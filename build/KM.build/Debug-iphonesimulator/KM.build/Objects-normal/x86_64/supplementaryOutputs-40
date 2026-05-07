@@ -1,0 +1,23 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Processors/MarkdownParser.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownParser.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownParser.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownParser.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownParser.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownParser.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/MarkdownTextView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownTextView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownTextView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownTextView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownTextView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MarkdownTextView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/MermaidWebView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MermaidWebView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MermaidWebView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MermaidWebView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MermaidWebView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/MermaidWebView.swiftdeps"
+  }
+}

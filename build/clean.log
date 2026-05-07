@@ -1,0 +1,37 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild clean -project KM.xcodeproj -scheme KM
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+  GRDB: https://github.com/groue/GRDB.swift.git @ 6.29.3
+  swift-custom-dump: https://github.com/pointfreeco/swift-custom-dump @ 1.5.0
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 603.0.1
+  swift-snapshot-testing: https://github.com/pointfreeco/swift-snapshot-testing @ 1.19.2
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:00006050-001A48A90CD1401C, name:My Mac }
+{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+{ platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+{ platform:iOS Simulator, arch:arm64, id:D8F8D001-4A75-479F-A9BE-96AA280814E2, OS:26.4.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:98C55AFB-A5E2-4141-BDFD-16048EF1ED95, OS:26.4.1, name:iPad Air 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:19C08566-3579-4E99-BB6D-F8E829F4CB1D, OS:26.4.1, name:iPad Air 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:16761FA8-FE8B-4100-B9BD-83090C3D7D1B, OS:26.4.1, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:A757D196-4A31-4DE3-8F99-1CE55B0B057C, OS:26.4.1, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:563021AC-FD4F-4911-B9C6-D78ABF43F148, OS:26.4.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:9C265BED-0DB2-4AF9-A394-36CE008545D6, OS:26.4.1, name:iPhone 17 }
+{ platform:iOS Simulator, arch:arm64, id:446F21F6-4EEF-4B07-B0DB-A6DF967C347B, OS:26.4.1, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:arm64, id:F4AEAA9B-F3B7-4547-9246-675CD64954D3, OS:26.4.1, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:57794B55-2859-4FFE-B701-7F95DD192946, OS:26.4.1, name:iPhone 17e }
+{ platform:iOS Simulator, arch:arm64, id:7DDE7113-82AD-4174-A3F7-5EED1B8AD6A4, OS:26.4.1, name:iPhone Air }
+{ platform:iOS, arch:arm64, id:00008150-001178203447801C, name:Constantine's iPhone }
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+** CLEAN SUCCEEDED **
+

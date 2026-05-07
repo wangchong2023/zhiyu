@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Infrastructure/Utilities/ThemeManager.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/ThemeManager.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/ThemeManager.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/ThemeManager.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/ThemeManager.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/ThemeManager.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Feature/UndoService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/UndoService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/UndoService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/UndoService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/UndoService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/UndoService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WatchConnectivityService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WatchConnectivityService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WatchConnectivityService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WatchConnectivityService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WatchConnectivityService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WatchConnectivityService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Storage/VaultSecurityService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultSecurityService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultSecurityService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultSecurityService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultSecurityService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultSecurityService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Storage/VaultService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VaultService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/VoiceNoteComponents.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteComponents.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteComponents.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteComponents.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteComponents.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteComponents.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/WeeklyInsightCard.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WeeklyInsightCard.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WeeklyInsightCard.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WeeklyInsightCard.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WeeklyInsightCard.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/WeeklyInsightCard.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Features/VisionProSpatialView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VisionProSpatialView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VisionProSpatialView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VisionProSpatialView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VisionProSpatialView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VisionProSpatialView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Features/VoiceNoteView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphoneos/KMMac.build/Objects-normal/arm64/VoiceNoteView.swiftdeps"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Features/QuizView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/QuizView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/QuizView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/QuizView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/QuizView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/QuizView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/PromptWorkshopView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PromptWorkshopView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PromptWorkshopView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PromptWorkshopView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PromptWorkshopView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PromptWorkshopView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Settings/PluginDetailView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PluginDetailView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PluginDetailView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PluginDetailView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PluginDetailView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PluginDetailView.swiftdeps"
+  }
+}

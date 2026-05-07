@@ -1,0 +1,23 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Models/PageType.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageType.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageType.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageType.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageType.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageType.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/PerformanceService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PerformanceService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PerformanceService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PerformanceService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PerformanceService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PerformanceService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/PageDetailHeader.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageDetailHeader.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageDetailHeader.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageDetailHeader.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageDetailHeader.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/x86_64/PageDetailHeader.swiftdeps"
+  }
+}

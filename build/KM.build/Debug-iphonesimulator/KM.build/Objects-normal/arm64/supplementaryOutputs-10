@@ -1,0 +1,23 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Editors/MarkdownRendererView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/MarkdownRendererView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/MarkdownRendererView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/MarkdownRendererView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/MarkdownRendererView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/MarkdownRendererView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Editors/OCRScanView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OCRScanView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OCRScanView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OCRScanView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OCRScanView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OCRScanView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OnDeviceLLMSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OnDeviceLLMSettingsView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OnDeviceLLMSettingsView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OnDeviceLLMSettingsView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KM.build/Objects-normal/arm64/OnDeviceLLMSettingsView.swiftdeps"
+  }
+}

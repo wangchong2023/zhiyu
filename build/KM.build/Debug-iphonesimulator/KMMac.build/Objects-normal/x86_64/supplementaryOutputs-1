@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Models/AppConfig.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AppConfig.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AppConfig.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AppConfig.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AppConfig.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AppConfig.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Models/AsyncStatus.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AsyncStatus.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AsyncStatus.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AsyncStatus.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AsyncStatus.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AsyncStatus.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/AIProviders.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIProviders.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIProviders.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIProviders.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIProviders.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIProviders.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/AISynthesisService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AISynthesisService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AISynthesisService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AISynthesisService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AISynthesisService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AISynthesisService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/AccessibilityService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AccessibilityService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AccessibilityService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AccessibilityService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AccessibilityService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AccessibilityService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/System/ActivityService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/ActivityService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/ActivityService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/ActivityService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/ActivityService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/ActivityService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/AIPulseIndicator.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIPulseIndicator.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIPulseIndicator.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIPulseIndicator.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIPulseIndicator.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AIPulseIndicator.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/AdaptiveSidebarView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AdaptiveSidebarView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AdaptiveSidebarView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AdaptiveSidebarView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AdaptiveSidebarView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/AdaptiveSidebarView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Pages/BacklinksView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/BacklinksView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/BacklinksView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/BacklinksView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/BacklinksView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/BacklinksView.swiftdeps"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMAdapters.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMAdapters.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMAdapters.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMAdapters.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMAdapters.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMAdapters.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMChatService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMChatService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMChatService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMChatService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMChatService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMChatService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMClient.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMClient.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMClient.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMClient.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMClient.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMClient.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMContextBuilder.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMContextBuilder.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMContextBuilder.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMContextBuilder.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMContextBuilder.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMContextBuilder.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMModels.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMModels.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMModels.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMModels.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMModels.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMModels.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMProtocols.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMProtocols.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMProtocols.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMProtocols.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMProtocols.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMProtocols.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMRefactorService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMRefactorService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMRefactorService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMRefactorService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMRefactorService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMRefactorService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Logic/KnowledgeInsightService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/KnowledgeInsightService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/KnowledgeInsightService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/KnowledgeInsightService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/KnowledgeInsightService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/KnowledgeInsightService.swiftdeps"
+  }
+}

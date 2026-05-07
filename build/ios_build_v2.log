@@ -1,0 +1,147 @@
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:132:5: error: attribute 'private' can only be used in a non-local scope
+    private func updateAdapter() {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:146:5: error: attribute 'private' can only be used in a non-local scope
+    private var cancellables = Set<AnyCancellable>()
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:5: error: attribute 'private' can only be used in a non-local scope
+    private static let ingestTemperature: Double = 0.3
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:20: error: static properties may only be declared on a type
+    private static let ingestTemperature: Double = 0.3
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:5: error: attribute 'private' can only be used in a non-local scope
+    private static let ingestMaxTokens: Int = 3000
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:20: error: static properties may only be declared on a type
+    private static let ingestMaxTokens: Int = 3000
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:5: error: attribute 'private' can only be used in a non-local scope
+    private static let validationMaxTokens: Int = 5
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:20: error: static properties may only be declared on a type
+    private static let validationMaxTokens: Int = 5
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:157:5: error: attribute 'private' can only be used in a non-local scope
+    private func makeClient() -> LLMClient {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:468:1: error: expected '}' in class
+
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:22:83: note: to match this opening '{'
+final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
+                                                                                  ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:132:5: error: attribute 'private' can only be used in a non-local scope
+    private func updateAdapter() {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:146:5: error: attribute 'private' can only be used in a non-local scope
+    private var cancellables = Set<AnyCancellable>()
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:5: error: attribute 'private' can only be used in a non-local scope
+    private static let ingestTemperature: Double = 0.3
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:20: error: static properties may only be declared on a type
+    private static let ingestTemperature: Double = 0.3
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:5: error: attribute 'private' can only be used in a non-local scope
+    private static let ingestMaxTokens: Int = 3000
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:20: error: static properties may only be declared on a type
+    private static let ingestMaxTokens: Int = 3000
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:5: error: attribute 'private' can only be used in a non-local scope
+    private static let validationMaxTokens: Int = 5
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:20: error: static properties may only be declared on a type
+    private static let validationMaxTokens: Int = 5
+            ~~~~~~~^
+            
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:157:5: error: attribute 'private' can only be used in a non-local scope
+    private func makeClient() -> LLMClient {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:468:1: error: expected '}' in class
+
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:22:83: note: to match this opening '{'
+final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
+                                                                                  ^
+eyJibHVlcHJpbnRfYmx1ZXByaW50SWRlbnRpZmllciI6IkdSREIiLCJibHVlcHJpbnRfcHJvdmlkZXJGaWxlUGF0aFN0cmluZyI6IlwvVXNlcnNcL2NvbnN0YW50aW5lXC9MaWJyYXJ5XC9EZXZlbG9wZXJcL1hjb2RlXC9EZXJpdmVkRGF0YVwvS00tZHVtcWxvb3huY3pnaWViaGRobXd5bGZkemxwcVwvU291cmNlUGFja2FnZXNcL2NoZWNrb3V0c1wvR1JEQi5zd2lmdCIsInR5cGUiOnsiYmx1ZXByaW50Ijp7fX19
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:132:5: error: Attribute 'private' can only be used in a non-local scope
+    private func updateAdapter() {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:146:5: error: Attribute 'private' can only be used in a non-local scope
+    private var cancellables = Set<AnyCancellable>()
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let ingestTemperature: Double = 0.3
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:20: error: Static properties may only be declared on a type
+    private static let ingestTemperature: Double = 0.3
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let ingestMaxTokens: Int = 3000
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:20: error: Static properties may only be declared on a type
+    private static let ingestMaxTokens: Int = 3000
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let validationMaxTokens: Int = 5
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:20: error: Static properties may only be declared on a type
+    private static let validationMaxTokens: Int = 5
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:157:5: error: Attribute 'private' can only be used in a non-local scope
+    private func makeClient() -> LLMClient {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:468:1: error: Expected '}' in class
+
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:22:83: note: To match this opening '{'
+final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
+                                                                                  ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:132:5: error: Attribute 'private' can only be used in a non-local scope
+    private func updateAdapter() {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:146:5: error: Attribute 'private' can only be used in a non-local scope
+    private var cancellables = Set<AnyCancellable>()
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let ingestTemperature: Double = 0.3
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:150:20: error: Static properties may only be declared on a type
+    private static let ingestTemperature: Double = 0.3
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let ingestMaxTokens: Int = 3000
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:152:20: error: Static properties may only be declared on a type
+    private static let ingestMaxTokens: Int = 3000
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:5: error: Attribute 'private' can only be used in a non-local scope
+    private static let validationMaxTokens: Int = 5
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:154:20: error: Static properties may only be declared on a type
+    private static let validationMaxTokens: Int = 5
+            ~~~~~~~^
+             (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:157:5: error: Attribute 'private' can only be used in a non-local scope
+    private func makeClient() -> LLMClient {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:468:1: error: Expected '}' in class
+
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:22:83: note: To match this opening '{'
+final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
+                                                                                  ^ (in target 'KM' from project 'KM')
+** BUILD FAILED **
+

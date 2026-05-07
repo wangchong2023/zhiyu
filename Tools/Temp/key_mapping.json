@@ -1,0 +1,11 @@
+{
+  "editor.wikiLink": "editor.knowledgeLink",
+  "ocr.saveToWiki": "ocr.saveToKnowledge",
+  "ondevice.ingest.compileToWiki": "ondevice.ingest.compileToKnowledge",
+  "page.wiki": "page.knowledge",
+  "pdf.ingestToWiki": "pdf.ingestToKnowledge",
+  "speech.saveToWiki": "speech.saveToKnowledge",
+  "tab.wiki": "tab.knowledge",
+  "welcome.guide.wikiLink": "welcome.guide.knowledgeLink",
+  "welcome.wikilinkHint": "welcome.knowledgelinkHint"
+}

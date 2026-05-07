@@ -1,0 +1,58 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Infrastructure/Utilities/WikiColors.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiColors.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiColors.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiColors.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiColors.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiColors.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/System/WikiEventBus.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEventBus.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEventBus.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEventBus.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEventBus.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEventBus.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/WikiCard.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCard.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCard.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCard.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCard.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCard.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/WikiCardComponents.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCardComponents.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCardComponents.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCardComponents.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCardComponents.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiCardComponents.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/WikiDecorators.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiDecorators.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiDecorators.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiDecorators.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiDecorators.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiDecorators.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/WikiEmptyState.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEmptyState.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEmptyState.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEmptyState.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEmptyState.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WikiEmptyState.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Core/WelcomeView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WelcomeView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WelcomeView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WelcomeView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WelcomeView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WelcomeView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/WidgetAndWatchViews.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WidgetAndWatchViews.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WidgetAndWatchViews.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WidgetAndWatchViews.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WidgetAndWatchViews.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug-iphonesimulator/KMMac.build/Objects-normal/x86_64/WidgetAndWatchViews.swiftdeps"
+  }
+}

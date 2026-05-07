@@ -1,0 +1,29 @@
+eyJibHVlcHJpbnRfYmx1ZXByaW50SWRlbnRpZmllciI6IkdSREIiLCJibHVlcHJpbnRfcHJvdmlkZXJGaWxlUGF0aFN0cmluZyI6IlwvVXNlcnNcL2NvbnN0YW50aW5lXC9MaWJyYXJ5XC9EZXZlbG9wZXJcL1hjb2RlXC9EZXJpdmVkRGF0YVwvS00tZHVtcWxvb3huY3pnaWViaGRobXd5bGZkemxwcVwvU291cmNlUGFja2FnZXNcL2NoZWNrb3V0c1wvR1JEQi5zd2lmdCIsInR5cGUiOnsiYmx1ZXByaW50Ijp7fX19
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'LLMService', consider removing it
+    nonisolated(unsafe) static let shared = LLMService()
+    ^~~~~~~~~~~~~~~~~~~~
+    
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:36: warning: main actor-isolated default value in a nonisolated(unsafe) context; this is an error in the Swift 6 language mode
+    nonisolated(unsafe) static let shared = LLMService()
+                                   ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'LLMService', consider removing it
+    nonisolated(unsafe) static let shared = LLMService()
+    ^~~~~~~~~~~~~~~~~~~~
+    
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:36: warning: main actor-isolated default value in a nonisolated(unsafe) context; this is an error in the Swift 6 language mode
+    nonisolated(unsafe) static let shared = LLMService()
+                                   ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'LLMService', consider removing it
+    nonisolated(unsafe) static let shared = LLMService()
+    ^~~~~~~~~~~~~~~~~~~~
+    
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:36: warning: main actor-isolated default value in a nonisolated(unsafe) context; this is an error in the Swift 6 language mode
+    nonisolated(unsafe) static let shared = LLMService()
+                                   ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:5: warning: 'nonisolated(unsafe)' is unnecessary for a constant with 'Sendable' type 'LLMService', consider removing it
+    nonisolated(unsafe) static let shared = LLMService()
+    ^~~~~~~~~~~~~~~~~~~~
+    
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/LLMService.swift:24:36: warning: main actor-isolated default value in a nonisolated(unsafe) context; this is an error in the Swift 6 language mode
+    nonisolated(unsafe) static let shared = LLMService()
+                                   ^

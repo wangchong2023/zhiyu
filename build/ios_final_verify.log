@@ -1,0 +1,108 @@
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:1: error: unary operator cannot be separated from its operand
+... (rest of the method unchanged) ...
+^  ~
+   
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:11: error: expected ',' separator
+... (rest of the method unchanged) ...
+          ^
+         ,
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: expected expression after operator
+    private struct SlideData: Codable {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: attribute 'private' can only be used in a non-local scope
+    private struct SlideData: Codable {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:189:5: error: attribute 'private' can only be used in a non-local scope
+    private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:207:1: error: declaration is only valid at file scope
+extension WebViewExportService: WKNavigationDelegate {
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:212:1: error: expected '}' in class
+
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:17:44: note: to match this opening '{'
+final class WebViewExportService: NSObject {
+                                           ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:1: error: unary operator cannot be separated from its operand
+... (rest of the method unchanged) ...
+^  ~
+   
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:11: error: expected ',' separator
+... (rest of the method unchanged) ...
+          ^
+         ,
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: expected expression after operator
+    private struct SlideData: Codable {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: attribute 'private' can only be used in a non-local scope
+    private struct SlideData: Codable {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:189:5: error: attribute 'private' can only be used in a non-local scope
+    private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
+    ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:207:1: error: declaration is only valid at file scope
+extension WebViewExportService: WKNavigationDelegate {
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:212:1: error: expected '}' in class
+
+^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:17:44: note: to match this opening '{'
+final class WebViewExportService: NSObject {
+                                           ^
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:1: error: Unary operator cannot be separated from its operand
+... (rest of the method unchanged) ...
+^  ~
+    (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:11: error: Expected ',' separator
+... (rest of the method unchanged) ...
+          ^
+         , (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: Expected expression after operator
+    private struct SlideData: Codable {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: Attribute 'private' can only be used in a non-local scope
+    private struct SlideData: Codable {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:189:5: error: Attribute 'private' can only be used in a non-local scope
+    private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:207:1: error: Declaration is only valid at file scope
+extension WebViewExportService: WKNavigationDelegate {
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:212:1: error: Expected '}' in class
+
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:17:44: note: To match this opening '{'
+final class WebViewExportService: NSObject {
+                                           ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:1: error: Unary operator cannot be separated from its operand
+... (rest of the method unchanged) ...
+^  ~
+    (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:180:11: error: Expected ',' separator
+... (rest of the method unchanged) ...
+          ^
+         , (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: Expected expression after operator
+    private struct SlideData: Codable {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:184:5: error: Attribute 'private' can only be used in a non-local scope
+    private struct SlideData: Codable {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:189:5: error: Attribute 'private' can only be used in a non-local scope
+    private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
+    ^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:207:1: error: Declaration is only valid at file scope
+extension WebViewExportService: WKNavigationDelegate {
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:212:1: error: Expected '}' in class
+
+^ (in target 'KM' from project 'KM')
+/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/WebViewExportService.swift:17:44: note: To match this opening '{'
+final class WebViewExportService: NSObject {
+                                           ^ (in target 'KM' from project 'KM')
+error: the following command failed with exit code 1 but produced no further output
+SwiftDriver KM normal arm64 com.apple.xcode.tools.swift.compiler (in target 'KM' from project 'KM')
+** BUILD FAILED **
+

@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Models/LintIssue.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintIssue.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintIssue.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintIssue.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintIssue.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintIssue.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Core/Protocols/LLMServiceProtocol.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMServiceProtocol.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMServiceProtocol.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMServiceProtocol.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMServiceProtocol.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMServiceProtocol.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Core/Protocols/LLMStrategy.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMStrategy.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMStrategy.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMStrategy.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMStrategy.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMStrategy.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Feature/LintService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/LocalAnalyticsService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LocalAnalyticsService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LocalAnalyticsService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LocalAnalyticsService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LocalAnalyticsService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LocalAnalyticsService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Logic/LinkService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Processors/LinkScraperService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkScraperService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkScraperService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkScraperService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkScraperService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LinkScraperService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Features/LintView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LintView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Settings/LLMSettingsView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMSettingsView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMSettingsView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMSettingsView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/LLMSettingsView.swiftdeps"
+  }
+}

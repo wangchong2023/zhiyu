@@ -1,0 +1,122 @@
+name: ZhiYu
+packages:
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    from: 1.17.2
+  GRDB:
+    url: https://github.com/groue/GRDB.swift.git
+    from: 6.29.1
+
+options:
+  bundleIdPrefix: com.zhiyu.app
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+    watchOS: "10.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    TARGETED_DEVICE_FAMILY: "1,2,4"
+    INFOPLIST_FILE: Sources/Info.plist
+    DEVELOPMENT_TEAM: ""
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+    MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
+
+targets:
+  ZhiYu:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+        excludes:
+          - "Platforms/macOS/**"
+          - "Platforms/watchOS/**"
+          - "MacInfo.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app
+        INFOPLIST_FILE: Sources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
+    dependencies:
+      - package: GRDB
+
+  ZhiYuMac:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sources
+        excludes:
+          - "Platforms/iOS/**"
+          - "Platforms/watchOS/**"
+          - "Info.plist"
+          - "Base.lproj/**"
+          - "LaunchScreen.storyboard"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.mac
+        INFOPLIST_FILE: Sources/MacInfo.plist
+        SUPPORTS_MACCATALYST: "YES"
+        SDKROOT: iphoneos
+        TARGETED_DEVICE_FAMILY: "2"
+        CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
+    dependencies:
+      - package: GRDB
+
+  ZhiYuWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: Sources
+        excludes:
+          - "Platforms/iOS/**"
+          - "Platforms/macOS/**"
+          - "Info.plist"
+          - "MacInfo.plist"
+          - "Base.lproj/**"
+          - "LaunchScreen.storyboard"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.watch
+        SDKROOT: watchos
+        GENERATE_INFOPLIST_FILE: "YES"
+
+  ZhiYuTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: ZhiYu
+      - package: SnapshotTesting
+
+schemes:
+  ZhiYu:
+    build:
+      targets:
+        ZhiYu: all
+    test:
+      targets:
+        - ZhiYuTests
+    run:
+      executable: ZhiYu
+
+  ZhiYuMac:
+    build:
+      targets:
+        ZhiYuMac: all
+    run:
+      executable: ZhiYuMac
+
+  ZhiYuWatch:
+    build:
+      targets:
+        ZhiYuWatch: all
+    run:
+      executable: ZhiYuWatch

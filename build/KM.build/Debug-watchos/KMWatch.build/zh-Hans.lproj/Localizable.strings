@@ -1,0 +1,2037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>a11y.highContrast</key>
+	<string>高对比度</string>
+	<key>a11y.links</key>
+	<string>个链接</string>
+	<key>a11y.reduceMotion</key>
+	<string>减弱动态效果</string>
+	<key>a11y.tags</key>
+	<string>标签</string>
+	<key>a11y.tapToOpen</key>
+	<string>轻点打开</string>
+	<key>a11y.voiceOver</key>
+	<string>VoiceOver</string>
+	<key>a11y.words</key>
+	<string>字</string>
+	<key>action.browseGraph</key>
+	<string>浏览图谱</string>
+	<key>action.browseGraph.subtitle</key>
+	<string>可视化知识关联</string>
+	<key>action.createPage</key>
+	<string>创建页面</string>
+	<key>action.createPage.subtitle</key>
+	<string>新建知识库页面</string>
+	<key>action.healthCheck</key>
+	<string>健康检查</string>
+	<key>action.healthCheck.subtitle</key>
+	<string>检测断链、孤立页面、矛盾</string>
+	<key>action.ingestKnowledge</key>
+	<string>导入知识</string>
+	<key>action.ingestKnowledge.subtitle</key>
+	<string>将原始素材加工入库</string>
+	<key>ai.status.scanning</key>
+	<string>全库智能扫描中...</string>
+	<key>ai.status.thinking</key>
+	<string>AI 正在思考...</string>
+	<key>aitask.center.title</key>
+	<string>AI 任务中心</string>
+	<key>aitask.clearAll</key>
+	<string>全部清除</string>
+	<key>aitask.empty.desc</key>
+	<string>任务中心用于监控耗时的全局操作
+您无需停留在原页面等待，这里会帮您持续追踪进度。</string>
+	<key>aitask.empty.title</key>
+	<string>暂无后台任务</string>
+	<key>aitask.emptyHint</key>
+	<string>此处展示长耗时的异步 AI 任务，如知识合成、全库扫描等。您可以在页面详情的 AI 实验栏中启动任务。</string>
+	<key>aitask.guide.archive</key>
+	<string>AI 智能归档</string>
+	<key>aitask.guide.archive.desc</key>
+	<string>长篇文档的自动分析和摘要生成</string>
+	<key>aitask.guide.health</key>
+	<string>健康检查与 AI 扫描</string>
+	<key>aitask.guide.health.desc</key>
+	<string>在右侧边栏底部的「健康状态」中发起</string>
+	<key>aitask.guide.ingest</key>
+	<string>数据导入与导出</string>
+	<key>aitask.guide.ingest.desc</key>
+	<string>批量导入 Markdown 文件或从 Web 剪藏时</string>
+	<key>aitask.howToTrigger</key>
+	<string>如何触发任务？</string>
+	<key>aitask.noRunning</key>
+	<string>暂无任务</string>
+	<key>aitask.scanTaskName</key>
+	<string>全库智能扫描</string>
+	<key>aitask.status.completed</key>
+	<string>已完成</string>
+	<key>aitask.status.completedFormat</key>
+	<string>已完成: %@</string>
+	<key>aitask.status.failed</key>
+	<string>失败</string>
+	<key>aitask.status.failedFormat</key>
+	<string>任务失败: %@</string>
+	<key>aitask.status.pending</key>
+	<string>等待中</string>
+	<key>aitask.status.running</key>
+	<string>处理中...</string>
+	<key>aitask.status.runningFormat</key>
+	<string>正在执行: %1$@ - %2$@</string>
+	<key>aitask.status.startingFormat</key>
+	<string>正在启动: %1$@ (%2$@)</string>
+	<key>app.name</key>
+	<string>知识库</string>
+	<key>backlinks.backlinksCount</key>
+	<string>%d 个反向链接</string>
+	<key>backlinks.noBackLinks</key>
+	<string>无反向链接</string>
+	<key>backlinks.noOutgoing</key>
+	<string>无出链</string>
+	<key>backlinks.outgoingCount</key>
+	<string>%d 个出链</string>
+	<key>backup.actions</key>
+	<string>操作</string>
+	<key>backup.autoBackup</key>
+	<string>自动备份</string>
+	<key>backup.createNow</key>
+	<string>立即创建备份</string>
+	<key>backup.exportCurrent</key>
+	<string>导出当前数据</string>
+	<key>backup.history</key>
+	<string>备份历史</string>
+	<key>backup.lastBackup</key>
+	<string>上次备份</string>
+	<key>backup.log.crashRecovery</key>
+	<string>检测到崩溃恢复 - 发现脏标记</string>
+	<key>backup.log.createFailed</key>
+	<string>备份失败: %@</string>
+	<key>backup.log.restoreFailed</key>
+	<string>恢复备份失败: %@</string>
+	<key>backup.log.saveIndexFailed</key>
+	<string>保存备份索引失败: %@</string>
+	<key>backup.noBackups</key>
+	<string>暂无备份</string>
+	<key>backup.noBackupsDesc</key>
+	<string>创建备份以保护您的知识库数据</string>
+	<key>backup.pages</key>
+	<string>页</string>
+	<key>backup.restore</key>
+	<string>恢复</string>
+	<key>backup.restoreMessage</key>
+	<string>确定要从此备份恢复吗？当前数据将被替换，恢复前会自动创建安全备份。</string>
+	<key>backup.restoreTitle</key>
+	<string>恢复备份</string>
+	<key>backup.settings</key>
+	<string>备份设置</string>
+	<key>backup.title</key>
+	<string>备份与恢复</string>
+	<key>backup.words</key>
+	<string>字</string>
+	<key>chat.ai.thinking</key>
+	<string>AI 正在思考更深层的问题...</string>
+	<key>chat.aiRunning</key>
+	<string>AI 正在后台运行中...</string>
+	<key>chat.aiThinking</key>
+	<string>AI 正在思考...</string>
+	<key>chat.clearHistory</key>
+	<string>清空对话</string>
+	<key>chat.configureFirst</key>
+	<string>请先配置 LLM API Key</string>
+	<key>chat.expandFull</key>
+	<string>展开全文</string>
+	<key>chat.group.ai</key>
+	<string>✨ AI 深度探索</string>
+	<key>chat.group.base</key>
+	<string>基础引导</string>
+	<key>chat.group.user</key>
+	<string>我的置顶指令</string>
+	<key>chat.inputPlaceholder</key>
+	<string>问你的知识库...</string>
+	<key>chat.llmSettings</key>
+	<string>大模型设置</string>
+	<key>chat.referencesCollapsed</key>
+	<string>引用来源</string>
+	<key>chat.referencesExpanded</key>
+	<string>引用来源</string>
+	<key>chat.suggested.compare</key>
+	<string>对比不同概念的异同</string>
+	<key>chat.suggested.connections</key>
+	<string>有哪些页面之间可能存在关联但没有链接？</string>
+	<key>chat.suggested.explain</key>
+	<string>解释这些概念之间的关系</string>
+	<key>chat.suggested.gaps</key>
+	<string>知识库中有哪些盲区需要补充？</string>
+	<key>chat.suggested.organize</key>
+	<string>帮我整理知识结构</string>
+	<key>chat.suggested.recommend</key>
+	<string>推荐可以添加的新页面</string>
+	<key>chat.suggested.summarize</key>
+	<string>总结我的知识库中最重要的概念</string>
+	<key>chat.suggested.whatContent</key>
+	<string>知识库中有哪些内容？</string>
+	<key>chat.title</key>
+	<string>AI 助手</string>
+	<key>chat.welcomeDesc</key>
+	<string>基于你的知识库内容回答问题，发现关联，发现盲区</string>
+	<key>chat.welcomeTitle</key>
+	<string>知识库 AI 助手</string>
+	<key>collab.connectedUsers</key>
+	<string>已连接的用户</string>
+	<key>collab.defaultRoom</key>
+	<string>知识库协作房间</string>
+	<key>collab.error.connectionTimeout</key>
+	<string>连接超时，请重试</string>
+	<key>collab.error.noPermission</key>
+	<string>您没有编辑权限</string>
+	<key>collab.hostSession</key>
+	<string>主持协作</string>
+	<key>collab.hostSetup</key>
+	<string>设置协作房间</string>
+	<key>collab.hostedBy</key>
+	<string>主持人:</string>
+	<key>collab.howItWorks</key>
+	<string>工作原理</string>
+	<key>collab.info.encrypted</key>
+	<string>端到端加密传输</string>
+	<key>collab.info.local</key>
+	<string>通过本地 Wi-Fi / 蓝牙直连</string>
+	<key>collab.info.maxPeers</key>
+	<string>最多支持 8 位协作者</string>
+	<key>collab.joinSession</key>
+	<string>加入协作</string>
+	<key>collab.leaveSession</key>
+	<string>离开协作</string>
+	<key>collab.nearbyRooms</key>
+	<string>附近的协作房间</string>
+	<key>collab.noEdits</key>
+	<string>暂无编辑记录</string>
+	<key>collab.recentEdits</key>
+	<string>最近的编辑</string>
+	<key>collab.role.editor</key>
+	<string>编辑者</string>
+	<key>collab.role.owner</key>
+	<string>主持人</string>
+	<key>collab.role.viewer</key>
+	<string>查看者</string>
+	<key>collab.room</key>
+	<string>知识库 Room</string>
+	<key>collab.roomName</key>
+	<string>房间名称</string>
+	<key>collab.roomNamePlaceholder</key>
+	<string>输入房间名称</string>
+	<key>collab.searching</key>
+	<string>正在搜索...</string>
+	<key>collab.simulatorWarning</key>
+	<string>MultipeerConnectivity 在模拟器上不可用，请在真机上测试协作功能。</string>
+	<key>collab.startHosting</key>
+	<string>开始主持</string>
+	<key>collab.status.advertiseError</key>
+	<string>广播失败</string>
+	<key>collab.status.browseError</key>
+	<string>搜索失败</string>
+	<key>collab.status.connected</key>
+	<string>已连接</string>
+	<key>collab.status.connecting</key>
+	<string>连接中...</string>
+	<key>collab.status.disconnected</key>
+	<string>已断开</string>
+	<key>collab.status.hosting</key>
+	<string>正在主持协作</string>
+	<key>collab.status.joining</key>
+	<string>正在加入...</string>
+	<key>collab.status.pageReceived</key>
+	<string>收到页面同步</string>
+	<key>collab.status.ready</key>
+	<string>就绪</string>
+	<key>collab.status.searching</key>
+	<string>正在搜索附近的协作房间...</string>
+	<key>collab.status.simulatorNotSupported</key>
+	<string>模拟器不支持本地协作</string>
+	<key>collab.stopSearching</key>
+	<string>停止搜索</string>
+	<key>collab.subtitle</key>
+	<string>通过本地网络与他人实时协作编辑知识库</string>
+	<key>collab.title</key>
+	<string>实时协作</string>
+	<key>collab.username</key>
+	<string>用户名</string>
+	<key>collab.usernamePlaceholder</key>
+	<string>输入你的名字</string>
+	<key>confidence.high</key>
+	<string>高</string>
+	<key>confidence.low</key>
+	<string>低</string>
+	<key>confidence.medium</key>
+	<string>中</string>
+	<key>create.basicInfo</key>
+	<string>基本信息</string>
+	<key>create.comparisonDimensions</key>
+	<string>对比维度</string>
+	<key>create.comparisonTemplate</key>
+	<string>对比模板</string>
+	<key>create.conceptTemplate</key>
+	<string>概念模板</string>
+	<key>create.conclusion</key>
+	<string>结论</string>
+	<key>create.content</key>
+	<string>内容</string>
+	<key>create.coreContributions</key>
+	<string>核心贡献</string>
+	<key>create.corePoints</key>
+	<string>核心要点</string>
+	<key>create.create</key>
+	<string>创建</string>
+	<key>create.definition</key>
+	<string>定义</string>
+	<key>create.description</key>
+	<string>说明</string>
+	<key>create.dimension</key>
+	<string>维度</string>
+	<key>create.entityTemplate</key>
+	<string>实体模板</string>
+	<key>create.keyIdeas</key>
+	<string>关键理念</string>
+	<key>create.overview</key>
+	<string>概述</string>
+	<key>create.pageTitle</key>
+	<string>页面标题</string>
+	<key>create.quickTemplates</key>
+	<string>快速模板</string>
+	<key>create.relatedLinks</key>
+	<string>相关链接</string>
+	<key>create.tagsPlaceholder</key>
+	<string>标签（逗号分隔）</string>
+	<key>create.title</key>
+	<string>创建页面</string>
+	<key>dashboard.dailyInsights</key>
+	<string>每日知识闪念</string>
+	<key>dashboard.dailyInsights.refresh</key>
+	<string>点击刷新以获取今日召回见解</string>
+	<key>dashboard.density</key>
+	<string>知识连接密度</string>
+	<key>dashboard.hotTopics</key>
+	<string>热门知识领域</string>
+	<key>dashboard.totalLinks</key>
+	<string>知识连接</string>
+	<key>dashboard.totalPages</key>
+	<string>总页面</string>
+	<key>deepLink.log.indexingFailed</key>
+	<string>Spotlight 索引失败: %@</string>
+	<key>detail.pageType</key>
+	<string>页面类型</string>
+	<key>editor.addAlias</key>
+	<string>添加别名</string>
+	<key>editor.addTag</key>
+	<string>添加标签</string>
+	<key>editor.bidirectionalLinks</key>
+	<string>支持 [[双向链接]] 语法</string>
+	<key>editor.bold</key>
+	<string>粗体</string>
+	<key>editor.code</key>
+	<string>代码</string>
+	<key>editor.divider</key>
+	<string>分割线</string>
+	<key>editor.enterTag</key>
+	<string>输入标签</string>
+	<key>editor.iconCustomized</key>
+	<string>已自定义</string>
+	<key>editor.insertWikiLink</key>
+	<string>插入知识库链接</string>
+	<key>editor.italic</key>
+	<string>斜体</string>
+	<key>editor.link</key>
+	<string>链接</string>
+	<key>editor.list</key>
+	<string>列表</string>
+	<key>editor.pageTitlePlaceholder</key>
+	<string>输入页面标题</string>
+	<key>editor.quote</key>
+	<string>引用</string>
+	<key>editor.searchPages</key>
+	<string>搜索页面...</string>
+	<key>editor.selectedText</key>
+	<string>选中文本</string>
+	<key>editor.table</key>
+	<string>表格</string>
+	<key>editor.tableColumn1</key>
+	<string>列1</string>
+	<key>editor.tableColumn2</key>
+	<string>列2</string>
+	<key>editor.tableColumn3</key>
+	<string>列3</string>
+	<key>editor.tableContent</key>
+	<string>内容</string>
+	<key>editor.wikiLink</key>
+	<string>知识库链接</string>
+	<key>empty.actionHint</key>
+	<string>可执行操作</string>
+	<key>empty.hint</key>
+	<string>提示</string>
+	<key>export.aliases</key>
+	<string>别名</string>
+	<key>export.confidence</key>
+	<string>可信度</string>
+	<key>export.created</key>
+	<string>创建</string>
+	<key>export.exportTime</key>
+	<string>导出时间</string>
+	<key>export.header</key>
+	<string>知识库导出</string>
+	<key>export.status</key>
+	<string>状态</string>
+	<key>export.tags</key>
+	<string>标签</string>
+	<key>export.totalPages</key>
+	<string>总页面</string>
+	<key>export.type</key>
+	<string>类型</string>
+	<key>export.updated</key>
+	<string>更新</string>
+	<key>graph.all</key>
+	<string>全部</string>
+	<key>graph.emptyDesc</key>
+	<string>连接您的灵感，见证它们成长为知识神经网络</string>
+	<key>graph.emptyTitle</key>
+	<string>开启您的知识宇宙</string>
+	<key>graph.insightBridges</key>
+	<string>桥接节点</string>
+	<key>graph.insightBridgesDesc</key>
+	<string>连接3个或以上社区的关键节点</string>
+	<key>graph.insightOrphans</key>
+	<string>孤立页面</string>
+	<key>graph.insightOrphansDesc</key>
+	<string>没有任何连接的页面</string>
+	<key>graph.insightSparse</key>
+	<string>稀疏社区</string>
+	<key>graph.insightSparseDesc</key>
+	<string>内部链接较弱的低内聚力社区</string>
+	<key>graph.insightSurprising</key>
+	<string>意外关联</string>
+	<key>graph.insightSurprisingDesc</key>
+	<string>跨类型或跨社区连接的页面</string>
+	<key>graph.insights</key>
+	<string>图谱洞察</string>
+	<key>graph.legend</key>
+	<string>图例</string>
+	<key>graph.linkHint</key>
+	<string>在编辑页面时使用 [[页面名]] 即可建立链接</string>
+	<key>graph.menu.analysis</key>
+	<string>布局与分析</string>
+	<key>graph.menu.disableClustering</key>
+	<string>禁用语义聚类</string>
+	<key>graph.menu.enableClustering</key>
+	<string>启用语义聚类</string>
+	<key>graph.menu.hideLegend</key>
+	<string>隐藏分类图例</string>
+	<key>graph.menu.relayout</key>
+	<string>重新生成布局</string>
+	<key>graph.menu.showLegend</key>
+	<string>显示分类图例</string>
+	<key>graph.menu.visuals</key>
+	<string>视觉选项</string>
+	<key>graph.nodesConnections</key>
+	<string>%d 节点 · %d 连接</string>
+	<key>graph.startBuilding</key>
+	<string>开始构建网络</string>
+	<key>graph.tip.biLink</key>
+	<string>提示：使用 [[页面标题]] 语法在正文中建立关联</string>
+	<key>graph.title</key>
+	<string>知识图谱</string>
+	<key>graph3d.title</key>
+	<string>3D 图谱</string>
+	<key>graph3d.viewPage</key>
+	<string>查看页面</string>
+	<key>icloud.aboutSync</key>
+	<string>关于 iCloud 同步</string>
+	<key>icloud.autoSync</key>
+	<string>自动同步</string>
+	<key>icloud.autoSyncFailed</key>
+	<string>自动同步失败</string>
+	<key>icloud.bidirectionalSync</key>
+	<string>双向同步</string>
+	<key>icloud.clearCloudData</key>
+	<string>清除 iCloud 数据</string>
+	<key>icloud.conflictDetected</key>
+	<string>冲突检测</string>
+	<key>icloud.conflictMessage</key>
+	<string>本地与远程数据存在冲突，请选择解决方式。</string>
+	<key>icloud.conflictPolicy</key>
+	<string>冲突解决策略</string>
+	<key>icloud.download</key>
+	<string>从 iCloud 下载</string>
+	<key>icloud.error.cloudKit</key>
+	<string>CloudKit 错误</string>
+	<key>icloud.error.conflictResolution</key>
+	<string>冲突解决失败</string>
+	<key>icloud.error.decoding</key>
+	<string>数据解码失败</string>
+	<key>icloud.error.encoding</key>
+	<string>数据编码失败</string>
+	<key>icloud.error.notAvailable</key>
+	<string>iCloud 不可用，请确认已登录 iCloud 账户</string>
+	<key>icloud.info1</key>
+	<string>数据通过 iCloud 私有数据库存储</string>
+	<key>icloud.info2</key>
+	<string>仅限同一 Apple ID 的设备间同步</string>
+	<key>icloud.info3</key>
+	<string>冲突时默认合并两边数据</string>
+	<key>icloud.info4</key>
+	<string>页面以更新时间为准，保留较新版本</string>
+	<key>icloud.keepLocal</key>
+	<string>保留本地</string>
+	<key>icloud.keepRemote</key>
+	<string>保留远程</string>
+	<key>icloud.lastSyncFormat</key>
+	<string>上次同步：%@</string>
+	<key>icloud.merge</key>
+	<string>合并（推荐）</string>
+	<key>icloud.notAvailable</key>
+	<string>iCloud 不可用，请确认已登录 iCloud 账户</string>
+	<key>icloud.pullFromCloud</key>
+	<string>从 iCloud 下载</string>
+	<key>icloud.pullOverwriteMessage</key>
+	<string>所有本地页面将被远程数据替换，此操作不可撤销。</string>
+	<key>icloud.pullWillOverwrite</key>
+	<string>从 iCloud 下载将覆盖本地数据</string>
+	<key>icloud.pushToCloud</key>
+	<string>上传到 iCloud</string>
+	<key>icloud.syncActions</key>
+	<string>同步操作</string>
+	<key>icloud.syncError</key>
+	<string>同步错误</string>
+	<key>icloud.syncSettings</key>
+	<string>同步设置</string>
+	<key>icloud.syncStatus</key>
+	<string>iCloud 同步状态</string>
+	<key>icloud.title</key>
+	<string>iCloud 同步</string>
+	<key>iconPicker.academic</key>
+	<string>学术</string>
+	<key>iconPicker.allIcons</key>
+	<string>全部图标</string>
+	<key>iconPicker.common</key>
+	<string>常用</string>
+	<key>iconPicker.customSelected</key>
+	<string>已选择自定义图标</string>
+	<key>iconPicker.nature</key>
+	<string>自然</string>
+	<key>iconPicker.reset</key>
+	<string>重置</string>
+	<key>iconPicker.selectIcon</key>
+	<string>选择图标</string>
+	<key>iconPicker.symbols</key>
+	<string>符号</string>
+	<key>iconPicker.transport</key>
+	<string>交通</string>
+	<key>iconPicker.useDefault</key>
+	<string>使用默认图标</string>
+	<key>index.comparisonCount</key>
+	<string>%d 个比较</string>
+	<key>index.conceptCount</key>
+	<string>%d 个概念</string>
+	<key>index.concepts</key>
+	<string>概念</string>
+	<key>index.entities</key>
+	<string>实体</string>
+	<key>index.entityCount</key>
+	<string>%d 个实体</string>
+	<key>index.overview</key>
+	<string>概览</string>
+	<key>index.pages</key>
+	<string>页面</string>
+	<key>index.sourceCount</key>
+	<string>%d 个来源</string>
+	<key>index.sources</key>
+	<string>来源</string>
+	<key>index.wordCount</key>
+	<string>%d 字</string>
+	<key>ingest.activity</key>
+	<string>导入任务状态</string>
+	<key>ingest.activityEmpty</key>
+	<string>暂无活动</string>
+	<key>ingest.clipboardEmpty</key>
+	<string>剪贴板为空</string>
+	<key>ingest.clipboardImport</key>
+	<string>从剪贴板导入</string>
+	<key>ingest.clipboardImportHint</key>
+	<string>从系统剪贴板获取内容</string>
+	<key>ingest.clipboardNoNewPages</key>
+	<string>没有新页面可导入</string>
+	<key>ingest.clipboardSuccess</key>
+	<string>导入完成</string>
+	<key>ingest.clipboardSuccessCount</key>
+	<string>已导入 %d 个页面</string>
+	<key>ingest.compileRules</key>
+	<string>萃取规则：提取核心观点、建立 [[双向链接]]、智能推荐标签</string>
+	<key>ingest.deepScan</key>
+	<string>开启深度扫描 (RAG)</string>
+	<key>ingest.deepScanDesc</key>
+	<string>将文档进行语义分块并生成向量索引，大幅提升长文档的检索精度。</string>
+	<key>ingest.ecoIndexingLowPower</key>
+	<string>🔋 [Eco-Indexing] 系统处于低功耗模式，将采用节流索引策略。</string>
+	<key>ingest.enrichRichContentPrompt</key>
+	<string># Role: 知识工程专家
+
+# Task: 
+分析以下 Markdown 内容，识别其中的表格 (|---|) 和图片 (![]())。
+
+# Requirements:
+1. 对于每个表格，基于其行列数据生成一段 150 字以内的“数据洞察摘要”。
+2. 对于每个核心图片，基于标题或上下文推测其视觉语义。
+3. 将这些分析结果以 `&gt; [Semantic Insight]: ...` 的格式插入到原图表下方。
+4. 保持原文逻辑不变，仅返回增强后的完整 Markdown 内容。</string>
+	<key>ingest.error</key>
+	<string>错误</string>
+	<key>ingest.failedURLFormat</key>
+	<string>URL 抓取失败: %@</string>
+	<key>ingest.field.content</key>
+	<string>内容</string>
+	<key>ingest.field.icon</key>
+	<string>图标</string>
+	<key>ingest.field.tags</key>
+	<string>标签</string>
+	<key>ingest.field.tagsPlaceholder</key>
+	<string>标签，用逗号分隔</string>
+	<key>ingest.field.title</key>
+	<string>标题</string>
+	<key>ingest.field.titlePlaceholder</key>
+	<string>输入页面标题</string>
+	<key>ingest.field.type</key>
+	<string>类型</string>
+	<key>ingest.fileImport</key>
+	<string>文件加工</string>
+	<key>ingest.fileImportHint</key>
+	<string>支持 PDF/Word/Excel/文本</string>
+	<key>ingest.fileTooLarge</key>
+	<string>文件过大 (上限 50MB)</string>
+	<key>ingest.hero.subtitle</key>
+	<string>将素材加工并入库，自动提取关键信息并建立知识关联</string>
+	<key>ingest.hero.title</key>
+	<string>知识导入</string>
+	<key>ingest.iconCustom</key>
+	<string>自定义</string>
+	<key>ingest.iconDefault</key>
+	<string>默认</string>
+	<key>ingest.iconReset</key>
+	<string>重置</string>
+	<key>ingest.manualEntry</key>
+	<string>手动输入</string>
+	<key>ingest.manualEntryHint</key>
+	<string>粘贴或输入内容</string>
+	<key>ingest.manualTitle</key>
+	<string>手动输入</string>
+	<key>ingest.method.file</key>
+	<string>文件导入</string>
+	<key>ingest.method.fileDesc</key>
+	<string>支持 PDF、Word、Excel、Markdown 等 50MB 以内的文件</string>
+	<key>ingest.method.manual</key>
+	<string>手动录入</string>
+	<key>ingest.method.manualDesc</key>
+	<string>输入或粘贴内容</string>
+	<key>ingest.method.ocr</key>
+	<string>图片转文字</string>
+	<key>ingest.method.ocrDesc</key>
+	<string>扫描纸资料和书籍</string>
+	<key>ingest.ocrScan</key>
+	<string>图片转文字</string>
+	<key>ingest.ocrScanHint</key>
+	<string>从图片中识别文字</string>
+	<key>ingest.ok</key>
+	<string>确定</string>
+	<key>ingest.preview</key>
+	<string>预览</string>
+	<key>ingest.previewConfirm</key>
+	<string>确认导入</string>
+	<key>ingest.previewDiscard</key>
+	<string>放弃</string>
+	<key>ingest.processing</key>
+	<string>正在加工素材...</string>
+	<key>ingest.processingRAGFormat</key>
+	<string>正在抓取并 RAG 索引: %@</string>
+	<key>ingest.processingURLFormat</key>
+	<string>正在抓取 URL: %@</string>
+	<key>ingest.queue.desc</key>
+	<string>查看近期导入进度与结果</string>
+	<key>ingest.queue.title</key>
+	<string>导入队列</string>
+	<key>ingest.smartIngestDoneDesc</key>
+	<string>已智能提取内容并创建知识页面</string>
+	<key>ingest.smartToggle</key>
+	<string>智能导入</string>
+	<key>ingest.smartToggleHint</key>
+	<string>使用 AI 提取关键信息并建立链接</string>
+	<key>ingest.submit</key>
+	<string>导入</string>
+	<key>ingest.submitting</key>
+	<string>导入中...</string>
+	<key>ingest.success</key>
+	<string>导入成功！知识已加工入库</string>
+	<key>ingest.suggestLinks</key>
+	<string>建议链接</string>
+	<key>ingest.tip1</key>
+	<string>将原始资料粘贴到内容区域</string>
+	<key>ingest.tip2</key>
+	<string>选择页面类型和标签</string>
+	<key>ingest.tip3</key>
+	<string>点击导入，系统自动加工</string>
+	<key>ingest.tip4</key>
+	<string>自动检测已有页面的交叉引用</string>
+	<key>ingest.tip5</key>
+	<string>更新索引和操作日志</string>
+	<key>ingest.tips</key>
+	<string>导入方式</string>
+	<key>ingest.title</key>
+	<string>知识导入</string>
+	<key>ingest.urlImport</key>
+	<string>网页加工</string>
+	<key>ingest.urlImportHint</key>
+	<string>抓取网页内容</string>
+	<key>ingest.urlImportPlaceholder</key>
+	<string>粘贴多个 URL，每行一个。AI 将自动解析并导入知识。</string>
+	<key>ingest.voiceNote</key>
+	<string>语音笔记</string>
+	<key>ingest.voiceNoteHint</key>
+	<string>语音转文字，快速记录灵感</string>
+	<key>ingest.webDesc</key>
+	<string>输入网页链接，AI 将自动提取并加工知识。</string>
+	<key>insight.generateReport</key>
+	<string>点击生成个人智库周报</string>
+	<key>insight.tips.content</key>
+	<string>周报基于您过去一周的知识增长进行深度分析，帮助您发现知识盲区并建立更深层次的关联。建议每周复盘一次以保持智库的活力。</string>
+	<key>insight.tips.title</key>
+	<string>如何阅读周报？</string>
+	<key>insight.weeklyTitle</key>
+	<string>知识周报</string>
+	<key>lint.aiFixSuggestion</key>
+	<string>AI 修复建议</string>
+	<key>lint.aiScanning</key>
+	<string>正在分析中...</string>
+	<key>lint.aiSuggestionError</key>
+	<string>获取建议失败：%@</string>
+	<key>lint.aiSuggestions</key>
+	<string>AI 维护建议</string>
+	<key>lint.apply</key>
+	<string>应用</string>
+	<key>lint.brokenLink</key>
+	<string>断链: 「%@」引用了不存在的页面 [[%@]]</string>
+	<key>lint.brokenLinkSuggestion</key>
+	<string>创建页面「%@」或修复链接</string>
+	<key>lint.center.title</key>
+	<string>健康检查</string>
+	<key>lint.checking</key>
+	<string>检查中...</string>
+	<key>lint.cycleMessage</key>
+	<string>检测到循环引用: "%@" ↔ "%@"</string>
+	<key>lint.cycleSuggestion</key>
+	<string>循环引用可能导致逻辑死循环，建议检查是否可以将两者合并或细化关联。</string>
+	<key>lint.detailIssues</key>
+	<string>详细体检报告</string>
+	<key>lint.errors</key>
+	<string>错误</string>
+	<key>lint.foundIssues</key>
+	<string>发现 %d 个问题</string>
+	<key>lint.goToPage</key>
+	<string>前往页面 →</string>
+	<key>lint.health.excellent</key>
+	<string>优秀</string>
+	<key>lint.health.fair</key>
+	<string>一般</string>
+	<key>lint.health.good</key>
+	<string>良好</string>
+	<key>lint.health.poor</key>
+	<string>较差</string>
+	<key>lint.health.score</key>
+	<string>健康指数</string>
+	<key>lint.islandMessage</key>
+	<string>发现知识孤岛："%@"</string>
+	<key>lint.islandSuggestion</key>
+	<string>建议将此页面链接到现有知识网络，或从中引用相关内容。</string>
+	<key>lint.linkDiscoverySection</key>
+	<string>潜在链接发现</string>
+	<key>lint.metric.bridges</key>
+	<string>关键桥梁</string>
+	<key>lint.metric.broken</key>
+	<string>失效引用</string>
+	<key>lint.metric.links</key>
+	<string>逻辑连接</string>
+	<key>lint.metric.orphans</key>
+	<string>孤立节点</string>
+	<key>lint.metric.pages</key>
+	<string>知识总量</string>
+	<key>lint.noAISuggestions</key>
+	<string>暂无 AI 建议</string>
+	<key>lint.noAISuggestionsHint</key>
+	<string>点击下方按钮，让 AI 扫描您的知识库并提供重构或链接建议。</string>
+	<key>lint.noIssues</key>
+	<string>知识库状态良好</string>
+	<key>lint.noIssuesHint</key>
+	<string>没有发现断链、孤立页面或矛盾内容</string>
+	<key>lint.orphanPage</key>
+	<string>孤立页面: 「%@」没有任何反向链接</string>
+	<key>lint.orphanSuggestion</key>
+	<string>考虑从相关页面添加 [[%@]] 链接</string>
+	<key>lint.outdated</key>
+	<string>可能过时: 「%@」已超过30天未更新</string>
+	<key>lint.outdatedSuggestion</key>
+	<string>检查内容是否需要更新</string>
+	<key>lint.refactorSection</key>
+	<string>AI 重构建议</string>
+	<key>lint.rule.error</key>
+	<string>1 错误 = -10分</string>
+	<key>lint.rule.info</key>
+	<string>1 提示 = -2分</string>
+	<key>lint.rule.warning</key>
+	<string>1 警告 = -5分</string>
+	<key>lint.runAIScan</key>
+	<string>开始 AI 智能扫描</string>
+	<key>lint.runCheck</key>
+	<string>运行健康检查</string>
+	<key>lint.stubContent</key>
+	<string>占位内容: 「%@」内容少于100字</string>
+	<key>lint.stubSuggestion</key>
+	<string>补充更多内容或将状态改为「占位」</string>
+	<key>lint.tips</key>
+	<string>建议</string>
+	<key>lint.title</key>
+	<string>健康检查</string>
+	<key>lint.warnings</key>
+	<string>警告</string>
+	<key>llm.apiAddress</key>
+	<string>API 地址</string>
+	<key>llm.apiKey</key>
+	<string>API Key</string>
+	<key>llm.chatHistory</key>
+	<string>对话记录</string>
+	<key>llm.chatSection</key>
+	<string>对话</string>
+	<key>llm.clearHistory</key>
+	<string>清空对话记录</string>
+	<key>llm.configuration</key>
+	<string>配置</string>
+	<key>llm.connectionSuccess</key>
+	<string>连接成功！API Key 有效</string>
+	<key>llm.enableAssistant</key>
+	<string>启用 LLM 助手</string>
+	<key>llm.error.apiError</key>
+	<string>API 错误</string>
+	<key>llm.error.cancelled</key>
+	<string>请求已取消</string>
+	<key>llm.error.httpError</key>
+	<string>HTTP 错误</string>
+	<key>llm.error.invalidResponse</key>
+	<string>API 返回格式异常</string>
+	<key>llm.error.invalidURL</key>
+	<string>API 地址无效</string>
+	<key>llm.error.notConfigured</key>
+	<string>LLM 未配置。请在设置中填写 API Key。</string>
+	<key>llm.error.rateLimited</key>
+	<string>请求过于频繁，请稍后重试</string>
+	<key>llm.error.unauthorized</key>
+	<string>API Key 无效或已过期</string>
+	<key>llm.info</key>
+	<string>说明</string>
+	<key>llm.info.contextSent</key>
+	<string>对话时会发送知识库内容作为上下文</string>
+	<key>llm.info.localKey</key>
+	<string>API Key 仅存储在本地设备</string>
+	<key>llm.info.openAICompatible</key>
+	<string>支持所有 OpenAI 兼容 API</string>
+	<key>llm.info.smartIngest</key>
+	<string>智能导入利用 AI 加工原始素材</string>
+	<key>llm.ingest.compileInstruction</key>
+	<string>请将以下素材加工为结构化的知识库内容。</string>
+	<key>llm.ingest.compileRules</key>
+	<string>萃取规则：</string>
+	<key>llm.ingest.existingPages</key>
+	<string>已有知识库页面（请优先链接这些）</string>
+	<key>llm.ingest.jsonCompiledContent</key>
+	<string>加工后的 Markdown 内容</string>
+	<key>llm.ingest.jsonFormat</key>
+	<string>请以 JSON 格式返回加工结果：</string>
+	<key>llm.ingest.jsonSuggestedTags</key>
+	<string>标签</string>
+	<key>llm.ingest.jsonSummary</key>
+	<string>一段简短摘要</string>
+	<key>llm.ingest.rawContent</key>
+	<string>原始资料内容：</string>
+	<key>llm.ingest.rawTitle</key>
+	<string>原始资料标题</string>
+	<key>llm.ingest.rule1</key>
+	<string>1. 使用 Markdown 格式</string>
+	<key>llm.ingest.rule2</key>
+	<string>2. 用 [[页面标题]] 语法链接到已有的知识库页面（如果内容提及了相关概念）</string>
+	<key>llm.ingest.rule3</key>
+	<string>3. 提取关键概念作为标签</string>
+	<key>llm.ingest.rule4</key>
+	<string>4. 组织内容为清晰的章节结构</string>
+	<key>llm.ingest.rule5</key>
+	<string>5. 如果内容涉及对比或关联，使用表格呈现</string>
+	<key>llm.ingest.rule6</key>
+	<string>6. 保持事实准确，不添加原文没有的信息</string>
+	<key>llm.ingest.systemPrompt</key>
+	<string>你是知识库的萃取专家。将原始素材加工为结构化的知识库内容。只返回 JSON，不要包含其他文本。</string>
+	<key>llm.messages</key>
+	<string>条</string>
+	<key>llm.model</key>
+	<string>模型</string>
+	<key>llm.prompt.conceptCount</key>
+	<string>概念</string>
+	<key>llm.prompt.conceptList</key>
+	<string>概念列表：</string>
+	<key>llm.prompt.duty1</key>
+	<string>1. 回答用户关于知识库内容的问题</string>
+	<key>llm.prompt.duty2</key>
+	<string>2. 帮助整理和加工知识</string>
+	<key>llm.prompt.duty3</key>
+	<string>3. 建议页面间的关联</string>
+	<key>llm.prompt.duty4</key>
+	<string>4. 发现知识盲区和矛盾</string>
+	<key>llm.prompt.entityCount</key>
+	<string>实体</string>
+	<key>llm.prompt.entityList</key>
+	<string>实体列表：</string>
+	<key>llm.prompt.overview</key>
+	<string>当前知识库概览：</string>
+	<key>llm.prompt.recentUpdates</key>
+	<string>最近更新：</string>
+	<key>llm.prompt.relevantPages</key>
+	<string>相关页面内容：</string>
+	<key>llm.prompt.role</key>
+	<string>你是知识库助手，基于 Karpathy 知识管理方法论运行。</string>
+	<key>llm.prompt.rule1</key>
+	<string>- 基于知识库事实回答，引用相关页面用 [[页面标题]] 格式</string>
+	<key>llm.prompt.rule2</key>
+	<string>- 如果知识库中没有相关信息，明确说明</string>
+	<key>llm.prompt.rule3</key>
+	<string>- 回答使用中文</string>
+	<key>llm.prompt.rule4</key>
+	<string>- 保持简洁、准确、有条理</string>
+	<key>llm.prompt.sourceCount</key>
+	<string>来源</string>
+	<key>llm.prompt.sourceList</key>
+	<string>来源列表：</string>
+	<key>llm.prompt.statusLabel</key>
+	<string>状态</string>
+	<key>llm.prompt.totalPages</key>
+	<string>- 总页面</string>
+	<key>llm.prompt.typeLabel</key>
+	<string>类型</string>
+	<key>llm.provider</key>
+	<string>服务商</string>
+	<key>llm.provider.custom</key>
+	<string>自定义 API</string>
+	<key>llm.provider.deepSeek</key>
+	<string>DeepSeek</string>
+	<key>llm.provider.kimi</key>
+	<string>Kimi (月之暗面)</string>
+	<key>llm.provider.minimax</key>
+	<string>MiniMax</string>
+	<key>llm.provider.qwen</key>
+	<string>通义千问</string>
+	<key>llm.provider.siliconflow</key>
+	<string>硅基流动</string>
+	<key>llm.provider.zhipu</key>
+	<string>智谱 GLM</string>
+	<key>llm.status</key>
+	<string>状态</string>
+	<key>llm.testConnection</key>
+	<string>测试连接</string>
+	<key>llm.testing</key>
+	<string>测试中...</string>
+	<key>llm.title</key>
+	<string>大模型设置</string>
+	<key>llm.validation</key>
+	<string>测试</string>
+	<key>llm.validationFailed</key>
+	<string>测试失败</string>
+	<key>loading</key>
+	<string>加载中...</string>
+	<key>log.error.saveFailed</key>
+	<string>保存日志失败: %@</string>
+	<key>log.noDetails</key>
+	<string>暂无详细信息</string>
+	<key>log.noLogs</key>
+	<string>暂无操作日志</string>
+	<key>logAction.create</key>
+	<string>创建</string>
+	<key>logAction.delete</key>
+	<string>删除</string>
+	<key>logAction.deletePDF</key>
+	<string>删除PDF</string>
+	<key>logAction.healthCheck</key>
+	<string>健康检查</string>
+	<key>logAction.highlight</key>
+	<string>高亮标注</string>
+	<key>logAction.importPDF</key>
+	<string>导入PDF</string>
+	<key>logAction.importPDFFailed</key>
+	<string>导入PDF失败</string>
+	<key>logAction.ingest</key>
+	<string>导入</string>
+	<key>logAction.ingestPDF</key>
+	<string>导入PDF</string>
+	<key>logAction.lint</key>
+	<string>Lint</string>
+	<key>logAction.lintIssuesFound</key>
+	<string>发现 %d 个问题</string>
+	<key>logAction.ocrRecognize</key>
+	<string>OCR识别</string>
+	<key>logAction.redo</key>
+	<string>重做操作</string>
+	<key>logAction.smartIngest</key>
+	<string>智能导入</string>
+	<key>logAction.sync</key>
+	<string>同步</string>
+	<key>logAction.undo</key>
+	<string>撤销操作</string>
+	<key>logAction.update</key>
+	<string>更新</string>
+	<key>misc.aiThinking</key>
+	<string>AI 正在思考中...</string>
+	<key>misc.cancel</key>
+	<string>取消</string>
+	<key>misc.close</key>
+	<string>关闭</string>
+	<key>misc.colon</key>
+	<string>：</string>
+	<key>misc.copy</key>
+	<string>拷贝</string>
+	<key>misc.delete</key>
+	<string>删除</string>
+	<key>misc.done</key>
+	<string>完成</string>
+	<key>misc.dragToSort</key>
+	<string>拖拽可排序</string>
+	<key>misc.error</key>
+	<string>错误</string>
+	<key>misc.gotIt</key>
+	<string>知道了</string>
+	<key>misc.import</key>
+	<string>导入</string>
+	<key>misc.loading</key>
+	<string>加载中...</string>
+	<key>misc.ok</key>
+	<string>确定</string>
+	<key>misc.separator</key>
+	<string>、</string>
+	<key>misc.unitTenThousand</key>
+	<string>万</string>
+	<key>misc.view</key>
+	<string>查看</string>
+	<key>ocr.addTag</key>
+	<string>添加</string>
+	<key>ocr.changeIcon</key>
+	<string>更换</string>
+	<key>ocr.charCountFormat</key>
+	<string>%d 字符</string>
+	<key>ocr.confirmAndEdit</key>
+	<string>确认并编辑</string>
+	<key>ocr.copy</key>
+	<string>复制</string>
+	<key>ocr.customIcon</key>
+	<string>自定义</string>
+	<key>ocr.error.cameraUnavailable</key>
+	<string>相机不可用</string>
+	<key>ocr.error.invalidImage</key>
+	<string>无效图片</string>
+	<key>ocr.error.noResults</key>
+	<string>未识别到文字</string>
+	<key>ocr.fromAlbum</key>
+	<string>从相册选择</string>
+	<key>ocr.pageTitle</key>
+	<string>页面标题</string>
+	<key>ocr.pageType</key>
+	<string>页面类型</string>
+	<key>ocr.processing</key>
+	<string>正在识别文字...</string>
+	<key>ocr.recognize</key>
+	<string>识别文字</string>
+	<key>ocr.result</key>
+	<string>识别结果</string>
+	<key>ocr.saveToWiki</key>
+	<string>保存到知识库</string>
+	<key>ocr.scanFailed</key>
+	<string>文字识别失败</string>
+	<key>ocr.scanTag</key>
+	<string>扫描</string>
+	<key>ocr.selectImage</key>
+	<string>选择图片进行文字识别</string>
+	<key>ocr.title</key>
+	<string>OCR 文字识别</string>
+	<key>ondevice.appleIntelligence</key>
+	<string>Apple Intelligence</string>
+	<key>ondevice.assistDesc</key>
+	<string>开启后，AI 会在实验室为您提供页面重构建议（合并/拆分）并自动发现潜在的知识关联链接。</string>
+	<key>ondevice.assistMode</key>
+	<string>智能维护助理</string>
+	<key>ondevice.autoRefactor</key>
+	<string>在加工时自动执行重构</string>
+	<key>ondevice.available</key>
+	<string>端侧推理可用</string>
+	<key>ondevice.chatContext</key>
+	<string>你是知识库助手。基于以下知识库内容回答问题。</string>
+	<key>ondevice.chatQuestion</key>
+	<string>问题</string>
+	<key>ondevice.connected</key>
+	<string>连通正常</string>
+	<key>ondevice.enableAutoScan</key>
+	<string>启用自动扫描建议</string>
+	<key>ondevice.error.compilationFailed</key>
+	<string>知识萃取失败</string>
+	<key>ondevice.error.inferenceFailed</key>
+	<string>推理失败</string>
+	<key>ondevice.error.modelNotFound</key>
+	<string>模型未找到</string>
+	<key>ondevice.error.modelNotLoaded</key>
+	<string>模型未加载</string>
+	<key>ondevice.error.notSupported</key>
+	<string>当前系统不支持</string>
+	<key>ondevice.errorFormat</key>
+	<string>连通异常 (Error: %@)</string>
+	<key>ondevice.generate</key>
+	<string>生成</string>
+	<key>ondevice.generating</key>
+	<string>生成中...</string>
+	<key>ondevice.importModel</key>
+	<string>导入模型</string>
+	<key>ondevice.inferenceSpeed</key>
+	<string>推理速度</string>
+	<key>ondevice.info</key>
+	<string>说明</string>
+	<key>ondevice.info.memory</key>
+	<string>模型使用设备内存，大模型可能影响性能</string>
+	<key>ondevice.info.ne</key>
+	<string>利用 Neural Engine 加速推理</string>
+	<key>ondevice.info.offline</key>
+	<string>无需网络连接，完全离线运行</string>
+	<key>ondevice.info.privacy</key>
+	<string>所有推理在设备本地完成，数据不离开设备</string>
+	<key>ondevice.ingest.compileToWiki</key>
+	<string>将以下内容加工为结构化知识库页面。已有页面</string>
+	<key>ondevice.ingest.content</key>
+	<string>内容</string>
+	<key>ondevice.ingest.linkAndFormat</key>
+	<string>用 [[页面标题]] 链接已有页面。输出 Markdown 格式。</string>
+	<key>ondevice.ingest.title</key>
+	<string>标题</string>
+	<key>ondevice.loadModel</key>
+	<string>加载模型</string>
+	<key>ondevice.local</key>
+	<string>本地</string>
+	<key>ondevice.model.bundled</key>
+	<string>知识库 LLM（内置）</string>
+	<key>ondevice.modelLoaded</key>
+	<string>模型已加载</string>
+	<key>ondevice.models</key>
+	<string>可用模型</string>
+	<key>ondevice.noModels</key>
+	<string>没有可用的本地模型。请导入 .mlmodelc 模型文件。</string>
+	<key>ondevice.requiresIOS17</key>
+	<string>需要 iOS 17.0 或更高版本</string>
+	<key>ondevice.result</key>
+	<string>生成结果</string>
+	<key>ondevice.subtitle</key>
+	<string>在设备本地运行 LLM，无需网络，完全私密</string>
+	<key>ondevice.supportsCoreML</key>
+	<string>支持 Core ML 模型推理</string>
+	<key>ondevice.supportsFoundation</key>
+	<string>支持 Apple Foundation Models</string>
+	<key>ondevice.system</key>
+	<string>系统</string>
+	<key>ondevice.test</key>
+	<string>测试推理</string>
+	<key>ondevice.testGeneration</key>
+	<string>测试文本生成</string>
+	<key>ondevice.testPrompt</key>
+	<string>输入测试提示词</string>
+	<key>ondevice.title</key>
+	<string>本地大模型</string>
+	<key>ondevice.unavailable</key>
+	<string>端侧推理不可用</string>
+	<key>ondevice.unload</key>
+	<string>卸载</string>
+	<key>page.ai.extractActions</key>
+	<string>提取行动项</string>
+	<key>page.ai.infographic</key>
+	<string>生成知识信息图</string>
+	<key>page.ai.lab</key>
+	<string>产出实验室</string>
+	<key>page.ai.labOutput</key>
+	<string>AI 实验室产出</string>
+	<key>page.ai.mindmap</key>
+	<string>思维导图 (Mermaid)</string>
+	<key>page.ai.quiz</key>
+	<string>知识测验 (Quiz)</string>
+	<key>page.ai.report</key>
+	<string>深度报告 (Report)</string>
+	<key>page.ai.slides</key>
+	<string>演示大纲 (Slides)</string>
+	<key>page.ai.summary</key>
+	<string>智能总结</string>
+	<key>page.aiInsights</key>
+	<string>AI 灵感星火</string>
+	<key>page.aiInsights.desc</key>
+	<string>基于当前语境自动预测的关联知识</string>
+	<key>page.aliasAccessibility</key>
+	<string>别名：%@</string>
+	<key>page.backlinkAccessibility</key>
+	<string>反向链接到 %d 个页面</string>
+	<key>page.backlinks</key>
+	<string>反向链接</string>
+	<key>page.backlinksCount</key>
+	<string>%d 个反向链接</string>
+	<key>page.confidenceAccessibility</key>
+	<string>置信度：%@</string>
+	<key>page.confidenceFormat</key>
+	<string>%@ 置信度</string>
+	<key>page.confirmDelete</key>
+	<string>确认删除</string>
+	<key>page.createdFormat</key>
+	<string>创建于 %@</string>
+	<key>page.deleteMessage</key>
+	<string>此操作不可恢复，页面及所有引用将被删除。</string>
+	<key>page.deletePage</key>
+	<string>删除页面</string>
+	<key>page.deletePageTitle</key>
+	<string>删除页面</string>
+	<key>page.doneEditing</key>
+	<string>完成编辑</string>
+	<key>page.doubleTapToNavigate</key>
+	<string>双击跳转到该页面</string>
+	<key>page.edit</key>
+	<string>编辑页面</string>
+	<key>page.empty</key>
+	<string>这个页面还没有内容</string>
+	<key>page.emptyHint</key>
+	<string>点击右上角 ✏️ 开始编辑，使用 [[页面名]] 建立关联</string>
+	<key>page.expandStub</key>
+	<string>扩展存根</string>
+	<key>page.findLinks</key>
+	<string>寻找相关链接</string>
+	<key>page.firstPageContent</key>
+	<string>这是你的第一个页面。开始创建内容，使用 [[页面名]] 语法建立双向链接，构建你的知识网络。</string>
+	<key>page.firstPageTitle</key>
+	<string>欢迎使用知识库</string>
+	<key>page.history</key>
+	<string>版本历史</string>
+	<key>page.history.none</key>
+	<string>暂无历史快照</string>
+	<key>page.history.physical</key>
+	<string>物理快照</string>
+	<key>page.history.rollback</key>
+	<string>回滚到此版本</string>
+	<key>page.history.version</key>
+	<string>快照版本</string>
+	<key>page.icon</key>
+	<string>图标</string>
+	<key>page.metaAccessibility</key>
+	<string>页面元数据</string>
+	<key>page.noBackLinks</key>
+	<string>无反向链接</string>
+	<key>page.outLinkUnit</key>
+	<string>出链</string>
+	<key>page.outLinksCount</key>
+	<string>%d 个出链</string>
+	<key>page.pin</key>
+	<string>固定页面</string>
+	<key>page.related.ai</key>
+	<string>语义联想 (AI Suggested)</string>
+	<key>page.related.aiDesc</key>
+	<string>基于内容深度关联</string>
+	<key>page.related.manual</key>
+	<string>手动关联 (Related)</string>
+	<key>page.related.none</key>
+	<string>暂无手动关联页面</string>
+	<key>page.snapshot.preview</key>
+	<string>快照预览</string>
+	<key>page.source.open</key>
+	<string>访问原始链接</string>
+	<key>page.source.title</key>
+	<string>知识溯源 (Source)</string>
+	<key>page.statusAccessibility</key>
+	<string>状态：%@</string>
+	<key>page.statusFormat</key>
+	<string>状态：%@</string>
+	<key>page.tagsAccessibility</key>
+	<string>标签：%@</string>
+	<key>page.titleAccessibility</key>
+	<string>标题：%@</string>
+	<key>page.type</key>
+	<string>页面类型</string>
+	<key>page.typeAccessibility</key>
+	<string>类型：%@</string>
+	<key>page.unpin</key>
+	<string>取消固定</string>
+	<key>page.updatedFormat</key>
+	<string>更新于 %@</string>
+	<key>page.wiki</key>
+	<string>知识库</string>
+	<key>page.wordCount</key>
+	<string>%d 字</string>
+	<key>page.wordCountUnit</key>
+	<string>字</string>
+	<key>pageStore.error.saveFailed</key>
+	<string>保存页面失败: %@</string>
+	<key>palette.searchPlaceholder</key>
+	<string>搜索指令、页面、标签...</string>
+	<key>pdf.add</key>
+	<string>添加 PDF</string>
+	<key>pdf.addNote</key>
+	<string>添加备注...</string>
+	<key>pdf.annotateSelected</key>
+	<string>标注选中文字</string>
+	<key>pdf.cannotLoadPDF</key>
+	<string>无法加载 PDF</string>
+	<key>pdf.contentPreview</key>
+	<string>内容预览</string>
+	<key>pdf.createdPage</key>
+	<string>已创建页面：%@</string>
+	<key>pdf.delete</key>
+	<string>删除</string>
+	<key>pdf.extractionMethod</key>
+	<string>提取方式</string>
+	<key>pdf.extractionRange</key>
+	<string>提取范围</string>
+	<key>pdf.fromPage</key>
+	<string>从第</string>
+	<key>pdf.fullText</key>
+	<string>全文</string>
+	<key>pdf.highlightCountFormat</key>
+	<string>%d 个高亮</string>
+	<key>pdf.highlightsOnly</key>
+	<string>仅标注内容</string>
+	<key>pdf.ingest</key>
+	<string>导入</string>
+	<key>pdf.ingestModeFormat</key>
+	<string>导入模式：%@</string>
+	<key>pdf.ingestToWiki</key>
+	<string>导入到知识库</string>
+	<key>pdf.library</key>
+	<string>PDF 文档库</string>
+	<key>pdf.libraryHint</key>
+	<string>添加 PDF 文档，阅读并高亮标注，提取内容到知识库</string>
+	<key>pdf.noHighlights</key>
+	<string>暂无标注内容，请先在阅读时添加高亮标注</string>
+	<key>pdf.noteLabel</key>
+	<string>备注：</string>
+	<key>pdf.page</key>
+	<string>页</string>
+	<key>pdf.pageCountFormat</key>
+	<string>%d 页</string>
+	<key>pdf.pageNumber</key>
+	<string>第 %d 页</string>
+	<key>pdf.pageRange</key>
+	<string>指定页范围</string>
+	<key>pdf.pageSeparator</key>
+	<string>\n\n--- 第 %@ 页 ---\n\n</string>
+	<key>pdf.pageTitle</key>
+	<string>页面标题</string>
+	<key>pdf.pageType</key>
+	<string>页面类型</string>
+	<key>pdf.saveAnnotation</key>
+	<string>保存标注</string>
+	<key>pdf.targetPage</key>
+	<string>目标页面</string>
+	<key>pdf.title</key>
+	<string>PDF 文档</string>
+	<key>pdf.toPage</key>
+	<string>页到第</string>
+	<key>perf.edges</key>
+	<string>图谱边</string>
+	<key>perf.graphLayout</key>
+	<string>图谱布局</string>
+	<key>perf.lastUpdated</key>
+	<string>最后更新</string>
+	<key>perf.lint</key>
+	<string>健康检查</string>
+	<key>perf.load</key>
+	<string>加载</string>
+	<key>perf.memory</key>
+	<string>内存使用</string>
+	<key>perf.nodes</key>
+	<string>图谱节点</string>
+	<key>perf.pages</key>
+	<string>页面数</string>
+	<key>perf.save</key>
+	<string>保存</string>
+	<key>perf.search</key>
+	<string>搜索</string>
+	<key>perf.summary.edges</key>
+	<string>边</string>
+	<key>perf.summary.graph</key>
+	<string>图谱</string>
+	<key>perf.summary.graphLayout</key>
+	<string>图谱布局</string>
+	<key>perf.summary.lint</key>
+	<string>健康检查</string>
+	<key>perf.summary.load</key>
+	<string>加载</string>
+	<key>perf.summary.memory</key>
+	<string>内存</string>
+	<key>perf.summary.nodes</key>
+	<string>节点</string>
+	<key>perf.summary.pages</key>
+	<string>页面</string>
+	<key>perf.summary.save</key>
+	<string>保存</string>
+	<key>perf.summary.search</key>
+	<string>搜索</string>
+	<key>perf.summary.title</key>
+	<string>📊 性能摘要</string>
+	<key>perf.summary.words</key>
+	<string>字</string>
+	<key>perf.timing</key>
+	<string>耗时分析</string>
+	<key>perf.title</key>
+	<string>性能监控</string>
+	<key>perf.words</key>
+	<string>总字数</string>
+	<key>pinned</key>
+	<string>已收藏</string>
+	<key>plugin.action.install</key>
+	<string>安装</string>
+	<key>plugin.action.uninstall</key>
+	<string>卸载</string>
+	<key>plugin.center</key>
+	<string>插件中心</string>
+	<key>plugin.communityMode</key>
+	<string>社区模式 (风险提示)</string>
+	<key>plugin.local.desc</key>
+	<string>选择本地的 .bundle 或 .js 脚本</string>
+	<key>plugin.local.mount</key>
+	<string>挂载本地扩展</string>
+	<key>plugin.market</key>
+	<string>社区市场</string>
+	<key>plugin.myPlugins</key>
+	<string>我的插件</string>
+	<key>plugin.noPlugins</key>
+	<string>暂无插件</string>
+	<key>plugin.noPluginsHint</key>
+	<string>去社区市场发现惊喜吧</string>
+	<key>plugin.perm.content</key>
+	<string>内容修改</string>
+	<key>plugin.perm.network</key>
+	<string>网络访问</string>
+	<key>plugin.perm.sandbox</key>
+	<string>沙盒安全</string>
+	<key>plugin.safeModeOn</key>
+	<string>安全模式已开启</string>
+	<key>plugin.searchPlaceholder</key>
+	<string>搜索扩展能力...</string>
+	<key>plugin.section.about</key>
+	<string>关于此插件</string>
+	<key>plugin.section.permissions</key>
+	<string>所需权限</string>
+	<key>plugin.stat.downloads</key>
+	<string>下载</string>
+	<key>plugin.stat.rating</key>
+	<string>评分</string>
+	<key>plugin.status.enabled</key>
+	<string>已启用</string>
+	<key>prompt.default.mindmap</key>
+	<string>请根据以下内容生成一个 Mermaid 格式的思维导图（mindmap）。直接输出代码块。</string>
+	<key>prompt.default.quiz</key>
+	<string>请根据以下内容生成 3 道选择题和 1 道简答题，用于知识测验。使用 Markdown 格式。</string>
+	<key>prompt.default.report</key>
+	<string>请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。</string>
+	<key>prompt.default.slides</key>
+	<string># Role: 专业演讲教练
+# Task: 将内容转化为带引用的演示文稿大纲（幻灯片格式）。
+# Requirements:
+1. 使用 Markdown 分隔符 `---` 表示换页。
+2. 每页包含标题和 3-5 个核心要点。
+3. **必须标注来源**：每个要点后使用 `[[Source]]` 标记。</string>
+	<key>prompt.expert.base.title</key>
+	<string>专家提示词配置</string>
+	<key>prompt.expert.mindmap.footer</key>
+	<string>影响：控制图谱的层级深度、节点密度和展示风格。</string>
+	<key>prompt.expert.mindmap.title</key>
+	<string>调教“思维导图”生成</string>
+	<key>prompt.expert.quiz.footer</key>
+	<string>影响：控制题目的难易程度、题型分布及解析详略。</string>
+	<key>prompt.expert.quiz.title</key>
+	<string>调教“知识测验”逻辑</string>
+	<key>prompt.expert.report.footer</key>
+	<string>影响：控制报告的专业口吻、分析模型和引用精度。</string>
+	<key>prompt.expert.report.title</key>
+	<string>调教“深度报告”深度</string>
+	<key>prompt.expert.slides.footer</key>
+	<string>影响：控制每页幻灯片的要点密度和逻辑结构。</string>
+	<key>prompt.expert.slides.title</key>
+	<string>调教“演示文稿”风格</string>
+	<key>prompt.factory.title</key>
+	<string>提示词工厂</string>
+	<key>prompt.fixSuggestion</key>
+	<string>针对知识库健康检查问题提供修复建议。
+仅以简洁的中文给出 2-3 行操作步骤，不要废话。</string>
+	<key>prompt.folding</key>
+	<string>你是一位知识维护专家。请将以下“新资料”增量式地融合（Fold）进“现有页面内容”中。
+
+要求：
+1. 保持页面结构的完整性。
+2. 逻辑去重，增量插入。
+3. 保持双向链接 [[WikiLinks]]。
+4. 直接返回最终的 Markdown。</string>
+	<key>prompt.initial.quiz</key>
+	<string>根据现有内容出 3 道高难度测试题</string>
+	<key>prompt.initial.report</key>
+	<string>将最近的笔记转化为一份报告大纲</string>
+	<key>prompt.initial.summarize</key>
+	<string>总结我最近学习的核心知识</string>
+	<key>prompt.mindmap</key>
+	<string>思维导图 (Mindmap)</string>
+	<key>prompt.potentialLinks</key>
+	<string>你是一位专业的知识库架构师。
+任务：分析给定的文本，识别其中提到的、但尚未标记为 [[链接]] 的现有页面标题。
+
+要求：
+1. 仅返回文本中明确提到或高度相关的标题。
+2. 以 JSON 数组格式返回，例如: ["标题1", "标题2"]
+3. 不要返回任何解释。</string>
+	<key>prompt.queryRewrite</key>
+	<string>你是一位知识检索专家。请分析以下查询并改写为一组检索关键词。
+要求：
+1. 扩充同义词和专业术语。
+2. 仅输出关键词，逗号分隔。</string>
+	<key>prompt.quiz</key>
+	<string>知识测验 (Quiz)</string>
+	<key>prompt.refactor</key>
+	<string>你是一位知识管理专家。分析页面数据，寻找优化结构的机会（合并相似、拆分过大、重命名）。
+以 JSON 数组格式返回，对象包含: type, target, reason, suggestion。</string>
+	<key>prompt.report</key>
+	<string>深度报告 (Report)</string>
+	<key>prompt.rerank</key>
+	<string># Role: 信息检索专家
+# Task: 根据相关性对以下文档排序。
+
+# Requirements:
+仅返回 JSON 数组格式的排序索引，如: [1, 0, 2]。不要解释。
+格式: {"ranked_ids": [...]}</string>
+	<key>prompt.reset.factory</key>
+	<string>恢复为默认</string>
+	<key>prompt.resetConfirm</key>
+	<string>确认重置</string>
+	<key>prompt.resetToDefault</key>
+	<string>重置为默认指令</string>
+	<key>prompt.resetWarning</key>
+	<string>这将抹除你所有的自定义 Prompt，并恢复为系统预设。</string>
+	<key>prompt.shortcut.deepReview</key>
+	<string>深度复盘我的核心概念</string>
+	<key>prompt.shortcut.findGaps</key>
+	<string>找出知识库中的逻辑断层</string>
+	<key>prompt.shortcut.studyPath</key>
+	<string>为我生成本周的学习路径</string>
+	<key>prompt.slides</key>
+	<string>演示大纲 (Slides)</string>
+	<key>prompt.workshop.add</key>
+	<string>新增快捷指令</string>
+	<key>prompt.workshop.input.placeholder</key>
+	<string>输入快捷指令...</string>
+	<key>prompt.workshop.intro.desc</key>
+	<string>提示词工厂是您调教 AI 处理逻辑的实验室。您可以修改底层的“系统指令”来改变 AI 生成内容的深度和风格，或置顶您自己的常用快捷指令。</string>
+	<key>prompt.workshop.intro.title</key>
+	<string>AI 提示词实验室</string>
+	<key>prompt.workshop.shortcuts.footer</key>
+	<string>这些指令将优先出现在 AI 助手的欢迎界面，支持一键发送。</string>
+	<key>prompt.workshop.shortcuts.title</key>
+	<string>置顶：一键快捷指令</string>
+	<key>quickStart</key>
+	<string>快速开始</string>
+	<key>quiz.backToPage</key>
+	<string>返回页面</string>
+	<key>quiz.completed</key>
+	<string>测验完成!</string>
+	<key>quiz.questionFormat</key>
+	<string>问题 %1$lld / %2$lld</string>
+	<key>quiz.scoreFormat</key>
+	<string>得分: %lld</string>
+	<key>quiz.yourScore</key>
+	<string>你的得分</string>
+	<key>recentUpdates</key>
+	<string>最近更新</string>
+	<key>search.advancedAI</key>
+	<string>AI 深度语义搜索</string>
+	<key>search.all</key>
+	<string>全部</string>
+	<key>search.diag.ftsRank</key>
+	<string>FTS 排名</string>
+	<key>search.diag.miss</key>
+	<string>未命</string>
+	<key>search.diag.originalQuery</key>
+	<string>原始查询</string>
+	<key>search.diag.rewrite</key>
+	<string>查询改写 (Rewrite)</string>
+	<key>search.diag.rewrittenQuery</key>
+	<string>AI 改写结果</string>
+	<key>search.diag.rrfDetail</key>
+	<string>RRF 融合排名详情 (Top 10)</string>
+	<key>search.diag.scoreFormat</key>
+	<string>得分: %.4f</string>
+	<key>search.diag.title</key>
+	<string>检索诊断报告</string>
+	<key>search.diag.vectorRank</key>
+	<string>向量排名</string>
+	<key>search.diagnostics</key>
+	<string>查看检索诊断 (QA)</string>
+	<key>search.noResults</key>
+	<string>没有找到匹配的页面</string>
+	<key>search.noResultsHint</key>
+	<string>尝试更换关键词或调整筛选条件</string>
+	<key>search.pagesCount</key>
+	<string>%d 个页面</string>
+	<key>search.placeholder</key>
+	<string>搜索页面、标签、内容...</string>
+	<key>search.showAll</key>
+	<string>显示全部结果</string>
+	<key>search.sort.recentlyCreated</key>
+	<string>最近创建</string>
+	<key>search.sort.recentlyUpdated</key>
+	<string>最近更新</string>
+	<key>search.sort.title</key>
+	<string>标题</string>
+	<key>search.sort.type</key>
+	<string>类型</string>
+	<key>search.title</key>
+	<string>搜索</string>
+	<key>security.lockVault</key>
+	<string>锁定知识库</string>
+	<key>security.privacyMasked</key>
+	<string>敏感内容已遮盖</string>
+	<key>security.unlock</key>
+	<string>验证解锁</string>
+	<key>security.unlockHint</key>
+	<string>需要身份验证才能访问您的隐私数据</string>
+	<key>security.unlockReason</key>
+	<string>验证身份以查看私密笔记</string>
+	<key>security.unlockToView</key>
+	<string>解锁并查看</string>
+	<key>security.vaultLocked</key>
+	<string>知识库已锁定</string>
+	<key>settings.aboutApp</key>
+	<string>关于</string>
+	<key>settings.aboutDescription</key>
+	<string>本地优先的知识管理应用，AI 驱动，数据始终保留在本地设备。</string>
+	<key>settings.accentColor</key>
+	<string>主题色</string>
+	<key>settings.advancedMaintenance</key>
+	<string>高级维护设置</string>
+	<key>settings.build</key>
+	<string>构建号</string>
+	<key>settings.cancel</key>
+	<string>取消</string>
+	<key>settings.confirmReset</key>
+	<string>确认重置</string>
+	<key>settings.exportMarkdown</key>
+	<string>导出为单个 Markdown 文件</string>
+	<key>settings.exportToFolder</key>
+	<string>导出为 Markdown 文件夹 (多文件)</string>
+	<key>settings.graph3D</key>
+	<string>3D 图谱</string>
+	<key>settings.healthCheck</key>
+	<string>健康检查</string>
+	<key>settings.iCloudSync</key>
+	<string>iCloud 同步</string>
+	<key>settings.importClipboard</key>
+	<string>从剪贴板导入</string>
+	<key>settings.importComplete</key>
+	<string>导入完成</string>
+	<key>settings.importFromFolder</key>
+	<string>从文件夹导入</string>
+	<key>settings.importFromFolder.desc</key>
+	<string>载入外部文件夹</string>
+	<key>settings.importSuccess</key>
+	<string>成功导入 %d 个页面</string>
+	<key>settings.importTag</key>
+	<string>导入</string>
+	<key>settings.importedPageTitle</key>
+	<string>已导入页面</string>
+	<key>settings.language.chinese</key>
+	<string>简体中文</string>
+	<key>settings.language.english</key>
+	<string>English</string>
+	<key>settings.language.system</key>
+	<string>跟随系统</string>
+	<key>settings.llmConfig</key>
+	<string>大模型设置</string>
+	<key>settings.llmNotConfigured</key>
+	<string>未配置</string>
+	<key>settings.lockVaultNow</key>
+	<string>立即锁定金库</string>
+	<key>settings.masterIndex</key>
+	<string>总索引</string>
+	<key>settings.ok</key>
+	<string>确定</string>
+	<key>settings.onDeviceLLM</key>
+	<string>本地大模型</string>
+	<key>settings.operationLog</key>
+	<string>操作日志</string>
+	<key>settings.platform</key>
+	<string>平台</string>
+	<key>settings.privacyMode</key>
+	<string>隐私模式</string>
+	<key>settings.privacyMode.desc</key>
+	<string>对标记为 #private 的内容执行高斯模糊</string>
+	<key>settings.reset</key>
+	<string>重置知识库</string>
+	<key>settings.resetAllData</key>
+	<string>重置所有数据</string>
+	<key>settings.resetWarning</key>
+	<string>此操作将删除所有页面和日志，恢复为默认内容。不可恢复。</string>
+	<key>settings.section.about</key>
+	<string>关于</string>
+	<key>settings.section.ai</key>
+	<string>人工智能</string>
+	<key>settings.section.danger</key>
+	<string>危险操作</string>
+	<key>settings.section.data</key>
+	<string>数据管理</string>
+	<key>settings.section.import</key>
+	<string>数据导入</string>
+	<key>settings.section.importExport</key>
+	<string>导入与导出</string>
+	<key>settings.section.maintenance</key>
+	<string>维护</string>
+	<key>settings.section.moreFeatures</key>
+	<string>更多功能</string>
+	<key>settings.section.security</key>
+	<string>安全与隐私</string>
+	<key>settings.section.stats</key>
+	<string>知识库统计</string>
+	<key>settings.section.system</key>
+	<string>系统设置</string>
+	<key>settings.settings</key>
+	<string>设置</string>
+	<key>settings.spatialComputing</key>
+	<string>空间计算</string>
+	<key>settings.stubPages</key>
+	<string>占位页面</string>
+	<key>settings.systemLanguage</key>
+	<string>系统语言</string>
+	<key>settings.systemTheme</key>
+	<string>系统主题</string>
+	<key>settings.tagManager</key>
+	<string>标签管理</string>
+	<key>settings.theme.dark</key>
+	<string>深色模式</string>
+	<key>settings.theme.light</key>
+	<string>浅色模式</string>
+	<key>settings.theme.system</key>
+	<string>跟随系统</string>
+	<key>settings.totalPages</key>
+	<string>总页面</string>
+	<key>settings.totalWords</key>
+	<string>总字数</string>
+	<key>settings.unavailable</key>
+	<string>不可用</string>
+	<key>settings.vaultSecurity</key>
+	<string>金库安全</string>
+	<key>settings.version</key>
+	<string>版本</string>
+	<key>shortcuts.createdPage</key>
+	<string>已创建页面「%@」</string>
+	<key>shortcuts.foundResults</key>
+	<string>找到 %d 个相关页面</string>
+	<key>shortcuts.noResults</key>
+	<string>未找到与「%@」相关的内容</string>
+	<key>shortcuts.statsFormat</key>
+	<string>知识库统计：总页面 %d，总字数 %d，实体 %d，概念 %d，占位 %d</string>
+	<key>sidebar.allPages</key>
+	<string>所有页面</string>
+	<key>sidebar.dashboard</key>
+	<string>知识仪表盘</string>
+	<key>sidebar.frequentKnowledge</key>
+	<string>常用知识</string>
+	<key>sidebar.healthCheck</key>
+	<string>健康检查</string>
+	<key>sidebar.linkUnit</key>
+	<string>链</string>
+	<key>sidebar.masterIndex</key>
+	<string>知识索引</string>
+	<key>sidebar.navigation</key>
+	<string>导航</string>
+	<key>sidebar.operationLog</key>
+	<string>操作日志</string>
+	<key>sidebar.pluginMarket</key>
+	<string>插件市场</string>
+	<key>sidebar.recent</key>
+	<string>最近修改</string>
+	<key>sidebar.security</key>
+	<string>安全与锁定</string>
+	<key>sidebar.tagManager</key>
+	<string>标签管理</string>
+	<key>sidebar.tools</key>
+	<string>工具</string>
+	<key>sidebar.universe</key>
+	<string>知识宇宙</string>
+	<key>sidebar.weeklyInsight</key>
+	<string>知识周报</string>
+	<key>spatial.feature.3dGraph</key>
+	<string>3D 知识图谱</string>
+	<key>spatial.feature.3dGraph.desc</key>
+	<string>在空间中自由浏览和操作知识节点</string>
+	<key>spatial.feature.gaze</key>
+	<string>眼动追踪</string>
+	<key>spatial.feature.gaze.desc</key>
+	<string>注视即选中，自然交互</string>
+	<key>spatial.feature.gesture</key>
+	<string>手势交互</string>
+	<key>spatial.feature.gesture.desc</key>
+	<string>捏合、拖拽、旋转操作知识节点</string>
+	<key>spatial.feature.spatialAudio</key>
+	<string>空间音频</string>
+	<key>spatial.feature.spatialAudio.desc</key>
+	<string>节点关联音频反馈，沉浸式体验</string>
+	<key>spatial.features</key>
+	<string>空间计算功能</string>
+	<key>spatial.requirement</key>
+	<string>完整体验需要 Apple Vision Pro 设备。当前显示为 iOS 预览模式。</string>
+	<key>spatial.subtitle</key>
+	<string>在 Vision Pro 中以沉浸式 3D 方式浏览知识图谱</string>
+	<key>spatial.title</key>
+	<string>空间计算</string>
+	<key>speech.audioLevel</key>
+	<string>音频电平</string>
+	<key>speech.characters</key>
+	<string>字符</string>
+	<key>speech.confirmAndEdit</key>
+	<string>确认并编辑</string>
+	<key>speech.defaultTitle</key>
+	<string>语音笔记预览</string>
+	<key>speech.error.audioEngine</key>
+	<string>音频引擎错误</string>
+	<key>speech.error.localeNotSupported</key>
+	<string>不支持该语言</string>
+	<key>speech.error.notAuthorized</key>
+	<string>未授权</string>
+	<key>speech.history</key>
+	<string>历史记录</string>
+	<key>speech.lang.deDE</key>
+	<string>德语</string>
+	<key>speech.lang.enGB</key>
+	<string>英语（英国）</string>
+	<key>speech.lang.enUS</key>
+	<string>英语（美国）</string>
+	<key>speech.lang.esES</key>
+	<string>西班牙语</string>
+	<key>speech.lang.frFR</key>
+	<string>法语</string>
+	<key>speech.lang.jaJP</key>
+	<string>日语</string>
+	<key>speech.lang.koKR</key>
+	<string>韩语</string>
+	<key>speech.lang.ptBR</key>
+	<string>葡萄牙语（巴西）</string>
+	<key>speech.lang.zhHans</key>
+	<string>中文（简体）</string>
+	<key>speech.lang.zhHant</key>
+	<string>中文（繁体）</string>
+	<key>speech.language</key>
+	<string>识别语言</string>
+	<key>speech.needPermission</key>
+	<string>需要麦克风权限才能录音</string>
+	<key>speech.noteTitle</key>
+	<string>笔记标题</string>
+	<key>speech.noteTitlePlaceholder</key>
+	<string>输入笔记标题</string>
+	<key>speech.requestPermission</key>
+	<string>请求权限</string>
+	<key>speech.result</key>
+	<string>转录结果</string>
+	<key>speech.saveTitle</key>
+	<string>保存语音笔记</string>
+	<key>speech.saveToWiki</key>
+	<string>保存到知识库</string>
+	<key>speech.status.audioError</key>
+	<string>音频引擎错误</string>
+	<key>speech.status.complete</key>
+	<string>转录完成</string>
+	<key>speech.status.denied</key>
+	<string>麦克风权限被拒绝</string>
+	<key>speech.status.error</key>
+	<string>识别错误</string>
+	<key>speech.status.localeNotSupported</key>
+	<string>不支持该语言</string>
+	<key>speech.status.notDetermined</key>
+	<string>等待授权</string>
+	<key>speech.status.ready</key>
+	<string>就绪</string>
+	<key>speech.status.recording</key>
+	<string>正在录音...</string>
+	<key>speech.status.restricted</key>
+	<string>语音识别受限</string>
+	<key>speech.status.simulatorNotSupported</key>
+	<string>模拟器不支持语音录入，请在真机上测试</string>
+	<key>speech.status.unknown</key>
+	<string>未知状态</string>
+	<key>speech.subtitle</key>
+	<string>语音转文字，快速记录灵感与知识</string>
+	<key>speech.tapToRecord</key>
+	<string>点击开始录音</string>
+	<key>speech.tapToStop</key>
+	<string>点击停止录音</string>
+	<key>speech.title</key>
+	<string>语音笔记</string>
+	<key>speech.voiceNote</key>
+	<string>语音笔记</string>
+	<key>speech.voiceTag</key>
+	<string>语音</string>
+	<key>splash.appName</key>
+	<string>智元</string>
+	<key>splash.author</key>
+	<string></string>
+	<key>splash.enter</key>
+	<string>进入知识宇宙</string>
+	<key>splash.quote</key>
+	<string>让知识成为可计算的单元</string>
+	<key>stat.concepts</key>
+	<string>概念</string>
+	<key>stat.entities</key>
+	<string>实体</string>
+	<key>stat.performance</key>
+	<string>性能监控</string>
+	<key>stat.sources</key>
+	<string>来源</string>
+	<key>stat.stubPages</key>
+	<string>待完善页面</string>
+	<key>stat.totalPages</key>
+	<string>总页面</string>
+	<key>stat.totalWords</key>
+	<string>总字数</string>
+	<key>status.active</key>
+	<string>活跃</string>
+	<key>status.deprecated</key>
+	<string>已弃用</string>
+	<key>status.needsUpdate</key>
+	<string>待更新</string>
+	<key>status.stub</key>
+	<string>占位</string>
+	<key>sync.error</key>
+	<string>同步失败</string>
+	<key>sync.idle</key>
+	<string>未同步</string>
+	<key>sync.synced</key>
+	<string>已同步</string>
+	<key>sync.syncing</key>
+	<string>同步中...</string>
+	<key>tab.chat</key>
+	<string>AI助手</string>
+	<key>tab.collab</key>
+	<string>实时协作</string>
+	<key>tab.graph</key>
+	<string>图谱</string>
+	<key>tab.ingest</key>
+	<string>导入</string>
+	<key>tab.pdf</key>
+	<string>PDF</string>
+	<key>tab.search</key>
+	<string>搜索</string>
+	<key>tab.settings</key>
+	<string>设置</string>
+	<key>tab.voice</key>
+	<string>语音</string>
+	<key>tab.wiki</key>
+	<string>知识库</string>
+	<key>tag.delete</key>
+	<string>删除</string>
+	<key>tag.deleteMessage</key>
+	<string>确定要删除标签「%@」吗？</string>
+	<key>tag.deleteTag</key>
+	<string>删除标签</string>
+	<key>tag.newName</key>
+	<string>新名称</string>
+	<key>tag.noTags</key>
+	<string>还没有任何标签</string>
+	<key>tag.noTagsHint</key>
+	<string>在编辑页面时添加标签，或导入内容时指定标签</string>
+	<key>tag.rename</key>
+	<string>重命名</string>
+	<key>tag.renameMessage</key>
+	<string>将标签「%@」重命名为：</string>
+	<key>tag.renameTag</key>
+	<string>重命名标签</string>
+	<key>tag.tagPages</key>
+	<string>%d 个页面</string>
+	<key>tag.title</key>
+	<string>标签管理</string>
+	<key>tagcloud.selectTag</key>
+	<string>选择标签查看相关页面</string>
+	<key>tags.addNew</key>
+	<string>新增标签</string>
+	<key>tags.bulkDeleteWarning</key>
+	<string>确定要删除选中的 %lld 个标签吗？这将从所有关联页面中移除它们。</string>
+	<key>tags.bulkManage</key>
+	<string>批量管理</string>
+	<key>tags.confirmBulkDelete</key>
+	<string>确认批量删除</string>
+	<key>tags.createHint</key>
+	<string>创建一个新标签，系统将自动为此标签生成一个占位页面。</string>
+	<key>tags.inputName</key>
+	<string>输入标签名称</string>
+	<key>tags.manageTitle</key>
+	<string>管理标签</string>
+	<key>tags.pageContent</key>
+	<string>这是一个自动创建的页面，用于保存标签 #%@。</string>
+	<key>tags.pageTitle</key>
+	<string>关于 #%@</string>
+	<key>tags.selectToManage</key>
+	<string>请选择要管理的标签</string>
+	<key>tags.selectedCount</key>
+	<string>已选中 %lld 个标签</string>
+	<key>type.comparison</key>
+	<string>对比</string>
+	<key>type.concept</key>
+	<string>概念</string>
+	<key>type.entity</key>
+	<string>实体</string>
+	<key>type.map</key>
+	<string>地图</string>
+	<key>type.raw</key>
+	<string>原始</string>
+	<key>type.source</key>
+	<string>来源</string>
+	<key>undo.redo</key>
+	<string>重做</string>
+	<key>undo.undo</key>
+	<string>撤销</string>
+	<key>weekly.aiAnalysis</key>
+	<string>基于 AI 分析本周知识增长与关联</string>
+	<key>weekly.coreAreas</key>
+	<string>核心领域</string>
+	<key>welcome.growthTrend</key>
+	<string>知识库增长趋势</string>
+	<key>welcome.guide.browseGraph</key>
+	<string>在图谱中浏览知识关联</string>
+	<key>welcome.guide.createPage</key>
+	<string>创建第一个知识页面</string>
+	<key>welcome.guide.search</key>
+	<string>通过搜索快速定位内容</string>
+	<key>welcome.guide.wikiLink</key>
+	<string>使用 [[页面名]] 建立双向链接</string>
+	<key>welcome.quickStart</key>
+	<string>快速上手</string>
+	<key>welcome.subtitle</key>
+	<string>基于智能方法的知识管理系统</string>
+	<key>welcome.wikilinkHint</key>
+	<string>编辑页面时输入 [[页面名]] 即可自动建立双向链接</string>
+	<key>widget.active</key>
+	<string>活跃</string>
+	<key>widget.characters</key>
+	<string>字</string>
+	<key>widget.knowledgeCompile</key>
+	<string>知识萃取</string>
+	<key>widget.pages</key>
+	<string>页面</string>
+	<key>widget.recentUpdates</key>
+	<string>最近更新</string>
+	<key>widget.stub</key>
+	<string>占位</string>
+	<key>widget.title</key>
+	<string>知识库</string>
+	<key>widget.words</key>
+	<string>字</string>
+	<key>页面数</key>
+	<string>页面数</string>
+</dict>
+</plist>

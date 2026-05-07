@@ -1,0 +1,338 @@
+// MarkdownEditorView.swift
+//
+// 作者: Wang Chong
+// 功能说明: 待执行的编辑器操作
+// 版本: 1.0
+// 修改记录:
+//   - 创建: 2026-05-02
+//   - 更新: 2026-05-03
+// 日期: 2026-05-04
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+@preconcurrency import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
+
+/// 待执行的编辑器操作
+///
+/// 用于 toolbar 和 representable 之间的通信。
+/// 当用户点击工具栏按钮时，将操作类型写入此枚举，
+/// 由 representable 消费并执行具体的文本操作（插入、包裹等）。
+///
+/// - insert: 在光标位置插入前缀和可选后缀
+/// - wrap: 用指定字符串包裹选区
+/// - insertMultiline: 在光标位置插入多行文本
+/// - applink: 打开页面链接选择器
+enum EditorPendingAction: Equatable {
+    case insert(prefix: String, suffix: String?)
+    case wrap(wrapper: String)
+    case insertMultiline(text: String)
+    case applink
+    case ocr
+}
+
+/// Markdown 富文本编辑器视图
+///
+/// 支持编辑知识库页面的 Markdown 内容，包括标题、标签、别名和正文。
+///
+/// ## 主要功能
+/// - 页面标题编辑
+/// - 标签管理（添加、删除）
+/// - 别名管理（添加、删除）
+/// - Markdown 内容编辑（支持富文本工具栏）
+/// - 知识库 链接插入
+///
+/// ## 状态管理
+/// - `editorContent`: 编辑器中的实际文本内容
+/// - `pendingAction`: 待执行的工具栏操作（由 toolbar 写入，representable 消费）
+/// - `cursorState`: 光标状态，包含对 UITextView 的引用用于执行文本操作
+///
+/// ## 工具栏操作流程
+/// 1. 用户点击工具栏按钮 → 写入 `pendingAction`
+/// 2. `onChange(of: pendingAction)` 监听到变化
+/// 3. 调用 `executeAction()` 执行实际操作
+/// 4. 将 `pendingAction` 置为 nil
+@MainActor
+struct MarkdownEditorView: View {
+    @Binding var page: KnowledgePage  ///< 绑定的页面对象，编辑结果直接写回此对象
+    @Binding var isEditing: Bool  ///< 绑定外部的编辑状态
+    @Environment(AppStore.self) var store  ///< 全局知识库存储
+    @State private var showLinkPicker = false  ///< 是否显示 PageLink 页面选择器
+    @State private var editorContent: String = ""  ///< 编辑器文本内容（与 page.content 同步）
+    @State private var showTagInput = false  ///< 是否显示标签输入框
+    @State private var newTagText = ""  ///< 新标签输入框内容
+    @State private var showAliasInput = false  ///< 是否显示别名输入框
+    @State private var newAliasText = ""  ///< 新别名输入框内容
+    @State private var cursorPosition: Int = 0  ///< 当前光标位置（字符偏移）
+    @State private var selectedRange: NSRange = NSRange(location: 0, length: 0)  ///< 当前文本选区
+    @State private var cursorState = CursorState()  ///< 光标状态（包含 UITextView executor 引用）
+    /// 待执行的编辑器操作（由 toolbar 写入，由 representable 消费）
+    @State private var pendingAction: EditorPendingAction?
+    @State private var showPhotosPicker = false
+    @State private var isProcessingOCR = false
+    @EnvironmentObject var ocrService: OCRProcessor
+
+    var body: some View {
+        VStack(spacing: 0) {
+            editorToolbar
+            Divider().background(Color.appBorder)
+            titleEditor
+            
+            // Integrated Tags & Aliases Section
+            VStack(spacing: 0) {
+                tagsEditor
+                aliasesEditor
+            }
+            .background(Color.appCard.opacity(0.4))
+            .overlay(Divider().background(Color.appBorder), alignment: .bottom)
+            
+            contentEditor
+        }
+        .ocrPicker(isPresented: $showPhotosPicker) { recognizedText in
+            cursorState.executor?.insertMultilineAtCursor(text: recognizedText)
+        }
+        .background(Color.appBackground)
+        .onAppear { editorContent = page.content }
+        .onDisappear {
+            page.content = editorContent
+            page.updated = Date()
+            store.updatePage(page, forceDeepScan: false)
+        }
+        .sheet(isPresented: $showLinkPicker) {
+            PageLinkPickerSheet(page: $page, editorContent: $editorContent)
+        }
+    }
+
+    // MARK: - Title Editor
+    private var titleEditor: some View {
+        HStack {
+            TextField(L10n.Editor.tr("pageTitlePlaceholder"), text: $page.title)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(.appText)
+                .padding()
+        }
+        .background(Color.appCard)
+        .overlay(Divider().background(Color.appBorder), alignment: .bottom)
+    }
+
+    // MARK: - Tags Editor
+    private var tagsEditor: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                Label {
+                    Text(L10n.Ingest.tr("field.tags"))
+                        .font(.caption2.bold())
+                        .foregroundStyle(.appSecondary)
+                } icon: {
+                    Image(systemName: "tag.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+                .padding(.trailing, 4)
+
+                ForEach(page.tags, id: \.self) { tag in
+                    TagChip(tag: tag) {
+                        withAnimation { page.tags.removeAll { $0 == tag } }
+                    }
+                }
+
+                if showTagInput {
+                    InlineTagInput(
+                        text: $newTagText,
+                        onCommit: commitTag,
+                        onCancel: { withAnimation { showTagInput = false; newTagText = "" } }
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                } else {
+                    Button(action: { withAnimation { showTagInput = true } }) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "plus.circle.fill").font(.caption)
+                            Text(L10n.Editor.tr("addTag")).font(.caption)
+                        }
+                        .foregroundStyle(.appAccent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.appAccent.opacity(0.1))
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+        }
+    }
+
+    // MARK: - Aliases Editor
+    private var aliasesEditor: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                Label {
+                    Text(L10n.Editor.tr("addAlias"))
+                        .font(.caption2.bold())
+                        .foregroundStyle(.appSecondary)
+                } icon: {
+                    Image(systemName: "arrow.branch")
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+                .padding(.trailing, 4)
+
+                ForEach(page.aliases, id: \.self) { alias in
+                    AliasChip(alias: alias) {
+                        withAnimation { page.aliases.removeAll { $0 == alias } }
+                    }
+                }
+
+                if showAliasInput {
+                    InlineTagInput(
+                        text: $newAliasText,
+                        onCommit: commitAlias,
+                        onCancel: { withAnimation { showAliasInput = false; newAliasText = "" } }
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                } else {
+                    Button(action: { withAnimation { showAliasInput = true } }) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "plus.circle.fill").font(.caption)
+                            Text(L10n.Editor.tr("addAlias")).font(.caption)
+                        }
+                        .foregroundStyle(.appSource)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.appSource.opacity(0.1))
+                        .clipShape(Capsule())
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .overlay(Divider().background(Color.appBorder), alignment: .top)
+    }
+
+    // MARK: - Content Editor
+    private var contentEditor: some View {
+#if os(iOS)
+        MarkdownTextViewRepresentable(
+            text: $editorContent,
+            cursorPosition: $cursorPosition,
+            selectedRange: $selectedRange,
+            cursorState: cursorState
+        )
+        .frame(maxHeight: .infinity)
+        .onChange(of: editorContent) { _, newValue in
+            page.content = newValue
+        }
+        .onChange(of: pendingAction) { _, action in
+            guard let action = action else { return }
+            executeAction(action)
+            pendingAction = nil
+        }
+#else
+        TextEditor(text: $editorContent)
+            .frame(maxHeight: .infinity)
+            .onChange(of: editorContent) { _, newValue in
+                page.content = newValue
+            }
+#endif
+    }
+
+    // MARK: - Tag Management
+    private func commitTag() {
+        let trimmed = newTagText.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty && !page.tags.contains(trimmed) {
+            withAnimation { page.tags.append(trimmed) }
+        }
+        newTagText = ""
+        showTagInput = false
+    }
+
+    // MARK: - Alias Management
+    private func commitAlias() {
+        let trimmed = newAliasText.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty && !page.aliases.contains(trimmed) {
+            withAnimation { page.aliases.append(trimmed) }
+        }
+        newAliasText = ""
+        showAliasInput = false
+    }
+
+    // MARK: - Editor Toolbar
+    private var editorToolbar: some View {
+        MarkdownEditorToolbar(
+            cursorPosition: cursorPosition,
+            selectedRange: selectedRange,
+            onInsert: { prefix, suffix in
+                pendingAction = .insert(prefix: prefix, suffix: suffix)
+            },
+            onWrap: { wrapper in
+                pendingAction = .wrap(wrapper: wrapper)
+            },
+            onInsertMultiline: { text in
+                pendingAction = .insertMultiline(text: text)
+            },
+            onShowLinkPicker: {
+                showLinkPicker = true
+            },
+            onOCR: {
+                pendingAction = .ocr
+            }
+        )
+    }
+
+    // MARK: - Execute Pending Action
+    /// 通过 EditorActionExecutor 直接操作 UITextView，确保光标位置正确。
+    private func executeAction(_ action: EditorPendingAction) {
+        switch action {
+        case .insert(let prefix, let suffix):
+            cursorState.executor?.insertAtCursor(prefix: prefix, suffix: suffix)
+        case .wrap(let wrapper):
+            cursorState.executor?.wrapAtCursor(wrapper: wrapper)
+        case .insertMultiline(let text):
+            cursorState.executor?.insertMultilineAtCursor(text: text)
+        case .applink:
+            showLinkPicker = true
+        case .ocr:
+            // 弹出 PhotosPicker 的逻辑在 iOS 16+ 中通常配合 PhotosPicker 组件
+            // 这里我们手动触发一个隐藏的状态控制
+            showPhotosPicker = true
+        }
+    }
+}
+
+// MARK: - PhotosPicker 包装（用于在编辑器中直接调起）
+import PhotosUI
+extension View {
+    func ocrPicker(isPresented: Binding<Bool>, onResult: @escaping (String) -> Void) -> some View {
+        self.modifier(OCRPickerModifier(isPresented: isPresented, onResult: onResult))
+    }
+}
+
+@MainActor
+struct OCRPickerModifier: ViewModifier {
+    @Binding var isPresented: Bool
+    let onResult: (String) -> Void
+    @State private var selectedItem: PhotosPickerItem?
+    @EnvironmentObject var ocrService: OCRProcessor
+
+    func body(content: Content) -> some View {
+        content
+            .photosPicker(isPresented: $isPresented, selection: $selectedItem, matching: .images)
+            .onChange(of: selectedItem) { _, newItem in
+                guard let newItem = newItem else { return }
+                Task {
+                    if let data = try? await newItem.loadTransferable(type: Data.self),
+                       let image = AppImage(data: data) {
+                        do {
+                            let text = try await ocrService.recognizeText(from: image)
+                            await MainActor.run { onResult(text) }
+                        } catch {
+                            ToastManager.shared.show(type: .error, message: error.localizedDescription)
+                        }
+                    }
+                    selectedItem = nil
+                }
+            }
+    }
+}

@@ -1,0 +1,191 @@
+// OnDeviceComponents.swift
+//
+// 作者: Wang Chong
+// 功能说明: struct OnDeviceTestView
+// 版本: 1.0
+// 修改记录:
+//   - 创建: 2026-05-02
+// 日期: 2026-05-04
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+@preconcurrency import SwiftUI
+
+// MARK: - On-Device Test View
+@MainActor
+/// 设备端模型测试预览组件
+/// 负责在 UI 中提供直接调用 CoreML 或 MLCLLM 模型的沙盒界面，验证生成效果与性能指标
+struct OnDeviceTestView: View {
+    @ObservedObject var onDeviceService: OnDeviceLLMService
+    @Environment(\.dismiss) private var dismiss
+    @State private var prompt = ""
+    @State private var result = ""
+    @State private var isGenerating = false
+    
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                promptInputSection
+                generateButton
+                progressIndicator
+                resultSection
+                Spacer()
+            }
+            .padding()
+            .background(Color.appBackground)
+            .navigationTitle(Localized.tr("ondevice.test"))
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+        }
+    }
+    
+    // MARK: - Prompt Input
+    private var promptInputSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(Localized.tr("ondevice.testPrompt"))
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.appSecondary)
+            
+            TextEditor(text: $prompt)
+                .font(.body)
+                .frame(height: 80)
+                .padding(8)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppUI.standardRadius)
+                        .strokeBorder(Color.appAccent.opacity(0.3), lineWidth: 1)
+                )
+        }
+    }
+    
+    // MARK: - Generate Button
+    private var generateButton: some View {
+        Button(action: generate) {
+            HStack {
+                if isGenerating {
+                    ProgressView()
+                        .tint(.white)
+                }
+                Text(isGenerating ? Localized.tr("ondevice.generating") : Localized.tr("ondevice.generate"))
+            }
+            .font(.headline)
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(isGenerating ? Color.appSecondary : Color.appAccent)
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        }
+        .disabled(isGenerating || prompt.isEmpty)
+    }
+    
+    // MARK: - Progress
+    @ViewBuilder
+    private var progressIndicator: some View {
+        if isGenerating {
+            ProgressView(value: onDeviceService.generationProgress)
+                .tint(.appAccent)
+        }
+    }
+    
+    // MARK: - Result
+    @ViewBuilder
+    private var resultSection: some View {
+        if !result.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text(Localized.tr("ondevice.result"))
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.appSecondary)
+                    Spacer()
+                    Button(action: { AppPasteboard.string = result }) {
+                        Image(systemName: "doc.on.doc")
+                            .font(.caption)
+                            .foregroundStyle(.appAccent)
+                    }
+                }
+                
+                ScrollView {
+                    Text(result)
+                        .font(.body)
+                        .foregroundStyle(.appText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxHeight: 300)
+                .padding()
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+            }
+        }
+    }
+    
+    // MARK: - Generate
+    private func generate() {
+        isGenerating = true
+        result = ""
+        
+        Task {
+            do {
+                let generated = try await onDeviceService.generate(prompt: prompt, maxTokens: 128)
+                result = generated
+            } catch {
+                result = "\(L10n.Common.tr("error")): \(error.localizedDescription)"
+            }
+            isGenerating = false
+        }
+    }
+}
+
+// MARK: - On-Device Model Row
+/// 设备端模型列表行组件
+/// 负责展示本地模型的基本信息（名称、体积、来源类型），并提供选中状态反馈
+struct OnDeviceModelRow: View {
+    let model: OnDeviceModel
+    let isSelected: Bool
+    let onSelect: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: model.icon)
+                .font(.title3)
+                .foregroundStyle(.appAccent)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(model.name)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.appText)
+                
+                HStack(spacing: 8) {
+                    if model.size > 0 {
+                        Text(model.sizeLabel)
+                            .font(.caption2)
+                    }
+                    Text(model.type == .system ? Localized.tr("ondevice.system") : Localized.tr("ondevice.local"))
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.appAccent.opacity(0.1))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(.appSecondary)
+            }
+            
+            Spacer()
+            
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                .fill(isSelected ? Color.appAccent.opacity(0.08) : Color.appCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                .strokeBorder(isSelected ? Color.appAccent.opacity(0.3) : Color.clear, lineWidth: 1)
+        )
+        .onTapGesture { onSelect() }
+    }
+}

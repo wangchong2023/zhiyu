@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/AI/PromptService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Dev/PerformanceBenchmarker.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceBenchmarker.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceBenchmarker.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceBenchmarker.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceBenchmarker.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceBenchmarker.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/PerformanceService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PerformanceService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Plugins/PluginMarketService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginMarketService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginMarketService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginMarketService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginMarketService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginMarketService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Plugins/PluginProtocols.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginProtocols.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginProtocols.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginProtocols.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginProtocols.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginProtocols.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Plugins/PluginRegistry.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginRegistry.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginRegistry.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginRegistry.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginRegistry.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginRegistry.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/PromptWorkshopView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptWorkshopView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptWorkshopView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptWorkshopView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptWorkshopView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PromptWorkshopView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Settings/PluginCenterView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginCenterView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginCenterView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginCenterView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginCenterView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginCenterView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Settings/PluginDetailView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginDetailView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginDetailView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginDetailView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginDetailView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/PluginDetailView.swiftdeps"
+  }
+}

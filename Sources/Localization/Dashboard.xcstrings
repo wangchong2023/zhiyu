@@ -1,0 +1,816 @@
+{
+  "sourceLanguage": "zh-Hans",
+  "strings": {
+    "dashboard.dailyInsights": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily Insights"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每日灵感"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.dailyInsights.refresh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to refresh for new insights"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击刷新以获取新的见解"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.density": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection Density"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连接密度"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.density.desc": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reflects the tightness of connections between knowledge points. Higher density means a more solid knowledge system."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "反映了知识点之间的关联紧密程度，密度越高，知识体系越稳固。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.hotTopics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hot Topics"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "热门领域"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.pages": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个页面"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.totalLinks": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total Links"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "总关联数"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.totalPages": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total Nodes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "总节点数"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.index.comparisonCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d comparisons"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个比较"
+          }
+        }
+      }
+    },
+    "dashboard.index.conceptCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d concepts"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个概念"
+          }
+        }
+      }
+    },
+    "dashboard.index.concepts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concepts"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "概念"
+          }
+        }
+      }
+    },
+    "dashboard.index.entities": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "实体"
+          }
+        }
+      }
+    },
+    "dashboard.index.entityCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d entities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个实体"
+          }
+        }
+      }
+    },
+    "dashboard.index.overview": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overview"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "概览"
+          }
+        }
+      }
+    },
+    "dashboard.index.pages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面"
+          }
+        }
+      }
+    },
+    "dashboard.index.sourceCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d sources"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个来源"
+          }
+        }
+      }
+    },
+    "dashboard.index.sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源"
+          }
+        }
+      }
+    },
+    "dashboard.index.wordCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d words"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 字"
+          }
+        }
+      }
+    },
+    "insight.daily.prompt.oldest": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write a recommendation in a natural tone, suggesting to review the note \"%@\", explaining the value of review. No more than 50 words. Content: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用自然的口吻写一句推荐语，建议复习《%@》这篇笔记，说明复习价值。不超过50字。内容：%@"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "insight.daily.prompt.recent": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a caring knowledge review companion. User's recent focus: %@. Recommend reviewing the old note \"%@\", content summary: %@. Please write a recommendation in a natural and friendly tone, highlighting the value of rereading this note for current learning. No more than 50 words. Return JSON: {\"insight\": \"...\", \"suggestedConnection\": \"...\"}"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个贴心的知识复习伙伴。用户最近在关注：%@。推荐复习旧笔记《%@》，内容摘要：%@。请用自然亲切的口吻写一句推荐语，点明重读这篇笔记对当前学习的价值。不超过50字。返回JSON: {\"insight\": \"...\", \"suggestedConnection\": \"...\"}"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.daily.systemPrompt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a caring knowledge review companion, helping users discover connections between knowledge in a warm and natural tone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个贴心的知识复习伙伴，用温暖自然的口吻帮助用户发现知识间的联系。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.generateReport": {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击生成个人智库周报"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.growth.explosive": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explosive Growth"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "爆发式增长"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.growth.steady": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steady Accumulation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "稳步积累"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.recap.tip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to see more connection suggestions"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击查看更多关联建议"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.tips.content": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Based on this week's knowledge growth, it is recommended to continue exploring connections in related fields and try to connect fragmented knowledge points through mindmaps."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基于本周的知识增长情况，建议你继续深入探索相关领域的关联，并尝试通过思维导图将零散的知识点串联起来。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.tips.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deep Insights"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深度建议"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.weekly.prompt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "# Role: Senior Knowledge Architect\n# Context: User added nodes: [%@].\n# Task: Generate a weekly report, including cognitive anchors, connection density, etc. Requirement: Within 250 words."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "# Role: 资深知识架构师\n# Context: 用户添加了节点：[%@]。\n# Task: 生成周度报告，包含认知锚点、关联密度等。要求 250 字以内。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.weekly.systemPrompt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a senior knowledge architect, skilled at summarizing knowledge systems."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个资深知识架构师，擅长总结知识体系。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insight.weeklyTitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly Insight"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识周报"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.stats.avgLatency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Average Latency"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平均响应时延"
+          }
+        }
+      }
+    },
+    "dashboard.stats.faithfulness": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faithfulness"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "忠实度"
+          }
+        }
+      }
+    },
+    "dashboard.stats.relevance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relevance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相关度"
+          }
+        }
+      }
+    },
+    "dashboard.stats.precision": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Precision"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精确度"
+          }
+        }
+      }
+    },
+    "dashboard.stats.benchmark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG Quality Benchmark (AI Eval)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG 质量 Benchmark (AI 评估)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.cleanedPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent cleanup removed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近一次清洗已删除"
+          }
+        }
+      }
+    },
+    "dashboard.stats.cleanedSuffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "duplicate chunks"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个重复分块"
+          }
+        }
+      }
+    },
+    "dashboard.stats.cleanupAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deep Data Cleanup (Semantic Deduplication)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "深度数据清洗 (语义去重)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.latencySection": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG Performance Monitor (Latency)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG 性能监控 (时延)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.maintenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Governance & Maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识治理与维护"
+          }
+        }
+      }
+    },
+    "dashboard.stats.monthlySummary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly Token Summary"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月度 Token 汇总"
+          }
+        }
+      }
+    },
+    "dashboard.stats.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resource Audit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "资源审计"
+          }
+        }
+      }
+    },
+    "dashboard.stats.storageDistribution": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Storage Distribution"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储空间分布"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tokenTrend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token Consumption Trend"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token 消耗趋势"
+          }
+        }
+      }
+    },
+    "dashboard.stats.totalStorage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total Storage Used"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "总占用空间"
+          }
+        }
+      }
+    },
+    "dashboard.stats.aiResources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Resource Overhead"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 资源开销统计"
+          }
+        }
+      }
+    },
+    "dashboard.stats.storageAudit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Storage Audit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识存储审计"
+          }
+        }
+      }
+    },
+    "dashboard.stats.perfAndQuality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance & Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能与质量评估"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

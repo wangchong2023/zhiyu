@@ -1,0 +1,340 @@
+// VisionProSpatialView.swift
+//
+// 作者: Wang Chong
+// 功能说明: Apple Vision Pro 空间计算视图，提供沉浸式知识可视化体验。
+// 版本: 1.0
+// 修改记录:
+//   - 创建: 2026-05-02
+// 日期: 2026-05-04
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+
+// MARK: - 空间计算视图
+#if os(visionOS)
+import RealityKit
+import RealityKitContent
+#endif
+
+/// Vision Pro 空间计算视图
+/// 负责在 visionOS 环境下渲染沉浸式 3D 知识图谱，并为 iOS/macOS 平台提供视差模拟效果
+struct VisionProSpatialView: View {
+    @Environment(AppStore.self) var store
+    @State private var orbitAngle: Angle = .degrees(0)
+    @State private var showPageDetail = false
+    @State private var selectedPage: KnowledgePage?
+    
+    var body: some View {
+        #if os(visionOS)
+        visionOSContent
+        #else
+        iOSPreviewContent
+        #endif
+    }
+    
+    // MARK: - visionOS Content
+    #if os(visionOS)
+    private var visionOSContent: some View {
+        RealityView { content in
+            // Create immersive scene
+            let anchor = AnchorEntity(world: .zero)
+            
+            // Add nodes for each page
+            let pages = store.pages
+            let positions = generateSpatialPositions(count: pages.count)
+            
+            for (index, page) in pages.enumerated() {
+                let entity = createPageEntity(page: page, position: positions[index])
+                anchor.addChild(entity)
+            }
+            
+            // Add connection lines
+            for page in pages {
+                for linkTitle in page.outgoingLinks {
+                    if let linkedPage = store.pageByTitle(linkTitle),
+                       let sourceIndex = pages.firstIndex(where: { $0.id == page.id }),
+                       let targetIndex = pages.firstIndex(where: { $0.id == linkedPage.id }) {
+                        let lineEntity = createConnectionLine(
+                            from: positions[sourceIndex],
+                            to: positions[targetIndex]
+                        )
+                        anchor.addChild(lineEntity)
+                    }
+                }
+            }
+            
+            content.add(anchor)
+        }
+        .gesture(
+            SpatialTapGesture()
+                .targetedToAnyEntity()
+                .onEnded { value in
+                    if let pageID = value.entity.name.components(separatedBy: ":").last,
+                       let uuid = UUID(uuidString: pageID),
+                       let page = store.pageByID(uuid) {
+                        selectedPage = page
+                        showPageDetail = true
+                    }
+                }
+        )
+        .sheet(isPresented: $showPageDetail) {
+            if let page = selectedPage {
+                SpatialPageDetailView(page: page)
+            }
+        }
+    }
+    
+    private func createPageEntity(page: KnowledgePage, position: SIMD3<Float>) -> ModelEntity {
+        let size: Float = 0.15
+        let mesh = MeshResource.generateSphere(radius: size)
+        let color = UIColor(Color.fromModelColorName(page.type.colorName))
+        var material = SimpleMaterial()
+        material.color = .init(tint: color, opacity: 0.8)
+        
+        let entity = ModelEntity(mesh: mesh, materials: [material])
+        entity.position = position
+        entity.name = "page:\(page.id.uuidString)"
+        
+        // Add hover component
+        entity.components.set(HoverEffectComponent())
+        
+        return entity
+    }
+    
+    private func createConnectionLine(from: SIMD3<Float>, to: SIMD3<Float>) -> ModelEntity {
+        let distance = simd_distance(from, to)
+        let mesh = MeshResource.generateCylinder(height: distance, radius: 0.005)
+        var material = SimpleMaterial()
+        material.color = .init(tint: .white.withAlphaComponent(0.3), opacity: 0.3)
+        
+        let entity = ModelEntity(mesh: mesh, materials: [material])
+        
+        let midpoint = (from + to) / 2
+        entity.position = midpoint
+        
+        // Orient toward target
+        let direction = normalize(to - from)
+        let up = SIMD3<Float>(0, 1, 0)
+        let axis = normalize(cross(up, direction))
+        let angle = acos(dot(up, direction))
+        entity.orientation = simd_quatf(angle: angle, axis: axis)
+        
+        return entity
+    }
+    
+    private func generateSpatialPositions(count: Int) -> [SIMD3<Float>] {
+        var positions: [SIMD3<Float>] = []
+        let radius: Float = 2.0
+        let goldenRatio = (1 + sqrt(5)) / 2
+        
+        for i in 0..<count {
+            let theta = 2 * .pi * Float(i) / Float(goldenRatio)
+            let phi = acos(1 - 2 * (Float(i) + 0.5) / Float(count))
+            
+            let x = radius * sin(phi) * cos(theta)
+            let y = radius * sin(phi) * sin(theta)
+            let z = radius * cos(phi)
+            
+            positions.append(SIMD3<Float>(x, y, z))
+        }
+        
+        return positions
+    }
+    #endif
+    
+    // MARK: - iOS Preview Content
+    /// On iOS, show a simulated spatial view preview with depth/parallax effects
+    private var iOSPreviewContent: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Header
+                VStack(spacing: 16) {
+                    Image(systemName: "visionpro")
+                        .font(.system(size: 56))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.purple, .blue],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text(Localized.tr("spatial.title"))
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.appText)
+                    
+                    Text(Localized.tr("spatial.subtitle"))
+                        .font(.subheadline)
+                        .foregroundStyle(.appSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.top, 20)
+                
+                // Parallax Preview
+                SpatialParallaxPreview(pages: Array(store.pages.prefix(20)))
+                    .frame(height: 400)
+                
+                // Feature List
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(Localized.tr("spatial.features"))
+                        .font(.headline)
+                        .foregroundStyle(.appText)
+                    
+                    SpatialFeatureRow(icon: "cube.transparent.fill", title: Localized.tr("spatial.feature.3dGraph"), desc: Localized.tr("spatial.feature.3dGraph.desc"))
+                    SpatialFeatureRow(icon: "hand.tap.fill", title: Localized.tr("spatial.feature.gesture"), desc: Localized.tr("spatial.feature.gesture.desc"))
+                    SpatialFeatureRow(icon: "eye.fill", title: Localized.tr("spatial.feature.gaze"), desc: Localized.tr("spatial.feature.gaze.desc"))
+                    SpatialFeatureRow(icon: "person.crop.circle.badge.plus", title: Localized.tr("spatial.feature.spatialAudio"), desc: Localized.tr("spatial.feature.spatialAudio.desc"))
+                }
+                .appContainer(cornerRadius: AppUI.largeRadius, padding: true)
+                
+                // Device Requirement
+                VStack(spacing: 8) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundStyle(.blue)
+                    Text(Localized.tr("spatial.requirement"))
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
+            }
+            .padding()
+        }
+        .background(Color.appBackground)
+        .navigationTitle(Localized.tr("spatial.title"))
+    }
+}
+
+// MARK: - 空间视差预览
+/// 空间视差预览组件（iOS/macOS）
+/// 负责在非沉浸式平台上通过多层卡片位移算法模拟 3D 深度感，提供跨平台的空间体验一致性
+struct SpatialParallaxPreview: View {
+    let pages: [KnowledgePage]
+    @State private var dragOffset: CGSize = .zero
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                // Background layers
+                ForEach(0..<min(pages.count, 8), id: \.self) { i in
+                    let page = pages[i]
+                    let depth = CGFloat(i) * 3
+                    let xOffset = dragOffset.width * depth * 0.01
+                    let yOffset = dragOffset.height * depth * 0.01
+                    let scale = 1.0 - CGFloat(i) * 0.03
+
+                    // Distribute cards across the available area
+                    let col = CGFloat(i % 4) - 1.5          // –1.5 … +1.5
+                    let row = CGFloat(i / 4) - 0.5           // –0.5 … +0.5
+                    let baseX = col * (w * 0.22)
+                    let baseY = row * (h * 0.40)
+
+                    SpatialNodeCard(page: page)
+                        .scaleEffect(scale)
+                        .offset(x: baseX + xOffset, y: baseY + yOffset)
+                        .zIndex(Double(8 - i))
+                }
+            }
+            .frame(width: w, height: h)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in dragOffset = value.translation }
+                    .onEnded { _ in
+                        withAnimation(.spring()) { dragOffset = .zero }
+                    }
+            )
+            .background(
+                RadialGradient(
+                    colors: [Color.purple.opacity(0.1), Color.black.opacity(0.8)],
+                    center: .center,
+                    startRadius: 50,
+                    endRadius: max(w, h) * 0.6
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.chipRadius))
+        }
+    }
+}
+
+// MARK: - 空间节点卡片
+/// 空间节点展示卡片组件
+/// 负责展示单个知识节点的关键元数据，具备高斯模糊背景与品牌色发光效果，适配沉浸式 UI
+struct SpatialNodeCard: View {
+    let page: KnowledgePage
+    
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(systemName: page.displayIcon)
+                .font(.title3)
+                .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+            
+            Text(page.title)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+        }
+        .padding(12)
+        .frame(width: 100, height: 70)
+        .background(
+            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.fromModelColorName(page.type.colorName).opacity(0.3), radius: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                .strokeBorder(Color.fromModelColorName(page.type.colorName).opacity(0.4), lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Spatial Feature Row
+struct SpatialFeatureRow: View {
+    let icon: String
+    let title: String
+    let desc: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.purple)
+                .frame(width: 36, height: 36)
+                .background(Color.purple.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.appText)
+                Text(desc)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+            }
+        }
+    }
+}
+
+// MARK: - Spatial Page Detail (visionOS only)
+#if os(visionOS)
+struct SpatialPageDetailView: View {
+    let page: KnowledgePage
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text(page.title)
+                .font(.title2.weight(.bold))
+            
+            ScrollView {
+                Text(page.content)
+                    .font(.body)
+            }
+            
+            Button(L10n.Common.tr("close")) { dismiss() }
+        }
+        .padding(40)
+    }
+}
+#endif

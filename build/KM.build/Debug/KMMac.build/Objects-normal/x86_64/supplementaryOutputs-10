@@ -1,0 +1,65 @@
+{
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Infrastructure/Utilities/FlowLayout.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FlowLayout.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FlowLayout.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FlowLayout.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FlowLayout.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FlowLayout.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Graph/GraphClusteringService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphClusteringService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphClusteringService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphClusteringService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphClusteringService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphClusteringService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Infrastructure/GraphDataProvider.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphDataProvider.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphDataProvider.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphDataProvider.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphDataProvider.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphDataProvider.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Services/Sync/FileSystemSyncService.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FileSystemSyncService.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FileSystemSyncService.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FileSystemSyncService.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FileSystemSyncService.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/FileSystemSyncService.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/ExportReportView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/ExportReportView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/ExportReportView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/ExportReportView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/ExportReportView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/ExportReportView.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/Graph3DComponents.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DComponents.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DComponents.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DComponents.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DComponents.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DComponents.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/GraphComponents.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphComponents.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphComponents.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphComponents.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphComponents.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphComponents.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Components/GraphLOD.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphLOD.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphLOD.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphLOD.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphLOD.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/GraphLOD.swiftdeps"
+  },
+  "/Users/constantine/Documents/work/code/projects/km/Sources/Shared/Views/Features/Graph3DView.swift" : {
+    "const-values" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DView.swiftconstvalues",
+    "dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DView.d",
+    "diagnostics" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DView.dia",
+    "object" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DView.o",
+    "swift-dependencies" : "/Users/constantine/Documents/work/code/projects/km/build/KM.build/Debug/KMMac.build/Objects-normal/x86_64/Graph3DView.swiftdeps"
+  }
+}
