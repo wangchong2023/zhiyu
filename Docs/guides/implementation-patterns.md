@@ -10,6 +10,31 @@
   ```
 - **`nonisolated(unsafe)` 用于单例**：非 `Sendable` 类中的 `static let shared` 需要该属性才能在 Swift 6 严格并发下编译通过。
 
+## 架构解耦模式
+
+### 1. 模块化 DI (Modular Dependency Injection)
+避免在 `ZhiYuApp.init()` 中平铺数百行注册逻辑。使用 `ModuleRegistrar`：
+- 每个层级（Core, Storage, Domain）定义自己的 `Registrar`。
+- `ZhiYuApp` 仅负责按顺序调用 `register(in:)`。
+- **优点**：启动代码整洁，支持在测试环境中一键替换整组 Mock。
+
+### 2. 能力协议 (Capability Protocols)
+当 L2 服务需要访问 L1 Store 的特定高级功能（如向量索引）时，不要使用类型强转（`as? SQLiteStore`）。
+- 定义 `VectorIndexableStore` 协议。
+- Store 遵循协议。
+- 服务通过 `if let store = pageStore as? any VectorIndexableStore` 访问。
+- **优点**：消除硬编码依赖，维持分层边界。
+
+### 3. Actor 化重型处理器 (Actor-based Processors)
+计算密集型服务（OCR、语音识别）应定义为 `actor` 而非 `class`。
+- **职责**：确保内部状态（如 Vision 请求队列）的并发安全。
+- **规范**：移除 `@unchecked Sendable`，拥抱 Swift 6 的原生数据隔离。
+
+### 4. 表现层扩展 (View Extensions)
+模型（Model）层严禁 `import SwiftUI`。
+- 图标（icon）、颜色（Color）属性应存放在 `Views/Styles/` 目录下的 Extension 中。
+- **优点**：保持 Model 的纯粹性，方便多平台（如无 UI 的 CLI 工具）重用模型。
+
 ## SwiftUI 图谱模式
 
 - **浮动控件**：对浮动在内容之上的控件（Picker、缩放按钮、筛选药丸），使用 `.overlay(alignment:)`。避免使用带有 `VStack { Spacer() }` 的 ZStack 子视图——它们会创建透明的全屏层，拦截触摸事件。`.overlay(alignment:)` 仅占据其内容的固有尺寸。

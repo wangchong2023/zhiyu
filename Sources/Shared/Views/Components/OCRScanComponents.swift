@@ -26,40 +26,40 @@ struct OCRImagePickerArea: View {
     let onStartRecognition: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppUI.standardPadding) { // 16
             if let image = selectedImage {
                 #if canImport(UIKit)
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 300
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-                    .shadow(color: .black.opacity(0.1), radius: 8)
+                    .shadow(color: .black.opacity(AppUI.shadowOpacity), radius: AppUI.small) // 0.1, 8
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .stroke(Color.appBorder, lineWidth: 1)
+                            .stroke(Color.appBorder, lineWidth: AppUI.borderWidth) // 1
                     )
                 #else
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 300
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-                    .shadow(color: .black.opacity(0.1), radius: 8)
+                    .shadow(color: .black.opacity(AppUI.shadowOpacity), radius: AppUI.small) // 0.1, 8
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .stroke(Color.appBorder, lineWidth: 1)
+                            .stroke(Color.appBorder, lineWidth: AppUI.borderWidth) // 1
                     )
                 #endif
             } else {
                 // Placeholder
                 RoundedRectangle(cornerRadius: AppUI.cardRadius)
                     .fill(Color.appCard)
-                    .frame(height: 200)
+                    .frame(height: AppUI.Metrics.heroValueSize * 7.7) // 200
                     .overlay(
-                        VStack(spacing: 12) {
+                        VStack(spacing: AppUI.medium) { // 12
                             Image(systemName: "text.viewfinder")
-                                .font(.system(size: 40))
+                                .font(.system(size: AppUI.Metrics.largeIconSize + AppUI.small)) // 40
                                 .foregroundStyle(.appSecondary)
                             Text(Localized.tr("ocr.selectImage"))
                                 .font(.subheadline)
@@ -68,13 +68,13 @@ struct OCRImagePickerArea: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [8]))
+                            .strokeBorder(style: StrokeStyle(lineWidth: AppUI.borderWidth * 2, dash: [CGFloat(AppUI.small)])) // 2, 8
                             .foregroundStyle(.appBorder)
                     )
             }
 
             // Photo picker
-            HStack(spacing: 16) {
+            HStack(spacing: AppUI.standardPadding) { // 16
                 PhotosPicker(selection: Binding(
                     get: { selectedPhoto },
                     set: { onPhotoSelected($0) }
@@ -82,26 +82,26 @@ struct OCRImagePickerArea: View {
                     Label(Localized.tr("ocr.fromAlbum"), systemImage: "photo.on.rectangle")
                         .font(.subheadline)
                         .foregroundStyle(.appAccent)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color.appAccent.opacity(0.1), in: RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                        .padding(.horizontal, AppUI.standardPadding) // 16
+                        .padding(.vertical, AppUI.small + AppUI.atomic) // 10
+                        .background(Color.appAccent.opacity(AppUI.glassOpacity), in: RoundedRectangle(cornerRadius: AppUI.smallRadius)) // 0.1
                 }
                 .accessibilityIdentifier("ocr-select-photo")
 
                 if selectedImage != nil {
                     Button(action: onStartRecognition) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                             if isProcessing {
                                 ProgressView()
                                     .tint(.white)
-                                    .scaleEffect(0.8)
+                                    .scaleEffect(AppUI.fullOpacity * 0.8) // 0.8
                             }
                             Text(isProcessing ? Localized.tr("ocr.processing") : Localized.tr("ocr.recognize"))
                         }
                         .font(.subheadline)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, AppUI.standardPadding) // 16
+                        .padding(.vertical, AppUI.small + AppUI.atomic) // 10
                         .background(Color.appAccent, in: RoundedRectangle(cornerRadius: AppUI.smallRadius))
                     }
                     .accessibilityIdentifier("ocr-start-recognition")
@@ -121,7 +121,7 @@ struct OCRResultDisplay: View {
     let onCopy: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppUI.medium) { // 12
             HStack {
                 Label(Localized.tr("ocr.result"), systemImage: "doc.text")
                     .font(.subheadline.weight(.semibold))
@@ -140,13 +140,13 @@ struct OCRResultDisplay: View {
             TextEditor(text: $recognizedText)
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.appText)
-                .frame(minHeight: 120, maxHeight: 300)
-                .padding(8)
+                .frame(minHeight: AppUI.Metrics.heroValueSize * 4.6, maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 120, 300
+                .padding(AppUI.small) // 8
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                        .stroke(Color.appBorder, lineWidth: 1)
+                        .stroke(Color.appBorder, lineWidth: AppUI.borderWidth) // 1
                 )
 
             HStack {
@@ -182,7 +182,7 @@ struct OCRSaveForm: View {
     let onTagInputChange: (String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppUI.medium) { // 12
             Text(Localized.tr("ocr.saveToKnowledge"))
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.appText)
@@ -190,11 +190,11 @@ struct OCRSaveForm: View {
             TextField(Localized.tr("ocr.pageTitle"), text: $targetTitle)
                 .font(.subheadline)
                 .foregroundStyle(.appText)
-                .padding(10)
+                .padding(AppUI.small + AppUI.atomic) // 10
                 .background(Color.appCard, in: RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                        .stroke(Color.appBorder, lineWidth: 1)
+                        .stroke(Color.appBorder, lineWidth: AppUI.borderWidth) // 1
                 )
                 .accessibilityIdentifier("ocr-page-title")
 
@@ -214,12 +214,12 @@ struct OCRSaveForm: View {
                 Spacer()
 
                 Button(action: onIconPickerToggle) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                         Image(systemName: targetCustomIcon ?? targetType.icon)
                             .font(.body)
                             .foregroundStyle(targetCustomIcon != nil ? .appAccent : .appSecondary)
-                            .frame(width: 28, height: 28)
-                            .background((targetCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(targetType.colorName)).opacity(0.15))
+                            .frame(width: AppUI.Metrics.smallIconBoxSize, height: AppUI.Metrics.smallIconBoxSize) // 28
+                            .background((targetCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(targetType.colorName)).opacity(AppUI.glassOpacity * 1.5)) // 0.15
                             .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
 
                         Text(targetCustomIcon != nil ? Localized.tr("ocr.changeIcon") : Localized.tr("ocr.customIcon"))
@@ -237,11 +237,11 @@ struct OCRSaveForm: View {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, AppUI.atomic * 2) // 4
 
             // Tags
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                     ForEach(targetTags, id: \.self) { tag in
                         TagPill(tag: tag, onRemove: { onRemoveTag(tag) })
                     }
@@ -260,12 +260,12 @@ struct OCRSaveForm: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, AppUI.medium) // 12
                     .background(Color.appAccent, in: RoundedRectangle(cornerRadius: AppUI.standardRadius))
             }
             .accessibilityIdentifier("ocr-save-to-knowledge")
         }
-        .padding(16)
+        .padding(AppUI.standardPadding) // 16
         .background(Color.appCard, in: RoundedRectangle(cornerRadius: AppUI.cardRadius))
     }
 }
@@ -279,7 +279,8 @@ struct TagPill: View {
     var onRemove: () -> Void = {}
 
     var body: some View {
-        HStack(spacing: 4) {
+    var body: some View {
+        HStack(spacing: AppUI.atomic * 2) { // 4
             Text(tag)
                 .font(.caption2)
                 .foregroundStyle(.appAccent)
@@ -290,8 +291,9 @@ struct TagPill: View {
                     .foregroundStyle(.appSecondary)
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color.appAccent.opacity(0.1), in: Capsule())
+        .padding(.horizontal, AppUI.small) // 8
+        .padding(.vertical, AppUI.atomic * 2) // 4
+        .background(Color.appAccent.opacity(AppUI.glassOpacity), in: Capsule()) // 0.1
+    }
     }
 }

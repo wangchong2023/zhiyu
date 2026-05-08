@@ -119,7 +119,7 @@ struct TokenUsage: Codable, FetchableRecord, PersistableRecord {
 // MARK: - 核心存储 (KnowledgePageStore)
 
 /// 知识库 页面存储：封装所有基于 GRDB 的高性能 CRUD 操作。
-final class KnowledgePageStore {
+final class KnowledgePageStore: Sendable {
     private let dbWriter: any DatabaseWriter
 
     init(dbWriter: any DatabaseWriter) {
@@ -128,19 +128,23 @@ final class KnowledgePageStore {
 
     // MARK: - 页面操作 (实现 Upsert 逻辑)
 
-    func save(_ page: KnowledgePage) throws {
+    @discardableResult
+    func save(_ page: KnowledgePage) throws -> UUID {
         try dbWriter.write { db in
-            try upsert(page, in: db)
+            try save(page, in: db)
         }
     }
 
-    /// 在已有数据库事务中保存页面（实现标题归一化）
-    func save(_ page: KnowledgePage, using db: Database) throws {
-        try upsert(page, in: db)
+    /// 在已有数据库事务中保存页面及其关联链接，返回实际使用的 ID
+    @discardableResult
+    func save(_ page: KnowledgePage, in db: Database) throws -> UUID {
+        let savedID = try upsert(page, in: db)
+        try saveLinks(sourceID: savedID, targetTitles: page.outgoingLinks, in: db)
+        return savedID
     }
-    
-    /// 执行具体的 Upsert 逻辑：根据标题查找，存在则更新，不存在则插入
-    private func upsert(_ page: KnowledgePage, in db: Database) throws {
+
+    /// 执行具体的 Upsert 逻辑：根据标题查找，存在则更新，不存在则插入。返回保存后的 ID。
+    private func upsert(_ page: KnowledgePage, in db: Database) throws -> UUID {
         if let existing = try KnowledgePage.filter(Column("title") == page.title).fetchOne(db) {
             // 如果标题已存在，则保持原有的 ID 不变，执行更新操作
             var updatedPage = page
@@ -148,9 +152,11 @@ final class KnowledgePageStore {
             // 继承原有页面的创建时间
             updatedPage.created = existing.created
             try updatedPage.update(db)
+            return existing.id
         } else {
             // 标题不存在，执行新插入
             try page.insert(db)
+            return page.id
         }
     }
 
@@ -201,11 +207,16 @@ final class KnowledgePageStore {
 
     func saveLinks(sourceID: UUID, targetTitles: [String]) throws {
         try dbWriter.write { db in
-            try PageLink.filter(Column("source_id") == sourceID).deleteAll(db)
-            for title in targetTitles {
-                let link = PageLink(sourceID: sourceID, targetTitle: title)
-                try link.insert(db)
-            }
+            try saveLinks(sourceID: sourceID, targetTitles: targetTitles, in: db)
+        }
+    }
+
+    /// 在给定数据库连接中保存链接（内部使用）
+    private func saveLinks(sourceID: UUID, targetTitles: [String], in db: Database) throws {
+        try PageLink.filter(Column("source_id") == sourceID).deleteAll(db)
+        for title in targetTitles {
+            let link = PageLink(sourceID: sourceID, targetTitle: title)
+            try link.insert(db)
         }
     }
 
@@ -275,7 +286,7 @@ final class KnowledgePageStore {
                 INSERT INTO \(AppConstants.Storage.Tables.llmCallLogs) (model, prompt_tokens, completion_tokens, latency_ms, status, \(AppConstants.Storage.Columns.created))
                 VALUES (?, ?, ?, ?, ?, ?)
             """, arguments: [model, prompt, completion, latency, status, Date()])
-            
+
             // 同时更新汇总表 token_usage (保持向前兼容)
             try db.execute(sql: """
                 INSERT INTO \(AppConstants.Storage.Tables.tokenUsage) (model, prompt_tokens, completion_tokens, total_tokens, \(AppConstants.Storage.Columns.created))
@@ -283,7 +294,7 @@ final class KnowledgePageStore {
             """, arguments: [model, prompt, completion, prompt + completion, Date()])
         }
     }
-    
+
     /// 获取最近 30 天的平均响应时延
     func fetchAverageLatency() throws -> Int {
         try dbWriter.read { db in
@@ -320,7 +331,7 @@ final class KnowledgePageStore {
     }
 
     /// 获取存储空间分布统计 (基于类型)
-    func fetchStorageStats() throws -> (total: Int64, byType: [String: Int64]) {
+    func fetchStorageStats() throws -> (total: Int64, byType: [String: Int64], dbSize: Int64) {
         try dbWriter.read { db in
             let total: Int64 = try Row.fetchOne(db, sql: "SELECT SUM(\(AppConstants.Storage.Columns.fileSize)) FROM \(AppConstants.Storage.Tables.pages)")?["SUM(\(AppConstants.Storage.Columns.fileSize))"] ?? 0
             let rows = try Row.fetchAll(db, sql: "SELECT type, SUM(\(AppConstants.Storage.Columns.fileSize)) as size FROM \(AppConstants.Storage.Tables.pages) GROUP BY type")
@@ -330,17 +341,29 @@ final class KnowledgePageStore {
                 let size: Int64 = row["size"] ?? 0
                 byType[type] = size
             }
-            return (total, byType)
+
+            // 获取数据库物理文件大小 (通过 PRAGMA 避开 internal 属性访问限制)
+            let dbPathRow = try Row.fetchOne(db, sql: "PRAGMA database_list")
+            let dbPath = dbPathRow?["file"] as? String ?? ""
+            let dbSize = (try? FileManager.default.attributesOfItem(atPath: dbPath)[.size] as? Int64) ?? 0
+
+            return (total, byType, dbSize)
         }
     }
 
-    /// 获取知识溯源统计 (导入与自建维度)
-    func fetchProvenanceStats() throws -> (imported: Int, created: Int) {
+    /// 获取导入与自建统计 (计数与大小)
+    func fetchProvenanceStats() throws -> (importedCount: Int, importedSize: Int64, createdCount: Int, createdSize: Int64) {
         try dbWriter.read { db in
             // 导入的页面通常带有 "ingested" 标签
-            let importedCount = try KnowledgePage.filter(Column("tags").like("%ingested%")).fetchCount(db)
-            let totalCount = try KnowledgePage.fetchCount(db)
-            return (importedCount, totalCount - importedCount)
+            let imported = try Row.fetchOne(db, sql: "SELECT COUNT(*) as count, SUM(\(AppConstants.Storage.Columns.fileSize)) as size FROM \(AppConstants.Storage.Tables.pages) WHERE tags LIKE '%ingested%'")
+            let total = try Row.fetchOne(db, sql: "SELECT COUNT(*) as count, SUM(\(AppConstants.Storage.Columns.fileSize)) as size FROM \(AppConstants.Storage.Tables.pages)")
+
+            let iCount: Int = imported?["count"] ?? 0
+            let iSize: Int64 = imported?["size"] ?? 0
+            let tCount: Int = total?["count"] ?? 0
+            let tSize: Int64 = total?["size"] ?? 0
+
+            return (iCount, iSize, tCount - iCount, tSize - iSize)
         }
     }
 
@@ -350,9 +373,9 @@ final class KnowledgePageStore {
             try PageChunk.filter(Column("embedding") != nil).fetchAll(db)
         }
     }
-    
+
     // MARK: - 数据清洗 (Cleaning)
-    
+
     /// 清洗重复分块：识别并删除内容重复的分块
     func cleanupDuplicateChunks() throws -> Int {
         try dbWriter.write { db in
@@ -368,7 +391,7 @@ final class KnowledgePageStore {
             return db.changesCount
         }
     }
-    
+
     /// 清洗孤儿分块：删除关联页面已不存在的分块
     func cleanupOrphanedChunks() throws -> Int {
         try dbWriter.write { db in
@@ -379,9 +402,9 @@ final class KnowledgePageStore {
             return db.changesCount
         }
     }
-    
+
     // MARK: - 质量评估 (Benchmark)
-    
+
     /// 保存 RAG 评估结果
     func saveEvaluation(query: String, answer: String, scores: [String: Double], model: String) throws {
         try dbWriter.write { db in
@@ -389,20 +412,20 @@ final class KnowledgePageStore {
                 INSERT INTO \(AppConstants.Storage.Tables.ragEvaluations) (query, answer, \(AppConstants.Storage.Columns.faithfulness), \(AppConstants.Storage.Columns.relevance), \(AppConstants.Storage.Columns.precision), evaluator_model, \(AppConstants.Storage.Columns.created))
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, arguments: [
-                query, answer, 
-                scores["faithfulness"] ?? 0, 
-                scores["relevance"] ?? 0, 
-                scores["precision"] ?? 0, 
+                query, answer,
+                scores["faithfulness"] ?? 0,
+                scores["relevance"] ?? 0,
+                scores["precision"] ?? 0,
                 model, Date()
             ])
         }
     }
-    
+
     /// 获取最近的评估分数分布
     func fetchEvaluationStats() throws -> [String: Double] {
         try dbWriter.read { db in
             let row = try Row.fetchOne(db, sql: """
-                SELECT AVG(\(AppConstants.Storage.Columns.faithfulness)), AVG(\(AppConstants.Storage.Columns.relevance)), AVG(\(AppConstants.Storage.Columns.precision)) 
+                SELECT AVG(\(AppConstants.Storage.Columns.faithfulness)), AVG(\(AppConstants.Storage.Columns.relevance)), AVG(\(AppConstants.Storage.Columns.precision))
                 FROM \(AppConstants.Storage.Tables.ragEvaluations)
             """)
             return [

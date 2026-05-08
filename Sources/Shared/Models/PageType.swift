@@ -33,17 +33,6 @@ enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvert
         }
     }
     
-    var icon: String {
-        switch self {
-        case .entity: return "person.text.rectangle.fill"
-        case .concept: return "lightbulb.fill"
-        case .source: return "doc.richtext.fill"
-        case .comparison: return "arrow.left.arrow.right.circle.fill"
-        case .map: return "map.fill"
-        case .raw: return "doc.plaintext.fill"
-        }
-    }
-    
     var colorName: String {
         switch self {
         case .entity: return "blue"
@@ -71,7 +60,7 @@ enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
         case .deprecated: return L10n.CoreModels.tr("status.deprecated")
         }
     }
-
+    
     var colorName: String {
         switch self {
         case .active: return "green"
@@ -95,7 +84,7 @@ enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible {
         case .low: return L10n.CoreModels.tr("confidence.low")
         }
     }
-
+    
     var colorName: String {
         switch self {
         case .high: return "green"

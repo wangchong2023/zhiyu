@@ -21,12 +21,12 @@ struct GraphLayoutProcessor {
 
     /// 布局配置参数
     struct Config {
-        var repulsion: CGFloat = 5000
-        var attraction: CGFloat = 0.01
-        var damping: CGFloat = 0.85
-        var centerGravity: CGFloat = 0.005
-        var iterations: Int = 100
-        var padding: CGFloat = 40
+        var repulsion: CGFloat = AppConstants.Graph.Physics.repulsionForce
+        var attraction: CGFloat = AppConstants.Graph.Physics.attractionForce
+        var damping: CGFloat = AppConstants.Graph.Physics.damping
+        var centerGravity: CGFloat = AppConstants.Graph.Physics.centerGravity
+        var iterations: Int = AppConstants.Graph.TwoD.simulationIterations
+        var padding: CGFloat = AppUI.Graph.layoutPadding
 
         static let `default` = Config()
     }
@@ -42,7 +42,7 @@ struct GraphLayoutProcessor {
 
         // ── 动态画布计算 ──
         let nodeCount = pages.count
-        let baseExpansion = 1.0 + CGFloat(max(0, nodeCount - 20)) * 0.05
+        let baseExpansion = 1.0 + CGFloat(max(0, CGFloat(nodeCount) - AppConstants.Graph.TwoD.baseExpansionOffset)) * AppConstants.Graph.TwoD.expansionFactor
         let virtualWidth = canvasSize.width * baseExpansion
         let virtualHeight = canvasSize.height * baseExpansion
 
@@ -66,17 +66,15 @@ struct GraphLayoutProcessor {
 
         // ── 创建边 (确保无向去重) ──
         var edges: [GraphEdge] = []
+        var edgeSet: Set<EdgePair> = []
         let pageIDSet = Set(pages.map { $0.id })
-        
+
         for page in pages {
             // 解析出站链接
             for link in page.outgoingLinks {
                 if let targetPage = linkResolver(link), pageIDSet.contains(targetPage.id) {
-                    let alreadyExists = edges.contains { e in
-                        (e.source == page.id && e.target == targetPage.id) ||
-                        (e.source == targetPage.id && e.target == page.id)
-                    }
-                    if !alreadyExists && page.id != targetPage.id {
+                    let pair = EdgePair(min(page.id, targetPage.id), max(page.id, targetPage.id))
+                    if page.id != targetPage.id && edgeSet.insert(pair).inserted {
                         edges.append(GraphEdge(source: page.id, target: targetPage.id))
                     }
                 }
@@ -84,11 +82,8 @@ struct GraphLayoutProcessor {
             // 解析相关页面
             for relatedID in page.relatedPageIDs {
                 if pageIDSet.contains(relatedID) {
-                    let alreadyExists = edges.contains { e in
-                        (e.source == page.id && e.target == relatedID) ||
-                        (e.source == relatedID && e.target == page.id)
-                    }
-                    if !alreadyExists && page.id != relatedID {
+                    let pair = EdgePair(min(page.id, relatedID), max(page.id, relatedID))
+                    if page.id != relatedID && edgeSet.insert(pair).inserted {
                         edges.append(GraphEdge(source: page.id, target: relatedID))
                     }
                 }
@@ -108,11 +103,33 @@ struct GraphLayoutProcessor {
                 temperature: temperature
             )
         }
-        
-        // ── 统计连接数 (用于渲染性能优化) ──
+
+        // ── 统计连接数 (用于渲染性能优化) (复杂度 O(E)) ──
+        var linkCounts: [UUID: Int] = [:]
+        for edge in edges {
+            linkCounts[edge.source, default: 0] += 1
+            linkCounts[edge.target, default: 0] += 1
+        }
         for i in nodes.indices {
-            let nodeID = nodes[i].id
-            nodes[i].linkCount = edges.filter { $0.source == nodeID || $0.target == nodeID }.count
+            nodes[i].linkCount = linkCounts[nodes[i].id] ?? 0
+        }
+
+        // ── 最终居中平移优化 ──
+        if !nodes.isEmpty {
+            let minX = nodes.map { $0.position.x }.min() ?? 0
+            let maxX = nodes.map { $0.position.x }.max() ?? 0
+            let minY = nodes.map { $0.position.y }.min() ?? 0
+            let maxY = nodes.map { $0.position.y }.max() ?? 0
+
+            let graphCenter = CGPoint(x: (minX + maxX) / 2, y: (minY + maxY) / 2)
+            let canvasCenter = CGPoint(x: canvasSize.width / 2, y: canvasSize.height / 2)
+            let dx = canvasCenter.x - graphCenter.x
+            let dy = canvasCenter.y - graphCenter.y
+
+            for i in nodes.indices {
+                nodes[i].position.x += dx
+                nodes[i].position.y += dy
+            }
         }
 
         return (nodes, edges)
@@ -129,52 +146,74 @@ struct GraphLayoutProcessor {
     ) {
         let nodeCount = nodes.count
         guard nodeCount > 0 else { return }
-        
-        let effectiveDamping = config.damping * temperature
-        let effectiveGravity = config.centerGravity + (1.0 - temperature) * 0.01
 
         var forces = Array(repeating: CGPoint.zero, count: nodeCount)
-        let centerX = canvasWidth / 2
-        let centerY = canvasHeight / 2
 
-        // ── 1. 性能优化：空间索引优化：网格剖分排斥力计算 (O(N)) ──
-        let gridSize: CGFloat = 120
+        // 1. 斥力计算 (Grid-based O(N))
+        computeRepulsionForces(nodes: nodes, forces: &forces, config: config)
+
+        // 2. 引力计算 (Edge-based O(E))
+        computeAttractionForces(nodes: nodes, edges: edges, forces: &forces, config: config)
+
+        // 3. 向心力与社区引力计算
+        computeCenterAndClusterForces(
+            nodes: nodes,
+            forces: &forces,
+            canvasWidth: canvasWidth,
+            canvasHeight: canvasHeight,
+            temperature: temperature,
+            config: config
+        )
+
+        // 4. 应用力、阻尼系数与边界约束
+        applyForcesAndConstraints(
+            nodes: &nodes,
+            forces: forces,
+            canvasWidth: canvasWidth,
+            canvasHeight: canvasHeight,
+            temperature: temperature,
+            config: config
+        )
+    }
+
+    // MARK: - 物理仿真子模块
+
+    /// 计算节点间的网格斥力
+    private static func computeRepulsionForces(nodes: [GraphNode], forces: inout [CGPoint], config: Config) {
+        let gridSize = AppConstants.Graph.Physics.gridSize
         var grid: [Int: [Int]] = [:]
-        grid.reserveCapacity(nodeCount) // 预留容量减少分配
-        
+
         for i in nodes.indices {
             let gx = Int(nodes[i].position.x / gridSize)
             let gy = Int(nodes[i].position.y / gridSize)
             let key = (gx << 16) | (gy & 0xFFFF)
             grid[key, default: []].append(i)
         }
-        
+
         for i in nodes.indices {
             let gx = Int(nodes[i].position.x / gridSize)
             let gy = Int(nodes[i].position.y / gridSize)
-            
+
             for ox in -1...1 {
                 for oy in -1...1 {
                     let key = ((gx + ox) << 16) | ((gy + oy) & 0xFFFF)
                     guard let neighbors = grid[key] else { continue }
-                    
+
                     for j in neighbors where i < j {
                         let dx = nodes[i].position.x - nodes[j].position.x
                         let dy = nodes[i].position.y - nodes[j].position.y
                         let distSq = dx * dx + dy * dy
-                        
-                        // 核心修复：移除 distSq < 4 的限制（防止重叠节点不排斥），并调优排斥范围
-                        if distSq > 40000 { continue } // 增加排斥范围到 200 像素
-                        
-                        let dist = max(0.1, sqrt(distSq)) // 防止除零
-                        
-                        // 增加碰撞避免力：当距离极小时，给予极大的排斥脉冲
-                        let collisionForce: CGFloat = dist < 20 ? 10000 : 0
+
+                        // 忽略过远或极近的节点
+                        if distSq > AppConstants.Graph.Physics.maxRepulsionDistanceSq || distSq < AppConstants.Graph.Physics.minDistanceSq { continue }
+
+                        let dist = sqrt(distSq)
+                        let collisionForce: CGFloat = dist < AppConstants.Graph.Physics.collisionDistance ? AppConstants.Graph.Physics.collisionForce : 0
                         let force = (config.repulsion / distSq) + collisionForce
-                        
+
                         let fx = (dx / dist) * force
                         let fy = (dy / dist) * force
-                        
+
                         forces[i].x += fx
                         forces[i].y += fy
                         forces[j].x -= fx
@@ -183,33 +222,45 @@ struct GraphLayoutProcessor {
                 }
             }
         }
+    }
 
-        // ── 2. 边的吸引力 (优化后：O(E)) ──
-        // 性能关键：仅在此处建立一次索引映射
+    /// 计算节点间的吸引力（边）
+    private static func computeAttractionForces(nodes: [GraphNode], edges: [GraphEdge], forces: inout [CGPoint], config: Config) {
         let nodeIndexMap = Dictionary(uniqueKeysWithValues: nodes.enumerated().map { ($0.element.id, $0.offset) })
 
         for edge in edges {
-            guard let i = nodeIndexMap[edge.source],
-                  let j = nodeIndexMap[edge.target] else { continue }
+            guard let i = nodeIndexMap[edge.source], let j = nodeIndexMap[edge.target] else { continue }
             let dx = nodes[j].position.x - nodes[i].position.x
             let dy = nodes[j].position.y - nodes[i].position.y
-            
+
             let distSq = dx * dx + dy * dy
             if distSq < 1 { continue }
             let dist = sqrt(distSq)
-            
+
             let force = dist * config.attraction
             let fx = (dx / dist) * force
             let fy = (dy / dist) * force
-            
+
             forces[i].x += fx
             forces[i].y += fy
             forces[j].x -= fx
             forces[j].y -= fy
         }
+    }
 
-        // ── 3. 向心引力与社区引力 ──
-        // 预计算社区中心
+    /// 计算中心向心力与社区聚合力
+    private static func computeCenterAndClusterForces(
+        nodes: [GraphNode],
+        forces: inout [CGPoint],
+        canvasWidth: CGFloat,
+        canvasHeight: CGFloat,
+        temperature: CGFloat,
+        config: Config
+    ) {
+        let centerX = canvasWidth / 2
+        let centerY = canvasHeight / 2
+        let effectiveGravity = config.centerGravity + (1.0 - temperature) * 0.01
+
         var communityCenters: [Int: (sum: CGPoint, count: Int)] = [:]
         for node in nodes {
             if let commID = node.communityID {
@@ -222,11 +273,11 @@ struct GraphLayoutProcessor {
         }
 
         for i in nodes.indices {
-            // 中心引力
+            // 全局中心引力
             forces[i].x += (centerX - nodes[i].position.x) * effectiveGravity
             forces[i].y += (centerY - nodes[i].position.y) * effectiveGravity
-            
-            // 社区引力
+
+            // 社区聚合力 (Cluster Attraction)
             if let commID = nodes[i].communityID, let centerData = communityCenters[commID] {
                 let center = CGPoint(x: centerData.sum.x / CGFloat(centerData.count), y: centerData.sum.y / CGFloat(centerData.count))
                 let dx = center.x - nodes[i].position.x
@@ -236,13 +287,23 @@ struct GraphLayoutProcessor {
                 forces[i].y += dy * clusterAttraction
             }
         }
+    }
 
-        // ── 4. 应用力 + 边界约束 ──
+    /// 应用最终力、阻尼系数并执行画布边界检查
+    private static func applyForcesAndConstraints(
+        nodes: inout [GraphNode],
+        forces: [CGPoint],
+        canvasWidth: CGFloat,
+        canvasHeight: CGFloat,
+        temperature: CGFloat,
+        config: Config
+    ) {
+        let effectiveDamping = config.damping * temperature
         for i in nodes.indices {
             nodes[i].position.x += forces[i].x * effectiveDamping
             nodes[i].position.y += forces[i].y * effectiveDamping
 
-            // 限制在画布内
+            // 边界软约束：确保节点不超出可见画布区域
             nodes[i].position.x = max(config.padding, min(canvasWidth - config.padding, nodes[i].position.x))
             nodes[i].position.y = max(config.padding, min(canvasHeight - config.padding, nodes[i].position.y))
         }

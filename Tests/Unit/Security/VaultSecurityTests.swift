@@ -18,14 +18,14 @@ final class VaultSecurityTests: XCTestCase {
 
     var vault: VaultStorageSecurityService!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         vault = VaultStorageSecurityService()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         vault = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - 初始状态

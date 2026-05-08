@@ -108,7 +108,7 @@ struct PageDetailHeader: View {
                     Image(systemName: "arrow.branch")
                         .font(.caption2)
                         .foregroundStyle(.appSource)
-                    ForEach(page.aliases, id: \.self) { alias in
+                    ForEach(Array(Set(page.aliases)).sorted(), id: \.self) { alias in
                         Text(alias)
                             .font(.caption2)
                             .padding(.horizontal, 8)
@@ -130,7 +130,7 @@ struct PageDetailHeader: View {
         if !page.tags.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
-                    ForEach(page.tags, id: \.self) { tag in
+                    ForEach(Array(Set(page.tags)).sorted(), id: \.self) { tag in
                         Text("#\(tag)")
                             .font(.caption2)
                             .padding(.horizontal, 8)

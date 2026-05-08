@@ -15,7 +15,7 @@ import Foundation
 
 /// 专门处理知识测验数据的解析、转换与清洗
 enum QuizProcessor {
-    
+
     struct QuizModelShell: Codable {
         let title: String
         let questions: [QuestionShell]
@@ -39,7 +39,7 @@ enum QuizProcessor {
     static func convertJSONToMarkdown(_ text: String) -> String? {
         let cleaned = cleanJSON(text)
         guard let data = cleaned.data(using: .utf8) else { return nil }
-        
+
         struct QuizJSON: Codable {
             let title: String?
             let questions: [QuestionJSON]
@@ -51,15 +51,13 @@ enum QuizProcessor {
             let answer: AnyCodable?
             let explanation: String?
         }
-        
+
         enum AnyCodable: Codable {
             case int(Int)
             case string(String)
             init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                if let i = try? container.decode(Int.self) { self = .int(i) }
-                else if let s = try? container.decode(String.self) { self = .string(s) }
-                else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Not int or string") }
+                if let i = try? container.decode(Int.self) { self = .int(i) } else if let s = try? container.decode(String.self) { self = .string(s) } else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Not int or string") }
             }
             func encode(to encoder: Encoder) throws {}
             var stringValue: String {
@@ -71,7 +69,7 @@ enum QuizProcessor {
         }
 
         guard let quiz = try? JSONDecoder().decode(QuizJSON.self, from: data) else { return nil }
-        
+
         var md = "# \(quiz.title ?? Localized.tr("quiz.title"))\n\n"
         for (index, q) in quiz.questions.enumerated() {
             md += "## \(index + 1). \(q.text)\n\n"
@@ -87,7 +85,7 @@ enum QuizProcessor {
             }
             md += "\n</details>\n\n"
         }
-        
+
         return md
     }
 

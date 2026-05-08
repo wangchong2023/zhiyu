@@ -16,62 +16,95 @@ import Foundation
 // MARK: - 社区发现
 extension GraphLayoutProcessor {
 
-    /// 使用 Louvain 算法检测社区，返回带社区信息的节点
     static func detectCommunities(nodes: [GraphNode], edges: [GraphEdge]) -> [GraphNode] {
         guard !nodes.isEmpty else { return [] }
 
-        var workingNodes = nodes
-        let nodeIDs = Set(nodes.map { $0.id })
-        guard nodeIDs.count >= 1 else { return workingNodes }
+        let (adjacency, nodeDegree, undirectedEdges) = buildGraphStructures(nodes: nodes, edges: edges)
+        let m = Double(undirectedEdges.count)
 
-        // 构建邻接表
-        var adjacency: [UUID: Set<UUID>] = [:]
-        var nodeDegree: [UUID: Int] = [:]
-        for node in workingNodes {
-            adjacency[node.id] = []
-            nodeDegree[node.id] = 0
+        guard m > 0 else {
+            return assignIndependentCommunities(nodes: nodes)
         }
 
-        // 构建无向边（避免重复）
+        var (community, communityNodes) = initializeCommunities(nodes: nodes)
+
+        refineCommunities(
+            community: &community,
+            communityNodes: &communityNodes,
+            adjacency: adjacency,
+            nodeDegree: nodeDegree,
+            m: m
+        )
+
+        return finalizeCommunities(
+            nodes: nodes,
+            community: community,
+            undirectedEdges: undirectedEdges
+        )
+    }
+
+    // MARK: - 私有优化组件
+
+    /// 构建图的邻接关系与度数信息
+    private static func buildGraphStructures(nodes: [GraphNode], edges: [GraphEdge]) -> (adjacency: [UUID: Set<UUID>], nodeDegree: [UUID: Int], undirectedEdges: Set<EdgePair>) {
+        let nodeIDs = Set(nodes.map { $0.id })
+        var adjacency: [UUID: Set<UUID>] = [:]
+        var nodeDegree: [UUID: Int] = [:]
+
+        for nodeID in nodeIDs {
+            adjacency[nodeID] = []
+            nodeDegree[nodeID] = 0
+        }
+
         var undirectedEdges: Set<EdgePair> = []
         for edge in edges {
             if nodeIDs.contains(edge.source) && nodeIDs.contains(edge.target) {
-                undirectedEdges.insert(EdgePair(min(edge.source, edge.target), max(edge.source, edge.target)))
+                let pair = EdgePair(min(edge.source, edge.target), max(edge.source, edge.target))
+                if undirectedEdges.insert(pair).inserted {
+                    adjacency[edge.source]?.insert(edge.target)
+                    adjacency[edge.target]?.insert(edge.source)
+                    nodeDegree[edge.source, default: 0] += 1
+                    nodeDegree[edge.target, default: 0] += 1
+                }
             }
         }
+        return (adjacency, nodeDegree, undirectedEdges)
+    }
 
-        // 填充邻接表和度数
-        for edge in undirectedEdges {
-            adjacency[edge.source]?.insert(edge.target)
-            adjacency[edge.target]?.insert(edge.source)
-            nodeDegree[edge.source, default: 0] += 1
-            nodeDegree[edge.target, default: 0] += 1
+    /// 当没有边时，为每个节点分配独立的社区
+    private static func assignIndependentCommunities(nodes: [GraphNode]) -> [GraphNode] {
+        var workingNodes = nodes
+        for i in workingNodes.indices {
+            workingNodes[i].communityID = i
+            workingNodes[i].communityCohesion = 1.0
         }
+        return workingNodes
+    }
 
-        let m = Double(undirectedEdges.count) // 总边数
-        guard m > 0 else {
-            // 无边的情况，所有节点独立社区
-            for i in workingNodes.indices {
-                workingNodes[i].communityID = i
-                workingNodes[i].communityCohesion = 1.0
-            }
-            return workingNodes
-        }
-
-        // 初始化每个节点为独立社区
+    /// 初始化社区分配，每个节点独立为一个社区
+    private static func initializeCommunities(nodes: [GraphNode]) -> (community: [UUID: Int], communityNodes: [Int: Set<UUID>]) {
         var community: [UUID: Int] = [:]
         var communityNodes: [Int: Set<UUID>] = [:]
-        for (index, node) in workingNodes.enumerated() {
+        for (index, node) in nodes.enumerated() {
             community[node.id] = index
             communityNodes[index] = [node.id]
         }
+        return (community, communityNodes)
+    }
 
+    /// 迭代优化社区分配
+    private static func refineCommunities(
+        community: inout [UUID: Int],
+        communityNodes: inout [Int: Set<UUID>],
+        adjacency: [UUID: Set<UUID>],
+        nodeDegree: [UUID: Int],
+        m: Double
+    ) {
         var currentModularity = calculateModularity(community: community, adjacency: adjacency, nodeDegree: nodeDegree, m: m)
-
-        // 迭代优化
         var improved = true
         var iteration = 0
         let maxIterations = 10
+        let nodeIDs = Array(community.keys)
 
         while improved && iteration < maxIterations {
             improved = false
@@ -79,41 +112,17 @@ extension GraphLayoutProcessor {
 
             for nodeID in nodeIDs {
                 let currentComm = community[nodeID]!
+                let bestComm = findBestCommunity(
+                    for: nodeID,
+                    currentComm: currentComm,
+                    community: community,
+                    communityNodes: communityNodes,
+                    adjacency: adjacency,
+                    nodeDegree: nodeDegree,
+                    m: m
+                )
 
-                // 获取邻居社区
-                var neighborCommunities: [Int: [UUID]] = [:]
-                if let neighbors = adjacency[nodeID] {
-                    for neighbor in neighbors {
-                        let neighborComm = community[neighbor]!
-                        if neighborComm != currentComm {
-                            neighborCommunities[neighborComm, default: []].append(neighbor)
-                        }
-                    }
-                }
-
-                // 尝试移动到每个邻居社区
-                var bestComm = currentComm
-                var bestGain = 0.0
-
-                for (targetComm, _) in neighborCommunities {
-                    let gain = calculateModularityGain(
-                        nodeID: nodeID,
-                        targetComm: targetComm,
-                        currentComm: currentComm,
-                        adjacency: adjacency,
-                        nodeDegree: nodeDegree,
-                        community: community,
-                        communityNodes: communityNodes,
-                        m: m
-                    )
-                    if gain > bestGain {
-                        bestGain = gain
-                        bestComm = targetComm
-                    }
-                }
-
-                if bestGain > 0 && bestComm != currentComm {
-                    // 移动节点到更好的社区
+                if bestComm != currentComm {
                     communityNodes[currentComm]?.remove(nodeID)
                     communityNodes[bestComm, default: []].insert(nodeID)
                     community[nodeID] = bestComm
@@ -128,8 +137,57 @@ extension GraphLayoutProcessor {
                 currentModularity = newModularity
             }
         }
+    }
 
-        // 计算社区内聚力
+    /// 寻找节点的最佳目标社区
+    private static func findBestCommunity(
+        for nodeID: UUID,
+        currentComm: Int,
+        community: [UUID: Int],
+        communityNodes: [Int: Set<UUID>],
+        adjacency: [UUID: Set<UUID>],
+        nodeDegree: [UUID: Int],
+        m: Double
+    ) -> Int {
+        var neighborCommunities: [Int: [UUID]] = [:]
+        if let neighbors = adjacency[nodeID] {
+            for neighbor in neighbors {
+                let neighborComm = community[neighbor]!
+                if neighborComm != currentComm {
+                    neighborCommunities[neighborComm, default: []].append(neighbor)
+                }
+            }
+        }
+
+        var bestComm = currentComm
+        var bestGain = 0.0
+
+        for (targetComm, _) in neighborCommunities {
+            let gain = calculateModularityGain(
+                nodeID: nodeID,
+                targetComm: targetComm,
+                currentComm: currentComm,
+                adjacency: adjacency,
+                nodeDegree: nodeDegree,
+                community: community,
+                communityNodes: communityNodes,
+                m: m
+            )
+            if gain > bestGain {
+                bestGain = gain
+                bestComm = targetComm
+            }
+        }
+        return bestComm
+    }
+
+    /// 计算最终的内聚力并更新节点状态
+    private static func finalizeCommunities(
+        nodes: [GraphNode],
+        community: [UUID: Int],
+        undirectedEdges: Set<EdgePair>
+    ) -> [GraphNode] {
+        var workingNodes = nodes
         var communityInternalEdges: [Int: Int] = [:]
         var communityTotalEdges: [Int: Int] = [:]
 
@@ -143,14 +201,9 @@ extension GraphLayoutProcessor {
             }
         }
 
-        // 分配社区 ID 和内聚力
-        var nodeIndexMap: [UUID: Int] = [:]
-        for (index, node) in workingNodes.enumerated() {
-            nodeIndexMap[node.id] = index
-        }
+        let nodeIndexMap = Dictionary(uniqueKeysWithValues: workingNodes.enumerated().map { ($0.element.id, $0.offset) })
 
-        for nodeID in nodeIDs {
-            let comm = community[nodeID]!
+        for (nodeID, comm) in community {
             let internalEdges = communityInternalEdges[comm] ?? 0
             let totalEdges = communityTotalEdges[comm] ?? 1
             let cohesion = Double(internalEdges) / Double(totalEdges)

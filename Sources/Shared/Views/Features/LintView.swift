@@ -2,8 +2,8 @@
 //
 // 作者: Wang Chong
 // 功能说明: 本文件实现了知识管理系统的“健康检查”与“系统治理”中心（LintView），是确保知识库结构完整性与质量的核心视图。
-// 系统通过以下维度对知识库进行全自动审计与优化建议：
-// 1. 结构化审计：自动检测断开的链接（Broken Links）、孤儿页面（Orphan Pages）及循环引用，维护知识图谱的逻辑拓扑。
+// 系统通过以下维度对知识库进行全自动监控与优化建议：
+// 1. 结构化监控：自动检测断开的链接（Broken Links）、孤儿页面（Orphan Pages）及循环引用，维护知识图谱的逻辑拓扑。
 // 2. 健康评分系统：基于页面规模、链接密度及错误率计算实时健康分，通过 Dashboard 直观展示知识库的整体质量水平。
 // 3. AI 治理建议：集成 LLM 对知识内容进行深度扫描，识别可合并的重复概念、建议拆分的冗余文档，并自动发现潜在的关联节点。
 // 4. 自动化修复流程：提供一键修复按钮与快捷跳转功能，支持通过 AI 智能补全缺失元数据，显著降低知识维护的人力成本。
@@ -96,9 +96,10 @@ struct LintViewContent: View {
 
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
                     if selectedTab == 0 { runLint() } else { runAIScan() }
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         // 使用固定身份的 ZStack 和透明度切换，彻底杜绝重影
                         ZStack {
                             ProgressView()
@@ -114,6 +115,10 @@ struct LintViewContent: View {
                     }
                     .font(.subheadline.bold())
                     .foregroundStyle(buttonGradient)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(buttonGradient.opacity(0.12))
+                    .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
                 .disabled(isRunning || aiStore.isScanningAI)
@@ -195,6 +200,7 @@ struct LintViewContent: View {
                 }
                 .padding(.leading, 16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                
                 
                 HStack {
                     Spacer()
@@ -300,37 +306,54 @@ struct LintViewContent: View {
     }
     
     private func metricCard(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .center, spacing: 12) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.1))
-                        .frame(width: 28, height: 28)
+                        .fill(color.opacity(0.15))
+                        .frame(width: 32, height: 32)
                     Image(systemName: icon)
-                        .font(.system(size: 14))
-                        .foregroundStyle(color)
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(color)
                 }
-                
-                Text(title)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.appSecondary)
+                Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .center)
             
-            Text(value)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(.appText)
-                .frame(maxWidth: .infinity, alignment: .center)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.appSecondary)
+                
+                Text(value)
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.appText)
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding(16)
-        .background(AppUI.containerBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
+        .padding(AppUI.standardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            ZStack {
+                Color.appCard
+                LinearGradient(
+                    colors: [color.opacity(0.08), .clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
         )
-        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius)
+                .stroke(
+                    LinearGradient(
+                        colors: [.appBorder.opacity(0.8), .appBorder.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 5)
     }
 
     // MARK: - AI 建议板块

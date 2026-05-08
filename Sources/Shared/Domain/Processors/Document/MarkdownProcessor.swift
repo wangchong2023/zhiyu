@@ -17,7 +17,7 @@ import Foundation
 // MARK: - Markdown 解析器
 /// Pure parsing layer for Markdown content. Returns structured block representations.
 /// Rendering is handled separately by MarkdownRendererView.
-final class MarkdownProcessor {
+final class MarkdownProcessor: Sendable {
 
     // MARK: - 块类型
     enum BlockType {
@@ -168,21 +168,21 @@ final class MarkdownProcessor {
     private func parseHeading(_ line: String) -> BlockType? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         guard trimmed.hasPrefix("#") else { return nil }
-        
+
         let hashes = trimmed.prefix(while: { $0 == "#" })
         let level = hashes.count
-        
+
         // 标题后面必须跟一个空格才是标准的 Markdown 标题 (e.g. "### Title")
         guard level >= 1 && level <= 6 else { return nil }
-        
+
         let contentStart = trimmed.index(trimmed.startIndex, offsetBy: level)
         guard contentStart < trimmed.endIndex else { return nil }
-        
+
         let afterHashes = trimmed[contentStart...]
         if afterHashes.hasPrefix(" ") {
             return .heading(text: afterHashes.trimmingCharacters(in: .whitespaces), level: level)
         }
-        
+
         return nil
     }
 
@@ -229,10 +229,16 @@ final class MarkdownProcessor {
     private func parseBulletList(lines: [String], startIndex: Int) -> (block: BlockType, nextIndex: Int)? {
         let trimmed = lines[startIndex].trimmingCharacters(in: .whitespaces)
 
-        // Check if it's a bullet or numbered list
+        // Check if it's a bullet list
         let isBulletList = trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
-        let isNumberedList = trimmed.count >= 3 && trimmed.first?.isNumber == true &&
-                            trimmed.dropFirst().first == "." && trimmed.dropFirst(2).first == " "
+        // Check if it's a numbered list (e.g. "1. " or "1.[[")
+        let isNumberedList: Bool
+        if let dotIndex = trimmed.firstIndex(of: "."), dotIndex < trimmed.index(trimmed.startIndex, offsetBy: 4) {
+            let prefix = trimmed[..<dotIndex]
+            isNumberedList = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
+        } else {
+            isNumberedList = false
+        }
 
         guard isBulletList || isNumberedList else { return nil }
 
@@ -244,9 +250,13 @@ final class MarkdownProcessor {
 
             if isBulletList && (listLine.hasPrefix("- ") || listLine.hasPrefix("* ")) {
                 items.append(String(listLine.dropFirst(2)))
-            } else if isNumberedList && listLine.count >= 3 && listLine.first?.isNumber == true && listLine.dropFirst().first == "." {
-                if let dotIndex = listLine.firstIndex(of: ".") {
-                    items.append(String(listLine[listLine.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces))
+            } else if isNumberedList, let dotIndex = listLine.firstIndex(of: ".") {
+                let prefix = listLine[..<dotIndex]
+                if prefix.allSatisfy({ $0.isNumber }) && !prefix.isEmpty {
+                    let content = String(listLine[listLine.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces)
+                    items.append(content)
+                } else {
+                    break
                 }
             } else {
                 break
@@ -254,7 +264,7 @@ final class MarkdownProcessor {
             i += 1
         }
 
-        return (.bulletList(items: items, indent: 0), i)
+        return (.bulletList(items: items, indent: isNumberedList ? -1 : 0), i) // 使用 -1 表示有序列表
     }
 
     // MARK: - 解析引用块
@@ -307,32 +317,37 @@ final class MarkdownProcessor {
             var earliestMatch: (type: InlineType, match: NSTextCheckingResult)?
 
             for (type, regex) in patterns {
-                if let match = regex.firstMatch(in: text, range: NSRange(location: currentOffset, length: nsText.length - currentOffset)) {
+                // 在当前剩余文本中寻找最早的匹配
+                if let match = regex.firstMatch(in: text, options: [], range: NSRange(location: currentOffset, length: nsText.length - currentOffset)) {
                     if earliestMatch == nil || match.range.location < earliestMatch!.match.range.location {
                         earliestMatch = (type, match)
+                    } else if match.range.location == earliestMatch!.match.range.location {
+                        // 如果起始位置相同，优先处理更具体的类型（如 applink 优先于 link 或 text）
+                        if type == .applink { earliestMatch = (type, match) }
                     }
                 }
             }
 
             if let earliest = earliestMatch {
                 let matchRange = earliest.match.range
-                
-                // Add text before the match
+
+                // 添加匹配项之前的普通文本
                 if matchRange.location > currentOffset {
                     let before = nsText.substring(with: NSRange(location: currentOffset, length: matchRange.location - currentOffset))
                     segments.append(InlineSegment(type: .text, content: before))
                 }
 
-                // Add the matched segment
+                // 处理匹配到的片段内容
                 let content: String
                 switch earliest.type {
                 case .applink:
-                    let raw = nsText.substring(with: earliest.match.range(at: 1))
+                    // 提取 [[ 内容 ]]
+                    let raw = nsText.substring(with: earliest.match.range(at: 1)).trimmingCharacters(in: .whitespaces)
                     if raw.contains("|") {
                         let parts = raw.split(separator: "|")
                         let title = String(parts.first ?? "").trimmingCharacters(in: .whitespaces)
                         let label = String(parts.last ?? "").trimmingCharacters(in: .whitespaces)
-                        content = "\(label)|\(title)" // 格式：Label|Title
+                        content = "\(label)|\(title)"
                     } else {
                         content = raw
                     }
@@ -345,13 +360,15 @@ final class MarkdownProcessor {
                 default:
                     content = ""
                 }
-                
+
                 segments.append(InlineSegment(type: earliest.type, content: content))
                 currentOffset = matchRange.location + matchRange.length
             } else {
-                // Add remaining text
+                // 无更多匹配，添加剩余所有文本
                 let remainingText = nsText.substring(from: currentOffset)
-                segments.append(InlineSegment(type: .text, content: remainingText))
+                if !remainingText.isEmpty {
+                    segments.append(InlineSegment(type: .text, content: remainingText))
+                }
                 break
             }
         }
@@ -372,7 +389,7 @@ final class MarkdownProcessor {
 }
 
 extension NSRegularExpression {
-    static let appLinkRegex = try! NSRegularExpression(pattern: "\\[\\[([^\\]]+)\\]\\]")
+    static let appLinkRegex = try! NSRegularExpression(pattern: "\\[\\[([^\\]\\n]+)\\]\\]")
     static let boldRegex = try! NSRegularExpression(pattern: "\\*\\*([^*]+)\\*\\*")
     static let italicRegex = try! NSRegularExpression(pattern: "\\*([^*]+)\\*")
     static let codeRegex = try! NSRegularExpression(pattern: "`([^`]+)`")

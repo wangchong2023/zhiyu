@@ -25,6 +25,12 @@
             "state": "translated",
             "value": "AI 正在后台运行中..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 正在后台运行中..."
+          }
         }
       },
       "extractionState": "manual"
@@ -32,6 +38,12 @@
     "chat.aiThinking": {
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 正在思考..."
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "AI 正在思考..."

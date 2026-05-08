@@ -75,220 +75,223 @@ struct SearchView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Search Header (Bar + Filters)
-            VStack(spacing: 12) {
-                // Unified Search Bar
-                HStack(spacing: 0) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.appSecondary)
-                        TextField(Localized.tr("search.placeholder"), text: $searchText)
-                            .foregroundStyle(.appText)
-                            .accessibilityIdentifier("searchPlaceholder")
-                            .submitLabel(.search)
-                            .onSubmit {
-                                if !searchText.isEmpty {
-                                    runAdvancedSearch()
+        ZStack {
+            AppUI.Background.meshGradient()
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Search Header (Bar + Filters)
+                VStack(spacing: 12) {
+                    // Unified Search Bar
+                    HStack(spacing: 0) {
+                        HStack(spacing: AppUI.tightPadding + AppUI.atomic) { // 10
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(.appSecondary)
+                            TextField(Localized.tr("search.placeholder"), text: $searchText)
+                                .foregroundStyle(.appText)
+                                .accessibilityIdentifier("searchPlaceholder")
+                                .submitLabel(.search)
+                                .onSubmit {
+                                    if !searchText.isEmpty {
+                                        runAdvancedSearch()
+                                    }
                                 }
-                            }
 
-                        if !searchText.isEmpty {
-                            Button(action: { 
-                                searchText = ""
-                                useAdvancedSearch = false
-                                advancedResults = []
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.appSecondary)
+                            if !searchText.isEmpty {
+                                Button(action: { 
+                                    searchText = ""
+                                    useAdvancedSearch = false
+                                    advancedResults = []
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.appSecondary)
+                                }
+                                .padding(.trailing, AppUI.tiny)
                             }
-                            .padding(.trailing, 4)
                         }
+                        .padding(.leading, AppUI.standardPadding - AppUI.atomic) // 14
+                        .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
+                        .background(Color.appCard)
                     }
-                    .padding(.leading, 14)
-                    .padding(.vertical, 10)
-                    .background(Color.appCard)
-                }
-                .frame(height: 46)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.appBorder.opacity(0.5), lineWidth: 0.5)
-                )
-                .padding(.horizontal)
-                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: searchText.isEmpty)
-                
-                // Filters
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        FilterPill(title: Localized.tr("search.all"), accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
-                            HapticFeedback.shared.trigger(.selection)
-                            filterType = nil
-                        }
-
-                        ForEach(PageType.allCases) { type in
-                            FilterPill(
-                                title: type.displayName,
-                                icon: type.icon,
-                                color: Color.fromModelColorName(type.colorName),
-                                accessibilityIdentifier: "filter-\(type.rawValue)",
-                                isSelected: filterType == type
-                            ) {
+                    .frame(height: AppUI.inputBarHeight)
+                    .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppUI.mediumRadius)
+                            .stroke(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625), lineWidth: AppUI.borderWidth / 2) // 0.5
+                    )
+                    .padding(.horizontal)
+                    .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: searchText.isEmpty)
+                    
+                    // Filters
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            FilterPill(title: Localized.tr("search.all"), accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
                                 HapticFeedback.shared.trigger(.selection)
-                                filterType = type
+                                filterType = nil
                             }
-                        }
 
-                        Divider().frame(height: 24).background(Color.appBorder)
-
-                        // Status Filters
-                        Menu {
-                            Button(L10n.Common.tr("all")) { filterStatus = nil }
-                            ForEach(PageStatus.allCases, id: \.self) { status in
-                                Button(status.displayName) { filterStatus = status }
-                            }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "flag")
-                                    .font(.caption)
-                                Text(filterStatus?.displayName ?? Localized.tr("page.status"))
-                                    .font(.caption)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(filterStatus == nil ? Color.appCard : Color.appAccent.opacity(0.1))
-                            .clipShape(Capsule())
-                            .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
-                        }
-
-                        Divider().frame(height: 24).background(Color.appBorder)
-
-                        // Sort options
-                        Menu {
-                            ForEach(SortOption.allCases, id: \.self) { option in
-                                Button(action: { sortBy = option }) {
-                                    Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? "checkmark" : "")
+                            ForEach(PageType.allCases) { type in
+                                FilterPill(
+                                    title: type.displayName,
+                                    icon: type.icon,
+                                    color: Color.fromModelColorName(type.colorName),
+                                    accessibilityIdentifier: "filter-\(type.rawValue)",
+                                    isSelected: filterType == type
+                                ) {
+                                    HapticFeedback.shared.trigger(.selection)
+                                    filterType = type
                                 }
                             }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "arrow.up.arrow.down")
-                                    .font(.caption)
-                                Text(Localized.tr(sortBy.rawValue))
-                                    .font(.caption)
+
+                            Divider().frame(height: 24).background(Color.appBorder)
+
+                            // Status Filters
+                            Menu {
+                                Button(L10n.Common.tr("all")) { filterStatus = nil }
+                                ForEach(PageStatus.allCases, id: \.self) { status in
+                                    Button(status.displayName) { filterStatus = status }
+                                }
+                            } label: {
+                                HStack(spacing: AppUI.tiny) {
+                                    Image(systemName: "flag")
+                                        .font(.caption)
+                                    Text(filterStatus?.displayName ?? Localized.tr("page.status"))
+                                        .font(.caption)
+                                }
+                                .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
+                                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
+                                .background(filterStatus == nil ? Color.appCard : Color.appAccent.opacity(AppUI.glassOpacity / 1.5)) // 0.1
+                                .clipShape(Capsule())
+                                .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
                             }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(Color.appCard)
-                            .clipShape(Capsule())
+
+                            Divider().frame(height: 24).background(Color.appBorder)
+
+                            // Sort options
+                            Menu {
+                                ForEach(SortOption.allCases, id: \.self) { option in
+                                    Button(action: { sortBy = option }) {
+                                        Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? "checkmark" : "")
+                                    }
+                                }
+                            } label: {
+                                HStack(spacing: AppUI.tiny) {
+                                    Image(systemName: "arrow.up.arrow.down")
+                                        .font(.caption)
+                                    Text(Localized.tr(sortBy.rawValue))
+                                        .font(.caption)
+                                }
+                                .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
+                                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
+                                .background(Color.appCard)
+                                .clipShape(Capsule())
+                                .foregroundStyle(.appSecondary)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.top, 12)
+                .background(Color.appBackground)
+                
+                // Main Results Content
+                ZStack {
+                    if searchStore.isSearching {
+                        VStack(spacing: AppUI.standardPadding) {
+                            ForEach(0..<6) { _ in
+                                HStack(spacing: AppUI.medium) {
+                                    SkeletonBox(width: AppUI.Sidebar.iconBoxSize, height: AppUI.Sidebar.iconBoxSize) // 44
+                                    VStack(alignment: .leading, spacing: AppUI.tightPadding) {
+                                        SkeletonBox(width: 140, height: AppUI.standardFontSize)
+                                        SkeletonBox(width: 240, height: AppUI.microFontSize)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.horizontal)
+                            }
+                            Spacer()
+                        }
+                        .padding(.top, AppUI.Action.iconSize) // 20
+                    } else if filteredPages.isEmpty {
+                        VStack(spacing: AppUI.standardPadding) {
+                            Spacer()
+                            Image(systemName: searchText.isEmpty ? "magnifyingglass" : "doc.text.magnifyingglass")
+                                .font(.system(size: AppUI.Metrics.heroValueSize * 1.5)) // 48
+                                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
+                            
+                            Text(searchText.isEmpty ? Localized.tr("search.placeholder") : Localized.tr("search.noResults"))
+                                .font(.headline)
+                                .foregroundStyle(.appSecondary)
+                            
+                            if !searchText.isEmpty {
+                                Text(Localized.tr("search.noResultsHint"))
+                                    .font(.caption)
+                                    .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.875)) // 0.7
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, AppUI.huge)
+                            }
+                            Spacer()
+                        }
+                    } else {
+                        List {
+                            ForEach(filteredPages) { page in
+                                Button(action: {
+                                    HapticFeedback.shared.trigger(.selection)
+                                    router.navigate(to: .pageDetail(id: page.id))
+                                }) {
+                                    PageRowView(page: page)
+                                }
+                                .buttonStyle(.plain)
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                                .contextMenu {
+                                    Button {
+                                        HapticFeedback.shared.trigger(.selection)
+                                        previewPage = page
+                                    } label: {
+                                        Label(L10n.Common.tr("quickPreview"), systemImage: "eye")
+                                    }
+                                    
+                                    Button {
+                                        AppPasteboard.string = "[[\(page.title)]]"
+                                    } label: {
+                                        Label(L10n.Common.tr("copyPageLink"), systemImage: "link")
+                                    }
+                                }
+                            }
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                    }
+                }
+                .animation(.default, value: searchStore.isSearching)
+                .animation(.default, value: filteredPages.isEmpty)
+                
+                // Footer
+                if !filteredPages.isEmpty {
+                    Divider().background(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
+                    HStack {
+                        Text(Localized.trf("search.pagesCount", filteredPages.count))
+                            .font(.caption)
                             .foregroundStyle(.appSecondary)
+                        
+                        if useAdvancedSearch {
+                            Spacer()
+                            Button(action: { showDiagnostics = true }) {
+                                Label(Localized.tr("search.diagnostics"), systemImage: "info.circle")
+                                    .font(.caption2)
+                                    .foregroundStyle(.appAccent)
+                            }
+                        } else {
+                            Spacer()
                         }
                     }
                     .padding(.horizontal)
+                    .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
+                    .background(Color.appBackground)
                 }
-            }
-            .padding(.top, 12)
-            .background(Color.appBackground)
-            
-            
-            // Main Results Content
-            ZStack {
-                if searchStore.isSearching {
-                    VStack(spacing: 16) {
-                        ForEach(0..<6) { _ in
-                            HStack(spacing: 12) {
-                                SkeletonBox(width: 44, height: 44)
-                                VStack(alignment: .leading, spacing: 8) {
-                                    SkeletonBox(width: 140, height: 14)
-                                    SkeletonBox(width: 240, height: 10)
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal)
-                        }
-                        Spacer()
-                    }
-                    .padding(.top, 20)
-                } else if filteredPages.isEmpty {
-                    VStack(spacing: 16) {
-                        Spacer()
-                        Image(systemName: searchText.isEmpty ? "magnifyingglass" : "doc.text.magnifyingglass")
-                            .font(.system(size: 48))
-                            .foregroundStyle(.appSecondary.opacity(0.5))
-                        
-                        Text(searchText.isEmpty ? Localized.tr("search.placeholder") : Localized.tr("search.noResults"))
-                            .font(.headline)
-                            .foregroundStyle(.appSecondary)
-                        
-                        if !searchText.isEmpty {
-                            Text(Localized.tr("search.noResultsHint"))
-                                .font(.caption)
-                                .foregroundStyle(.appSecondary.opacity(0.7))
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 40)
-                        }
-                        Spacer()
-                    }
-                } else {
-                    List {
-                        ForEach(filteredPages) { page in
-                            Button(action: {
-                                HapticFeedback.shared.trigger(.selection)
-                                router.navigate(to: .pageDetail(id: page.id))
-                            }) {
-                                PageRowView(page: page)
-                            }
-                            .buttonStyle(.plain)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                            .contextMenu {
-                                Button {
-                                    HapticFeedback.shared.trigger(.selection)
-                                    previewPage = page
-                                } label: {
-                                    Label(L10n.Common.tr("quickPreview"), systemImage: "eye")
-                                }
-                                
-                                Button {
-                                    AppPasteboard.string = "[[\(page.title)]]"
-                                } label: {
-                                    Label(L10n.Common.tr("copyPageLink"), systemImage: "link")
-                                }
-                            }
-                        }
-                    }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                }
-            }
-            .animation(.default, value: searchStore.isSearching)
-            .animation(.default, value: filteredPages.isEmpty)
-            
-            // Footer
-            if !filteredPages.isEmpty {
-                Divider().background(Color.appBorder.opacity(0.5))
-                HStack {
-                    Text(Localized.trf("search.pagesCount", filteredPages.count))
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary)
-                    
-                    if useAdvancedSearch {
-                        Spacer()
-                        Button(action: { showDiagnostics = true }) {
-                            Label(Localized.tr("search.diagnostics"), systemImage: "info.circle")
-                                .font(.caption2)
-                                .foregroundStyle(.appAccent)
-                        }
-                    } else {
-                        Spacer()
-                    }
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 10)
-                .background(Color.appBackground)
             }
         }
-        .background(Color.appBackground)
         .navigationTitle(Localized.tr("search.title"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
@@ -391,7 +394,7 @@ struct FilterPill: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
             if let icon = icon {
                 Image(systemName: icon)
                     .font(horizontalSizeClass == .regular ? .subheadline : .caption)
@@ -399,14 +402,14 @@ struct FilterPill: View {
             Text(title)
                 .font(pillFont.weight(isSelected ? .semibold : .regular))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .background(isSelected ? color.opacity(0.25) : Color.appCard)
+        .padding(.horizontal, AppUI.standardPadding)
+        .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
+        .background(isSelected ? color.opacity(AppUI.glassOpacity * 1.66) : Color.appCard) // 0.25
         .clipShape(Capsule())
         .foregroundStyle(isSelected ? color : .appSecondary)
         .overlay(
             Capsule()
-                .stroke(isSelected ? color.opacity(0.4) : Color.clear, lineWidth: 1)
+                .stroke(isSelected ? color.opacity(AppUI.disabledOpacity + 0.1) : Color.clear, lineWidth: AppUI.borderWidth) // 0.4, 1
         )
         .contentShape(Capsule())
         .onTapGesture(perform: action)
@@ -468,10 +471,10 @@ struct SearchBadgeView: View {
     let color: Color
     var body: some View {
         Text(label)
-            .font(.system(size: 9, weight: .bold))
-            .padding(.horizontal, 6)
-            .padding(.vertical, 2)
-            .background(color.opacity(0.1))
+            .font(.system(size: AppUI.microFontSize - AppUI.atomic, weight: .bold)) // 9
+            .padding(.horizontal, AppUI.tiny + AppUI.atomic) // 6
+            .padding(.vertical, AppUI.atomic * 2) // 2
+            .background(color.opacity(AppUI.glassOpacity / 1.5)) // 0.1
             .foregroundStyle(color)
             .clipShape(Capsule())
     }

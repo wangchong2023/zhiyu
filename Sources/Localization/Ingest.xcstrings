@@ -212,6 +212,12 @@
             "state": "translated",
             "value": "🔋 [Eco-Indexing] 系统处于低功耗模式，将采用节流索引策略。"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Power Mode Indexing"
+          }
         }
       },
       "extractionState": "manual"
@@ -219,6 +225,12 @@
     "ingest.enrichRichContentPrompt": {
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "# Role: 知识工程专家\n\n# Task: \n分析以下 Markdown 内容，识别其中的表格 (|---|) 和图片 (![]())。\n\n# Requirements:\n1. 对于每个表格，基于其行列数据生成一段 150 字以内的“数据洞察摘要”。\n2. 对于每个核心图片，基于标题或上下文推测其视觉语义。\n3. 将这些分析结果以 `> [Semantic Insight]: ...` 的格式插入到原图表下方。\n4. 保持原文逻辑不变，仅返回增强后的完整 Markdown 内容。"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "# Role: 知识工程专家\n\n# Task: \n分析以下 Markdown 内容，识别其中的表格 (|---|) 和图片 (![]())。\n\n# Requirements:\n1. 对于每个表格，基于其行列数据生成一段 150 字以内的“数据洞察摘要”。\n2. 对于每个核心图片，基于标题或上下文推测其视觉语义。\n3. 将这些分析结果以 `> [Semantic Insight]: ...` 的格式插入到原图表下方。\n4. 保持原文逻辑不变，仅返回增强后的完整 Markdown 内容。"
@@ -248,6 +260,12 @@
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL 抓取失败: %@"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "URL 抓取失败: %@"
@@ -858,6 +876,12 @@
             "state": "translated",
             "value": "正在抓取并 RAG 索引: %@"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在抓取并 RAG 索引: %@"
+          }
         }
       }
     },
@@ -865,6 +889,12 @@
       "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在抓取 URL: %@"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "正在抓取 URL: %@"

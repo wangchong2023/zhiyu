@@ -10,6 +10,7 @@
 
 import XCTest
 import SwiftUI
+import GRDB
 @testable import ZhiYu
 
 // MARK: - Models Tests
@@ -84,10 +85,9 @@ final class ModelsTests: XCTestCase {
             content: "This links to [[Page A]] and [[Page B]] and [[Page A]] again."
         )
         let links = page.outgoingLinks
-        XCTAssertEqual(links.count, 3) // includes duplicate
+        XCTAssertEqual(links.count, 2) // AppLinkProcessor deduplicates
         XCTAssertEqual(links[0], "Page A")
         XCTAssertEqual(links[1], "Page B")
-        XCTAssertEqual(links[2], "Page A")
     }
     
     func testOutgoingLinksNoMatch() {
@@ -224,23 +224,22 @@ final class ModelsTests: XCTestCase {
             XCTAssertFalse(type.icon.isEmpty, "PageType.\(type.rawValue) should have an icon")
         }
     }
-    
     func testPageTypeColors() {
         for type in PageType.allCases {
-            _ = type.themedColor // Just verify it doesn't crash
+            _ = type.colorName // Just verify it doesn't crash
         }
     }
-    
+
     // MARK: - PageStatus Tests
     func testPageStatusAllCases() {
         XCTAssertEqual(PageStatus.allCases.count, 4)
     }
-    
+
     func testPageStatusColors() {
-        XCTAssertEqual(PageStatus.active.color, .green)
-        XCTAssertEqual(PageStatus.stub.color, .yellow)
-        XCTAssertEqual(PageStatus.needsUpdate.color, .orange)
-        XCTAssertEqual(PageStatus.deprecated.color, .red)
+        XCTAssertEqual(PageStatus.active.colorName, "green")
+        XCTAssertEqual(PageStatus.stub.colorName, "yellow")
+        XCTAssertEqual(PageStatus.needsUpdate.colorName, "orange")
+        XCTAssertEqual(PageStatus.deprecated.colorName, "red")
     }
     
     // MARK: - Confidence Tests
@@ -318,19 +317,19 @@ final class LintIssueTests: XCTestCase {
         XCTAssertEqual(issue.severity, .error)
         XCTAssertEqual(issue.message, "Broken link")
         XCTAssertEqual(issue.severity.icon, "xmark.circle.fill")
-        XCTAssertEqual(issue.severity.color, .red)
+        XCTAssertEqual(issue.severity.colorName, "red")
     }
     
     func testLintIssueSeverityWarning() {
         let issue = LintIssue(severity: .warning, message: "Orphan page", suggestion: "Add links to this page")
         XCTAssertEqual(issue.severity.icon, "exclamationmark.triangle.fill")
-        XCTAssertEqual(issue.severity.color, Color.orange)
+        XCTAssertEqual(issue.severity.colorName, "orange")
     }
     
     func testLintIssueSeverityInfo() {
         let issue = LintIssue(severity: .info, message: "Stub content", suggestion: "Expand the content")
         XCTAssertEqual(issue.severity.icon, "info.circle.fill")
-        XCTAssertEqual(issue.severity.color, Color.blue)
+        XCTAssertEqual(issue.severity.colorName, "blue")
     }
 }
 
@@ -579,7 +578,7 @@ final class IngestServiceTests: XCTestCase {
         ]
         
         let content = "I want to learn about Machine Learning and Neural Networks."
-        let concepts = ingestService.extractConcepts(from: content, pages: pages)
+        let concepts = await ingestService.extractConcepts(from: content, pages: pages)
         
         XCTAssertTrue(concepts.contains("Machine Learning"))
         XCTAssertTrue(concepts.contains("Neural Network"))
@@ -588,13 +587,13 @@ final class IngestServiceTests: XCTestCase {
     
     func testExtractConceptsCaseInsensitive() async {
         let pages = [KnowledgePage(title: "SwiftUI", type: .concept)]
-        let concepts = ingestService.extractConcepts(from: "I love swiftui programming", pages: pages)
+        let concepts = await ingestService.extractConcepts(from: "I love swiftui programming", pages: pages)
         XCTAssertTrue(concepts.contains("SwiftUI"), "Should be case-insensitive")
     }
     
     func testExtractConceptsEmpty() async {
         let pages = [KnowledgePage(title: "Something")]
-        let concepts = ingestService.extractConcepts(from: "No matches here", pages: pages)
+        let concepts = await ingestService.extractConcepts(from: "No matches here", pages: pages)
         XCTAssertTrue(concepts.isEmpty)
     }
     
@@ -608,14 +607,14 @@ final class IngestServiceTests: XCTestCase {
     }
 }
 
-// MARK: - MarkdownParser Tests
-final class MarkdownParserTests: XCTestCase {
+// MARK: - MarkdownProcessor Tests
+final class MarkdownProcessorTests: XCTestCase {
     
-    var parser: MarkdownParser!
+    var parser: MarkdownProcessor!
     
     override func setUp() async throws {
         try await super.setUp()
-        parser = MarkdownParser()
+        parser = MarkdownProcessor()
     }
     
     func testParseHeadings() {
@@ -697,7 +696,7 @@ final class MarkdownParserTests: XCTestCase {
         let types = segments.map(\.type)
         XCTAssertTrue(types.contains(.bold))
         XCTAssertTrue(types.contains(.code))
-        XCTAssertTrue(types.contains(.wikilink))
+        XCTAssertTrue(types.contains(.applink))
         XCTAssertTrue(types.contains(.italic))
         XCTAssertTrue(types.contains(.text))
         
@@ -739,15 +738,15 @@ final class MarkdownParserTests: XCTestCase {
     }
 }
 
-// MARK: - LogService Tests
+// MARK: - Logger Tests
 @MainActor
-final class LogServiceTests: XCTestCase {
+final class LoggerTests: XCTestCase {
     
-    var logService: LogService!
+    var logService: Logger!
     
     override func setUp() async throws {
         try await super.setUp()
-        logService = LogService()
+        logService = Logger()
         logService.logEntries.removeAll() // Start clean
     }
     

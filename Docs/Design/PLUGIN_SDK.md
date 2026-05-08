@@ -70,7 +70,7 @@ protocol UIExtensionPlugin: KnowledgePlugin {
 | :--- | :--- | :--- | :--- |
 | **hostVersion** | `var hostVersion: String` | 无 | 宿主内核版本号（当前 `"2.0.0"`） |
 | **log** | `func log(_ message: String)` | 无 | 统一日志输出，自动添加 `[Plugin:id]` 前缀 |
-| **requestAIAccess** | `func requestAIAccess(prompt:) async -> String?` | `"llm"` (manifest) | 调用 LLM，未声明权限返回 `nil` 并记录安全审计 |
+| **requestAIAccess** | `func requestAIAccess(prompt:) async -> String?` | `"llm"` (manifest) | 调用 LLM，未声明权限返回 `nil` 并记录安全检查 |
 | **queryPages** | `func queryPages(matching:) async -> [WikiPage]` | `"pages.read"` (manifest) | 模糊搜索页面，未声明权限返回空数组 |
 
 ### 权限管控流程
@@ -98,7 +98,7 @@ Plugin.requestAIAccess()
 
 | 机制 | 配置 | 说明 |
 | :--- | :--- | :--- |
-| **权限白名单** | `manifest.permissions` | 每次调用前检查权限，未声明操作被拦截并记录审计日志 |
+| **权限白名单** | `manifest.permissions` | 每次调用前检查权限，未声明操作被拦截并记录操作日志 |
 | **流控降级** | 50 次/60s 窗口 | 超阈值自动跳过该插件，下一窗口恢复 |
 | **超时熔断** | 0.5s 单次执行 | 超时记录警告并触发 `plugin_circuit_break` 埋点 |
 | **崩溃隔离** | `do-catch` 保护链 | 单插件异常不导致主程序闪退 |

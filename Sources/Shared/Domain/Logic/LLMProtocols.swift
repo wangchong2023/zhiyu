@@ -15,10 +15,10 @@ import Foundation
 protocol LLMAdapter: Sendable {
     var id: String { get }
     var displayName: String { get }
-    
+
     /// 执行同步生成任务
     func generate(prompt: String, systemPrompt: String) async throws -> String
-    
+
     /// 执行流式生成任务
     func chatStream(messages: [[String: Any]]) -> AsyncThrowingStream<String, Error>
 }

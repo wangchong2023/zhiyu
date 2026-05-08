@@ -19,7 +19,7 @@ import SceneKit
 struct Graph3DView: View {
     @Environment(AppStore.self) var store
     @State private var scene: SCNScene?
-    @State private var cameraDistance: Float = 140
+    @State private var cameraDistance: Float = AppConstants.Graph.ThreeD.defaultCameraDistance
     @State private var autoRotate = false
     @State private var filterType: PageType? = nil
     @State private var showNodeInfo = false
@@ -47,8 +47,8 @@ struct Graph3DView: View {
             
             if !isFullScreen {
                 headerOverlay
-                    .padding(.top, 16)
-                    .padding(.leading, 20)
+                    .padding(.top, AppUI.standardPadding)
+                    .padding(.leading, AppUI.widePadding)
             }
             
             // FPS Indicator (Bottom Left, Subtle)
@@ -57,15 +57,15 @@ struct Graph3DView: View {
         .overlay(alignment: .topTrailing) {
             if !hideControls {
                 controlsOverlay
-                    .padding(.top, isFullScreen ? 40 : 8)
-                    .padding(.trailing, 16)
+                    .padding(.top, isFullScreen ? AppUI.huge + AppUI.tightPadding : AppUI.tightPadding)
+                    .padding(.trailing, AppUI.standardPadding)
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
         .overlay(alignment: .bottom) {
             if let page = infoPage {
                 nodeInfoBar(page: page)
-                    .padding(.bottom, isFullScreen ? 20 : 8)
+                    .padding(.bottom, isFullScreen ? AppUI.widePadding : AppUI.tightPadding)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -109,15 +109,15 @@ struct Graph3DView: View {
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, AppUI.tightPadding)
+                .padding(.vertical, AppUI.tiny)
                 .background(.ultraThinMaterial)
                 .clipShape(Capsule())
-                .opacity(0.6)
+                .opacity(AppUI.secondaryOpacity * 0.75) // 0.6
                 Spacer()
             }
-            .padding(.leading, 16)
-            .padding(.bottom, isFullScreen ? 40 : 16)
+            .padding(.leading, AppUI.standardPadding)
+            .padding(.bottom, isFullScreen ? AppUI.huge + AppUI.tightPadding : AppUI.standardPadding)
         }
         .allowsHitTesting(false)
     }
@@ -177,8 +177,8 @@ struct Graph3DView: View {
         }
 
         // 优化 3D 布局空间：根据节点数量动态扩展球体半径，确保节点间距足够
-        let baseRadius = sqrt(Double(pages.count)) * 12.0
-        let radius: CGFloat = CGFloat(max(40, min(150, baseRadius)))
+        let baseRadius = sqrt(Double(pages.count)) * AppConstants.Graph.ThreeD.baseSphereRadiusMultiplier
+        let radius: CGFloat = CGFloat(max(AppConstants.Graph.ThreeD.minSphereRadius, min(AppConstants.Graph.ThreeD.maxSphereRadius, baseRadius)))
         let positions = generateSpherePositions(count: pages.count, radius: radius)
 
         let nodeMap = createPageNodes(pages: pages, positions: positions, scene: newScene)
@@ -195,8 +195,8 @@ struct Graph3DView: View {
     }
 
     private func addStarfield(to scene: SCNScene) {
-        let starCount = 500
-        let starGeometry = SCNSphere(radius: 0.1)
+        let starCount = AppConstants.Graph.ThreeD.starCount
+        let starGeometry = SCNSphere(radius: AppUI.Graph.ThreeD.starRadius)
         starGeometry.firstMaterial?.emission.contents = UIColor(Color.appAccent).withAlphaComponent(0.8)
         starGeometry.firstMaterial?.diffuse.contents = UIColor(Color.appAccent).withAlphaComponent(0.5)
         
@@ -233,8 +233,8 @@ struct Graph3DView: View {
     private func setupCamera(scene: SCNScene) {
         let camera = SCNNode()
         camera.camera = SCNCamera()
-        camera.camera?.zNear = 0.1
-        camera.camera?.zFar = 1000 
+        camera.camera?.zNear = AppConstants.Graph.ThreeD.cameraZNear
+        camera.camera?.zFar = AppConstants.Graph.ThreeD.cameraZFar 
         camera.position = SCNVector3(0, 15, Float(cameraDistance))
         camera.look(at: SCNVector3(0, 0, 0))
         camera.name = "mainCamera"
@@ -266,11 +266,11 @@ struct Graph3DView: View {
             let isDimmed = selectedNodeID != nil && !isSelected && !isNeighbor
             
             let uiColor = UIColor(Color.fromModelColorName(page.type.colorName))
-            let opacity: CGFloat = isDimmed ? 0.2 : 1.0
+            let opacity: CGFloat = isDimmed ? AppUI.dimmedOpacity : AppUI.fullOpacity
             
             geometry.firstMaterial?.diffuse.contents = uiColor.withAlphaComponent(opacity)
             geometry.firstMaterial?.specular.contents = UIColor.white.withAlphaComponent(opacity)
-            geometry.firstMaterial?.emission.contents = isDimmed ? uiColor.withAlphaComponent(0.1) : uiColor.withAlphaComponent(0.4)
+            geometry.firstMaterial?.emission.contents = isDimmed ? uiColor.withAlphaComponent(AppUI.glassOpacity / 1.5) : uiColor.withAlphaComponent(AppUI.disabledOpacity + 0.1)
 
             let node = SCNNode(geometry: geometry)
             node.position = SCNVector3(
@@ -311,7 +311,11 @@ struct Graph3DView: View {
     private func calculateNodeSize(for page: KnowledgePage) -> CGFloat {
         let backlinkCount = store.pages.filter { $0.outgoingLinks.contains(page.title) }.count
         let linkCount = page.outgoingLinks.count + backlinkCount
-        return CGFloat(max(1.2, min(4.0, 1.5 + Double(linkCount) * 0.4)))
+        // 增大节点基础尺寸与上限
+        return CGFloat(max(
+            AppUI.Graph.ThreeD.minNodeSize,
+            min(AppUI.Graph.ThreeD.maxNodeSize, AppUI.Graph.ThreeD.baseNodeSize + Double(linkCount) * AppUI.Graph.ThreeD.nodeLinkWeight)
+        ))
     }
 
     private func createLabelNode(title: String, nodeSize: CGFloat) -> SCNNode {
@@ -321,8 +325,9 @@ struct Graph3DView: View {
         text.isWrapped = false
 
         let textNode = SCNNode(geometry: text)
-        textNode.position = SCNVector3(Float(nodeSize + 0.5), 0, 0)
-        textNode.scale = SCNVector3(0.4, 0.4, 0.4)
+        textNode.position = SCNVector3(Float(nodeSize + CGFloat(AppUI.Graph.ThreeD.labelOffset)), 0, 0)
+        let labelScale = AppUI.Graph.ThreeD.labelScale
+        textNode.scale = SCNVector3(labelScale, labelScale, labelScale)
         textNode.geometry?.firstMaterial?.diffuse.contents = UIColor.white
         textNode.geometry?.firstMaterial?.emission.contents = UIColor.white.withAlphaComponent(0.3)
 
@@ -343,9 +348,12 @@ struct Graph3DView: View {
 
     private func createEdgeNodes(pages: [KnowledgePage], nodeMap: [UUID: SCNNode], scene: SCNScene) {
         var processedEdges = Set<String>()
+        // 性能优化：建立标题到页面的映射表，将查找复杂度从 O(N) 降至 O(1)
+        let pageTitleMap = Dictionary(uniqueKeysWithValues: store.pages.map { ($0.title, $0) })
+        
         for page in pages {
             for linkTitle in page.outgoingLinks {
-                if let linkedPage = store.pages.first(where: { $0.title == linkTitle }),
+                if let linkedPage = pageTitleMap[linkTitle],
                    let sourceNode = nodeMap[page.id],
                    let targetNode = nodeMap[linkedPage.id] {
                     let edgeKey = [page.id.uuidString, linkedPage.id.uuidString].sorted().joined(separator: "-")
@@ -396,7 +404,7 @@ struct Graph3DView: View {
         let vector = SCNVector3(target.x - source.x, target.y - source.y, target.z - source.z)
         let length = sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z)
         let isHighlighted = selectedNodeID == sourceID || selectedNodeID == targetID
-        let radius: CGFloat = isHighlighted ? 0.15 : 0.05
+        let radius: CGFloat = isHighlighted ? AppUI.Graph.ThreeD.edgeRadiusHighlighted : AppUI.Graph.ThreeD.edgeRadius
         let cylinder = SCNCylinder(radius: radius, height: CGFloat(length))
         let baseColor = UIColor(Color.appAccent)
         let opacity: CGFloat = isHighlighted ? 1.0 : 0.2
@@ -442,7 +450,7 @@ struct Graph3DView: View {
     private func resetCamera() {
         guard let camera = cameraNode else { return }
         HapticFeedback.shared.trigger(.selection)
-        cameraDistance = 140 
+        cameraDistance = AppConstants.Graph.ThreeD.defaultCameraDistance 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 0.8
         SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeInEaseOut)

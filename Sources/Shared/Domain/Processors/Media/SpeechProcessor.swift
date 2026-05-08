@@ -32,19 +32,19 @@ final class SpeechProcessor: ObservableObject {
     @Published var selectedLanguage: String = "zh-CN"
     @Published var hasPermission: Bool = false
     @Published var recordings: [VoiceRecording] = []
-    
+
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
-    
+
     // MARK: - Init
     init() {
         loadSupportedLanguages()
         checkPermission()
         loadRecordings()
     }
-    
+
     // MARK: - Permission
     func checkPermission() {
         SFSpeechRecognizer.requestAuthorization { status in
@@ -65,7 +65,7 @@ final class SpeechProcessor: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Languages
     private func loadSupportedLanguages() {
         let locales: [(String, String)] = [
@@ -78,13 +78,13 @@ final class SpeechProcessor: ObservableObject {
             ("fr-FR", Localized.tr("speech.lang.frFR")),
             ("de-DE", Localized.tr("speech.lang.deDE")),
             ("es-ES", Localized.tr("speech.lang.esES")),
-            ("pt-BR", Localized.tr("speech.lang.ptBR")),
+            ("pt-BR", Localized.tr("speech.lang.ptBR"))
         ]
-        
+
         supportedLanguages = locales.filter { locale in
             SFSpeechRecognizer(locale: Locale(identifier: locale.0)) != nil
         }
-        
+
         // Auto-select based on system language
         let preferred = Locale.preferredLanguages.first ?? "en-US"
         if preferred.hasPrefix("zh-Hans") || preferred.hasPrefix("zh-CN") {
@@ -95,7 +95,7 @@ final class SpeechProcessor: ObservableObject {
             selectedLanguage = match.code
         }
     }
-    
+
     // MARK: - Start Recording
     func startRecording() {
         guard hasPermission else {
@@ -191,38 +191,38 @@ final class SpeechProcessor: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Stop Recording
     func stopRecording() {
         audioEngine?.inputNode.removeTap(onBus: 0)
         audioEngine?.stop()
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
-        
+
         isRecording = false
         audioLevel = 0
         audioLevelHistory = Array(repeating: 0, count: 20)
-        
+
         if !transcribedText.isEmpty {
             statusMessage = Localized.tr("speech.status.complete")
         } else {
             statusMessage = Localized.tr("speech.status.ready")
         }
     }
-    
+
     // MARK: - Transcribe Audio File
     func transcribeFile(url: URL) async throws -> String {
         isTranscribing = true
         defer { isTranscribing = false }
-        
+
         let locale = Locale(identifier: selectedLanguage)
         guard let recognizer = SFSpeechRecognizer(locale: locale) else {
             throw SpeechError.localeNotSupported
         }
-        
+
         let request = SFSpeechURLRecognitionRequest(url: url)
         request.shouldReportPartialResults = false
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             recognizer.recognitionTask(with: request) { result, error in
                 if let error = error {
@@ -235,7 +235,7 @@ final class SpeechProcessor: ObservableObject {
             }
         }
     }
-    
+
     // MARK: - Save Recording
     func saveRecording(title: String) -> VoiceRecording {
         let recording = VoiceRecording(
@@ -250,28 +250,28 @@ final class SpeechProcessor: ObservableObject {
         saveRecordingsToDisk()
         return recording
     }
-    
+
     func deleteRecording(_ recording: VoiceRecording) {
         recordings.removeAll { $0.id == recording.id }
         saveRecordingsToDisk()
     }
-    
+
     // MARK: - Clear
     func clearTranscription() {
         transcribedText = ""
         statusMessage = Localized.tr("speech.status.ready")
     }
-    
+
     // MARK: - Persistence
     private let recordingsKey = "zhiyu_voice_recordings"
-    
+
     private func loadRecordings() {
         if let data = UserDefaults.standard.data(forKey: recordingsKey),
            let decoded = try? JSONDecoder().decode([VoiceRecording].self, from: data) {
             recordings = decoded
         }
     }
-    
+
     private func saveRecordingsToDisk() {
         if let data = try? JSONEncoder().encode(recordings) {
             UserDefaults.standard.set(data, forKey: recordingsKey)
@@ -294,7 +294,7 @@ enum SpeechError: LocalizedError {
     case localeNotSupported
     case notAuthorized
     case audioEngineError
-    
+
     var errorDescription: String? {
         switch self {
         case .localeNotSupported: return Localized.tr("speech.error.localeNotSupported")

@@ -29,7 +29,7 @@ struct ChatBubbleView: View {
     var isSelected: Bool = false
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) { // 12
             if isSelectionMode {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(isSelected ? Color.appAccent : Color.appSecondary)
@@ -58,69 +58,90 @@ struct ChatBubbleView: View {
     }
     
     private var userBubble: some View {
-        VStack(alignment: .trailing, spacing: 4) {
-            VStack(alignment: .trailing, spacing: 4) {
-                Image(systemName: "person.circle.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.white.opacity(0.8))
-                
-                Text(message.content)
-                    .font(.footnote)
-                    .foregroundStyle(.white)
+        VStack(alignment: .trailing, spacing: AppUI.tiny) { // 4
+            VStack(alignment: .trailing, spacing: AppUI.tiny + AppUI.atomic) { // 6
+                HStack(spacing: AppUI.tiny) { // 4
+                    Text(message.content)
+                        .font(.body)
+                        .foregroundStyle(.white)
+                    
+                    Image(systemName: "person.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.white.opacity(AppUI.secondaryOpacity)) // 0.8
+                        .offset(y: AppUI.atomic) // 1
+                }
             }
-            .padding(14)
+            .padding(.horizontal, AppUI.standardPadding) // 16
+            .padding(.vertical, AppUI.medium) // 12
+            .frame(minWidth: AppUI.huge * 1.875) // 60
             .background(
                 LinearGradient(
-                    colors: [.appAccent, .appAccent.opacity(0.85)],
+                    colors: [.appAccent, .appAccent.opacity(AppUI.secondaryOpacity)], // 0.8
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
-            .shadow(color: Color.appAccent.opacity(0.2), radius: 6, x: 0, y: 3)
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+            .shadow(color: Color.appAccent.opacity(AppUI.glassOpacity * 1.5), radius: AppUI.tightPadding, x: 0, y: AppUI.tiny) // 0.15, 8, 4
             
             Text(timestampString)
-                .font(.system(size: 10))
-                .foregroundStyle(.appSecondary)
+                .font(.system(size: AppUI.microFontSize - AppUI.atomic)) // 9
+                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.75)) // 0.6
+                .padding(.trailing, AppUI.tiny) // 4
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.leading, 24)
+        .padding(.leading, AppUI.huge * 1.875) // 60
     }
     
     private var assistantBubble: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 4) {
-                    Image(systemName: "sparkles")
-                        .font(.caption2)
-                    Text("AI")
-                        .font(.system(size: 10, weight: .bold))
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+            VStack(alignment: .leading, spacing: AppUI.tightPadding) { // 8
+                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
+                    ZStack {
+                        Circle()
+                            .fill(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.1
+                            .frame(width: AppUI.Action.iconSize, height: AppUI.Action.iconSize) // 20
+                        Image(systemName: "sparkles")
+                            .font(.system(size: AppUI.microFontSize)) // 10
+                            .foregroundStyle(.appAccent)
+                    }
+                    Text("智宇 AI")
+                        .font(.system(size: AppUI.microFontSize + AppUI.atomic, weight: .bold)) // 11
+                        .foregroundStyle(.appAccent)
                 }
-                .foregroundStyle(.appAccent)
                 
                 ChatContentView(text: message.content, pages: pages, selectedTab: $selectedTab)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.horizontal, AppUI.standardPadding) // 16
+            .padding(.vertical, AppUI.standardPadding - AppUI.atomic) // 14
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: AppUI.mediumRadius)
-                    .stroke(Color.appAccent.opacity(0.12), lineWidth: 1)
+                RoundedRectangle(cornerRadius: AppUI.standardRadius)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.appAccent.opacity(AppUI.glassOpacity), .clear], // 0.1
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: AppUI.borderWidth // 1
+                    )
             )
-            .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
+            .shadow(color: Color.black.opacity(AppUI.glassOpacity * 0.4), radius: AppUI.tightPadding + AppUI.atomic, x: 0, y: AppUI.tiny + AppUI.atomic) // 0.04, 10, 5
             
             // Collapsible References Panel
             if !message.relatedPageIDs.isEmpty {
                 referencesPanel
+                    .padding(.top, AppUI.atomic * 2) // 2
             }
             
             Text(timestampString)
-                .font(.system(size: 10))
-                .foregroundStyle(.appSecondary)
+                .font(.system(size: AppUI.microFontSize - AppUI.atomic)) // 9
+                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.75)) // 0.6
+                .padding(.leading, AppUI.tiny) // 4
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.trailing, 8)
+        .padding(.trailing, AppUI.huge) // 32
     }
     
     /// Collapsible references panel showing cited knowledge pages grouped by type
@@ -205,14 +226,14 @@ struct ChatBubbleView: View {
         HStack {
             Spacer()
             Text(message.content)
-                .font(.system(size: 11))
-                .foregroundStyle(.appSecondary.opacity(0.8))
-                .padding(.horizontal, 20)
-                .padding(.vertical, 4)
-                .background(Capsule().fill(Color.appCard.opacity(0.5)))
+                .font(.system(size: AppUI.microFontSize + AppUI.atomic)) // 11
+                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity)) // 0.8
+                .padding(.horizontal, AppUI.wide) // 20
+                .padding(.vertical, AppUI.tiny) // 4
+                .background(Capsule().fill(Color.appCard.opacity(AppUI.fullOpacity * 0.5))) // 0.5
             Spacer()
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, AppUI.tightPadding) // 8
     }
 }
 

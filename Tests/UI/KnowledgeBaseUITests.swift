@@ -61,18 +61,18 @@ class KnowledgeBaseUITests: XCTestCase {
     }
 
     /// 导航到 Wiki Tab
-    func navigateToWikiTab() {
+    func navigateToWikiTab() async async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
 
     /// 导航到设置 Tab
-    func navigateToSettingsTab() {
+    func navigateToSettingsTab() async async {
         app.tabBars.buttons["Settings"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
 }
 
@@ -80,12 +80,12 @@ class KnowledgeBaseUITests: XCTestCase {
 final class TabNavigationTests: KnowledgeBaseUITests {
 
     /// 测试全部 5 个 Tab 都能被点击
-    func testAllFiveTabsAreTappable() {
+    func testAllFiveTabsAreTappable() async {
         let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
         for tab in tabs {
             XCTAssertTrue(app.tabBars.buttons[tab].exists, "Tab '\(tab)' 不存在")
             app.tabBars.buttons[tab].tap()
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
         }
     }
 }
@@ -95,43 +95,43 @@ final class WikiTabTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        navigateToWikiTab()
+        await navigateToWikiTab()
     }
 
     // MARK: Sidebar Tests
-    func testSidebarIndexButton() {
+    func testSidebarIndexButton() async {
         let indexButton = app.buttons["总索引"]
         if indexButton.exists {
             safeTap(indexButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
             // 验证导航到 IndexView（NavigationStack）
             XCTAssertTrue(app.navigationBars.buttons.element(boundBy: 0).exists || app.navigationBars["索引"].exists)
         }
     }
 
-    func testSidebarLogButton() {
+    func testSidebarLogButton() async {
         let logButton = app.buttons["操作日志"]
         if logButton.exists {
             safeTap(logButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
         }
     }
 
-    func testSidebarHealthCheckButton() {
+    func testSidebarHealthCheckButton() async {
         let healthButton = app.buttons["健康检查"]
         if healthButton.exists {
             safeTap(healthButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
         }
     }
 
     // MARK: Page Creation Tests
-    func testCreatePageButton() {
+    func testCreatePageButton() async {
         // 点击创建按钮
         let createButton = app.navigationBars.buttons.element(boundBy: 1)
         if createButton.exists {
             safeTap(createButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
             // 验证 CreatePageView Sheet 出现
             XCTAssertTrue(app.sheets.firstMatch.exists || app.navigationBars["创建页面"].exists)
         }
@@ -143,17 +143,17 @@ final class PageDetailTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        navigateToWikiTab()
+        await navigateToWikiTab()
         // 尝试创建一个测试页面并进入
-        createTestPage()
+        await createTestPage()
     }
 
-    private func createTestPage() {
+    private func createTestPage() async {
         // 点击创建按钮
         let createButton = app.navigationBars.buttons.element(boundBy: 1)
         if createButton.exists {
             safeTap(createButton)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
 
             // 填写标题
             let titleField = app.textFields["页面标题"]
@@ -166,45 +166,45 @@ final class PageDetailTests: KnowledgeBaseUITests {
             let createPageBtn = app.buttons["创建"]
             if createPageBtn.exists && createPageBtn.isEnabled {
                 safeTap(createPageBtn)
-                Thread.sleep(forTimeInterval: 2)
+                try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
             }
         }
     }
 
-    func testPinButton() {
+    func testPinButton() async {
         let pinButton = app.navigationBars.buttons.element(boundBy: 0)
         if pinButton.exists {
             safeTap(pinButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             safeTap(pinButton) // 再次点击取消固定
         }
     }
 
-    func testBacklinksButton() {
+    func testBacklinksButton() async {
         let backlinksButton = app.navigationBars.buttons.element(boundBy: 1)
         if backlinksButton.exists {
             safeTap(backlinksButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证 sheet
             XCTAssertTrue(app.sheets.firstMatch.exists || app.buttons["关闭"].exists)
         }
     }
 
-    func testEditButton() {
+    func testEditButton() async {
         let editButton = app.navigationBars.buttons.element(boundBy: 2)
         if editButton.exists {
             safeTap(editButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证编辑工具栏出现
             XCTAssertTrue(app.scrollViews.firstMatch.exists)
         }
     }
 
-    func testMoreMenu() {
+    func testMoreMenu() async {
         let moreButton = app.navigationBars.buttons["更多"]
         if moreButton.exists {
             safeTap(moreButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证 Menu 出现
             XCTAssertTrue(app.menuItems.firstMatch.exists || app.sheets.firstMatch.exists)
         }
@@ -217,15 +217,15 @@ final class SearchTests: KnowledgeBaseUITests {
     override func setUp() async throws {
         try await super.setUp()
         app.tabBars.buttons["Search"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
-    func testSearchBarIsTappable() {
+    func testSearchBarIsTappable() async {
         let searchField = app.textFields["搜索页面、标签、内容..."]
         if searchField.exists {
             safeTap(searchField)
             searchField.typeText("Test")
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证键盘出现
             XCTAssertTrue(app.keyboards.element.exists)
             // 清空搜索
@@ -236,45 +236,45 @@ final class SearchTests: KnowledgeBaseUITests {
         }
     }
 
-    func testTypeFilterPills() {
+    func testTypeFilterPills() async {
         let allPill = app.buttons["全部"]
         if allPill.exists {
             safeTap(allPill)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
 
         let entityPill = app.buttons["实体"]
         if entityPill.exists {
             safeTap(entityPill)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testSortMenu() {
+    func testSortMenu() async {
         let sortButton = app.buttons["最近更新"]
         if sortButton.exists {
             safeTap(sortButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证 menu 出现
             if app.menuItems.firstMatch.exists {
                 // 选择一个排序选项
                 app.menuItems.firstMatch.tap()
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
-    func testSearchResultsNavigation() {
+    func testSearchResultsNavigation() async {
         let searchField = app.textFields["搜索页面、标签、内容..."]
         if searchField.exists {
             searchField.tap()
             searchField.typeText("Page")
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
             // 查找第一个结果
             let resultCell = app.tables.cells.firstMatch
             if resultCell.exists && resultCell.isHittable {
                 safeTap(resultCell)
-                Thread.sleep(forTimeInterval: 2)
+                try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
             }
         }
     }
@@ -285,100 +285,100 @@ final class SettingsTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        navigateToSettingsTab()
+        await navigateToSettingsTab()
     }
 
-    func testNavigateToLLMSettings() {
+    func testNavigateToLLMSettings() async {
         let llmNav = app.cells.matching(identifier: "AI-LLM设置").firstMatch
         if llmNav.exists && llmNav.isHittable {
             safeTap(llmNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateToOnDeviceLLM() {
+    func testNavigateToOnDeviceLLM() async {
         let onDeviceNav = app.cells.matching(identifier: "AI-端侧LLM").firstMatch
         if onDeviceNav.exists && onDeviceNav.isHittable {
             safeTap(onDeviceNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateToiCloudSync() {
+    func testNavigateToiCloudSync() async {
         let iCloudNav = app.cells.matching(identifier: "数据-iCloud同步").firstMatch
         if iCloudNav.exists && iCloudNav.isHittable {
             safeTap(iCloudNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateToBackup() {
+    func testNavigateToBackup() async {
         let backupNav = app.cells.matching(identifier: "数据-备份").firstMatch
         if backupNav.exists && backupNav.isHittable {
             safeTap(backupNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateTo3DGraph() {
+    func testNavigateTo3DGraph() async {
         let graphNav = app.cells.matching(identifier: "功能-3D图谱").firstMatch
         if graphNav.exists && graphNav.isHittable {
             safeTap(graphNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateToSpatialComputing() {
+    func testNavigateToSpatialComputing() async {
         let spatialNav = app.cells.matching(identifier: "功能-空间计算").firstMatch
         if spatialNav.exists && spatialNav.isHittable {
             safeTap(spatialNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testNavigateToAbout() {
+    func testNavigateToAbout() async {
         let aboutNav = app.cells.matching(identifier: "关于-应用").firstMatch
         if aboutNav.exists && aboutNav.isHittable {
             safeTap(aboutNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testResetKnowledgeBaseShowsConfirmation() {
+    func testResetKnowledgeBaseShowsConfirmation() async {
         // 危险操作：只测试确认对话框出现，不执行实际重置
         let resetButton = app.buttons["危险-重置知识库"]
         if resetButton.exists && resetButton.isHittable {
             safeTap(resetButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证确认对话框出现
             XCTAssertTrue(app.alerts.firstMatch.exists || app.dialogs.firstMatch.exists)
             // 取消重置
             let cancelButton = app.buttons["取消"].firstMatch
             if cancelButton.exists {
                 safeTap(cancelButton)
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
-    func testAppearanceSectionAccessible() {
+    func testAppearanceSectionAccessible() async {
         // 外观 Section（语言）应该可以滚动访问
         let scrollView = app.scrollViews.firstMatch
         if scrollView.exists {
             scrollView.swipeUp(velocity: .fast)
-            Thread.sleep(forTimeInterval: 0.3)
+            try? await Task.sleep(nanoseconds: UInt64(0.3 * 1_000_000_000))
             scrollView.swipeDown(velocity: .fast)
         }
     }
 
-    func testAllSectionsScrollable() {
+    func testAllSectionsScrollable() async {
         // 验证 Settings 可以滚动到所有 Section
         let scrollView = app.scrollViews.firstMatch
         if scrollView.exists {
             scrollView.swipeUp(velocity: .fast)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             scrollView.swipeUp(velocity: .fast)
-            Thread.sleep(forTimeInterval: 0.3)
+            try? await Task.sleep(nanoseconds: UInt64(0.3 * 1_000_000_000))
             // App 不应崩溃
             XCTAssertTrue(app.exists, "App should still be running after scrolling")
         }
@@ -391,78 +391,78 @@ final class IngestTests: KnowledgeBaseUITests {
     override func setUp() async throws {
         try await super.setUp()
         app.tabBars.buttons["Ingest"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
-    func testOCRButtonExists() {
+    func testOCRButtonExists() async {
         let ocrButton = app.buttons.matching(identifier: "OCR扫描").firstMatch
         if ocrButton.exists {
             safeTap(ocrButton)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
             // 验证进入 OCR 界面
             XCTAssertTrue(app.navigationBars["OCR 文字识别"].exists || app.buttons["取消"].exists)
         }
     }
 
-    func testManualEntrySectionExists() {
+    func testManualEntrySectionExists() async {
         let titleField = app.textFields["输入页面标题"]
         if titleField.exists {
             safeTap(titleField)
             titleField.typeText("Test Ingest Page")
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testSmartIngestToggle() {
+    func testSmartIngestToggle() async {
         let toggle = app.switches.matching(identifier: "智能导入").firstMatch
         if toggle.exists {
             safeTap(toggle)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testIngestButton() {
+    func testIngestButton() async {
         // 先填写标题
         let titleField = app.textFields["输入页面标题"]
         if titleField.exists {
             titleField.tap()
             titleField.typeText("Manual Test Page")
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
 
         let ingestButton = app.buttons["开始导入"]
         if ingestButton.exists && ingestButton.isEnabled {
             safeTap(ingestButton)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
         }
     }
 
-    func testFileImportButton() {
+    func testFileImportButton() async {
         // 测试文件导入按钮存在并可点击
         let fileButton = app.buttons.matching(identifier: "文件导入").firstMatch
         XCTAssertTrue(fileButton.exists, "文件导入按钮不存在")
         safeTap(fileButton)
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         // 验证文件选择器出现或系统弹窗
         XCTAssertTrue(app.sheets.firstMatch.exists || app.otherElements["DocumentBrowser"].exists || !fileButton.isHittable)
     }
 
-    func testVoiceNoteButton() {
+    func testVoiceNoteButton() async {
         // 测试语音笔记按钮存在并可点击
         let voiceButton = app.buttons.matching(identifier: "语音笔记").firstMatch
         XCTAssertTrue(voiceButton.exists, "语音笔记按钮不存在")
         safeTap(voiceButton)
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         // 验证语音录制界面出现
         XCTAssertTrue(app.navigationBars.firstMatch.exists || app.sheets.firstMatch.exists)
     }
 
-    func testClipboardImportButton() {
+    func testClipboardImportButton() async {
         // 测试剪贴板导入按钮存在并可点击
         let clipboardButton = app.buttons.matching(identifier: "剪贴板导入").firstMatch
         XCTAssertTrue(clipboardButton.exists, "剪贴板导入按钮不存在")
         safeTap(clipboardButton)
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 
@@ -472,65 +472,65 @@ final class GraphTests: KnowledgeBaseUITests {
     override func setUp() async throws {
         try await super.setUp()
         app.tabBars.buttons["Graph"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
-    func testGraphZoomControls() {
+    func testGraphZoomControls() async {
         // 测试缩放按钮
         let zoomIn = app.buttons.matching(identifier: "zoom-in").firstMatch
         if zoomIn.exists {
             safeTap(zoomIn)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
 
         let zoomOut = app.buttons.matching(identifier: "zoom-out").firstMatch
         if zoomOut.exists {
             safeTap(zoomOut)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
 
         let resetBtn = app.buttons.matching(identifier: "reset").firstMatch
         if resetBtn.exists {
             safeTap(resetBtn)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
 
         let relayoutBtn = app.buttons.matching(identifier: "relayout").firstMatch
         if relayoutBtn.exists {
             safeTap(relayoutBtn)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testTypeFilterPills() {
+    func testTypeFilterPills() async {
         let entityFilter = app.buttons.matching(identifier: "Filter-entity").firstMatch
         if entityFilter.exists {
             safeTap(entityFilter)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             safeTap(entityFilter) // 取消选择
         }
     }
 
-    func testLegendToggle() {
+    func testLegendToggle() async {
         let legendBtn = app.buttons.matching(identifier: "toggle-legend").firstMatch
         if legendBtn.exists {
             safeTap(legendBtn)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testInsightsToggle() {
+    func testInsightsToggle() async {
         // 测试图谱洞察按钮（刚修复的布局问题）
         let insightsBtn = app.buttons.matching(identifier: "toggle-insights").firstMatch
         XCTAssertTrue(insightsBtn.exists, "图谱洞察按钮不存在")
         safeTap(insightsBtn)
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         // 验证洞察面板出现
         XCTAssertTrue(app.scrollViews.firstMatch.exists || app.otherElements.firstMatch.exists)
         // 再次点击关闭
         if insightsBtn.isHittable {
             safeTap(insightsBtn)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 }
@@ -541,41 +541,41 @@ final class ChatTests: KnowledgeBaseUITests {
     override func setUp() async throws {
         try await super.setUp()
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         // 从 Wiki tab 导航到 Chat
         let chatNav = app.cells.matching(identifier: "AI-Chat").firstMatch
         if chatNav.exists {
             safeTap(chatNav)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
         }
     }
 
-    func testSendMessage() {
+    func testSendMessage() async {
         let textField = app.textFields.firstMatch
         if textField.exists {
             safeTap(textField)
             textField.typeText("Hello")
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
             let sendButton = app.buttons["send"]
             if sendButton.exists && sendButton.isEnabled {
                 safeTap(sendButton)
-                Thread.sleep(forTimeInterval: 3)
+                try? await Task.sleep(nanoseconds: UInt64(3 * 1_000_000_000))
             }
         }
     }
 
-    func testClearHistory() {
+    func testClearHistory() async {
         let menuButton = app.buttons["menu"]
         if menuButton.exists {
             safeTap(menuButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
             // 查找清除历史按钮
             let clearButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '清空'")).firstMatch
             if clearButton.exists {
                 safeTap(clearButton)
-                Thread.sleep(forTimeInterval: 1)
+                try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
                 // 确认对话框
                 let confirmButton = app.buttons["清空"]
                 if confirmButton.exists {
@@ -585,13 +585,13 @@ final class ChatTests: KnowledgeBaseUITests {
         }
     }
 
-    func testSuggestedQueries() {
+    func testSuggestedQueries() async {
         // 查找建议问题按钮
         let suggestedButtons = app.buttons.matching(NSPredicate(format: "label CONTAINS '什么是' OR label CONTAINS '如何' OR label CONTAINS '解释'"))
         let count = suggestedButtons.count
         if count > 0 {
             safeTap(suggestedButtons.element(boundBy: 0))
-            Thread.sleep(forTimeInterval: 3)
+            try? await Task.sleep(nanoseconds: UInt64(3 * 1_000_000_000))
         }
     }
 }
@@ -602,36 +602,36 @@ final class LintTests: KnowledgeBaseUITests {
     override func setUp() async throws {
         try await super.setUp()
         // 健康检查现在在 Wiki Tab 侧边栏
-        navigateToWikiTab()
+        await navigateToWikiTab()
         let healthButton = app.buttons.matching(identifier: "healthCheck").firstMatch
         if healthButton.exists && healthButton.isHittable {
             safeTap(healthButton)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
         }
     }
 
-    func testRunHealthCheckButton() {
+    func testRunHealthCheckButton() async {
         let runButton = app.buttons.matching(identifier: "run-lint").firstMatch
         if runButton.exists && runButton.isHittable {
             safeTap(runButton)
-            Thread.sleep(forTimeInterval: 3)
+            try? await Task.sleep(nanoseconds: UInt64(3 * 1_000_000_000))
             // 验证问题列表出现或一切正常提示
             XCTAssertTrue(app.scrollViews.firstMatch.exists || app.staticTexts.firstMatch.exists)
         }
     }
 
-    func testExpandIssueItem() {
+    func testExpandIssueItem() async {
         // 先运行检查
         let runButton = app.buttons.matching(identifier: "run-lint").firstMatch
         if runButton.exists && runButton.isHittable {
             safeTap(runButton)
-            Thread.sleep(forTimeInterval: 3)
+            try? await Task.sleep(nanoseconds: UInt64(3 * 1_000_000_000))
         }
 
         let issueCell = app.cells.firstMatch
         if issueCell.exists && issueCell.isHittable {
             safeTap(issueCell)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 }
@@ -641,42 +641,42 @@ final class iCloudSyncTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        navigateToSettingsTab()
+        await navigateToSettingsTab()
         let iCloudNav = app.cells.matching(identifier: "数据-iCloud同步").firstMatch
         if iCloudNav.exists && iCloudNav.isHittable {
             safeTap(iCloudNav)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testPushToCloud() {
+    func testPushToCloud() async {
         let pushButton = app.buttons.matching(identifier: "push-to-icloud").firstMatch
         if pushButton.exists && pushButton.isHittable && pushButton.isEnabled {
             safeTap(pushButton)
-            Thread.sleep(forTimeInterval: 3)
+            try? await Task.sleep(nanoseconds: UInt64(3 * 1_000_000_000))
         }
     }
 
-    func testPullFromCloudShowsConfirmation() {
+    func testPullFromCloudShowsConfirmation() async {
         let pullButton = app.buttons.matching(identifier: "pull-from-icloud").firstMatch
         if pullButton.exists && pullButton.isHittable && pullButton.isEnabled {
             safeTap(pullButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证确认对话框出现
             XCTAssertTrue(app.alerts.firstMatch.exists || app.dialogs.firstMatch.exists)
             let cancelButton = app.buttons["取消"].firstMatch
             if cancelButton.exists {
                 safeTap(cancelButton)
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
-    func testAutoSyncToggle() {
+    func testAutoSyncToggle() async {
         let autoSyncToggle = app.switches.matching(identifier: "auto-sync").firstMatch
         if autoSyncToggle.exists && autoSyncToggle.isHittable {
             safeTap(autoSyncToggle)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 }
@@ -686,16 +686,16 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        navigateToWikiTab()
+        await navigateToWikiTab()
         // 创建并进入编辑页面
-        createAndEditPage()
+        await createAndEditPage()
     }
 
-    private func createAndEditPage() {
+    private func createAndEditPage() async {
         let createButton = app.navigationBars.buttons.element(boundBy: 1)
         if createButton.exists {
             safeTap(createButton)
-            Thread.sleep(forTimeInterval: 2)
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
 
             let titleField = app.textFields["页面标题"]
             if titleField.exists {
@@ -706,95 +706,95 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
             let createBtn = app.buttons["创建"]
             if createBtn.exists {
                 safeTap(createBtn)
-                Thread.sleep(forTimeInterval: 2)
+                try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
             }
 
             // 点击编辑按钮
             let editButton = app.navigationBars.buttons.element(boundBy: 2)
             if editButton.exists {
                 safeTap(editButton)
-                Thread.sleep(forTimeInterval: 1)
+                try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             }
         }
     }
 
-    func testToolbarH1Button() {
+    func testToolbarH1Button() async {
         let h1Button = app.buttons["H1"]
         if h1Button.exists {
             safeTap(h1Button)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarBoldButton() {
+    func testToolbarBoldButton() async {
         let boldButton = app.buttons["粗体"]
         if boldButton.exists {
             safeTap(boldButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarItalicButton() {
+    func testToolbarItalicButton() async {
         let italicButton = app.buttons["斜体"]
         if italicButton.exists {
             safeTap(italicButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarCodeButton() {
+    func testToolbarCodeButton() async {
         let codeButton = app.buttons["代码"]
         if codeButton.exists {
             safeTap(codeButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarLinkButton() {
+    func testToolbarLinkButton() async {
         let linkButton = app.buttons["链接"]
         if linkButton.exists {
             safeTap(linkButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testToolbarListButton() {
+    func testToolbarListButton() async {
         let listButton = app.buttons["列表"]
         if listButton.exists {
             safeTap(listButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarBlockquoteButton() {
+    func testToolbarBlockquoteButton() async {
         let quoteButton = app.buttons["引用"]
         if quoteButton.exists {
             safeTap(quoteButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarTableButton() {
+    func testToolbarTableButton() async {
         let tableButton = app.buttons["表格"]
         if tableButton.exists {
             safeTap(tableButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarDividerButton() {
+    func testToolbarDividerButton() async {
         let dividerButton = app.buttons["分割线"]
         if dividerButton.exists {
             safeTap(dividerButton)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testToolbarWikilinkButton() {
+    func testToolbarWikilinkButton() async {
         let kmlinkButton = app.buttons["Wiki链接"]
         if kmlinkButton.exists {
             safeTap(kmlinkButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 验证 sheet 出现
             if app.sheets.firstMatch.exists {
                 safeTap(app.buttons["取消"])
@@ -802,26 +802,26 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
         }
     }
 
-    func testAddTagInput() {
+    func testAddTagInput() async {
         let addTagButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '添加标签'")).firstMatch
         if addTagButton.exists {
             safeTap(addTagButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 输入标签
             let textField = app.textFields["输入标签名称"]
             if textField.exists {
                 textField.typeText("TestTag")
                 safeTap(app.buttons["添加"])
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
-    func testFinishEditing() {
+    func testFinishEditing() async {
         let doneButton = app.navigationBars.buttons.element(boundBy: 2)
         if doneButton.exists {
             safeTap(doneButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 }
@@ -829,33 +829,33 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
 // MARK: - Collaboration Tests
 final class CollaborationTests: KnowledgeBaseUITests {
 
-    func testCollabToolExists() {
-        navigateToWikiTab()
+    func testCollabToolExists() async {
+        await navigateToWikiTab()
         
         // Navigate to sidebar and find collaboration tool button
         let collabButton = app.buttons.matching(identifier: "collab").firstMatch
         if collabButton.isHittable {
             safeTap(collabButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
         // Should show collaboration view or simulator not supported message
     }
 
-    func testHostSessionButton() {
-        navigateToWikiTab()
+    func testHostSessionButton() async {
+        await navigateToWikiTab()
         let hostBtn = app.buttons["Host"]
         if hostBtn.exists && hostBtn.isEnabled {
             safeTap(hostBtn)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 
-    func testJoinRoomButton() {
-        navigateToWikiTab()
+    func testJoinRoomButton() async {
+        await navigateToWikiTab()
         let joinBtn = app.buttons["Join"]
         if joinBtn.exists && joinBtn.isEnabled {
             safeTap(joinBtn)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
     }
 }
@@ -863,13 +863,13 @@ final class CollaborationTests: KnowledgeBaseUITests {
 // MARK: - Backup Tests
 final class BackupTests: KnowledgeBaseUITests {
 
-    func testBackupViewExists() {
+    func testBackupViewExists() async {
         // Navigate to settings
         if !app.tabBars.buttons["设置"].exists {
             app.tabBars.buttons.element(boundBy: 4).tap()
         }
         app.tabBars.buttons["设置"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Look for backup section
         let backupText = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '备份' OR label CONTAINS 'Backup'")).firstMatch
@@ -880,12 +880,12 @@ final class BackupTests: KnowledgeBaseUITests {
 // MARK: - Tag Cloud Tests
 final class TagCloudTests: KnowledgeBaseUITests {
 
-    func testTagCloudToolExists() {
-        navigateToWikiTab()
+    func testTagCloudToolExists() async {
+        await navigateToWikiTab()
         let tagCloudButton = app.buttons.matching(identifier: "tagCloud").firstMatch
         if tagCloudButton.isHittable {
             safeTap(tagCloudButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // Verify tag cloud content appears
             XCTAssertFalse(app.staticTexts.count == 0, "Tag cloud should have some content or empty state")
         }
@@ -895,12 +895,12 @@ final class TagCloudTests: KnowledgeBaseUITests {
 // MARK: - Index View Tests
 final class IndexViewTests: KnowledgeBaseUITests {
 
-    func testIndexViewNavigation() {
-        navigateToWikiTab()
+    func testIndexViewNavigation() async {
+        await navigateToWikiTab()
         let indexButton = app.buttons.matching(identifier: "masterIndex").firstMatch
         if indexButton.isHittable {
             safeTap(indexButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // Index view should show page list
             let navTitle = app.navigationBars.firstMatch.identifier
             XCTAssertTrue(!navTitle.isEmpty || app.tables.firstMatch.exists, "Index view should be navigated to")
@@ -911,12 +911,12 @@ final class IndexViewTests: KnowledgeBaseUITests {
 // MARK: - Operation Log Tests
 final class OperationLogTests: KnowledgeBaseUITests {
 
-    func testOperationLogExists() {
-        navigateToWikiTab()
+    func testOperationLogExists() async {
+        await navigateToWikiTab()
         let logButton = app.buttons.matching(identifier: "operationLog").firstMatch
         if logButton.isHittable {
             safeTap(logButton)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // Log entries should appear (or empty state)
             XCTAssertTrue(app.scrollViews.firstMatch.exists || app.staticTexts.firstMatch.exists)
         }
@@ -926,12 +926,12 @@ final class OperationLogTests: KnowledgeBaseUITests {
 // MARK: - Health Check Integration Tests
 final class HealthCheckIntegrationTests: KnowledgeBaseUITests {
 
-    func testRunHealthCheck() {
-        navigateToWikiTab()
+    func testRunHealthCheck() async {
+        await navigateToWikiTab()
         let healthButton = app.buttons.matching(identifier: "healthCheck").firstMatch
         if healthButton.isHittable {
             safeTap(healthButton)
-            Thread.sleep(forTimeInterval: 2) // Lint takes time to run
+            try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000)) // Lint takes time to run
             // Check for lint results
             let issuesFound = app.staticTexts.matching(
                 NSPredicate(format: "label CONTAINS 'issue' OR label CONTAINS '问题' OR label CONTAINS 'error'")
@@ -946,8 +946,8 @@ final class HealthCheckIntegrationTests: KnowledgeBaseUITests {
 final class PageLifecycleE2ETests: KnowledgeBaseUITests {
 
     /// Full flow: create page → edit → add link → delete → verify
-    func testFullPageLifecycle() {
-        navigateToWikiTab()
+    func testFullPageLifecycle() async {
+        await navigateToWikiTab()
 
         // Step 1: Create a new page via the + button
         let createButton = app.buttons.matching(
@@ -958,7 +958,7 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
             XCTFail("Create button not found"); return
         }
         safeTap(createButton)
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Step 2: Enter title in the creation sheet
         let titleField = app.textFields.matching(
@@ -971,7 +971,7 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
             // Save the page
             let saveBtn = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Save' OR label CONTAINS '保存'")).firstMatch
             if saveBtn.isHittable { safeTap(saveBtn) }
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         }
 
         // Step 3: The page should now be visible in sidebar/pages list
@@ -981,25 +981,25 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
         // Step 4: Tap on it to open detail
         if pageCell.isHittable {
             safeTap(pageCell)
-            Thread.sleep(forTimeInterval: 1)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
             // Step 5: Edit the page content
             let editButton = app.navigationBars.buttons.matching(NSPredicate(format: "label CONTAINS 'Edit' OR label CONTAINS '编辑'")).firstMatch
             if editButton.isHittable {
                 safeTap(editButton)
-                Thread.sleep(forTimeInterval: 1)
+                try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
                 // Type some markdown content
                 let editor = app.textViews.firstMatch
                 if editor.exists {
                     editor.tap()
                     editor.typeText("# Hello World\n\nThis is **bold** text.\n\n- List item 1\n- List item 2")
-                    Thread.sleep(forTimeInterval: 0.5)
+                    try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
                     // Save changes
                     let doneBtn = app.navigationBars.buttons.matching(NSPredicate(format: "label CONTAINS 'Done' OR label CONTAINS '完成'")).firstMatch
                     if doneBtn.isHittable { safeTap(doneBtn) }
-                    Thread.sleep(forTimeInterval: 1)
+                    try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
                 }
             }
         }
@@ -1009,54 +1009,54 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
 // MARK: - Settings E2E Tests
 final class SettingsE2ETests: KnowledgeBaseUITests {
 
-    func testSettingsAllSectionsAccessible() {
+    func testSettingsAllSectionsAccessible() async {
         if !app.tabBars.buttons["设置"].exists {
             app.tabBars.buttons.element(boundBy: 4).tap()
         }
         app.tabBars.buttons["设置"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Scroll through settings to verify all sections load without crash
         let scrollView = app.scrollViews.firstMatch
         if scrollView.exists {
             scrollView.swipeUp(velocity: .fast)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             scrollView.swipeDown(velocity: .fast)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
 
         // App shouldn't crash — that's the main assertion here
         XCTAssertTrue(app.exists, "App should still be running after settings navigation")
     }
 
-    func testLanguageSwitching() {
+    func testLanguageSwitching() async {
         if !app.tabBars.buttons["Settings"].exists {
             app.tabBars.buttons.element(boundBy: 4).tap()
         }
         app.tabBars.buttons["Settings"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Find language setting
         let langPicker = app.pickerWheels.firstMatch
         if langPicker.exists && langPicker.isHittable {
             // Just verify we can interact with it
             langPicker.adjust(toPickerWheelValue: "English")
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testThemeAccentColorChange() {
+    func testThemeAccentColorChange() async {
         if !app.tabBars.buttons["设置"].exists {
             app.tabBars.buttons.element(boundBy: 4).tap()
         }
         app.tabBars.buttons["设置"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Find accent color buttons (usually colored circles/squares)
         let colorButtons = app.buttons.matching(NSPredicate(format: "identifier CONTAINS 'accent' OR identifier CONTAINS 'color'")).allElementsBoundByIndex
         if let firstColor = colorButtons.first {
             safeTap(firstColor)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 }

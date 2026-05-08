@@ -40,7 +40,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     @Published var statusMessage: String = ""
     @Published var discoveredRooms: [DiscoveredRoom] = []
     @Published var isSimulator: Bool = false
-    @Published var connectionError: String? = nil
+    @Published var connectionError: String?
     @Published var isConnecting: Bool = false
 
     /// Delegate for applying remote page changes

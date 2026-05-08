@@ -23,11 +23,17 @@ final class DataExportService {
         let syncService = FileSystemSyncService()
         try syncService.exportToMarkdown(pages: pages, destinationURL: destinationURL)
         
+        // 计算导出目录的总大小
+        let totalSize: Int64 = (try? FileManager.default.subpathsOfDirectory(atPath: destinationURL.path).reduce(0) { sum, path in
+            let fullPath = destinationURL.appendingPathComponent(path).path
+            return sum + ((try? FileManager.default.attributesOfItem(atPath: fullPath)[.size] as? Int64) ?? 0)
+        }) ?? 0
+        
         // 记录操作日志
         Logger.shared.addLog(
             action: .export,
             target: "export.allMarkdown",
-            details: Localized.trf("export.countFormat", pages.count)
+            details: "size:\(totalSize), count:\(pages.count)"
         )
     }
     
@@ -39,10 +45,11 @@ final class DataExportService {
         
         let url = try await WebViewExportService.shared.exportToPDF(markdown: markdown, fileName: fileName)
         
+        let fileSize = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? 0
         Logger.shared.addLog(
             action: .export,
             target: "PDF Report",
-            details: Localized.trf("export.countFormat", pages.count)
+            details: "size:\(fileSize), count:\(pages.count)"
         )
         
         return url

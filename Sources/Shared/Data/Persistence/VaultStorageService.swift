@@ -20,16 +20,16 @@ struct ExternalPage {
 
 final class VaultStorageService {
     nonisolated(unsafe) static let shared = VaultStorageService()
-    
+
     /// 扫描指定文件夹下的所有 Markdown 文件
     func scan(directory: URL) -> [ExternalPage] {
         var results: [ExternalPage] = []
         let fileManager = FileManager.default
-        
+
         guard let enumerator = fileManager.enumerator(at: directory, includingPropertiesForKeys: [.isRegularFileKey, .contentModificationDateKey], options: [.skipsHiddenFiles, .skipsPackageDescendants]) else {
             return []
         }
-        
+
         for case let fileURL as URL in enumerator {
             if fileURL.pathExtension.lowercased() == "md" {
                 if let page = processFile(at: fileURL) {
@@ -37,19 +37,19 @@ final class VaultStorageService {
                 }
             }
         }
-        
+
         return results
     }
-    
+
     private func processFile(at url: URL) -> ExternalPage? {
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             let modificationDate = attributes[.modificationDate] as? Date ?? Date()
             let content = try String(contentsOf: url, encoding: .utf8)
-            
+
             // 提取标题（优先找 H1，否则用文件名）
             let title = extractTitle(from: content) ?? url.deletingPathExtension().lastPathComponent
-            
+
             return ExternalPage(
                 url: url,
                 title: title,

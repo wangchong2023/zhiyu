@@ -40,7 +40,7 @@ struct ExportReportView: View {
                 .foregroundStyle(Color.appSecondary)
             
             // 内容详情
-            ForEach(pages.prefix(10), id: \.id) { page in // 示例仅导出前 10 页以防 PDF 过大
+            ForEach(pages.prefix(AppUI.Metrics.maxReportPageExportCount), id: \.id) { page in // 10
                 VStack(alignment: .leading, spacing: AppUI.small) {
                     HStack(spacing: AppUI.small) {
                         Image(systemName: page.type.icon)
@@ -50,20 +50,20 @@ struct ExportReportView: View {
                             .foregroundStyle(Color.appText)
                     }
                     
-                    Text(page.content.prefix(300) + "...")
-                        .font(.system(size: 12))
+                    Text(page.content.prefix(AppUI.Metrics.reportContentPreviewLength) + "...") // 300
+                        .font(AppUI.captionFont) // 12
                         .foregroundStyle(Color.appText)
-                        .lineLimit(5)
+                        .lineLimit(AppUI.Metrics.maxReportContentLineLimit) // 5
                         .padding(.leading, AppUI.wide)
                     
                     if !page.tags.isEmpty {
                         HStack(spacing: AppUI.tiny) {
                             ForEach(page.tags, id: \.self) { tag in
                                 Text("#\(tag)")
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(.system(size: AppUI.microFontSize, weight: .medium)) // 10
                                     .padding(.horizontal, AppUI.small)
                                     .padding(.vertical, AppUI.atomic)
-                                    .background(Color.appAccent.opacity(0.12))
+                                    .background(Color.appAccent.opacity(AppUI.glassOpacity * 0.8)) // 0.12
                                     .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
                             }
                         }
@@ -83,7 +83,7 @@ struct ExportReportView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding(AppUI.huge)
-        .frame(width: 595, height: 842) // A4 纸张尺寸 (72 DPI)
+        .frame(width: AppUI.Metrics.A4Width, height: AppUI.Metrics.A4Height) // 595, 842
         .background(Color.white)
     }
 }

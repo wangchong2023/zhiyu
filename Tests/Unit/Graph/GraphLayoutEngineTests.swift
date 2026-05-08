@@ -1,4 +1,4 @@
-// GraphLayoutEngineTests.swift
+// GraphLayoutProcessorTests.swift
 //
 // 作者: Wang Chong
 // 功能说明: 力导向图谱布局引擎测试
@@ -12,16 +12,16 @@ import XCTest
 @testable import ZhiYu
 
 /// 力导向图谱布局引擎测试
-/// 验证 GraphLayoutEngine 的布局计算、边创建及边界条件处理。
-final class GraphLayoutEngineTests: XCTestCase {
+/// 验证 GraphLayoutProcessor 的布局计算、边创建及边界条件处理。
+final class GraphLayoutProcessorTests: XCTestCase {
 
     // MARK: - 空输入
 
     func testLayoutEmptyPagesReturnsEmptyNodesAndEdges() {
         let size = CGSize(width: 800, height: 600)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [],
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: size
         )
         XCTAssertTrue(result.nodes.isEmpty, "空页面集应返回空节点")
@@ -33,9 +33,9 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutSinglePageReturnsOneNodeNoEdges() {
         let page = KnowledgePage(title: "单页", content: "内容")
         let size = CGSize(width: 800, height: 600)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [page],
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: size
         )
         XCTAssertEqual(result.nodes.count, 1, "单页面应生成 1 个节点")
@@ -49,7 +49,7 @@ final class GraphLayoutEngineTests: XCTestCase {
         let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
         let pageB = KnowledgePage(title: "B", type: .concept, content: "Links to [[A]]")
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
             linkResolver: { title in
                 if title == "A" { return pageA }
@@ -67,7 +67,7 @@ final class GraphLayoutEngineTests: XCTestCase {
         let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
         let pageB = KnowledgePage(title: "B", type: .concept, content: "No outgoing links")
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
             linkResolver: { title in
                 if title == "B" { return pageB }
@@ -86,7 +86,7 @@ final class GraphLayoutEngineTests: XCTestCase {
         let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]] and [[B]]")
         let pageB = KnowledgePage(title: "B", type: .concept, content: "Content")
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
             linkResolver: { title in
                 if title == "B" { return pageB }
@@ -106,9 +106,9 @@ final class GraphLayoutEngineTests: XCTestCase {
         var pageB = KnowledgePage(title: "B", type: .concept, content: "Content")
         pageB.relatedPageIDs = [pageA.id]
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: CGSize(width: 800, height: 600)
         )
 
@@ -120,9 +120,9 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutWithBrokenLinkDoesNotCreateEdge() {
         let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[NonExistent]]")
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA],
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: CGSize(width: 800, height: 600)
         )
 
@@ -133,9 +133,9 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutNodePositionsWithinCanvas() {
         let pages = (0..<10).map { KnowledgePage(title: "P\($0)", content: "") }
         let canvasSize = CGSize(width: 800, height: 600)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: pages,
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: canvasSize
         )
 
@@ -152,9 +152,9 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutMultiplePagesCreatesNodesForAll() {
         let pages = (0..<20).map { KnowledgePage(title: "页面\($0)", content: "") }
         let size = CGSize(width: 1024, height: 768)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: pages,
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: size
         )
         XCTAssertEqual(result.nodes.count, pages.count, "应生成与输入数量相同的节点")
@@ -165,11 +165,11 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutNodePositionsAreDistinct() {
         let pages = (0..<50).map { KnowledgePage(title: "P\($0)", content: "") }
         let size = CGSize(width: 1024, height: 1024)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: pages,
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: size,
-            config: GraphLayoutEngine.Config(iterations: 200)
+            config: GraphLayoutProcessor.Config(iterations: 200)
         )
         let positions = result.nodes.map { $0.position }
         XCTAssertEqual(Set(positions.map { "\(Int($0.x)),\(Int($0.y))" }).count,
@@ -188,7 +188,7 @@ final class GraphLayoutEngineTests: XCTestCase {
         let linkMap: [String: KnowledgePage] = [
             "目标页面": target
         ]
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: pages,
             linkResolver: { linkMap[$0] },
             canvasSize: size
@@ -203,9 +203,9 @@ final class GraphLayoutEngineTests: XCTestCase {
     func testLayoutIsolatedNodeHasNoEdges() {
         let isolated = KnowledgePage(title: "孤立节点", content: "")
         let size = CGSize(width: 800, height: 600)
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [isolated],
-            linkResolver: { _ in nil },
+            linkResolver: { (_: String) -> KnowledgePage? in nil },
             canvasSize: size
         )
         XCTAssertTrue(result.edges.isEmpty, "孤立节点不应产生边")

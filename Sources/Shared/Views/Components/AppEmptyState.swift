@@ -60,33 +60,33 @@ struct AppEmptyState: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: AppUI.standardPadding + AppUI.small) { // 24
             // 视觉区：图标 + 装饰卡片
             ZStack {
                 // 背景装饰圆
                 Circle()
-                    .fill(Color.appAccent.opacity(0.07))
-                    .frame(width: 120, height: 120)
+                    .fill(Color.appAccent.opacity(AppUI.glassOpacity * 0.7)) // 0.07
+                    .frame(width: AppUI.Metrics.heroValueSize * 3.75, height: AppUI.Metrics.heroValueSize * 3.75) // 120
 
                 Circle()
-                    .fill(Color.appAccent.opacity(0.04))
-                    .frame(width: 160, height: 160)
+                    .fill(Color.appAccent.opacity(AppUI.glassOpacity * 0.4)) // 0.04
+                    .frame(width: AppUI.Metrics.heroValueSize * 5.0, height: AppUI.Metrics.heroValueSize * 5.0) // 160
 
                 // 主图标
                 Image(systemName: icon)
-                    .font(.system(size: 44, weight: .light))
+                    .font(.system(size: AppUI.Metrics.largeIconBoxSize, weight: .light)) // 44
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.appAccent, .appAccent.opacity(0.6)],
+                            colors: [.appAccent, .appAccent.opacity(AppUI.fullOpacity * 0.6)], // 0.6
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
             }
-            .frame(height: 100)
+            .frame(height: AppUI.Metrics.heroValueSize * 3.8) // 100
 
             // 文字区
-            VStack(spacing: 8) {
+            VStack(spacing: AppUI.small) { // 8
                 Text(title)
                     .font(.title3.weight(.semibold))
                     .foregroundStyle(.appText)
@@ -104,18 +104,18 @@ struct AppEmptyState: View {
                 Text(hint)
                     .font(.caption)
                     .foregroundStyle(.appAccent)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
+                    .padding(.horizontal, AppUI.small + AppUI.tiny) // 14
+                    .padding(.vertical, AppUI.tiny + AppUI.atomic) // 7
                     .background(
                         RoundedRectangle(cornerRadius: AppUI.chipRadius)
-                            .fill(Color.appAccent.opacity(0.1))
+                            .fill(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.1
                     )
             }
 
             // 操作按钮
             if let action = action {
                 Button(action: action.handler) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                         if let icon = action.icon {
                             Image(systemName: icon)
                         }
@@ -123,8 +123,8 @@ struct AppEmptyState: View {
                     }
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(actionForegroundColor(for: action.role))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, AppUI.loosePadding) // 20
+                    .padding(.vertical, AppUI.small + AppUI.atomic) // 10
                     .background(
                         action.role == .primary || action.role == nil
                             ? Color.appAccent
@@ -133,12 +133,12 @@ struct AppEmptyState: View {
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.small))
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.small)
-                            .stroke(action.role == .primary || action.role == nil ? Color.clear : Color.appAccent, lineWidth: 1)
+                            .stroke(action.role == .primary || action.role == nil ? Color.clear : Color.appAccent, lineWidth: AppUI.borderWidth) // 1
                     )
                 }
             }
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, AppUI.largeIconSize) // 32
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(buildAccessibilityLabel())

@@ -19,11 +19,11 @@ struct CollabInfoRow: View {
     let text: String
     
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: AppUI.CompositeRow.spacing) { // 10
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundStyle(.appAccent)
-                .frame(width: 20)
+                .frame(width: AppUI.Action.iconSize + AppUI.tiny) // 20
             Text(text)
                 .font(.caption)
                 .foregroundStyle(.appText)
@@ -114,11 +114,11 @@ struct RecentEditRow: View {
             Image(systemName: "pencil.circle.fill")
                 .foregroundStyle(.appConcept)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: AppUI.atomic) { // 2
                 Text(edit.userID.components(separatedBy: "|").first ?? edit.userID)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appText)
-                Text("\(edit.field) → \(String(edit.newValue.prefix(50)))")
+                Text("\(edit.field) → \(String(edit.newValue.prefix(AppUI.Metrics.maxCollabEditPreviewLength)))") // 50
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                     .lineLimit(1)
@@ -155,9 +155,9 @@ struct CollabRoleBadge: View {
     var body: some View {
         Text(role.displayName)
             .font(.caption.weight(.medium))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.15))
+            .padding(.horizontal, AppUI.small) // 8
+            .padding(.vertical, AppUI.tiny) // 4
+            .background(color.opacity(AppUI.glassOpacity)) // 0.15
             .clipShape(Capsule())
             .foregroundStyle(color)
     }

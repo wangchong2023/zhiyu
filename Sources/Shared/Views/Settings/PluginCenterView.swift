@@ -70,39 +70,46 @@ struct PluginCenterView: View {
             .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
             .overlay(RoundedRectangle(cornerRadius: AppUI.cardRadius).stroke(Color.appBorder.opacity(AppUI.glassOpacity * 3), lineWidth: AppUI.borderWidth / 2))
             
-            // 安全模式与加载按钮：左对齐，去冗余
+            // 安全模式与加载按钮：对齐全局 Action 规范
             HStack(spacing: AppUI.standardPadding) {
-                HStack(spacing: AppUI.small) {
+                // 安全模式 Chip
+                HStack(spacing: AppUI.tiny) {
                     Text(Localized.tr("plugin.safeMode"))
-                        .font(.system(size: AppUI.microFontSize + 1, weight: .medium))
+                        .font(.system(size: AppUI.captionFontSize, weight: .semibold))
                         .foregroundStyle(.appSecondary)
                     Toggle("", isOn: $isSafeModeOn)
                         .labelsHidden()
                         .controlSize(.mini)
-                        .scaleEffect(AppUI.Action.pressScale) // 统一缩放比例
                         .tint(.appAccent)
                 }
+                .padding(.horizontal, AppUI.medium)
+                .padding(.vertical, AppUI.tiny)
+                .background(Color.appSecondary.opacity(0.1))
+                .clipShape(Capsule())
                 
+                // 加载本地插件 Action
                 Button(action: { 
                     HapticFeedback.shared.trigger(.selection)
                     showFileImporter = true 
                 }) {
                     HStack(spacing: AppUI.tiny) {
                         Image(systemName: "plus.circle.fill")
-                            .font(.system(size: AppUI.iconTiny))
+                            .font(.system(size: AppUI.Action.iconSize))
                         Text(Localized.tr("plugin.local.mount"))
-                            .font(.system(size: AppUI.microFontSize, weight: .bold))
+                            .font(.system(size: AppUI.subheadlineFontSize, weight: .bold))
                     }
-                    .padding(.horizontal, AppUI.mediumRadius)
-                    .padding(.vertical, AppUI.tightPadding - AppUI.atomic)
-                    .background(Color.appAccent.opacity(AppUI.glassOpacity / 1.5))
-                    .foregroundStyle(Color.appAccent)
+                    .padding(.horizontal, AppUI.standardPadding)
+                    .frame(height: AppUI.Action.compactButtonHeight)
+                    .background(Color.appAccent)
+                    .foregroundStyle(.white)
                     .clipShape(Capsule())
+                    .shadow(color: Color.appAccent.opacity(0.2), radius: 8, x: 0, y: 4)
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
             }
-            .padding(.horizontal, AppUI.tiny)
+            .padding(.top, AppUI.tiny)
         }
         .padding()
         .background(Color.appBackground)

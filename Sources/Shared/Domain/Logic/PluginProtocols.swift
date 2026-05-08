@@ -49,12 +49,12 @@ protocol PluginContext {
 protocol KnowledgePlugin: AnyObject {
     /// 插件元数据
     var manifest: PluginManifest { get }
-    
+
     var monetization: MonetizationInfo? { get }        // 商业化声明
-    
+
     /// 插件加载：进行资源初始化、UI 锚点注册等
     func onLoad(context: PluginContext)
-    
+
     /// 插件卸载：清理资源、注销钩子
     func onUnload()
 }
@@ -63,7 +63,7 @@ protocol KnowledgePlugin: AnyObject {
 protocol InterceptionPlugin: KnowledgePlugin {
     /// 在内容入库前执行（例如：执行正则清洗、敏感词过滤）
     func preProcess(content: String) throws -> String
-    
+
     /// 在内容渲染前执行（例如：将特定语法转化为自定义视图）
     func postProcess(content: String) throws -> String
 }

@@ -71,7 +71,7 @@ class ZhiYuPlatformUITests: XCTestCase {
 @available(iOS 17.0, *)
 final class iPhoneTests: ZhiYuPlatformUITests {
 
-    func testiPhoneTabBarIsAtBottom() {
+    func testiPhoneTabBarIsAtBottom() async {
         // iPhone 上 Tab 栏应该在底部
         let tabBar = app.tabBars.firstMatch
         XCTAssertTrue(tabBar.exists, "iPhone Tab 栏不存在")
@@ -83,7 +83,7 @@ final class iPhoneTests: ZhiYuPlatformUITests {
                       "Tab 栏应该在屏幕底部区域")
     }
 
-    func testiPhoneTabBarHasLabels() {
+    func testiPhoneTabBarHasLabels() async {
         // iPhone Tab 栏应该同时显示图标和文字标签
         let wikiTab = app.tabBars.buttons["Wiki"]
         let graphTab = app.tabBars.buttons["Graph"]
@@ -99,16 +99,16 @@ final class iPhoneTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testiPhoneCompactWidthClass() {
+    func testiPhoneCompactWidthClass() async {
         // iPhone 使用 compact width size class
-        navigateToWikiTab()
+        await navigateToWikiTab()
         // 在 compact 模式下，某些按钮应该显示
         let createButton = app.navigationBars.buttons.element(boundBy: 1)
         XCTAssertTrue(createButton.exists || app.navigationBars.buttons["add"].exists,
                       "iPhone 应该显示创建按钮")
     }
 
-    func testiPhoneSidebarNotVisible() {
+    func testiPhoneSidebarNotVisible() async {
         // iPhone 默认不显示侧边栏
         let sidebar = app.otherElements["Sidebar"]
         if sidebar.exists {
@@ -117,8 +117,8 @@ final class iPhoneTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Navigation
-    func testiPhoneNavigationStack() {
-        navigateToWikiTab()
+    func testiPhoneNavigationStack() async {
+        await navigateToWikiTab()
 
         // iPhone 使用 NavigationStack（不是 SplitView）
         // 导航栏应该在顶部
@@ -126,7 +126,7 @@ final class iPhoneTests: ZhiYuPlatformUITests {
         XCTAssertTrue(navBar.exists, "iPhone 导航栏应该存在")
     }
 
-    func testiPhoneTabNavigation() {
+    func testiPhoneTabNavigation() async {
         // 测试 iPhone 上 5 个 Tab 都能正常切换
         let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
 
@@ -134,18 +134,18 @@ final class iPhoneTests: ZhiYuPlatformUITests {
             let button = app.tabBars.buttons[tab]
             if button.exists {
                 button.tap()
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() {
+    private func navigateToWikiTab() async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 
@@ -153,13 +153,13 @@ final class iPhoneTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class iPadTests: ZhiYuPlatformUITests {
 
-    func testiPadNavigationSplitViewVisible() {
+    func testiPadNavigationSplitViewVisible() async {
         // iPad 上应该显示分割视图
         let splitView = app.otherElements.firstMatch
         XCTAssertTrue(splitView.exists, "iPad 应该显示分割视图")
     }
 
-    func testiPadSidebarVisible() {
+    func testiPadSidebarVisible() async {
         // iPad 上侧边栏应该可见
         let sidebar = app.otherElements["Sidebar"]
         if sidebar.exists {
@@ -167,7 +167,7 @@ final class iPadTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testiPadTabBarPresence() {
+    func testiPadTabBarPresence() async {
         // iPad 上可能显示顶部 Tab 栏（sidebarAdaptable 样式）
         // 检查是否有 Tab 栏
         let hasTabBar = app.tabBars.count > 0
@@ -178,9 +178,9 @@ final class iPadTests: ZhiYuPlatformUITests {
                       "iPad 应该有 Tab 导航（顶部或底部）")
     }
 
-    func testiPadRegularWidthClass() {
+    func testiPadRegularWidthClass() async {
         // iPad 使用 regular width size class
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 在 regular 模式下，分屏视图应该可用
         let splitView = app.otherElements.firstMatch
@@ -191,16 +191,16 @@ final class iPadTests: ZhiYuPlatformUITests {
         XCTAssertTrue(createButton.exists, "iPad 应该显示创建按钮")
     }
 
-    func testiPadDetailPane() {
+    func testiPadDetailPane() async {
         // iPad 应该有详情面板
         let detailNav = app.navigationBars[".detail"]
         XCTAssertTrue(detailNav.exists || app.otherElements["Detail"].exists,
                       "iPad 应该有详情面板")
     }
 
-    func testiPadToolbarButtons() {
+    func testiPadToolbarButtons() async {
         // iPad 工具栏应该有更多空间显示按钮
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         let navButtons = app.navigationBars.buttons
         let buttonCount = navButtons.count
@@ -210,15 +210,15 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Navigation
-    func testiPadNavigationStack() {
-        navigateToWikiTab()
+    func testiPadNavigationStack() async {
+        await navigateToWikiTab()
 
         // iPad 上应该使用分割视图
         let splitView = app.otherElements.firstMatch
         XCTAssertTrue(splitView.exists, "iPad 应该使用分割视图")
     }
 
-    func testiPadTabNavigation() {
+    func testiPadTabNavigation() async {
         // 测试 iPad 上 5 个 Tab 都能正常切换
         let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
 
@@ -226,25 +226,25 @@ final class iPadTests: ZhiYuPlatformUITests {
             let button = app.tabBars.buttons[tab]
             if button.exists {
                 button.tap()
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
         }
     }
 
-    func testiPadSidebarToggle() {
+    func testiPadSidebarToggle() async {
         // 测试侧边栏展开/折叠（如果支持）
         let sidebarToggle = app.buttons["sidebar-toggle"]
         if sidebarToggle.exists {
             safeTap(sidebarToggle)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
         }
     }
 
-    func testiPadKeyboardShortcuts() {
+    func testiPadKeyboardShortcuts() async {
         // iPad 应该有键盘快捷键支持
         // 测试 cmd + n 新建页面
         app.typeText("n")
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // 验证是否有新建页面 sheet
         let createSheet = app.sheets.firstMatch
@@ -258,12 +258,12 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() {
+    private func navigateToWikiTab() async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 
@@ -271,13 +271,13 @@ final class iPadTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class MacCatalystTests: ZhiYuPlatformUITests {
 
-    func testMacMenuBarExists() {
+    func testMacMenuBarExists() async {
         // Mac 上应该有菜单栏
         let menuBar = app.menuBars.firstMatch
         XCTAssertTrue(menuBar.exists, "Mac 应该有菜单栏")
     }
 
-    func testMacWindowChrome() {
+    func testMacWindowChrome() async {
         // Mac 窗口应该有标准的窗口装饰（标题栏等）
         let window = app.windows.firstMatch
         XCTAssertTrue(window.exists, "Mac 应该有窗口")
@@ -288,7 +288,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         XCTAssertTrue(window.buttons.count > 0, "Mac 窗口应该有按钮")
     }
 
-    func testMacToolbar() {
+    func testMacToolbar() async {
         // Mac 应该有工具栏
         let toolbar = app.toolbars.firstMatch
         // 工具栏可能不总是存在，取决于窗口状态
@@ -297,11 +297,11 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testMacKeyboardShortcuts() {
+    func testMacKeyboardShortcuts() async {
         // 测试 Mac 键盘快捷键
         // Cmd + n 新建
         app.typeText("n")
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         let createSheet = app.sheets.firstMatch
         if createSheet.exists {
@@ -313,16 +313,16 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
 
         // Cmd + f 搜索
         app.typeText("f")
-        Thread.sleep(forTimeInterval: 0.5)
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
     }
 
-    func testMacMouseInteractions() {
+    func testMacMouseInteractions() async {
         // Mac 应该支持鼠标悬停
         let wikiTab = app.tabBars.buttons["Wiki"]
         if wikiTab.exists {
             // 右键菜单
             wikiTab.rightClick()
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
             // 检查是否有上下文菜单
             let menu = app.menus.firstMatch
@@ -333,7 +333,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testMacWindowManagement() {
+    func testMacWindowManagement() async {
         // 测试窗口管理
         let window = app.windows.firstMatch
         if window.exists {
@@ -341,7 +341,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
             let fullScreenButton = window.buttons["full-screen-button"]
             if fullScreenButton.exists && fullScreenButton.isEnabled {
                 safeTap(fullScreenButton)
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
                 // 退出全屏
                 safeTap(fullScreenButton)
@@ -349,31 +349,31 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testMacTrackpadGestures() {
+    func testMacTrackpadGestures() async {
         // Mac 应该支持触控板手势
         // 双指滑动模拟
         let scrollView = app.scrollViews.firstMatch
         if scrollView.exists {
             // 使用双指轻扫
             scrollView.swipeDown()
-            Thread.sleep(forTimeInterval: 0.3)
+            try? await Task.sleep(nanoseconds: UInt64(0.3 * 1_000_000_000))
         }
     }
 
     // MARK: - Menu Items
-    func testMacFileMenu() {
+    func testMacFileMenu() async {
         let menuBar = app.menuBars.firstMatch
         let fileMenu = menuBar.menuItems["File"]
 
         if fileMenu.exists {
             safeTap(fileMenu)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
             // 检查菜单项
             let newItem = app.menuItems["New"]
             if newItem.exists {
                 safeTap(newItem)
-                Thread.sleep(forTimeInterval: 1)
+                try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             }
 
             // 按 Escape 关闭菜单
@@ -381,37 +381,37 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testMacEditMenu() {
+    func testMacEditMenu() async {
         let menuBar = app.menuBars.firstMatch
         let editMenu = menuBar.menuItems["Edit"]
 
         if editMenu.exists {
             safeTap(editMenu)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
             let undoItem = app.menuItems["Undo"]
             if undoItem.exists {
                 safeTap(undoItem)
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
             }
             // 按 Escape 关闭菜单
             app.typeText("\u{1B}")
         }
     }
 
-    func testMacViewMenu() {
+    func testMacViewMenu() async {
         let menuBar = app.menuBars.firstMatch
         let viewMenu = menuBar.menuItems["View"]
 
         if viewMenu.exists {
             safeTap(viewMenu)
-            Thread.sleep(forTimeInterval: 0.5)
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
             // 检查是否有 Enter Full Screen 选项
             let fullScreenItem = app.menuItems["Enter Full Screen"]
             if fullScreenItem.exists {
                 safeTap(fullScreenItem)
-                Thread.sleep(forTimeInterval: 0.5)
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
                 // 退出全屏
                 app.typeText("\u{1B}")
@@ -422,12 +422,12 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() {
+    private func navigateToWikiTab() async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 
@@ -435,13 +435,13 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
-    func testOrientationChange() {
+    func testOrientationChange() async {
         // 测试横竖屏切换（iPad）
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 如果支持旋转，测试切换
         XCUIDevice.shared.orientation = .landscapeLeft
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // 验证 UI 正确调整
         let splitView = app.otherElements.firstMatch
@@ -449,30 +449,30 @@ final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
         // 切换回竖屏
         XCUIDevice.shared.orientation = .portrait
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
-    func testSizeClassTransitions() {
+    func testSizeClassTransitions() async {
         // 测试 size class 切换
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 基础验证，确保窗口存在
         XCTAssertTrue(app.windows.firstMatch.exists)
     }
 
-    func testDynamicTypeScaling() {
+    func testDynamicTypeScaling() async {
         // 测试动态字体大小
-        navigateToWikiTab()
+        await navigateToWikiTab()
         XCTAssertTrue(app.exists)
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() {
+    private func navigateToWikiTab() async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 
@@ -480,9 +480,9 @@ final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class AccessibilityTests: ZhiYuPlatformUITests {
 
-    func testVoiceOverSupport() {
+    func testVoiceOverSupport() async {
         // 测试 VoiceOver 支持
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 验证关键元素有 accessibility identifier
         let wikiTab = app.tabBars.buttons["Wiki"]
@@ -493,9 +493,9 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
         XCTAssertFalse(label?.isEmpty ?? true, "Tab 应该有 accessibility label")
     }
 
-    func testDynamicType() {
+    func testDynamicType() async {
         // 测试动态字体
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 验证文本可读性
         let textElements = app.textFields
@@ -509,9 +509,9 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
         }
     }
 
-    func testColorContrast() {
+    func testColorContrast() async {
         // 验证颜色对比度（基础检查）
-        navigateToWikiTab()
+        await navigateToWikiTab()
 
         // 获取窗口
         let window = app.windows.firstMatch
@@ -519,11 +519,11 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() {
+    private func navigateToWikiTab() async {
         if !app.tabBars.buttons["Wiki"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
         app.tabBars.buttons["Wiki"].tap()
-        Thread.sleep(forTimeInterval: 1)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }

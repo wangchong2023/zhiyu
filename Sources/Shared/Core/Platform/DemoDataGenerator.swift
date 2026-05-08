@@ -54,19 +54,20 @@ struct DemoDataGenerator {
         return count
     }
 
-    /// 执行图谱压力测试数据生成 (1000条节点)
-    /// - Parameter store: 目标存储对象
+    /// 执行图谱压力测试数据生成
+    /// - Parameters:
+    ///   - store: 目标存储对象
+    ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
     @MainActor
-    static func generateStressTest(in store: SQLiteStore) -> Int {
-        print("🧪 [StressTest] Starting stress test data generation (1000 nodes)...")
+    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) -> Int {
+        print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
         
         // 清理旧数据以获得准确的性能评估
         store.removeAllPages()
         MedalService.shared.reset()
         
         var count = 0
-        let targetCount = 1000
         
         store.performBatchWrite { db in
             // 预生成标题列表，用于建立随机链接

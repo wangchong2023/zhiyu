@@ -75,9 +75,9 @@ struct SplashBackgroundView: View {
                         .fill(Color.white)
                         .frame(width: star.size, height: star.size)
                         .position(x: geo.size.width * star.x, y: geo.size.height * star.y)
-                        .opacity(starTwinkle ? 0.7 : 0.3)
+                        .opacity(starTwinkle ? AppUI.fullOpacity * 0.7 : AppUI.disabledOpacity) // 0.7, 0.3
                         .animation(
-                            .easeInOut(duration: 1.5 + star.delay)
+                            .easeInOut(duration: AppUI.Animation.looseDuration + star.delay) // 1.5
                             .repeatForever(autoreverses: true)
                             .delay(star.delay),
                             value: starTwinkle
@@ -103,13 +103,13 @@ struct SplashBackgroundView: View {
                     .stroke(
                         LinearGradient(
                             colors: [
-                                fromNode.isAccent ? Color.appAccent.opacity(0.3) : Color.white.opacity(0.12),
-                                toNode.isAccent ? Color.appAccent.opacity(0.3) : Color.white.opacity(0.12)
+                                fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2), // 0.3, 0.12
+                                toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2) // 0.3, 0.12
                             ],
                             startPoint: .init(x: fromNode.x, y: fromNode.y),
                             endPoint: .init(x: toNode.x, y: toNode.y)
                         ),
-                        lineWidth: 0.8
+                        lineWidth: AppUI.borderWidth * 0.8 // 0.8
                     )
                 }
             }
@@ -121,8 +121,8 @@ struct SplashBackgroundView: View {
                         .fill(
                             RadialGradient(
                                 colors: [
-                                    node.isAccent ? Color.appAccent.opacity(0.9) : Color.white.opacity(0.8),
-                                    node.isAccent ? Color.appAccent.opacity(0.3) : Color.white.opacity(0.2),
+                                    node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8), // 0.9, 0.8
+                                    node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2), // 0.3, 0.2
                                     .clear
                                 ],
                                 center: .center,
@@ -132,10 +132,10 @@ struct SplashBackgroundView: View {
                         )
                         .frame(width: node.size * 4, height: node.size * 4)
                         .position(x: geo.size.width * node.x, y: geo.size.height * node.y)
-                        .scaleEffect(nodeGlow ? 1.0 : 0.5)
-                        .opacity(nodeGlow ? 1.0 : 0.3)
+                        .scaleEffect(nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5) // 1.0, 0.5
+                        .opacity(nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity) // 1.0, 0.3
                         .animation(
-                            .easeInOut(duration: 2.0 + Double(index) * 0.1)
+                            .easeInOut(duration: AppUI.Animation.slowDuration + Double(index) * 0.1) // 2.0
                             .repeatForever(autoreverses: true)
                             .delay(Double(index) * 0.08),
                             value: nodeGlow
@@ -148,17 +148,17 @@ struct SplashBackgroundView: View {
                 Spacer()
                 RadialGradient(
                     colors: [
-                        Color(red: 1.0, green: 0.85, blue: 0.5).opacity(0.25),
-                        Color(red: 0.9, green: 0.65, blue: 0.3).opacity(0.12),
-                        Color(red: 0.7, green: 0.4, blue: 0.2).opacity(0.05),
+                        Color(red: 1.0, green: 0.85, blue: 0.5).opacity(AppUI.glassOpacity * 2.5), // 0.25
+                        Color(red: 0.9, green: 0.65, blue: 0.3).opacity(AppUI.glassOpacity * 1.2), // 0.12
+                        Color(red: 0.7, green: 0.4, blue: 0.2).opacity(AppUI.shadowOpacity / 2), // 0.05
                         .clear
                     ],
                     center: .center,
-                    startRadius: 20,
-                    endRadius: 250
+                    startRadius: AppUI.loosePadding, // 20
+                    endRadius: AppUI.Metrics.heroValueSize * 9.6 // 250
                 )
-                .frame(height: 300)
-                .offset(y: 80)
+                .frame(height: AppUI.Metrics.heroValueSize * 11.5) // 300
+                .offset(y: AppUI.Metrics.heroValueSize * 3) // 80
             }
 
             // 书本轮廓 — 极简线条
@@ -167,32 +167,32 @@ struct SplashBackgroundView: View {
                 ZStack {
                     // 书本主体
                     RoundedRectangle(cornerRadius: AppUI.tiny)
-                        .stroke(Color.appAccent.opacity(0.35), lineWidth: 1.2)
-                        .frame(width: 60, height: 44)
+                        .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
+                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.Metrics.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(-8))
-                        .offset(x: -2)
+                        .offset(x: -AppUI.atomic) // -2
 
                     RoundedRectangle(cornerRadius: AppUI.tiny)
-                        .stroke(Color.appAccent.opacity(0.35), lineWidth: 1.2)
-                        .frame(width: 60, height: 44)
+                        .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
+                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.Metrics.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(8))
-                        .offset(x: 2)
+                        .offset(x: AppUI.atomic) // 2
 
                     // 书脊
                     Capsule()
-                        .fill(Color.appAccent.opacity(0.2))
-                        .frame(width: 3, height: 44)
+                        .fill(Color.appAccent.opacity(AppUI.glassOpacity * 2)) // 0.2
+                        .frame(width: AppUI.atomic + 1, height: AppUI.Metrics.iconDisplay) // 3, 44
 
                     // 从书中升起的光粒子
                     ForEach(0..<5, id: \.self) { i in
                         Circle()
-                            .fill(Color.appAccent.opacity(0.4))
-                            .frame(width: 3, height: 3)
+                            .fill(Color.appAccent.opacity(AppUI.glassOpacity * 4)) // 0.4
+                            .frame(width: AppUI.atomic + 1, height: AppUI.atomic + 1) // 3, 3
                             .offset(
-                                x: CGFloat(i - 2) * 14,
-                                y: nodeGlow ? -60 - CGFloat(i) * 15 : -20
+                                x: CGFloat(i - 2) * (AppUI.small + AppUI.tiny), // 14
+                                y: nodeGlow ? -AppUI.Metrics.iconBoxSize * 1.35 - CGFloat(i) * 15 : -AppUI.loosePadding // -60, -20
                             )
-                            .opacity(nodeGlow ? 0.6 : 0.1)
+                            .opacity(nodeGlow ? AppUI.fullOpacity * 0.6 : AppUI.glassOpacity) // 0.6, 0.1
                             .animation(
                                 .easeOut(duration: 3.0)
                                 .repeatForever(autoreverses: false)
@@ -201,7 +201,7 @@ struct SplashBackgroundView: View {
                             )
                     }
                 }
-                .padding(.bottom, 180)
+                .padding(.bottom, AppUI.Metrics.heroValueSize * 7) // 180
             }
         }
     }

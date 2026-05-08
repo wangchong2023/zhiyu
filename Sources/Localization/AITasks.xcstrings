@@ -37,6 +37,12 @@
     },
     "ai.status.scanning": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intelligent Scanning..."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -48,6 +54,12 @@
     },
     "ai.status.thinking": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI is thinking..."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -387,6 +399,12 @@
             "state": "translated",
             "value": "暂无任务"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No active tasks"
+          }
         }
       },
       "extractionState": "manual"
@@ -414,6 +432,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "全库智能扫描"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library Scan"
           }
         }
       },
@@ -443,6 +467,12 @@
             "state": "translated",
             "value": "已完成: %@"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成: %@"
+          }
         }
       },
       "extractionState": "manual"
@@ -467,6 +497,12 @@
     "aitask.status.failedFormat": {
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "任务失败: %@"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "任务失败: %@"
@@ -516,6 +552,12 @@
             "state": "translated",
             "value": "正在执行: %1$@ - %2$@"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在执行: %1$@ - %2$@"
+          }
         }
       },
       "extractionState": "manual"
@@ -523,6 +565,12 @@
     "aitask.status.startingFormat": {
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在启动: %1$@ (%2$@)"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "正在启动: %1$@ (%2$@)"

@@ -37,6 +37,12 @@
     },
     "misc.aiThinking": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI is thinking..."
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -172,6 +178,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "："
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ": "
           }
         }
       }
@@ -370,6 +382,12 @@
             "state": "translated",
             "value": "拖拽可排序"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag to reorder"
+          }
         }
       },
       "extractionState": "manual"
@@ -404,6 +422,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "错误"
+          }
+        }
+      }
+    },
+    "misc.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "执行失败"
           }
         }
       }
@@ -544,6 +579,23 @@
       },
       "extractionState": "manual"
     },
+    "misc.processing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "处理中"
+          }
+        }
+      }
+    },
     "misc.preview": {
       "localizations": {
         "en": {
@@ -654,6 +706,12 @@
             "state": "translated",
             "value": "、"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · "
+          }
         }
       }
     },
@@ -714,6 +772,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "万"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10k"
           }
         }
       },
@@ -868,6 +932,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "暂无数据"
+          }
+        }
+      }
+    },
+    "misc.type": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "类型"
           }
         }
       }

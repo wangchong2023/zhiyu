@@ -164,48 +164,44 @@ struct TaskCenterView: View {
         let metrics = taskCenter.metrics(for: type)
         let runningCount = metrics.running
         
-        return VStack(alignment: .center, spacing: AppUI.medium) {
+        return VStack(alignment: .center, spacing: AppUI.tiny) {
             ZStack {
                 Circle()
                     .fill(color.opacity(AppUI.glassOpacity / 2))
-                    .frame(width: AppUI.Timeline.indicatorSize, height: AppUI.Timeline.indicatorSize)
+                    .frame(width: AppUI.Timeline.indicatorSize - AppUI.tiny, height: AppUI.Timeline.indicatorSize - AppUI.tiny) // 32
                 Image(systemName: type.icon)
-                    .font(.system(size: AppUI.Action.iconSize, weight: .bold))
+                    .font(.system(size: AppUI.subheadlineFontSize, weight: .bold))
                     .foregroundStyle(color)
                 
                 if runningCount > 0 {
                     Circle()
                         .trim(from: 0, to: 0.8)
                         .stroke(color, lineWidth: AppUI.borderWidth * 2)
-                        .frame(width: AppUI.Timeline.iconCircleSize + AppUI.tiny, height: AppUI.Timeline.iconCircleSize + AppUI.tiny)
+                        .frame(width: AppUI.Timeline.indicatorSize, height: AppUI.Timeline.indicatorSize)
                         .rotationEffect(.degrees(-90))
                 }
             }
             
-            VStack(spacing: AppUI.tiny) {
+            VStack(spacing: AppUI.atomic) {
                 Text(L10n.AI.Task.tr("type.\(type.rawValue)"))
-                    .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold))
+                    .font(.system(size: AppUI.microFontSize + AppUI.atomic, weight: .bold)) // 11
                     .foregroundStyle(.appSecondary)
                 
                 HStack(alignment: .firstTextBaseline, spacing: AppUI.atomic) {
                     Text("\(metrics.completed)")
-                        .font(.system(size: AppUI.Metrics.dashboardValueSize, weight: .bold, design: .rounded))
+                        .font(.system(size: AppUI.standardFontSize + AppUI.small, weight: .bold, design: .rounded)) // 20
                         .foregroundStyle(.appText)
                     Text("/ \(metrics.total)")
-                        .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .medium, design: .rounded))
-                        .foregroundStyle(.appSecondary.opacity(AppUI.glassOpacity * 2))
+                        .font(.system(size: AppUI.microFontSize, weight: .medium, design: .rounded))
+                        .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.75)) // 0.6
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .appContainer(
-            background: AppUI.containerBackground,
-            borderColor: runningCount > 0 ? color.opacity(AppUI.glassOpacity * 2) : AppUI.containerBorder,
-            cornerRadius: AppUI.Task.dashboardRadius,
-            padding: true
-        )
-        .padding(.vertical, AppUI.medium + AppUI.atomic)
-        .shadow(color: Color.black.opacity(0.02), radius: AppUI.small, x: 0, y: AppUI.tiny)
+        .padding(.vertical, AppUI.standardPadding)
+        .appMetricCardStyle(color: color, cornerRadius: AppUI.standardRadius)
+        .padding(.vertical, AppUI.tiny)
+        .shadow(color: Color.black.opacity(AppUI.shadowOpacity / 5), radius: AppUI.small, x: 0, y: AppUI.tiny)
     }
     
     private var emptyState: some View {
@@ -343,7 +339,7 @@ private struct TaskRow: View {
             VStack(alignment: .trailing, spacing: AppUI.Metrics.progressHeight) {
                 statusText
                 Text(task.startTime.formatted(.dateTime.hour().minute().second()))
-                    .font(.system(size: AppUI.microFontSize - 2, design: .monospaced))
+                    .font(.system(size: AppUI.microFontSize - AppUI.atomic * 2, design: .monospaced)) // 8
                     .foregroundStyle(.appSecondary.opacity(AppUI.glassOpacity * 2))
                     .fixedSize()
             }

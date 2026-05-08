@@ -19,7 +19,7 @@ enum TaskType: String, CaseIterable {
     case aiScan         // AI 扫描
     case healthCheck    // 健康检查
     case synthesis      // 知识合成
-    
+
     var icon: String {
         switch self {
         case .ai: return "sparkles"
@@ -29,7 +29,7 @@ enum TaskType: String, CaseIterable {
         case .synthesis: return "wand.and.stars"
         }
     }
-    
+
     // UI 扩展逻辑映射（后续可由 View 层通过扩展覆盖，目前放在这里作为默认实现）
     var defaultColor: String {
         switch self {
@@ -47,7 +47,7 @@ enum TaskStatus: Equatable {
     case running(progress: Double)  // 执行中（带进度）
     case completed                  // 已完成
     case failed(error: String)      // 执行失败（带错误信息）
-    
+
     static func == (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
         switch (lhs, rhs) {
         case (.pending, .pending): return true
@@ -68,7 +68,7 @@ struct GlobalTask: Identifiable {
     var status: TaskStatus          // 当前状态
     let startTime = Date()          // 启动时间
     var isRead: Bool = false        // 用户是否已读（用于通知红点）
-    var associatedPageID: UUID? = nil // 关联页面（完成后可跳转）
+    var associatedPageID: UUID? // 关联页面（完成后可跳转）
 }
 
 /// 全局任务管理中心 (单例)
@@ -76,15 +76,15 @@ struct GlobalTask: Identifiable {
 @MainActor
 class TaskCenter: ObservableObject {
     static let shared = TaskCenter()
-    
+
     @Published var tasks: [GlobalTask] = []
     @Published var latestStatus: String = ""
     private var cancellables = Set<AnyCancellable>()
-    
+
     init() {
         setupSubscriptions()
     }
-    
+
     private func setupSubscriptions() {
         AppEventBus.shared.subscribe()
             .receive(on: RunLoop.main)
@@ -95,12 +95,12 @@ class TaskCenter: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     /// 更新全局最新状态文案 (用于触发 UI 脉搏动效)
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
     }
-    
+
     /// 任务指标摘要
     struct TaskMetrics {
         let total: Int
@@ -108,21 +108,21 @@ class TaskCenter: ObservableObject {
         let running: Int
         let failed: Int
     }
-    
+
     /// 获取指定类型的任务指标
     func metrics(for type: TaskType) -> TaskMetrics {
         let relevant = tasks.filter { $0.type == type }
         let completed = relevant.filter { $0.status == .completed }.count
-        let running = relevant.filter { 
-            if case .running = $0.status { return true }; return false 
+        let running = relevant.filter {
+            if case .running = $0.status { return true }; return false
         }.count
         let failed = relevant.filter {
             if case .failed = $0.status { return true }; return false
         }.count
-        
+
         return TaskMetrics(total: relevant.count, completed: completed, running: running, failed: failed)
     }
-    
+
     /// 未读已完成任务数
     var unreadCount: Int {
         tasks.filter { task in
@@ -135,25 +135,25 @@ class TaskCenter: ObservableObject {
             }
         }.count
     }
-    
+
     func addTask(type: TaskType = .ai, name: String, target: String) -> UUID {
         let task = GlobalTask(type: type, name: name, target: target, status: .pending)
         self.tasks.insert(task, at: 0)
         self.latestStatus = Localized.trf("aitask.status.startingFormat", name, target)
-        
+
         // 灵动岛适配：启动实时活动
         ActivityService.shared.startActivity(name: name, target: target)
-        
+
         return task.id
     }
-    
+
     func updateTask(_ id: UUID, status: TaskStatus, associatedPageID: UUID? = nil) {
         if let index = self.tasks.firstIndex(where: { $0.id == id }) {
             self.tasks[index].status = status
             if let pageID = associatedPageID {
                 self.tasks[index].associatedPageID = pageID
             }
-            
+
             let task = self.tasks[index]
             switch status {
             case .running(let progress):
@@ -171,7 +171,7 @@ class TaskCenter: ObservableObject {
             case .pending:
                 break
             }
-            
+
             // 如果成功且任务过多，清理旧任务
             if case .completed = status {
                 if self.tasks.count > 20 {
@@ -180,7 +180,7 @@ class TaskCenter: ObservableObject {
             }
         }
     }
-    
+
     func markAsRead(_ id: UUID) {
         DispatchQueue.main.async {
             if let index = self.tasks.firstIndex(where: { $0.id == id }) {
@@ -188,19 +188,19 @@ class TaskCenter: ObservableObject {
             }
         }
     }
-    
+
     func markAllAsRead() {
         for i in 0..<self.tasks.count {
             self.tasks[i].isRead = true
         }
     }
-    
+
     func removeTask(_ id: UUID) {
         DispatchQueue.main.async {
             self.tasks.removeAll(where: { $0.id == id })
         }
     }
-    
+
     /// 重置所有任务数据
     func reset() {
         self.tasks.removeAll()

@@ -21,18 +21,18 @@ struct StatCard: View {
     let color: Color
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: AppUI.medium - AppUI.atomic) { // 10
             // 带发光效果的图标
             ZStack {
                 Circle()
-                    .fill(color.opacity(0.12))
-                    .frame(width: 52, height: 52)
+                    .fill(color.opacity(AppUI.glassOpacity * 1.2))
+                    .frame(width: AppUI.largeIconSize * 1.6, height: AppUI.largeIconSize * 1.6) // 52
 
                 Image(systemName: icon)
                     .font(.title2.weight(.medium))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [color, color.opacity(0.7)],
+                            colors: [color, color.opacity(AppUI.secondaryOpacity)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -40,7 +40,7 @@ struct StatCard: View {
             }
 
             Text(value)
-                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .font(.system(size: AppUI.Metrics.heroValueSize - 2, weight: .bold, design: .rounded)) // 26
                 .foregroundStyle(.appText)
 
             Text(title)
@@ -48,10 +48,10 @@ struct StatCard: View {
                 .foregroundStyle(.appSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, AppUI.standardPadding)
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
-        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+        .shadow(color: .black.opacity(AppUI.shadowOpacity * 1.5), radius: AppUI.shadowRadius - 2, x: 0, y: AppUI.shadowY) // 0.06, 8, 4
     }
 }
 
@@ -67,25 +67,25 @@ struct QuickActionRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
+            HStack(spacing: AppUI.medium + AppUI.atomic * 2) { // 14
                 // 渐变图标背景
                 ZStack {
                     RoundedRectangle(cornerRadius: AppUI.small)
                         .fill(
                             LinearGradient(
-                                colors: [color.opacity(0.2), color.opacity(0.08)],
+                                colors: [color.opacity(AppUI.glassOpacity * 2), color.opacity(AppUI.glassOpacity * 0.8)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .frame(width: 44, height: 44)
+                        .frame(width: AppUI.Metrics.iconBoxSize + 4, height: AppUI.Metrics.iconBoxSize + 4) // 44
 
                     Image(systemName: icon)
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: AppUI.titleIconSize, weight: .semibold))
                         .foregroundStyle(color)
                 }
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: AppUI.atomic * 1.5) { // 3
                     Text(title)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.appText)
@@ -98,12 +98,12 @@ struct QuickActionRow: View {
 
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.medium))
-                    .foregroundStyle(.appSecondary.opacity(0.6))
+                    .foregroundStyle(.appSecondary.opacity(AppUI.dimmedOpacity))
             }
-            .padding(14)
+            .padding(AppUI.medium + AppUI.atomic * 2) // 14
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
-            .shadow(color: .black.opacity(isPressed ? 0.04 : 0.08), radius: isPressed ? 4 : 8, x: 0, y: isPressed ? 2 : 4)
+            .shadow(color: .black.opacity(isPressed ? AppUI.shadowOpacity : AppUI.shadowOpacity * 2), radius: isPressed ? AppUI.shadowRadius / 2.5 : AppUI.shadowRadius / 1.25, x: 0, y: isPressed ? AppUI.shadowY / 2 : AppUI.shadowY) // 4:8, 2:4
             .scaleEffect(isPressed ? 0.98 : 1.0)
         }
         .buttonStyle(.plain)
@@ -126,19 +126,19 @@ struct GuideStepRow: View {
     let icon: String
 
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: AppUI.medium + AppUI.atomic * 2) { // 14
             // 带数字序号的渐变圆
             ZStack {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [.appAccent, .appAccent.opacity(0.7)],
+                            colors: [.appAccent, .appAccent.opacity(AppUI.secondaryOpacity)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 32, height: 32)
-                    .shadow(color: .appAccent.opacity(0.3), radius: 4, x: 0, y: 2)
+                    .frame(width: AppUI.largeIconSize, height: AppUI.largeIconSize) // 32
+                    .shadow(color: .appAccent.opacity(AppUI.disabledOpacity), radius: AppUI.shadowRadius / 2.5, x: 0, y: AppUI.shadowY / 2) // 0.3, 4, 2
 
                 Text("\(number)")
                     .font(.caption.weight(.bold))
@@ -161,28 +161,28 @@ struct PageRowView: View {
     @Environment(AppStore.self) var store
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) {
             // Type icon
             Image(systemName: page.displayIcon)
                 .font(.body)
                 .foregroundStyle(Color.fromModelColorName(page.type.colorName))
-                .frame(width: 32, height: 32)
-                .background(Color.fromModelColorName(page.type.colorName).opacity(0.15))
+                .frame(width: AppUI.largeIconSize, height: AppUI.largeIconSize) // 32
+                .background(Color.fromModelColorName(page.type.colorName).opacity(AppUI.glassOpacity * 1.5))
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
             
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: AppUI.atomic * 1.5) { // 3
                 Text(page.title)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
                     .lineLimit(1)
                 
                 if !compact {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppUI.small) {
                         Text(page.type.displayName)
                             .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.fromModelColorName(page.type.colorName).opacity(0.2))
+                            .padding(.horizontal, AppUI.small - AppUI.atomic) // 6
+                            .padding(.vertical, AppUI.atomic)
+                            .background(Color.fromModelColorName(page.type.colorName).opacity(AppUI.glassOpacity * 2))
                             .clipShape(Capsule())
                             .foregroundStyle(Color.fromModelColorName(page.type.colorName))
                         
@@ -205,10 +205,10 @@ struct PageRowView: View {
             // Status indicator
             Circle()
                 .fill(Color.fromModelColorName(page.status.colorName))
-                .frame(width: 8, height: 8)
+                .frame(width: AppUI.smallIconSize / 2.5, height: AppUI.smallIconSize / 2.5) // 8
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, AppUI.medium)
+        .padding(.vertical, AppUI.medium - AppUI.atomic) // 10
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
         .contentShape(Rectangle()) // 确保整行可点

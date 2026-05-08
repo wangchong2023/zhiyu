@@ -135,7 +135,7 @@ struct ChatViewContent: View {
     // MARK: - Not Configured Banner
     private var notConfiguredBanner: some View {
         NavigationLink(destination: LLMSettingsView()) {
-            HStack(spacing: 10) {
+            HStack(spacing: AppUI.small + AppUI.atomic) { // 10
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundStyle(.orange)
                 Text(L10n.Chat.tr("configureFirst"))
@@ -147,7 +147,7 @@ struct ChatViewContent: View {
                     .foregroundStyle(.appSecondary)
             }
             .padding()
-            .background(Color.orange.opacity(0.1))
+            .background(Color.orange.opacity(AppUI.glassOpacity)) // 0.1
         }
         .buttonStyle(.plain)
     }
@@ -160,28 +160,28 @@ struct ChatViewContent: View {
                     if llmService.chatHistory.isEmpty && !llmService.isProcessing {
                         chatWelcome()
                     } else {
-                        // 只要正在处理中，就显示流式气泡（置顶）
+                        // 按照时间正序排列，最新的在最下面
+                        ForEach(llmService.chatHistory) { message in
+                            messageRow(for: message)
+                        }
+
+                        // 正在处理中，就显示流式气泡（在最下面）
                         if llmService.isProcessing {
                             streamingBubble
                                 .id("processing")
                         }
-
-                        // 按照时间倒序排列，最新的在最上面
-                        ForEach(llmService.chatHistory.reversed()) { message in
-                            messageRow(for: message)
-                        }
                     }
                 }
-                .padding(.horizontal, 4)
-                .padding(.bottom, 16)
+                .padding(.horizontal, AppUI.tiny)
+                .padding(.bottom, AppUI.standardPadding)
             }
             .onChange(of: llmService.chatHistory.count) {
-                // 当有新消息时，自动滚动到顶部（最新的位置）
-                withAnimation { proxy.scrollTo(llmService.chatHistory.last?.id, anchor: .top) }
+                // 当有新消息时，自动滚动到底部
+                withAnimation { proxy.scrollTo(llmService.chatHistory.last?.id, anchor: .bottom) }
             }
             .onChange(of: llmService.isProcessing) {
                 if llmService.isProcessing {
-                    withAnimation { proxy.scrollTo("processing", anchor: .top) }
+                    withAnimation { proxy.scrollTo("processing", anchor: .bottom) }
                 }
             }
         }
@@ -214,14 +214,14 @@ struct ChatViewContent: View {
     }
 
     private func chatWelcome(isSheet: Bool = false) -> some View {
-        VStack(spacing: isSheet ? 12 : 8) {
+        VStack(spacing: isSheet ? AppUI.medium : AppUI.small) { // 12, 8
             if !isSheet {
                 // Remove Spacer to tighten layout
 
                 // 带光晕的图标
                 ZStack {
                     Circle()
-                        .fill(Color.appAccent.opacity(0.1))
+                        .fill(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.1
                         .frame(width: AppUI.largeIconSize * 1.6, height: AppUI.largeIconSize * 1.6)
                         .blur(radius: AppUI.medium)
 
@@ -234,7 +234,7 @@ struct ChatViewContent: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: .appAccent.opacity(0.3), radius: AppUI.small, x: 0, y: AppUI.tiny)
+                        .shadow(color: .appAccent.opacity(AppUI.glassOpacity * 2), radius: AppUI.small, x: 0, y: AppUI.tiny)
                 }
 
                 Text(L10n.Chat.tr("welcomeTitle"))
@@ -243,7 +243,7 @@ struct ChatViewContent: View {
             }
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: AppUI.wide) { // 20
                     // 1. 我的指令 (置顶)
                     suggestionGroup(title: L10n.Chat.tr("group.user"), icon: "pin.fill", queries: promptService.userShortcuts.map { $0.text })
                     
@@ -251,7 +251,7 @@ struct ChatViewContent: View {
                     if isGeneratingAIQuestions {
                         HStack {
                             ProgressView()
-                                .scaleEffect(0.8)
+                                .scaleEffect(AppUI.fullOpacity * 0.8) // 0.8
                             Text(L10n.Chat.tr("ai.thinking"))
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
@@ -272,25 +272,25 @@ struct ChatViewContent: View {
     }
 
     private func suggestionGroup(title: String, icon: String, queries: [String], color: Color = .appSecondary) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: AppUI.small + AppUI.atomic) { // 10
             // 标题现在支持点击直接触发“总体探索”
             Button(action: {
                 HapticFeedback.shared.trigger(.link)
                 let query = Localized.trf("chat.deepExplorePrompt", title)
                 sendMessage(query)
             }) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                     Image(systemName: icon)
                         .font(.caption2)
                     Text(title)
                         .font(.caption.weight(.bold))
                     Spacer()
                     Image(systemName: "sparkles.rectangle.stack")
-                        .font(.system(size: 10))
-                        .opacity(0.5)
+                        .font(.system(size: AppUI.Metrics.heroValueSize * 0.38)) // 10
+                        .opacity(AppUI.fullOpacity * 0.5) // 0.5
                 }
                 .foregroundStyle(color)
-                .padding(.leading, 4)
+                .padding(.leading, AppUI.atomic * 2) // 4
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -311,14 +311,14 @@ struct ChatViewContent: View {
                         Spacer()
                         Image(systemName: "arrow.up.right.circle.fill")
                             .font(.caption2)
-                            .foregroundStyle(.appAccent.opacity(0.7))
+                            .foregroundStyle(.appAccent.opacity(AppUI.fullOpacity * 0.7)) // 0.7
                     }
                     .padding()
                     .background(Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                            .stroke(Color.appBorder.opacity(0.3), lineWidth: 1)
+                            .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
                     )
                 }
                 .buttonStyle(.plain)
@@ -342,28 +342,31 @@ struct ChatViewContent: View {
                 .font(AppUI.secondaryFont)
                 .foregroundStyle(.appAccent)
                 .frame(width: AppUI.titleIconSize * 1.2, height: AppUI.titleIconSize * 1.2)
-                .background(Color.appAccent.opacity(0.15))
+                .background(Color.appAccent.opacity(AppUI.glassOpacity * 1.5)) // 0.15
                 .clipShape(Circle())
             
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
                 if llmService.streamingContent.isEmpty {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
                         Text(L10n.Chat.tr("aiThinking"))
                             .font(.caption.weight(.medium))
                             .foregroundStyle(.appAccent)
-                        HStack(spacing: 4) {
+                        HStack(spacing: AppUI.atomic * 2) { // 4
                             ForEach(0..<3, id: \.self) { index in
                                 Circle()
                                     .fill(Color.appAccent)
-                                    .frame(width: 6, height: 6)
+                                    .frame(width: AppUI.tiny + AppUI.atomic, height: AppUI.tiny + AppUI.atomic) // 6, 6
                                     .modifier(PulsingDot(delay: Double(index) * 0.2))
                             }
                         }
                     }
                 } else {
-                    Text(llmService.streamingContent)
-                        .font(AppUI.secondaryFont)
-                        .foregroundStyle(.appText)
+                    MarkdownRendererView(
+                        content: llmService.streamingContent,
+                        isPrivate: false,
+                        onLinkTap: { _ in },
+                        isCompact: true
+                    )
                 }
             }
             .padding(AppUI.medium)
@@ -379,12 +382,12 @@ struct ChatViewContent: View {
         VStack(spacing: 0) {
             Divider()
             
-            HStack(alignment: .center, spacing: 12) {
+            HStack(alignment: .center, spacing: AppUI.medium) { // 12
                 Button(action: { showPrompts.toggle() }) {
                     Image(systemName: "sparkles.rectangle.stack")
                         .font(.title3)
-                        .foregroundStyle(llmService.isProcessing ? .appSecondary.opacity(0.3) : .appAccent)
-                        .frame(width: 44, height: 44)
+                        .foregroundStyle(llmService.isProcessing ? .appSecondary.opacity(AppUI.disabledOpacity) : .appAccent)
+                        .frame(width: AppUI.Action.buttonHeight, height: AppUI.Action.buttonHeight)
                         .background(Color.appCard)
                         .clipShape(Circle())
                 }
@@ -423,7 +426,7 @@ struct ChatViewContent: View {
             }
             .padding(.horizontal, AppUI.standardPadding)
             .padding(.vertical, AppUI.tightPadding)
-            .background(llmService.isProcessing ? Color.appCard.opacity(0.5) : Color.appCard)
+            .background(llmService.isProcessing ? Color.appCard.opacity(AppUI.fullOpacity * 0.5) : Color.appCard) // 0.5
             .sheet(isPresented: $showPrompts) {
                 NavigationStack {
                     chatWelcome(isSheet: true)

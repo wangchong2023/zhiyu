@@ -45,11 +45,13 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 | **L0** | 基础设施层 | 存储引擎 (SQLite), 网络 (Network), 安全 (Keychain, SecurityManager, Logger) |
 
 ## 目录结构 (Shared)
-- `Sources/Shared/Core`: 基础设施、平台适配、全局常量与协议。
-- `Sources/Shared/Data`: 持久化存储 (SQLite, Vault) 与同步引擎。
-- `Sources/Shared/Domain`: 业务领域逻辑、RAG 管道、AI 推理与核心功能。
-- `Sources/Shared/Models`: 领域模型 (Entity, Concept, Page)。
+- `Sources/Shared/Core`: 基础设施、平台适配、全局协议与工具类 (`Logger`, `AppRouter`, `HapticFeedback`)。
+- `Sources/Shared/Data`: 持久化存储 (`SQLiteStore`, `AppStore`) 与同步引擎 (`iCloudSyncService`)。
+- `Sources/Shared/Domain`: 业务领域逻辑 (`LLMService`, `LinkService`)、RAG 管道、摄取服务 (`IngestService`) 与专用处理器 (`OCR`, `PDF`, `Chunker`)。
+- `Sources/Shared/Models`: 核心领域模型 (`KnowledgePage`, `PageType`)。
+- `Sources/Shared/ViewModels`: 基于 `@Observable` 的视图模型 (如 `ChatViewModel`)。
 - `Sources/Shared/Views`: 跨平台 SwiftUI 视图。
+
 
 ## 开发约定
 
@@ -90,8 +92,8 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 - `feat:` (新功能), `fix:` (缺陷修复), `docs:` (文档), `refactor:` (重构), `perf:` (优化)。
 
 ## 关键文件路径
-- `Sources/ZhiYuApp.swift`: 应用入口与服务注册。
-- `Sources/Shared/Services/Core/ServiceContainer.swift`: DI 容器实现。
+- `Sources/ZhiYuApp.swift`: 应用入口与服务注册中心。
+- `Sources/Shared/Core/ServiceContainer.swift`: DI 容器实现。
 - `Sources/Shared/Models/`: 核心领域模型。
 - `Sources/Shared/Views/`: 跨平台 SwiftUI 视图。
 - `Tools/`: 开发者辅助工具（同步、模拟器、MockServer）。

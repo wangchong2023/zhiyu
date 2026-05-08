@@ -20,17 +20,17 @@ final class AIWorkflowStore {
     var isScanningAI = false
     var refactorSuggestions: [RefactorSuggestion] = []
     var potentialLinks: [PotentialLinkSuggestion] = []
-    
+
     // ── 洞察与报告 ──
     var weeklyInsight: KnowledgeInsightService.WeeklyInsight?
     var dailyRecap: KnowledgeInsightService.DailyRecap?
     var isGeneratingDailyRecap = false
-    
+
     // ── 页面级 AI 状态 ──
     var activePageAIResult: String?
     var isProcessingPageAI = false
     var activeQuiz: QuizModel?
-    
+
     // ── 健康度状态 ──
     var lastLintScore: Int = 0
     var lastLintDate: Date?
@@ -50,7 +50,7 @@ final class AIWorkflowStore {
         }
         return []
     }()
-    
+
     var lintIssues: [LintIssue] {
         get { access(keyPath: \.lintIssues); return _lintIssues }
         set {
@@ -75,7 +75,7 @@ final class AIWorkflowStore {
     init() {
         setupSubscriptions()
     }
-    
+
     private func setupSubscriptions() {
         AppEventBus.shared.subscribe()
             .receive(on: RunLoop.main)
@@ -86,7 +86,7 @@ final class AIWorkflowStore {
             }
             .store(in: &cancellables)
     }
-    
+
     // ── AI 洞察管理 ──
 
     func generateWeeklyInsight(forceRefresh: Bool = false) async {
@@ -132,14 +132,14 @@ final class AIWorkflowStore {
     func generateDailyRecap(forceRefresh: Bool = false) async {
         guard !isGeneratingDailyRecap else { return }
         guard llmService.isEnabled else { return }
-        
+
         isGeneratingDailyRecap = true
         defer { isGeneratingDailyRecap = false }
-        
+
         do {
             let result = try await insightService.generateDailyRecap(
-                pages: sqliteStore.pages, 
-                llmService: llmService, 
+                pages: sqliteStore.pages,
+                llmService: llmService,
                 forceRefresh: forceRefresh
             )
             dailyRecap = result
@@ -159,21 +159,21 @@ final class AIWorkflowStore {
     }
 
     func runAIScan() async {
-        guard llmService.isEnabled else { 
+        guard llmService.isEnabled else {
             logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
-            return 
+            return
         }
-        
+
         isScanningAI = true
         let taskID = TaskCenter.shared.addTask(type: .ai, name: L10n.AI.Task.tr("scanTaskName"), target: "System")
-        
+
         do {
             let samplePages = Array(sqliteStore.pages.prefix(10))
             let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
-            
+
             let activePages = sqliteStore.pages.sorted(by: { $0.updated > $1.updated }).prefix(5)
             let existingTitles = sqliteStore.pages.map { $0.title }
-            
+
             var tempLinks: [PotentialLinkSuggestion] = []
             var seenLinks = Set<String>()
             for page in activePages {
@@ -186,14 +186,14 @@ final class AIWorkflowStore {
                     }
                 }
             }
-            
+
             refactorSuggestions = suggestions
             potentialLinks = tempLinks
             isScanningAI = false
             TaskCenter.shared.updateTask(taskID, status: .completed)
         } catch {
             logger.addLog(action: .aiscanFailed, target: "System", details: error.localizedDescription)
-            isScanningAI = false 
+            isScanningAI = false
             TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
         }
     }
@@ -204,8 +204,8 @@ final class AIWorkflowStore {
     }
 
     /// 查找与当前页面语义相似的页面（基于向量嵌入）
-    func findSimilarPages(for page: KnowledgePage, limit: Int = 3) -> [KnowledgePage] {
-        let results = sqliteStore.embeddingManager.search(query: page.title, topK: limit + 1)
+    func findSimilarPages(for page: KnowledgePage, limit: Int = 3) async -> [KnowledgePage] {
+        let results = await sqliteStore.embeddingManager.search(query: page.title, topK: limit + 1)
         return results
             .filter { $0.id != page.id }
             .prefix(limit)
@@ -218,8 +218,8 @@ final class AIWorkflowStore {
         ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
         Task {
             isProcessingPageAI = true
-            defer { 
-                isProcessingPageAI = false 
+            defer {
+                isProcessingPageAI = false
                 ToastManager.shared.dismiss()
             }
             do {
@@ -236,8 +236,8 @@ final class AIWorkflowStore {
         ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
         Task {
             isProcessingPageAI = true
-            defer { 
-                isProcessingPageAI = false 
+            defer {
+                isProcessingPageAI = false
                 ToastManager.shared.dismiss()
             }
             do {
@@ -298,24 +298,24 @@ final class AIWorkflowStore {
         lintIssues = []
         lastLintScore = 0
         lastLintDate = nil
-        
+
         // 清理磁盘上的动态缓存 Key
         let calendar = Calendar.current
         let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
         let year = components.yearForWeekOfYear ?? 0
         let week = components.weekOfYear ?? 0
         let lang = Localized.currentLanguage
-        
+
         let weeklyKey = "weekly_insight_\(year)_\(week)_\(lang)"
         UserDefaults.standard.removeObject(forKey: weeklyKey)
-        
+
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         let dailyKey = "daily_recap_\(formatter.string(from: Date()))_\(lang)"
         UserDefaults.standard.removeObject(forKey: dailyKey)
-        
+
         UserDefaults.standard.removeObject(forKey: "lastLintIssues")
-        
+
         logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data and disk cache cleared.", module: "AIWorkflowStore")
     }
 

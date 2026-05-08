@@ -126,7 +126,7 @@ final class CollaborationServiceTests: XCTestCase {
         let testDBURL = URL(string: "file::memory:?cache=shared")!
         let sqliteStore = SQLiteStore(dbURL: testDBURL)
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
+        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
         ServiceContainer.shared.register(LinkService(), for: LinkService.self)
         ServiceContainer.shared.register(LintService(), for: LintService.self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
@@ -188,15 +188,15 @@ final class CollaborationServiceTests: XCTestCase {
     }
 }
 
-// MARK: - SpeechService Tests
+// MARK: - SpeechProcessor Tests
 @MainActor
-final class SpeechServiceTests: XCTestCase {
+final class SpeechProcessorTests: XCTestCase {
 
-    var speechService: SpeechService!
+    var speechService: SpeechProcessor!
 
     override func setUp() async throws {
         try await super.setUp()
-        speechService = SpeechService()
+        speechService = SpeechProcessor()
     }
 
     override func tearDown() async throws {
@@ -257,21 +257,21 @@ final class DocumentFormatEdgeCaseTests: XCTestCase {
     }
 }
 
-// MARK: - MarkdownParser Edge Cases
-final class MarkdownParserEdgeCaseTests: XCTestCase {
+// MARK: - MarkdownProcessor Edge Cases
+final class MarkdownProcessorEdgeCaseTests: XCTestCase {
 
-    var parser: MarkdownParser!
+    var parser: MarkdownProcessor!
 
     override func setUp() {
         super.setUp()
-        parser = MarkdownParser()
+        parser = MarkdownProcessor()
     }
 
     func testParsePageLinkWithSpaces() {
         let content = "This links to [[Page With Spaces]]"
         let segments = parser.parseInlineSegments(content)
 
-        let wikilinks = segments.filter { $0.type == .wikilink }
+        let wikilinks = segments.filter { $0.type == .applink }
         XCTAssertEqual(wikilinks.count, 1)
         XCTAssertEqual(wikilinks.first?.content, "Page With Spaces")
     }
@@ -280,7 +280,7 @@ final class MarkdownParserEdgeCaseTests: XCTestCase {
         let content = "链接到 [[中文页面名称]]"
         let segments = parser.parseInlineSegments(content)
 
-        let wikilinks = segments.filter { $0.type == .wikilink }
+        let wikilinks = segments.filter { $0.type == .applink }
         XCTAssertEqual(wikilinks.count, 1)
         XCTAssertEqual(wikilinks.first?.content, "中文页面名称")
     }
@@ -290,7 +290,7 @@ final class MarkdownParserEdgeCaseTests: XCTestCase {
         let segments = parser.parseInlineSegments(content)
 
         // Empty brackets should not be parsed as wikilink (regex requires non-empty)
-        let wikilinks = segments.filter { $0.type == .wikilink }
+        let wikilinks = segments.filter { $0.type == .applink }
         XCTAssertTrue(wikilinks.isEmpty || wikilinks.allSatisfy { !$0.content.isEmpty })
     }
 
@@ -470,7 +470,7 @@ final class LintServiceEdgeCasesTests: XCTestCase {
         let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
         let pageB = KnowledgePage(title: "B", type: .concept, content: "Links to [[A]]")
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
             linkResolver: { title in
                 if title == "A" { return pageA }
@@ -512,25 +512,25 @@ final class IngestServiceEdgeCasesTests: XCTestCase {
         ingestService = IngestService()
     }
 
-    func testExtractConceptsNoMatch() {
+    func testExtractConceptsNoMatch() async {
         let pages = [KnowledgePage(title: "Existing", type: .concept)]
         let content = "This mentions Nothing That Exists"
-        let concepts = ingestService.extractConcepts(from: content, pages: pages)
+        let concepts = await ingestService.extractConcepts(from: content, pages: pages)
         XCTAssertTrue(concepts.isEmpty)
     }
 
-    func testExtractConceptsCaseInsensitive() {
+    func testExtractConceptsCaseInsensitive() async {
         let pages = [KnowledgePage(title: "SwiftUI", type: .concept)]
-        let concepts1 = ingestService.extractConcepts(from: "swiftui", pages: pages)
-        let concepts2 = ingestService.extractConcepts(from: "SWIFTUI", pages: pages)
+        let concepts1 = await ingestService.extractConcepts(from: "swiftui", pages: pages)
+        let concepts2 = await ingestService.extractConcepts(from: "SWIFTUI", pages: pages)
         XCTAssertFalse(concepts1.isEmpty)
         XCTAssertFalse(concepts2.isEmpty)
     }
 
-    func testExtractConceptsPartialMatch() {
+    func testExtractConceptsPartialMatch() async {
         let pages = [KnowledgePage(title: "Machine Learning", type: .concept)]
         // Partial match should not trigger
-        let concepts = ingestService.extractConcepts(from: "Machines are everywhere", pages: pages)
+        let concepts = await ingestService.extractConcepts(from: "Machines are everywhere", pages: pages)
         XCTAssertTrue(concepts.isEmpty, "Partial word match should not extract concept")
     }
 

@@ -25,10 +25,6 @@ struct SettingsView: View {
     @EnvironmentObject var llmService: LLMService
     @ObservedObject var onboardingService: OnboardingService
     @State private var showResetConfirmation = false
-    @State private var showInjectConfirmation = false
-    @State private var showPerformanceTestConfirmation = false
-    @State private var injectedCount: Int = 0
-    @State private var showResetOnboardingConfirmation = false
     @State private var isExportingAll = false
     #if ICLOUD_ENABLED
     @State private var coordinator = iCloudSyncCoordinator()
@@ -103,105 +99,94 @@ struct SettingsView: View {
                     Localized.languageMode = newValue
                     languageForceUpdate.toggle()
                 }
-                .id(languageForceUpdate)
             } header: {
-                Text(L10n.Settings.tr("section.system"))
+                Text(L10n.Settings.Section.appearance)
             }
-            
-            // ── AI 配置 ──
-            Section {
-                SettingsNavigationRow(icon: "wrench.and.screwdriver.fill", title: L10n.Settings.tr("llmConfig"), identifier: "settings.llm") {
-                    LLMSettingsView()
-                } trailing: {
-                    if llmService.isEnabled {
-                        if !llmService.isReady {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
-                                .font(.caption)
-                        } else {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                                .font(.caption)
-                        }
-                    } else {
-                        Text(L10n.Settings.tr("llmNotConfigured"))
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
-                    }
-                }
+            .listRowBackground(Color.appCard.opacity(AppUI.secondaryOpacity)) // 0.8
 
-                SettingsNavigationRow(icon: "cpu.fill", title: L10n.Settings.tr("onDeviceLLM"), identifier: "settings.onDeviceLLM") {
+            // ── AI 能力 ──
+            Section {
+                SettingsNavigationRow(icon: "antenna.radiowaves.left.and.right", title: L10n.Settings.tr("llmSettings"), identifier: "settings.llm") {
+                    LLMSettingsView()
+                }
+                
+                SettingsNavigationRow(icon: "cpu", title: L10n.Settings.tr("onDeviceLLM"), identifier: "settings.ondevice") {
                     OnDeviceLLMSettingsView()
                 }
                 
-                SettingsNavigationRow(icon: "flask.fill", title: L10n.Settings.tr("promptWorkshop"), identifier: "settings.promptWorkshop") {
-                    PromptWorkshopView()
+                SettingsNavigationRow(icon: "terminal", title: L10n.Settings.tr("promptLab"), identifier: "settings.prompts") {
+                    PromptLabView()
                 }
             } header: {
                 Text(L10n.Settings.Section.ai)
             }
-            
-            // ── 同步与备份 ──
+            .listRowBackground(Color.appCard.opacity(0.8))
+
+            // ── 数据同步 ──
             Section {
                 #if ICLOUD_ENABLED
-                SettingsNavigationRow(icon: "icloud", title: L10n.Settings.tr("iCloudSync"), identifier: "settings.icloud") {
+                SettingsNavigationRow(icon: "icloud.fill", title: L10n.Settings.tr("iCloudSync"), identifier: "settings.icloud") {
                     iCloudSyncView(coordinator: coordinator)
-                } trailing: {
-                    if coordinator.iCloudAvailable {
-                        Circle()
-                            .fill(coordinator.syncStatus == .synced ? Color.appAccent : Color.appSecondary)
-                            .frame(width: AppUI.Task.statusIndicatorSize, height: AppUI.Task.statusIndicatorSize)
-                    } else {
-                        Text(L10n.Settings.tr("unavailable"))
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
-                    }
                 }
                 #endif
-
-                SettingsNavigationRow(icon: "externaldrive.fill", title: L10n.Backup.title, identifier: "settings.backup") {
+                
+                SettingsNavigationRow(icon: "archivebox.fill", title: L10n.Settings.tr("backupRestore"), identifier: "settings.backup") {
                     BackupView()
                 }
-
-                SettingsNavigationRow(icon: "person.2.circle.fill", title: L10n.Collaboration.tr("title"), identifier: "settings.collaboration") {
-                    CollaborationView()
-                }
-
-                SettingsNavigationRow(icon: "chart.bar.fill", title: "资源审计", identifier: "settings.stats") {
-                    SystemStatsView()
-                }
                 
-                Button(role: .destructive, action: { showResetConfirmation = true }) {
-                    Label(L10n.Settings.tr("reset"), systemImage: "arrow.counterclockwise")
-                        .foregroundStyle(.red)
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    showFolderImporterForImport = true
+                }) {
+                    Label(L10n.Transfer.tr("import.folder"), systemImage: "folder.badge.plus")
+                        .foregroundStyle(.appText)
+                }
+                .accessibilityIdentifier("settings.importFolder")
+
+                Button(action: {
+                    isExportingAll = true
+                    let content = exportAllAsMarkdown()
+                    #if os(iOS)
+                    let av = UIActivityViewController(activityItems: [content], applicationActivities: nil)
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let rootVC = windowScene.windows.first?.rootViewController {
+                        rootVC.present(av, animated: true)
+                    }
+                    #endif
+                }) {
+                    Label(L10n.Settings.tr("exportAllMarkdown"), systemImage: "square.and.arrow.up")
+                        .foregroundStyle(.appText)
+                }
+                .accessibilityIdentifier("settings.exportAll")
+
+                Button(role: .destructive, action: {
+                    showResetConfirmation = true
+                }) {
+                    Label(L10n.Settings.tr("resetData"), systemImage: "trash.fill")
                 }
                 .accessibilityIdentifier("settings.reset")
-                .confirmationDialog(
-                    L10n.Settings.tr("confirmReset"),
-                    isPresented: $showResetConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(L10n.Settings.tr("resetAllData"), role: .destructive) {
+                .alert(L10n.Settings.tr("resetConfirmationTitle"), isPresented: $showResetConfirmation) {
+                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                    Button(L10n.Common.tr("confirmReset"), role: .destructive) {
                         store.resetAllData()
-                        store.seedDefaultContent()
                         HapticFeedback.shared.trigger(.success)
                     }
-                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
                 } message: {
-                    Text(L10n.Settings.tr("resetWarning"))
+                    Text(L10n.Settings.tr("resetConfirmationMessage"))
                 }
             } header: {
                 Text(L10n.Settings.Section.data)
             }
-            
+            .listRowBackground(Color.appCard.opacity(0.8))
+
             // ── 安全与隐私 ──
             Section {
                 Toggle(isOn: privacyBinding) {
                     Label {
-                        VStack(alignment: .leading, spacing: AppUI.atomic) {
+                        VStack(alignment: .leading, spacing: AppUI.atomic) { // 2
                             Text(L10n.Settings.tr("privacyMode"))
-                            Text(L10n.Settings.tr("privacyMode.desc"))
-                                .font(.caption2)
+                            Text(L10n.Settings.tr("privacyModeDesc"))
+                                .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
                     } icon: {
@@ -228,81 +213,16 @@ struct SettingsView: View {
             } header: {
                 Text(L10n.Settings.Section.security)
             }
+            .listRowBackground(Color.appCard.opacity(0.8))
             
             // ── 开发者选项 ──
             #if DEBUG
             Section {
-                Button(action: {
-                    showInjectConfirmation = true
-                }) {
-                    Label(L10n.Settings.tr("injectDemoData"), systemImage: "testtube.2")
+                SettingsNavigationRow(icon: "hammer.fill", title: L10n.Settings.tr("section.developer"), identifier: "settings.developer") {
+                    DeveloperSettingsView(onboardingService: onboardingService)
                 }
-                .accessibilityIdentifier("settings.injectDemo")
-                .alert(L10n.Settings.tr("injectConfirm.title"), isPresented: $showInjectConfirmation) {
-                    Button(L10n.Common.tr("confirm")) {
-                        let count = store.generateDemoData()
-                        HapticFeedback.shared.trigger(count > 0 ? .success : .error)
-                        if count > 0 {
-                            ToastManager.shared.show(type: .success, message: L10n.Settings.trf("injectDemo.successMessage", count))
-                        } else {
-                            ToastManager.shared.show(type: .error, message: Localized.tr("settings.inject.noDataGenerated"))
-                        }
-                    }
-                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.tr("injectConfirm.message"))
-                }
-
-                Button(action: {
-                    showPerformanceTestConfirmation = true
-                }) {
-                    Label(L10n.Settings.tr("performanceTest"), systemImage: "speedometer")
-                }
-                .accessibilityIdentifier("settings.performanceTest")
-                .alert(L10n.Settings.tr("performanceTestConfirm.title"), isPresented: $showPerformanceTestConfirmation) {
-                    Button(L10n.Common.tr("confirm")) {
-                        injectedCount = store.generateStressTestData()
-                        HapticFeedback.shared.trigger(.success)
-                        ToastManager.shared.show(type: .success, message: L10n.Settings.trf("injectDemo.successMessage", injectedCount))
-                    }
-                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.tr("performanceTestConfirm.message"))
-                }
-                
-                Button(role: .destructive, action: { showClearAllConfirmation = true }) {
-                    Label(L10n.Settings.tr("clearAll"), systemImage: "trash.slash.fill")
-                }
-                .accessibilityIdentifier("settings.clearAll")
-                .confirmationDialog(L10n.Settings.tr("clearAll.confirmTitle"), isPresented: $showClearAllConfirmation, titleVisibility: .visible) {
-                    Button(L10n.Settings.tr("clearAll.action"), role: .destructive) {
-                        store.clearAllDeveloperData()
-                        HapticFeedback.shared.trigger(.success)
-                        ToastManager.shared.show(type: .success, message: L10n.Settings.tr("clearAll.success"))
-                    }
-                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.tr("clearAll.message"))
-                }
-
-                Button(action: {
-                    showResetOnboardingConfirmation = true
-                }) {
-                    Label(L10n.Settings.tr("resetOnboarding"), systemImage: "arrow.triangle.2.circlepath")
-                }
-                .alert(L10n.Settings.tr("resetOnboarding.title"), isPresented: $showResetOnboardingConfirmation) {
-                    Button(L10n.Common.tr("confirm"), role: .destructive) {
-                        onboardingService.reset()
-                        HapticFeedback.shared.trigger(.success)
-                        ToastManager.shared.show(type: .success, message: L10n.Settings.tr("resetOnboarding.success"))
-                    }
-                    Button(L10n.Common.tr("cancel"), role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.tr("resetOnboarding.message"))
-                }
-            } header: {
-                Text(L10n.Settings.tr("section.developer"))
             }
+            .listRowBackground(Color.appCard.opacity(0.8))
             #endif
 
             Section {
@@ -310,12 +230,13 @@ struct SettingsView: View {
                     SettingsAboutView()
                 }
             }
+            .listRowBackground(Color.appCard.opacity(0.8))
         }
-#if os(iOS)
+        #if os(iOS)
         .listStyle(.insetGrouped)
-#endif
+        #endif
         .scrollContentBackground(.hidden)
-        .background(Color.appBackground)
+        .background(AppUI.Background.meshGradient())
         .navigationTitle(L10n.Settings.title)
         // 导入文件夹
         .fileImporter(

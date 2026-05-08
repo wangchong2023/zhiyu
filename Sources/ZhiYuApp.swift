@@ -30,72 +30,26 @@ struct ZhiYuApp: App {
     @AppStorage("hasSeenSplash") private var hasSeenSplash = false
     
     /// 初始化应用环境
-    /// 在此阶段完成 L0-L2 层的依赖注入与服务挂载
+    /// 在此阶段完成 L0-L2 层的模块化依赖注入与服务挂载
     init() {
-        // 1. 初始化基础设施服务 (L0)
-        // 这些服务不依赖于业务逻辑，提供底层存储、安全与观测能力
-        let logger = Logger()
-        let sqliteStore = SQLiteStore()
-        let backupService = BackupService()
-        let snapshotService = SnapshotService()
-        let securityService = VaultStorageSecurityService()
+        // 1. 按照分层顺序执行模块化注册
+        CoreModuleRegistrar.register(in: ServiceContainer.shared)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        DomainModuleRegistrar.register(in: ServiceContainer.shared)
         
-        // 2. 注册协议与实例 (Service Locator 模式)
-        // 确保后续各模块可以通过 @Inject 属性包装器安全访问这些单例
-        ServiceContainer.shared.register(logger, for: (any LoggerProtocol).self)
-        ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(backupService, for: BackupService.self)
-        ServiceContainer.shared.register(snapshotService, for: SnapshotService.self)
-        ServiceContainer.shared.register(securityService, for: VaultStorageSecurityService.self)
-        
-        // 3. 初始化领域服务 (L1)
-        // 包含页面链接审计、网络摄取、健康检查等业务逻辑组件
-        ServiceContainer.shared.register(LinkService(), for: LinkService.self)
-        ServiceContainer.shared.register(IngestService(), for: IngestService.self)
-        ServiceContainer.shared.register(LintService(), for: LintService.self)
-        ServiceContainer.shared.register(UndoService(), for: UndoService.self)
-        ServiceContainer.shared.register(DeepLinkService(), for: DeepLinkService.self)
-        ServiceContainer.shared.register(PerformanceService(), for: PerformanceService.self)
-        ServiceContainer.shared.register(AccessibilityService(), for: AccessibilityService.self)
-        
-        // 3.1 注册 RAG 核心存储与检索组件
-        if let writer = DatabaseManager.shared.dbWriter {
-            let pageStore = KnowledgePageStore(dbWriter: writer)
-            ServiceContainer.shared.register(pageStore, for: KnowledgePageStore.self)
-            
-            let embeddingManager = EmbeddingManager(repository: pageStore)
-            ServiceContainer.shared.register(embeddingManager, for: EmbeddingManager.self)
-        }
-        
-        // 4. 初始化应用能力层 (L2)
-        // 涉及 LLM 推理、知识合成等高阶 AI 能力
+        // 2. 初始化核心 AI 服务状态（用于 SwiftUI 状态持有）
         let llm = LLMService.shared
         _llmService = StateObject(wrappedValue: llm)
         
-        ServiceContainer.shared.register(llm, for: (any LLMServiceProtocol).self)
-        ServiceContainer.shared.register(llm, for: LLMService.self)
-        
-        ServiceContainer.shared.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
-        ServiceContainer.shared.register(PluginRegistry.shared, for: PluginRegistry.self)
-        ServiceContainer.shared.register(WorkflowService.shared, for: WorkflowService.self)
-        ServiceContainer.shared.register(AISynthesisService.shared, for: AISynthesisService.self)
-        
-        let evaluationService = RAGEvaluationService(
-            llmService: llm, 
-            store: ServiceContainer.shared.resolve(KnowledgePageStore.self)
-        )
-        ServiceContainer.shared.register(evaluationService, for: RAGEvaluationService.self)
-        
-        // 5. 在服务注册完成后初始化 Store
-        // AppStore 依赖于上述所有注入的服务，故必须放在最后初始化
+        // 3. 在所有基础服务就绪后，初始化顶层 Store
         _store = State(wrappedValue: AppStore())
         
-        // 6. 配置全局 UI 样式
+        // 4. 配置全局 UI 样式
         #if canImport(UIKit)
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.appAccent)
         #endif
         
-        print("🚀 [ZHIYU-LIFECYCLE] App Initialized at \(Date())")
+        print("🚀 [ZHIYU-LIFECYCLE] App Initialized via Modular Registrars at \(Date())")
     }
 
     /// 应用主场景定义

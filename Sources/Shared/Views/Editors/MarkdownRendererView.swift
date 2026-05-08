@@ -125,6 +125,7 @@ struct MarkdownRendererView: View {
         
         return Text(text)
             .font(.system(size: headingLevel.size, design: .rounded).weight(headingLevel.weight))
+            .font(.system(size: headingLevel.size + 2, design: .rounded).weight(headingLevel.weight))
             .foregroundStyle(.appText)
             .multilineTextAlignment(isMainTitle ? .center : .leading)
             .frame(maxWidth: .infinity, alignment: isMainTitle ? .center : .leading)
@@ -135,25 +136,34 @@ struct MarkdownRendererView: View {
     @ViewBuilder
     private func renderParagraph(text: String) -> some View {
         renderInlineContent(text)
-            .font(isCompact ? AppUI.captionFont : .system(.body, design: .serif))
-            .lineSpacing(AppUI.tiny * 1.5)
+            .font(isCompact ? AppUI.secondaryFont : .system(.body, design: .serif))
+            .lineSpacing(isCompact ? AppUI.atomic * 2 : AppUI.tiny * 1.5)
             .foregroundStyle(.appText.opacity(AppUI.fullOpacity - AppUI.glassOpacity))
     }
 
     // MARK: - Render Bullet List
     @ViewBuilder
     private func renderBulletList(items: [String], indent: Int) -> some View {
+        let isOrdered = indent == -1
         VStack(alignment: .leading, spacing: AppUI.tiny) {
-            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+            ForEach(Array(items.enumerated()), id: \.offset) { index, item in
                 HStack(alignment: .top, spacing: AppUI.tightPadding) {
-                    Text("•")
-                        .foregroundStyle(.appAccent)
-                        .frame(width: AppUI.iconSmall)
+                    if isOrdered {
+                        Text("\(index + 1).")
+                            .font(.system(.body, design: .rounded).weight(.bold))
+                            .foregroundStyle(.appAccent)
+                            .frame(width: 24, alignment: .trailing)
+                    } else {
+                        Text("•")
+                            .foregroundStyle(.appAccent)
+                            .frame(width: AppUI.iconSmall)
+                    }
+                    
                     renderInlineContent(item)
                         .foregroundStyle(.appText)
                     Spacer(minLength: 0)
                 }
-                .padding(.leading, CGFloat(indent) * AppUI.standardPadding)
+                .padding(.leading, isOrdered ? 0 : CGFloat(indent) * AppUI.standardPadding)
             }
         }
         .padding(.vertical, AppUI.atomic)

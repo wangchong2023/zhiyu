@@ -6,7 +6,7 @@
 // 1. Token 消耗分析：展示最近 30 天的 Token 使用趋势，帮助用户掌握 AI 运行成本。
 // 2. 存储空间分布：分类统计不同业务层级（Entity, Concept 等）的磁盘占用。
 // 3. 知识溯源监控：新增“导入 vs 自建”维度统计，量化知识库的自动化程度。
-// 4. 性能与质量审计：实时展示平均响应时延及基于 RAGAS 标准的 Faithfulness、Relevance 指标。
+// 4. 性能与质量评估：实时展示平均响应时延及基于 RAGAS 标准的 Faithfulness、Relevance 指标。
 // 5. 自动化维护：提供孤立数据块清理入口，保障数据库的长期高性能运行。
 // 版本: 1.2
 // 修改记录:
@@ -36,7 +36,7 @@ struct StorageItem: Identifiable {
 }
 
 // MARK: - 资源监控视图
-/// [L3] 表现层：资源监控视图 (原资源审计)
+/// [L3] 表现层：资源监控视图 (原资源监控)
 /// 提供 AI 资源消耗、存储空间分布及数据溯源的多维度监控。
 struct SystemStatsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -59,8 +59,9 @@ struct SystemStatsView: View {
     @State private var monthlyStats: [MonthlyToken] = []
     @State private var totalStorage: Int64 = 0
     @State private var storageByType: [StorageItem] = []
-    @State private var provenance: (imported: Int, created: Int) = (0, 0)
+    @State private var provenance: (importedCount: Int, importedSize: Int64, createdCount: Int, createdSize: Int64) = (0, 0, 0, 0)
     @State private var exportCount: Int = 0
+    @State private var totalExportSize: Int64 = 0
     @State private var avgLatency: Int = 0
     @State private var evalStats: [String: Double] = [:]
     @State private var isLoading = true
@@ -97,14 +98,6 @@ struct SystemStatsView: View {
         }
         .navigationTitle(L10n.Dashboard.tr("stats.navigationTitleMonitor"))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.appSecondary.opacity(0.5))
-                }
-            }
-        }
         .task {
             await loadStats()
         }
@@ -137,20 +130,60 @@ struct SystemStatsView: View {
             }
             .padding(.vertical, AppUI.tiny)
             
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(L10n.Dashboard.tr("stats.avgLatency"))
-                        .font(.subheadline)
-                        .foregroundColor(.appSecondary)
-                    Text("\(avgLatency) ms")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .monospacedDigit()
+            HStack(spacing: AppUI.standardPadding) {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        ZStack {
+                            Circle()
+                                .fill((avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.15))
+                                .frame(width: 32, height: 32)
+                            Image(systemName: "timer")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
+                        }
+                        Spacer()
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L10n.Dashboard.tr("stats.avgLatency"))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.appSecondary)
+                        
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text("\(avgLatency)")
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundColor(.appText)
+                            Text("ms")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.appSecondary)
+                        }
+                    }
                 }
-                Spacer()
-                Image(systemName: "timer")
-                    .font(.largeTitle)
-                    .foregroundColor(avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
+                .padding(AppUI.standardPadding)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    ZStack {
+                        Color.appCard
+                        LinearGradient(
+                            colors: [(avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.08), .clear],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    }
+                )
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.appBorder.opacity(0.8), .appBorder.opacity(0.2)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 5)
             }
             .padding(.vertical, AppUI.tiny)
         }
@@ -179,7 +212,7 @@ struct SystemStatsView: View {
                         Circle()
                             .fill(colorForType(item.type))
                             .frame(width: AppUI.microIconSize, height: AppUI.microIconSize)
-                        Text(item.type)
+                        Text(displayName(for: item.type))
                         Spacer()
                         Text(formatBytes(item.size))
                             .foregroundColor(.appSecondary)
@@ -188,28 +221,37 @@ struct SystemStatsView: View {
             }
         }
         
-        // 知识溯源：量化导入与自建比例
+        // 导入与导出统计：量化导入与自建资产
         Section(header: Text(L10n.Dashboard.tr("stats.provenance"))) {
             HStack {
                 Label(L10n.Dashboard.tr("stats.imported"), systemImage: "arrow.down.doc")
                 Spacer()
-                Text("\(provenance.imported)")
-                    .foregroundColor(.appSecondary)
-                    .monospacedDigit()
+                VStack(alignment: .trailing) {
+                    Text("\(provenance.importedCount) \(L10n.Dashboard.tr("index.pages"))")
+                    Text(formatBytes(provenance.importedSize))
+                        .font(.caption)
+                        .foregroundColor(.appSecondary)
+                }
             }
             HStack {
                 Label(L10n.Dashboard.tr("stats.manuallyCreated"), systemImage: "pencil.and.outline")
                 Spacer()
-                Text("\(provenance.created)")
-                    .foregroundColor(.appSecondary)
-                    .monospacedDigit()
+                VStack(alignment: .trailing) {
+                    Text("\(provenance.createdCount) \(L10n.Dashboard.tr("index.pages"))")
+                    Text(formatBytes(provenance.createdSize))
+                        .font(.caption)
+                        .foregroundColor(.appSecondary)
+                }
             }
             HStack {
                 Label(L10n.Dashboard.tr("stats.exportedRecent"), systemImage: "arrow.up.doc")
                 Spacer()
-                Text("\(exportCount)")
-                    .foregroundColor(.appSecondary)
-                    .monospacedDigit()
+                VStack(alignment: .trailing) {
+                    Text("\(exportCount) \(L10n.Dashboard.tr("pages"))")
+                    Text(formatBytes(totalExportSize))
+                        .font(.caption)
+                        .foregroundColor(.appSecondary)
+                }
             }
         }
         
@@ -234,27 +276,69 @@ struct SystemStatsView: View {
                     .font(.caption)
                     .foregroundColor(Color.green)
             }
+            
         }
     }
     
     private var qualityGrid: some View {
-        HStack {
-            VStack {
-                Text(L10n.Dashboard.tr("stats.faithfulness")).font(.caption)
-                Text(String(format: "%.2f", evalStats[EvaluationMetric.faithfulness.rawValue] ?? 0)).fontWeight(.bold)
-            }
-            Spacer()
-            VStack {
-                Text(L10n.Dashboard.tr("stats.relevance")).font(.caption)
-                Text(String(format: "%.2f", evalStats[EvaluationMetric.relevance.rawValue] ?? 0)).fontWeight(.bold)
-            }
-            Spacer()
-            VStack {
-                Text(L10n.Dashboard.tr("stats.precision")).font(.caption)
-                Text(String(format: "%.2f", evalStats[EvaluationMetric.precision.rawValue] ?? 0)).fontWeight(.bold)
-            }
+        HStack(spacing: AppUI.standardPadding) {
+            metricCard(title: L10n.Dashboard.tr("stats.faithfulness"), value: evalStats[EvaluationMetric.faithfulness.rawValue] ?? 0, icon: "checkmark.shield", color: .appAccent)
+            metricCard(title: L10n.Dashboard.tr("stats.relevance"), value: evalStats[EvaluationMetric.relevance.rawValue] ?? 0, icon: "target", color: .appAccent)
+            metricCard(title: L10n.Dashboard.tr("stats.precision"), value: evalStats[EvaluationMetric.precision.rawValue] ?? 0, icon: "scope", color: .appAccent)
         }
         .padding(.vertical, AppUI.small)
+    }
+
+    private func metricCard(title: String, value: Double, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.15))
+                        .frame(width: 28, height: 28)
+                    Image(systemName: icon)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(color)
+                }
+                Spacer()
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.appSecondary)
+                    .lineLimit(1)
+                
+                Text(String(format: "%.2f", value))
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.appText)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            ZStack {
+                Color.appCard
+                LinearGradient(
+                    colors: [color.opacity(0.08), .clear],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+        )
+        .clipShape(RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius)
+                .stroke(
+                    LinearGradient(
+                        colors: [.appBorder.opacity(0.8), .appBorder.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
     }
     
     // MARK: - 统一空状态视图
@@ -280,15 +364,26 @@ struct SystemStatsView: View {
         return formatter.string(fromByteCount: bytes)
     }
     
-    private func colorForType(_ type: String) -> Color {
-        switch type {
-        case "entity": return .appEntity
-        case "concept": return .appConcept
-        case "source": return .appSource
-        case "comparison": return .appComparison
-        case "map": return .appMap
-        default: return .appAccent
+    private func displayName(for type: String) -> String {
+        if type == "system.database" {
+            return L10n.Dashboard.tr("stats.system.database")
+        } else if type == "system.logs" {
+            return L10n.Dashboard.tr("stats.system.logs")
+        } else if let pageType = PageType(rawValue: type) {
+            return pageType.displayName
         }
+        return type
+    }
+    
+    private func colorForType(_ type: String) -> Color {
+        if type == "system.database" {
+            return .indigo
+        } else if type == "system.logs" {
+            return .secondary
+        } else if let pageType = PageType(rawValue: type) {
+            return .fromModelColorName(pageType.colorName)
+        }
+        return .gray
     }
     
     // MARK: - 数据加载与清理
@@ -308,14 +403,36 @@ struct SystemStatsView: View {
             
             // 2. 存储与溯源类数据
             let storage = try store.fetchStorageStats()
-            self.totalStorage = storage.total
-            self.storageByType = storage.byType.map { StorageItem(type: $0.key, size: $0.value) }
-                .sorted { $0.size > $1.size }
             
-            self.provenance = try store.fetchProvenanceStats()
+            // 获取日志文件大小
+            let logSize = (try? FileManager.default.attributesOfItem(atPath: (Logger.shared as Logger).logsFileURL.path)[.size] as? Int64) ?? 0
             
-            // 计算最近导出次数 (从 Logger 获取)
-            self.exportCount = Logger.shared.logEntries.filter { $0.action == .export }.count
+            // 构建存储列表，加入数据库和日志
+            var items: [StorageItem] = storage.byType.map { StorageItem(type: $0.key, size: $0.value) }
+            items.append(StorageItem(type: "system.database", size: storage.dbSize))
+            items.append(StorageItem(type: "system.logs", size: logSize))
+            
+            self.totalStorage = storage.total + storage.dbSize + logSize
+            self.storageByType = items.sorted { $0.size > $1.size }
+            
+            let prov = try store.fetchProvenanceStats()
+            self.provenance = (prov.importedCount, prov.importedSize, prov.createdCount, prov.createdSize)
+            
+            // 计算最近导出次数与大小 (从 Logger 获取)
+            let exportLogs = Logger.shared.logEntries.filter { $0.action == .export }
+            self.exportCount = exportLogs.count
+            
+            // 解析日志中的 size:XXXX 字段
+            var totalSize: Int64 = 0
+            let regex = try? NSRegularExpression(pattern: "size:(\\d+)")
+            for log in exportLogs {
+                if let match = regex?.firstMatch(in: log.details, range: NSRange(log.details.startIndex..., in: log.details)),
+                   let range = Range(match.range(at: 1), in: log.details),
+                   let size = Int64(log.details[range]) {
+                    totalSize += size
+                }
+            }
+            self.totalExportSize = totalSize
             
             let endTime = Date()
             Logger.shared.addLog(
@@ -329,7 +446,6 @@ struct SystemStatsView: View {
             )
             isLoading = false
         } catch {
-            let endTime = Date()
             Logger.shared.error("加载监控数据失败", error: error)
             isLoading = false
         }
@@ -340,7 +456,7 @@ struct SystemStatsView: View {
         let store = ServiceContainer.shared.resolve(KnowledgePageStore.self)
         
         do {
-            let count = try await store.cleanupOrphanedChunks()
+            let count = try store.cleanupOrphanedChunks()
             self.cleanedCount = count
             isCleaning = false
             HapticFeedback.shared.trigger(.success)

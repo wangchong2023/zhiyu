@@ -21,11 +21,11 @@ import Combine
 final class UndoService: ObservableObject {
     @Published var canUndo: Bool = false
     @Published var canRedo: Bool = false
-    
+
     private var undoStack: [[KnowledgePage]] = []
     private var redoStack: [[KnowledgePage]] = []
     private let maxStackSize = 50
-    
+
     // MARK: - Snapshot Management
     func pushSnapshot(_ pages: [KnowledgePage]) {
         undoStack.append(pages.map { $0 })
@@ -36,7 +36,7 @@ final class UndoService: ObservableObject {
         redoStack.removeAll()
         updatePublishedState()
     }
-    
+
     func undo(currentPages: [KnowledgePage]) -> [KnowledgePage]? {
         guard !undoStack.isEmpty else { return nil }
         // Save current state to redo stack
@@ -45,7 +45,7 @@ final class UndoService: ObservableObject {
         updatePublishedState()
         return previous
     }
-    
+
     func redo(currentPages: [KnowledgePage]) -> [KnowledgePage]? {
         guard !redoStack.isEmpty else { return nil }
         // Save current state to undo stack
@@ -54,13 +54,13 @@ final class UndoService: ObservableObject {
         updatePublishedState()
         return next
     }
-    
+
     func clear() {
         undoStack.removeAll()
         redoStack.removeAll()
         updatePublishedState()
     }
-    
+
     private func updatePublishedState() {
         canUndo = !undoStack.isEmpty
         canRedo = !redoStack.isEmpty

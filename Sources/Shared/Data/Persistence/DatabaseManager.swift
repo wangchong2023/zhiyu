@@ -23,22 +23,22 @@ enum DatabaseError: Error {
 final class DatabaseManager {
     /// 全局单例
     static let shared = DatabaseManager()
-    
+
     /// 标记当前是否处于测试环境
     var isInTesting: Bool = false
-    
+
     /// 统一使用 DatabaseWriter 协议，支持 DatabasePool (WAL) 或 DatabaseQueue (内存/单线程)
     private(set) var dbWriter: (any DatabaseWriter)?
-    
+
     /// 获取当前的数据库池（辅助属性，保持向后兼容）
     var dbPool: DatabasePool! {
         return dbWriter as? DatabasePool
     }
-    
+
     private init() {
         // 延迟初始化，由 setup() 显式启动
     }
-    
+
     /// 初始化数据库连接
     /// 配置 WAL 模式、外键约束并执行 Schema 迁移
     /// - Parameter dbURL: 数据库文件的 URL 路径
@@ -47,22 +47,25 @@ final class DatabaseManager {
         // 如果已经初始化过且路径一致，则跳过
         let isMemory = dbURL.absoluteString.contains(":memory:")
         if let current = dbWriter {
-            let currentPath = current.path
+            let currentPath: String = (try? current.read { db in
+                let row = try Row.fetchOne(db, sql: "PRAGMA database_list")
+                return row?["file"] as? String
+            }) ?? ""
             let newPath = dbURL.path
             // 内存模式下统一比对标记，文件模式下比对真实路径
             if (isMemory && currentPath == ":memory:") || currentPath == newPath {
                 return
             }
         }
-        
+
         var config = Configuration()
         config.prepareDatabase { db in
             // 启用外键支持
             try db.execute(sql: "PRAGMA foreign_keys = ON")
         }
-        
+
         // 核心修复逻辑：检测是否为内存数据库
-        
+
         if isMemory {
             // 对于内存数据库，直接使用 DatabaseQueue() 避开非法路径问题
             self.dbWriter = try DatabaseQueue(configuration: config)
@@ -70,7 +73,7 @@ final class DatabaseManager {
             // 使用 DatabasePool 启用 WAL 模式
             self.dbWriter = try DatabasePool(path: dbURL.path, configuration: config)
         }
-        
+
         // 核心修复：使用显式类型转换避开 any DatabaseWriter 无法直接满足泛型约束的问题
         if let pool = dbWriter as? DatabasePool {
             try migrator.migrate(pool)
@@ -85,21 +88,21 @@ final class DatabaseManager {
             // 但显式处理 Pool 和 Queue 已覆盖 99% 的场景
         }
     }
-    
+
     /// 关闭当前数据库连接并重置单例状态
     func reset() {
         dbWriter = nil
     }
-    
+
     // MARK: - 数据库迁移 (Migrator)
     private var migrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
-        
+
         #if DEBUG
         // 在开发模式下，允许在不增加版本的情况下擦除并重新创建（方便快速调整 Schema）
         // migrator.eraseDatabaseOnSchemaChange = true
         #endif
-        
+
         // V1: 初始架构 (包含 pages, page_embeddings, page_chunks, links)
         migrator.registerMigration("v1") { db in
             // 1. Pages 表
@@ -126,7 +129,7 @@ final class DatabaseManager {
                 // v1 包含 lamport_timestamp 作为基线
                 t.column("lamport_timestamp", .integer).notNull().defaults(to: 0)
             }
-            
+
             // 2. FTS5 全文搜索表 (基于 pages 内容)
             try db.create(virtualTable: "pages_fts", ifNotExists: true, using: FTS5()) { t in
                 t.tokenizer = .unicode61() // 支持多语言分词
@@ -134,12 +137,12 @@ final class DatabaseManager {
                 t.column("content")
                 t.column("tags")
                 t.column("aliases")
-                
+
                 // 3. 极速同步：使用 GRDB 自动生成的触发器替代手动 SQL
                 // 它会自动处理 INSERT/UPDATE/DELETE 时的 rowid 关联与内容对齐
                 t.synchronize(withTable: "pages")
             }
-            
+
             // 4. Embeddings 表
             try db.create(table: "page_embeddings", ifNotExists: true) { t in
                 t.column("id", .text).primaryKey().references("pages", column: "id", onDelete: .cascade)
@@ -147,7 +150,7 @@ final class DatabaseManager {
                 t.column("model_name", .text).notNull()
                 t.column("updated", .datetime).notNull()
             }
-            
+
             // 5. Page Chunks 表 (RAG)
             try db.create(table: "page_chunks", ifNotExists: true) { t in
                 t.column("id", .text).primaryKey()
@@ -156,7 +159,7 @@ final class DatabaseManager {
                 t.column("embedding", .blob)
                 t.column("start_index", .integer)
             }
-            
+
             // 6. Links 表
             try db.create(table: "links", ifNotExists: true) { t in
                 t.column("source_id", .text).notNull().references("pages", column: "id", onDelete: .cascade)
@@ -165,7 +168,7 @@ final class DatabaseManager {
                 t.primaryKey(["source_id", "target_title"])
             }
         }
-        
+
         // V2: 兼容性补丁 - 确保 lamport_timestamp 存在于旧库中
         migrator.registerMigration("v2_add_lamport") { db in
             let columns = try db.columns(in: "pages")
@@ -175,7 +178,7 @@ final class DatabaseManager {
                 }
             }
         }
-        
+
         // V4: 标题唯一性约束 - 强制同名页面合并，并添加唯一索引
         migrator.registerMigration("v4_unique_title") { db in
             // 1. 清理现有重复标题数据（保留最新更新的一条）
@@ -187,12 +190,12 @@ final class DatabaseManager {
                     )
                 )
             """)
-            
+
             // 2. 删除旧索引并创建唯一索引
             try db.execute(sql: "DROP INDEX IF EXISTS idx_pages_on_title")
             try db.execute(sql: "CREATE UNIQUE INDEX idx_pages_on_title ON pages(title)")
         }
-        
+
         // V5: RAG 增强 - 升级分块表支持层级与分类
         migrator.registerMigration("v5_upgrade_page_chunks") { db in
             let columns = try db.columns(in: "page_chunks")
@@ -203,8 +206,8 @@ final class DatabaseManager {
                 }
             }
         }
-        
-        // V6: 资源审计 - 记录 Token 使用量以支持开销统计
+
+        // V6: 资源监控 - 记录 Token 使用量以支持开销统计
         migrator.registerMigration("v6_resource_audit") { db in
             try db.create(table: "token_usage", ifNotExists: true) { t in
                 t.autoIncrementedPrimaryKey("id")
@@ -215,7 +218,7 @@ final class DatabaseManager {
                 t.column("created", .datetime).notNull().indexed()
             }
         }
-        
+
         // V7: 增强治理 - 性能监控与质量评估
         migrator.registerMigration("v7_enhanced_governance") { db in
             // 1. LLM 调用日志表 (可观测性：Token + 时延 + 状态)
@@ -228,7 +231,7 @@ final class DatabaseManager {
                 t.column("status", .text).notNull().defaults(to: "success")
                 t.column("created", .datetime).notNull().indexed()
             }
-            
+
             // 2. 质量评估表 (Benchmark)
             try db.create(table: "rag_evaluations", ifNotExists: true) { t in
                 t.autoIncrementedPrimaryKey("id")
@@ -241,7 +244,7 @@ final class DatabaseManager {
                 t.column("created", .datetime).notNull().indexed()
             }
         }
-        
+
         // V8: Karpathy 模式增强 - 补全溯源元数据
         migrator.registerMigration("v8_karpathy_metadata") { db in
             let columns = try db.columns(in: "pages")
@@ -252,7 +255,7 @@ final class DatabaseManager {
                 }
             }
         }
-        
+
         return migrator
     }
 }

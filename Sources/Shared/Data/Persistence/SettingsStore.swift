@@ -41,7 +41,7 @@ final class SettingsStore {
             }
         }
     }
-    
+
     @ObservationIgnored private var _isBiometricEnabled: Bool = UserDefaults.standard.object(forKey: "isBiometricEnabled") as? Bool ?? true
     var isBiometricEnabled: Bool {
         get {
@@ -55,10 +55,10 @@ final class SettingsStore {
             }
         }
     }
-    
+
     // ── 性能与调试 ──
     var showPerfDashboard = false
-    
+
     // ── 引导状态 ──
     var hasShownGraphCoachMark: Bool {
         get { UserDefaults.standard.bool(forKey: "hasShownGraphCoachMark") }
@@ -81,7 +81,7 @@ final class SettingsStore {
         get { UserDefaults.standard.string(forKey: "knowledge-management_username") ?? "" }
         set { UserDefaults.standard.set(newValue, forKey: "knowledge-management_username") }
     }
-    
+
     func reset() {
         isPrivacyModeEnabled = true
         isBiometricEnabled = true

@@ -24,7 +24,7 @@ struct SynthesisActionButton: View {
         let currentCount = synthesisStore.synthesisResults[type]?.count ?? 0
         let isLimitReached = currentCount >= synthesisStore.maxSynthesisDocsPerType
         
-        VStack(spacing: 8) {
+        VStack(spacing: AppUI.tightPadding) {
             Button(action: { 
                 HapticFeedback.shared.trigger(.selection)
                 
@@ -50,38 +50,40 @@ struct SynthesisActionButton: View {
                 let combinedContent = store.pages.map { "# \($0.title)\n\($0.content)" }.joined(separator: "\n\n---\n\n")
                 synthesisStore.performSynthesis(type: type, combinedContent: combinedContent)
             }) {
-                VStack(spacing: AppUI.Graph.tightPadding * 0.75) {
+                VStack(spacing: AppUI.tiny) {
                     ZStack {
-                        Circle().fill(Color.appAccent.opacity(0.05)).frame(width: AppUI.Graph.selectedNodeSize, height: AppUI.Graph.selectedNodeSize)
+                        Circle().fill(type.formatColor.opacity(AppUI.dimmedOpacity * 0.6)).frame(width: AppUI.Metrics.largeIconBoxSize, height: AppUI.Metrics.largeIconBoxSize) // 0.12
                         Image(systemName: type.icon)
-                            .font(.system(size: AppUI.chipRadius))
-                            .opacity((state == .generating || isLimitReached) ? 0.2 : 1.0)
+                            .font(.system(size: AppUI.iconMedium, weight: .semibold))
+                            .foregroundStyle(type.formatColor)
+                            .opacity((state == .generating || isLimitReached) ? AppUI.dimmedOpacity : AppUI.fullOpacity)
                         
                         if state == .generating {
                             ProgressView()
-                                .scaleEffect(1.0)
-                                .tint(.appAccent)
+                                .scaleEffect(AppUI.Animation.pressScale) // 0.9
+                                .tint(type.formatColor)
                         } else if isLimitReached {
                             Image(systemName: "lock.fill")
-                                .font(.system(size: AppUI.subheadlineFontSize))
-                                .foregroundStyle(.red.opacity(0.6))
+                                .font(.system(size: AppUI.iconTiny, weight: .bold))
+                                .foregroundStyle(.red.opacity(AppUI.secondaryOpacity))
                         }
                     }
-                    Text(type.title).font(.subheadline.bold())
+                    Text(type.title)
+                        .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold))
+                        .foregroundStyle(isLimitReached ? .appSecondary : .appText)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, AppUI.medium)
-                .appCardStyle(cornerRadius: AppUI.large)
-                .foregroundStyle(isLimitReached ? .appSecondary : .appText)
+                .padding(.vertical, AppUI.standardPadding)
+                .appMetricCardStyle(color: type.formatColor, cornerRadius: AppUI.standardRadius)
             }
             .buttonStyle(SynthesisButtonStyle())
             .disabled(state == .generating || isLimitReached)
-            .animation(.spring(response: 0.3), value: state)
-            .animation(.spring(response: 0.3), value: isLimitReached)
+            .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: state)
+            .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: isLimitReached)
             
             if isLimitReached {
                 Text(Localized.tr("synthesis.limitReachedWarning"))
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: AppUI.microFontSize, weight: .medium))
                     .foregroundStyle(.red)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
@@ -93,8 +95,8 @@ struct SynthesisButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .opacity(configuration.isPressed ? 0.9 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? AppUI.Animation.pressScale : 1.0)
+            .opacity(configuration.isPressed ? AppUI.pressedOpacity : AppUI.fullOpacity)
+            .animation(.easeInOut(duration: AppUI.Animation.standardDuration / 2), value: configuration.isPressed)
     }
 }

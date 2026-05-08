@@ -16,7 +16,7 @@ struct OnboardingOverlay: View {
     var body: some View {
         if let step = service.currentStep {
             ZStack {
-                Color.black.opacity(0.7)
+                Color.black.opacity(AppUI.secondaryOpacity * 0.875) // 0.7
                     .ignoresSafeArea()
                     .onTapGesture { 
                         withAnimation {
@@ -24,18 +24,18 @@ struct OnboardingOverlay: View {
                         }
                     }
                 
-                VStack(spacing: 24) {
+                VStack(spacing: AppUI.loosePadding) { // 24
                     Image(systemName: step.icon)
                         .font(.system(size: AppUI.iconHuge * 1.25))
                         .foregroundStyle(.appAccent)
                     
-                    VStack(spacing: 8) {
+                    VStack(spacing: AppUI.tightPadding) { // 8
                         Text(step.title)
                             .font(.title2.bold())
                         Text(step.description)
                             .font(.body)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
+                            .padding(.horizontal, AppUI.huge) // 32
                     }
                     
                     Button(action: { 
@@ -46,8 +46,8 @@ struct OnboardingOverlay: View {
                         Text(step == .vault ? Localized.tr("onboarding.action.start") : Localized.tr("onboarding.action.next"))
                             .font(.headline)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 40)
-                            .padding(.vertical, 12)
+                            .padding(.horizontal, AppUI.huge * 1.25) // 40
+                            .padding(.vertical, AppUI.medium) // 12
                             .background(Color.appAccent)
                             .clipShape(Capsule())
                     }

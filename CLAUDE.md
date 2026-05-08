@@ -24,24 +24,24 @@ xcodegen generate
 python3 Tools/update_localization.py
 
 # 构建 iOS
-xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS'
+xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS'
 
 # 构建 macOS (Catalyst)
-xcodebuild build -project KM.xcodeproj -scheme KM -destination 'platform=macOS'
+xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS'
 
 # 构建 watchOS
-xcodebuild build -project KM.xcodeproj -scheme KMWatch -destination 'generic/platform=watchOS'
+xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS'
 
-# 列出可用模拟器（CI 环境可能与本机不同）
-xcodebuild -project KM.xcodeproj -scheme KM -showdestinations | grep simulator
+# 列出可用模拟器
+xcodebuild -project ZhiYu.xcodeproj -scheme ZhiYu -showdestinations | grep simulator
 
-# 运行单元测试（设备名需替换为 -showdestinations 中列出的）
-xcodebuild test -project KM.xcodeproj -scheme KM -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -enableCodeCoverage YES
+# 运行单元测试
+xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -enableCodeCoverage YES
 
 # 运行单个测试类
-xcodebuild test -project KM.xcodeproj -scheme KM -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:KMTests/AppStoreTests
+xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:ZhiYuTests/AppStoreTests
 
-# 代码检查（需安装 SwiftLint: brew install swiftlint）
+# 代码检查（需安装 SwiftLint）
 swiftlint --strict
 ```
 
@@ -53,14 +53,14 @@ swiftlint --strict
 |-------|------|-----------------|
 | **L3** | 表现层 | SwiftUI Views、`@Observable` ViewModels、导航 |
 | **L2** | 领域/功能层 | 业务逻辑服务 — `KnowledgeInsightService`、`AISynthesisService`、`IngestService` |
-| **L1** | 服务层 | 数据访问与 AI 适配器 — `AppStore`、`LLMClient`、`EmbeddingManager`、`LinkScraper` |
-| **L0** | 基础设施层 | 存储引擎、网络、Keychain、Logger、OS 工具 |
+| **L1** | 服务层 | 数据访问与 AI 适配器 — `AppStore`、`LLMClient`、`EmbeddingManager` |
+| **L0** | 基础设施层 | 存储引擎 (SQLite)、网络、Keychain、Logger、OS 工具 |
 
 ## 关键模式
 
 ### 依赖注入 — `@Inject` 属性包装器
 
-服务通过 `ServiceContainer`（服务定位器模式）在 `ZhiYuApp.init()` 中注册。在任何 View 或其他服务中使用：
+服务通过 `ServiceContainer`（服务定位器模式）在 `ZhiYuApp.init()` 中注册。在任何 View、ViewModel 或其他服务中使用：
 
 ```swift
 @Inject var store: AppStore
@@ -73,66 +73,37 @@ swiftlint --strict
 - 严格并发检查**已启用**（`SWIFT_STRICT_CONCURRENCY: complete` — Swift 6 模式）
 - 优先使用 `async/await` 和 `actor`；绝不使用锁或信号量
 - UI 绑定代码必须标注 `@MainActor`
-- 非 `Sendable` 单例类（如 `PPTXGenerator`），将 `static let shared` 标记为 `nonisolated(unsafe)`：
-  ```swift
-  nonisolated(unsafe) static let shared = PPTXGenerator()
-  ```
-
-> 实现细节见 [Docs/guides/implementation-patterns.md](Docs/guides/implementation-patterns.md)（Swift 6 变通方案、图谱模式、合成文档、缓存策略、测验流程、Mermaid、WebViewExport、UI 框架）。
+- 非 `Sendable` 单例类，将 `static let shared` 标记为 `nonisolated(unsafe)`。
 
 ## 项目结构（关键路径）
 
 ```
 Sources/
-├── ZhiYuApp.swift                # @main 入口点，服务注册
+├── ZhiYuApp.swift                # @main 入口点，服务注册中心
 ├── Shared/
-│   ├── Models/                # WikiPage、GraphModels、PageSchema、AppConfig、CollaborationModels
-│   ├── Services/
-│   │   ├── Core/              # ServiceContainer（DI）、LLMServiceProtocol、EmbeddingProvider、LLMStrategy
-│   │   ├── Storage/           # AppStore、SQLiteStore、VaultService、BackupService
-│   │   ├── AI/                # LLMService、LLMClient、EmbeddingManager、AISynthesisService、IngestQueue
-│   │   ├── Logic/             # KnowledgeInsightService、LinkService、RecursiveChunker
-│   │   ├── Processors/        # LinkScraperService、MarkdownParser、OCRService、PDFService、SpeechService
-│   │   ├── Graph/             # GraphClusteringService、GraphLayoutEngine
-│   │   ├── Sync/              # iCloudSyncManager、AppCloudSyncService、FileSystemSyncService
-│   │   ├── Plugins/           # PluginRegistry、PluginProtocols、PluginMarketService
-│   │   ├── Infrastructure/    # LogService、HapticManager、SecurityManager、PerformanceService、WebViewExportService 等
-│   │   ├── Feature/           # CollaborationService、IngestService、LintService、TaskCenter、UndoService
-│   │   ├── Gamification/      # MedalService
-│   │   └── System/            # ActivityService、WikiEventBus
-│   ├── Views/
-│   │   ├── Core/              # ContentView、Navigation、Dashboard、Search
-│   │   ├── Pages/             # 页面列表、详情、历史
-│   │   ├── Editors/           # Markdown 编辑器、源码模式
-│   │   ├── Features/          # Graph3DView、GraphView、AI 合成视图
-│   │   ├── Components/        # 可复用 UI 组件（chips、breadcrumbs 等）
-│   │   ├── CommandPalette/    # Cmd+K 命令面板
-│   │   └── Settings/          # 设置视图
-│   └── Infrastructure/        # ThemeManager、Localization、CJK 支持、跨平台辅助
-├── Platforms/iOS/             # iOS 特定代码
-├── Platforms/macOS/           # macOS 特定代码
-├── Platforms/watchOS/         # WatchContentView、WatchDictationView、WatchWidgets
-└── Resources/AppConfig.json   # 运行时配置
-Tests/
-├── Unit/                      # 模型、服务、存储、AI 测试 + RAG 黄金集评估
-├── Integration/               # RAGPipelineTests
-├── UI/ + UITests/              # UI 自动化测试
-├── SnapshotTests/              # Point-Free 快照测试
-├── Performance/               # 搜索性能基准测试
-├── Boundary/                  # 边界情况测试（ingest queue）
-└── Platforms/                 # Watch 连接测试
+│   ├── Core/                  # ServiceContainer (DI)、协议定义、平台适配、工具类
+│   ├── Data/                  # SQLiteStore、AppStore、VaultService、同步引擎 (iCloud/FS)
+│   ├── Domain/                # LLMService、AISynthesisService、IngestService、处理器 (OCR/PDF/Chunker)
+│   ├── Models/                # Entity、Concept、Page 模型定义
+│   ├── ViewModels/            # 基于 @Observable 的业务逻辑编排层 (ChatViewModel, GraphViewModel)
+│   ├── Views/                 # 跨平台 SwiftUI 视图组件
+│   └── Resources/             # 跨平台静态资源
+├── Platforms/                 # 平台特定实现 (iOS, macOS, watchOS)
+└── Resources/                 # App 资源 (Assets, Info.plist)
+Tests/                         # 单元测试、集成测试、快照测试、性能测试
+Tools/                         # 开发者辅助工具 (MockServer, Scripts)
 ```
 
 ## Targets
 
-- **KM** — iOS 应用（iPhone/iPad），主 target
-- **KMMac** — Mac Catalyst 应用，`SUPPORTS_MACCATALYST: YES`，仅 iPad/Mac 设备族
-- **KMWatch** — 独立 watchOS 应用，支持听写和小组件
-- **KMTests** — 单元测试 bundle，依赖 KM + SnapshotTesting 包
+- **ZhiYu** — iOS 应用（iPhone/iPad），主 target
+- **ZhiYuMac** — Mac Catalyst 应用
+- **ZhiYuWatch** — 独立 watchOS 应用
+- **ZhiYuTests** — 单元测试 bundle
 
 ## 提交规范
 
-使用 Conventional Commits 格式（可以使用中文描述）：
+使用 Conventional Commits 格式：
 
 - `feat:` — 新功能
 - `fix:` — 缺陷修复
@@ -140,29 +111,10 @@ Tests/
 - `refactor:` — 代码重构
 - `perf:` — 性能优化
 
-分支命名：`feature/*`、`hotfix/*`、`bugfix/*`。功能开发合入 `develop`，`main` 为稳定发布分支。
-
-## 代码风格约定
-
-> 完整细节见 [Docs/guides/swift-coding-style.md](Docs/guides/swift-coding-style.md)（命名、Protocol、Localization key、CodingKeys 等）。
-> 配置文件规范（project.yml、AppConfig.json、xcassets 等）见 [Docs/guides/config-conventions.md](Docs/guides/config-conventions.md)。
-
-### 核心约定
-
-| 规则 | 说明 |
-|------|------|
-| `import` 管理 | Model/Service 层 `import Foundation`，绝不导入 `SwiftUI`；View 层 `import SwiftUI` |
-| 枚举 Raw Values | 无 `Codable` 用隐式，有 `Codable` 用显式 |
-| 协议遵循用 Extension | 协议实现放独立 `extension`，不在类型声明体内联 |
-
-### 注释规范
+## 注释规范
 
 统一使用**简体中文**书写所有注释：
 
-- **文档注释（`///`）**：用于公开 API、协议方法、类型定义，供 Xcode Quick Help 显示。用中文。
-- **实现注释（`//`）**：用于内部逻辑说明。用中文。
-- **MARK 标签**：使用 `// MARK: - 中文标题` 格式，`-` 分隔符不可省略。
-- **TODO/FIXME**：`// TODO: 中文说明` / `// FIXME: 中文说明`
-- **英文术语保留**：专有名词、API 名、框架名等保留英文原文（如 `// 缓存失效后强制重新计算`）。
-
-> `///` 解释"为什么"，`//` 解释"怎么做"。一行能读懂的代码不需要注释。
+- **文档注释（`///`）**：解释“为什么”，用于公开 API。
+- **实现注释（`//`）**：解释“怎么做”，用于内部逻辑。
+- **MARK 标签**：使用 `// MARK: - 中文标题` 格式。

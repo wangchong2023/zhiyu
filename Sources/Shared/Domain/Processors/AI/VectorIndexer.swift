@@ -16,19 +16,19 @@ import Foundation
 
 /// 向量索引处理器
 final class VectorIndexer {
-    
+
     private let embeddingManager: EmbeddingManager
-    
+
     init(embeddingManager: EmbeddingManager) {
         self.embeddingManager = embeddingManager
     }
-    
+
     /// 执行多维向量索引
     /// - Parameters:
     ///   - pageID: 关联的页面 ID
     ///   - chunks: 待处理的 PageChunk 列表
-    func index(pageID: UUID, chunks: [PageChunk]) {
+    func index(pageID: UUID, chunks: [PageChunk]) async {
         guard !chunks.isEmpty else { return }
-        embeddingManager.indexChunks(pageID: pageID, chunks: chunks)
+        await embeddingManager.indexChunks(pageID: pageID, chunks: chunks)
     }
 }

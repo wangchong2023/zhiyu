@@ -23,7 +23,7 @@ struct SaveVoiceNoteSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: AppUI.loosePadding) { // 20
                     titleField
                     typePicker
                     previewSection
@@ -40,7 +40,7 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var titleField: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
             Text(Localized.tr("speech.noteTitle"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -51,7 +51,7 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var typePicker: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
             Text(Localized.tr("ocr.pageType"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -66,7 +66,7 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var previewSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
             Text(Localized.tr("pdf.contentPreview"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -74,13 +74,13 @@ struct SaveVoiceNoteSheet: View {
             TextEditor(text: $speechService.transcribedText)
                 .font(.body)
                 .foregroundStyle(.appText)
-                .frame(minHeight: 120, maxHeight: 300)
-                .padding(8)
+                .frame(minHeight: AppUI.Metrics.heroValueSize * 4.6, maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 120, 300
+                .padding(AppUI.small)
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                        .stroke(Color.appBorder, lineWidth: 1)
+                        .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
                 )
         }
     }
@@ -122,14 +122,14 @@ struct VoiceRecordingRow: View {
     let recording: VoiceRecording
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) {
             Image(systemName: "waveform")
                 .foregroundStyle(.appSource)
-                .frame(width: 32, height: 32)
-                .background(Color.appSource.opacity(0.15))
+                .frame(width: AppUI.largeIconSize, height: AppUI.largeIconSize) // 32
+                .background(Color.appSource.opacity(AppUI.glassOpacity * 1.5))
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: AppUI.atomic) {
                 Text(recording.title)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
@@ -146,8 +146,8 @@ struct VoiceRecordingRow: View {
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, AppUI.medium)
+        .padding(.vertical, AppUI.medium - AppUI.atomic) // 10
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
         .frame(maxWidth: .infinity)

@@ -23,9 +23,9 @@ extension Notification.Name {
 /// 负责展示导入功能的品牌视觉元素及核心价值主张
 struct IngestHeroSection: View {
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppUI.medium) {
             Image(systemName: "tray.and.arrow.down.fill")
-                .font(.system(size: 48))
+                .font(.system(size: AppUI.iconDisplay))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.appSource, .appText],
@@ -40,7 +40,7 @@ struct IngestHeroSection: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
+        .padding(.vertical, AppUI.tightPadding)
     }
 }
 
@@ -64,14 +64,14 @@ struct IngestEntryCardsSection: View {
     /// 响应式列配置：iPhone 2列，iPad 自适应多列
     private var columns: [GridItem] {
         if horizontalSizeClass == .regular {
-            Array(repeating: GridItem(.flexible(minimum: 80, maximum: 180), spacing: 12), count: 5)
+            Array(repeating: GridItem(.flexible(minimum: AppUI.Metrics.heroValueSize * 3, maximum: AppUI.Metrics.heroValueSize * 7), spacing: AppUI.medium), count: 5) // 80, 180, 12
         } else {
             [GridItem(.flexible()), GridItem(.flexible())]
         }
     }
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 12) {
+        LazyVGrid(columns: columns, spacing: AppUI.medium) {
             // 1. File import card
             Button(action: {
                 showFileImporter = true
@@ -160,30 +160,30 @@ struct IngestEntryCardsSection: View {
     }
 
     private func entryCardContent(title: String, subtitle: String, icon: String, color: Color) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 24))
-                .frame(width: 32, height: 32)
-                .foregroundStyle(color)
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.appText)
-                .multilineTextAlignment(.center)
-            Text(subtitle)
-                .font(subtitleFont)
-                .foregroundStyle(.appSecondary)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: AppUI.medium) {
+            ZStack {
+                Circle()
+                    .fill(color.opacity(AppUI.glassOpacity * 1.2)) // 0.12
+                    .frame(width: AppUI.Metrics.iconBoxSize, height: AppUI.Metrics.iconBoxSize)
+                Image(systemName: icon)
+                    .font(.system(size: AppUI.headlineFontSize, weight: .semibold))
+                    .foregroundStyle(color)
+            }
+            
+            VStack(alignment: .leading, spacing: AppUI.tiny) {
+                Text(title)
+                    .font(.system(size: AppUI.Metrics.titleSmallFontSize, weight: .bold))
+                    .foregroundStyle(.appText)
+                
+                Text(subtitle)
+                    .font(subtitleFont)
+                    .foregroundStyle(.appSecondary)
+                    .lineLimit(2)
+            }
         }
-        .frame(maxWidth: .infinity, minHeight: 100)
-        .padding(.vertical, 12)
-        .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                .stroke(color.opacity(0.15), lineWidth: AppUI.borderWidth)
-        )
+        .padding(AppUI.standardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appMetricCardStyle(color: color, cornerRadius: AppUI.standardRadius)
     }
 }
 
@@ -218,33 +218,33 @@ struct IngestManualFormSection: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: AppUI.wide) {
             // Title and Type
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: AppUI.standardPadding) {
                 // Title field
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
                     Text(L10n.Ingest.tr("field.title"))
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    HStack(spacing: 12) {
+                    HStack(spacing: AppUI.medium) {
                         Image(systemName: newCustomIcon ?? newType.icon)
                             .font(.headline)
                             .foregroundStyle(.appAccent)
-                            .frame(width: 44, height: 44)
-                            .background(Color.appAccent.opacity(0.1))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .frame(width: AppUI.Action.buttonHeight, height: AppUI.Action.buttonHeight)
+                            .background(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.1
+                            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
                             .onTapGesture { showIconPicker = true }
                         
                         TextField(L10n.Ingest.tr("field.titlePlaceholder"), text: $newTitle)
                             .font(.headline)
                             .padding()
                             .background(Color.appCard)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.appBorder, lineWidth: 1)
+                                RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                                    .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
                             )
                     }
                 }
@@ -252,7 +252,7 @@ struct IngestManualFormSection: View {
                 pageTypeSelector
                 
                 // Tags field
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
                     Text(L10n.Ingest.tr("field.tags"))
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
@@ -262,12 +262,12 @@ struct IngestManualFormSection: View {
             }
 
             // Content editor
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
                 Text(L10n.Ingest.tr("field.content"))
                     .font(fieldLabelFont)
                     .foregroundStyle(.appSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading) // 强制左对齐
-                AppMonospacedEditor(text: $newContent, minHeight: 180) // 略微降低默认高度
+                AppMonospacedEditor(text: $newContent, minHeight: AppUI.Metrics.heroValueSize * 7) // 180
             }
         }
         .padding(.horizontal)
@@ -276,37 +276,37 @@ struct IngestManualFormSection: View {
         VStack(spacing: 0) {
             if llmService.isEnabled && !llmService.apiKey.isEmpty {
                 Toggle(isOn: $useSmartIngest) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppUI.small) { // 8
                         Image(systemName: "sparkles")
                             .foregroundStyle(.appAccent)
-                            .frame(width: 20)
+                            .frame(width: AppUI.smallIconSize) // 20
                         Text(L10n.Ingest.tr("smartToggle"))
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.appText)
                     }
                 }
                 .tint(.appAccent)
-                .padding(.vertical, 12)
+                .padding(.vertical, AppUI.medium) // 12
                 .accessibilityIdentifier("ingest.smartToggleAction")
                 
-                Divider().padding(.leading, 44)
+                Divider().padding(.leading, AppUI.Metrics.iconBoxSize) // 44
             }
             
             Toggle(isOn: $useDeepScan) {
-                HStack(spacing: 8) {
+                HStack(spacing: AppUI.small) { // 8
                     Image(systemName: "cpu")
                         .foregroundStyle(.appSource)
-                        .frame(width: 20)
+                        .frame(width: AppUI.smallIconSize) // 20
                     Text(L10n.Ingest.tr("deepScan"))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
                 }
             }
             .tint(.appSource)
-            .padding(.vertical, 12)
+            .padding(.vertical, AppUI.medium) // 12
             
             if useSmartIngest || useDeepScan {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: AppUI.atomic) { // 4
                     if useSmartIngest {
                         Text(L10n.Ingest.tr("smartToggleHint"))
                             .font(.caption)
@@ -319,7 +319,7 @@ struct IngestManualFormSection: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 12)
+                .padding(.bottom, AppUI.medium) // 12
                 .transition(.opacity)
             }
         }
@@ -341,15 +341,15 @@ struct IngestManualFormSection: View {
             onPerformIngest()
         }
         .disabled(newTitle.isEmpty || newContent.isEmpty || isIngesting)
-        .opacity(newTitle.isEmpty || newContent.isEmpty ? 0.5 : 1)
+        .opacity(newTitle.isEmpty || newContent.isEmpty ? AppUI.disabledOpacity : AppUI.fullOpacity)
         .padding(.horizontal)
 
     }
 
     private var smartIngestToggle: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppUI.small) {
             Toggle(isOn: $useSmartIngest) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppUI.tiny + AppUI.atomic) {
                     Image(systemName: "sparkles")
                         .foregroundStyle(.appAccent)
                     Text(L10n.Ingest.tr("smartToggle"))
@@ -370,9 +370,9 @@ struct IngestManualFormSection: View {
     }
 
     private var deepScanToggle: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppUI.small) { // 8
             Toggle(isOn: $useDeepScan) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                     Image(systemName: "cpu")
                         .foregroundStyle(.appSource)
                     Text(L10n.Ingest.tr("deepScan"))
@@ -386,23 +386,23 @@ struct IngestManualFormSection: View {
                 Text(L10n.Ingest.tr("deepScanDesc"))
                     .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                     .foregroundStyle(.appSource)
-                    .padding(.leading, 30)
+                    .padding(.leading, AppUI.Metrics.smallIconBoxSize + AppUI.atomic) // 30
             }
         }
         .padding()
-        .background(useDeepScan ? Color.appSource.opacity(0.1) : Color.appCard.opacity(0.5))
+        .background(useDeepScan ? Color.appSource.opacity(AppUI.glassOpacity) : Color.appCard.opacity(AppUI.dimmedOpacity))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
         .padding(.horizontal)
     }
 
     private var pageTypeSelector: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
             Text(L10n.Ingest.tr("field.type"))
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: AppUI.small) {
                     ForEach(PageType.allCases) { type in
                         Button(action: { newType = type }) {
                             AppIconChip(
@@ -420,33 +420,33 @@ struct IngestManualFormSection: View {
     }
 
     private var iconPickerSection: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: AppUI.small + AppUI.atomic) { // 10
             Text(L10n.Ingest.tr("field.icon"))
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
             Button(action: { showIconPicker = true }) {
-                HStack(spacing: 6) {
+                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
                     Image(systemName: newCustomIcon ?? newType.icon)
                         .font(.caption)
                         .foregroundStyle(newCustomIcon != nil ? .appAccent : .appSecondary)
-                        .frame(width: 20, height: 20)
-                        .background((newCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(newType.colorName)).opacity(0.15))
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.tiny))
+                        .frame(width: AppUI.smallIconSize, height: AppUI.smallIconSize) // 20
+                        .background((newCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(newType.colorName)).opacity(AppUI.glassOpacity * 1.5)) // 0.15
+                        .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
                     Text(newCustomIcon != nil ? L10n.Ingest.tr("iconCustom") : L10n.Ingest.tr("iconDefault"))
                         .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                         .foregroundStyle(newCustomIcon != nil ? .appAccent : .appSecondary)
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 9))
+                        .font(.system(size: AppUI.microFontSize - AppUI.atomic / 2)) // 9
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
+                .padding(.horizontal, AppUI.small + AppUI.atomic) // 10
+                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 7
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                        .stroke(newCustomIcon != nil ? Color.appAccent.opacity(0.5) : Color.clear, lineWidth: 1)
+                        .stroke(newCustomIcon != nil ? Color.appAccent.opacity(AppUI.dimmedOpacity) : Color.clear, lineWidth: AppUI.borderWidth)
                 )
             }
             .buttonStyle(.plain)
@@ -457,8 +457,8 @@ struct IngestManualFormSection: View {
                     Text(L10n.Ingest.tr("iconReset"))
                         .font(horizontalSizeClass == .regular ? .caption : .caption2)
                         .foregroundStyle(.appSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 5)
+                        .padding(.horizontal, AppUI.small)
+                        .padding(.vertical, AppUI.tiny + AppUI.atomic / 2) // 5
                         .background(Color.appCard)
                         .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
                 }
@@ -503,16 +503,16 @@ struct SmartIngestPreview: View {
                     }
                 )
             )
-            .padding(.horizontal, 4)
+            .padding(.horizontal, AppUI.tiny)
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: AppUI.medium) { // 12
                 // Type + Tags chips
-                HStack(spacing: 8) {
+                HStack(spacing: AppUI.small) { // 8
                     if let type = PageType(rawValue: result.suggestedType) {
                         AppChip(text: type.displayName, color: Color.fromModelColorName(type.colorName))
                     }
-                    ForEach(result.suggestedTags.prefix(5), id: \.self) { tag in
-                        AppChip(text: "#\(tag)", color: .appAccent, backgroundOpacity: 0.1)
+                    ForEach(result.suggestedTags.prefix(AppUI.Metrics.maxRecentItems), id: \.self) { tag in // 5
+                        AppChip(text: "#\(tag)", color: .appAccent, backgroundOpacity: AppUI.glassOpacity) // 0.1
                     }
                 }
 
@@ -530,20 +530,20 @@ struct SmartIngestPreview: View {
                         .foregroundStyle(.appText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxHeight: 200)
-                .padding(8)
+                .frame(maxHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
+                .padding(AppUI.small) // 8
                 .background(Color.appBackground)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
 
                 // Related titles
                 if !result.relatedTitles.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: AppUI.atomic) { // 4
                         Text(L10n.Ingest.tr("suggestLinks"))
                             .font(previewFont.weight(.medium))
                             .foregroundStyle(.appSecondary)
 
                         ForEach(result.relatedTitles, id: \.self) { title in
-                            HStack(spacing: 4) {
+                            HStack(spacing: AppUI.atomic) { // 4
                                 Image(systemName: "link")
                                     .font(.caption2)
                                 Text("[[\(title)]]")
@@ -566,10 +566,10 @@ struct IngestTipsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppUI.medium) {
             AppSectionHeader(title: L10n.Ingest.tr("tips"), icon: "lightbulb.fill", iconColor: .orange)
-                .padding(.horizontal, 4)
+                .padding(.horizontal, AppUI.tiny)
 
             // Three import method cards
-            HStack(spacing: 10) {
+            HStack(spacing: AppUI.small + AppUI.atomic) { // 10
                 importMethodCard(
                     icon: "doc.badge.plus",
                     title: L10n.Ingest.tr("method.file"),
@@ -592,7 +592,7 @@ struct IngestTipsSection: View {
     }
 
     private func importMethodCard(icon: String, title: String, desc: String) -> some View {
-        VStack(spacing: 6) {
+        VStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(.appAccent)
@@ -606,7 +606,7 @@ struct IngestTipsSection: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(10)
+        .padding(AppUI.small + AppUI.atomic) // 10
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
     }
@@ -623,7 +623,7 @@ struct URLImportSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: AppUI.medium) { // 12
                     Text(L10n.Ingest.tr("urlImportPlaceholder"))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
@@ -631,17 +631,17 @@ struct URLImportSheet: View {
                     TextEditor(text: $urlText)
                         .font(.system(.body, design: .monospaced))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(8)
+                        .padding(AppUI.small) // 8
                         .background(Color.appBackground)
                         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                         .overlay(
                             RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                                .stroke(Color.appAccent.opacity(0.2), lineWidth: 1)
+                                .stroke(Color.appAccent.opacity(AppUI.glassOpacity * 2), lineWidth: AppUI.borderWidth) // 0.2, 1
                         )
                 }
                 .padding()
                 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: AppUI.medium) { // 12
                     Label(L10n.Ingest.tr("webDesc"), systemImage: "info.circle")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)

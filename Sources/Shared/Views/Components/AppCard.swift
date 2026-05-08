@@ -66,8 +66,8 @@ struct AppBorderedCard<Content: View>: View {
 
     var body: some View {
         content
-            .padding(.vertical, 16)
-            .padding(.horizontal, 12)
+            .padding(.vertical, AppUI.standardPadding)
+            .padding(.horizontal, AppUI.medium)
             .frame(maxWidth: .infinity)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
@@ -146,11 +146,11 @@ struct AppStepRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: AppUI.medium - AppUI.atomic) { // 10
             Text("\(number)")
                 .font(.caption.weight(.bold))
                 .foregroundStyle(.white)
-                .frame(width: 22, height: 22)
+                .frame(width: AppUI.smallIconSize + AppUI.atomic * 2, height: AppUI.smallIconSize + AppUI.atomic * 2) // 22
                 .background(Circle().fill(Color.appAccent))
 
             Text(text)
@@ -176,8 +176,8 @@ struct AppChip: View {
     var body: some View {
         Text(text)
             .font(chipFont)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, AppUI.small)
+            .padding(.vertical, AppUI.tiny)
             .background(color.opacity(backgroundOpacity))
             .clipShape(Capsule())
             .foregroundStyle(color)
@@ -199,20 +199,20 @@ struct AppIconChip: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
             Image(systemName: icon)
                 .font(.caption)
             Text(text)
                 .font(chipFont)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(isSelected ? color.opacity(0.25) : Color.appCard)
+        .padding(.horizontal, AppUI.medium)
+        .padding(.vertical, AppUI.small)
+        .background(isSelected ? color.opacity(AppUI.glassOpacity * 2.5) : Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
         .foregroundStyle(isSelected ? color : .appSecondary)
         .overlay(
             RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                .stroke(isSelected ? color.opacity(0.5) : Color.clear, lineWidth: AppUI.borderWidth)
+                .stroke(isSelected ? color.opacity(AppUI.disabledOpacity) : Color.clear, lineWidth: AppUI.borderWidth)
         )
     }
 }
@@ -230,7 +230,7 @@ struct AppPrimaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppUI.small) {
                 if isLoading {
                     ProgressView()
                         .tint(.white)
@@ -260,7 +260,7 @@ struct AppCapsuleButton: View {
     var color: Color = .appAccent
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: AppUI.tiny) {
             if let icon = icon {
                 Image(systemName: icon)
                     .font(.caption2)
@@ -268,8 +268,8 @@ struct AppCapsuleButton: View {
             Text(title)
                 .font(.caption.weight(.semibold))
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
+        .padding(.horizontal, AppUI.medium)
+        .padding(.vertical, AppUI.tiny + AppUI.atomic) // 6
         .background(isPrimary ? color : Color.appCard)
         .foregroundStyle(isPrimary ? .white : .appSecondary)
         .clipShape(Capsule())
@@ -288,7 +288,7 @@ struct AppSuccessBanner: View {
     }
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(.green)
             Text(message)
@@ -297,7 +297,7 @@ struct AppSuccessBanner: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.green.opacity(0.1))
+        .background(Color.green.opacity(AppUI.glassOpacity))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
     }
 }
@@ -326,26 +326,26 @@ struct AppTagField: View {
     @State private var newTag: String = ""
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            FlowLayout(spacing: 6) {
+        VStack(alignment: .leading, spacing: AppUI.small) {
+            FlowLayout(spacing: AppUI.tiny + AppUI.atomic) { // 6
                 ForEach(tags, id: \.self) { tag in
-                    HStack(spacing: 3) {
+                    HStack(spacing: AppUI.atomic * 1.5) { // 3
                         Text("#\(tag)")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: AppUI.microFontSize + 1))
                         Button(action: { 
-                            withAnimation(.spring(response: 0.3)) {
+                            withAnimation(.spring(response: AppUI.Animation.standardDuration)) {
                                 tags.removeAll { $0 == tag }
                             }
                         }) {
                             Image(systemName: "xmark")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: AppUI.microFontSize - 1))
                                 .foregroundStyle(.appSecondary)
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.appAccent.opacity(0.1))
+                    .padding(.horizontal, AppUI.small)
+                    .padding(.vertical, AppUI.tiny)
+                    .background(Color.appAccent.opacity(AppUI.glassOpacity))
                     .clipShape(Capsule())
                     .foregroundStyle(.appAccent)
                 }
@@ -362,16 +362,16 @@ struct AppTagField: View {
                     .onSubmit {
                         addCurrentTag()
                     }
-                    .frame(minWidth: 100)
+                    .frame(minWidth: AppUI.largeIconSize * 2.5) // 100
                     .foregroundStyle(.appText)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+            .padding(.horizontal, AppUI.medium)
+            .padding(.vertical, AppUI.small)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                    .stroke(Color.appBorder.opacity(0.5), lineWidth: AppUI.borderWidth)
+                    .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
             )
         }
     }
@@ -400,7 +400,7 @@ struct AppMonospacedEditor: View {
             .scrollContentBackground(.hidden)
             .foregroundStyle(.appText)
             .frame(minHeight: minHeight)
-            .padding(12)
+            .padding(AppUI.medium)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
     }
@@ -431,7 +431,7 @@ struct AppScrollableChips<Data: RandomAccessCollection, Content: View>: View whe
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+            HStack(spacing: AppUI.small) {
                 ForEach(Array(items), id: \.self) { item in
                     Button(action: { onSelect(item) }) {
                         chipContent(item)

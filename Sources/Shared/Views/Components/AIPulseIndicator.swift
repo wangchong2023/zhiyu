@@ -26,40 +26,40 @@ struct AIPulseIndicator: View {
         } else if store.isScanningAI {
             return .appAccent // 正在全库扫描
         }
-        return .appSecondary.opacity(0.3)
+        return .appSecondary.opacity(AppUI.disabledOpacity) // 0.3
     }
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: AppUI.small) { // 8
             ZStack {
                 Circle()
                     .fill(pulseColor)
-                    .frame(width: 8, height: 8)
+                    .frame(width: AppUI.smallIconSize / 2, height: AppUI.smallIconSize / 2) // 8
                 
                 if isActive {
                     Circle()
-                        .stroke(pulseColor, lineWidth: 2)
-                        .frame(width: 16, height: 16)
+                        .stroke(pulseColor, lineWidth: AppUI.borderWidth * 2) // 2
+                        .frame(width: AppUI.smallIconSize, height: AppUI.smallIconSize) // 16
                         .scaleEffect(isAnimating ? 1.5 : 1.0)
-                        .opacity(isAnimating ? 0 : 0.8)
+                        .opacity(isAnimating ? 0 : AppUI.fullOpacity * 0.8) // 0.8
                 }
             }
             .onAppear {
-                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: false)) {
+                withAnimation(.easeInOut(duration: AppUI.Animation.looseDuration).repeatForever(autoreverses: false)) { // 1.5
                     isAnimating = true
                 }
             }
             
             if isActive {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: AppUI.atomic) { // 2
                     Text(store.llmService.isProcessing ? Localized.tr("ai.status.thinking") : Localized.tr("ai.status.scanning"))
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .font(.system(size: AppUI.microFontSize, weight: .bold, design: .rounded)) // 10
                         .foregroundStyle(pulseColor)
                     
                     if !TaskCenter.shared.latestStatus.isEmpty {
                         Text(TaskCenter.shared.latestStatus)
-                            .font(.system(size: 8, design: .monospaced))
-                            .foregroundStyle(.appSecondary.opacity(0.8))
+                            .font(.system(size: AppUI.microFontSize - 2, design: .monospaced)) // 8
+                            .foregroundStyle(.appSecondary.opacity(AppUI.fullOpacity * 0.8)) // 0.8
                             .lineLimit(1)
                             .transition(.asymmetric(insertion: .push(from: .bottom), removal: .opacity))
                     }
@@ -67,14 +67,14 @@ struct AIPulseIndicator: View {
                 .transition(.opacity.combined(with: .move(edge: .leading)))
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, AppUI.small + AppUI.atomic) // 10
+        .padding(.vertical, AppUI.tiny + AppUI.atomic) // 6
         .background(
             Capsule()
-                .fill(Color.appCard.opacity(0.8))
-                .shadow(color: .black.opacity(0.05), radius: 2)
+                .fill(Color.appCard.opacity(AppUI.fullOpacity * 0.8)) // 0.8
+                .shadow(color: .black.opacity(AppUI.shadowOpacity / 2), radius: AppUI.borderWidth * 2) // 0.05, 2
         )
-        .animation(.spring(response: 0.3), value: TaskCenter.shared.latestStatus)
+        .animation(.spring(response: AppUI.Animation.standardDuration * 1.2), value: TaskCenter.shared.latestStatus) // 0.3
         .animation(.spring(), value: isActive)
         .onChange(of: isActive) { oldValue, newValue in
             if newValue {

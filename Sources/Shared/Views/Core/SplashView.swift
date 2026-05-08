@@ -33,12 +33,12 @@ struct SplashView: View {
                 Spacer()
                 
                 // App Logo / 名称
-                VStack(spacing: 12) {
+                VStack(spacing: AppUI.medium) { // 12
                     Image(systemName: "books.vertical.fill")
-                        .font(.system(size: 44, weight: .light))
+                        .font(.system(size: AppUI.Metrics.heroValueSize * 1.69, weight: .light)) // 44
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
+                                colors: [Color.appAccent, Color.appAccent.opacity(AppUI.fullOpacity * 0.7)], // 0.7
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -46,59 +46,59 @@ struct SplashView: View {
                         .opacity(logoOpacity)
                     
                     Text(Localized.tr("splash.appName"))
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .font(.system(size: AppUI.Metrics.titleFontSize, weight: .bold, design: .rounded)) // 28
                         .foregroundStyle(.white)
                         .opacity(logoOpacity)
                 }
-                .padding(.bottom, 60)
+                .padding(.bottom, AppUI.Metrics.heroValueSize * 2.3) // 60
                 
                 // 名言
-                VStack(spacing: 16) {
+                VStack(spacing: AppUI.standardPadding) { // 16
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: 17, weight: .medium, design: .serif))
-                        .foregroundStyle(.white.opacity(0.9))
+                        .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
+                        .foregroundStyle(.white.opacity(AppUI.fullOpacity * 0.9)) // 0.9
                         .multilineTextAlignment(.center)
-                        .lineSpacing(6)
-                        .padding(.horizontal, 40)
+                        .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
+                        .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
                         .opacity(quoteOpacity)
                     
                     // 闪光效果
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: 17, weight: .medium, design: .serif))
+                        .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.clear, .white.opacity(0.6), .clear],
+                                colors: [.clear, .white.opacity(AppUI.fullOpacity * 0.6), .clear], // 0.6
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .multilineTextAlignment(.center)
-                        .lineSpacing(6)
-                        .padding(.horizontal, 40)
+                        .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
+                        .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
                         .offset(x: shimmerOffset)
                         .mask(
                             Text(Localized.tr("splash.quote"))
-                                .font(.system(size: 17, weight: .medium, design: .serif))
+                                .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
                                 .multilineTextAlignment(.center)
-                                .lineSpacing(6)
-                                .padding(.horizontal, 40)
+                                .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
+                                .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
                         )
-                        .opacity(quoteOpacity > 0.5 ? 0.4 : 0)
+                        .opacity(quoteOpacity > AppUI.fullOpacity * 0.5 ? AppUI.glassOpacity * 4 : 0) // 0.5, 0.4
                     
                     // 署名 (仅保留装饰线)
                     HStack(spacing: 0) {
                         Text("— ")
-                            .foregroundStyle(.white.opacity(0.5))
+                            .foregroundStyle(.white.opacity(AppUI.fullOpacity * 0.5)) // 0.5
                         Text(Localized.tr("splash.author"))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.appAccent.opacity(0.8), Color.appAccent],
+                                    colors: [Color.appAccent.opacity(AppUI.fullOpacity * 0.8), Color.appAccent], // 0.8
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                     }
-                    .font(.system(size: 14, weight: .medium, design: .serif))
+                    .font(.system(size: AppUI.Metrics.captionFontSize, weight: .medium, design: .serif)) // 14
                     .opacity(authorOpacity)
                 }
                 
@@ -106,30 +106,30 @@ struct SplashView: View {
                 
                 // 继续按钮
                 Button(action: {
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                    withAnimation(.easeInOut(duration: AppUI.Animation.standardDuration)) { // 0.5
                         onDismiss()
                     }
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: AppUI.small) { // 8
                         Text(Localized.tr("splash.enter"))
-                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .font(.system(size: AppUI.Metrics.subHeadlineFontSize, weight: .semibold, design: .rounded)) // 15
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: AppUI.Metrics.caption2FontSize, weight: .semibold)) // 13
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 14)
+                    .padding(.horizontal, AppUI.Metrics.heroValueSize * 1.23) // 32
+                    .padding(.vertical, AppUI.small + AppUI.tiny) // 14
                     .background(
                         Capsule()
-                            .fill(Color.appAccent.opacity(0.25))
+                            .fill(Color.appAccent.opacity(AppUI.glassOpacity * 2.5)) // 0.25
                             .overlay(
                                 Capsule()
-                                    .strokeBorder(Color.appAccent.opacity(0.5), lineWidth: 1)
+                                    .strokeBorder(Color.appAccent.opacity(AppUI.fullOpacity * 0.5), lineWidth: AppUI.borderWidth) // 0.5, 1
                             )
                     )
                 }
                 .opacity(authorOpacity)
-                .padding(.bottom, 50)
+                .padding(.bottom, AppUI.Metrics.heroValueSize * 1.9) // 50
             }
         }
         .onAppear {
@@ -144,34 +144,34 @@ struct SplashView: View {
         nodeGlow = true
         
         // Logo 淡入
-        withAnimation(.easeOut(duration: 0.8)) {
+        withAnimation(.easeOut(duration: AppUI.Animation.slowDuration)) { // 0.8
             logoOpacity = 1
         }
         
         // 名言淡入
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.easeOut(duration: 1.2)) {
+            withAnimation(.easeOut(duration: AppUI.Animation.looseDuration * 0.8)) { // 1.2
                 quoteOpacity = 1
             }
         }
         
         // 署名淡入
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-            withAnimation(.easeOut(duration: 0.8)) {
+            withAnimation(.easeOut(duration: AppUI.Animation.slowDuration)) { // 0.8
                 authorOpacity = 1
             }
         }
         
         // 闪光扫过
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            withAnimation(.easeInOut(duration: 1.5)) {
+            withAnimation(.easeInOut(duration: AppUI.Animation.looseDuration)) { // 1.5
                 shimmerOffset = 200
             }
         }
         
         // 5 秒后自动进入（仅在用户未手动点击时）
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            withAnimation(.easeInOut(duration: 0.5)) {
+            withAnimation(.easeInOut(duration: AppUI.Animation.standardDuration)) { // 0.5
                 onDismiss()
             }
         }

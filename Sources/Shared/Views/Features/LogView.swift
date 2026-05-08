@@ -35,19 +35,19 @@ struct LogViewContent: View {
                     Image(systemName: "clock.arrow.circlepath")
                         .font(.system(size: AppUI.Timeline.emptyIconSize))
                         .foregroundStyle(.appSecondary)
-                    Text(Localized.tr("log.noLogs"))
+                    Text(L10n.Log.noLogs)
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
-                    Text(Localized.tr("log.noLogs"))
+                    Text(L10n.Log.noLogs)
                         .font(.caption)
-                        .foregroundStyle(.appSecondary.opacity(0.7))
+                        .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, AppUI.loosePadding * 1.5)
             } else {
                 ForEach(store.logEntries) { entry in
                     Button(action: {
-                        withAnimation(.easeInOut(duration: 0.25)) {
+                        withAnimation(.easeInOut(duration: AppUI.Animation.standardDuration)) {
                             if expandedEntryIDs.contains(entry.id) {
                                 expandedEntryIDs.remove(entry.id)
                             } else {
@@ -83,7 +83,7 @@ struct LogViewContent: View {
             }
         }
         .confirmationDialog(
-            Localized.tr("log.clearConfirmTitle"),
+            L10n.Log.clearConfirmTitle,
             isPresented: $showConfirmation,
             titleVisibility: .visible
         ) {
@@ -110,12 +110,12 @@ private struct LogEntryRow: View {
     let isExpanded: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.small - 2) {
+        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
             HStack(spacing: AppUI.medium) {
                 // 动作图标
                 ZStack {
                     Circle()
-                        .fill(Color.fromModelColorName(entry.action.colorName).opacity(0.1))
+                        .fill(Color.fromModelColorName(entry.action.colorName).opacity(AppUI.dimmedOpacity * 0.5)) // 0.1
                         .frame(width: AppUI.Timeline.iconCircleSize, height: AppUI.Timeline.iconCircleSize)
                     
                     Image(systemName: entry.action.icon)
@@ -123,7 +123,7 @@ private struct LogEntryRow: View {
                         .font(.system(size: AppUI.subheadlineFontSize, weight: .bold))
                 }
                 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: AppUI.atomic) {
                     HStack {
                         Text(entry.action.localizedName)
                             .font(.headline)
@@ -136,39 +136,44 @@ private struct LogEntryRow: View {
                         
                         if let mod = entry.module {
                             Text(mod)
-                                .font(.system(size: AppUI.microFontSize - 1, weight: .bold))
+                                .font(.system(size: AppUI.microFontSize - AppUI.atomic / 2, weight: .bold)) // 9
                                 .padding(.horizontal, AppUI.tiny)
-                                .padding(.vertical, 1)
-                                .background(Color.appSecondary.opacity(0.1))
-                                .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius - 1))
+                                .padding(.vertical, AppUI.atomic / 2) // 1
+                                .background(Color.appSecondary.opacity(AppUI.glassOpacity))
+                                .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius - AppUI.atomic / 2)) // 3
                                 .foregroundStyle(.appSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        // 状态标签
+                        if let status = entry.status {
+                            Text(status.localizedName)
+                                .font(.system(size: AppUI.caption2FontSize - AppUI.atomic / 2, weight: .bold)) // 10
+                                .padding(.horizontal, AppUI.small - AppUI.atomic) // 6
+                                .padding(.vertical, AppUI.atomic)
+                                .background(status == .success ? Color.green.opacity(AppUI.glassOpacity) : Color.red.opacity(AppUI.glassOpacity))
+                                .foregroundStyle(status == .success ? .green : .red)
+                                .clipShape(Capsule())
                         }
                     }
                     
                     HStack(spacing: AppUI.tightPadding) {
-                        Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+                        if let start = entry.startTime, let end = entry.endTime {
+                            Text("\(start.formatted(date: .omitted, time: .shortened)) - \(end.formatted(date: .omitted, time: .shortened))")
+                        } else {
+                            Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+                        }
                         
                         if let dur = entry.duration {
                             Text("•")
-                            Text(String(format: "%.2fs", dur))
+                            Text(String(format: "%.3fs", dur))
                                 .foregroundStyle(.appAccent)
-                        }
-                        
-                        if entry.action == .error {
-                            Text("•")
-                            Text(L10n.Common.tr("failed"))
-                                .foregroundStyle(.red)
-                        } else if entry.duration != nil {
-                            Text("•")
-                            Text(L10n.Common.tr("success"))
-                                .foregroundStyle(.green)
                         }
                     }
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                 }
-
-                Spacer()
 
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .font(.caption2)
@@ -181,7 +186,7 @@ private struct LogEntryRow: View {
                     HStack(spacing: AppUI.wide) {
                         if let start = entry.startTime {
                             VStack(alignment: .leading) {
-                                Text(Localized.tr("log.startTime"))
+                                Text(L10n.Log.startTime)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
                                 Text(start.formatted(date: .omitted, time: .standard))
@@ -191,7 +196,7 @@ private struct LogEntryRow: View {
                         
                         if let end = entry.endTime {
                             VStack(alignment: .leading) {
-                                Text(Localized.tr("log.endTime"))
+                                Text(L10n.Log.endTime)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
                                 Text(end.formatted(date: .omitted, time: .standard))
@@ -201,10 +206,10 @@ private struct LogEntryRow: View {
                         
                         if let dur = entry.duration {
                             VStack(alignment: .leading) {
-                                Text(Localized.tr("log.duration"))
+                                Text(L10n.Log.duration)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
-                                Text(String(format: "%.2fs", dur))
+                                Text(String(format: "%.3fs", dur))
                                     .font(.system(.caption2, design: .monospaced).bold())
                                     .foregroundStyle(.appAccent)
                             }
@@ -212,8 +217,24 @@ private struct LogEntryRow: View {
                     }
                     .padding(.horizontal, AppUI.Timeline.detailHorizontalPadding)
                     .padding(.vertical, AppUI.Timeline.detailVerticalPadding)
-                    .background(Color.appCard.opacity(0.4))
+                    .background(Color.appCard.opacity(AppUI.disabledOpacity * 1.33)) // 0.4
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+
+                    // 失败原因
+                    if let reason = entry.failureReason {
+                        VStack(alignment: .leading, spacing: AppUI.tiny) {
+                            Text(L10n.Log.failureReason)
+                                .font(.caption2.bold())
+                                .foregroundStyle(.red)
+                            Text(reason)
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundStyle(.red.opacity(AppUI.secondaryOpacity))
+                        }
+                        .padding(AppUI.Timeline.detailHorizontalPadding)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.red.opacity(AppUI.dimmedOpacity * 0.25)) // 0.05
+                        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                    }
 
                     if !entry.details.isEmpty {
                         Text(entry.details)

@@ -1,4 +1,0 @@
---- xcodebuild: WARNING: Using the first of multiple matching destinations:
-{ platform:macOS, arch:arm64, variant:Mac Catalyst, id:00006050-001A48A90CD1401C, name:My Mac }
-{ platform:macOS, arch:x86_64, variant:Mac Catalyst, id:00006050-001A48A90CD1401C, name:My Mac }
-{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:00006050-001A48A90CD1401C, name:My Mac }

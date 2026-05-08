@@ -65,7 +65,7 @@
 | TC-PLG-01 | PluginRegistry | 插件加载与卸载 | `onLoad` 和 `onUnload` 生命周期完整执行，资源正确释放。 | P0 |
 | TC-PLG-02 | Interception | preProcess 拦截 | 插件修改内容后，入库数据为处理后版本，原始内容不被覆盖。 | P0 |
 | TC-PLG-03 | Sandbox | 插件崩溃隔离 | 单个插件 `preProcess` 抛出异常时，主程序不崩溃，插件被自动熔断。 | P0 |
-| TC-PLG-04 | Permissions | 权限白名单 | 插件尝试执行未声明权限的操作时被拦截，记录审计日志。 | P1 |
+| TC-PLG-04 | Permissions | 权限白名单 | 插件尝试执行未声明权限的操作时被拦截，记录操作日志。 | P1 |
 | TC-PLG-05 | Interception | postProcess 渲染 | 插件在渲染前修改内容后，UI 显示处理后的 Markdown。 | P1 |
 | TC-PLG-06 | Market | 插件安装与更新 | 从市场安装插件后自动激活，版本更新后 `onLoad` 重新触发。 | P2 |
 

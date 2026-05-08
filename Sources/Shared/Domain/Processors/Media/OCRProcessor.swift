@@ -27,75 +27,52 @@ import PhotosUI
 ///
 /// ## 主要功能
 /// - 从 UIImage 中提取文字
-/// - 支持异步回调和 async/await 两种调用方式
+/// - 支持异步调用方式
 /// - 多语言自动检测（简体中文、繁体中文、英文、日文、韩文）
 ///
 /// ## 使用方式
 /// ```swift
-/// // 异步回调方式
-/// ocrService.recognizeText(from: image) { result in
-///     if case .success(let text) = result {
-///         print(text)
-///     }
-/// }
-///
 /// // async/await 方式
 /// let text = try await ocrService.recognizeText(from: image)
 /// ```
-@MainActor
-class OCRProcessor: ObservableObject {
-    @MainActor static let shared = OCRProcessor()
-    
+actor OCRProcessor {
+    static let shared = OCRProcessor()
+
     /// Recognize text from a AppImage
-    func recognizeText(from image: AppImage, completion: @escaping @Sendable (Result<String, Error>) -> Void) {
+    func recognizeText(from image: AppImage) async throws -> String {
         guard let cgImage = image.appCGImage else {
-            completion(.failure(OCRError.invalidImage))
-            return
+            throw OCRError.invalidImage
         }
-        
-        let request = VNRecognizeTextRequest { request, error in
-            if let error = error {
-                completion(.failure(error))
-                return
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let request = VNRecognizeTextRequest { request, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let observations = request.results as? [VNRecognizedTextObservation] else {
+                    continuation.resume(throwing: OCRError.noResults)
+                    return
+                }
+
+                let text = observations.compactMap { observation in
+                    observation.topCandidates(1).first?.string
+                }.joined(separator: "\n")
+
+                continuation.resume(returning: text)
             }
-            
-            guard let observations = request.results as? [VNRecognizedTextObservation] else {
-                completion(.failure(OCRError.noResults))
-                return
-            }
-            
-            let text = observations.compactMap { observation in
-                observation.topCandidates(1).first?.string
-            }.joined(separator: "\n")
-            
-            completion(.success(text))
-        }
-        
-        // Support Chinese + English + Japanese + Korean
-        request.recognitionLanguages = ["zh-Hans", "zh-Hant", "en-US", "ja", "ko"]
-        request.recognitionLevel = .accurate
-        request.usesLanguageCorrection = true
-        
-        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-        DispatchQueue.global(qos: .userInitiated).async {
+
+            // Support Chinese + English + Japanese + Korean
+            request.recognitionLanguages = ["zh-Hans", "zh-Hant", "en-US", "ja", "ko"]
+            request.recognitionLevel = .accurate
+            request.usesLanguageCorrection = true
+
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             do {
                 try handler.perform([request])
             } catch {
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    /// Synchronous version using async/await
-    func recognizeText(from image: AppImage) async throws -> String {
-        try await withCheckedThrowingContinuation { continuation in
-            recognizeText(from: image) { result in
-                switch result {
-                case .success(let text):
-                    continuation.resume(returning: text)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
+                continuation.resume(throwing: error)
             }
         }
     }
@@ -112,7 +89,7 @@ enum OCRError: LocalizedError {
     case invalidImage
     case noResults
     case cameraUnavailable
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidImage: return Localized.tr("ocr.error.invalidImage")
@@ -121,5 +98,3 @@ enum OCRError: LocalizedError {
         }
     }
 }
-
-extension OCRProcessor: @unchecked Sendable {}

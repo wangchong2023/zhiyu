@@ -21,14 +21,14 @@ struct EvaluationReport: Identifiable {
 
 /// [L2] 领域服务：RAG 质量评估中心
 final class RAGEvaluationService {
-    private let llmService: LLMService
+    private let llmService: any LLMServiceProtocol
     private let store: KnowledgePageStore
-    
-    init(llmService: LLMService, store: KnowledgePageStore) {
+
+    init(llmService: any LLMServiceProtocol, store: KnowledgePageStore) {
         self.llmService = llmService
         self.store = store
     }
-    
+
     /// 执行单次回答评估
     /// - Parameters:
     ///   - query: 原始问题
@@ -53,36 +53,36 @@ final class RAGEvaluationService {
           "reasoning": "简要说明理由"
         }
         """
-        
+
         do {
             let response = try await llmService.generate(prompt: prompt, systemPrompt: "你是一个客观公正的评估机器人。")
             if let data = response.data(using: .utf8),
                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                
+
                 let f = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
                 let r = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
                 let p = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
-                
+
                 let status = f < 0.7 ? "Warning" : (f < 0.5 ? "Fail" : "Pass")
-                
+
                 // 持久化评估结果到数据库
                 try? store.saveEvaluation(
-                    query: query, 
-                    answer: answer, 
+                    query: query,
+                    answer: answer,
                     scores: [
-                        EvaluationMetric.faithfulness.rawValue: f, 
-                        EvaluationMetric.relevance.rawValue: r, 
+                        EvaluationMetric.faithfulness.rawValue: f,
+                        EvaluationMetric.relevance.rawValue: r,
                         EvaluationMetric.precision.rawValue: p
-                    ], 
+                    ],
                     model: AppModel.evaluator.rawValue
                 )
-                
+
                 return EvaluationReport(query: query, answer: answer, faithfulness: f, relevance: r, precision: p, status: status)
             }
         } catch {
             print("Evaluation failed: \(error)")
         }
-        
+
         return EvaluationReport(query: query, answer: answer, faithfulness: 0, relevance: 0, precision: 0, status: "Error")
     }
 }

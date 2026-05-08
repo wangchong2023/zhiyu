@@ -25,11 +25,11 @@ struct LLMProviderMetadata: Codable {
 final class LLMRegistry {
     nonisolated(unsafe) static let shared = LLMRegistry()
     private var providers: [String: LLMProviderMetadata] = [:]
-    
+
     private init() {
         loadProviders()
     }
-    
+
     private func loadProviders() {
         // 首先尝试从 Bundle 加载（Apple 推荐方式）
         if let url = Bundle.main.url(forResource: "LLMProviders", withExtension: "json"),
@@ -40,7 +40,7 @@ final class LLMRegistry {
             }
             return
         }
-        
+
         // 兜底方案：如果 JSON 未能加载（如尚未打包），使用硬编码数据
         let fallbacks: [LLMProviderMetadata] = [
             .init(id: "zhipu", nameKey: "llm.provider.zhipu", baseURL: "https://open.bigmodel.cn/api/paas/v4", defaultModel: "glm-4-flash", suggestedModels: ["glm-4-flash", "glm-4", "glm-4v"], icon: "sparkles"),
@@ -55,7 +55,7 @@ final class LLMRegistry {
             providers[item.id] = item
         }
     }
-    
+
     func metadata(for id: String) -> LLMProviderMetadata? {
         providers[id]
     }
@@ -70,32 +70,32 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     case kimi = "kimi"
     case siliconflow = "siliconflow"
     case custom = "custom"
-    
+
     var id: String { rawValue }
-    
+
     private var metadata: LLMProviderMetadata? {
         LLMRegistry.shared.metadata(for: rawValue)
     }
-    
+
     var displayName: String {
         if let key = metadata?.nameKey {
             return Localized.tr(key)
         }
         return rawValue.capitalized
     }
-    
+
     var defaultBaseURL: String {
         metadata?.baseURL ?? ""
     }
-    
+
     var defaultModel: String {
         metadata?.defaultModel ?? ""
     }
-    
+
     var suggestedModels: [String] {
         metadata?.suggestedModels ?? ["default"]
     }
-    
+
     var icon: String {
         metadata?.icon ?? "server.rack"
     }
@@ -108,13 +108,13 @@ struct ChatMessage: Identifiable, Codable {
     let content: String
     let timestamp: Date
     var relatedPageIDs: [UUID]
-    
+
     enum MessageRole: String, Codable {
         case system = "system"
         case user = "user"
         case assistant = "assistant"
     }
-    
+
     init(
         id: UUID = UUID(),
         role: MessageRole,
@@ -149,7 +149,7 @@ enum LLMError: LocalizedError {
     case httpError(Int)
     case apiError(String)
     case cancelled
-    
+
     var errorDescription: String? {
         switch self {
         case .notConfigured:

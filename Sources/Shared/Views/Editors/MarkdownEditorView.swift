@@ -71,7 +71,6 @@ struct MarkdownEditorView: View {
     @State private var pendingAction: EditorPendingAction?
     @State private var showPhotosPicker = false
     @State private var isProcessingOCR = false
-    @EnvironmentObject var ocrService: OCRProcessor
 
     var body: some View {
         VStack(spacing: 0) {
@@ -314,7 +313,6 @@ struct OCRPickerModifier: ViewModifier {
     @Binding var isPresented: Bool
     let onResult: (String) -> Void
     @State private var selectedItem: PhotosPickerItem?
-    @EnvironmentObject var ocrService: OCRProcessor
 
     func body(content: Content) -> some View {
         content
@@ -325,7 +323,7 @@ struct OCRPickerModifier: ViewModifier {
                     if let data = try? await newItem.loadTransferable(type: Data.self),
                        let image = AppImage(data: data) {
                         do {
-                            let text = try await ocrService.recognizeText(from: image)
+                            let text = try await OCRProcessor.shared.recognizeText(from: image)
                             await MainActor.run { onResult(text) }
                         } catch {
                             ToastManager.shared.show(type: .error, message: error.localizedDescription)

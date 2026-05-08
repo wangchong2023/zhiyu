@@ -156,7 +156,7 @@ struct Graph3DControlsOverlay: View {
     var body: some View {
         let iconColor: Color = isFullScreen ? .white : .appText
         
-        VStack(spacing: 8) {
+        VStack(spacing: AppUI.small) {
             // Fullscreen toggle
             Button(action: { 
                 withAnimation(.spring()) { 
@@ -168,7 +168,7 @@ struct Graph3DControlsOverlay: View {
                 Image(systemName: isFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                     .font(.title3)
                     .foregroundStyle(iconColor)
-                    .padding(10)
+                    .padding(AppUI.small + AppUI.atomic)
                     .background(.ultraThinMaterial)
                     .clipShape(Circle())
             }
@@ -184,7 +184,7 @@ struct Graph3DControlsOverlay: View {
                     Image(systemName: "eye.slash")
                         .font(.title3)
                         .foregroundStyle(iconColor)
-                        .padding(10)
+                        .padding(AppUI.small + AppUI.atomic)
                         .background(.ultraThinMaterial)
                         .clipShape(Circle())
                 }
@@ -197,7 +197,7 @@ struct Graph3DControlsOverlay: View {
                     Image(systemName: autoRotate ? "arrow.clockwise.circle.fill" : "arrow.clockwise.circle")
                         .font(.title3)
                         .foregroundStyle(autoRotate ? Color.appAccent : iconColor)
-                        .padding(10)
+                        .padding(AppUI.small + AppUI.atomic)
                         .background(.ultraThinMaterial)
                         .clipShape(Circle())
                 }
@@ -209,7 +209,7 @@ struct Graph3DControlsOverlay: View {
                 Image(systemName: "scope")
                     .font(.title3)
                     .foregroundStyle(iconColor)
-                    .padding(10)
+                    .padding(AppUI.small + AppUI.atomic)
                     .background(.ultraThinMaterial)
                     .clipShape(Circle())
             }
@@ -220,7 +220,7 @@ struct Graph3DControlsOverlay: View {
                 Image(systemName: "plus.magnifyingglass")
                     .font(.title3)
                     .foregroundStyle(iconColor)
-                    .padding(10)
+                    .padding(AppUI.small + AppUI.atomic)
                     .background(.ultraThinMaterial)
                     .clipShape(Circle())
             }
@@ -231,7 +231,7 @@ struct Graph3DControlsOverlay: View {
                 Image(systemName: "minus.magnifyingglass")
                     .font(.title3)
                     .foregroundStyle(iconColor)
-                    .padding(10)
+                    .padding(AppUI.small + AppUI.atomic)
                     .background(.ultraThinMaterial)
                     .clipShape(Circle())
             }
@@ -239,14 +239,14 @@ struct Graph3DControlsOverlay: View {
 
             // Filter - 全屏模式下根据用户要求隐藏
             if !isFullScreen {
-                Button(action: { withAnimation(.spring(response: 0.35)) { showFilterPopup.toggle() } }) {
+                Button(action: { withAnimation(.spring(response: AppUI.Animation.springResponse + 0.05)) { showFilterPopup.toggle() } }) {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                         .font(.title3)
                         .foregroundStyle(filterType == nil ? iconColor : Color.appAccent)
-                        .padding(10)
+                        .padding(AppUI.small + AppUI.atomic)
                         .background(.ultraThinMaterial)
                         .clipShape(Circle())
-                        .shadow(color: .black.opacity(filterType == nil ? 0 : 0.2), radius: 4)
+                        .shadow(color: .black.opacity(filterType == nil ? 0 : AppUI.dimmedOpacity), radius: AppUI.tiny)
                 }
                 .overlay(alignment: .bottomTrailing) {
                     if showFilterPopup {
@@ -339,10 +339,10 @@ struct Graph3DNodeInfoBar: View {
     let onViewPage: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) {
             Circle()
                 .fill(Color.fromModelColorName(page.type.colorName))
-                .frame(width: 36, height: 36)
+                .frame(width: AppUI.Timeline.indicatorSize, height: AppUI.Timeline.indicatorSize)
                 .overlay {
                     Image(systemName: page.displayIcon)
                         .font(.caption)

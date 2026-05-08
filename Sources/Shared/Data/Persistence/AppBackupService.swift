@@ -17,28 +17,28 @@ final class BackupService: ObservableObject {
     @Published var backupEntries: [BackupEntry] = []
     @Published var lastBackupDate: Date?
     @Published var isAutoBackupEnabled: Bool = true
-    
+
     /// Maximum number of backups to retain before auto-cleanup removes the oldest.
     private static let maxBackups = 20
     /// Minimum time interval (seconds) between consecutive auto-backups to avoid thrashing.
     private static let backupInterval: TimeInterval = 300
-    
+
     let baseDirectory: URL
-    
+
     struct BackupEntry: Identifiable, Codable {
         let id: UUID
         let timestamp: Date
         let pageCount: Int
         let totalWords: Int
         let fileName: String
-        
+
         var displayName: String {
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .short
             return formatter.string(from: timestamp)
         }
-        
+
         func fileSize(in directory: URL) -> String {
             let url = directory.appendingPathComponent(fileName)
             if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
@@ -48,49 +48,49 @@ final class BackupService: ObservableObject {
             return "—"
         }
     }
-    
+
     // MARK: - Directory Helper
     static func defaultBackupDirectory() -> URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return docs.appendingPathComponent("AppBackups", isDirectory: true)
     }
-    
+
     var backupDirectory: URL {
         let dir = baseDirectory.appendingPathComponent("AppBackups", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }
-    
+
     // MARK: - Init
     init(baseDirectory: URL? = nil) {
         self.baseDirectory = baseDirectory ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         loadBackupEntries()
         checkForCrashRecovery()
     }
-    
+
     // MARK: - Create Backup
     func createBackup(pages: [KnowledgePage]) {
         guard isAutoBackupEnabled else { return }
-        
+
         // Throttle: don't backup too frequently
         if let last = lastBackupDate, Date().timeIntervalSince(last) < Self.backupInterval {
             return
         }
-        
+
         let startTime = Date()
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        
+
         let timestamp = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let fileName = "backup_\(formatter.string(from: timestamp)).json"
-        
+
         do {
             let data = try encoder.encode(pages)
             let url = backupDirectory.appendingPathComponent(fileName)
             try data.write(to: url, options: .atomicWrite)
-            
+
             let entry = BackupEntry(
                 id: UUID(),
                 timestamp: timestamp,
@@ -100,13 +100,13 @@ final class BackupService: ObservableObject {
             )
             backupEntries.append(entry)
             lastBackupDate = timestamp
-            
+
             // Save entries index
             saveBackupEntries()
-            
+
             // Clean old backups
             cleanOldBackups()
-            
+
             let endTime = Date()
             Logger.shared.addLog(
                 action: .ingest,
@@ -231,11 +231,11 @@ final class BackupService: ObservableObject {
             Logger.shared.addLog(action: .error, target: "BackupService", details: String(format: Localized.tr("backup.log.saveIndexFailed"), error.localizedDescription))
         }
     }
-    
+
     private func loadBackupEntries() {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        
+
         let url = backupDirectory.appendingPathComponent("backup_index.json")
         do {
             let data = try Data(contentsOf: url)
@@ -246,11 +246,11 @@ final class BackupService: ObservableObject {
             scanBackupDirectory()
         }
     }
-    
+
     private func scanBackupDirectory() {
         let dir = backupDirectory
         guard let files = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [URLResourceKey.creationDateKey]) else { return }
-        
+
         var entries: [BackupEntry] = []
         for file in files where file.lastPathComponent.hasPrefix("backup_") && file.pathExtension == "json" {
             let decoder = JSONDecoder()

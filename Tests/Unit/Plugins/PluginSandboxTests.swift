@@ -18,16 +18,16 @@ final class PluginSandboxTests: XCTestCase {
 
     var registry: PluginRegistry!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         registry = PluginRegistry.shared
-        registry.reset()
+        await registry.reset()
     }
 
-    override func tearDown() {
-        registry.reset()
+    override func tearDown() async throws {
+        await registry.reset()
         registry = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     // MARK: - 加载与卸载

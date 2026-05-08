@@ -29,9 +29,8 @@ struct GraphContainerView: View {
         let currentFilteredEdges = viewModel.getFilteredEdges(for: currentFilteredNodes)
 
         ZStack {
-            Color.appBackground
+            AppUI.Background.meshGradient()
                 .ignoresSafeArea()
-                .contentShape(Rectangle())
                 .onTapGesture {
                     dismissCard()
                 }
@@ -135,7 +134,7 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func dismissCard() {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+        withAnimation(.spring(response: AppUI.Animation.springResponse + 0.1, dampingFraction: AppUI.Animation.springDamping)) {
             viewModel.selectedNodeID = nil
             viewModel.isAnimating = false
         }
@@ -147,7 +146,7 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func handleNodeTap(_ node: GraphNode) {
-        withAnimation(.spring(response: 0.55, dampingFraction: 0.85)) {
+        withAnimation(.spring(response: AppUI.Animation.springResponse * 1.83, dampingFraction: AppUI.Animation.springDamping + 0.05)) {
             if viewModel.selectedNodeID == node.id {
                 viewModel.selectedNodeID = nil
                 viewModel.isAnimating = false
@@ -165,7 +164,10 @@ struct GraphContainerView: View {
                     height: centerY - node.position.y
                 )
                 viewModel.lastOffset = viewModel.offset
-                if viewModel.scale < 1.0 { viewModel.scale = 1.2; viewModel.lastScale = 1.2 }
+                if viewModel.scale < 1.0 { 
+                    viewModel.scale = 1.2
+                    viewModel.lastScale = 1.2 
+                }
             }
         }
         HapticFeedback.shared.trigger(.selection)
@@ -272,7 +274,7 @@ struct GraphContainerView: View {
         let padding: CGFloat = AppUI.Graph.layoutPadding
         let scaleX = (viewModel.graphSize.width - padding * 2) / max(maxX - minX, AppUI.Graph.minLayoutDimension)
         let scaleY = (viewModel.graphSize.height - padding * 2) / max(maxY - minY, AppUI.Graph.minLayoutDimension)
-        let targetScale = min(max(min(scaleX, scaleY), 0.5), 2.0)
+        let targetScale = min(max(min(scaleX, scaleY), AppUI.Graph.minScale), AppUI.Graph.maxScale)
         let targetOffsetX = (viewModel.graphSize.width / 2 - (minX + maxX) / 2) * targetScale
         let targetOffsetY = (viewModel.graphSize.height / 2 - (minY + maxY) / 2) * targetScale
         withAnimation(.spring()) {
@@ -385,7 +387,7 @@ struct GraphCanvasView: View {
             scale: scale
         )
         .position(node.position)
-        .opacity(isDimmed ? 0.2 : 1.0)
+        .opacity(isDimmed ? AppUI.dimmedOpacity : AppUI.fullOpacity)
     }
     
     private func drawEdges(in context: GraphicsContext, size: CGSize) {
@@ -396,7 +398,7 @@ struct GraphCanvasView: View {
             guard let s = nodeLookup[edge.source], let t = nodeLookup[edge.target] else { continue }
             
             let isHighlighted = selectedNodeID == edge.source || selectedNodeID == edge.target
-            let opacity = isHighlighted ? 0.8 : (isAnySelected ? 0.05 : 0.2)
+            let opacity = isHighlighted ? AppUI.secondaryOpacity : (isAnySelected ? AppUI.glassOpacity / 3 : AppUI.dimmedOpacity)
             let lineWidth: CGFloat = isHighlighted ? AppUI.Graph.highlightedLineWidth : 1.0
             
             var path = Path()

@@ -54,7 +54,9 @@ struct PDFLibraryView: View {
                 PDFReaderView(documentInfo: doc)
             }
             .onAppear {
-                documents = store.loadPDFDocuments()
+                Task {
+                    documents = await store.loadPDFDocuments()
+                }
             }
         }
     }
@@ -72,16 +74,18 @@ struct PDFLibraryView: View {
             guard let data = try? Data(contentsOf: url) else { return }
             let fileName = "\(UUID().uuidString).pdf"
 
-            if store.savePDFDocument(data: data, fileName: fileName) != nil {
-                let pdfDoc = PDFKit.PDFDocument(data: data)
-                let docInfo = PDFDocumentInfo(
-                    title: url.deletingPathExtension().lastPathComponent,
-                    fileName: fileName,
-                    pageCount: pdfDoc?.pageCount ?? 0
-                )
-                documents.append(docInfo)
-                store.savePDFDocuments(documents)
-                store.addLog(action: .importPDF, target: docInfo.title, details: Localized.trf("pdf.pageCountFormat", docInfo.pageCount))
+            Task {
+                if let _ = await store.savePDFDocument(data: data, fileName: fileName) {
+                    let pdfDoc = PDFKit.PDFDocument(data: data)
+                    let docInfo = PDFDocumentInfo(
+                        title: url.deletingPathExtension().lastPathComponent,
+                        fileName: fileName,
+                        pageCount: pdfDoc?.pageCount ?? 0
+                    )
+                    documents.append(docInfo)
+                    await store.savePDFDocuments(documents)
+                    store.addLog(action: .importPDF, target: docInfo.title, details: Localized.trf("pdf.pageCountFormat", docInfo.pageCount))
+                }
             }
 
         case .failure(let error):
@@ -90,25 +94,29 @@ struct PDFLibraryView: View {
     }
 
     private func deleteDocument(_ doc: PDFDocumentInfo) {
-        _ = store.deletePDFDocument(fileName: doc.fileName)
-        documents.removeAll { $0.id == doc.id }
-        store.savePDFDocuments(documents)
-        store.addLog(action: .deletePDF, target: doc.title, details: "")
+        Task {
+            _ = await store.deletePDFDocument(fileName: doc.fileName)
+            documents.removeAll { $0.id == doc.id }
+            await store.savePDFDocuments(documents)
+            store.addLog(action: .deletePDF, target: doc.title, details: "")
+        }
     }
 
     private func ingestPDF(_ doc: PDFDocumentInfo) {
-        guard let pdfDoc = store.loadPDFDocument(fileName: doc.fileName) else { return }
-        let text = store.extractPDFText(from: pdfDoc)
+        Task {
+            guard let pdfDoc = await store.loadPDFDocument(fileName: doc.fileName) else { return }
+            let text = await store.extractPDFText(from: pdfDoc)
 
-        if !text.isEmpty {
-            let page = store.createPage(
-                title: doc.title,
-                type: .source,
-                content: text,
-                tags: ["PDF", Localized.tr("logAction.ingest")]
-            )
-            store.addLog(action: .importPDF, target: doc.title, details: Localized.trf("pdf.createdPage", page.title))
-            store.saveToDisk()
+            if !text.isEmpty {
+                let page = store.createPage(
+                    title: doc.title,
+                    type: .source,
+                    content: text,
+                    tags: ["PDF", Localized.tr("logAction.ingest")]
+                )
+                store.addLog(action: .importPDF, target: doc.title, details: Localized.trf("pdf.createdPage", page.title))
+                store.saveToDisk()
+            }
         }
     }
 }
@@ -211,9 +219,11 @@ struct PDFReaderView: View {
             }
         }
         .onAppear {
-            pdfDocument = store.loadPDFDocument(fileName: documentInfo.fileName)
-            highlights = documentInfo.highlights
-            currentPage = documentInfo.lastReadPage
+            Task {
+                pdfDocument = await store.loadPDFDocument(fileName: documentInfo.fileName)
+                highlights = documentInfo.highlights
+                currentPage = documentInfo.lastReadPage
+            }
         }
     }
 
@@ -314,10 +324,12 @@ struct PDFReaderView: View {
         )
         highlights.append(highlight)
 
-        var docs = store.loadPDFDocuments()
-        if let index = docs.firstIndex(where: { $0.id == documentInfo.id }) {
-            docs[index].highlights = highlights
-            store.savePDFDocuments(docs)
+        Task {
+            var docs = await store.loadPDFDocuments()
+            if let index = docs.firstIndex(where: { $0.id == documentInfo.id }) {
+                docs[index].highlights = highlights
+                await store.savePDFDocuments(docs)
+            }
         }
 
         selectedText = ""

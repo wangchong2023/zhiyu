@@ -19,18 +19,7 @@ final class AppStoreStorageTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        ServiceContainer.shared.reset()
-        DatabaseManager.shared.reset()
-        
-        let testDBURL = URL(string: "file::memory:?cache=shared")!
-        let sqliteStore = SQLiteStore(dbURL: testDBURL)
-        ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
-        ServiceContainer.shared.register(LinkService(), for: LinkService.self)
-        ServiceContainer.shared.register(LintService(), for: LintService.self)
-        ServiceContainer.shared.register(UndoService(), for: UndoService.self)
-        ServiceContainer.shared.register(BackupService(), for: BackupService.self)
-
+        setupFullMockEnvironment()
         store = AppStore()
     }
     

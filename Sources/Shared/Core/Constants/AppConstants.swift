@@ -47,7 +47,7 @@ struct AppConstants {
     struct Storage {
         /// 数据库文件名
         static let databaseName: String = "App.sqlite"
-        /// 性能审计回溯天数 (最近 30 天)
+        /// 性能监控回溯天数 (最近 30 天)
         static let observabilityWindowDays: Int = 30
         /// 30 天的秒数 (用于 SQL 查询)
         static let thirtyDaysSeconds: TimeInterval = 30 * 24 * 3600
@@ -69,7 +69,7 @@ struct AppConstants {
             static let pageEmbeddings = "page_embeddings"
             /// AI 调用额度与 Token 统计表
             static let tokenUsage = "token_usage"
-            /// LLM 请求执行详细日志，用于审计与计费
+            /// LLM 请求执行详细日志，用于监控与计费
             static let llmCallLogs = "llm_call_logs"
             /// RAG 检索效果离线评估结果表
             static let ragEvaluations = "rag_evaluations"
@@ -115,10 +115,51 @@ struct AppConstants {
         }
     }
 
-    // MARK: - 性能与审计
+    // MARK: - 性能与监控
     struct Performance {
         /// 延迟警告阈值 (毫秒)
         static let latencyWarningThreshold: Int = 2000
+    }
+
+    // MARK: - Graph (知识图谱算法与逻辑)
+    struct Graph {
+        /// 2D 图谱逻辑配置
+        struct TwoD {
+            static let virtualSizeMultiplier: CGFloat = 2.0
+            static let simulationIterations: Int = 100
+            static let baseExpansionOffset: CGFloat = 20.0
+            static let expansionFactor: CGFloat = 0.05
+        }
+        
+        /// 3D 图谱逻辑配置
+        struct ThreeD {
+            static let defaultCameraDistance: Float = 140.0
+            static let cameraZNear: Double = 0.1
+            static let cameraZFar: Double = 1000.0
+            
+            // 布局逻辑系数 (非视觉尺寸)
+            static let baseSphereRadiusMultiplier: Double = 18.0
+            static let minSphereRadius: CGFloat = 60.0
+            static let maxSphereRadius: CGFloat = 250.0
+            
+            static let starCount: Int = 500
+        }
+        
+        /// 力导向算法物理常数
+        struct Physics {
+            static let repulsionForce: CGFloat = 5000.0
+            static let attractionForce: CGFloat = 0.01
+            static let damping: CGFloat = 0.85
+            static let centerGravity: CGFloat = 0.005
+            static let friction: CGFloat = 0.9
+            
+            // 内部优化常数
+            static let gridSize: CGFloat = 120.0
+            static let collisionDistance: CGFloat = 20.0
+            static let collisionForce: CGFloat = 10000.0
+            static let maxRepulsionDistanceSq: CGFloat = 40000.0
+            static let minDistanceSq: CGFloat = 0.01
+        }
     }
 }
 

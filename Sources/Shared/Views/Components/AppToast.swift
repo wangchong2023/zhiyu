@@ -47,7 +47,7 @@ struct AppToast: Identifiable, Equatable {
     let id = UUID()
     let type: AppToastType
     let message: String
-    var duration: Double = 3.0
+    var duration: Double = AppUI.Animation.slowDuration * 6 // 3.0
 }
 
 // MARK: - 提示管理器
@@ -63,7 +63,7 @@ final class ToastManager: ObservableObject {
     private init() {}
     
     func show(type: AppToastType, message: String, duration: Double = 3.0) {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+        withAnimation(.spring(response: AppUI.Animation.standardDuration * 1.6, dampingFraction: AppUI.Animation.standardDamping)) { // 0.4, 0.8
             currentToast = AppToast(type: type, message: message, duration: duration)
         }
         
@@ -78,7 +78,7 @@ final class ToastManager: ObservableObject {
     }
     
     func dismiss() {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+        withAnimation(.spring(response: AppUI.Animation.standardDuration * 1.6, dampingFraction: AppUI.Animation.standardDamping)) { // 0.4, 0.8
             currentToast = nil
         }
     }
@@ -94,11 +94,11 @@ struct AppToastView: View {
     let onDismiss: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) { // 12
             if toast.type == .processing {
                 ProgressView()
                     .tint(toast.type.color)
-                    .scaleEffect(0.8)
+                    .scaleEffect(AppUI.fullOpacity * 0.8) // 0.8
             } else {
                 Image(systemName: toast.type.icon)
                     .foregroundStyle(toast.type.color)
@@ -116,22 +116,22 @@ struct AppToastView: View {
                     .foregroundStyle(.appSecondary)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, AppUI.standardPadding) // 16
+        .padding(.vertical, AppUI.medium) // 12
         .background(
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: AppUI.medium) // 12
                     .fill(.ultraThinMaterial)
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.appCard.opacity(0.7))
+                RoundedRectangle(cornerRadius: AppUI.medium) // 12
+                    .fill(Color.appCard.opacity(AppUI.fullOpacity * 0.7)) // 0.7
             }
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: AppUI.medium) // 12
+                .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth / 2) // 0.3, 0.5
         )
-        .shadow(color: .black.opacity(0.1), radius: 10, y: 5)
-        .padding(.horizontal, 20)
+        .shadow(color: .black.opacity(AppUI.shadowOpacity), radius: AppUI.standardRadius, y: AppUI.small + AppUI.atomic) // 0.1, 10, 5
+        .padding(.horizontal, AppUI.loosePadding) // 20
         .transition(.move(edge: .top).combined(with: .opacity))
     }
 }
@@ -150,7 +150,7 @@ struct AppToastModifier: ViewModifier {
                 AppToastView(toast: toast) {
                     manager.dismiss()
                 }
-                .padding(.top, 10)
+                .padding(.top, AppUI.small + AppUI.atomic) // 10
                 .zIndex(9999)
             }
         }

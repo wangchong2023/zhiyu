@@ -45,16 +45,16 @@ struct WelcomeHeroSection: View {
         VStack(spacing: AppUI.standardPadding) {
             ZStack {
                 AppDotPattern(dotColor: Color.appBorder, spacing: AppUI.wide, dotSize: AppUI.atomic)
-                    .frame(width: 200, height: 100).opacity(0.5)
-                Circle().fill(Color.appAccent.opacity(0.08))
-                    .frame(width: 140, height: 140)
+                    .frame(width: AppUI.Metrics.heroValueSize * 7.7, height: AppUI.Metrics.heroValueSize * 3.85).opacity(AppUI.fullOpacity * 0.5) // 200, 100, 0.5
+                Circle().fill(Color.appAccent.opacity(AppUI.glassOpacity * 0.8)) // 0.08
+                    .frame(width: AppUI.Metrics.heroValueSize * 5.4, height: AppUI.Metrics.heroValueSize * 5.4) // 140
                     .blur(radius: AppUI.wide)
                 Image(systemName: "books.vertical.circle.fill")
-                    .font(.system(size: 72))
+                    .font(.system(size: AppUI.Metrics.heroValueSize * 2.76)) // 72
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(0.4), radius: AppUI.standardPadding, x: 0, y: AppUI.small)
+                    .shadow(color: .appAccent.opacity(AppUI.glassOpacity * 4), radius: AppUI.standardPadding, x: 0, y: AppUI.small) // 0.4
             }
-            .frame(height: 100)
+            .frame(height: AppUI.Metrics.heroValueSize * 3.85) // 100
             Text(Localized.tr("page.knowledge"))
                 .font(.system(size: AppUI.huge + AppUI.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
@@ -68,7 +68,7 @@ struct WelcomeHeroSection: View {
 
 struct WelcomeStatsSection: View {
     @Environment(AppStore.self) var store
-    private let columns = [GridItem(.adaptive(minimum: 160, maximum: .infinity), spacing: AppUI.wide)]
+    private let columns = [GridItem(.adaptive(minimum: AppUI.Metrics.heroValueSize * 6.15, maximum: .infinity), spacing: AppUI.wide)] // 160
     var body: some View {
         LazyVGrid(columns: columns, spacing: AppUI.wide) {
             StatCard(title: Localized.tr("stat.totalPages"), value: "\(store.totalPages)", icon: "doc.richtext.fill", color: .appAccent)
@@ -174,11 +174,11 @@ struct WelcomeQuickStartGuideSection: View {
                         .foregroundStyle(Color.appAccent)
                 }
                 .padding()
-                .background(Color.appAccent.opacity(0.05))
+                .background(Color.appAccent.opacity(AppUI.glassOpacity / 2)) // 0.05
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                        .stroke(Color.appAccent.opacity(0.1), lineWidth: 1)
+                        .stroke(Color.appAccent.opacity(AppUI.glassOpacity), lineWidth: AppUI.borderWidth) // 0.1, 1
                 )
             }
             .buttonStyle(.plain)

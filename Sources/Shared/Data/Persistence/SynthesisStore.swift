@@ -96,7 +96,7 @@ final class SynthesisStore {
         for type in SynthesisType.allCases { states[type] = .idle }
         return states
     }()
-    
+
     var synthesisStates: [SynthesisType: SynthesisStatus] {
         get { access(keyPath: \.synthesisStates); return _synthesisStates }
         set { withMutation(keyPath: \.synthesisStates) { _synthesisStates = newValue } }
@@ -108,7 +108,7 @@ final class SynthesisStore {
 
     init() {
         loadSynthesisResults()
-        
+
         AppEventBus.shared.subscribe()
             .receive(on: RunLoop.main)
             .sink { [weak self] event in
@@ -273,14 +273,25 @@ final class SynthesisStore {
     func exportSynthesisDocument(_ doc: SynthesisDocument) async throws -> URL {
         let fileName = doc.name.replacingOccurrences(of: "/", with: "-")
                                .replacingOccurrences(of: ":", with: "-")
+        let url: URL
         switch doc.type {
         case .mindmap:
-            return try await WebViewExportService.shared.exportMindmapToPDF(mermaidCode: doc.content, fileName: fileName)
+            url = try await WebViewExportService.shared.exportMindmapToPDF(mermaidCode: doc.content, fileName: fileName)
         case .slides:
-            return try await WebViewExportService.shared.exportToPPTX(markdown: doc.content, fileName: fileName)
+            url = try await WebViewExportService.shared.exportToPPTX(markdown: doc.content, fileName: fileName)
         case .report, .quiz, .infographic:
-            return try await WebViewExportService.shared.exportToPDF(markdown: doc.content, fileName: fileName)
+            url = try await WebViewExportService.shared.exportToPDF(markdown: doc.content, fileName: fileName)
         }
+
+        // 记录导出日志
+        let fileSize = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size] as? Int64) ?? 0
+        Logger.shared.addLog(
+            action: .export,
+            target: "\(doc.type.title): \(fileName)",
+            details: "size:\(fileSize)"
+        )
+
+        return url
     }
 
     /**
@@ -302,7 +313,7 @@ final class SynthesisStore {
      */
     static func cleanMarkdown(_ text: String) -> String {
         var cleaned = text
-        
+
         // 使用正则批量移除常见的冗余转义字符，LLM 经常在生成列表、链接或特殊符号时过度转义
         // 匹配反斜杠后紧跟 Markdown 特殊字符：# ( ) [ ] { } _ ~ + - * . ! |
         let pattern = #"\\([\#\(\)\[\]\{\}\_\~\+\-\*\.\!\|])"#
@@ -310,11 +321,11 @@ final class SynthesisStore {
             let range = NSRange(location: 0, length: cleaned.utf16.count)
             cleaned = regex.stringByReplacingMatches(in: cleaned, options: [], range: range, withTemplate: "$1")
         }
-        
+
         // 特别修复 [[ ]] 的转义
         cleaned = cleaned.replacingOccurrences(of: "\\[\\[", with: "[[")
                         .replacingOccurrences(of: "\\]\\]", with: "]]")
-        
+
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
@@ -330,12 +341,12 @@ final class SynthesisStore {
                 return title
             }
         }
-        
+
         // 使用公共格式化工具提取标题
         if let extracted = SynthesisProcessor.extractTitle(from: content) {
             return extracted
         }
-        
+
         return type.title
     }
 

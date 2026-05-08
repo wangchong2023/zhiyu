@@ -256,7 +256,7 @@
         }
       }
     },
-    "create.pageTitle": {
+    "create.page.title": {
       "extractionState": "manual",
       "localizations": {
         "en": {

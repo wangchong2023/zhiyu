@@ -16,7 +16,7 @@ import Foundation
 
 /// 针对知识合成（思维导图、演示文稿、知识测验、深度报告、信息图）的通用处理工具
 enum SynthesisProcessor {
-    
+
     /// 格式化 Mermaid 代码块
     /// - Parameters:
     ///   - text: 包含 Mermaid 代码的原始文本
@@ -26,9 +26,9 @@ enum SynthesisProcessor {
         var cleaned = text.replacingOccurrences(of: "```mermaid", with: "")
             .replacingOccurrences(of: "```", with: "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         // 1. 提取标题 (如果有 # 标题)
-        var title: String? = nil
+        var title: String?
         if cleaned.hasPrefix("# ") {
             if let firstLineEnd = cleaned.firstIndex(of: "\n") {
                 title = String(cleaned[..<firstLineEnd])
@@ -40,7 +40,7 @@ enum SynthesisProcessor {
         let patterns = ["mindmap.*", "graph.*", "pie.*", "timeline.*", "sequenceDiagram.*", "gantt.*"]
         var mermaidCode: String = cleaned
         var foundMatch = false
-        
+
         for pattern in patterns {
             if let range = cleaned.range(of: "(?s)\(pattern)", options: .regularExpression) {
                 mermaidCode = String(cleaned[range])
@@ -48,7 +48,7 @@ enum SynthesisProcessor {
                 break
             }
         }
-        
+
         // 3. 如果完全没有匹配且不包含关键字，则尝试加上前缀
         // 4. 特殊处理：如果只有 graph 但没有方向，则补全方向
         if !foundMatch {
@@ -59,41 +59,41 @@ enum SynthesisProcessor {
             // 如果只有 graph 但紧接着没写方向，补上 TD
             mermaidCode = mermaidCode.replacingOccurrences(of: "graph", with: "graph TD", options: .anchored)
         }
-        
+
         // 对最终确定的 Mermaid 代码进行语法纠错加固
         mermaidCode = sanitizeMermaidSyntax(mermaidCode)
-        
+
         if let title = title {
             return "\(title)\n\n\(mermaidCode)"
         } else {
             return mermaidCode
         }
     }
-    
+
     /// 对 Mermaid 进行语法纠错加固 (处理节点文本中的非法字符)
     private static func sanitizeMermaidSyntax(_ code: String) -> String {
         let isMindmap = code.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("mindmap")
         var lines = code.components(separatedBy: .newlines)
-        
+
         for i in 0..<lines.count {
             var line = lines[i]
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.isEmpty || trimmed == "mindmap" { continue }
-            
+
             // 获取缩进
             let indentation = line.prefix { $0.isWhitespace }
-            
+
             if isMindmap {
                 // 针对 mindmap 的特殊处理：
                 // 1. 移除行尾可能导致解析错误的连字符
                 var content = trimmed.replacingOccurrences(of: #"-+$"#, with: "", options: .regularExpression)
-                
+
                 // 2. 如果包含特殊字符且没带括号，套上引号
                 let hasBrackets = (content.contains("((") && content.contains("))")) ||
                                   (content.contains("[") && content.contains("]")) ||
                                   (content.contains("{{") && content.contains("}}")) ||
                                   (content.contains("(") && content.contains(")"))
-                
+
                 if !hasBrackets && !content.hasPrefix("\"") {
                     // 清理内容中的非法引号
                     let safeText = content.replacingOccurrences(of: "\"", with: "'")
@@ -103,7 +103,7 @@ enum SynthesisProcessor {
                     // 如果有括号，确保括号内的内容也是安全的
                     content = content.replacingOccurrences(of: ":", with: "：")
                 }
-                
+
                 line = String(indentation) + content
             } else {
                 // 针对 graph 等其他图表的通用处理
@@ -113,7 +113,7 @@ enum SynthesisProcessor {
                     let range = NSRange(location: 0, length: line.utf16.count)
                     line = regex.stringByReplacingMatches(in: line, options: [], range: range, withTemplate: #"$1["$3"]"#)
                 }
-                
+
                 // 2. 标签内容净化
                 if let start = line.firstIndex(of: "["), let end = line.lastIndex(of: "]") {
                     let range = line.index(after: start)..<end
@@ -122,7 +122,7 @@ enum SynthesisProcessor {
                     if innerText.hasPrefix("\"") && innerText.hasSuffix("\"") {
                         innerText = String(innerText.dropFirst().dropLast())
                     }
-                    
+
                     let cleaned = innerText.replacingOccurrences(of: "(", with: "（")
                                            .replacingOccurrences(of: ")", with: "）")
                                            .replacingOccurrences(of: "\"", with: "'")
@@ -130,24 +130,24 @@ enum SynthesisProcessor {
                     line.replaceSubrange(range, with: "\"\(cleaned)\"")
                 }
             }
-            
+
             lines[i] = line
         }
         return lines.joined(separator: "\n")
     }
-    
+
     /// 从文本内容中提取第一个 H1 级别的标题
     static func extractTitle(from content: String) -> String? {
         let lines = content.components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespaces) }
-        
+
         // 寻找第一个非空的 Markdown 标题行
         if let firstLine = lines.first(where: { !$0.isEmpty && $0.hasPrefix("# ") }) {
             return firstLine.replacingOccurrences(of: #"^#+\s*"#, with: "", options: .regularExpression)
                             .replacingOccurrences(of: "```", with: "")
                             .trimmingCharacters(in: .whitespaces)
         }
-        
+
         return nil
     }
 
@@ -164,11 +164,11 @@ enum SynthesisProcessor {
             "\\[\\[": "[[",
             "\\]\\]": "]]"
         ]
-        
+
         for (target, replacement) in replacements {
             cleaned = cleaned.replacingOccurrences(of: target, with: replacement)
         }
-        
+
         return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

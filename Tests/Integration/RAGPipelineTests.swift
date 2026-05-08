@@ -20,20 +20,7 @@ final class RAGPipelineTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        ServiceContainer.shared.reset()
-        DatabaseManager.shared.reset()
-        
-        let testDBURL = URL(string: "file::memory:?cache=shared")!
-        let sqliteStore = SQLiteStore(dbURL: testDBURL)
-        ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
-        ServiceContainer.shared.register(LinkService(), for: LinkService.self)
-        ServiceContainer.shared.register(LintService(), for: LintService.self)
-        ServiceContainer.shared.register(UndoService(), for: UndoService.self)
-        ServiceContainer.shared.register(BackupService(), for: BackupService.self)
-        ServiceContainer.shared.register(IngestService(), for: IngestService.self)
-        ServiceContainer.shared.register(LLMService(), for: LLMService.self)
-
+        setupFullMockEnvironment()
         store = AppStore()
     }
 
@@ -46,8 +33,8 @@ final class RAGPipelineTests: XCTestCase {
     
     func testFullRAGPipeline() async throws {
         // 1. 导入 (Ingest)
-        let testContent = "智宇 (ZhiYu) 是一款基于 RAG 架构的知识管理软件，支持双向链接。"
-        let page = store.ingestService.ingestRawContent(
+        let testContent = "智宇 (ZhiYu) 是一款基于 RAG 架构的知识管理 software，支持双向链接。"
+        let page = await store.ingestService.ingestRawContent(
             title: "智宇简介",
             content: testContent,
             pageStore: store.sqliteStore
@@ -57,11 +44,11 @@ final class RAGPipelineTests: XCTestCase {
         XCTAssertNotNil(pageID)
         
         // 2. 向量化验证 (Vectorization)
-        // 等待异步向量化完成
-        store.sqliteStore.embeddingManager.waitForCompletion()
+        // 由于 IngestService 内部现在是异步等待管道完成的，此处无需手动等待
         
-        let embedding = store.sqliteStore.embeddingManager.allEmbeddings[pageID]
-        XCTAssertNotNil(embedding, "向量化任务应在导入后异步完成")
+        let allEmbeddings = await store.sqliteStore.embeddingManager.allEmbeddings
+        let embedding = allEmbeddings[pageID]
+        XCTAssertNotNil(embedding, "向量化任务应在导入后完成")
         
         // 3. 检索 (Hybrid Search)
         let searchResults = await store.linkService.search(query: "什么是智宇", in: store.pages)

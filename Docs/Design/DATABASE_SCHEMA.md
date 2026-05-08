@@ -32,7 +32,7 @@
 | `embedding` | BLOB | | 向量数据 |
 | `start_index` | INTEGER | NOT NULL | 在原文档中的字符偏移位置 |
 
-### 1.3 `token_usage` (AI 资源审计表)
+### 1.3 `token_usage` (AI 资源监控表)
 记录 LLM 调用的开销情况（V6 引入）。
 
 | 字段 | 类型 | 约束 | 说明 |
@@ -74,3 +74,36 @@ CREATE VIRTUAL TABLE pages_fts USING fts5(
 | **V4** | `v4_unique_title` | **重大变更**：清理同名页面，为 `title` 字段添加 UNIQUE 唯一约束。 |
 | **V5** | `v5_upgrade_page_chunks` | **RAG 升级**：为分块表添加 `parent_id` (层级支持) 和 `chunk_type` (分类支持)。 |
 | **V6** | `v6_resource_audit` | **资源治理**：创建 `token_usage` 表，支持 Token 消耗统计。 |
+| **V7** | `v7_enhanced_governance` | **增强治理**：创建 `llm_call_logs` (调用日志) 和 `rag_evaluations` (质量评估) 表。 |
+| **V8** | `v8_karpathy_metadata` | **模式增强**：补全 `pages` 表的物理溯源元数据 (`file_size`, `source_type`)。 |
+
+---
+
+## 4. 增强治理表 (V7 引入)
+
+### 4.1 `llm_call_logs` (LLM 调用日志)
+用于系统性能分析与开销审计。
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `id` | INTEGER | PRIMARY KEY |
+| `model` | TEXT | 使用的模型 ID |
+| `prompt_tokens` | INTEGER | 输入 Token |
+| `completion_tokens` | INTEGER | 输出 Token |
+| `latency_ms` | INTEGER | 请求耗时 (毫秒) |
+| `status` | TEXT | success / failure |
+| `created` | DATETIME | 产生时间 |
+
+### 4.2 `rag_evaluations` (RAG 质量评估)
+用于持续跟踪 AI 回答的忠实度与相关性。
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `id` | INTEGER | PRIMARY KEY |
+| `query` | TEXT | 用户提问 |
+| `answer` | TEXT | AI 回答内容 |
+| `faithfulness_score` | DOUBLE | 忠实度评分 (0-1) |
+| `relevance_score` | DOUBLE | 相关性评分 (0-1) |
+| `context_precision` | DOUBLE | 上下文精准度 (0-1) |
+| `evaluator_model` | TEXT | 执行评估的大模型名称 |
+| `created` | DATETIME | 评估时间 |

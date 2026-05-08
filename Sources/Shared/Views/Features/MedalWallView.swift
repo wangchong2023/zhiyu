@@ -18,28 +18,28 @@ struct MedalWallView: View {
     @StateObject private var medalService = MedalService.shared
     
     let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: AppUI.standardPadding),
+        GridItem(.flexible(), spacing: AppUI.standardPadding)
     ]
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: AppUI.loosePadding) {
                 // 顶部统计
-                HStack(spacing: 20) {
+                HStack(spacing: AppUI.widePadding) {
                     statBox(title: Localized.tr("medal.totalEarned"), value: "\(medalService.earnedMedalIDs.count)", icon: "trophy.fill", color: .orange)
                     statBox(title: Localized.tr("medal.progress"), value: "\(Int(Double(medalService.earnedMedalIDs.count) / 7.0 * 100))%", icon: "chart.bar.fill", color: .blue)
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, AppUI.standardPadding)
                 
                 // 分类展示
                 medalSection(title: Localized.tr("medal.category.explore"), category: .explore)
                 medalSection(title: Localized.tr("medal.category.accumulation"), category: .accumulation)
                 medalSection(title: Localized.tr("medal.category.connection"), category: .connection)
                 
-                Spacer(minLength: 40)
+                Spacer(minLength: AppUI.huge)
             }
-            .padding(.vertical)
+            .padding(.vertical, AppUI.standardPadding)
         }
         .background(Color.appBackground)
         .navigationTitle(Localized.tr("medal.wall.title"))
@@ -49,17 +49,17 @@ struct MedalWallView: View {
     }
     
     private func medalSection(title: String, category: MedalService.Medal.Category) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: AppUI.standardPadding) {
             Text(title)
                 .font(.title3.bold())
-                .padding(.horizontal)
+                .padding(.horizontal, AppUI.standardPadding)
             
-            LazyVGrid(columns: columns, spacing: 16) {
+            LazyVGrid(columns: columns, spacing: AppUI.standardPadding) {
                 ForEach(getMedals(for: category)) { medal in
                     MedalCard(medal: medal, isEarned: medalService.earnedMedalIDs.contains(medal.id))
                 }
             }
-            .padding(.horizontal)
+            .padding(.horizontal, AppUI.standardPadding)
         }
     }
     
@@ -68,7 +68,7 @@ struct MedalWallView: View {
     }
     
     private func statBox(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: AppUI.tightPadding) {
             HStack {
                 Image(systemName: icon)
                     .foregroundStyle(color)
@@ -77,12 +77,12 @@ struct MedalWallView: View {
                     .foregroundStyle(.appSecondary)
             }
             Text(value)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: AppUI.largeFontSize, weight: .bold, design: .rounded))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
+        .padding(AppUI.standardPadding)
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .shadow(color: .black.opacity(AppUI.shadowOpacity / 2), radius: AppUI.microRadius + AppUI.atomic, x: 0, y: AppUI.borderWidth * 2)
     }
 }

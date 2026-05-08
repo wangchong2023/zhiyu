@@ -88,8 +88,8 @@ final class AppRouter {
         // 如果当前已经在历史末尾，则不重复添加
         if navigationHistory.last?.id == page.id { return }
         
-        // 限制历史长度为 5 个 (UX 建议：过多会导致认知负担)
-        if navigationHistory.count >= 5 {
+        // 限制历史长度 (UX 建议：过多会导致认知负担)
+        if navigationHistory.count >= AppUI.Metrics.maxBreadcrumbCount { // 5
             navigationHistory.removeFirst()
         }
         navigationHistory.append(page)

@@ -40,7 +40,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         ServiceContainer.shared.register(linkService, for: LinkService.self)
         ServiceContainer.shared.register(lintService, for: LintService.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
+        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         
@@ -246,7 +246,7 @@ final class SearchFilterWorkflowTests: XCTestCase {
         
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         ServiceContainer.shared.register(linkService, for: LinkService.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
+        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
     }
     
     override func tearDown() async throws {
@@ -503,7 +503,7 @@ final class IngestPipelineTests: XCTestCase {
         Python is commonly used for ML.
         """
 
-        let concepts = ingestService.extractConcepts(from: newContent, pages: existingPages)
+        let concepts = await ingestService.extractConcepts(from: newContent, pages: existingPages)
 
         XCTAssertTrue(concepts.contains("Machine Learning"), "Should extract 'Machine Learning'")
         XCTAssertTrue(concepts.contains("Neural Network"), "Should extract 'Neural Network'")
@@ -565,11 +565,11 @@ final class GraphLayoutRealisticTests: XCTestCase {
         }
 
         let start = Date()
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: pages,
             linkResolver: { title in
                 let numStr = title.replacingOccurrences(of: "Page ", with: "")
-                if let num = Int(numStr), num < pages.count {
+                if let num = Int(numStr), num >= 0, num < pages.count {
                     return pages[num]
                 }
                 return nil
@@ -633,7 +633,7 @@ final class GraphLayoutRealisticTests: XCTestCase {
 
         let allPages = communityA + communityB
 
-        let result = GraphLayoutEngine.layout(
+        let result = GraphLayoutProcessor.layout(
             pages: allPages,
             linkResolver: { title in allPages.first { $0.title == title } },
             canvasSize: CGSize(width: 1200, height: 800)
@@ -656,11 +656,11 @@ final class GraphLayoutRealisticTests: XCTestCase {
 // MARK: - E2E: Markdown Rendering
 final class MarkdownRenderingTests: XCTestCase {
 
-    var parser: MarkdownParser!
+    var parser: MarkdownProcessor!
 
     override func setUp() async throws {
         try await super.setUp()
-        parser = MarkdownParser()
+        parser = MarkdownProcessor()
     }
 
     func testAllMarkdownBlockTypesParsed() {
@@ -707,7 +707,7 @@ final class MarkdownRenderingTests: XCTestCase {
         let boldSegments = segments.filter { $0.type == .bold }
         let italicSegments = segments.filter { $0.type == .italic }
         let codeSegments = segments.filter { $0.type == .code }
-        let wikilinkSegments = segments.filter { $0.type == .wikilink }
+        let wikilinkSegments = segments.filter { $0.type == .applink }
 
         XCTAssertEqual(boldSegments.first?.content, "bold")
         XCTAssertEqual(italicSegments.first?.content, "italic")
@@ -729,7 +729,7 @@ final class MarkdownRenderingTests: XCTestCase {
 @MainActor
 final class LogAuditTrailTests: XCTestCase {
 
-    var logService: LogService!
+    var logService: Logger!
     var tempDir: URL!
 
     override func setUp() async throws {
@@ -739,8 +739,8 @@ final class LogAuditTrailTests: XCTestCase {
         tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
         
-        logService = LogService(customDirectory: tempDir)
-        ServiceContainer.shared.register(logService, for: LogServiceProtocol.self)
+        logService = Logger(customDirectory: tempDir)
+        ServiceContainer.shared.register(logService, for: (any LoggerProtocol).self)
     }
 
     override func tearDown() async throws {

@@ -44,18 +44,18 @@ struct QuizView: View {
     @State private var isCompleted = false
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppUI.tightPadding) {
             // 标题页眉
             Text(quiz.title)
                 .font(.title2.bold())
                 .padding(.top, AppUI.large)
                 .padding(.bottom, AppUI.medium)
-                .padding(.horizontal)
+                .padding(.horizontal, AppUI.standardPadding)
                 .frame(maxWidth: .infinity, alignment: .center)
 
             if !isCompleted {
                 // 进度页眉
-                VStack(spacing: 8) {
+                VStack(spacing: AppUI.tightPadding) {
                     HStack {
                         Text(Localized.trf("quiz.questionFormat", currentIndex + 1, quiz.questions.count))
                             .font(.caption.bold())
@@ -69,15 +69,15 @@ struct QuizView: View {
                     ProgressView(value: Double(currentIndex + 1), total: Double(quiz.questions.count))
                         .tint(.appAccent)
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, AppUI.standardPadding)
                 
                 // Question Content
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
+                    VStack(alignment: .leading, spacing: AppUI.loosePadding) {
                         Text(quiz.questions[currentIndex].text)
                             .font(.headline)
                             .foregroundStyle(.appText)
-                            .lineSpacing(4)
+                            .lineSpacing(AppUI.tiny)
                         
                         VStack(spacing: 12) {
                             ForEach(0..<quiz.questions[currentIndex].options.count, id: \.self) { index in
@@ -115,9 +115,9 @@ struct QuizView: View {
                                     .foregroundStyle(.appSecondary)
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding()
-                                    .background(Color.appAccent.opacity(0.05))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .padding(AppUI.standardPadding)
+                                    .background(Color.appAccent.opacity(AppUI.shadowOpacity / 2)) // 0.05
+                                    .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                             }
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
@@ -134,27 +134,27 @@ struct QuizView: View {
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(AppUI.standardPadding)
                             .background(Color.appAccent)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
                     }
-                    .padding()
+                    .padding(AppUI.standardPadding)
                 }
             } else {
                 // Completion View
-                VStack(spacing: 24) {
+                VStack(spacing: AppUI.loosePadding) {
                     Image(systemName: "trophy.fill")
-                        .font(.system(size: 80))
+                        .font(.system(size: AppUI.Metrics.heroValueSize * 2.5)) // 80
                         .foregroundStyle(.appAccent)
                     
-                    VStack(spacing: 8) {
+                    VStack(spacing: AppUI.tightPadding) {
                         Text(Localized.tr("quiz.completed"))
                             .font(.title.bold())
                         Text(Localized.tr("quiz.yourScore"))
                             .font(.subheadline)
                             .foregroundStyle(.appSecondary)
                         Text("\(score) / \(quiz.questions.count)")
-                            .font(.system(size: 48, weight: .black, design: .rounded))
+                            .font(.system(size: AppUI.Metrics.heroValueSize * 1.5, weight: .black, design: .rounded)) // 48
                             .foregroundStyle(.appAccent)
                     }
                     
@@ -163,11 +163,11 @@ struct QuizView: View {
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(AppUI.standardPadding)
                             .background(Color.appAccent)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
                     }
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, AppUI.huge)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -267,10 +267,10 @@ private struct OptionRow: View {
     
     private var backgroundColor: Color {
         if !showResult {
-            return isSelected ? Color.appAccent.opacity(0.1) : Color.appCard
+            return isSelected ? Color.appAccent.opacity(AppUI.glassOpacity / 1.5) : Color.appCard
         }
-        if isCorrect { return Color.green.opacity(0.1) }
-        if isSelected { return Color.red.opacity(0.1) }
+        if isCorrect { return Color.green.opacity(AppUI.glassOpacity / 1.5) }
+        if isSelected { return Color.red.opacity(AppUI.glassOpacity / 1.5) }
         return Color.appCard
     }
     

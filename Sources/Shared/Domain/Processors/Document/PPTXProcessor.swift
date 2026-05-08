@@ -15,37 +15,37 @@ import Foundation
 /// 遵循微软 OpenXML 标准，通过生成 XML 目录结构并使用系统 zip 工具打包。
 final class PPTXProcessor {
     nonisolated(unsafe) static let shared = PPTXProcessor()
-    
+
     struct Slide {
         let title: String
         let bullets: [String]
     }
-    
+
     func generate(markdown: String, title: String) async throws -> URL {
         let slides = parseMarkdown(markdown)
         let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        
+
         // 1. 创建目录结构
         try createDirectoryStructure(at: tempDir)
-        
+
         // 2. 生成静态 XML 文件
         try generateContentTypes(at: tempDir)
         try generateRels(at: tempDir)
         try generatePresentation(at: tempDir, slideCount: slides.count)
         try generatePresentationRels(at: tempDir, slideCount: slides.count)
-        
+
         // 3. 生成幻灯片内容
         for (index, slide) in slides.enumerated() {
             try generateSlide(at: tempDir, slide: slide, index: index + 1)
         }
-        
+
         // 4. 打包为 .pptx (本质是 zip)
         let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(title).pptx")
         if FileManager.default.fileExists(atPath: outputURL.path) {
             try FileManager.default.removeItem(at: outputURL)
         }
-        
+
         #if os(macOS)
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/zip")
@@ -60,29 +60,29 @@ final class PPTXProcessor {
         throw NSError(domain: "PPTXProcessor", code: 405, userInfo: [NSLocalizedDescriptionKey: "iOS requires macOS toolchain for native zipping"])
         #endif
     }
-    
+
     private func parseMarkdown(_ markdown: String) -> [Slide] {
         var slides: [Slide] = []
         let parts = markdown.components(separatedBy: "\n## ")
-        
+
         for (index, part) in parts.enumerated() {
             let lines = part.components(separatedBy: .newlines)
             let title = lines.first?.replacingOccurrences(of: "# ", with: "").trimmingCharacters(in: .whitespaces) ?? "Slide \(index + 1)"
             let bullets = lines.dropFirst().filter { $0.trimmingCharacters(in: .whitespaces).hasPrefix("- ") || $0.trimmingCharacters(in: .whitespaces).hasPrefix("* ") }
                 .map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "- ", with: "").replacingOccurrences(of: "* ", with: "") }
-            
+
             slides.append(Slide(title: title, bullets: bullets))
         }
         return slides
     }
-    
+
     private func createDirectoryStructure(at url: URL) throws {
         let dirs = ["_rels", "ppt", "ppt/_rels", "ppt/slides", "ppt/theme"]
         for dir in dirs {
             try FileManager.default.createDirectory(at: url.appendingPathComponent(dir), withIntermediateDirectories: true)
         }
     }
-    
+
     private func generateContentTypes(at url: URL) throws {
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -95,7 +95,7 @@ final class PPTXProcessor {
         """
         try xml.write(to: url.appendingPathComponent("[Content_Types].xml"), atomically: true, encoding: .utf8)
     }
-    
+
     private func generateRels(at url: URL) throws {
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -105,13 +105,13 @@ final class PPTXProcessor {
         """
         try xml.write(to: url.appendingPathComponent("_rels/.rels"), atomically: true, encoding: .utf8)
     }
-    
+
     private func generatePresentation(at url: URL, slideCount: Int) throws {
         var slideList = ""
         for i in 1...slideCount {
             slideList += "<p:sldId id=\"\(255 + i)\" r:id=\"rId\(i + 1)\"/>"
         }
-        
+
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
@@ -121,13 +121,13 @@ final class PPTXProcessor {
         """
         try xml.write(to: url.appendingPathComponent("ppt/presentation.xml"), atomically: true, encoding: .utf8)
     }
-    
+
     private func generatePresentationRels(at url: URL, slideCount: Int) throws {
         var rels = ""
         for i in 1...slideCount {
             rels += "<Relationship Id=\"rId\(i + 1)\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide\(i).xml\"/>"
         }
-        
+
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -137,7 +137,7 @@ final class PPTXProcessor {
         """
         try xml.write(to: url.appendingPathComponent("ppt/_rels/presentation.xml.rels"), atomically: true, encoding: .utf8)
     }
-    
+
     private func generateSlide(at url: URL, slide: Slide, index: Int) throws {
         var bodyText = ""
         for bullet in slide.bullets {
@@ -151,7 +151,7 @@ final class PPTXProcessor {
             </a:p>
             """
         }
-        
+
         let xml = """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
@@ -180,7 +180,7 @@ final class PPTXProcessor {
         </p:sld>
         """
         try xml.write(to: url.appendingPathComponent("ppt/slides/slide\(index).xml"), atomically: true, encoding: .utf8)
-        
+
         // 生成默认主题 (简化)
         if index == 1 {
             let themeXml = """

@@ -57,7 +57,7 @@ struct ContentView: View {
 
             if store.securityService.isLocked {
                 LockOverlayView()
-                    .transition(AnyTransition.opacity.combined(with: .scale(scale: 0.95)))
+                    .transition(AnyTransition.opacity.combined(with: .scale(scale: AppUI.fullOpacity * 0.95))) // 0.95
                     .zIndex(100)
             }
             
@@ -106,8 +106,10 @@ struct ContentView: View {
             switch router.selectedTab {
             case .knowledge:
                 SidebarView(heroNamespace: heroNamespace, selection: $router.sidebarSelection)
+            case .settings:
+                SettingsView(onboardingService: onboardingService, languageForceUpdate: $languageForceUpdate)
             default:
-                Color.appBackground // 其他模块暂不显示二级列，或者显示空白
+                Color.appBackground
             }
         } detail: {
             // 详情列：显示主要内容
@@ -116,7 +118,7 @@ struct ContentView: View {
         .tint(tintColor)
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(400)])
+                .presentationDetents([.height(AppUI.Metrics.heroValueSize * 15.3)]) // 400
                 .presentationBackground(.clear)
         }
         .background {
@@ -169,7 +171,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(400)])
+                .presentationDetents([.height(AppUI.Metrics.heroValueSize * 15.3)]) // 400
                 .presentationBackground(.clear)
         }
         .background {
@@ -239,7 +241,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(400)])
+                .presentationDetents([.height(AppUI.Metrics.heroValueSize * 15.3)]) // 400
                 .presentationBackground(.clear)
         }
         .background {
@@ -350,7 +352,7 @@ struct CoachMarkOverlay: View {
     var body: some View {
         ZStack {
             // 半透明背景
-            Color.black.opacity(0.4)
+            Color.black.opacity(AppUI.glassOpacity * 4) // 0.4
                 .ignoresSafeArea()
                 .onTapGesture { dismissWithAnimation() }
             
@@ -360,14 +362,14 @@ struct CoachMarkOverlay: View {
                     Circle()
                         .fill(LinearGradient(colors: [.appAccent, .appSource], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(width: AppUI.Gallery.splashIconSize, height: AppUI.Gallery.splashIconSize)
-                        .shadow(color: .appAccent.opacity(0.3), radius: AppUI.medium, y: 5)
+                        .shadow(color: .appAccent.opacity(AppUI.disabledOpacity), radius: AppUI.medium, y: AppUI.small + AppUI.atomic) // 0.3, 5
                     
                     Image(systemName: iconName)
-                        .font(.system(size: AppUI.titleFontSize * 1.3, weight: .bold))
+                        .font(.system(size: AppUI.Metrics.titleFontSize * 1.3, weight: .bold)) // 1.3
                         .foregroundStyle(.white)
                 }
-                .scaleEffect(isAnimating ? 1 : 0.8)
-                .opacity(isAnimating ? 1 : 0)
+                .scaleEffect(isAnimating ? AppUI.fullOpacity : AppUI.fullOpacity * 0.8) // 1.0, 0.8
+                .opacity(isAnimating ? AppUI.fullOpacity : 0) // 1.0
                 
                 VStack(spacing: 12) {
                     Text(Localized.tr(titleKey))
@@ -380,22 +382,22 @@ struct CoachMarkOverlay: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
-                .offset(y: isAnimating ? 0 : 20)
-                .opacity(isAnimating ? 1 : 0)
+                .offset(y: isAnimating ? 0 : AppUI.loosePadding) // 20
+                .opacity(isAnimating ? AppUI.fullOpacity : 0) // 1.0
                 
                 Button(action: performAction) {
                     Text(Localized.tr(actionKey))
                         .font(.headline)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, AppUI.Metrics.heroValueSize * 1.23) // 32
+                        .padding(.vertical, AppUI.medium) // 12
                         .background(
                             Capsule()
                                 .fill(Color.appAccent)
                         )
                 }
-                .scaleEffect(isAnimating ? 1 : 0.9)
-                .opacity(isAnimating ? 1 : 0)
+                .scaleEffect(isAnimating ? AppUI.fullOpacity : AppUI.fullOpacity * 0.9) // 1.0, 0.9
+                .opacity(isAnimating ? AppUI.fullOpacity : 0) // 1.0
                 
                 Button(action: dismissWithAnimation) {
                     Text(L10n.Common.tr("skip"))
@@ -404,16 +406,16 @@ struct CoachMarkOverlay: View {
                 }
                 .padding(.top, AppUI.tiny)
             }
-            .padding(AppUI.giant * 1.5)
+            .padding(AppUI.giant + AppUI.Metrics.heroValueSize * 0.5) // 1.5x
             .background(
-                RoundedRectangle(cornerRadius: AppUI.largeRadius * 1.5)
+                RoundedRectangle(cornerRadius: AppUI.largeRadius + AppUI.Metrics.heroValueSize * 0.4) // 1.5x
                     .fill(Color.appCard)
-                    .shadow(color: .black.opacity(0.2), radius: 30, x: 0, y: 15)
+                    .shadow(color: .black.opacity(AppUI.glassOpacity * 2), radius: AppUI.Metrics.heroValueSize * 1.15, x: 0, y: AppUI.Metrics.heroValueSize * 0.57) // 0.2, 30, 15
             )
             .padding(AppUI.giant)
         }
         .onAppear {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+            withAnimation(.spring(response: AppUI.Animation.standardDuration, dampingFraction: AppUI.Animation.standardDamping * 0.875)) { // 0.5, 0.7
                 isAnimating = true
             }
         }
@@ -455,10 +457,10 @@ struct CoachMarkOverlay: View {
     }
     
     private func dismissWithAnimation() {
-        withAnimation(.easeIn(duration: 0.2)) {
+        withAnimation(.easeIn(duration: AppUI.Animation.fastDuration)) { // 0.2
             isAnimating = false
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppUI.Animation.fastDuration) { // 0.2
             onDismiss()
         }
     }

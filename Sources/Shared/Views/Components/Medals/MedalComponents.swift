@@ -16,10 +16,10 @@ struct MedalCard: View {
     let isEarned: Bool
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppUI.medium) {
             ZStack {
                 let baseColor = Color(hex: medal.colorHex)
-                let fillColor = isEarned ? baseColor.opacity(AppUI.glassOpacity) : Color.appBorder.opacity(0.1)
+                let fillColor = isEarned ? baseColor.opacity(AppUI.glassOpacity) : Color.appBorder.opacity(AppUI.glassOpacity / 1.5) // 0.1
                 
                 Circle()
                     .fill(fillColor)
@@ -27,7 +27,7 @@ struct MedalCard: View {
                 
                 Image(systemName: medal.icon)
                     .font(.system(size: AppUI.Gallery.iconSize, weight: .bold))
-                    .foregroundStyle(isEarned ? baseColor : .appSecondary.opacity(0.5))
+                    .foregroundStyle(isEarned ? baseColor : .appSecondary.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
                 
                 if !isEarned {
                     Image(systemName: "lock.fill")
@@ -55,13 +55,13 @@ struct MedalCard: View {
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.Gallery.itemRadius))
         .overlay {
-            let overlayColor = isEarned ? Color(hex: medal.colorHex).opacity(0.3) : Color.appBorder.opacity(0.1)
+            let overlayColor = isEarned ? Color(hex: medal.colorHex).opacity(AppUI.glassOpacity * 2) : Color.appBorder.opacity(AppUI.glassOpacity / 1.5)
             RoundedRectangle(cornerRadius: AppUI.Gallery.itemRadius)
-                .stroke(overlayColor, lineWidth: 1)
+                .stroke(overlayColor, lineWidth: AppUI.borderWidth)
         }
-        .shadow(color: isEarned ? Color(hex: medal.colorHex).opacity(0.1) : .clear, radius: 10, y: 4)
+        .shadow(color: isEarned ? Color(hex: medal.colorHex).opacity(AppUI.glassOpacity / 1.5) : .clear, radius: AppUI.standardRadius, y: AppUI.borderWidth * 4)
         .grayscale(isEarned ? 0 : 1)
-        .opacity(isEarned ? 1 : 0.7)
+        .opacity(isEarned ? AppUI.fullOpacity : AppUI.secondaryOpacity + 0.1) // 0.7
     }
 }
 
@@ -73,16 +73,16 @@ struct MedalRewardPopup: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            Color.black.opacity(AppUI.disabledOpacity + 0.1) // 0.4
                 .ignoresSafeArea()
                 .onTapGesture(perform: onDismiss)
             
-            VStack(spacing: 24) {
+            VStack(spacing: AppUI.loosePadding) {
                 // 顶部闪烁装饰
                 ZStack {
                     let baseColor = Color(hex: medal.colorHex)
                     Circle()
-                        .fill(baseColor.opacity(0.2))
+                        .fill(baseColor.opacity(AppUI.dimmedOpacity))
                         .frame(width: AppUI.Gallery.displayIconSize, height: AppUI.Gallery.displayIconSize)
                         .blur(radius: AppUI.Gallery.blurRadius)
                         .scaleEffect(isAnimating ? 1.2 : 0.8)
@@ -96,12 +96,12 @@ struct MedalRewardPopup: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: baseColor.opacity(0.5), radius: 20, y: 10)
+                        .shadow(color: baseColor.opacity(AppUI.secondaryOpacity / 1.6), radius: AppUI.loosePadding, y: AppUI.standardPadding) // 0.5, 20, 10
                         .scaleEffect(isAnimating ? 1.1 : 0.9)
                 }
                 .padding(.top, AppUI.Gallery.blurRadius)
                 
-                VStack(spacing: 12) {
+                VStack(spacing: AppUI.medium) {
                     Text(Localized.tr("medal.congrats"))
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
@@ -115,7 +115,7 @@ struct MedalRewardPopup: View {
                         .font(.body)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, AppUI.Grid.heroValueSize)
                 }
                 
                 Button(action: onDismiss) {
@@ -126,9 +126,9 @@ struct MedalRewardPopup: View {
                         .frame(width: AppUI.Gallery.callToActionWidth, height: AppUI.Gallery.callToActionHeight)
                         .background {
                             Capsule()
-                                .fill(LinearGradient(colors: [baseColor, baseColor.opacity(0.8)], startPoint: .leading, endPoint: .trailing))
+                                .fill(LinearGradient(colors: [baseColor, baseColor.opacity(AppUI.secondaryOpacity)], startPoint: .leading, endPoint: .trailing))
                         }
-                        .shadow(color: baseColor.opacity(0.3), radius: 10, y: 5)
+                        .shadow(color: baseColor.opacity(AppUI.disabledOpacity), radius: AppUI.standardRadius, y: AppUI.microRadius + AppUI.atomic) // 0.3, 10, 5
                 }
                 .padding(.bottom, AppUI.Gallery.blurRadius)
                 .scaleEffect(isAnimating ? 1 : 0.9)
@@ -138,7 +138,7 @@ struct MedalRewardPopup: View {
                     .fill(Color.appCard)
                     .overlay(
                         RoundedRectangle(cornerRadius: AppUI.Gallery.containerRadius)
-                            .stroke(LinearGradient(colors: [.white.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+                            .stroke(LinearGradient(colors: [.white.opacity(AppUI.dimmedOpacity), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: AppUI.borderWidth)
                     )
             )
             .padding(AppUI.Gallery.containerPadding)
@@ -146,7 +146,7 @@ struct MedalRewardPopup: View {
             .opacity(isAnimating ? 1 : 0)
         }
         .onAppear {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7, blendDuration: 0)) {
+            withAnimation(.spring(response: AppUI.Animation.springResponse * 2, dampingFraction: AppUI.Animation.springDamping - 0.1, blendDuration: 0)) {
                 isAnimating = true
             }
         }

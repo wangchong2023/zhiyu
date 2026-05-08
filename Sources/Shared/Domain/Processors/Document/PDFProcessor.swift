@@ -28,7 +28,7 @@ struct PDFDocumentInfo: Identifiable, Codable {
     var lastReadPage: Int
     var highlights: [PDFHighlight]
     var linkedPageTitles: [String]  // KnowledgePages linked from this PDF
-    
+
     init(
         id: UUID = UUID(),
         title: String,
@@ -63,7 +63,7 @@ struct PDFHighlight: Identifiable, Codable {
     var color: String  // "yellow", "green", "blue", "pink", "purple"
     var note: String
     var creationDate: Date
-    
+
     init(
         id: UUID = UUID(),
         pageIndex: Int,
@@ -79,7 +79,7 @@ struct PDFHighlight: Identifiable, Codable {
         self.note = note
         self.creationDate = creationDate
     }
-    
+
     var highlightColor: Color {
         switch color {
         case "yellow": return .yellow
@@ -108,31 +108,28 @@ struct PDFHighlight: Identifiable, Codable {
 /// ## 使用方式
 /// ```swift
 /// let pdfService = PDFProcessor.shared
-/// if let document = pdfService.loadPDF(fileName: "document.pdf") {
-///     let text = pdfService.extractText(from: document)
+/// if let document = await pdfService.loadPDF(fileName: "document.pdf") {
+///     let text = await pdfService.extractText(from: document)
 /// }
 /// ```
-class PDFProcessor {
-    nonisolated(unsafe) static let shared = PDFProcessor()
-    
+@MainActor
+final class PDFProcessor {
+    static let shared = PDFProcessor()
+
     private let documentsDirectory: URL
-    
+
     init() {
         documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("AppPDFs", isDirectory: true)
-        
+
         // Create directory if needed
         try? FileManager.default.createDirectory(at: documentsDirectory, withIntermediateDirectories: true)
     }
-    
+
     // MARK: - File Management
 
     /// 保存 PDF 数据到本地存储
-    /// - Parameters:
-    ///   - data: PDF 文件的二进制数据
-    ///   - fileName: 保存的文件名（含扩展名）
-    /// - Returns: 保存后的文件 URL，失败返回 nil
-    func savePDF(data: Data, fileName: String) -> URL? {
+    func savePDF(data: Data, fileName: String) async -> URL? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
             try data.write(to: fileURL)
@@ -141,19 +138,15 @@ class PDFProcessor {
             return nil
         }
     }
-    
+
     /// 从本地存储加载 PDF 文档
-    /// - Parameter fileName: PDF 文件名
-    /// - Returns: PDFKit.PDFDocument 对象，加载失败返回 nil
-    func loadPDF(fileName: String) -> PDFKit.PDFDocument? {
+    func loadPDF(fileName: String) async -> PDFKit.PDFDocument? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         return PDFKit.PDFDocument(url: fileURL)
     }
-    
+
     /// 从本地存储删除 PDF 文件
-    /// - Parameter fileName: 要删除的 PDF 文件名
-    /// - Returns: 删除成功返回 true，失败返回 false
-    func deletePDF(fileName: String) -> Bool {
+    func deletePDF(fileName: String) async -> Bool {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
             try FileManager.default.removeItem(at: fileURL)
@@ -162,10 +155,9 @@ class PDFProcessor {
             return false
         }
     }
-    
+
     /// 获取本地存储的所有 PDF 文件名列表
-    /// - Returns: 按文件名升序排列的 PDF 文件名数组
-    func allPDFFilenames() -> [String] {
+    func allPDFFilenames() async -> [String] {
         do {
             let files = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
             return files
@@ -176,15 +168,11 @@ class PDFProcessor {
             return []
         }
     }
-    
+
     // MARK: - Text Extraction
 
     /// 从 PDF 文档中提取文本内容
-    /// - Parameters:
-    ///   - pdfDocument: PDFKit 文档对象
-    ///   - pageRange: 可选的页码范围，nil 表示提取所有页面
-    /// - Returns: 提取的文本内容，页面之间以换行符分隔
-    func extractText(from pdfDocument: PDFKit.PDFDocument, pageRange: Range<Int>? = nil) -> String {
+    func extractText(from pdfDocument: PDFKit.PDFDocument, pageRange: Range<Int>? = nil) async -> String {
         var text = ""
         let start = pageRange?.lowerBound ?? 0
         let end = pageRange?.upperBound ?? pdfDocument.pageCount
@@ -199,8 +187,6 @@ class PDFProcessor {
     }
 
     /// 从 URL 提取 PDF 文本内容
-    /// - Parameter url: PDF 文件的 URL
-    /// - Returns: 提取的文本内容，提取失败返回 nil
     static func extractText(from url: URL) -> String? {
         guard let document = PDFKit.PDFDocument(url: url) else { return nil }
         var text = ""
@@ -214,25 +200,23 @@ class PDFProcessor {
     }
 
     /// 从 URL 提取 PDF 文本内容（实例方法版本）
-    func extractText(from url: URL) -> String? {
+    func extractText(from url: URL) async -> String? {
         guard let document = PDFKit.PDFDocument(url: url) else { return nil }
-        return extractText(from: document)
+        return await extractText(from: document)
     }
 
     // MARK: - Metadata Persistence
 
     /// 保存文档元数据到本地存储
-    /// - Parameter docs: PDFDocumentInfo 数组，会覆盖原有元数据
-    func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) {
+    func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         if let data = try? JSONEncoder().encode(docs) {
             try? data.write(to: url)
         }
     }
-    
+
     /// 从本地存储加载文档元数据
-    /// - Returns: PDFDocumentInfo 数组，无数据时返回空数组
-    func loadDocumentsInfo() -> [PDFDocumentInfo] {
+    func loadDocumentsInfo() async -> [PDFDocumentInfo] {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         guard let data = try? Data(contentsOf: url),
               let docs = try? JSONDecoder().decode([PDFDocumentInfo].self, from: data) else {

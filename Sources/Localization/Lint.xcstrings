@@ -26,6 +26,12 @@
             "state": "translated",
             "value": "正在分析中..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Scanning..."
+          }
         }
       }
     },
@@ -122,6 +128,12 @@
             "state": "translated",
             "value": "健康检查"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lint Center"
+          }
         }
       }
     },
@@ -138,6 +150,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "检查中..."
+          }
+        }
+      }
+    },
+    "lint.clearData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear History"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空历史"
           }
         }
       }
@@ -336,6 +365,12 @@
             "state": "translated",
             "value": "发现知识孤岛：\"%@\""
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发现知识孤岛：\"%@\""
+          }
         }
       },
       "extractionState": "manual"
@@ -343,6 +378,12 @@
     "lint.islandSuggestion": {
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。"
@@ -721,6 +762,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "运行检查"
+          }
+        }
+      }
+    },
+    "lint.startCheck": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Check"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始检查"
           }
         }
       }

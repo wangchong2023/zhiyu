@@ -95,7 +95,12 @@ struct AdaptiveDetailView: View {
                 case .ingest:
                     IngestView(selectedTab: $selectedTab)
                 case .settings:
-                    SettingsView(onboardingService: onboardingService, languageForceUpdate: $languageForceUpdate)
+                    // 设置列表已移动至中栏，详情列显示引导或占位
+                    ContentUnavailableView(
+                        Localized.tr("sidebar.settings"),
+                        systemImage: "gearshape.2",
+                        description: Text(Localized.tr("sidebar.settings.placeholder"))
+                    )
                 }
             }
             .navigationDestination(for: AppRoute.self) { route in

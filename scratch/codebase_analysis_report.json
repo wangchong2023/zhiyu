@@ -1,0 +1,430 @@
+{
+  "total_files": 216,
+  "total_lines": 39227,
+  "layer_violations": [
+    "Sources/Shared/Data/Persistence/SearchStore.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Data/Persistence/IngestStore.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Data/Persistence/SynthesisStore.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Data/Persistence/SettingsStore.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Domain/Features/LintService.swift imports SwiftUI but is in a lower layer.",
+    "Sources/Shared/Domain/Processors/Document/PDFProcessor.swift imports SwiftUI but is in a lower layer."
+  ],
+  "largest_files": [
+    {
+      "file": "Sources/Shared/Views/Features/IngestView.swift",
+      "lines": 745,
+      "has_file_header": true,
+      "chinese_chars": 257,
+      "imports": [
+        "UniformTypeIdentifiers"
+      ],
+      "num_functions": 8,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 52
+    },
+    {
+      "file": "Sources/Shared/Views/Components/IngestViewComponents.swift",
+      "lines": 676,
+      "has_file_header": true,
+      "chinese_chars": 559,
+      "imports": [
+        "SwiftUI"
+      ],
+      "num_functions": 2,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 13
+    },
+    {
+      "file": "Sources/Shared/Views/Features/LintView.swift",
+      "lines": 672,
+      "has_file_header": true,
+      "chinese_chars": 632,
+      "imports": [
+        "SwiftUI"
+      ],
+      "num_functions": 6,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 32
+    },
+    {
+      "file": "Sources/Shared/Data/Persistence/SQLiteStore.swift",
+      "lines": 602,
+      "has_file_header": false,
+      "chinese_chars": 1458,
+      "imports": [
+        "Foundation",
+        "GRDB",
+        "NaturalLanguage",
+        "Observation"
+      ],
+      "num_functions": 26,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 53
+    },
+    {
+      "file": "Sources/Shared/Views/Components/GraphComponents.swift",
+      "lines": 594,
+      "has_file_header": false,
+      "chinese_chars": 915,
+      "imports": [
+        "SwiftUI"
+      ],
+      "num_functions": 2,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 22
+    },
+    {
+      "file": "Sources/Shared/Views/Pages/PageDetailView.swift",
+      "lines": 565,
+      "has_file_header": true,
+      "chinese_chars": 135,
+      "imports": [
+        "SwiftUI"
+      ],
+      "num_functions": 4,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 21
+    },
+    {
+      "file": "Sources/Shared/Data/Sync/AppCloudSyncService.swift",
+      "lines": 532,
+      "has_file_header": true,
+      "chinese_chars": 962,
+      "imports": [
+        "Foundation",
+        "CloudKit"
+      ],
+      "num_functions": 13,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 69
+    },
+    {
+      "file": "Sources/Shared/Views/Features/Graph3DView.swift",
+      "lines": 526,
+      "has_file_header": true,
+      "chinese_chars": 141,
+      "imports": [
+        "SwiftUI",
+        "SceneKit"
+      ],
+      "num_functions": 22,
+      "magic_strings_count": 2,
+      "magic_numbers_count": 6,
+      "complexity_score": 45
+    },
+    {
+      "file": "Sources/Shared/Data/Persistence/AppStore.swift",
+      "lines": 513,
+      "has_file_header": false,
+      "chinese_chars": 1304,
+      "imports": [
+        "Observation"
+      ],
+      "num_functions": 44,
+      "magic_strings_count": 4,
+      "magic_numbers_count": 0,
+      "complexity_score": 20
+    },
+    {
+      "file": "Sources/Shared/Views/Pages/TagCloudView.swift",
+      "lines": 494,
+      "has_file_header": true,
+      "chinese_chars": 534,
+      "imports": [
+        "SwiftUI",
+        "AppKit"
+      ],
+      "num_functions": 7,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 21
+    }
+  ],
+  "files_missing_chinese_comments": [],
+  "highest_complexity": [
+    {
+      "file": "Sources/Shared/Data/Persistence/SynthesisStore.swift",
+      "lines": 353,
+      "has_file_header": true,
+      "chinese_chars": 508,
+      "imports": [
+        "SwiftUI",
+        "Observation",
+        "Combine"
+      ],
+      "num_functions": 12,
+      "magic_strings_count": 7,
+      "magic_numbers_count": 0,
+      "complexity_score": 70
+    },
+    {
+      "file": "Sources/Shared/Data/Sync/AppCloudSyncService.swift",
+      "lines": 532,
+      "has_file_header": true,
+      "chinese_chars": 962,
+      "imports": [
+        "Foundation",
+        "CloudKit"
+      ],
+      "num_functions": 13,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 69
+    },
+    {
+      "file": "Sources/Shared/Domain/Logic/OnDeviceLLMService.swift",
+      "lines": 388,
+      "has_file_header": true,
+      "chinese_chars": 28,
+      "imports": [
+        "Combine"
+      ],
+      "num_functions": 12,
+      "magic_strings_count": 7,
+      "magic_numbers_count": 4,
+      "complexity_score": 65
+    },
+    {
+      "file": "Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift",
+      "lines": 381,
+      "has_file_header": true,
+      "chinese_chars": 328,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 12,
+      "magic_strings_count": 3,
+      "magic_numbers_count": 0,
+      "complexity_score": 65
+    },
+    {
+      "file": "Sources/Shared/Domain/Features/IngestService.swift",
+      "lines": 433,
+      "has_file_header": false,
+      "chinese_chars": 432,
+      "imports": [
+        "Foundation",
+        "Compression"
+      ],
+      "num_functions": 14,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 1,
+      "complexity_score": 61
+    },
+    {
+      "file": "Sources/Shared/Data/Persistence/SQLiteStore.swift",
+      "lines": 602,
+      "has_file_header": false,
+      "chinese_chars": 1458,
+      "imports": [
+        "Foundation",
+        "GRDB",
+        "NaturalLanguage",
+        "Observation"
+      ],
+      "num_functions": 26,
+      "magic_strings_count": 1,
+      "magic_numbers_count": 0,
+      "complexity_score": 53
+    },
+    {
+      "file": "Sources/Shared/Views/Features/IngestView.swift",
+      "lines": 745,
+      "has_file_header": true,
+      "chinese_chars": 257,
+      "imports": [
+        "UniformTypeIdentifiers"
+      ],
+      "num_functions": 8,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 52
+    },
+    {
+      "file": "Sources/Shared/Core/Platform/AppRouter.swift",
+      "lines": 167,
+      "has_file_header": false,
+      "chinese_chars": 521,
+      "imports": [
+        "SwiftUI",
+        "Observation"
+      ],
+      "num_functions": 9,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 49
+    },
+    {
+      "file": "Sources/Shared/Domain/Features/TaskCenter.swift",
+      "lines": 214,
+      "has_file_header": true,
+      "chinese_chars": 289,
+      "imports": [
+        "Foundation",
+        "Combine"
+      ],
+      "num_functions": 9,
+      "magic_strings_count": 0,
+      "magic_numbers_count": 0,
+      "complexity_score": 47
+    },
+    {
+      "file": "Sources/Shared/Views/Features/Graph3DView.swift",
+      "lines": 526,
+      "has_file_header": true,
+      "chinese_chars": 141,
+      "imports": [
+        "SwiftUI",
+        "SceneKit"
+      ],
+      "num_functions": 22,
+      "magic_strings_count": 2,
+      "magic_numbers_count": 6,
+      "complexity_score": 45
+    }
+  ],
+  "most_magic_literals": [
+    {
+      "file": "Sources/Shared/Core/Constants/AppUI.swift",
+      "lines": 433,
+      "has_file_header": false,
+      "chinese_chars": 165,
+      "imports": [
+        "SwiftUI",
+        "UIKit"
+      ],
+      "num_functions": 3,
+      "magic_strings_count": 19,
+      "magic_numbers_count": 116,
+      "complexity_score": 23
+    },
+    {
+      "file": "Sources/Shared/Domain/Processors/Document/PPTXProcessor.swift",
+      "lines": 196,
+      "has_file_header": true,
+      "chinese_chars": 262,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 8,
+      "magic_strings_count": 81,
+      "magic_numbers_count": 0,
+      "complexity_score": 10
+    },
+    {
+      "file": "Sources/Shared/Core/Constants/AppConstants.swift",
+      "lines": 140,
+      "has_file_header": true,
+      "chinese_chars": 599,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 0,
+      "magic_strings_count": 33,
+      "magic_numbers_count": 10,
+      "complexity_score": 8
+    },
+    {
+      "file": "Sources/Shared/Models/LogAction.swift",
+      "lines": 83,
+      "has_file_header": true,
+      "chinese_chars": 111,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 0,
+      "magic_strings_count": 18,
+      "magic_numbers_count": 0,
+      "complexity_score": 41
+    },
+    {
+      "file": "Sources/Shared/Data/Persistence/KnowledgePageStore.swift",
+      "lines": 424,
+      "has_file_header": false,
+      "chinese_chars": 817,
+      "imports": [
+        "Foundation",
+        "GRDB"
+      ],
+      "num_functions": 26,
+      "magic_strings_count": 16,
+      "magic_numbers_count": 0,
+      "complexity_score": 27
+    },
+    {
+      "file": "Sources/Shared/Domain/Logic/LLMContextBuilder.swift",
+      "lines": 249,
+      "has_file_header": true,
+      "chinese_chars": 282,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 11,
+      "magic_strings_count": 16,
+      "magic_numbers_count": 0,
+      "complexity_score": 19
+    },
+    {
+      "file": "Sources/Shared/Views/Settings/SettingsView.swift",
+      "lines": 383,
+      "has_file_header": true,
+      "chinese_chars": 281,
+      "imports": [
+        "SwiftUI",
+        "UniformTypeIdentifiers"
+      ],
+      "num_functions": 2,
+      "magic_strings_count": 14,
+      "magic_numbers_count": 0,
+      "complexity_score": 19
+    },
+    {
+      "file": "Sources/Shared/Models/PageType.swift",
+      "lines": 96,
+      "has_file_header": true,
+      "chinese_chars": 28,
+      "imports": [
+        "Foundation",
+        "GRDB"
+      ],
+      "num_functions": 0,
+      "magic_strings_count": 13,
+      "magic_numbers_count": 0,
+      "complexity_score": 45
+    },
+    {
+      "file": "Sources/Shared/Domain/Logic/LLMModels.swift",
+      "lines": 254,
+      "has_file_header": true,
+      "chinese_chars": 61,
+      "imports": [
+        "Foundation"
+      ],
+      "num_functions": 4,
+      "magic_strings_count": 12,
+      "magic_numbers_count": 0,
+      "complexity_score": 36
+    },
+    {
+      "file": "Sources/Shared/Domain/Logic/OnDeviceLLMService.swift",
+      "lines": 388,
+      "has_file_header": true,
+      "chinese_chars": 28,
+      "imports": [
+        "Combine"
+      ],
+      "num_functions": 12,
+      "magic_strings_count": 7,
+      "magic_numbers_count": 4,
+      "complexity_score": 65
+    }
+  ]
+}

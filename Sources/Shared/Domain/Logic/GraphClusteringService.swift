@@ -14,7 +14,7 @@ import Foundation
 /// 图谱聚类服务 (Architect 视角：知识涌现)
 /// 负责对知识库中的页面进行语义聚类。
 final class GraphClusteringService {
-    
+
     struct Cluster: Identifiable {
         let id = UUID()
         let name: String
@@ -22,25 +22,25 @@ final class GraphClusteringService {
         let centroid: [Float]
         let colorName: String
     }
-    
+
     /// 执行 K-Means 聚类
     func cluster(pages: [KnowledgePage], embeddings: [UUID: [Float]], k: Int = 5) -> [Cluster] {
         guard pages.count > k else { return [] }
-        
+
         // 1. 初始化质心 (随机选 K 个)
         var centroids: [[Float]] = Array(embeddings.values.prefix(k))
         var clusters: [[UUID]] = Array(repeating: [], count: k)
-        
+
         // 2. 迭代 (简单实现，实际可增加迭代次数限制)
         for _ in 0..<10 {
             clusters = Array(repeating: [], count: k)
-            
+
             // 指派阶段
             for (id, vector) in embeddings {
                 let nearestIndex = findNearestCentroid(vector: vector, centroids: centroids)
                 clusters[nearestIndex].append(id)
             }
-            
+
             // 更新阶段
             for i in 0..<k {
                 if let newCentroid = calculateMean(vectors: clusters[i].compactMap { embeddings[$0] }) {
@@ -48,10 +48,10 @@ final class GraphClusteringService {
                 }
             }
         }
-        
+
         // 3. 包装结果
         let clusterColors: [String] = ["blue", "purple", "orange", "green", "pink", "teal", "indigo"]
-        
+
         return (0..<k).map { i in
             Cluster(
                 name: Localized.trf("graph.cluster.name", i + 1),
@@ -61,7 +61,7 @@ final class GraphClusteringService {
             )
         }
     }
-    
+
     private func findNearestCentroid(vector: [Float], centroids: [[Float]]) -> Int {
         var minDistance = Float.infinity
         var nearestIndex = 0
@@ -74,7 +74,7 @@ final class GraphClusteringService {
         }
         return nearestIndex
     }
-    
+
     private func euclideanDistance(_ v1: [Float], _ v2: [Float]) -> Float {
         var sum: Float = 0
         for i in 0..<min(v1.count, v2.count) {
@@ -82,7 +82,7 @@ final class GraphClusteringService {
         }
         return sqrt(sum)
     }
-    
+
     private func calculateMean(vectors: [[Float]]) -> [Float]? {
         guard !vectors.isEmpty else { return nil }
         let count = Float(vectors.count)

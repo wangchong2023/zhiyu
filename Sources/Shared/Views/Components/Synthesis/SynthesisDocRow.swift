@@ -43,7 +43,7 @@ struct SynthesisDocRow: View {
                 if editMode == .active {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: AppUI.Graph.nodeSizeReference))
-                        .foregroundStyle(isSelected ? .appAccent : .appSecondary.opacity(0.4))
+                        .foregroundStyle(isSelected ? .appAccent : .appSecondary.opacity(AppUI.disabledOpacity * 1.33)) // 0.4
                         .onTapGesture {
                             HapticFeedback.shared.trigger(.selection)
                             onTap()
@@ -55,7 +55,7 @@ struct SynthesisDocRow: View {
             
             ZStack {
                 RoundedRectangle(cornerRadius: AppUI.CompositeRow.cornerRadius)
-                    .fill(type.formatColor.opacity(0.1))
+                    .fill(type.formatColor.opacity(AppUI.dimmedOpacity * 0.5)) // 0.1
                     .frame(width: AppUI.CompositeRow.iconBoxSize, height: AppUI.CompositeRow.iconBoxSize)
                 Image(systemName: type.formatIcon).foregroundStyle(type.formatColor)
             }
@@ -79,7 +79,7 @@ struct SynthesisDocRow: View {
             if editMode == .inactive {
                 Image(systemName: "chevron.right")
                     .font(.system(size: AppUI.captionFontSize))
-                    .foregroundStyle(.appSecondary.opacity(0.5))
+                    .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.6)) // 0.5
             }
         }
         .padding(.horizontal, AppUI.standardPadding)

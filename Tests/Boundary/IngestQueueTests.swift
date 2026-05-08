@@ -22,6 +22,7 @@ final class IngestQueueTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         store = AppStore()
         llmService = MockLLMService()
         cancellables = []
@@ -56,46 +57,5 @@ final class IngestQueueTests: XCTestCase {
         // 3. 验证队列状态已重置
         XCTAssertFalse(queue.isProcessing, "即便完成任务，队列也必须重置状态")
         XCTAssertEqual(queue.pendingCount, 0, "计数器必须归零")
-    }
-}
-
-// MARK: - Mock Helpers
-final class MockLLMService: LLMServiceProtocol, @unchecked Sendable {
-    var objectWillChange = ObservableObjectPublisher()
-    var isProcessing: Bool = false
-    var isEnabled: Bool = true
-    
-    func chat(query: String, pages: [KnowledgePage]) async throws -> ChatMessage {
-        return ChatMessage(role: .assistant, content: "Mock")
-    }
-    func chatStream(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
-        return AsyncThrowingStream { _ in }
-    }
-    func generate(prompt: String, systemPrompt: String) async throws -> String {
-        return "Mock"
-    }
-    func smartIngest(title: String, rawContent: String, pages: [KnowledgePage]) async throws -> SmartIngestResult {
-        return SmartIngestResult(
-            compiledContent: "Mock",
-            suggestedTags: ["Mock"],
-            suggestedType: "Mock",
-            relatedTitles: [],
-            summary: "Mock"
-        )
-    }
-    func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] {
-        return []
-    }
-    func foldContent(existingContent: String, newContent: String, title: String) async throws -> String {
-        return "Mock"
-    }
-    func analyzeForRefactoring(pages: [KnowledgePage]) async throws -> [RefactorSuggestion] {
-        return []
-    }
-    func rewriteQuery(_ query: String) async -> String {
-        return query
-    }
-    func rerank(query: String, candidates: [KnowledgePage]) async throws -> [KnowledgePage] {
-        return candidates
     }
 }

@@ -119,7 +119,6 @@ final class MCBrowserDelegateImpl: NSObject, MCNearbyServiceBrowserDelegate {
     }
 }
 
-
 extension MCSessionDelegateImpl: @unchecked Sendable {}
 extension MCAdvertiserDelegateImpl: @unchecked Sendable {}
 extension MCBrowserDelegateImpl: @unchecked Sendable {}

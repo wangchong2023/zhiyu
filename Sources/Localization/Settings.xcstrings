@@ -69,6 +69,23 @@
         }
       }
     },
+    "settings.appearance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "外观设置"
+          }
+        }
+      }
+    },
     "settings.biometricProtection": {
       "extractionState": "manual",
       "localizations": {
@@ -417,6 +434,12 @@
             "state": "translated",
             "value": "载入外部文件夹"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "载入外部文件夹"
+          }
         }
       }
     },
@@ -579,13 +602,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Model Settings"
+            "value": "Online LLM"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "大模型设置"
+            "value": "在线大模型"
           }
         }
       }
@@ -603,6 +626,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "未配置"
+          }
+        }
+      }
+    },
+    "settings.developer.section.performance_test": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance Testing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能测试"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.count": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Node Count"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测试节点数量"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.run": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run Stress Test"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运行压力测试"
           }
         }
       }
@@ -1023,6 +1097,12 @@
             "state": "translated",
             "value": "数据导入"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据导入"
+          }
         }
       }
     },
@@ -1362,6 +1442,193 @@
           "stringUnit": {
             "state": "translated",
             "value": "版本"
+          }
+        }
+      }
+    },
+    "settings.developer.section.data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data Injection"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据注入"
+          }
+        }
+      }
+    },
+    "settings.developer.section.performance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stress Testing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "极限性能压测"
+          }
+        }
+      }
+    },
+    "settings.developer.section.system": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "State & Reset"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "状态与重置"
+          }
+        }
+      }
+    },
+    "settings.developer.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Developer Options"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开发者选项"
+          }
+        }
+      }
+    },
+    "settings.developer.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data injection, stress testing and system reset"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据注入、压力测试与系统重置"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.1k": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stress Test (1000 nodes)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "压力测试 (1000 节点)"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.10k": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extreme Stress Test (10000 nodes)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "极限压测 (10000 节点)"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.success": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Successfully generated %d stress test nodes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "成功生成 %d 个压力测试节点"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.confirmTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run Stress Test"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "执行压力测试"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.confirmAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm (Clear data and generate %d nodes)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确定 (清空数据并生成 %d 节点)"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.confirmMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This operation will clear all pages in the current database, used for performance testing only. 10000 nodes may cause brief stuttering."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此操作将清空当前数据库所有页面，仅用于性能测试。10000 节点可能会导致短时间卡顿。"
           }
         }
       }

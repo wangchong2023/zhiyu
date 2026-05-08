@@ -15,7 +15,7 @@ struct OpenAICompatibleAdapter: LLMAdapter {
     let id: String
     let displayName: String
     let config: LLMConfigStore
-    
+
     func generate(prompt: String, systemPrompt: String) async throws -> String {
         let client = LLMClient(baseURL: config.baseURL, apiKey: config.apiKey)
         let body: [String: Any] = [
@@ -33,7 +33,7 @@ struct OpenAICompatibleAdapter: LLMAdapter {
         }
         return content
     }
-    
+
     func chatStream(messages: [[String: Any]]) -> AsyncThrowingStream<String, Error> {
         let client = LLMClient(baseURL: config.baseURL, apiKey: config.apiKey)
         let body: [String: Any] = [
@@ -41,13 +41,13 @@ struct OpenAICompatibleAdapter: LLMAdapter {
             "messages": messages,
             "stream": true
         ]
-        
+
         struct SendableBody: @unchecked Sendable {
             let dict: [String: Any]
         }
         let safeBody = SendableBody(dict: body)
         let capturedClient = client
-        
+
         return AsyncThrowingStream { @Sendable continuation in
             Task {
                 do {
@@ -70,12 +70,12 @@ struct OllamaAdapter: LLMAdapter {
     let displayName: String = "Ollama (Local)"
     let model: String
     let baseURL: String
-    
+
     func generate(prompt: String, systemPrompt: String) async throws -> String {
         // 实现略，调用 Ollama API
         return "Ollama Result"
     }
-    
+
     func chatStream(messages: [[String: Any]]) -> AsyncThrowingStream<String, Error> {
         return AsyncThrowingStream { _ in }
     }

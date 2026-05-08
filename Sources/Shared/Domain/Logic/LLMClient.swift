@@ -23,9 +23,9 @@ final class LLMClient: @unchecked Sendable {
     
     // MARK: - 常量
     /// 普通请求超时时间（秒）
-    private static let defaultTimeout: TimeInterval = 60
+    private static let defaultTimeout: TimeInterval = 90
     /// 流式请求超时时间（秒，考虑到首字响应可能较慢）
-    private static let streamingTimeout: TimeInterval = 120
+    private static let streamingTimeout: TimeInterval = 180
     
     init(baseURL: String, apiKey: String) {
         self.baseURL = baseURL

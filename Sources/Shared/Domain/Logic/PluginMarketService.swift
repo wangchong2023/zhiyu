@@ -33,15 +33,15 @@ final class PluginMarketService: ObservableObject {
     @Published var availablePlugins: [MarketPlugin] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
-    
+
     private var cancellables = Set<AnyCancellable>()
-    
+
     // 生产环境地址 (GitHub 模式)
     private let productionURL = URL(string: AppConfig.productionURL)!
-    
+
     // 本地调试地址 (开发者模式)
     private let debugURL = URL(string: AppConfig.mockServerURL)!
-    
+
     private var targetURL: URL {
         #if DEBUG
         return debugURL
@@ -49,19 +49,19 @@ final class PluginMarketService: ObservableObject {
         return productionURL
         #endif
     }
-    
+
     func fetchPlugins() async {
-        await MainActor.run { 
+        await MainActor.run {
             isLoading = true
             errorMessage = nil
         }
-        
+
         do {
             // 真实的网络请求逻辑
             let (data, _) = try await URLSession.shared.data(from: targetURL)
             let decoder = JSONDecoder()
             let decodedPlugins = try decoder.decode([MarketPlugin].self, from: data)
-            
+
             await MainActor.run {
                 self.availablePlugins = decodedPlugins
                 self.isLoading = false

@@ -20,6 +20,7 @@ struct PageDetailView: View {
     @Environment(AppStore.self) var store  ///< 全局知识库存储
     @Environment(AIWorkflowStore.self) var aiStore ///< AI 工作流存储
     @Environment(AppRouter.self) var router     ///< 路由管理器
+    @State private var recommendations: [KnowledgePage] = [] ///< 语义推荐页面
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
         self.heroNamespace = heroNamespace
@@ -117,7 +118,7 @@ struct PageDetailView: View {
                 Label(Localized.tr("page.findLinks"), systemImage: "link.badge.plus")
             }
         } label: {
-            Image(systemName: AppUI.Icons.sparkles + ".circle.fill")
+            Image(systemName: AppUI.Icons.sparkles)
                 .foregroundStyle(.appAccent)
         }
         .disabled(viewModel.isEditing)
@@ -233,9 +234,15 @@ struct PageDetailView: View {
         }
         .onAppear {
             router.addToHistory(viewModel.page)
+            Task {
+                recommendations = await aiStore.findSimilarPages(for: viewModel.page)
+            }
         }
         .onChange(of: viewModel.page) { _, newValue in
             router.addToHistory(newValue)
+            Task {
+                recommendations = await aiStore.findSimilarPages(for: newValue)
+            }
         }
         .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
     }
@@ -371,9 +378,7 @@ struct PageDetailView: View {
     }
     
     private var semanticRecommendationsSection: some View {
-        let recommendations = aiStore.findSimilarPages(for: viewModel.page)
-        
-        return Group {
+        Group {
             if !recommendations.isEmpty {
                 VStack(alignment: .leading, spacing: AppUI.medium) {
                     HStack(spacing: AppUI.small) {

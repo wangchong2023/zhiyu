@@ -26,7 +26,7 @@ final class ZhiYuNewFeaturesTests: XCTestCase {
         let testDBURL = URL(string: "file::memory:?cache=shared")!
         let sqliteStore = SQLiteStore(dbURL: testDBURL)
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(LogService(), for: LogServiceProtocol.self)
+        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
         ServiceContainer.shared.register(LinkService(), for: LinkService.self)
         ServiceContainer.shared.register(LintService(), for: LintService.self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
@@ -120,9 +120,9 @@ final class ZhiYuNewFeaturesTests: XCTestCase {
         service.save()
     }
 
-    // MARK: - RecursiveChunker Semantic Tests
-    func testRecursiveChunkerSemanticSplitting() {
-        let chunker = RecursiveChunker()
+    // MARK: - TextChunkerProcessor Semantic Tests
+    func testTextChunkerProcessorSemanticSplitting() {
+        let chunker = TextChunkerProcessor()
         let markdown = """
         # Header 1
         Section 1 content.

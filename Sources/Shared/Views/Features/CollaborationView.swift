@@ -33,7 +33,7 @@ struct CollaborationViewContent: View {
     @State private var showConnectionError = false
 
     private var recentEditsSnapshot: [CollabEdit] {
-        Array(collabService.recentEdits.suffix(10))
+        Array(collabService.recentEdits.suffix(AppUI.Metrics.maxCollabEditHistory)) // 10
     }
 
     var body: some View {
@@ -63,7 +63,7 @@ struct CollaborationViewContent: View {
             HostingSetupSheet(collabService: collabService, roomName: $roomName)
         }
         .alert(L10n.Collaboration.tr("error.connectionTimeout"), isPresented: $showConnectionError) {
-            Button("OK", role: .cancel) { }
+            Button(L10n.Common.ok, role: .cancel) { }
         } message: {
             Text(collabService.connectionError ?? "")
         }
@@ -78,9 +78,9 @@ struct CollaborationViewContent: View {
     
     // MARK: - Header
     private var headerSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: AppUI.medium) { // 12
             Image(systemName: "person.2.circle.fill")
-                .font(.system(size: 56))
+                .font(.system(size: AppUI.iconDisplay * 1.16)) // 56
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.appAccent, .appConcept],
@@ -108,16 +108,16 @@ struct CollaborationViewContent: View {
                 .foregroundStyle(.appSecondary)
         }
         .padding()
-        .background(Color.orange.opacity(0.08))
+        .background(Color.orange.opacity(AppUI.glassOpacity * 0.53)) // 0.08
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
     }
     
     // MARK: - Status
     private var statusSection: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) { // 12
             Circle()
                 .fill(collabService.isJoined ? .green : .gray)
-                .frame(width: 12, height: 12)
+                .frame(width: AppUI.iconTiny, height: AppUI.iconTiny) // 12
             
             Text(collabService.statusMessage)
                 .font(.subheadline)
@@ -128,9 +128,9 @@ struct CollaborationViewContent: View {
             if collabService.isJoined {
                 Text("\(collabService.connectedPeers.count + 1)")
                     .font(.caption.weight(.bold))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.appAccent.opacity(0.15))
+                    .padding(.horizontal, AppUI.small) // 8
+                    .padding(.vertical, AppUI.tiny) // 4
+                    .background(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.15
                     .clipShape(Capsule())
                     .foregroundStyle(.appAccent)
             }

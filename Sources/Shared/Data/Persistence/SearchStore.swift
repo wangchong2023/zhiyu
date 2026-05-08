@@ -23,11 +23,11 @@ final class SearchStore {
     var isSearching = false
     var lastSearchDiagnostic: SearchDiagnosticInfo?
     var isAdvancedSearching = false
-    
+
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored @Inject private var linkService: LinkService
     @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
-    
+
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -40,44 +40,44 @@ final class SearchStore {
             }
             .store(in: &cancellables)
     }
-    
+
     /// 执行高级（混合）搜索
     func performAdvancedSearch(query: String) async -> [KnowledgePage] {
         isSearching = true
         defer { isSearching = false }
-        
+
         let res = await linkService.hybridSearchWithDiagnostics(
             query: query,
             in: sqliteStore.pages,
             embeddingManager: sqliteStore.embeddingManager
         )
-        
+
         lastSearchDiagnostic = res.diagnostic
         searchResults = res.results
         return res.results
     }
-    
+
     private func performDebouncedSearch(query: String) {
         searchTask?.cancel()
-        
+
         guard !query.isEmpty else {
             searchResults = []
             isSearching = false
             return
         }
-        
+
         searchTask = Task {
             isSearching = true
             // 300ms 防抖
             try? await Task.sleep(nanoseconds: 300_000_000)
             if Task.isCancelled { return }
-            
+
             let res = await linkService.hybridSearchWithDiagnostics(
                 query: query,
                 in: sqliteStore.pages,
                 embeddingManager: sqliteStore.embeddingManager
             )
-            
+
             if !Task.isCancelled {
                 searchResults = res.results
                 lastSearchDiagnostic = res.diagnostic
@@ -85,7 +85,7 @@ final class SearchStore {
             }
         }
     }
-    
+
     func clearAll() {
         searchTask?.cancel()
         searchText = ""

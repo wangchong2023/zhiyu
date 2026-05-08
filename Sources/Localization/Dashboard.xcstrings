@@ -1,6 +1,40 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    "dashboard.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Dashboard"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识仪表盘"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.hotTopics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hot Topics"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "热门领域"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
     "dashboard.dailyInsights": {
       "localizations": {
         "en": {
@@ -35,6 +69,23 @@
       },
       "extractionState": "manual"
     },
+    "dashboard.graphShortcut": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graph View"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进入图谱"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
     "dashboard.density": {
       "localizations": {
         "en": {
@@ -64,6 +115,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "反映了知识点之间的关联紧密程度，密度越高，知识体系越稳固。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.density.outbound": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outbound"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向外关联"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.density.inbound": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbound"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向内引用"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.density.details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze knowledge node relationships to optimize repository structure."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分析知识节点间的引用关系，帮助优化仓库结构。"
           }
         }
       },
@@ -136,6 +238,23 @@
         }
       },
       "extractionState": "manual"
+    },
+    "dashboard.index.links": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "links"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个关联"
+          }
+        }
+      }
     },
     "dashboard.index.comparisonCount": {
       "extractionState": "manual",
@@ -360,6 +479,12 @@
     },
     "dashboard.insight.generateReport": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to generate Weekly Library Report"
+          }
+        },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
@@ -579,13 +704,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "RAG Quality Benchmark (AI Eval)"
+            "value": "RAG Quality Benchmark"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "RAG 质量 Benchmark (AI 评估)"
+            "value": "RAG 质量评估"
           }
         }
       }
@@ -596,13 +721,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recent cleanup removed"
+            "value": "Cleaned"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "最近一次清洗已删除"
+            "value": "已清理"
           }
         }
       }
@@ -613,13 +738,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "duplicate chunks"
+            "value": "orphaned items"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "个重复分块"
+            "value": "个孤立数据项"
           }
         }
       }
@@ -630,13 +755,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deep Data Cleanup (Semantic Deduplication)"
+            "value": "Deep Data Cleanup"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "深度数据清洗 (语义去重)"
+            "value": "深度数据清洗"
           }
         }
       }
@@ -664,7 +789,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Knowledge Governance & Maintenance"
+            "value": "Knowledge Governance"
           }
         },
         "zh-Hans": {
@@ -698,13 +823,166 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Resource Audit"
+            "value": "Resource Monitor"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "资源审计"
+            "value": "资源监控"
+          }
+        }
+      }
+    },
+    "dashboard.stats.navigationTitleMonitor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resource Monitor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "资源监控"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tabPerf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Performance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性能"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tabStorage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Storage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储"
+          }
+        }
+      }
+    },
+    "dashboard.stats.provenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import & Export Statistics"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入与导出统计"
+          }
+        }
+      }
+    },
+    "dashboard.stats.system.database": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQLite Database"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SQLite 数据库"
+          }
+        }
+      }
+    },
+    "dashboard.stats.system.logs": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operation Logs"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "操作日志"
+          }
+        }
+      }
+    },
+    "dashboard.stats.imported": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imported"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自动导入"
+          }
+        }
+      }
+    },
+    "dashboard.stats.manuallyCreated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manually Created"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动创建"
+          }
+        }
+      }
+    },
+    "dashboard.stats.exportedRecent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently Exported"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近导出次数"
           }
         }
       }
@@ -732,13 +1010,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Token Consumption Trend"
+            "value": "Token Usage Trend"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Token 消耗趋势"
+            "value": "Token 使用趋势"
           }
         }
       }
@@ -749,13 +1027,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Total Storage Used"
+            "value": "Total Storage"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "总占用空间"
+            "value": "总存储占用"
           }
         }
       }
@@ -766,30 +1044,30 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI Resource Overhead"
+            "value": "AI Resources"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 资源开销统计"
+            "value": "AI 资源消耗"
           }
         }
       }
     },
-    "dashboard.stats.storageAudit": {
+    "dashboard.stats.storageMonitor": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Knowledge Storage Audit"
+            "value": "Knowledge Storage Monitor"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "知识存储审计"
+            "value": "知识存储监控"
           }
         }
       }

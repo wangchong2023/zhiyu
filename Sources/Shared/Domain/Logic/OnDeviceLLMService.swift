@@ -26,10 +26,10 @@ final class OnDeviceLLMService: ObservableObject {
     @Published var generationProgress: Double = 0
     @Published var generatedText: String = ""
     @Published var inferenceSpeed: Double = 0 // tokens/sec
-    
+
     private var currentModel: AnyObject?
     private let configKey = "zhiyu_ondevice_config"
-    
+
     // MARK: - Constants
     /// Default max tokens for text generation
     private static let defaultMaxTokens: Int = 256
@@ -43,13 +43,13 @@ final class OnDeviceLLMService: ObservableObject {
     private static let contextPageLimit: Int = 5
     /// Character limit for page content preview in context
     private static let contentPreviewChars: Int = 200
-    
+
     // MARK: - Init
     init() {
         checkAvailability()
         discoverModels()
     }
-    
+
     // MARK: - Check Availability
     private func checkAvailability() {
         // Core ML is available on iOS 16+, on-device LLM requires iOS 17+
@@ -59,11 +59,11 @@ final class OnDeviceLLMService: ObservableObject {
             isAvailable = false
         }
     }
-    
+
     // MARK: - Discover Models
     private func discoverModels() {
         var models: [OnDeviceModel] = []
-        
+
         // Check for bundled models
         if let modelURL = Bundle.main.url(forResource: "AppLLM", withExtension: "mlmodelc") {
             models.append(OnDeviceModel(
@@ -74,11 +74,11 @@ final class OnDeviceLLMService: ObservableObject {
                 type: .bundled
             ))
         }
-        
+
         // Check Documents directory for downloaded models
         let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let modelsDir = docsDir.appendingPathComponent("MLModels")
-        
+
         if let enumerator = FileManager.default.enumerator(at: modelsDir, includingPropertiesForKeys: [.fileSizeKey]) {
             for case let fileURL as URL in enumerator {
                 if fileURL.pathExtension == "mlmodelc" {
@@ -93,7 +93,7 @@ final class OnDeviceLLMService: ObservableObject {
                 }
             }
         }
-        
+
         // Add system Apple Intelligence (iOS 18.1+)
         if #available(iOS 18.1, *) {
             models.append(OnDeviceModel(
@@ -104,9 +104,9 @@ final class OnDeviceLLMService: ObservableObject {
                 type: .system
             ))
         }
-        
+
         availableModels = models
-        
+
         // Auto-select saved model
         let savedID = UserDefaults.standard.string(forKey: configKey)
         if let saved = savedID, models.contains(where: { $0.id == saved }) {
@@ -115,7 +115,7 @@ final class OnDeviceLLMService: ObservableObject {
             selectedModelID = first.id
         }
     }
-    
+
     private func estimateModelSize(url: URL) -> Int64 {
         let fm = FileManager.default
         var total: Int64 = 0
@@ -128,16 +128,16 @@ final class OnDeviceLLMService: ObservableObject {
         }
         return total
     }
-    
+
     // MARK: - Load Model
     func loadModel() async throws {
         guard let model = availableModels.first(where: { $0.id == selectedModelID }) else {
             throw OnDeviceError.modelNotFound
         }
-        
+
         isGenerating = true
         generationProgress = 0
-        
+
         switch model.type {
         case .system:
             // Apple Intelligence uses Foundation Models framework (iOS 18.2+)
@@ -148,12 +148,12 @@ final class OnDeviceLLMService: ObservableObject {
             } else {
                 throw OnDeviceError.notSupported
             }
-            
+
         case .bundled, .downloaded:
             guard let url = model.url else {
                 throw OnDeviceError.modelNotFound
             }
-            
+
             // Load Core ML model
             let compiledURL: URL
             if url.pathExtension == "mlmodelc" {
@@ -161,41 +161,41 @@ final class OnDeviceLLMService: ObservableObject {
             } else {
                 compiledURL = try await MLModel.compileModel(at: url)
             }
-            
+
             let config = MLModelConfiguration()
             config.computeUnits = .all // Use Neural Engine + GPU + CPU
-            
+
             let mlModel = try MLModel(contentsOf: compiledURL, configuration: config)
             currentModel = mlModel
             isModelLoaded = true
             loadedModelName = model.name
         }
-        
+
         isGenerating = false
         generationProgress = 1.0
-        
+
         // Save selection
         UserDefaults.standard.set(selectedModelID, forKey: configKey)
     }
-    
+
     // MARK: - Generate Text
     func generate(prompt: String, maxTokens: Int = defaultMaxTokens) async throws -> String {
         guard isModelLoaded else {
             throw OnDeviceError.modelNotLoaded
         }
-        
+
         isGenerating = true
         generatedText = ""
         generationProgress = 0
-        
+
         let startTime = Date()
-        
+
         // Use Apple Foundation Models if available (iOS 18.2+)
         if #available(iOS 18.2, *) {
             // Foundation Models integration would go here
             // For now, simulate with Core ML prediction
         }
-        
+
         // Core ML text generation
         if currentModel is MLModel {
             let inputFeatures: [String: Any] = [
@@ -203,7 +203,7 @@ final class OnDeviceLLMService: ObservableObject {
                 "max_tokens": maxTokens,
                 "temperature": Self.generationTemperature
             ]
-            
+
             do {
                 let provider = try MLDictionaryFeatureProvider(dictionary: inputFeatures)
                 let modelToPredict = self.currentModel as? MLModel
@@ -212,12 +212,12 @@ final class OnDeviceLLMService: ObservableObject {
                     let prediction = try model.prediction(from: provider)
                     return prediction.featureValue(for: "generated_text")?.stringValue
                 }.value
-                
+
                 if let generated = generatedTextResult {
                     let elapsed = Date().timeIntervalSince(startTime)
                     let tokenCount = generated.split(separator: " ").count
                     inferenceSpeed = Double(tokenCount) / elapsed
-                    
+
                     generatedText = generated
                     generationProgress = 1.0
                     isGenerating = false
@@ -228,27 +228,27 @@ final class OnDeviceLLMService: ObservableObject {
                 throw OnDeviceError.inferenceFailed(error.localizedDescription)
             }
         }
-        
+
         isGenerating = false
         throw OnDeviceError.modelNotLoaded
     }
-    
+
     // MARK: - Smart Ingest (On-Device)
     /// Compile raw content using on-device LLM
     func smartIngestOnDevice(title: String, content: String, pages: [KnowledgePage]) async throws -> SmartIngestResult {
         let existingTitles = pages.map(\.title).prefix(20).joined(separator: ", ")
-        
+
         let prompt = """
         \(Localized.tr("ondevice.ingest.compileToKnowledge"))：\(existingTitles)
-        
+
         \(Localized.tr("ondevice.ingest.title"))：\(title)
         \(Localized.tr("ondevice.ingest.content"))：\(content)
-        
+
         \(Localized.tr("ondevice.ingest.linkAndFormat"))
         """
-        
+
         let generated = try await generate(prompt: prompt, maxTokens: Self.smartIngestMaxTokens)
-        
+
         return SmartIngestResult(
             compiledContent: generated,
             suggestedTags: extractTags(from: generated),
@@ -257,39 +257,39 @@ final class OnDeviceLLMService: ObservableObject {
             summary: String(generated.prefix(100))
         )
     }
-    
+
     // MARK: - Chat (On-Device)
     func chatOnDevice(query: String, pages: [KnowledgePage]) async throws -> String {
         var context = Localized.tr("ondevice.chatContext")
-        
+
         // Add relevant page summaries
         let relevant = pages.filter { page in
             query.lowercased().contains(page.title.lowercased()) ||
             page.tags.contains(where: { query.lowercased().contains($0.lowercased()) })
         }
-        
+
         for page in relevant.prefix(Self.contextPageLimit) {
             context += "\n\n## \(page.title)\n\(String(page.content.prefix(Self.contentPreviewChars)))"
         }
-        
+
         let prompt = "\(context)\n\n\(Localized.tr("ondevice.chatQuestion")): \(query)"
         return try await generate(prompt: prompt, maxTokens: Self.chatMaxTokens)
     }
-    
+
     // MARK: - Cancel
     func cancelGeneration() {
         isGenerating = false
         generatedText = ""
         generationProgress = 0
     }
-    
+
     // MARK: - Unload
     func unloadModel() {
         currentModel = nil
         isModelLoaded = false
         loadedModelName = ""
     }
-    
+
     // MARK: - Helpers
     private func extractTags(from text: String) -> [String] {
         let pattern = "#(\\w+)"
@@ -301,33 +301,33 @@ final class OnDeviceLLMService: ObservableObject {
             return nsText.substring(with: match.range(at: 1))
         }
     }
-    
+
     // MARK: - Import Model
     func importModel(from url: URL) async throws {
         let docsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let modelsDir = docsDir.appendingPathComponent("MLModels")
         try FileManager.default.createDirectory(at: modelsDir, withIntermediateDirectories: true)
-        
-        let _ = url.deletingPathExtension().lastPathComponent
+
+        _ = url.deletingPathExtension().lastPathComponent
         let destURL = modelsDir.appendingPathComponent(url.lastPathComponent)
-        
+
         if url.startAccessingSecurityScopedResource() {
             defer { url.stopAccessingSecurityScopedResource() }
             try FileManager.default.copyItem(at: url, to: destURL)
         } else {
             try FileManager.default.copyItem(at: url, to: destURL)
         }
-        
+
         // Compile if needed
         if destURL.pathExtension == "mlmodel" {
             let compiledURL = try await MLModel.compileModel(at: destURL)
             try FileManager.default.removeItem(at: destURL)
             try FileManager.default.moveItem(at: compiledURL, to: destURL.appendingPathExtension("mlmodelc"))
         }
-        
+
         discoverModels()
     }
-    
+
     // MARK: - Delete Model
     func deleteModel(_ model: OnDeviceModel) throws {
         if let url = model.url {
@@ -347,17 +347,17 @@ struct OnDeviceModel: Identifiable {
     let url: URL?
     let size: Int64
     let type: ModelType
-    
+
     enum ModelType {
         case bundled
         case downloaded
         case system
     }
-    
+
     var sizeLabel: String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
     }
-    
+
     var icon: String {
         switch type {
         case .bundled: return "cube.box.fill"
@@ -374,7 +374,7 @@ enum OnDeviceError: LocalizedError {
     case notSupported
     case inferenceFailed(String)
     case compilationFailed
-    
+
     var errorDescription: String? {
         switch self {
         case .modelNotFound: return Localized.tr("ondevice.error.modelNotFound")

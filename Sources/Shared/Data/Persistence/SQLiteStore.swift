@@ -23,12 +23,12 @@ import Observation
 /// 所有的数据库操作都通过 GRDB 仓库层执行，确保类型安全与高并发。
 @MainActor
 @Observable
-final class SQLiteStore {
+final class SQLiteStore: VectorIndexableStore {
     var pages: [KnowledgePage] = []
 
     // MARK: - 子组件
     private let repository: KnowledgePageStore
-    private(set) var embeddingManager: EmbeddingManager!
+    private(set) var embeddingManager: EmbeddingManager
     // 使用 @ObservationIgnored 并标记为 nonisolated(unsafe) 以允许在 deinit 中安全取消
     @ObservationIgnored
     private nonisolated(unsafe) var observationTask: Task<Void, Never>?
@@ -37,14 +37,18 @@ final class SQLiteStore {
     // MARK: - 回调钩子
     var onLog: ((LogAction, String, String) -> Void)?
     var onSaveNeeded: (() -> Void)?
-    
+
     // MARK: - 动态计算属性
-    
+
     /// 获取当前活跃数据库的物理路径
     /// - Returns: 数据库文件的 URL 路径
-    var dbPath: URL { 
-        // 核心修复：通过 dbWriter 协议安全获取路径，避免在 DatabaseQueue 模式下强行解包 dbPool
-        URL(fileURLWithPath: DatabaseManager.shared.dbWriter?.path ?? "") 
+    var dbPath: URL {
+        // 核心修复：通过 PRAGMA 获取路径，避开 GRDB internal 属性访问限制
+        let path: String = (try? DatabaseManager.shared.dbWriter?.read { db in
+            let row = try Row.fetchOne(db, sql: "PRAGMA database_list")
+            return row?["file"] as? String
+        }) ?? ""
+        return URL(fileURLWithPath: path)
     }
 
     // MARK: - 初始化
@@ -69,10 +73,10 @@ final class SQLiteStore {
             }
             self.repository = KnowledgePageStore(dbWriter: writer)
             self.embeddingManager = EmbeddingManager(repository: repository)
-            
+
             // 3. 执行旧数据迁移 (如果存在 JSON)
             migrateLegacyJSONIfNeeded(docsDir: docsDir)
-            
+
             // 4. 启动响应式观察 (ValueObservation)
             setupObservation(with: DatabaseManager.shared.dbWriter)
         } catch {
@@ -83,9 +87,11 @@ final class SQLiteStore {
         if !DatabaseManager.shared.isInTesting {
             SecurityManager.shared.updateSignature(for: dbPath)
         }
-        
+
         // 启动后台向量同步
-        embeddingManager.syncEmbeddings(pages: pages)
+        Task {
+            await embeddingManager.syncEmbeddings(pages: pages)
+        }
     }
 
     /// 处理从旧版 JSON 文件到 SQLite 的数据平滑迁移
@@ -94,18 +100,18 @@ final class SQLiteStore {
         let jsonURL = docsDir.appendingPathComponent("zhiyu_pages.json")
         guard FileManager.default.fileExists(atPath: jsonURL.path) else { return }
         guard (try? repository.count()) == 0 else { return }
-        
+
         Logger.shared.addLog(action: .systemInit, target: "SQLiteStore", details: "Migrating from legacy JSON...")
         do {
             let data = try Data(contentsOf: jsonURL)
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let legacyPages = try decoder.decode([KnowledgePage].self, from: data)
-            
+
             for page in legacyPages {
                 try repository.save(page)
             }
-            
+
             try? FileManager.default.moveItem(at: jsonURL, to: jsonURL.appendingPathExtension("migrated"))
             Logger.shared.addLog(action: .systemInit, target: "SQLiteStore", details: "Migration finished: \(legacyPages.count) pages.")
         } catch {
@@ -133,12 +139,10 @@ final class SQLiteStore {
         let observation = ValueObservation.tracking { db in
             try KnowledgePage.order(Column("updated").desc).fetchAll(db)
         }
-        
+
         for try await latestPages in observation.values(in: reader) {
-            await MainActor.run {
-                self.pages = latestPages
-                self.embeddingManager.syncEmbeddings(pages: latestPages)
-            }
+            self.pages = latestPages
+            await self.embeddingManager.syncEmbeddings(pages: latestPages)
         }
     }
 
@@ -156,18 +160,18 @@ final class SQLiteStore {
         close()
         let path = dbPath
         DatabaseManager.shared.reset()
-        
+
         // 2. 物理删除文件
         if FileManager.default.fileExists(atPath: path.path) {
             try FileManager.default.removeItem(at: path)
         }
-        
+
         // 3. 重新执行 Setup
         try DatabaseManager.shared.setup(at: path)
-        
+
         // 4. 重新启动观察
         setupObservation(with: DatabaseManager.shared.dbWriter)
-        
+
         Logger.shared.addLog(action: .systemInit, target: "SQLiteStore", details: "Database reset and observation restarted.")
     }
 
@@ -177,7 +181,7 @@ final class SQLiteStore {
     }
 
     // MARK: - CRUD 操作 (增删改查)
-    
+
     /// 创建并保存新页面，同步处理链接提取与向量化
     /// - Parameters:
     ///   - title: 页面标题
@@ -217,11 +221,14 @@ final class SQLiteStore {
         )
 
         do {
-            try repository.save(page)
-            // pages.append(page) // <- 移除：由 ValueObservation 自动同步
-            try repository.saveLinks(sourceID: page.id, targetTitles: page.outgoingLinks)
-            embeddingManager.updateEmbedding(for: page)
-            
+            let actualID = try repository.save(page)
+            var savedPage = page
+            savedPage.id = actualID
+
+            Task {
+                await embeddingManager.updateEmbedding(for: savedPage)
+            }
+
             if forceDeepScan || content.count > 500 {
                 performDeepScan(for: page)
             }
@@ -275,9 +282,9 @@ final class SQLiteStore {
 
             do {
                 try repository.save(updated)
-                // pages[index] = updated // <- 移除：由 ValueObservation 自动同步
-                try repository.saveLinks(sourceID: updated.id, targetTitles: updated.outgoingLinks)
-                embeddingManager.updateEmbedding(for: updated)
+                Task {
+                    await embeddingManager.updateEmbedding(for: updated)
+                }
 
                 if forceDeepScan || updated.content.count > 500 {
                     performDeepScan(for: updated)
@@ -321,7 +328,9 @@ final class SQLiteStore {
                 do {
                     try repository.save(mergedPage)
                     // pages[localIndex] = mergedPage // <- 移除：由 ValueObservation 自动同步
-                    embeddingManager.updateEmbedding(for: mergedPage)
+                    Task {
+                        await embeddingManager.updateEmbedding(for: mergedPage)
+                    }
                 } catch {
                     Logger.shared.addLog(action: .error, target: "SQLiteStore", details: "Sync remote failed: \(error.localizedDescription)")
                 }
@@ -330,7 +339,9 @@ final class SQLiteStore {
             do {
                 try repository.save(remotePage)
                 // pages.append(remotePage) // <- 移除：由 ValueObservation 自动同步
-                embeddingManager.updateEmbedding(for: remotePage)
+                Task {
+                    await embeddingManager.updateEmbedding(for: remotePage)
+                }
             } catch {
                 Logger.shared.addLog(action: .error, target: "SQLiteStore", details: "Insert remote failed: \(error.localizedDescription)")
             }
@@ -346,7 +357,7 @@ final class SQLiteStore {
             if pages[i].relatedPageIDs.contains(page.id) {
                 var refPage = pages[i]
                 refPage.relatedPageIDs.removeAll { $0 == page.id }
-                try? repository.save(refPage)
+                _ = try? repository.save(refPage)
             }
         }
 
@@ -382,7 +393,7 @@ final class SQLiteStore {
     ///   - newTag: 新标签名称
     func renameTag(_ oldTag: String, to newTag: String) {
         Logger.shared.logTimed(action: .update, target: oldTag, module: "SQLiteStore", details: "重命名标签为: \(newTag)") {
-            performBatchWrite { db in
+            performBatchWrite { _ in
                 for p in self.pages {
                     if let idx = p.tags.firstIndex(of: oldTag) {
                         var updated = p
@@ -398,7 +409,7 @@ final class SQLiteStore {
     /// - Parameter tag: 待移除的标签名称
     func deleteTag(_ tag: String) {
         Logger.shared.logTimed(action: .delete, target: tag, module: "SQLiteStore", details: "删除标签成功") {
-            performBatchWrite { db in
+            performBatchWrite { _ in
                 for p in self.pages {
                     if let idx = p.tags.firstIndex(of: tag) {
                         var updated = p
@@ -410,8 +421,6 @@ final class SQLiteStore {
         }
     }
 
-
-
     func clearAllData() {
         try? repository.deleteAll()
         // pages.removeAll() // <- 移除：由 ValueObservation 自动同步
@@ -419,7 +428,7 @@ final class SQLiteStore {
     }
 
     // MARK: - 检索方法
-    
+
     /// 根据 UUID 查找页面对象
     /// - Parameter id: 页面唯一标识
     /// - Returns: 找到的页面或 nil
@@ -455,7 +464,7 @@ final class SQLiteStore {
     func searchPages(query: String) -> [KnowledgePage] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return pages }
-        
+
         do {
             return try repository.search(query: trimmed)
         } catch {
@@ -479,7 +488,7 @@ final class SQLiteStore {
         let tagger = NLTagger(tagSchemes: [.lexicalClass])
         tagger.string = query
         var keywords: [String] = []
-        
+
         tagger.enumerateTags(in: query.startIndex..<query.endIndex, unit: .word, scheme: .lexicalClass, options: [.omitPunctuation, .omitWhitespace]) { tag, range in
             if let tag = tag, tag == .noun || tag == .otherWord {
                 keywords.append(String(query[range]))
@@ -497,13 +506,13 @@ final class SQLiteStore {
     var totalWords: Int { pages.reduce(0) { $0 + $1.wordCount } }
 
     // MARK: - 批量重构
-    
+
     /// 全量替换现有数据，用于导入或同步
     /// - Parameter newPages: 新页面列表
     func replaceAllPages(_ newPages: [KnowledgePage]) {
         try? repository.deleteAll()
         for page in newPages {
-            try? repository.save(page)
+            _ = try? repository.save(page)
         }
     }
 
@@ -513,7 +522,7 @@ final class SQLiteStore {
     }
 
     // MARK: - 载入与重载
-    
+
     /// 强制从磁盘重载数据，触发 UI 刷新
     func reloadFromDisk() {
         onSaveNeeded?()
@@ -525,18 +534,18 @@ final class SQLiteStore {
         let hasSeeded = UserDefaults.standard.bool(forKey: "has_seeded_initial_content")
         // 如果已经填充过且数据库不为空，则跳过
         if hasSeeded && !pages.isEmpty { return }
-        
+
         let appName = Localized.tr("app.name")
-        
+
         // 1. 欢迎页
         _ = createPage(
             title: "👋 \(Localized.tr("welcome.title")) \(appName)",
             type: .concept,
             content: """
             # \(Localized.tr("welcome.header"))
-            
+
             \(appName) \(Localized.tr("welcome.desc1")) [[3D \(Localized.tr("sidebar.graph"))]] \(Localized.tr("welcome.desc2"))
-            
+
             ### \(Localized.tr("welcome.startTitle"))
             - \(Localized.tr("welcome.start1")) [[\(Localized.tr("sidebar.chat"))]] \(Localized.tr("welcome.start2"))
             - \(Localized.tr("welcome.start3"))
@@ -544,7 +553,7 @@ final class SQLiteStore {
             """,
             tags: [Localized.tr("welcome.tag1"), Localized.tr("welcome.tag2")]
         )
-        
+
         // 2. 关于图谱
         _ = createPage(
             title: Localized.tr("sidebar.graph"),
@@ -552,7 +561,7 @@ final class SQLiteStore {
             content: Localized.tr("demo.planning.content"), // Reuse or add new keys if needed, but sidebar.graph title is definitely needed.
             tags: [Localized.tr("welcome.tag1"), Localized.tr("sidebar.graph")]
         )
-        
+
         // 3. AI 助手指南
         _ = createPage(
             title: Localized.tr("sidebar.chat"),
@@ -560,13 +569,13 @@ final class SQLiteStore {
             content: Localized.tr("demo.aiAgent.content"),
             tags: ["AI", "RAG"]
         )
-        
+
         UserDefaults.standard.set(true, forKey: "has_seeded_initial_content")
         logAction(.systemInit, "SystemVault", Localized.tr("log.seedSuccess"))
     }
-    
+
     // MARK: - RAG & Deep Scan
-    
+
     /// 执行知识深度扫描，利用统一的 RAG 管道进行语义切分与向量化
     /// - Parameter page: 目标页面
     private func performDeepScan(for page: KnowledgePage) {
@@ -577,7 +586,7 @@ final class SQLiteStore {
                 llm: nil, // 存储层的深度扫描暂时不带 LLM 增强以保障性能
                 embeddingManager: self.embeddingManager
             )
-            
+
             // 记录日志
             onLog?(.update, page.title, "DeepScan completed (RAG Pipeline)")
         }
@@ -596,7 +605,4 @@ extension SQLiteStore: AnyPageStore {
     }
 }
 
-
 extension SQLiteStore: @unchecked Sendable {}
-
-

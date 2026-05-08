@@ -156,13 +156,13 @@ struct SynthesisView: View {
                     VStack(spacing: AppUI.medium) {
                         Image(systemName: "doc.text.magnifyingglass")
                             .font(.system(size: AppUI.Timeline.emptyIconSize))
-                            .foregroundStyle(.appSecondary.opacity(AppUI.glassOpacity))
+                            .foregroundStyle(.appSecondary.opacity(AppUI.Metrics.emptyStateIconOpacity)) // 0.15
                         Text(Localized.tr("synthesis.noDocs"))
                             .font(.subheadline)
                             .foregroundStyle(.appSecondary)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, AppUI.loosePadding * 1.5)
+                    .padding(.vertical, AppUI.Metrics.emptyStateVerticalPadding) // 24
                 } else {
                     ForEach(filteredDocs, id: \.1.id) { type, doc in
                         SynthesisDocRow(
@@ -227,9 +227,9 @@ struct SynthesisView: View {
                             Text(L10n.Common.tr("delete"))
                         }
                         .font(.footnote.bold())
-                        .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(0.5) : .white)
+                        .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(AppUI.disabledOpacity) : .white)
                         .padding(.horizontal, AppUI.Chip.horizontalPadding)
-                        .padding(.vertical, AppUI.Action.capsuleHeight)
+                        .padding(.vertical, AppUI.smallRadius)
                         .background(
                             Capsule().fill(selectedDocIDs.isEmpty ? Color.clear : Color.red)
                         )
@@ -268,7 +268,7 @@ struct SynthesisView: View {
 
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+                withAnimation(AppUI.standardAnimation) {
                     if editMode == .inactive {
                         editMode = .active
                     } else {
@@ -412,9 +412,9 @@ struct SynthesisView: View {
             .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                    .stroke(AppUI.containerBorder.opacity(0.2), lineWidth: AppUI.borderWidth / 2)
+                    .stroke(AppUI.containerBorder.opacity(AppUI.dimmedOpacity), lineWidth: AppUI.borderWidth / 2)
             )
-            .shadow(color: Color.black.opacity(0.03), radius: AppUI.small, y: AppUI.tiny)
+            .shadow(color: Color.black.opacity(AppUI.shadowOpacity * 0.3), radius: AppUI.small, y: AppUI.tiny) // 0.03
         }
     }
 
@@ -422,7 +422,7 @@ struct SynthesisView: View {
     private func synthesisTaskRow(task: GlobalTask) -> some View {
         HStack(spacing: AppUI.standardPadding) {
             ZStack {
-                Circle().fill(Color.appAccent.opacity(0.1)).frame(width: AppUI.Graph.selectedNodeSize, height: AppUI.Graph.selectedNodeSize)
+                Circle().fill(Color.appAccent.opacity(AppUI.glassOpacity / 1.5)).frame(width: AppUI.Graph.selectedNodeSize, height: AppUI.Graph.selectedNodeSize)
                 ProgressView()
             }
             VStack(alignment: .leading, spacing: AppUI.small) {

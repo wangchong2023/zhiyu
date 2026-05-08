@@ -17,7 +17,7 @@ import PDFKit
 /// 负责配置 PDF 内容的提取方式（全文、范围或仅高亮），并设定目标 知识库 页面的元数据
 struct PDFIngestSheet: View {
     let documentInfo: PDFDocumentInfo
-    @ObservedObject var store: AppStore
+    @Bindable var store: AppStore
     let pdfDocument: PDFKit.PDFDocument?
     
     @State private var ingestMode = "fullText"
@@ -25,6 +25,8 @@ struct PDFIngestSheet: View {
     @State private var pageEnd = 1
     @State private var targetType = PageType.source
     @State private var targetTitle = ""
+    @State private var previewText = ""
+    @State private var isLoadingPreview = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -43,15 +45,23 @@ struct PDFIngestSheet: View {
 #endif
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(Localized.tr("pdf.ingest")) { ingestContent() }
-                        .fontWeight(.semibold)
-                        .disabled(targetTitle.isEmpty)
+                    Button(Localized.tr("pdf.ingest")) {
+                        Task {
+                            await ingestContent()
+                        }
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(targetTitle.isEmpty || isLoadingPreview)
                 }
             }
             .onAppear {
                 targetTitle = documentInfo.title
                 pageEnd = documentInfo.pageCount
+                updatePreview()
             }
+            .onChange(of: ingestMode) { updatePreview() }
+            .onChange(of: pageStart) { updatePreview() }
+            .onChange(of: pageEnd) { updatePreview() }
         }
     }
     
@@ -86,11 +96,11 @@ struct PDFIngestSheet: View {
                     Text(Localized.tr("pdf.fromPage"))
                     TextField("1", value: $pageStart, format: .number)
                         .keyboardType(.numberPad)
-                        .frame(width: 50)
+                        .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.toPage"))
                     TextField("\(documentInfo.pageCount)", value: $pageEnd, format: .number)
                         .keyboardType(.numberPad)
-                        .frame(width: 50)
+                        .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.page"))
                 }
                 .foregroundStyle(.appText)
@@ -116,52 +126,68 @@ struct PDFIngestSheet: View {
     private var previewSection: some View {
         Section {
             ScrollView {
-                Text(previewText)
-                    .font(.caption)
-                    .foregroundStyle(.appSecondary)
-                    .lineLimit(10)
+                if isLoadingPreview {
+                    ProgressView()
+                        .padding()
+                } else {
+                    Text(previewText)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                        .lineLimit(10)
+                }
             }
-            .frame(maxHeight: 150)
+            .frame(maxHeight: AppUI.Metrics.heroValueSize * 5.75) // 150
         } header: {
             Text(Localized.tr("pdf.contentPreview"))
         }
     }
     
-    // MARK: - Preview Text
-    private var previewText: String {
-        switch ingestMode {
-        case "fullText":
-            guard let pdfDoc = pdfDocument else { return Localized.tr("pdf.cannotLoadPDF") }
-            let text = store.extractPDFText(from: pdfDoc, pageRange: 0..<min(2, pdfDoc.pageCount))
-            return String(text.prefix(500))
-        case "pageRange":
-            guard let pdfDoc = pdfDocument else { return "" }
-            let start = max(0, pageStart - 1)
-            let end = min(pdfDoc.pageCount, pageEnd)
-            let text = store.extractPDFText(from: pdfDoc, pageRange: start..<end)
-            return String(text.prefix(500))
-        case "highlights":
-            let texts = documentInfo.highlights.map { $0.text }
-            return texts.joined(separator: "\n\n").prefix(500).description
-        default:
-            return ""
+    // MARK: - Update Preview
+    private func updatePreview() {
+        Task {
+            isLoadingPreview = true
+            defer { isLoadingPreview = false }
+            
+            switch ingestMode {
+            case "fullText":
+                guard let pdfDoc = pdfDocument else {
+                    previewText = Localized.tr("pdf.cannotLoadPDF")
+                    return
+                }
+                let text = await store.extractPDFText(from: pdfDoc, pageRange: 0..<min(2, pdfDoc.pageCount))
+                previewText = String(text.prefix(500))
+            case "pageRange":
+                guard let pdfDoc = pdfDocument else {
+                    previewText = ""
+                    return
+                }
+                let start = max(0, pageStart - 1)
+                let end = min(pdfDoc.pageCount, pageEnd)
+                let text = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
+                previewText = String(text.prefix(500))
+            case "highlights":
+                let texts = documentInfo.highlights.map { $0.text }
+                previewText = String(texts.joined(separator: "\n\n").prefix(500))
+            default:
+                previewText = ""
+            }
         }
     }
     
     // MARK: - Ingest Content
-    private func ingestContent() {
+    private func ingestContent() async {
         var content = ""
         
         switch ingestMode {
         case "fullText":
             if let pdfDoc = pdfDocument {
-                content = store.extractPDFText(from: pdfDoc)
+                content = await store.extractPDFText(from: pdfDoc)
             }
         case "pageRange":
             if let pdfDoc = pdfDocument {
                 let start = max(0, pageStart - 1)
                 let end = min(pdfDoc.pageCount, pageEnd)
-                content = store.extractPDFText(from: pdfDoc, pageRange: start..<end)
+                content = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
             }
         case "highlights":
             content = documentInfo.highlights.map { h in
@@ -194,7 +220,7 @@ struct PDFDocumentRow: View {
     let doc: PDFDocumentInfo
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: AppUI.medium) { // 12
             pdfIcon
             docInfo
             Spacer()
@@ -202,15 +228,15 @@ struct PDFDocumentRow: View {
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, AppUI.atomic * 2) // 4
     }
     
     private var pdfIcon: some View {
         RoundedRectangle(cornerRadius: AppUI.microRadius)
-            .fill(Color.appAccent.opacity(0.15))
-            .frame(width: 48, height: 64)
+            .fill(Color.appAccent.opacity(AppUI.glassOpacity * 1.5)) // 0.15
+            .frame(width: AppUI.Metrics.heroValueSize * 1.85, height: AppUI.Metrics.heroValueSize * 2.45) // 48, 64
             .overlay(
-                VStack(spacing: 4) {
+                VStack(spacing: AppUI.atomic * 2) { // 4
                     Image(systemName: "doc.richtext.fill")
                         .font(.title3)
                         .foregroundStyle(.appAccent)
@@ -222,13 +248,13 @@ struct PDFDocumentRow: View {
     }
     
     private var docInfo: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: AppUI.atomic * 2) { // 4
             Text(doc.title)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appText)
                 .lineLimit(1)
             
-            HStack(spacing: 8) {
+            HStack(spacing: AppUI.small) { // 8
                 Label(Localized.trf("pdf.pageCountFormat", doc.pageCount), systemImage: "doc.text")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)

@@ -15,16 +15,16 @@
 import Foundation
 
 /// 知识摄入管道 - RAG 流程的统一入口
-final class KnowledgeIngestPipeline {
-    
+actor KnowledgeIngestPipeline {
+
     /// 共享实例
     static let shared = KnowledgeIngestPipeline()
-    
+
     private let enricher = AIContentEnricher.shared
     private let chunker = TextChunkerProcessor()
-    
+
     private init() {}
-    
+
     /// 执行完整的 Advanced RAG 摄入流程
     /// 包含：语义增强 -> 全局摘要 -> 父子块切分 -> 反向提问 (Q&A) -> 向量化
     func process(
@@ -40,10 +40,10 @@ final class KnowledgeIngestPipeline {
         } else {
             enrichedContent = content
         }
-        
+
         // 使用并发任务组处理后续阶段
         let allEnrichedChunks = await withTaskGroup(of: [PageChunk].self) { group in
-            
+
             // 任务 A: 全局摘要索引 (Summary Indexing)
             if let llm = llm {
                 group.addTask {
@@ -62,18 +62,18 @@ final class KnowledgeIngestPipeline {
                     return []
                 }
             }
-            
+
             // 阶段 3: 层级分块与反向提问 (并行处理每个父块)
             let parentConfig = TextChunkerProcessor.Config(chunkSize: 1000, chunkOverlap: 200, separators: TextChunkerProcessor.default.separators)
             let childConfig = TextChunkerProcessor.Config(chunkSize: 300, chunkOverlap: 50, separators: TextChunkerProcessor.default.separators)
-            
+
             let parentChunks = chunker.split(text: enrichedContent, config: parentConfig)
-            
+
             for (pIndex, pChunk) in parentChunks.enumerated() {
                 group.addTask {
                     var chunkBatch: [PageChunk] = []
                     let parentChunkID = "p_\(pageID.uuidString)_\(pIndex)"
-                    
+
                     // 1. 保存父块
                     let parentRecord = PageChunk(
                         id: parentChunkID,
@@ -85,7 +85,7 @@ final class KnowledgeIngestPipeline {
                         startIndex: pChunk.startIndex
                     )
                     chunkBatch.append(parentRecord)
-                    
+
                     // 2. 生成子块
                     let children = self.chunker.split(text: pChunk.text, config: childConfig)
                     for (cIndex, cChunk) in children.enumerated() {
@@ -100,7 +100,7 @@ final class KnowledgeIngestPipeline {
                         )
                         chunkBatch.append(childRecord)
                     }
-                    
+
                     // 3. 反向提问 (Reverse Q&A)
                     if let llm = llm {
                         let qaPrompt = "针对以下文本片段，生成 3 个用户可能会提出的核心问题。要求：问题必须专业、简练，每行一个问题。直接输出问题：\n\n\(pChunk.text)"
@@ -120,11 +120,11 @@ final class KnowledgeIngestPipeline {
                             }
                         }
                     }
-                    
+
                     return chunkBatch
                 }
             }
-            
+
             // 合并所有结果
             var finalChunks: [PageChunk] = []
             for await batch in group {
@@ -132,11 +132,11 @@ final class KnowledgeIngestPipeline {
             }
             return finalChunks
         }
-        
+
         // 阶段 5: 向量索引 (Vector Indexing)
         let indexer = VectorIndexer(embeddingManager: embeddingManager)
-        indexer.index(pageID: pageID, chunks: allEnrichedChunks)
-        
+        await indexer.index(pageID: pageID, chunks: allEnrichedChunks)
+
         return enrichedContent
     }
 }

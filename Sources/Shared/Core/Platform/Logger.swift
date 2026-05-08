@@ -1,11 +1,11 @@
 // Logger.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了全站通用的日志记录系统（Logger），旨在为系统提供统一、高性能且具备持久化能力的审计与调试支持。
+// 功能说明: 本文件定义了全站通用的日志记录系统（Logger），旨在为系统提供统一、高性能且具备持久化能力的监控与调试支持。
 // 该组件通过以下核心功能点保障系统的可观测性：
 // 1. 实现分级日志管理（Debug/Error），支持根据编译环境自动切换输出策略，优化生产环境性能。
-// 2. 提供基于磁盘持久化的审计日志系统，通过 JSON 序列化技术将操作记录保存至应用沙盒，支持多级缓冲与异步保存。
-// 3. 集成 Combine 框架，通过发布者-订阅者模式实时推送日志更新，驱动 UI 层的审计中心进行响应式渲染。
+// 2. 提供基于磁盘持久化的操作日志系统，通过 JSON 序列化技术将操作记录保存至应用沙盒，支持多级缓冲与异步保存。
+// 3. 集成 Combine 框架，通过发布者-订阅者模式实时推送日志更新，驱动 UI 层的日志中心进行响应式渲染。
 // 版本: 1.1
 // 修改记录:
 //   - 2026-05-05: 迁移至 Utils/System 并重构为核心工具类，强化了功能说明注释
@@ -16,7 +16,22 @@ import Combine
 
 // MARK: - Models
 
-/// 审计日志条目模型，记录系统操作的元数据
+/// 操作执行状态
+enum LogStatus: String, Codable {
+    case success
+    case failure
+    case processing
+    
+    var localizedName: String {
+        switch self {
+        case .success: return L10n.Common.tr("success")
+        case .failure: return L10n.Common.tr("failed")
+        case .processing: return L10n.Common.tr("processing")
+        }
+    }
+}
+
+/// 操作日志条目模型，记录系统操作的元数据
 struct LogEntry: Identifiable, Codable {
     var id: UUID
     var action: LogAction
@@ -27,6 +42,8 @@ struct LogEntry: Identifiable, Codable {
     var startTime: Date?
     var endTime: Date?
     var module: String? // 来源模块，如 SystemVault, AppStore
+    var status: LogStatus?
+    var failureReason: String?
     
     init(
         id: UUID = UUID(),
@@ -37,7 +54,9 @@ struct LogEntry: Identifiable, Codable {
         duration: TimeInterval? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
-        module: String? = nil
+        module: String? = nil,
+        status: LogStatus? = nil,
+        failureReason: String? = nil
     ) {
         self.id = id
         self.action = action
@@ -48,6 +67,8 @@ struct LogEntry: Identifiable, Codable {
         self.startTime = startTime
         self.endTime = endTime
         self.module = module
+        self.status = status
+        self.failureReason = failureReason
     }
 }
 
@@ -55,7 +76,7 @@ struct LogEntry: Identifiable, Codable {
 protocol LoggerProtocol: AnyObject, Sendable {
     var logEntries: [LogEntry] { get }
     var logEntriesPublisher: AnyPublisher<[LogEntry], Never> { get }
-    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?)
+    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?)
     func debug(_ message: String, file: String, function: String, line: Int)
     func error(_ message: String, error: Error?, file: String, function: String, line: Int)
     func saveToDisk()
@@ -82,14 +103,16 @@ extension LoggerProtocol {
         duration: TimeInterval? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
-        module: String? = nil
+        module: String? = nil,
+        status: LogStatus? = nil,
+        failureReason: String? = nil
     ) {
-        self.addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module)
+        self.addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module, status: status, failureReason: failureReason)
     }
 }
 
 // MARK: - Logger (Standardized Logging)
-/// [L1] 基础层：管理审计日志的持久化与内存缓存
+/// [L1] 基础层：管理操作日志的持久化与内存缓存
 final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
     static let shared = Logger() // 全局共享实例
     
@@ -113,7 +136,7 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
         let errorDesc = error?.localizedDescription ?? "None"
         print("❌ [ERROR] [\(fileName):\(line)] \(function) -> \(message) (Error: \(errorDesc))")
         
-        // 重要错误也记录到审计日志
+        // 重要错误也记录到操作日志
         addLog(action: .error, target: fileName, details: "\(message): \(errorDesc)")
     }
 
@@ -124,7 +147,7 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
         customDirectory ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     }
     
-    private var logsFileURL: URL {
+    internal var logsFileURL: URL {
         documentsDirectory.appendingPathComponent(AppConfig.logsFileName)
     }
     
@@ -161,7 +184,9 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
         duration: TimeInterval? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
-        module: String? = nil
+        module: String? = nil,
+        status: LogStatus? = nil,
+        failureReason: String? = nil
     ) {
         let entry = LogEntry(
             action: action,
@@ -170,12 +195,21 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
             duration: duration,
             startTime: startTime,
             endTime: endTime,
-            module: module
+            module: module,
+            status: status,
+            failureReason: failureReason
         )
         
         // 打印到控制台，方便调试
         let durationStr = duration.map { String(format: " (耗时: %.3fs)", $0) } ?? ""
-        let statusEmoji = action == .error ? "❌" : "✅"
+        let statusEmoji: String
+        switch status {
+        case .success: statusEmoji = "✅"
+        case .failure: statusEmoji = "❌"
+        case .processing: statusEmoji = "⏳"
+        case .none: statusEmoji = action == .error ? "❌" : "📝"
+        }
+        
         print("\(statusEmoji) [LOG] [\(module ?? "System")] \(action.localizedName) -> \(target): \(details)\(durationStr)")
 
         Task { @MainActor in
@@ -206,19 +240,22 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
                 duration: endTime.timeIntervalSince(startTime),
                 startTime: startTime,
                 endTime: endTime,
-                module: module
+                module: module,
+                status: .success
             )
             return result
         } catch {
             let endTime = Date()
             addLog(
-                action: .error,
+                action: action == .error ? .error : action,
                 target: target,
-                details: "\(details) Failed: \(error.localizedDescription)",
+                details: details,
                 duration: endTime.timeIntervalSince(startTime),
                 startTime: startTime,
                 endTime: endTime,
-                module: module
+                module: module,
+                status: .failure,
+                failureReason: error.localizedDescription
             )
             throw error
         }

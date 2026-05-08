@@ -109,7 +109,7 @@ struct TagCloudViewContent: View {
                 }
                 
                 Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
+                    withAnimation(.spring(response: AppUI.Animation.springResponse)) { // 0.3
                         isEditMode.toggle()
                         if !isEditMode { selectedTagsForBulk.removeAll() }
                     }
@@ -133,20 +133,12 @@ struct TagCloudViewContent: View {
                         icon: "tag.fill",
                         iconColor: .appAccent
                     )
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, AppUI.tiny) // 4
 
                     VStack(spacing: 0) {
                         tagScrollView
                     }
-                    .frame(maxWidth: .infinity)
-                    .appContainer(padding: false)
-                    .padding(AppUI.medium)
-                    .background(Color.appCard.opacity(AppUI.glassOpacity))
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
-                    )
+                    .appContainer(background: Color.appCard.opacity(AppUI.glassOpacity), padding: false)
                     .overlay(alignment: .bottom) {
                         if isEditMode && !selectedTagsForBulk.isEmpty {
                             bulkActionBar
@@ -164,20 +156,13 @@ struct TagCloudViewContent: View {
                     icon: "doc.on.doc.fill",
                     iconColor: .appSource
                 )
-                .padding(.horizontal, 4)
+                .padding(.horizontal, AppUI.tiny) // 4
 
                 pagesListView
-                    .appContainer(padding: false)
-                    .padding(AppUI.medium)
-                    .background(Color.appCard.opacity(AppUI.glassOpacity))
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
-                    )
+                    .appContainer(background: Color.appCard.opacity(AppUI.glassOpacity), padding: false)
             }
             .padding(.horizontal, AppUI.standardPadding)
-            .padding(.vertical, AppUI.Layout.columnSpacing)
+            .padding(.bottom, AppUI.Layout.columnSpacing)
         }
     }
 
@@ -248,7 +233,7 @@ struct TagCloudViewContent: View {
             Button(role: .destructive, action: { showBulkDeleteConfirm = true }) {
                 Text(L10n.Common.tr("bulkDelete"))
                     .padding(.horizontal, AppUI.large)
-                    .padding(.vertical, AppUI.small - 2)
+                    .padding(.vertical, AppUI.small - AppUI.atomic) // 6
                     .background(Color.red)
                     .clipShape(Capsule())
                     .foregroundStyle(.white)
@@ -256,7 +241,7 @@ struct TagCloudViewContent: View {
             .buttonStyle(.plain)
         }
         .padding()
-        .background(BlurView().background(Color.appAccent.opacity(0.8)))
+        .background(BlurView().background(Color.appAccent.opacity(AppUI.secondaryOpacity))) // 0.8
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
         .padding()
         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -285,19 +270,17 @@ struct TagCloudViewContent: View {
                     tagCapsule(tagItem)
                 }
             }
-            .padding(.horizontal, AppUI.standardPadding)
-            .padding(.vertical, AppUI.standardPadding)
+            .padding(AppUI.medium)
         }
-        .frame(minHeight: AppUI.inputBarHeight)
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxHeight: 280)
+        .frame(minHeight: AppUI.Gallery.splashIconSize) // 80
+        .frame(maxHeight: AppUI.Metrics.maxTagCloudHeight) // 300
     }
 
     private func tagCapsule(_ item: (tag: String, count: Int)) -> some View {
         let isSelected = isEditMode ? selectedTagsForBulk.contains(item.tag) : selectedTag == item.tag
         
         return Button(action: {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
+            withAnimation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping)) { // 0.35, 0.8
                 if isEditMode {
                     if selectedTagsForBulk.contains(item.tag) {
                         selectedTagsForBulk.remove(item.tag)
@@ -318,21 +301,21 @@ struct TagCloudViewContent: View {
                     .font(.system(size: AppUI.microFontSize, weight: .bold, design: .monospaced))
                     .padding(.horizontal, AppUI.small)
                     .padding(.vertical, AppUI.atomic)
-                    .background(isSelected ? Color.appAccent.opacity(0.15) : Color.appSecondary.opacity(0.08))
+                    .background(isSelected ? Color.appAccent.opacity(AppUI.glassOpacity) : Color.appSecondary.opacity(AppUI.glassOpacity * 0.53)) // 0.15, 0.08
                     .clipShape(Capsule())
             }
             .padding(.horizontal, AppUI.large)
             .padding(.vertical, AppUI.small)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color.appAccent.opacity(AppUI.glassOpacity) : Color.appCard.opacity(0.6))
+                    .fill(isSelected ? Color.appAccent.opacity(AppUI.glassOpacity) : Color.appCard.opacity(AppUI.secondaryOpacity * 0.75)) // 0.6
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? Color.appAccent.opacity(0.8) : Color.appBorder.opacity(0.6), lineWidth: 1.2)
+                    .stroke(isSelected ? Color.appAccent.opacity(AppUI.secondaryOpacity) : Color.appBorder.opacity(AppUI.secondaryOpacity * 0.75), lineWidth: AppUI.borderWidth * 1.5) // 0.8, 0.6, 1.2
             )
             .scaleEffect(isSelected ? AppUI.Gallery.hoverScale : 1.0)
-            .shadow(color: isSelected ? Color.appAccent.opacity(0.12) : Color.clear, radius: 10, y: 4)
+            .shadow(color: isSelected ? Color.appAccent.opacity(AppUI.glassOpacity * 0.8) : Color.clear, radius: AppUI.shadowRadius, y: AppUI.shadowY) // 0.12
             .overlay(alignment: .topTrailing) {
                 if isEditMode {
                     ZStack {
@@ -386,7 +369,7 @@ struct TagCloudViewContent: View {
                             }
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                                    .fill(Color.appCard.opacity(0.4))
+                                    .fill(Color.appCard.opacity(AppUI.disabledOpacity * 1.33)) // 0.4
                                     .padding(.horizontal, AppUI.small)
                                     .padding(.vertical, AppUI.tiny)
                             )
@@ -413,14 +396,14 @@ struct TagCloudViewContent: View {
             } else {
                 VStack(spacing: AppUI.medium) {
                     Image(systemName: isEditMode ? "checklist" : "tag")
-                        .font(.system(size: 32))
-                        .foregroundStyle(.appSecondary.opacity(0.5))
+                        .font(.system(size: AppUI.iconHuge)) // 32
+                        .foregroundStyle(.appSecondary.opacity(AppUI.glassOpacity * 3.33)) // 0.5
                     Text(isEditMode ? Localized.tr("tags.selectToManage") : Localized.tr("tagcloud.selectTag"))
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: AppUI.Layout.emptyStateHeight)
+                .frame(height: AppUI.Metrics.sourceCardHeight * 1.22) // 140
                 .background(Color.appBackground.opacity(0.01))
                 .onTapGesture {
                     if isEditMode { isEditMode = false }

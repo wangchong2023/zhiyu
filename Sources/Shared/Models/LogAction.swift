@@ -34,6 +34,7 @@ enum LogAction: String, Codable, CaseIterable {
     case systemInit = "logAction.systemInit"
     case aiscanFailed = "log.action.aiscan.failed"
     case aiscanSkipped = "log.action.aiscan.skipped"
+    case sync = "logAction.sync"
     
     // 系统级
     case error = "ERROR"
@@ -56,7 +57,7 @@ enum LogAction: String, Codable, CaseIterable {
         case .highlight: return "yellow"
         case .systemInit: return "indigo"
         case .aiscanFailed, .importPDFFailed: return "red"
-        case .aiscanSkipped: return "gray"
+        case .aiscanSkipped, .sync: return "gray"
         default: return "gray"
         }
     }
@@ -74,6 +75,7 @@ enum LogAction: String, Codable, CaseIterable {
         case .systemInit: return "sparkles"
         case .aiscanFailed, .importPDFFailed: return "exclamationmark.triangle"
         case .aiscanSkipped: return "forward.end"
+        case .sync: return "arrow.triangle.2.circlepath"
         default: return "circle"
         }
     }

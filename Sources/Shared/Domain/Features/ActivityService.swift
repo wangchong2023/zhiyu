@@ -18,15 +18,15 @@ import ActivityKit
 @MainActor
 final class ActivityService {
     static let shared = ActivityService()
-    
+
     #if os(iOS)
     // 注意：实际项目中需要定义具体的 ActivityAttributes
     // 这里作为架构设计的 stub 实现
     // private var currentActivity: Activity<AIProcessingAttributes>?
     #endif
-    
+
     private init() {}
-    
+
     /// 启动实时活动
     func startActivity(name: String, target: String) {
         #if os(iOS)
@@ -36,7 +36,7 @@ final class ActivityService {
         // currentActivity = try? Activity.request(attributes: attributes, content: .init(state: contentState, staleDate: nil))
         #endif
     }
-    
+
     /// 更新进度
     func updateProgress(_ progress: Double, message: String) {
         #if os(iOS)
@@ -44,7 +44,7 @@ final class ActivityService {
         // Task { await currentActivity?.update(using: newState) }
         #endif
     }
-    
+
     /// 结束活动
     func endActivity() {
         #if os(iOS)

@@ -52,7 +52,7 @@ final class LLMChatService: Sendable {
     }
 
     // MARK: - 非流式对话
-    
+
     /// 执行非流式对话，内部构造请求体以确保线程安全
     func chat(systemPrompt: String, query: String, history: [ChatMessage]) async throws -> String {
         let requestBody = makeChatRequestBody(systemPrompt: systemPrompt, query: query, history: history)

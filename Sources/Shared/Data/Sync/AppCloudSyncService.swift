@@ -6,7 +6,7 @@
 // 1. 差异化同步：通过对比本地与云端的 lastModified 时间戳，智能决定推送到云端或拉取到本地。
 // 2. 冲突解决：提供“保留本地”、“保留云端”及“智能合并”三种策略，并在检测到数据冲突时通过回调通知 UI 层。
 // 3. 数据压缩与安全：将 KnowledgePage 与 LogEntry 序列化为 JSON 格式存储于 CKRecord 中，确保存储效率。
-// 4. 环境适配：针对模拟器与不同平台（iOS/macOS）进行了运行环境审计，确保在无 Entitlements 环境下优雅降级。
+// 4. 环境适配：针对模拟器与不同平台（iOS/macOS）进行了运行环境监控，确保在无 Entitlements 环境下优雅降级。
 // 版本: 1.1
 // 修改记录:
 //   - 2026-05-05: 完善全工程中文文档规范，增加详细的同步逻辑说明与函数注释
@@ -127,7 +127,7 @@ class iCloudSyncService: ObservableObject {
         #endif
     }
 
-    // MARK: - 状态审计
+    // MARK: - 状态监控
     
     /**
      * @description: 异步检查当前 iCloud 账户的登录状态，并更新 iCloudAvailable 标记
