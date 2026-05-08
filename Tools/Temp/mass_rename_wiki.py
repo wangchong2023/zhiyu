@@ -52,7 +52,20 @@ mapping = {
     "WikiToastModifier": "AppToastModifier",
     "WikiToastView": "AppToastView",
     "WikilinkPickerSheet": "PageLinkPickerSheet",
-    "wiki_link": "page_link"
+    "wiki_link": "page_link",
+    "navigateToWikiTab": "navigateToKnowledgeTab",
+    "WikiTabTests": "KnowledgeTabTests",
+    "WikiTab": "KnowledgeTab",
+    "wikiTab": "knowledgeTab",
+    "testToolbarWikilinkButton": "testToolbarPageLinkButton",
+    "Wiki链接": "知识链接",
+    "HealthyWiki": "HealthyKnowledge",
+    "Healthy wiki": "Healthy knowledge",
+    "wikilink": "pageLink",
+    "wikilinks": "pageLinks",
+    "Wiki Tab": "Knowledge Tab",
+    "Wiki tab": "Knowledge tab",
+    "\"Wiki\"": "\"Knowledge\""
 }
 
 def process_file(file_path):

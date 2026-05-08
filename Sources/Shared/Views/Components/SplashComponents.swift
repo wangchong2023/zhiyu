@@ -90,6 +90,9 @@ struct SplashBackgroundView: View {
                 ForEach(Array(connections.enumerated()), id: \.offset) { _, conn in
                     let fromNode = networkNodes[conn.from]
                     let toNode = networkNodes[conn.to]
+                    let lineColor1 = fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
+                    let lineColor2 = toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
+                    
                     Path { path in
                         path.move(to: CGPoint(
                             x: geo.size.width * fromNode.x,
@@ -102,10 +105,7 @@ struct SplashBackgroundView: View {
                     }
                     .stroke(
                         LinearGradient(
-                            colors: [
-                                fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2), // 0.3, 0.12
-                                toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2) // 0.3, 0.12
-                            ],
+                            colors: [lineColor1, lineColor2],
                             startPoint: .init(x: fromNode.x, y: fromNode.y),
                             endPoint: .init(x: toNode.x, y: toNode.y)
                         ),
@@ -117,14 +117,20 @@ struct SplashBackgroundView: View {
             // 神经网络节点
             GeometryReader { geo in
                 ForEach(Array(networkNodes.enumerated()), id: \.offset) { index, node in
+                    let nodeColor1 = node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8)
+                    let nodeColor2 = node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2)
+                    
+                    let nodeScale = nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5
+                    let nodeOpacity = nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity
+                    let animDuration = AppUI.Animation.slowDuration + Double(index) * 0.1
+                    let nodeAnim = SwiftUI.Animation.easeInOut(duration: animDuration)
+                        .repeatForever(autoreverses: true)
+                        .delay(Double(index) * 0.08)
+                    
                     Circle()
                         .fill(
                             RadialGradient(
-                                colors: [
-                                    node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8), // 0.9, 0.8
-                                    node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2), // 0.3, 0.2
-                                    .clear
-                                ],
+                                colors: [nodeColor1, nodeColor2, .clear],
                                 center: .center,
                                 startRadius: 0,
                                 endRadius: node.size * 2
@@ -132,14 +138,9 @@ struct SplashBackgroundView: View {
                         )
                         .frame(width: node.size * 4, height: node.size * 4)
                         .position(x: geo.size.width * node.x, y: geo.size.height * node.y)
-                        .scaleEffect(nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5) // 1.0, 0.5
-                        .opacity(nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity) // 1.0, 0.3
-                        .animation(
-                            .easeInOut(duration: AppUI.Animation.slowDuration + Double(index) * 0.1) // 2.0
-                            .repeatForever(autoreverses: true)
-                            .delay(Double(index) * 0.08),
-                            value: nodeGlow
-                        )
+                        .scaleEffect(nodeScale)
+                        .opacity(nodeOpacity)
+                        .animation(nodeAnim, value: nodeGlow)
                 }
             }
 
@@ -168,20 +169,20 @@ struct SplashBackgroundView: View {
                     // 书本主体
                     RoundedRectangle(cornerRadius: AppUI.tiny)
                         .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
-                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.Metrics.iconDisplay) // 60, 44
+                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(-8))
                         .offset(x: -AppUI.atomic) // -2
 
                     RoundedRectangle(cornerRadius: AppUI.tiny)
                         .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
-                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.Metrics.iconDisplay) // 60, 44
+                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(8))
                         .offset(x: AppUI.atomic) // 2
 
                     // 书脊
                     Capsule()
                         .fill(Color.appAccent.opacity(AppUI.glassOpacity * 2)) // 0.2
-                        .frame(width: AppUI.atomic + 1, height: AppUI.Metrics.iconDisplay) // 3, 44
+                        .frame(width: AppUI.atomic + 1, height: AppUI.iconDisplay) // 3, 44
 
                     // 从书中升起的光粒子
                     ForEach(0..<5, id: \.self) { i in

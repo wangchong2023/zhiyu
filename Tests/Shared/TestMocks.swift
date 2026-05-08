@@ -14,7 +14,7 @@ import GRDB
 final class MockLogger: LoggerProtocol, @unchecked Sendable {
     var logEntries: [LogEntry] = []
     var logEntriesPublisher: AnyPublisher<[LogEntry], Never> { Just([]).eraseToAnyPublisher() }
-    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?) {}
+    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?) {}
     func debug(_ message: String, file: String, function: String, line: Int) {}
     func error(_ message: String, error: Error?, file: String, function: String, line: Int) {}
     func saveToDisk() {}

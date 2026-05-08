@@ -192,7 +192,8 @@ actor LinkService {
         var tagCount: [String: Int] = [:]
         for page in pages {
             for tag in page.tags {
-                tagCount[tag, default: 0] += 1
+                let cleanedTag = tag.replacingOccurrences(of: "#", with: "")
+                tagCount[cleanedTag, default: 0] += 1
             }
         }
         return tagCount.map { ($0.key, $0.value) }.sorted {

@@ -545,7 +545,7 @@ final class LintServiceTests: XCTestCase {
         XCTAssertTrue(orphanIssues.isEmpty, "raw type should not be flagged as orphan")
     }
     
-    func testNoIssuesForHealthyWiki() async {
+    func testNoIssuesForHealthyKnowledge() async {
         let pageA = KnowledgePage(title: "Alpha", content: String(repeating: "Good content ", count: 20))
         let pageB = KnowledgePage(title: "Beta", content: "Links to [[Alpha]] " + String(repeating: "content ", count: 15))
         let pages = [pageA, pageB]
@@ -753,7 +753,7 @@ final class LoggerTests: XCTestCase {
     override func tearDown() async throws {
         // Clean up any files created during testing
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        _ = try? FileManager.default.removeItem(at: docs!.appendingPathComponent("wikicraft_logs.json"))
+        _ = try? FileManager.default.removeItem(at: docs!.appendingPathComponent("zhiyu_logs.json"))
         logService = nil
         try await super.tearDown()
     }
@@ -792,11 +792,11 @@ final class ChatHistoryStoreTests: XCTestCase {
         try await super.setUp()
         store = ChatHistoryStore()
         store.messages.removeAll()
-        UserDefaults.standard.removeObject(forKey: "wikicraft_chat_history")
+        UserDefaults.standard.removeObject(forKey: "zhiyu_chat_history")
     }
     
     override func tearDown() async throws {
-        UserDefaults.standard.removeObject(forKey: "wikicraft_chat_history")
+        UserDefaults.standard.removeObject(forKey: "zhiyu_chat_history")
         store = nil
         try await super.tearDown()
     }
@@ -838,7 +838,7 @@ final class ChatHistoryStoreTests: XCTestCase {
         store.append(original)
         
         // Verify persistence via UserDefaults
-        guard let data = UserDefaults.standard.data(forKey: "wikicraft_chat_history"),
+        guard let data = UserDefaults.standard.data(forKey: "zhiyu_chat_history"),
               let decoded = try? JSONDecoder().decode([ChatMessage].self, from: data) else {
             XCTFail("Failed to load persisted messages"); return
         }
@@ -855,12 +855,12 @@ final class LLMConfigStoreTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        UserDefaults.standard.removeObject(forKey: "wikicraft_llm_config")
+        UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
         configStore = LLMConfigStore()
     }
     
     override func tearDown() async throws {
-        UserDefaults.standard.removeObject(forKey: "wikicraft_llm_config")
+        UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
         configStore = nil
         try await super.tearDown()
     }

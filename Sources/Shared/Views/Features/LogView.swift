@@ -167,7 +167,7 @@ private struct LogEntryRow: View {
                         
                         if let dur = entry.duration {
                             Text("•")
-                            Text(String(format: "%.3fs", dur))
+                            Text(dur.formattedAdaptive)
                                 .foregroundStyle(.appAccent)
                         }
                     }
@@ -209,7 +209,7 @@ private struct LogEntryRow: View {
                                 Text(L10n.Log.duration)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
-                                Text(String(format: "%.3fs", dur))
+                                Text(dur.formattedAdaptive)
                                     .font(.system(.caption2, design: .monospaced).bold())
                                     .foregroundStyle(.appAccent)
                             }

@@ -71,6 +71,8 @@ enum AppUI {
     static let iconHuge: CGFloat = 32
     /// 展示型图标尺寸 (48px)
     static let iconDisplay: CGFloat = 48
+    /// 小型图标尺寸 (16px)
+    static let smallIconSize: CGFloat = 16
     /// 标题栏图标尺寸 (24px)
     static let titleIconSize: CGFloat = 24
     
@@ -169,6 +171,8 @@ enum AppUI {
     struct Grid {
         /// 标准网格间距
         static let standardSpacing: CGFloat = 16
+        /// 大型网格间距 (50px)
+        static let largeSpacing: CGFloat = 50
         /// 紧凑网格间距
         static let tightSpacing: CGFloat = 8
         /// 流式布局间距
@@ -288,6 +292,9 @@ enum AppUI {
         /// 现代化卡片大型图标背景尺寸
         static let largeIconBoxSize: CGFloat = 44
         
+        /// 标题字号 (24px)
+        static let titleFontSize: CGFloat = 24
+        
         /// 知识来源卡片宽度
         static let sourceCardWidth: CGFloat = 135
         /// 知识来源卡片高度
@@ -318,6 +325,11 @@ enum AppUI {
         static let reportContentPreviewLength: Int = 300
         /// 报告内容最大行数限制
         static let maxReportContentLineLimit: Int = 5
+        
+        /// 仪表盘最大显示项
+        static let maxDashboardItems: Int = 15
+        /// 最近任务最大显示项
+        static let maxRecentItems: Int = 5
         
         /// A4 纸张标准宽度 (72 DPI)
         static let A4Width: CGFloat = 595
@@ -369,6 +381,14 @@ enum AppUI {
         static let hoverScale: CGFloat = 1.02
         /// 标准线性动画时长
         static let standardDuration: Double = 0.2
+        /// 宽松动画时长 (s)
+        static let looseDuration: Double = 1.5
+        /// 快速动画时长 (s)
+        static let fastDuration: Double = 0.2
+        /// 慢速动画时长 (s)
+        static let slowDuration: Double = 0.5
+        /// 标准弹性阻尼
+        static let standardDamping: Double = 0.8
     }
 
     // MARK: - 13. 列表模式 (List Pattern)
@@ -509,6 +529,8 @@ enum AppUI {
     static let subheadlineFontSize: CGFloat = 14
     /// 正文字号 (16px)
     static let bodyFontSize: CGFloat = 16
+    /// 标准字号 (16px)
+    static let standardFontSize: CGFloat = 16
     /// 标题字号 (18px)
     static let headlineFontSize: CGFloat = 18
     /// 大标题字号 (24px)
@@ -554,6 +576,8 @@ enum AppUI {
     static let borderWidth: CGFloat = 0.8
     static let shadowRadius: CGFloat = 10
     static let shadowY: CGFloat = 4
+    /// 标准阴影透明度
+    static let shadowOpacity: Double = 0.1
     static let shadowColor = Color.black.opacity(0.06)
     
     /// 玻璃拟态透明度
@@ -578,9 +602,9 @@ enum AppUI {
     
     // MARK: - 20. 动效常数 (Legacy Animation)
     /// 标准弹性动画
-    static var standardAnimation: Animation { .spring(response: 0.35, dampingFraction: 0.8) }
+    static var standardAnimation: SwiftUI.Animation { SwiftUI.Animation.spring(response: 0.35, dampingFraction: 0.8) }
     /// 快速淡出动画
-    static var fastAnimation: Animation { .easeOut(duration: 0.2) }
+    static var fastAnimation: SwiftUI.Animation { SwiftUI.Animation.easeOut(duration: 0.2) }
     
     // MARK: - 21. 背景模式 (Background Patterns)
     /// 动态背景与氛围光生成

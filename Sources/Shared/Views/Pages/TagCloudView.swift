@@ -82,17 +82,23 @@ struct TagCloudViewContent: View {
     }
 
     var body: some View {
-        mainContent
-            .background(Color.appBackground)
-            .navigationTitle(L10n.Tag.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .background(alertLayer)
-            .task {
-                await fetchData()
-            }
-            .onChange(of: store.pages) { _, _ in
-                Task { await fetchData() }
-            }
+        ZStack {
+            AppUI.Background.meshGradient()
+                .ignoresSafeArea()
+            
+            mainContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .background(Color.appBackground) // 确保主内容区域也是背景色
+        }
+        .navigationTitle(L10n.Tag.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(alertLayer)
+        .task {
+            await fetchData()
+        }
+        .onChange(of: store.pages) { _, _ in
+            Task { await fetchData() }
+        }
     }
 
     /// 组合主界面布局
@@ -149,20 +155,31 @@ struct TagCloudViewContent: View {
                 .padding(.vertical, AppUI.Layout.columnSpacing)
             }
 
-            // 3. 关联页面列表（确保与上方卡片视觉对齐）
             VStack(alignment: .leading, spacing: AppUI.medium) {
-                AppSectionHeader(
-                    title: L10n.Tag.relatedPagesTitle,
-                    icon: "doc.on.doc.fill",
-                    iconColor: .appSource
-                )
-                .padding(.horizontal, AppUI.tiny) // 4
+                HStack {
+                    AppSectionHeader(
+                        title: L10n.Tag.relatedPagesTitle,
+                        icon: "doc.on.doc.fill",
+                        iconColor: .appSource
+                    )
+                    Spacer()
+                    if let _ = selectedTag, !isEditMode {
+                        Text(Localized.trf("tag.tagPages", filteredPages.count))
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                    }
+                }
+                .padding(.horizontal, AppUI.tiny)
 
                 pagesListView
                     .appContainer(background: Color.appCard.opacity(AppUI.glassOpacity), padding: false)
+                    .frame(minHeight: AppUI.Metrics.sourceCardHeight) 
             }
             .padding(.horizontal, AppUI.standardPadding)
             .padding(.bottom, AppUI.Layout.columnSpacing)
+            
+            // 添加弹性间距，确保内容不满一屏时背景色依然能覆盖全屏
+            Spacer(minLength: 0)
         }
     }
 
@@ -272,8 +289,8 @@ struct TagCloudViewContent: View {
             }
             .padding(AppUI.medium)
         }
-        .frame(minHeight: AppUI.Gallery.splashIconSize) // 80
         .frame(maxHeight: AppUI.Metrics.maxTagCloudHeight) // 300
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func tagCapsule(_ item: (tag: String, count: Int)) -> some View {
@@ -294,7 +311,7 @@ struct TagCloudViewContent: View {
             HapticFeedback.shared.trigger(.selection)
         }) {
             HStack(spacing: AppUI.Layout.listRowSpacing) {
-                Text("#\(item.tag)")
+                Text(item.tag.replacingOccurrences(of: "#", with: ""))
                     .font(.system(.subheadline, design: .rounded).weight(isSelected ? .semibold : .regular))
                 
                 Text("\(item.count)")
@@ -375,19 +392,6 @@ struct TagCloudViewContent: View {
                             )
                             .listRowSeparator(.hidden)
                         }
-                    } header: {
-                        HStack {
-                            Text(tag)
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.appAccent)
-                            Spacer()
-                            Text(Localized.trf("tag.tagPages", filteredPages.count))
-                                .font(.caption2)
-                                .foregroundStyle(.appSecondary)
-                        }
-                        .textCase(nil)
-                        .padding(.horizontal, AppUI.small)
-                        .padding(.vertical, AppUI.tiny)
                     }
                 }
                 .listStyle(.plain)

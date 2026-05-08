@@ -42,6 +42,7 @@
 		095D40D94FB2A4BB6A9AEBBF /* PerformanceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7B84C08F953A4A86F4E9F0 /* PerformanceService.swift */; };
 		0974B6FE0D9C53A25EDB0E19 /* AppCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD53A25F64387625DD1B4E54 /* AppCard.swift */; };
 		09F334293AAEF46AB11C18E7 /* IngestQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C85EEA55FFA9B5BCF6647C9 /* IngestQueueTests.swift */; };
+		0A10DF6A442DB34B0CB8573C /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB10A32B0713EB6F1416042 /* ButtonStyles.swift */; };
 		0A31CDC46C9428A1B2CD77AA /* MermaidWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91982C8E6E3128B58D6F3CDE /* MermaidWebView.swift */; };
 		0B4AB7FA2F88B85F7BC3123C /* AIPulseIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A5FC501D066DAED5A0C731 /* AIPulseIndicator.swift */; };
 		0C173CB93011C61C1A44E673 /* SynthesisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2AE7EFBF8BFACF2351F8E63 /* SynthesisView.swift */; };
@@ -267,6 +268,7 @@
 		5BBB0D7F177933FA7748991E /* iCloudSyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EE5FD976025E18D17E19B9 /* iCloudSyncCoordinator.swift */; };
 		5C0048C0FE8E0042B98469CB /* HostingSetupSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF25CB63E711B4C5CD70E11 /* HostingSetupSheet.swift */; };
 		5C09B29F901397D21A2CB35D /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55512F68574E23206057F57B /* WelcomeView.swift */; };
+		5CBE844542ED51BDB5FB355C /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB10A32B0713EB6F1416042 /* ButtonStyles.swift */; };
 		5CFA40882739F7AAFCB0E5F6 /* GraphClusteringService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B111E1AD8F8A75F0AFB0793A /* GraphClusteringService.swift */; };
 		5D373A1B872613574A177868 /* PerformanceBenchmarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F5A2F93ECD1C82822E397A /* PerformanceBenchmarker.swift */; };
 		5D5D1674500556785BF876ED /* FileSystemSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65FC89D54481A838E6D50D6 /* FileSystemSyncService.swift */; };
@@ -624,6 +626,7 @@
 		CEDF0A44354027B62B37319D /* LLMAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B133CB06F41AB7C0BDAF68A /* LLMAdapters.swift */; };
 		CF76DF43C7B424797D80ABEF /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8CB4500DEF17D77DD908D4 /* Logger.swift */; };
 		CF92FED29AF4D13FD41EF909 /* AppKeyboardShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1578FC45C7E423CE991ECF34 /* AppKeyboardShortcuts.swift */; };
+		CFA038054685225D4EF374B8 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB10A32B0713EB6F1416042 /* ButtonStyles.swift */; };
 		CFE039E3255AF9247BFB322E /* SynthesisProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED1513CA7D0AA4F289C3ED6 /* SynthesisProcessor.swift */; };
 		CFEA913022EDDCF4C619C1E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9112DA748F39CA5018D59610 /* Assets.xcassets */; };
 		D06C0E5C8F165403983A2BAF /* SettingsAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF313A3D045F5BCAE86D84E1 /* SettingsAboutView.swift */; };
@@ -964,6 +967,7 @@
 		9AED5CA89C3896A0878A465E /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		9B48E61F2D01DF4DB4A41A4B /* StoreCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreCapabilities.swift; sourceTree = "<group>"; };
 		9C15BF0FC2B735F94054FF60 /* BacklinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BacklinksView.swift; sourceTree = "<group>"; };
+		9CB10A32B0713EB6F1416042 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		9D53F3C7D72E964BD9B68B5B /* WatchDictationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchDictationView.swift; sourceTree = "<group>"; };
 		9E7A7AB7F9656C11B2679C1D /* ExcelProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcelProcessor.swift; sourceTree = "<group>"; };
 		9F709C0568AA2ACD79EAD87B /* GraphLayoutProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphLayoutProcessor.swift; sourceTree = "<group>"; };
@@ -1834,6 +1838,7 @@
 		E680520A3595244A25218DE3 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
+				9CB10A32B0713EB6F1416042 /* ButtonStyles.swift */,
 				8256B0EC20A5BB2C12EA4DC9 /* PageType+UI.swift */,
 			);
 			path = Styles;
@@ -2261,6 +2266,7 @@
 				CE574346F734CB931F65DA62 /* BacklinksView.swift in Sources */,
 				77F4859544D20CC5DBB053A3 /* BackupView.swift in Sources */,
 				FBACA056651B113B22FBFC4F /* BreadcrumbView.swift in Sources */,
+				0A10DF6A442DB34B0CB8573C /* ButtonStyles.swift in Sources */,
 				B0BE16B4638EECF25397E250 /* Character+CJK.swift in Sources */,
 				CD760DBE442451E8D7E91569 /* ChatComponents.swift in Sources */,
 				6BEF40D899C09FD2077DB096 /* ChatView.swift in Sources */,
@@ -2482,6 +2488,7 @@
 				EDC5F82BFF8A94561BD333AA /* BacklinksView.swift in Sources */,
 				C80052439FB7F329EB2CEDEB /* BackupView.swift in Sources */,
 				3202133CBDE560996EC8C263 /* BreadcrumbView.swift in Sources */,
+				CFA038054685225D4EF374B8 /* ButtonStyles.swift in Sources */,
 				96865C7CD7784A8E310A63AE /* Character+CJK.swift in Sources */,
 				BF10C2847DD82E167A4B960D /* ChatComponents.swift in Sources */,
 				0F4689B1524D2618B7E0C43E /* ChatView.swift in Sources */,
@@ -2703,6 +2710,7 @@
 				F3AC579F637AD817955B7BEF /* BacklinksView.swift in Sources */,
 				D34E60F3DD51EA5C16D40E51 /* BackupView.swift in Sources */,
 				C2BB4DE6BB920104079F325F /* BreadcrumbView.swift in Sources */,
+				5CBE844542ED51BDB5FB355C /* ButtonStyles.swift in Sources */,
 				D64804D251BFA48C3CD8ACAA /* Character+CJK.swift in Sources */,
 				34BD530987DD1919AE713AC5 /* ChatComponents.swift in Sources */,
 				52F9249915C114D9CA4FC99D /* ChatView.swift in Sources */,

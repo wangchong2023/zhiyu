@@ -18,6 +18,40 @@
       },
       "extractionState": "manual"
     },
+    "dashboard.insights.loading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generating AI insights..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在为您生成 AI 知识见解..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "dashboard.insights.empty": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No insights available yet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无知识见解，多添加一些内容吧"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
     "dashboard.hotTopics": {
       "localizations": {
         "en": {

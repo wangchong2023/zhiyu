@@ -5,7 +5,7 @@
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
-//   - 2026-05-07: 系统性重构，从 WikiLoadingOverlay 重命名为 AppLoadingOverlay，术语统一为“全屏加载遮罩”
+//   - 2026-05-07: 系统性重构，从 AppLoadingOverlay 重命名为 AppLoadingOverlay，术语统一为“全屏加载遮罩”
 // 日期: 2026-05-07
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 

@@ -115,7 +115,7 @@ struct MedalRewardPopup: View {
                         .font(.body)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppUI.Grid.heroValueSize)
+                        .padding(.horizontal, AppUI.Metrics.heroValueSize)
                 }
                 
                 Button(action: onDismiss) {

@@ -68,7 +68,11 @@ struct MedalWallView: View {
     }
     
     private func statBox(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: AppUI.tightPadding) {
+        let shadowRadius = AppUI.microRadius + AppUI.atomic
+        let shadowY = AppUI.borderWidth * 2
+        let shadowOpacity = AppUI.shadowOpacity / 2
+        
+        return VStack(alignment: .leading, spacing: AppUI.tightPadding) {
             HStack {
                 Image(systemName: icon)
                     .foregroundStyle(color)
@@ -77,12 +81,12 @@ struct MedalWallView: View {
                     .foregroundStyle(.appSecondary)
             }
             Text(value)
-                .font(.system(size: AppUI.largeFontSize, weight: .bold, design: .rounded))
+                .font(.system(size: AppUI.titleFontSize, weight: .bold, design: .rounded))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AppUI.standardPadding)
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-        .shadow(color: .black.opacity(AppUI.shadowOpacity / 2), radius: AppUI.microRadius + AppUI.atomic, x: 0, y: AppUI.borderWidth * 2)
+        .shadow(color: .black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: shadowY)
     }
 }

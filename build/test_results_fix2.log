@@ -1,0 +1,322 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination "platform=iOS Simulator,name=iPhone 17 Pro"
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-snapshot-testing: https://github.com/pointfreeco/swift-snapshot-testing @ 1.19.2
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+  GRDB: https://github.com/groue/GRDB.swift.git @ 6.29.3
+  swift-custom-dump: https://github.com/pointfreeco/swift-custom-dump @ 1.5.0
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 603.0.1
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (8 targets)
+    Target 'ZhiYuTests' in project 'ZhiYu'
+        ➜ Explicit dependency on target 'ZhiYu' in project 'ZhiYu'
+        ➜ Explicit dependency on target 'SnapshotTesting' in project 'swift-snapshot-testing'
+    Target 'SnapshotTesting' in project 'swift-snapshot-testing'
+        ➜ Explicit dependency on target 'SnapshotTesting' in project 'swift-snapshot-testing'
+    Target 'SnapshotTesting' in project 'swift-snapshot-testing' (no dependencies)
+    Target 'ZhiYu' in project 'ZhiYu'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'CSQLite' in project 'GRDB'
+    Target 'CSQLite' in project 'GRDB' (no dependencies)
+    Target 'GRDB_GRDB' in project 'GRDB' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.4-23E252-686eebb5dc1d8ecb277353a59184f4aa.sdkstatcache
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu/ZhiYu.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk -o /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.4-23E252-686eebb5dc1d8ecb277353a59184f4aa.sdkstatcache
+
+SwiftDriver ZhiYuTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuTests -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.4-23E252-686eebb5dc1d8ecb277353a59184f4aa.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ZhiYuTests (in target 'ZhiYuTests' from project 'ZhiYu')
+
+EmitSwiftModule normal arm64 (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: warning: conformance of 'MockLLMService' to protocol 'ObservableObject' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: note: isolate this conformance to the main actor with '@MainActor'
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+                                      @MainActor 
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: note: turn data races into runtime errors with '@preconcurrency'
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+                                      @preconcurrency 
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:29:9: note: main actor-isolated property 'objectWillChange' cannot satisfy nonisolated requirement
+    var objectWillChange = ObservableObjectPublisher()
+        ^
+
+SwiftCompile normal arm64 Compiling\ TestMocks.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift (in target 'ZhiYuTests' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: warning: conformance of 'MockLLMService' to protocol 'ObservableObject' crosses into main actor-isolated code and can cause data races; this is an error in the Swift 6 language mode
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: note: isolate this conformance to the main actor with '@MainActor'
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+                                      @MainActor 
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:28:13: note: turn data races into runtime errors with '@preconcurrency'
+final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
+            ^
+                                      @preconcurrency 
+/Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift:29:9: note: main actor-isolated property 'objectWillChange' cannot satisfy nonisolated requirement
+    var objectWillChange = ObservableObjectPublisher()
+        ^
+
+SwiftDriverJobDiscovery normal arm64 Compiling TestMocks.swift (in target 'ZhiYuTests' from project 'ZhiYu')
+
+SwiftDriver\ Compilation ZhiYuTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuTests -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.4-23E252-686eebb5dc1d8ecb277353a59184f4aa.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for ZhiYuTests (in target 'ZhiYuTests' from project 'ZhiYu')
+
+SwiftDriver\ Compilation\ Requirements ZhiYuTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuTests -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk/Developer/Library/Frameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.4-23E252-686eebb5dc1d8ecb277353a59184f4aa.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-iphonesimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.abi.json (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.abi.json /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Ld /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/ZhiYuTests normal (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk -O0 -L/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -F/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk/Developer/Library/Frameworks -filelist /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -bundle_loader /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/ZhiYu -Xlinker -object_path_lto -Xlinker /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftmodule @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/ZhiYu.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/ZhiYuTests -Xlinker -add_ast_path -Xlinker /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/swift-snapshot-testing.build/Debug-iphonesimulator/SnapshotTesting.build/Objects-normal/arm64/SnapshotTesting.swiftmodule @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/swift-snapshot-testing.build/Debug-iphonesimulator/SnapshotTesting.build/Objects-normal/arm64/SnapshotTesting-linker-args.resp
+
+Copy /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftsourceinfo (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.swiftsourceinfo /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYuTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+ExtractAppIntentsMetadata (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name ZhiYuTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.4.sdk --xcode-version 17E202 --platform-family iOS --deployment-target 17.0 --bundle-identifier com.zhiyu.app.ZhiYuTests --output /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/ZhiYuTests --dependency-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests_dependency_info.dat --stringsdata-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.SwiftFileList --metadata-file-list /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests.DependencyMetadataFileList --static-metadata-file-list /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/ZhiYuTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/Objects-normal/arm64/ZhiYuTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-05-08 18:00:45.257 appintentsmetadataprocessor[8434:114547] Starting appintentsmetadataprocessor export
+2026-05-08 18:00:45.264 appintentsmetadataprocessor[8434:114547] Extracted no relevant App Intents symbols, skipping writing output
+
+CopySwiftLibs /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/ZhiYuTests --scan-folder /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/Frameworks --scan-folder /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/PlugIns --scan-folder /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/SystemExtensions --scan-folder /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYuTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest (in target 'ZhiYuTests' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/PlugIns/ZhiYuTests.xctest
+
+CodeSign /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/ZhiYu.debug.dylib (in target 'ZhiYu' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/ZhiYu.debug.dylib
+/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/ZhiYu.debug.dylib: replacing existing signature
+
+CodeSign /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/__preview.dylib (in target 'ZhiYu' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/__preview.dylib
+/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/__preview.dylib: replacing existing signature
+
+CodeSign /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app (in target 'ZhiYu' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-iphonesimulator/ZhiYu.build/ZhiYu.app.xcent --timestamp\=none --generate-entitlement-der /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app
+/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app: replacing existing signature
+
+Validate /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app (in target 'ZhiYu' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-validationUtility /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app -shallow-bundle -infoplist-subpath Info.plist
+
+2026-05-08 18:01:04.560 xcodebuild[8396:114296]  iOSSimulator: 446F21F6-4EEF-4B07-B0DB-A6DF967C347B: Failed to launch app with identifier: com.zhiyu.app and options: {
+    "activate_suspended" = 0;
+    arguments =     (
+    );
+    environment =     {
+        "APP_DISTRIBUTOR_ID_OVERRIDE" = "com.apple.AppStore";
+        "CA_ASSERT_MAIN_THREAD_TRANSACTIONS" = 0;
+        "CA_DEBUG_TRANSACTIONS" = 0;
+        "DYLD_FRAMEWORK_PATH" = "/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/PackageFrameworks:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        "DYLD_INSERT_LIBRARIES" = "/usr/lib/libRPAC.dylib:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/Frameworks/libXCTestBundleInject.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23E254a/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.4.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/Frameworks/libXCTestBundleInject.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23E254a/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.4.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+        "DYLD_LIBRARY_PATH" = "/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib";
+        "LLVM_PROFILE_FILE" = "/dev/null";
+        NSUnbufferedIO = YES;
+        "OS_ACTIVITY_DT_MODE" = YES;
+        "PERFC_ENABLE_EXTENDED_DIAGNOSTIC_FORMAT" = 1;
+        "PERFC_ENABLE_PROFILE_MODE" = 1;
+        "PERFC_RESET_INSERT_LIBRARIES" = 1;
+        "PERFC_SUPPRESS_SYSTEM_REPORTS" = 1;
+        "RUN_DESTINATION_DEVICE_NAME" = "iPhone 17 Pro";
+        "RUN_DESTINATION_DEVICE_PLATFORM_IDENTIFIER" = "com.apple.platform.iphonesimulator";
+        "RUN_DESTINATION_DEVICE_UDID" = "446F21F6-4EEF-4B07-B0DB-A6DF967C347B";
+        "SQLITE_ENABLE_THREAD_ASSERTIONS" = 1;
+        "SWIFT_BACKTRACE" = "enable=no";
+        TERM = dumb;
+        XCInjectBundleInto = unused;
+        "XCODE_SCHEME_NAME" = ZhiYu;
+        XCTestBundleInjectPath = "/usr/lib/libRPAC.dylib:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/Frameworks/libXCTestBundleInject.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23E254a/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.4.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator/ZhiYu.app/Frameworks/libXCTestBundleInject.dylib:/Library/Developer/CoreSimulator/Volumes/iOS_23E254a/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.4.simruntime/Contents/Resources/RuntimeRoot/usr/lib/libMainThreadChecker.dylib:/usr/lib/libRPAC.dylib";
+        XCTestBundlePath = "PlugIns/ZhiYuTests.xctest";
+        XCTestConfigurationFilePath = "";
+        XCTestSessionIdentifier = "F86EBBB9-2835-402D-BCB3-37E335BD609F";
+        "__XCODE_BUILT_PRODUCTS_DIR_PATHS" = "/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator";
+        "__XPC_DYLD_FRAMEWORK_PATH" = "/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator";
+        "__XPC_DYLD_LIBRARY_PATH" = "/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator:/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-iphonesimulator";
+        "__XPC_LLVM_PROFILE_FILE" = "/dev/null";
+    };
+    stderr = "/dev/ttys002";
+    stdout = "/dev/ttys002";
+    "terminate_running_process" = 1;
+    "wait_for_debugger" = 1;
+} (error = Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 "Simulator device failed to launch com.zhiyu.app." UserInfo={NSLocalizedDescription=Simulator device failed to launch com.zhiyu.app., NSUnderlyingError=0xb41c18b40 {Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 "The request to open "com.zhiyu.app" failed." UserInfo={BSErrorCodeDescription=RequestDenied, NSLocalizedDescription=The request to open "com.zhiyu.app" failed., NSUnderlyingError=0xb41c18f90 {Error Domain=FBSOpenApplicationErrorDomain Code=6 "Application failed preflight checks" UserInfo={BSErrorCodeDescription=Busy, NSLocalizedFailureReason=Application failed preflight checks}}, FBSOpenApplicationRequestID=0x259a, NSLocalizedFailureReason=The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks").}}, NSLocalizedFailureReason=The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks")., FBSOpenApplicationRequestID=0x259a, SimCallingSelector=launchApplicationWithID:options:pid:error:, BSErrorCodeDescription=RequestDenied})
+2026-05-08 18:01:04.562 xcodebuild[8396:114247] [MT] IDELaunchReport: 2beaf8408aa54740:2beaf8408aa54740: Finished with error: Simulator device failed to launch com.zhiyu.app.
+Domain: FBSOpenApplicationServiceErrorDomain
+Code: 1
+Failure Reason: The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks").
+User Info: {
+    BSErrorCodeDescription = RequestDenied;
+    DVTErrorCreationDateKey = "2026-05-08 10:01:04 +0000";
+    FBSOpenApplicationRequestID = 0x259a;
+    IDERunOperationFailingWorker = IDELaunchiPhoneSimulatorLauncher;
+    SimCallingSelector = "launchApplicationWithID:options:pid:error:";
+}
+--
+The request to open "com.zhiyu.app" failed.
+Domain: FBSOpenApplicationServiceErrorDomain
+Code: 1
+Failure Reason: The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks").
+User Info: {
+    BSErrorCodeDescription = RequestDenied;
+    FBSOpenApplicationRequestID = 0x259a;
+}
+--
+The operation couldn’t be completed. Application failed preflight checks
+Domain: FBSOpenApplicationErrorDomain
+Code: 6
+Failure Reason: Application failed preflight checks
+User Info: {
+    BSErrorCodeDescription = Busy;
+}
+--
+
+2026-05-08 18:01:04.562 xcodebuild[8396:114247] [MT] IDELaunchReport: 2beaf8408aa54740:2beaf8408aa54740: com.apple.dt.IDERunOperationWorkerFinished {
+    "device_identifier" = "446F21F6-4EEF-4B07-B0DB-A6DF967C347B";
+    "device_model" = "iPhone18,1";
+    "device_osBuild" = "26.4.1 (23E254a)";
+    "device_osBuild_monotonic" = 2304025400;
+    "device_os_variant" = 1;
+    "device_platform" = "com.apple.platform.iphonesimulator";
+    "device_platform_family" = 2;
+    "device_reality" = 2;
+    "device_thinningType" = "iPhone18,1";
+    "device_transport" = 4;
+    "launchSession_schemeCommand" = Test;
+    "launchSession_schemeCommand_enum" = 2;
+    "launchSession_targetArch" = arm64;
+    "launchSession_targetArch_enum" = 6;
+    "operation_duration_ms" = 17909;
+    "operation_errorCode" = 1;
+    "operation_errorDomain" = FBSOpenApplicationServiceErrorDomain;
+    "operation_errorWorker" = IDELaunchiPhoneSimulatorLauncher;
+    "operation_error_reportable" = 1;
+    "operation_name" = IDERunOperationWorkerGroup;
+    "param_consoleMode" = 0;
+    "param_debugger_attachToExtensions" = 0;
+    "param_debugger_attachToXPC" = 0;
+    "param_debugger_type" = 1;
+    "param_destination_isProxy" = 0;
+    "param_destination_platform" = "com.apple.platform.iphonesimulator";
+    "param_diag_MTE_enable" = 0;
+    "param_diag_MainThreadChecker_stopOnIssue" = 0;
+    "param_diag_MallocStackLogging_enableDuringAttach" = 0;
+    "param_diag_MallocStackLogging_enableForXPC" = 0;
+    "param_diag_allowLocationSimulation" = 1;
+    "param_diag_checker_mtc_enable" = 0;
+    "param_diag_checker_tpc_enable" = 1;
+    "param_diag_gpu_frameCapture_enable" = 3;
+    "param_diag_gpu_shaderValidation_enable" = 0;
+    "param_diag_gpu_validation_enable" = 1;
+    "param_diag_guardMalloc_enable" = 0;
+    "param_diag_memoryGraphOnResourceException" = 0;
+    "param_diag_queueDebugging_enable" = 0;
+    "param_diag_runtimeProfile_generate" = 0;
+    "param_diag_sanitizer_asan_enable" = 0;
+    "param_diag_sanitizer_tsan_enable" = 0;
+    "param_diag_sanitizer_tsan_stopOnIssue" = 0;
+    "param_diag_sanitizer_ubsan_enable" = 0;
+    "param_diag_sanitizer_ubsan_stopOnIssue" = 0;
+    "param_diag_showNonLocalizedStrings" = 0;
+    "param_diag_viewDebugging_enabled" = 0;
+    "param_diag_viewDebugging_insertDylibOnLaunch" = 0;
+    "param_install_style" = 2;
+    "param_launcher_UID" = 2;
+    "param_launcher_allowDeviceSensorReplayData" = 0;
+    "param_launcher_kind" = 0;
+    "param_launcher_style" = 0;
+    "param_launcher_substyle" = 0;
+    "param_runnable_appExtensionHostRunMode" = 0;
+    "param_runnable_productType" = "com.apple.product-type.application";
+    "param_testing_launchedForTesting" = 1;
+    "param_testing_suppressSimulatorApp" = 1;
+    "param_testing_usingCLI" = 0;
+    "sdk_canonicalName" = "iphonesimulator26.4";
+    "sdk_osVersion" = "26.4";
+    "sdk_platformID" = 7;
+    "sdk_variant" = iphonesimulator;
+    "sdk_version_monotonic" = 2304025200;
+}
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Logs/Test/Test-ZhiYu-2026.05.08_18-00-43-+0800.xcresult
+
+2026-05-08 18:01:10.033 xcodebuild[8396:114247] [MT] IDETestOperationsObserverDebug: 24.645 elapsed -- Testing started completed.
+2026-05-08 18:01:10.033 xcodebuild[8396:114247] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-05-08 18:01:10.033 xcodebuild[8396:114247] [MT] IDETestOperationsObserverDebug: 24.645 sec, +24.645 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Logs/Test/Test-ZhiYu-2026.05.08_18-00-43-+0800.xcresult
+
+Testing failed:
+	Simulator device failed to launch com.zhiyu.app.
+	ZhiYu encountered an error (Failed to install or launch the test runner. (Underlying Error: Simulator device failed to launch com.zhiyu.app. The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks"). (Underlying Error: The request to open "com.zhiyu.app" failed. The request was denied by service delegate (SBMainWorkspace) for reason: Busy ("Application failed preflight checks"). (Underlying Error: The operation couldn’t be completed. Application failed preflight checks))))
+
+** TEST FAILED **
+
+Testing started

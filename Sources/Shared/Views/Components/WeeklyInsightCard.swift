@@ -37,14 +37,14 @@ struct WeeklyInsightCard: View {
                 Spacer()
                 
                 if isGenerating {
-                    ProgressView().scaleEffect(0.8)
+                    ProgressView().scaleEffect(AppUI.Animation.pressScale) // 0.8
                 } else {
                     Button(action: { generateInsight(forceRefresh: true) }) {
                         Image(systemName: "arrow.clockwise")
                             .font(.caption.bold())
                             .foregroundStyle(.appSecondary)
                             .padding(AppUI.small)
-                            .background(Circle().fill(Color.appBorder.opacity(AppUI.glassOpacity * 2))) // 0.2
+                            .background(Circle().fill(Color.appBorder.opacity(AppUI.dimmedOpacity))) // 0.2
                     }
                     .buttonStyle(.plain)
                 }
@@ -58,12 +58,12 @@ struct WeeklyInsightCard: View {
                     SkeletonBox(width: 280, height: 16)
                 }
             } else if let insight = aiStore.weeklyInsight {
-                VStack(alignment: .leading, spacing: AppUI.standardPadding + AppUI.small) { // 24
+                VStack(alignment: .leading, spacing: AppUI.Metrics.sectionSpacing) { // 24
                     // 核心指标 (奖牌化设计)
                     VStack(alignment: .leading, spacing: AppUI.standardPadding) {
-                        HStack(spacing: AppUI.standardPadding + AppUI.small) { // 24
+                        HStack(spacing: AppUI.Metrics.sectionSpacing) { // 24
                             InsightStat(label: Localized.tr("stat.newPages"), value: "\(insight.totalNewPages)", icon: "doc.badge.plus", color: .blue)
-                            Divider().frame(height: AppUI.Action.buttonHeight * 0.9) // 36
+                            Divider().frame(height: AppUI.Action.buttonHeight - AppUI.small) // 36
                             InsightStat(label: Localized.tr("stat.growth"), value: insight.growthTraction, icon: "chart.line.uptrend.xyaxis", color: .green)
                         }
                         
@@ -71,7 +71,7 @@ struct WeeklyInsightCard: View {
                             FlowLayout(spacing: AppUI.small) {
                                 ForEach(Array(Set(insight.topKeywords)).sorted(), id: \.self) { tag in
                                     Text("#\(tag)")
-                                        .font(.system(size: AppUI.microFontSize + 1))
+                                        .font(AppUI.caption2Font) // 11
                                         .padding(.horizontal, AppUI.small + AppUI.atomic) // 10
                                         .padding(.vertical, AppUI.tiny + AppUI.atomic) // 6
                                         .background(Color.appAccent.opacity(AppUI.glassOpacity))
@@ -83,18 +83,18 @@ struct WeeklyInsightCard: View {
                     }
                     .padding(AppUI.loosePadding) // 添加内边距，解决内容过于拥挤的问题
                     .background(AppUI.containerBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)) // 16
+                    .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius)) // 16
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)
+                        RoundedRectangle(cornerRadius: AppUI.cardRadius)
                             .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
                     )
 
                     // 摘要正文
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: AppUI.standardPadding) { // 12
                         HStack {
                             Image(systemName: "quote.opening")
                                 .font(.title2)
-                                .foregroundStyle(.appAccent.opacity(0.3))
+                                .foregroundStyle(.appAccent.opacity(AppUI.dimmedOpacity * 1.5)) // 0.3
                             Spacer()
                         }
                         
@@ -103,7 +103,7 @@ struct WeeklyInsightCard: View {
                                 router.navigateToPage(id: page.id)
                             }
                         })
-                        .padding(.horizontal, 4)
+                        .padding(.horizontal, AppUI.small) // 4
                         
                         HStack {
                             Spacer()
@@ -115,10 +115,10 @@ struct WeeklyInsightCard: View {
                     .padding(AppUI.loosePadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background {
-                        RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)
+                        RoundedRectangle(cornerRadius: AppUI.cardRadius) // 16
                             .fill(.ultraThinMaterial)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)
+                                RoundedRectangle(cornerRadius: AppUI.cardRadius)
                                     .stroke(LinearGradient(colors: [AppUI.containerBorder, .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: AppUI.borderWidth)
                             )
                     }
@@ -138,18 +138,18 @@ struct WeeklyInsightCard: View {
                         Image(systemName: "sparkles")
                             .font(.title2)
                     }
-                    .padding(AppUI.standardPadding + AppUI.small) // 24
+                    .padding(AppUI.Metrics.sectionSpacing) // 24
                     .background(
-                        RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)
-                            .fill(LinearGradient(colors: [.appAccent.opacity(AppUI.glassOpacity * 1.5), .appAccent.opacity(AppUI.glassOpacity / 2)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .overlay(RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small).stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth))
+                        RoundedRectangle(cornerRadius: AppUI.cardRadius) // 16
+                            .fill(LinearGradient(colors: [.appAccent.opacity(AppUI.dimmedOpacity * 0.75), .appAccent.opacity(AppUI.glassOpacity / 2)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .overlay(RoundedRectangle(cornerRadius: AppUI.cardRadius).stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth))
                     )
                     .foregroundStyle(.appAccent)
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(AppUI.standardPadding + AppUI.small) // 24
+        .padding(AppUI.Metrics.sectionSpacing) // 24
         .background(
             ZStack {
                 AppUI.containerBackground
@@ -191,9 +191,9 @@ struct InsightStat: View {
     var body: some View {
         HStack(spacing: AppUI.medium) {
             Image(systemName: icon)
-                .font(.system(size: AppUI.largeIconSize * 0.625, weight: .semibold)) // 20
+                .font(.system(size: AppUI.Metrics.iconBoxSize / 2, weight: .semibold)) // 20
                 .foregroundStyle(color)
-                .frame(width: AppUI.Metrics.iconBoxSize + 4, height: AppUI.Metrics.iconBoxSize + 4) // 44
+                .frame(width: AppUI.Metrics.iconBoxSize + AppUI.atomic * 2, height: AppUI.Metrics.iconBoxSize + AppUI.atomic * 2) // 44
                 .background(
                     Circle()
                         .fill(color.opacity(AppUI.glassOpacity * 1.5))
@@ -218,7 +218,7 @@ struct WeeklyReportView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: AppUI.Metrics.sectionSpacing) { // 24
                 WeeklyInsightCard()
                 
                 // 深度建议
@@ -237,16 +237,16 @@ struct WeeklyReportView: View {
                         .padding(AppUI.loosePadding)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppUI.containerBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)) // 16
+                        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius)) // 16
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppUI.standardRadius + AppUI.small)
+                            RoundedRectangle(cornerRadius: AppUI.cardRadius)
                                 .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
                         )
                 }
                 .padding(.top, AppUI.medium - AppUI.atomic) // 10
                 
                 // 底部占位，增加留白感
-                Spacer(minLength: AppUI.largeIconSize + AppUI.small) // 40
+                Spacer(minLength: AppUI.Metrics.iconBoxSize) // 40
             }
             .padding(AppUI.loosePadding)
         }

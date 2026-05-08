@@ -78,26 +78,24 @@ struct IngestEntryCardsSection: View {
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("fileImport"),
-                    subtitle: L10n.Ingest.tr("fileImportHint"),
                     icon: "doc.badge.plus",
-                    color: .appText
+                    color: .blue
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.file")
 
-            // 2. Manual entry card (toggle)
+            // 2. Manual entry card
             Button(action: {
                 showManualForm = true
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("manualEntry"),
-                    subtitle: L10n.Ingest.tr("manualEntryHint"),
                     icon: "pencil.and.list.clipboard",
-                    color: .appText
+                    color: .orange
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.manual")
 
             // 3. URL import card
@@ -106,12 +104,11 @@ struct IngestEntryCardsSection: View {
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("urlImport"),
-                    subtitle: L10n.Ingest.tr("urlImportHint"),
                     icon: "link",
-                    color: .appText
+                    color: .teal
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.url")
 
             // 4. OCR entry card
@@ -120,27 +117,24 @@ struct IngestEntryCardsSection: View {
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("ocrScan"),
-                    subtitle: L10n.Ingest.tr("ocrScanHint"),
                     icon: "text.viewfinder",
-                    color: .appText
+                    color: .purple
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.ocr")
 
             // 5. Clipboard import card
             Button(action: {
-                // Trigger clipboard import via notification to parent
                 NotificationCenter.default.post(name: .importFromClipboard, object: nil)
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("clipboardImport"),
-                    subtitle: L10n.Ingest.tr("clipboardImportHint"),
                     icon: "doc.on.clipboard",
-                    color: .appText
+                    color: .green
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.clipboard")
 
             // 6. Voice note card
@@ -149,40 +143,33 @@ struct IngestEntryCardsSection: View {
             }) {
                 entryCardContent(
                     title: L10n.Ingest.tr("voiceNote"),
-                    subtitle: L10n.Ingest.tr("voiceNoteHint"),
                     icon: "waveform",
-                    color: .appText
+                    color: .red
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(AppCardButtonStyle())
             .accessibilityIdentifier("ingest.voice")
         }
     }
 
-    private func entryCardContent(title: String, subtitle: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: AppUI.medium) {
+    private func entryCardContent(title: String, icon: String, color: Color) -> some View {
+        VStack(spacing: AppUI.tiny) {
             ZStack {
                 Circle()
                     .fill(color.opacity(AppUI.glassOpacity * 1.2)) // 0.12
-                    .frame(width: AppUI.Metrics.iconBoxSize, height: AppUI.Metrics.iconBoxSize)
+                    .frame(width: AppUI.Metrics.largeIconBoxSize, height: AppUI.Metrics.largeIconBoxSize)
                 Image(systemName: icon)
-                    .font(.system(size: AppUI.headlineFontSize, weight: .semibold))
+                    .font(.system(size: AppUI.iconMedium, weight: .semibold))
                     .foregroundStyle(color)
             }
             
-            VStack(alignment: .leading, spacing: AppUI.tiny) {
-                Text(title)
-                    .font(.system(size: AppUI.Metrics.titleSmallFontSize, weight: .bold))
-                    .foregroundStyle(.appText)
-                
-                Text(subtitle)
-                    .font(subtitleFont)
-                    .foregroundStyle(.appSecondary)
-                    .lineLimit(2)
-            }
+            Text(title)
+                .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold))
+                .foregroundStyle(.appText)
+                .multilineTextAlignment(.center)
         }
-        .padding(AppUI.standardPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, AppUI.standardPadding)
         .appMetricCardStyle(color: color, cornerRadius: AppUI.standardRadius)
     }
 }

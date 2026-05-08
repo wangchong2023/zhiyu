@@ -201,7 +201,7 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
         )
         
         // 打印到控制台，方便调试
-        let durationStr = duration.map { String(format: " (耗时: %.3fs)", $0) } ?? ""
+        let durationStr = duration.map { " (耗时: \($0.formattedAdaptive))" } ?? ""
         let statusEmoji: String
         switch status {
         case .success: statusEmoji = "✅"
@@ -306,6 +306,24 @@ final class Logger: ObservableObject, LoggerProtocol, @unchecked Sendable {
         Task { @MainActor in
             logEntries.removeAll()
             saveToDisk()
+        }
+    }
+}
+
+// MARK: - TimeInterval Extension
+extension TimeInterval {
+    /// 自动根据量级选择最合适的单位进行格式化 (µs, ms, s, m)
+    var formattedAdaptive: String {
+        if self < 0.001 {
+            return String(format: "%.0fµs", self * 1_000_000)
+        } else if self < 1.0 {
+            return String(format: "%.1fms", self * 1000)
+        } else if self < 60.0 {
+            return String(format: "%.2fs", self)
+        } else {
+            let minutes = Int(self) / 60
+            let seconds = self.truncatingRemainder(dividingBy: 60)
+            return String(format: "%dm %.1fs", minutes, seconds)
         }
     }
 }

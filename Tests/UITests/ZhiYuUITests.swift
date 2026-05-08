@@ -56,18 +56,17 @@ final class ZhiYuUITests: XCTestCase {
     /// 测试 PageLink 点击跳转
     func testPageLinkNavigation() throws {
         // 1. 进入搜索或列表找到包含链接的页面
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         
         let firstPage = app.cells.element(boundBy: 0)
         XCTAssertTrue(firstPage.exists)
         firstPage.tap()
         
         // 2. 查找正文中的链接（蓝色文本或特定标记）
-        let wikiLink = app.staticTexts.containing(NSPredicate(format: "label CONTAINS '[[ '")).element(boundBy: 0)
-        if wikiLink.exists {
-            wikiLink.tap()
-            // 验证导航标题是否改变
-            XCTAssertTrue(app.navigationBars.element.exists)
+        let pageLink = app.staticTexts.containing(NSPredicate(format: "label CONTAINS '[[ '")).element(boundBy: 0)
+        if pageLink.exists {
+            pageLink.tap()
         }
+        XCTAssertTrue(app.navigationBars.element.exists)
     }
 }

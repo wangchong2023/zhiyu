@@ -55,16 +55,16 @@ struct SplashView: View {
                 // 名言
                 VStack(spacing: AppUI.standardPadding) { // 16
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
+                        .font(.system(size: AppUI.bodyFontSize, weight: .medium, design: .serif)) // 17
                         .foregroundStyle(.white.opacity(AppUI.fullOpacity * 0.9)) // 0.9
                         .multilineTextAlignment(.center)
                         .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
-                        .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
+                        .padding(.horizontal, AppUI.Metrics.iconBoxSize) // 40
                         .opacity(quoteOpacity)
                     
                     // 闪光效果
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
+                        .font(.system(size: AppUI.bodyFontSize, weight: .medium, design: .serif)) // 17
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.clear, .white.opacity(AppUI.fullOpacity * 0.6), .clear], // 0.6
@@ -74,14 +74,14 @@ struct SplashView: View {
                         )
                         .multilineTextAlignment(.center)
                         .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
-                        .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
+                        .padding(.horizontal, AppUI.Metrics.iconBoxSize) // 40
                         .offset(x: shimmerOffset)
                         .mask(
                             Text(Localized.tr("splash.quote"))
-                                .font(.system(size: AppUI.Metrics.bodyFontSize, weight: .medium, design: .serif)) // 17
+                                .font(.system(size: AppUI.bodyFontSize, weight: .medium, design: .serif)) // 17
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(AppUI.tiny + AppUI.atomic) // 6
-                                .padding(.horizontal, AppUI.Metrics.largeIconSize) // 40
+                                .padding(.horizontal, AppUI.Metrics.iconBoxSize) // 40
                         )
                         .opacity(quoteOpacity > AppUI.fullOpacity * 0.5 ? AppUI.glassOpacity * 4 : 0) // 0.5, 0.4
                     
@@ -98,7 +98,7 @@ struct SplashView: View {
                                 )
                             )
                     }
-                    .font(.system(size: AppUI.Metrics.captionFontSize, weight: .medium, design: .serif)) // 14
+                    .font(.system(size: AppUI.captionFontSize, weight: .medium, design: .serif)) // 14
                     .opacity(authorOpacity)
                 }
                 
@@ -112,9 +112,9 @@ struct SplashView: View {
                 }) {
                     HStack(spacing: AppUI.small) { // 8
                         Text(Localized.tr("splash.enter"))
-                            .font(.system(size: AppUI.Metrics.subHeadlineFontSize, weight: .semibold, design: .rounded)) // 15
+                            .font(.system(size: AppUI.subheadlineFontSize, weight: .semibold, design: .rounded)) // 15
                         Image(systemName: "arrow.right")
-                            .font(.system(size: AppUI.Metrics.caption2FontSize, weight: .semibold)) // 13
+                            .font(.system(size: AppUI.caption2FontSize, weight: .semibold)) // 13
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, AppUI.Metrics.heroValueSize * 1.23) // 32

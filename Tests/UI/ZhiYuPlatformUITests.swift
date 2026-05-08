@@ -85,23 +85,23 @@ final class iPhoneTests: ZhiYuPlatformUITests {
 
     func testiPhoneTabBarHasLabels() async {
         // iPhone Tab 栏应该同时显示图标和文字标签
-        let wikiTab = app.tabBars.buttons["Wiki"]
+        let knowledgeTab = app.tabBars.buttons["Knowledge"]
         let graphTab = app.tabBars.buttons["Graph"]
 
-        XCTAssertTrue(wikiTab.exists || app.tabBars.buttons.element(boundBy: 0).exists,
-                      "Wiki Tab 不存在")
+        XCTAssertTrue(knowledgeTab.exists || app.tabBars.buttons.element(boundBy: 0).exists,
+                      "Knowledge Tab 不存在")
 
         // iPhone 上 Tab 栏每个按钮应该有标签（不只是图标）
         // 检查 Tab 按钮的 label 是否包含文字
-        if wikiTab.exists {
-            let label = wikiTab.label
-            XCTAssertFalse(label.isEmpty, "Wiki Tab 应该有文字标签")
+        if knowledgeTab.exists {
+            let label = knowledgeTab.label
+            XCTAssertFalse(label.isEmpty, "Knowledge Tab 应该有文字标签")
         }
     }
 
     func testiPhoneCompactWidthClass() async {
         // iPhone 使用 compact width size class
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         // 在 compact 模式下，某些按钮应该显示
         let createButton = app.navigationBars.buttons.element(boundBy: 1)
         XCTAssertTrue(createButton.exists || app.navigationBars.buttons["add"].exists,
@@ -118,7 +118,7 @@ final class iPhoneTests: ZhiYuPlatformUITests {
 
     // MARK: - Navigation
     func testiPhoneNavigationStack() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // iPhone 使用 NavigationStack（不是 SplitView）
         // 导航栏应该在顶部
@@ -128,7 +128,7 @@ final class iPhoneTests: ZhiYuPlatformUITests {
 
     func testiPhoneTabNavigation() async {
         // 测试 iPhone 上 5 个 Tab 都能正常切换
-        let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
+        let tabs = ["Knowledge", "Graph", "Search", "Ingest", "Settings"]
 
         for tab in tabs {
             let button = app.tabBars.buttons[tab]
@@ -140,11 +140,11 @@ final class iPhoneTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    private func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
@@ -180,7 +180,7 @@ final class iPadTests: ZhiYuPlatformUITests {
 
     func testiPadRegularWidthClass() async {
         // iPad 使用 regular width size class
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 在 regular 模式下，分屏视图应该可用
         let splitView = app.otherElements.firstMatch
@@ -200,7 +200,7 @@ final class iPadTests: ZhiYuPlatformUITests {
 
     func testiPadToolbarButtons() async {
         // iPad 工具栏应该有更多空间显示按钮
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         let navButtons = app.navigationBars.buttons
         let buttonCount = navButtons.count
@@ -211,7 +211,7 @@ final class iPadTests: ZhiYuPlatformUITests {
 
     // MARK: - Navigation
     func testiPadNavigationStack() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // iPad 上应该使用分割视图
         let splitView = app.otherElements.firstMatch
@@ -220,7 +220,7 @@ final class iPadTests: ZhiYuPlatformUITests {
 
     func testiPadTabNavigation() async {
         // 测试 iPad 上 5 个 Tab 都能正常切换
-        let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
+        let tabs = ["Knowledge", "Graph", "Search", "Ingest", "Settings"]
 
         for tab in tabs {
             let button = app.tabBars.buttons[tab]
@@ -258,11 +258,11 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    private func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
@@ -318,10 +318,10 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
 
     func testMacMouseInteractions() async {
         // Mac 应该支持鼠标悬停
-        let wikiTab = app.tabBars.buttons["Wiki"]
-        if wikiTab.exists {
+        let knowledgeTab = app.tabBars.buttons["Knowledge"]
+        if knowledgeTab.exists {
             // 右键菜单
-            wikiTab.rightClick()
+            knowledgeTab.rightClick()
             try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
             // 检查是否有上下文菜单
@@ -422,11 +422,11 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    private func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
@@ -437,7 +437,7 @@ final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
     func testOrientationChange() async {
         // 测试横竖屏切换（iPad）
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 如果支持旋转，测试切换
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -454,7 +454,7 @@ final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
     func testSizeClassTransitions() async {
         // 测试 size class 切换
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 基础验证，确保窗口存在
         XCTAssertTrue(app.windows.firstMatch.exists)
@@ -462,16 +462,16 @@ final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
     func testDynamicTypeScaling() async {
         // 测试动态字体大小
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         XCTAssertTrue(app.exists)
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    private func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
@@ -482,20 +482,20 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
     func testVoiceOverSupport() async {
         // 测试 VoiceOver 支持
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 验证关键元素有 accessibility identifier
-        let wikiTab = app.tabBars.buttons["Wiki"]
-        XCTAssertTrue(wikiTab.exists, "Wiki Tab 应该可访问")
+        let knowledgeTab = app.tabBars.buttons["Knowledge"]
+        XCTAssertTrue(knowledgeTab.exists, "Knowledge Tab 应该可访问")
 
         // 验证标签
-        let label = wikiTab.accessibilityLabel
+        let label = knowledgeTab.accessibilityLabel
         XCTAssertFalse(label?.isEmpty ?? true, "Tab 应该有 accessibility label")
     }
 
     func testDynamicType() async {
         // 测试动态字体
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 验证文本可读性
         let textElements = app.textFields
@@ -511,7 +511,7 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
     func testColorContrast() async {
         // 验证颜色对比度（基础检查）
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // 获取窗口
         let window = app.windows.firstMatch
@@ -519,11 +519,11 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
     }
 
     // MARK: - Helpers
-    private func navigateToWikiTab() async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    private func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }

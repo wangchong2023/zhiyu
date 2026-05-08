@@ -330,7 +330,7 @@ struct AppTagField: View {
             FlowLayout(spacing: AppUI.tiny + AppUI.atomic) { // 6
                 ForEach(tags, id: \.self) { tag in
                     HStack(spacing: AppUI.atomic * 1.5) { // 3
-                        Text("#\(tag)")
+                        Text(tag)
                             .font(.system(size: AppUI.microFontSize + 1))
                         Button(action: { 
                             withAnimation(.spring(response: AppUI.Animation.standardDuration)) {

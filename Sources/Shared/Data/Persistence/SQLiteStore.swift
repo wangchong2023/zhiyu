@@ -393,14 +393,25 @@ final class SQLiteStore: VectorIndexableStore {
     ///   - newTag: 新标签名称
     func renameTag(_ oldTag: String, to newTag: String) {
         Logger.shared.logTimed(action: .update, target: oldTag, module: "SQLiteStore", details: "重命名标签为: \(newTag)") {
-            performBatchWrite { _ in
-                for p in self.pages {
-                    if let idx = p.tags.firstIndex(of: oldTag) {
-                        var updated = p
-                        updated.tags[idx] = newTag
-                        try self.repository.save(updated)
-                    }
-                }
+            performBatchWrite { db in
+                try self.internalRenameTag(oldTag, to: newTag, in: db)
+            }
+        }
+    }
+
+    /// 内部重命名标签，支持在现有事务中运行
+    func internalRenameTag(_ oldTag: String, to newTag: String, in db: Database) throws {
+        // 核心崩溃修复：不能在后台写入线程访问标注了 @MainActor 的 self.pages
+        // 改为从数据库直接获取所有包含该标签的页面
+        let pagesToUpdate = try KnowledgePage.filter(Column("tags").like("%\"\(oldTag)\"%")).fetchAll(db)
+        
+        for p in pagesToUpdate {
+            var updatedTags = p.tags
+            if let idx = updatedTags.firstIndex(of: oldTag) {
+                updatedTags[idx] = newTag
+                var updatedPage = p
+                updatedPage.tags = updatedTags
+                try updatedPage.update(db)
             }
         }
     }
@@ -409,14 +420,24 @@ final class SQLiteStore: VectorIndexableStore {
     /// - Parameter tag: 待移除的标签名称
     func deleteTag(_ tag: String) {
         Logger.shared.logTimed(action: .delete, target: tag, module: "SQLiteStore", details: "删除标签成功") {
-            performBatchWrite { _ in
-                for p in self.pages {
-                    if let idx = p.tags.firstIndex(of: tag) {
-                        var updated = p
-                        updated.tags.remove(at: idx)
-                        try self.repository.save(updated)
-                    }
-                }
+            performBatchWrite { db in
+                try self.internalDeleteTag(tag, in: db)
+            }
+        }
+    }
+
+    /// 内部删除标签，支持在现有事务中运行
+    func internalDeleteTag(_ tag: String, in db: Database) throws {
+        // 核心崩溃修复：从数据库直接获取页面数据
+        let pagesToUpdate = try KnowledgePage.filter(Column("tags").like("%\"\(tag)\"%")).fetchAll(db)
+        
+        for p in pagesToUpdate {
+            var updatedTags = p.tags
+            if let idx = updatedTags.firstIndex(of: tag) {
+                updatedTags.remove(at: idx)
+                var updatedPage = p
+                updatedPage.tags = updatedTags
+                try updatedPage.update(db)
             }
         }
     }

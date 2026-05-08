@@ -18,6 +18,40 @@
         }
       }
     },
+    "ingest.recent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent Activities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近导入活动"
+          }
+        }
+      }
+    },
+    "ingest.noActivities": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No recent activities"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "近期暂无导入活动"
+          }
+        }
+      }
+    },
     "ingest.activity": {
       "extractionState": "manual",
       "localizations": {

@@ -106,16 +106,16 @@ struct SettingsView: View {
 
             // ── AI 能力 ──
             Section {
-                SettingsNavigationRow(icon: "antenna.radiowaves.left.and.right", title: L10n.Settings.tr("llmSettings"), identifier: "settings.llm") {
+                SettingsNavigationRow(icon: "antenna.radiowaves.left.and.right", title: L10n.Settings.llmSettings, identifier: "settings.llm") {
                     LLMSettingsView()
                 }
                 
-                SettingsNavigationRow(icon: "cpu", title: L10n.Settings.tr("onDeviceLLM"), identifier: "settings.ondevice") {
+                SettingsNavigationRow(icon: "cpu", title: L10n.Settings.onDeviceLLM, identifier: "settings.ondevice") {
                     OnDeviceLLMSettingsView()
                 }
                 
-                SettingsNavigationRow(icon: "terminal", title: L10n.Settings.tr("promptLab"), identifier: "settings.prompts") {
-                    PromptLabView()
+                SettingsNavigationRow(icon: "terminal", title: L10n.Settings.promptLab, identifier: "settings.prompts") {
+                    PromptWorkshopView()
                 }
             } header: {
                 Text(L10n.Settings.Section.ai)
@@ -125,54 +125,29 @@ struct SettingsView: View {
             // ── 数据同步 ──
             Section {
                 #if ICLOUD_ENABLED
-                SettingsNavigationRow(icon: "icloud.fill", title: L10n.Settings.tr("iCloudSync"), identifier: "settings.icloud") {
+                SettingsNavigationRow(icon: "icloud.fill", title: L10n.Settings.iCloudSync, identifier: "settings.icloud") {
                     iCloudSyncView(coordinator: coordinator)
                 }
                 #endif
                 
-                SettingsNavigationRow(icon: "archivebox.fill", title: L10n.Settings.tr("backupRestore"), identifier: "settings.backup") {
+                SettingsNavigationRow(icon: "archivebox.fill", title: L10n.Settings.backupRestore, identifier: "settings.backup") {
                     BackupView()
                 }
                 
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    showFolderImporterForImport = true
-                }) {
-                    Label(L10n.Transfer.tr("import.folder"), systemImage: "folder.badge.plus")
-                        .foregroundStyle(.appText)
-                }
-                .accessibilityIdentifier("settings.importFolder")
-
-                Button(action: {
-                    isExportingAll = true
-                    let content = exportAllAsMarkdown()
-                    #if os(iOS)
-                    let av = UIActivityViewController(activityItems: [content], applicationActivities: nil)
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let rootVC = windowScene.windows.first?.rootViewController {
-                        rootVC.present(av, animated: true)
-                    }
-                    #endif
-                }) {
-                    Label(L10n.Settings.tr("exportAllMarkdown"), systemImage: "square.and.arrow.up")
-                        .foregroundStyle(.appText)
-                }
-                .accessibilityIdentifier("settings.exportAll")
-
-                Button(role: .destructive, action: {
+            Button(role: .destructive, action: {
                     showResetConfirmation = true
                 }) {
-                    Label(L10n.Settings.tr("resetData"), systemImage: "trash.fill")
+                    Label(L10n.Settings.resetData, systemImage: "trash.fill")
                 }
                 .accessibilityIdentifier("settings.reset")
-                .alert(L10n.Settings.tr("resetConfirmationTitle"), isPresented: $showResetConfirmation) {
+                .alert(L10n.Settings.resetConfirmationTitle, isPresented: $showResetConfirmation) {
                     Button(L10n.Common.tr("cancel"), role: .cancel) { }
                     Button(L10n.Common.tr("confirmReset"), role: .destructive) {
                         store.resetAllData()
                         HapticFeedback.shared.trigger(.success)
                     }
                 } message: {
-                    Text(L10n.Settings.tr("resetConfirmationMessage"))
+                    Text(L10n.Settings.resetConfirmationMessage)
                 }
             } header: {
                 Text(L10n.Settings.Section.data)
@@ -184,8 +159,8 @@ struct SettingsView: View {
                 Toggle(isOn: privacyBinding) {
                     Label {
                         VStack(alignment: .leading, spacing: AppUI.atomic) { // 2
-                            Text(L10n.Settings.tr("privacyMode"))
-                            Text(L10n.Settings.tr("privacyModeDesc"))
+                            Text(L10n.Settings.privacyMode)
+                            Text(L10n.Settings.privacyModeDesc)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
@@ -198,7 +173,7 @@ struct SettingsView: View {
                 
                 Toggle(isOn: biometricBinding) {
                     Label {
-                        Text(L10n.Settings.tr("biometricProtection"))
+                        Text(L10n.Settings.biometricProtection)
                     } icon: {
                         Image(systemName: "faceid")
                             .foregroundStyle(.blue)
@@ -207,10 +182,11 @@ struct SettingsView: View {
                 .disabled(!store.securityService.biometricsAvailable)
                 .accessibilityIdentifier("settings.biometric")
 
-                SettingsNavigationRow(icon: "clock.arrow.circlepath", title: L10n.Settings.tr("operationLog"), identifier: "settings.log") {
+                SettingsNavigationRow(icon: "clock.arrow.circlepath", title: L10n.Settings.operationLog, identifier: "settings.log") {
                     LogView()
                 }
-            } header: {
+            }
+ header: {
                 Text(L10n.Settings.Section.security)
             }
             .listRowBackground(Color.appCard.opacity(0.8))
@@ -218,7 +194,7 @@ struct SettingsView: View {
             // ── 开发者选项 ──
             #if DEBUG
             Section {
-                SettingsNavigationRow(icon: "hammer.fill", title: L10n.Settings.tr("section.developer"), identifier: "settings.developer") {
+                SettingsNavigationRow(icon: "hammer.fill", title: L10n.Settings.Section.developer, identifier: "settings.developer") {
                     DeveloperSettingsView(onboardingService: onboardingService)
                 }
             }
@@ -247,7 +223,7 @@ struct SettingsView: View {
             switch result {
             case .success(let urls):
                 if let url = urls.first {
-                    let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Transfer.tr("import.externalVault"), target: url.lastPathComponent)
+                    let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Transfer.Import.externalVault, target: url.lastPathComponent)
                     Task {
                         let _ = url.startAccessingSecurityScopedResource()
                         defer { url.stopAccessingSecurityScopedResource() }

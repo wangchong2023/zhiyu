@@ -19,6 +19,7 @@ struct PluginCenterView: View {
     @State private var selectedTab = 0
     @State private var searchText = ""
     @State private var isSafeModeOn = true
+    @State private var showSafeModeWarning = false
     @State private var showFileImporter = false
     
     var body: some View {
@@ -54,6 +55,21 @@ struct PluginCenterView: View {
         .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
             // 处理文件选择结果
         }
+        .confirmationDialog(
+            Localized.tr("plugin.safeMode.warning.title"),
+            isPresented: $showSafeModeWarning,
+            titleVisibility: .visible
+        ) {
+            Button(Localized.tr("plugin.safeMode.turnOff"), role: .destructive) {
+                isSafeModeOn = false
+                HapticFeedback.shared.trigger(.warning)
+            }
+            Button(L10n.Common.tr("cancel"), role: .cancel) {
+                isSafeModeOn = true
+            }
+        } message: {
+            Text(Localized.tr("plugin.safeMode.warning.message"))
+        }
     }
     
     private var headerSection: some View {
@@ -77,7 +93,17 @@ struct PluginCenterView: View {
                     Text(Localized.tr("plugin.safeMode"))
                         .font(.system(size: AppUI.captionFontSize, weight: .semibold))
                         .foregroundStyle(.appSecondary)
-                    Toggle("", isOn: $isSafeModeOn)
+                    Toggle("", isOn: Binding(
+                        get: { isSafeModeOn },
+                        set: { newValue in
+                            if !newValue {
+                                // 尝试关闭时弹出警告
+                                showSafeModeWarning = true
+                            } else {
+                                isSafeModeOn = true
+                            }
+                        }
+                    ))
                         .labelsHidden()
                         .controlSize(.mini)
                         .tint(.appAccent)

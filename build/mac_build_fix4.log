@@ -1,0 +1,923 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination platform=macOS CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-snapshot-testing: https://github.com/pointfreeco/swift-snapshot-testing @ 1.19.2
+  swift-custom-dump: https://github.com/pointfreeco/swift-custom-dump @ 1.5.0
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 603.0.1
+  GRDB: https://github.com/groue/GRDB.swift.git @ 6.29.3
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, variant:Mac Catalyst, id:00006050-001A48A90CD1401C, name:My Mac }
+{ platform:macOS, arch:x86_64, variant:Mac Catalyst, id:00006050-001A48A90CD1401C, name:My Mac }
+{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:00006050-001A48A90CD1401C, name:My Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'ZhiYuMac' in project 'ZhiYu'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'CSQLite' in project 'GRDB'
+    Target 'CSQLite' in project 'GRDB' (no dependencies)
+    Target 'GRDB_GRDB' in project 'GRDB' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.4-25E251-30f9ca8789b706f8bd3fc906a70d770f.sdkstatcache
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu/ZhiYu.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk -o /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.4-25E251-30f9ca8789b706f8bd3fc906a70d770f.sdkstatcache
+
+SwiftDriver ZhiYuMac normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuMac -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk -target arm64-apple-ios17.0-macabi -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst -Fsystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/Frameworks -Fsystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/SubFrameworks -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.4-25E251-30f9ca8789b706f8bd3fc906a70d770f.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-maccatalyst/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst/include -Xcc -isystem -Xcc /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/usr/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ AppConfig.swift,\ AppConstants.swift,\ AppDecorators.swift,\ AppEmptyState.swift,\ AppEventBus.swift,\ AppKeyboardShortcuts.swift,\ AppLinkProcessor.swift,\ AppLoadingOverlay.swift,\ AppNotifications.swift,\ AppRouter.swift,\ AppStore.swift,\ AppTab.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConfig.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConstants.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppDecorators.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppEmptyState.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/AppEventBus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppKeyboardShortcuts.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/AppLinkProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppLoadingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppNotifications.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppRouter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppTab.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConfig.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConstants.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppDecorators.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppEmptyState.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/AppEventBus.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppKeyboardShortcuts.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/AppLinkProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppLoadingOverlay.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppNotifications.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppRouter.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppTab.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ FlowLayout.swift,\ Graph3DComponents.swift,\ Graph3DView.swift,\ GraphClusteringService.swift,\ GraphCommunityProcessor.swift,\ GraphComponents.swift,\ GraphDataProvider.swift,\ GraphInsightDetection.swift,\ GraphLOD.swift,\ GraphLayoutProcessor.swift,\ GraphModels.swift,\ GraphView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/FlowLayout.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/Graph3DView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphClusteringService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphCommunityProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/GraphDataProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphInsightDetection.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphLOD.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphLayoutProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/GraphModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/GraphView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/FlowLayout.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/Graph3DView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphClusteringService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphCommunityProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/GraphDataProvider.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphInsightDetection.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphLOD.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphLayoutProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/GraphModels.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/GraphView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ DeepLinkService.swift,\ DemoDataGenerator.swift,\ DeveloperSettingsView.swift,\ DocumentProcessor.swift,\ DocxProcessor.swift,\ DragDropComponents.swift,\ EditorComponents.swift,\ EmbeddingManager.swift,\ EmbeddingProvider.swift,\ ExcelProcessor.swift,\ ExportReportView.swift,\ FileSystemSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DeepLinkService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DemoDataGenerator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/DeveloperSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocumentProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocxProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/EditorComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/EmbeddingManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/EmbeddingProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/ExcelProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ExportReportView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/FileSystemSyncService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DeepLinkService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DemoDataGenerator.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/DeveloperSettingsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocumentProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocxProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/EditorComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/EmbeddingManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/EmbeddingProvider.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/ExcelProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ExportReportView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/FileSystemSyncService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ CollaborationComponents.swift,\ CollaborationModels.swift,\ CollaborationService.swift,\ CollaborationView.swift,\ ColorSchemeMode.swift,\ CommandPaletteView.swift,\ ContentView.swift,\ CreatePageView.swift,\ CrossPlatform.swift,\ DataCoordinator.swift,\ DataExportService.swift,\ DatabaseManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/CollaborationComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/CollaborationModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/CollaborationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ColorSchemeMode.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/CommandPalette/CommandPaletteView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ContentView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/CreatePageView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Platforms/Adaptor/CrossPlatform.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/DataCoordinator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DataExportService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/DatabaseManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/CollaborationComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/CollaborationModels.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/CollaborationView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ColorSchemeMode.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/CommandPalette/CommandPaletteView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ContentView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/CreatePageView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Platforms/Adaptor/CrossPlatform.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/DataCoordinator.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DataExportService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/DatabaseManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ AppToast.swift,\ AppTooltip.swift,\ AppUI.swift,\ AppWindowSceneDelegate.swift,\ AsyncStatus.swift,\ BacklinksView.swift,\ BackupView.swift,\ BreadcrumbView.swift,\ Character+CJK.swift,\ ChatComponents.swift,\ ChatView.swift,\ ChatViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppToast.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppTooltip.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppUI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/AsyncStatus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/BacklinksView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/BackupView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/BreadcrumbView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Character+CJK.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ChatComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/ChatView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/ChatViewModel.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppToast.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppTooltip.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppUI.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/AsyncStatus.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/BacklinksView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/BackupView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/BreadcrumbView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Character+CJK.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ChatComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/ChatView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/ChatViewModel.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ ModuleRegistrar.swift,\ NavigationView.swift,\ OCRProcessor.swift,\ OCRScanComponents.swift,\ OCRScanView.swift,\ OnDeviceComponents.swift,\ OnDeviceLLMService.swift,\ OnDeviceLLMSettingsView.swift,\ OnboardingOverlay.swift,\ OnboardingService.swift,\ PDFComponents.swift,\ PDFProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c -filelist /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/sources-1 -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift -primary-file /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift -supplementary-output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/supplementaryOutputs-11 -target arm64-apple-ios17.0-macabi -module-can-import-version AppKit 2685.50.120 2685.50.120 -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -module-can-import MachO -module-can-import-version UIKit 9126.4.27.1 9126.4.27 -module-can-import-version WatchConnectivity 222.0.0 222.0.0 -disable-cross-import-overlay-search -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import LocalAuthentication /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/LocalAuthentication.framework/Modules/LocalAuthentication.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import LocalAuthentication /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/Library/Frameworks/LocalAuthentication.framework/Modules/LocalAuthentication.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/iOSSupport/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import SceneKit /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/iOSSupport/System/Library/Frameworks/SceneKit.framework/Modules/SceneKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import WebKit /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Cryptexes/OS/System/iOSSupport/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import WebKit /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac-dependencies-1.json -debug-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac.swiftmodule -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst -Fsystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/Frameworks -Fsystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/System/Library/SubFrameworks -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ZhiYuMac_const_extract_protocols.json -enable-upcoming-feature StrictConcurrency -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/constantine/Documents/work/code/projects/ZhiYu -enable-anonymous-context-mangled-names -file-compilation-dir /Users/constantine/Documents/work/code/projects/ZhiYu -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.4-25E251-30f9ca8789b706f8bd3fc906a70d770f.sdkstatcache -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-maccatalyst/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/ZhiYuMac-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-maccatalyst/include -Xcc -isystem -Xcc /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.4.sdk/System/iOSSupport/usr/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name ZhiYuMac -frontend-parseable-output -disable-clang-spi -clang-target arm64-apple-ios26.4-macabi -target-sdk-version 26.4 -target-sdk-name macosx26.4 -prebuilt-module-cache-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx/prebuilt-modules/26.4 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ModuleRegistrar.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/NavigationView.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRProcessor.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRScanComponents.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRScanView.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceComponents.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceLLMService.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceLLMSettingsView.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnboardingOverlay.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnboardingService.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/PDFComponents.o -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/PDFProcessor.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/ModuleRegistrar.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/NavigationView.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRProcessor.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRScanComponents.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OCRScanView.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceComponents.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceLLMService.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnDeviceLLMSettingsView.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnboardingOverlay.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/OnboardingService.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/PDFComponents.o -index-unit-output-path /ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/Objects-normal/arm64/PDFProcessor.o -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift:62:67: error: type 'AppUI.Metrics' has no member 'largeIconSize'
+                                .font(.system(size: AppUI.Metrics.largeIconSize + AppUI.small)) // 40
+                                                    ~~~~~~~~~~~~~ ^~~~~~~~~~~~~
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ PerformanceService.swift,\ PluginCenterView.swift,\ PluginDetailView.swift,\ PluginMarketService.swift,\ PluginProtocols.swift,\ PluginRegistry.swift,\ PromptService.swift,\ PromptWorkshopView.swift,\ QuizProcessor.swift,\ QuizView.swift,\ RAGEvaluationService.swift,\ ReadabilityModifiers.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PerformanceService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginMarketService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginRegistry.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PromptService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/PromptWorkshopView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/QuizProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/QuizView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/RAGEvaluationService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ReadabilityModifiers.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PerformanceService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginCenterView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginDetailView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginMarketService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginProtocols.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginRegistry.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PromptService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/PromptWorkshopView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/QuizProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/QuizView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/RAGEvaluationService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ReadabilityModifiers.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ GraphViewModel.swift,\ HapticFeedback.swift,\ HostingSetupSheet.swift,\ IconPickerView.swift,\ IndexView.swift,\ IngestQueue.swift,\ IngestService.swift,\ IngestStore.swift,\ IngestView.swift,\ IngestViewComponents.swift,\ KeyboardShortcutsView.swift,\ KeychainService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/GraphViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/HapticFeedback.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/HostingSetupSheet.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/IconPickerView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/IndexView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/IngestQueue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/IngestService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/IngestStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/IngestView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/IngestViewComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/KeyboardShortcutsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/KeychainService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/GraphViewModel.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/HapticFeedback.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/HostingSetupSheet.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/IconPickerView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/IndexView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/IngestQueue.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/IngestService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/IngestStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/IngestView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/IngestViewComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/KeyboardShortcutsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/KeychainService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ UndoService.swift,\ VaultStorageSecurityService.swift,\ VaultStorageService.swift,\ VectorIndexer.swift,\ ViewFactory.swift,\ VisionProSpatialView.swift,\ VoiceNoteComponents.swift,\ VoiceNoteView.swift,\ WatchConnectivityService.swift,\ WebScraperProcessor.swift,\ WebViewExportService.swift,\ WeeklyInsightCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/UndoService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/VectorIndexer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ViewFactory.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VisionProSpatialView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/VoiceNoteComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VoiceNoteView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WatchConnectivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Network/WebScraperProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WebViewExportService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/WeeklyInsightCard.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/UndoService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/VectorIndexer.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ViewFactory.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VisionProSpatialView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/VoiceNoteComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VoiceNoteView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WatchConnectivityService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Network/WebScraperProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WebViewExportService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/WeeklyInsightCard.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ ZhiYuMac (in target 'ZhiYuMac' from project 'ZhiYu')
+EmitSwiftModule normal arm64 (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ KnowledgeDashboardView.swift,\ KnowledgeIngestPipeline.swift,\ KnowledgeInsightService.swift,\ KnowledgePage.swift,\ KnowledgePageStore.swift,\ LLMAdapters.swift,\ LLMChatService.swift,\ LLMClient.swift,\ LLMContextBuilder.swift,\ LLMModels.swift,\ LLMProtocols.swift,\ LLMRefactorService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/KnowledgeDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/KnowledgeIngestPipeline.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/KnowledgeInsightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/KnowledgePage.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/KnowledgePageStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMAdapters.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMChatService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMClient.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMContextBuilder.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMRefactorService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/KnowledgeDashboardView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/KnowledgeIngestPipeline.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/KnowledgeInsightService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/KnowledgePage.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/KnowledgePageStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMAdapters.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMChatService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMClient.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMContextBuilder.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMModels.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMProtocols.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMRefactorService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ SettingsView.swift,\ Shimmer.swift,\ ShortcutManager.swift,\ SidebarView.swift,\ SnapshotService.swift,\ SpeechProcessor.swift,\ SplashComponents.swift,\ SplashView.swift,\ SpotlightService.swift,\ StoreCapabilities.swift,\ SynthesisActionButton.swift,\ SynthesisDocRow.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Shimmer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/ShortcutManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SnapshotService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SplashComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SplashView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SpotlightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/StoreCapabilities.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisActionButton.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Shimmer.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/ShortcutManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SidebarView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SnapshotService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SplashComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SplashView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SpotlightService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/StoreCapabilities.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisActionButton.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ AIContentEnricher.swift,\ AIPulseIndicator.swift,\ AISynthesisService.swift,\ AIWorkflowStore.swift,\ AccessibilityService.swift,\ ActivityService.swift,\ AdaptiveSidebarView.swift,\ AppAccessibilityView.swift,\ AppBackupService.swift,\ AppCard.swift,\ AppCardComponents.swift,\ AppCloudSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/AIContentEnricher.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AIPulseIndicator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/AISynthesisService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AIWorkflowStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AccessibilityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/ActivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AdaptiveSidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppAccessibilityView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppBackupService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCardComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/AppCloudSyncService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/AIContentEnricher.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AIPulseIndicator.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/AISynthesisService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AIWorkflowStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AccessibilityService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/ActivityService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AdaptiveSidebarView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppAccessibilityView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppBackupService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCard.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCardComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/AppCloudSyncService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ RelatedPageDropDelegate.swift,\ SQLiteStore.swift,\ SchemaService.swift,\ SearchDiagnosticInfo.swift,\ SearchStore.swift,\ SearchView.swift,\ SecurityManager.swift,\ SecurityReinforcement.swift,\ ServiceContainer.swift,\ SettingsAboutView.swift,\ SettingsComponents.swift,\ SettingsStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SQLiteStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/SchemaService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/SearchDiagnosticInfo.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SearchStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/SearchView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityReinforcement.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ServiceContainer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsAboutView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SettingsComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SettingsStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SQLiteStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/SchemaService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/SearchDiagnosticInfo.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SearchStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/SearchView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityReinforcement.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ServiceContainer.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsAboutView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SettingsComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SettingsStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ SynthesisProcessor.swift,\ SynthesisStore.swift,\ SynthesisView.swift,\ SystemStatsView.swift,\ TagCapsule.swift,\ TagCloudView.swift,\ TaskCenter.swift,\ TaskCenterView.swift,\ TextChunkerProcessor.swift,\ ThemeManager.swift,\ TooltipManager.swift,\ UINavigationController+PopGesture.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/SynthesisProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SynthesisStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SystemStatsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/TagCapsule.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/TagCloudView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/TaskCenter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/TaskCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/TextChunkerProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ThemeManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/TooltipManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/SynthesisProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SynthesisStore.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SystemStatsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/TagCapsule.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/TagCloudView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/TaskCenter.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/TaskCenterView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/TextChunkerProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ThemeManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/TooltipManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ WelcomeView.swift,\ WidgetAndWatchViews.swift,\ WorkflowService.swift,\ XlsxStringsProcessor.swift,\ ZhiYuApp.swift,\ ZipUtility.swift,\ iCloudSyncComponents.swift,\ iCloudSyncCoordinator.swift,\ iCloudSyncManager.swift,\ iCloudSyncView.swift,\ GeneratedAssetSymbols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/WelcomeView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WorkflowService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/XlsxStringsProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ZipUtility.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/iCloudSyncComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncCoordinator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/iCloudSyncView.swift /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/WelcomeView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WorkflowService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/XlsxStringsProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ZipUtility.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/iCloudSyncComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncCoordinator.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncManager.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/iCloudSyncView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-maccatalyst/ZhiYuMac.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ LogView.swift,\ Logger.swift,\ MCSessionDelegateImpl.swift,\ MarkdownEditorView.swift,\ MarkdownProcessor.swift,\ MarkdownRendererView.swift,\ MarkdownTextView.swift,\ MedalComponents.swift,\ MedalService.swift,\ MedalWallView.swift,\ MermaidWebView.swift,\ ModelColorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LogView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/Logger.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MCSessionDelegateImpl.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownEditorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownRendererView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Medals/MedalComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MedalService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/MedalWallView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MermaidWebView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ModelColorView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LogView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/Logger.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MCSessionDelegateImpl.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownEditorView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownRendererView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Medals/MedalComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MedalService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/MedalWallView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MermaidWebView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ModelColorView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ LLMResponseProcessor.swift,\ LLMService.swift,\ LLMServiceProtocol.swift,\ LLMSettingsView.swift,\ LinkService.swift,\ LintIssue.swift,\ LintService.swift,\ LintView.swift,\ LocalAnalyticsService.swift,\ Localized.swift,\ LockOverlayView.swift,\ LogAction.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/LLMResponseProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/LLMServiceProtocol.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/LLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LinkService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LintIssue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/LintService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LintView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/LocalAnalyticsService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Localized.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/LockOverlayView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LogAction.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/LLMResponseProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/LLMServiceProtocol.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/LLMSettingsView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LinkService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LintIssue.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/LintService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LintView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/LocalAnalyticsService.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Localized.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/LockOverlayView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LogAction.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal arm64 Compiling\ PDFReaderView.swift,\ PPTXProcessor.swift,\ PageDetailHeader.swift,\ PageDetailView.swift,\ PageDetailViewModel.swift,\ PageHistoryView.swift,\ PageSchema.swift,\ PageType+UI.swift,\ PageType.swift,\ PencilManager.swift,\ PerformanceBenchmarker.swift,\ PerformanceDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/PDFReaderView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PPTXProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PageDetailHeader.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/PageDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/PageDetailViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/PageHistoryView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageSchema.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/PageType+UI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageType.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PencilManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/PerformanceBenchmarker.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PerformanceDashboardView.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ ModuleRegistrar.swift,\ NavigationView.swift,\ OCRProcessor.swift,\ OCRScanComponents.swift,\ OCRScanView.swift,\ OnDeviceComponents.swift,\ OnDeviceLLMService.swift,\ OnDeviceLLMSettingsView.swift,\ OnboardingOverlay.swift,\ OnboardingService.swift,\ PDFComponents.swift,\ PDFProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+	SwiftCompile normal arm64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift (in target 'ZhiYuMac' from project 'ZhiYu')
+	Building project ZhiYu with scheme ZhiYuMac
+(3 failures)

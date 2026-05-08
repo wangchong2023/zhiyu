@@ -66,13 +66,9 @@ final class AppRouter {
     var sidebarSelection: SidebarSelection? = nil
     
     /// 当前主 Tab (通过 UserDefaults 持久化，防止后台切换后状态丢失)
-    var selectedTab: AppTab {
-        get {
-            let raw = UserDefaults.standard.string(forKey: "app_selected_tab") ?? AppTab.knowledge.rawValue
-            return AppTab(rawValue: raw) ?? .knowledge
-        }
-        set {
-            UserDefaults.standard.set(newValue.rawValue, forKey: "app_selected_tab")
+    var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: "app_selected_tab") ?? "") ?? .knowledge {
+        didSet {
+            UserDefaults.standard.set(selectedTab.rawValue, forKey: "app_selected_tab")
         }
     }
     

@@ -413,8 +413,8 @@ extension AppStore {
 
     /// 批量清理选中的标签集合。
     func bulkDeleteTags(_ tags: Set<String>) {
-        sqliteStore.performBatchWrite { [self] _ in
-            for tag in tags { self.sqliteStore.deleteTag(tag) }
+        sqliteStore.performBatchWrite { db in
+            for tag in tags { try self.sqliteStore.internalDeleteTag(tag, in: db) }
         }
     }
 

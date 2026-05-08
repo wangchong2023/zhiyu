@@ -271,27 +271,27 @@ final class MarkdownProcessorEdgeCaseTests: XCTestCase {
         let content = "This links to [[Page With Spaces]]"
         let segments = parser.parseInlineSegments(content)
 
-        let wikilinks = segments.filter { $0.type == .applink }
-        XCTAssertEqual(wikilinks.count, 1)
-        XCTAssertEqual(wikilinks.first?.content, "Page With Spaces")
+        let pageLinks = segments.filter { $0.type == .applink }
+        XCTAssertEqual(pageLinks.count, 1)
+        XCTAssertEqual(pageLinks.first?.content, "Page With Spaces")
     }
 
     func testParsePageLinkWithChinese() {
         let content = "链接到 [[中文页面名称]]"
         let segments = parser.parseInlineSegments(content)
 
-        let wikilinks = segments.filter { $0.type == .applink }
-        XCTAssertEqual(wikilinks.count, 1)
-        XCTAssertEqual(wikilinks.first?.content, "中文页面名称")
+        let pageLinks = segments.filter { $0.type == .applink }
+        XCTAssertEqual(pageLinks.count, 1)
+        XCTAssertEqual(pageLinks.first?.content, "中文页面名称")
     }
 
     func testParsePageLinkEmpty() {
         let content = "Text with [[]] empty link"
         let segments = parser.parseInlineSegments(content)
 
-        // Empty brackets should not be parsed as wikilink (regex requires non-empty)
-        let wikilinks = segments.filter { $0.type == .applink }
-        XCTAssertTrue(wikilinks.isEmpty || wikilinks.allSatisfy { !$0.content.isEmpty })
+        // Empty brackets should not be parsed as pageLink (regex requires non-empty)
+        let pageLinks = segments.filter { $0.type == .applink }
+        XCTAssertTrue(pageLinks.isEmpty || pageLinks.allSatisfy { !$0.content.isEmpty })
     }
 
     func testParseBoldAcrossMultipleWords() {
@@ -482,9 +482,9 @@ final class LintServiceEdgeCasesTests: XCTestCase {
         XCTAssertEqual(result.edges.count, 2, "Circular links should produce 2 edges")
     }
 
-    func testEmptyWikiLintResult() async {
+    func testEmptyPageLintResult() async {
         let issues = await lintService.runLint(pages: [], linkService: linkService)
-        XCTAssertTrue(issues.isEmpty, "Empty wiki should produce no lint issues")
+        XCTAssertTrue(issues.isEmpty, "Empty page should produce no lint issues")
     }
 
     func testDuplicatePageTitlesDetected() async {

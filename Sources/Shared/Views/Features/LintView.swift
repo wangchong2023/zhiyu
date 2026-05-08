@@ -115,10 +115,6 @@ struct LintViewContent: View {
                     }
                     .font(.subheadline.bold())
                     .foregroundStyle(buttonGradient)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(buttonGradient.opacity(0.12))
-                    .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
                 .disabled(isRunning || aiStore.isScanningAI)

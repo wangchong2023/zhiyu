@@ -137,6 +137,23 @@
         }
       }
     },
+    "misc.confirmReset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to reset?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认重置？此操作不可撤销。"
+          }
+        }
+      }
+    },
     "misc.clearAll": {
       "localizations": {
         "en": {

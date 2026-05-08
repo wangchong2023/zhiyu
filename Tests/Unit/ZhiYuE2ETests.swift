@@ -12,7 +12,7 @@ import XCTest
 import MultipeerConnectivity
 @testable import ZhiYu
 
-// MARK: - E2E: Complete Wiki Page Workflow Tests
+// MARK: - E2E: Complete Knowledge Page Workflow Tests
 /// 覆盖从创建→编辑→链接→健康检查→删除的完整页面生命周期
 @MainActor
 final class KnowledgePageWorkflowTests: XCTestCase {
@@ -198,7 +198,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
 
     // MARK: - Health Check Integration
 
-    func testHealthCheckNoIssuesForHealthyWiki() async {
+    func testHealthCheckNoIssuesForHealthyKnowledge() async {
         var page1 = KnowledgePage(title: "Healthy A", type: .entity, content: String(repeating: "Healthy content here. ", count: 10))
         var page2 = KnowledgePage(title: "Healthy B", type: .concept, content: "Links to [[Healthy A]]. " + String(repeating: "More healthy content. ", count: 10))
 
@@ -208,7 +208,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         let errorCount = issues.filter { $0.severity == .error }.count
 
         // No broken links, no orphans (both pages link to each other)
-        XCTAssertEqual(errorCount, 0, "Healthy wiki should produce no errors")
+        XCTAssertEqual(errorCount, 0, "Healthy knowledge should produce no errors")
     }
 
     func testStubPagesFlaggedByHealthCheck() async {
@@ -707,12 +707,12 @@ final class MarkdownRenderingTests: XCTestCase {
         let boldSegments = segments.filter { $0.type == .bold }
         let italicSegments = segments.filter { $0.type == .italic }
         let codeSegments = segments.filter { $0.type == .code }
-        let wikilinkSegments = segments.filter { $0.type == .applink }
+        let pageLinkSegments = segments.filter { $0.type == .applink }
 
         XCTAssertEqual(boldSegments.first?.content, "bold")
         XCTAssertEqual(italicSegments.first?.content, "italic")
         XCTAssertEqual(codeSegments.first?.content, "code")
-        XCTAssertEqual(wikilinkSegments.first?.content, "PageLink")
+        XCTAssertEqual(pageLinkSegments.first?.content, "PageLink")
     }
 
     func testComplexNestedFormatting() {
@@ -753,7 +753,7 @@ final class LogAuditTrailTests: XCTestCase {
         logService.addLog(action: .create, target: "Test Page", details: "Created new page")
         logService.addLog(action: .update, target: "Test Page", details: "Updated content")
         logService.addLog(action: .delete, target: "Test Page", details: "Deleted page")
-        logService.addLog(action: .lint, target: "Wiki", details: "Ran full lint: 3 issues found")
+        logService.addLog(action: .lint, target: "Knowledge", details: "Ran full lint: 3 issues found")
 
         XCTAssertEqual(logService.logEntries.count, 4)
 

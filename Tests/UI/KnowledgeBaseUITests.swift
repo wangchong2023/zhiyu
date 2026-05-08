@@ -60,17 +60,17 @@ class KnowledgeBaseUITests: XCTestCase {
         }
     }
 
-    /// 导航到 Wiki Tab
-    func navigateToWikiTab() async async {
-        if !app.tabBars.buttons["Wiki"].exists {
+    /// 导航到 Knowledge Tab
+    func navigateToKnowledgeTab() async {
+        if !app.tabBars.buttons["Knowledge"].exists {
             app.tabBars.buttons.element(boundBy: 0).tap()
         }
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
 
     /// 导航到设置 Tab
-    func navigateToSettingsTab() async async {
+    func navigateToSettingsTab() async {
         app.tabBars.buttons["Settings"].tap()
         try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
@@ -81,7 +81,7 @@ final class TabNavigationTests: KnowledgeBaseUITests {
 
     /// 测试全部 5 个 Tab 都能被点击
     func testAllFiveTabsAreTappable() async {
-        let tabs = ["Wiki", "Graph", "Search", "Ingest", "Settings"]
+        let tabs = ["Knowledge", "Graph", "Search", "Ingest", "Settings"]
         for tab in tabs {
             XCTAssertTrue(app.tabBars.buttons[tab].exists, "Tab '\(tab)' 不存在")
             app.tabBars.buttons[tab].tap()
@@ -90,12 +90,12 @@ final class TabNavigationTests: KnowledgeBaseUITests {
     }
 }
 
-// MARK: - Wiki Tab Tests
-final class WikiTabTests: KnowledgeBaseUITests {
+// MARK: - Knowledge Tab Tests
+final class KnowledgeTabTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
     }
 
     // MARK: Sidebar Tests
@@ -143,7 +143,7 @@ final class PageDetailTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         // 尝试创建一个测试页面并进入
         await createTestPage()
     }
@@ -540,9 +540,9 @@ final class ChatTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        app.tabBars.buttons["Wiki"].tap()
+        app.tabBars.buttons["Knowledge"].tap()
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-        // 从 Wiki tab 导航到 Chat
+        // 从 Knowledge tab 导航到 Chat
         let chatNav = app.cells.matching(identifier: "AI-Chat").firstMatch
         if chatNav.exists {
             safeTap(chatNav)
@@ -601,8 +601,8 @@ final class LintTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        // 健康检查现在在 Wiki Tab 侧边栏
-        await navigateToWikiTab()
+        // 健康检查现在在 Knowledge Tab 侧边栏
+        await navigateToKnowledgeTab()
         let healthButton = app.buttons.matching(identifier: "healthCheck").firstMatch
         if healthButton.exists && healthButton.isHittable {
             safeTap(healthButton)
@@ -686,7 +686,7 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         // 创建并进入编辑页面
         await createAndEditPage()
     }
@@ -790,8 +790,8 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
         }
     }
 
-    func testToolbarWikilinkButton() async {
-        let kmlinkButton = app.buttons["Wiki链接"]
+    func testToolbarPageLinkButton() async {
+        let kmlinkButton = app.buttons["知识链接"]
         if kmlinkButton.exists {
             safeTap(kmlinkButton)
             try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
@@ -830,7 +830,7 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
 final class CollaborationTests: KnowledgeBaseUITests {
 
     func testCollabToolExists() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         
         // Navigate to sidebar and find collaboration tool button
         let collabButton = app.buttons.matching(identifier: "collab").firstMatch
@@ -842,7 +842,7 @@ final class CollaborationTests: KnowledgeBaseUITests {
     }
 
     func testHostSessionButton() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let hostBtn = app.buttons["Host"]
         if hostBtn.exists && hostBtn.isEnabled {
             safeTap(hostBtn)
@@ -851,7 +851,7 @@ final class CollaborationTests: KnowledgeBaseUITests {
     }
 
     func testJoinRoomButton() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let joinBtn = app.buttons["Join"]
         if joinBtn.exists && joinBtn.isEnabled {
             safeTap(joinBtn)
@@ -881,7 +881,7 @@ final class BackupTests: KnowledgeBaseUITests {
 final class TagCloudTests: KnowledgeBaseUITests {
 
     func testTagCloudToolExists() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let tagCloudButton = app.buttons.matching(identifier: "tagCloud").firstMatch
         if tagCloudButton.isHittable {
             safeTap(tagCloudButton)
@@ -896,7 +896,7 @@ final class TagCloudTests: KnowledgeBaseUITests {
 final class IndexViewTests: KnowledgeBaseUITests {
 
     func testIndexViewNavigation() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let indexButton = app.buttons.matching(identifier: "masterIndex").firstMatch
         if indexButton.isHittable {
             safeTap(indexButton)
@@ -912,7 +912,7 @@ final class IndexViewTests: KnowledgeBaseUITests {
 final class OperationLogTests: KnowledgeBaseUITests {
 
     func testOperationLogExists() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let logButton = app.buttons.matching(identifier: "operationLog").firstMatch
         if logButton.isHittable {
             safeTap(logButton)
@@ -927,7 +927,7 @@ final class OperationLogTests: KnowledgeBaseUITests {
 final class HealthCheckIntegrationTests: KnowledgeBaseUITests {
 
     func testRunHealthCheck() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
         let healthButton = app.buttons.matching(identifier: "healthCheck").firstMatch
         if healthButton.isHittable {
             safeTap(healthButton)
@@ -947,7 +947,7 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
 
     /// Full flow: create page → edit → add link → delete → verify
     func testFullPageLifecycle() async {
-        await navigateToWikiTab()
+        await navigateToKnowledgeTab()
 
         // Step 1: Create a new page via the + button
         let createButton = app.buttons.matching(

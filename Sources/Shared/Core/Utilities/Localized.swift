@@ -194,12 +194,26 @@ struct L10n {
         static var privacyMode: String { tr("privacyMode") }
         static var security: String { tr("section.security") }
         static var accentColor: String { tr("accentColor") }
+        static var llmSettings: String { tr("llmConfig") }
+        static var onDeviceLLM: String { tr("onDeviceLLM") }
+        static var promptLab: String { tr("promptWorkshop") }
+        static var iCloudSync: String { tr("iCloudSync") }
+        static var backupRestore: String { L10n.Backup.title }
+        static var exportAllMarkdown: String { tr("exportMarkdown") }
+        static var resetData: String { tr("reset") }
+        static var resetConfirmationTitle: String { tr("resetOnboarding.title") }
+        static var resetConfirmationMessage: String { tr("resetOnboarding.message") }
+        static var privacyModeDesc: String { tr("privacyMode.desc") }
+        static var biometricProtection: String { tr("biometricProtection") }
+        static var operationLog: String { tr("operationLog") }
 
         struct Section {
+            static var appearance: String { Settings.tr("appearance") }
             static var ai: String { Settings.tr("section.ai") }
             static var data: String { Settings.tr("section.data") }
             static var security: String { Settings.tr("section.security") }
             static var danger: String { Settings.tr("section.danger") }
+            static var developer: String { Settings.tr("section.developer") }
         }
     }
 
@@ -240,13 +254,13 @@ struct L10n {
     /// 备份与迁移模块。
     struct Backup {
         static func tr(_ key: String) -> String { Localized.tr("backup.\(key)", table: "Backup") }
+        static var title: String { tr("title") }
         static func trf(_ key: String, _ args: CVarArg...) -> String {
             let template = tr(key)
             return String(format: template, arguments: args)
         }
 
         /// 页面名称：数据备份
-        static var title: String { tr("title") }
     }
 
     /// 导入模块：处理文档上传、OCR、网页抓取等入库流程。
@@ -374,6 +388,8 @@ struct L10n {
                 let template = tr(key)
                 return String(format: template, arguments: args)
             }
+            static var folder: String { L10n.Settings.tr("importFromFolder") }
+            static var externalVault: String { tr("externalVault") }
         }
     }
 

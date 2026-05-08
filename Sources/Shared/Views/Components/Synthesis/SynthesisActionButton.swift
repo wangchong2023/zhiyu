@@ -76,7 +76,7 @@ struct SynthesisActionButton: View {
                 .padding(.vertical, AppUI.standardPadding)
                 .appMetricCardStyle(color: type.formatColor, cornerRadius: AppUI.standardRadius)
             }
-            .buttonStyle(SynthesisButtonStyle())
+            .buttonStyle(AppCardButtonStyle())
             .disabled(state == .generating || isLimitReached)
             .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: state)
             .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: isLimitReached)
@@ -91,12 +91,3 @@ struct SynthesisActionButton: View {
     }
 }
 
-struct SynthesisButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .contentShape(Rectangle())
-            .scaleEffect(configuration.isPressed ? AppUI.Animation.pressScale : 1.0)
-            .opacity(configuration.isPressed ? AppUI.pressedOpacity : AppUI.fullOpacity)
-            .animation(.easeInOut(duration: AppUI.Animation.standardDuration / 2), value: configuration.isPressed)
-    }
-}

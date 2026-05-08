@@ -59,7 +59,7 @@ struct OCRImagePickerArea: View {
                     .overlay(
                         VStack(spacing: AppUI.medium) { // 12
                             Image(systemName: "text.viewfinder")
-                                .font(.system(size: AppUI.Metrics.largeIconSize + AppUI.small)) // 40
+                                .font(.system(size: AppUI.largeIconSize + AppUI.small)) // 40
                                 .foregroundStyle(.appSecondary)
                             Text(Localized.tr("ocr.selectImage"))
                                 .font(.subheadline)
@@ -279,7 +279,6 @@ struct TagPill: View {
     var onRemove: () -> Void = {}
 
     var body: some View {
-    var body: some View {
         HStack(spacing: AppUI.atomic * 2) { // 4
             Text(tag)
                 .font(.caption2)
@@ -294,6 +293,5 @@ struct TagPill: View {
         .padding(.horizontal, AppUI.small) // 8
         .padding(.vertical, AppUI.atomic * 2) // 4
         .background(Color.appAccent.opacity(AppUI.glassOpacity), in: Capsule()) // 0.1
-    }
     }
 }
