@@ -680,6 +680,13 @@
           }
         }
       }
+    },
+    "chat.aiAssistantName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "ZhiYu AI" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "智宇 AI" } }
+      }
     }
   },
   "version": "1.0"

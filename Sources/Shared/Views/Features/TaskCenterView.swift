@@ -17,17 +17,17 @@ import SwiftUI
 struct TaskCenterView: View {
     @ObservedObject var taskCenter = TaskCenter.shared
     @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(AppRouter.self) var router
     @State private var showClearConfirm = false
     
     var body: some View {
-        ZStack {
-            Color.appBackground.ignoresSafeArea()
-            
+        Group {
             if taskCenter.tasks.isEmpty {
                 ScrollView {
                     VStack(spacing: AppUI.loosePadding) {
                         statusDashboard
+                            .padding(.horizontal, AppUI.Task.dashboardPadding)
                         emptyState
                             .padding(.top, AppUI.loosePadding)
                     }
@@ -36,8 +36,6 @@ struct TaskCenterView: View {
                 List {
                     Section {
                         statusDashboard
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
                             .padding(.vertical, AppUI.tightPadding)
                     } header: {
                         Text(L10n.AI.Task.tr("categories"))
@@ -121,12 +119,12 @@ struct TaskCenterView: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            }
+        }
         .navigationTitle(L10n.AI.Task.centerTitle)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
-        .background(Color.appBackground)
+        .background(themeManager.pageBackground())
         .onAppear {
             taskCenter.markAllAsRead()
         }
@@ -153,7 +151,6 @@ struct TaskCenterView: View {
             summaryCard(type: .aiScan, color: .orange)
             summaryCard(type: .synthesis, color: .purple)
         }
-        .padding(.horizontal, AppUI.Task.dashboardPadding)
     }
     
     private func taskColor(for type: TaskType) -> Color {
@@ -338,7 +335,7 @@ private struct TaskRow: View {
             
             VStack(alignment: .trailing, spacing: AppUI.Metrics.progressHeight) {
                 statusText
-                Text(task.startTime.formatted(.dateTime.hour().minute().second()))
+                Text(task.startTime.formatted(.dateTime.hour().minute().second().locale(Localized.currentLocale)))
                     .font(.system(size: AppUI.microFontSize - AppUI.atomic * 2, design: .monospaced)) // 8
                     .foregroundStyle(.appSecondary.opacity(AppUI.glassOpacity * 2))
                     .fixedSize()

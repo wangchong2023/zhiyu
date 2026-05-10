@@ -172,7 +172,7 @@ struct QuizView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
     }
     
     private func selectOption(_ index: Int) {

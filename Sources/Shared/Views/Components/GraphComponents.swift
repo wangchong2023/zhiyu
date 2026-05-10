@@ -251,7 +251,7 @@ struct GraphZoomControls: View {
             }
             .accessibilityIdentifier("zoom-out")
 
-            Divider().frame(width: AppUI.borderWidth, height: AppUI.iconLarge).background(Color.appBorder)
+
 
             Button(action: {
                 withAnimation { scale = min(3.0, scale + 0.2) }
@@ -498,7 +498,7 @@ struct GraphInsightsPanel: View {
                 }
                 .padding()
             }
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         }
     
     private func insightSection(id: String, icon: String, title: String, count: Int, description: String, color: Color) -> some View {

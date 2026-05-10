@@ -303,17 +303,17 @@ final class KnowledgePageStore: Sendable {
         }
     }
 
-    /// 获取过去 30 天的每日 Token 统计
-    func fetchDailyTokenStats() throws -> [(date: String, total: Int)] {
+    /// 获取过去 30 天的每日 AI 资源统计 (Token 与 请求次数)
+    func fetchDailyAIStats() throws -> [(date: String, tokens: Int, requests: Int)] {
         try dbWriter.read { db in
             let rows = try Row.fetchAll(db, sql: """
-                SELECT strftime('%Y-%m-%d', created) as day, SUM(total_tokens) as total
+                SELECT strftime('%Y-%m-%d', created) as day, SUM(total_tokens) as tokens, COUNT(*) as requests
                 FROM token_usage
                 WHERE created >= date('now', '-30 days')
                 GROUP BY day
                 ORDER BY day ASC
             """)
-            return rows.map { ($0["day"], $0["total"]) }
+            return rows.map { ($0["day"], $0["tokens"], $0["requests"]) }
         }
     }
 
@@ -331,18 +331,31 @@ final class KnowledgePageStore: Sendable {
     }
 
     /// 获取存储空间分布统计 (基于类型)
-    func fetchStorageStats() throws -> (total: Int64, byType: [String: Int64], dbSize: Int64) {
+    /// 核心逻辑：优先使用物理 fileSize，若缺失则基于 content 长度进行估算 (UTF-16 字节 + 500B 元数据开销)
+    func fetchStorageStats() throws -> (total: Int64, byType: [String: (size: Int64, count: Int)], dbSize: Int64) {
         try dbWriter.read { db in
-            let total: Int64 = try Row.fetchOne(db, sql: "SELECT SUM(\(AppConstants.Storage.Columns.fileSize)) FROM \(AppConstants.Storage.Tables.pages)")?["SUM(\(AppConstants.Storage.Columns.fileSize))"] ?? 0
-            let rows = try Row.fetchAll(db, sql: "SELECT type, SUM(\(AppConstants.Storage.Columns.fileSize)) as size FROM \(AppConstants.Storage.Tables.pages) GROUP BY type")
-            var byType: [String: Int64] = [:]
+            // 1. 获取按类型的聚合统计
+            let rows = try Row.fetchAll(db, sql: """
+                SELECT 
+                    type, 
+                    COUNT(*) as count,
+                    SUM(COALESCE(\(AppConstants.Storage.Columns.fileSize), LENGTH(content) * 2 + 500)) as size
+                FROM \(AppConstants.Storage.Tables.pages) 
+                GROUP BY type
+            """)
+            
+            var byType: [String: (size: Int64, count: Int)] = [:]
+            var total: Int64 = 0
+            
             for row in rows {
                 let type: String = row["type"]
                 let size: Int64 = row["size"] ?? 0
-                byType[type] = size
+                let count: Int = row["count"]
+                byType[type] = (size, count)
+                total += size
             }
 
-            // 获取数据库物理文件大小 (通过 PRAGMA 避开 internal 属性访问限制)
+            // 2. 获取数据库物理文件大小
             let dbPathRow = try Row.fetchOne(db, sql: "PRAGMA database_list")
             let dbPath = dbPathRow?["file"] as? String ?? ""
             let dbSize = (try? FileManager.default.attributesOfItem(atPath: dbPath)[.size] as? Int64) ?? 0

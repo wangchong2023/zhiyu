@@ -13,6 +13,14 @@ extension Color {
     /// - Returns: 对应的 SwiftUI.Color，默认为 .gray
     static func fromModelColorName(_ name: String) -> Color {
         switch name {
+        // 语义化名称映射（对应 AppUI 知识分类颜色）
+        case "entity": return .appEntity
+        case "concept": return .appConcept
+        case "source": return .appSource
+        case "map": return .appMap
+        case "comparison": return .appComparison
+        
+        // 基础颜色映射
         case "green": return .green
         case "blue": return .blue
         case "red": return .red

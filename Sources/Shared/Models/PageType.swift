@@ -35,11 +35,11 @@ enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvert
     
     var colorName: String {
         switch self {
-        case .entity: return "blue"
-        case .concept: return "purple"
-        case .source: return "green"
-        case .comparison: return "orange"
-        case .map: return "red"
+        case .entity: return "entity"
+        case .concept: return "concept"
+        case .source: return "source"
+        case .comparison: return "comparison"
+        case .map: return "map"
         case .raw: return "gray"
         }
     }

@@ -13,6 +13,7 @@ import SwiftUI
 
 /// 插件中心 (Stub: 为未来生态预留位置)
 struct PluginCenterView: View {
+    @Environment(AppRouter.self) var router
     @StateObject private var registry = PluginRegistry.shared
     @StateObject private var marketService = PluginMarketService()
     
@@ -23,8 +24,6 @@ struct PluginCenterView: View {
     @State private var showFileImporter = false
     
     var body: some View {
-        ZStack {
-            Color.appBackground.ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // 1. 高级搜索与筛选头部
@@ -47,15 +46,16 @@ struct PluginCenterView: View {
                     }
                 }
             }
-        }
-        .navigationTitle(Localized.tr("plugin.center"))
+                .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+                .id(router.languageForceUpdate)
+                .navigationTitle(Localized.tr("plugin.center"))
 #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitleDisplayMode(.inline)
 #endif
-        .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
-            // 处理文件选择结果
-        }
-        .confirmationDialog(
+                .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
+                    // 处理文件选择结果
+                }
+                .confirmationDialog(
             Localized.tr("plugin.safeMode.warning.title"),
             isPresented: $showSafeModeWarning,
             titleVisibility: .visible
@@ -86,59 +86,45 @@ struct PluginCenterView: View {
             .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
             .overlay(RoundedRectangle(cornerRadius: AppUI.cardRadius).stroke(Color.appBorder.opacity(AppUI.glassOpacity * 3), lineWidth: AppUI.borderWidth / 2))
             
-            // 安全模式与加载按钮：对齐全局 Action 规范
-            HStack(spacing: AppUI.standardPadding) {
-                // 安全模式 Chip
-                HStack(spacing: AppUI.tiny) {
-                    Text(Localized.tr("plugin.safeMode"))
-                        .font(.system(size: AppUI.captionFontSize, weight: .semibold))
-                        .foregroundStyle(.appSecondary)
+            // 安全模式与加载按钮：对齐全局 Action 规范（移除冗余背景，采用轻量化风格）
+            HStack(spacing: AppUI.wide) {
+                // 安全模式切换
+                HStack(spacing: AppUI.small) {
+                    Label(Localized.tr("plugin.safeMode"), systemImage: isSafeModeOn ? "shield.fill" : "shield.slash")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(isSafeModeOn ? .green : .orange)
+                    
                     Toggle("", isOn: Binding(
                         get: { isSafeModeOn },
                         set: { newValue in
                             if !newValue {
-                                // 尝试关闭时弹出警告
                                 showSafeModeWarning = true
                             } else {
                                 isSafeModeOn = true
                             }
                         }
                     ))
-                        .labelsHidden()
-                        .controlSize(.mini)
-                        .tint(.appAccent)
+                    .labelsHidden()
+                    .controlSize(.mini)
+                    .tint(.appAccent)
                 }
-                .padding(.horizontal, AppUI.medium)
-                .padding(.vertical, AppUI.tiny)
-                .background(Color.appSecondary.opacity(0.1))
-                .clipShape(Capsule())
+                
+                Spacer()
                 
                 // 加载本地插件 Action
                 Button(action: { 
                     HapticFeedback.shared.trigger(.selection)
                     showFileImporter = true 
                 }) {
-                    HStack(spacing: AppUI.tiny) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: AppUI.Action.iconSize))
-                        Text(Localized.tr("plugin.local.mount"))
-                            .font(.system(size: AppUI.subheadlineFontSize, weight: .bold))
-                    }
-                    .padding(.horizontal, AppUI.standardPadding)
-                    .frame(height: AppUI.Action.compactButtonHeight)
-                    .background(Color.appAccent)
-                    .foregroundStyle(.white)
-                    .clipShape(Capsule())
-                    .shadow(color: Color.appAccent.opacity(0.2), radius: 8, x: 0, y: 4)
+                    Label(Localized.tr("plugin.local.mount"), systemImage: "plus.circle")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appAccent)
                 }
-                .buttonStyle(.plain)
-                
-                Spacer()
             }
             .padding(.top, AppUI.tiny)
         }
         .padding()
-        .background(Color.appBackground)
+        .background(Color.clear)
     }
     
     private var myPluginsSection: some View {

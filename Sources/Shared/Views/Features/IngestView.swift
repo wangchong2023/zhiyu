@@ -56,6 +56,7 @@ struct IngestView: View {
     @Environment(IngestStore.self) var ingestStore
     @Environment(AppRouter.self) var router
     @EnvironmentObject var llmService: LLMService
+    @EnvironmentObject var themeManager: ThemeManager
     @Binding var selectedTab: AppTab
 
     @State private var newTitle = ""
@@ -93,8 +94,7 @@ struct IngestView: View {
 
     var body: some View {
         ZStack {
-            // 背景层
-            AppUI.Background.meshGradient()
+            themeManager.pageBackground()
                 .ignoresSafeArea()
             
             ScrollView {
@@ -129,38 +129,41 @@ struct IngestView: View {
         } message: {
             Text(errorMessage ?? "")
         }
-        .sheet(isPresented: $showIconPicker) {
-            IconPickerView(selectedIcon: $newCustomIcon)
-        }
         .fileImporter(
             isPresented: $showFileImporter,
             allowedContentTypes: {
-                var types: [UTType] = [.pdf, .plainText, .text]
-                if let doc = UTType("com.microsoft.word.doc") { types.append(doc) }
-                if let docx = UTType("org.openxmlformats.wordprocessingml.document") { types.append(docx) }
-                if let xls = UTType("com.microsoft.excel.xls") { types.append(xls) }
-                if let xlsx = UTType("org.openxmlformats.spreadsheetml.sheet") { types.append(xlsx) }
-                if let md = UTType("net.daringfireball.markdown") { types.append(md) }
+                var types: [UTType] = [.pdf, .text, .plainText]
+                if let md = UTType("net.daringfireball.markdown") {
+                    types.append(md)
+                }
                 return types
             }(),
             allowsMultipleSelection: true
         ) { result in
             handleFileImport(result)
         }
-        .sheet(isPresented: $showVoiceNote) {
+        .sheet(isPresented: $showVoiceNote, onDismiss: {
+            if !newTitle.isEmpty {
+                showManualForm = true
+            }
+        }) {
             VoiceNoteView(onFinish: { title, content in
                 self.newTitle = title
                 self.newContent = content
                 self.manualFormTitle = Localized.tr("speech.title")
-                self.showManualForm = true
+                // Remove immediate showManualForm = true to avoid sheet conflict
             })
         }
-        .sheet(isPresented: $showOCRScan) {
+        .sheet(isPresented: $showOCRScan, onDismiss: {
+            if !newTitle.isEmpty {
+                showManualForm = true
+            }
+        }) {
             OCRScanView(onFinish: { title, content in
                 self.newTitle = title
                 self.newContent = content
                 self.manualFormTitle = Localized.tr("ocr.title")
-                self.showManualForm = true
+                // Remove immediate showManualForm = true
             })
         }
         .sheet(isPresented: $showURLImport) {
@@ -175,6 +178,8 @@ struct IngestView: View {
         .onReceive(NotificationCenter.default.publisher(for: .importFromClipboard)) { _ in
             performClipboardImport()
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .background(AppUI.Background.pageBackground(accentColor: .appSource))
     }
 
     @ViewBuilder
@@ -278,18 +283,26 @@ struct IngestView: View {
             router.navigateToTool(.taskCenter)
         }) {
             HStack {
-                Label(L10n.Ingest.tr("activeTasks"), systemImage: "clock.arrow.circlepath")
+                Image(systemName: "clock.arrow.circlepath")
                     .font(.subheadline.bold())
-                Spacer()
-                Text("\(TaskCenter.shared.tasks.filter({ $0.type == .ingest && isRunning(status: $0.status) }).count) Running")
-                    .font(.caption)
                     .foregroundStyle(.appAccent)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    let runningCount = TaskCenter.shared.tasks.filter({ $0.type == .ingest && isRunning(status: $0.status) }).count
+                    Text(L10n.Ingest.trf("activeTasks", runningCount))
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.appText)
+                    Text(L10n.Ingest.tr("recentActivity"))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.appSecondary)
+                }
+                Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
             .padding(AppUI.standardPadding)
-            .background(Color.appCard)
+            .background(Color.appCard.opacity(0.8))
             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
         }
         .buttonStyle(.plain)
@@ -400,44 +413,98 @@ struct IngestView: View {
     private var manualFormSheet: some View {
         NavigationStack {
             Form {
-                Section(header: Text(L10n.Ingest.tr("basicInfo"))) {
-                    TextField(L10n.Ingest.tr("pageTitle"), text: $newTitle)
+                Section(header: Text(L10n.Creation.tr("basicInfo"))) {
+                    TextField(L10n.Creation.tr("pageTitle"), text: $newTitle)
+                        .font(.headline)
                     
-                    Picker(L10n.Ingest.tr("pageType"), selection: $newType) {
-                        ForEach(PageType.allCases, id: \.self) { type in
-                            Label(type.displayName, systemImage: type.icon)
-                                .tag(type)
+                    // Horizontal Type Selector (Faster than Picker)
+                    VStack(alignment: .leading, spacing: AppUI.medium) {
+                        Text(L10n.Creation.tr("pageType"))
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.appSecondary)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: AppUI.small) {
+                                ForEach(PageType.allCases, id: \.self) { type in
+                                    Button(action: {
+                                        HapticFeedback.shared.trigger(.selection)
+                                        withAnimation(.spring(response: 0.3)) {
+                                            newType = type
+                                        }
+                                    }) {
+                                        HStack(spacing: 6) {
+                                            Image(systemName: type.icon)
+                                            Text(type.displayName)
+                                        }
+                                        .font(.subheadline.weight(newType == type ? .bold : .medium))
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(newType == type ? Color.fromModelColorName(type.colorName).opacity(0.2) : Color.appCard.opacity(0.8))
+                                        .foregroundStyle(newType == type ? Color.fromModelColorName(type.colorName) : .appSecondary)
+                                        .clipShape(Capsule())
+                                        .overlay(
+                                            Capsule()
+                                                .stroke(newType == type ? Color.fromModelColorName(type.colorName).opacity(0.3) : Color.appBorder, lineWidth: 1)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, 1)
                         }
                     }
+                    .padding(.vertical, AppUI.tiny)
                     
-                    Button(action: { showIconPicker = true }) {
+                    // Custom Icon Selection
+                    NavigationLink(destination: IconPickerView(selectedIcon: $newCustomIcon)) {
                         HStack {
-                            Text(L10n.Ingest.tr("customIcon"))
+                            Label(L10n.Creation.tr("customIcon"), systemImage: "star.square.fill")
                             Spacer()
                             if let icon = newCustomIcon {
                                 Image(systemName: icon)
+                                    .font(.title3)
+                                    .foregroundStyle(.appAccent)
+                                    .padding(AppUI.tiny)
+                                    .background(Color.appAccent.opacity(0.1))
+                                    .clipShape(Circle())
                             } else {
                                 Text(L10n.Common.tr("none"))
                                     .foregroundColor(.appSecondary)
+                                    .font(.subheadline)
                             }
                         }
                     }
+                    
+                    // Smart Ingest Entry (Directly below Custom Icon)
+                    VStack(alignment: .leading, spacing: AppUI.small) {
+                        HStack {
+                            Label(L10n.Ingest.tr("smartIngest"), systemImage: "sparkles")
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.appAccent)
+                            Spacer()
+                            Toggle("", isOn: $useSmartIngest)
+                                .labelsHidden()
+                                .tint(.appAccent)
+                        }
+                        
+                        if useSmartIngest {
+                            Text(L10n.Ingest.tr("smartIngestDesc"))
+                                .font(.system(size: AppUI.captionFontSize))
+                                .foregroundStyle(.appSecondary)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    .padding(.vertical, AppUI.tiny)
                 }
                 
-                Section(header: Text(L10n.Ingest.tr("content"))) {
+                Section(header: Text(L10n.Creation.tr("content"))) {
                     TextEditor(text: $newContent)
                         .frame(minHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
                 }
-                
-                Section {
-                    Toggle(L10n.Ingest.tr("smartIngest"), isOn: $useSmartIngest)
-                    if useSmartIngest {
-                        Text(L10n.Ingest.tr("smartIngestDesc"))
-                            .font(.caption)
-                            .foregroundColor(.appSecondary)
-                    }
-                }
             }
+            .scrollContentBackground(.hidden)
+            .background(themeManager.pageBackground())
             .navigationTitle(manualFormTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -539,13 +606,13 @@ struct SourceCardView: View {
             Spacer()
             
             HStack {
-                Text(page.created.formatted(.relative(presentation: .named)))
+                Text(page.created.formatted(.relative(presentation: .named).locale(Localized.currentLocale)))
                     .font(.system(size: AppUI.microFontSize))
                     .foregroundStyle(.appSecondary)
                 Spacer()
-                Text("\(page.wordCount)w")
-                    .font(.system(size: AppUI.microFontSize, weight: .bold))
-                    .foregroundStyle(.appAccent)
+                Text(L10n.Common.trf("wordCount", page.wordCount))
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundStyle(.appSecondary)
             }
         }
         .padding(AppUI.medium)
@@ -580,7 +647,7 @@ struct ActivityRow: View {
                         .font(.system(size: AppUI.subheadlineFontSize, weight: .medium))
                         .foregroundStyle(.appText)
                         .lineLimit(1)
-                    Text(task.startTime.formatted())
+                    Text(task.startTime.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
                         .font(.system(size: AppUI.captionFontSize))
                         .foregroundStyle(.appSecondary)
                 }

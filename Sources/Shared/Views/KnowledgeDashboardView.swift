@@ -14,6 +14,7 @@ import Charts
 struct KnowledgeDashboardView: View {
     @Environment(AppStore.self) var store
     @Environment(AppRouter.self) var router
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var statsTask: Task<Void, Never>? = nil
     @State private var tags: [(tag: String, count: Int)] = []
     @State private var showDensityInfo = false
@@ -22,17 +23,7 @@ struct KnowledgeDashboardView: View {
     
     var body: some View {
         ZStack {
-            // 背景层
-            AppUI.Background.meshGradient()
-                .ignoresSafeArea()
-            
-            // 顶部氛围光
-            VStack {
-                AppUI.Background.ambientGlow(color: .appAccent)
-                    .offset(y: -AppUI.Grid.largeSpacing * 3) // -150
-                Spacer()
-            }
-            .ignoresSafeArea()
+            themeManager.pageBackground()
             
             ScrollView {
                 VStack(alignment: .leading, spacing: AppUI.standardPadding) {
@@ -44,11 +35,12 @@ struct KnowledgeDashboardView: View {
                 .padding()
             }
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Dashboard.tr("title"))
         .onAppear {
-            updateTags()
             statsTask?.cancel()
             statsTask = Task {
+                updateTags()
                 await calculateStats()
                 refreshInsights()
             }
@@ -339,7 +331,7 @@ struct KnowledgeDashboardView: View {
     @Inject private var llm: LLMService
     
     private func refreshInsights() {
-        guard !isLoadingInsights else { return }
+        guard !isLoadingInsights, llm.isEnabled, !llm.apiKey.isEmpty else { return }
         isLoadingInsights = true
         
         Task {

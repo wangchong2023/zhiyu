@@ -32,6 +32,7 @@ struct LintViewContent: View {
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
     @Environment(AppRouter.self) var router
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) var dismiss // 新增：用于强制退出层级
     @State private var isRunning = false
     @State private var selectedTab = 0 // 0: 健康检查, 1: AI 建议
@@ -51,28 +52,35 @@ struct LintViewContent: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 选项卡切换
-            Picker("", selection: $selectedTab) {
-                Text(L10n.Lint.tr("title")).tag(0)
-                Text(L10n.Lint.tr("aiSuggestions")).tag(1)
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(AppUI.containerBackground)
-
-            // 内容区
-            Group {
-                if selectedTab == 0 {
-                    healthCheckSection
-                } else {
-                    aiSuggestionsSection
+        ZStack {
+            AppUI.Background.pageBackground(accentColor: themeManager.accentColor)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // 选项卡切换
+                Picker("", selection: $selectedTab) {
+                    Text(L10n.Lint.tr("title")).tag(0)
+                    Text(L10n.Lint.tr("aiSuggestions")).tag(1)
                 }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, AppUI.huge)
+                .padding(.vertical, 10)
+                .background(.ultraThinMaterial.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .padding(.horizontal, AppUI.standardPadding)
+
+                // 内容区
+                Group {
+                    if selectedTab == 0 {
+                        healthCheckSection
+                    } else {
+                        aiSuggestionsSection
+                    }
+                }
+                .frame(maxHeight: .infinity)
             }
-            .frame(maxHeight: .infinity)
         }
-        .background(Color.appBackground)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(selectedTab == 0 ? L10n.Lint.tr("title") : L10n.Lint.tr("aiSuggestions"))
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -114,6 +122,11 @@ struct LintViewContent: View {
                         Text(isRunning || aiStore.isScanningAI ? L10n.Lint.tr("scanning") : (selectedTab == 0 ? L10n.Lint.tr("runCheck") : L10n.Lint.tr("runAIScan")))
                     }
                     .font(.subheadline.bold())
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.appCard)
+                    .clipShape(Capsule())
+                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     .foregroundStyle(buttonGradient)
                 }
                 .buttonStyle(.plain)
@@ -141,7 +154,7 @@ struct LintViewContent: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(L10n.Lint.tr("detailIssues"))
                             .font(.headline)
-                            .padding(.horizontal)
+                            .padding(.horizontal, AppUI.huge)
                         
                         VStack(alignment: .leading, spacing: 0) {
                             issueSection(title: Localized.trf("lint.errors", aiStore.lintIssues.filter { $0.severity == .error }.count), 
@@ -157,7 +170,7 @@ struct LintViewContent: View {
                                          icon: "info.circle.fill", color: .blue)
                         }
                         .appContainer(padding: true)
-                        .padding(.horizontal)
+                        .padding(.horizontal, AppUI.huge)
                     }
                 }
             }
@@ -171,8 +184,8 @@ struct LintViewContent: View {
                 // 上次检查时间展示在左上角
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L10n.Lint.tr("lastCheck.title"))
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.appSecondary)
+                        .font(.system(size: 12, weight: .bold)) // 提升字号并加粗
+                        .foregroundStyle(.appText) // 改为正文颜色更醒目
                         .padding(.leading, 4)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -194,7 +207,7 @@ struct LintViewContent: View {
                             .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
                     )
                 }
-                .padding(.leading, 16)
+                .padding(.leading, AppUI.huge)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 
                 
@@ -202,33 +215,34 @@ struct LintViewContent: View {
                     Spacer()
                     ZStack {
                         Circle()
-                            .stroke(healthColor.opacity(0.08), lineWidth: 14)
-                            .frame(width: 135, height: 135) // 进一步缩小圆圈，彻底解决与左侧信息的重叠
+                            .stroke(healthColor.opacity(0.08), lineWidth: 10)
+                            .frame(width: 110, height: 110) // 略微缩小，确保不重叠
                         
                         // 进度环
                         Circle()
                             .trim(from: 0, to: CGFloat(aiStore.lintScore) / 100.0)
                             .stroke(
                                 LinearGradient(colors: [healthColor.opacity(0.6), healthColor], startPoint: .top, endPoint: .bottom),
-                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                                style: StrokeStyle(lineWidth: 10, lineCap: .round)
                             )
-                            .frame(width: 135, height: 135)
+                            .frame(width: 110, height: 110)
                             .rotationEffect(.degrees(-90))
                         
-                        VStack(spacing: 2) {
+                        VStack(spacing: 0) {
                             Text("\(aiStore.lintScore)")
-                                .font(.system(size: 50, weight: .bold, design: .rounded))
+                                .font(.system(size: 38, weight: .bold, design: .rounded))
                                 .foregroundStyle(.appText)
-                            Text(L10n.Lint.tr("health.score"))
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(.appSecondary)
+                            
+                            Text(aiStore.healthLevel.title)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(healthColor)
                         }
                     }
                     Spacer()
                 }
                 
                 // 评分标准展示在右下角
-                VStack(alignment: .trailing, spacing: 6) {
+                VStack(alignment: .trailing, spacing: 4) {
                     let ranges = [
                         (L10n.Lint.tr("health.excellent"), "90-100"),
                         (L10n.Lint.tr("health.good"), "70-89"),
@@ -237,42 +251,28 @@ struct LintViewContent: View {
                     ]
                     
                     ForEach(ranges, id: \.1) { label, range in
-                        HStack(spacing: 4) {
+                        HStack(spacing: 6) {
                             Text(label)
-                                .font(.system(size: 9))
-                                .frame(width: 30, alignment: .trailing)
+                                .font(.system(size: 10, weight: .bold))
+                                .frame(width: 32, alignment: .trailing)
                             Text(range)
-                                .font(.system(size: 9, design: .monospaced))
+                                .font(.system(size: 10, design: .monospaced))
                                 .foregroundStyle(.appSecondary.opacity(0.8))
-                                .frame(width: 45, alignment: .leading)
+                                .frame(width: 46, alignment: .leading)
                         }
                     }
                 }
-                .font(.system(size: 10, weight: .semibold, design: .rounded))
-                .foregroundStyle(.appSecondary)
-                .padding(12)
-                .background(AppUI.containerBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(AppUI.small)
+                .background(AppUI.containerBackground.opacity(0.9))
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: AppUI.smallRadius)
                         .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
                 )
-                .padding(.trailing, 20)
+                .padding(.trailing, AppUI.standardPadding)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
-            .frame(height: 180)
-            
-            Text(aiStore.healthLevel.title)
-                .font(.headline.bold())
-                .foregroundStyle(healthColor)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 8)
-                .background(healthColor.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(healthColor.opacity(0.2), lineWidth: 1)
-                )
+            .frame(height: 160)
         }
     }
     
@@ -298,7 +298,7 @@ struct LintViewContent: View {
                        icon: "point.3.connected.trianglepath.dotted", 
                        color: .appAccent)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, AppUI.huge)
     }
     
     private func metricCard(title: String, value: String, icon: String, color: Color) -> some View {
@@ -527,7 +527,7 @@ struct RefactorSuggestionRow: View {
             Text(Localized.trf("lint.aiFixSuggestion", suggestion.suggestion))
                 .font(.caption2)
                 .padding(6)
-                .background(Color.appBackground)
+                .background(AppUI.Background.cardBackground())
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
         .padding(.vertical, 4)

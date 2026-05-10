@@ -86,6 +86,10 @@ enum Localized {
 
     static var isChinese: Bool { currentLanguage == "zh-Hans" }
 
+    static var currentLocale: Locale {
+        Locale(identifier: currentLanguage)
+    }
+
     /**
      * @description: 读取本地化字符串，支持动态语言切换与多表查询
      * @param {String} key 本地化键值
@@ -213,7 +217,10 @@ struct L10n {
             static var data: String { Settings.tr("section.data") }
             static var security: String { Settings.tr("section.security") }
             static var danger: String { Settings.tr("section.danger") }
+            static var maintenance: String { Settings.tr("maintenance") }
             static var developer: String { Settings.tr("section.developer") }
+            static var tabData: String { Settings.tr("developer.tab.data") }
+            static var tabQuality: String { Settings.tr("developer.tab.quality") }
         }
     }
 
@@ -423,6 +430,41 @@ struct L10n {
         static var insightsLoading: String { tr("insights.loading") }
         static var insightsPageDeleted: String { tr("insights.pageDeleted") }
         static var insightsEmpty: String { tr("insights.empty") }
+
+        // --- 资源监控相关 ---
+        static var physicalStorage: String { tr("stats.physicalStorage") }
+        static var knowledgeVolume: String { tr("stats.knowledgeVolume") }
+        static var exportedRecent: String { tr("stats.exportedRecent") }
+        static var maintenance: String { tr("stats.maintenance") }
+        static var benchmarkDescription: String { tr("stats.benchmark.description") }
+        static var cleanupAction: String { tr("stats.cleanupAction") }
+        static var cleanedPrefix: String { tr("stats.cleanedPrefix") }
+        static var cleanedSuffix: String { tr("stats.cleanedSuffix") }
+        static var totalStorage: String { tr("stats.totalStorage") }
+        static var provenance: String { tr("stats.provenance") }
+        static var imported: String { tr("stats.imported") }
+        static var manuallyCreated: String { tr("stats.manuallyCreated") }
+        
+        static var apiRequests: String { tr("stats.apiRequests") }
+        static var tokens: String { tr("stats.tokens") }
+        static var unitMs: String { tr("stats.unitMs") }
+        static var updateSuccess: String { tr("stats.updateSuccess") }
+        static var updateFailed: String { tr("stats.updateFailed") }
+        static var cleanupFailed: String { tr("stats.cleanupFailed") }
+        
+        static var typeConcept: String { tr("stats.typeConcept") }
+        static var typeSource: String { tr("stats.typeSource") }
+        static var typeEntity: String { tr("stats.typeEntity") }
+        
+        static var chartDate: String { tr("stats.chartDate") }
+        static var chartValue: String { tr("stats.chartValue") }
+        static var chartSelected: String { tr("stats.chartSelected") }
+        
+        struct System {
+            static func tr(_ key: String) -> String { Dashboard.tr("stats.system.\(key)") }
+            static var database: String { tr("database") }
+            static var logs: String { tr("logs") }
+        }
     }
 
     /// Markdown 编辑器及相关操作文案。

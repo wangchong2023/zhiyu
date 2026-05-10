@@ -105,7 +105,7 @@ struct ChatBubbleView: View {
                             .font(.system(size: AppUI.microFontSize)) // 10
                             .foregroundStyle(.appAccent)
                     }
-                    Text("智宇 AI")
+                    Text(L10n.Chat.tr("aiAssistantName"))
                         .font(.system(size: AppUI.microFontSize + AppUI.atomic, weight: .bold)) // 11
                         .foregroundStyle(.appAccent)
                 }

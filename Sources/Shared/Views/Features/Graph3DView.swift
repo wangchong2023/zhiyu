@@ -69,7 +69,7 @@ struct Graph3DView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .ignoresSafeArea(edges: isFullScreen ? .all : [])
         .statusBarHidden(isFullScreen)
         .preferredColorScheme(isFullScreen ? .dark : nil)

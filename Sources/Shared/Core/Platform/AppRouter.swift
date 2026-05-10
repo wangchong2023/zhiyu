@@ -74,6 +74,10 @@ final class AppRouter {
     
     /// 空间导航历史 (面包屑)
     var navigationHistory: [KnowledgePage] = []
+
+    /// 强制 UI 刷新标识（主要用于多语言切换）
+    /// 强制 UI 刷新标识（主要用于多语言切换）
+    var languageForceUpdate: Bool = false
     
     private init() {}
     

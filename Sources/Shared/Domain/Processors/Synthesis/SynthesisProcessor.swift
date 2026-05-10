@@ -49,15 +49,24 @@ enum SynthesisProcessor {
             }
         }
 
-        // 3. 如果完全没有匹配且不包含关键字，则尝试加上前缀
-        // 4. 特殊处理：如果只有 graph 但没有方向，则补全方向
+        // 3. 增强：确保关键字与根节点之间有换行，防止 "mindmap root" 这种在一行导致的解析错误
+        if foundMatch {
+            for keyword in ["mindmap", "graph TD", "graph LR", "graph TB", "graph BT", "graph", "timeline", "gantt", "pie", "sequenceDiagram"] {
+                if mermaidCode.hasPrefix(keyword) {
+                    let afterKeyword = mermaidCode.dropFirst(keyword.count)
+                    if !afterKeyword.isEmpty && !afterKeyword.hasPrefix("\n") {
+                        mermaidCode = keyword + "\n  " + afterKeyword.trimmingCharacters(in: .whitespaces)
+                    }
+                    break
+                }
+            }
+        }
+
+        // 4. 如果完全没有匹配且不包含关键字，则尝试加上前缀
         if !foundMatch {
             mermaidCode = "\(fallbackPrefix)\n  " + mermaidCode.replacingOccurrences(of: "\n", with: "\n  ")
         } else if mermaidCode.trimmingCharacters(in: .whitespaces) == "graph" {
             mermaidCode = "graph TD"
-        } else if mermaidCode.hasPrefix("graph") && !mermaidCode.contains("TD") && !mermaidCode.contains("LR") && !mermaidCode.contains("TB") && !mermaidCode.contains("BT") {
-            // 如果只有 graph 但紧接着没写方向，补上 TD
-            mermaidCode = mermaidCode.replacingOccurrences(of: "graph", with: "graph TD", options: .anchored)
         }
 
         // 对最终确定的 Mermaid 代码进行语法纠错加固
@@ -162,7 +171,9 @@ enum SynthesisProcessor {
             "\\. ": ". ",
             "\\!": "!",
             "\\[\\[": "[[",
-            "\\]\\]": "]]"
+            "\\]\\]": "]]",
+            "\\\\[": "[",
+            "\\\\]": "]"
         ]
 
         for (target, replacement) in replacements {

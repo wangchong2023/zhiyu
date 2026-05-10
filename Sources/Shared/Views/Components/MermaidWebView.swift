@@ -41,18 +41,13 @@ struct MermaidWebView: View {
             // Zoom Controls (统一图谱风格：合拢式排列)
             HStack(spacing: 0) {
                 zoomButton(icon: "minus.magnifyingglass") { zoom(by: 0.8) }
+                zoomButton(icon: "plus.magnifyingglass") { zoom(by: 1.2) }
                 
                 Divider()
                     .frame(width: 1, height: 20)
                     .background(Color.appBorder.opacity(0.5))
                 
                 zoomButton(icon: "arrow.counterclockwise") { resetZoom() }
-                
-                Divider()
-                    .frame(width: 1, height: 20)
-                    .background(Color.appBorder.opacity(0.5))
-                
-                zoomButton(icon: "plus.magnifyingglass") { zoom(by: 1.2) }
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))

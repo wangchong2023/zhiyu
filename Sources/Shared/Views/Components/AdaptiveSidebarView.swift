@@ -77,9 +77,16 @@ struct AdaptiveDetailView: View {
     @Environment(AppRouter.self) var router
     @Binding var selectedTab: AppTab
     @Binding var selection: SidebarSelection?
-    @Binding var languageForceUpdate: Bool
+    // // @Binding var languageForceUpdate: Bool
     @ObservedObject var onboardingService: OnboardingService
     var heroNamespace: Namespace.ID
+
+    init(selectedTab: Binding<AppTab>, selection: Binding<SidebarSelection?>, onboardingService: OnboardingService, heroNamespace: Namespace.ID) {
+        self._selectedTab = selectedTab
+        self._selection = selection
+        self.onboardingService = onboardingService
+        self.heroNamespace = heroNamespace
+    }
 
     var body: some View {
         @Bindable var router = router

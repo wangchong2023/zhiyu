@@ -31,7 +31,7 @@ struct OnDeviceTestView: View {
                 Spacer()
             }
             .padding()
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(Localized.tr("ondevice.test"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

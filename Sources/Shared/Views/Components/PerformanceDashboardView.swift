@@ -76,13 +76,13 @@ struct PerformanceDashboardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
                     
                     // Last Updated
-                    Text(Localized.tr("perf.lastUpdated") + ": " + service.metrics.lastUpdated.formatted())
+                    Text(Localized.tr("perf.lastUpdated") + ": " + service.metrics.lastUpdated.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
                 .padding()
             }
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(Localized.tr("perf.title"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

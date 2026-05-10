@@ -215,6 +215,7 @@ final class AIWorkflowStore {
     // ── 页面级 AI 行为 ──
 
     func runPageAISummary(content: String) {
+        activePageAIResult = nil
         ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
         Task {
             isProcessingPageAI = true
@@ -232,7 +233,9 @@ final class AIWorkflowStore {
         }
     }
 
-    func extractPageActions(content: String) {
+    /// 提取页面行动项
+    func runPageAIExtractActions(content: String) {
+        activePageAIResult = nil
         ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
         Task {
             isProcessingPageAI = true
@@ -250,10 +253,10 @@ final class AIWorkflowStore {
         }
     }
 
-    func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) {
-        let taskID = TaskCenter.shared.addTask(type: .ai, name: type.title, target: title)
+    /// 扩展页面存根内容
+    func runPageAIExpansion(content: String) {
+        activePageAIResult = nil
         ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
-
         Task {
             isProcessingPageAI = true
             defer {
@@ -261,17 +264,37 @@ final class AIWorkflowStore {
                 ToastManager.shared.dismiss()
             }
             do {
-                let result: String
-                switch type {
-                case .mindmap: result = try await AISynthesisService.shared.generateMindMap(content: content)
-                case .quiz: result = try await AISynthesisService.shared.generateQuiz(content: content)
-                case .slides: result = try await AISynthesisService.shared.generatePresentation(content: content)
-                case .report: result = try await AISynthesisService.shared.generateReport(content: content)
-                case .infographic: result = try await AISynthesisService.shared.generateInfographic(content: content)
-                }
-                TaskCenter.shared.updateTask(taskID, status: .completed)
+                let expanded = try await AISynthesisService.shared.expandKnowledge(content: content)
+                activePageAIResult = expanded
+                HapticFeedback.shared.trigger(.success)
+            } catch {
+                ToastManager.shared.show(type: .error, message: error.localizedDescription)
+            }
+        }
+    }
+
+    func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) {
+        activePageAIResult = nil
+        activeQuiz = nil
+        let taskID = TaskCenter.shared.addTask(type: .ai, name: type.title, target: title)
+        
+        ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
+        
+        Task {
+            isProcessingPageAI = true
+            defer {
+                isProcessingPageAI = false
+                ToastManager.shared.dismiss()
+            }
+            
+            do {
+                let result = try await AISynthesisService.shared.synthesize(type: type, content: content)
+                TaskCenter.shared.completeTask(id: taskID)
+                
+                // 针对不同类型处理结果
                 if type == .quiz {
-                    if let data = result.data(using: .utf8),
+                    let cleaned = QuizProcessor.cleanJSON(result)
+                    if let data = cleaned.data(using: .utf8),
                        let quiz = try? JSONDecoder().decode(QuizModel.self, from: data) {
                         activeQuiz = quiz
                     } else {
@@ -280,9 +303,10 @@ final class AIWorkflowStore {
                 } else {
                     activePageAIResult = result
                 }
+                
                 HapticFeedback.shared.trigger(.success)
             } catch {
-                TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
+                TaskCenter.shared.failTask(id: taskID, error: error.localizedDescription)
                 ToastManager.shared.show(type: .error, message: error.localizedDescription)
             }
         }

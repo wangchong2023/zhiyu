@@ -26,7 +26,7 @@ struct IconPickerView: View {
             "camera.fill", "music.note", "paintpalette.fill", "hammer.fill"
         ]),
         ("iconPicker.academic", [
-            "graduationcap.fill", "brain.head.profile.fill", "atom", "dna",
+            "graduationcap.fill", "brain.head.profile.fill", "atom", "circle.grid.hex.fill",
             "chart.bar.fill", "chart.pie.fill", "cube.box.fill", "gearshape.fill",
             "cpu", "desktopcomputer", "server.rack", "circle.hexagongrid.fill"
         ]),
@@ -36,8 +36,8 @@ struct IconPickerView: View {
             "mountain.2.fill", "water.waves", "wind", "snowflake"
         ]),
         ("iconPicker.transport", [
-            "airplane", "car.fill", "train.side.front.filled",
-            "ship.fill", "bicycle", "sailboat.fill"
+            "airplane", "car.fill", "tram.fill",
+            "ferry.fill", "bicycle", "sailboat.fill"
         ]),
         ("iconPicker.symbols", [
             "exclamationmark.triangle.fill", "checkmark.circle.fill",
@@ -54,29 +54,27 @@ struct IconPickerView: View {
 
     // MARK: - Body
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // Current selection preview
-                    currentSelectionPreview
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                // Current selection preview
+                currentSelectionPreview
 
-                    // Icon categories
-                    ForEach(Self.iconCategories, id: \.0) { category, icons in
-                        iconCategorySection(title: categoryDisplayName(category), icons: icons)
-                    }
+                // Icon categories
+                ForEach(Self.iconCategories, id: \.0) { category, icons in
+                    iconCategorySection(title: categoryDisplayName(category), icons: icons)
                 }
-                .padding()
             }
-            .background(Color.appBackground)
-            .navigationTitle(L10n.Editor.tr("iconPicker.selectIcon"))
+            .padding()
+        }
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .navigationTitle(L10n.Editor.tr("iconPicker.selectIcon"))
 #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
 #endif
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("ok")) { dismiss() }
-                        .fontWeight(.medium)
-                }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button(L10n.Common.tr("ok")) { dismiss() }
+                    .fontWeight(.medium)
             }
         }
     }

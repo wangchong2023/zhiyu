@@ -51,6 +51,47 @@ final class SQLiteStore: VectorIndexableStore {
         return URL(fileURLWithPath: path)
     }
 
+    /// 存储统计信息结构
+    struct StorageStats {
+        let databaseSize: Int64
+        let logsSize: Int64
+        let importsSize: Int64
+        let exportsSize: Int64
+    }
+
+    /// 获取真实的存储分类统计数据
+    func getStorageStats() -> StorageStats {
+        let fm = FileManager.default
+        
+        // 1. 数据库大小
+        let dbSize = (try? fm.attributesOfItem(atPath: dbPath.path)[.size] as? Int64) ?? 0
+        
+        // 2. 操作日志大小
+        let logsSize = (try? fm.attributesOfItem(atPath: Logger.shared.logsFileURL.path)[.size] as? Int64) ?? 0
+        
+        // 3. 数据导入大小 (从 pages 表中统计)
+        let importsSize = pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
+        
+        // 4. 数据导出大小 (尝试统计默认导出目录)
+        let docsDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let exportsURL = docsDir.appendingPathComponent("Exports")
+        let exportsSize: Int64 = (try? fm.subpathsOfDirectory(atPath: exportsURL.path).reduce(0) { sum, path in
+            let fullPath = exportsURL.appendingPathComponent(path).path
+            var isDir: ObjCBool = false
+            if fm.fileExists(atPath: fullPath, isDirectory: &isDir), !isDir.boolValue {
+                return sum + ((try? fm.attributesOfItem(atPath: fullPath)[.size] as? Int64) ?? 0)
+            }
+            return sum
+        }) ?? 0
+        
+        return StorageStats(
+            databaseSize: dbSize,
+            logsSize: logsSize,
+            importsSize: importsSize,
+            exportsSize: exportsSize
+        )
+    }
+
     // MARK: - 初始化
     /// 初始化存储门面，执行数据库连接、完整性校验、迁移及观察者启动
     /// - Parameter providedURL: 可选的自定义数据库路径，若为 nil 则使用默认路径

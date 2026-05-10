@@ -79,7 +79,7 @@ struct SettingsViewWrapper: View {
     // 假设 SettingsView 需要 onboardingService
     // 实际项目中可以从 Environment 或全局单例获取
     var body: some View {
-        SettingsView(onboardingService: OnboardingService(), languageForceUpdate: .constant(false))
+        SettingsView(onboardingService: OnboardingService())
     }
 }
 

@@ -170,7 +170,7 @@ private struct PDFDocumentListView: View {
         .listStyle(.insetGrouped)
 #endif
         .scrollContentBackground(.hidden)
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
     }
 }
 
@@ -192,7 +192,8 @@ struct PDFReaderView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.appBackground.ignoresSafeArea()
+                AppUI.Background.pageBackground(accentColor: .appAccent)
+                    .ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     pdfContent
@@ -352,7 +353,7 @@ struct PDFKitRepresentedView: UIViewRepresentable {
         pdfView.autoScales = true
         pdfView.displayMode = .singlePageContinuous
         pdfView.displayDirection = .vertical
-        pdfView.backgroundColor = UIColor(Color.appBackground)
+        pdfView.backgroundColor = .clear
 
         NotificationCenter.default.addObserver(
             context.coordinator,

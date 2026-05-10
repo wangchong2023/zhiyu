@@ -58,7 +58,8 @@ struct SettingsAboutView: View {
         .listStyle(.insetGrouped)
 #endif
         .scrollContentBackground(.hidden)
-        .background(Color.appBackground)
+        .listRowBackground(Color.appCard.opacity(0.8))
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .navigationTitle(Localized.tr("app.name"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)

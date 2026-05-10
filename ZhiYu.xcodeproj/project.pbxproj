@@ -1111,14 +1111,44 @@
 			children = (
 				CC3038A6DE8474E67C81E15E /* Core */,
 				D188349AE9C3D168F81C60EF /* Data */,
+				5A70333B1DCBEB9348E66F44 /* DesignSystem */,
 				59C6F757C1AD36F4F55980AC /* Domain */,
 				486C8EF1DA19FD694C5749D5 /* Models */,
 				E00B0C33EC96EBBF6918816F /* Platforms */,
+				AEFA5168EAA8473E2F2FC3E1 /* Protocols */,
 				51E8BFDD347DD95A9B629A15 /* Resources */,
+				954EB49EAC8075FA8F6FCE9E /* Theme */,
+				6D18CD44E002A59416D040A6 /* UIComponents */,
 				47E5CF3A4BF3FE879119E0CC /* ViewModels */,
 				BD2ED50E17E19E822FB9EDA6 /* Views */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		02F86942F8BA8F745C24E04C /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				B6FA2CD12C8B47FB5B4AC3ED /* Chat */,
+				9BDD37B0FF47DF54E8AB0909 /* KnowledgeBase */,
+				88B07FF69AB7E0C927E750A1 /* Search */,
+				1E43B84A6BE2985A4E3B7627 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		08AD7356737BA60D9F18B68A /* Core */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		0A26419A6CDB486DEEB43E7F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				5EED54F989290DF7B1EB559D /* Resources */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 		0DE553DAED1AA70D0C51EA3F /* Platforms */ = {
@@ -1164,6 +1194,21 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		1E43B84A6BE2985A4E3B7627 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				82759E85D3DAA3311967B346 /* Resources */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		1EC61E33069AB53D013F3B73 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
 		1F52A1A07E755F3C69EE35B1 /* ComponentSnapshots */ = {
 			isa = PBXGroup;
 			children = (
@@ -1197,6 +1242,13 @@
 				2C85EEA55FFA9B5BCF6647C9 /* IngestQueueTests.swift */,
 			);
 			path = Boundary;
+			sourceTree = "<group>";
+		};
+		25BC94B1A68B6FB456162CDA /* OCR */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = OCR;
 			sourceTree = "<group>";
 		};
 		2F68724A87E59F7CCBE9B087 /* Media */ = {
@@ -1348,6 +1400,13 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		47F70DDEDE98EF03077D5490 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		481C403F3D4133C6BA592B4A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1356,6 +1415,10 @@
 				868F1602FB8033BE41909C4E /* MacInfo.plist */,
 				715181975B3103DDA1A8265B /* ZhiYu.entitlements */,
 				22F2072C11697EA15DF1A2F7 /* ZhiYuApp.swift */,
+				0A26419A6CDB486DEEB43E7F /* App */,
+				8836F49FDE558FFDAC54F23E /* Core */,
+				02F86942F8BA8F745C24E04C /* Features */,
+				B031C99A0FF5FEF21EAAFB92 /* Infrastructure */,
 				792343B234A232C7154A8F3D /* LaunchScreen.storyboard */,
 				828AAA60BFBDFC407B45D1FB /* Localization */,
 				0DE553DAED1AA70D0C51EA3F /* Platforms */,
@@ -1402,6 +1465,13 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
+		49E277C8892AF7A59A327EEA /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
 		4D02771ACE1CFDA1BD8A72F0 /* Synthesis */ = {
 			isa = PBXGroup;
 			children = (
@@ -1409,6 +1479,13 @@
 				FED1513CA7D0AA4F289C3ED6 /* SynthesisProcessor.swift */,
 			);
 			path = Synthesis;
+			sourceTree = "<group>";
+		};
+		4FD392900046C4E0F5869FEA /* Database */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		51E8BFDD347DD95A9B629A15 /* Resources */ = {
@@ -1455,6 +1532,13 @@
 			path = Domain;
 			sourceTree = "<group>";
 		};
+		5A70333B1DCBEB9348E66F44 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
 		5C0154E194D836020CE93EAA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -1470,11 +1554,32 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		5EED54F989290DF7B1EB559D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		64DE39AFA926CD07FA888822 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		67681CF9E35FD153999931E9 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		68DCE61B59687117C14F3BDB /* VectorDB */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = VectorDB;
 			sourceTree = "<group>";
 		};
 		69BDB0FC76B06D7C4E85100F /* BrokenTests */ = {
@@ -1490,6 +1595,21 @@
 				D26630122EAFAA87BDF2F3AB /* VaultSecurityTests.swift */,
 			);
 			path = Security;
+			sourceTree = "<group>";
+		};
+		6D18CD44E002A59416D040A6 /* UIComponents */ = {
+			isa = PBXGroup;
+			children = (
+				B01215CE8924A892E3D2B13F /* Layouts */,
+			);
+			path = UIComponents;
+			sourceTree = "<group>";
+		};
+		6F62695A28DA822E6568B864 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		73D41C32C73BC38BB08060A7 /* Features */ = {
@@ -1537,6 +1657,13 @@
 				7660385242924E0E7DB78F1A /* CommandPaletteView.swift */,
 			);
 			path = CommandPalette;
+			sourceTree = "<group>";
+		};
+		82759E85D3DAA3311967B346 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		828AAA60BFBDFC407B45D1FB /* Localization */ = {
@@ -1608,6 +1735,28 @@
 			path = Logic;
 			sourceTree = "<group>";
 		};
+		8836F49FDE558FFDAC54F23E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				4FD392900046C4E0F5869FEA /* Database */,
+				D185F5EB4D7BC1273B23DCF6 /* Extension */,
+				DBE9B127E45678970544D26D /* Logger */,
+				B6F9B10FBCE04682C60FF7EF /* Network */,
+				EE78EADB2FD7B63FC475CDD6 /* Resources */,
+				EF278B1222834C07297BE762 /* Storage */,
+				67681CF9E35FD153999931E9 /* Utils */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		88B07FF69AB7E0C927E750A1 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				BD8ADF8FD6D1ADD9474DED13 /* Resources */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		8BA1B7E3EEF0EFC9D4792A75 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -1622,6 +1771,53 @@
 				29D2B623011C6C3BCE1A37B2 /* AppConfig.json */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		954EB49EAC8075FA8F6FCE9E /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		9BDD37B0FF47DF54E8AB0909 /* KnowledgeBase */ = {
+			isa = PBXGroup;
+			children = (
+				6F62695A28DA822E6568B864 /* Resources */,
+			);
+			path = KnowledgeBase;
+			sourceTree = "<group>";
+		};
+		AEFA5168EAA8473E2F2FC3E1 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		AF04731198B707F6D695ECA0 /* LLM */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = LLM;
+			sourceTree = "<group>";
+		};
+		B01215CE8924A892E3D2B13F /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Layouts;
+			sourceTree = "<group>";
+		};
+		B031C99A0FF5FEF21EAAFB92 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				49E277C8892AF7A59A327EEA /* Analytics */,
+				AF04731198B707F6D695ECA0 /* LLM */,
+				25BC94B1A68B6FB456162CDA /* OCR */,
+				68DCE61B59687117C14F3BDB /* VectorDB */,
+			);
+			path = Infrastructure;
 			sourceTree = "<group>";
 		};
 		B1DD156101CCA52235BFA55C /* UITests */ = {
@@ -1645,6 +1841,21 @@
 				EF9FE1D49BAFF52544F3864E /* XlsxStringsProcessor.swift */,
 			);
 			path = Document;
+			sourceTree = "<group>";
+		};
+		B6F9B10FBCE04682C60FF7EF /* Network */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		B6FA2CD12C8B47FB5B4AC3ED /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				47F70DDEDE98EF03077D5490 /* Resources */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		BBBC3D531DFAECA3679AB3A5 /* Constants */ = {
@@ -1681,6 +1892,13 @@
 				E680520A3595244A25218DE3 /* Styles */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BD8ADF8FD6D1ADD9474DED13 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		C1078E41CD175D605E9E07CB /* js */ = {
@@ -1740,6 +1958,13 @@
 			path = Plugins;
 			sourceTree = "<group>";
 		};
+		D185F5EB4D7BC1273B23DCF6 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 		D188349AE9C3D168F81C60EF /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1766,6 +1991,13 @@
 				E59448EAACCE7EF2A8C110E9 /* VaultStorageService.swift */,
 			);
 			path = Persistence;
+			sourceTree = "<group>";
+		};
+		DBE9B127E45678970544D26D /* Logger */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Logger;
 			sourceTree = "<group>";
 		};
 		DCE4F101D18795E1359F31A4 /* Subviews */ = {
@@ -1805,7 +2037,10 @@
 				308BAACC1ECE49468D7CE4D9 /* ZhiYuNewFeaturesTests.swift */,
 				A9590EF4730BC7FBA9A5FBD5 /* ZhiYuTests.swift */,
 				DD86893099D262EDE13738C7 /* AI */,
+				08AD7356737BA60D9F18B68A /* Core */,
+				1EC61E33069AB53D013F3B73 /* Features */,
 				EA3B69718BBA8BBEF35B05D6 /* Graph */,
+				F2CDB14E15D7979ECB907AF5 /* Infrastructure */,
 				D1406F0B91682F9DF13F2A6D /* Plugins */,
 				6B5098F27D58E77DA0A0B503 /* Security */,
 				DDDE9409B4C553F0D6BB9D57 /* Services */,
@@ -1862,6 +2097,20 @@
 			path = SnapshotTests;
 			sourceTree = "<group>";
 		};
+		EE78EADB2FD7B63FC475CDD6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		EF278B1222834C07297BE762 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		EFA4A46641EB5C9301590D3B /* Sync */ = {
 			isa = PBXGroup;
 			children = (
@@ -1882,6 +2131,13 @@
 				91405E29C4696D58AE5ED0E0 /* VectorIndexer.swift */,
 			);
 			path = AI;
+			sourceTree = "<group>";
+		};
+		F2CDB14E15D7979ECB907AF5 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Infrastructure;
 			sourceTree = "<group>";
 		};
 		F4B4CB6D8427630E3677C82C /* Platform */ = {

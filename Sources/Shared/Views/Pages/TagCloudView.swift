@@ -82,23 +82,18 @@ struct TagCloudViewContent: View {
     }
 
     var body: some View {
-        ZStack {
-            AppUI.Background.meshGradient()
-                .ignoresSafeArea()
-            
-            mainContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .background(Color.appBackground) // 确保主内容区域也是背景色
-        }
-        .navigationTitle(L10n.Tag.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(alertLayer)
-        .task {
-            await fetchData()
-        }
-        .onChange(of: store.pages) { _, _ in
-            Task { await fetchData() }
-        }
+        mainContent
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(AppUI.Background.pageBackground(accentColor: .blue))
+            .navigationTitle(L10n.Tag.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .background(alertLayer)
+            .task {
+                await fetchData()
+            }
+            .onChange(of: store.pages) { _, _ in
+                Task { await fetchData() }
+            }
     }
 
     /// 组合主界面布局
@@ -151,7 +146,7 @@ struct TagCloudViewContent: View {
                         }
                     }
                 }
-                .padding(.horizontal, AppUI.standardPadding)
+                .padding(.horizontal, AppUI.huge)
                 .padding(.vertical, AppUI.Layout.columnSpacing)
             }
 
@@ -175,7 +170,7 @@ struct TagCloudViewContent: View {
                     .appContainer(background: Color.appCard.opacity(AppUI.glassOpacity), padding: false)
                     .frame(minHeight: AppUI.Metrics.sourceCardHeight) 
             }
-            .padding(.horizontal, AppUI.standardPadding)
+            .padding(.horizontal, AppUI.huge)
             .padding(.bottom, AppUI.Layout.columnSpacing)
             
             // 添加弹性间距，确保内容不满一屏时背景色依然能覆盖全屏
@@ -376,7 +371,7 @@ struct TagCloudViewContent: View {
 
     private var pagesListView: some View {
         Group {
-            if let tag = selectedTag, !isEditMode {
+            if selectedTag != nil, !isEditMode {
                 List {
                     Section {
                         ForEach(filteredPages) { page in

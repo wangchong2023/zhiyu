@@ -28,10 +28,30 @@ struct PageDetailHeader: View {
             titleView
             aliasesView
             tagsView
-            metaInfoView
+            
+            // Metadata section with industrial-grade collapsible control
+            DisclosureGroup(
+                isExpanded: $isMetaExpanded,
+                content: { metaInfoView.padding(.top, 4) },
+                label: {
+                    HStack {
+                        Label(Localized.tr("page.metaInfo"), systemImage: "info.circle")
+                            .font(.caption2.bold())
+                            .foregroundStyle(.appSecondary)
+                        Spacer()
+                    }
+                }
+            )
+            .tint(.appSecondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(Color.appCard.opacity(0.4))
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
         }
         .padding()
     }
+    
+    @State private var isMetaExpanded = false
     
     // MARK: - Breadcrumb
     private var breadcrumb: some View {
@@ -149,15 +169,15 @@ struct PageDetailHeader: View {
     // MARK: - Meta Info
     private var metaInfoView: some View {
         HStack(spacing: 16) {
-            Label(Localized.trf("page.createdFormat", page.created.formatted(date: .abbreviated, time: .omitted)), systemImage: "calendar")
-            Label(Localized.trf("page.updatedFormat", page.updated.formatted(date: .abbreviated, time: .omitted)), systemImage: "clock")
+            Label(Localized.trf("page.createdFormat", page.created.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: "calendar")
+            Label(Localized.trf("page.updatedFormat", page.updated.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: "clock")
             Label(Localized.trf("page.wordCount", page.wordCount), systemImage: "textformat")
             Label(Localized.trf("page.outLinksCount", page.outgoingLinks.count), systemImage: "link")
         }
         .font(.caption)
         .foregroundStyle(.appSecondary)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Localized.trf("page.metaAccessibility", page.created.formatted(date: .abbreviated, time: .omitted), page.wordCount, page.outgoingLinks.count))
+        .accessibilityLabel(Localized.trf("page.metaAccessibility", page.created.formatted(.dateTime.year().month().day().locale(Localized.currentLocale)), page.wordCount, page.outgoingLinks.count))
     }
 }
 

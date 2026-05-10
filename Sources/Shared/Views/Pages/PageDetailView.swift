@@ -83,7 +83,7 @@ struct PageDetailView: View {
             Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
                 Label(Localized.tr("page.ai.summary"), systemImage: "wand.and.stars")
             }
-            Button(action: { aiStore.extractPageActions(content: viewModel.page.content) }) {
+            Button(action: { aiStore.runPageAIExtractActions(content: viewModel.page.content) }) {
                 Label(Localized.tr("page.ai.extractActions"), systemImage: "checkmark.seal")
             }
 
@@ -125,17 +125,19 @@ struct PageDetailView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .top) {
-            // Immersive Background
-            LinearGradient(
-                colors: [Color.fromModelColorName(viewModel.page.type.colorName).opacity(0.08), Color.appBackground],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
+        @Bindable var viewModel = viewModel
+        ScrollViewReader { proxy in
             ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(spacing: 0) {
+                    // Optimized spacing to reduce the gap between header and content
+                    Color.clear.frame(height: 10)
+                    
+                    VStack(alignment: .leading, spacing: 0) {
+                        if aiStore.isProcessingPageAI || aiStore.activePageAIResult != nil {
+                            aiResultDisplaySection
+                                .id("aiResultSection")
+                                .padding(.bottom, AppUI.standardPadding)
+                        }
                     // Content
                     Group {
                         if viewModel.isEditing {
@@ -157,11 +159,6 @@ struct PageDetailView: View {
 
                         semanticRecommendationsSection
                         
-                        aiResultDisplaySection
-
-                        Divider()
-                            .background(Color.appBorder)
-
                         backlinksSection
                     }
                     .padding(.horizontal)
@@ -171,7 +168,7 @@ struct PageDetailView: View {
         }
         .frame(maxWidth: AppUI.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle("")
 #if os(iOS)
@@ -245,6 +242,7 @@ struct PageDetailView: View {
             }
         }
         .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
+        }
     }
     
     @ViewBuilder
@@ -363,7 +361,7 @@ struct PageDetailView: View {
                                 .foregroundStyle(.appSecondary)
                                 .padding(AppUI.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.appBackground)
+                                .background(AppUI.Background.cardBackground())
                                 .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
                                 .lineLimit(3)
                         }
@@ -506,7 +504,9 @@ struct PageDetailView: View {
         .padding()
     }
     
-    private func expandStub() {}
+    private func expandStub() {
+        aiStore.runPageAIExpansion(content: viewModel.page.content)
+    }
     private func findRelatedLinks() { Task { await aiStore.runAIScan() } }
     private func navigateToPage(_ title: String) {
         if let target = store.pages.first(where: { $0.title == title }) {

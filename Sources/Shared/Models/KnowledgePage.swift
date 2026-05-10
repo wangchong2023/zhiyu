@@ -101,7 +101,7 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
         self.contentHash = contentHash
         self.sourceURL = sourceURL
         self.rawTextSnippet = rawTextSnippet
-        self.fileSize = fileSize
+        self.fileSize = fileSize ?? Int64(content.utf8.count)
         self.sourceType = sourceType
         self.lamportTimestamp = lamportTimestamp ?? Int64(created.timeIntervalSince1970 * 1000)
         self.created = created

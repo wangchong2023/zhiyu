@@ -39,7 +39,7 @@ struct LintIssue: Identifiable, Codable, Sendable {
         
         var icon: String {
             switch self {
-            case .brokenLink: return "link.badge.minus"
+            case .brokenLink: return "link"
             case .orphan: return "person.crop.circle.badge.questionmark"
             case .island: return "leaf.fill"
             case .cycle: return "arrow.2.squarepath"

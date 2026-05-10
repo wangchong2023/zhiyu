@@ -22,7 +22,7 @@ struct ExportReportView: View {
                     .font(.system(size: AppUI.large, weight: .bold))
                     .foregroundStyle(Color.appAccent)
                 Spacer()
-                Text(Date().formatted(date: .long, time: .omitted))
+                Text(Date().formatted(Date.FormatStyle(date: .long, time: .omitted, locale: Localized.currentLocale)))
                     .font(.caption)
                     .foregroundStyle(Color.appSecondary)
             }

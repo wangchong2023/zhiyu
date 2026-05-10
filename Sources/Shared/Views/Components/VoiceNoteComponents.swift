@@ -31,7 +31,7 @@ struct SaveVoiceNoteSheet: View {
                 }
                 .padding()
             }
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(Localized.tr("speech.saveTitle"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -99,7 +99,7 @@ struct SaveVoiceNoteSheet: View {
     
     private func saveNote() {
         let noteTitle = title.isEmpty
-            ? "\(Localized.tr("speech.voiceNote")) \(Date().formatted(.dateTime.month().day().hour().minute()))"
+            ? "\(Localized.tr("speech.voiceNote")) \(Date().formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale)))"
             : title
         _ = store.createPage(
             title: noteTitle,

@@ -90,6 +90,7 @@ actor AISynthesisService {
         return result
     }
 
+
     /// 生成信息图表 (Mermaid)
     func generateInfographic(content: String) async throws -> String {
         let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
@@ -107,6 +108,13 @@ actor AISynthesisService {
     func generateReport(content: String) async throws -> String {
         let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a report writer. First line MUST be '# <title>' summarizing the report topic. Use Markdown headings for sections.")
+        return SynthesisProcessor.cleanMarkdown(result)
+    }
+
+    /// 知识深度扩充：对现有内容进行多维度深挖与背景补充
+    func expandKnowledge(content: String) async throws -> String {
+        let prompt = PromptService.shared.expansionPrompt + PromptService.shared.languageInstruction + "\n\n待扩充内容：\n\(content)"
+        let result = try await llm.generate(prompt: prompt, systemPrompt: PromptService.shared.expansionSystemPrompt)
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
@@ -158,5 +166,17 @@ actor AISynthesisService {
 
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
         return LLMResponseProcessor.parseJSONArray(result)
+    }
+
+    /// 统一合成入口 (Facade)
+    func synthesize(type: SynthesisStore.SynthesisType, content: String) async throws -> String {
+        switch type {
+        case .mindmap: return try await generateMindMap(content: content)
+        case .quiz: return try await generateQuiz(content: content)
+        case .slides: return try await generatePresentation(content: content)
+        case .report: return try await generateReport(content: content)
+        case .infographic: return try await generateInfographic(content: content)
+        case .expansion: return try await expandKnowledge(content: content)
+        }
     }
 }

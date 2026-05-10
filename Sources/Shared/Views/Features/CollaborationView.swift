@@ -54,7 +54,7 @@ struct CollaborationViewContent: View {
             }
             .padding()
         }
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .navigationTitle(L10n.Collaboration.tr("title"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)

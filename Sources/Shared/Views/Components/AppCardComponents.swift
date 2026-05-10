@@ -49,7 +49,7 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppUI.standardPadding)
-        .background(Color.appCard)
+        .background(Color.appCard.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
         .shadow(color: .black.opacity(AppUI.shadowOpacity * 1.5), radius: AppUI.shadowRadius - 2, x: 0, y: AppUI.shadowY) // 0.06, 8, 4
     }
@@ -101,7 +101,7 @@ struct QuickActionRow: View {
                     .foregroundStyle(.appSecondary.opacity(AppUI.dimmedOpacity))
             }
             .padding(AppUI.medium + AppUI.atomic * 2) // 14
-            .background(Color.appCard)
+            .background(Color.appCard.opacity(0.8))
             .clipShape(RoundedRectangle(cornerRadius: AppUI.medium))
             .shadow(color: .black.opacity(isPressed ? AppUI.shadowOpacity : AppUI.shadowOpacity * 2), radius: isPressed ? AppUI.shadowRadius / 2.5 : AppUI.shadowRadius / 1.25, x: 0, y: isPressed ? AppUI.shadowY / 2 : AppUI.shadowY) // 4:8, 2:4
             .scaleEffect(isPressed ? 0.98 : 1.0)
@@ -186,7 +186,7 @@ struct PageRowView: View {
                             .clipShape(Capsule())
                             .foregroundStyle(Color.fromModelColorName(page.type.colorName))
                         
-                        Text(page.updated, style: .date)
+                        Text(page.updated.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                         
@@ -209,7 +209,7 @@ struct PageRowView: View {
         }
         .padding(.horizontal, AppUI.medium)
         .padding(.vertical, AppUI.medium - AppUI.atomic) // 10
-        .background(Color.appCard)
+        .background(Color.appCard.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
         .contentShape(Rectangle()) // 确保整行可点
     }

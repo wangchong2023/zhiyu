@@ -119,7 +119,10 @@ final class WebViewExportService: NSObject {
 
     /// 将 Mermaid 导出为 PDF
     func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
-        if isExporting { throw NSError(domain: "WebViewExport", code: 429) }
+        if isExporting {
+            try? await Task.sleep(for: .milliseconds(500))
+            if isExporting { throw NSError(domain: "WebViewExport", code: 429, userInfo: [NSLocalizedDescriptionKey: "System busy, please try later."]) }
+        }
         
         isExporting = true
         defer { 
@@ -184,7 +187,10 @@ final class WebViewExportService: NSObject {
     
     /// 将 Markdown 导出为 PPTX
     func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
-        if isExporting { throw NSError(domain: "WebViewExport", code: 429) }
+        if isExporting {
+            try? await Task.sleep(for: .milliseconds(500))
+            if isExporting { throw NSError(domain: "WebViewExport", code: 429, userInfo: [NSLocalizedDescriptionKey: "System busy, please try later."]) }
+        }
         isExporting = true
         defer { isExporting = false }
 

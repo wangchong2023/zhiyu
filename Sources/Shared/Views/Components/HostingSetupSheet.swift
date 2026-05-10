@@ -30,7 +30,7 @@ struct HostingSetupSheet: View {
                 }
                 .padding()
             }
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(L10n.Collaboration.tr("hostSession"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

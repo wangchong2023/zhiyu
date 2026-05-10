@@ -76,6 +76,12 @@ class ThemeManager: ObservableObject {
     nonisolated func colorForName(_ name: String) -> Color {
         Self.colorForName(name)
     }
+
+    /// 提供统一的背景渲染入口
+    @MainActor
+    func pageBackground() -> some View {
+        AppUI.Background.pageBackground(accentColor: accentColor)
+    }
 }
 
 extension ThemeManager: @unchecked Sendable {}

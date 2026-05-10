@@ -46,16 +46,21 @@ struct ChatViewContent: View {
     @State private var selectedMessageIDs: Set<UUID> = []
 
     var body: some View {
-        VStack(spacing: 0) {
-            if !llmService.isEnabled || llmService.apiKey.isEmpty {
-                notConfiguredBanner
+        ZStack {
+            AppUI.Background.pageBackground(accentColor: .appAccent)
+                .ignoresSafeArea(edges: .top)
+            
+            VStack(spacing: 0) {
+                if !llmService.isEnabled || llmService.apiKey.isEmpty {
+                    notConfiguredBanner
+                }
+
+                chatMessageList
+
+                chatInputBar
             }
-
-            chatMessageList
-
-            chatInputBar
         }
-        .background(Color.appBackground)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Chat.tr("title"))
         .toolbar {
             ToolbarItem(placement: .automatic) {

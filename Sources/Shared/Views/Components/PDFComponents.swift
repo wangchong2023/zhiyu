@@ -38,7 +38,7 @@ struct PDFIngestSheet: View {
                 previewSection
             }
             .scrollContentBackground(.hidden)
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(Localized.tr("pdf.ingestToKnowledge"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -264,7 +264,7 @@ struct PDFDocumentRow: View {
                     .foregroundStyle(.appSecondary)
             }
             
-            Text(doc.addedDate.formatted(.dateTime.month().day()))
+            Text(doc.addedDate.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
         }

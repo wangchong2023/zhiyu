@@ -256,23 +256,7 @@
         }
       }
     },
-    "create.page.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page title"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面标题"
-          }
-        }
-      }
-    },
+
     "create.quickTemplates": {
       "extractionState": "manual",
       "localizations": {
@@ -492,6 +476,113 @@
             "value": "创建页面"
           }
         }
+      }
+    },
+    "create.pageType": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面类型"
+          }
+        }
+      }
+    },
+    "create.customIcon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom Icon"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义图标"
+          }
+        }
+      }
+    },
+    "create.pageTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面标题"
+          }
+        }
+      }
+    },
+    "create.template.entity.overviewPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Enter a brief introduction of the person, organization, or item..." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "在这里输入人物、机构或物品的简要介绍..." } }
+      }
+    },
+    "create.template.entity.contributionsPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "List core achievements or major contributions..." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "列出核心成就或主要贡献..." } }
+      }
+    },
+    "create.template.entity.relatedPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Use [[Page Title]] to link to other knowledge points..." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "使用 [[页面标题]] 关联到其他知识点..." } }
+      }
+    },
+    "create.template.concept.definitionPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Enter the definition or core connotation of the concept..." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "在这里输入概念的定义或核心内涵..." } }
+      }
+    },
+    "create.template.concept.analysisPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "1. Key Element A: [Description...]\n2. Key Element B: [Description...]" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "1. 关键要素 A：[描述...]\n2. 关键要素 B：[描述...]" } }
+      }
+    },
+    "create.template.concept.linksPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Related Concepts: [[Concept Name]]" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "关联概念：[[概念名称]]" } }
+      }
+    },
+    "create.template.comparison.dimensionsPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "- Dimension 1: A vs B\n- Dimension 2: A vs B" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "- 维度 1: 对象 A vs 对象 B\n- 维度 2: 对象 A vs 对象 B" } }
+      }
+    },
+    "create.template.comparison.conclusionPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Enter summary insights after comparison..." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "在这里输入对比后的总结性见解..." } }
       }
     }
   },

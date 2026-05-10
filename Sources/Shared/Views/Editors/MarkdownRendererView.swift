@@ -209,11 +209,12 @@ struct MarkdownRendererView: View {
                         .padding(.top, AppUI.tightPadding)
                 }
 
-                Text(code)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(.appText.opacity(AppUI.fullOpacity - AppUI.glassOpacity))
-                    .padding(AppUI.medium)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                ScrollView(.horizontal, showsIndicators: true) {
+                    Text(code)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.appText.opacity(AppUI.fullOpacity - AppUI.glassOpacity))
+                        .padding(AppUI.medium)
+                }
             }
             .background(Color.appCard.opacity(AppUI.fullOpacity - AppUI.glassOpacity * 1.5))
             .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
@@ -228,38 +229,40 @@ struct MarkdownRendererView: View {
     // MARK: - Render Table
     @ViewBuilder
     private func renderTable(headers: [String], rows: [[String]]) -> some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                ForEach(Array(headers.enumerated()), id: \.offset) { _, cell in
-                    renderInlineContent(cell)
-                        .font(.system(.subheadline).weight(.semibold))
-                        .foregroundStyle(.appText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, AppUI.tightPadding)
-                        .padding(.vertical, AppUI.tightPadding)
-                }
-            }
-            .background(Color.appAccent.opacity(AppUI.glassOpacity / 1.5))
-
-            ForEach(Array(rows.enumerated()), id: \.offset) { rowIdx, row in
+        ScrollView(.horizontal, showsIndicators: true) {
+            VStack(spacing: 0) {
                 HStack(spacing: 0) {
-                    ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
+                    ForEach(Array(headers.enumerated()), id: \.offset) { _, cell in
                         renderInlineContent(cell)
-                            .font(.system(.subheadline))
+                            .font(.system(.subheadline).weight(.semibold))
                             .foregroundStyle(.appText)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(minWidth: 100, alignment: .leading) // 最小宽度保证列内容不被过度压缩
                             .padding(.horizontal, AppUI.tightPadding)
-                            .padding(.vertical, AppUI.small - AppUI.atomic)
+                            .padding(.vertical, AppUI.tightPadding)
                     }
                 }
-                .background(rowIdx % 2 == 0 ? Color.clear : Color.appCard.opacity(AppUI.disabledOpacity))
+                .background(Color.appAccent.opacity(AppUI.glassOpacity / 1.5))
+
+                ForEach(Array(rows.enumerated()), id: \.offset) { rowIdx, row in
+                    HStack(spacing: 0) {
+                        ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
+                            renderInlineContent(cell)
+                                .font(.system(.subheadline))
+                                .foregroundStyle(.appText)
+                                .frame(minWidth: 100, alignment: .leading)
+                                .padding(.horizontal, AppUI.tightPadding)
+                                .padding(.vertical, AppUI.small - AppUI.atomic)
+                        }
+                    }
+                    .background(rowIdx % 2 == 0 ? Color.clear : Color.appCard.opacity(AppUI.disabledOpacity))
+                }
             }
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: AppUI.smallRadius)
+                    .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
+            )
         }
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
-        )
         .padding(.vertical, AppUI.tiny)
     }
 

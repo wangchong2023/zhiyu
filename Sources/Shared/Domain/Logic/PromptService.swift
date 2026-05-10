@@ -26,6 +26,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         if let savedQuiz = defaults.string(forKey: "prompt_quiz") { self.quizPrompt = savedQuiz }
         if let savedSlides = defaults.string(forKey: "prompt_slides") { self.slidesPrompt = savedSlides }
         if let savedReport = defaults.string(forKey: "prompt_report") { self.reportPrompt = savedReport }
+        if let savedExpansion = defaults.string(forKey: "prompt_expansion") { self.expansionPrompt = savedExpansion }
     }
 
     // MARK: - 检索增强 (RAG) 相关
@@ -56,6 +57,8 @@ final class PromptService: ObservableObject, @unchecked Sendable {
     @Published var infographicPrompt: String = Localized.tr("prompt.default.infographic")
     @Published var insightQuestionsPrompt: String = Localized.tr("prompt.default.insightQuestions")
     @Published var reportPrompt: String = Localized.tr("prompt.default.report")
+    @Published var expansionPrompt: String = Localized.tr("prompt.default.expansion")
+    @Published var expansionSystemPrompt: String = "You are a senior knowledge expert and researcher. Your goal is to provide deep, insightful expansion of existing knowledge."
 
     // MARK: - 用户资产
 
@@ -82,6 +85,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         if defaults.string(forKey: "prompt_quiz") == nil { quizPrompt = Localized.tr("prompt.default.quiz") }
         if defaults.string(forKey: "prompt_slides") == nil { slidesPrompt = Localized.tr("prompt.default.slides") }
         if defaults.string(forKey: "prompt_report") == nil { reportPrompt = Localized.tr("prompt.default.report") }
+        if defaults.string(forKey: "prompt_expansion") == nil { expansionPrompt = Localized.tr("prompt.default.expansion") }
     }
 
     func reload() {
@@ -95,6 +99,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.set(quizPrompt, forKey: "prompt_quiz")
         defaults.set(slidesPrompt, forKey: "prompt_slides")
         defaults.set(reportPrompt, forKey: "prompt_report")
+        defaults.set(expansionPrompt, forKey: "prompt_expansion")
         print("Prompt configurations saved to UserDefaults.")
     }
 
@@ -104,11 +109,13 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.removeObject(forKey: "prompt_quiz")
         defaults.removeObject(forKey: "prompt_slides")
         defaults.removeObject(forKey: "prompt_report")
+        defaults.removeObject(forKey: "prompt_expansion")
 
         self.mindmapPrompt = Localized.tr("prompt.default.mindmap")
         self.quizPrompt = Localized.tr("prompt.default.quiz")
         self.slidesPrompt = Localized.tr("prompt.default.slides")
         self.reportPrompt = Localized.tr("prompt.default.report")
+        self.expansionPrompt = Localized.tr("prompt.default.expansion")
         print("Prompt configurations reset to default.")
     }
 

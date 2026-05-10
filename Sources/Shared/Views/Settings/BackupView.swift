@@ -15,6 +15,7 @@ import SwiftUI
 struct BackupView: View {
     @Environment(AppStore.self) var store
     @StateObject private var backupService = BackupService()
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     @State private var showRestoreConfirmation = false
     @State private var selectedEntry: BackupService.BackupEntry?
@@ -36,7 +37,7 @@ struct BackupView: View {
                             Text(L10n.Backup.tr("lastBackup"))
                                 .foregroundStyle(.appSecondary)
                             Spacer()
-                            Text(lastDate.formatted(date: .numeric, time: .standard))
+                            Text(lastDate.formatted(Date.FormatStyle(date: .numeric, time: .standard, locale: Localized.currentLocale)))
                                 .foregroundStyle(.appSecondary)
                         }
                     }
@@ -89,7 +90,7 @@ struct BackupView: View {
             }
             .listStyle(.inset)
             .scrollContentBackground(.hidden)
-            .background(Color.appBackground)
+            .background(themeManager.pageBackground())
             .navigationTitle(L10n.Backup.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

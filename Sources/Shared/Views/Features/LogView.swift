@@ -25,6 +25,7 @@ struct LogView: View {
 /// 负责从存储引擎加载日志条目，处理清空逻辑，并管理条目的展开/折叠状态
 struct LogViewContent: View {
     @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var expandedEntryIDs: Set<UUID> = []
     @State private var showConfirmation = false
 
@@ -68,7 +69,7 @@ struct LogViewContent: View {
         .listStyle(.insetGrouped)
 #endif
         .scrollContentBackground(.hidden)
-        .background(Color.appBackground)
+        .background(themeManager.pageBackground())
         .navigationTitle(L10n.Settings.tr("operationLog"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -95,9 +96,10 @@ struct LogViewContent: View {
         } message: {
             Text(L10n.Settings.tr("clearAll.message"))
         }
+        .scrollContentBackground(.hidden)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
 #if os(iOS)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(Color.appBackground, for: .navigationBar)
 #endif
     }
 }
@@ -160,9 +162,9 @@ private struct LogEntryRow: View {
                     
                     HStack(spacing: AppUI.tightPadding) {
                         if let start = entry.startTime, let end = entry.endTime {
-                            Text("\(start.formatted(date: .omitted, time: .shortened)) - \(end.formatted(date: .omitted, time: .shortened))")
+                            Text("\(start.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale))) - \(end.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale)))")
                         } else {
-                            Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+                            Text(entry.timestamp.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Localized.currentLocale)))
                         }
                         
                         if let dur = entry.duration {
@@ -189,7 +191,7 @@ private struct LogEntryRow: View {
                                 Text(L10n.Log.startTime)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
-                                Text(start.formatted(date: .omitted, time: .standard))
+                                Text(start.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)))
                                     .font(.system(.caption2, design: .monospaced))
                             }
                         }
@@ -199,7 +201,7 @@ private struct LogEntryRow: View {
                                 Text(L10n.Log.endTime)
                                     .font(.caption2)
                                     .foregroundStyle(.appSecondary)
-                                Text(end.formatted(date: .omitted, time: .standard))
+                                Text(end.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)))
                                     .font(.system(.caption2, design: .monospaced))
                             }
                         }
@@ -242,7 +244,7 @@ private struct LogEntryRow: View {
                             .foregroundStyle(.appSecondary)
                             .padding(AppUI.Timeline.detailHorizontalPadding)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.appBackground)
+                            .background(AppUI.Background.cardBackground())
                             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
                     }
                 }

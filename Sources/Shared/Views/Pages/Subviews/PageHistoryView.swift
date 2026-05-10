@@ -11,6 +11,7 @@ import SwiftUI
 struct PageHistoryView: View {
     let page: KnowledgePage
     @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     @State private var history: [SnapshotInfo] = []
     @State private var selectedSnapshot: SnapshotInfo?
@@ -30,7 +31,7 @@ struct PageHistoryView: View {
                         }) {
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text(snapshot.date.formatted(date: .abbreviated, time: .shortened))
+                                    Text(snapshot.date.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Localized.currentLocale)))
                                         .font(.subheadline.weight(.medium))
                                     Text(Localized.tr("page.history.physical"))
                                         .font(.caption2)
@@ -46,6 +47,8 @@ struct PageHistoryView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(themeManager.pageBackground())
             .navigationTitle(Localized.tr("page.history"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -75,6 +78,7 @@ private struct SnapshotDetailView: View {
     let snapshot: SnapshotInfo
     let content: String
     let onRollback: () -> Void
+    @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -87,7 +91,7 @@ private struct SnapshotDetailView: View {
                                 .font(.caption.weight(.bold))
                                 .foregroundStyle(.appAccent)
                             Spacer()
-                            Text(snapshot.date.formatted())
+                            Text(snapshot.date.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }
@@ -127,7 +131,7 @@ private struct SnapshotDetailView: View {
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
-            .background(Color.appBackground)
+            .background(themeManager.pageBackground())
         }
     }
 }

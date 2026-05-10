@@ -49,11 +49,11 @@ struct VoiceNoteView: View {
             .padding(.top, 8)
             .padding(.bottom, 24)
         }
-        .background(Color.appBackground.ignoresSafeArea())
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .navigationTitle(Localized.tr("speech.title"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .navigationBar)
 #endif
         .sheet(isPresented: $showSaveSheet) {
             SaveVoiceNoteSheet(speechService: speechService, title: $noteTitle)
@@ -224,7 +224,7 @@ struct VoiceNoteView: View {
                 .foregroundStyle(.appText)
                 .frame(minHeight: 100, maxHeight: 200)
                 .padding(8)
-                .background(Color.appBackground)
+                .background(AppUI.Background.cardBackground())
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)

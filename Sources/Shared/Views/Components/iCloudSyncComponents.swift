@@ -48,7 +48,7 @@ struct SyncStatusRow: View {
                     .foregroundStyle(.appText)
 
                 if let date = syncService.lastSyncDate {
-                    Text(Localized.trf("icloud.lastSyncFormat", date.formatted(.dateTime.year().month().day().hour().minute())))
+                    Text(Localized.trf("icloud.lastSyncFormat", date.formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale))))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }

@@ -21,68 +21,75 @@ struct IndexView: View {
 // MARK: - Index View Content (for use inside parent NavigationStack)
 struct IndexViewContent: View {
     @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
     var filterType: PageType? = nil
     
     @State private var showDeleteConfirmation = false
     @State private var pageToDelete: KnowledgePage?
 
     var body: some View {
-        List {
-            if filterType == nil {
-                summarySection
-            }
+        ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            ScrollView {
+                LazyVStack(spacing: AppUI.standardPadding, pinnedViews: [.sectionHeaders]) {
+                    if filterType == nil {
+                        summarySection
+                    }
 
-            if filterType == nil || filterType == .entity {
-                entitySection
-            }
+                    if filterType == nil || filterType == .entity {
+                        entitySection
+                    }
 
-            if filterType == nil || filterType == .concept {
-                conceptSection
-            }
+                    if filterType == nil || filterType == .concept {
+                        conceptSection
+                    }
 
-            if filterType == nil || filterType == .source {
-                sourceSection
-            }
+                    if filterType == nil || filterType == .source {
+                        sourceSection
+                    }
 
-            if filterType == nil || filterType == .comparison {
-                comparisonSection
-            }
-        }
-        .confirmationDialog(
-            pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(Localized.tr("page.deletePage"), role: .destructive) {
-                if let page = pageToDelete {
-                    store.deletePage(page)
-                    HapticFeedback.shared.trigger(.success)
+                    if filterType == nil || filterType == .comparison {
+                        comparisonSection
+                    }
                 }
+                .padding(.horizontal, AppUI.huge)
+                .padding(.vertical, AppUI.loosePadding)
+                .padding(.bottom, AppUI.standardPadding * 2)
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {
-                pageToDelete = nil
-            }
-        } message: {
-            Text(Localized.tr("settings.clearAll.message"))
         }
-        #if os(iOS)
-        .listStyle(.insetGrouped)
-#endif
-        .scrollContentBackground(.hidden)
-        .background(Color.appBackground)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(filterType?.displayName ?? Localized.tr("sidebar.allPages"))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    HapticFeedback.shared.trigger(.selection)
-                    store.refresh()
-                } label: {
-                    Label(L10n.Common.tr("refresh"), systemImage: AppUI.Icons.refresh)
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            HapticFeedback.shared.trigger(.selection)
+                            store.refresh()
+                        } label: {
+                            Label(L10n.Common.tr("refresh"), systemImage: AppUI.Icons.refresh)
+                        }
+                    }
                 }
-            }
+                .confirmationDialog(
+                    pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
+                    isPresented: $showDeleteConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button(Localized.tr("page.deletePage"), role: .destructive) {
+                        if let page = pageToDelete {
+                            store.deletePage(page)
+                            HapticFeedback.shared.trigger(.success)
+                        }
+                    }
+                    Button(L10n.Common.tr("cancel"), role: .cancel) {
+                        pageToDelete = nil
+                    }
+                } message: {
+                    Text(Localized.tr("settings.clearAll.message"))
+                }
         }
-    }
     
     @ViewBuilder
     private var summarySection: some View {
@@ -94,10 +101,15 @@ struct IndexViewContent: View {
                 IndexStatView(label: L10n.Dashboard.tr("index.sources"), value: "\(store.sourceCount)", color: .appSource)
             }
             .padding(.vertical, AppUI.tiny)
-            .listRowInsets(EdgeInsets(top: AppUI.Layout.tightPadding, leading: AppUI.Chip.horizontalPadding, bottom: AppUI.Layout.tightPadding, trailing: AppUI.Chip.horizontalPadding))
-            .listRowBackground(Color.clear)
         } header: {
-            Text(L10n.Dashboard.tr("index.overview"))
+            HStack {
+                Text(L10n.Dashboard.tr("index.overview"))
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.appSecondary)
+                Spacer()
+            }
+            .padding(.vertical, AppUI.tiny)
+            .background(Color.appBackground.opacity(0.01)) // 使 Header 背景透明
         }
     }
     
@@ -106,22 +118,29 @@ struct IndexViewContent: View {
         let entities = store.pages.filter { $0.type == .entity }.sorted { $0.title < $1.title }
         if !entities.isEmpty {
             Section {
-                ForEach(entities) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        IndexRowView(page: page)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            pageToDelete = page
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label(Localized.tr("page.deletePage"), systemImage: AppUI.Icons.delete)
+                VStack(spacing: 0) {
+                    ForEach(entities) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            IndexRowView(page: page)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        if page.id != entities.last?.id {
+                            Divider()
+                                .padding(.leading, AppUI.Sidebar.iconBoxSize + AppUI.Sidebar.rowSpacing)
                         }
                     }
                 }
+                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
             } header: {
-                Label(Localized.trf("index.entityCount", entities.count), systemImage: AppUI.Icons.person)
-                    .foregroundStyle(.appEntity)
+                HStack {
+                    Label(Localized.trf("index.entityCount", entities.count), systemImage: AppUI.Icons.entity)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appEntity)
+                    Spacer()
+                }
+                .padding(.vertical, AppUI.tiny)
+                .background(Color.appBackground.opacity(0.01))
             }
         }
     }
@@ -131,22 +150,37 @@ struct IndexViewContent: View {
         let concepts = store.pages.filter { $0.type == .concept }.sorted { $0.title < $1.title }
         if !concepts.isEmpty {
             Section {
-                ForEach(concepts) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        IndexRowView(page: page)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            pageToDelete = page
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label(Localized.tr("page.deletePage"), systemImage: AppUI.Icons.delete)
+                VStack(spacing: 0) {
+                    ForEach(concepts) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            IndexRowView(page: page)
+                        }
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                pageToDelete = page
+                                showDeleteConfirmation = true
+                            } label: {
+                                Label(Localized.tr("page.deletePage"), systemImage: AppUI.Icons.delete)
+                            }
+                        }
+                        
+                        if page.id != concepts.last?.id {
+                            Divider()
+                                .padding(.leading, AppUI.Sidebar.iconBoxSize + AppUI.Sidebar.rowSpacing)
                         }
                     }
                 }
+                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
             } header: {
-                Label(Localized.trf("index.conceptCount", concepts.count), systemImage: AppUI.Icons.lightbulb)
-                    .foregroundStyle(.appConcept)
+                HStack {
+                    Label(Localized.trf("index.conceptCount", concepts.count), systemImage: AppUI.Icons.concept)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appConcept)
+                    Spacer()
+                }
+                .padding(.vertical, AppUI.tiny)
+                .background(Color.appBackground.opacity(0.01))
             }
         }
     }
@@ -156,22 +190,29 @@ struct IndexViewContent: View {
         let sources = store.pages.filter { $0.type == .source }.sorted { $0.title < $1.title }
         if !sources.isEmpty {
             Section {
-                ForEach(sources) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        IndexRowView(page: page)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            pageToDelete = page
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label(Localized.tr("page.deletePage"), systemImage: AppUI.Icons.delete)
+                VStack(spacing: 0) {
+                    ForEach(sources) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            IndexRowView(page: page)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        if page.id != sources.last?.id {
+                            Divider()
+                                .padding(.leading, AppUI.Sidebar.iconBoxSize + AppUI.Sidebar.rowSpacing)
                         }
                     }
                 }
+                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
             } header: {
-                Label(Localized.trf("index.sourceCount", sources.count), systemImage: AppUI.Icons.doc)
-                    .foregroundStyle(.appSource)
+                HStack {
+                    Label(Localized.trf("index.sourceCount", sources.count), systemImage: AppUI.Icons.source)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appSource)
+                    Spacer()
+                }
+                .padding(.vertical, AppUI.tiny)
+                .background(Color.appBackground.opacity(0.01))
             }
         }
     }
@@ -181,22 +222,29 @@ struct IndexViewContent: View {
         let comparisons = store.pages.filter { $0.type == .comparison }.sorted { $0.title < $1.title }
         if !comparisons.isEmpty {
             Section {
-                ForEach(comparisons) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        IndexRowView(page: page)
-                    }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            pageToDelete = page
-                            showDeleteConfirmation = true
-                        } label: {
-                            Label(Localized.tr("page.deletePage"), systemImage: AppUI.Icons.delete)
+                VStack(spacing: 0) {
+                    ForEach(comparisons) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            IndexRowView(page: page)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        if page.id != comparisons.last?.id {
+                            Divider()
+                                .padding(.leading, AppUI.Sidebar.iconBoxSize + AppUI.Sidebar.rowSpacing)
                         }
                     }
                 }
+                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
             } header: {
-                Label(Localized.trf("index.comparisonCount", comparisons.count), systemImage: AppUI.Icons.compare)
-                    .foregroundStyle(.appComparison)
+                HStack {
+                    Label(Localized.trf("index.comparisonCount", comparisons.count), systemImage: AppUI.Icons.comparison)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appComparison)
+                    Spacer()
+                }
+                .padding(.vertical, AppUI.tiny)
+                .background(Color.appBackground.opacity(0.01))
             }
         }
     }
@@ -221,7 +269,7 @@ struct IndexStatView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppUI.List.rowVerticalPadding)
-        .background(Color.appCard)
+        .background(Color.appCard.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: AppUI.cardRadius)

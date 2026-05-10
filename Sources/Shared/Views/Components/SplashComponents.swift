@@ -70,77 +70,83 @@ struct SplashBackgroundView: View {
 
             // 星星层
             GeometryReader { geo in
-                ForEach(Array(stars.enumerated()), id: \.offset) { index, star in
-                    Circle()
-                        .fill(Color.white)
-                        .frame(width: star.size, height: star.size)
-                        .position(x: geo.size.width * star.x, y: geo.size.height * star.y)
-                        .opacity(starTwinkle ? AppUI.fullOpacity * 0.7 : AppUI.disabledOpacity) // 0.7, 0.3
-                        .animation(
-                            .easeInOut(duration: AppUI.Animation.looseDuration + star.delay) // 1.5
-                            .repeatForever(autoreverses: true)
-                            .delay(star.delay),
-                            value: starTwinkle
-                        )
+                if geo.size.width > 1 && geo.size.height > 1 {
+                    ForEach(Array(stars.enumerated()), id: \.offset) { index, star in
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: star.size, height: star.size)
+                            .position(x: geo.size.width * star.x, y: geo.size.height * star.y)
+                            .opacity(starTwinkle ? AppUI.fullOpacity * 0.7 : AppUI.disabledOpacity)
+                            .animation(
+                                .easeInOut(duration: AppUI.Animation.looseDuration + star.delay)
+                                .repeatForever(autoreverses: true)
+                                .delay(star.delay),
+                                value: starTwinkle
+                            )
+                    }
                 }
             }
 
             // 神经网络连接线
             GeometryReader { geo in
-                ForEach(Array(connections.enumerated()), id: \.offset) { _, conn in
-                    let fromNode = networkNodes[conn.from]
-                    let toNode = networkNodes[conn.to]
-                    let lineColor1 = fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
-                    let lineColor2 = toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
-                    
-                    Path { path in
-                        path.move(to: CGPoint(
-                            x: geo.size.width * fromNode.x,
-                            y: geo.size.height * fromNode.y
-                        ))
-                        path.addLine(to: CGPoint(
-                            x: geo.size.width * toNode.x,
-                            y: geo.size.height * toNode.y
-                        ))
+                if geo.size.width > 1 && geo.size.height > 1 {
+                    ForEach(Array(connections.enumerated()), id: \.offset) { _, conn in
+                        let fromNode = networkNodes[conn.from]
+                        let toNode = networkNodes[conn.to]
+                        let lineColor1 = fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
+                        let lineColor2 = toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
+                        
+                        Path { path in
+                            path.move(to: CGPoint(
+                                x: geo.size.width * fromNode.x,
+                                y: geo.size.height * fromNode.y
+                            ))
+                            path.addLine(to: CGPoint(
+                                x: geo.size.width * toNode.x,
+                                y: geo.size.height * toNode.y
+                            ))
+                        }
+                        .stroke(
+                            LinearGradient(
+                                colors: [lineColor1, lineColor2],
+                                startPoint: .init(x: fromNode.x, y: fromNode.y),
+                                endPoint: .init(x: toNode.x, y: toNode.y)
+                            ),
+                            lineWidth: AppUI.borderWidth * 0.8
+                        )
                     }
-                    .stroke(
-                        LinearGradient(
-                            colors: [lineColor1, lineColor2],
-                            startPoint: .init(x: fromNode.x, y: fromNode.y),
-                            endPoint: .init(x: toNode.x, y: toNode.y)
-                        ),
-                        lineWidth: AppUI.borderWidth * 0.8 // 0.8
-                    )
                 }
             }
 
             // 神经网络节点
             GeometryReader { geo in
-                ForEach(Array(networkNodes.enumerated()), id: \.offset) { index, node in
-                    let nodeColor1 = node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8)
-                    let nodeColor2 = node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2)
-                    
-                    let nodeScale = nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5
-                    let nodeOpacity = nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity
-                    let animDuration = AppUI.Animation.slowDuration + Double(index) * 0.1
-                    let nodeAnim = SwiftUI.Animation.easeInOut(duration: animDuration)
-                        .repeatForever(autoreverses: true)
-                        .delay(Double(index) * 0.08)
-                    
-                    Circle()
-                        .fill(
-                            RadialGradient(
-                                colors: [nodeColor1, nodeColor2, .clear],
-                                center: .center,
-                                startRadius: 0,
-                                endRadius: node.size * 2
+                if geo.size.width > 1 && geo.size.height > 1 {
+                    ForEach(Array(networkNodes.enumerated()), id: \.offset) { index, node in
+                        let nodeColor1 = node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8)
+                        let nodeColor2 = node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2)
+                        
+                        let nodeScale = nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5
+                        let nodeOpacity = nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity
+                        let animDuration = AppUI.Animation.slowDuration + Double(index) * 0.1
+                        let nodeAnim = SwiftUI.Animation.easeInOut(duration: animDuration)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(index) * 0.08)
+                        
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [nodeColor1, nodeColor2, .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: node.size * 2
+                                )
                             )
-                        )
-                        .frame(width: node.size * 4, height: node.size * 4)
-                        .position(x: geo.size.width * node.x, y: geo.size.height * node.y)
-                        .scaleEffect(nodeScale)
-                        .opacity(nodeOpacity)
-                        .animation(nodeAnim, value: nodeGlow)
+                            .frame(width: node.size * 4, height: node.size * 4)
+                            .position(x: geo.size.width * node.x, y: geo.size.height * node.y)
+                            .scaleEffect(nodeScale)
+                            .opacity(nodeOpacity)
+                            .animation(nodeAnim, value: nodeGlow)
+                    }
                 }
             }
 

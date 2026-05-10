@@ -10,6 +10,7 @@ import Charts
 struct WelcomeView: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var showInjectSuccess = false
     @State private var injectedCount = 0
     
@@ -29,7 +30,7 @@ struct WelcomeView: View {
             }
             .padding(.bottom, AppUI.huge + AppUI.small)
         }
-        .background(Color.appBackground)
+        .background(themeManager.pageBackground())
         .alert(L10n.Common.tr("success"), isPresented: $showInjectSuccess) {
             Button(L10n.Common.tr("awesome"), role: .cancel) { }
         } message: {

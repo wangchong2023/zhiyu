@@ -19,7 +19,7 @@ struct BreadcrumbView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(Array(history.enumerated()), id: \.element.id) { index, page in
+                ForEach(Array(history.enumerated()), id: \.offset) { index, page in
                     HStack(spacing: 8) {
                         Button(action: { 
                             HapticFeedback.shared.trigger(.link)

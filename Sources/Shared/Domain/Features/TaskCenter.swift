@@ -181,6 +181,16 @@ class TaskCenter: ObservableObject {
         }
     }
 
+    /// 便捷方法：完成任务
+    func completeTask(id: UUID, associatedPageID: UUID? = nil) {
+        updateTask(id, status: .completed, associatedPageID: associatedPageID)
+    }
+
+    /// 便捷方法：任务失败
+    func failTask(id: UUID, error: String) {
+        updateTask(id, status: .failed(error: error))
+    }
+
     func markAsRead(_ id: UUID) {
         DispatchQueue.main.async {
             if let index = self.tasks.firstIndex(where: { $0.id == id }) {

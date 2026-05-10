@@ -322,7 +322,7 @@ final class MarkdownProcessor: Sendable {
                     if earliestMatch == nil || match.range.location < earliestMatch!.match.range.location {
                         earliestMatch = (type, match)
                     } else if match.range.location == earliestMatch!.match.range.location {
-                        // 如果起始位置相同，优先处理更具体的类型（如 applink 优先于 link 或 text）
+                        // 如果起始位置相同，优先处理更具体的类型（如 applink 优先于 link）
                         if type == .applink { earliestMatch = (type, match) }
                     }
                 }
@@ -344,7 +344,7 @@ final class MarkdownProcessor: Sendable {
                     // 提取 [[ 内容 ]]
                     let raw = nsText.substring(with: earliest.match.range(at: 1)).trimmingCharacters(in: .whitespaces)
                     if raw.contains("|") {
-                        let parts = raw.split(separator: "|")
+                        let parts = raw.components(separatedBy: "|")
                         let title = String(parts.first ?? "").trimmingCharacters(in: .whitespaces)
                         let label = String(parts.last ?? "").trimmingCharacters(in: .whitespaces)
                         content = "\(label)|\(title)"
@@ -389,9 +389,9 @@ final class MarkdownProcessor: Sendable {
 }
 
 extension NSRegularExpression {
-    static let appLinkRegex = try! NSRegularExpression(pattern: "\\[\\[([^\\]\\n]+)\\]\\]")
+    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[([^\\]\\n]+)\\]\\]")
     static let boldRegex = try! NSRegularExpression(pattern: "\\*\\*([^*]+)\\*\\*")
     static let italicRegex = try! NSRegularExpression(pattern: "\\*([^*]+)\\*")
     static let codeRegex = try! NSRegularExpression(pattern: "`([^`]+)`")
-    static let linkRegex = try! NSRegularExpression(pattern: "\\[([^\\]]+)\\]\\(([^\\)]+)\\)")
+    static let linkRegex = try! NSRegularExpression(pattern: "(?<!\\[)\\[([^\\]]+)\\]\\(([^\\)]+)\\)")
 }

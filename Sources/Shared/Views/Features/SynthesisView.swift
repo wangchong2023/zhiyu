@@ -23,6 +23,7 @@ struct SynthesisView: View {
     @State private var showOutput = false
     @State private var outputType: SynthesisStore.SynthesisType = .mindmap
     @State private var selectedDoc: SynthesisStore.SynthesisDocument?
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var pdfURL: IdentifiableURL?
 
     @State private var exportError: String?
@@ -51,21 +52,26 @@ struct SynthesisView: View {
             return false
         }
         
-        return ScrollView {
-            VStack(spacing: AppUI.loosePadding) {
-                // 1. 合成操作入口
-                synthesisEntryView
-                
-                // 2. 正在运行的任务
-                if !runningTasks.isEmpty {
-                    runningTasksSection(tasks: runningTasks)
+        return ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: AppUI.loosePadding) {
+                    // 1. 合成操作入口
+                    synthesisEntryView
+                    
+                    // 2. 正在运行的任务
+                    if !runningTasks.isEmpty {
+                        runningTasksSection(tasks: runningTasks)
+                    }
+                    
+                    // 3. 文档列表区域
+                    documentListArea
                 }
-                
-                // 3. 文档列表区域
-                documentListArea
+                .padding(.horizontal, AppUI.standardPadding)
+                .padding(.vertical, AppUI.widePadding)
             }
-            .padding(.horizontal, AppUI.standardPadding)
-            .padding(.vertical, AppUI.widePadding)
             .alert(L10n.Synthesis.tr("error.noPages"), isPresented: $showNoPagesAlert) {
                 Button(L10n.Common.tr("ok"), role: .cancel) { }
             }
@@ -73,13 +79,13 @@ struct SynthesisView: View {
                 Button(L10n.Common.tr("done"), role: .cancel) { }
             }
             .alert(Localized.tr("tag.rename"), isPresented: $showRenameDialog) {
-                 TextField(Localized.tr("tags.inputName"), text: $newDocName)
-                 Button(Localized.tr("tag.rename")) {
-                     if let doc = docToRename {
-                         synthesisStore.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: newDocName)
-                     }
-                 }
-                 Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                TextField(Localized.tr("tags.inputName"), text: $newDocName)
+                Button(Localized.tr("tag.rename")) {
+                    if let doc = docToRename {
+                        synthesisStore.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: newDocName)
+                    }
+                }
+                Button(L10n.Common.tr("cancel"), role: .cancel) { }
             }
             .alert(Localized.tr("chat.configureFirst"), isPresented: $showLLMAlert) {
                 Button(L10n.Common.tr("confirm"), role: .cancel) { }
@@ -102,7 +108,7 @@ struct SynthesisView: View {
                 Button(L10n.Common.tr("cancel"), role: .cancel) { }
             }
         }
-        .background(Color.appBackground)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(Localized.tr("sidebar.synthesis"))
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -204,86 +210,88 @@ struct SynthesisView: View {
     }
     
     private var listHeader: some View {
-        HStack {
-            Text(L10n.Synthesis.tr("documentList")).font(.title3.bold())
-            Spacer()
-            editAndBatchDeleteControls
+        VStack(alignment: .leading, spacing: AppUI.small) {
+            HStack {
+                Text(L10n.Synthesis.tr("documentList")).font(.title3.bold())
+                Spacer()
+                // “编辑/完成”按钮始终在顶部右侧
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    withAnimation(AppUI.standardAnimation) {
+                        if editMode == .inactive {
+                            editMode = .active
+                        } else {
+                            editMode = .inactive
+                            selectedDocIDs.removeAll()
+                        }
+                    }
+                }) {
+                    Text(editMode == .active ? L10n.Common.tr("done") : L10n.Common.tr("edit"))
+                        .font(.subheadline.bold())
+                        .foregroundStyle(Color.appAccent)
+                }
+                .buttonStyle(.plain)
+            }
+            
+            // 编辑模式下的批量操作按钮移至第二行，并支持水平滚动以防溢出
+            if editMode == .active {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: AppUI.medium) {
+                        Button(action: {
+                            HapticFeedback.shared.trigger(.warning)
+                            showBatchDeleteConfirm = true
+                        }) {
+                            HStack(spacing: AppUI.tiny) {
+                                Image(systemName: "trash")
+                                Text(L10n.Common.tr("delete"))
+                            }
+                            .font(.footnote.bold())
+                            .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(AppUI.disabledOpacity) : .white)
+                            .padding(.horizontal, AppUI.Chip.horizontalPadding)
+                            .padding(.vertical, AppUI.smallRadius)
+                            .background(
+                                Capsule().fill(selectedDocIDs.isEmpty ? Color.clear : Color.red)
+                            )
+                            .overlay(
+                                Capsule().stroke(selectedDocIDs.isEmpty ? Color.appBorder : Color.red, lineWidth: AppUI.borderWidth)
+                            )
+                        }
+                        .disabled(selectedDocIDs.isEmpty)
+                        
+                        Button(action: {
+                            HapticFeedback.shared.trigger(.warning)
+                            showClearAllConfirm = true
+                        }) {
+                            HStack(spacing: AppUI.tiny) {
+                                Image(systemName: "trash.slash")
+                                Text(L10n.Common.tr("clearAll"))
+                            }
+                            .font(.footnote.bold())
+                            .foregroundStyle(.appSecondary)
+                            .padding(.horizontal, AppUI.medium)
+                            .padding(.vertical, AppUI.smallRadius)
+                            .background(
+                                Capsule().stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
+                            )
+                        }
+                        .confirmationDialog(Localized.tr("synthesis.clearAllConfirm"), isPresented: $showClearAllConfirm, titleVisibility: .visible) {
+                            Button(L10n.Common.tr("clearAll"), role: .destructive) {
+                                synthesisStore.clearAll()
+                                HapticFeedback.shared.trigger(.success)
+                            }
+                            Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                        }
+                    }
+                    .padding(.vertical, AppUI.tiny)
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
         }
         .padding(.vertical, AppUI.tightPadding)
         .foregroundStyle(.appText)
         .textCase(nil)
     }
 
-    private var editAndBatchDeleteControls: some View {
-        HStack(spacing: AppUI.tightPadding) {
-            if editMode == .active {
-                HStack(spacing: AppUI.medium) {
-                    Button(action: {
-                        HapticFeedback.shared.trigger(.warning)
-                        showBatchDeleteConfirm = true
-                    }) {
-                        HStack(spacing: AppUI.tiny) {
-                            Image(systemName: "trash")
-                            Text(L10n.Common.tr("delete"))
-                        }
-                        .font(.footnote.bold())
-                        .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(AppUI.disabledOpacity) : .white)
-                        .padding(.horizontal, AppUI.Chip.horizontalPadding)
-                        .padding(.vertical, AppUI.smallRadius)
-                        .background(
-                            Capsule().fill(selectedDocIDs.isEmpty ? Color.clear : Color.red)
-                        )
-                        .overlay(
-                            Capsule().stroke(selectedDocIDs.isEmpty ? Color.appBorder : Color.red, lineWidth: AppUI.borderWidth)
-                        )
-                    }
-                    .disabled(selectedDocIDs.isEmpty)
-                    
-                    Button(action: {
-                        HapticFeedback.shared.trigger(.warning)
-                        showClearAllConfirm = true
-                    }) {
-                        HStack(spacing: AppUI.tiny) {
-                            Image(systemName: "trash.slash")
-                            Text(L10n.Common.tr("clearAll"))
-                        }
-                        .font(.footnote.bold())
-                        .foregroundStyle(.appSecondary)
-                        .padding(.horizontal, AppUI.medium)
-                        .padding(.vertical, AppUI.smallRadius)
-                        .background(
-                            Capsule().stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
-                        )
-                    }
-                    .confirmationDialog(Localized.tr("synthesis.clearAllConfirm"), isPresented: $showClearAllConfirm, titleVisibility: .visible) {
-                        Button(L10n.Common.tr("clearAll"), role: .destructive) {
-                            synthesisStore.clearAll()
-                            HapticFeedback.shared.trigger(.success)
-                        }
-                        Button(L10n.Common.tr("cancel"), role: .cancel) { }
-                    }
-                }
-                .transition(.move(edge: .trailing).combined(with: .opacity))
-            }
-
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                withAnimation(AppUI.standardAnimation) {
-                    if editMode == .inactive {
-                        editMode = .active
-                    } else {
-                        editMode = .inactive
-                        selectedDocIDs.removeAll()
-                    }
-                }
-            }) {
-                Text(editMode == .active ? L10n.Common.tr("done") : L10n.Common.tr("edit"))
-                    .font(.subheadline.bold())
-                    .foregroundStyle(Color.appAccent)
-            }
-            .buttonStyle(.plain)
-        }
-    }
     
     private var backButton: some View {
         Button(action: {

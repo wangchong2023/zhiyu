@@ -613,6 +613,20 @@
         }
       }
     },
+    "misc.history.count": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d records" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "共 %d 条记录" } }
+      },
+      "extractionState": "manual"
+    },
+    "misc.wordCount": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%d words" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "%d 字" } }
+      },
+      "extractionState": "manual"
+    },
     "misc.preview": {
       "localizations": {
         "en": {
@@ -966,6 +980,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "类型"
+          }
+        }
+      }
+    },
+    "misc.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "None"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无"
           }
         }
       }

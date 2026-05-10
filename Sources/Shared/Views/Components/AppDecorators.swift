@@ -269,6 +269,7 @@ struct AppDotPattern: View {
 
     var body: some View {
         Canvas { context, size in
+            guard size.width > 1 && size.height > 1 else { return }
             let cols = Int(size.width / spacing) + 1
             let rows = Int(size.height / spacing) + 1
             for row in 0..<rows {

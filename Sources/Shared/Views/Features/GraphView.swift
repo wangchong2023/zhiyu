@@ -21,6 +21,7 @@ struct GraphContainerView: View {
     @Environment(AppRouter.self) var router
     var heroNamespace: Namespace.ID
     @Binding var selectedTab: AppTab
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var viewModel = GraphViewModel()
     @StateObject private var tooltipManager = TooltipManager.shared
 
@@ -28,66 +29,66 @@ struct GraphContainerView: View {
         let currentFilteredNodes = viewModel.getFilteredNodes()
         let currentFilteredEdges = viewModel.getFilteredEdges(for: currentFilteredNodes)
 
-        ZStack {
-            AppUI.Background.meshGradient()
+        return ZStack {
+            themeManager.pageBackground()
                 .ignoresSafeArea()
-                .onTapGesture {
-                    dismissCard()
-                }
+            
+            Group {
+                if viewModel.nodes.isEmpty {
+                    GraphEmptyStateView(selectedTab: $selectedTab)
+                } else {
+                    // 2. 主体布局：标题/过滤项 + 画布
+                    VStack(spacing: AppUI.medium) {
+                        // 顶部非描边区域：统计与过滤器
+                        VStack(alignment: .leading, spacing: AppUI.medium) {
+                            graphStatsBar
+                            
+                            GraphFilterPillsView(
+                                filterType: $viewModel.filterType,
+                                tooltipManager: tooltipManager
+                            )
+                        }
+                        .padding(.horizontal, AppUI.standardPadding)
+                        .padding(.top, AppUI.medium)
+                        .zIndex(10) // 确保在画布之上
 
-            if viewModel.nodes.isEmpty {
-                GraphEmptyStateView(selectedTab: $selectedTab)
-            } else {
-                // 2. 主体布局：标题/过滤项 + 画布
-                VStack(spacing: AppUI.medium) {
-                    // 顶部非描边区域：统计与过滤器
-                    VStack(alignment: .leading, spacing: AppUI.medium) {
-                        graphStatsBar
-                        
-                        GraphFilterPillsView(
-                            filterType: $viewModel.filterType,
-                            tooltipManager: tooltipManager
+                        // 核心绘图区：应用柔和边框与裁剪
+                        ZStack {
+                            GraphCanvasView(
+                                nodes: $viewModel.nodes,
+                                filteredEdges: currentFilteredEdges,
+                                provider: store,
+                                filterType: viewModel.filterType,
+                                useClustering: viewModel.useClustering,
+                                selectedNodeID: $viewModel.selectedNodeID,
+                                isAnimating: $viewModel.isAnimating,
+                                scale: $viewModel.scale,
+                                lastScale: $viewModel.lastScale,
+                                offset: $viewModel.offset,
+                                lastOffset: $viewModel.lastOffset,
+                                graphSize: $viewModel.graphSize,
+                                heroNamespace: heroNamespace
+                            ) { node in
+                                handleNodeTap(node)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                dismissCard()
+                            }
+                        }
+                        .background(AppUI.containerBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+                                .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
                         )
+                        .padding(.horizontal, AppUI.standardPadding)
+                        .padding(.bottom, AppUI.standardPadding)
                     }
-                    .padding(.horizontal, AppUI.standardPadding)
-                    .padding(.top, AppUI.medium)
-                    .zIndex(10) // 确保在画布之上
-
-                    // 核心绘图区：应用柔和边框与裁剪
-                    ZStack {
-                        GraphCanvasView(
-                            nodes: $viewModel.nodes,
-                            filteredEdges: currentFilteredEdges,
-                            provider: store,
-                            filterType: viewModel.filterType,
-                            useClustering: viewModel.useClustering,
-                            selectedNodeID: $viewModel.selectedNodeID,
-                            isAnimating: $viewModel.isAnimating,
-                            scale: $viewModel.scale,
-                            lastScale: $viewModel.lastScale,
-                            offset: $viewModel.offset,
-                            lastOffset: $viewModel.lastOffset,
-                            graphSize: $viewModel.graphSize,
-                            heroNamespace: heroNamespace
-                        ) { node in
-                            handleNodeTap(node)
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            dismissCard()
-                        }
-                    }
-                    .background(AppUI.containerBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                            .stroke(AppUI.containerBorder, lineWidth: AppUI.borderWidth)
-                    )
-                    .padding(.horizontal, AppUI.standardPadding)
-                    .padding(.bottom, AppUI.standardPadding)
                 }
             }
         }
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Graph.title)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { layoutGraph() }

@@ -19,6 +19,7 @@ struct SearchView: View {
     @State private var filterType: PageType?
     @State private var filterStatus: PageStatus?
     @State private var sortBy: SortOption = .updated
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var previewPage: KnowledgePage?
     @State private var advancedResults: [KnowledgePage] = []
     @State private var useAdvancedSearch = false
@@ -75,227 +76,225 @@ struct SearchView: View {
     }
     
     var body: some View {
-        ZStack {
-            AppUI.Background.meshGradient()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Search Header (Bar + Filters)
-                VStack(spacing: 12) {
-                    // Unified Search Bar
-                    HStack(spacing: 0) {
-                        HStack(spacing: AppUI.tightPadding + AppUI.atomic) { // 10
-                            Image(systemName: "magnifyingglass")
-                                .foregroundStyle(.appSecondary)
-                            TextField(Localized.tr("search.placeholder"), text: $searchText)
-                                .foregroundStyle(.appText)
-                                .accessibilityIdentifier("searchPlaceholder")
-                                .submitLabel(.search)
-                                .onSubmit {
-                                    if !searchText.isEmpty {
-                                        runAdvancedSearch()
-                                    }
+        VStack(spacing: 0) {
+            // Search Header (Bar + Filters)
+            VStack(spacing: 12) {
+                // Unified Search Bar
+                HStack(spacing: 0) {
+                    HStack(spacing: AppUI.tightPadding + AppUI.atomic) { // 10
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.appSecondary)
+                        TextField(Localized.tr("search.placeholder"), text: $searchText)
+                            .foregroundStyle(.appText)
+                            .accessibilityIdentifier("searchPlaceholder")
+                            .submitLabel(.search)
+                            .onSubmit {
+                                if !searchText.isEmpty {
+                                    runAdvancedSearch()
                                 }
-
-                            if !searchText.isEmpty {
-                                Button(action: { 
-                                    searchText = ""
-                                    useAdvancedSearch = false
-                                    advancedResults = []
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.appSecondary)
-                                }
-                                .padding(.trailing, AppUI.tiny)
                             }
+
+                        if !searchText.isEmpty {
+                            Button(action: { 
+                                searchText = ""
+                                useAdvancedSearch = false
+                                advancedResults = []
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.appSecondary)
+                            }
+                            .padding(.trailing, AppUI.tiny)
                         }
-                        .padding(.leading, AppUI.standardPadding - AppUI.atomic) // 14
-                        .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
-                        .background(Color.appCard)
                     }
-                    .frame(height: AppUI.inputBarHeight)
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.mediumRadius)
-                            .stroke(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625), lineWidth: AppUI.borderWidth / 2) // 0.5
-                    )
-                    .padding(.horizontal)
-                    .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: searchText.isEmpty)
-                    
-                    // Filters
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            FilterPill(title: Localized.tr("search.all"), accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
+                    .padding(.leading, AppUI.standardPadding - AppUI.atomic) // 14
+                    .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
+                    .background(Color.appCard.opacity(0.8))
+                }
+                .frame(height: AppUI.inputBarHeight)
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppUI.mediumRadius)
+                        .stroke(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625), lineWidth: AppUI.borderWidth / 2) // 0.5
+                )
+                .padding(.horizontal)
+                .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: searchText.isEmpty)
+                
+                // Filters
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        FilterPill(title: Localized.tr("search.all"), accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
+                            HapticFeedback.shared.trigger(.selection)
+                            filterType = nil
+                        }
+
+                        ForEach(PageType.allCases) { type in
+                            FilterPill(
+                                title: type.displayName,
+                                icon: type.icon,
+                                color: Color.fromModelColorName(type.colorName),
+                                accessibilityIdentifier: "filter-\(type.rawValue)",
+                                isSelected: filterType == type
+                            ) {
                                 HapticFeedback.shared.trigger(.selection)
-                                filterType = nil
-                            }
-
-                            ForEach(PageType.allCases) { type in
-                                FilterPill(
-                                    title: type.displayName,
-                                    icon: type.icon,
-                                    color: Color.fromModelColorName(type.colorName),
-                                    accessibilityIdentifier: "filter-\(type.rawValue)",
-                                    isSelected: filterType == type
-                                ) {
-                                    HapticFeedback.shared.trigger(.selection)
-                                    filterType = type
-                                }
-                            }
-
-                            Divider().frame(height: 24).background(Color.appBorder)
-
-                            // Status Filters
-                            Menu {
-                                Button(L10n.Common.tr("all")) { filterStatus = nil }
-                                ForEach(PageStatus.allCases, id: \.self) { status in
-                                    Button(status.displayName) { filterStatus = status }
-                                }
-                            } label: {
-                                HStack(spacing: AppUI.tiny) {
-                                    Image(systemName: "flag")
-                                        .font(.caption)
-                                    Text(filterStatus?.displayName ?? Localized.tr("page.status"))
-                                        .font(.caption)
-                                }
-                                .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
-                                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
-                                .background(filterStatus == nil ? Color.appCard : Color.appAccent.opacity(AppUI.glassOpacity / 1.5)) // 0.1
-                                .clipShape(Capsule())
-                                .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
-                            }
-
-                            Divider().frame(height: 24).background(Color.appBorder)
-
-                            // Sort options
-                            Menu {
-                                ForEach(SortOption.allCases, id: \.self) { option in
-                                    Button(action: { sortBy = option }) {
-                                        Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? "checkmark" : "")
-                                    }
-                                }
-                            } label: {
-                                HStack(spacing: AppUI.tiny) {
-                                    Image(systemName: "arrow.up.arrow.down")
-                                        .font(.caption)
-                                    Text(Localized.tr(sortBy.rawValue))
-                                        .font(.caption)
-                                }
-                                .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
-                                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
-                                .background(Color.appCard)
-                                .clipShape(Capsule())
-                                .foregroundStyle(.appSecondary)
+                                filterType = type
                             }
                         }
-                        .padding(.horizontal)
-                    }
-                }
-                .padding(.top, 12)
-                .background(Color.appBackground)
-                
-                // Main Results Content
-                ZStack {
-                    if searchStore.isSearching {
-                        VStack(spacing: AppUI.standardPadding) {
-                            ForEach(0..<6) { _ in
-                                HStack(spacing: AppUI.medium) {
-                                    SkeletonBox(width: AppUI.Sidebar.iconBoxSize, height: AppUI.Sidebar.iconBoxSize) // 44
-                                    VStack(alignment: .leading, spacing: AppUI.tightPadding) {
-                                        SkeletonBox(width: 140, height: AppUI.standardFontSize)
-                                        SkeletonBox(width: 240, height: AppUI.microFontSize)
-                                    }
-                                    Spacer()
-                                }
-                                .padding(.horizontal)
+
+                        Divider().frame(height: 24).background(Color.appBorder)
+
+                        // Status Filters
+                        Menu {
+                            Button(L10n.Common.tr("all")) { filterStatus = nil }
+                            ForEach(PageStatus.allCases, id: \.self) { status in
+                                Button(status.displayName) { filterStatus = status }
                             }
-                            Spacer()
-                        }
-                        .padding(.top, AppUI.Action.iconSize) // 20
-                    } else if filteredPages.isEmpty {
-                        VStack(spacing: AppUI.standardPadding) {
-                            Spacer()
-                            Image(systemName: searchText.isEmpty ? "magnifyingglass" : "doc.text.magnifyingglass")
-                                .font(.system(size: AppUI.Metrics.heroValueSize * 1.5)) // 48
-                                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
-                            
-                            Text(searchText.isEmpty ? Localized.tr("search.placeholder") : Localized.tr("search.noResults"))
-                                .font(.headline)
-                                .foregroundStyle(.appSecondary)
-                            
-                            if !searchText.isEmpty {
-                                Text(Localized.tr("search.noResultsHint"))
+                        } label: {
+                            HStack(spacing: AppUI.tiny) {
+                                Image(systemName: "flag")
                                     .font(.caption)
-                                    .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.875)) // 0.7
-                                    .multilineTextAlignment(.center)
-                                    .padding(.horizontal, AppUI.huge)
+                                Text(filterStatus?.displayName ?? Localized.tr("page.status"))
+                                    .font(.caption)
                             }
-                            Spacer()
+                            .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
+                            .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
+                            .background(filterStatus == nil ? Color.appCard.opacity(0.8) : Color.appAccent.opacity(AppUI.glassOpacity / 1.5)) // 0.1
+                            .clipShape(Capsule())
+                            .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
                         }
-                    } else {
-                        List {
-                            ForEach(filteredPages) { page in
-                                Button(action: {
-                                    HapticFeedback.shared.trigger(.selection)
-                                    router.navigate(to: .pageDetail(id: page.id))
-                                }) {
-                                    PageRowView(page: page)
-                                }
-                                .buttonStyle(.plain)
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(.hidden)
-                                .contextMenu {
-                                    Button {
-                                        HapticFeedback.shared.trigger(.selection)
-                                        previewPage = page
-                                    } label: {
-                                        Label(L10n.Common.tr("quickPreview"), systemImage: "eye")
-                                    }
-                                    
-                                    Button {
-                                        AppPasteboard.string = "[[\(page.title)]]"
-                                    } label: {
-                                        Label(L10n.Common.tr("copyPageLink"), systemImage: "link")
-                                    }
+
+                        Divider().frame(height: 24).background(Color.appBorder)
+
+                        // Sort options
+                        Menu {
+                            ForEach(SortOption.allCases, id: \.self) { option in
+                                Button(action: { sortBy = option }) {
+                                    Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? "checkmark" : "")
                                 }
                             }
+                        } label: {
+                            HStack(spacing: AppUI.tiny) {
+                                Image(systemName: "arrow.up.arrow.down")
+                                    .font(.caption)
+                                Text(Localized.tr(sortBy.rawValue))
+                                    .font(.caption)
+                            }
+                            .padding(.horizontal, AppUI.tightPadding + AppUI.atomic) // 10
+                            .padding(.vertical, AppUI.tiny + AppUI.atomic) // 5
+                            .background(Color.appCard.opacity(0.8))
+                            .clipShape(Capsule())
+                            .foregroundStyle(.appSecondary)
                         }
-                        .listStyle(.plain)
-                        .scrollContentBackground(.hidden)
                     }
+                    .padding(.horizontal)
                 }
-                .animation(.default, value: searchStore.isSearching)
-                .animation(.default, value: filteredPages.isEmpty)
-                
-                // Footer
-                if !filteredPages.isEmpty {
-                    Divider().background(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
-                    HStack {
-                        Text(Localized.trf("search.pagesCount", filteredPages.count))
-                            .font(.caption)
+            }
+            .padding(.top, 12)
+            .background(Color.appBackground.opacity(0.4))
+            .background(.ultraThinMaterial)
+            
+            // Main Results Content
+            ZStack {
+                if searchStore.isSearching {
+                    VStack(spacing: AppUI.standardPadding) {
+                        ForEach(0..<6) { _ in
+                            HStack(spacing: AppUI.medium) {
+                                SkeletonBox(width: AppUI.Sidebar.iconBoxSize, height: AppUI.Sidebar.iconBoxSize) // 44
+                                VStack(alignment: .leading, spacing: AppUI.tightPadding) {
+                                    SkeletonBox(width: 140, height: AppUI.standardFontSize)
+                                    SkeletonBox(width: 240, height: AppUI.microFontSize)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                        }
+                        Spacer()
+                    }
+                    .padding(.top, AppUI.Action.iconSize) // 20
+                } else if filteredPages.isEmpty {
+                    VStack(spacing: AppUI.standardPadding) {
+                        Spacer()
+                        Image(systemName: searchText.isEmpty ? "magnifyingglass" : "doc.text.magnifyingglass")
+                            .font(.system(size: AppUI.Metrics.heroValueSize * 1.5)) // 48
+                            .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
+                        
+                        Text(searchText.isEmpty ? Localized.tr("search.placeholder") : Localized.tr("search.noResults"))
+                            .font(.headline)
                             .foregroundStyle(.appSecondary)
                         
-                        if useAdvancedSearch {
-                            Spacer()
-                            Button(action: { showDiagnostics = true }) {
-                                Label(Localized.tr("search.diagnostics"), systemImage: "info.circle")
-                                    .font(.caption2)
-                                    .foregroundStyle(.appAccent)
+                        if !searchText.isEmpty {
+                            Text(Localized.tr("search.noResultsHint"))
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.875)) // 0.7
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, AppUI.huge)
+                        }
+                        Spacer()
+                    }
+                } else {
+                    List {
+                        ForEach(filteredPages) { page in
+                            Button(action: {
+                                HapticFeedback.shared.trigger(.selection)
+                                router.navigate(to: .pageDetail(id: page.id))
+                            }) {
+                                PageRowView(page: page)
                             }
-                        } else {
-                            Spacer()
+                            .buttonStyle(.plain)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .contextMenu {
+                                Button {
+                                    HapticFeedback.shared.trigger(.selection)
+                                    previewPage = page
+                                } label: {
+                                    Label(L10n.Common.tr("quickPreview"), systemImage: "eye")
+                                }
+                                
+                                Button {
+                                    AppPasteboard.string = "[[\(page.title)]]"
+                                } label: {
+                                    Label(L10n.Common.tr("copyPageLink"), systemImage: "link")
+                                }
+                            }
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
-                    .background(Color.appBackground)
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
+            }
+            .animation(.default, value: searchStore.isSearching)
+            .animation(.default, value: filteredPages.isEmpty)
+            
+            // Footer
+            if !filteredPages.isEmpty {
+                Divider().background(Color.appBorder.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
+                HStack {
+                    Text(Localized.trf("search.pagesCount", filteredPages.count))
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                    
+                    if useAdvancedSearch {
+                        Spacer()
+                        Button(action: { showDiagnostics = true }) {
+                            Label(Localized.tr("search.diagnostics"), systemImage: "info.circle")
+                                .font(.caption2)
+                                .foregroundStyle(.appAccent)
+                        }
+                    } else {
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
+                .background(themeManager.pageBackground())
             }
         }
         .navigationTitle(Localized.tr("search.title"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
 #endif
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .background(themeManager.pageBackground())
         .sheet(item: $previewPage) { page in
             PagePreviewSheet(page: page)
         }
@@ -334,6 +333,7 @@ struct SearchView: View {
 struct PagePreviewSheet: View {
     let page: KnowledgePage
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         NavigationStack {
@@ -342,7 +342,7 @@ struct PagePreviewSheet: View {
                     HStack {
                         AppIconChip(icon: page.type.icon, text: page.type.displayName, color: Color.fromModelColorName(page.type.colorName), isSelected: true)
                         Spacer()
-                        Text(page.updated, style: .date)
+                Text(page.updated.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     }
@@ -362,7 +362,7 @@ struct PagePreviewSheet: View {
                 }
                 .padding()
             }
-            .background(Color.appBackground)
+            .background(themeManager.pageBackground())
             .navigationTitle(L10n.Common.tr("preview"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -404,7 +404,7 @@ struct FilterPill: View {
         }
         .padding(.horizontal, AppUI.standardPadding)
         .padding(.vertical, AppUI.tightPadding + AppUI.atomic) // 10
-        .background(isSelected ? color.opacity(AppUI.glassOpacity * 1.66) : Color.appCard) // 0.25
+        .background(isSelected ? color.opacity(AppUI.glassOpacity * 1.66) : Color.appCard.opacity(0.8)) // 0.25
         .clipShape(Capsule())
         .foregroundStyle(isSelected ? color : .appSecondary)
         .overlay(

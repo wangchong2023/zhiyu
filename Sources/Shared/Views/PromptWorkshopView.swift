@@ -43,7 +43,6 @@ struct PromptWorkshopView: View {
                     }
                 }
             }
-            .listRowBackground(Color.appAccent.opacity(0.05))
 
             // ── 模块 1：我的快捷指令 (默认展开) ──
             Section {
@@ -93,6 +92,9 @@ struct PromptWorkshopView: View {
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
+        .scrollContentBackground(.hidden)
+        .listRowBackground(Color.appCard.opacity(0.8))
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .onDisappear {
             promptService.save()
             HapticFeedback.shared.trigger(.success)

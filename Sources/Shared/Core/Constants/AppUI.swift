@@ -81,7 +81,24 @@ enum AppUI {
     static let microIconSize: CGFloat = 12
     static let captionIconSize: CGFloat = 14
     
-    // MARK: - 4. 交互模式 (Interaction Patterns)
+    // MARK: - 4. 布局模式 (Layout Patterns)
+    /// 全局布局规范
+    struct Layout {
+        /// 内容最大阅读宽度 (针对阅读体验优化的 800px)
+        static let maxReadWidth: CGFloat = 800
+        /// 卡片内边距 (16px)
+        static let cardContentPadding: CGFloat = 16
+        /// 紧凑型边距 (8px)
+        static let tightPadding: CGFloat = 8
+        /// 页面顶部标题栏纵向边距 (12px)
+        static let headerVerticalPadding: CGFloat = 12
+        /// 栏目间距 (16px)
+        static let columnSpacing: CGFloat = 16
+        /// 列表行间距 (8px)
+        static let listRowSpacing: CGFloat = 8
+    }
+
+    // MARK: - 5. 交互模式 (Interaction Patterns)
     /// 按钮与输入控件的交互规范
     struct Action {
         /// 标准按钮高度
@@ -562,13 +579,16 @@ enum AppUI {
         static let unpin = "pin.slash"
         static let history = "clock.arrow.2.circlepath"
         static let refresh = "arrow.clockwise"
-        static let person = "person.text.rectangle.fill"
-        static let lightbulb = "lightbulb.fill"
-        static let doc = "doc.richtext.fill"
+        static let reset = "arrow.triangle.2.circlepath"
+        static let plus = "plus"
         static let lock = "lock.fill"
         static let lockOpen = "lock.open.fill"
-        static let compare = "arrow.left.and.right.righttriangle.left.righttriangle.right.fill"
-        static let plus = "plus"
+        
+        // ── 知识分类语义化图标 ──
+        static let entity = "person.text.rectangle.fill"
+        static let concept = "lightbulb.fill"
+        static let source = "doc.richtext.fill"
+        static let comparison = "arrow.left.and.right.righttriangle.left.righttriangle.right.fill"
     }
 
     // MARK: - 19. 视觉风格常数 (Styling)
@@ -610,61 +630,199 @@ enum AppUI {
     /// 动态背景与氛围光生成
     struct Background {
         /// 动态网格背景渲染器
-        @ViewBuilder
-        static func meshGradient() -> some View {
-            ZStack {
-                Color.appBackground
-                
-                Canvas { context, size in
-                    let gridPadding: CGFloat = 40
-                    let rows = Int(size.height / gridPadding)
-                    let cols = Int(size.width / gridPadding)
-                    
-                    for row in 0...rows {
-                        let y = CGFloat(row) * gridPadding
-                        context.stroke(Path { p in
-                            p.move(to: CGPoint(x: 0, y: y))
-                            p.addLine(to: CGPoint(x: size.width, y: y))
-                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+        struct MeshGradientView: View {
+            var body: some View {
+                GeometryReader { geometry in
+                    let size = geometry.size
+                    ZStack {
+                        Color.appBackground
+                        
+                        if size.width > 1 && size.height > 1 {
+                            if #available(iOS 18.0, macOS 15.0, *) {
+                                MeshGradient(
+                                    width: 3,
+                                    height: 3,
+                                    points: [
+                                        [0, 0], [0.5, 0], [1, 0],
+                                        [0, 0.5], [0.5, 0.5], [1, 0.5],
+                                        [0, 1], [0.5, 1], [1, 1]
+                                    ],
+                                    colors: [
+                                        .appBackground, .appBackground, .appBackground,
+                                        .appAccent.opacity(0.12), .appConcept.opacity(0.08), .appSource.opacity(0.1),
+                                        .appBackground, .appBackground, .appBackground
+                                    ],
+                                    smoothsColors: true
+                                )
+                            } else {
+                                Canvas { context, size in
+                                    guard size.width > 1 && size.height > 1 else { return }
+                                    let gridPadding: CGFloat = 40
+                                    let rows = Int(size.height / gridPadding)
+                                    let cols = Int(size.width / gridPadding)
+                                    
+                                    for row in 0...rows {
+                                        let y = CGFloat(row) * gridPadding
+                                        context.stroke(Path { p in
+                                            p.move(to: CGPoint(x: 0, y: y))
+                                            p.addLine(to: CGPoint(x: size.width, y: y))
+                                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                                    }
+                                    
+                                    for col in 0...cols {
+                                        let x = CGFloat(col) * gridPadding
+                                        context.stroke(Path { p in
+                                            p.move(to: CGPoint(x: x, y: 0))
+                                            p.addLine(to: CGPoint(x: x, y: size.height))
+                                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                                    }
+                                }
+                            }
+                        }
                     }
-                    
-                    for col in 0...cols {
-                        let x = CGFloat(col) * gridPadding
-                        context.stroke(Path { p in
-                            p.move(to: CGPoint(x: x, y: 0))
-                            p.addLine(to: CGPoint(x: x, y: size.height))
-                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
-                    }
+                    .ignoresSafeArea()
                 }
             }
         }
         
         /// 氛围光渐变背景
+        struct AmbientGlowView: View {
+            let color: Color
+            var body: some View {
+                GeometryReader { geometry in
+                    let size = geometry.size
+                    if size.width > 1 && size.height > 1 {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    colors: [color.opacity(0.15), .clear],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 250
+                                )
+                            )
+                            .frame(width: 500, height: 500)
+                            .blur(radius: 80)
+                            .position(x: size.width / 2, y: size.height / 2)
+                    }
+                }
+            }
+        }
+        
+        /// 统一的工业级页面背景
+        struct PageBackgroundView: View {
+            let accentColor: Color
+            var body: some View {
+                ZStack {
+                    MeshGradientView()
+                    VStack {
+                        AmbientGlowView(color: accentColor)
+                            .frame(height: 300)
+                            .offset(y: -150)
+                        Spacer()
+                    }
+                }
+                .ignoresSafeArea()
+                .background(Color.appBackground)
+            }
+        }
+
         @ViewBuilder
-        static func ambientGlow(color: Color) -> some View {
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [color.opacity(0.12), .clear],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: 200
-                    )
-                )
-                .frame(width: 400, height: 400)
-                .blur(radius: 60)
+        static func pageBackground(accentColor: Color = .appAccent) -> some View {
+            PageBackgroundView(accentColor: accentColor)
+        }
+        
+        /// 统一的卡片背景
+        static func cardBackground() -> Color {
+            .appCard
+        }
+        
+        /// 统一的浮层背景
+        static func overlayBackground() -> some View {
+            Color.appCard.opacity(0.85)
         }
     }
     
-    /// 布局常数补充
-    struct Layout {
-        static let cardContentPadding: CGFloat = 16
-        static let maxReadWidth: CGFloat = 800
-        static let tightPadding: CGFloat = 8
-        static let headerVerticalPadding: CGFloat = 12
-        static let listRowSpacing: CGFloat = 10
-        static let emptyStateHeight: CGFloat = 200
-        static let columnSpacing: CGFloat = 20
+    // MARK: - 22. 玻璃拟态组件 (Glass-morphism Components)
+    
+    /// 统一的玻璃卡片修饰符
+    struct GlassCardModifier: ViewModifier {
+        let opacity: Double
+        let cornerRadius: CGFloat
+        
+        func body(content: Content) -> some View {
+            content
+                .background(.ultraThinMaterial.opacity(opacity))
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .stroke(Color.appBorder.opacity(0.4), lineWidth: 0.5)
+                )
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
+        }
+    }
+    
+    /// 标准卡片容器
+    struct AppSection<Content: View>: View {
+        let title: String?
+        let footer: String?
+        let content: Content
+        
+        init(title: String? = nil, footer: String? = nil, @ViewBuilder content: () -> Content) {
+            self.title = title
+            self.footer = footer
+            self.content = content()
+        }
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: AppUI.small) {
+                if let title = title {
+                    Text(title)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                        .padding(.leading, AppUI.medium)
+                        .textCase(.uppercase)
+                }
+                
+                VStack(spacing: 0) {
+                    content
+                }
+                .modifier(GlassCardModifier(opacity: 1.0, cornerRadius: AppUI.cardRadius))
+                
+                if let footer = footer {
+                    Text(footer)
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                        .padding(.horizontal, AppUI.medium)
+                }
+            }
+            .padding(.horizontal, AppUI.standardPadding)
+            .padding(.vertical, AppUI.small)
+        }
+    }
+}
+
+// MARK: - View 扩展
+extension View {
+    /// 应用玻璃拟态卡片样式
+    func appGlassCardStyle(opacity: Double = 1.0, cornerRadius: CGFloat = AppUI.cardRadius) -> some View {
+        self.modifier(AppUI.GlassCardModifier(opacity: opacity, cornerRadius: cornerRadius))
+    }
+    
+    /// 应用列表行样式 (用于 AppSection 内部)
+    func appListRowStyle(showDivider: Bool = true) -> some View {
+        VStack(spacing: 0) {
+            self
+                .padding(.horizontal, AppUI.medium)
+                .padding(.vertical, AppUI.medium)
+                .contentShape(Rectangle())
+            
+            if showDivider {
+                Divider()
+                    .padding(.leading, AppUI.medium)
+                    .opacity(0.5)
+            }
+        }
     }
 }
 
@@ -735,7 +893,7 @@ extension View {
     /// 标准卡片容器样式
     func appCardStyle(cornerRadius: CGFloat = AppUI.cardRadius) -> some View {
         self.padding(AppUI.large)
-            .background(Color.appCard)
+            .background(Color.appCard.opacity(0.8))
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -745,7 +903,7 @@ extension View {
     }
     
     /// 通用容器样式
-    func appContainer(background: Color = .appCard, borderColor: Color = .appBorder, cornerRadius: CGFloat = AppUI.cardRadius, padding: Bool = true) -> some View {
+    func appContainer(background: Color = .appCard.opacity(0.8), borderColor: Color = .appBorder, cornerRadius: CGFloat = AppUI.cardRadius, padding: Bool = true) -> some View {
         self.padding(padding ? AppUI.standardPadding : 0)
             .background(background)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
@@ -770,7 +928,7 @@ extension View {
     func appMetricCardStyle(color: Color = .appAccent, cornerRadius: CGFloat = AppUI.Metrics.dashboardRadius) -> some View {
         self.background(
             ZStack {
-                Color.appCard
+                Color.appCard.opacity(0.8)
                 LinearGradient(
                     colors: [color.opacity(0.08), .clear],
                     startPoint: .topLeading,

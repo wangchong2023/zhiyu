@@ -278,13 +278,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Excellent"
+            "value": "Healthy"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "非常健康"
+            "value": "健康"
           }
         }
       },
@@ -301,7 +301,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "尚可"
+            "value": "一般"
           }
         }
       },
@@ -329,13 +329,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Needs Improvement"
+            "value": "Poor"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "亟待优化"
+            "value": "较差"
           }
         }
       },

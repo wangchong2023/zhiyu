@@ -51,6 +51,7 @@ struct SidebarView: View {
     @Environment(AppRouter.self) var router
     @ObservedObject var taskCenter = TaskCenter.shared
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @EnvironmentObject var themeManager: ThemeManager
     var heroNamespace: Namespace.ID
     var selection: Binding<SidebarSelection?>? = nil
     
@@ -98,7 +99,11 @@ struct SidebarView: View {
     }
 
     var body: some View {
-        List(selection: effectiveBinding) {
+        ZStack {
+            AppUI.Background.pageBackground(accentColor: themeManager.accentColor)
+                .ignoresSafeArea()
+            
+            List(selection: effectiveBinding) {
             // ══ 1. 仪表盘与核心能力 ══
             Section {
                 NavigationLink(value: SidebarSelection.tool(.dashboard)) {
@@ -222,6 +227,9 @@ struct SidebarView: View {
             }
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
+        } // Close ZStack
+        .toolbarBackground(.hidden, for: .navigationBar)
         .confirmationDialog(
             pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
             isPresented: $showDeleteConfirmation,

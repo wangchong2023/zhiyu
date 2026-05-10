@@ -88,7 +88,7 @@ struct CreatePageView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
             .navigationTitle(L10n.Creation.tr("title"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -121,20 +121,24 @@ struct CreatePageView: View {
         dismiss()
     }
     
-    private func applyEntityTemplate() {
-        content = """
+    private var entityTemplateContent: String {
+        """
         # \(title)
         
         【\(L10n.Creation.tr("template.entity.overview"))】
-        在这里输入人物、机构或物品的简要介绍...
+        \(L10n.Creation.tr("template.entity.overviewPlaceholder"))
         
         【\(L10n.Creation.tr("template.entity.contributions"))】
-        列出核心成就或主要贡献...
+        \(L10n.Creation.tr("template.entity.contributionsPlaceholder"))
         
         【\(L10n.Creation.tr("template.entity.related"))】
-        使用 [[页面标题]] 关联到其他知识点...
+        \(L10n.Creation.tr("template.entity.relatedPlaceholder"))
         
         """
+    }
+    
+    private func applyEntityTemplate() {
+        content = entityTemplateContent
     }
     
     private func applyConceptTemplate() {
@@ -142,14 +146,13 @@ struct CreatePageView: View {
         # \(title)
 
         【\(L10n.Creation.tr("template.concept.definition"))】
-        在这里输入概念的定义或核心内涵...
+        \(L10n.Creation.tr("template.concept.definitionPlaceholder"))
 
         【\(L10n.Creation.tr("template.concept.analysis"))】
-        1. 关键要素 A：[描述...]
-        2. 关键要素 B：[描述...]
+        \(L10n.Creation.tr("template.concept.analysisPlaceholder"))
 
         【\(L10n.Creation.tr("template.concept.links"))】
-        关联概念：[[概念名称]]
+        \(L10n.Creation.tr("template.concept.linksPlaceholder"))
 
         """
     }
@@ -159,11 +162,10 @@ struct CreatePageView: View {
         # \(title) \(L10n.Creation.tr("template.comparison.suffix"))
 
         【\(L10n.Creation.tr("template.comparison.dimensions"))】
-        - 维度 1: 对象 A vs 对象 B
-        - 维度 2: 对象 A vs 对象 B
+        \(L10n.Creation.tr("template.comparison.dimensionsPlaceholder"))
 
         【\(L10n.Creation.tr("template.comparison.conclusion"))】
-        在这里输入对比后的总结性见解...
+        \(L10n.Creation.tr("template.comparison.conclusionPlaceholder"))
 
         """
     }

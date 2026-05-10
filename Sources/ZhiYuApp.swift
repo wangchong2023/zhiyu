@@ -67,6 +67,7 @@ struct ZhiYuApp: App {
                     .environment(router)
                     .environmentObject(themeManager)
                     .environmentObject(llmService)
+                    .environment(\.locale, Localized.currentLocale)
                     .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
                     .tint(themeManager.accentColor)
 

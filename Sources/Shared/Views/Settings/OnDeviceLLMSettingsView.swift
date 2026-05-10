@@ -17,6 +17,8 @@ import UniformTypeIdentifiers
 struct OnDeviceLLMSettingsView: View {
     @StateObject private var onDeviceService = OnDeviceLLMService()
     @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var llmService: LLMService
     @State private var testPrompt = ""
     @State private var testResult = ""
     @State private var showImportPicker = false
@@ -25,19 +27,24 @@ struct OnDeviceLLMSettingsView: View {
     @State private var errorMessage = ""
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                headerSection
-                availabilitySection
-                modelSelectionSection
-                modelManagementSection
-                testSection
-                infoSection
+        ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    headerSection
+                    availabilitySection
+                    modelSelectionSection
+                    modelManagementSection
+                    testSection
+                    infoSection
+                }
+                .padding()
             }
-            .padding()
         }
-        .background(Color.appBackground)
-        .navigationTitle(Localized.tr("ondevice.title"))
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationTitle(L10n.Settings.onDeviceLLM)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

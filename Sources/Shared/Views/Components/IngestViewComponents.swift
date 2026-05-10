@@ -519,7 +519,7 @@ struct SmartIngestPreview: View {
                 }
                 .frame(maxHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
                 .padding(AppUI.small) // 8
-                .background(Color.appBackground)
+                .background(AppUI.Background.cardBackground())
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
 
                 // Related titles
@@ -619,7 +619,7 @@ struct URLImportSheet: View {
                         .font(.system(.body, design: .monospaced))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(AppUI.small) // 8
-                        .background(Color.appBackground)
+                        .background(AppUI.Background.cardBackground())
                         .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                         .overlay(
                             RoundedRectangle(cornerRadius: AppUI.smallRadius)
@@ -656,7 +656,7 @@ struct URLImportSheet: View {
                     }
                 }
             }
-            .background(Color.appBackground)
+            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         }
     }
 }

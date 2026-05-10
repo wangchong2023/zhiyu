@@ -62,7 +62,7 @@ struct CommandPaletteView: View {
             .listStyle(.plain)
             .frame(height: 300)
         }
-        .background(Color.appBackground)
+        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.5), radius: 20)
         .frame(width: 500)

@@ -630,6 +630,57 @@
         }
       }
     },
+    "settings.maintenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Governance & Maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识治理与维护"
+          }
+        }
+      }
+    },
+    "settings.developer.tab.data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data & Maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据与维护"
+          }
+        }
+      }
+    },
+    "settings.developer.tab.quality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quality Assessment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "质量评估"
+          }
+        }
+      }
+    },
     "settings.developer.section.performance_test": {
       "extractionState": "manual",
       "localizations": {
@@ -1493,6 +1544,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "状态与重置"
+          }
+        }
+      }
+    },
+    "settings.developer.section.dataReset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data Reset"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据重置"
+          }
+        }
+      }
+    },
+    "settings.developer.section.operationInfo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operation Information"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "操作信息"
           }
         }
       }

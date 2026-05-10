@@ -35,6 +35,7 @@ final class SynthesisStore {
         case quiz = "quiz"
         case report = "report"
         case infographic = "infographic"
+        case expansion = "expansion"
         var id: String { rawValue }
         var title: String {
             switch self {
@@ -43,6 +44,7 @@ final class SynthesisStore {
             case .quiz: return Localized.tr("prompt.expert.quiz.title")
             case .report: return Localized.tr("prompt.expert.report.title")
             case .infographic: return Localized.tr("page.ai.infographic")
+            case .expansion: return Localized.tr("page.ai.expansion")
             }
         }
         var icon: String {
@@ -52,6 +54,7 @@ final class SynthesisStore {
             case .quiz: return "checklist.checked"
             case .report: return "doc.text.magnifyingglass"
             case .infographic: return "chart.bar.doc.horizontal"
+            case .expansion: return "text.badge.plus"
             }
         }
         var formatIcon: String {
@@ -61,6 +64,7 @@ final class SynthesisStore {
             case .quiz: return "checklist.checked"
             case .report: return "doc.richtext.fill"
             case .infographic: return "chart.bar.fill"
+            case .expansion: return "doc.append.fill"
             }
         }
         var formatColor: Color {
@@ -70,6 +74,7 @@ final class SynthesisStore {
             case .quiz: return .green
             case .report: return .red
             case .infographic: return .purple
+            case .expansion: return .indigo
             }
         }
     }
@@ -248,6 +253,8 @@ final class SynthesisStore {
                     content = try await AISynthesisService.shared.generateReport(content: combinedContent)
                 case .infographic:
                     content = try await AISynthesisService.shared.generateInfographic(content: combinedContent)
+                case .expansion:
+                    content = try await AISynthesisService.shared.expandKnowledge(content: combinedContent)
                 }
 
                 await MainActor.run {
@@ -279,7 +286,7 @@ final class SynthesisStore {
             url = try await WebViewExportService.shared.exportMindmapToPDF(mermaidCode: doc.content, fileName: fileName)
         case .slides:
             url = try await WebViewExportService.shared.exportToPPTX(markdown: doc.content, fileName: fileName)
-        case .report, .quiz, .infographic:
+        case .report, .quiz, .infographic, .expansion:
             url = try await WebViewExportService.shared.exportToPDF(markdown: doc.content, fileName: fileName)
         }
 

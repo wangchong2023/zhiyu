@@ -24,7 +24,6 @@ struct ContentView: View {
     
     @StateObject private var tooltipManager = TooltipManager.shared
     @State private var showCommandPalette = false
-    @State private var languageForceUpdate: Bool = false
     @Namespace private var heroNamespace
     @StateObject private var medalService = MedalService.shared
     
@@ -107,13 +106,13 @@ struct ContentView: View {
             case .knowledge:
                 SidebarView(heroNamespace: heroNamespace, selection: $router.sidebarSelection)
             case .settings:
-                SettingsView(onboardingService: onboardingService, languageForceUpdate: $languageForceUpdate)
+                SettingsView(onboardingService: onboardingService)
             default:
                 Color.appBackground
             }
         } detail: {
             // 详情列：显示主要内容
-            AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, languageForceUpdate: $languageForceUpdate, onboardingService: onboardingService, heroNamespace: heroNamespace)
+            AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, onboardingService: onboardingService, heroNamespace: heroNamespace)
         }
         .tint(tintColor)
         .sheet(isPresented: $showCommandPalette) {
@@ -153,7 +152,7 @@ struct ContentView: View {
 
             Tab(AppTab.settings.displayTitle, systemImage: AppTab.settings.icon, value: AppTab.settings) {
                 NavigationStack(path: $router.path) {
-                    SettingsView(onboardingService: onboardingService, languageForceUpdate: $languageForceUpdate)
+                    SettingsView(onboardingService: onboardingService)
                         .navigationDestination(for: AppRoute.self) { route in
                             ViewFactory.makeView(for: route)
                         }
@@ -219,7 +218,7 @@ struct ContentView: View {
                 .tag(AppTab.graph)
 
             NavigationStack(path: $router.path) {
-                SettingsView(onboardingService: onboardingService, languageForceUpdate: $languageForceUpdate)
+                SettingsView(onboardingService: onboardingService)
                     .accessibilityIdentifier("Settings")
                     .navigationDestination(for: AppRoute.self) { route in
                         ViewFactory.makeView(for: route)
@@ -258,12 +257,8 @@ struct ContentView: View {
     @ViewBuilder
     private var knowledgeTabContent: some View {
         @Bindable var router = router
-        if languageForceUpdate {
-            NavigationView(selectedTab: $router.selectedTab, heroNamespace: heroNamespace)
-                .id(languageForceUpdate)
-        } else {
-            NavigationView(selectedTab: $router.selectedTab, heroNamespace: heroNamespace)
-        }
+        NavigationView(selectedTab: $router.selectedTab, heroNamespace: heroNamespace)
+            .id(router.languageForceUpdate)
     }
     
     /// Graph tab 内容，languageForceUpdate 时强制刷新
@@ -271,17 +266,11 @@ struct ContentView: View {
     private var graphTabContent: some View {
         @Bindable var router = router
         NavigationStack(path: $router.path) {
-            Group {
-                if languageForceUpdate {
-                    GraphContainerView(heroNamespace: heroNamespace, selectedTab: $router.selectedTab)
-                        .id(languageForceUpdate)
-                } else {
-                    GraphContainerView(heroNamespace: heroNamespace, selectedTab: $router.selectedTab)
+            GraphContainerView(heroNamespace: heroNamespace, selectedTab: $router.selectedTab)
+                .id(router.languageForceUpdate)
+                .navigationDestination(for: AppRoute.self) { route in
+                    ViewFactory.makeView(for: route)
                 }
-            }
-            .navigationDestination(for: AppRoute.self) { route in
-                ViewFactory.makeView(for: route)
-            }
         }
     }
     
@@ -291,7 +280,7 @@ struct ContentView: View {
         @Bindable var router = router
         NavigationStack(path: $router.path) {
             SearchView()
-                .id(languageForceUpdate)
+                .id(router.languageForceUpdate)
                 .navigationDestination(for: AppRoute.self) { route in
                     ViewFactory.makeView(for: route)
                 }
@@ -303,15 +292,9 @@ struct ContentView: View {
     private var ingestTabContent: some View {
         @Bindable var router = router
         NavigationStack(path: $router.path) {
-            Group {
-                if languageForceUpdate {
-                    IngestView(selectedTab: $router.selectedTab)
-                        .id(languageForceUpdate)
-                } else {
-                    IngestView(selectedTab: $router.selectedTab)
-                }
-            }
-            .navigationDestination(for: AppRoute.self) { route in
+            IngestView(selectedTab: $router.selectedTab)
+                .id(router.languageForceUpdate)
+                .navigationDestination(for: AppRoute.self) { route in
                 ViewFactory.makeView(for: route)
             }
         }
