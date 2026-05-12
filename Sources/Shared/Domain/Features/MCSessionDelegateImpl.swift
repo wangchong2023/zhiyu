@@ -8,6 +8,7 @@
 // 日期: 2026-05-04
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
+#if canImport(MultipeerConnectivity)
 import Foundation
 @preconcurrency import MultipeerConnectivity
 
@@ -122,3 +123,4 @@ final class MCBrowserDelegateImpl: NSObject, MCNearbyServiceBrowserDelegate {
 extension MCSessionDelegateImpl: @unchecked Sendable {}
 extension MCAdvertiserDelegateImpl: @unchecked Sendable {}
 extension MCBrowserDelegateImpl: @unchecked Sendable {}
+#endif

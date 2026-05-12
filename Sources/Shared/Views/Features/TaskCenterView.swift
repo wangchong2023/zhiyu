@@ -48,10 +48,73 @@ struct TaskCenterView: View {
                             let metrics = taskCenter.metrics(for: type)
                             let tasks = taskCenter.tasks.filter { $0.type == type }
                             
+                            #if os(watchOS)
+                            Section {
+                                if tasks.isEmpty {
+                                    Text(L10n.AI.Task.tr("noHistory"))
+                                        .font(.caption)
+                                        .foregroundStyle(.appSecondary)
+                                        .padding(.vertical, AppUI.tightPadding)
+                                } else {
+                                    ForEach(tasks.sorted(by: { $0.startTime > $1.startTime })) { task in
+                                        TaskRow(task: task)
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                taskCenter.markAsRead(task.id)
+                                                if let pageID = task.associatedPageID {
+                                                    router.navigateToPage(id: pageID)
+                                                }
+                                            }
+                                    }
+                                    .onDelete { indices in
+                                        let sortedTasks = tasks.sorted(by: { $0.startTime > $1.startTime })
+                                        indices.forEach { index in
+                                            taskCenter.removeTask(sortedTasks[index].id)
+                                        }
+                                    }
+                                }
+                            } header: {
+                                HStack(spacing: AppUI.medium) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(taskColor(for: type).opacity(AppUI.glassOpacity / 3))
+                                            .frame(width: AppUI.Task.badgeSize, height: AppUI.Task.badgeSize)
+                                        Image(systemName: type.icon)
+                                            .font(.system(size: AppUI.Action.smallIconSize, weight: .bold))
+                                            .foregroundStyle(taskColor(for: type))
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: AppUI.atomic) {
+                                        Text(L10n.AI.Task.tr("type.\(type.rawValue)"))
+                                            .font(.subheadline.bold())
+                                        Text(L10n.AI.Task.trf("history.count", metrics.total))
+                                            .font(.caption2)
+                                            .foregroundStyle(.appSecondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if metrics.running > 0 {
+                                        HStack(spacing: AppUI.tiny) {
+                                            ProgressView()
+                                                .controlSize(.small)
+                                            Text("\(metrics.running)")
+                                                .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold, design: .rounded))
+                                                .foregroundStyle(taskColor(for: type))
+                                        }
+                                        .padding(.horizontal, AppUI.tightPadding)
+                                        .padding(.vertical, AppUI.tiny)
+                                        .background(taskColor(for: type).opacity(AppUI.glassOpacity / 3))
+                                        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                                    }
+                                }
+                                .padding(.vertical, AppUI.tiny)
+                            }
+                            #else
                             DisclosureGroup {
-                            if tasks.isEmpty {
-                                Text(L10n.AI.Task.tr("noHistory"))
-                                    .font(.caption)
+                                if tasks.isEmpty {
+                                    Text(L10n.AI.Task.tr("noHistory"))
+                                        .font(.caption)
                                         .foregroundStyle(.appSecondary)
                                         .padding(.vertical, AppUI.tightPadding)
                                 } else {
@@ -109,6 +172,7 @@ struct TaskCenterView: View {
                                 }
                                 .padding(.vertical, AppUI.tiny)
                             }
+                            #endif
                         }
                     } header: {
                         Text(L10n.AI.Task.tr("list.title"))
@@ -117,7 +181,9 @@ struct TaskCenterView: View {
                             .textCase(nil)
                     }
                 }
+                #if !os(watchOS)
                 .listStyle(.insetGrouped)
+                #endif
             }
         }
         .navigationTitle(L10n.AI.Task.centerTitle)

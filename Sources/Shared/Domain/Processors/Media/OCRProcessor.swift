@@ -15,7 +15,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 @preconcurrency import SwiftUI
+#if canImport(Vision)
 @preconcurrency import Vision
+#endif
 import PhotosUI
 
 // MARK: - OCR Service
@@ -38,6 +40,7 @@ import PhotosUI
 actor OCRProcessor {
     static let shared = OCRProcessor()
 
+#if canImport(Vision)
     /// Recognize text from a AppImage
     func recognizeText(from image: AppImage) async throws -> String {
         guard let cgImage = image.appCGImage else {
@@ -76,6 +79,11 @@ actor OCRProcessor {
             }
         }
     }
+#else
+    func recognizeText(from image: AppImage) async throws -> String {
+        return ""
+    }
+#endif
 }
 
 // MARK: - OCR Error

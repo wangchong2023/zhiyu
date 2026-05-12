@@ -62,7 +62,9 @@ struct LintViewContent: View {
                     Text(L10n.Lint.tr("title")).tag(0)
                     Text(L10n.Lint.tr("aiSuggestions")).tag(1)
                 }
+                #if !os(watchOS)
                 .pickerStyle(.segmented)
+                #endif
                 .padding(.horizontal, AppUI.huge)
                 .padding(.vertical, 10)
                 .background(.ultraThinMaterial.opacity(0.3))
@@ -667,6 +669,7 @@ struct LintIssueRow: View {
     }
     
     private func fetchAISuggestion() {
+        #if !os(watchOS)
         guard !isAnalyzing else { return }
         isAnalyzing = true
         
@@ -686,5 +689,6 @@ struct LintIssueRow: View {
                 }
             }
         }
+        #endif
     }
 }

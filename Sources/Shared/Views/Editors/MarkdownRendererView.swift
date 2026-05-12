@@ -104,6 +104,19 @@ struct MarkdownRendererView: View {
 
     @ViewBuilder
     private func renderDetailsBlock(summary: String, content: String) -> some View {
+        #if os(watchOS)
+        VStack(alignment: .leading, spacing: AppUI.tiny) {
+            Text(summary)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(.appAccent)
+            MarkdownRendererView(content: content, isPrivate: isPrivate, onLinkTap: onLinkTap, isCompact: true)
+                .padding(.top, AppUI.tiny)
+        }
+        .padding(AppUI.medium)
+        .background(Color.appAccent.opacity(AppUI.glassOpacity / 3))
+        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .padding(.vertical, AppUI.tiny)
+        #else
         DisclosureGroup {
             MarkdownRendererView(content: content, isPrivate: isPrivate, onLinkTap: onLinkTap, isCompact: true)
                 .padding(.top, AppUI.tiny)
@@ -116,6 +129,7 @@ struct MarkdownRendererView: View {
         .background(Color.appAccent.opacity(AppUI.glassOpacity / 3))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
         .padding(.vertical, AppUI.tiny)
+        #endif
     }
 
     // MARK: - Render Heading

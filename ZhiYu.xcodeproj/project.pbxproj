@@ -476,6 +476,7 @@
 		A34781465E024968835DE5A2 /* SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AB955C8308A438C62A3925 /* SecurityManager.swift */; };
 		A368D1D3BE8F79C4BFF849E1 /* iCloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9DC594CE523640364DD55 /* iCloudSyncManager.swift */; };
 		A3A535CF0FC995B39EE4C2FF /* mermaid.min.js in Resources */ = {isa = PBXBuildFile; fileRef = FBF2590EE0EB9FB9F25270DE /* mermaid.min.js */; };
+		A3D595A302985B3842A64ADF /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 27EC66462D43C62281B48DA8 /* GRDB */; };
 		A3FF39324708CA01A9354F13 /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AED5CA89C3896A0878A465E /* QuizView.swift */; };
 		A45646D4619CF9D8329807D5 /* PromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE2D61305A4ADBE85F99D09 /* PromptService.swift */; };
 		A49E25FB6A4163502EEAD56A /* SchemaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA3AD203B331DA2B05CF0404 /* SchemaService.swift */; };
@@ -933,7 +934,7 @@
 		8256B0EC20A5BB2C12EA4DC9 /* PageType+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageType+UI.swift"; sourceTree = "<group>"; };
 		830CA638131ED500D3AF99AB /* AsyncStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStatus.swift; sourceTree = "<group>"; };
 		83FD257991FB7E10D47A194D /* AppAccessibilityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAccessibilityView.swift; sourceTree = "<group>"; };
-		845931ACF7AF46702940544A /* ZhiYu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZhiYu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		845931ACF7AF46702940544A /* ZhiYu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZhiYu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		868F1602FB8033BE41909C4E /* MacInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = MacInfo.plist; sourceTree = "<group>"; };
 		86DF1B56C71E6D02DAE8BAB0 /* AISynthesisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISynthesisService.swift; sourceTree = "<group>"; };
 		873FB6756E1050C88B658CF1 /* AppDecorators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDecorators.swift; sourceTree = "<group>"; };
@@ -1084,6 +1085,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BBA888411DF791592C1A300 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		25FE1560EB48C69ADB1DCCD7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3D595A302985B3842A64ADF /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2206,6 +2215,7 @@
 			buildPhases = (
 				EA1B37A047D6A4A9288944A3 /* Sources */,
 				AB2B5FECDF7840D69B5DBB41 /* Resources */,
+				25FE1560EB48C69ADB1DCCD7 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2213,6 +2223,7 @@
 			);
 			name = ZhiYuWatch;
 			packageProductDependencies = (
+				27EC66462D43C62281B48DA8 /* GRDB */,
 			);
 			productName = ZhiYuWatch;
 			productReference = 7B302439FE0CA28FA34BF25E /* ZhiYuWatch.app */;
@@ -2289,9 +2300,6 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					6408FAB740B3056A6CC305BA = {
-						DevelopmentTeam = "";
-					};
-					67D028F10F307E1351F7262E = {
 						DevelopmentTeam = "";
 					};
 					7A6CFC0442842DC91A9C4990 = {
@@ -3182,7 +3190,8 @@
 		18D23EE186D12135F3C18828 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Watch";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.watch;
@@ -3211,7 +3220,8 @@
 		4CFB47C17FF72AD51DCC9A17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/MacInfo.plist;
@@ -3316,7 +3326,8 @@
 		6AAF0BA21B1E41564A7F4578 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Watch";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.watch;
@@ -3329,15 +3340,17 @@
 		834DBEE8457A3FB4B63343ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8A472TXX33;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wangchong.zhiyu.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3346,7 +3359,8 @@
 		989EB686C7F8D0448F3AD859 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Sources/MacInfo.plist;
@@ -3365,15 +3379,17 @@
 		D36151BC77693BB6E7DA1A56 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 8A472TXX33;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wangchong.zhiyu.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3512,6 +3528,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		27EC66462D43C62281B48DA8 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3D82E2B9E5C8BD3B5F9B9E8 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		5D76EDDAB3391C2872023439 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A3D82E2B9E5C8BD3B5F9B9E8 /* XCRemoteSwiftPackageReference "GRDB.swift" */;

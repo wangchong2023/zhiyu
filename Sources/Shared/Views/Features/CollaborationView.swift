@@ -9,7 +9,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
+#if canImport(MultipeerConnectivity)
 import MultipeerConnectivity
+#endif
 
 // MARK: - 导航入口
 /// 多设备协作功能主容器视图
@@ -68,7 +70,9 @@ struct CollaborationViewContent: View {
             Text(collabService.connectionError ?? "")
         }
         .onAppear {
+            #if os(iOS)
             userName = UIDevice.current.name
+            #endif
             collabService.setDelegate(store)
         }
         .onChange(of: collabService.connectionError) { _, newValue in

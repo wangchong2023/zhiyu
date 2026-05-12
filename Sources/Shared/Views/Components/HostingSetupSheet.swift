@@ -57,7 +57,9 @@ struct HostingSetupSheet: View {
                 .foregroundStyle(.appSecondary)
             
             TextField(L10n.Collaboration.tr("roomNamePlaceholder"), text: $roomName)
+                #if !os(watchOS)
                 .textFieldStyle(.roundedBorder)
+                #endif
                 .accessibilityIdentifier("hosting-room-name-field")
         }
     }

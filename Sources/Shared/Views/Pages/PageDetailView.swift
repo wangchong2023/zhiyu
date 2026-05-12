@@ -79,6 +79,13 @@ struct PageDetailView: View {
     }
     
     private var aiMenuButton: some View {
+        #if os(watchOS)
+        Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
+            Image(systemName: AppUI.Icons.sparkles)
+                .foregroundStyle(.appAccent)
+        }
+        .disabled(viewModel.isEditing)
+        #else
         Menu {
             Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
                 Label(Localized.tr("page.ai.summary"), systemImage: "wand.and.stars")
@@ -122,6 +129,7 @@ struct PageDetailView: View {
                 .foregroundStyle(.appAccent)
         }
         .disabled(viewModel.isEditing)
+        #endif
     }
     
     var body: some View {

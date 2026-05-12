@@ -10,10 +10,27 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
+#if canImport(PDFKit)
 import PDFKit
+#endif
 import UniformTypeIdentifiers
 
 // MARK: - PDF Library View
+#if os(watchOS)
+@MainActor
+struct PDFLibraryView: View {
+    var body: some View {
+        Text(Localized.tr("status.simulatorNotSupported"))
+    }
+}
+
+struct PDFReaderView: View {
+    let documentInfo: PDFDocumentInfo
+    var body: some View {
+        Text(Localized.tr("status.simulatorNotSupported"))
+    }
+}
+#else
 @MainActor
 struct PDFLibraryView: View {
     @Environment(AppStore.self) var store
@@ -231,6 +248,7 @@ struct PDFReaderView: View {
     // MARK: - PDF Content
     @ViewBuilder
     private var pdfContent: some View {
+        #if canImport(PDFKit)
         if let pdfDoc = pdfDocument {
             PDFKitRepresentedView(
                 document: pdfDoc,
@@ -241,6 +259,9 @@ struct PDFReaderView: View {
         } else {
             ContentUnavailableView(Localized.tr("pdf.cannotLoadPDF"), systemImage: "exclamationmark.triangle")
         }
+        #else
+        ContentUnavailableView("PDF Not Supported", systemImage: "exclamationmark.triangle", description: Text("PDF reading is not supported on this platform."))
+        #endif
     }
 
     // MARK: - Bottom Bar
@@ -251,9 +272,15 @@ struct PDFReaderView: View {
             }
 
             HStack {
+                #if canImport(PDFKit)
                 Text("\(currentPage + 1) / \(pdfDocument?.pageCount ?? 0)")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
+                #else
+                Text("0 / 0")
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                #endif
 
                 Spacer()
 
@@ -300,7 +327,9 @@ struct PDFReaderView: View {
 
             TextField(Localized.tr("pdf.addNote"), text: $highlightNote)
                 .font(.caption)
+#if os(iOS) || os(macOS)
                 .textFieldStyle(.roundedBorder)
+#endif
 
             Button(action: saveHighlight) {
                 Text(Localized.tr("pdf.saveAnnotation"))
@@ -341,6 +370,8 @@ struct PDFReaderView: View {
     }
 }
 
+#if canImport(PDFKit)
+import PDFKit
 // MARK: - PDFKit Represented View
 struct PDFKitRepresentedView: UIViewRepresentable {
     let document: PDFKit.PDFDocument
@@ -392,3 +423,5 @@ struct PDFKitRepresentedView: UIViewRepresentable {
         }
     }
 }
+#endif
+#endif

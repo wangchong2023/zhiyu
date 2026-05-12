@@ -10,7 +10,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 @preconcurrency import SwiftUI
+#if canImport(WebKit)
 import WebKit
+#endif
 
 @MainActor
 struct NavigationView: View {

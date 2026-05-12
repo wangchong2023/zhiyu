@@ -25,6 +25,16 @@ struct PromptWorkshopView: View {
         Form {
             // ── 认知补全：功能简介 (可收缩) ──
             Section {
+                #if os(watchOS)
+                VStack(alignment: .leading, spacing: 12) {
+                    Label(Localized.tr("prompt.workshop.intro.title"), systemImage: "flask.fill")
+                        .font(.headline)
+                        .foregroundStyle(.appAccent)
+                    Text(Localized.tr("prompt.workshop.intro.desc"))
+                        .font(.subheadline)
+                        .foregroundStyle(.appSecondary)
+                }
+                #else
                 DisclosureGroup(isExpanded: $isIntroExpanded) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(Localized.tr("prompt.workshop.intro.desc"))
@@ -42,6 +52,7 @@ struct PromptWorkshopView: View {
                             .font(.headline)
                     }
                 }
+                #endif
             }
 
             // ── 模块 1：我的快捷指令 (默认展开) ──

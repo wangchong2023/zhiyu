@@ -8,7 +8,9 @@
 // 日期: 2026-05-04
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
+#if !os(watchOS)
 import SwiftUI
+import UIKit
 
 // MARK: - 场景代理（多窗口支持）
 @available(iOS 16.0, macCatalyst 16.0, *)
@@ -40,3 +42,4 @@ class AppWindowSceneDelegate: NSObject, UIWindowSceneDelegate {
     func sceneWillEnterForeground(_ scene: UIScene) {}
     func sceneDidEnterBackground(_ scene: UIScene) {}
 }
+#endif

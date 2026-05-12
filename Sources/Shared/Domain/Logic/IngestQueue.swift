@@ -10,7 +10,7 @@
 
 import Foundation
 import Combine
-#if !os(macOS)
+#if canImport(BackgroundTasks)
 import BackgroundTasks
 #endif
 
@@ -34,7 +34,7 @@ final class IngestQueue: ObservableObject {
 
     /// 注册后台处理任务
     func registerBackgroundTasks() {
-#if !os(macOS)
+#if canImport(BackgroundTasks)
         BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.zhimind.ingest.process", using: nil) { task in
             self.handleBackgroundTask(task: task as! BGProcessingTask)
         }
@@ -80,7 +80,7 @@ final class IngestQueue: ObservableObject {
     }
 
     // MARK: - 后台调度逻辑
-#if !os(macOS)
+#if canImport(BackgroundTasks)
     private func handleBackgroundTask(task: BGProcessingTask) {
         guard pendingCount > 0 else {
             task.setTaskCompleted(success: true)
@@ -98,7 +98,7 @@ final class IngestQueue: ObservableObject {
     func scheduleAppRefresh() {
         guard pendingCount > 0 else { return }
 
-#if !os(macOS)
+#if canImport(BackgroundTasks)
         let request = BGProcessingTaskRequest(identifier: "com.zhimind.ingest.process")
         request.requiresNetworkConnectivity = false
         request.requiresExternalPower = false

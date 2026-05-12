@@ -34,7 +34,8 @@ struct SynthesisView: View {
     @State private var showDeleteDocConfirm = false
     @State private var showRenameDialog = false
     
-    @State private var editMode: EditMode = .inactive
+    // 统一使用 SynthesisDocRow.EditMode（跨平台一致）
+    @State private var editMode: SynthesisDocRow.EditMode = .inactive
     @State private var selectedDocIDs = Set<UUID>()
     @State private var showLimitAlert = false
     @State private var showNoPagesAlert = false
@@ -117,7 +118,11 @@ struct SynthesisView: View {
         }
         .sheet(isPresented: $showOutput) { outputSheet }
         .sheet(item: $pdfURL) { identifiable in
+            #if !os(watchOS)
             PDFPreviewWrapper(url: identifiable.url)
+            #else
+            Text(identifiable.url.lastPathComponent)
+            #endif
         }
     }
 
@@ -198,6 +203,7 @@ struct SynthesisView: View {
                                 showDeleteDocConfirm = true
                             }
                         )
+                        
                         
                         if doc.id != filteredDocs.last?.1.id {
                             Divider().padding(.leading, AppUI.Sidebar.iconBoxSize + AppUI.medium) 

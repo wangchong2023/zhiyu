@@ -12,6 +12,16 @@
 import PhotosUI
 
 // MARK: - OCR Scanner View
+#if os(watchOS)
+@MainActor
+struct OCRScanView: View {
+    var onFinish: ((String, String) -> Void)?
+    
+    var body: some View {
+        Text(Localized.tr("status.simulatorNotSupported"))
+    }
+}
+#else
 @MainActor
 struct OCRScanView: View {
     @Environment(AppStore.self) var store
@@ -176,3 +186,4 @@ struct OCRScanView: View {
         newTagText = ""
     }
 }
+#endif

@@ -59,9 +59,14 @@ struct CreatePageView: View {
                 }
                 
                 Section {
+                    #if os(watchOS)
+                    TextField("", text: $content, axis: .vertical)
+                        .font(.system(.body, design: .monospaced))
+                    #else
                     TextEditor(text: $content)
                         .font(.system(.body, design: .monospaced))
                         .frame(minHeight: 150)
+                    #endif
                 } header: {
                     HStack {
                         Text(L10n.Creation.tr("content"))

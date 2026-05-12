@@ -12,20 +12,22 @@ import SwiftUI
 struct SynthesisDocRow: View {
     let doc: SynthesisStore.SynthesisDocument
     let type: SynthesisStore.SynthesisType
-    let editMode: EditMode
     let isSelected: Bool
     let onTap: () -> Void
     let onRename: () -> Void
     let onDelete: () -> Void
+    // MARK: - 编辑模式枚举（跨平台统一定义，不依赖 SwiftUI.EditMode）
+    /// 简化编辑模式，避免与 SwiftUI.EditMode 类型混淆
+    enum EditMode: Equatable { case active, inactive }
     
-    @Environment(SynthesisStore.self) var synthesisStore
-
-    init(doc: SynthesisStore.SynthesisDocument, 
-         type: SynthesisStore.SynthesisType, 
-         editMode: EditMode, 
-         isSelected: Bool, 
-         onTap: @escaping () -> Void, 
-         onRename: @escaping () -> Void, 
+    let editMode: EditMode
+    
+    init(doc: SynthesisStore.SynthesisDocument,
+         type: SynthesisStore.SynthesisType,
+         editMode: EditMode = .inactive,
+         isSelected: Bool,
+         onTap: @escaping () -> Void,
+         onRename: @escaping () -> Void,
          onDelete: @escaping () -> Void) {
         self.doc = doc
         self.type = type

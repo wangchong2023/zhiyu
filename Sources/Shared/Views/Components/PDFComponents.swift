@@ -10,7 +10,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
+#if canImport(PDFKit)
 import PDFKit
+#endif
 
 // MARK: - PDF Ingest Sheet
 /// PDF 资料入库配置面板组件
@@ -18,7 +20,9 @@ import PDFKit
 struct PDFIngestSheet: View {
     let documentInfo: PDFDocumentInfo
     @Bindable var store: AppStore
+    #if canImport(PDFKit)
     let pdfDocument: PDFKit.PDFDocument?
+    #endif
     
     @State private var ingestMode = "fullText"
     @State private var pageStart = 1
@@ -89,17 +93,23 @@ struct PDFIngestSheet: View {
                 Text(Localized.tr("pdf.pageRange")).tag("pageRange")
                 Text(Localized.tr("pdf.highlightsOnly")).tag("highlights")
             }
+            #if !os(watchOS)
             .pickerStyle(.segmented)
+            #endif
             
             if ingestMode == "pageRange" {
                 HStack {
                     Text(Localized.tr("pdf.fromPage"))
                     TextField("1", value: $pageStart, format: .number)
+                        #if os(iOS)
                         .keyboardType(.numberPad)
+                        #endif
                         .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.toPage"))
                     TextField("\(documentInfo.pageCount)", value: $pageEnd, format: .number)
+                        #if os(iOS)
                         .keyboardType(.numberPad)
+                        #endif
                         .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.page"))
                 }
@@ -150,13 +160,18 @@ struct PDFIngestSheet: View {
             
             switch ingestMode {
             case "fullText":
+                #if canImport(PDFKit)
                 guard let pdfDoc = pdfDocument else {
                     previewText = Localized.tr("pdf.cannotLoadPDF")
                     return
                 }
                 let text = await store.extractPDFText(from: pdfDoc, pageRange: 0..<min(2, pdfDoc.pageCount))
                 previewText = String(text.prefix(500))
+                #else
+                previewText = "PDF extraction is not supported on this platform."
+                #endif
             case "pageRange":
+                #if canImport(PDFKit)
                 guard let pdfDoc = pdfDocument else {
                     previewText = ""
                     return
@@ -165,6 +180,9 @@ struct PDFIngestSheet: View {
                 let end = min(pdfDoc.pageCount, pageEnd)
                 let text = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
                 previewText = String(text.prefix(500))
+                #else
+                previewText = ""
+                #endif
             case "highlights":
                 let texts = documentInfo.highlights.map { $0.text }
                 previewText = String(texts.joined(separator: "\n\n").prefix(500))
@@ -180,15 +198,19 @@ struct PDFIngestSheet: View {
         
         switch ingestMode {
         case "fullText":
+            #if canImport(PDFKit)
             if let pdfDoc = pdfDocument {
                 content = await store.extractPDFText(from: pdfDoc)
             }
+            #endif
         case "pageRange":
+            #if canImport(PDFKit)
             if let pdfDoc = pdfDocument {
                 let start = max(0, pageStart - 1)
                 let end = min(pdfDoc.pageCount, pageEnd)
                 content = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
             }
+            #endif
         case "highlights":
             content = documentInfo.highlights.map { h in
                 var text = "> \(h.text)"
@@ -271,6 +293,7 @@ struct PDFDocumentRow: View {
     }
 }
 
+#if canImport(PDFKit)
 // MARK: - PDF Preview Wrapper
 /// PDF 预览包装器组件
 /// 负责在 SwiftUI 中嵌入原生 PDFView 渲染引擎，支持文档加载与自动缩放
@@ -290,6 +313,7 @@ struct PDFPreviewWrapper: UIViewRepresentable {
         }
     }
 }
+#endif
 
 // MARK: - Highlight Color Extension
 extension Color {

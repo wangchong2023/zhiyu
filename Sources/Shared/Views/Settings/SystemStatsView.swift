@@ -92,7 +92,9 @@ struct SystemStatsView: View {
                                 Text(tab.title).tag(tab)
                             }
                         }
+                        #if !os(watchOS)
                         .pickerStyle(.segmented)
+                        #endif
                         .padding(AppUI.tiny)
                     }
                     .padding(.top, AppUI.medium)
@@ -220,8 +222,12 @@ struct SystemStatsView: View {
                         .frame(height: 200)
                     } else {
                         HStack(spacing: AppUI.medium) {
+                            #if os(watchOS)
+                            chartContainer
+                            #else
                             chartContainer
                                 .frame(maxWidth: UIScreen.main.bounds.width * 0.45)
+                            #endif
                             
                             legendContainer
                                 .frame(maxWidth: .infinity)

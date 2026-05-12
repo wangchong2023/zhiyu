@@ -53,7 +53,9 @@ struct DeveloperSettingsView: View {
                         Text(tab.title).tag(tab)
                     }
                 }
+                #if !os(watchOS)
                 .pickerStyle(.segmented)
+                #endif
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
                 .padding(.vertical, AppUI.small)
@@ -134,7 +136,9 @@ struct DeveloperSettingsView: View {
                             Text("5000").tag(5000)
                             Text("10000").tag(10000)
                         }
+                        #if !os(watchOS)
                         .pickerStyle(.menu)
+                        #endif
                     }
                     
                     Button(action: { showStressTestConfirmation = true }) {

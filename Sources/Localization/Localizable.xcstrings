@@ -388,6 +388,9 @@
         }
       }
     },
+    "0 / 0" : {
+
+    },
     "1" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -12890,6 +12893,9 @@
         }
       }
     },
+    "Mermaid diagrams are not supported on this platform." : {
+
+    },
     "misc.action" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13846,6 +13852,12 @@
           }
         }
       }
+    },
+    "Not Supported" : {
+
+    },
+    "Not used on watchOS" : {
+
     },
     "NSCameraUsageDescription" : {
       "comment" : "Privacy - Camera Usage Description",
@@ -16487,6 +16499,9 @@
         }
       }
     },
+    "PDF reading is not supported on this platform." : {
+
+    },
     "pdf.add" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -17530,7 +17545,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "选择本地的 .bundle 或 .js 脚本"
+            "value" : "Select a local .bundle or .js script"
           }
         },
         "zh-Hans" : {
@@ -17547,7 +17562,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "加载本地Plugin"
+            "value" : "Load Local Plugin"
           }
         },
         "zh-Hans" : {
@@ -17564,7 +17579,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "社区市场"
+            "value" : "Community Market"
           }
         },
         "zh-Hans" : {
@@ -17598,7 +17613,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "暂无上架Plugin"
+            "value" : "No plugins available"
           }
         },
         "zh-Hans" : {
@@ -17615,7 +17630,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "去开发者社区看看最新动态吧"
+            "value" : "Check the developer community for updates"
           }
         },
         "zh-Hans" : {
@@ -17632,7 +17647,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "我的Plugin"
+            "value" : "My Plugins"
           }
         },
         "zh-Hans" : {
@@ -17768,7 +17783,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "安全模式"
+            "value" : "Safe Mode"
           }
         },
         "zh-Hans" : {
@@ -17853,7 +17868,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "搜索扩展能力..."
+            "value" : "Search extensions..."
           }
         },
         "zh-Hans" : {
@@ -17938,7 +17953,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已启用"
+            "value" : "Enabled"
           }
         },
         "zh-Hans" : {

@@ -45,7 +45,11 @@ final class VaultStorageSecurityService {
     func checkBiometrics() {
         let context = LAContext()
         var error: NSError?
+        #if os(watchOS)
+        biometricsAvailable = context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
+        #else
         biometricsAvailable = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        #endif
     }
 
     /**
@@ -74,13 +78,19 @@ final class VaultStorageSecurityService {
 
         var error: NSError?
         // 若硬件不支持，直接放行（由 UI 层负责显示不可用状态）
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
+        #if os(watchOS)
+        let policy: LAPolicy = .deviceOwnerAuthentication
+        #else
+        let policy: LAPolicy = .deviceOwnerAuthenticationWithBiometrics
+        #endif
+        
+        guard context.canEvaluatePolicy(policy, error: &error) else {
             self.activeContext = nil
             return true
         }
 
         let result = await withCheckedContinuation { continuation in
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: Localized.tr("security.unlockReason")) { success, _ in
+            context.evaluatePolicy(policy, localizedReason: Localized.tr("security.unlockReason")) { success, _ in
                 continuation.resume(returning: success)
             }
         }

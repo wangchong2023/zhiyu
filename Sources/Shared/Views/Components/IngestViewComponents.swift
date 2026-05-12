@@ -615,7 +615,13 @@ struct URLImportSheet: View {
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                     
-                    TextEditor(text: $urlText)
+                    Group {
+                        #if os(watchOS)
+                        TextField("", text: $urlText)
+                        #else
+                        TextEditor(text: $urlText)
+                        #endif
+                    }
                         .font(.system(.body, design: .monospaced))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(AppUI.small) // 8

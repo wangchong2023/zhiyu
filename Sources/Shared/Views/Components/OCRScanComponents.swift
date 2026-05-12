@@ -28,7 +28,9 @@ struct OCRImagePickerArea: View {
     var body: some View {
         VStack(spacing: AppUI.standardPadding) { // 16
             if let image = selectedImage {
-                #if canImport(UIKit)
+                #if os(watchOS)
+                Text(Localized.tr("status.simulatorNotSupported"))
+                #elseif canImport(UIKit)
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
@@ -137,7 +139,13 @@ struct OCRResultDisplay: View {
                 .accessibilityIdentifier("ocr-copy-text")
             }
 
-            TextEditor(text: $recognizedText)
+            Group {
+                #if os(watchOS)
+                TextField("", text: $recognizedText, axis: .vertical)
+                #else
+                TextEditor(text: $recognizedText)
+                #endif
+            }
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(.appText)
                 .frame(minHeight: AppUI.Metrics.heroValueSize * 4.6, maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 120, 300
@@ -203,7 +211,9 @@ struct OCRSaveForm: View {
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }
+            #if !os(watchOS)
             .pickerStyle(.segmented)
+            #endif
 
             // Icon picker row
             HStack {

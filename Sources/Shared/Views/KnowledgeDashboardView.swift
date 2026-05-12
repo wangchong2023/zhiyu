@@ -187,23 +187,7 @@ struct KnowledgeDashboardView: View {
                 }
                 .padding(.top, AppUI.tiny)
             }
-            .padding(AppUI.wide)
-            .background(
-                ZStack {
-                    Color.appCard
-                    LinearGradient(
-                        colors: [.appAccent.opacity(0.03), .clear],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                }
-            )
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius)
-                    .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
-            )
-            .shadow(color: AppUI.shadowColor, radius: AppUI.shadowRadius + 5, x: 0, y: AppUI.shadowY + 6)
+            .appMetricCardStyle(color: .appAccent)
         }
     }
     
@@ -282,19 +266,7 @@ struct KnowledgeDashboardView: View {
                         .padding(.vertical, 10)
                 }
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                    .fill(Color.appCard)
-                    .shadow(color: AppUI.shadowColor, radius: AppUI.shadowRadius, x: 0, y: AppUI.shadowY + 1)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                    .stroke(
-                        LinearGradient(colors: [.appAccent.opacity(AppUI.dimmedOpacity), .clear], startPoint: .topLeading, endPoint: .bottomTrailing),
-                        lineWidth: AppUI.borderWidth
-                    )
-            )
+            .appMetricCardStyle(color: .appAccent, cornerRadius: AppUI.standardRadius)
         }
     }
     
@@ -454,11 +426,12 @@ struct MetricBox: View {
         }
         .padding(AppUI.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.ultraThinMaterial.opacity(0.8))
         .background(
             ZStack {
-                Color.appCard
+                Color.appCard.opacity(0.4)
                 LinearGradient(
-                    colors: [color.opacity(0.08), .clear],
+                    colors: [color.opacity(0.1), .clear],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -469,14 +442,14 @@ struct MetricBox: View {
             RoundedRectangle(cornerRadius: AppUI.Metrics.dashboardRadius)
                 .stroke(
                     LinearGradient(
-                        colors: [.appBorder.opacity(AppUI.secondaryOpacity), .appBorder.opacity(AppUI.dimmedOpacity)],
+                        colors: [.appBorder.opacity(0.6), .appBorder.opacity(0.1)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: AppUI.borderWidth
                 )
         )
-        .shadow(color: AppUI.shadowColor, radius: AppUI.shadowRadius, x: 0, y: AppUI.shadowY + 1)
+        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
     }
 }
 

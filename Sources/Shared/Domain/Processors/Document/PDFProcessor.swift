@@ -10,7 +10,9 @@
 // 修改记录:
 //   - 2026-05-05: 迁移至 Utils/Processors/Document 并完善 PDF 解析逻辑说明
 import SwiftUI
+#if canImport(PDFKit)
 import PDFKit
+#endif
 
 // MARK: - PDF 文档模型
 
@@ -140,10 +142,20 @@ final class PDFProcessor {
     }
 
     /// 从本地存储加载 PDF 文档
+#if !os(watchOS)
     func loadPDF(fileName: String) async -> PDFKit.PDFDocument? {
+        #if canImport(PDFKit)
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         return PDFKit.PDFDocument(url: fileURL)
+        #else
+        return nil
+        #endif
     }
+#else
+    func loadPDF(fileName: String) async -> Any? {
+        return nil
+    }
+#endif
 
     /// 从本地存储删除 PDF 文件
     func deletePDF(fileName: String) async -> Bool {
@@ -172,6 +184,7 @@ final class PDFProcessor {
     // MARK: - Text Extraction
 
     /// 从 PDF 文档中提取文本内容
+    #if canImport(PDFKit) && !os(watchOS)
     func extractText(from pdfDocument: PDFKit.PDFDocument, pageRange: Range<Int>? = nil) async -> String {
         var text = ""
         let start = pageRange?.lowerBound ?? 0
@@ -185,9 +198,11 @@ final class PDFProcessor {
         }
         return text
     }
+    #endif
 
     /// 从 URL 提取 PDF 文本内容
     static func extractText(from url: URL) -> String? {
+        #if canImport(PDFKit) && !os(watchOS)
         guard let document = PDFKit.PDFDocument(url: url) else { return nil }
         var text = ""
         for i in 0..<document.pageCount {
@@ -197,12 +212,19 @@ final class PDFProcessor {
             }
         }
         return text
+        #else
+        return nil
+        #endif
     }
 
     /// 从 URL 提取 PDF 文本内容（实例方法版本）
     func extractText(from url: URL) async -> String? {
+        #if canImport(PDFKit) && !os(watchOS)
         guard let document = PDFKit.PDFDocument(url: url) else { return nil }
         return await extractText(from: document)
+        #else
+        return nil
+        #endif
     }
 
     // MARK: - Metadata Persistence

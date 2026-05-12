@@ -13,7 +13,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
+#if canImport(WebKit)
 import WebKit
+#endif
 
 // MARK: - 导航入口
 /// AI 助手对话功能主容器视图
@@ -40,7 +42,9 @@ struct ChatViewContent: View {
     @FocusState private var isInputFocused: Bool
     @State private var isGeneratingAIQuestions = false
     @State private var showPrompts = false
+#if canImport(WebKit)
     @State private var exportWebView: WKWebView?
+#endif
     @State private var exportURL: IdentifiableURL?
     @State private var isSelectionMode = false
     @State private var selectedMessageIDs: Set<UUID> = []
@@ -64,6 +68,9 @@ struct ChatViewContent: View {
         .navigationTitle(L10n.Chat.tr("title"))
         .toolbar {
             ToolbarItem(placement: .automatic) {
+                #if os(watchOS)
+                EmptyView()
+                #else
                 Menu {
                     Section {
                         Button(action: { }) {
@@ -118,11 +125,14 @@ struct ChatViewContent: View {
                         .foregroundStyle(.appSecondary)
                 }
                 .accessibilityIdentifier("menu")
+                #endif
             }
         }
+        #if !os(watchOS)
         .sheet(item: $exportURL) { identifiable in
             ActivityView(activityItems: [identifiable.url])
         }
+        #endif
         .alert(L10n.Common.tr("error"), isPresented: $showError) {
             Button(L10n.Common.tr("ok")) { errorMessage = nil }
         } message: {

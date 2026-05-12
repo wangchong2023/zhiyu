@@ -93,7 +93,9 @@ struct VoiceNoteView: View {
                     Text(lang.name).tag(lang.code)
                 }
             }
+            #if !os(watchOS)
             .pickerStyle(.menu)
+            #endif
             .tint(.appAccent)
         }
         .appContainer(cornerRadius: AppUI.cardRadius, padding: true)
@@ -219,6 +221,7 @@ struct VoiceNoteView: View {
                 }
             }
             
+            #if !os(watchOS)
             TextEditor(text: $speechService.transcribedText)
                 .font(.body)
                 .foregroundStyle(.appText)
@@ -230,6 +233,14 @@ struct VoiceNoteView: View {
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)
                         .stroke(Color.appBorder, lineWidth: 1)
                 )
+            #else
+            TextField("", text: $speechService.transcribedText)
+                .font(.body)
+                .foregroundStyle(.appText)
+                .padding(8)
+                .background(AppUI.Background.cardBackground())
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            #endif
             
             HStack {
                 Text("\(speechService.transcribedText.count) \(Localized.tr("speech.characters"))")

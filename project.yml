@@ -41,7 +41,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app
         INFOPLIST_FILE: Sources/Info.plist
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-iOS
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     dependencies:
       - package: GRDB
@@ -61,10 +62,12 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.mac
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-iOS
         INFOPLIST_FILE: Sources/MacInfo.plist
         SUPPORTS_MACCATALYST: "YES"
         SDKROOT: iphoneos
         TARGETED_DEVICE_FAMILY: "2"
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     dependencies:
       - package: GRDB
@@ -84,8 +87,12 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.watch
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-Watch
         SDKROOT: watchos
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         GENERATE_INFOPLIST_FILE: "YES"
+    dependencies:
+      - package: GRDB
 
   ZhiYuTests:
     type: bundle.unit-test

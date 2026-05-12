@@ -143,6 +143,7 @@ struct SearchView: View {
                         Divider().frame(height: 24).background(Color.appBorder)
 
                         // Status Filters
+                        #if !os(watchOS)
                         Menu {
                             Button(L10n.Common.tr("all")) { filterStatus = nil }
                             ForEach(PageStatus.allCases, id: \.self) { status in
@@ -161,10 +162,12 @@ struct SearchView: View {
                             .clipShape(Capsule())
                             .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
                         }
+                        #endif
 
                         Divider().frame(height: 24).background(Color.appBorder)
 
                         // Sort options
+                        #if !os(watchOS)
                         Menu {
                             ForEach(SortOption.allCases, id: \.self) { option in
                                 Button(action: { sortBy = option }) {
@@ -184,6 +187,7 @@ struct SearchView: View {
                             .clipShape(Capsule())
                             .foregroundStyle(.appSecondary)
                         }
+                        #endif
                     }
                     .padding(.horizontal)
                 }
@@ -241,7 +245,9 @@ struct SearchView: View {
                             }
                             .buttonStyle(.plain)
                             .listRowBackground(Color.clear)
+                            #if !os(watchOS)
                             .listRowSeparator(.hidden)
+                            #endif
                             .contextMenu {
                                 Button {
                                     HapticFeedback.shared.trigger(.selection)

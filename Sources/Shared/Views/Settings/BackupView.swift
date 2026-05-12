@@ -49,7 +49,7 @@ struct BackupView: View {
                 Section {
                     Button {
                         backupService.createBackup(pages: store.pages)
-                        AccessibilityService.playHaptic(.medium)
+                        HapticFeedback.shared.trigger(.selection)
                     } label: {
                         Label(L10n.Backup.tr("createNow"), systemImage: "plus.circle.fill")
                     }
@@ -88,7 +88,9 @@ struct BackupView: View {
                     Text(L10n.Backup.tr("history"))
                 }
             }
+            #if !os(watchOS)
             .listStyle(.inset)
+            #endif
             .scrollContentBackground(.hidden)
             .background(themeManager.pageBackground())
             .navigationTitle(L10n.Backup.title)
@@ -137,7 +139,7 @@ struct BackupView: View {
         store.replaceAllPages(pages)
         store.saveToDisk()
         
-        AccessibilityService.playNotificationHaptic(.success)
+        HapticFeedback.shared.trigger(.success)
     }
 }
 

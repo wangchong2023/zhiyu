@@ -10,7 +10,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
+#if canImport(PDFKit)
 import PDFKit
+#endif
 
 /// 数据导出与迁移服务 (Product Manager 视角：增强用户数据安全感与可迁移性)
 final class DataExportService {
@@ -40,6 +42,7 @@ final class DataExportService {
     /// 生成 AI 驱动的 PDF 知识报告
     @MainActor
     func generatePDFReport(pages: [KnowledgePage]) async throws -> URL {
+        #if canImport(PDFKit)
         let markdown = pages.map { "# \($0.title)\n\n\($0.content)" }.joined(separator: "\n\n---\n\n")
         let fileName = "ZhiYu_Knowledge_Report_\(Int(Date().timeIntervalSince1970))"
         
@@ -53,6 +56,9 @@ final class DataExportService {
         )
         
         return url
+        #else
+        throw DataExportError.notImplemented
+        #endif
     }
     
     /// 备份金库到 ZIP 压缩包

@@ -30,6 +30,21 @@ struct PageDetailHeader: View {
             tagsView
             
             // Metadata section with industrial-grade collapsible control
+            #if os(watchOS)
+            VStack(alignment: .leading) {
+                HStack {
+                    Label(Localized.tr("page.metaInfo"), systemImage: "info.circle")
+                        .font(.caption2.bold())
+                        .foregroundStyle(.appSecondary)
+                    Spacer()
+                }
+                metaInfoView.padding(.top, 4)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(Color.appCard.opacity(0.4))
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            #else
             DisclosureGroup(
                 isExpanded: $isMetaExpanded,
                 content: { metaInfoView.padding(.top, 4) },
@@ -47,6 +62,7 @@ struct PageDetailHeader: View {
             .padding(.vertical, 8)
             .background(Color.appCard.opacity(0.4))
             .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            #endif
         }
         .padding()
     }

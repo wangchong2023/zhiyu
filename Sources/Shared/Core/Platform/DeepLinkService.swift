@@ -9,7 +9,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
+#if canImport(CoreSpotlight)
 import CoreSpotlight
+#endif
 
 // MARK: - Deep Link Service
 /// Handles deep links, universal links, and Spotlight indexing for Knowledge Base pages.
@@ -66,6 +68,7 @@ final class DeepLinkService: ObservableObject {
         return false
     }
     
+#if canImport(CoreSpotlight)
     // MARK: - Spotlight Indexing
     func indexPages(_ pages: [KnowledgePage]) {
         var searchableItems: [CSSearchableItem] = []
@@ -106,6 +109,11 @@ final class DeepLinkService: ObservableObject {
     func deindexAllPages() {
         CSSearchableIndex.default().deleteAllSearchableItems() { _ in }
     }
+#else
+    func indexPages(_ pages: [KnowledgePage]) {}
+    func deindexPage(id: UUID) {}
+    func deindexAllPages() {}
+#endif
     
     // MARK: - Spotlight Query Handling
     func handleSpotlightActivity(_ userActivity: NSUserActivity) -> Bool {

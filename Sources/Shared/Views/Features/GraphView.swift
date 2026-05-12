@@ -419,7 +419,11 @@ struct GraphCanvasView: View {
     }
 
     private var zoomGesture: some Gesture {
+        #if os(watchOS)
+        TapGesture()
+        #else
         MagnificationGesture().onChanged { v in scale = lastScale * v }.onEnded { _ in lastScale = scale }
+        #endif
     }
     private var dragGesture: some Gesture {
         DragGesture().onChanged { v in offset = CGSize(width: lastOffset.width + v.translation.width, height: lastOffset.height + v.translation.height) }.onEnded { _ in lastOffset = offset }

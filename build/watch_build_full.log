@@ -1,0 +1,24 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination "generic/platform=watchOS Simulator" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-snapshot-testing: https://github.com/pointfreeco/swift-snapshot-testing @ 1.19.2
+  swift-custom-dump: https://github.com/pointfreeco/swift-custom-dump @ 1.5.0
+  GRDB: https://github.com/groue/GRDB.swift.git @ 6.29.3
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 603.0.1
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+
+2026-05-10 09:47:24.776 xcodebuild[30690:316877] Writing error result bundle to /var/folders/rs/v67zrdbx553gsp0ngtvd9pw80000gn/T/ResultBundle_2026-10-05_09-47-0024.xcresult
+xcodebuild: error: Unable to find a destination matching the provided destination specifier:
+		{ generic:1, platform:watchOS Simulator }
+
+	Ineligible destinations for the "ZhiYuWatch" scheme:
+		{ platform:watchOS, arch:arm64_32, id:00008301-1090A910148BC02E, name:Constantine's Apple Watch, error:watchOS 26.4 is not installed. Please download and install the platform from Xcode > Settings > Components. }
+		{ platform:watchOS, id:dvtdevice-DVTiOSDevicePlaceholder-watchos:placeholder, name:Any watchOS Device, error:watchOS 26.4 is not installed. Please download and install the platform from Xcode > Settings > Components. }

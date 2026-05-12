@@ -21,11 +21,13 @@ struct WatchContentView: View {
         NavigationStack {
             List {
                 Section(header: Text(L10n.Watch.tr("recents"))) {
-                    ForEach(store.pages.sorted(by: { $0.updated > $1.updated }).prefix(5)) { page in
+                    let recentPages = Array(store.pages.sorted(by: { $0.updated > $1.updated }).prefix(5))
+                    ForEach(recentPages) { page in
                         NavigationLink(value: page) {
                             HStack {
-                                Image(systemName: page.displayIcon)
-                                    .foregroundStyle(page.type.themedColor)
+                                let icon = page.displayIcon
+                                Image(systemName: icon)
+                                    .foregroundStyle(Color.appAccent)
                                     .accessibilityHidden(true)
                                 Text(page.title)
                                     .font(.caption.weight(.medium))
@@ -68,7 +70,7 @@ struct WatchPageDetailView: View {
                 Divider()
                 
                 // 手表端仅显示摘要或精简内容
-                Text(page.summary ?? page.content.prefix(200) + "...")
+                Text(String(page.content.prefix(200)) + "...")
                     .font(.caption2)
             }
             .padding()

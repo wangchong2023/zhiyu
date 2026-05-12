@@ -6,6 +6,7 @@
 // 日期: 2026-05-06
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
+#if os(iOS)
 import UIKit
 
 // MARK: - 全局手势支持
@@ -29,3 +30,4 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
         return true
     }
 }
+#endif

@@ -46,7 +46,9 @@ struct SaveVoiceNoteSheet: View {
                 .foregroundStyle(.appSecondary)
             
             TextField(Localized.tr("speech.noteTitlePlaceholder"), text: $title)
+                #if !os(watchOS)
                 .textFieldStyle(.roundedBorder)
+                #endif
         }
     }
     
@@ -61,7 +63,9 @@ struct SaveVoiceNoteSheet: View {
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
             }
+            #if !os(watchOS)
             .pickerStyle(.segmented)
+            #endif
         }
     }
     
@@ -71,6 +75,7 @@ struct SaveVoiceNoteSheet: View {
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
+            #if !os(watchOS)
             TextEditor(text: $speechService.transcribedText)
                 .font(.body)
                 .foregroundStyle(.appText)
@@ -82,6 +87,14 @@ struct SaveVoiceNoteSheet: View {
                     RoundedRectangle(cornerRadius: AppUI.standardRadius)
                         .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
                 )
+            #else
+            TextField("", text: $speechService.transcribedText)
+                .font(.body)
+                .foregroundStyle(.appText)
+                .padding(AppUI.small)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+            #endif
         }
     }
     

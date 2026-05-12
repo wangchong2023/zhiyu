@@ -10,7 +10,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 @preconcurrency import SwiftUI
+#if canImport(WebKit)
 import WebKit
+#endif
 
 struct IdentifiableURL: Identifiable {
     let id = UUID()
@@ -22,11 +24,14 @@ struct IdentifiableURL: Identifiable {
 /// 负责在 WebKit 容器中加载 Mermaid.js 并渲染流程图、甘特图等知识图谱扩展内容
 struct MermaidWebView: View {
     let mermaidCode: String
+    #if canImport(WebKit)
     @State private var webView: WKWebView?
+    #endif
     @State private var showExportSheet = false
     @State private var identifiablePDFURL: IdentifiableURL?
 
     var body: some View {
+        #if canImport(WebKit)
         ZStack(alignment: .bottomTrailing) {
             #if os(macOS)
             MermaidWKWebViewMac(mermaidCode: mermaidCode, webView: $webView)
@@ -60,8 +65,22 @@ struct MermaidWebView: View {
         }
         .frame(minHeight: 400)
         .sheet(item: $identifiablePDFURL) { identifiable in
+            #if os(iOS)
             ActivityView(activityItems: [identifiable.url])
+            #endif
         }
+        #else
+        VStack {
+            Image(systemName: "chart.bar.doc.horizontal")
+                .font(.largeTitle)
+            Text(Localized.tr("synthesis.mindmap.renderError"))
+            Text("Mermaid diagrams are not supported on this platform.")
+                .font(.caption)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        #endif
     }
 
     private func zoomButton(icon: String, action: @escaping () -> Void) -> some View {
@@ -94,6 +113,7 @@ struct MermaidWebView: View {
     }
 
     private func exportToPDF() {
+        #if canImport(WebKit) && os(iOS)
         guard let webView = webView else { return }
         
         let config = WKPDFConfiguration()
@@ -107,9 +127,11 @@ struct MermaidWebView: View {
                 ToastManager.shared.show(type: .error, message: error.localizedDescription)
             }
         }
+        #endif
     }
 }
 
+#if canImport(WebKit)
 #if os(iOS)
 struct MermaidWKWebView: UIViewRepresentable {
     let mermaidCode: String
@@ -260,4 +282,5 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
         """
     }
 }
+#endif
 #endif

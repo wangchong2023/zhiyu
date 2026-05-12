@@ -13,12 +13,38 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
+#if canImport(Speech)
 @preconcurrency import Speech
+#endif
 import AVFoundation
 
 // MARK: - Speech Service
 /// Speech-to-text service using Apple's Speech framework.
 /// Supports real-time transcription and audio file transcription.
+#if os(watchOS)
+@MainActor
+final class SpeechProcessor: ObservableObject {
+    @Published var isRecording = false
+    @Published var isTranscribing = false
+    @Published var transcribedText = ""
+    @Published var audioLevel: Float = 0
+    @Published var audioLevelHistory: [Float] = Array(repeating: 0, count: 20)
+    @Published var statusMessage: String = "Not Supported"
+    @Published var supportedLanguages: [(code: String, name: String)] = []
+    @Published var selectedLanguage: String = "zh-CN"
+    @Published var hasPermission: Bool = false
+    @Published var recordings: [VoiceRecording] = []
+    
+    init() {}
+    func checkPermission() {}
+    func startRecording() {}
+    func stopRecording() {}
+    func transcribeFile(url: URL) async throws -> String { return "" }
+    func saveRecording(title: String) -> VoiceRecording { return VoiceRecording(id: UUID(), title: "", text: "", language: "", duration: 0, createdAt: Date()) }
+    func deleteRecording(_ recording: VoiceRecording) {}
+    func clearTranscription() {}
+}
+#else
 @MainActor
 final class SpeechProcessor: ObservableObject {
     @Published var isRecording = false
@@ -33,9 +59,11 @@ final class SpeechProcessor: ObservableObject {
     @Published var hasPermission: Bool = false
     @Published var recordings: [VoiceRecording] = []
 
+#if canImport(Speech)
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
+#endif
     private var audioEngine: AVAudioEngine?
 
     // MARK: - Init
@@ -47,6 +75,7 @@ final class SpeechProcessor: ObservableObject {
 
     // MARK: - Permission
     func checkPermission() {
+#if canImport(Speech)
         SFSpeechRecognizer.requestAuthorization { status in
             DispatchQueue.main.async {
                 self.hasPermission = status == .authorized
@@ -64,6 +93,7 @@ final class SpeechProcessor: ObservableObject {
                 }
             }
         }
+#endif
     }
 
     // MARK: - Languages
@@ -81,9 +111,11 @@ final class SpeechProcessor: ObservableObject {
             ("pt-BR", Localized.tr("speech.lang.ptBR"))
         ]
 
+#if canImport(Speech)
         supportedLanguages = locales.filter { locale in
             SFSpeechRecognizer(locale: Locale(identifier: locale.0)) != nil
         }
+#endif
 
         // Auto-select based on system language
         let preferred = Locale.preferredLanguages.first ?? "en-US"
@@ -103,6 +135,7 @@ final class SpeechProcessor: ObservableObject {
             return
         }
 
+#if canImport(Speech)
         let locale = Locale(identifier: selectedLanguage)
         guard let recognizer = SFSpeechRecognizer(locale: locale) else {
             statusMessage = Localized.tr("speech.status.localeNotSupported")
@@ -124,20 +157,25 @@ final class SpeechProcessor: ObservableObject {
         startAudioEngine(audioEngine)
         startRecognitionTask(recognizer: recognizer)
         #endif
+#endif
     }
 
     // MARK: - Setup Recognition Request
     private func setupRecognitionRequest() {
+#if canImport(Speech)
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let request = recognitionRequest else { return }
         request.shouldReportPartialResults = true
         request.requiresOnDeviceRecognition = false
+#endif
     }
 
     // MARK: - Setup Audio Tap
     private func setupAudioTap(inputNode: AVAudioInputNode) {
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: nil) { [weak self] buffer, _ in
+#if canImport(Speech)
             self?.recognitionRequest?.append(buffer)
+#endif
             self?.calculateAudioLevel(from: buffer)
         }
     }
@@ -172,6 +210,7 @@ final class SpeechProcessor: ObservableObject {
 
     // MARK: - Start Recognition Task
     private func startRecognitionTask(recognizer: SFSpeechRecognizer) {
+#if canImport(Speech)
         guard let request = recognitionRequest else { return }
 
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
@@ -190,14 +229,17 @@ final class SpeechProcessor: ObservableObject {
                 }
             }
         }
+#endif
     }
 
     // MARK: - Stop Recording
     func stopRecording() {
         audioEngine?.inputNode.removeTap(onBus: 0)
         audioEngine?.stop()
+#if canImport(Speech)
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
+#endif
 
         isRecording = false
         audioLevel = 0
@@ -215,6 +257,7 @@ final class SpeechProcessor: ObservableObject {
         isTranscribing = true
         defer { isTranscribing = false }
 
+#if canImport(Speech)
         let locale = Locale(identifier: selectedLanguage)
         guard let recognizer = SFSpeechRecognizer(locale: locale) else {
             throw SpeechError.localeNotSupported
@@ -234,6 +277,9 @@ final class SpeechProcessor: ObservableObject {
                 }
             }
         }
+#else
+        return ""
+#endif
     }
 
     // MARK: - Save Recording
@@ -278,6 +324,7 @@ final class SpeechProcessor: ObservableObject {
         }
     }
 }
+#endif
 
 // MARK: - Voice Recording Model
 struct VoiceRecording: Identifiable, Codable {

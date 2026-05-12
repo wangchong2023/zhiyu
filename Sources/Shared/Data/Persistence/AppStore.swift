@@ -17,7 +17,9 @@
 
 @preconcurrency import SwiftUI
 @preconcurrency import Combine
+#if canImport(PDFKit)
 @preconcurrency import PDFKit
+#endif
 import Observation
 
 /// 知识管理中心存储：应用的状态大脑与业务指令分发中心。
@@ -495,15 +497,17 @@ extension AppStore {
         await PDFProcessor.shared.deletePDF(fileName: fileName)
     }
 
+#if canImport(PDFKit)
     /// 加载物理 PDF 文档对象以供阅读或解析。
-    func loadPDFDocument(fileName: String) async -> PDFKit.PDFDocument? {
+    func loadPDFDocument(fileName: String) async -> PDFDocument? {
         await PDFProcessor.shared.loadPDF(fileName: fileName)
     }
 
     /// 从 PDF 文档对象中提取特定范围或全量的文本内容。
-    func extractPDFText(from doc: PDFKit.PDFDocument, pageRange: Range<Int>? = nil) async -> String {
+    func extractPDFText(from doc: PDFDocument, pageRange: Range<Int>? = nil) async -> String {
         await PDFProcessor.shared.extractText(from: doc, pageRange: pageRange)
     }
+#endif
 }
 
 // MARK: - CollaborationDelegate 实现

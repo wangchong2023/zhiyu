@@ -21,18 +21,18 @@ enum AppPasteboard {
     /// 获取或设置系统剪贴板文本
     static var string: String? {
         get {
-            #if canImport(UIKit)
+            #if os(iOS)
             return UIPasteboard.general.string
-            #elseif canImport(AppKit)
+            #elseif os(macOS)
             return NSPasteboard.general.string(forType: .string)
             #else
             return nil
             #endif
         }
         set {
-            #if canImport(UIKit)
+            #if os(iOS)
             UIPasteboard.general.string = newValue
-            #elseif canImport(AppKit)
+            #elseif os(macOS)
             NSPasteboard.general.clearContents()
             if let s = newValue {
                 NSPasteboard.general.setString(s, forType: .string)
@@ -43,18 +43,21 @@ enum AppPasteboard {
 }
 
 /// 跨平台图片包装器
-#if canImport(UIKit)
+#if os(iOS)
 typealias AppImage = UIImage
-#elseif canImport(AppKit)
+#elseif os(macOS)
 typealias AppImage = NSImage
+#else
+// For watchOS, or others. We might not need AppImage directly or can use an empty struct.
+struct AppImage {}
 #endif
 
 extension AppImage {
     /// 统一转换为 CGImage 以供 Vision 等框架使用
     var appCGImage: CGImage? {
-        #if canImport(UIKit)
+        #if os(iOS)
         return self.cgImage
-        #elseif canImport(AppKit)
+        #elseif os(macOS)
         return self.cgImage(forProposedRect: nil, context: nil, hints: nil)
         #else
         return nil

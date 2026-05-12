@@ -129,6 +129,7 @@ struct IngestView: View {
         } message: {
             Text(errorMessage ?? "")
         }
+        #if !os(watchOS)
         .fileImporter(
             isPresented: $showFileImporter,
             allowedContentTypes: {
@@ -142,6 +143,7 @@ struct IngestView: View {
         ) { result in
             handleFileImport(result)
         }
+        #endif
         .sheet(isPresented: $showVoiceNote, onDismiss: {
             if !newTitle.isEmpty {
                 showManualForm = true
@@ -499,8 +501,14 @@ struct IngestView: View {
                 }
                 
                 Section(header: Text(L10n.Creation.tr("content"))) {
-                    TextEditor(text: $newContent)
-                        .frame(minHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
+                    Group {
+                        #if os(watchOS)
+                        TextField("", text: $newContent)
+                        #else
+                        TextEditor(text: $newContent)
+                        #endif
+                    }
+                    .frame(minHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
                 }
             }
             .scrollContentBackground(.hidden)

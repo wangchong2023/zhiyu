@@ -1,0 +1,1551 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination "generic/platform=watchOS Simulator" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+  GRDB: https://github.com/groue/GRDB.swift.git @ 6.29.3
+  swift-snapshot-testing: https://github.com/pointfreeco/swift-snapshot-testing @ 1.19.2
+  swift-syntax: https://github.com/swiftlang/swift-syntax @ 603.0.1
+  swift-custom-dump: https://github.com/pointfreeco/swift-custom-dump @ 1.5.0
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'ZhiYuWatch' in project 'ZhiYu'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+    Target 'GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'GRDB_GRDB' in project 'GRDB'
+        ➜ Explicit dependency on target 'CSQLite' in project 'GRDB'
+    Target 'CSQLite' in project 'GRDB' (no dependencies)
+    Target 'GRDB_GRDB' in project 'GRDB' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/watchsimulator26.4-23T238-688ef53f1462e2c8f657fdc38a81448f8aa186fa658f8d2cb200b6f26918d89b.sdkstatcache
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu/ZhiYu.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk -o /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/watchsimulator26.4-23T238-688ef53f1462e2c8f657fdc38a81448f8aa186fa658f8d2cb200b6f26918d89b.sdkstatcache
+
+CompileAssetCatalogVariant thinned /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets --compile /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device watch --minimum-deployment-target 10.0 --platform watchsimulator
+/* com.apple.actool.document.warnings */
+:.: warning: Unknown platform value "macos"
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets:./AppIcon.appiconset/[][universal][1024x1024][][][][][][][][2d][AppIcon.png]: warning: The app icon set "AppIcon" has an unassigned child.
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets:./AppIcon.appiconset/[][universal][1024x1024][][][][][][][][2d][AppIcon.png]: warning: The app icon set "AppIcon" has an unassigned child.
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets:./AppIcon.appiconset/[][universal][1024x1024][][][][][][][][2d][AppIcon.png]: warning: The app icon set "AppIcon" has an unassigned child.
+/* com.apple.actool.compilation-results */
+/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist_thinned
+/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_output/thinned/Assets.car
+
+
+SwiftDriver ZhiYuWatch normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuWatch -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk -target x86_64-apple-watchos10.0-simulator -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/watchsimulator26.4-23T238-688ef53f1462e2c8f657fdc38a81448f8aa186fa658f8d2cb200b6f26918d89b.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-watchsimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources-normal/x86_64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/x86_64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver ZhiYuWatch normal arm64 com.apple.xcode.tools.swift.compiler (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name ZhiYuWatch -Onone @/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/arm64/ZhiYuWatch.SwiftFileList -DDEBUG -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -enable-upcoming-feature StrictConcurrency -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk -target arm64-apple-watchos10.0-simulator -g -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -c -j18 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/watchsimulator26.4-23T238-688ef53f1462e2c8f657fdc38a81448f8aa186fa658f8d2cb200b6f26918d89b.sdkstatcache -output-file-map /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/arm64/ZhiYuWatch-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/arm64/ZhiYuWatch.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/arm64/ZhiYuWatch_const_extract_protocols.json -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-watchsimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources-normal/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/arm64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/arm64/ZhiYuWatch-Swift.h -working-directory /Users/constantine/Documents/work/code/projects/ZhiYu -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdbool-BIJF1CVDZP43VEY8RASZMUJG1.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdarg-5OVVXVRDH9Q7BSLCS032JPCOQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_AvailabilityInternal-9IBEO1JZ2GI695WJ9YYDJ5VOY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrcheck-BC4NZTGSBU2XO3O6TU8AT50YF.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stddef-2L3YN0VIU3C4P3PARY8OEVY9D.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrauth-C3AXKVUV7GZ2JXU8UDN29UU4X.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftShims-42OGTNZWDI8WWT7RTDD5YKK4B.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_SwiftConcurrencyShims-CXEK283R1MPTADHYRB7FXL9AE.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DeveloperToolsSupport-8RHMARJQAYX9UVF81009E6AZZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_float-7MKKIN9URGPCTSU9RMEYA71DH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftShims-EG6D1FK8N00SPPWZKE095O4ZX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_AvailabilityInternal-MXC0QMJG1JB99CFQRUIAPEMS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_SwiftConcurrencyShims-UBNSIH4RCCVIK8L061GCUK17.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrauth-CYJTA1XHB4BVH5K17IO6U0J0M.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdarg-E7T9HOVIJ1OJTH4XH615O04G9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DeveloperToolsSupport-39KZHPCB7ETWEPXF29AH30A2I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_float-9VAW2BTVZ05CRYLYP5O6PCX8V.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stddef-FFWHIBCZ8VKUTURC79DPAVKU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdbool-BBP2QEGWV4L4SFVT7H6Y5KJB3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrcheck-9OV3LNHED9MWM4K4L50AAD10H.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation1-CZK7I63LS88JO8JORK8PPOH16.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation1-7FB18P4NLD3NQJ7DGG592SW6F.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_limits-84QO9OYBYMF56LATPHNPW4PLG.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SQLite3-2OHN3WNBMAD5HDN51L84YUFFK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation2-DBJLWD3VHG2TVXTX14MA9SN29.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ExtensionFoundation-BC1ITUGVS5AYHT2ILJ6ONH9LT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ExtensionFoundation-BRW1JRO9X3IHQPPDPFNV7POU1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SQLite3-6RZMWAYFDWNB97SMFVP7YOHL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_limits-5ZJLQ7LEVLRQG9GFJWWSOBLWW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation2-69PMLG2RUWWD7HOAGB5I4EQ2W.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/CSQLite-1P4SYQ6J8V3HHG1M7N4GX3MFK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdint-ABQATSPWBJ1SS3GVGOL0Z6TM1.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/sys_types-4O0VNCOJDP643PSLBAS8QHRQX.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/string_h-CHNPO8WIVV1IQFRIGFIQX3ZQH.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_tgmath-4J4COI2ZMCSGMQZ40Z6GEYYBS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules/CSQLite-53SAHRYA02PEP2DPDLFXF24WD.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdatomic-BEPE4CHHKFP0QC3VEQNQ6JUJK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation3-AMFZ8YE211IGRQM62NW3GQMPH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_tgmath-89UIGXSL929DOLRL9LPFV7HI2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/sys_types-DGMRM0TWT7L1BIALUMB0MLYUT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdint-2NVH7JD2M0PCM99XKPXR8M4MC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/string_h-7VUQ8L0FE1JREZKM8W30HHHLM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdatomic-8ZPH55IM99PYT8J14UOZF2316.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation3-BOOHUPYYCV6T479LXUPWIFORD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_intrinsics-44VV3CDDWUL5TGY67MGBPUDXA.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_inttypes-ENIH0T9S1OLLW45M8UGX15ED8.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_intrinsics-7U8RLYB3X2WY37P86HNJS0CEI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_inttypes-3KIJL3UU0EOJ52AM358Y4C9EV.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Darwin-CWJ2QLX6PRN3ED8WIN7Z0FUW8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Darwin-EG0GL3IV4UY1935OAHNJ1L1J1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/simd-EI8XHUYCW4IHDHM05YALY1QEY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/simd-EWCPPLA2467JBZZVXWFVY3YL7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Compression-98GFREZUOP3UV87QJ3YXH6HV2.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MachO-93L4HWYEKI0EJ2SXPEIPH6LHN.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ObjectiveC-1I0OJMMZ875HBZVJV9CHSURC9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ObjectiveC-FXAAXO2RWJQFWAZXBIY6XUJ1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Compression-6M5BGKM085YVP9LD4ZSACZ8TX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MachO-39SR7JB9CQ7I6CSMVKCESR8Q4.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_object-D4JXW8RPHLUCVPUSCQZZTIGCF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_object-2JYH2S60YV2RCCK6CKLIB8M76.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_workgroup-C7DGRNHGBF4SLDK90RTWJW967.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_workgroup-408U0I3BWCQZSG6UW2JFEJGOV.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Dispatch-2JT2FYRHFK7KN5MEDP1TR7QSM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Spatial-1HS3XPW7F054HI6C7SIIZ5J28.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Dispatch-BN3R7T2LE5M6RWN6QSJ9MEH6F.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/dnssd-5IQ0YAOEORJW1QX8930ACB7MG.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreFoundation-F3LWBEELM9OF8RVOXIONQHBI0.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/XPC-7CRKM01C1CP5VLLCJOEYMWQ4J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/XPC-BOFVA0E8N46AR9GEQ21IZUYKD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreFoundation-A60WL55RM28ME7N4X0OWV49KC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/dnssd-ENKLS4B8Q2B9DVU1A7S3JIQGU.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os-6DZPATUVK27YKRYP05WL4RX6D.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Spatial-3IK3H57MXARFK36N6WWAUDEJ4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os-7TQT8LB7HHPFUHIN77TMAONW9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreAudioTypes-A0KB983QTW2N5M5MYXO45CQ4O.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreGraphics-70CM4L49WAC35YOSW4VWRB68.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Security-8V6UANK439WRY6NEL2CMV0QAF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Security-9Y0S1CDC52L5OHSRECTY6B7P0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreGraphics-9EXQEK6ZY4ZUBZFK8E4032GFK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreAudioTypes-7JYWYJWEHBBHZ7ZAYLVVH142F.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreAudio-D7W5ZP3UC5QTY8YJ0FPEGL6NF.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Foundation-C86U4EWUNZT4CER7PCUGVK1AH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreAudio-ALD29ETQIQJTWLXCH0SESPHTK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreText-9NZDZLFTW9VJ40Z1HDNK6DRN0.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ImageIO-ENGRUFRJ0X13UV67CDIDPG7WY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreVideo-B2NIZTES7CORCF6PS5I8B9RF5.pcm
+
+LinkAssetCatalog /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Assets.xcassets (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-linkAssetCatalog --thinned /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_output/thinned --thinned-dependencies /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist_unthinned --output /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app --plist-output /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app/Assets.car (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+ProcessInfoPlistFile /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app/Info.plist /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Info.plist (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    builtin-infoPlistUtility /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app/PkgInfo -expandbuildsettings -format binary -platform watchsimulator -additionalcontentfile /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/assetcatalog_generated_info.plist -scanforprivacyfile /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app/GRDB_GRDB.bundle -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/ZhiYuWatch.app/Info.plist
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Foundation-DY452UTZTO20JDXT7LLJRJZC5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreText-BG1A61GCZAPCRYFZHIY601PJA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreVideo-D9Z8BVLHCF2QO38XX7GZ3NVMK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ImageIO-D3VKCSSBY9GG8J40LFY5YO1WL.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreMedia-HYS4XTCX18MFDC5UIAERCBMR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accelerate-EDX2YN2RLG8NQZTNZA7106T15.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accelerate-DMUMGGZ4LRAA545RYKGEPQKDR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreMedia-BY62JQMTWV1TL7F37T67RCH5J.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreTransferable-3VFWKXO51S7K6O4Z0R810DEJ2.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/NaturalLanguage-2RU5UFLP2N2A48CFGCIM20999.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/RelevanceKit-24P864UDKV6QLH66BCHMUVKJT.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Symbols-DEEBO2MI9GM8Y2X8RFTVTWFO7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_LocationEssentials-B91BWKYX2PEWQBGE0NTPI77NY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UniformTypeIdentifiers-AGQTO4LUS884QGH6QV3JRJWSI.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OSLog-A9SG1UQSIO15TBJXBE2JPRUKZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIUtilities-EQ8Y1LY49HLK917TSAWIIZ38C.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreML-3TP96V0RNME9VSTKGQFSHO33Q.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accessibility-7V3RGHTVIM4MMLW8XLTFB1C8W.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreData-45PZBNJ4I2L2ZQY30B9R9G8NW.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Network-77M24HTVT8W3RKZZL7NNYOB36.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UserNotifications-5T4IB78OKYI6TQIU9COSOOZ9I.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreMIDI-A1Z1CYG0TLIGK8HA46509D0PZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SceneKit-8FZPO2O8ZPY872WFPUHKPFPUZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/QuartzCore-29VQ5IPQS2LXZR2DG90YQIOLS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/RelevanceKit-5AI0V69VXEK5RCWQ6LA6P61Z9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreTransferable-9GR038QAJIE9L14X50HKZFF4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WidgetKit-A1BYVT70DZKWB7IEGZ2DE8DLB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accessibility-7D6UN0KBSWDZABQF0H5TAVXCQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UserNotifications-9J308PB46MOZ05PBTW0GXMX96.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OSLog-CIUHRJXJS8O2VM2Y3JVNDX5J6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/QuartzCore-2EC8Y2OGKPR9DXKSGEYU9UOPV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WatchConnectivity-9OQDQZMLSHNNS9Q9FXX2POWMF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UniformTypeIdentifiers-4EJY924KNMC1IXBW27I4J7NAL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIUtilities-C1HRBM2L4HF9VLQLS46HGW68E.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WidgetKit-5UVMKXBH6551GEKHSGM45PNVQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AVFAudio-3V4E3IH8OUZN0BAKGUEMKAACH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AppIntents-I6HVNLA5E2IFAFMVWG6LUEU1.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreLocation-4C9MWUW7YE7R6J08XRL0FVUIS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/LocalAuthentication-99LK3UG2U7U9TCKSRP07G0NGP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SceneKit-4NM73EQEOVBGG3UT25QY2BMGJ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DataDetection-9AG48S111UHTYD1Z6O0U805G4.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreMIDI-DM8B4U102LS8D8RSCX96MBPCA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Symbols-RKOJXZC4RF9QFI06SPQ322C9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUICore-7C0E7SWHHMMQILPS7VLFPE5Q6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreData-5T8OBUZVSMXJFOHIHVQM3KORB.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WatchConnectivity-5T626M6N4PCA5TDPET985CSMC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/NaturalLanguage-9K0192MGGMOXCFEVGO3GBI1T6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Network-ATTEX7K52SNXFXE9R01ULLU6Y.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_LocationEssentials-13H40R6UCYS2ELUWCC6SAV2H9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIKit-35FRHW4TVHZOU9ZWH26BSYZY7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreML-69VFYY27W8IM7Z6KJ2HGQB8HE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DataDetection-E3ZNUFZGWXOOC2Z4SLXC2LP9V.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUICore-DR9A9T2WZC9DS7FDHUKH4K6AE.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AppIntents-KM24LEVU5SWCOA3G6HXMYDPZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/LocalAuthentication-12UI6YK89QRBCF1YDB5Q3IAE6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/EventKit-64MAT2S0QS8S653T3NE7KPMRK.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Intents-2906AQ1GP14A3VDTV4NT4MC02.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIKit-4I9MXCZX29OVGAPR03NIBTNSF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreLocation-D86D0D5ZT1H7WJY3II5GIASWE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AVFAudio-BU0UIIDSTF7YBMK5RD3PFM58.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AVFoundation-1H3YGPH7P7O1KJO446M2KOORL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/EventKit-7DDYMRJ0N1XVRULXBL0KS2CLW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Intents-DBJNY5KNUK5335LXEJTGIC81R.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/AVFoundation-EQ48BMSYL9D12MBESMHD8PDOR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/PhotosUI-BRD9P0TMEQV16E1FGRNIDZLKR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/HomeKit-59UF7S9QIE38714G6L3VB8WDS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MapKit-DZW8NP4HL1EB5RDFU8RWALNO3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/PhotosUI-OFSC1L1H5IF3DA1D8TK05SOK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MapKit-DTMF4BB85HN45H8TU0GN5XSZ2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/HomeKit-EK12W98Y19EPSMV58J9JB5MR4.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WatchKit-DDB5Z5FIGTABDQOJSI8IIA0PK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/WatchKit-DXQHT25GH38CDFFEWTNKZ20IP.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUI-5YS199A4CFRGL936SGG2QVDGE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUI-A0IETVDNECAJ1A9OUFHOTEGTK.pcm
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ ZhiYuWatch (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+EmitSwiftModule normal x86_64 (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:16:17: error: 'UIWindow' is unavailable in watchOS
+    var window: UIWindow?
+                ^~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIWindow.h:22:12: note: 'UIWindow' has been explicitly marked unavailable here
+@interface UIWindow : UIView
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:18:25: error: 'UIScene' is unavailable in watchOS
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+                        ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:18:57: error: 'UISceneSession' is unavailable in watchOS
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+                                                        ^~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UISceneSession.h:19:12: note: 'UISceneSession' has been explicitly marked unavailable here
+@interface UISceneSession : NSObject <NSSecureCoding>
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:18:100: error: 'UIScene' is unavailable in watchOS
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+                                                                                                   ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:37:38: error: 'UIScene' is unavailable in watchOS
+    func sceneDidDisconnect(_ scene: UIScene) {}
+                                     ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:38:40: error: 'UIScene' is unavailable in watchOS
+    func sceneDidBecomeActive(_ scene: UIScene) {}
+                                       ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:39:41: error: 'UIScene' is unavailable in watchOS
+    func sceneWillResignActive(_ scene: UIScene) {}
+                                        ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:40:44: error: 'UIScene' is unavailable in watchOS
+    func sceneWillEnterForeground(_ scene: UIScene) {}
+                                           ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:41:43: error: 'UIScene' is unavailable in watchOS
+    func sceneDidEnterBackground(_ scene: UIScene) {}
+                                          ^~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIScene.h:20:12: note: 'UIScene' has been explicitly marked unavailable here
+@interface UIScene : UIResponder
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift:15:41: error: 'UIWindowSceneDelegate' is unavailable in watchOS
+class AppWindowSceneDelegate: NSObject, UIWindowSceneDelegate {
+                                        ^~~~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIWindowScene.h:65:11: note: 'UIWindowSceneDelegate' has been explicitly marked unavailable here
+@protocol UIWindowSceneDelegate <UISceneDelegate>
+          ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:314:39: error: cannot find type 'MCPeerID' in scope
+    private func setupSession(peerID: MCPeerID) {
+                                      ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:326:42: error: cannot find type 'MCPeerID' in scope
+    private func setupAdvertiser(peerID: MCPeerID, roomName: String) {
+                                         ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:343:39: error: cannot find type 'MCPeerID' in scope
+    private func setupBrowser(peerID: MCPeerID) {
+                                      ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:367:48: error: cannot find type 'MCPeerID' in scope
+    private func handlePeerConnected(_ peerID: MCPeerID) {
+                                               ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:386:51: error: cannot find type 'MCPeerID' in scope
+    private func handlePeerDisconnected(_ peerID: MCPeerID) {
+                                                  ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:395:53: error: cannot find type 'MCSessionState' in scope
+    private func handleSessionStatusChange(_ state: MCSessionState, peerID: MCPeerID) {
+                                                    ^~~~~~~~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:395:77: error: cannot find type 'MCPeerID' in scope
+    private func handleSessionStatusChange(_ state: MCSessionState, peerID: MCPeerID) {
+                                                                            ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift:401:64: error: cannot find type 'MCPeerID' in scope
+    private func handleDataReceived(_ data: Data, from peerID: MCPeerID) {
+                                                               ^~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:70:28: error: 'DropInfo' is unavailable in watchOS
+    func performDrop(info: DropInfo) -> Bool {
+                           ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:74:29: error: 'DropInfo' is unavailable in watchOS
+    func validateDrop(info: DropInfo) -> Bool {
+                            ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:67:31: error: 'DropDelegate' is unavailable in watchOS
+struct PagesListDropDelegate: DropDelegate {
+                              ^~~~~~~~~~~~
+SwiftUI.DropDelegate:4:44: note: 'DropDelegate' has been explicitly marked unavailable here
+@MainActor @preconcurrency public protocol DropDelegate {
+                                           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:86:28: error: 'DropInfo' is unavailable in watchOS
+    func performDrop(info: DropInfo) -> Bool {
+                           ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:90:29: error: 'DropInfo' is unavailable in watchOS
+    func validateDrop(info: DropInfo) -> Bool {
+                            ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift:83:26: error: 'DropDelegate' is unavailable in watchOS
+struct FileDropDelegate: DropDelegate {
+                         ^~~~~~~~~~~~
+SwiftUI.DropDelegate:4:44: note: 'DropDelegate' has been explicitly marked unavailable here
+@MainActor @preconcurrency public protocol DropDelegate {
+                                           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:30:42: error: cannot find type 'SCNView' in scope
+    func makeUIView(context: Context) -> SCNView {
+                                         ^~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:30:30: error: cannot find type 'Context' in scope
+    func makeUIView(context: Context) -> SCNView {
+                             ^~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:47:33: error: cannot find type 'SCNView' in scope
+    func updateUIView(_ uiView: SCNView, context: Context) {
+                                ^~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:47:51: error: cannot find type 'Context' in scope
+    func updateUIView(_ uiView: SCNView, context: Context) {
+                                                  ^~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:63:41: error: 'UITapGestureRecognizer' is unavailable in watchOS
+        @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+                                        ^~~~~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITapGestureRecognizer.h:23:12: note: 'UITapGestureRecognizer' has been explicitly marked unavailable here
+@interface UITapGestureRecognizer : UIGestureRecognizer
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift:26:27: error: cannot find type 'UIViewRepresentable' in scope
+struct TappableSceneView: UIViewRepresentable {
+                          ^~~~~~~~~~~~~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift:34:24: error: 'UITextView' is unavailable in watchOS
+    weak var textView: UITextView?
+                       ^~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITextView.h:219:12: note: 'UITextView' has been explicitly marked unavailable here
+@interface UITextView : UIScrollView <UITextInput, UIContentSizeCategoryAdjusting, UILetterformAwareAdjusting>
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift:42:49: error: 'UITextView' is unavailable in watchOS
+    func textViewDidChangeSelection(_ textView: UITextView) {
+                                                ^~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITextView.h:219:12: note: 'UITextView' has been explicitly marked unavailable here
+@interface UITextView : UIScrollView <UITextInput, UIContentSizeCategoryAdjusting, UILetterformAwareAdjusting>
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift:49:40: error: 'UITextView' is unavailable in watchOS
+    func textViewDidChange(_ textView: UITextView) {
+                                       ^~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITextView.h:219:12: note: 'UITextView' has been explicitly marked unavailable here
+@interface UITextView : UIScrollView <UITextInput, UIContentSizeCategoryAdjusting, UILetterformAwareAdjusting>
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift:31:52: error: 'UITextViewDelegate' is unavailable in watchOS
+final class MarkdownTextViewCoordinator: NSObject, UITextViewDelegate {
+                                                   ^~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UITextView.h:32:11: note: 'UITextViewDelegate' has been explicitly marked unavailable here
+@protocol UITextViewDelegate <NSObject, UIScrollViewDelegate>
+          ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift:145:45: error: cannot find type 'PDFKit' in scope
+    func loadPDF(fileName: String) async -> PDFKit.PDFDocument? {
+                                            ^~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/PDFReaderView.swift:191:37: error: cannot find type 'PDFKit' in scope
+    @State private var pdfDocument: PDFKit.PDFDocument?
+                                    ^~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift:16:28: error: 'DropInfo' is unavailable in watchOS
+    func performDrop(info: DropInfo) -> Bool {
+                           ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift:20:28: error: 'DropInfo' is unavailable in watchOS
+    func dropEntered(info: DropInfo) {
+                           ^~~~~~~~
+SwiftUI.DropInfo:4:15: note: 'DropInfo' has been explicitly marked unavailable here
+public struct DropInfo {
+              ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift:12:33: error: 'DropDelegate' is unavailable in watchOS
+struct RelatedPageDropDelegate: DropDelegate {
+                                ^~~~~~~~~~~~
+SwiftUI.DropDelegate:4:44: note: 'DropDelegate' has been explicitly marked unavailable here
+@MainActor @preconcurrency public protocol DropDelegate {
+                                           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift:188:51: error: cannot find type 'SFSpeechRecognizer' in scope
+    private func startRecognitionTask(recognizer: SFSpeechRecognizer) {
+                                                  ^~~~~~~~~~~~~~~~~~
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift:15:19: error: 'EditMode' is unavailable in watchOS
+    let editMode: EditMode
+                  ^~~~~~~~
+SwiftUI.EditMode:4:13: note: 'EditMode' has been explicitly marked unavailable here
+public enum EditMode : Sendable {
+            ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift:25:20: error: 'EditMode' is unavailable in watchOS
+         editMode: EditMode, 
+                   ^~~~~~~~
+SwiftUI.EditMode:4:13: note: 'EditMode' has been explicitly marked unavailable here
+public enum EditMode : Sendable {
+            ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift:37:34: error: 'EditMode' is unavailable in watchOS
+    @State private var editMode: EditMode = .inactive
+                                 ^~~~~~~~
+SwiftUI.EditMode:4:13: note: 'EditMode' has been explicitly marked unavailable here
+public enum EditMode : Sendable {
+            ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift:23:67: error: 'UIGestureRecognizer' is unavailable in watchOS
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+                                                                  ^~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIGestureRecognizer.h:35:12: note: 'UIGestureRecognizer' has been explicitly marked unavailable here
+@interface UIGestureRecognizer : NSObject
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift:28:56: error: 'UIGestureRecognizer' is unavailable in watchOS
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+                                                       ^~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIGestureRecognizer.h:35:12: note: 'UIGestureRecognizer' has been explicitly marked unavailable here
+@interface UIGestureRecognizer : NSObject
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift:28:135: error: 'UIGestureRecognizer' is unavailable in watchOS
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+                                                                                                                                      ^~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIGestureRecognizer.h:35:12: note: 'UIGestureRecognizer' has been explicitly marked unavailable here
+@interface UIGestureRecognizer : NSObject
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift:13:48: error: 'UIGestureRecognizerDelegate' is unavailable in watchOS
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIGestureRecognizer.h:91:11: note: 'UIGestureRecognizerDelegate' has been explicitly marked unavailable here
+@protocol UIGestureRecognizerDelegate <NSObject>
+          ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift:13:11: error: 'UINavigationController' is unavailable in watchOS
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+          ^~~~~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/UIKit.framework/Headers/UINavigationController.h:46:12: note: 'UINavigationController' has been explicitly marked unavailable here
+@interface UINavigationController : UIViewController
+           ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:19:16: warning: static property 'title' is not concurrency-safe because it is nonisolated global shared mutable state; this is an error in the Swift 6 language mode
+    static var title: LocalizedStringResource = "快速记录"
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:19:16: note: convert 'title' to a 'let' constant to make 'Sendable' shared state immutable
+    static var title: LocalizedStringResource = "快速记录"
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:19:16: note: add '@MainActor' to make static property 'title' part of global actor 'MainActor'
+    static var title: LocalizedStringResource = "快速记录"
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:19:16: note: disable concurrency-safety checks if accesses are protected by an external synchronization mechanism
+    static var title: LocalizedStringResource = "快速记录"
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:20:16: warning: static property 'description' is not concurrency-safe because it is nonisolated global shared mutable state; this is an error in the Swift 6 language mode
+    static var description = IntentDescription("直接进入语音采集界面")
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:20:16: note: convert 'description' to a 'let' constant to make 'Sendable' shared state immutable
+    static var description = IntentDescription("直接进入语音采集界面")
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:20:16: note: add '@MainActor' to make static property 'description' part of global actor 'MainActor'
+    static var description = IntentDescription("直接进入语音采集界面")
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift:20:16: note: disable concurrency-safety checks if accesses are protected by an external synchronization mechanism
+    static var description = IntentDescription("直接进入语音采集界面")
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift:16:8: error: invalid redeclaration of 'WatchKnowledgeStatsView'
+struct WatchKnowledgeStatsView: View {
+       ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchView.swift:24:8: note: 'WatchKnowledgeStatsView' previously declared here
+struct WatchKnowledgeStatsView: View {
+       ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchView.swift:24:8: note: 'WatchKnowledgeStatsView' previously declared here
+struct WatchKnowledgeStatsView: View {
+       ^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift:20:1: error: 'main' attribute can only apply to one type in a module
+@main
+^
+/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchApp.swift:15:1: error: 'main' attribute can only apply to one type in a module
+@main
+^
+
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -emit-module -experimental-skip-non-inlinable-function-bodies-without-types /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/AIContentEnricher.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AIPulseIndicator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/AISynthesisService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AIWorkflowStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AccessibilityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/ActivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AdaptiveSidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppAccessibilityView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppBackupService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCardComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/AppCloudSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConfig.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConstants.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppDecorators.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppEmptyState.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/AppEventBus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppKeyboardShortcuts.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/AppLinkProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppLoadingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppNotifications.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppRouter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppTab.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppToast.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppTooltip.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppUI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/AsyncStatus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/BacklinksView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/BackupView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/BreadcrumbView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/ButtonStyles.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Character+CJK.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ChatComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/ChatView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/ChatViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/CollaborationComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/CollaborationModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/CollaborationService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/CollaborationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ColorSchemeMode.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/CommandPalette/CommandPaletteView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ContentView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/CreatePageView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Platforms/Adaptor/CrossPlatform.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/DataCoordinator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DataExportService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/DatabaseManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DeepLinkService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/DemoDataGenerator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/DeveloperSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocumentProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocxProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/EditorComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/EmbeddingManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/EmbeddingProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/ExcelProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ExportReportView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/FileSystemSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/FlowLayout.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/Graph3DView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphClusteringService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphCommunityProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/GraphDataProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphInsightDetection.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphLOD.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphLayoutProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/GraphModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/GraphView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/GraphViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/HapticFeedback.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/HostingSetupSheet.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/IconPickerView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/IndexView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/IngestQueue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/IngestService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/IngestStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/IngestView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/IngestViewComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/KeyboardShortcutsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/KeychainService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/KnowledgeDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/KnowledgeIngestPipeline.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/KnowledgeInsightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/KnowledgePage.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/KnowledgePageStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMAdapters.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMChatService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMClient.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMContextBuilder.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMRefactorService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/LLMResponseProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/LLMServiceProtocol.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/LLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LinkService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LintIssue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/LintService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LintView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/LocalAnalyticsService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Localized.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/LockOverlayView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LogAction.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LogView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/Logger.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MCSessionDelegateImpl.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownEditorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownRendererView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Medals/MedalComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MedalService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/MedalWallView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MermaidWebView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ModelColorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/PDFReaderView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PPTXProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PageDetailHeader.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/PageDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/PageDetailViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/PageHistoryView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageSchema.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/PageType+UI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageType.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PencilManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/PerformanceBenchmarker.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PerformanceDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PerformanceService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginMarketService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginRegistry.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PromptService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/PromptWorkshopView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/QuizProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/QuizView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/RAGEvaluationService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ReadabilityModifiers.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SQLiteStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/SchemaService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/SearchDiagnosticInfo.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SearchStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/SearchView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityReinforcement.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ServiceContainer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsAboutView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SettingsComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SettingsStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Shimmer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/ShortcutManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SnapshotService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SplashComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SplashView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SpotlightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/StoreCapabilities.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisActionButton.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/SynthesisProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SynthesisStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SystemStatsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/TagCapsule.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/TagCloudView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/TaskCenter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/TaskCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/TextChunkerProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ThemeManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/TooltipManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/UndoService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/VectorIndexer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ViewFactory.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VisionProSpatialView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/VoiceNoteComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VoiceNoteView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WatchConnectivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchContentView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchDictationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Network/WebScraperProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WebViewExportService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/WeeklyInsightCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/WelcomeView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WorkflowService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/XlsxStringsProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchApp.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ZipUtility.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/iCloudSyncComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncCoordinator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/iCloudSyncView.swift /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/GeneratedAssetSymbols.swift -target x86_64-apple-watchos10.0-simulator -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -module-can-import MachO -module-can-import-version UIKit 9126.4.27.1 9126.4.27 -module-can-import-version WatchConnectivity 222.0.0 222.0.0 -disable-cross-import-overlay-search -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import PhotosUI /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/PhotosUI.framework/Modules/PhotosUI.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import RelevanceKit /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/System/Library/Frameworks/RelevanceKit.framework/Modules/RelevanceKit.swiftcrossimport/MapKit.swiftoverlay -swift-module-cross-import RelevanceKit /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk/System/Library/Frameworks/RelevanceKit.framework/Modules/RelevanceKit.swiftcrossimport/MapKit.swiftoverlay -swift-module-cross-import SceneKit /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator.sdk/System/Library/Frameworks/SceneKit.framework/Modules/SceneKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/WatchOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-dependencies-1.json -enable-objc-interop -sdk /Applications/Xcode.app/Contents/Developer/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator26.4.sdk -I /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/PackageFrameworks -F /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch_const_extract_protocols.json -enable-upcoming-feature StrictConcurrency -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/constantine/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/constantine/Documents/work/code/projects/ZhiYu -enable-anonymous-context-mangled-names -file-compilation-dir /Users/constantine/Documents/work/code/projects/ZhiYu -Xcc -fmodule-map-file\=/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/SourcePackages/checkouts/GRDB.swift/Sources/CSQLite/module.modulemap -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/watchsimulator26.4-23T238-688ef53f1462e2c8f657fdc38a81448f8aa186fa658f8d2cb200b6f26918d89b.sdkstatcache -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-generated-files.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-own-target-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYu-48e36c608b438f24ac5a43fe091185d1-VFS-watchsimulator/all-product-headers.yaml -Xcc -iquote -Xcc /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/ZhiYuWatch-project-headers.hmap -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Products/Debug-watchsimulator/include -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources-normal/x86_64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/x86_64 -Xcc -I/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name ZhiYuWatch -frontend-parseable-output -disable-clang-spi -clang-target x86_64-apple-watchos26.4-simulator -target-sdk-version 26.4 -target-sdk-name watchsimulator26.4 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -emit-module-doc-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.swiftdoc -emit-module-source-info-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.swiftsourceinfo -emit-objc-header-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-Swift.h -serialize-diagnostics-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-primary-emit-module.dia -emit-dependencies-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch-primary-emit-module.d -o /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.swiftmodule -emit-abi-descriptor-path /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/Objects-normal/x86_64/ZhiYuWatch.abi.json
+SwiftCompile normal x86_64 Compiling\ WidgetAndWatchViews.swift,\ WorkflowService.swift,\ XlsxStringsProcessor.swift,\ ZhiYuApp.swift,\ ZhiYuWatchApp.swift,\ ZhiYuWatchView.swift,\ ZipUtility.swift,\ iCloudSyncComponents.swift,\ iCloudSyncCoordinator.swift,\ iCloudSyncManager.swift,\ iCloudSyncView.swift,\ GeneratedAssetSymbols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WorkflowService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/XlsxStringsProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchApp.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ZipUtility.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/iCloudSyncComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncCoordinator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/iCloudSyncView.swift /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/WidgetAndWatchViews.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WorkflowService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/XlsxStringsProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/ZhiYuApp.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchApp.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/Resources/ZhiYuWatchView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ZipUtility.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/iCloudSyncComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncCoordinator.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/iCloudSyncManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/iCloudSyncView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/ZhiYu.build/Debug-watchsimulator/ZhiYuWatch.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ TagCapsule.swift,\ TagCloudView.swift,\ TaskCenter.swift,\ TaskCenterView.swift,\ TextChunkerProcessor.swift,\ ThemeManager.swift,\ TooltipManager.swift,\ UINavigationController+PopGesture.swift,\ UndoService.swift,\ VaultStorageSecurityService.swift,\ VaultStorageService.swift,\ VectorIndexer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/TagCapsule.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/TagCloudView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/TaskCenter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/TaskCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/TextChunkerProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ThemeManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/TooltipManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/UndoService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/VectorIndexer.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/TagCapsule.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/TagCloudView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/TaskCenter.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/TaskCenterView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/TextChunkerProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/ThemeManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/TooltipManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/UINavigationController+PopGesture.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/UndoService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageSecurityService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/VaultStorageService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/VectorIndexer.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ ViewFactory.swift,\ VisionProSpatialView.swift,\ VoiceNoteComponents.swift,\ VoiceNoteView.swift,\ WatchConnectivityService.swift,\ WatchContentView.swift,\ WatchDictationView.swift,\ WatchWidgets.swift,\ WebScraperProcessor.swift,\ WebViewExportService.swift,\ WeeklyInsightCard.swift,\ WelcomeView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ViewFactory.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VisionProSpatialView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/VoiceNoteComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VoiceNoteView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WatchConnectivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchContentView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchDictationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Network/WebScraperProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WebViewExportService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/WeeklyInsightCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/WelcomeView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/ViewFactory.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VisionProSpatialView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/VoiceNoteComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/VoiceNoteView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WatchConnectivityService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchContentView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchDictationView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/watchOS/WatchWidgets.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Network/WebScraperProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/WebViewExportService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/WeeklyInsightCard.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/WelcomeView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ SearchStore.swift,\ SearchView.swift,\ SecurityManager.swift,\ SecurityReinforcement.swift,\ ServiceContainer.swift,\ SettingsAboutView.swift,\ SettingsComponents.swift,\ SettingsStore.swift,\ SettingsView.swift,\ Shimmer.swift,\ ShortcutManager.swift,\ SidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SearchStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/SearchView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityReinforcement.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ServiceContainer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsAboutView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SettingsComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SettingsStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Shimmer.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/ShortcutManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SidebarView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SearchStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/SearchView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SecurityReinforcement.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ServiceContainer.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsAboutView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SettingsComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SettingsStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SettingsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Shimmer.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/ShortcutManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SidebarView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ SnapshotService.swift,\ SpeechProcessor.swift,\ SplashComponents.swift,\ SplashView.swift,\ SpotlightService.swift,\ StoreCapabilities.swift,\ SynthesisActionButton.swift,\ SynthesisDocRow.swift,\ SynthesisProcessor.swift,\ SynthesisStore.swift,\ SynthesisView.swift,\ SystemStatsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SnapshotService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SplashComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SplashView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SpotlightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/StoreCapabilities.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisActionButton.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/SynthesisProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SynthesisStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SystemStatsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SnapshotService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/SpeechProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/SplashComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/SplashView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/SpotlightService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/StoreCapabilities.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisActionButton.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Synthesis/SynthesisDocRow.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/SynthesisProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SynthesisStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/SynthesisView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/SystemStatsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ MarkdownProcessor.swift,\ MarkdownRendererView.swift,\ MarkdownTextView.swift,\ MedalComponents.swift,\ MedalService.swift,\ MedalWallView.swift,\ MermaidWebView.swift,\ ModelColorView.swift,\ ModuleRegistrar.swift,\ NavigationView.swift,\ OCRProcessor.swift,\ OCRScanComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownRendererView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Medals/MedalComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MedalService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/MedalWallView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MermaidWebView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ModelColorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/MarkdownProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownRendererView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MarkdownTextView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Medals/MedalComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MedalService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/MedalWallView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/MermaidWebView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ModelColorView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/ModuleRegistrar.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Core/NavigationView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Media/OCRProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OCRScanComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ LinkService.swift,\ LintIssue.swift,\ LintService.swift,\ LintView.swift,\ LocalAnalyticsService.swift,\ Localized.swift,\ LockOverlayView.swift,\ LogAction.swift,\ LogView.swift,\ Logger.swift,\ MCSessionDelegateImpl.swift,\ MarkdownEditorView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LinkService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LintIssue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/LintService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LintView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/LocalAnalyticsService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Localized.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/LockOverlayView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LogAction.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LogView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/Logger.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MCSessionDelegateImpl.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownEditorView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LinkService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LintIssue.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/LintService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LintView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/LocalAnalyticsService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Localized.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/LockOverlayView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/LogAction.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/LogView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/Logger.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/MCSessionDelegateImpl.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/MarkdownEditorView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ OCRScanView.swift,\ OnDeviceComponents.swift,\ OnDeviceLLMService.swift,\ OnDeviceLLMSettingsView.swift,\ OnboardingOverlay.swift,\ OnboardingService.swift,\ PDFComponents.swift,\ PDFProcessor.swift,\ PDFReaderView.swift,\ PPTXProcessor.swift,\ PageDetailHeader.swift,\ PageDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/PDFReaderView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PPTXProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PageDetailHeader.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/PageDetailView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/OCRScanView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnDeviceComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/OnDeviceLLMService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/OnDeviceLLMSettingsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/OnboardingOverlay.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/OnboardingService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PDFComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PDFProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/PDFReaderView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/PPTXProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PageDetailHeader.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/PageDetailView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ PluginProtocols.swift,\ PluginRegistry.swift,\ PromptService.swift,\ PromptWorkshopView.swift,\ QuizProcessor.swift,\ QuizView.swift,\ RAGEvaluationService.swift,\ ReadabilityModifiers.swift,\ RelatedPageDropDelegate.swift,\ SQLiteStore.swift,\ SchemaService.swift,\ SearchDiagnosticInfo.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginRegistry.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PromptService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/PromptWorkshopView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/QuizProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/QuizView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/RAGEvaluationService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ReadabilityModifiers.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SQLiteStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/SchemaService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/SearchDiagnosticInfo.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginProtocols.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginRegistry.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PromptService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/PromptWorkshopView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Synthesis/QuizProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/QuizView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/RAGEvaluationService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ReadabilityModifiers.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/RelatedPageDropDelegate.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/SQLiteStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/SchemaService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/SearchDiagnosticInfo.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ KnowledgePageStore.swift,\ LLMAdapters.swift,\ LLMChatService.swift,\ LLMClient.swift,\ LLMContextBuilder.swift,\ LLMModels.swift,\ LLMProtocols.swift,\ LLMRefactorService.swift,\ LLMResponseProcessor.swift,\ LLMService.swift,\ LLMServiceProtocol.swift,\ LLMSettingsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/KnowledgePageStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMAdapters.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMChatService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMClient.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMContextBuilder.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMProtocols.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMRefactorService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/LLMResponseProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/LLMServiceProtocol.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/LLMSettingsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/KnowledgePageStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMAdapters.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMChatService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMClient.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMContextBuilder.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMModels.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMProtocols.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMRefactorService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/LLMResponseProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/LLMService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/LLMServiceProtocol.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/LLMSettingsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ PageDetailViewModel.swift,\ PageHistoryView.swift,\ PageSchema.swift,\ PageType+UI.swift,\ PageType.swift,\ PencilManager.swift,\ PerformanceBenchmarker.swift,\ PerformanceDashboardView.swift,\ PerformanceService.swift,\ PluginCenterView.swift,\ PluginDetailView.swift,\ PluginMarketService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/PageDetailViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/PageHistoryView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageSchema.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/PageType+UI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageType.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PencilManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/PerformanceBenchmarker.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PerformanceDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PerformanceService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginCenterView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginDetailView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginMarketService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/PageDetailViewModel.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/Subviews/PageHistoryView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageSchema.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/PageType+UI.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/PageType.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PencilManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/PerformanceBenchmarker.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/PerformanceDashboardView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/PerformanceService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginCenterView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/PluginDetailView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/PluginMarketService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ IndexView.swift,\ IngestQueue.swift,\ IngestService.swift,\ IngestStore.swift,\ IngestView.swift,\ IngestViewComponents.swift,\ KeyboardShortcutsView.swift,\ KeychainService.swift,\ KnowledgeDashboardView.swift,\ KnowledgeIngestPipeline.swift,\ KnowledgeInsightService.swift,\ KnowledgePage.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/IndexView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/IngestQueue.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/IngestService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/IngestStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/IngestView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/IngestViewComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/KeyboardShortcutsView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/KeychainService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/KnowledgeDashboardView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/KnowledgeIngestPipeline.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/KnowledgeInsightService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/KnowledgePage.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/IndexView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/IngestQueue.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/IngestService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/IngestStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/IngestView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/IngestViewComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/KeyboardShortcutsView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/KeychainService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/KnowledgeDashboardView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/KnowledgeIngestPipeline.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/KnowledgeInsightService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/KnowledgePage.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ DocumentProcessor.swift,\ DocxProcessor.swift,\ DragDropComponents.swift,\ EditorComponents.swift,\ EmbeddingManager.swift,\ EmbeddingProvider.swift,\ ExcelProcessor.swift,\ ExportReportView.swift,\ FileSystemSyncService.swift,\ FlowLayout.swift,\ Graph3DComponents.swift,\ Graph3DView.swift,\ GraphClusteringService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocumentProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocxProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/EditorComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/EmbeddingManager.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/EmbeddingProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/ExcelProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ExportReportView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/FileSystemSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/FlowLayout.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/Graph3DView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphClusteringService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocumentProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/DocxProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/DragDropComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/EditorComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/EmbeddingManager.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Protocols/EmbeddingProvider.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Document/ExcelProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ExportReportView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/FileSystemSyncService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/FlowLayout.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/Graph3DComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/Graph3DView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphClusteringService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ GraphCommunityProcessor.swift,\ GraphComponents.swift,\ GraphDataProvider.swift,\ GraphInsightDetection.swift,\ GraphLOD.swift,\ GraphLayoutProcessor.swift,\ GraphModels.swift,\ GraphView.swift,\ GraphViewModel.swift,\ HapticFeedback.swift,\ HostingSetupSheet.swift,\ IconPickerView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphCommunityProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/GraphDataProvider.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphInsightDetection.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphLOD.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphLayoutProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/GraphModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/GraphView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/GraphViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/HapticFeedback.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/HostingSetupSheet.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/IconPickerView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphCommunityProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/GraphDataProvider.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/GraphInsightDetection.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/GraphLOD.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/Graph/GraphLayoutProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/GraphModels.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/GraphView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/GraphViewModel.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/HapticFeedback.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/HostingSetupSheet.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Editors/IconPickerView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ AIContentEnricher.swift,\ AIPulseIndicator.swift,\ AISynthesisService.swift,\ AIWorkflowStore.swift,\ AccessibilityService.swift,\ ActivityService.swift,\ AdaptiveSidebarView.swift,\ AppAccessibilityView.swift,\ AppBackupService.swift,\ AppCard.swift,\ AppCardComponents.swift,\ AppCloudSyncService.swift,\ AppConfig.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/AIContentEnricher.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AIPulseIndicator.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/AISynthesisService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AIWorkflowStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AccessibilityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/ActivityService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AdaptiveSidebarView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppAccessibilityView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppBackupService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCard.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCardComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/AppCloudSyncService.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConfig.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Processors/AI/AIContentEnricher.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AIPulseIndicator.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Logic/AISynthesisService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AIWorkflowStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AccessibilityService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/ActivityService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AdaptiveSidebarView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppAccessibilityView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppBackupService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCard.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppCardComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Sync/AppCloudSyncService.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConfig.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ AppConstants.swift,\ AppDecorators.swift,\ AppEmptyState.swift,\ AppEventBus.swift,\ AppKeyboardShortcuts.swift,\ AppLinkProcessor.swift,\ AppLoadingOverlay.swift,\ AppNotifications.swift,\ AppRouter.swift,\ AppStore.swift,\ AppTab.swift,\ AppToast.swift,\ AppTooltip.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConstants.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppDecorators.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppEmptyState.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/AppEventBus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppKeyboardShortcuts.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/AppLinkProcessor.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppLoadingOverlay.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppNotifications.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppRouter.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppStore.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppTab.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppToast.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppTooltip.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppConstants.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppDecorators.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppEmptyState.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Domain/Features/AppEventBus.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppKeyboardShortcuts.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/AppLinkProcessor.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppLoadingOverlay.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppNotifications.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppRouter.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Data/Persistence/AppStore.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppTab.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppToast.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/AppTooltip.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 Compiling\ AppUI.swift,\ AppWindowSceneDelegate.swift,\ AsyncStatus.swift,\ BacklinksView.swift,\ BackupView.swift,\ BreadcrumbView.swift,\ ButtonStyles.swift,\ Character+CJK.swift,\ ChatComponents.swift,\ ChatView.swift,\ ChatViewModel.swift,\ CollaborationComponents.swift,\ CollaborationModels.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppUI.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/AsyncStatus.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/BacklinksView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/BackupView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/BreadcrumbView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/ButtonStyles.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Character+CJK.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ChatComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/ChatView.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/ChatViewModel.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/CollaborationComponents.swift /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/CollaborationModels.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Constants/AppUI.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Platform/AppWindowSceneDelegate.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/AsyncStatus.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Pages/BacklinksView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Settings/BackupView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/BreadcrumbView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Styles/ButtonStyles.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Core/Utilities/Character+CJK.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/ChatComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Features/ChatView.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/ViewModels/ChatViewModel.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Views/Components/CollaborationComponents.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+SwiftCompile normal x86_64 /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/Models/CollaborationModels.swift (in target 'ZhiYuWatch' from project 'ZhiYu')
+    cd /Users/constantine/Documents/work/code/projects/ZhiYu
+    
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	EmitSwiftModule normal x86_64 (in target 'ZhiYuWatch' from project 'ZhiYu')
+	SwiftEmitModule normal x86_64 Emitting\ module\ for\ ZhiYuWatch (in target 'ZhiYuWatch' from project 'ZhiYu')
+	Building project ZhiYu with scheme ZhiYuWatch
+(3 failures)

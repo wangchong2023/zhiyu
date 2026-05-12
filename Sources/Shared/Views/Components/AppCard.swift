@@ -395,6 +395,14 @@ struct AppMonospacedEditor: View {
     var minHeight: CGFloat = 200
 
     var body: some View {
+        #if os(watchOS)
+        TextField("", text: $text, axis: .vertical)
+            .font(.system(.body, design: .monospaced))
+            .foregroundStyle(.appText)
+            .padding(AppUI.medium)
+            .background(Color.appCard)
+            .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+        #else
         TextEditor(text: $text)
             .font(.system(.body, design: .monospaced))
             .scrollContentBackground(.hidden)
@@ -403,6 +411,7 @@ struct AppMonospacedEditor: View {
             .padding(AppUI.medium)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+        #endif
     }
 }
 

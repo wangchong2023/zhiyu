@@ -263,6 +263,7 @@ struct SettingsView: View {
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Settings.title)
+            #if !os(watchOS)
             .fileImporter(
                 isPresented: $showFolderImporterForImport,
                 allowedContentTypes: [.folder],
@@ -290,6 +291,7 @@ struct SettingsView: View {
                     ToastManager.shared.show(type: .error, message: error.localizedDescription)
                 }
             }
+            #endif
             .onAppear {
                 // 初始化本地状态
                 localPrivacyEnabled = settingsStore.isPrivacyModeEnabled

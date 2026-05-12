@@ -159,7 +159,11 @@ final class OnDeviceLLMService: ObservableObject {
             if url.pathExtension == "mlmodelc" {
                 compiledURL = url
             } else {
+                #if os(watchOS)
+                throw OnDeviceError.compilationFailed
+                #else
                 compiledURL = try await MLModel.compileModel(at: url)
+                #endif
             }
 
             let config = MLModelConfiguration()
@@ -320,9 +324,13 @@ final class OnDeviceLLMService: ObservableObject {
 
         // Compile if needed
         if destURL.pathExtension == "mlmodel" {
+            #if os(watchOS)
+            throw OnDeviceError.compilationFailed
+            #else
             let compiledURL = try await MLModel.compileModel(at: destURL)
             try FileManager.default.removeItem(at: destURL)
             try FileManager.default.moveItem(at: compiledURL, to: destURL.appendingPathExtension("mlmodelc"))
+            #endif
         }
 
         discoverModels()

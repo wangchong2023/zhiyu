@@ -28,6 +28,9 @@ final class WorkflowService: ObservableObject {
     
     /// 请求提醒事项权限
     func requestAccess() async -> Bool {
+        #if os(watchOS)
+        return false
+        #else
         do {
             if #available(iOS 17.0, macOS 14.0, *) {
                 return try await eventStore.requestFullAccessToReminders()
@@ -37,6 +40,7 @@ final class WorkflowService: ObservableObject {
         } catch {
             return false
         }
+        #endif
     }
     
     /// 将 AI 提取的行动项同步至系统提醒事项
@@ -44,6 +48,9 @@ final class WorkflowService: ObservableObject {
     ///   - text: 包含任务的文本（通常是 AI 生成的 Markdown 列表）
     ///   - title: 提醒事项列表的标题
     func syncToReminders(text: String, title: String) async throws {
+        #if os(watchOS)
+        throw WorkflowError.accessDenied
+        #else
         let hasAccess = await requestAccess()
         guard hasAccess else { throw WorkflowError.accessDenied }
         
@@ -68,5 +75,6 @@ final class WorkflowService: ObservableObject {
         }
         
         HapticFeedback.shared.trigger(.success)
+        #endif
     }
 }

@@ -25,6 +25,7 @@ final class CursorState: ObservableObject {
 }
 
 // MARK: - 文本视图协调器
+#if os(iOS)
 @MainActor
 /// Markdown 文本视图协调器
 /// 负责处理底层 UITextView 的委派回调，实现文本变更同步与光标状态追踪
@@ -52,9 +53,18 @@ final class MarkdownTextViewCoordinator: NSObject, UITextViewDelegate {
         }
     }
 }
+#endif
 
 // MARK: - Markdown Text View Representable
-#if os(iOS)
+#if os(watchOS)
+struct MarkdownTextViewRepresentable: View {
+    @Binding var text: String
+    @Binding var cursorPosition: Int
+    @Binding var selectedRange: NSRange
+    let cursorState: CursorState
+    var body: some View { TextField("", text: $text, axis: .vertical) }
+}
+#elseif os(iOS)
 /// Markdown 文本视图包装器组件
 /// 负责在 SwiftUI 中嵌入原生高性能 UITextView，支持实时语法高亮感知（由协调器处理）及双向文本绑定
 struct MarkdownTextViewRepresentable: UIViewRepresentable {
@@ -112,6 +122,7 @@ struct MarkdownTextViewRepresentable: UIViewRepresentable {
 #endif
 
 // MARK: - 动作执行器
+#if os(iOS)
 @MainActor
 /// 编辑器动作执行器
 /// 负责执行具体编辑命令（如插入、包裹选区），实现光标感知的自动化文本操作
@@ -159,6 +170,15 @@ final class EditorActionExecutor {
         tv.insertText(text)
     }
 }
+#else
+@MainActor
+final class EditorActionExecutor {
+    init() {}
+    func insertAtCursor(prefix: String, suffix: String?) {}
+    func wrapAtCursor(wrapper: String) {}
+    func insertMultilineAtCursor(text: String) {}
+}
+#endif
 
 // MARK: - Markdown Editor Toolbar
 /// Markdown 编辑器辅助工具栏组件

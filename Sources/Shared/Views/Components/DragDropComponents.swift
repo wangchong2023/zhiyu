@@ -36,6 +36,7 @@ extension UTType {
 // MARK: - Drag & Drop Modifier for Pages
 /// 页面拖放修饰符组件
 /// 负责为视图注入原生拖拽支持，并提供自定义的拖拽实时预览效果
+#if !os(watchOS)
 struct PageDragDropModifier: ViewModifier {
     let page: KnowledgePage
 
@@ -55,15 +56,22 @@ struct PageDragDropModifier: ViewModifier {
             }
     }
 }
+#endif
 
 extension View {
     /// Apply drag and drop support for a page
+    @ViewBuilder
     func pageDragDrop(page: KnowledgePage) -> some View {
+        #if os(watchOS)
+        self
+        #else
         modifier(PageDragDropModifier(page: page))
+        #endif
     }
 }
 
 // MARK: - Drop Delegate for Pages List
+#if !os(watchOS)
 struct PagesListDropDelegate: DropDelegate {
     let onDrop: (UUID) -> Void
 
@@ -91,3 +99,4 @@ struct FileDropDelegate: DropDelegate {
         return info.hasItemsConforming(to: [.fileURL])
     }
 }
+#endif

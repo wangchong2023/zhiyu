@@ -58,8 +58,13 @@ struct GraphNodeView: View {
     var body: some View {
         Group {
             if isVisible {
-                let nodeBaseColor = useClustering ? (clusters.first(where: { $0.pageIDs.contains(node.id) }).map { Color.fromModelColorName($0.colorName) } ?? Color.fromModelColorName(node.type.colorName)) : Color.fromModelColorName(node.type.colorName)
-                let isLowDetail = scale < AppConfig.UI.graphLODZoomThreshold // LOD 阈值
+                let nodeBaseColor: Color = {
+                    if useClustering, let cluster = clusters.first(where: { $0.pageIDs.contains(node.id) }) {
+                        return Color.fromModelColorName(cluster.colorName)
+                    }
+                    return Color.fromModelColorName(node.type.colorName)
+                }()
+                let isLowDetail = scale < AppConfig.UI.graphLODZoomThreshold
                 
                 ZStack {
                     if isLowDetail {
@@ -116,6 +121,7 @@ struct GraphNodeView: View {
                 .matchedGeometryEffect(id: node.id, in: heroNamespace, isSource: true)
                 #endif
                 .frame(width: nodeSize, height: nodeSize)
+                #if !os(watchOS)
                 .onHover { hovering in
                     withAnimation(.spring()) {
                         isHovered = hovering
@@ -124,6 +130,7 @@ struct GraphNodeView: View {
                         HapticFeedback.shared.trigger(.selection)
                     }
                 }
+                #endif
                 .overlay {
                     if isHovered {
                         VStack(alignment: .leading, spacing: AppUI.atomic) {
@@ -150,9 +157,12 @@ struct GraphNodeView: View {
                         let link = "[[\(node.title)]]"
                         #if os(iOS)
                         UIPasteboard.general.string = link
-                        #else
+                        #elseif os(macOS)
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(link, forType: .string)
+                        #else
+                        // watchOS: 不支持剪贴板操作
+                        _ = link
                         #endif
                     }) {
                         Label(L10n.Graph.tr("copyPageLink"), systemImage: "link")

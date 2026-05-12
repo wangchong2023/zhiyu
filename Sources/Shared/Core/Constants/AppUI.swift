@@ -639,21 +639,46 @@ enum AppUI {
                         
                         if size.width > 1 && size.height > 1 {
                             if #available(iOS 18.0, macOS 15.0, *) {
-                                MeshGradient(
-                                    width: 3,
-                                    height: 3,
-                                    points: [
-                                        [0, 0], [0.5, 0], [1, 0],
-                                        [0, 0.5], [0.5, 0.5], [1, 0.5],
-                                        [0, 1], [0.5, 1], [1, 1]
-                                    ],
-                                    colors: [
-                                        .appBackground, .appBackground, .appBackground,
-                                        .appAccent.opacity(0.12), .appConcept.opacity(0.08), .appSource.opacity(0.1),
-                                        .appBackground, .appBackground, .appBackground
-                                    ],
-                                    smoothsColors: true
-                                )
+                                #if os(watchOS)
+                                Canvas { context, size in
+                                    guard size.width > 1 && size.height > 1 else { return }
+                                    let gridPadding: CGFloat = 40
+                                    let rows = Int(size.height / gridPadding)
+                                    let cols = Int(size.width / gridPadding)
+                                    
+                                    for row in 0...rows {
+                                        let y = CGFloat(row) * gridPadding
+                                        context.stroke(Path { p in
+                                            p.move(to: CGPoint(x: 0, y: y))
+                                            p.addLine(to: CGPoint(x: size.width, y: y))
+                                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                                    }
+                                    
+                                    for col in 0...cols {
+                                        let x = CGFloat(col) * gridPadding
+                                        context.stroke(Path { p in
+                                            p.move(to: CGPoint(x: x, y: 0))
+                                            p.addLine(to: CGPoint(x: x, y: size.height))
+                                        }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                                    }
+                                }
+                                #else
+                                    MeshGradient(
+                                        width: 3,
+                                        height: 3,
+                                        points: [
+                                            [0, 0], [0.5, 0], [1, 0],
+                                            [0, 0.5], [0.5, 0.5], [1, 0.5],
+                                            [0, 1], [0.5, 1], [1, 1]
+                                        ],
+                                        colors: [
+                                            .appBackground, .appBackground, .appBackground,
+                                            .appAccent.opacity(0.2), .appConcept.opacity(0.15), .appSource.opacity(0.18),
+                                            .appBackground, .appBackground, .appBackground
+                                        ],
+                                        smoothsColors: true
+                                    )
+                                #endif
                             } else {
                                 Canvas { context, size in
                                     guard size.width > 1 && size.height > 1 else { return }
@@ -694,12 +719,12 @@ enum AppUI {
                     if size.width > 1 && size.height > 1 {
                         Circle()
                             .fill(
-                                RadialGradient(
-                                    colors: [color.opacity(0.15), .clear],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 250
-                                )
+                                    RadialGradient(
+                                        colors: [color.opacity(0.25), .clear],
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: 300
+                                    )
                             )
                             .frame(width: 500, height: 500)
                             .blur(radius: 80)
@@ -830,7 +855,7 @@ extension View {
 extension Color {
     /// 跨平台支持的亮暗模式适配初始化器
     init(light: Color, dark: Color) {
-        #if canImport(UIKit)
+        #if canImport(UIKit) && !os(watchOS)
         self.init(UIColor { traitCollection in
             traitCollection.userInterfaceStyle == .dark ? UIColor(dark) : UIColor(light)
         })
@@ -893,24 +918,27 @@ extension View {
     /// 标准卡片容器样式
     func appCardStyle(cornerRadius: CGFloat = AppUI.cardRadius) -> some View {
         self.padding(AppUI.large)
-            .background(Color.appCard.opacity(0.8))
+            .background(.ultraThinMaterial)
+            .background(Color.appCard.opacity(0.7))
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
+                    .stroke(Color.appBorder.opacity(0.4), lineWidth: AppUI.borderWidth)
             )
-            .shadow(color: AppUI.shadowColor, radius: AppUI.shadowRadius / 2, x: 0, y: 2)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
     }
     
     /// 通用容器样式
-    func appContainer(background: Color = .appCard.opacity(0.8), borderColor: Color = .appBorder, cornerRadius: CGFloat = AppUI.cardRadius, padding: Bool = true) -> some View {
+    func appContainer(background: Color = .appCard.opacity(0.7), borderColor: Color = .appBorder, cornerRadius: CGFloat = AppUI.cardRadius, padding: Bool = true) -> some View {
         self.padding(padding ? AppUI.standardPadding : 0)
+            .background(.ultraThinMaterial)
             .background(background)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(borderColor, lineWidth: AppUI.borderWidth)
+                    .stroke(borderColor.opacity(0.4), lineWidth: AppUI.borderWidth)
             )
+            .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
     }
     
     /// 自定义背景视图的容器样式
@@ -926,29 +954,30 @@ extension View {
 
     /// 仪表盘指标卡片风格 (Metric Card Style)
     func appMetricCardStyle(color: Color = .appAccent, cornerRadius: CGFloat = AppUI.Metrics.dashboardRadius) -> some View {
-        self.background(
-            ZStack {
-                Color.appCard.opacity(0.8)
-                LinearGradient(
-                    colors: [color.opacity(0.08), .clear],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            }
-        )
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(
+        self.background(.ultraThinMaterial)
+            .background(
+                ZStack {
+                    Color.appCard.opacity(0.7)
                     LinearGradient(
-                        colors: [.appBorder.opacity(0.8), .appBorder.opacity(0.2)],
+                        colors: [color.opacity(0.12), .clear],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
-        )
-        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 5)
+                    )
+                }
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.appBorder.opacity(0.5), .appBorder.opacity(0.1)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.5
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
     }
 }
 

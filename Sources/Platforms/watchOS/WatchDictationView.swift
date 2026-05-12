@@ -40,8 +40,7 @@ struct WatchDictationView: View {
     }
     
     private func saveAndSync() {
-        let newPage = KnowledgePage(title: "Dictation \(Date().formatted())", content: text)
-        store.addPage(newPage)
+        _ = store.createPage(title: "Dictation \(Date().formatted())", type: .raw, content: text)
         
         // 增强：通过 WCSession 实时推送到 iPhone
         WatchConnectivityService.shared.sendContent(text)

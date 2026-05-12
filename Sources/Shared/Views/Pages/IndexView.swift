@@ -269,12 +269,14 @@ struct IndexStatView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppUI.List.rowVerticalPadding)
-        .background(Color.appCard.opacity(0.8))
+        .background(.ultraThinMaterial.opacity(0.8))
+        .background(Color.appCard.opacity(0.4))
         .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                .stroke(color.opacity(0.1), lineWidth: AppUI.borderWidth)
+                .stroke(color.opacity(0.2), lineWidth: AppUI.borderWidth)
         )
+        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
     }
 }
 

@@ -8,8 +8,14 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
+#if canImport(PDFKit)
+import PDFKit
+#endif
+#if canImport(WebKit)
 import WebKit
+#endif
 
+#if canImport(WebKit)
 /// 网页导出服务 (L0 基础架构层)
 /// 利用不可见的 WKWebView 执行 JavaScript (PptxGenJS / Marked.js) 实现跨平台导出。
 @MainActor
@@ -274,3 +280,22 @@ extension WebViewExportService: WKNavigationDelegate {
         print("Export WebView failed to load: \(error)")
     }
 }
+#else
+@MainActor
+final class WebViewExportService: NSObject {
+    static let shared = WebViewExportService()
+    private override init() { super.init() }
+    
+    func exportToPDF(markdown: String, fileName: String) async throws -> URL {
+        throw NSError(domain: "WebViewExport", code: 501, userInfo: [NSLocalizedDescriptionKey: "WebView export is not supported on this platform."])
+    }
+    
+    func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
+        throw NSError(domain: "WebViewExport", code: 501, userInfo: [NSLocalizedDescriptionKey: "WebView export is not supported on this platform."])
+    }
+    
+    func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
+        throw NSError(domain: "WebViewExport", code: 501, userInfo: [NSLocalizedDescriptionKey: "WebView export is not supported on this platform."])
+    }
+}
+#endif

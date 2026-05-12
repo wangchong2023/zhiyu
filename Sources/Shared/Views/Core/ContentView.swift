@@ -97,6 +97,9 @@ struct ContentView: View {
     // MARK: - iPad/Mac Adaptive SplitView
     @ViewBuilder
     private func adaptiveSplitView(tintColor: Color) -> some View {
+        #if os(watchOS)
+        Text("Not used on watchOS")
+        #else
         @Bindable var router = router
         NavigationSplitView {
             AdaptiveSidebarView(selectedTab: $router.selectedTab)
@@ -125,12 +128,16 @@ struct ContentView: View {
                 .keyboardShortcut("k", modifiers: .command)
                 .opacity(0)
         }
+        #endif
     }
     
     // MARK: - iOS 18+ Modern TabView (Bottom TabBar — consistent on iPhone & iPad)
     @available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *)
     @ViewBuilder
     private func modernTabView(tintColor: Color) -> some View {
+        #if os(watchOS)
+        Text("Not used on watchOS")
+        #else
         @Bindable var store = store
         @Bindable var router = router
         TabView(selection: $router.selectedTab) {
@@ -180,11 +187,15 @@ struct ContentView: View {
             .keyboardShortcut("k", modifiers: .command)
             .opacity(0)
         }
+        #endif
     }
     
     // MARK: - iOS 17 Legacy TabView (Bottom TabBar)
     @ViewBuilder
     private func legacyTabView(tintColor: Color) -> some View {
+        #if os(watchOS)
+        Text("Not used on watchOS")
+        #else
         @Bindable var store = store
         @Bindable var router = router
         TabView(selection: $router.selectedTab) {
@@ -250,6 +261,7 @@ struct ContentView: View {
             .keyboardShortcut("k", modifiers: .command)
             .opacity(0)
         }
+        #endif
     }
     
     /// Knowledge tab 内容，使用 @ViewBuilder 根据 languageForceUpdate 条件刷新

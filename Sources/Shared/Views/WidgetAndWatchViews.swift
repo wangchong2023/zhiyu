@@ -11,6 +11,7 @@
 import SwiftUI
 import WidgetKit
 
+#if !os(watchOS)
 // MARK: - Apple Watch Quick View
 /// Lightweight view for Apple Watch showing key knowledge stats and recent pages
 struct WatchKnowledgeStatsView: View {
@@ -105,6 +106,7 @@ struct WatchKnowledgeStatsView: View {
         return "\(n)"
     }
 }
+#endif
 
 // MARK: - Widget Preview Views (for development)
 /// These views are designed for the Widget Extension target.

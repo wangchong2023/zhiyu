@@ -9,7 +9,9 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
+#if canImport(MultipeerConnectivity)
 import MultipeerConnectivity
+#endif
 
 // MARK: - Collaboration Models
 struct CollabUser: Identifiable, Codable, Hashable {
@@ -56,7 +58,11 @@ enum CollabRole: String, Codable {
 // MARK: - Discovered Room Model
 struct DiscoveredRoom: Identifiable, Hashable {
     let id: String
+#if canImport(MultipeerConnectivity)
     let peerID: MCPeerID
+#else
+    let peerID: String
+#endif
     let roomName: String
     let owner: String
 }

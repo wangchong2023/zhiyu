@@ -46,7 +46,13 @@ struct OnDeviceTestView: View {
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
-            TextEditor(text: $prompt)
+            Group {
+                #if os(watchOS)
+                TextField("", text: $prompt, axis: .vertical)
+                #else
+                TextEditor(text: $prompt)
+                #endif
+            }
                 .font(.body)
                 .frame(height: 80)
                 .padding(8)

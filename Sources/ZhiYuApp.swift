@@ -15,9 +15,9 @@
 
 import SwiftUI
 
-/// 应用程序主入口
-/// 负责管理顶层状态树与全局服务生命周期
+#if !os(watchOS)
 @main
+#endif
 @MainActor
 struct ZhiYuApp: App {
     // ── 顶层状态持有者 ──
@@ -45,7 +45,7 @@ struct ZhiYuApp: App {
         _store = State(wrappedValue: AppStore())
         
         // 4. 配置全局 UI 样式
-        #if canImport(UIKit)
+        #if os(iOS)
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.appAccent)
         #endif
         
@@ -89,6 +89,7 @@ struct ZhiYuApp: App {
             .animation(.easeInOut(duration: 0.6), value: hasSeenSplash)
         }
         // macOS / iPadOS 原生快捷键指令组
+        #if !os(watchOS)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button(Localized.tr("creation.newPage")) {
@@ -97,5 +98,6 @@ struct ZhiYuApp: App {
                 .keyboardShortcut("n", modifiers: .command)
             }
         }
+        #endif
     }
 }

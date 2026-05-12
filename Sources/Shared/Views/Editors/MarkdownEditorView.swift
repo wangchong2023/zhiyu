@@ -228,6 +228,12 @@ struct MarkdownEditorView: View {
             executeAction(action)
             pendingAction = nil
         }
+#elseif os(watchOS)
+        TextField("", text: $editorContent, axis: .vertical)
+            .frame(maxHeight: .infinity)
+            .onChange(of: editorContent) { _, newValue in
+                page.content = newValue
+            }
 #else
         TextEditor(text: $editorContent)
             .frame(maxHeight: .infinity)
@@ -301,7 +307,9 @@ struct MarkdownEditorView: View {
 }
 
 // MARK: - PhotosPicker 包装（用于在编辑器中直接调起）
+#if !os(watchOS)
 import PhotosUI
+#endif
 extension View {
     func ocrPicker(isPresented: Binding<Bool>, onResult: @escaping (String) -> Void) -> some View {
         self.modifier(OCRPickerModifier(isPresented: isPresented, onResult: onResult))
@@ -312,10 +320,13 @@ extension View {
 struct OCRPickerModifier: ViewModifier {
     @Binding var isPresented: Bool
     let onResult: (String) -> Void
+    #if !os(watchOS)
     @State private var selectedItem: PhotosPickerItem?
+    #endif
 
     func body(content: Content) -> some View {
         content
+            #if !os(watchOS)
             .photosPicker(isPresented: $isPresented, selection: $selectedItem, matching: .images)
             .onChange(of: selectedItem) { _, newItem in
                 guard let newItem = newItem else { return }
@@ -332,5 +343,6 @@ struct OCRPickerModifier: ViewModifier {
                     selectedItem = nil
                 }
             }
+            #endif
     }
 }

@@ -13,14 +13,14 @@ import SwiftUI
 import AppIntents
 
 // MARK: - 手表端小组件
-/// 手表端点击意图定义
-/// 负责响应表盘 Complication 的点击事件，支持快速跳转至采集界面
-struct CaptureIntent: AppIntent {
+/// 手表端专用捕获意图（与 ShortcutManager.CaptureIntent 分离，避免元数据冲突）
+struct WatchCaptureIntent: AppIntent {
     static var title: LocalizedStringResource = "快速记录"
     static var description = IntentDescription("直接进入语音采集界面")
+    static var persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
     
     func perform() async throws -> some IntentResult {
-        // 这里的逻辑通常是由系统拉起 App 并带入特定 Context
+        // 点击表盘时由系统拉起 App 并进入采集界面
         return .result()
     }
 }
@@ -64,7 +64,7 @@ struct WatchWidgetView: View {
 
     var body: some View {
         // 使用带有 Intent 的 Button，点击即触发 App 逻辑
-        Button(intent: CaptureIntent()) {
+        Button(intent: WatchCaptureIntent()) {
             ZStack {
                 Circle()
                     .fill(Color.appAccent.gradient)

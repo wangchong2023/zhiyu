@@ -198,6 +198,7 @@ struct OnDeviceLLMSettingsView: View {
                 .background(Color.appAccent.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
             }
+            #if !os(watchOS)
             .fileImporter(
                 isPresented: $showImportPicker,
                 allowedContentTypes: {
@@ -224,6 +225,7 @@ struct OnDeviceLLMSettingsView: View {
                     break
                 }
             }
+            #endif
         }
     }
     

@@ -44,7 +44,9 @@ struct AdaptiveSidebarView: View {
                 sidebarRow(for: .settings)
             }
         }
+        #if !os(watchOS)
         .listStyle(.sidebar)
+        #endif
         .navigationTitle(Localized.tr("app.name"))
         .toolbar {
             ToolbarItem(placement: .automatic) {

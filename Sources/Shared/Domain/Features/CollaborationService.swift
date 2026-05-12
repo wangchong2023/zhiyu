@@ -14,7 +14,9 @@
 
 import Foundation
 import Combine
+#if canImport(MultipeerConnectivity)
 import MultipeerConnectivity
+#endif
 
 /// 协作服务代理协议
 @MainActor
@@ -55,6 +57,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     /// Connection attempt timeout
     private static let connectionTimeout: TimeInterval = 15
 
+#if canImport(MultipeerConnectivity)
     // MC objects — only initialized on real devices
     private var myPeerID: MCPeerID?
     private var session: MCSession?
@@ -69,10 +72,13 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     // Connection tracking
     private var connectionTimer: Timer?
     private var pendingInvitations: [MCPeerID] = []
+#endif
 
     private let deviceName: String = {
+        #if os(iOS)
         if Thread.isMainThread { return UIDevice.current.name }
-        return "iPhone"
+        #endif
+        return "Device"
     }()
     private var userName: String {
         UserDefaults.standard.string(forKey: "app_username") ?? deviceName
@@ -108,6 +114,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         }
     }
 
+#if canImport(MultipeerConnectivity)
     // MARK: - Host Session
     func startHosting(roomName: String) {
         guard !isSimulator else { return }
@@ -156,16 +163,24 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         startConnectionTimer()
         statusMessage = L10n.Collaboration.tr("status.joining")
     }
+#else
+    func startHosting(roomName: String) {}
+    func startBrowsing() {}
+    func joinRoom(_ room: DiscoveredRoom) {}
+#endif
 
     // MARK: - Stop
     func stop() {
         clearConnectionTimer()
+#if canImport(MultipeerConnectivity)
         advertiser?.stopAdvertisingPeer()
         advertiser = nil
         browser?.stopBrowsingForPeers()
         browser = nil
         session?.disconnect()
         session = nil
+        pendingInvitations.removeAll()
+#endif
 
         isHosting = false
         isJoined = false
@@ -173,7 +188,6 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         connectedPeers.removeAll()
         discoveredRooms.removeAll()
         recentEdits.removeAll()
-        pendingInvitations.removeAll()
         connectionError = nil
 
         statusMessage = isSimulator
@@ -184,6 +198,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     // MARK: - Connection Timer
     private func startConnectionTimer() {
         clearConnectionTimer()
+        #if canImport(MultipeerConnectivity)
         DispatchQueue.main.async { [weak self] in
             self?.connectionTimer = Timer.scheduledTimer(withTimeInterval: Self.connectionTimeout, repeats: false) { [weak self] _ in
                 Task { @MainActor in
@@ -191,13 +206,17 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
                 }
             }
         }
+        #endif
     }
 
     private func clearConnectionTimer() {
+        #if canImport(MultipeerConnectivity)
         connectionTimer?.invalidate()
         connectionTimer = nil
+        #endif
     }
 
+#if canImport(MultipeerConnectivity)
     private func handleConnectionTimeout() {
         isConnecting = false
         if connectedPeers.isEmpty {
@@ -205,6 +224,11 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
             statusMessage = L10n.Collaboration.tr("status.disconnected")
         }
     }
+#else
+    private func handleConnectionTimeout() {
+        isConnecting = false
+    }
+#endif
 
     // MARK: - Permission Check
     /// Returns true if current role allows editing/broadcasting
@@ -212,6 +236,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         role == .owner || role == .editor
     }
 
+#if canImport(MultipeerConnectivity)
     // MARK: - Broadcast Edit
     func broadcastEdit(pageID: UUID, field: String, oldValue: String, newValue: String) {
         guard !isSimulator else { return }
@@ -234,7 +259,11 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
             send(data: data)
         }
     }
+#else
+    func broadcastEdit(pageID: UUID, field: String, oldValue: String, newValue: String) {}
+#endif
 
+#if canImport(MultipeerConnectivity)
     // MARK: - Broadcast Full Page
     func broadcastPage(_ page: KnowledgePage) {
         guard !isSimulator, let session = session, !session.connectedPeers.isEmpty else { return }
@@ -260,6 +289,9 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
             send(data: data)
         }
     }
+#else
+    func broadcastPage(_ page: KnowledgePage) {}
+#endif
 
     // MARK: - Set Username
     func setUserName(_ name: String) {
@@ -268,8 +300,10 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
 
     // MARK: - Private Helpers
     private func send(data: Data) {
+        #if canImport(MultipeerConnectivity)
         guard let session = session, !session.connectedPeers.isEmpty else { return }
         try? session.send(data, toPeers: session.connectedPeers, with: .reliable)
+        #endif
     }
 
     private func appendEdit(_ edit: CollabEdit) {
@@ -282,6 +316,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         }
     }
 
+#if canImport(MultipeerConnectivity)
     // MARK: - Session Setup
     private func setupSession(peerID: MCPeerID) {
         let session = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
@@ -376,6 +411,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
             appendEdit(edit)
             return
         }
+        
         // Try to decode as page sync
         if let payload = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
            payload["type"] as? String == "pageSync",
@@ -384,6 +420,11 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
             return
         }
     }
+#else
+    private func handleDataReceived(_ data: Data, from peerID: String) {
+        // No-op for watchOS
+    }
+#endif
 
     // MARK: - Remote Page Sync
     /// Apply a remote page update with last-write-wins conflict resolution

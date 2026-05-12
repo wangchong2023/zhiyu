@@ -71,9 +71,11 @@ struct Graph3DView: View {
         }
         .background(AppUI.Background.pageBackground(accentColor: .appAccent))
         .ignoresSafeArea(edges: isFullScreen ? .all : [])
+        #if !os(watchOS)
         .statusBarHidden(isFullScreen)
-        .preferredColorScheme(isFullScreen ? .dark : nil)
         .toolbar(isFullScreen ? .hidden : .visible, for: .tabBar)
+        #endif
+        .preferredColorScheme(isFullScreen ? .dark : nil)
 #if os(iOS)
         .navigationBarBackButtonHidden(isFullScreen)
         .toolbar(isFullScreen ? .hidden : .visible, for: .navigationBar)
@@ -453,7 +455,9 @@ struct Graph3DView: View {
         cameraDistance = AppConstants.Graph.ThreeD.defaultCameraDistance 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 0.8
+        #if !os(watchOS)
         SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        #endif
         camera.position = SCNVector3(0, 15, Float(cameraDistance))
         camera.look(at: SCNVector3(0, 0, 0))
         SCNTransaction.commit()
@@ -483,7 +487,9 @@ struct Graph3DView: View {
             if let scene = scene, let targetNode = scene.rootNode.childNode(withName: uuid.uuidString, recursively: true), let camera = cameraNode {
                 SCNTransaction.begin()
                 SCNTransaction.animationDuration = 1.0
+                #if !os(watchOS)
                 SCNTransaction.animationTimingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                #endif
                 let pos = targetNode.position
                 let direction = SCNVector3(pos.x, pos.y + 5, pos.z + 15)
                 camera.position = direction

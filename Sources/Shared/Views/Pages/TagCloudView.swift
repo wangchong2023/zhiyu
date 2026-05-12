@@ -385,7 +385,9 @@ struct TagCloudViewContent: View {
                                     .padding(.horizontal, AppUI.small)
                                     .padding(.vertical, AppUI.tiny)
                             )
+                            #if !os(watchOS)
                             .listRowSeparator(.hidden)
+                            #endif
                         }
                     }
                 }

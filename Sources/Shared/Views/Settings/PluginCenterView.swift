@@ -34,7 +34,9 @@ struct PluginCenterView: View {
                     Text(Localized.tr("plugin.market")).tag(0)
                     Text(Localized.tr("plugin.myPlugins")).tag(1)
                 }
+                #if !os(watchOS)
                 .pickerStyle(.segmented)
+                #endif
                 .padding()
                 
                 // 3. 内容主体
@@ -52,9 +54,11 @@ struct PluginCenterView: View {
 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
 #endif
+#if !os(watchOS)
                 .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
                     // 处理文件选择结果
                 }
+#endif
                 .confirmationDialog(
             Localized.tr("plugin.safeMode.warning.title"),
             isPresented: $showSafeModeWarning,

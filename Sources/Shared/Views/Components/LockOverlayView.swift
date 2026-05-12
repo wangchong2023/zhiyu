@@ -27,8 +27,10 @@ struct LockOverlayView: View {
     private var titleSize: CGFloat {
         #if os(macOS)
         return 36
-        #else
+        #elseif os(iOS)
         return UIDevice.current.userInterfaceIdiom == .pad ? 36 : 28
+        #else
+        return 24
         #endif
     }
 
