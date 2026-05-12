@@ -98,38 +98,23 @@ struct CapabilitiesSection: View {
     var body: some View {
         Section {
             NavigationLink(value: SidebarSelection.tool(.dashboard)) {
-                Label {
-                    Text(Localized.tr("sidebar.dashboard"))
-                } icon: {
-                    Image(systemName: "gauge.with.needle.fill")
-                        .foregroundStyle(.blue)
-                }
+                Label(Localized.tr("sidebar.dashboard"), systemImage: "gauge.with.needle.fill")
+                    .foregroundStyle(.appText)
             }
             NavigationLink(value: SidebarSelection.tool(.chat)) {
-                Label {
-                    Text(Localized.tr("tab.chat"))
-                } icon: {
-                    Image(systemName: "sparkles")
-                        .foregroundStyle(.cyan)
-                }
+                Label(Localized.tr("tab.chat"), systemImage: "sparkles")
+                    .foregroundStyle(.appText)
             }
             NavigationLink(value: SidebarSelection.tool(.synthesis)) {
-                Label {
-                    Text(Localized.tr("sidebar.synthesis"))
-                } icon: {
-                    Image(systemName: "wand.and.stars")
-                        .foregroundStyle(.indigo)
-                }
+                Label(Localized.tr("sidebar.synthesis"), systemImage: "wand.and.stars")
+                    .foregroundStyle(.appText)
             }
             NavigationLink(value: SidebarSelection.tool(.weeklyReport)) {
-                Label {
-                    Text(Localized.tr("sidebar.weeklyInsight"))
-                } icon: {
-                    Image(systemName: "doc.text.magnifyingglass")
-                        .foregroundStyle(.blue.opacity(0.8))
-                }
+                Label(Localized.tr("sidebar.weeklyInsight"), systemImage: "doc.text.magnifyingglass")
+                    .foregroundStyle(.appText)
             }
-        } header: {
+        }
+ header: {
             Text(Localized.tr("sidebar.capabilities"))
         }
         .listRowBackground(SidebarRowBackground())
@@ -142,12 +127,8 @@ struct UniverseSection: View {
     var body: some View {
         Section {
             NavigationLink(value: SidebarSelection.tool(.index)) {
-                Label {
-                    Text(Localized.tr("sidebar.allPages"))
-                } icon: {
-                    Image(systemName: "tray.full.fill")
-                        .foregroundStyle(.blue)
-                }
+                Label(Localized.tr("sidebar.allPages"), systemImage: "tray.full.fill")
+                    .foregroundStyle(.appText)
             }
             
             ForEach(PageType.allCases) { type in
@@ -191,7 +172,7 @@ struct PinnedSection: View {
                     )
                 }
             } header: {
-                Label(Localized.tr("pinned"), systemImage: "pin.fill")
+                Text(Localized.tr("pinned"))
             }
             .listRowBackground(SidebarRowBackground())
         }
@@ -206,12 +187,8 @@ struct ToolsSection: View {
         Section {
             NavigationLink(value: SidebarSelection.tool(.lint)) {
                 HStack {
-                    Label {
-                        Text(Localized.tr("sidebar.healthCheck"))
-                    } icon: {
-                        Image(systemName: "stethoscope")
-                            .foregroundStyle(.cyan)
-                    }
+                    Label(Localized.tr("sidebar.healthCheck"), systemImage: "stethoscope")
+                        .foregroundStyle(.appText)
                     Spacer()
                     if !store.lintIssues.isEmpty {
                         Text("\(store.lintIssues.count)")
@@ -224,21 +201,13 @@ struct ToolsSection: View {
                 }
             }
             NavigationLink(value: SidebarSelection.tool(.tagCloud)) {
-                Label {
-                    Text(Localized.tr("sidebar.tagManager"))
-                } icon: {
-                    Image(systemName: "tag.fill")
-                        .foregroundStyle(.blue.opacity(0.7))
-                }
+                Label(Localized.tr("sidebar.tagManager"), systemImage: "tag.fill")
+                    .foregroundStyle(.appText)
             }
             NavigationLink(value: SidebarSelection.tool(.taskCenter)) {
                 HStack {
-                    Label {
-                        Text(L10n.AI.Task.centerTitle)
-                    } icon: {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .foregroundStyle(.blue)
-                    }
+                    Label(L10n.AI.Task.centerTitle, systemImage: "arrow.triangle.2.circlepath")
+                        .foregroundStyle(.appText)
                     Spacer()
                     if taskCenter.unreadCount > 0 {
                         Text("\(taskCenter.unreadCount)")
@@ -251,20 +220,12 @@ struct ToolsSection: View {
                 }
             }
             NavigationLink(value: SidebarSelection.tool(.pluginMarket)) {
-                Label {
-                    Text(Localized.tr("sidebar.plugins"))
-                } icon: {
-                    Image(systemName: "puzzlepiece.fill")
-                        .foregroundStyle(.indigo)
-                }
+                Label(Localized.tr("sidebar.plugins"), systemImage: "puzzlepiece.fill")
+                    .foregroundStyle(.appText)
             }
             NavigationLink(value: SidebarSelection.tool(.collab)) {
-                Label {
-                    Text(Localized.tr("sidebar.collaboration"))
-                } icon: {
-                    Image(systemName: "person.2.fill")
-                        .foregroundStyle(.blue)
-                }
+                Label(Localized.tr("sidebar.collaboration"), systemImage: "person.2.fill")
+                    .foregroundStyle(.appText)
             }
         } header: {
             Text(Localized.tr("sidebar.tools"))
