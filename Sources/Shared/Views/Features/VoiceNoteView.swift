@@ -49,7 +49,7 @@ struct VoiceNoteView: View {
             .padding(.top, 8)
             .padding(.bottom, 24)
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(Localized.tr("speech.title"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -227,7 +227,7 @@ struct VoiceNoteView: View {
                 .foregroundStyle(.appText)
                 .frame(minHeight: 100, maxHeight: 200)
                 .padding(8)
-                .background(AppUI.Background.cardBackground())
+                .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: AppUI.smallRadius)
@@ -238,7 +238,7 @@ struct VoiceNoteView: View {
                 .font(.body)
                 .foregroundStyle(.appText)
                 .padding(8)
-                .background(AppUI.Background.cardBackground())
+                .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
             #endif
             

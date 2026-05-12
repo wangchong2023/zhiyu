@@ -69,7 +69,7 @@ struct Graph3DView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .ignoresSafeArea(edges: isFullScreen ? .all : [])
         #if !os(watchOS)
         .statusBarHidden(isFullScreen)

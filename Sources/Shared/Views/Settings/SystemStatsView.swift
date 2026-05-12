@@ -86,7 +86,7 @@ struct SystemStatsView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     // 分段选择器
-                    AppUI.AppSection {
+                    StandardSection {
                         Picker("", selection: $selectedTab) {
                             ForEach(Tab.allCases, id: \.self) { tab in
                                 Text(tab.title).tag(tab)
@@ -95,9 +95,9 @@ struct SystemStatsView: View {
                         #if !os(watchOS)
                         .pickerStyle(.segmented)
                         #endif
-                        .padding(AppUI.tiny)
+                        .padding(Spacing.tiny)
                     }
-                    .padding(.top, AppUI.medium)
+                    .padding(.top, Spacing.medium)
                     
                     if isLoading {
                         VStack {
@@ -115,7 +115,7 @@ struct SystemStatsView: View {
                 }
                 .padding(.bottom, 30) // 底部留白
             }
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Dashboard.tr("stats.navigationTitleMonitor"))
         .navigationBarTitleDisplayMode(.inline)
@@ -130,8 +130,8 @@ struct SystemStatsView: View {
     private var performanceSection: some View {
         Group {
             // 1. API 请求卡片
-            AppUI.AppSection(title: L10n.Dashboard.apiRequests) {
-                VStack(alignment: .leading, spacing: AppUI.tiny) {
+            StandardSection(title: L10n.Dashboard.apiRequests) {
+                VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(dailyStats.reduce(0) { $0 + $1.requests })")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -144,12 +144,12 @@ struct SystemStatsView: View {
                     ChartView(stats: dailyStats, type: .requests)
                         .frame(height: 180)
                 }
-                .padding(AppUI.medium)
+                .padding(Spacing.medium)
             }
             
             // 2. Token 消耗卡片
-            AppUI.AppSection(title: L10n.Dashboard.tr("stats.tokensUsage")) {
-                VStack(alignment: .leading, spacing: AppUI.tiny) {
+            StandardSection(title: L10n.Dashboard.tr("stats.tokensUsage")) {
+                VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(dailyStats.reduce(0) { $0 + $1.tokens })")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -162,12 +162,12 @@ struct SystemStatsView: View {
                     ChartView(stats: dailyStats, type: .tokens)
                         .frame(height: 180)
                 }
-                .padding(AppUI.medium)
+                .padding(Spacing.medium)
             }
             
             // 3. 响应时延卡片
-            AppUI.AppSection(title: L10n.Dashboard.tr("stats.avgLatency")) {
-                HStack(spacing: AppUI.standardPadding) {
+            StandardSection(title: L10n.Dashboard.tr("stats.avgLatency")) {
+                HStack(spacing: Spacing.standardPadding) {
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             ZStack {
@@ -194,7 +194,7 @@ struct SystemStatsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(AppUI.medium)
+                .padding(Spacing.medium)
             }
         }
     }
@@ -204,13 +204,13 @@ struct SystemStatsView: View {
     private var storageSection: some View {
         Group {
             // 1. 知识库资产分布 (饼图 + 详细图例)
-            AppUI.AppSection(title: L10n.Dashboard.tr("stats.storageDistribution")) {
-                VStack(spacing: AppUI.medium) {
+            StandardSection(title: L10n.Dashboard.tr("stats.storageDistribution")) {
+                VStack(spacing: Spacing.medium) {
                     if storageCategories.isEmpty {
                         ProgressView()
                             .frame(height: 200)
                     } else if storageCategories.allSatisfy({ $0.value == 0 }) {
-                        VStack(spacing: AppUI.medium) {
+                        VStack(spacing: Spacing.medium) {
                             Image(systemName: "chart.pie")
                                 .font(.system(size: 40))
                                 .foregroundStyle(.appSecondary.opacity(0.3))
@@ -221,7 +221,7 @@ struct SystemStatsView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 200)
                     } else {
-                        HStack(spacing: AppUI.medium) {
+                        HStack(spacing: Spacing.medium) {
                             #if os(watchOS)
                             chartContainer
                             #else
@@ -232,17 +232,17 @@ struct SystemStatsView: View {
                             legendContainer
                                 .frame(maxWidth: .infinity)
                         }
-                        .padding(.vertical, AppUI.small)
+                        .padding(.vertical, Spacing.small)
                     }
                 }
-                .padding(AppUI.medium)
+                .padding(Spacing.medium)
             }
             
             // 2. 存储空间分布列表
-            AppUI.AppSection(title: L10n.Dashboard.tr("stats.storageDetails")) {
+            StandardSection(title: L10n.Dashboard.tr("stats.storageDetails")) {
                 ForEach(storageCategories.indices, id: \.self) { index in
                     let category = storageCategories[index]
-                    HStack(spacing: AppUI.standardPadding) {
+                    HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: iconForCategory(category.label))
                             .foregroundStyle(category.color)
                             .frame(width: 24)
@@ -272,7 +272,7 @@ struct SystemStatsView: View {
             }
             
             // 3. 治理与维护
-            AppUI.AppSection(title: L10n.Dashboard.maintenance) {
+            StandardSection(title: L10n.Dashboard.maintenance) {
                 VStack(alignment: .leading, spacing: 12) {
                     Button(action: { Task { await cleanupData() } }) {
                         HStack {
@@ -296,7 +296,7 @@ struct SystemStatsView: View {
                             .foregroundColor(Color.green)
                     }
                 }
-                .padding(AppUI.medium)
+                .padding(Spacing.medium)
             }
         }
     }

@@ -48,7 +48,7 @@ struct PluginCenterView: View {
                     }
                 }
             }
-                .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+                .background(PageBackgroundView(accentColor: .appAccent))
                 .id(router.languageForceUpdate)
                 .navigationTitle(Localized.tr("plugin.center"))
 #if os(iOS)

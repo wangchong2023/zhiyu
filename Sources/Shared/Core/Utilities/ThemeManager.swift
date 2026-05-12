@@ -80,7 +80,7 @@ class ThemeManager: ObservableObject {
     /// 提供统一的背景渲染入口
     @MainActor
     func pageBackground() -> some View {
-        AppUI.Background.pageBackground(accentColor: accentColor)
+        PageBackgroundView(accentColor: accentColor)
     }
 }
 

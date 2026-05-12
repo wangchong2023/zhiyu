@@ -41,7 +41,7 @@ struct MedalWallView: View {
             }
             .padding(.vertical, AppUI.standardPadding)
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(Localized.tr("medal.wall.title"))
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)

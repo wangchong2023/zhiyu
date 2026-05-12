@@ -78,7 +78,7 @@ struct iCloudSyncView: View {
         .listStyle(.insetGrouped)
 #endif
         .scrollContentBackground(.hidden)
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.ICloud.tr("title"))
         .alert(L10n.ICloud.tr("syncError"), isPresented: $coordinator.showError) {
             Button(L10n.Common.tr("ok"), role: .cancel) {}

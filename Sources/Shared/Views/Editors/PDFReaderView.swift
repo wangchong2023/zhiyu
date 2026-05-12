@@ -187,7 +187,7 @@ private struct PDFDocumentListView: View {
         .listStyle(.insetGrouped)
 #endif
         .scrollContentBackground(.hidden)
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
     }
 }
 
@@ -209,7 +209,7 @@ struct PDFReaderView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppUI.Background.pageBackground(accentColor: .appAccent)
+                PageBackgroundView(accentColor: .appAccent)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {

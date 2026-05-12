@@ -250,7 +250,7 @@ struct WeeklyReportView: View {
             }
             .padding(AppUI.loosePadding)
         }
-        .background(AppUI.Background.pageBackground(accentColor: .purple))
+        .background(PageBackgroundView(accentColor: .purple))
         .navigationTitle(Localized.tr("sidebar.weeklyInsight"))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)

@@ -93,7 +93,7 @@ struct CreatePageView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Creation.tr("title"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

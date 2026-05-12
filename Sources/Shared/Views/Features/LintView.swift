@@ -53,7 +53,7 @@ struct LintViewContent: View {
 
     var body: some View {
         ZStack {
-            AppUI.Background.pageBackground(accentColor: themeManager.accentColor)
+            PageBackgroundView(accentColor: themeManager.accentColor)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -529,7 +529,7 @@ struct RefactorSuggestionRow: View {
             Text(Localized.trf("lint.aiFixSuggestion", suggestion.suggestion))
                 .font(.caption2)
                 .padding(6)
-                .background(AppUI.Background.cardBackground())
+                .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
         .padding(.vertical, 4)

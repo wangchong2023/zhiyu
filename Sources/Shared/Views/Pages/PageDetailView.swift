@@ -176,7 +176,7 @@ struct PageDetailView: View {
         }
         .frame(maxWidth: AppUI.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
-        .background(AppUI.Background.pageBackground(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
+        .background(PageBackgroundView(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle("")
 #if os(iOS)
@@ -369,7 +369,7 @@ struct PageDetailView: View {
                                 .foregroundStyle(.appSecondary)
                                 .padding(AppUI.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(AppUI.Background.cardBackground())
+                                .background(Color.appCard)
                                 .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
                                 .lineLimit(3)
                         }

@@ -508,7 +508,7 @@ struct GraphInsightsPanel: View {
                 }
                 .padding()
             }
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
         }
     
     private func insightSection(id: String, icon: String, title: String, count: Int, description: String, color: Color) -> some View {

@@ -31,7 +31,7 @@ struct PageLinkPickerSheet: View {
                 searchBar
                 pageList
             }
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Editor.tr("insertPageLink"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -201,6 +201,6 @@ struct InlineTagInput: View {
         }
         .padding(.horizontal)
         .padding(.bottom, AppUI.small)
-        .background(AppUI.Background.cardBackground())
+        .background(Color.appCard)
     }
 }

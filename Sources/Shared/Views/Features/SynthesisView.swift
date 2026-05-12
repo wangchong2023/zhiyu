@@ -211,7 +211,7 @@ struct SynthesisView: View {
                     }
                 }
             }
-            .appContainer(background: AnyView(Rectangle().fill(AppUI.containerMaterial)))
+            .appContainer(background: AppUI.containerMaterial)
         }
     }
     

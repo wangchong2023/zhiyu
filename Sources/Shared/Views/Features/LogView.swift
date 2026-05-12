@@ -97,7 +97,7 @@ struct LogViewContent: View {
             Text(L10n.Settings.tr("clearAll.message"))
         }
         .scrollContentBackground(.hidden)
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
 #if os(iOS)
         .toolbarBackground(.visible, for: .navigationBar)
 #endif
@@ -244,7 +244,7 @@ private struct LogEntryRow: View {
                             .foregroundStyle(.appSecondary)
                             .padding(AppUI.Timeline.detailHorizontalPadding)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(AppUI.Background.cardBackground())
+                            .background(Color.appCard)
                             .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
                     }
                 }

@@ -200,7 +200,7 @@ struct VisionProSpatialView: View {
             }
             .padding()
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(Localized.tr("spatial.title"))
     }
 }

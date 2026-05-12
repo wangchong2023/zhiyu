@@ -121,7 +121,7 @@ struct BacklinksView: View {
             .listStyle(.insetGrouped)
 #endif
             .scrollContentBackground(.hidden)
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(page.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

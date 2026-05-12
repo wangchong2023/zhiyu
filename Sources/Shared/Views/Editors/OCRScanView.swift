@@ -86,7 +86,7 @@ struct OCRScanView: View {
                 .padding()
             }
             .scrollContentBackground(.hidden)
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(Localized.tr("ocr.title"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

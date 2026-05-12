@@ -105,7 +105,7 @@ struct PromptWorkshopView: View {
 #endif
         .scrollContentBackground(.hidden)
         .listRowBackground(Color.appCard.opacity(0.8))
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .onDisappear {
             promptService.save()
             HapticFeedback.shared.trigger(.success)

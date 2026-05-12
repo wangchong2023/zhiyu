@@ -181,7 +181,7 @@ struct IngestView: View {
             performClipboardImport()
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .background(AppUI.Background.pageBackground(accentColor: .appSource))
+        .background(PageBackgroundView(accentColor: .appSource))
     }
 
     @ViewBuilder

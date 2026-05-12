@@ -51,7 +51,7 @@ struct ChatViewContent: View {
 
     var body: some View {
         ZStack {
-            AppUI.Background.pageBackground(accentColor: .appAccent)
+            PageBackgroundView(accentColor: .appAccent)
                 .ignoresSafeArea(edges: .top)
             
             VStack(spacing: 0) {

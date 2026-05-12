@@ -82,7 +82,7 @@ struct PerformanceDashboardView: View {
                 }
                 .padding()
             }
-            .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+            .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(Localized.tr("perf.title"))
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)

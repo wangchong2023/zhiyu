@@ -177,7 +177,7 @@ struct DeveloperSettingsView: View {
             #endif
             .listRowBackground(Color.appCard.opacity(0.8))
             .scrollContentBackground(.hidden)
-            .background(AppUI.Background.pageBackground(accentColor: .blue))
+            .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.tr("section.developer"))
             .navigationBarTitleDisplayMode(.inline)
             .task {

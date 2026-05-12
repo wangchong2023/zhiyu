@@ -91,7 +91,7 @@ struct MarkdownEditorView: View {
         .ocrPicker(isPresented: $showPhotosPicker) { recognizedText in
             cursorState.executor?.insertMultilineAtCursor(text: recognizedText)
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
         .onAppear { editorContent = page.content }
         .onDisappear {
             page.content = editorContent

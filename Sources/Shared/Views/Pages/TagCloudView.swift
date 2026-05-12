@@ -84,7 +84,7 @@ struct TagCloudViewContent: View {
     var body: some View {
         mainContent
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .background(AppUI.Background.pageBackground(accentColor: .blue))
+            .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Tag.title)
             .navigationBarTitleDisplayMode(.inline)
             .background(alertLayer)

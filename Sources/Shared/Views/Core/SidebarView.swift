@@ -62,7 +62,7 @@ struct SidebarView: View {
             ToolsSection()
         }
         .background(
-            AppUI.Background.pageBackground(accentColor: themeManager.accentColor)
+            PageBackgroundView(accentColor: themeManager.accentColor)
                 .ignoresSafeArea()
         )
         .scrollContentBackground(.hidden)
@@ -246,8 +246,10 @@ struct SidebarListStyleModifier: ViewModifier {
         } else {
             content.listStyle(.sidebar)
         }
-        #else
+        #elseif os(macOS)
         content.listStyle(.sidebar)
+        #else
+        content.listStyle(.plain)
         #endif
     }
 }

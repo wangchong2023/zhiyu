@@ -62,7 +62,7 @@ struct PluginDetailView: View {
             }
             .padding()
         }
-        .background(AppUI.Background.pageBackground(accentColor: .appAccent))
+        .background(PageBackgroundView(accentColor: .appAccent))
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
