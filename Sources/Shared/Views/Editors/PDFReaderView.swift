@@ -237,7 +237,11 @@ struct PDFReaderView: View {
         }
         .onAppear {
             Task {
-                pdfDocument = await store.loadPDFDocument(fileName: documentInfo.fileName)
+                if let url = await store.loadPDFDocument(fileName: documentInfo.fileName) {
+                    #if canImport(PDFKit)
+                    pdfDocument = PDFDocument(url: url)
+                    #endif
+                }
                 highlights = documentInfo.highlights
                 currentPage = documentInfo.lastReadPage
             }

@@ -55,12 +55,25 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    func getPDFURL(fileName: String) -> URL? {
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
+    }
+
     // MARK: - Text Extraction
 
     func extractText(from url: URL) async -> String? {
         guard let document = PDFDocument(url: url) else { return nil }
+        return await extractText(from: url, pageRange: 0..<document.pageCount)
+    }
+
+    func extractText(from url: URL, pageRange: Range<Int>) async -> String? {
+        guard let document = PDFDocument(url: url) else { return nil }
         var text = ""
-        for i in 0..<document.pageCount {
+        let start = max(0, pageRange.lowerBound)
+        let end = min(document.pageCount, pageRange.upperBound)
+        
+        for i in start..<end {
             if let page = document.page(at: i) {
                 text += page.string ?? ""
                 text += String(format: Localized.tr("pdf.pageSeparator"), i + 1)

@@ -318,6 +318,7 @@ extension View {
 
 @MainActor
 struct OCRPickerModifier: ViewModifier {
+    @Inject var store: AppStore
     @Binding var isPresented: Bool
     let onResult: (String) -> Void
     #if !os(watchOS)
@@ -334,7 +335,7 @@ struct OCRPickerModifier: ViewModifier {
                     if let data = try? await newItem.loadTransferable(type: Data.self),
                        let image = AppImage(data: data) {
                         do {
-                            let text = try await OCRProcessor.shared.recognizeText(from: image)
+                            let text = try await store.recognizeText(from: image)
                             await MainActor.run { onResult(text) }
                         } catch {
                             ToastManager.shared.show(type: .error, message: error.localizedDescription)

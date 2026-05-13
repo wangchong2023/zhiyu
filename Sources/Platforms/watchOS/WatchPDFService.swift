@@ -13,7 +13,9 @@ final class WatchPDFService: PDFServiceProtocol {
     func savePDF(data: Data, fileName: String) async -> URL? { return nil }
     func deletePDF(fileName: String) async -> Bool { return false }
     func allPDFFilenames() async -> [String] { return [] }
+    func getPDFURL(fileName: String) -> URL? { return nil }
     func extractText(from url: URL) async -> String? { return nil }
+    func extractText(from url: URL, pageRange: Range<Int>) async -> String? { return nil }
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {}
     func loadDocumentsInfo() async -> [PDFDocumentInfo] { return [] }
 }

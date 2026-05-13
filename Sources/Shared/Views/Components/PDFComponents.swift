@@ -161,24 +161,24 @@ struct PDFIngestSheet: View {
             switch ingestMode {
             case "fullText":
                 #if canImport(PDFKit)
-                guard let pdfDoc = pdfDocument else {
+                guard let pdfDoc = pdfDocument, let url = pdfDoc.documentURL else {
                     previewText = Localized.tr("pdf.cannotLoadPDF")
                     return
                 }
-                let text = await store.extractPDFText(from: pdfDoc, pageRange: 0..<min(2, pdfDoc.pageCount))
+                let text = await store.extractPDFText(from: url, pageRange: 0..<min(2, pdfDoc.pageCount))
                 previewText = String(text.prefix(500))
                 #else
                 previewText = "PDF extraction is not supported on this platform."
                 #endif
             case "pageRange":
                 #if canImport(PDFKit)
-                guard let pdfDoc = pdfDocument else {
+                guard let pdfDoc = pdfDocument, let url = pdfDoc.documentURL else {
                     previewText = ""
                     return
                 }
                 let start = max(0, pageStart - 1)
                 let end = min(pdfDoc.pageCount, pageEnd)
-                let text = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
+                let text = await store.extractPDFText(from: url, pageRange: start..<end)
                 previewText = String(text.prefix(500))
                 #else
                 previewText = ""
@@ -199,16 +199,16 @@ struct PDFIngestSheet: View {
         switch ingestMode {
         case "fullText":
             #if canImport(PDFKit)
-            if let pdfDoc = pdfDocument {
-                content = await store.extractPDFText(from: pdfDoc)
+            if let pdfDoc = pdfDocument, let url = pdfDoc.documentURL {
+                content = await store.extractPDFText(from: url)
             }
             #endif
         case "pageRange":
             #if canImport(PDFKit)
-            if let pdfDoc = pdfDocument {
+            if let pdfDoc = pdfDocument, let url = pdfDoc.documentURL {
                 let start = max(0, pageStart - 1)
                 let end = min(pdfDoc.pageCount, pageEnd)
-                content = await store.extractPDFText(from: pdfDoc, pageRange: start..<end)
+                content = await store.extractPDFText(from: url, pageRange: start..<end)
             }
             #endif
         case "highlights":

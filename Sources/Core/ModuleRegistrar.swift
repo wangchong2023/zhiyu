@@ -29,6 +29,7 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(StubBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
         #endif
         
+        let sqliteStore = SQLiteStore()
         container.register(sqliteStore, for: SQLiteStore.self)
 
         #if os(macOS)
@@ -71,16 +72,6 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(iOSHapticService(), for: (any HapticFeedbackProtocol).self)
         #endif
         
-        #if os(watchOS)
-        container.register(WatchPDFService(), for: (any PDFServiceProtocol).self)
-        #else
-        container.register(iOSPDFService(), for: (any PDFServiceProtocol).self)
-        #endif
-
-        #if os(iOS)
-        container.register(ActivityService.shared, for: ActivityService.self)
-        #endif
-        
         #if os(macOS)
         container.register(StubWatchSyncService(), for: (any WatchSyncProtocol).self)
         #elseif os(watchOS)
@@ -95,9 +86,6 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(DeepLinkService(), for: DeepLinkService.self)
         container.register(PerformanceService(), for: PerformanceService.self)
         container.register(AccessibilityService(), for: AccessibilityService.self)
-        #if canImport(WatchConnectivity)
-        container.register(WatchConnectivityService.shared, for: WatchConnectivityService.self)
-        #endif
         container.register(SnapshotService(), for: SnapshotService.self)
         container.register(WorkflowService.shared, for: WorkflowService.self)
 

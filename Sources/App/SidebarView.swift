@@ -29,6 +29,7 @@ enum SidebarSelection: Hashable {
             case .log: return .log
             case .collab: return .collab
             case .pluginMarket: return .pluginMarket
+            case .healthCheck: return .lint
             }
         case .filteredIndex(let type): return .index(filterType: type)
         }

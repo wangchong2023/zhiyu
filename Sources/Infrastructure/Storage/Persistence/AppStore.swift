@@ -95,7 +95,7 @@ final class AppStore: @preconcurrency GraphDataProvider {
 
     /// 工具项定义
     enum ToolItem: String, CaseIterable, Hashable {
-        case index, chat, log, lint, tagCloud, collab, taskCenter, weeklyReport, dashboard, pluginMarket, synthesis
+        case index, chat, log, lint, tagCloud, collab, taskCenter, weeklyReport, dashboard, pluginMarket, synthesis, healthCheck
     }
 
     // MARK: - Coach Marks
@@ -502,6 +502,16 @@ extension AppStore {
     /// 从 URL 提取 PDF 文本内容。
     func extractPDFText(from url: URL) async -> String {
         await pdfService.extractText(from: url) ?? ""
+    }
+
+    /// 从 URL 提取特定页码范围的 PDF 文本内容。
+    func extractPDFText(from url: URL, pageRange: Range<Int>) async -> String {
+        await pdfService.extractText(from: url, pageRange: pageRange) ?? ""
+    }
+
+    /// 获取指定 PDF 文档的物理 URL。
+    func loadPDFDocument(fileName: String) async -> URL? {
+        pdfService.getPDFURL(fileName: fileName)
     }
 }
 

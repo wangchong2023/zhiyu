@@ -21,8 +21,14 @@ public protocol PDFServiceProtocol: Sendable {
     /// 获取所有 PDF 文件名
     func allPDFFilenames() async -> [String]
     
-    /// 提取文本内容
+    /// 获取指定 PDF 文件的物理路径
+    func getPDFURL(fileName: String) -> URL?
+    
+    /// 提取全量文本内容
     func extractText(from url: URL) async -> String?
+    
+    /// 提取指定页码范围的文本内容
+    func extractText(from url: URL, pageRange: Range<Int>) async -> String?
     
     /// 保存元数据
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async
