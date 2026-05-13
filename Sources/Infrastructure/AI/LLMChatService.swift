@@ -69,21 +69,27 @@ final class LLMChatService: Sendable {
     /// 执行流式对话，返回异步抛出流
     func streamChat(systemPrompt: String, query: String, history: [ChatMessage]) -> AsyncThrowingStream<String, Error> {
         let requestBody = makeStreamingRequestBody(systemPrompt: systemPrompt, query: query, history: history)
+        let localClient = self.client
         
-        return AsyncThrowingStream { continuation in
-            Task {
-                do {
-                    let bytes = try await client.sendStreamingRequest(body: requestBody)
-                    // 使用统一的 SSE 解析器
-                    for try await chunk in SSEParser.parse(bytes: bytes) {
-                        if Task.isCancelled { break }
-                        continuation.yield(chunk)
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
+        let (stream, continuation) = AsyncThrowingStream<String, Error>.makeStream()
+        
+        let task = Task {
+            do {
+                let bytes = try await localClient.sendStreamingRequest(body: requestBody)
+                for try await chunk in SSEParser.parse(bytes: bytes) {
+                    if Task.isCancelled { break }
+                    continuation.yield(chunk)
                 }
+                continuation.finish()
+            } catch {
+                continuation.finish(throwing: error)
             }
         }
+        
+        continuation.onTermination = { @Sendable _ in
+            task.cancel()
+        }
+        
+        return stream
     }
 }

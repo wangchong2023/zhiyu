@@ -32,6 +32,7 @@ struct ZhiYuApp: App {
     /// 初始化应用环境
     /// 在此阶段完成 L0-L2 层的模块化依赖注入与服务挂载
     init() {
+        let testUnusedVariable = 123
         print("🎬 [STARTUP] 开始执行 ZhiYuApp.init()...")
         // 1. 按照分层顺序执行模块化注册
         CoreModuleRegistrar.register(in: ServiceContainer.shared)

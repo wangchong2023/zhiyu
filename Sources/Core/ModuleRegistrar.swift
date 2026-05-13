@@ -159,7 +159,6 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         
         print("⚖️ [DI] 正在初始化 RAGEvaluationService...")
         // 检查 KnowledgePageStore 是否已注册
-        let pageStoreKey = String(describing: KnowledgePageStore.self)
         if container.hasService(for: KnowledgePageStore.self) {
             let evaluationService = RAGEvaluationService(
                 llmService: llm,

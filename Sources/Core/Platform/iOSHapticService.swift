@@ -11,10 +11,7 @@ import UIKit
 /// iOS 触感反馈实现：使用 UINotificationFeedbackGenerator 和 UIImpactFeedbackGenerator
 final class iOSHapticService: HapticFeedbackProtocol {
     func trigger(_ pattern: HapticPattern) {
-        #if targetEnvironment(simulator)
-        return
-        #endif
-        
+        #if !targetEnvironment(simulator)
         switch pattern {
         case .success:
             UINotificationFeedbackGenerator().notificationOccurred(.success)
@@ -29,6 +26,7 @@ final class iOSHapticService: HapticFeedbackProtocol {
         case .processing, .link, .selection, .pulse:
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
+        #endif
     }
 }
 #endif
