@@ -106,7 +106,7 @@ struct Graph3DView: View {
                 HStack(spacing: 4) {
                     Circle()
                         .fill(fps > 30 ? Color.green : (fps > 15 ? Color.orange : Color.red))
-                        .frame(width: 6, height: 6)
+                        .frame(width: DesignSystem.tiny + 2, height: DesignSystem.tiny + 2)
                     Text("FPS: \(Int(fps))")
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(.appSecondary)

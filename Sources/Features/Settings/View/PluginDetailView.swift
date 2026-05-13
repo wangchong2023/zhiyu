@@ -26,9 +26,9 @@ struct PluginDetailView: View {
                 // Header section
                 HStack(spacing: 20) {
                     Image(systemName: icon)
-                        .font(.system(size: 60))
+                        .font(.system(size: DesignSystem.Gallery.mainIconSize))
                         .foregroundStyle(.white)
-                        .frame(width: 100, height: 100)
+                        .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                         .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .clipShape(RoundedRectangle(cornerRadius: 22))
                         .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
@@ -41,7 +41,7 @@ struct PluginDetailView: View {
                             statItem(label: Localized.tr("plugin.stat.downloads"), value: "1.2K", icon: "arrow.down.circle")
                             statItem(label: Localized.tr("plugin.stat.rating"), value: "4.9", icon: "star.fill", color: .yellow)
                         }
-                        .padding(.top, 4)
+                        .padding(.top, DesignSystem.tiny)
                     }
                 }
                 
@@ -77,14 +77,14 @@ struct PluginDetailView: View {
                 Label(isInstalled ? Localized.tr("plugin.action.uninstall") : Localized.tr("plugin.action.install"), systemImage: isInstalled ? "trash" : "icloud.and.arrow.down")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, DesignSystem.small)
             }
             .buttonStyle(.borderedProminent)
             .tint(.appAccent)
             
             Button(action: {}) {
                 Image(systemName: "square.and.arrow.up")
-                    .padding(8)
+                    .padding(DesignSystem.small)
             }
             .buttonStyle(.bordered)
         }
@@ -97,7 +97,7 @@ struct PluginDetailView: View {
                 Text(value).bold()
             }
             .font(.caption)
-            Text(label).font(.system(size: 8)).foregroundStyle(.appSecondary)
+            Text(label).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
         }
     }
     
@@ -138,8 +138,8 @@ struct PermissionTag: View {
             Text(text)
         }
         .font(.caption2.bold())
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(color.opacity(0.1))
         .foregroundStyle(color)
         .clipShape(Capsule())

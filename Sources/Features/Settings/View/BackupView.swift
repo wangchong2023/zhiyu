@@ -180,7 +180,7 @@ struct BackupEntryRow: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
                 onDelete()

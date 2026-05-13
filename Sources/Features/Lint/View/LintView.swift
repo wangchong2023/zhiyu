@@ -186,7 +186,7 @@ struct LintViewContent: View {
                 // 上次检查时间展示在左上角
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L10n.Lint.tr("lastCheck.title"))
-                        .font(.system(size: 12, weight: .bold)) // 提升字号并加粗
+                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold)) // 提升字号并加粗
                         .foregroundStyle(.appText) // 改为正文颜色更醒目
                         .padding(.leading, 4)
 
@@ -197,7 +197,7 @@ struct LintViewContent: View {
                                 .foregroundStyle(.appText)
                         } else {
                             Text(L10n.Lint.tr("lastCheck.never"))
-                                .font(.system(size: 10))
+                                .font(.system(size: DesignSystem.microFontSize))
                                 .foregroundStyle(.appSecondary)
                         }
                     }
@@ -236,7 +236,7 @@ struct LintViewContent: View {
                                 .foregroundStyle(.appText)
                             
                             Text(aiStore.healthLevel.title)
-                                .font(.system(size: 14, weight: .bold))
+                                .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                                 .foregroundStyle(healthColor)
                         }
                     }
@@ -274,7 +274,7 @@ struct LintViewContent: View {
                 .padding(.trailing, DesignSystem.standardPadding)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
-            .frame(height: 160)
+            .frame(height: DesignSystem.Metrics.chartHeight - 60)
         }
     }
     
@@ -309,9 +309,9 @@ struct LintViewContent: View {
                 ZStack {
                     Circle()
                         .fill(color.opacity(0.15))
-                        .frame(width: 32, height: 32)
+                        .frame(width: DesignSystem.Metrics.iconBoxSize - 8, height: DesignSystem.Metrics.iconBoxSize - 8)
                     Image(systemName: icon)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .foregroundColor(color)
                 }
                 Spacer()
@@ -323,7 +323,7 @@ struct LintViewContent: View {
                     .foregroundColor(.appSecondary)
                 
                 Text(value)
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
                     .foregroundColor(.appText)
             }
         }

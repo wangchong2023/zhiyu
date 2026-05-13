@@ -47,7 +47,7 @@ struct QuizView: View {
         VStack(spacing: Spacing.medium) {
             // 标题页眉
             Text(quiz.title)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                 .padding(.top, Spacing.wide)
                 .padding(.bottom, Spacing.small)
                 .padding(.horizontal, Spacing.standardPadding)

@@ -157,7 +157,7 @@ struct IngestView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     let runningCount = TaskCenter.shared.tasks.filter({ $0.type == .ingest && isRunning(status: $0.status) }).count
                     Text(L10n.Ingest.trf("activeTasks", runningCount)).font(.system(size: 11, weight: .bold)).foregroundStyle(.appText)
-                    Text(L10n.Ingest.tr("recentActivity")).font(.system(size: 10)).foregroundStyle(.appSecondary)
+                    Text(L10n.Ingest.tr("recentActivity")).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)

@@ -58,7 +58,7 @@ struct iCloudSyncView: View {
                     SyncInfoRow(icon: "3.circle.fill", text: L10n.ICloud.tr("info3"))
                     SyncInfoRow(icon: "4.circle.fill", text: L10n.ICloud.tr("info4"))
                 }
-                .padding(.vertical, 4)
+                .padding(.vertical, DesignSystem.tiny)
             } header: {
                 Text(L10n.ICloud.tr("aboutSync"))
             }

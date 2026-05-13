@@ -54,7 +54,7 @@ struct LLMSettingsView: View {
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, DesignSystem.tiny)
                     
                     Toggle(Localized.tr("ondevice.enableAutoScan"), isOn: $llmService.autoScan)
                         .tint(.appAccent)
@@ -166,7 +166,7 @@ struct LLMSettingsView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, DesignSystem.tiny)
                     }
                 } header: {
                     Text(Localized.tr("llm.validation"))
@@ -278,8 +278,8 @@ struct LLMSettingsView: View {
                         Button(action: { llmService.model = model }) {
                             Text(model)
                                 .font(.caption)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, DesignSystem.medium - 2)
+                                .padding(.vertical, DesignSystem.small - 2)
                                 .background(llmService.model == model ? Color.appAccent.opacity(0.2) : Color.appCard.opacity(0.8))
                                 .clipShape(Capsule())
                                 .foregroundStyle(llmService.model == model ? .appAccent : .appSecondary)
@@ -289,7 +289,7 @@ struct LLMSettingsView: View {
                 }
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, DesignSystem.small)
     }
     
     private var suggestedModels: [String] {

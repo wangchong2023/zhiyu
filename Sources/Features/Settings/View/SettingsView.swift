@@ -147,7 +147,7 @@ struct SettingsView: View {
                         if llmService.isReady {
                             Circle()
                                 .fill(.green)
-                                .frame(width: 8, height: 8)
+                                .frame(width: DesignSystem.small, height: DesignSystem.small)
                                 .shadow(color: .green.opacity(0.5), radius: 2)
                         }
                     }

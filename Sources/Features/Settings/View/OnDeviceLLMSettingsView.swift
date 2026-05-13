@@ -62,7 +62,7 @@ struct OnDeviceLLMSettingsView: View {
     private var headerSection: some View {
         VStack(spacing: 12) {
             Image(systemName: "cpu.fill")
-                .font(.system(size: 48))
+                .font(.system(size: DesignSystem.displayFontSize * 1.5))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.appSource, .appAccent],
@@ -76,7 +76,7 @@ struct OnDeviceLLMSettingsView: View {
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
         }
-        .padding(.top, 10)
+        .padding(.top, DesignSystem.medium - 2)
     }
     
     // MARK: - Availability

@@ -245,9 +245,9 @@ struct DeveloperSettingsView: View {
                 ZStack {
                     Circle()
                         .fill(color.opacity(0.15))
-                        .frame(width: 28, height: 28)
+                        .frame(width: DesignSystem.smallIconSize + 12, height: DesignSystem.smallIconSize + 12)
                     Image(systemName: icon)
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                         .foregroundColor(color)
                 }
                 Spacer()
@@ -255,16 +255,16 @@ struct DeveloperSettingsView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .medium))
                     .foregroundColor(.appSecondary)
                     .lineLimit(1)
                 
                 Text(String(format: "%.2f", value))
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                     .foregroundColor(.appText)
             }
         }
-        .padding(12)
+        .padding(DesignSystem.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
         .appMetricCardStyle(color: color)
         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)

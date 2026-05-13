@@ -102,7 +102,7 @@ struct SystemStatsView: View {
                     if isLoading {
                         VStack {
                             ProgressView()
-                                .padding(.vertical, 40)
+                                .padding(.vertical, DesignSystem.large * 2.5)
                         }
                     } else {
                         switch selectedTab {
@@ -113,7 +113,7 @@ struct SystemStatsView: View {
                         }
                     }
                 }
-                .padding(.bottom, 30) // 底部留白
+                .padding(.bottom, DesignSystem.large * 2) // 底部留白
             }
             .background(PageBackgroundView(accentColor: .appAccent))
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -134,7 +134,7 @@ struct SystemStatsView: View {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(dailyStats.reduce(0) { $0 + $1.requests })")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
                         Text(L10n.Dashboard.tr("stats.requestsUsage"))
                             .font(.caption)
@@ -142,7 +142,7 @@ struct SystemStatsView: View {
                     }
                     
                     ChartView(stats: dailyStats, type: .requests)
-                        .frame(height: 180)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 40)
                 }
                 .padding(Spacing.medium)
             }
@@ -152,7 +152,7 @@ struct SystemStatsView: View {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(dailyStats.reduce(0) { $0 + $1.tokens })")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
                         Text(L10n.Dashboard.tokens)
                             .font(.caption)
@@ -160,7 +160,7 @@ struct SystemStatsView: View {
                     }
                     
                     ChartView(stats: dailyStats, type: .tokens)
-                        .frame(height: 180)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 40)
                 }
                 .padding(Spacing.medium)
             }
@@ -173,9 +173,9 @@ struct SystemStatsView: View {
                             ZStack {
                                 Circle()
                                     .fill((avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.15))
-                                    .frame(width: 32, height: 32)
+                                    .frame(width: DesignSystem.Metrics.iconBoxSize - 8, height: DesignSystem.Metrics.iconBoxSize - 8)
                                 Image(systemName: "timer")
-                                    .font(.system(size: 14, weight: .bold))
+                                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                                     .foregroundColor(avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
                             }
                             Spacer()
@@ -184,10 +184,10 @@ struct SystemStatsView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             HStack(alignment: .firstTextBaseline, spacing: 4) {
                                 Text("\(avgLatency)")
-                                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
                                     .foregroundColor(.appText)
                                 Text(L10n.Dashboard.unitMs)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold))
                                     .foregroundColor(.appSecondary)
                             }
                         }
@@ -208,25 +208,25 @@ struct SystemStatsView: View {
                 VStack(spacing: Spacing.medium) {
                     if storageCategories.isEmpty {
                         ProgressView()
-                            .frame(height: 200)
+                            .frame(height: DesignSystem.Metrics.chartHeight - 20)
                     } else if storageCategories.allSatisfy({ $0.value == 0 }) {
                         VStack(spacing: Spacing.medium) {
                             Image(systemName: "chart.pie")
-                                .font(.system(size: 40))
+                                .font(.system(size: DesignSystem.Gallery.iconSize))
                                 .foregroundStyle(.appSecondary.opacity(0.3))
                             Text(L10n.Common.Empty.tr("noData"))
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
                         .frame(maxWidth: .infinity)
-                        .frame(height: 200)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 20)
                     } else {
                         HStack(spacing: Spacing.medium) {
                             #if os(watchOS)
                             chartContainer
                             #else
                             chartContainer
-                                .frame(maxWidth: UIScreen.main.bounds.width * 0.45)
+                                .frame(maxWidth: .infinity)
                             #endif
                             
                             legendContainer
@@ -245,7 +245,7 @@ struct SystemStatsView: View {
                     HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: iconForCategory(category.label))
                             .foregroundStyle(category.color)
-                            .frame(width: 24)
+                            .frame(width: DesignSystem.giant)
                         
                         Text(category.label)
                             .foregroundStyle(.appText)
@@ -262,7 +262,7 @@ struct SystemStatsView: View {
                             if totalStorage > 0 {
                                 let percent = Int(Double(category.value) / Double(totalStorage) * 100)
                                 Text("\(percent)%")
-                                    .font(.system(size: 10, design: .rounded))
+                                    .font(.system(size: DesignSystem.microFontSize, design: .rounded))
                                     .foregroundStyle(.appSecondary)
                             }
                         }
@@ -315,14 +315,14 @@ struct SystemStatsView: View {
                 .foregroundStyle(category.color)
             }
             .chartLegend(.hidden)
-            .frame(height: 180)
+            .frame(height: DesignSystem.Metrics.chartHeight - 40)
             
             VStack(spacing: 4) {
                 Text(formatBytes(totalStorage))
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .font(.system(size: DesignSystem.titleFontSize + 2, weight: .bold, design: .rounded))
                     .foregroundStyle(.appAccent)
                 Text(L10n.Dashboard.totalStorage)
-                    .font(.system(size: 10, weight: .black))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .black))
                     .foregroundStyle(.appSecondary)
                     .kerning(1)
                     .textCase(.uppercase)
@@ -336,11 +336,11 @@ struct SystemStatsView: View {
                 HStack(spacing: DesignSystem.tiny) {
                     Circle()
                         .fill(category.color)
-                        .frame(width: 6, height: 6)
+                        .frame(width: DesignSystem.tiny + 2, height: DesignSystem.tiny + 2)
                     
                     VStack(alignment: .leading, spacing: 0) {
                         Text(category.label)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(DesignSystem.caption2Font)
                             .foregroundStyle(.appText)
                             .lineLimit(1)
                         HStack(spacing: 4) {
@@ -348,7 +348,7 @@ struct SystemStatsView: View {
                             let percent = totalStorage > 0 ? Int(Double(category.value) / Double(totalStorage) * 100) : 0
                             Text("(\(percent)%)")
                         }
-                        .font(.system(size: 9))
+                        .font(.system(size: DesignSystem.microFontSize))
                         .foregroundStyle(.appSecondary)
                     }
                 }
@@ -377,8 +377,8 @@ struct SystemStatsView: View {
         var body: some View {
             HStack {
                 ZStack {
-                    Circle().fill(color.opacity(0.1)).frame(width: 32, height: 32)
-                    Image(systemName: icon).font(.system(size: 14)).foregroundStyle(color)
+                    Circle().fill(color.opacity(0.1)).frame(width: DesignSystem.Metrics.iconBoxSize - 8, height: DesignSystem.Metrics.iconBoxSize - 8)
+                    Image(systemName: icon).font(.system(size: DesignSystem.subheadlineFontSize)).foregroundStyle(color)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -563,14 +563,14 @@ struct ChartView: View {
         if stats.isEmpty {
             VStack(spacing: DesignSystem.small) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
-                    .font(.system(size: 32))
+                    .font(.system(size: DesignSystem.displayFontSize))
                     .foregroundStyle(.appSecondary.opacity(0.3))
                 Text(L10n.Common.Empty.tr("noData"))
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 160)
+            .frame(height: DesignSystem.Metrics.chartHeight - 60)
             .background(Color.appCard.opacity(0.3))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         } else {
@@ -630,7 +630,7 @@ struct ChartView: View {
                             Circle()
                                 .stroke(themeManager.accentColor, lineWidth: 2)
                                 .background(Circle().fill(.white))
-                                .frame(width: 8, height: 8)
+                                .frame(width: DesignSystem.small, height: DesignSystem.small)
                         }
                     }
                 }
@@ -642,7 +642,7 @@ struct ChartView: View {
                     AxisValueLabel(anchor: .topTrailing) {
                         if let date = value.as(Date.self) {
                             Text(formatDate(date))
-                                .font(.system(size: 10))
+                                .font(.system(size: DesignSystem.microFontSize))
                                 .foregroundStyle(.appSecondary)
                         }
                     }
@@ -654,7 +654,7 @@ struct ChartView: View {
                     AxisValueLabel {
                         if let intValue = value.as(Int.self) {
                             Text("\(intValue)")
-                                .font(.system(size: 10))
+                                .font(.system(size: DesignSystem.microFontSize))
                                 .foregroundStyle(.appSecondary)
                         }
                     }
@@ -677,20 +677,20 @@ struct ChartView: View {
     private func tooltipView(stat: DailyAIUsage) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(stat.date, format: .dateTime.year().month().day())
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                 .foregroundStyle(.appText)
             
             HStack(spacing: 4) {
                 Text(type == .requests ? L10n.Dashboard.apiRequests : L10n.Dashboard.tokens)
-                    .font(.system(size: 11))
+                    .font(.system(size: DesignSystem.caption2FontSize))
                     .foregroundStyle(.appSecondary)
                 Text("\(type == .requests ? stat.requests : stat.tokens)")
-                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .font(.system(size: DesignSystem.caption2FontSize, weight: .semibold, design: .rounded))
                     .foregroundStyle(.appText)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.small)
         .background {
             RoundedRectangle(cornerRadius: 6, style: .continuous)
                 .fill(Color.appCard)

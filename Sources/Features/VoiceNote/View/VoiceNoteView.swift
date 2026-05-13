@@ -57,7 +57,7 @@ struct VoiceNoteView: View {
     private var headerSection: some View {
         VStack(spacing: 10) {
             Image(systemName: "waveform.circle.fill")
-                .font(.system(size: 48))
+                .font(.system(size: DesignSystem.displayFontSize * 1.5))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.appAccent, .appSource],
@@ -151,7 +151,7 @@ struct VoiceNoteView: View {
                         .frame(width: 30, height: 30)
                 } else {
                     Image(systemName: "mic.fill")
-                        .font(.system(size: 32))
+                        .font(.system(size: DesignSystem.displayFontSize))
                         .foregroundStyle(.appAccent)
                 }
             }

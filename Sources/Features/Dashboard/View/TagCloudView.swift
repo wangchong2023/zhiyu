@@ -404,7 +404,7 @@ struct TagCloudViewContent: View {
                         .foregroundStyle(.appSecondary)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: DesignSystem.Metrics.sourceCardHeight * 1.22) // 140
+                .frame(height: DesignSystem.Metrics.sourceCardHeight * 1.22)
                 .background(Color.appBackground.opacity(0.01))
                 .onTapGesture {
                     if isEditMode { isEditMode = false }

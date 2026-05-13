@@ -72,7 +72,7 @@ struct AuthView: View {
                     .blur(radius: 10)
                 
                 Image(systemName: "books.vertical.circle.fill")
-                    .font(.system(size: 48))
+                    .font(.system(size: DesignSystem.displayFontSize * 1.5))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .shadow(color: .appAccent.opacity(0.4), radius: 10, y: 4)
             }
@@ -105,7 +105,7 @@ struct AuthView: View {
                     }
                 }) {
                     Text(L10n.Common.tr("login"))
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .frame(width: 120, height: 38)
                         .foregroundStyle(!isRegisterMode ? .white : .appSecondary)
                 }
@@ -116,7 +116,7 @@ struct AuthView: View {
                     }
                 }) {
                     Text(L10n.Common.tr("register"))
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .frame(width: 120, height: 38)
                         .foregroundStyle(isRegisterMode ? .white : .appSecondary)
                 }

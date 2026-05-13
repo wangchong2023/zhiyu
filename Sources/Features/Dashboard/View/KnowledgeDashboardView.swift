@@ -146,7 +146,7 @@ struct KnowledgeDashboardView: View {
                             endPoint: .trailing
                         ))
                     }
-                    .frame(height: 240)
+                    .frame(height: DesignSystem.Metrics.chartHeight + 20)
                     .chartXAxis {
                         AxisMarks(position: .bottom) { _ in
                             AxisGridLine(stroke: StrokeStyle(dash: [2, 4]))
@@ -170,7 +170,7 @@ struct KnowledgeDashboardView: View {
                             Label(L10n.Dashboard.densityInbound, systemImage: "arrow.left.circle.fill")
                                 .foregroundStyle(.purple)
                         }
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     }
                     .chartLegend(.hidden)
                 }
@@ -249,7 +249,7 @@ struct KnowledgeDashboardView: View {
                                         .font(.system(size: DesignSystem.caption2FontSize))
                                         .foregroundColor(.orange)
                                     Text(recap.suggestedConnection)
-                                        .font(.system(size: DesignSystem.caption2FontSize + 1, weight: .medium))
+                                        .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
                                         .foregroundColor(.appSecondary)
                                         .multilineTextAlignment(.leading)
                                 }
@@ -263,7 +263,7 @@ struct KnowledgeDashboardView: View {
                         .font(.subheadline)
                         .foregroundColor(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, DesignSystem.medium - 2)
                 }
             }
             .appMetricCardStyle(color: .appAccent, cornerRadius: DesignSystem.standardRadius)
@@ -476,14 +476,14 @@ struct HotTopicMedal: View {
                     .font(.system(size: DesignSystem.titleFontSize, weight: .bold))
                     .foregroundColor(.appText)
                 Text("\(count) " + L10n.Dashboard.tr("index.pages"))
-                    .font(.system(size: DesignSystem.caption2FontSize + 1))
+                    .font(.system(size: DesignSystem.captionFontSize))
                     .foregroundColor(.appSecondary)
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                 .foregroundColor(.appSecondary.opacity(0.3))
         }
         .padding(DesignSystem.standardPadding)
