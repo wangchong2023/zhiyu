@@ -8,7 +8,7 @@
 import Foundation
 
 /// AI 知识综合服务协议
-public protocol AISynthesisServiceProtocol: Sendable {
+protocol AISynthesisServiceProtocol: Sendable {
     func summarize(content: String) async throws -> String
     func generateMindMap(content: String) async throws -> String
     func generateInsightfulQuestions(pages: [KnowledgePage]) async throws -> [String]
@@ -16,11 +16,6 @@ public protocol AISynthesisServiceProtocol: Sendable {
 }
 
 /// 聊天服务协议
-public protocol ChatServiceProtocol: Sendable {
+protocol ChatServiceProtocol: Sendable {
     // 定义 ChatService 的能力
-}
-
-/// Ingest 服务协议
-public protocol IngestServiceProtocol: Sendable {
-    func processIngest(item: IngestItem) async throws
 }
