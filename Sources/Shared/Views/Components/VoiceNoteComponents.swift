@@ -14,7 +14,7 @@ import SwiftUI
 /// 语音笔记保存配置面板组件
 /// 负责在保存语音识别结果前配置页面标题、类型，并展示转录文本预览供最终确认
 struct SaveVoiceNoteSheet: View {
-    @ObservedObject var speechService: SpeechProcessor
+    var speechService: any SpeechServiceProtocol
     @Binding var title: String
     @Environment(AppStore.self) var store
     @Environment(\.dismiss) private var dismiss
@@ -23,7 +23,7 @@ struct SaveVoiceNoteSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: AppUI.loosePadding) { // 20
+                VStack(spacing: DesignSystem.loosePadding) { // 20
                     titleField
                     typePicker
                     previewSection
@@ -40,7 +40,7 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var titleField: some View {
-        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
             Text(Localized.tr("speech.noteTitle"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -53,7 +53,7 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var typePicker: some View {
-        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
             Text(Localized.tr("ocr.pageType"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -70,30 +70,36 @@ struct SaveVoiceNoteSheet: View {
     }
     
     private var previewSection: some View {
-        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
             Text(Localized.tr("pdf.contentPreview"))
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
             #if !os(watchOS)
-            TextEditor(text: $speechService.transcribedText)
+            TextEditor(text: Binding(
+                get: { speechService.transcribedText },
+                set: { speechService.transcribedText = $0 }
+            ))
                 .font(.body)
                 .foregroundStyle(.appText)
-                .frame(minHeight: AppUI.Metrics.heroValueSize * 4.6, maxHeight: AppUI.Metrics.heroValueSize * 11.5) // 120, 300
-                .padding(AppUI.small)
+                .frame(minHeight: DesignSystem.Metrics.heroValueSize * 4.6, maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 120, 300
+                .padding(DesignSystem.small)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                        .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
+                    RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                        .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
                 )
             #else
-            TextField("", text: $speechService.transcribedText)
+            TextField("", text: Binding(
+                get: { speechService.transcribedText },
+                set: { speechService.transcribedText = $0 }
+            ))
                 .font(.body)
                 .foregroundStyle(.appText)
-                .padding(AppUI.small)
+                .padding(DesignSystem.small)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
             #endif
         }
     }
@@ -106,7 +112,7 @@ struct SaveVoiceNoteSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.appAccent)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
     }
     
@@ -135,14 +141,14 @@ struct VoiceRecordingRow: View {
     let recording: VoiceRecording
     
     var body: some View {
-        HStack(spacing: AppUI.medium) {
+        HStack(spacing: DesignSystem.medium) {
             Image(systemName: "waveform")
                 .foregroundStyle(.appSource)
-                .frame(width: AppUI.largeIconSize, height: AppUI.largeIconSize) // 32
-                .background(Color.appSource.opacity(AppUI.glassOpacity * 1.5))
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize) // 32
+                .background(Color.appSource.opacity(DesignSystem.glassOpacity * 1.5))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             
-            VStack(alignment: .leading, spacing: AppUI.atomic) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(recording.title)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
@@ -159,10 +165,10 @@ struct VoiceRecordingRow: View {
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.horizontal, AppUI.medium)
-        .padding(.vertical, AppUI.medium - AppUI.atomic) // 10
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.medium - DesignSystem.atomic) // 10
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
         .frame(maxWidth: .infinity)
     }
 }

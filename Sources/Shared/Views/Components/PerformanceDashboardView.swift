@@ -73,7 +73,7 @@ struct PerformanceDashboardView: View {
                     }
                     .padding()
                     .background(Color.appCard)
-                    .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                     
                     // Last Updated
                     Text(Localized.tr("perf.lastUpdated") + ": " + service.metrics.lastUpdated.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
@@ -135,7 +135,7 @@ struct MetricCardView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
 }
 
@@ -159,16 +159,16 @@ struct TimingRowView: View {
                 .frame(width: 100, alignment: .leading)
             
             GeometryReader { geo in
-                RoundedRectangle(cornerRadius: AppUI.microRadius)
+                RoundedRectangle(cornerRadius: DesignSystem.microRadius)
                     .fill(color.opacity(0.3))
-                    .frame(width: geo.size.width, height: AppUI.small)
+                    .frame(width: geo.size.width, height: DesignSystem.small)
                     .overlay(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: AppUI.microRadius)
+                        RoundedRectangle(cornerRadius: DesignSystem.microRadius)
                             .fill(color)
-                            .frame(width: max(barWidth, duration > 0 ? AppUI.tiny : 0), height: AppUI.small)
+                            .frame(width: max(barWidth, duration > 0 ? DesignSystem.tiny : 0), height: DesignSystem.small)
                     }
             }
-            .frame(height: AppUI.small)
+            .frame(height: DesignSystem.small)
             
             Text(String(format: "%.3fs", duration))
                 .font(.caption.monospacedDigit())

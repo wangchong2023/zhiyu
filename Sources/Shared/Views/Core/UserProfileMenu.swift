@@ -1,0 +1,118 @@
+// UserProfileMenu.swift
+//
+// 作者: Wang Chong
+// 功能说明: 本文件实现了全系统通用的用户个人资料菜单（UserProfileMenu）。
+// 该组件集成了：
+// 1. 账户管理：显示当前登录状态并支持登出。
+// 2. 安全控制：快捷锁定应用程序。
+// 3. 系统设置：跳转至全局设置页面。
+// 4. 交互引导：重新触发功能引导与新手教程。
+// 版本: 1.0
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+
+struct UserProfileMenu: View {
+    @Environment(AuthService.self) var authService
+    @Environment(AppStore.self) var store
+    @Environment(AppRouter.self) var router
+    @EnvironmentObject var onboardingService: OnboardingService
+    
+    @State private var showSettings = false
+    @State private var showAbout = false
+    @State private var showWatchMenu = false
+    
+    var body: some View {
+        #if os(watchOS)
+        Button(action: { showWatchMenu = true }) {
+            profileLabel
+        }
+        .sheet(isPresented: $showWatchMenu) {
+            List {
+                Button(action: { showSettings = true; showWatchMenu = false }) {
+                    Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
+                }
+                Button(action: { store.securityService.lock(); showWatchMenu = false }) {
+                    Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
+                }
+                Button(role: .destructive, action: { authService.logout(); showWatchMenu = false }) {
+                    Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            }
+        }
+        .sheet(isPresented: $showSettings) { settingsStack }
+        .sheet(isPresented: $showAbout) { aboutStack }
+        #else
+        Menu {
+            Section {
+                Button(action: {
+                    showSettings = true
+                }) {
+                    Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
+                }
+                
+                Button(action: {
+                    store.securityService.lock()
+                }) {
+                    Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
+                }
+            }
+            
+            Section {
+                Button(action: {
+                    onboardingService.reset()
+                    store.pendingCoachMark = .graphDiscovery
+                }) {
+                    Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
+                }
+                
+                Button(action: {
+                    showAbout = true
+                }) {
+                    Label(L10n.Common.tr("about"), systemImage: "info.circle")
+                }
+            }
+            
+            Section {
+                Button(role: .destructive, action: {
+                    authService.logout()
+                }) {
+                    Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            }
+        } label: {
+            profileLabel
+        }
+        .sheet(isPresented: $showSettings) { settingsStack }
+        .sheet(isPresented: $showAbout) { aboutStack }
+        #endif
+    }
+    
+    private var profileLabel: some View {
+        ZStack {
+            if authService.isGuest {
+                Image(systemName: "person.crop.circle.badge.questionmark")
+                    .font(.system(size: 14))
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .font(.system(size: 16, weight: .bold))
+            }
+        }
+        .frame(width: 36, height: 36)
+        .background(Color.appAccent.opacity(0.1))
+        .clipShape(Circle())
+        .foregroundStyle(.appAccent)
+    }
+    
+    private var settingsStack: some View {
+        NavigationStack {
+            SettingsView(onboardingService: onboardingService)
+        }
+    }
+    
+    private var aboutStack: some View {
+        NavigationStack {
+            AboutView()
+        }
+    }
+}

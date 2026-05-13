@@ -21,20 +21,20 @@ struct WatchKnowledgeStatsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: AppUI.medium) {
+            VStack(spacing: DesignSystem.medium) {
                 // Stats circle
                 ZStack {
                     Circle()
-                        .stroke(Color.appAccent.opacity(AppUI.glassOpacity), lineWidth: AppUI.borderWidth * 3)
-                        .frame(width: AppUI.huge * 2 + AppUI.small, height: AppUI.huge * 2 + AppUI.small)
+                        .stroke(Color.appAccent.opacity(DesignSystem.glassOpacity), lineWidth: DesignSystem.borderWidth * 3)
+                        .frame(width: DesignSystem.huge * 2 + DesignSystem.small, height: DesignSystem.huge * 2 + DesignSystem.small)
                     
                     Circle()
                         .trim(from: 0, to: min(1.0, Double(totalPages) / 100.0))
-                        .stroke(Color.appAccent, style: StrokeStyle(lineWidth: AppUI.borderWidth * 3, lineCap: .round))
-                        .frame(width: AppUI.huge * 2 + AppUI.small, height: AppUI.huge * 2 + AppUI.small)
+                        .stroke(Color.appAccent, style: StrokeStyle(lineWidth: DesignSystem.borderWidth * 3, lineCap: .round))
+                        .frame(width: DesignSystem.huge * 2 + DesignSystem.small, height: DesignSystem.huge * 2 + DesignSystem.small)
                         .rotationEffect(.degrees(-90))
                     
-                    VStack(spacing: AppUI.atomic) {
+                    VStack(spacing: DesignSystem.atomic) {
                         Text("\(totalPages)")
                             .font(.title3.weight(.bold))
                             .foregroundStyle(Color.appText)
@@ -45,8 +45,8 @@ struct WatchKnowledgeStatsView: View {
                 }
                 
                 // Word count
-                HStack(spacing: AppUI.small) {
-                    VStack(spacing: AppUI.atomic) {
+                HStack(spacing: DesignSystem.small) {
+                    VStack(spacing: DesignSystem.atomic) {
                         Text(formatNumber(totalWords))
                             .font(.caption.weight(.bold))
                             .foregroundStyle(Color.appText)
@@ -59,16 +59,16 @@ struct WatchKnowledgeStatsView: View {
                 Divider()
                 
                 // Recent pages
-                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
                     Text(L10n.Widget.tr("recentUpdates"))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(Color.appSecondary)
                     
                     ForEach(recentTitles.prefix(5), id: \.self) { title in
-                        HStack(spacing: AppUI.tiny + AppUI.atomic) {
+                        HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
                             Circle()
                                 .fill(Color.appAccent)
-                                .frame(width: AppUI.tiny + AppUI.atomic / 2, height: AppUI.tiny + AppUI.atomic / 2)
+                                .frame(width: DesignSystem.tiny + DesignSystem.atomic / 2, height: DesignSystem.tiny + DesignSystem.atomic / 2)
                             Text(title)
                                 .font(.caption2)
                                 .foregroundStyle(Color.appText)
@@ -78,7 +78,7 @@ struct WatchKnowledgeStatsView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(AppUI.small)
+            .padding(DesignSystem.small)
         }
         .navigationTitle(L10n.Widget.tr("title"))
         .onAppear {
@@ -120,7 +120,7 @@ struct AppWidgetPreview: View {
     let recentTitles: [String]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.small) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack {
                 Image(systemName: "books.vertical.circle.fill")
                     .font(.title3)
@@ -135,20 +135,20 @@ struct AppWidgetPreview: View {
             
             Divider()
             
-            HStack(spacing: AppUI.medium) {
-                VStack(spacing: AppUI.atomic) {
+            HStack(spacing: DesignSystem.medium) {
+                VStack(spacing: DesignSystem.atomic) {
                     Text("\(totalWords)").font(.caption.weight(.bold))
                     Text(L10n.Widget.tr("characters")).font(.caption2).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 
-                VStack(spacing: AppUI.atomic) {
+                VStack(spacing: DesignSystem.atomic) {
                     Text("\(activeCount)").font(.caption.weight(.bold))
                     Text(L10n.Widget.tr("active")).font(.caption2).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 
-                VStack(spacing: AppUI.atomic) {
+                VStack(spacing: DesignSystem.atomic) {
                     Text("\(stubCount)").font(.caption.weight(.bold))
                     Text(L10n.Widget.tr("stub")).font(.caption2).foregroundStyle(.secondary)
                 }
@@ -156,21 +156,21 @@ struct AppWidgetPreview: View {
             }
             
             if !recentTitles.isEmpty {
-                VStack(alignment: .leading, spacing: AppUI.tiny) {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                     Text(L10n.Widget.tr("recentUpdates"))
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(.secondary)
                     
                     ForEach(recentTitles, id: \.self) { title in
-                        HStack(spacing: AppUI.tiny) {
-                            Circle().fill(.purple).frame(width: AppUI.atomic * 2, height: AppUI.atomic * 2)
+                        HStack(spacing: DesignSystem.tiny) {
+                            Circle().fill(.purple).frame(width: DesignSystem.atomic * 2, height: DesignSystem.atomic * 2)
                             Text(title).font(.caption2).lineLimit(1)
                         }
                     }
                 }
             }
         }
-        .padding(AppUI.small)
+        .padding(DesignSystem.small)
     }
 }
 

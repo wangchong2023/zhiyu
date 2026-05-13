@@ -76,7 +76,7 @@ struct HostingSetupSheet: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
     
     private var startButton: some View {
@@ -91,7 +91,7 @@ struct HostingSetupSheet: View {
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.appAccent)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .accessibilityIdentifier("hosting-start-button")
     }

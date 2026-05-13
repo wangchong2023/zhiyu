@@ -13,7 +13,6 @@
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
-import SwiftUI
 
 // MARK: - Lint Service (Health Check)
 /// 对知识库进行健康检查：断裂链接、孤立页面、存根页面、陈旧内容。

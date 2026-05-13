@@ -16,52 +16,52 @@ struct MedalCard: View {
     let isEarned: Bool
     
     var body: some View {
-        VStack(spacing: AppUI.medium) {
+        VStack(spacing: DesignSystem.medium) {
             ZStack {
                 let baseColor = Color(hex: medal.colorHex)
-                let fillColor = isEarned ? baseColor.opacity(AppUI.glassOpacity) : Color.appBorder.opacity(AppUI.glassOpacity / 1.5) // 0.1
+                let fillColor = isEarned ? baseColor.opacity(DesignSystem.glassOpacity) : Color.appBorder.opacity(DesignSystem.glassOpacity / 1.5) // 0.1
                 
                 Circle()
                     .fill(fillColor)
-                    .frame(width: AppUI.Gallery.itemSize, height: AppUI.Gallery.itemSize)
+                    .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                 
                 Image(systemName: medal.icon)
-                    .font(.system(size: AppUI.Gallery.iconSize, weight: .bold))
-                    .foregroundStyle(isEarned ? baseColor : .appSecondary.opacity(AppUI.secondaryOpacity * 0.625)) // 0.5
+                    .font(.system(size: DesignSystem.Gallery.iconSize, weight: .bold))
+                    .foregroundStyle(isEarned ? baseColor : .appSecondary.opacity(DesignSystem.secondaryOpacity * 0.625)) // 0.5
                 
                 if !isEarned {
                     Image(systemName: "lock.fill")
                         .font(.caption2)
-                        .padding(AppUI.tiny)
+                        .padding(DesignSystem.tiny)
                         .background(Circle().fill(.ultraThinMaterial))
-                        .offset(x: AppUI.Gallery.badgeOffset, y: AppUI.Gallery.badgeOffset)
+                        .offset(x: DesignSystem.Gallery.badgeOffset, y: DesignSystem.Gallery.badgeOffset)
                 }
             }
             
-            VStack(spacing: AppUI.tiny) {
+            VStack(spacing: DesignSystem.tiny) {
                 Text(Localized.tr(medal.titleKey))
-                    .font(.system(size: AppUI.subheadlineFontSize, weight: .bold))
+                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                     .foregroundStyle(isEarned ? .appText : .appSecondary)
                 
                 Text(Localized.tr(medal.descKey))
-                    .font(.system(size: AppUI.microFontSize))
+                    .font(.system(size: DesignSystem.microFontSize))
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
         }
-        .padding(AppUI.standardPadding)
+        .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity)
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.Gallery.itemRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Gallery.itemRadius))
         .overlay {
-            let overlayColor = isEarned ? Color(hex: medal.colorHex).opacity(AppUI.glassOpacity * 2) : Color.appBorder.opacity(AppUI.glassOpacity / 1.5)
-            RoundedRectangle(cornerRadius: AppUI.Gallery.itemRadius)
-                .stroke(overlayColor, lineWidth: AppUI.borderWidth)
+            let overlayColor = isEarned ? Color(hex: medal.colorHex).opacity(DesignSystem.glassOpacity * 2) : Color.appBorder.opacity(DesignSystem.glassOpacity / 1.5)
+            RoundedRectangle(cornerRadius: DesignSystem.Gallery.itemRadius)
+                .stroke(overlayColor, lineWidth: DesignSystem.borderWidth)
         }
-        .shadow(color: isEarned ? Color(hex: medal.colorHex).opacity(AppUI.glassOpacity / 1.5) : .clear, radius: AppUI.standardRadius, y: AppUI.borderWidth * 4)
+        .shadow(color: isEarned ? Color(hex: medal.colorHex).opacity(DesignSystem.glassOpacity / 1.5) : .clear, radius: DesignSystem.standardRadius, y: DesignSystem.borderWidth * 4)
         .grayscale(isEarned ? 0 : 1)
-        .opacity(isEarned ? AppUI.fullOpacity : AppUI.secondaryOpacity + 0.1) // 0.7
+        .opacity(isEarned ? DesignSystem.fullOpacity : DesignSystem.secondaryOpacity + 0.1) // 0.7
     }
 }
 
@@ -73,22 +73,22 @@ struct MedalRewardPopup: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(AppUI.disabledOpacity + 0.1) // 0.4
+            Color.black.opacity(DesignSystem.disabledOpacity + 0.1) // 0.4
                 .ignoresSafeArea()
                 .onTapGesture(perform: onDismiss)
             
-            VStack(spacing: AppUI.loosePadding) {
+            VStack(spacing: DesignSystem.loosePadding) {
                 // 顶部闪烁装饰
                 ZStack {
                     let baseColor = Color(hex: medal.colorHex)
                     Circle()
-                        .fill(baseColor.opacity(AppUI.dimmedOpacity))
-                        .frame(width: AppUI.Gallery.displayIconSize, height: AppUI.Gallery.displayIconSize)
-                        .blur(radius: AppUI.Gallery.blurRadius)
+                        .fill(baseColor.opacity(DesignSystem.dimmedOpacity))
+                        .frame(width: DesignSystem.Gallery.displayIconSize, height: DesignSystem.Gallery.displayIconSize)
+                        .blur(radius: DesignSystem.Gallery.blurRadius)
                         .scaleEffect(isAnimating ? 1.2 : 0.8)
                     
                     Image(systemName: medal.icon)
-                        .font(.system(size: AppUI.Gallery.mainIconSize, weight: .black))
+                        .font(.system(size: DesignSystem.Gallery.mainIconSize, weight: .black))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [baseColor, baseColor.opacity(0.6)],
@@ -96,12 +96,12 @@ struct MedalRewardPopup: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: baseColor.opacity(AppUI.secondaryOpacity / 1.6), radius: AppUI.loosePadding, y: AppUI.standardPadding) // 0.5, 20, 10
+                        .shadow(color: baseColor.opacity(DesignSystem.secondaryOpacity / 1.6), radius: DesignSystem.loosePadding, y: DesignSystem.standardPadding) // 0.5, 20, 10
                         .scaleEffect(isAnimating ? 1.1 : 0.9)
                 }
-                .padding(.top, AppUI.Gallery.blurRadius)
+                .padding(.top, DesignSystem.Gallery.blurRadius)
                 
-                VStack(spacing: AppUI.medium) {
+                VStack(spacing: DesignSystem.medium) {
                     Text(Localized.tr("medal.congrats"))
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
@@ -115,7 +115,7 @@ struct MedalRewardPopup: View {
                         .font(.body)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, AppUI.Metrics.heroValueSize)
+                        .padding(.horizontal, DesignSystem.Metrics.heroValueSize)
                 }
                 
                 Button(action: onDismiss) {
@@ -123,30 +123,30 @@ struct MedalRewardPopup: View {
                     Text(L10n.Common.tr("awesome"))
                         .font(.headline)
                         .foregroundStyle(.white)
-                        .frame(width: AppUI.Gallery.callToActionWidth, height: AppUI.Gallery.callToActionHeight)
+                        .frame(width: DesignSystem.Gallery.callToActionWidth, height: DesignSystem.Gallery.callToActionHeight)
                         .background {
                             Capsule()
-                                .fill(LinearGradient(colors: [baseColor, baseColor.opacity(AppUI.secondaryOpacity)], startPoint: .leading, endPoint: .trailing))
+                                .fill(LinearGradient(colors: [baseColor, baseColor.opacity(DesignSystem.secondaryOpacity)], startPoint: .leading, endPoint: .trailing))
                         }
-                        .shadow(color: baseColor.opacity(AppUI.disabledOpacity), radius: AppUI.standardRadius, y: AppUI.microRadius + AppUI.atomic) // 0.3, 10, 5
+                        .shadow(color: baseColor.opacity(DesignSystem.disabledOpacity), radius: DesignSystem.standardRadius, y: DesignSystem.microRadius + DesignSystem.atomic) // 0.3, 10, 5
                 }
-                .padding(.bottom, AppUI.Gallery.blurRadius)
+                .padding(.bottom, DesignSystem.Gallery.blurRadius)
                 .scaleEffect(isAnimating ? 1 : 0.9)
             }
             .background(
-                RoundedRectangle(cornerRadius: AppUI.Gallery.containerRadius)
+                RoundedRectangle(cornerRadius: DesignSystem.Gallery.containerRadius)
                     .fill(Color.appCard)
                     .overlay(
-                        RoundedRectangle(cornerRadius: AppUI.Gallery.containerRadius)
-                            .stroke(LinearGradient(colors: [.white.opacity(AppUI.dimmedOpacity), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: AppUI.borderWidth)
+                        RoundedRectangle(cornerRadius: DesignSystem.Gallery.containerRadius)
+                            .stroke(LinearGradient(colors: [.appGloss.opacity(DesignSystem.dimmedOpacity), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: DesignSystem.borderWidth)
                     )
             )
-            .padding(AppUI.Gallery.containerPadding)
+            .padding(DesignSystem.Gallery.containerPadding)
             .scaleEffect(isAnimating ? 1 : 0.5)
             .opacity(isAnimating ? 1 : 0)
         }
         .onAppear {
-            withAnimation(.spring(response: AppUI.Animation.springResponse * 2, dampingFraction: AppUI.Animation.springDamping - 0.1, blendDuration: 0)) {
+            withAnimation(.spring(response: DesignSystem.Animation.springResponse * 2, dampingFraction: DesignSystem.Animation.springDamping - 0.1, blendDuration: 0)) {
                 isAnimating = true
             }
         }

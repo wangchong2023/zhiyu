@@ -599,18 +599,22 @@
     "misc.processing": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Processing"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "处理中"
-          }
-        }
+        "en": { "stringUnit": { "state": "translated", "value": "Processing" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "处理中" } }
+      }
+    },
+    "misc.login": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Login" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "登录" } }
+      }
+    },
+    "misc.register": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Register" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "注册" } }
       }
     },
     "misc.history.count": {
@@ -999,6 +1003,34 @@
             "value": "无"
           }
         }
+      }
+    },
+    "misc.settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Settings" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "应用设置" } }
+      }
+    },
+    "misc.lock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Lock" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "锁定应用" } }
+      }
+    },
+    "misc.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Help" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "操作指引" } }
+      }
+    },
+    "misc.about": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "About" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "关于智宇" } }
       }
     }
   },

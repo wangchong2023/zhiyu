@@ -76,6 +76,17 @@ public enum Spacing {
     /// 展示型图标尺寸 (48px)
     public static let iconDisplay: CGFloat = 48
     
+    /// 小型图标尺寸别名 (16px)
+    public static let smallIconSize: CGFloat = 16
+    /// 标题图标尺寸 (24px)
+    public static let titleIconSize: CGFloat = 24
+    /// 大型图标尺寸别名 (28px)
+    public static let largeIconSize: CGFloat = 28
+    /// 微型图标尺寸 (14px)
+    public static let microIconSize: CGFloat = 14
+    /// 说明文字图标尺寸 (12px)
+    public static let captionIconSize: CGFloat = 12
+    
     // MARK: - 4. 布局模式 (Layout Patterns)
     
     /// 全局布局规范
@@ -118,6 +129,10 @@ public enum Spacing {
         public static let largeIconSize: CGFloat = 24
         /// 返回按钮点击区域宽度
         public static let backButtonWidth: CGFloat = 40
+        /// 按压缩放比例
+        public static let pressScale: CGFloat = 0.96
+        /// 标准动画时长
+        public static let animationDuration: Double = 0.2
     }
     
     /// 展示模式规范
@@ -135,6 +150,8 @@ public enum Spacing {
         public static let containerRadius: CGFloat = 24
         public static let containerPadding: CGFloat = 32
         public static let showcaseRadius: CGFloat = 20
+        /// 悬停缩放比例
+        public static let hoverScale: CGFloat = 1.05
     }
     
     /// 时间轴展示规范
@@ -180,6 +197,12 @@ public enum Spacing {
             public static let baseNodeSize: CGFloat = 3.5
             public static let minNodeSize: CGFloat = 3.0
             public static let maxNodeSize: CGFloat = 10.0
+            /// 节点连接权重
+            public static let nodeLinkWeight: Double = 0.5
+            /// 标签偏移量
+            public static let labelOffset: Float = 2.0
+            /// 标签缩放比例
+            public static let labelScale: Float = 1.0
             public static let edgeRadius: CGFloat = 0.1
             public static let edgeRadiusHighlighted: CGFloat = 0.3
             public static let starRadius: CGFloat = 0.1
@@ -218,6 +241,33 @@ public enum Spacing {
         public static let emptyStateVerticalPadding: CGFloat = 24
         public static let sectionSpacing: CGFloat = 24
         public static let maxTagCloudHeight: CGFloat = 300
+        
+        /// 标题字体大小 (20px)
+        public static let titleFontSize: CGFloat = 20
+        /// 小型标题字体大小 (17px)
+        public static let titleSmallFontSize: CGFloat = 17
+        /// 最大面包屑层级
+        public static let maxBreadcrumbCount: Int = 5
+        /// 最大协作编辑历史记录
+        public static let maxCollabEditHistory: Int = 50
+        /// 协作编辑预览长度
+        public static let maxCollabEditPreviewLength: Int = 100
+        /// 知识增长天数限制
+        public static let knowledgeGrowthDaysLimit: Int = 30
+        /// 图谱引导触发阈值
+        public static let graphCoachMarkThreshold: Int = 5
+        /// 最大报告导出页面数
+        public static let maxReportPageExportCount: Int = 20
+        /// 报告内容预览长度
+        public static let reportContentPreviewLength: Int = 200
+        /// 报告内容行数限制
+        public static let maxReportContentLineLimit: Int = 3
+        /// 仪表盘最大项数
+        public static let maxDashboardItems: Int = 8
+        /// 最近记录最大项数
+        public static let maxRecentItems: Int = 10
+        /// 缺省页图标不透明度
+        public static let emptyStateIconOpacity: CGFloat = 0.3
     }
     
     /// 任务管理中心规范
@@ -272,6 +322,12 @@ public enum Spacing {
         public static let desktopSheetMinHeight: CGFloat = 600
         public static let glowBlurSmall: CGFloat = 4
         public static let glowBlurMedium: CGFloat = 8
+        /// 中型发光缩放
+        public static let glowScaleMedium: CGFloat = 1.2
+        /// 大型发光缩放
+        public static let glowScaleLarge: CGFloat = 1.5
+        /// 呼吸缩放
+        public static let pulseScale: CGFloat = 1.1
     }
     
     // MARK: - 5. 视觉风格常数 (Styling)
@@ -282,4 +338,6 @@ public enum Spacing {
     public static let shadowRadius: CGFloat = 10
     /// 标准阴影 Y 轴偏移
     public static let shadowY: CGFloat = 4
+    /// 标准阴影不透明度
+    public static let shadowOpacity: Double = 0.12
 }

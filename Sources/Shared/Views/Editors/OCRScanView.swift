@@ -78,7 +78,7 @@ struct OCRScanView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.appAccent)
-                            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                         }
                         .padding(.top, 10)
                     }

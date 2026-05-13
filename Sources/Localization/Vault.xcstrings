@@ -1,0 +1,83 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "vault.homeTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notebooks" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "笔记本" } }
+      }
+    },
+    "vault.displayMode.grid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Grid" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "网格展示" } }
+      }
+    },
+    "vault.displayMode.list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "List" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "列表展示" } }
+      }
+    },
+    "vault.welcome" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Welcome Back" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "欢迎回来" } }
+      }
+    },
+    "vault.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a notebook to start exploring" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择一个笔记本开始探索" } }
+      }
+    },
+    "vault.new" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Notebook" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "新建笔记本" } }
+      }
+    },
+    "vault.create" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Create" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "创建" } }
+      }
+    },
+    "vault.namePlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notebook Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "笔记本名称" } }
+      }
+    },
+    "vault.rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重命名" } }
+      }
+    },
+    "vault.switch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Switch Notebook" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "切换笔记本" } }
+      }
+    },
+    "vault.page.knowledge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pages" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "个知识点" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

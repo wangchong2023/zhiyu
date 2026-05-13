@@ -57,9 +57,9 @@ struct OnDeviceTestView: View {
                 .frame(height: 80)
                 .padding(8)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppUI.standardRadius)
+                    RoundedRectangle(cornerRadius: Spacing.standardRadius)
                         .strokeBorder(Color.appAccent.opacity(0.3), lineWidth: 1)
                 )
         }
@@ -80,7 +80,7 @@ struct OnDeviceTestView: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(isGenerating ? Color.appSecondary : Color.appAccent)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
         }
         .disabled(isGenerating || prompt.isEmpty)
     }
@@ -120,7 +120,7 @@ struct OnDeviceTestView: View {
                 .frame(maxHeight: 300)
                 .padding()
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
             }
         }
     }
@@ -185,11 +185,11 @@ struct OnDeviceModelRow: View {
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+            RoundedRectangle(cornerRadius: Spacing.cardRadius)
                 .fill(isSelected ? Color.appAccent.opacity(0.08) : Color.appCard)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+            RoundedRectangle(cornerRadius: Spacing.cardRadius)
                 .strokeBorder(isSelected ? Color.appAccent.opacity(0.3) : Color.clear, lineWidth: 1)
         )
         .onTapGesture { onSelect() }

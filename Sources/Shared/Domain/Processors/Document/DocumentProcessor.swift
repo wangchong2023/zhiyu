@@ -38,8 +38,10 @@ struct DocumentProcessorFactory {
 // MARK: - 具体处理器代理 (适配现有实现)
 
 struct PDFProcessorProxy: DocumentProcessor {
+    @Inject private var pdfService: any PDFServiceProtocol
+
     func extractText(from url: URL) async throws -> String {
-        guard let text = await PDFProcessor.shared.extractText(from: url) else {
+        guard let text = await pdfService.extractText(from: url) else {
             throw ProcessorError.extractionFailed
         }
         return text

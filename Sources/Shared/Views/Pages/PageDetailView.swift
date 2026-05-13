@@ -4,7 +4,7 @@
 // 功能说明: 知识详情页视图，支持 Markdown 编辑、AI 洞察及关联分析。
 // 核心原则：
 // 1. 单一布局源：完全遵循 AppUI 的 Layout 和 Metrics 系统。
-// 2. 图标标准化：使用 AppUI.Icons 统一管理所有 SF Symbols。
+// 2. 图标标准化：使用 DesignSystem.Icons 统一管理所有 SF Symbols。
 // 版本: 1.1 (工业级布局重构版)
 // 修改记录:
 //   - 2026-05-07: 移除硬编码颜色与间距，对接全局 AppUI 治理体系。
@@ -30,14 +30,14 @@ struct PageDetailView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .automatic) {
-            HStack(spacing: AppUI.small) {
+            HStack(spacing: DesignSystem.small) {
                 pinButton
                 backlinksButton
                 editButton
                 aiMenuButton
             }
-            .padding(.horizontal, AppUI.small)
-            .padding(.vertical, AppUI.tiny)
+            .padding(.horizontal, DesignSystem.small)
+            .padding(.vertical, DesignSystem.tiny)
             .background(Color.appCard.opacity(0.5))
             .clipShape(Capsule())
             .overlay(Capsule().stroke(Color.appBorder.opacity(0.3), lineWidth: 1))
@@ -46,7 +46,7 @@ struct PageDetailView: View {
     
     private var pinButton: some View {
         Button(action: { viewModel.togglePin() }) {
-            Image(systemName: viewModel.page.isPinned ? AppUI.Icons.pin + ".fill" : AppUI.Icons.pin)
+            Image(systemName: viewModel.page.isPinned ? DesignSystem.Icons.pin + ".fill" : DesignSystem.Icons.pin)
                 .foregroundStyle(viewModel.page.isPinned ? .orange : .appSecondary)
         }
         .accessibilityLabel(viewModel.page.isPinned ? Localized.tr("page.unpin") : Localized.tr("page.pin"))
@@ -54,8 +54,8 @@ struct PageDetailView: View {
     
     private var backlinksButton: some View {
         Button(action: { viewModel.showBacklinks.toggle() }) {
-            HStack(spacing: AppUI.tiny) {
-                Image(systemName: AppUI.Icons.link)
+            HStack(spacing: DesignSystem.tiny) {
+                Image(systemName: DesignSystem.Icons.link)
                 Text("\(viewModel.backlinks.count)")
             }
             .foregroundStyle(.appText)
@@ -72,7 +72,7 @@ struct PageDetailView: View {
             }
             viewModel.isEditing.toggle()
         }) {
-            Image(systemName: viewModel.isEditing ? "checkmark.circle.fill" : AppUI.Icons.edit + ".circle.fill")
+            Image(systemName: viewModel.isEditing ? "checkmark.circle.fill" : DesignSystem.Icons.edit + ".circle.fill")
                 .foregroundStyle(viewModel.isEditing ? .green : .appText)
         }
         .accessibilityLabel(viewModel.isEditing ? Localized.tr("page.doneEditing") : Localized.tr("page.edit"))
@@ -81,7 +81,7 @@ struct PageDetailView: View {
     private var aiMenuButton: some View {
         #if os(watchOS)
         Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
-            Image(systemName: AppUI.Icons.sparkles)
+            Image(systemName: DesignSystem.Icons.sparkles)
                 .foregroundStyle(.appAccent)
         }
         .disabled(viewModel.isEditing)
@@ -116,7 +116,7 @@ struct PageDetailView: View {
             
             Divider()
             Button(action: { viewModel.showSnapshotHistory = true }) {
-                Label(Localized.tr("page.history"), systemImage: AppUI.Icons.history)
+                Label(Localized.tr("page.history"), systemImage: DesignSystem.Icons.history)
             }
             Button(action: { expandStub() }) {
                 Label(Localized.tr("page.expandStub"), systemImage: "text.badge.plus")
@@ -125,7 +125,7 @@ struct PageDetailView: View {
                 Label(Localized.tr("page.findLinks"), systemImage: "link.badge.plus")
             }
         } label: {
-            Image(systemName: AppUI.Icons.sparkles)
+            Image(systemName: DesignSystem.Icons.sparkles)
                 .foregroundStyle(.appAccent)
         }
         .disabled(viewModel.isEditing)
@@ -144,13 +144,13 @@ struct PageDetailView: View {
                         if aiStore.isProcessingPageAI || aiStore.activePageAIResult != nil {
                             aiResultDisplaySection
                                 .id("aiResultSection")
-                                .padding(.bottom, AppUI.standardPadding)
+                                .padding(.bottom, DesignSystem.standardPadding)
                         }
                     // Content
                     Group {
                         if viewModel.isEditing {
                             MarkdownEditorView(page: $viewModel.page, isEditing: $viewModel.isEditing)
-                                .padding(.top, AppUI.wide)
+                                .padding(.top, DesignSystem.wide)
                         } else if viewModel.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             emptyStateView
                         } else {
@@ -174,7 +174,7 @@ struct PageDetailView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .frame(maxWidth: AppUI.Layout.maxReadWidth)
+        .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
         .background(PageBackgroundView(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -225,10 +225,10 @@ struct PageDetailView: View {
                 }
 
                 PageDetailHeader(page: viewModel.page, heroNamespace: heroNamespace)
-                    .padding(.top, router.navigationHistory.isEmpty ? AppUI.Layout.tightPadding : 0)
+                    .padding(.top, router.navigationHistory.isEmpty ? DesignSystem.Layout.tightPadding : 0)
                     .background(.ultraThinMaterial)
             }
-            .frame(maxWidth: AppUI.Layout.maxReadWidth)
+            .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
             .overlay(
                 Divider().background(Color.appBorder),
                 alignment: .bottom
@@ -256,9 +256,9 @@ struct PageDetailView: View {
     @ViewBuilder
     private var aiResultDisplaySection: some View {
         if aiStore.isProcessingPageAI || aiStore.activePageAIResult != nil {
-            VStack(alignment: .leading, spacing: AppUI.medium) {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 HStack {
-                    Image(systemName: AppUI.Icons.sparkles)
+                    Image(systemName: DesignSystem.Icons.sparkles)
                         .foregroundStyle(.appAccent)
                     Text(Localized.tr("page.ai.labOutput"))
                         .font(.headline)
@@ -276,7 +276,7 @@ struct PageDetailView: View {
                                     .font(.caption)
                                     .foregroundStyle(.appAccent)
                             }
-                            .padding(.trailing, AppUI.small)
+                            .padding(.trailing, DesignSystem.small)
                         }
                         
                         Button(action: { 
@@ -297,7 +297,7 @@ struct PageDetailView: View {
                 }
                 
                 if aiStore.isProcessingPageAI {
-                    VStack(alignment: .leading, spacing: AppUI.medium) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
                         AppSkeleton(height: 20)
                             .frame(width: 200)
                         AppSkeleton(height: 120)
@@ -316,9 +316,9 @@ struct PageDetailView: View {
     }
     
     private var emptyStateView: some View {
-        VStack(spacing: AppUI.medium) {
+        VStack(spacing: DesignSystem.medium) {
             Image(systemName: "pencil.line")
-                .font(.system(size: AppUI.huge))
+                .font(.system(size: DesignSystem.huge))
                 .foregroundStyle(.appSecondary)
             Text(Localized.tr("page.empty"))
                 .font(.subheadline)
@@ -326,10 +326,10 @@ struct PageDetailView: View {
             Text(Localized.tr("page.emptyHint"))
                 .font(.caption)
                 .foregroundStyle(.appAccent.opacity(0.7))
-                .padding(.horizontal, AppUI.wide)
-                .padding(.vertical, AppUI.small)
+                .padding(.horizontal, DesignSystem.wide)
+                .padding(.vertical, DesignSystem.small)
                 .background(Color.appAccent.opacity(0.06))
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
         .frame(maxWidth: .infinity, minHeight: 200)
         .padding()
@@ -338,7 +338,7 @@ struct PageDetailView: View {
     private var provenanceSection: some View {
         Group {
             if let sourceURL = viewModel.page.sourceURL, let url = URL(string: sourceURL) {
-                VStack(alignment: .leading, spacing: AppUI.tightPadding) {
+                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                     HStack {
                         Image(systemName: "safari")
                             .foregroundStyle(.appAccent)
@@ -347,7 +347,7 @@ struct PageDetailView: View {
                             .foregroundStyle(.appText)
                         Spacer()
                         Link(destination: url) {
-                            HStack(spacing: AppUI.tiny) {
+                            HStack(spacing: DesignSystem.tiny) {
                                 Text(Localized.tr("page.source.open"))
                                 Image(systemName: "arrow.up.right.circle")
                             }
@@ -367,10 +367,10 @@ struct PageDetailView: View {
                             Text(snippet)
                                 .font(.system(size: 11, design: .monospaced))
                                 .foregroundStyle(.appSecondary)
-                                .padding(AppUI.small)
+                                .padding(DesignSystem.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color.appCard)
-                                .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                                 .lineLimit(3)
                         }
                     }
@@ -386,14 +386,14 @@ struct PageDetailView: View {
     private var semanticRecommendationsSection: some View {
         Group {
             if !recommendations.isEmpty {
-                VStack(alignment: .leading, spacing: AppUI.medium) {
-                    HStack(spacing: AppUI.small) {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    HStack(spacing: DesignSystem.small) {
                         ZStack {
                             Circle()
                                 .fill(Color.appAccent.opacity(0.1))
                                 .frame(width: 24, height: 24)
-                            Image(systemName: AppUI.Icons.sparkles)
-                                .font(.system(size: AppUI.iconTiny))
+                            Image(systemName: DesignSystem.Icons.sparkles)
+                                .font(.system(size: DesignSystem.iconTiny))
                                 .foregroundStyle(.appAccent)
                         }
                         
@@ -406,9 +406,9 @@ struct PageDetailView: View {
                                 .foregroundStyle(.appSecondary)
                         }
                     }
-                    .padding(.bottom, AppUI.tiny)
+                    .padding(.bottom, DesignSystem.tiny)
                     
-                    VStack(spacing: AppUI.tightPadding) {
+                    VStack(spacing: DesignSystem.tightPadding) {
                         ForEach(recommendations) { recPage in
                             recommendationRow(for: recPage)
                         }
@@ -416,11 +416,11 @@ struct PageDetailView: View {
                 }
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: AppUI.largeRadius)
+                    RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                         .fill(Color.appAccent.opacity(0.03))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppUI.largeRadius)
+                    RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                         .stroke(
                             LinearGradient(colors: [.appAccent.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing),
                             lineWidth: 1
@@ -449,11 +449,11 @@ struct PageDetailView: View {
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
-            .padding(AppUI.medium)
+            .padding(DesignSystem.medium)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.tightPadding))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding))
             .overlay(
-                RoundedRectangle(cornerRadius: AppUI.tightPadding)
+                RoundedRectangle(cornerRadius: DesignSystem.tightPadding)
                     .stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
             )
         }
@@ -461,9 +461,9 @@ struct PageDetailView: View {
     }
     
     private var backlinksSection: some View {
-        VStack(alignment: .leading, spacing: AppUI.medium) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
-                Image(systemName: AppUI.Icons.link)
+                Image(systemName: DesignSystem.Icons.link)
                     .foregroundStyle(.appAccent)
                 Text(Localized.tr("page.backlinks"))
                     .font(.headline)
@@ -477,16 +477,16 @@ struct PageDetailView: View {
                 Text(Localized.tr("page.noBackLinks"))
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
-                    .padding(.vertical, AppUI.small)
+                    .padding(.vertical, DesignSystem.small)
             } else {
                 ForEach(viewModel.backlinks) { linkedPage in
                     NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
-                        HStack(spacing: AppUI.medium) {
+                        HStack(spacing: DesignSystem.medium) {
                             Image(systemName: linkedPage.displayIcon)
                                 .foregroundStyle(Color.fromModelColorName(linkedPage.type.colorName))
                                 .frame(width: 28, height: 28)
                                 .background(Color.fromModelColorName(linkedPage.type.colorName).opacity(0.15))
-                                .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
 
                             Text(linkedPage.title)
                                 .font(.subheadline)
@@ -498,10 +498,10 @@ struct PageDetailView: View {
                                 .font(.caption2)
                                 .foregroundStyle(.appSecondary)
                         }
-                        .padding(.horizontal, AppUI.tightPadding)
-                        .padding(.vertical, AppUI.small)
+                        .padding(.horizontal, DesignSystem.tightPadding)
+                        .padding(.vertical, DesignSystem.small)
                         .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(Localized.trf("page.backlinkAccessibility", linkedPage.title, linkedPage.type.displayName))
@@ -529,13 +529,13 @@ struct AILabSection: View {
     @Environment(AIWorkflowStore.self) var aiStore
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.medium) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Label(Localized.tr("page.ai.lab"), systemImage: "flask.fill")
                 .font(.headline)
                 .foregroundStyle(.appAccent)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppUI.small) {
+                HStack(spacing: DesignSystem.small) {
                     AIActionButton(title: Localized.tr("page.ai.summary"), icon: "wand.and.stars") {
                         aiStore.runPageAISummary(content: page.content)
                     }
@@ -550,7 +550,7 @@ struct AILabSection: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
 }
 
@@ -561,17 +561,17 @@ private struct AIActionButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: AppUI.tiny) {
+            VStack(spacing: DesignSystem.tiny) {
                 Image(systemName: icon)
                     .font(.title3)
                 Text(title)
                     .font(.caption2.weight(.medium))
             }
-            .padding(.horizontal, AppUI.medium)
-            .padding(.vertical, AppUI.small)
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.small)
             .background(Color.appAccent.opacity(0.1))
             .foregroundStyle(.appAccent)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
     }
 }

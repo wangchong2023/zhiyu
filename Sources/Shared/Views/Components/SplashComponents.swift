@@ -73,12 +73,12 @@ struct SplashBackgroundView: View {
                 if geo.size.width > 1 && geo.size.height > 1 {
                     ForEach(Array(stars.enumerated()), id: \.offset) { index, star in
                         Circle()
-                            .fill(Color.white)
+                            .fill(.appGloss)
                             .frame(width: star.size, height: star.size)
                             .position(x: geo.size.width * star.x, y: geo.size.height * star.y)
-                            .opacity(starTwinkle ? AppUI.fullOpacity * 0.7 : AppUI.disabledOpacity)
+                            .opacity(starTwinkle ? DesignSystem.fullOpacity * 0.7 : DesignSystem.disabledOpacity)
                             .animation(
-                                .easeInOut(duration: AppUI.Animation.looseDuration + star.delay)
+                                .easeInOut(duration: DesignSystem.Animation.looseDuration + star.delay)
                                 .repeatForever(autoreverses: true)
                                 .delay(star.delay),
                                 value: starTwinkle
@@ -93,8 +93,8 @@ struct SplashBackgroundView: View {
                     ForEach(Array(connections.enumerated()), id: \.offset) { _, conn in
                         let fromNode = networkNodes[conn.from]
                         let toNode = networkNodes[conn.to]
-                        let lineColor1 = fromNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
-                        let lineColor2 = toNode.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 1.2)
+                        let lineColor1 = fromNode.isAccent ? Color.appAccent.opacity(DesignSystem.disabledOpacity) : Color.appGloss.opacity(DesignSystem.glassOpacity * 1.2)
+                        let lineColor2 = toNode.isAccent ? Color.appAccent.opacity(DesignSystem.disabledOpacity) : Color.appGloss.opacity(DesignSystem.glassOpacity * 1.2)
                         
                         Path { path in
                             path.move(to: CGPoint(
@@ -112,7 +112,7 @@ struct SplashBackgroundView: View {
                                 startPoint: .init(x: fromNode.x, y: fromNode.y),
                                 endPoint: .init(x: toNode.x, y: toNode.y)
                             ),
-                            lineWidth: AppUI.borderWidth * 0.8
+                            lineWidth: DesignSystem.borderWidth * 0.8
                         )
                     }
                 }
@@ -122,12 +122,12 @@ struct SplashBackgroundView: View {
             GeometryReader { geo in
                 if geo.size.width > 1 && geo.size.height > 1 {
                     ForEach(Array(networkNodes.enumerated()), id: \.offset) { index, node in
-                        let nodeColor1 = node.isAccent ? Color.appAccent.opacity(AppUI.fullOpacity * 0.9) : Color.white.opacity(AppUI.fullOpacity * 0.8)
-                        let nodeColor2 = node.isAccent ? Color.appAccent.opacity(AppUI.disabledOpacity) : Color.white.opacity(AppUI.glassOpacity * 2)
+                        let nodeColor1 = node.isAccent ? Color.appAccent.opacity(DesignSystem.fullOpacity * 0.9) : Color.appGloss.opacity(DesignSystem.fullOpacity * 0.8)
+                        let nodeColor2 = node.isAccent ? Color.appAccent.opacity(DesignSystem.disabledOpacity) : Color.appGloss.opacity(DesignSystem.glassOpacity * 2)
                         
-                        let nodeScale = nodeGlow ? AppUI.fullOpacity : AppUI.fullOpacity * 0.5
-                        let nodeOpacity = nodeGlow ? AppUI.fullOpacity : AppUI.disabledOpacity
-                        let animDuration = AppUI.Animation.slowDuration + Double(index) * 0.1
+                        let nodeScale = nodeGlow ? DesignSystem.fullOpacity : DesignSystem.fullOpacity * 0.5
+                        let nodeOpacity = nodeGlow ? DesignSystem.fullOpacity : DesignSystem.disabledOpacity
+                        let animDuration = DesignSystem.Animation.slowDuration + Double(index) * 0.1
                         let nodeAnim = SwiftUI.Animation.easeInOut(duration: animDuration)
                             .repeatForever(autoreverses: true)
                             .delay(Double(index) * 0.08)
@@ -155,17 +155,17 @@ struct SplashBackgroundView: View {
                 Spacer()
                 RadialGradient(
                     colors: [
-                        Color(red: 1.0, green: 0.85, blue: 0.5).opacity(AppUI.glassOpacity * 2.5), // 0.25
-                        Color(red: 0.9, green: 0.65, blue: 0.3).opacity(AppUI.glassOpacity * 1.2), // 0.12
-                        Color(red: 0.7, green: 0.4, blue: 0.2).opacity(AppUI.shadowOpacity / 2), // 0.05
+                        Color(red: 1.0, green: 0.85, blue: 0.5).opacity(DesignSystem.glassOpacity * 2.5), // 0.25
+                        Color(red: 0.9, green: 0.65, blue: 0.3).opacity(DesignSystem.glassOpacity * 1.2), // 0.12
+                        Color(red: 0.7, green: 0.4, blue: 0.2).opacity(DesignSystem.shadowOpacity / 2), // 0.05
                         .clear
                     ],
                     center: .center,
-                    startRadius: AppUI.loosePadding, // 20
-                    endRadius: AppUI.Metrics.heroValueSize * 9.6 // 250
+                    startRadius: DesignSystem.loosePadding, // 20
+                    endRadius: DesignSystem.Metrics.heroValueSize * 9.6 // 250
                 )
-                .frame(height: AppUI.Metrics.heroValueSize * 11.5) // 300
-                .offset(y: AppUI.Metrics.heroValueSize * 3) // 80
+                .frame(height: DesignSystem.Metrics.heroValueSize * 11.5) // 300
+                .offset(y: DesignSystem.Metrics.heroValueSize * 3) // 80
             }
 
             // 书本轮廓 — 极简线条
@@ -173,33 +173,33 @@ struct SplashBackgroundView: View {
                 Spacer()
                 ZStack {
                     // 书本主体
-                    RoundedRectangle(cornerRadius: AppUI.tiny)
-                        .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
-                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.iconDisplay) // 60, 44
+                    RoundedRectangle(cornerRadius: DesignSystem.tiny)
+                        .stroke(Color.appAccent.opacity(DesignSystem.disabledOpacity * 1.15), lineWidth: DesignSystem.borderWidth * 1.2) // 0.35, 1.2
+                        .frame(width: DesignSystem.Metrics.iconBoxSize + DesignSystem.medium, height: DesignSystem.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(-8))
-                        .offset(x: -AppUI.atomic) // -2
+                        .offset(x: -DesignSystem.atomic) // -2
 
-                    RoundedRectangle(cornerRadius: AppUI.tiny)
-                        .stroke(Color.appAccent.opacity(AppUI.disabledOpacity * 1.15), lineWidth: AppUI.borderWidth * 1.2) // 0.35, 1.2
-                        .frame(width: AppUI.Metrics.iconBoxSize + AppUI.medium, height: AppUI.iconDisplay) // 60, 44
+                    RoundedRectangle(cornerRadius: DesignSystem.tiny)
+                        .stroke(Color.appAccent.opacity(DesignSystem.disabledOpacity * 1.15), lineWidth: DesignSystem.borderWidth * 1.2) // 0.35, 1.2
+                        .frame(width: DesignSystem.Metrics.iconBoxSize + DesignSystem.medium, height: DesignSystem.iconDisplay) // 60, 44
                         .rotationEffect(.degrees(8))
-                        .offset(x: AppUI.atomic) // 2
+                        .offset(x: DesignSystem.atomic) // 2
 
                     // 书脊
                     Capsule()
-                        .fill(Color.appAccent.opacity(AppUI.glassOpacity * 2)) // 0.2
-                        .frame(width: AppUI.atomic + 1, height: AppUI.iconDisplay) // 3, 44
+                        .fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 2)) // 0.2
+                        .frame(width: DesignSystem.atomic + 1, height: DesignSystem.iconDisplay) // 3, 44
 
                     // 从书中升起的光粒子
                     ForEach(0..<5, id: \.self) { i in
                         Circle()
-                            .fill(Color.appAccent.opacity(AppUI.glassOpacity * 4)) // 0.4
-                            .frame(width: AppUI.atomic + 1, height: AppUI.atomic + 1) // 3, 3
+                            .fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 4)) // 0.4
+                            .frame(width: DesignSystem.atomic + 1, height: DesignSystem.atomic + 1) // 3, 3
                             .offset(
-                                x: CGFloat(i - 2) * (AppUI.small + AppUI.tiny), // 14
-                                y: nodeGlow ? -AppUI.Metrics.iconBoxSize * 1.35 - CGFloat(i) * 15 : -AppUI.loosePadding // -60, -20
+                                x: CGFloat(i - 2) * (DesignSystem.small + DesignSystem.tiny), // 14
+                                y: nodeGlow ? -DesignSystem.Metrics.iconBoxSize * 1.35 - CGFloat(i) * 15 : -DesignSystem.loosePadding // -60, -20
                             )
-                            .opacity(nodeGlow ? AppUI.fullOpacity * 0.6 : AppUI.glassOpacity) // 0.6, 0.1
+                            .opacity(nodeGlow ? DesignSystem.fullOpacity * 0.6 : DesignSystem.glassOpacity) // 0.6, 0.1
                             .animation(
                                 .easeOut(duration: 3.0)
                                 .repeatForever(autoreverses: false)
@@ -208,7 +208,7 @@ struct SplashBackgroundView: View {
                             )
                     }
                 }
-                .padding(.bottom, AppUI.Metrics.heroValueSize * 7) // 180
+                .padding(.bottom, DesignSystem.Metrics.heroValueSize * 7) // 180
             }
         }
     }

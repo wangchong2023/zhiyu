@@ -113,7 +113,9 @@ sequenceDiagram
         - `Core`: 服务容器与基础协议 (ServiceContainer, Protocols)。
         - `System`: 任务调度与系统事件 (ActivityService, WikiEventBus)。
     - **Views**: SwiftUI 响应式通用视图。
-        - `Components`: 原子化 UI 组件。
+        - `UIComponents`: UI 组件体系。
+            - `DesignSystem`: 存放公共统一设计标准（如全局的 Colors, Spacing, Typography 等）。
+            - `Layouts`: 存放具体界面的特殊定制标准以及通用的布局模版容器（重构时注意保持既有布局效果不变）。
         - `Pages`: 业务功能页面 (PageDetail, GraphView, ChatView)。
         - `Editors`: Markdown 渲染与编辑器。
     - **Infrastructure**: 全局工具与常量 (Utilities, Constants)。

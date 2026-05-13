@@ -6,10 +6,10 @@
 
 | Target | 用途 | 设备族 |
 |--------|------|--------|
-| `KM` | iOS 主应用 | iPhone / iPad |
-| `KMMac` | Mac Catalyst | iPad / Mac |
-| `KMWatch` | watchOS 独立应用 | Apple Watch |
-| `KMTests` | 单元测试 | — |
+| `ZhiYu` | iOS 主应用 | iPhone / iPad |
+| `ZhiYuMac` | Mac Catalyst | iPad / Mac |
+| `ZhiYuWatch` | watchOS 独立应用 | Apple Watch |
+| `ZhiYuTests` | 单元测试 | — |
 
 ### source 分组
 
@@ -17,7 +17,7 @@
 
 ```yaml
 targets:
-  KM:
+  ZhiYu:
     sources:
       - path: Sources
         excludes:
@@ -81,11 +81,11 @@ packages:
 
 ### Colorset 命名
 
-使用 `wiki` 前缀标识应用主题色：
+使用 `app` 前缀标识应用主题色：
 
-- `wikiAccent` — 主题强调色
-- `wikiCard` — 卡片背景色
-- `wikiBackground` — 页面背景色
+- `appAccent` — 主题强调色
+- `appCard` — 卡片背景色
+- `appBackground` — 页面背景色
 
 ### AppIcon
 
@@ -94,20 +94,13 @@ packages:
 
 ## 本地化文件 (.xcstrings)
 
-### 文件分布
+### 策略：分表管理 + 脚本合并
 
-已按业务边界拆分，各自独立：
+详见 [国际化与本地化指南](../Requirements/LOCALIZATION.md)。
 
-| 文件 | 用途 |
-|------|------|
-| `Graph.xcstrings` | 知识图谱视觉表达 |
-| `Settings.xcstrings` | 应用配置、安全与数据管理 |
-| `AITasks.xcstrings` | AI 任务中心及运行时状态反馈 |
-| `InfoPlist.xcstrings` | Info.plist 权限描述文案 |
-
-- `InfoPlist.xcstrings` 只放权限描述文案，不放 UI 文本
-- 新增 UI 字符串放入对应业务域文件，不再有通用 `Localizable.xcstrings`
-- `.strings` / `.stringsdict` 格式已废弃，统一使用 `.xcstrings`
+*   **物理分表**：按业务域（L0-L2）物理拆分为多个 `.xcstrings` 文件。
+*   **自动化同步**：通过 `Tools/update_localization.py` 在发布前将子表词条合并至 `Localizable.xcstrings` 主表。
+*   **禁止直接引用**：View 严禁直接使用硬编码字符串，必须通过类型安全的 `L10n` 结构体访问。
 
 ## 文档文件 (.md)
 

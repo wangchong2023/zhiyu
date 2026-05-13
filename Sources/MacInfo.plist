@@ -51,7 +51,7 @@
 		</dict>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>我们需要使用面容 ID 来保护您的隐私知识库。</string>
+	<string>We need Face ID to protect your private knowledge vault.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>ZhiYu needs microphone access to record voice notes.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

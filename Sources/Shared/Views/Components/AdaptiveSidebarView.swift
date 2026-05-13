@@ -27,6 +27,7 @@ struct AdaptiveSidebarView: View {
             }
             
             Section(Localized.tr("sidebar.tools")) {
+                sidebarRow(for: .chat)
                 sidebarRow(for: .ingest)
                 sidebarRow(for: .search)
                 sidebarRow(for: .graph)
@@ -39,25 +40,23 @@ struct AdaptiveSidebarView: View {
                     Label(L10n.AI.Task.centerTitle, systemImage: "arrow.triangle.2.circlepath")
                 }
             }
-            
-            Section(Localized.tr("sidebar.system")) {
-                sidebarRow(for: .settings)
-            }
         }
         #if !os(watchOS)
         .listStyle(.sidebar)
         #endif
         .navigationTitle(Localized.tr("app.name"))
         .toolbar {
+            #if os(watchOS)
             ToolbarItem(placement: .automatic) {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    store.securityService.lock()
-                }) {
-                    Image(systemName: "lock.fill")
-                        .foregroundStyle(.red.opacity(0.8))
-                }
-                .help(Localized.tr("security.lockVault"))
+                VaultBadge()
+            }
+            #else
+            ToolbarItem(placement: .navigation) {
+                VaultBadge()
+            }
+            #endif
+            ToolbarItem(placement: .automatic) {
+                UserProfileMenu()
             }
         }
     }
@@ -80,13 +79,11 @@ struct AdaptiveDetailView: View {
     @Binding var selectedTab: AppTab
     @Binding var selection: SidebarSelection?
     // // @Binding var languageForceUpdate: Bool
-    @ObservedObject var onboardingService: OnboardingService
     var heroNamespace: Namespace.ID
 
-    init(selectedTab: Binding<AppTab>, selection: Binding<SidebarSelection?>, onboardingService: OnboardingService, heroNamespace: Namespace.ID) {
+    init(selectedTab: Binding<AppTab>, selection: Binding<SidebarSelection?>, heroNamespace: Namespace.ID) {
         self._selectedTab = selectedTab
         self._selection = selection
-        self.onboardingService = onboardingService
         self.heroNamespace = heroNamespace
     }
 
@@ -97,19 +94,14 @@ struct AdaptiveDetailView: View {
                 switch selectedTab {
                 case .knowledge:
                     DetailContentView(selection: $selection, selectedTab: $selectedTab)
+                case .chat:
+                    ChatView(selectedTab: $selectedTab)
                 case .graph:
                     GraphContainerView(heroNamespace: heroNamespace, selectedTab: $selectedTab)
                 case .search:
                     SearchView()
                 case .ingest:
                     IngestView(selectedTab: $selectedTab)
-                case .settings:
-                    // 设置列表已移动至中栏，详情列显示引导或占位
-                    ContentUnavailableView(
-                        Localized.tr("sidebar.settings"),
-                        systemImage: "gearshape.2",
-                        description: Text(Localized.tr("sidebar.settings.placeholder"))
-                    )
                 }
             }
             .navigationDestination(for: AppRoute.self) { route in
@@ -117,6 +109,11 @@ struct AdaptiveDetailView: View {
             }
             .navigationDestination(for: KnowledgePage.self) { page in
                 PageDetailView(page: page)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    VaultBadge()
+                }
             }
         }
     }

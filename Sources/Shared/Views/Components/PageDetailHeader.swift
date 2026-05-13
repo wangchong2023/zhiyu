@@ -43,7 +43,7 @@ struct PageDetailHeader: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
             .background(Color.appCard.opacity(0.4))
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #else
             DisclosureGroup(
                 isExpanded: $isMetaExpanded,
@@ -61,7 +61,7 @@ struct PageDetailHeader: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
             .background(Color.appCard.opacity(0.4))
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #endif
         }
         .padding()

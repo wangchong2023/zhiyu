@@ -1,0 +1,166 @@
+// AppButtons.swift
+//
+// 作者: Wang Chong
+// 功能说明: 本文件定义了智宇 (ZhiYu) 的标准按钮体系，包括主要操作按钮、胶囊形按钮及交互缩放样式。
+// 核心职责：
+// 1. 提供统一样式的交互控件，封装渐变色、加载状态及触感反馈。
+// 2. 支持品牌色主操作按钮及辅助类轻量化按钮。
+// MARK: [PR-03] 统一按钮交互规范，优化点击热区与响应速度
+// 版本: 1.2
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+
+// MARK: - App Primary Button
+
+/// 品牌色主操作按钮
+/// 支持渐变背景、加载指示器及图标显示。
+public struct AppPrimaryButton: View {
+    public let title: String
+    public var icon: String? = nil
+    public var isLoading: Bool = false
+    public var gradientColors: [Color] = [.appAccent, .appAccent.opacity(0.7)]
+    public var maxWidth: CGFloat? = .infinity
+    public let action: () -> Void
+
+    public init(
+        title: String,
+        icon: String? = nil,
+        isLoading: Bool = false,
+        gradientColors: [Color] = [.appAccent, .appAccent.opacity(0.7)],
+        maxWidth: CGFloat? = .infinity,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.icon = icon
+        self.isLoading = isLoading
+        self.gradientColors = gradientColors
+        self.maxWidth = maxWidth
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            HStack(spacing: Spacing.small) {
+                if isLoading {
+                    ProgressView()
+                        .tint(.white)
+                } else if let icon = icon {
+                    Image(systemName: icon)
+                }
+                Text(title)
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: maxWidth)
+            .padding()
+            .background(
+                LinearGradient(colors: gradientColors, startPoint: .leading, endPoint: .trailing)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
+            .foregroundStyle(.white)
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+}
+
+// MARK: - App Bordered Button
+
+/// 品牌色边框按钮
+/// 适用于次要但依然重要的操作，替代系统默认的 .bordered 样式以解决白边问题。
+public struct AppBorderedButton: View {
+    public let title: String
+    public var icon: String? = nil
+    public var color: Color = .appAccent
+    public var maxWidth: CGFloat? = .infinity
+    public let action: () -> Void
+
+    public init(
+        title: String,
+        icon: String? = nil,
+        color: Color = .appAccent,
+        maxWidth: CGFloat? = .infinity,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.icon = icon
+        self.color = color
+        self.maxWidth = maxWidth
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            HStack(spacing: Spacing.small) {
+                if let icon = icon {
+                    Image(systemName: icon)
+                }
+                Text(title)
+                    .fontWeight(.medium)
+            }
+            .frame(maxWidth: maxWidth)
+            .padding(.vertical, Spacing.medium)
+            .padding(.horizontal, Spacing.large)
+            .background(color.opacity(0.08))
+            .overlay(
+                RoundedRectangle(cornerRadius: Spacing.cardRadius)
+                    .stroke(color.opacity(0.4), lineWidth: Spacing.borderWidth)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
+            .foregroundStyle(color)
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+}
+
+// MARK: - App Capsule Button
+
+/// 胶囊形展示组件 (View)
+/// 适用于预览视图、详情页操作或辅助性质的功能标识。
+public struct AppCapsuleButton: View {
+    public let title: String
+    public var icon: String? = nil
+    public var isPrimary: Bool = true
+    public var color: Color = .appAccent
+
+    public init(
+        title: String,
+        icon: String? = nil,
+        isPrimary: Bool = true,
+        color: Color = .appAccent
+    ) {
+        self.title = title
+        self.icon = icon
+        self.isPrimary = isPrimary
+        self.color = color
+    }
+
+    public var body: some View {
+        HStack(spacing: Spacing.tiny) {
+            if let icon = icon {
+                Image(systemName: icon)
+                    .font(.caption2)
+            }
+            Text(title)
+                .font(.caption.weight(.semibold))
+        }
+        .padding(.horizontal, Spacing.medium)
+        .padding(.vertical, Spacing.tiny + Spacing.atomic) // 6
+        .background(isPrimary ? color : Color.appCard)
+        .foregroundStyle(isPrimary ? .white : .appSecondary)
+        .clipShape(Capsule())
+    }
+}
+
+// MARK: - Button Styles
+
+/// 点击缩放交互样式
+/// 为按钮提供物理反馈效果。
+public struct ScaleButtonStyle: ButtonStyle {
+    public init() {}
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? Animations.Interaction.pressScale : 1.0)
+            .animation(.easeOut(duration: Spacing.Action.animationDuration), value: configuration.isPressed)
+    }
+}

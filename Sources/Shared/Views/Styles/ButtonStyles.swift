@@ -12,8 +12,8 @@ struct AppCardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())
-            .scaleEffect(configuration.isPressed ? AppUI.Animation.pressScale : 1.0)
-            .opacity(configuration.isPressed ? AppUI.pressedOpacity : AppUI.fullOpacity)
-            .animation(.easeInOut(duration: AppUI.Animation.standardDuration / 2), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? DesignSystem.Animation.pressScale : 1.0)
+            .opacity(configuration.isPressed ? DesignSystem.pressedOpacity : DesignSystem.fullOpacity)
+            .animation(.easeInOut(duration: DesignSystem.Animation.standardDuration / 2), value: configuration.isPressed)
     }
 }

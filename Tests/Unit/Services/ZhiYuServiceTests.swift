@@ -188,15 +188,15 @@ final class CollaborationServiceTests: XCTestCase {
     }
 }
 
-// MARK: - SpeechProcessor Tests
+// MARK: - Speech Service Tests
 @MainActor
-final class SpeechProcessorTests: XCTestCase {
+final class SpeechServiceTests: XCTestCase {
 
-    var speechService: SpeechProcessor!
+    var speechService: iOSSpeechService!
 
     override func setUp() async throws {
         try await super.setUp()
-        speechService = SpeechProcessor()
+        speechService = iOSSpeechService()
     }
 
     override func tearDown() async throws {
@@ -215,8 +215,9 @@ final class SpeechProcessorTests: XCTestCase {
         XCTAssertTrue(speechService.recordings.isEmpty, "Recordings should start empty")
     }
 
-    func testAudioLevelHistoryIsEmptyInitially() {
-        XCTAssertTrue(speechService.audioLevelHistory.isEmpty)
+    func testAudioLevelHistoryHasInitialState() {
+        // Now it's initialized with 20 zeros
+        XCTAssertEqual(speechService.audioLevelHistory.count, 20)
     }
 
     func testIsRecordingFalseInitially() {

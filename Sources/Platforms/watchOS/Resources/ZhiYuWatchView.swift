@@ -28,20 +28,20 @@ struct WatchKnowledgeStatsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: AppUI.medium) {
+            VStack(spacing: DesignSystem.medium) {
                 // 1. 页面总数环形图
                 ZStack {
                     Circle()
-                        .stroke(Color.watchAccent.opacity(AppUI.glassOpacity), lineWidth: AppUI.borderWidth * 3)
-                        .frame(width: AppUI.huge * 2 + AppUI.small, height: AppUI.huge * 2 + AppUI.small)
+                        .stroke(Color.watchAccent.opacity(DesignSystem.glassOpacity), lineWidth: DesignSystem.borderWidth * 3)
+                        .frame(width: DesignSystem.huge * 2 + DesignSystem.small, height: DesignSystem.huge * 2 + DesignSystem.small)
                     
                     Circle()
                         .trim(from: 0, to: min(1.0, Double(totalPages) / 100.0))
-                        .stroke(Color.watchAccent, style: StrokeStyle(lineWidth: AppUI.borderWidth * 3, lineCap: .round))
-                        .frame(width: AppUI.huge * 2 + AppUI.small, height: AppUI.huge * 2 + AppUI.small)
+                        .stroke(Color.watchAccent, style: StrokeStyle(lineWidth: DesignSystem.borderWidth * 3, lineCap: .round))
+                        .frame(width: DesignSystem.huge * 2 + DesignSystem.small, height: DesignSystem.huge * 2 + DesignSystem.small)
                         .rotationEffect(.degrees(-90))
                     
-                    VStack(spacing: AppUI.atomic) {
+                    VStack(spacing: DesignSystem.atomic) {
                         Text("\(totalPages)")
                             .font(.title3.weight(.bold))
                             .foregroundStyle(Color.watchText)
@@ -52,8 +52,8 @@ struct WatchKnowledgeStatsView: View {
                 }
                 
                 // 2. 总字数统计
-                HStack(spacing: AppUI.small) {
-                    VStack(spacing: AppUI.atomic) {
+                HStack(spacing: DesignSystem.small) {
+                    VStack(spacing: DesignSystem.atomic) {
                         Text(formatNumber(totalWords))
                             .font(.caption.weight(.bold))
                             .foregroundStyle(Color.watchText)
@@ -66,16 +66,16 @@ struct WatchKnowledgeStatsView: View {
                 Divider()
                 
                 // 3. 最近更新列表
-                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
                     Text(L.tr("watch.recentUpdates"))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(Color.watchSecondary)
                     
                     ForEach(recentTitles.prefix(5), id: \.self) { title in
-                        HStack(spacing: AppUI.tiny + AppUI.atomic) {
+                        HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
                             Circle()
                                 .fill(Color.watchAccent)
-                                .frame(width: AppUI.tiny + AppUI.atomic / 2, height: AppUI.tiny + AppUI.atomic / 2)
+                                .frame(width: DesignSystem.tiny + DesignSystem.atomic / 2, height: DesignSystem.tiny + DesignSystem.atomic / 2)
                             Text(title)
                                 .font(.caption2)
                                 .foregroundStyle(Color.watchText)
@@ -85,7 +85,7 @@ struct WatchKnowledgeStatsView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding(AppUI.small)
+            .padding(DesignSystem.small)
         }
         .navigationTitle("ZhiYu")
         .onAppear {

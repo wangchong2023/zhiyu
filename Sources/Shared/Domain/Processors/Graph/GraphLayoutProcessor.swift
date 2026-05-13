@@ -26,7 +26,7 @@ struct GraphLayoutProcessor {
         var damping: CGFloat = AppConstants.Graph.Physics.damping
         var centerGravity: CGFloat = AppConstants.Graph.Physics.centerGravity
         var iterations: Int = AppConstants.Graph.TwoD.simulationIterations
-        var padding: CGFloat = AppUI.Graph.layoutPadding
+        var padding: CGFloat = DesignSystem.Graph.layoutPadding
 
         static let `default` = Config()
     }

@@ -104,13 +104,13 @@ struct PDFIngestSheet: View {
                         #if os(iOS)
                         .keyboardType(.numberPad)
                         #endif
-                        .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
+                        .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.toPage"))
                     TextField("\(documentInfo.pageCount)", value: $pageEnd, format: .number)
                         #if os(iOS)
                         .keyboardType(.numberPad)
                         #endif
-                        .frame(width: AppUI.Metrics.heroValueSize * 1.9) // 50
+                        .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(Localized.tr("pdf.page"))
                 }
                 .foregroundStyle(.appText)
@@ -146,7 +146,7 @@ struct PDFIngestSheet: View {
                         .lineLimit(10)
                 }
             }
-            .frame(maxHeight: AppUI.Metrics.heroValueSize * 5.75) // 150
+            .frame(maxHeight: Spacing.Metrics.heroValueSize * 5.75) // 150
         } header: {
             Text(Localized.tr("pdf.contentPreview"))
         }
@@ -242,7 +242,7 @@ struct PDFDocumentRow: View {
     let doc: PDFDocumentInfo
     
     var body: some View {
-        HStack(spacing: AppUI.medium) { // 12
+        HStack(spacing: Spacing.medium) { // 12
             pdfIcon
             docInfo
             Spacer()
@@ -250,15 +250,15 @@ struct PDFDocumentRow: View {
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.vertical, AppUI.atomic * 2) // 4
+        .padding(.vertical, Spacing.atomic * 2) // 4
     }
     
     private var pdfIcon: some View {
-        RoundedRectangle(cornerRadius: AppUI.microRadius)
-            .fill(Color.appAccent.opacity(AppUI.glassOpacity * 1.5)) // 0.15
-            .frame(width: AppUI.Metrics.heroValueSize * 1.85, height: AppUI.Metrics.heroValueSize * 2.45) // 48, 64
+        RoundedRectangle(cornerRadius: Spacing.microRadius)
+            .fill(Color.appAccent.opacity(Colors.Opacity.glassOpacity * 1.5)) // 0.15
+            .frame(width: Spacing.Metrics.heroValueSize * 1.85, height: Spacing.Metrics.heroValueSize * 2.45) // 48, 64
             .overlay(
-                VStack(spacing: AppUI.atomic * 2) { // 4
+                VStack(spacing: Spacing.atomic * 2) { // 4
                     Image(systemName: "doc.richtext.fill")
                         .font(.title3)
                         .foregroundStyle(.appAccent)
@@ -270,13 +270,13 @@ struct PDFDocumentRow: View {
     }
     
     private var docInfo: some View {
-        VStack(alignment: .leading, spacing: AppUI.atomic * 2) { // 4
+        VStack(alignment: .leading, spacing: Spacing.atomic * 2) { // 4
             Text(doc.title)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appText)
                 .lineLimit(1)
             
-            HStack(spacing: AppUI.small) { // 8
+            HStack(spacing: Spacing.small) { // 8
                 Label(Localized.trf("pdf.pageCountFormat", doc.pageCount), systemImage: "doc.text")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)

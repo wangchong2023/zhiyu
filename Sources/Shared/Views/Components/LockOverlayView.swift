@@ -140,7 +140,7 @@ struct LockOverlayView: View {
                                 )
                             
                             Capsule()
-                                .stroke(.white.opacity(0.4), lineWidth: 0.5)
+                                .stroke(.appGloss.opacity(0.4), lineWidth: 0.5)
                         }
                     }
                     .foregroundStyle(.white)
@@ -157,4 +157,4 @@ struct LockOverlayView: View {
     }
 }
 
-// Moved to AppUI.swift
+// Moved to DesignSystem.swift

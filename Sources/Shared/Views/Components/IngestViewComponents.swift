@@ -23,9 +23,9 @@ extension Notification.Name {
 /// 负责展示导入功能的品牌视觉元素及核心价值主张
 struct IngestHeroSection: View {
     var body: some View {
-        VStack(spacing: AppUI.medium) {
+        VStack(spacing: DesignSystem.medium) {
             Image(systemName: "tray.and.arrow.down.fill")
-                .font(.system(size: AppUI.iconDisplay))
+                .font(.system(size: DesignSystem.iconDisplay))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [.appSource, .appText],
@@ -40,7 +40,7 @@ struct IngestHeroSection: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, AppUI.tightPadding)
+        .padding(.vertical, DesignSystem.tightPadding)
     }
 }
 
@@ -64,14 +64,14 @@ struct IngestEntryCardsSection: View {
     /// 响应式列配置：iPhone 2列，iPad 自适应多列
     private var columns: [GridItem] {
         if horizontalSizeClass == .regular {
-            Array(repeating: GridItem(.flexible(minimum: AppUI.Metrics.heroValueSize * 3, maximum: AppUI.Metrics.heroValueSize * 7), spacing: AppUI.medium), count: 5) // 80, 180, 12
+            Array(repeating: GridItem(.flexible(minimum: DesignSystem.Metrics.heroValueSize * 3, maximum: DesignSystem.Metrics.heroValueSize * 7), spacing: DesignSystem.medium), count: 5) // 80, 180, 12
         } else {
             [GridItem(.flexible()), GridItem(.flexible())]
         }
     }
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: AppUI.medium) {
+        LazyVGrid(columns: columns, spacing: DesignSystem.medium) {
             // 1. File import card
             Button(action: {
                 showFileImporter = true
@@ -153,24 +153,24 @@ struct IngestEntryCardsSection: View {
     }
 
     private func entryCardContent(title: String, icon: String, color: Color) -> some View {
-        VStack(spacing: AppUI.tiny) {
+        VStack(spacing: DesignSystem.tiny) {
             ZStack {
                 Circle()
-                    .fill(color.opacity(AppUI.glassOpacity * 1.2)) // 0.12
-                    .frame(width: AppUI.Metrics.largeIconBoxSize, height: AppUI.Metrics.largeIconBoxSize)
+                    .fill(color.opacity(DesignSystem.glassOpacity * 1.2)) // 0.12
+                    .frame(width: DesignSystem.Metrics.largeIconBoxSize, height: DesignSystem.Metrics.largeIconBoxSize)
                 Image(systemName: icon)
-                    .font(.system(size: AppUI.iconMedium, weight: .semibold))
+                    .font(.system(size: DesignSystem.iconMedium, weight: .semibold))
                     .foregroundStyle(color)
             }
             
             Text(title)
-                .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold))
+                .font(.system(size: DesignSystem.Metrics.dashboardLabelSize, weight: .bold))
                 .foregroundStyle(.appText)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, AppUI.standardPadding)
-        .appMetricCardStyle(color: color, cornerRadius: AppUI.standardRadius)
+        .padding(.vertical, DesignSystem.standardPadding)
+        .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
     }
 }
 
@@ -205,33 +205,33 @@ struct IngestManualFormSection: View {
     }
 
     var body: some View {
-        VStack(spacing: AppUI.wide) {
+        VStack(spacing: DesignSystem.wide) {
             // Title and Type
-            VStack(alignment: .leading, spacing: AppUI.standardPadding) {
+            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                 // Title field
-                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
                     Text(L10n.Ingest.tr("field.title"))
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    HStack(spacing: AppUI.medium) {
+                    HStack(spacing: DesignSystem.medium) {
                         Image(systemName: newCustomIcon ?? newType.icon)
                             .font(.headline)
                             .foregroundStyle(.appAccent)
-                            .frame(width: AppUI.Action.buttonHeight, height: AppUI.Action.buttonHeight)
-                            .background(Color.appAccent.opacity(AppUI.glassOpacity)) // 0.1
-                            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                            .frame(width: DesignSystem.Action.buttonHeight, height: DesignSystem.Action.buttonHeight)
+                            .background(Color.appAccent.opacity(DesignSystem.glassOpacity)) // 0.1
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                             .onTapGesture { showIconPicker = true }
                         
                         TextField(L10n.Ingest.tr("field.titlePlaceholder"), text: $newTitle)
                             .font(.headline)
                             .padding()
                             .background(Color.appCard)
-                            .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppUI.cardRadius)
-                                    .stroke(Color.appBorder, lineWidth: AppUI.borderWidth)
+                                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                                    .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
                             )
                     }
                 }
@@ -239,7 +239,7 @@ struct IngestManualFormSection: View {
                 pageTypeSelector
                 
                 // Tags field
-                VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+                VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
                     Text(L10n.Ingest.tr("field.tags"))
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
@@ -249,12 +249,12 @@ struct IngestManualFormSection: View {
             }
 
             // Content editor
-            VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) { // 6
+            VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
                 Text(L10n.Ingest.tr("field.content"))
                     .font(fieldLabelFont)
                     .foregroundStyle(.appSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading) // 强制左对齐
-                AppMonospacedEditor(text: $newContent, minHeight: AppUI.Metrics.heroValueSize * 7) // 180
+                AppMonospacedEditor(text: $newContent, minHeight: DesignSystem.Metrics.heroValueSize * 7) // 180
             }
         }
         .padding(.horizontal)
@@ -263,37 +263,37 @@ struct IngestManualFormSection: View {
         VStack(spacing: 0) {
             if llmService.isEnabled && !llmService.apiKey.isEmpty {
                 Toggle(isOn: $useSmartIngest) {
-                    HStack(spacing: AppUI.small) { // 8
+                    HStack(spacing: DesignSystem.small) { // 8
                         Image(systemName: "sparkles")
                             .foregroundStyle(.appAccent)
-                            .frame(width: AppUI.smallIconSize) // 20
+                            .frame(width: DesignSystem.smallIconSize) // 20
                         Text(L10n.Ingest.tr("smartToggle"))
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.appText)
                     }
                 }
                 .tint(.appAccent)
-                .padding(.vertical, AppUI.medium) // 12
+                .padding(.vertical, DesignSystem.medium) // 12
                 .accessibilityIdentifier("ingest.smartToggleAction")
                 
-                Divider().padding(.leading, AppUI.Metrics.iconBoxSize) // 44
+                Divider().padding(.leading, DesignSystem.Metrics.iconBoxSize) // 44
             }
             
             Toggle(isOn: $useDeepScan) {
-                HStack(spacing: AppUI.small) { // 8
+                HStack(spacing: DesignSystem.small) { // 8
                     Image(systemName: "cpu")
                         .foregroundStyle(.appSource)
-                        .frame(width: AppUI.smallIconSize) // 20
+                        .frame(width: DesignSystem.smallIconSize) // 20
                     Text(L10n.Ingest.tr("deepScan"))
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
                 }
             }
             .tint(.appSource)
-            .padding(.vertical, AppUI.medium) // 12
+            .padding(.vertical, DesignSystem.medium) // 12
             
             if useSmartIngest || useDeepScan {
-                VStack(alignment: .leading, spacing: AppUI.atomic) { // 4
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 4
                     if useSmartIngest {
                         Text(L10n.Ingest.tr("smartToggleHint"))
                             .font(.caption)
@@ -306,7 +306,7 @@ struct IngestManualFormSection: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, AppUI.medium) // 12
+                .padding(.bottom, DesignSystem.medium) // 12
                 .transition(.opacity)
             }
         }
@@ -328,15 +328,15 @@ struct IngestManualFormSection: View {
             onPerformIngest()
         }
         .disabled(newTitle.isEmpty || newContent.isEmpty || isIngesting)
-        .opacity(newTitle.isEmpty || newContent.isEmpty ? AppUI.disabledOpacity : AppUI.fullOpacity)
+        .opacity(newTitle.isEmpty || newContent.isEmpty ? DesignSystem.disabledOpacity : DesignSystem.fullOpacity)
         .padding(.horizontal)
 
     }
 
     private var smartIngestToggle: some View {
-        VStack(alignment: .leading, spacing: AppUI.small) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             Toggle(isOn: $useSmartIngest) {
-                HStack(spacing: AppUI.tiny + AppUI.atomic) {
+                HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
                     Image(systemName: "sparkles")
                         .foregroundStyle(.appAccent)
                     Text(L10n.Ingest.tr("smartToggle"))
@@ -357,9 +357,9 @@ struct IngestManualFormSection: View {
     }
 
     private var deepScanToggle: some View {
-        VStack(alignment: .leading, spacing: AppUI.small) { // 8
+        VStack(alignment: .leading, spacing: DesignSystem.small) { // 8
             Toggle(isOn: $useDeepScan) {
-                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
+                HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
                     Image(systemName: "cpu")
                         .foregroundStyle(.appSource)
                     Text(L10n.Ingest.tr("deepScan"))
@@ -373,23 +373,23 @@ struct IngestManualFormSection: View {
                 Text(L10n.Ingest.tr("deepScanDesc"))
                     .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                     .foregroundStyle(.appSource)
-                    .padding(.leading, AppUI.Metrics.smallIconBoxSize + AppUI.atomic) // 30
+                    .padding(.leading, DesignSystem.Metrics.smallIconBoxSize + DesignSystem.atomic) // 30
             }
         }
         .padding()
-        .background(useDeepScan ? Color.appSource.opacity(AppUI.glassOpacity) : Color.appCard.opacity(AppUI.dimmedOpacity))
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .background(useDeepScan ? Color.appSource.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.dimmedOpacity))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .padding(.horizontal)
     }
 
     private var pageTypeSelector: some View {
-        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
             Text(L10n.Ingest.tr("field.type"))
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: AppUI.small) {
+                HStack(spacing: DesignSystem.small) {
                     ForEach(PageType.allCases) { type in
                         Button(action: { newType = type }) {
                             AppIconChip(
@@ -407,33 +407,33 @@ struct IngestManualFormSection: View {
     }
 
     private var iconPickerSection: some View {
-        HStack(spacing: AppUI.small + AppUI.atomic) { // 10
+        HStack(spacing: DesignSystem.small + DesignSystem.atomic) { // 10
             Text(L10n.Ingest.tr("field.icon"))
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
             Button(action: { showIconPicker = true }) {
-                HStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
+                HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
                     Image(systemName: newCustomIcon ?? newType.icon)
                         .font(.caption)
                         .foregroundStyle(newCustomIcon != nil ? .appAccent : .appSecondary)
-                        .frame(width: AppUI.smallIconSize, height: AppUI.smallIconSize) // 20
-                        .background((newCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(newType.colorName)).opacity(AppUI.glassOpacity * 1.5)) // 0.15
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                        .frame(width: DesignSystem.smallIconSize, height: DesignSystem.smallIconSize) // 20
+                        .background((newCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(newType.colorName)).opacity(DesignSystem.glassOpacity * 1.5)) // 0.15
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                     Text(newCustomIcon != nil ? L10n.Ingest.tr("iconCustom") : L10n.Ingest.tr("iconDefault"))
                         .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                         .foregroundStyle(newCustomIcon != nil ? .appAccent : .appSecondary)
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: AppUI.microFontSize - AppUI.atomic / 2)) // 9
+                        .font(.system(size: DesignSystem.microFontSize - DesignSystem.atomic / 2)) // 9
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.horizontal, AppUI.small + AppUI.atomic) // 10
-                .padding(.vertical, AppUI.tiny + AppUI.atomic) // 7
+                .padding(.horizontal, DesignSystem.small + DesignSystem.atomic) // 10
+                .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic) // 7
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .overlay(
-                    RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                        .stroke(newCustomIcon != nil ? Color.appAccent.opacity(AppUI.dimmedOpacity) : Color.clear, lineWidth: AppUI.borderWidth)
+                    RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                        .stroke(newCustomIcon != nil ? Color.appAccent.opacity(DesignSystem.dimmedOpacity) : Color.clear, lineWidth: DesignSystem.borderWidth)
                 )
             }
             .buttonStyle(.plain)
@@ -444,10 +444,10 @@ struct IngestManualFormSection: View {
                     Text(L10n.Ingest.tr("iconReset"))
                         .font(horizontalSizeClass == .regular ? .caption : .caption2)
                         .foregroundStyle(.appSecondary)
-                        .padding(.horizontal, AppUI.small)
-                        .padding(.vertical, AppUI.tiny + AppUI.atomic / 2) // 5
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic / 2) // 5
                         .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                 }
                 .buttonStyle(.plain)
             }
@@ -472,7 +472,7 @@ struct SmartIngestPreview: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.medium) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             AppSectionHeader(
                 title: L10n.Ingest.tr("preview"),
                 icon: "sparkles",
@@ -490,16 +490,16 @@ struct SmartIngestPreview: View {
                     }
                 )
             )
-            .padding(.horizontal, AppUI.tiny)
+            .padding(.horizontal, DesignSystem.tiny)
 
-            VStack(alignment: .leading, spacing: AppUI.medium) { // 12
+            VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
                 // Type + Tags chips
-                HStack(spacing: AppUI.small) { // 8
+                HStack(spacing: DesignSystem.small) { // 8
                     if let type = PageType(rawValue: result.suggestedType) {
                         AppChip(text: type.displayName, color: Color.fromModelColorName(type.colorName))
                     }
-                    ForEach(result.suggestedTags.prefix(AppUI.Metrics.maxRecentItems), id: \.self) { tag in // 5
-                        AppChip(text: "#\(tag)", color: .appAccent, backgroundOpacity: AppUI.glassOpacity) // 0.1
+                    ForEach(result.suggestedTags.prefix(DesignSystem.Metrics.maxRecentItems), id: \.self) { tag in // 5
+                        AppChip(text: "#\(tag)", color: .appAccent, backgroundOpacity: DesignSystem.glassOpacity) // 0.1
                     }
                 }
 
@@ -517,20 +517,20 @@ struct SmartIngestPreview: View {
                         .foregroundStyle(.appText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxHeight: AppUI.Metrics.heroValueSize * 7.7) // 200
-                .padding(AppUI.small) // 8
+                .frame(maxHeight: DesignSystem.Metrics.heroValueSize * 7.7) // 200
+                .padding(DesignSystem.small) // 8
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
 
                 // Related titles
                 if !result.relatedTitles.isEmpty {
-                    VStack(alignment: .leading, spacing: AppUI.atomic) { // 4
+                    VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 4
                         Text(L10n.Ingest.tr("suggestLinks"))
                             .font(previewFont.weight(.medium))
                             .foregroundStyle(.appSecondary)
 
                         ForEach(result.relatedTitles, id: \.self) { title in
-                            HStack(spacing: AppUI.atomic) { // 4
+                            HStack(spacing: DesignSystem.atomic) { // 4
                                 Image(systemName: "link")
                                     .font(.caption2)
                                 Text("[[\(title)]]")
@@ -551,12 +551,12 @@ struct SmartIngestPreview: View {
 /// 负责提供各导入方式的功能说明及操作建议，提升用户初次使用体验
 struct IngestTipsSection: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.medium) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             AppSectionHeader(title: L10n.Ingest.tr("tips"), icon: "lightbulb.fill", iconColor: .orange)
-                .padding(.horizontal, AppUI.tiny)
+                .padding(.horizontal, DesignSystem.tiny)
 
             // Three import method cards
-            HStack(spacing: AppUI.small + AppUI.atomic) { // 10
+            HStack(spacing: DesignSystem.small + DesignSystem.atomic) { // 10
                 importMethodCard(
                     icon: "doc.badge.plus",
                     title: L10n.Ingest.tr("method.file"),
@@ -579,7 +579,7 @@ struct IngestTipsSection: View {
     }
 
     private func importMethodCard(icon: String, title: String, desc: String) -> some View {
-        VStack(spacing: AppUI.tiny + AppUI.atomic) { // 6
+        VStack(spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(.appAccent)
@@ -593,9 +593,9 @@ struct IngestTipsSection: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(AppUI.small + AppUI.atomic) // 10
+        .padding(DesignSystem.small + DesignSystem.atomic) // 10
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 }
 
@@ -610,7 +610,7 @@ struct URLImportSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: AppUI.medium) { // 12
+                VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
                     Text(L10n.Ingest.tr("urlImportPlaceholder"))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
@@ -624,17 +624,17 @@ struct URLImportSheet: View {
                     }
                         .font(.system(.body, design: .monospaced))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(AppUI.small) // 8
+                        .padding(DesignSystem.small) // 8
                         .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                         .overlay(
-                            RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                                .stroke(Color.appAccent.opacity(AppUI.glassOpacity * 2), lineWidth: AppUI.borderWidth) // 0.2, 1
+                            RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                                .stroke(Color.appAccent.opacity(DesignSystem.glassOpacity * 2), lineWidth: DesignSystem.borderWidth) // 0.2, 1
                         )
                 }
                 .padding()
                 
-                VStack(alignment: .leading, spacing: AppUI.medium) { // 12
+                VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
                     Label(L10n.Ingest.tr("webDesc"), systemImage: "info.circle")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)

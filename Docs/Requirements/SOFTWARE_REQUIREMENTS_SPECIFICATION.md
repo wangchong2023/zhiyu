@@ -47,7 +47,7 @@
 
 ### 6.1 数据模型 (Data Models)
 
-核心实体 `WikiPage` 字段定义：
+核心实体 `KnowledgePage` 字段定义：
 
 | 字段 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -99,7 +99,7 @@ LLM 服务协议定义在 `Sources/Shared/Services/Core/Protocols/LLMServiceProt
 - `hostVersion: String` — 宿主版本号
 - `log(_:)` — 统一日志输出
 - `requestAIAccess(prompt:) -> String?` — 受权限管控的 LLM 访问
-- `queryPages(matching:) -> [WikiPage]` — 受权限管控的页面查询
+- `queryPages(matching:) -> [KnowledgePage]` — 受权限管控的页面查询
 
 **权限枚举 `PluginPermission`：**
 - `.readContent` — 读取页面内容
@@ -120,7 +120,7 @@ LLM 服务协议定义在 `Sources/Shared/Services/Core/Protocols/LLMServiceProt
 
 iCloud 多端同步采用 **Lamport Last-Writer-Wins (LWW)** 策略：
 
-- **逻辑时钟**：每个 `WikiPage` 携带 `lamportTimestamp: Int64`，每次写操作递增
+- **逻辑时钟**：每个 `KnowledgePage` 携带 `lamportTimestamp: Int64`，每次写操作递增
 - **冲突检测**：`AppCloudSyncService.resolveSyncConflict()` 比较本地与远程页面的 `lamportTimestamp` 和 `updated` 时间戳
 - **合并策略**：高时间戳版本获胜；同时间戳但不同 UUID 的标题冲突保留本地版本
 - **用户回调**：`onConflictDetected` 闭包允许 UI 层介入自定义冲突解决策略

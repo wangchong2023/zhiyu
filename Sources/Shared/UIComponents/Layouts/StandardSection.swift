@@ -1,21 +1,47 @@
+// StandardSection.swift
+//
+// 作者: Wang Chong
+// 功能说明: 本文件定义了智宇 (ZhiYu) 的标准页面布局分段组件，用于构建具有统一样式的列表和分组。
+// 核心职责：
+// 1. 提供标准的 Section 布局，支持标题、脚注和内容区域。
+// 2. 封装玻璃拟态样式的容器修饰。
+// 3. 规范列表行 (List Row) 的内边距和分割线样式。
+// MARK: [PR-03] 统一布局模版与标准化容器组件，优化渲染性能
+// 版本: 1.1
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
 import SwiftUI
 
-// MARK: @PR-03: 标准化容器组件，用于列表分组
-
-/// 标准卡片容器
+/// 标准卡片容器组件
+/// 提供带标题和脚注的分组视图，内部内容自动应用玻璃拟态背景。
 public struct StandardSection<Content: View>: View {
+    // MARK: - Properties
+    
+    /// 顶部显示的标题文本
     public let title: String?
+    /// 底部显示的辅助说明文本
     public let footer: String?
+    /// 内容区域的视图闭包
     public let content: Content
     
+    // MARK: - Initialization
+    
+    /// 初始化标准分段组件
+    /// - Parameters:
+    ///   - title: 可选标题
+    ///   - footer: 可选脚注
+    ///   - content: 视图内容
     public init(title: String? = nil, footer: String? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
         self.footer = footer
         self.content = content()
     }
     
+    // MARK: - Body
+    
     public var body: some View {
         VStack(alignment: .leading, spacing: Spacing.small) {
+            // 渲染标题
             if let title = title {
                 Group {
                     Text(title)
@@ -26,11 +52,13 @@ public struct StandardSection<Content: View>: View {
                 .textCase(.uppercase)
             }
             
+            // 渲染内容区域（带玻璃拟态背景）
             VStack(spacing: 0) {
                 content
             }
             .appGlassCardStyle(opacity: 1.0, cornerRadius: Spacing.cardRadius)
             
+            // 渲染脚注
             if let footer = footer {
                 Group {
                     Text(footer)
@@ -45,14 +73,19 @@ public struct StandardSection<Content: View>: View {
     }
 }
 
+// MARK: - View 扩展
+
 public extension View {
-    /// 应用列表行样式 (用于 StandardSection 内部)
+    /// 应用列表行样式
+    /// 为视图添加标准的内边距和可选的底部分割线，通常用于 StandardSection 内部。
+    /// - Parameter showDivider: 是否显示底部分割线
+    /// - Returns: 包装后的视图
     func appListRowStyle(showDivider: Bool = true) -> some View {
         VStack(spacing: 0) {
             self
                 .padding(.horizontal, Spacing.medium)
                 .padding(.vertical, Spacing.medium)
-                .contentShape(Rectangle())
+                .contentShape(Rectangle()) // 确保整行可点击
             
             if showDivider {
                 Divider()

@@ -29,9 +29,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         DatabaseManager.shared.reset()
         DatabaseManager.shared.isInTesting = true
         
-        // 2. 初始化测试专用服务 (使用唯一的内存数据库名称，防止并发测试冲突)
-        let uniqueDBName = "km_test_\(UUID().uuidString)"
-        let testDBURL = URL(string: "file:\(uniqueDBName)?mode=memory&cache=shared")!
+        // 2. 初始化测试专用服务 (使用内存数据库，防止磁盘 IO 干扰与数据残留)
+        let testDBURL = URL(string: "file:memdb?mode=memory")!
         let sqliteStore = SQLiteStore(dbURL: testDBURL)
         let linkService = LinkService()
         let lintService = LintService()
@@ -65,7 +64,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
             title: "E2E Test Page",
             type: .entity,
             customIcon: "star.fill",
-            content: "This is test content with enough characters to not be a stub.",
+            content: "This is test content with enough characters to not be a stub. We need to reach at least one hundred characters to satisfy the business logic in KnowledgePage.",
             aliases: ["E2E Alias", "Test Alias"],
             tags: ["e2e", "test", "automation"],
             status: .active,
@@ -176,7 +175,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         let afterRedo = undoService.redo(currentPages: afterUndo!)
         XCTAssertEqual(afterRedo?.first?.title, "V2")
         XCTAssertTrue(undoService.canUndo)
-        XCTAssertTrue(undoService.canRedo)
+        XCTAssertFalse(undoService.canRedo)
 
         // New action clears redo
         undoService.pushSnapshot(v3)

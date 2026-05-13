@@ -55,9 +55,9 @@ struct MermaidWebView: View {
                 zoomButton(icon: "arrow.counterclockwise") { resetZoom() }
             }
             .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: AppUI.smallRadius)
+                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                     .stroke(Color.appBorder.opacity(0.5), lineWidth: 0.5)
             )
             .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)

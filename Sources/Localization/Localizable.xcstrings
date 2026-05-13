@@ -920,7 +920,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scanning Knowledge Base..."
+            "value" : "Intelligent Scanning..."
           }
         },
         "zh-Hans" : {
@@ -1611,6 +1611,261 @@
         }
       }
     },
+    "auth.apple" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Login"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 登录"
+          }
+        }
+      }
+    },
+    "auth.code.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verification Code"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证码"
+          }
+        }
+      }
+    },
+    "auth.getCode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get Code"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取"
+          }
+        }
+      }
+    },
+    "auth.guest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guest User"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游客用户"
+          }
+        }
+      }
+    },
+    "auth.guestMode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guest Mode (Skip)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "游客模式（跳过）"
+          }
+        }
+      }
+    },
+    "auth.identity.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone / Email / WeChat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号 / 邮箱 / 微信"
+          }
+        }
+      }
+    },
+    "auth.login" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录"
+          }
+        }
+      }
+    },
+    "auth.logout" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logout"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出登录"
+          }
+        }
+      }
+    },
+    "auth.password.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "密码"
+          }
+        }
+      }
+    },
+    "auth.phone.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone Number"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手机号"
+          }
+        }
+      }
+    },
+    "auth.qq" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QQ Login"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "QQ 登录"
+          }
+        }
+      }
+    },
+    "auth.register" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Register"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "注册"
+          }
+        }
+      }
+    },
+    "auth.setPassword.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Password"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置密码"
+          }
+        }
+      }
+    },
+    "auth.thirdParty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other login methods"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他登录方式"
+          }
+        }
+      }
+    },
+    "auth.wechat" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WeChat Login"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "微信登录"
+          }
+        }
+      }
+    },
     "backlinks.backlinksCount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2079,6 +2334,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI 正在思考..."
+          }
+        }
+      }
+    },
+    "chat.aiAssistantName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZhiYu AI"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智宇 AI"
           }
         }
       }
@@ -3664,6 +3936,9 @@
         }
       }
     },
+    "Copyright © 2026 Wang Chong.\nAll rights reserved." : {
+
+    },
     "create.basicInfo" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3817,6 +4092,23 @@
         }
       }
     },
+    "create.customIcon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom Icon"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义图标"
+          }
+        }
+      }
+    },
     "create.definition" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3942,13 +4234,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Page title"
+            "value" : "Page Title"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "页面标题"
+          }
+        }
+      }
+    },
+    "create.pageType" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page Type"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "页面类型"
           }
         }
       }
@@ -4021,6 +4330,23 @@
         }
       }
     },
+    "create.template.comparison.conclusionPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter summary insights after comparison..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在这里输入对比后的总结性见解..."
+          }
+        }
+      }
+    },
     "create.template.comparison.dimensions" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4034,6 +4360,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "对比维度"
+          }
+        }
+      }
+    },
+    "create.template.comparison.dimensionsPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "- Dimension 1: A vs B\n- Dimension 2: A vs B"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "- 维度 1: 对象 A vs 对象 B\n- 维度 2: 对象 A vs 对象 B"
           }
         }
       }
@@ -4072,6 +4415,23 @@
         }
       }
     },
+    "create.template.concept.analysisPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. Key Element A: [Description...]\n2. Key Element B: [Description...]"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1. 关键要素 A：[描述...]\n2. 关键要素 B：[描述...]"
+          }
+        }
+      }
+    },
     "create.template.concept.definition" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4085,6 +4445,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "概念定义"
+          }
+        }
+      }
+    },
+    "create.template.concept.definitionPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the definition or core connotation of the concept..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在这里输入概念的定义或核心内涵..."
           }
         }
       }
@@ -4106,6 +4483,23 @@
         }
       }
     },
+    "create.template.concept.linksPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Related Concepts: [[Concept Name]]"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关联概念：[[概念名称]]"
+          }
+        }
+      }
+    },
     "create.template.entity.contributions" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4119,6 +4513,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "核心贡献"
+          }
+        }
+      }
+    },
+    "create.template.entity.contributionsPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List core achievements or major contributions..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列出核心成就或主要贡献..."
           }
         }
       }
@@ -4140,6 +4551,23 @@
         }
       }
     },
+    "create.template.entity.overviewPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a brief introduction of the person, organization, or item..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在这里输入人物、机构或物品的简要介绍..."
+          }
+        }
+      }
+    },
     "create.template.entity.related" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4153,6 +4581,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "关联页面"
+          }
+        }
+      }
+    },
+    "create.template.entity.relatedPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use [[Page Title]] to link to other knowledge points..."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 [[页面标题]] 关联到其他知识点..."
           }
         }
       }
@@ -4480,6 +4925,23 @@
         }
       }
     },
+    "dashboard.index.requests" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Requests"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 请求次数"
+          }
+        }
+      }
+    },
     "dashboard.index.sourceCount" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -4554,7 +5016,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "点击生成个人智库周报"
+            "value" : "Tap to generate Weekly Library Report"
           }
         },
         "zh-Hans" : {
@@ -4758,13 +5220,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AI Resource Overhead"
+            "value" : "AI Resources"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AI 资源开销统计"
+            "value" : "AI 资源消耗"
           }
         }
       }
@@ -4782,6 +5244,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "API 请求次数"
+          }
+        }
+      }
+    },
+    "dashboard.stats.assets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Knowledge Assets"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知识资产规模"
           }
         }
       }
@@ -4809,13 +5288,81 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "RAG Quality Benchmark (AI Eval)"
+            "value" : "RAG Quality Benchmark"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "RAG 质量 Benchmark (AI 评估)"
+            "value" : "RAG 质量评估"
+          }
+        }
+      }
+    },
+    "dashboard.stats.benchmark.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic evaluation metrics based on RAGAS standards, reflecting the accuracy of knowledge retrieval and generation."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基于 RAGAS 标准的自动评估指标，反映知识检索与生成的准确性。"
+          }
+        }
+      }
+    },
+    "dashboard.stats.chartDate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日期"
+          }
+        }
+      }
+    },
+    "dashboard.stats.chartSelected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选"
+          }
+        }
+      }
+    },
+    "dashboard.stats.chartValue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Value"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数值"
           }
         }
       }
@@ -4826,13 +5373,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recent cleanup removed"
+            "value" : "Cleaned"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近清理了"
+            "value" : "已清理"
           }
         }
       }
@@ -4843,13 +5390,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "duplicate chunks"
+            "value" : "orphaned items"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "个重复分块"
+            "value" : "个孤立数据项"
           }
         }
       }
@@ -4860,13 +5407,47 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deep Data Cleanup (Semantic Deduplication)"
+            "value" : "Deep Data Cleanup"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "深度数据清洗 (语义去重)"
+            "value" : "深度数据清洗"
+          }
+        }
+      }
+    },
+    "dashboard.stats.cleanupFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to clean orphaned data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清理孤立数据失败"
+          }
+        }
+      }
+    },
+    "dashboard.stats.distribution" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage Distribution"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储空间分布"
           }
         }
       }
@@ -4877,13 +5458,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recently Exported"
+            "value" : "Data Export"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "最近导出次数"
+            "value" : "数据导出"
           }
         }
       }
@@ -4911,13 +5492,30 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Imported"
+            "value" : "Data Import"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自动导入"
+            "value" : "数据导入"
+          }
+        }
+      }
+    },
+    "dashboard.stats.knowledgeVolume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Knowledge Assets"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知识资产规模"
           }
         }
       }
@@ -4996,7 +5594,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knowledge Governance & Maintenance"
+            "value" : "Knowledge Governance"
           }
         },
         "zh-Hans" : {
@@ -5081,13 +5679,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resource Monitor"
+            "value" : "Storage Details"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "资源监控"
+            "value" : "存储空间明细"
           }
         }
       }
@@ -5105,6 +5703,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "性能与质量评估"
+          }
+        }
+      }
+    },
+    "dashboard.stats.physicalStorage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage Distribution"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储空间详细分布"
           }
         }
       }
@@ -5132,13 +5747,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import & Export Statistics"
+            "value" : "Data Provenance"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "导入与导出统计"
+            "value" : "数据溯源统计"
           }
         }
       }
@@ -5177,6 +5792,40 @@
         }
       }
     },
+    "dashboard.stats.requestsUsage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requests"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求次数"
+          }
+        }
+      }
+    },
+    "dashboard.stats.storageDetails" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage Details"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储详情"
+          }
+        }
+      }
+    },
     "dashboard.stats.storageDistribution" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -5189,7 +5838,41 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "存储空间分布"
+            "value" : "存储分布"
+          }
+        }
+      }
+    },
+    "dashboard.stats.storageExport" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据导出"
+          }
+        }
+      }
+    },
+    "dashboard.stats.storageImport" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据导入"
           }
         }
       }
@@ -5217,13 +5900,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite Database"
+            "value" : "Database"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite 数据库"
+            "value" : "数据库"
           }
         }
       }
@@ -5296,19 +5979,36 @@
         }
       }
     },
+    "dashboard.stats.tokensUsage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token Consumption"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Token 消耗"
+          }
+        }
+      }
+    },
     "dashboard.stats.tokenTrend" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Token Consumption Trend"
+            "value" : "Token Usage Trend"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Token 消耗趋势"
+            "value" : "Token 使用趋势"
           }
         }
       }
@@ -5319,24 +6019,126 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Total Storage Used"
+            "value" : "Total Storage"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "总占用空间"
+            "value" : "总存储占用"
+          }
+        }
+      }
+    },
+    "dashboard.stats.typeConcept" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concept"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "概念"
+          }
+        }
+      }
+    },
+    "dashboard.stats.typeEntity" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entity"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "实体"
+          }
+        }
+      }
+    },
+    "dashboard.stats.typeSource" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "来源"
+          }
+        }
+      }
+    },
+    "dashboard.stats.unitMs" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ms"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ms"
+          }
+        }
+      }
+    },
+    "dashboard.stats.updateFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load monitor data"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加载监控数据失败"
+          }
+        }
+      }
+    },
+    "dashboard.stats.updateSuccess" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System monitor data updated"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统监控数据更新成功"
           }
         }
       }
     },
     "dashboard.title" : {
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dashboard"
+            "value" : "Knowledge Dashboard"
           }
         },
         "zh-Hans" : {
@@ -7017,6 +7819,9 @@
         }
       }
     },
+    "Help Coming Soon" : {
+
+    },
     "history.count" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -7980,6 +8785,23 @@
         }
       }
     },
+    "ingest.activeTasks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d Running"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d 个任务正在进行"
+          }
+        }
+      }
+    },
     "ingest.activity" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8010,6 +8832,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暂无活动"
+          }
+        }
+      }
+    },
+    "ingest.basicInfo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basic Info"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基本信息"
           }
         }
       }
@@ -8133,6 +8972,40 @@
         }
       }
     },
+    "ingest.content" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main Content"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正文内容"
+          }
+        }
+      }
+    },
+    "ingest.customIcon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom Icon"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义图标"
+          }
+        }
+      }
+    },
     "ingest.deepScan" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8231,6 +9104,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "URL 抓取失败: %@"
+          }
+        }
+      }
+    },
+    "ingest.fetchingURL" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetching URL"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在抓取"
           }
         }
       }
@@ -8507,6 +9397,57 @@
         }
       }
     },
+    "ingest.importFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Failed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "导入失败"
+          }
+        }
+      }
+    },
+    "ingest.importingFile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing File"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导入文件"
+          }
+        }
+      }
+    },
+    "ingest.invalidURL" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid URL format"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL 格式无效"
+          }
+        }
+      }
+    },
     "ingest.llmRequired" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8779,6 +9720,40 @@
         }
       }
     },
+    "ingest.pageTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Page Title"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "页面标题"
+          }
+        }
+      }
+    },
+    "ingest.pageType" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Content Type"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容类型"
+          }
+        }
+      }
+    },
     "ingest.preview" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -8945,6 +9920,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最近活动"
+          }
+        }
+      }
+    },
+    "ingest.recentActivity" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View all in Task Center"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在任务中心查看全部"
+          }
+        }
+      }
+    },
+    "ingest.smartIngest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smart Ingest"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智能入库"
+          }
+        }
+      }
+    },
+    "ingest.smartIngestDesc" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatically extract key info and establish links using AI"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "利用 AI 自动提取关键信息并建立链接"
           }
         }
       }
@@ -10026,13 +11052,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excellent"
+            "value" : "Healthy"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "非常健康"
+            "value" : "健康"
           }
         }
       }
@@ -10049,7 +11075,7 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "尚可"
+            "value" : "一般"
           }
         }
       }
@@ -10077,13 +11103,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Needs Improvement"
+            "value" : "Poor"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "亟待优化"
+            "value" : "较差"
           }
         }
       }
@@ -12896,6 +13922,23 @@
     "Mermaid diagrams are not supported on this platform." : {
 
     },
+    "misc.about" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于智宇"
+          }
+        }
+      }
+    },
     "misc.action" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13406,6 +14449,40 @@
         }
       }
     },
+    "misc.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作指引"
+          }
+        }
+      }
+    },
+    "misc.history.count" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d records"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共 %d 条记录"
+          }
+        }
+      }
+    },
     "misc.ignore" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13474,6 +14551,40 @@
         }
       }
     },
+    "misc.lock" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lock"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "锁定应用"
+          }
+        }
+      }
+    },
+    "misc.login" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录"
+          }
+        }
+      }
+    },
     "misc.nextQuestion" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13487,6 +14598,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下一题"
+          }
+        }
+      }
+    },
+    "misc.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无"
           }
         }
       }
@@ -13593,6 +14721,23 @@
         }
       }
     },
+    "misc.register" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Register"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "注册"
+          }
+        }
+      }
+    },
     "misc.reset" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -13657,6 +14802,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "、"
+          }
+        }
+      }
+    },
+    "misc.settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用设置"
           }
         }
       }
@@ -13810,6 +14972,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看结果"
+          }
+        }
+      }
+    },
+    "misc.wordCount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d words"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%d 字"
           }
         }
       }
@@ -20191,6 +21370,40 @@
         }
       }
     },
+    "settings.developer.section.dataReset" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data Reset"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据重置"
+          }
+        }
+      }
+    },
+    "settings.developer.section.operationInfo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operation Information"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作信息"
+          }
+        }
+      }
+    },
     "settings.developer.section.performance" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -20333,13 +21546,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Test Scale"
+            "value" : "Node Count"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "测试规模"
+            "value" : "测试节点数量"
           }
         }
       }
@@ -20350,13 +21563,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Run Test"
+            "value" : "Run Stress Test"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "开始测试"
+            "value" : "运行压力测试"
           }
         }
       }
@@ -20391,6 +21604,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "数据注入、压力测试与系统重置"
+          }
+        }
+      }
+    },
+    "settings.developer.tab.data" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data & Maintenance"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "数据与维护"
+          }
+        }
+      }
+    },
+    "settings.developer.tab.quality" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality Assessment"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "质量评估"
           }
         }
       }
@@ -20758,13 +22005,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Model Settings"
+            "value" : "Online LLM"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "大模型设置"
+            "value" : "在线大模型"
           }
         }
       }
@@ -20782,6 +22029,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未配置"
+          }
+        }
+      }
+    },
+    "settings.maintenance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Governance & Maintenance"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知识治理与维护"
           }
         }
       }
@@ -24237,13 +25501,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Knowledge QA"
+            "value" : "AI Assistant"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AI助手"
+            "value" : "AI 助手"
           }
         }
       }
@@ -25143,6 +26407,196 @@
         }
       }
     },
+    "vault.create" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建"
+          }
+        }
+      }
+    },
+    "vault.displayMode.grid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grid"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网格展示"
+          }
+        }
+      }
+    },
+    "vault.displayMode.list" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列表展示"
+          }
+        }
+      }
+    },
+    "vault.homeTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notebooks"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "笔记本"
+          }
+        }
+      }
+    },
+    "vault.namePlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notebook Name"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "笔记本名称"
+          }
+        }
+      }
+    },
+    "vault.new" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Notebook"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新建笔记本"
+          }
+        }
+      }
+    },
+    "vault.page.knowledge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pages"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "个知识点"
+          }
+        }
+      }
+    },
+    "vault.rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名"
+          }
+        }
+      }
+    },
+    "vault.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a notebook to start exploring"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个笔记本开始探索"
+          }
+        }
+      }
+    },
+    "vault.switch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch Notebook"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "切换笔记本"
+          }
+        }
+      }
+    },
+    "vault.welcome" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome Back"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎回来"
+          }
+        }
+      }
+    },
+    "Version 1.0.0 (Build 20260512)" : {
+
+    },
     "watch.capture" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -25642,13 +27096,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d Pages"
+            "value" : "Pages"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d 页面"
+            "value" : "页面"
           }
         }
       }
@@ -25720,6 +27174,9 @@
           }
         }
       }
+    },
+    "ZhiYu" : {
+
     },
     "智宇 AI" : {
       "extractionState" : "stale",

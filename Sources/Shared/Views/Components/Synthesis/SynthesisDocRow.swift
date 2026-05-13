@@ -39,36 +39,36 @@ struct SynthesisDocRow: View {
     }
     
     var body: some View {
-        HStack(spacing: AppUI.medium) {
+        HStack(spacing: DesignSystem.medium) {
             // ══ 固定宽度的选择指示器插槽 ══
             Group {
                 if editMode == .active {
                     Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .font(.system(size: AppUI.Graph.nodeSizeReference))
-                        .foregroundStyle(isSelected ? .appAccent : .appSecondary.opacity(AppUI.disabledOpacity * 1.33)) // 0.4
+                        .font(.system(size: DesignSystem.Graph.nodeSizeReference))
+                        .foregroundStyle(isSelected ? .appAccent : .appSecondary.opacity(DesignSystem.disabledOpacity * 1.33)) // 0.4
                         .onTapGesture {
                             HapticFeedback.shared.trigger(.selection)
                             onTap()
                         }
                 }
             }
-            .frame(width: editMode == .active ? AppUI.CompositeRow.indicatorWidth : 0)
+            .frame(width: editMode == .active ? DesignSystem.CompositeRow.indicatorWidth : 0)
             .clipped()
             
             ZStack {
-                RoundedRectangle(cornerRadius: AppUI.CompositeRow.cornerRadius)
-                    .fill(type.formatColor.opacity(AppUI.dimmedOpacity * 0.5)) // 0.1
-                    .frame(width: AppUI.CompositeRow.iconBoxSize, height: AppUI.CompositeRow.iconBoxSize)
+                RoundedRectangle(cornerRadius: DesignSystem.CompositeRow.cornerRadius)
+                    .fill(type.formatColor.opacity(DesignSystem.dimmedOpacity * 0.5)) // 0.1
+                    .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.CompositeRow.iconBoxSize)
                 Image(systemName: type.formatIcon).foregroundStyle(type.formatColor)
             }
             
-            VStack(alignment: .leading, spacing: AppUI.tiny) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(doc.name)
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
                     .foregroundStyle(.appText)
                 
-                HStack(spacing: AppUI.tightPadding) {
+                HStack(spacing: DesignSystem.tightPadding) {
                     Text(formatDate(doc.createdAt))
                     Text("·")
                     Text(formatByteSize(doc.size))
@@ -80,13 +80,13 @@ struct SynthesisDocRow: View {
             
             if editMode == .inactive {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: AppUI.captionFontSize))
-                    .foregroundStyle(.appSecondary.opacity(AppUI.secondaryOpacity * 0.6)) // 0.5
+                    .font(.system(size: DesignSystem.captionFontSize))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.6)) // 0.5
             }
         }
-        .padding(.horizontal, AppUI.standardPadding)
-        .padding(.vertical, AppUI.medium)
-        .appCardStyle(cornerRadius: AppUI.CompositeRow.cornerRadius)
+        .padding(.horizontal, DesignSystem.standardPadding)
+        .padding(.vertical, DesignSystem.medium)
+        .appCardStyle(cornerRadius: DesignSystem.CompositeRow.cornerRadius)
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()

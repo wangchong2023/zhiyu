@@ -24,7 +24,7 @@ struct SynthesisActionButton: View {
         let currentCount = synthesisStore.synthesisResults[type]?.count ?? 0
         let isLimitReached = currentCount >= synthesisStore.maxSynthesisDocsPerType
         
-        VStack(spacing: AppUI.tightPadding) {
+        VStack(spacing: DesignSystem.tightPadding) {
             Button(action: { 
                 HapticFeedback.shared.trigger(.selection)
                 
@@ -50,40 +50,40 @@ struct SynthesisActionButton: View {
                 let combinedContent = store.pages.map { "# \($0.title)\n\($0.content)" }.joined(separator: "\n\n---\n\n")
                 synthesisStore.performSynthesis(type: type, combinedContent: combinedContent)
             }) {
-                VStack(spacing: AppUI.tiny) {
+                VStack(spacing: DesignSystem.tiny) {
                     ZStack {
-                        Circle().fill(type.formatColor.opacity(AppUI.dimmedOpacity * 0.6)).frame(width: AppUI.Metrics.largeIconBoxSize, height: AppUI.Metrics.largeIconBoxSize) // 0.12
+                        Circle().fill(type.formatColor.opacity(DesignSystem.dimmedOpacity * 0.6)).frame(width: DesignSystem.Metrics.largeIconBoxSize, height: DesignSystem.Metrics.largeIconBoxSize) // 0.12
                         Image(systemName: type.icon)
-                            .font(.system(size: AppUI.iconMedium, weight: .semibold))
+                            .font(.system(size: DesignSystem.iconMedium, weight: .semibold))
                             .foregroundStyle(type.formatColor)
-                            .opacity((state == .generating || isLimitReached) ? AppUI.dimmedOpacity : AppUI.fullOpacity)
+                            .opacity((state == .generating || isLimitReached) ? DesignSystem.dimmedOpacity : DesignSystem.fullOpacity)
                         
                         if state == .generating {
                             ProgressView()
-                                .scaleEffect(AppUI.Animation.pressScale) // 0.9
+                                .scaleEffect(DesignSystem.Animation.pressScale) // 0.9
                                 .tint(type.formatColor)
                         } else if isLimitReached {
                             Image(systemName: "lock.fill")
-                                .font(.system(size: AppUI.iconTiny, weight: .bold))
-                                .foregroundStyle(.red.opacity(AppUI.secondaryOpacity))
+                                .font(.system(size: DesignSystem.iconTiny, weight: .bold))
+                                .foregroundStyle(.red.opacity(DesignSystem.secondaryOpacity))
                         }
                     }
                     Text(type.title)
-                        .font(.system(size: AppUI.Metrics.dashboardLabelSize, weight: .bold))
+                        .font(.system(size: DesignSystem.Metrics.dashboardLabelSize, weight: .bold))
                         .foregroundStyle(isLimitReached ? .appSecondary : .appText)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, AppUI.standardPadding)
-                .appMetricCardStyle(color: type.formatColor, cornerRadius: AppUI.standardRadius)
+                .padding(.vertical, DesignSystem.standardPadding)
+                .appMetricCardStyle(color: type.formatColor, cornerRadius: DesignSystem.standardRadius)
             }
             .buttonStyle(AppCardButtonStyle())
             .disabled(state == .generating || isLimitReached)
-            .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: state)
-            .animation(.spring(response: AppUI.Animation.springResponse, dampingFraction: AppUI.Animation.springDamping), value: isLimitReached)
+            .animation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping), value: state)
+            .animation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping), value: isLimitReached)
             
             if isLimitReached {
                 Text(Localized.tr("synthesis.limitReachedWarning"))
-                    .font(.system(size: AppUI.microFontSize, weight: .medium))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .medium))
                     .foregroundStyle(.red)
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }

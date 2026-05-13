@@ -15,34 +15,34 @@ struct ExportReportView: View {
     let pages: [KnowledgePage]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.wide) {
+        VStack(alignment: .leading, spacing: DesignSystem.wide) {
             // 页眉：品牌标识
             HStack {
                 Text(Localized.tr("report.appName"))
-                    .font(.system(size: AppUI.large, weight: .bold))
+                    .font(.system(size: DesignSystem.large, weight: .bold))
                     .foregroundStyle(Color.appAccent)
                 Spacer()
                 Text(Date().formatted(Date.FormatStyle(date: .long, time: .omitted, locale: Localized.currentLocale)))
                     .font(.caption)
                     .foregroundStyle(Color.appSecondary)
             }
-            .padding(.bottom, AppUI.wide)
+            .padding(.bottom, DesignSystem.wide)
             
             Divider()
             
             // 报告标题
             Text(Localized.tr("report.title"))
-                .font(.system(size: AppUI.huge, weight: .black))
-                .padding(.vertical, AppUI.small)
+                .font(.system(size: DesignSystem.huge, weight: .black))
+                .padding(.vertical, DesignSystem.small)
             
             Text(Localized.trf("report.nodeCount", pages.count))
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
             
             // 内容详情
-            ForEach(pages.prefix(AppUI.Metrics.maxReportPageExportCount), id: \.id) { page in // 10
-                VStack(alignment: .leading, spacing: AppUI.small) {
-                    HStack(spacing: AppUI.small) {
+            ForEach(pages.prefix(DesignSystem.Metrics.maxReportPageExportCount), id: \.id) { page in // 10
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    HStack(spacing: DesignSystem.small) {
                         Image(systemName: page.type.icon)
                             .foregroundStyle(Color.fromModelColorName(page.type.colorName))
                         Text(page.title)
@@ -50,27 +50,27 @@ struct ExportReportView: View {
                             .foregroundStyle(Color.appText)
                     }
                     
-                    Text(page.content.prefix(AppUI.Metrics.reportContentPreviewLength) + "...") // 300
-                        .font(AppUI.captionFont) // 12
+                    Text(page.content.prefix(DesignSystem.Metrics.reportContentPreviewLength) + "...") // 300
+                        .font(DesignSystem.captionFont) // 12
                         .foregroundStyle(Color.appText)
-                        .lineLimit(AppUI.Metrics.maxReportContentLineLimit) // 5
-                        .padding(.leading, AppUI.wide)
+                        .lineLimit(DesignSystem.Metrics.maxReportContentLineLimit) // 5
+                        .padding(.leading, DesignSystem.wide)
                     
                     if !page.tags.isEmpty {
-                        HStack(spacing: AppUI.tiny) {
+                        HStack(spacing: DesignSystem.tiny) {
                             ForEach(page.tags, id: \.self) { tag in
                                 Text("#\(tag)")
-                                    .font(.system(size: AppUI.microFontSize, weight: .medium)) // 10
-                                    .padding(.horizontal, AppUI.small)
-                                    .padding(.vertical, AppUI.atomic)
-                                    .background(Color.appAccent.opacity(AppUI.glassOpacity * 0.8)) // 0.12
-                                    .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                                    .font(.system(size: DesignSystem.microFontSize, weight: .medium)) // 10
+                                    .padding(.horizontal, DesignSystem.small)
+                                    .padding(.vertical, DesignSystem.atomic)
+                                    .background(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8)) // 0.12
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                             }
                         }
-                        .padding(.leading, AppUI.wide)
+                        .padding(.leading, DesignSystem.wide)
                     }
                 }
-                .padding(.vertical, AppUI.small)
+                .padding(.vertical, DesignSystem.small)
             }
             
             Spacer()
@@ -82,8 +82,8 @@ struct ExportReportView: View {
                 .foregroundStyle(Color.appBorder)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
-        .padding(AppUI.huge)
-        .frame(width: AppUI.Metrics.A4Width, height: AppUI.Metrics.A4Height) // 595, 842
+        .padding(DesignSystem.huge)
+        .frame(width: DesignSystem.Metrics.A4Width, height: DesignSystem.Metrics.A4Height) // 595, 842
         .background(Color.white)
     }
 }

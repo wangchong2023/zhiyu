@@ -179,7 +179,7 @@ actor EmbeddingManager {
         guard let qv = vectorize(text: hypoDoc) else { return [] }
         let results = await searchChunks(queryVector: qv, topK: topK)
 
-        return results.compactMap { id, score in
+        return results.compactMap { id, score -> (PageChunk, Float)? in
             guard let chunk = chunkMetadata[id] else { return nil }
             return (chunk, score)
         }

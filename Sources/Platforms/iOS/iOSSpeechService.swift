@@ -1,0 +1,245 @@
+// iOSSpeechService.swift
+//
+// 作者: Wang Chong
+// 功能说明: SpeechServiceProtocol 的 iOS/iPadOS/macOS (Apple Speech) 实现。
+// 版本: 1.0
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+#if !os(watchOS)
+import Foundation
+#if canImport(Speech)
+@preconcurrency import Speech
+#endif
+import AVFoundation
+import Combine
+import Observation
+
+/// iOS 语音处理实现
+@Observable
+final class iOSSpeechService: NSObject, SpeechServiceProtocol {
+    var isRecording = false
+    var isTranscribing = false
+    var transcribedText = ""
+    var audioLevel: Float = 0
+    var audioLevelHistory: [Float] = Array(repeating: 0, count: 20)
+    var statusMessage: String = ""
+    var supportedLanguages: [(code: String, name: String)] = []
+    var selectedLanguage: String = "zh-CN"
+    var hasPermission: Bool = false
+    var recordings: [VoiceRecording] = []
+
+#if canImport(Speech)
+    private var speechRecognizer: SFSpeechRecognizer?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
+#endif
+    private var audioEngine: AVAudioEngine?
+
+    override init() {
+        super.init()
+        loadSupportedLanguages()
+        checkPermission()
+        loadRecordings()
+    }
+
+    func checkPermission() {
+#if canImport(Speech)
+        SFSpeechRecognizer.requestAuthorization { status in
+            DispatchQueue.main.async {
+                self.hasPermission = status == .authorized
+                switch status {
+                case .authorized:
+                    self.statusMessage = Localized.tr("speech.status.ready")
+                case .denied:
+                    self.statusMessage = Localized.tr("speech.status.denied")
+                case .restricted:
+                    self.statusMessage = Localized.tr("speech.status.restricted")
+                case .notDetermined:
+                    self.statusMessage = Localized.tr("speech.status.notDetermined")
+                @unknown default:
+                    self.statusMessage = Localized.tr("speech.status.unknown")
+                }
+            }
+        }
+#endif
+    }
+
+    private func loadSupportedLanguages() {
+        let locales: [(String, String)] = [
+            ("zh-CN", Localized.tr("speech.lang.zhHans")),
+            ("zh-TW", Localized.tr("speech.lang.zhHant")),
+            ("en-US", Localized.tr("speech.lang.enUS")),
+            ("en-GB", Localized.tr("speech.lang.enGB")),
+            ("ja-JP", Localized.tr("speech.lang.jaJP")),
+            ("ko-KR", Localized.tr("speech.lang.koKR")),
+            ("fr-FR", Localized.tr("speech.lang.frFR")),
+            ("de-DE", Localized.tr("speech.lang.deDE")),
+            ("es-ES", Localized.tr("speech.lang.esES")),
+            ("pt-BR", Localized.tr("speech.lang.ptBR"))
+        ]
+
+#if canImport(Speech)
+        supportedLanguages = locales.filter { locale in
+            SFSpeechRecognizer(locale: Locale(identifier: locale.0)) != nil
+        }
+#endif
+
+        let preferred = Locale.preferredLanguages.first ?? "en-US"
+        if preferred.hasPrefix("zh-Hans") || preferred.hasPrefix("zh-CN") {
+            selectedLanguage = "zh-CN"
+        } else if preferred.hasPrefix("zh-Hant") || preferred.hasPrefix("zh-TW") {
+            selectedLanguage = "zh-TW"
+        } else if let match = supportedLanguages.first(where: { preferred.hasPrefix($0.code) }) {
+            selectedLanguage = match.code
+        }
+    }
+
+    func startRecording() {
+        guard hasPermission else {
+            statusMessage = Localized.tr("speech.status.denied")
+            return
+        }
+
+#if canImport(Speech)
+        let locale = Locale(identifier: selectedLanguage)
+        guard let recognizer = SFSpeechRecognizer(locale: locale) else {
+            statusMessage = Localized.tr("speech.status.localeNotSupported")
+            return
+        }
+
+        speechRecognizer = recognizer
+        let audioEngine = AVAudioEngine()
+        self.audioEngine = audioEngine
+
+        #if targetEnvironment(simulator)
+        statusMessage = Localized.tr("speech.status.simulatorNotSupported")
+        #else
+        setupRecognitionRequest()
+        guard recognitionRequest != nil else { return }
+
+        setupAudioTap(inputNode: audioEngine.inputNode)
+        startAudioEngine(audioEngine)
+        startRecognitionTask(recognizer: recognizer)
+        #endif
+#endif
+    }
+
+    private func setupRecognitionRequest() {
+#if canImport(Speech)
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let request = recognitionRequest else { return }
+        request.shouldReportPartialResults = true
+        request.requiresOnDeviceRecognition = false
+#endif
+    }
+
+    private func setupAudioTap(inputNode: AVAudioInputNode) {
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: nil) { [weak self] buffer, _ in
+#if canImport(Speech)
+            self?.recognitionRequest?.append(buffer)
+#endif
+            self?.calculateAudioLevel(from: buffer)
+        }
+    }
+
+    private func calculateAudioLevel(from buffer: AVAudioPCMBuffer) {
+        let channelData = buffer.floatChannelData?[0]
+        let channelDataArray = Array(UnsafeBufferPointer(start: channelData, count: Int(buffer.frameLength)))
+        let rms = sqrt(channelDataArray.map { $0 * $0 }.reduce(0, +) / Float(channelDataArray.count))
+        let avgPower = 20 * log10(max(rms, 1e-8))
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.audioLevel = max(0, min(1, (avgPower + 50) / 50))
+            self.audioLevelHistory.removeFirst()
+            self.audioLevelHistory.append(max(0, min(1, (avgPower + 50) / 50)))
+        }
+    }
+
+    private func startAudioEngine(_ audioEngine: AVAudioEngine) {
+        audioEngine.prepare()
+        do {
+            try audioEngine.start()
+            isRecording = true
+            statusMessage = Localized.tr("speech.status.recording")
+        } catch {
+            statusMessage = Localized.tr("speech.status.audioError")
+        }
+    }
+
+    private func startRecognitionTask(recognizer: SFSpeechRecognizer) {
+#if canImport(Speech)
+        guard let request = recognitionRequest else { return }
+        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            DispatchQueue.main.async {
+                if let result = result {
+                    self?.transcribedText = result.bestTranscription.formattedString
+                    if result.isFinal { self?.stopRecording() }
+                }
+                if let error = error {
+                    self?.statusMessage = "\(Localized.tr("speech.status.error")): \(error.localizedDescription)"
+                    self?.stopRecording()
+                }
+            }
+        }
+#endif
+    }
+
+    func stopRecording() {
+        audioEngine?.inputNode.removeTap(onBus: 0)
+        audioEngine?.stop()
+#if canImport(Speech)
+        recognitionRequest?.endAudio()
+        recognitionTask?.cancel()
+#endif
+        isRecording = false
+        audioLevel = 0
+        audioLevelHistory = Array(repeating: 0, count: 20)
+        statusMessage = transcribedText.isEmpty ? Localized.tr("speech.status.ready") : Localized.tr("speech.status.complete")
+    }
+
+    func transcribeFile(url: URL) async throws -> String {
+        isTranscribing = true
+        defer { isTranscribing = false }
+#if canImport(Speech)
+        let locale = Locale(identifier: selectedLanguage)
+        guard let recognizer = SFSpeechRecognizer(locale: locale) else { throw SpeechError.localeNotSupported }
+        let request = SFSpeechURLRecognitionRequest(url: url)
+        request.shouldReportPartialResults = false
+        return try await withCheckedThrowingContinuation { continuation in
+            recognizer.recognitionTask(with: request) { result, error in
+                if let error = error { continuation.resume(throwing: error); return }
+                if let result = result, result.isFinal { continuation.resume(returning: result.bestTranscription.formattedString) }
+            }
+        }
+#else
+        return ""
+#endif
+    }
+
+    func saveRecording(title: String) -> VoiceRecording {
+        let recording = VoiceRecording(id: UUID(), title: title, text: transcribedText, language: selectedLanguage, duration: 0, createdAt: Date())
+        recordings.insert(recording, at: 0)
+        saveRecordingsToDisk()
+        return recording
+    }
+
+    func deleteRecording(_ recording: VoiceRecording) {
+        recordings.removeAll { $0.id == recording.id }
+        saveRecordingsToDisk()
+    }
+
+    func clearTranscription() {
+        transcribedText = ""
+        statusMessage = Localized.tr("speech.status.ready")
+    }
+
+    private let recordingsKey = "zhiyu_voice_recordings"
+    private func loadRecordings() {
+        if let data = UserDefaults.standard.data(forKey: recordingsKey), let decoded = try? JSONDecoder().decode([VoiceRecording].self, from: data) { recordings = decoded }
+    }
+    private func saveRecordingsToDisk() {
+        if let data = try? JSONEncoder().encode(recordings) { UserDefaults.standard.set(data, forKey: recordingsKey) }
+    }
+}
+#endif

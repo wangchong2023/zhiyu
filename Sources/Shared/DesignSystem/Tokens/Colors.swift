@@ -34,6 +34,17 @@ public enum Colors {
     
     // MARK: - 2. 预设容器颜色
     
+    public struct Opacity {
+        public static let glassOpacity: Double = Colors.glassOpacity
+        public static let fullOpacity: Double = Colors.fullOpacity
+        public static let disabledOpacity: Double = Colors.disabledOpacity
+        public static let pressedOpacity: Double = Colors.pressedOpacity
+        public static let dimmedOpacity: Double = Colors.dimmedOpacity
+        public static let secondaryOpacity: Double = Colors.secondaryOpacity
+        public static let shadowOpacity: Double = Colors.shadowOpacity
+        public static var shadowColor: Color { Colors.shadowColor }
+    }
+    
     /// 标准容器背景色
     public static var containerBackground: Color { Color.appCard }
     /// 标准容器边框色
@@ -74,6 +85,9 @@ extension Color {
         return MainActor.assumeIsolated { ThemeManager.shared.accentColor }
         #endif
     }
+    
+    /// 玻璃拟态高亮色/光泽色
+    public static var appGloss: Color { Color(light: Color.white, dark: Color.white.opacity(0.6)) }
     
     // MARK: - 知识分类语义颜色
     
@@ -131,6 +145,7 @@ extension ShapeStyle where Self == Color {
     public static var appEntity: Color { .appEntity }
     public static var appMap: Color { .appMap }
     public static var appComparison: Color { .appComparison }
+    public static var appGloss: Color { .appGloss }
 }
 
 // MARK: - Environment 扩展

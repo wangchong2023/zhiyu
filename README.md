@@ -53,7 +53,7 @@ graph TD
 ### 2. 三层技术模型
 
 #### 🟢 深度摄入层 (Ingestion Layer)
-- **语义分块 (Semantic Chunking)**：基于 `RecursiveChunker` 的递归拆分算法。
+- **语义分块 (Semantic Chunking)**：基于 `TextChunkerProcessor` 的递归拆分算法。
 - **分块优先级**：`Header (#) > Paragraph (\n\n) > Sentence (.)`，确保检索片段的上下文连续性。
 - **多模态解析**：自动将 PDF 中的表格转化为可索引的 JSON 描述。
 
@@ -93,7 +93,7 @@ Knowledge Management 采用一套代码实现多端差异化交互：
 
 ### 1. RAG 知识导入
 拖入 PDF 或粘贴 URL，系统会自动执行 **“深度扫描”**。
-> **Tip**: 在 `RecursiveChunker.swift` 中可以调整分块大小（默认 800 字符）。
+> **Tip**: 在 `TextChunkerProcessor.swift` 中可以调整分块大小（默认 800 字符）。
 
 ### 2. 交互式溯源
 在 AI 生成的报告中点击 `[[Source]]`：
@@ -120,9 +120,9 @@ Knowledge Management 采用一套代码实现多端差异化交互：
 1. **环境**：Xcode 16.0 & `brew install xcodegen`。
 2. **构建**：
    - 运行 `xcodegen generate` 生成项目。
-   - **iOS**: 选择 `KM` Scheme 进行编译（已包含 `KMTests` 单元测试）。
-   - **macOS**: 选择 `KMMac` 目标，支持 Catalyst 模式。
-   - **watchOS**: 选择 `KMWatch` 目标进行独立构建。
+   - **iOS**: 选择 `ZhiYu` Scheme 进行编译（已包含 `ZhiYuTests` 单元测试）。
+   - **macOS**: 选择 `ZhiYuMac` 目标，支持 Catalyst 模式。
+   - **watchOS**: 选择 `ZhiYuWatch` 目标进行独立构建。
 3. **配置**：在设置中填入 API Key，并开启 **“深度扫描模式”**。
 
 ---

@@ -40,7 +40,7 @@ struct SettingsNavigationRow<Destination: View, Trailing: View>: View {
 
     var body: some View {
         NavigationLink(destination: destination) {
-            HStack(spacing: AppUI.tightPadding + AppUI.atomic) { // 10
+            HStack(spacing: DesignSystem.tightPadding + DesignSystem.atomic) { // 10
                 Label(title, systemImage: icon)
                     .foregroundStyle(.appText)
 
@@ -106,11 +106,11 @@ struct InfoRow: View {
     let text: String
 
     var body: some View {
-        HStack(spacing: AppUI.tightPadding + AppUI.atomic) { // 10
+        HStack(spacing: DesignSystem.tightPadding + DesignSystem.atomic) { // 10
             Image(systemName: icon)
                 .font(.subheadline)
                 .foregroundStyle(.appText)
-                .frame(width: AppUI.Action.iconSize + AppUI.tiny) // 24
+                .frame(width: DesignSystem.Action.iconSize + DesignSystem.tiny) // 24
             Text(text)
                 .font(.subheadline)
                 .foregroundStyle(.appText)

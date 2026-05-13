@@ -1,11 +1,11 @@
 // LinkService.swift
 //
 // 作者: Wang Chong
-// 功能说明: [L1] 领域层：处理链接解析、反向链接、搜索与标签聚合
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
+// 功能说明: [L1] 领域层：处理知识库页面间的链接解析、反向链接发现、混合搜索与标签聚合逻辑。
+// MARK: [SR-02] 混合检索 (RAG) 链路调度与语义链接优化
+// MARK: [PR-01] 全文搜索 (FTS5) 响应延迟 < 100ms
+// MARK: [PR-02] 混合检索 (RAG) 链路耗时 < 1.5s
+// 版本: 1.1
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -95,14 +95,16 @@ actor LinkService {
         let semanticScored = await embeddingManager.search(query: query)
 
         // 动态门槛：对于短查询，语义门槛要极高，否则噪音太大
-        let similarityThreshold: Float = query.count < 4 ? 0.85 : 0.75
+        let similarityThreshold: Float = query.count < 4 
+            ? AppConstants.RAG.semanticThresholdShort 
+            : AppConstants.RAG.semanticThresholdLong
 
         let semanticResults = semanticScored
             .filter { res -> Bool in
                 // 动态门槛：对于短查询，语义门槛要极高
                 if query.count < 4 {
-                    // 对于短词，如果语义得分不足 0.88，则必须包含关键词
-                    if res.score > 0.88 { return true }
+                    // 对于短词，如果语义得分不足高信度阈值，则必须包含关键词
+                    if res.score > AppConstants.RAG.semanticShortHighConfidence { return true }
                     if let page = pages.first(where: { $0.id == res.id }) {
                         let lowerTitle = page.title.lowercased()
                         let lowerQuery = query.lowercased()
@@ -116,7 +118,7 @@ actor LinkService {
                 pages.first { $0.id == res.id }
             }
 
-        let k = 60
+        let k = AppConstants.RAG.rrfK
         var scores: [UUID: Double] = [:]
         var diagMap: [UUID: (fts: Int, vec: Int)] = [:]
 

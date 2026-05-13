@@ -18,8 +18,8 @@ final class LLMServiceTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // 使用默认配置初始化，实际测试中可注入 MockStrategy
-        service = LLMService()
+        // 使用单例进行基础冒烟测试
+        service = LLMService.shared
     }
     
     func testGenerateReportPrompt() async throws {

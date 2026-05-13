@@ -1,0 +1,72 @@
+// PDFModels.swift
+//
+// 作者: Wang Chong
+// 功能说明: PDF 处理模块的通用数据模型。
+// 版本: 1.0
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import Foundation
+
+// MARK: - PDF 文档模型
+
+/// PDF 文档信息模型
+///
+/// 存储 PDF 文档的元数据，包括标题、页数、阅读进度、高亮内容和关联的知识库页面。
+public struct PDFDocumentInfo: Identifiable, Codable, Sendable {
+    public let id: UUID
+    public var title: String
+    public var fileName: String
+    public var pageCount: Int
+    public var addedDate: Date
+    public var lastReadPage: Int
+    public var highlights: [PDFHighlight]
+    public var linkedPageTitles: [String]
+
+    public init(
+        id: UUID = UUID(),
+        title: String,
+        fileName: String,
+        pageCount: Int,
+        addedDate: Date = Date(),
+        lastReadPage: Int = 0,
+        highlights: [PDFHighlight] = [],
+        linkedPageTitles: [String] = []
+    ) {
+        self.id = id
+        self.title = title
+        self.fileName = fileName
+        self.pageCount = pageCount
+        self.addedDate = addedDate
+        self.lastReadPage = lastReadPage
+        self.highlights = highlights
+        self.linkedPageTitles = linkedPageTitles
+    }
+}
+
+// MARK: - PDF 高亮
+
+/// PDF 高亮标记模型
+public struct PDFHighlight: Identifiable, Codable, Sendable {
+    public let id: UUID
+    public var pageIndex: Int
+    public var text: String
+    public var color: String  // "yellow", "green", "blue", "pink", "purple"
+    public var note: String
+    public var creationDate: Date
+
+    public init(
+        id: UUID = UUID(),
+        pageIndex: Int,
+        text: String,
+        color: String = "yellow",
+        note: String = "",
+        creationDate: Date = Date()
+    ) {
+        self.id = id
+        self.pageIndex = pageIndex
+        self.text = text
+        self.color = color
+        self.note = note
+        self.creationDate = creationDate
+    }
+}

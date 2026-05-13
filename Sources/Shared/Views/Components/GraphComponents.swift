@@ -47,7 +47,7 @@ struct GraphNodeView: View {
     private var isVisible: Bool {
         guard let rect = viewportRect else { return true }
         // 简单的包围盒检测
-        let margin: CGFloat = AppUI.huge
+        let margin: CGFloat = DesignSystem.huge
         return rect.insetBy(dx: -margin, dy: -margin).contains(node.position)
     }
 
@@ -71,7 +71,7 @@ struct GraphNodeView: View {
                         // LOD: 远景模式 - 仅显示纯色圆点，极致性能
                         Circle()
                             .fill(nodeBaseColor)
-                            .frame(width: AppUI.iconSmall, height: AppUI.iconSmall)
+                            .frame(width: DesignSystem.iconSmall, height: DesignSystem.iconSmall)
                     } else {
                         nodeContent
                     }
@@ -91,9 +91,9 @@ struct GraphNodeView: View {
             // 1. 深度发光 (Aura Effect)
             if isSelected {
                 Circle()
-                    .fill(nodeBaseColor.opacity(AppUI.glassOpacity))
+                    .fill(nodeBaseColor.opacity(DesignSystem.glassOpacity))
                     .frame(width: nodeSize * 2.2, height: nodeSize * 2.2)
-                    .blur(radius: AppUI.cardRadius)
+                    .blur(radius: DesignSystem.cardRadius)
                     .scaleEffect(isAnimating ? 1.1 : 0.9)
                     .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: isAnimating)
             }
@@ -101,7 +101,7 @@ struct GraphNodeView: View {
             // 2. 核心脉冲 (Core Pulse)
             if isSelected {
                 Circle()
-                    .stroke(nodeBaseColor.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth * 1.5)
+                    .stroke(nodeBaseColor.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
                     .frame(width: nodeSize, height: nodeSize)
                     .scaleEffect(isAnimating ? 1.8 : 1.0)
                     .opacity(isAnimating ? 0 : 1)
@@ -133,18 +133,18 @@ struct GraphNodeView: View {
                 #endif
                 .overlay {
                     if isHovered {
-                        VStack(alignment: .leading, spacing: AppUI.atomic) {
+                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                             Text(node.title)
                                 .font(.caption.bold())
                             Text(node.type.displayName)
-                                .font(.system(size: AppUI.microFontSize - 2))
+                                .font(.system(size: DesignSystem.microFontSize - 2))
                                 .foregroundStyle(.secondary)
                         }
-                        .padding(.horizontal, AppUI.small)
-                        .padding(.vertical, AppUI.tiny)
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.tiny)
                         .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
-                        .offset(y: -AppUI.huge - AppUI.tiny)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                        .offset(y: -DesignSystem.huge - DesignSystem.tiny)
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
@@ -180,14 +180,14 @@ struct GraphNodeView: View {
                 }
                 .overlay(
                     Circle()
-                        .stroke(.white.opacity(AppUI.glassOpacity * 2), lineWidth: AppUI.borderWidth)
+                        .stroke(.appGloss.opacity(DesignSystem.glassOpacity * 2), lineWidth: DesignSystem.borderWidth)
                 )
-                .shadow(color: nodeBaseColor.opacity(isSelected ? AppUI.fullOpacity - AppUI.glassOpacity : AppUI.disabledOpacity), radius: isSelected ? AppUI.standardPadding : AppUI.tiny + AppUI.atomic)
+                .shadow(color: nodeBaseColor.opacity(isSelected ? DesignSystem.fullOpacity - DesignSystem.glassOpacity : DesignSystem.disabledOpacity), radius: isSelected ? DesignSystem.standardPadding : DesignSystem.tiny + DesignSystem.atomic)
                 .scaleEffect(isSelected ? 1.1 : 1.0)
 
             // 4. 类型图标
             Image(systemName: node.type.icon)
-                .font(.system(size: isSelected ? AppUI.subheadlineFontSize : AppUI.microFontSize, weight: .bold))
+                .font(.system(size: isSelected ? DesignSystem.subheadlineFontSize : DesignSystem.microFontSize, weight: .bold))
                 .foregroundStyle(.white)
         }
         .onTapGesture {
@@ -229,7 +229,7 @@ struct GraphNodeLabel: View {
             .font(.system(size: fontSize, weight: isSelected ? .semibold : .medium))
             .foregroundStyle(isSelected ? .appText : .appSecondary)
             .lineLimit(1)
-            .position(x: node.position.x, y: node.position.y + nodeSize / 2 + AppUI.mediumRadius)
+            .position(x: node.position.x, y: node.position.y + nodeSize / 2 + DesignSystem.mediumRadius)
             .accessibilityHidden(true) // 节点图标已包含信息，标签设为隐藏以防冗余
     }
 }
@@ -256,7 +256,7 @@ struct GraphZoomControls: View {
                 Image(systemName: "minus.magnifyingglass")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("zoom-out")
@@ -270,12 +270,12 @@ struct GraphZoomControls: View {
                 Image(systemName: "plus.magnifyingglass")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("zoom-in")
 
-            Divider().frame(width: AppUI.borderWidth, height: AppUI.iconLarge).background(Color.appBorder)
+            Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
             Button(action: {
                 withAnimation {
@@ -288,12 +288,12 @@ struct GraphZoomControls: View {
                 Image(systemName: "scope")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("reset")
 
-            Divider().frame(width: AppUI.borderWidth, height: AppUI.iconLarge).background(Color.appBorder)
+            Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
             Button(action: {
                 withAnimation(.spring(response: 0.5)) { onFitToScreen() }
@@ -301,12 +301,12 @@ struct GraphZoomControls: View {
                 Image(systemName: "viewfinder")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("fit-to-screen")
 
-            Divider().frame(width: AppUI.borderWidth, height: AppUI.iconLarge).background(Color.appBorder)
+            Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
             Button(action: {
                 withAnimation(.spring(response: 0.6)) { onRelayout() }
@@ -314,27 +314,24 @@ struct GraphZoomControls: View {
                 Image(systemName: "arrow.clockwise")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("relayout")
 
-            Divider().frame(width: AppUI.borderWidth, height: AppUI.iconLarge).background(Color.appBorder)
+            Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
             Button(action: { show3D = true }) {
                 Image(systemName: "view.3d")
                     .font(.body)
                     .foregroundStyle(.appSecondary)
-                    .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("graph-3d")
         }
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
-        )
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+        .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
     }
 }
 
@@ -345,10 +342,10 @@ private struct GraphLegendRow: View {
     let title: String
     
     var body: some View {
-        HStack(spacing: AppUI.tiny + AppUI.atomic) {
+        HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
             Circle()
                 .fill(color)
-                .frame(width: AppUI.microIconSize, height: AppUI.microIconSize)
+                .frame(width: DesignSystem.microIconSize, height: DesignSystem.microIconSize)
             Text(title)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
@@ -365,8 +362,8 @@ struct GraphLegend: View {
     let clusters: [GraphClusteringService.Cluster]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: AppUI.small) {
-            HStack(spacing: AppUI.tiny + AppUI.atomic) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
                 Image(systemName: "list.bullet.rectangle.portrait")
                     .font(.caption)
                     .foregroundStyle(.appAccent)
@@ -374,7 +371,7 @@ struct GraphLegend: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.appText)
             }
-            .padding(.bottom, AppUI.atomic)
+            .padding(.bottom, DesignSystem.atomic)
             
             if useClustering {
                 ForEach(clusters) { cluster in
@@ -386,14 +383,9 @@ struct GraphLegend: View {
                 }
             }
         }
-        .padding(AppUI.medium)
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: AppUI.standardRadius)
-                .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
-        )
-        .shadow(color: .black.opacity(AppUI.glassOpacity * 2), radius: AppUI.smallRadius)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+        .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.smallRadius)
     }
 }
 
@@ -414,8 +406,8 @@ struct GraphSelectedNodeCard: View {
             cardContent
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, AppUI.standardPadding)
-        .padding(.bottom, AppUI.standardPadding)
+        .padding(.horizontal, DesignSystem.standardPadding)
+        .padding(.bottom, DesignSystem.standardPadding)
     }
 
     /**
@@ -423,14 +415,14 @@ struct GraphSelectedNodeCard: View {
      * @return {View}
      */
     private var cardContent: some View {
-        HStack(spacing: AppUI.medium) {
+        HStack(spacing: DesignSystem.medium) {
             Image(systemName: page.displayIcon)
                 .foregroundStyle(Color.fromModelColorName(page.type.colorName))
-                .frame(width: AppUI.Action.minTouchTarget, height: AppUI.Action.minTouchTarget)
-                .background(Color.fromModelColorName(page.type.colorName).opacity(AppUI.glassOpacity))
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
+                .background(Color.fromModelColorName(page.type.colorName).opacity(DesignSystem.glassOpacity))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
 
-            VStack(alignment: .leading, spacing: AppUI.atomic) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(page.title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
@@ -446,8 +438,8 @@ struct GraphSelectedNodeCard: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.mediumRadius))
-        .shadow(color: .black.opacity(AppUI.glassOpacity * 2), radius: AppUI.mediumRadius)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+        .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.mediumRadius)
     }
 }
 
@@ -512,7 +504,7 @@ struct GraphInsightsPanel: View {
         }
     
     private func insightSection(id: String, icon: String, title: String, count: Int, description: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: AppUI.mediumRadius) {
+        VStack(alignment: .leading, spacing: DesignSystem.mediumRadius) {
             // Section header
             Button(action: {
                 withAnimation { 
@@ -523,11 +515,11 @@ struct GraphInsightsPanel: View {
                     }
                 }
             }) {
-                HStack(spacing: AppUI.small) {
+                HStack(spacing: DesignSystem.small) {
                     Image(systemName: icon)
                         .font(.subheadline)
                         .foregroundStyle(color)
-                        .frame(width: AppUI.iconLarge)
+                        .frame(width: DesignSystem.iconLarge)
                     
                     Text(title)
                         .font(.subheadline.bold())
@@ -536,9 +528,9 @@ struct GraphInsightsPanel: View {
                     Text("\(count)")
                         .font(.footnote)
                         .foregroundStyle(color)
-                        .padding(.horizontal, AppUI.small)
-                        .padding(.vertical, AppUI.atomic + AppUI.borderWidth)
-                        .background(color.opacity(AppUI.glassOpacity))
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.atomic + DesignSystem.borderWidth)
+                        .background(color.opacity(DesignSystem.glassOpacity))
                         .clipShape(Capsule())
                     
                     Spacer()
@@ -556,25 +548,25 @@ struct GraphInsightsPanel: View {
                 Text(description)
                     .font(.footnote)
                     .foregroundStyle(.appSecondary)
-                    .padding(.leading, AppUI.huge)
+                    .padding(.leading, DesignSystem.huge)
                 
                 // Node chips
                 let nodeIDs = getNodeIDs(for: id)
                 if !nodeIDs.isEmpty {
-                    FlowLayout(spacing: AppUI.small) {
+                    FlowLayout(spacing: DesignSystem.small) {
                         ForEach(nodeIDs, id: \.self) { nodeID in
                             if let node = nodes.first(where: { $0.id == nodeID }) {
                                 Button(action: { onSelectNode(nodeID) }) {
-                                    HStack(spacing: AppUI.tiny) {
+                                    HStack(spacing: DesignSystem.tiny) {
                                         Image(systemName: node.type.icon)
                                             .font(.footnote)
                                         Text(node.title)
                                             .font(.footnote)
                                             .lineLimit(1)
                                     }
-                                    .padding(.horizontal, AppUI.mediumRadius)
-                                    .padding(.vertical, AppUI.tiny + AppUI.atomic)
-                                    .background(color.opacity(AppUI.glassOpacity))
+                                    .padding(.horizontal, DesignSystem.mediumRadius)
+                                    .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic)
+                                    .background(color.opacity(DesignSystem.glassOpacity))
                                     .clipShape(Capsule())
                                     .foregroundStyle(color)
                                 }
@@ -582,13 +574,13 @@ struct GraphInsightsPanel: View {
                             }
                         }
                     }
-                    .padding(.leading, AppUI.huge)
+                    .padding(.leading, DesignSystem.huge)
                 }
             }
         }
-        .padding(AppUI.medium)
-        .background(color.opacity(AppUI.glassOpacity / 3))
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+        .padding(DesignSystem.medium)
+        .background(color.opacity(DesignSystem.glassOpacity / 3))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
     
     private func getNodeIDs(for section: String) -> [UUID] {

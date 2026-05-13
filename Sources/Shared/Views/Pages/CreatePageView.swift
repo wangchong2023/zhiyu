@@ -41,10 +41,10 @@ struct CreatePageView: View {
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
                                     .background(type == pageType ? Color.fromModelColorName(pageType.colorName).opacity(0.25) : Color.appCard)
-                                    .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                                     .foregroundStyle(type == pageType ? Color.fromModelColorName(pageType.colorName) : .appSecondary)
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: AppUI.smallRadius)
+                                        RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                                             .stroke(type == pageType ? Color.fromModelColorName(pageType.colorName).opacity(0.5) : Color.clear, lineWidth: 1)
                                     )
                                 }

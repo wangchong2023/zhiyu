@@ -16,7 +16,7 @@ struct OnboardingOverlay: View {
     var body: some View {
         if let step = service.currentStep {
             ZStack {
-                Color.black.opacity(AppUI.secondaryOpacity * 0.875) // 0.7
+                Color.black.opacity(Colors.Opacity.secondaryOpacity * 0.875) // 0.7
                     .ignoresSafeArea()
                     .onTapGesture { 
                         withAnimation {
@@ -24,18 +24,18 @@ struct OnboardingOverlay: View {
                         }
                     }
                 
-                VStack(spacing: AppUI.loosePadding) { // 24
+                VStack(spacing: Spacing.loosePadding) { // 24
                     Image(systemName: step.icon)
-                        .font(.system(size: AppUI.iconHuge * 1.25))
+                        .font(.system(size: Spacing.iconHuge * 1.25))
                         .foregroundStyle(.appAccent)
                     
-                    VStack(spacing: AppUI.tightPadding) { // 8
+                    VStack(spacing: Spacing.tightPadding) { // 8
                         Text(step.title)
                             .font(.title2.bold())
                         Text(step.description)
                             .font(.body)
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, AppUI.huge) // 32
+                            .padding(.horizontal, Spacing.huge) // 32
                     }
                     
                     Button(action: { 
@@ -46,8 +46,8 @@ struct OnboardingOverlay: View {
                         Text(step == .vault ? Localized.tr("onboarding.action.start") : Localized.tr("onboarding.action.next"))
                             .font(.headline)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, AppUI.huge * 1.25) // 40
-                            .padding(.vertical, AppUI.medium) // 12
+                            .padding(.horizontal, Spacing.huge * 1.25) // 40
+                            .padding(.vertical, Spacing.medium) // 12
                             .background(Color.appAccent)
                             .clipShape(Capsule())
                     }
@@ -60,11 +60,11 @@ struct OnboardingOverlay: View {
                     .font(.footnote)
                     .foregroundStyle(.appSecondary)
                 }
-                .padding(AppUI.giant * 1.5)
+                .padding(Spacing.giant * 1.5)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.largeRadius * 1.5))
-                .shadow(radius: AppUI.giant)
-                .padding(AppUI.giant)
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.largeRadius * 1.5))
+                .shadow(radius: Spacing.giant)
+                .padding(Spacing.giant)
                 .transition(.scale.combined(with: .opacity))
             }
             .zIndex(999)

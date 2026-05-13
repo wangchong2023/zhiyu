@@ -148,9 +148,8 @@ private struct PDFLibraryEmptyView: View {
         } description: {
             Text(Localized.tr("pdf.libraryHint"))
         } actions: {
-            Button(Localized.tr("pdf.add")) { onAdd() }
-                .buttonStyle(.borderedProminent)
-                .tint(.appAccent)
+            AppPrimaryButton(title: Localized.tr("pdf.add"), action: onAdd)
+                .frame(maxWidth: 200)
         }
     }
 }
@@ -335,9 +334,10 @@ struct PDFReaderView: View {
                 Text(Localized.tr("pdf.saveAnnotation"))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.appAccent, in: RoundedRectangle(cornerRadius: AppUI.microRadius))
+                    .padding(.horizontal, Spacing.medium)
+                    .padding(.vertical, Spacing.small)
+                    .background(Color.appAccent)
+                    .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             }
         }
         .padding(12)

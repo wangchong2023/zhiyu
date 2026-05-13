@@ -46,7 +46,6 @@ public enum Animations {
     /// 脉冲动效缩放倍率 (1.4)
     public static let pulseScale: CGFloat = 1.4
     
-    // MARK: - Decorator 专项动效
     /// 闪烁动画相位偏移
     public static let shimmerPhaseShift: CGFloat = 400
     /// 闪烁光带宽度比例
@@ -57,6 +56,31 @@ public enum Animations {
     public static let glowScaleMedium: CGFloat = 1.3
     /// 大型发光缩放倍率
     public static let glowScaleLarge: CGFloat = 1.8
+    
+    public struct Interaction {
+        public static let pressScale: CGFloat = Animations.pressScale
+        public static let hoverScale: CGFloat = Animations.hoverScale
+        public static let springResponse: Double = Animations.springResponse
+        public static let springDamping: Double = Animations.springDamping
+        public static let standardDuration: Double = Animations.standardDuration
+        public static let fastDuration: Double = Animations.fastDuration
+        public static let slowDuration: Double = Animations.slowDuration
+        public static let looseDuration: Double = Animations.looseDuration
+        public static let standardDamping: Double = 0.8
+        public static let standardAnimation: Animation = .appStandard
+        public static let fastAnimation: Animation = .appFast
+    }
+    
+    public struct Decorator {
+        public static let shimmerDuration: Double = Animations.shimmerDuration
+        public static let pulseDuration: Double = Animations.pulseDuration
+        public static let pulseScale: CGFloat = Animations.pulseScale
+        public static let shimmerPhaseShift: CGFloat = Animations.shimmerPhaseShift
+        public static let shimmerWidthRatio: CGFloat = Animations.shimmerWidthRatio
+        public static let shimmerEndRatio: CGFloat = Animations.shimmerEndRatio
+        public static let glowScaleMedium: CGFloat = Animations.glowScaleMedium
+        public static let glowScaleLarge: CGFloat = Animations.glowScaleLarge
+    }
 }
 
 // MARK: - SwiftUI Animation 扩展

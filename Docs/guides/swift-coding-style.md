@@ -2,6 +2,35 @@
 
 > 本文档是 CLAUDE.md 中 `## 代码风格约定` 的详细展开。高频规范保留在 CLAUDE.md，细节约定在此。
 
+## 代码质量与复杂度指标 (Complexity & Quality)
+
+- **圈复杂度 (McCabe Cyclomatic Complexity)**: 单个函数的圈复杂度严禁超过 **15**。
+- **函数长度**: 单个函数行数严禁超过 **100 行**（Non-Blank, Non-Comment, NBNC）。
+- **设计原则**: 严格遵循 **SOLID** 和 **KISS** (Keep It Simple, Stupid) 原则。模块/文件/函数必须具备**单一职责**，确保**高内聚、低耦合**。
+- **避免硬编码**: 严禁在业务逻辑中出现魔鬼数字 (Magic Numbers) 和硬编码字符串 (Magic Strings)，必须提取为 Constants 或配置。
+
+## 注释规范 (Comments)
+
+- **语言**: 必须使用**中文**编写所有注释。
+- **完备性**: 文件头、函数头、关键控制流过程、枚举、类和结构体等都必须具备完备的中文注释。
+  - **文档注释 (`///`)**：解释“为什么”，用于公开 API、类和枚举。
+  - **实现注释 (`//`)**：解释“怎么做”，用于内部关键过程逻辑。
+  - **MARK 标签**：`// MARK: - 中文标题` 用于分隔代码区块。
+
+## 需求追踪与可回溯性 (Traceability)
+
+为了实现最强的可回溯性，当前特性、规格、设计、代码和测试用例必须严格对应：
+- 所有需求、测试用例、设计均需具备**编号**（如 SR-01）、**标题**和**描述**，并记录在文档中（如 `SOFTWARE_REQUIREMENTS_SPECIFICATION.md`）。
+- **代码标记**: 在代码实现中，必须将对应的 SRS 编号以 `// MARK:` 或文档注释的形式标注出来。
+  - 示例：`// MARK: [SR-03] 金库级锁定` 或 `/// @Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md#SR-03`
+- **测试同步**: 必须同步考虑对应模块的单元测试、集成测试和系统测试的完整性。同时同步考虑 `.xcstrings` (String Catalog) 划分的合理性，其划分必须参考模块划分并建立对应关系。
+
+## 可靠性与可运维性 (DFX, Logging, Tracing & Metrics)
+
+- **日志与追踪**: 关键路径和异常分支必须有清晰的 Log 记录（区分 `debug`, `info`, `warning`, `error` 级别）。
+- **性能监控 (Metrics)**: 核心算法和耗时操作需考虑注入性能埋点（Metrics），追踪响应延迟与成功率。
+- **DFX (Design for X)**: 设计时需充分考虑可测试性 (Design for Testability)、可维护性 (Design for Maintainability) 与可靠性 (Design for Reliability)。
+
 ## 类型后缀语义
 
 不同后缀代表所属层级与职责：

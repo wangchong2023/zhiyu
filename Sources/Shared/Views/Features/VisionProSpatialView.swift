@@ -185,7 +185,7 @@ struct VisionProSpatialView: View {
                     SpatialFeatureRow(icon: "eye.fill", title: Localized.tr("spatial.feature.gaze"), desc: Localized.tr("spatial.feature.gaze.desc"))
                     SpatialFeatureRow(icon: "person.crop.circle.badge.plus", title: Localized.tr("spatial.feature.spatialAudio"), desc: Localized.tr("spatial.feature.spatialAudio.desc"))
                 }
-                .appContainer(cornerRadius: AppUI.largeRadius, padding: true)
+                .appContainer(cornerRadius: DesignSystem.largeRadius, padding: true)
                 
                 // Device Requirement
                 VStack(spacing: 8) {
@@ -253,7 +253,7 @@ struct SpatialParallaxPreview: View {
                     endRadius: max(w, h) * 0.6
                 )
             )
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.chipRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
         }
     }
 }
@@ -278,12 +278,12 @@ struct SpatialNodeCard: View {
         .padding(12)
         .frame(width: 100, height: 70)
         .background(
-            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+            RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                 .fill(.ultraThinMaterial)
                 .shadow(color: Color.fromModelColorName(page.type.colorName).opacity(0.3), radius: 4)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: AppUI.cardRadius)
+            RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                 .strokeBorder(Color.fromModelColorName(page.type.colorName).opacity(0.4), lineWidth: 1)
         )
     }
@@ -302,7 +302,7 @@ struct SpatialFeatureRow: View {
                 .foregroundStyle(.purple)
                 .frame(width: 36, height: 36)
                 .background(Color.purple.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)

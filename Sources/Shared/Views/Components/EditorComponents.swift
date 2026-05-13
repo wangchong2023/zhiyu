@@ -40,7 +40,7 @@ struct PageLinkPickerSheet: View {
     }
     
     private var searchBar: some View {
-        HStack(spacing: AppUI.small) {
+        HStack(spacing: DesignSystem.small) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(Color.appSecondary)
             TextField(L10n.Editor.tr("searchPages"), text: $searchText)
@@ -52,7 +52,7 @@ struct PageLinkPickerSheet: View {
                 }
             }
         }
-        .padding(AppUI.standardPadding)
+        .padding(DesignSystem.standardPadding)
         .background(Color.appCard)
     }
     
@@ -64,14 +64,14 @@ struct PageLinkPickerSheet: View {
                     editorContent.append(link)
                     dismiss()
                 } label: {
-                    HStack(spacing: AppUI.medium) {
+                    HStack(spacing: DesignSystem.medium) {
                         Image(systemName: p.type.icon)
                             .foregroundStyle(Color.fromModelColorName(p.type.colorName))
-                            .frame(width: AppUI.Gallery.iconSize, height: AppUI.Gallery.iconSize)
+                            .frame(width: DesignSystem.Gallery.iconSize, height: DesignSystem.Gallery.iconSize)
                             .background(Color.fromModelColorName(p.type.colorName).opacity(0.12))
-                            .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                         
-                        VStack(alignment: .leading, spacing: AppUI.atomic) {
+                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                             Text(p.title)
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(Color.appText)
@@ -85,7 +85,7 @@ struct PageLinkPickerSheet: View {
                         Image(systemName: "plus.circle")
                             .foregroundStyle(Color.appText)
                     }
-                    .padding(.vertical, AppUI.tiny)
+                    .padding(.vertical, DesignSystem.tiny)
                 }
                 .buttonStyle(.plain)
             }
@@ -104,7 +104,7 @@ struct EditorToolbarButton: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: AppUI.atomic) {
+            VStack(spacing: DesignSystem.atomic) {
                 Image(systemName: icon)
                     .font(.system(size: 14))
                 Text(title)
@@ -113,7 +113,7 @@ struct EditorToolbarButton: View {
             .foregroundStyle(Color.appSecondary)
             .frame(width: 44, height: 36)
             .background(Color.appBorder.opacity(0.15))
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(title)
@@ -127,7 +127,7 @@ struct TagChip: View {
     let onRemove: () -> Void
     
     var body: some View {
-        HStack(spacing: AppUI.tiny) {
+        HStack(spacing: DesignSystem.tiny) {
             Text("#\(tag)")
                 .font(.caption)
                 .foregroundStyle(Color.appAccent)
@@ -137,8 +137,8 @@ struct TagChip: View {
                     .foregroundStyle(Color.appSecondary)
             }
         }
-        .padding(.horizontal, AppUI.small)
-        .padding(.vertical, AppUI.tiny)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(Color.appAccent.opacity(0.12))
         .clipShape(Capsule())
     }
@@ -151,7 +151,7 @@ struct AliasChip: View {
     let onRemove: () -> Void
     
     var body: some View {
-        HStack(spacing: AppUI.tiny) {
+        HStack(spacing: DesignSystem.tiny) {
             Text(alias)
                 .font(.caption)
                 .foregroundStyle(Color.appSource)
@@ -161,8 +161,8 @@ struct AliasChip: View {
                     .foregroundStyle(Color.appSecondary)
             }
         }
-        .padding(.horizontal, AppUI.small)
-        .padding(.vertical, AppUI.tiny)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(Color.appSource.opacity(0.12))
         .clipShape(Capsule())
     }
@@ -176,14 +176,14 @@ struct InlineTagInput: View {
     let onCancel: () -> Void
     
     var body: some View {
-        HStack(spacing: AppUI.small) {
+        HStack(spacing: DesignSystem.small) {
             TextField(L10n.Editor.tr("enterTag"), text: $text)
                 .font(.caption)
                 .textFieldStyle(.plain)
-                .padding(.horizontal, AppUI.medium)
-                .padding(.vertical, AppUI.small)
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.vertical, DesignSystem.small)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.microRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                 .foregroundStyle(Color.appText)
                 .onSubmit { onCommit() }
             
@@ -200,7 +200,7 @@ struct InlineTagInput: View {
             }
         }
         .padding(.horizontal)
-        .padding(.bottom, AppUI.small)
+        .padding(.bottom, DesignSystem.small)
         .background(Color.appCard)
     }
 }

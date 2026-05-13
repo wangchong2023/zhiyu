@@ -19,11 +19,11 @@ struct CollabInfoRow: View {
     let text: String
     
     var body: some View {
-        HStack(spacing: AppUI.CompositeRow.spacing) { // 10
+        HStack(spacing: DesignSystem.CompositeRow.spacing) { // 10
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundStyle(.appAccent)
-                .frame(width: AppUI.Action.iconSize + AppUI.tiny) // 20
+                .frame(width: DesignSystem.Action.iconSize + DesignSystem.tiny) // 20
             Text(text)
                 .font(.caption)
                 .foregroundStyle(.appText)
@@ -61,7 +61,7 @@ struct DiscoveredRoomRow: View {
             }
             .padding()
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("collab-discovered-room-\(room.id)")
@@ -97,7 +97,7 @@ struct ConnectedPeerRow: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
         .accessibilityIdentifier("collab-connected-peer-\(peer.id)")
     }
 }
@@ -114,11 +114,11 @@ struct RecentEditRow: View {
             Image(systemName: "pencil.circle.fill")
                 .foregroundStyle(.appConcept)
 
-            VStack(alignment: .leading, spacing: AppUI.atomic) { // 2
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 2
                 Text(edit.userID.components(separatedBy: "|").first ?? edit.userID)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appText)
-                Text("\(edit.field) → \(String(edit.newValue.prefix(AppUI.Metrics.maxCollabEditPreviewLength)))") // 50
+                Text("\(edit.field) → \(String(edit.newValue.prefix(DesignSystem.Metrics.maxCollabEditPreviewLength)))") // 50
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                     .lineLimit(1)
@@ -132,7 +132,7 @@ struct RecentEditRow: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
         .accessibilityIdentifier("collab-edit-row-\(edit.id)")
     }
 }
@@ -155,9 +155,9 @@ struct CollabRoleBadge: View {
     var body: some View {
         Text(role.displayName)
             .font(.caption.weight(.medium))
-            .padding(.horizontal, AppUI.small) // 8
-            .padding(.vertical, AppUI.tiny) // 4
-            .background(color.opacity(AppUI.glassOpacity)) // 0.15
+            .padding(.horizontal, DesignSystem.small) // 8
+            .padding(.vertical, DesignSystem.tiny) // 4
+            .background(color.opacity(DesignSystem.glassOpacity)) // 0.15
             .clipShape(Capsule())
             .foregroundStyle(color)
     }

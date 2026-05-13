@@ -34,7 +34,7 @@ struct MarkdownRendererView: View {
             if content.isEmpty && store.llmService.isProcessing {
                 renderSkeleton()
             } else {
-                VStack(alignment: .leading, spacing: AppUI.medium) {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     let blocks = parser.parse(content)
                     ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in
                         renderBlock(block)
@@ -42,20 +42,20 @@ struct MarkdownRendererView: View {
                 }
             }
         }
-        .blur(radius: (store.isPrivacyModeEnabled && isPrivate && !tempUnlocked) ? AppUI.cardRadius : 0)
+        .blur(radius: (store.isPrivacyModeEnabled && isPrivate && !tempUnlocked) ? DesignSystem.cardRadius : 0)
         .overlay {
             if store.isPrivacyModeEnabled && isPrivate && !tempUnlocked {
-                VStack(spacing: AppUI.medium) {
+                VStack(spacing: DesignSystem.medium) {
                     Image(systemName: "eye.slash.fill")
-                        .font(.system(size: AppUI.largeIconSize / 1.5))
+                        .font(.system(size: DesignSystem.largeIconSize / 1.5))
                     Text(Localized.tr("security.privacyMasked"))
-                        .font(AppUI.titleFont)
+                        .font(DesignSystem.titleFont)
                     Button(action: {
                         authenticate()
                     }) {
                         Label(Localized.tr("security.unlockToView"), systemImage: "lock.open.fill")
-                            .padding(.horizontal, AppUI.standardPadding)
-                            .padding(.vertical, AppUI.tightPadding)
+                            .padding(.horizontal, DesignSystem.standardPadding)
+                            .padding(.vertical, DesignSystem.tightPadding)
                             .background(Color.appAccent)
                             .foregroundStyle(.white)
                             .clipShape(Capsule())
@@ -105,36 +105,36 @@ struct MarkdownRendererView: View {
     @ViewBuilder
     private func renderDetailsBlock(summary: String, content: String) -> some View {
         #if os(watchOS)
-        VStack(alignment: .leading, spacing: AppUI.tiny) {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             Text(summary)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appAccent)
             MarkdownRendererView(content: content, isPrivate: isPrivate, onLinkTap: onLinkTap, isCompact: true)
-                .padding(.top, AppUI.tiny)
+                .padding(.top, DesignSystem.tiny)
         }
-        .padding(AppUI.medium)
-        .background(Color.appAccent.opacity(AppUI.glassOpacity / 3))
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-        .padding(.vertical, AppUI.tiny)
+        .padding(DesignSystem.medium)
+        .background(Color.appAccent.opacity(DesignSystem.glassOpacity / 3))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        .padding(.vertical, DesignSystem.tiny)
         #else
         DisclosureGroup {
             MarkdownRendererView(content: content, isPrivate: isPrivate, onLinkTap: onLinkTap, isCompact: true)
-                .padding(.top, AppUI.tiny)
+                .padding(.top, DesignSystem.tiny)
         } label: {
             Text(summary)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appAccent)
         }
-        .padding(AppUI.medium)
-        .background(Color.appAccent.opacity(AppUI.glassOpacity / 3))
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
-        .padding(.vertical, AppUI.tiny)
+        .padding(DesignSystem.medium)
+        .background(Color.appAccent.opacity(DesignSystem.glassOpacity / 3))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        .padding(.vertical, DesignSystem.tiny)
         #endif
     }
 
     // MARK: - Render Heading
     private func renderHeading(text: String, level: Int) -> some View {
-        let headingLevel = AppUI.HeadingLevel(rawValue: level) ?? .h6
+        let headingLevel = DesignSystem.HeadingLevel(rawValue: level) ?? .h6
         let isMainTitle = level == 1
         
         return Text(text)
@@ -143,25 +143,25 @@ struct MarkdownRendererView: View {
             .foregroundStyle(.appText)
             .multilineTextAlignment(isMainTitle ? .center : .leading)
             .frame(maxWidth: .infinity, alignment: isMainTitle ? .center : .leading)
-            .padding(.top, isMainTitle ? AppUI.widePadding : headingLevel.topPadding)
-            .padding(.bottom, isMainTitle ? AppUI.standardPadding : AppUI.tiny)
+            .padding(.top, isMainTitle ? DesignSystem.widePadding : headingLevel.topPadding)
+            .padding(.bottom, isMainTitle ? DesignSystem.standardPadding : DesignSystem.tiny)
     }
 
     @ViewBuilder
     private func renderParagraph(text: String) -> some View {
         renderInlineContent(text)
-            .font(isCompact ? AppUI.secondaryFont : .system(.body, design: .serif))
-            .lineSpacing(isCompact ? AppUI.atomic * 2 : AppUI.tiny * 1.5)
-            .foregroundStyle(.appText.opacity(AppUI.fullOpacity - AppUI.glassOpacity))
+            .font(isCompact ? DesignSystem.secondaryFont : .system(.body, design: .serif))
+            .lineSpacing(isCompact ? DesignSystem.atomic * 2 : DesignSystem.tiny * 1.5)
+            .foregroundStyle(.appText.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity))
     }
 
     // MARK: - Render Bullet List
     @ViewBuilder
     private func renderBulletList(items: [String], indent: Int) -> some View {
         let isOrdered = indent == -1
-        VStack(alignment: .leading, spacing: AppUI.tiny) {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             ForEach(Array(items.enumerated()), id: \.offset) { index, item in
-                HStack(alignment: .top, spacing: AppUI.tightPadding) {
+                HStack(alignment: .top, spacing: DesignSystem.tightPadding) {
                     if isOrdered {
                         Text("\(index + 1).")
                             .font(.system(.body, design: .rounded).weight(.bold))
@@ -170,17 +170,17 @@ struct MarkdownRendererView: View {
                     } else {
                         Text("•")
                             .foregroundStyle(.appAccent)
-                            .frame(width: AppUI.iconSmall)
+                            .frame(width: DesignSystem.iconSmall)
                     }
                     
                     renderInlineContent(item)
                         .foregroundStyle(.appText)
                     Spacer(minLength: 0)
                 }
-                .padding(.leading, isOrdered ? 0 : CGFloat(indent) * AppUI.standardPadding)
+                .padding(.leading, isOrdered ? 0 : CGFloat(indent) * DesignSystem.standardPadding)
             }
         }
-        .padding(.vertical, AppUI.atomic)
+        .padding(.vertical, DesignSystem.atomic)
     }
 
     // MARK: - Render Blockquote
@@ -189,22 +189,22 @@ struct MarkdownRendererView: View {
         let isAISummary = text.contains("AI") || text.hasPrefix("> AI")
         
         HStack(spacing: 0) {
-            RoundedRectangle(cornerRadius: AppUI.tiny)
-                .fill(isAISummary ? Color.appAccent : Color.appAccent.opacity(AppUI.disabledOpacity))
-                .frame(width: AppUI.atomic + AppUI.borderWidth)
-                .padding(.trailing, AppUI.mediumRadius)
+            RoundedRectangle(cornerRadius: DesignSystem.tiny)
+                .fill(isAISummary ? Color.appAccent : Color.appAccent.opacity(DesignSystem.disabledOpacity))
+                .frame(width: DesignSystem.atomic + DesignSystem.borderWidth)
+                .padding(.trailing, DesignSystem.mediumRadius)
 
             renderInlineContent(text)
                 .font(isAISummary ? .system(.body, design: .serif).italic() : .body.italic())
                 .foregroundStyle(isAISummary ? .appAccent : .appSecondary)
-                .lineSpacing(isAISummary ? AppUI.small : AppUI.tiny * 1.5) // AI 总结采用更宽松的行间距提升阅读舒适度
+                .lineSpacing(isAISummary ? DesignSystem.small : DesignSystem.tiny * 1.5) // AI 总结采用更宽松的行间距提升阅读舒适度
 
             Spacer(minLength: 0)
         }
-        .padding(isAISummary ? AppUI.medium : 0)
-        .background(isAISummary ? Color.appAccent.opacity(AppUI.glassOpacity / 3) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: isAISummary ? AppUI.smallRadius : 0))
-        .padding(.vertical, AppUI.tiny)
+        .padding(isAISummary ? DesignSystem.medium : 0)
+        .background(isAISummary ? Color.appAccent.opacity(DesignSystem.glassOpacity / 3) : Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: isAISummary ? DesignSystem.smallRadius : 0))
+        .padding(.vertical, DesignSystem.tiny)
     }
 
     // MARK: - Render Code Block
@@ -212,31 +212,31 @@ struct MarkdownRendererView: View {
     private func renderCodeBlock(code: String, language: String) -> some View {
         if language.lowercased() == "mermaid" {
             MermaidWebView(mermaidCode: code)
-                .padding(.vertical, AppUI.tightPadding)
+                .padding(.vertical, DesignSystem.tightPadding)
         } else {
             VStack(alignment: .leading, spacing: 0) {
                 if !language.isEmpty {
                     Text(language)
                         .font(.system(.caption2, design: .monospaced).weight(.medium))
                         .foregroundStyle(.appSecondary)
-                        .padding(.horizontal, AppUI.medium)
-                        .padding(.top, AppUI.tightPadding)
+                        .padding(.horizontal, DesignSystem.medium)
+                        .padding(.top, DesignSystem.tightPadding)
                 }
 
                 ScrollView(.horizontal, showsIndicators: true) {
                     Text(code)
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.appText.opacity(AppUI.fullOpacity - AppUI.glassOpacity))
-                        .padding(AppUI.medium)
+                        .foregroundStyle(.appText.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity))
+                        .padding(DesignSystem.medium)
                 }
             }
-            .background(Color.appCard.opacity(AppUI.fullOpacity - AppUI.glassOpacity * 1.5))
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .background(Color.appCard.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity * 1.5))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                    .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
+                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                    .stroke(Color.appBorder.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth)
             )
-            .padding(.vertical, AppUI.tiny)
+            .padding(.vertical, DesignSystem.tiny)
         }
     }
 
@@ -251,11 +251,11 @@ struct MarkdownRendererView: View {
                             .font(.system(.subheadline).weight(.semibold))
                             .foregroundStyle(.appText)
                             .frame(minWidth: 100, alignment: .leading) // 最小宽度保证列内容不被过度压缩
-                            .padding(.horizontal, AppUI.tightPadding)
-                            .padding(.vertical, AppUI.tightPadding)
+                            .padding(.horizontal, DesignSystem.tightPadding)
+                            .padding(.vertical, DesignSystem.tightPadding)
                     }
                 }
-                .background(Color.appAccent.opacity(AppUI.glassOpacity / 1.5))
+                .background(Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5))
 
                 ForEach(Array(rows.enumerated()), id: \.offset) { rowIdx, row in
                     HStack(spacing: 0) {
@@ -264,20 +264,20 @@ struct MarkdownRendererView: View {
                                 .font(.system(.subheadline))
                                 .foregroundStyle(.appText)
                                 .frame(minWidth: 100, alignment: .leading)
-                                .padding(.horizontal, AppUI.tightPadding)
-                                .padding(.vertical, AppUI.small - AppUI.atomic)
+                                .padding(.horizontal, DesignSystem.tightPadding)
+                                .padding(.vertical, DesignSystem.small - DesignSystem.atomic)
                         }
                     }
-                    .background(rowIdx % 2 == 0 ? Color.clear : Color.appCard.opacity(AppUI.disabledOpacity))
+                    .background(rowIdx % 2 == 0 ? Color.clear : Color.appCard.opacity(DesignSystem.disabledOpacity))
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: AppUI.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: AppUI.smallRadius)
-                    .stroke(Color.appBorder.opacity(AppUI.disabledOpacity), lineWidth: AppUI.borderWidth)
+                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                    .stroke(Color.appBorder.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth)
             )
         }
-        .padding(.vertical, AppUI.tiny)
+        .padding(.vertical, DesignSystem.tiny)
     }
 
     // MARK: - Render Horizontal Rule
@@ -285,15 +285,15 @@ struct MarkdownRendererView: View {
     private func renderHorizontalRule() -> some View {
         Divider()
             .background(Color.appBorder)
-            .padding(.vertical, AppUI.tightPadding)
+            .padding(.vertical, DesignSystem.tightPadding)
     }
 
     // MARK: - Render Task List
     @ViewBuilder
     private func renderTaskList(items: [(text: String, checked: Bool)]) -> some View {
-        VStack(alignment: .leading, spacing: AppUI.tiny + AppUI.atomic) {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                HStack(spacing: AppUI.tightPadding) {
+                HStack(spacing: DesignSystem.tightPadding) {
                     Image(systemName: item.checked ? "checkmark.square.fill" : "square")
                         .font(.body)
                         .foregroundStyle(item.checked ? .green : .appSecondary)
@@ -304,7 +304,7 @@ struct MarkdownRendererView: View {
                 }
             }
         }
-        .padding(.vertical, AppUI.atomic)
+        .padding(.vertical, DesignSystem.atomic)
     }
 
     // MARK: - Inline Content Renderer
@@ -350,7 +350,7 @@ struct MarkdownRendererView: View {
                 container.swiftUI.font = (isCompact ? Font.footnote : Font.body).italic()
             case .code:
                 container.swiftUI.font = .system(.caption, design: .monospaced)
-                container.swiftUI.backgroundColor = Color.appAccent.opacity(AppUI.glassOpacity)
+                container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
                 container.swiftUI.foregroundColor = .appText
                 case .applink:
                     container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
@@ -397,25 +397,25 @@ struct MarkdownRendererView: View {
     // MARK: - Skeleton View
     @ViewBuilder
     private func renderSkeleton() -> some View {
-        VStack(alignment: .leading, spacing: AppUI.standardPadding) {
-            RoundedRectangle(cornerRadius: AppUI.microRadius)
+        VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+            RoundedRectangle(cornerRadius: DesignSystem.microRadius)
                 .fill(Color.appCard)
-                .frame(width: AppUI.Gallery.callToActionWidth + AppUI.huge, height: AppUI.Action.largeIconSize)
+                .frame(width: DesignSystem.Gallery.callToActionWidth + DesignSystem.huge, height: DesignSystem.Action.largeIconSize)
             
-            VStack(alignment: .leading, spacing: AppUI.tightPadding) {
+            VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                 ForEach(0..<3, id: \.self) { _ in
-                    RoundedRectangle(cornerRadius: AppUI.microRadius)
-                        .fill(Color.appCard.opacity(AppUI.disabledOpacity * 2))
-                        .frame(height: AppUI.captionFontSize + AppUI.atomic)
+                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                        .fill(Color.appCard.opacity(DesignSystem.disabledOpacity * 2))
+                        .frame(height: DesignSystem.captionFontSize + DesignSystem.atomic)
                         .frame(maxWidth: .infinity)
                 }
             }
             
-            RoundedRectangle(cornerRadius: AppUI.microRadius)
-                .fill(Color.appCard.opacity(AppUI.disabledOpacity))
-                .frame(width: AppUI.Gallery.callToActionWidth - AppUI.tightPadding, height: AppUI.subheadlineFontSize + AppUI.atomic * 2)
+            RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                .fill(Color.appCard.opacity(DesignSystem.disabledOpacity))
+                .frame(width: DesignSystem.Gallery.callToActionWidth - DesignSystem.tightPadding, height: DesignSystem.subheadlineFontSize + DesignSystem.atomic * 2)
         }
-        .padding(.vertical, AppUI.tightPadding)
-        .opacity(AppUI.disabledOpacity * 2)
+        .padding(.vertical, DesignSystem.tightPadding)
+        .opacity(DesignSystem.disabledOpacity * 2)
     }
 }

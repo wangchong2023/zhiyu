@@ -1,0 +1,207 @@
+// AppFeedback.swift
+//
+// 作者: Wang Chong
+// 功能说明: 本文件定义了智宇 (ZhiYu) 的反馈与加载状态组件体系。
+// 核心职责：
+// 1. 提供视觉反馈组件，如脉冲点 (Pulse)、闪烁加载 (Shimmer) 及骨架屏 (Skeleton)。
+// 2. 封装成功提示横幅及光晕效果。
+// MARK: [PR-03] 统一反馈动效规范，降低用户等待焦虑，提升系统交互的“呼吸感”
+// 版本: 1.2
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+
+// MARK: - App Pulse Dot
+
+/// 脉冲式状态指示点
+/// 通过缩放和透明度变化实现呼吸感反馈。
+public struct AppPulseDot: View {
+    public var color: Color = .appAccent
+    public var size: CGFloat = Spacing.small
+
+    @State private var isPulsing = false
+
+    public init(color: Color = .appAccent, size: CGFloat = Spacing.small) {
+        self.color = color
+        self.size = size
+    }
+
+    public var body: some View {
+        ZStack {
+            Circle()
+                .fill(color.opacity(0.3))
+                .frame(width: size * 2, height: size * 2)
+                .scaleEffect(isPulsing ? Spacing.Decorator.pulseScale : 1.0)
+                .opacity(isPulsing ? 0 : 1)
+
+            Circle()
+                .fill(color)
+                .frame(width: size, height: size)
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: Animations.Decorator.pulseDuration).repeatForever(autoreverses: false)) {
+                isPulsing = true
+            }
+        }
+    }
+}
+
+// MARK: - App Shimmer
+
+/// 闪烁加载背景
+/// 通过渐变色偏移实现骨架屏的流光效果。
+public struct AppShimmer: View {
+    @State private var phase: CGFloat = 0
+
+    public init() {}
+
+    public var body: some View {
+        LinearGradient(
+            colors: [
+                .clear,
+                Color.appAccent.opacity(0.15),
+                .clear
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        .offset(x: phase)
+        .onAppear {
+            // MARK: @PR-03: 使用高性能线性动画减少主线程压力
+            withAnimation(.linear(duration: Animations.Decorator.shimmerDuration).repeatForever(autoreverses: false)) {
+                phase = Animations.Decorator.shimmerPhaseShift
+            }
+        }
+    }
+}
+
+// MARK: - Shimmer Modifier
+
+/// 流光效果视图修饰符
+public struct ShimmerModifier: ViewModifier {
+    @State private var phase: CGFloat = -Animations.Decorator.shimmerPhaseShift / 2
+
+    public init() {}
+
+    public func body(content: Content) -> some View {
+        content
+            .overlay(
+                GeometryReader { geometry in
+                    LinearGradient(
+                        colors: [
+                            .clear,
+                            Color.white.opacity(0.2),
+                            .clear
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: geometry.size.width * Animations.Decorator.shimmerWidthRatio)
+                    .offset(x: phase)
+                    .onAppear {
+                        withAnimation(.linear(duration: Animations.Decorator.shimmerDuration).repeatForever(autoreverses: false)) {
+                            phase = geometry.size.width * Animations.Decorator.shimmerEndRatio
+                        }
+                    }
+                }
+            )
+            .clipped()
+    }
+}
+
+// MARK: - App Skeleton
+
+/// 骨架屏占位组件
+public struct AppSkeleton: View {
+    public var width: CGFloat? = nil
+    public var height: CGFloat = Spacing.large
+    public var cornerRadius: CGFloat = Spacing.tiny
+
+    public init(width: CGFloat? = nil, height: CGFloat = Spacing.large, cornerRadius: CGFloat = Spacing.tiny) {
+        self.width = width
+        self.height = height
+        self.cornerRadius = cornerRadius
+    }
+
+    public var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color.appSecondary.opacity(0.15))
+            .frame(width: width, height: height)
+            .shimmerApp()
+    }
+}
+
+// MARK: - App Success Banner
+
+/// 成功提示横幅
+public struct AppSuccessBanner: View {
+    public let message: String
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    public init(message: String) {
+        self.message = message
+    }
+
+    private var bannerFont: Font {
+        horizontalSizeClass == .regular ? Typography.secondaryFont : Typography.captionFont
+    }
+
+    public var body: some View {
+        HStack(spacing: Spacing.tiny + Spacing.atomic) { // 6
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+            Text(message)
+                .font(bannerFont)
+                .foregroundStyle(.green)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.green.opacity(Colors.glassOpacity))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
+    }
+}
+
+// MARK: - App Glow
+
+/// 图标光晕效果
+public struct AppGlow: View {
+    public let icon: String
+    public var color: Color = .appAccent
+    public var size: CGFloat = Spacing.huge
+
+    public init(icon: String, color: Color = .appAccent, size: CGFloat = Spacing.huge) {
+        self.icon = icon
+        self.color = color
+        self.size = size
+    }
+
+    public var body: some View {
+        ZStack {
+            // 外层光晕
+            Circle()
+                .fill(color.opacity(0.15))
+                .frame(width: size * Spacing.Decorator.glowScaleLarge, height: size * Spacing.Decorator.glowScaleLarge)
+                .blur(radius: Spacing.Decorator.glowBlurMedium)
+
+            // 内层光晕
+            Circle()
+                .fill(color.opacity(0.2))
+                .frame(width: size * Spacing.Decorator.glowScaleMedium, height: size * Spacing.Decorator.glowScaleMedium)
+                .blur(radius: Spacing.Decorator.glowBlurSmall)
+
+            // 中心图标
+            Image(systemName: icon)
+                .font(.system(size: size * 0.5, weight: .medium))
+                .foregroundStyle(color)
+        }
+    }
+}
+
+// MARK: - View Extension
+
+public extension View {
+    /// 应用流光加载动画
+    func shimmerApp() -> some View {
+        modifier(ShimmerModifier())
+    }
+}

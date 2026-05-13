@@ -87,7 +87,7 @@ struct IconPickerView: View {
                 .foregroundStyle(.appAccent)
                 .frame(width: 48, height: 48)
                 .background(Color.appAccent.opacity(0.15))
-                .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(selectedIcon != nil ? L10n.Editor.tr("iconPicker.customSelected") : L10n.Editor.tr("iconPicker.useDefault"))
@@ -119,7 +119,7 @@ struct IconPickerView: View {
         }
         .padding()
         .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: AppUI.cardRadius))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
 
     // MARK: - Icon Category Section
@@ -140,10 +140,10 @@ struct IconPickerView: View {
                             .font(.title3)
                             .frame(width: 44, height: 44)
                             .background(selectedIcon == icon ? Color.appAccent.opacity(0.25) : Color.appCard)
-                            .clipShape(RoundedRectangle(cornerRadius: AppUI.standardRadius))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
                             .foregroundStyle(selectedIcon == icon ? .appAccent : .appText)
                             .overlay(
-                                RoundedRectangle(cornerRadius: AppUI.standardRadius)
+                                RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
                                     .stroke(selectedIcon == icon ? Color.appAccent : Color.clear, lineWidth: 2)
                             )
                     }
