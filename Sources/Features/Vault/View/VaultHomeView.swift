@@ -15,43 +15,29 @@ struct VaultHomeView: View {
     @Environment(AppRouter.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     
-    @State private var showCreateSheet = false
-    @State private var newVaultName = ""
-    @State private var vaultToRename: VaultService.Vault?
-    @State private var renameText = ""
-    @State private var showDeleteConfirm = false
-    @State private var vaultToDelete: VaultService.Vault?
-    
-    @State private var displayMode: DisplayMode = .grid
-    
-    enum DisplayMode: String, CaseIterable {
-        case grid, list
-        var icon: String { self == .grid ? "square.grid.2x2" : "list.bullet" }
-    }
-    
-    private let columns = [
-        GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 20)
-    ]
+    @State private var viewModel = VaultHomeViewModel()
     
     var body: some View {
         @Bindable var router = router
+        @Bindable var viewModel = viewModel
+        
         NavigationStack(path: $router.path) {
             ZStack {
                 themeManager.pageBackground()
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 40) {
+                    VStack(alignment: .leading, spacing: DesignSystem.Vault.homeVerticalPadding) {
                         headerSection
                         
-                        if displayMode == .grid {
-                            LazyVGrid(columns: columns, spacing: 25) {
+                        if viewModel.displayMode == .grid {
+                            VaultGridLayout {
                                 createVaultCard
                                 
                                 ForEach(vaultService.vaults) { vault in
                                     VaultCard(vault: vault) {
-                                        withAnimation(.spring()) {
-                                            vaultService.selectVault(vault)
+                                        withAnimation(DesignSystem.Animation.standard) {
+                                            viewModel.selectVault(vault)
                                         }
                                     }
                                     .contextMenu {
@@ -59,13 +45,12 @@ struct VaultHomeView: View {
                                     }
                                 }
                             }
-                            .padding(.horizontal, 25)
                         } else {
-                            LazyVStack(spacing: 12) {
+                            VaultListLayout {
                                 ForEach(vaultService.vaults) { vault in
                                     VaultListRow(vault: vault) {
-                                        withAnimation(.spring()) {
-                                            vaultService.selectVault(vault)
+                                        withAnimation(DesignSystem.Animation.standard) {
+                                            viewModel.selectVault(vault)
                                         }
                                     }
                                     .contextMenu {
@@ -73,7 +58,7 @@ struct VaultHomeView: View {
                                     }
                                 }
                                 
-                                Button(action: { showCreateSheet = true }) {
+                                Button(action: { viewModel.showCreateSheet = true }) {
                                     HStack {
                                         Image(systemName: "plus.circle.fill")
                                             .foregroundStyle(.appAccent)
@@ -81,21 +66,20 @@ struct VaultHomeView: View {
                                             .foregroundStyle(.appAccent)
                                         Spacer()
                                     }
-                                    .padding()
+                                    .padding(DesignSystem.standardPadding)
                                     .background(Color.appCard.opacity(0.5))
-                                    .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.small))
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: Spacing.smallRadius)
-                                            .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4]))
+                                        RoundedRectangle(cornerRadius: DesignSystem.Radius.small)
+                                            .strokeBorder(style: StrokeStyle(lineWidth: DesignSystem.borderWidth, dash: [4]))
                                             .foregroundStyle(.appAccent.opacity(0.3))
                                     )
                                 }
                                 .buttonStyle(.plain)
                             }
-                            .padding(.horizontal, 25)
                         }
                     }
-                    .padding(.vertical, 40)
+                    .padding(.vertical, DesignSystem.Vault.homeVerticalPadding)
                 }
             }
             .navigationTitle(L10n.Vault.tr("homeTitle"))
@@ -105,15 +89,15 @@ struct VaultHomeView: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: DesignSystem.small) {
                         Button(action: {
-                            withAnimation(.spring()) {
-                                displayMode = displayMode == .grid ? .list : .grid
+                            withAnimation(DesignSystem.Animation.standard) {
+                                viewModel.toggleDisplayMode()
                             }
                         }) {
-                            Image(systemName: displayMode == .grid ? "list.bullet" : "square.grid.2x2")
-                                .font(.system(size: 13, weight: .bold))
-                                .frame(width: 36, height: 36)
+                            Image(systemName: viewModel.displayMode.icon)
+                                .font(.system(size: DesignSystem.Metrics.dashboardLabelSize, weight: .bold))
+                                .frame(width: DesignSystem.Timeline.indicatorSize, height: DesignSystem.Timeline.indicatorSize)
                                 .background(.ultraThinMaterial)
                                 .clipShape(Circle())
                         }
@@ -123,37 +107,27 @@ struct VaultHomeView: View {
                     }
                 }
             }
-            .alert(L10n.Vault.tr("create"), isPresented: $showCreateSheet) {
-                TextField(L10n.Vault.tr("namePlaceholder"), text: $newVaultName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { newVaultName = "" }
+            .alert(L10n.Vault.tr("create"), isPresented: $viewModel.showCreateSheet) {
+                TextField(L10n.Vault.tr("namePlaceholder"), text: $viewModel.newVaultName)
+                Button(L10n.Common.tr("cancel"), role: .cancel) { viewModel.newVaultName = "" }
                 Button(L10n.Vault.tr("create")) {
-                    if !newVaultName.isEmpty {
-                        vaultService.createVault(name: newVaultName)
-                        newVaultName = ""
-                    }
+                    viewModel.createVault()
                 }
             }
-            .alert(L10n.Vault.tr("rename"), isPresented: Binding(
-                get: { vaultToRename != nil },
-                set: { if !$0 { vaultToRename = nil } }
-            )) {
-                TextField(L10n.Vault.tr("namePlaceholder"), text: $renameText)
+            .alert(L10n.Vault.tr("rename"), isPresented: $viewModel.showRenameSheet) {
+                TextField(L10n.Vault.tr("namePlaceholder"), text: $viewModel.renameText)
                 Button(L10n.Common.tr("cancel"), role: .cancel) { }
                 Button(L10n.Common.tr("save")) {
-                    if let vault = vaultToRename, !renameText.isEmpty {
-                        vaultService.renameVault(id: vault.id, newName: renameText)
-                    }
+                    viewModel.confirmRename()
                 }
             }
             .confirmationDialog(
                 L10n.Common.tr("deleteConfirm"),
-                isPresented: $showDeleteConfirm,
+                isPresented: $viewModel.showDeleteConfirm,
                 titleVisibility: .visible
             ) {
                 Button(L10n.Common.tr("delete"), role: .destructive) {
-                    if let vault = vaultToDelete {
-                        vaultService.deleteVault(id: vault.id)
-                    }
+                    viewModel.confirmDelete()
                 }
                 Button(L10n.Common.tr("cancel"), role: .cancel) { }
             }
@@ -166,34 +140,34 @@ struct VaultHomeView: View {
     // MARK: - 子视图
     
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Vault.tr("welcome"))
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
                 .foregroundStyle(.appText)
             
             Text(L10n.Vault.tr("subtitle"))
-                .font(.body)
+                .font(.system(size: DesignSystem.bodyFontSize))
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.horizontal, 25)
+        .padding(.horizontal, DesignSystem.Vault.homePadding)
     }
     
     private var createVaultCard: some View {
-        Button(action: { showCreateSheet = true }) {
-            VStack(spacing: 15) {
+        Button(action: { viewModel.showCreateSheet = true }) {
+            VStack(spacing: DesignSystem.standardPadding) {
                 Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 40))
+                    .font(.system(size: DesignSystem.Gallery.iconSize))
                     .foregroundStyle(.appAccent)
                 
                 Text(L10n.Vault.tr("new"))
-                    .font(.headline)
+                    .font(.system(size: DesignSystem.headlineFontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 180)
+            .frame(height: DesignSystem.Vault.cardHeight)
             .background(
-                RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                    .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [6]))
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
+                    .strokeBorder(style: StrokeStyle(lineWidth: DesignSystem.atomic, dash: [6]))
                     .foregroundStyle(.appAccent.opacity(0.3))
             )
             .background(Color.appCard.opacity(0.5))
@@ -204,15 +178,13 @@ struct VaultHomeView: View {
     @ViewBuilder
     private func vaultContextMenu(for vault: VaultService.Vault) -> some View {
         Button {
-            vaultToRename = vault
-            renameText = vault.name
+            viewModel.initiateRename(for: vault)
         } label: {
             Label(L10n.Common.tr("edit"), systemImage: "pencil")
         }
         
         Button(role: .destructive) {
-            vaultToDelete = vault
-            showDeleteConfirm = true
+            viewModel.initiateDelete(for: vault)
         } label: {
             Label(L10n.Common.tr("delete"), systemImage: "trash")
         }
@@ -227,35 +199,35 @@ struct VaultCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 // 封面装饰
                 ZStack(alignment: .topTrailing) {
-                    RoundedRectangle(cornerRadius: Spacing.smallRadius)
+                    RoundedRectangle(cornerRadius: DesignSystem.Radius.small)
                         .fill(LinearGradient(colors: [.appAccent.opacity(0.8), .appConcept.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(height: 100)
+                        .frame(height: DesignSystem.Vault.coverHeight)
                     
                     Image(systemName: "book.closed.fill")
-                        .font(.title)
+                        .font(.system(size: DesignSystem.titleFontSize))
                         .foregroundStyle(.white.opacity(0.5))
-                        .padding(12)
+                        .padding(DesignSystem.medium)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                     Text(vault.name)
-                        .font(.headline)
+                        .font(.system(size: DesignSystem.headlineFontSize, weight: .bold))
                         .foregroundStyle(.appText)
                         .lineLimit(1)
                     
                     Text("\(vault.pageCount) " + L10n.Vault.tr("page.knowledge"))
-                        .font(.caption)
+                        .font(.system(size: DesignSystem.captionFontSize))
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.horizontal, 4)
+                .padding(.horizontal, DesignSystem.tiny)
             }
-            .padding(10)
+            .padding(DesignSystem.mediumRadius)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
-            .shadow(color: .black.opacity(0.05), radius: 10, y: 5)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.card))
+            .shadow(color: DesignSystem.shadowColor, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
         }
         .buttonStyle(.plain)
     }
@@ -269,40 +241,41 @@ struct VaultListRow: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
+            HStack(spacing: DesignSystem.standardPadding) {
                 // 封面装饰
                 ZStack {
-                    RoundedRectangle(cornerRadius: Spacing.microRadius)
+                    RoundedRectangle(cornerRadius: DesignSystem.Radius.micro)
                         .fill(LinearGradient(colors: [.appAccent.opacity(0.8), .appConcept.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(width: 44, height: 44)
+                        .frame(width: DesignSystem.Vault.listCoverSize, height: DesignSystem.Vault.listCoverSize)
                     
                     Image(systemName: "book.closed.fill")
-                        .font(.caption)
+                        .font(.system(size: DesignSystem.captionFontSize))
                         .foregroundStyle(.white.opacity(0.8))
                 }
                 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                     Text(vault.name)
-                        .font(.subheadline.bold())
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .foregroundStyle(.appText)
                     
                     Text("\(vault.pageCount) " + L10n.Vault.tr("page.knowledge"))
-                        .font(.caption2)
+                        .font(.system(size: DesignSystem.caption2FontSize))
                         .foregroundStyle(.appSecondary)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.caption2)
+                    .font(.system(size: DesignSystem.caption2FontSize))
                     .foregroundStyle(.appSecondary.opacity(0.5))
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
+            .padding(.vertical, DesignSystem.small)
+            .padding(.horizontal, DesignSystem.medium)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.small))
             .shadow(color: .black.opacity(0.02), radius: 4, y: 2)
         }
         .buttonStyle(.plain)
     }
 }
+

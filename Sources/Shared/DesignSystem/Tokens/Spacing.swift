@@ -310,6 +310,19 @@ public enum Spacing {
         public static let badgePadding: CGFloat = 6
     }
     
+    /// 笔记本枢纽规范
+    public struct Vault {
+        public static let gridCardMin: CGFloat = 160
+        public static let gridCardMax: CGFloat = 200
+        public static let gridSpacing: CGFloat = 20
+        public static let listSpacing: CGFloat = 12
+        public static let cardHeight: CGFloat = 180
+        public static let coverHeight: CGFloat = 100
+        public static let listCoverSize: CGFloat = 44
+        public static let homePadding: CGFloat = 25
+        public static let homeVerticalPadding: CGFloat = 40
+    }
+    
     /// 视觉装饰模式规范 (Decorator)
     public struct Decorator {
         public static let shadowRadiusSmall: CGFloat = 8
