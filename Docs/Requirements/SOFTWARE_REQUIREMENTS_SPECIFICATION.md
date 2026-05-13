@@ -126,5 +126,27 @@ iCloud 多端同步采用 **Lamport Last-Writer-Wins (LWW)** 策略：
 - **用户回调**：`onConflictDetected` 闭包允许 UI 层介入自定义冲突解决策略
 - **决议枚举**：`ConflictResolution` 支持 `.keepLocal` / `.keepRemote` / `.merge`
 
+## 7. DFX 设计要求 (Design for X: Logging, Tracing & Metrics)
+
+为确保高可靠性与可维护性，系统必须落实以下可观察性设计：
+
+### 7.1 日志记录 (Logging)
+- 所有关键路径（如网络请求、数据库操作、AI推理开始/结束）必须记录日志，统一通过 `Logger` 服务调用。
+- 日志应包含清晰的动作 (`LogAction`) 和目标 (`target`)，方便后续审计过滤。
+- **强制溯源**：实现关键特性的代码模块头部或对应函数中，必须通过 `// MARK: @SR-XX` 或者 `/// @Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md#SR-XX` 形式引用 SRS 需求编号。
+
+### 7.2 性能度量 (Metrics)
+- 核心耗时路径（见 **1. 性能需求**，如 PR-01, PR-02, PR-05）需通过 `PerformanceService` 追踪耗时，提供指标上报或输出到终端统计图表。
+
+## 8. 代码规范补充要求
+
+为达成高质量交付目标，系统必须遵守《Swift 编码风格指南》：
+- **高内聚低耦合 (SOLID)**: 职责分离，跨模块需通过 Protocol 注入，禁止使用单例的隐藏依赖；UI 和业务逻辑完全解耦 (MVVM 演进或独立 Service)。
+- **圈复杂度**: 函数内部圈复杂度严禁超过 15。
+- **函数长度控制**: 单个函数的非空非注释行数 (NBNC) 严禁超过 100 行。超出则必须重构拆分。
+- **中文注释完备性**: 模块文件头、关键类、结构体、枚举和算法函数均需配备清晰的中文注释，说明其意图、输入和副作用。
+- **反“魔鬼数字/字符串”**: 杜绝将魔法值散落在逻辑代码中。颜色、间距等 UI 布局属性存放到 `Shared/DesignSystem/Tokens/` 目录下；专用布局模板存放于 `Shared/UIComponents/Layouts/` 目录下；业务常量存放于 `AppConstants.swift`。
+- **UI 布局定制**: 重构时必须保持既有布局效果不变。全局公共标准存放在 DesignSystem 中，特定业务界面的布局定制模板应存放到 `Shared/UIComponents/Layouts/` 目录下。
+
 ---
 *本规范受架构 4+1 视图约束，是系统验收的最高技术依据。*
