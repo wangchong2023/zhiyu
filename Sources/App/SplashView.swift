@@ -33,12 +33,12 @@ struct SplashView: View {
                 Spacer()
                 
                 // App Logo / 名称
-                VStack(spacing: DesignSystem.medium) { // 12
+                VStack(spacing: DesignSystem.medium) {
                     Image(systemName: "books.vertical.fill")
-                        .font(.system(size: DesignSystem.Metrics.heroValueSize * 1.69, weight: .light)) // 44
+                        .font(.system(size: DesignSystem.Gallery.mainIconSize, weight: .light))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.fullOpacity * 0.7)], // 0.7
+                                colors: [Color.appAccent, Color.appAccent.opacity(Colors.Opacity.secondaryOpacity)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -46,59 +46,59 @@ struct SplashView: View {
                         .opacity(logoOpacity)
                     
                     Text(Localized.tr("splash.appName"))
-                        .font(.system(size: DesignSystem.Metrics.titleFontSize, weight: .bold, design: .rounded)) // 28
+                        .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .opacity(logoOpacity)
                 }
-                .padding(.bottom, DesignSystem.Metrics.heroValueSize * 2.3) // 60
+                .padding(.bottom, DesignSystem.huge * 2)
                 
                 // 名言
-                VStack(spacing: DesignSystem.standardPadding) { // 16
+                VStack(spacing: DesignSystem.standardPadding) {
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif)) // 17
-                        .foregroundStyle(.white.opacity(DesignSystem.fullOpacity * 0.9)) // 0.9
+                        .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
+                        .foregroundStyle(.white.opacity(Colors.Opacity.pressedOpacity))
                         .multilineTextAlignment(.center)
-                        .lineSpacing(DesignSystem.tiny + DesignSystem.atomic) // 6
-                        .padding(.horizontal, DesignSystem.Metrics.iconBoxSize) // 40
+                        .lineSpacing(DesignSystem.small)
+                        .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
                         .opacity(quoteOpacity)
                     
                     // 闪光效果
                     Text(Localized.tr("splash.quote"))
-                        .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif)) // 17
+                        .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.clear, .white.opacity(DesignSystem.fullOpacity * 0.6), .clear], // 0.6
+                                colors: [.clear, .white.opacity(Colors.Opacity.secondaryOpacity), .clear],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .multilineTextAlignment(.center)
-                        .lineSpacing(DesignSystem.tiny + DesignSystem.atomic) // 6
-                        .padding(.horizontal, DesignSystem.Metrics.iconBoxSize) // 40
+                        .lineSpacing(DesignSystem.small)
+                        .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
                         .offset(x: shimmerOffset)
                         .mask(
                             Text(Localized.tr("splash.quote"))
-                                .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif)) // 17
+                                .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
                                 .multilineTextAlignment(.center)
-                                .lineSpacing(DesignSystem.tiny + DesignSystem.atomic) // 6
-                                .padding(.horizontal, DesignSystem.Metrics.iconBoxSize) // 40
+                                .lineSpacing(DesignSystem.small)
+                                .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
                         )
-                        .opacity(quoteOpacity > DesignSystem.fullOpacity * 0.5 ? DesignSystem.glassOpacity * 4 : 0) // 0.5, 0.4
+                        .opacity(quoteOpacity > Colors.Opacity.pressedOpacity * 0.5 ? Colors.Opacity.glassOpacity * 4 : 0)
                     
                     // 署名 (仅保留装饰线)
                     HStack(spacing: 0) {
                         Text("— ")
-                            .foregroundStyle(.white.opacity(DesignSystem.fullOpacity * 0.5)) // 0.5
+                            .foregroundStyle(.white.opacity(Colors.Opacity.secondaryOpacity))
                         Text(Localized.tr("splash.author"))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.appAccent.opacity(DesignSystem.fullOpacity * 0.8), Color.appAccent], // 0.8
+                                    colors: [Color.appAccent.opacity(Colors.Opacity.secondaryOpacity), Color.appAccent],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
                             )
                     }
-                    .font(.system(size: DesignSystem.captionFontSize, weight: .medium, design: .serif)) // 14
+                    .font(.system(size: DesignSystem.captionFontSize, weight: .medium, design: .serif))
                     .opacity(authorOpacity)
                 }
                 
@@ -106,30 +106,30 @@ struct SplashView: View {
                 
                 // 继续按钮
                 Button(action: {
-                    withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) { // 0.5
+                    withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) {
                         onDismiss()
                     }
                 }) {
-                    HStack(spacing: DesignSystem.small) { // 8
+                    HStack(spacing: DesignSystem.small) {
                         Text(Localized.tr("splash.enter"))
-                            .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold, design: .rounded)) // 15
+                            .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold, design: .rounded))
                         Image(systemName: "arrow.right")
-                            .font(.system(size: DesignSystem.caption2FontSize, weight: .semibold)) // 13
+                            .font(DesignSystem.caption2Font)
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, DesignSystem.Metrics.heroValueSize * 1.23) // 32
-                    .padding(.vertical, DesignSystem.small + DesignSystem.tiny) // 14
+                    .padding(.horizontal, DesignSystem.huge)
+                    .padding(.vertical, DesignSystem.medium)
                     .background(
                         Capsule()
-                            .fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 2.5)) // 0.25
+                            .fill(Color.appAccent.opacity(Colors.Opacity.glassOpacity * 2))
                             .overlay(
                                 Capsule()
-                                    .strokeBorder(Color.appAccent.opacity(DesignSystem.fullOpacity * 0.5), lineWidth: DesignSystem.borderWidth) // 0.5, 1
+                                    .strokeBorder(Color.appAccent.opacity(Colors.Opacity.disabledOpacity), lineWidth: DesignSystem.borderWidth)
                             )
                     )
                 }
                 .opacity(authorOpacity)
-                .padding(.bottom, DesignSystem.Metrics.heroValueSize * 1.9) // 50
+                .padding(.bottom, DesignSystem.huge * 1.5)
             }
         }
         .onAppear {
@@ -144,34 +144,35 @@ struct SplashView: View {
         nodeGlow = true
         
         // Logo 淡入
-        withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) { // 0.8
+        withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) {
             logoOpacity = 1
         }
+
         
         // 名言淡入
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.easeOut(duration: DesignSystem.Animation.looseDuration * 0.8)) { // 1.2
+            withAnimation(.easeOut(duration: DesignSystem.Animation.looseDuration * 0.8)) {
                 quoteOpacity = 1
             }
         }
         
         // 署名淡入
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-            withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) { // 0.8
+            withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) {
                 authorOpacity = 1
             }
         }
         
         // 闪光扫过
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration)) { // 1.5
+            withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration)) {
                 shimmerOffset = 200
             }
         }
         
         // 5 秒后自动进入（仅在用户未手动点击时）
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) { // 0.5
+            withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) {
                 onDismiss()
             }
         }

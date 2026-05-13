@@ -80,7 +80,7 @@ struct ContentView: View {
 
             if store.securityService.isLocked {
                 LockOverlayView()
-                    .transition(AnyTransition.opacity.combined(with: .scale(scale: DesignSystem.fullOpacity * 0.95))) // 0.95
+                    .transition(AnyTransition.opacity.combined(with: .scale(scale: Colors.Opacity.fullOpacity * 0.95)))
                     .zIndex(100)
             }
             
@@ -142,7 +142,7 @@ struct ContentView: View {
         .tint(tintColor)
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)]) // 400
+                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -194,7 +194,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)]) // 400
+                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -260,7 +260,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)]) // 400
+                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -368,7 +368,7 @@ struct CoachMarkOverlay: View {
     var body: some View {
         ZStack {
             // 半透明背景
-            Color.black.opacity(DesignSystem.glassOpacity * 4) // 0.4
+            Color.black.opacity(DesignSystem.glassOpacity * 4)
                 .ignoresSafeArea()
                 .onTapGesture { dismissWithAnimation() }
             
@@ -378,14 +378,14 @@ struct CoachMarkOverlay: View {
                     Circle()
                         .fill(LinearGradient(colors: [.appAccent, .appSource], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(width: DesignSystem.Gallery.splashIconSize, height: DesignSystem.Gallery.splashIconSize)
-                        .shadow(color: .appAccent.opacity(DesignSystem.disabledOpacity), radius: DesignSystem.medium, y: DesignSystem.small + DesignSystem.atomic) // 0.3, 5
+                        .shadow(color: .appAccent.opacity(DesignSystem.disabledOpacity), radius: DesignSystem.medium, y: DesignSystem.small + DesignSystem.atomic)
                     
                     Image(systemName: iconName)
-                        .font(.system(size: DesignSystem.Metrics.titleFontSize * 1.3, weight: .bold)) // 1.3
+                        .font(.system(size: DesignSystem.Metrics.titleFontSize * 1.3, weight: .bold))
                         .foregroundStyle(.white)
                 }
-                .scaleEffect(isAnimating ? DesignSystem.fullOpacity : DesignSystem.fullOpacity * 0.8) // 1.0, 0.8
-                .opacity(isAnimating ? DesignSystem.fullOpacity : 0) // 1.0
+                .scaleEffect(isAnimating ? 1.0 : 0.8)
+                .opacity(isAnimating ? 1.0 : 0)
                 
                 VStack(spacing: 12) {
                     Text(Localized.tr(titleKey))
@@ -398,22 +398,22 @@ struct CoachMarkOverlay: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
-                .offset(y: isAnimating ? 0 : DesignSystem.loosePadding) // 20
-                .opacity(isAnimating ? DesignSystem.fullOpacity : 0) // 1.0
+                .offset(y: isAnimating ? 0 : DesignSystem.loosePadding)
+                .opacity(isAnimating ? 1.0 : 0)
                 
                 Button(action: performAction) {
                     Text(Localized.tr(actionKey))
                         .font(.headline)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, DesignSystem.Metrics.heroValueSize * 1.23) // 32
-                        .padding(.vertical, DesignSystem.medium) // 12
+                        .padding(.horizontal, DesignSystem.Metrics.heroValueSize * 1.25)
+                        .padding(.vertical, DesignSystem.medium)
                         .background(
                             Capsule()
                                 .fill(Color.appAccent)
                         )
                 }
-                .scaleEffect(isAnimating ? DesignSystem.fullOpacity : DesignSystem.fullOpacity * 0.9) // 1.0, 0.9
-                .opacity(isAnimating ? DesignSystem.fullOpacity : 0) // 1.0
+                .scaleEffect(isAnimating ? 1.0 : 0.9)
+                .opacity(isAnimating ? 1.0 : 0)
                 
                 Button(action: dismissWithAnimation) {
                     Text(L10n.Common.tr("skip"))
@@ -422,16 +422,16 @@ struct CoachMarkOverlay: View {
                 }
                 .padding(.top, DesignSystem.tiny)
             }
-            .padding(DesignSystem.giant + DesignSystem.Metrics.heroValueSize * 0.5) // 1.5x
+            .padding(DesignSystem.giant + DesignSystem.Metrics.heroValueSize * 0.5)
             .background(
-                RoundedRectangle(cornerRadius: DesignSystem.largeRadius + DesignSystem.Metrics.heroValueSize * 0.4) // 1.5x
+                RoundedRectangle(cornerRadius: DesignSystem.largeRadius + DesignSystem.Metrics.heroValueSize * 0.4)
                     .fill(Color.appCard)
-                    .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.heroValueSize * 1.15, x: 0, y: DesignSystem.Metrics.heroValueSize * 0.57) // 0.2, 30, 15
+                    .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.heroValueSize * 1.15, x: 0, y: DesignSystem.Metrics.heroValueSize * 0.57)
             )
             .padding(DesignSystem.giant)
         }
         .onAppear {
-            withAnimation(.spring(response: DesignSystem.Animation.standardDuration, dampingFraction: DesignSystem.Animation.standardDamping * 0.875)) { // 0.5, 0.7
+            withAnimation(.spring(response: DesignSystem.Animation.standardDuration, dampingFraction: DesignSystem.Animation.standardDamping * 0.875)) {
                 isAnimating = true
             }
         }

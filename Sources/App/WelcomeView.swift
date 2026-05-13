@@ -46,16 +46,16 @@ struct WelcomeHeroSection: View {
         VStack(spacing: Spacing.standardPadding) {
             ZStack {
                 AppDotPattern(dotColor: Color.appBorder, spacing: Spacing.wide, dotSize: Spacing.atomic)
-                    .frame(width: Spacing.Metrics.heroValueSize * 7.7, height: Spacing.Metrics.heroValueSize * 3.85).opacity(Colors.fullOpacity * 0.5) // 200, 100, 0.5
-                Circle().fill(Color.appAccent.opacity(Colors.glassOpacity * 0.8)) // 0.08
-                    .frame(width: Spacing.Metrics.heroValueSize * 5.4, height: Spacing.Metrics.heroValueSize * 5.4) // 140
+                    .frame(width: Spacing.Metrics.heroValueSize * 7.7, height: Spacing.Metrics.heroValueSize * 3.85).opacity(Colors.fullOpacity * 0.5)
+                Circle().fill(Color.appAccent.opacity(Colors.glassOpacity * 0.8))
+                    .frame(width: Spacing.Metrics.heroValueSize * 5.4, height: Spacing.Metrics.heroValueSize * 5.4)
                     .blur(radius: Spacing.wide)
                 Image(systemName: "books.vertical.circle.fill")
-                    .font(.system(size: Spacing.Metrics.heroValueSize * 2.76)) // 72
+                    .font(.system(size: Spacing.Metrics.heroValueSize * 2.76))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(Colors.glassOpacity * 4), radius: Spacing.standardPadding, x: 0, y: Spacing.small) // 0.4
+                    .shadow(color: .appAccent.opacity(Colors.glassOpacity * 4), radius: Spacing.standardPadding, x: 0, y: Spacing.small)
             }
-            .frame(height: Spacing.Metrics.heroValueSize * 3.85) // 100
+            .frame(height: Spacing.Metrics.heroValueSize * 3.85)
             Text(Localized.tr("page.knowledge"))
                 .font(.system(size: Spacing.huge + Spacing.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
@@ -175,11 +175,11 @@ struct WelcomeQuickStartGuideSection: View {
                         .foregroundStyle(Color.appAccent)
                 }
                 .padding()
-                .background(Color.appAccent.opacity(Colors.glassOpacity / 2)) // 0.05
+                .background(Color.appAccent.opacity(Colors.glassOpacity / 2))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                        .stroke(Color.appAccent.opacity(Colors.glassOpacity), lineWidth: Spacing.borderWidth) // 0.1, 1
+                        .stroke(Color.appAccent.opacity(Colors.glassOpacity), lineWidth: Spacing.borderWidth)
                 )
             }
             .buttonStyle(.plain)

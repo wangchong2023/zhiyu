@@ -105,39 +105,39 @@ struct VaultSection: View {
                     ZStack {
                         Circle()
                             .fill(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: 40, height: 40)
+                            .frame(width: DesignSystem.Metrics.iconBoxSize, height: DesignSystem.Metrics.iconBoxSize)
                         
                         Image(systemName: "books.vertical.fill")
-                            .font(.system(size: 18))
+                            .font(.system(size: DesignSystem.headlineFontSize))
                             .foregroundStyle(.white)
                     }
                     .shadow(color: .appAccent.opacity(0.3), radius: 5, y: 3)
                     
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                         Text(vaultService.currentVault?.name ?? "Default")
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .font(.system(size: DesignSystem.bodyFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
                         
                         Text(L10n.Vault.tr("switch"))
-                            .font(.system(size: 11, weight: .medium))
+                            .font(DesignSystem.caption2Font)
                             .foregroundStyle(.appAccent)
                     }
                     
                     Spacer()
                     
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                         .foregroundStyle(.appSecondary.opacity(0.5))
                 }
-                .padding(.vertical, 8)
-                .padding(.horizontal, 4)
+                .padding(.vertical, DesignSystem.small)
+                .padding(.horizontal, DesignSystem.tiny)
             }
         }
         .listRowBackground(
-            RoundedRectangle(cornerRadius: Spacing.standardRadius)
+            RoundedRectangle(cornerRadius: DesignSystem.Radius.standard)
                 .fill(Color.appCard)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, DesignSystem.small)
+                .padding(.vertical, DesignSystem.tiny)
         )
         #if !os(watchOS)
         .listRowSeparator(.hidden)
@@ -239,8 +239,8 @@ struct ToolsSection: View {
                     Spacer()
                     if !store.lintIssues.isEmpty {
                         Text("\(store.lintIssues.count)")
-                            .font(.caption2)
-                            .padding(.horizontal, 4)
+                            .font(DesignSystem.caption2Font)
+                            .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
                             .background(Color.appAccent.opacity(0.1))
                             .clipShape(Capsule())
                             .foregroundStyle(.appAccent)
@@ -258,10 +258,10 @@ struct ToolsSection: View {
                     Spacer()
                     if taskCenter.unreadCount > 0 {
                         Text("\(taskCenter.unreadCount)")
-                            .font(.caption2.bold())
+                            .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
+                            .padding(.vertical, DesignSystem.atomic)
                             .background(Capsule().fill(.red))
                     }
                 }
@@ -319,17 +319,17 @@ struct SidebarTypeRow: View {
                 Text(type.displayName)
                 Spacer()
                 Text("\(count)")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .medium, design: .rounded))
                     .foregroundStyle(.appSecondary)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
+                    .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
+                    .padding(.vertical, DesignSystem.atomic)
                     .background(Color.appAccent.opacity(0.1))
                     .clipShape(Capsule())
             }
         } icon: {
             Image(systemName: type.icon)
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
-                .frame(width: 20)
+                .frame(width: DesignSystem.Sidebar.iconFrameWidth)
         }
     }
 }
@@ -360,17 +360,17 @@ struct PageSidebarRow: View {
     let page: KnowledgePage
     var heroNamespace: Namespace.ID
     var body: some View {
-        HStack(spacing: Spacing.small) {
+        HStack(spacing: DesignSystem.small) {
             Image(systemName: page.type.icon)
-                .font(.system(size: Spacing.iconSmall))
+                .font(.system(size: DesignSystem.Icons.small))
                 .foregroundStyle(Color.fromModelColorName(page.type.colorName))
-                .frame(width: 24)
+                .frame(width: DesignSystem.Sidebar.iconFrameWidth)
             
             Text(page.title)
-                .font(.system(size: Typography.subheadlineFontSize, weight: .medium))
+                .font(.system(size: DesignSystem.subheadlineFontSize, weight: .medium))
                 .foregroundStyle(.appText)
                 .lineLimit(1)
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, DesignSystem.atomic)
     }
 }
