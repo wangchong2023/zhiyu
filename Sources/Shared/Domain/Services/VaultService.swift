@@ -12,7 +12,7 @@ import Observation
 /// 笔记本/库服务
 @Observable
 @MainActor
-public final class VaultService {
+public final class VaultService: VaultServiceProtocol {
     
     // MARK: - 数据模型
     
@@ -21,6 +21,7 @@ public final class VaultService {
         public var name: String
         public var createdAt: Date
         public var pageCount: Int
+        public var themePayload: String? // Added field
     }
     
     // MARK: - 状态属性
@@ -54,8 +55,8 @@ public final class VaultService {
         } else {
             // 初始演示库
             self.vaults = [
-                Vault(id: UUID(), name: "我的知识库", createdAt: Date(), pageCount: 12),
-                Vault(id: UUID(), name: "项目调研", createdAt: Date(), pageCount: 5)
+                Vault(id: UUID(), name: "我的知识库", createdAt: Date(), pageCount: 12, themePayload: nil),
+                Vault(id: UUID(), name: "项目调研", createdAt: Date(), pageCount: 5, themePayload: nil)
             ]
             saveVaults()
         }
@@ -87,7 +88,7 @@ public final class VaultService {
     
     /// 创建新笔记本
     public func createVault(name: String) {
-        let newVault = Vault(id: UUID(), name: name, createdAt: Date(), pageCount: 0)
+        let newVault = Vault(id: UUID(), name: name, createdAt: Date(), pageCount: 0, themePayload: nil)
         vaults.append(newVault)
         saveVaults()
     }
