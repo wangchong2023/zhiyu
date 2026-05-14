@@ -7,19 +7,28 @@
 
 import SwiftUI
 
-// MARK: - Sidebar Selection
+/// 侧边栏导航选中项定义
+/// 用于追踪用户在 NavigationSplitView 侧边栏中的交互位置
 enum SidebarSelection: Hashable {
+    /// 跳转到特定的知识页面条目 (根据 UUID 唯一定位)
     case page(UUID)
+    
+    /// 跳转到系统预设的工具项 (如：仪表盘、页面列表、设置等)
     case tool(AppStore.ToolItem)
+    
+    /// 按特定 PageType 类型过滤后的知识列表 (如：仅查看实体或概念)
     case filteredIndex(PageType)
     
+    /// 将当前的侧边栏选中项转换为具体的物理路由目标
+    /// 这一映射过程解耦了侧边栏的 UI 交互状态与底层的视图分发逻辑。
+    /// - Returns: 对应的 AppRoute 目标，可直接用于导航栈。
     func asRoute() -> AppRoute {
         switch self {
         case .page(let id): return .pageDetail(id: id)
         case .tool(let tool):
             switch tool {
             case .dashboard: return .dashboard
-            case .index: return .index()
+            case .pageList: return .pageList()
             case .lint: return .lint
             case .taskCenter: return .taskCenter
             case .tagCloud: return .tagCloud
@@ -30,8 +39,11 @@ enum SidebarSelection: Hashable {
             case .collab: return .collab
             case .pluginMarket: return .pluginMarket
             case .healthCheck: return .lint
+            case .search: return .search
+            case .ingest: return .ingest
+            case .graph: return .graph
             }
-        case .filteredIndex(let type): return .index(filterType: type)
+        case .filteredIndex(let type): return .pageList(filterType: type)
         }
     }
 }
@@ -53,15 +65,30 @@ struct SidebarView: View {
     var body: some View {
         @Bindable var router = router
         
-        List(selection: $router.sidebarSelection) {
-            CapabilitiesSection()
-            UniverseSection()
-            PinnedSection(
-                heroNamespace: heroNamespace,
-                pageToDelete: $pageToDelete,
-                showDeleteConfirmation: $showDeleteConfirmation
-            )
-            ToolsSection()
+        Group {
+            if horizontalSizeClass == .compact {
+                List {
+                    CapabilitiesSection()
+                    UniverseSection()
+                    PinnedSection(
+                        heroNamespace: heroNamespace,
+                        pageToDelete: $pageToDelete,
+                        showDeleteConfirmation: $showDeleteConfirmation
+                    )
+                    ToolsSection()
+                }
+            } else {
+                List(selection: $router.sidebarSelection) {
+                    CapabilitiesSection()
+                    UniverseSection()
+                    PinnedSection(
+                        heroNamespace: heroNamespace,
+                        pageToDelete: $pageToDelete,
+                        showDeleteConfirmation: $showDeleteConfirmation
+                    )
+                    ToolsSection()
+                }
+            }
         }
         .background(
             PageBackgroundView(accentColor: themeManager.accentColor)
@@ -90,17 +117,20 @@ struct SidebarView: View {
 struct CapabilitiesSection: View {
     var body: some View {
         Section {
-            NavigationLink(value: SidebarSelection.tool(.dashboard)) {
+            NavigationLink(value: AppRoute.dashboard) {
                 Label(Localized.tr("sidebar.dashboard"), systemImage: "gauge.with.needle.fill")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.synthesis)) {
+            NavigationLink(value: AppRoute.synthesis) {
                 Label(Localized.tr("sidebar.synthesis"), systemImage: "wand.and.stars")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.weeklyReport)) {
+            NavigationLink(value: AppRoute.weeklyReport) {
                 Label(Localized.tr("sidebar.weeklyInsight"), systemImage: "doc.text.magnifyingglass")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
         }
  header: {
@@ -115,20 +145,23 @@ struct UniverseSection: View {
     
     var body: some View {
         Section {
-            NavigationLink(value: SidebarSelection.tool(.index)) {
-                Label(Localized.tr("sidebar.allPages"), systemImage: "tray.full.fill")
+            NavigationLink(value: AppRoute.pageList(filterType: nil)) {
+                Label(Localized.tr("sidebar.pageList"), systemImage: "tray.full.fill")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
             
             ForEach(PageType.allCases) { type in
                 let count = store.pages.filter { $0.type == type }.count
                 if count > 0 {
-                    NavigationLink(value: SidebarSelection.filteredIndex(type)) {
+                    NavigationLink(value: AppRoute.pageList(filterType: type)) {
                         SidebarTypeRow(type: type, count: count)
+                            .contentShape(Rectangle())
                     }
                 }
             }
-        } header: {
+        }
+ header: {
             Text(Localized.tr("sidebar.universe"))
         }
         .listRowBackground(SidebarRowBackground())
@@ -174,7 +207,7 @@ struct ToolsSection: View {
     
     var body: some View {
         Section {
-            NavigationLink(value: SidebarSelection.tool(.lint)) {
+            NavigationLink(value: AppRoute.lint) {
                 HStack {
                     Label(Localized.tr("sidebar.healthCheck"), systemImage: "stethoscope")
                         .foregroundStyle(.appText)
@@ -184,17 +217,19 @@ struct ToolsSection: View {
                             .font(DesignSystem.caption2Font)
                             .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
                             .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                            .background(Color.appAccent.opacity(0.1))
+                            .background(Color.appAccent.opacity(DesignSystem.subtleFillOpacity))
                             .clipShape(Capsule())
                             .foregroundStyle(.appAccent)
                     }
                 }
+                .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.tagCloud)) {
+            NavigationLink(value: AppRoute.tagCloud) {
                 Label(Localized.tr("sidebar.tagManager"), systemImage: "tag.fill")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.taskCenter)) {
+            NavigationLink(value: AppRoute.taskCenter) {
                 HStack {
                     Label(L10n.AI.Task.centerTitle, systemImage: "arrow.triangle.2.circlepath")
                         .foregroundStyle(.appText)
@@ -205,17 +240,20 @@ struct ToolsSection: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
                             .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                            .background(Capsule().fill(.red))
+                            .background(Capsule().fill(Color.orange))
                     }
                 }
+                .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.pluginMarket)) {
+            NavigationLink(value: AppRoute.pluginMarket) {
                 Label(Localized.tr("sidebar.plugins"), systemImage: "puzzlepiece.fill")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
-            NavigationLink(value: SidebarSelection.tool(.collab)) {
+            NavigationLink(value: AppRoute.collab) {
                 Label(Localized.tr("sidebar.collaboration"), systemImage: "person.2.fill")
                     .foregroundStyle(.appText)
+                    .contentShape(Rectangle())
             }
         } header: {
             Text(Localized.tr("sidebar.tools"))
@@ -264,7 +302,7 @@ struct SidebarTypeRow: View {
                 Text("\(count)")
                     .padding(.horizontal, count > 9 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
                     .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                    .background(Color.appAccent.opacity(0.1))
+                    .background(Color.appAccent.opacity(DesignSystem.subtleFillOpacity))
                     .clipShape(Capsule())
             }
         } icon: {
