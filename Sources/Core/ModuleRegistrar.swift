@@ -80,7 +80,7 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
         #endif
         
-        container.register(AppRouter.shared, for: AppRouter.self)
+        container.register(Router.shared, for: Router.self)
         
         // 注册其他平台级服务
         container.register(DeepLinkService(), for: DeepLinkService.self)
@@ -142,6 +142,10 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         
         container.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
         container.register(ChatService.shared, for: ChatService.self)
+        
+        // 2. 应用层核心
+        container.register(Router.shared, for: Router.self)
+        container.register(AppEnvironment.shared, for: AppEnvironment.self)
         
         #if os(watchOS)
         container.register(WatchOCRService(), for: (any OCRServiceProtocol).self)

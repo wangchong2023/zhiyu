@@ -110,7 +110,7 @@ struct TagCloudViewContent: View {
                 }
                 
                 Button(action: {
-                    withAnimation(.spring(response: DesignSystem.Animation.springResponse)) { // 0.3
+                    withAnimation(DesignSystem.Animation.standard) {
                         isEditMode.toggle()
                         if !isEditMode { selectedTagsForBulk.removeAll() }
                     }
@@ -253,7 +253,7 @@ struct TagCloudViewContent: View {
             .buttonStyle(.plain)
         }
         .padding()
-        .background(BlurView().background(Color.appAccent.opacity(DesignSystem.secondaryOpacity))) // 0.8
+        .background(BlurView().background(Color.appAccent.opacity(DesignSystem.surfaceOpacity)))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .padding()
         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -269,7 +269,7 @@ struct TagCloudViewContent: View {
                 .foregroundStyle(.appSecondary)
             Text(Localized.tr("tag.noTagsHint"))
                 .font(.caption)
-                .foregroundStyle(.appSecondary.opacity(0.7))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.subtleOpacity))
                 .multilineTextAlignment(.center)
         }
         .frame(maxHeight: .infinity)
@@ -292,7 +292,7 @@ struct TagCloudViewContent: View {
         let isSelected = isEditMode ? selectedTagsForBulk.contains(item.tag) : selectedTag == item.tag
         
         return Button(action: {
-            withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) { // 0.35, 0.8
+            withAnimation(DesignSystem.Animation.prominent) {
                 if isEditMode {
                     if selectedTagsForBulk.contains(item.tag) {
                         selectedTagsForBulk.remove(item.tag)
@@ -313,21 +313,21 @@ struct TagCloudViewContent: View {
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
                     .padding(.horizontal, DesignSystem.small)
                     .padding(.vertical, DesignSystem.atomic)
-                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.53)) // 0.15, 0.08
+                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
                     .clipShape(Capsule())
             }
             .padding(.horizontal, DesignSystem.large)
             .padding(.vertical, DesignSystem.small)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.secondaryOpacity * 0.75)) // 0.6
+                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.translucentOpacity))
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.secondaryOpacity) : Color.appBorder.opacity(DesignSystem.secondaryOpacity * 0.75), lineWidth: DesignSystem.borderWidth * 1.5) // 0.8, 0.6, 1.2
+                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
             )
             .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
-            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY) // 0.12
+            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
             .overlay(alignment: .topTrailing) {
                 if isEditMode {
                     ZStack {
@@ -381,7 +381,7 @@ struct TagCloudViewContent: View {
                             }
                             .listRowBackground(
                                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                    .fill(Color.appCard.opacity(DesignSystem.disabledOpacity * 1.33)) // 0.4
+                                    .fill(Color.appCard.opacity(DesignSystem.softOpacity))
                                     .padding(.horizontal, DesignSystem.small)
                                     .padding(.vertical, DesignSystem.tiny)
                             )
@@ -397,15 +397,15 @@ struct TagCloudViewContent: View {
             } else {
                 VStack(spacing: DesignSystem.medium) {
                     Image(systemName: isEditMode ? "checklist" : "tag")
-                        .font(.system(size: DesignSystem.iconHuge)) // 32
-                        .foregroundStyle(.appSecondary.opacity(DesignSystem.glassOpacity * 3.33)) // 0.5
+                        .font(.system(size: DesignSystem.iconHuge))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.translucentOpacity))
                     Text(isEditMode ? Localized.tr("tags.selectToManage") : Localized.tr("tagcloud.selectTag"))
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: DesignSystem.Metrics.sourceCardHeight * 1.22)
-                .background(Color.appBackground.opacity(0.01))
+                .frame(height: DesignSystem.Metrics.sourceCardHeight)
+                .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
                 .onTapGesture {
                     if isEditMode { isEditMode = false }
                 }

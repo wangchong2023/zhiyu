@@ -17,7 +17,7 @@ import SwiftUI
 struct WeeklyInsightCard: View {
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var isGenerating = false
     
     var body: some View {

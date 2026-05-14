@@ -13,7 +13,7 @@ public struct NotebookHubView: View {
     // MARK: - 状态与环境
     
     @State private var viewModel = NotebookHubViewModel()
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     
     // MARK: - 初始化

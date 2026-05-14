@@ -15,17 +15,17 @@ import SwiftUI
 /// 全屏加载遮罩，统一各页面的 Loading 状态展示。
 /// 全屏加载覆盖层组件
 /// 负责在执行高开销异步操作（如数据库重建、大文件导入）时提供沉浸式的 Loading 界面，防止误操作
-struct AppLoadingOverlay: View {
+public struct AppLoadingOverlay: View {
     /// 是否显示加载遮罩
-    let isLoading: Bool
+    public let isLoading: Bool
     /// 加载提示文字（可选）
-    let message: String?
+    public let message: String?
     /// 遮罩背景色（默认半透明黑色）
-    let backgroundColor: Color
+    public let backgroundColor: Color
     /// 前景色（默认 accent）
-    let foregroundColor: Color
+    public let foregroundColor: Color
 
-    init(
+    public init(
         isLoading: Bool,
         message: String? = nil,
         backgroundColor: Color = Color.black.opacity(0.35),
@@ -37,7 +37,7 @@ struct AppLoadingOverlay: View {
         self.foregroundColor = foregroundColor
     }
 
-    var body: some View {
+    public var body: some View {
         if isLoading {
             ZStack {
                 backgroundColor

@@ -34,14 +34,14 @@ public struct StatCard: View {
             // 带发光效果的图标
             ZStack {
                 Circle()
-                    .fill(color.opacity(Colors.glassOpacity * 1.2))
-                    .frame(width: Spacing.largeIconSize * 1.6, height: Spacing.largeIconSize * 1.6) // 52
+                    .fill(color.opacity(DesignSystem.glassOpacity * 1.2))
+                    .frame(width: DesignSystem.Metrics.largeIconBoxSize * 1.2, height: DesignSystem.Metrics.largeIconBoxSize * 1.2)
 
                 Image(systemName: icon)
                     .font(.title2.weight(.medium))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [color, color.opacity(Colors.secondaryOpacity)],
+                            colors: [color, color.opacity(DesignSystem.secondaryOpacity)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -49,7 +49,7 @@ public struct StatCard: View {
             }
 
             Text(value)
-                .font(.system(size: Spacing.Metrics.heroValueSize - 2, weight: .bold, design: .rounded)) // 26
+                .font(.system(size: DesignSystem.Metrics.heroValueSize - 2, weight: .bold, design: .rounded)) // 30
                 .foregroundStyle(.appText)
 
             Text(title)
@@ -58,8 +58,8 @@ public struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.standardPadding)
-        .background(Color.appCard.opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.medium))
-        .shadow(color: .black.opacity(Spacing.shadowOpacity * 1.5), radius: Spacing.shadowRadius - 2, x: 0, y: Spacing.shadowY) // 0.06, 8, 4
+        .background(Color.appCard.opacity(DesignSystem.surfaceOpacity))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+        .shadow(color: .black.opacity(DesignSystem.shadowOpacity * 1.5), radius: DesignSystem.shadowRadius - 2, x: 0, y: DesignSystem.shadowY)
     }
 }

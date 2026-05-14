@@ -115,16 +115,16 @@ public struct AppGlassCard<Content: View>: View {
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .fill(.ultraThinMaterial)
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(Color.appCard.opacity(0.6))
+                        .fill(Color.appCard.opacity(DesignSystem.translucentOpacity))
                     if isHighlighted {
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .stroke(Color.appAccent.opacity(0.3), lineWidth: Spacing.borderWidth)
+                            .stroke(Color.appAccent.opacity(DesignSystem.accentStrokeOpacity), lineWidth: DesignSystem.borderWidth)
                     }
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(
-                color: .black.opacity(isHighlighted ? 0.15 : 0.08), 
+                color: .black.opacity(isHighlighted ? DesignSystem.glassOpacity : DesignSystem.shadowOpacity * 0.75), 
                 radius: isHighlighted ? Spacing.Decorator.shadowRadiusLarge : Spacing.Decorator.shadowRadiusSmall, 
                 x: 0, 
                 y: isHighlighted ? Spacing.Decorator.shadowOffsetYLarge : Spacing.Decorator.shadowOffsetYSmall

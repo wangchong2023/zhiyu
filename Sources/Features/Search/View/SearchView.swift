@@ -14,7 +14,7 @@ import SwiftUI
 struct SearchView: View {
     @Environment(AppStore.self) var store
     @Environment(SearchStore.self) var searchStore
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var searchText = ""
     @State private var filterType: PageType?
     @State private var filterStatus: PageStatus?
@@ -403,8 +403,8 @@ struct FilterPill: View {
             Text(title)
                 .font(pillFont.weight(isSelected ? .semibold : .regular))
         }
-        .padding(.horizontal, DesignSystem.standardPadding)
-        .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic) // 10
+        .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+        .padding(.vertical, DesignSystem.Chip.verticalPadding + DesignSystem.atomic) // 6
         .background(isSelected ? color.opacity(DesignSystem.glassOpacity * 1.66) : Color.appCard.opacity(0.8)) // 0.25
         .clipShape(Capsule())
         .foregroundStyle(isSelected ? color : .appSecondary)

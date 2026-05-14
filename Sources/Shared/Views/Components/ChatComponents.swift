@@ -21,7 +21,7 @@ struct ChatBubbleView: View {
     let message: ChatMessage
     let pages: [KnowledgePage]
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var referencesExpanded = false
     @Binding var selectedTab: AppTab
     
@@ -244,7 +244,7 @@ struct ChatContentView: View {
     let text: String
     let pages: [KnowledgePage]
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var expanded = false
     @Binding var selectedTab: AppTab
     

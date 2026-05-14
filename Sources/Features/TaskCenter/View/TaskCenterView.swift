@@ -18,7 +18,7 @@ struct TaskCenterView: View {
     @ObservedObject var taskCenter = TaskCenter.shared
     @Environment(AppStore.self) var store
     @EnvironmentObject var themeManager: ThemeManager
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var showClearConfirm = false
     
     var body: some View {

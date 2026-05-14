@@ -35,8 +35,8 @@ public struct AppChip: View {
     public var body: some View {
         Text(text)
             .font(chipFont)
-            .padding(.horizontal, Spacing.small)
-            .padding(.vertical, Spacing.tiny)
+            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+            .padding(.vertical, DesignSystem.Chip.verticalPadding)
             .background(color.opacity(backgroundOpacity))
             .clipShape(Capsule())
             .foregroundStyle(color)
@@ -73,10 +73,10 @@ public struct AppIconChip: View {
             Text(text)
                 .font(chipFont)
         }
-        .padding(.horizontal, Spacing.medium)
-        .padding(.vertical, Spacing.small)
-        .background(isSelected ? color.opacity(Colors.glassOpacity * 2.5) : Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.small)
+        .background(isSelected ? color.opacity(DesignSystem.glassOpacity * 2.5) : Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         .foregroundStyle(isSelected ? color : .appSecondary)
         .overlay(
             RoundedRectangle(cornerRadius: Spacing.smallRadius)
@@ -106,8 +106,8 @@ public struct AppBadge: View {
                 Text(text)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, Spacing.small)
-                    .padding(.vertical, Spacing.atomic + 1)
+                    .padding(.horizontal, text.count > 1 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
                     .background(color)
                     .clipShape(Capsule())
             } else {

@@ -67,7 +67,7 @@ struct PageDetailWrapper: View {
 }
 
 struct SynthesisViewWrapper: View {
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     var body: some View {
         SynthesisView(selection: Binding(
             get: { router.sidebarSelection },
@@ -88,7 +88,7 @@ struct SettingsViewWrapper: View {
 }
 
 struct LintWrapper: View {
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     var body: some View {
         LintView(selection: Binding(
             get: { router.sidebarSelection },

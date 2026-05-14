@@ -115,7 +115,7 @@ struct Graph3DView: View {
                 .padding(.vertical, DesignSystem.tiny)
                 .background(.ultraThinMaterial)
                 .clipShape(Capsule())
-                .opacity(DesignSystem.secondaryOpacity * 0.75) // 0.6
+                .opacity(DesignSystem.translucentOpacity)
                 Spacer()
             }
             .padding(.leading, DesignSystem.standardPadding)
@@ -199,8 +199,8 @@ struct Graph3DView: View {
     private func addStarfield(to scene: SCNScene) {
         let starCount = AppConstants.Graph.ThreeD.starCount
         let starGeometry = SCNSphere(radius: DesignSystem.Graph.ThreeD.starRadius)
-        starGeometry.firstMaterial?.emission.contents = UIColor(Color.appAccent).withAlphaComponent(0.8)
-        starGeometry.firstMaterial?.diffuse.contents = UIColor(Color.appAccent).withAlphaComponent(0.5)
+        starGeometry.firstMaterial?.emission.contents = UIColor(Color.appAccent).withAlphaComponent(DesignSystem.surfaceOpacity)
+        starGeometry.firstMaterial?.diffuse.contents = UIColor(Color.appAccent).withAlphaComponent(DesignSystem.softOpacity)
         
         for _ in 0..<starCount {
             let node = SCNNode(geometry: starGeometry)
@@ -272,7 +272,7 @@ struct Graph3DView: View {
             
             geometry.firstMaterial?.diffuse.contents = uiColor.withAlphaComponent(opacity)
             geometry.firstMaterial?.specular.contents = UIColor.white.withAlphaComponent(opacity)
-            geometry.firstMaterial?.emission.contents = isDimmed ? uiColor.withAlphaComponent(DesignSystem.glassOpacity / 1.5) : uiColor.withAlphaComponent(DesignSystem.disabledOpacity + 0.1)
+            geometry.firstMaterial?.emission.contents = isDimmed ? uiColor.withAlphaComponent(DesignSystem.ghostOpacity * 10) : uiColor.withAlphaComponent(DesignSystem.softOpacity)
 
             let node = SCNNode(geometry: geometry)
             node.position = SCNVector3(

@@ -51,26 +51,26 @@ public struct AppTagField: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: Spacing.small) {
             // 使用 FlowLayout 自动换行排列标签
-            FlowLayout(spacing: Spacing.tiny + Spacing.atomic) { // 6
+            FlowLayout(spacing: DesignSystem.Grid.flowSpacing) {
                 ForEach(tags, id: \.self) { tag in
-                    HStack(spacing: Spacing.atomic * 1.5) { // 3
+                    HStack(spacing: DesignSystem.atomic * 1.5) {
                         Text(tag)
-                            .font(.system(size: Typography.microFontSize + 1))
+                            .font(.system(size: DesignSystem.microFontSize + 1))
                         
                         Button(action: { 
-                            withAnimation(.spring(response: Animations.Interaction.standardDuration)) {
+                            withAnimation(DesignSystem.Animation.standard) {
                                 tags.removeAll { $0 == tag }
                             }
                         }) {
                             Image(systemName: "xmark")
-                                .font(.system(size: Typography.microFontSize - 1))
+                                .font(.system(size: DesignSystem.microFontSize - 1))
                                 .foregroundStyle(.appSecondary)
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.horizontal, Spacing.small)
-                    .padding(.vertical, Spacing.tiny)
-                    .background(Color.appAccent.opacity(Colors.glassOpacity))
+                    .padding(.horizontal, DesignSystem.small)
+                    .padding(.vertical, DesignSystem.tiny)
+                    .background(Color.appAccent.opacity(DesignSystem.glassOpacity))
                     .clipShape(Capsule())
                     .foregroundStyle(.appAccent)
                 }
@@ -88,7 +88,7 @@ public struct AppTagField: View {
                     .onSubmit {
                         addCurrentTag()
                     }
-                    .frame(minWidth: Spacing.largeIconSize * 2.5) // 100
+                    .frame(minWidth: DesignSystem.Metrics.largeIconBoxSize * 2.5)
                     .foregroundStyle(.appText)
             }
             .padding(.horizontal, Spacing.medium)

@@ -66,16 +66,21 @@ final class LLMChatService: Sendable {
         return content
     }
 
+    private struct SendableBody: @unchecked Sendable {
+        let dict: [String: Any]
+    }
+
     /// 执行流式对话，返回异步抛出流
     func streamChat(systemPrompt: String, query: String, history: [ChatMessage]) -> AsyncThrowingStream<String, Error> {
         let requestBody = makeStreamingRequestBody(systemPrompt: systemPrompt, query: query, history: history)
         let localClient = self.client
         
+        let safeBody = SendableBody(dict: requestBody)
         let (stream, continuation) = AsyncThrowingStream<String, Error>.makeStream()
         
         let task = Task {
             do {
-                let bytes = try await localClient.sendStreamingRequest(body: requestBody)
+                let bytes = try await localClient.sendStreamingRequest(body: safeBody.dict)
                 for try await chunk in SSEParser.parse(bytes: bytes) {
                     if Task.isCancelled { break }
                     continuation.yield(chunk)

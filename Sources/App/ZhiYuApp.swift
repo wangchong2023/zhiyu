@@ -7,10 +7,9 @@
 // 2. 依赖注入管理：利用 ServiceContainer 实现跨层级服务的解耦与注册。
 // 3. 状态树初始化：构建 AppStore 及各类子 Store，驱动 SwiftUI 声明式 UI 的数据流。
 // 4. 全局交互定义：配置窗口组、启动闪屏逻辑、全局主题管理及 macOS 原生快捷键命令。
-// 版本: 1.2
+// 版本: 1.3
 // 修改记录:
-//   - 2026-05-02: 初始架构创建。
-//   - 2026-05-05: 升级全工程文档规范，规范化 DI 注入流程与生命周期注释。
+//   - 2026-05-13: [SR-04] 重构应用环境管理，引入 AppEnvironment 与全局 Router。
 // 版权: Copyright © 2026 Wang Chong. All rights reserved.
 
 import SwiftUI
@@ -20,46 +19,14 @@ import SwiftUI
 #endif
 @MainActor
 struct ZhiYuApp: App {
-    // ── 顶层状态持有者 ──
-    @State private var store: AppStore
-    @State private var ingestStore: IngestStore
-    @State private var router: AppRouter = AppRouter.shared
-    @StateObject private var themeManager: ThemeManager = ThemeManager.shared
-    @StateObject private var llmService: LLMService = LLMService.shared
-    @State private var synthesisStore: SynthesisStore
+    // ── 顶层环境持有者 ──
+    @State private var appEnv: AppEnvironment = AppEnvironment.shared
     @AppStorage("hasSeenSplash") private var hasSeenSplash = false
     
-    /// 初始化应用环境
-    /// 在此阶段完成 L0-L2 层的模块化依赖注入与服务挂载
+    /// 初始化应用
     init() {
-        let testUnusedVariable = 123
-        print("🎬 [STARTUP] 开始执行 ZhiYuApp.init()...")
-        // 1. 按照分层顺序执行模块化注册
-        CoreModuleRegistrar.register(in: ServiceContainer.shared)
-        print("🎬 [STARTUP] CoreModuleRegistrar 注册完成")
-        StorageModuleRegistrar.register(in: ServiceContainer.shared)
-        print("🎬 [STARTUP] StorageModuleRegistrar 注册完成")
-        DomainModuleRegistrar.register(in: ServiceContainer.shared)
-        print("🎬 [STARTUP] DomainModuleRegistrar 注册完成")
-        
-        // 2. 初始化核心 AI 服务状态（用于 SwiftUI 状态持有）
-        print("🎬 [STARTUP] 正在获取 LLMService.shared...")
-        let llm = LLMService.shared
-        _llmService = StateObject(wrappedValue: llm)
-        
-        // 3. 在所有基础服务就绪后，初始化业务 Store
-        // 核心修复：必须在依赖注册完成后再进行 Store 实例化，防止 @Inject 导致的启动崩溃
-        print("🎬 [STARTUP] 正在初始化业务层 Stores...")
-        _ingestStore = State(wrappedValue: IngestStore())
-        _synthesisStore = State(wrappedValue: SynthesisStore())
-        _store = State(wrappedValue: AppStore())
-        
-        // 4. 配置全局 UI 样式
-        #if os(iOS)
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.appAccent)
-        #endif
-        
-        print("🚀 [ZHIYU-LIFECYCLE] App Initialized via Modular Registrars at \(Date())")
+        // AppEnvironment.shared 会在首次访问时完成 L0-L2 的注入与 Store 初始化
+        _ = AppEnvironment.shared
     }
 
     /// 应用主场景定义
@@ -70,27 +37,25 @@ struct ZhiYuApp: App {
                 ContentView()
                     .environment(AuthService.shared)
                     .environment(VaultService.shared)
-                    .environment(store)
-                    .environment(store.aiWorkflowStore)
-                    .environment(synthesisStore)
-                    .environment(store.searchStore)
-                    .environment(store.settingsStore)
-                    .environment(ingestStore)
-                    .environment(router)
-                    .environmentObject(themeManager)
-                    .environmentObject(llmService)
+                    .environment(appEnv.store)
+                    .environment(appEnv.store.aiWorkflowStore)
+                    .environment(appEnv.synthesisStore)
+                    .environment(appEnv.store.searchStore)
+                    .environment(appEnv.store.settingsStore)
+                    .environment(appEnv.ingestStore)
+                    .environment(appEnv.router)
+                    .environmentObject(appEnv.themeManager)
+                    .environmentObject(appEnv.llmService)
                     .environment(\.locale, Localized.currentLocale)
-                    .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
-                    .tint(themeManager.accentColor)
+                    .preferredColorScheme(appEnv.themeManager.colorSchemeMode.preferredColorScheme)
+                    .tint(appEnv.themeManager.accentColor)
 
                 // 启动闪屏层：覆盖在主视图之上
                 if !hasSeenSplash {
                     SplashView(onDismiss: {
-                        if hasSeenSplash { return } // 防重触发
+                        if hasSeenSplash { return }
                         withAnimation(.easeInOut(duration: 0.6)) {
-                            print("🔍 [NAV-DIAG] Splash dismissed. Posting notification.")
                             hasSeenSplash = true
-                            // 通知系统闪屏已结束，可开始执行一些重型初始化任务
                             NotificationCenter.default.post(name: NSNotification.Name("splashDismissed"), object: nil)
                         }
                     })

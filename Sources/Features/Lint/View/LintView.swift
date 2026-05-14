@@ -31,7 +31,7 @@ struct LintViewContent: View {
     @Binding var selection: SidebarSelection?
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.dismiss) var dismiss // 新增：用于强制退出层级
     @State private var isRunning = false
@@ -588,7 +588,7 @@ struct PotentialLinkRow: View {
 struct LintIssueRow: View {
     let issue: LintIssue
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @State private var aiSuggestion: String?
     @State private var isAnalyzing = false
 

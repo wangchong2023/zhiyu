@@ -15,7 +15,7 @@ import Combine
 // MARK: - App Toast Type
 /// 轻提示类型枚举
 /// 负责定义 Toast 的视觉风格（图标与色彩）及其代表的业务状态
-enum AppToastType: Equatable {
+public enum AppToastType: Equatable {
     case success
     case error
     case info
@@ -43,11 +43,11 @@ enum AppToastType: Equatable {
 // MARK: - App Toast Model
 /// 轻提示数据模型
 /// 负责封装单条 Toast 的展示内容、类型标识及显示时长，具备唯一标识符
-struct AppToast: Identifiable, Equatable {
-    let id = UUID()
-    let type: AppToastType
-    let message: String
-    var duration: Double = DesignSystem.Animation.slowDuration * 6 // 3.0
+public struct AppToast: Identifiable, Equatable {
+    public let id = UUID()
+    public let type: AppToastType
+    public let message: String
+    public var duration: Double = DesignSystem.Animation.slowDuration * 6 // 3.0
 }
 
 // MARK: - 提示管理器

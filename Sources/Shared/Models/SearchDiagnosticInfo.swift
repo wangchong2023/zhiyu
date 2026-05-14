@@ -11,19 +11,36 @@
 import Foundation
 
 /// 搜索诊断数据结构
-struct SearchDiagnosticInfo: Identifiable, Equatable {
-    let id = UUID()
-    let query: String
-    let rewrittenQuery: String
-    let ftsCount: Int
-    let vectorCount: Int
-    let rrfTopResults: [ResultScore]
+public struct SearchDiagnosticInfo: Identifiable, Equatable {
+    public let id: UUID
+    public let query: String
+    public let rewrittenQuery: String
+    public let ftsCount: Int
+    public let vectorCount: Int
+    public let rrfTopResults: [ResultScore]
+
+    public init(id: UUID = UUID(), query: String, rewrittenQuery: String, ftsCount: Int, vectorCount: Int, rrfTopResults: [ResultScore]) {
+        self.id = id
+        self.query = query
+        self.rewrittenQuery = rewrittenQuery
+        self.ftsCount = ftsCount
+        self.vectorCount = vectorCount
+        self.rrfTopResults = rrfTopResults
+    }
     
-    struct ResultScore: Identifiable, Equatable {
-        let id: UUID
-        let title: String
-        let ftsRank: Int
-        let vectorRank: Int
-        let finalScore: Double
+    public struct ResultScore: Identifiable, Equatable {
+        public let id: UUID
+        public let title: String
+        public let ftsRank: Int
+        public let vectorRank: Int
+        public let finalScore: Double
+
+        public init(id: UUID, title: String, ftsRank: Int, vectorRank: Int, finalScore: Double) {
+            self.id = id
+            self.title = title
+            self.ftsRank = ftsRank
+            self.vectorRank = vectorRank
+            self.finalScore = finalScore
+        }
     }
 }

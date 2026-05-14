@@ -17,7 +17,7 @@ struct SynthesisView: View {
     @Binding var selection: SidebarSelection?
     @Binding var selectedTab: AppTab
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Environment(SynthesisStore.self) var synthesisStore
     @ObservedObject var taskCenter = TaskCenter.shared
     @State private var showOutput = false
@@ -110,14 +110,7 @@ struct SynthesisView: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(Localized.tr("sidebar.synthesis"))
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                VaultBadge()
-            }
-        }
+        .appSubPageToolbar(title: Localized.tr("sidebar.synthesis"))
         .sheet(isPresented: $showOutput) { outputSheet }
         .sheet(item: $pdfURL) { identifiable in
             #if !os(watchOS)

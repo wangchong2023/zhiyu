@@ -19,7 +19,7 @@ public struct AppPrimaryButton: View {
     public let title: String
     public var icon: String? = nil
     public var isLoading: Bool = false
-    public var gradientColors: [Color] = [.appAccent, .appAccent.opacity(0.7)]
+    public var gradientColors: [Color] = [.appAccent, .appAccent.opacity(DesignSystem.subtleOpacity)]
     public var maxWidth: CGFloat? = .infinity
     public let action: () -> Void
 
@@ -27,7 +27,7 @@ public struct AppPrimaryButton: View {
         title: String,
         icon: String? = nil,
         isLoading: Bool = false,
-        gradientColors: [Color] = [.appAccent, .appAccent.opacity(0.7)],
+        gradientColors: [Color] = [.appAccent, .appAccent.opacity(DesignSystem.subtleOpacity)],
         maxWidth: CGFloat? = .infinity,
         action: @escaping () -> Void
     ) {
@@ -52,7 +52,8 @@ public struct AppPrimaryButton: View {
                     .fontWeight(.semibold)
             }
             .frame(maxWidth: maxWidth)
-            .padding()
+            .padding(.vertical, Spacing.medium)
+            .padding(.horizontal, Spacing.large)
             .background(
                 LinearGradient(colors: gradientColors, startPoint: .leading, endPoint: .trailing)
             )
@@ -100,10 +101,10 @@ public struct AppBorderedButton: View {
             .frame(maxWidth: maxWidth)
             .padding(.vertical, Spacing.medium)
             .padding(.horizontal, Spacing.large)
-            .background(color.opacity(0.08))
+            .background(color.opacity(DesignSystem.glassOpacity * 0.5))
             .overlay(
                 RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                    .stroke(color.opacity(0.4), lineWidth: Spacing.borderWidth)
+                    .stroke(color.opacity(DesignSystem.softOpacity), lineWidth: Spacing.borderWidth)
             )
             .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             .foregroundStyle(color)
@@ -115,7 +116,7 @@ public struct AppBorderedButton: View {
 // MARK: - App Capsule Button
 
 /// 胶囊形展示组件 (View)
-/// 适用于预览视图、详情页操作或辅助性质的功能标识。
+/// 适用于预览视图、详情页操作 or 辅助性质的功能标识。
 public struct AppCapsuleButton: View {
     public let title: String
     public var icon: String? = nil
@@ -143,8 +144,8 @@ public struct AppCapsuleButton: View {
             Text(title)
                 .font(.caption.weight(.semibold))
         }
-        .padding(.horizontal, Spacing.medium)
-        .padding(.vertical, Spacing.tiny + Spacing.atomic) // 6
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.small)
         .background(isPrimary ? color : Color.appCard)
         .foregroundStyle(isPrimary ? .white : .appSecondary)
         .clipShape(Capsule())

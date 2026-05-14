@@ -11,9 +11,16 @@
 import Foundation
 
 /// 页面 Schema：定义特定类型页面必须包含的内容结构
-struct PageSchema: Codable, Sendable {
-    let type: PageType
-    let requiredFields: [String]
-    let template: String
-    let promptInstruction: String
+public struct PageSchema: Codable, Sendable {
+    public let type: PageType
+    public let requiredFields: [String]
+    public let template: String
+    public let promptInstruction: String
+
+    public init(type: PageType, requiredFields: [String], template: String, promptInstruction: String) {
+        self.type = type
+        self.requiredFields = requiredFields
+        self.template = template
+        self.promptInstruction = promptInstruction
+    }
 }

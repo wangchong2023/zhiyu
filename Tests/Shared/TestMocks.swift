@@ -58,7 +58,7 @@ extension XCTestCase {
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         
         ServiceContainer.shared.register(HapticFeedback.shared, for: HapticFeedback.self)
-        ServiceContainer.shared.register(AppRouter.shared, for: AppRouter.self)
+        ServiceContainer.shared.register(Router.shared, for: Router.self)
         ServiceContainer.shared.register(DeepLinkService(), for: DeepLinkService.self)
         ServiceContainer.shared.register(PerformanceService(), for: PerformanceService.self)
         ServiceContainer.shared.register(AccessibilityService(), for: AccessibilityService.self)

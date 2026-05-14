@@ -41,7 +41,7 @@ struct SidebarView: View {
     @Environment(AppStore.self) var store
     @Environment(VaultService.self) var vaultService
     @Environment(IngestStore.self) var ingestStore
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     var heroNamespace: Namespace.ID
@@ -69,8 +69,6 @@ struct SidebarView: View {
         )
         .scrollContentBackground(.hidden)
         .modifier(SidebarListStyleModifier(horizontalSizeClass: horizontalSizeClass))
-        .scrollContentBackground(.hidden)
-        .modifier(SidebarListStyleModifier(horizontalSizeClass: horizontalSizeClass))
         .confirmationDialog(
             pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
             isPresented: $showDeleteConfirmation,
@@ -86,62 +84,6 @@ struct SidebarView: View {
             }
         }
         .appTabToolbar(title: Localized.tr("sidebar.title"))
-    }
-}
-
-// MARK: - Sections
-
-struct VaultSection: View {
-    @Environment(VaultService.self) var vaultService
-    
-    var body: some View {
-        Section {
-            Button(action: {
-                withAnimation(.spring()) {
-                    vaultService.exitVault()
-                }
-            }) {
-                HStack(spacing: 12) {
-                    ZStack {
-                        Circle()
-                            .fill(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: DesignSystem.Metrics.iconBoxSize, height: DesignSystem.Metrics.iconBoxSize)
-                        
-                        Image(systemName: "books.vertical.fill")
-                            .font(.system(size: DesignSystem.headlineFontSize))
-                            .foregroundStyle(.white)
-                    }
-                    .shadow(color: .appAccent.opacity(0.3), radius: 5, y: 3)
-                    
-                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                        Text(vaultService.currentVault?.name ?? "Default")
-                            .font(.system(size: DesignSystem.bodyFontSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(.appText)
-                        
-                        Text(L10n.Vault.tr("switch"))
-                            .font(DesignSystem.caption2Font)
-                            .foregroundStyle(.appAccent)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
-                        .foregroundStyle(.appSecondary.opacity(0.5))
-                }
-                .padding(.vertical, DesignSystem.small)
-                .padding(.horizontal, DesignSystem.tiny)
-            }
-        }
-        .listRowBackground(
-            RoundedRectangle(cornerRadius: DesignSystem.Radius.standard)
-                .fill(Color.appCard)
-                .padding(.horizontal, DesignSystem.small)
-                .padding(.vertical, DesignSystem.tiny)
-        )
-        #if !os(watchOS)
-        .listRowSeparator(.hidden)
-        #endif
     }
 }
 
@@ -240,7 +182,8 @@ struct ToolsSection: View {
                     if !store.lintIssues.isEmpty {
                         Text("\(store.lintIssues.count)")
                             .font(DesignSystem.caption2Font)
-                            .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
+                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                            .padding(.vertical, DesignSystem.Chip.verticalPadding)
                             .background(Color.appAccent.opacity(0.1))
                             .clipShape(Capsule())
                             .foregroundStyle(.appAccent)
@@ -260,8 +203,8 @@ struct ToolsSection: View {
                         Text("\(taskCenter.unreadCount)")
                             .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                             .foregroundStyle(.white)
-                            .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
-                            .padding(.vertical, DesignSystem.atomic)
+                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                            .padding(.vertical, DesignSystem.Chip.verticalPadding)
                             .background(Capsule().fill(.red))
                     }
                 }
@@ -305,7 +248,7 @@ struct SidebarListStyleModifier: ViewModifier {
 
 struct SidebarRowBackground: View {
     var body: some View {
-        Color.appCard.opacity(0.7)
+        Color.appCard.opacity(DesignSystem.subtleOpacity)
             .background(.ultraThinMaterial)
     }
 }
@@ -319,10 +262,8 @@ struct SidebarTypeRow: View {
                 Text(type.displayName)
                 Spacer()
                 Text("\(count)")
-                    .font(.system(size: DesignSystem.microFontSize, weight: .medium, design: .rounded))
-                    .foregroundStyle(.appSecondary)
-                    .padding(.horizontal, DesignSystem.Sidebar.badgePadding)
-                    .padding(.vertical, DesignSystem.atomic)
+                    .padding(.horizontal, count > 9 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
                     .background(Color.appAccent.opacity(0.1))
                     .clipShape(Capsule())
             }

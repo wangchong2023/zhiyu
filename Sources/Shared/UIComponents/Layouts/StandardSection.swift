@@ -56,7 +56,7 @@ public struct StandardSection<Content: View>: View {
             VStack(spacing: 0) {
                 content
             }
-            .appGlassCardStyle(opacity: 1.0, cornerRadius: Spacing.cardRadius)
+            .appGlassCardStyle(opacity: DesignSystem.fullOpacity, cornerRadius: DesignSystem.cardRadius)
             
             // 渲染脚注
             if let footer = footer {
@@ -89,8 +89,8 @@ public extension View {
             
             if showDivider {
                 Divider()
-                    .padding(.leading, Spacing.medium)
-                    .opacity(0.5)
+                    .padding(.leading, DesignSystem.medium)
+                    .opacity(DesignSystem.dividerOpacity)
             }
         }
     }

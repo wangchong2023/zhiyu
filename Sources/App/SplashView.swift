@@ -38,7 +38,7 @@ struct SplashView: View {
                         .font(.system(size: DesignSystem.Gallery.mainIconSize, weight: .light))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [Color.appAccent, Color.appAccent.opacity(Colors.Opacity.secondaryOpacity)],
+                                colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.secondaryOpacity)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -50,13 +50,13 @@ struct SplashView: View {
                         .foregroundStyle(.white)
                         .opacity(logoOpacity)
                 }
-                .padding(.bottom, DesignSystem.huge * 2)
+                .padding(.bottom, DesignSystem.Gallery.splashLogoBottomPadding)
                 
                 // 名言
                 VStack(spacing: DesignSystem.standardPadding) {
                     Text(Localized.tr("splash.quote"))
                         .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
-                        .foregroundStyle(.white.opacity(Colors.Opacity.pressedOpacity))
+                        .foregroundStyle(.white.opacity(DesignSystem.pressedOpacity))
                         .multilineTextAlignment(.center)
                         .lineSpacing(DesignSystem.small)
                         .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
@@ -67,7 +67,7 @@ struct SplashView: View {
                         .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.clear, .white.opacity(Colors.Opacity.secondaryOpacity), .clear],
+                                colors: [.clear, .white.opacity(DesignSystem.secondaryOpacity), .clear],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -83,16 +83,16 @@ struct SplashView: View {
                                 .lineSpacing(DesignSystem.small)
                                 .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
                         )
-                        .opacity(quoteOpacity > Colors.Opacity.pressedOpacity * 0.5 ? Colors.Opacity.glassOpacity * 4 : 0)
+                        .opacity(quoteOpacity > DesignSystem.pressedOpacity * 0.5 ? DesignSystem.glassOpacity * 4 : 0)
                     
                     // 署名 (仅保留装饰线)
                     HStack(spacing: 0) {
                         Text("— ")
-                            .foregroundStyle(.white.opacity(Colors.Opacity.secondaryOpacity))
+                            .foregroundStyle(.white.opacity(DesignSystem.secondaryOpacity))
                         Text(Localized.tr("splash.author"))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.appAccent.opacity(Colors.Opacity.secondaryOpacity), Color.appAccent],
+                                    colors: [Color.appAccent.opacity(DesignSystem.secondaryOpacity), Color.appAccent],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -121,15 +121,15 @@ struct SplashView: View {
                     .padding(.vertical, DesignSystem.medium)
                     .background(
                         Capsule()
-                            .fill(Color.appAccent.opacity(Colors.Opacity.glassOpacity * 2))
+                            .fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 2))
                             .overlay(
                                 Capsule()
-                                    .strokeBorder(Color.appAccent.opacity(Colors.Opacity.disabledOpacity), lineWidth: DesignSystem.borderWidth)
+                                    .strokeBorder(Color.appAccent.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth)
                             )
                     )
                 }
                 .opacity(authorOpacity)
-                .padding(.bottom, DesignSystem.huge * 1.5)
+                .padding(.bottom, DesignSystem.Gallery.splashButtonBottomPadding)
             }
         }
         .onAppear {
@@ -150,23 +150,23 @@ struct SplashView: View {
 
         
         // 名言淡入
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.standardDuration * 3) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.looseDuration * 0.8)) {
                 quoteOpacity = 1
             }
         }
         
         // 署名淡入
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.slowDuration + DesignSystem.Animation.standardDuration * 4.5) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) {
                 authorOpacity = 1
             }
         }
         
         // 闪光扫过
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.slowDuration + DesignSystem.Animation.standardDuration * 6.5) {
             withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration)) {
-                shimmerOffset = 200
+                shimmerOffset = DesignSystem.Decorator.shimmerPhaseShift * 0.5
             }
         }
         

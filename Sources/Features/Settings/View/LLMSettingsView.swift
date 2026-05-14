@@ -15,7 +15,7 @@
 struct LLMSettingsView: View {
     @Environment(AppStore.self) var store
     @EnvironmentObject var themeManager: ThemeManager
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var llmService: LLMService
     @State private var testing = false
     @State private var testResult: TestResult?

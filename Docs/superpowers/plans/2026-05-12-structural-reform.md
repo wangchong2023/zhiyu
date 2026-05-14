@@ -92,13 +92,12 @@
 - 移动：`Sources/Shared/ViewModels/ChatViewModel.swift` -> `Sources/Features/Chat/ViewModel/ChatViewModel.swift`
 - 创建：`Sources/Features/Chat/Service/ChatService.swift` (从 Domain 提取)
 
-- [ ] **步骤 1：建立垂直目录结构并移动文件**
-- [ ] **步骤 2：实施基于协议的依赖注入**
-定义 `ChatServiceProtocol`，通过 `ServiceContainer` 实现解耦。
-- [ ] **步骤 3：增强 DFX 日志**
-为对话响应链路添加结构化延迟追踪日志。
-- [ ] **步骤 4：提交代码**
-`git commit -m "refactor: 垂直化 Chat 模块，补全 DFX 与 SRS 溯源"`
+- [x] **步骤 1：建立垂直目录结构并移动文件**
+- [x] **步骤 2：实施基于协议的依赖注入**
+  定义 `ChatServiceProtocol`，通过 `ServiceContainer` 实现解耦。
+- [x] **步骤 3：增强 DFX 日志**
+  为对话响应链路添加结构化延迟追踪日志。
+- [x] **步骤 4：提交代码**`git commit -m "refactor: 垂直化 Chat 模块，补全 DFX 与 SRS 溯源"`
 
 ---
 

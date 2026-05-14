@@ -16,18 +16,18 @@ import SwiftUI
 @MainActor
 /// 操作引导提示组件
 /// 负责在 UI 元素周围弹出气泡样式的提示信息，用于新手引导或新功能展示
-struct AppTooltip: View {
-    let title: String
-    let description: String
-    let icon: String
-    var arrowDirection: ArrowDirection = .top
-    var accentColor: Color = .appAccent
+public struct AppTooltip: View {
+    public let title: String
+    public let description: String
+    public let icon: String
+    public var arrowDirection: ArrowDirection = .top
+    public var accentColor: Color = .appAccent
 
-    enum ArrowDirection {
+    public enum ArrowDirection {
         case top, bottom, left, right
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium - DesignSystem.atomic) { // 10
             HStack(alignment: .top, spacing: DesignSystem.medium - DesignSystem.atomic) { // 10
                 Image(systemName: icon)

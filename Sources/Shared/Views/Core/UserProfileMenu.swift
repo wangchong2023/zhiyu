@@ -15,7 +15,7 @@ import SwiftUI
 struct UserProfileMenu: View {
     @Environment(AuthService.self) var authService
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var onboardingService: OnboardingService
     
     @State private var showSettings = false
@@ -98,8 +98,8 @@ struct UserProfileMenu: View {
                     .font(.system(size: 16, weight: .bold))
             }
         }
-        .frame(width: 36, height: 36)
-        .background(Color.appAccent.opacity(0.1))
+        .frame(width: 32, height: 32)
+        .background(Color.appAccent.opacity(0.12))
         .clipShape(Circle())
         .foregroundStyle(.appAccent)
     }

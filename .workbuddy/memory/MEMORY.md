@@ -19,19 +19,14 @@
 5. KMStore.ToolItem 缺失 'healthCheck' 成员编译错误
 6. iPad 性能监控卡片无法弹出 sheet 的根因排查
 
-## 认证系统设计（已完成）
-- 支持登录方式: 微信、手机号、QQ、Apple、Google
-- 架构文档: /Users/constantine/Documents/work/code/projects/ZhiYu/Docs/AuthArchitecture.md
-- 设计方案: OAuth策略模式 + JWT Token
-
-## 项目结构
-- Sources/Shared: 共享视图和组件
-- Sources/App: 应用入口
-- Features: 功能模块（Auth/NotebookHub/Notebook/Ingest/Graph等）
-- Tests: 测试文件
-- Docs: 文档
+## 认证与导航系统（2026-05-13 更新）
+- **Notebook Hub**: 已实施笔记本工作台，支持 2 列卡片布局。
+- **AuthSession**: 引入了全局 `@Observable` 认证会话。
+- **个人中心**: 个人设置已集成至右上角头像菜单，取代了底部的 Settings Tab。
+- **协议驱动 DI**: AuthService 和 VaultService 已重构为基于协议的注入。
 
 ## 待处理
-- NotebookHub 页面设计（NotebookLM风格）
-- Graph 视图按钮布局修复
+- Notebook Hub 页面视觉优化（支持笔记本封面自定义）
 - iCloud 集成真机测试
+- Graph 视图按钮布局修复
+- 更多服务的协议化重构（Chat, Synthesis 等）

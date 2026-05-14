@@ -17,7 +17,7 @@ import WebKit
 @MainActor
 struct NavigationView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Binding var selectedTab: AppTab
     var heroNamespace: Namespace.ID
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
@@ -52,13 +52,12 @@ struct DetailContentView: View {
     @Binding var selection: SidebarSelection?
     @Binding var selectedTab: AppTab
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     
     var body: some View {
         @Bindable var router = router
 
         destinationView(for: selection)
-            .appTabToolbar(title: AppTab.knowledge.displayTitle)
     }
 
     /// 根据 SidebarSelection 路由到对应视图

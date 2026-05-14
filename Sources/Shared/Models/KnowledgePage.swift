@@ -19,10 +19,10 @@ import GRDB
 
 // MARK: - Knowledge Page
 /// 知识管理系统核心数据模型
-struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord {
-    static let databaseTableName: String = "pages"
+public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord, Sendable {
+    public static let databaseTableName: String = "pages"
     
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case id, title, type, content, aliases, tags, status, confidence, sources, created, updated
         case customIcon = "custom_icon"
         case relatedPageIDs = "related_page_ids"
@@ -35,36 +35,36 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
         case lamportTimestamp = "lamport_timestamp"
     }
     
-    var id: UUID
-    var title: String
-    var type: PageType
-    var customIcon: String?   // User-selected SF Symbol, nil = use type.icon
-    var content: String
-    var aliases: [String]
-    var tags: [String]
-    var status: PageStatus
-    var confidence: Confidence
-    var sources: [String]  // references to raw source IDs
-    var relatedPageIDs: [UUID]
-    var isPinned: Bool
-    var contentHash: String?
-    var created: Date
-    var updated: Date
+    public var id: UUID
+    public var title: String
+    public var type: PageType
+    public var customIcon: String?   // User-selected SF Symbol, nil = use type.icon
+    public var content: String
+    public var aliases: [String]
+    public var tags: [String]
+    public var status: PageStatus
+    public var confidence: Confidence
+    public var sources: [String]  // references to raw source IDs
+    public var relatedPageIDs: [UUID]
+    public var isPinned: Bool
+    public var contentHash: String?
+    public var created: Date
+    public var updated: Date
     // MARK: - 分布式冲突解决 (LWW 策略)
-    var lamportTimestamp: Int64 // 逻辑时钟，用于解决多端同步冲突
+    public var lamportTimestamp: Int64 // 逻辑时钟，用于解决多端同步冲突
     
     // MARK: - 溯源字段 (Karpathy 模式)
-    var sourceURL: String?      // 原始资料链接 (网页或 YouTube)
-    var rawTextSnippet: String? // 原始资料片段，用于校验
-    var fileSize: Int64?       // 文件大小 (字节)
-    var sourceType: String?    // 来源类型 (pdf, text, doc, etc.)
+    public var sourceURL: String?      // 原始资料链接 (网页或 YouTube)
+    public var rawTextSnippet: String? // 原始资料片段，用于校验
+    public var fileSize: Int64?       // 文件大小 (字节)
+    public var sourceType: String?    // 来源类型 (pdf, text, doc, etc.)
 
     /// Display icon: customIcon if set, otherwise type.icon
-    var displayIcon: String {
+    public var displayIcon: String {
         customIcon ?? type.icon
     }
 
-    init(
+    public init(
         id: UUID = UUID(),
         title: String,
         type: PageType = .concept,
@@ -111,7 +111,7 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
     /// 执行 LWW (Last Write Wins) 冲突合并
     /// - Parameter remote: 远程或同步过来的版本
     /// - Returns: 合并后的最终版本
-    func merge(with remote: KnowledgePage) -> KnowledgePage {
+    public func merge(with remote: KnowledgePage) -> KnowledgePage {
         // 核心规则：时间戳大的胜出
         if remote.lamportTimestamp > self.lamportTimestamp {
             return remote
@@ -124,11 +124,11 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
     }
     
     // Extract [[knowledge links]] from content
-    var outgoingLinks: [String] {
+    public var outgoingLinks: [String] {
         AppLinkProcessor.extractOutgoingLinks(from: content)
     }
     
-    var wordCount: Int {
+    public var wordCount: Int {
         // Support both Chinese and English word counting
         // Chinese: count CJK characters individually; English: count by spaces
         var count = 0
@@ -152,12 +152,12 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
         return count
     }
     
-    var isStub: Bool {
+    public var isStub: Bool {
         content.count < 100
     }
     
     
-    var folderName: String {
+    public var folderName: String {
         switch type {
         case .entity: return "entities"
         case .concept: return "concepts"
@@ -169,12 +169,12 @@ struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, Persista
     }
 
     /// 隐私敏感判定
-    var isPrivate: Bool {
+    public var isPrivate: Bool {
         getAllTags().contains("private")
     }
 
     /// 获取所有标签（包括元数据标签和内容中的 #标签）
-    func getAllTags() -> [String] {
+    public func getAllTags() -> [String] {
         var allTags = Set(tags)
         // 简单提取内容中的 #标签 (如 #tag1 #tag2)
         let pattern = "#([\\w\\u4e00-\\u9fa5]+)"

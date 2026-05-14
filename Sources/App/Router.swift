@@ -1,15 +1,13 @@
-// AppRouter.swift
+// Router.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的全局路由管理器（AppRouter），作为应用导航逻辑的核心大脑。
+// 功能说明: 本文件实现了知识管理系统的全局路由管理器（Router），作为应用导航逻辑的核心大脑。
 // 该类基于 SwiftUI 的现代导航堆栈（NavigationPath）与观察者模式，提供了卓越的视图切换能力：
 // 1. 声明式路径管理：通过集中化的 AppRoute 枚举解耦了视图间的直接依赖，支持动态推栈、平级切换及“回到根路径”的操作。
 // 2. 状态机同步逻辑：智能维护侧边栏选中项（SidebarSelection）与主标签（AppTab）的一致性，确保在跨平台（iPadOS vs iOS）布局切换时导航状态的透明迁移。
 // 3. 空间历史追踪：内置了轻量级的导航历史（Breadcrumbs）记录机制，为用户提供最近访问页面的快速回溯能力。
 // 4. 外部调度接入：提供单例接口支持 Deep Link、搜索跳转及系统级指令对应用路由的直接编排。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，完善导航状态管理与历史追踪逻辑说明
+// 版本: 1.2
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
@@ -59,9 +57,9 @@ enum AppRoute: Hashable, Identifiable {
 /// 集中管理导航状态，支持解耦跳转与状态持久化
 @Observable
 @MainActor
-final class AppRouter {
+final class Router {
     /// 全局单例，方便非视图层级调用（如 DeepLink 处理）
-    static let shared = AppRouter()
+    static let shared = Router()
     
     /// 核心导航路径
     var path = NavigationPath()
@@ -79,7 +77,6 @@ final class AppRouter {
     /// 空间导航历史 (面包屑)
     var navigationHistory: [KnowledgePage] = []
 
-    /// 强制 UI 刷新标识（主要用于多语言切换）
     /// 强制 UI 刷新标识（主要用于多语言切换）
     var languageForceUpdate: Bool = false
     
@@ -135,7 +132,7 @@ final class AppRouter {
         }
     }
     
-    /// 回到根视图
+    /// 返回到根路径
     func popToRoot() {
         path = NavigationPath()
     }
@@ -167,4 +164,3 @@ final class AppRouter {
         }
     }
 }
-

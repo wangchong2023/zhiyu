@@ -24,7 +24,7 @@ struct SettingsView: View {
     @Environment(SettingsStore.self) var settingsStore
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var llmService: LLMService
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @ObservedObject var onboardingService: OnboardingService
 
     init(onboardingService: OnboardingService) {

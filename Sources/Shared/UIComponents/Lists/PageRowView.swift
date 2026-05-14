@@ -48,8 +48,8 @@ struct PageRowView: View {
                         // 页面类型标签
                         Text(page.type.displayName)
                             .font(.caption2)
-                            .padding(.horizontal, Spacing.small - Spacing.atomic) // 6
-                            .padding(.vertical, Spacing.atomic)
+                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                            .padding(.vertical, DesignSystem.Chip.verticalPadding)
                             .background(Color.fromModelColorName(page.type.colorName).opacity(Colors.glassOpacity * 2))
                             .clipShape(Capsule())
                             .foregroundStyle(Color.fromModelColorName(page.type.colorName))
@@ -75,10 +75,10 @@ struct PageRowView: View {
             // 状态圆点指示器
             Circle()
                 .fill(Color.fromModelColorName(page.status.colorName))
-                .frame(width: Spacing.smallIconSize / 2.5, height: Spacing.smallIconSize / 2.5) // 8
+                .frame(width: Spacing.small, height: Spacing.small)
         }
-        .padding(.horizontal, Spacing.medium)
-        .padding(.vertical, Spacing.medium - Spacing.atomic) // 10
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.small)
         .background(Color.appCard.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
         .contentShape(Rectangle()) // 确保整行可点击

@@ -15,7 +15,7 @@ import Observation
 /// 负责管理图谱画布、统计信息、过滤器及详情卡片的组合布局
 struct GraphContainerView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     var heroNamespace: Namespace.ID
     @Binding var selectedTab: AppTab
     @EnvironmentObject var themeManager: ThemeManager
@@ -109,7 +109,7 @@ struct GraphContainerView: View {
                 )
                 .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
-                .overlay(RoundedRectangle(cornerRadius: DesignSystem.standardRadius).stroke(Color.appBorder.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth / 2))
+                .overlay(RoundedRectangle(cornerRadius: DesignSystem.standardRadius).stroke(Color.appBorder.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth))
                 .padding(.trailing, DesignSystem.Graph.toolbarPaddingTrailing)
                 .padding(.bottom, viewModel.selectedNodeID != nil ? DesignSystem.Graph.toolbarPaddingBottomExpanded : DesignSystem.Graph.toolbarPaddingBottomDefault)
                 .animation(DesignSystem.standardAnimation, value: viewModel.selectedNodeID)
@@ -131,7 +131,7 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func dismissCard() {
-        withAnimation(.spring(response: DesignSystem.Animation.springResponse + 0.1, dampingFraction: DesignSystem.Animation.springDamping)) {
+        withAnimation(DesignSystem.Animation.standard) {
             viewModel.selectedNodeID = nil
             viewModel.isAnimating = false
         }
@@ -143,7 +143,7 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func handleNodeTap(_ node: GraphNode) {
-        withAnimation(.spring(response: DesignSystem.Animation.springResponse * 1.83, dampingFraction: DesignSystem.Animation.springDamping + 0.05)) {
+        withAnimation(DesignSystem.Animation.prominent) {
             if viewModel.selectedNodeID == node.id {
                 viewModel.selectedNodeID = nil
                 viewModel.isAnimating = false
@@ -191,19 +191,19 @@ struct GraphContainerView: View {
                 
                 Image(systemName: "chevron.right")
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
-                    .foregroundStyle(.appAccent.opacity(DesignSystem.disabledOpacity * 1.2)) // 颜色加深，暗示跳转
+                    .foregroundStyle(.appAccent.opacity(DesignSystem.softOpacity))
             }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.tightPadding)
+            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+            .padding(.vertical, DesignSystem.Chip.verticalPadding)
             .background(
                 Capsule()
-                    .fill(Color.appAccent.opacity(DesignSystem.glassOpacity / 2)) // 稍微加深背景色
+                    .fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.5))
             )
             .overlay(
                 Capsule()
-                    .stroke(Color.appAccent.opacity(DesignSystem.disabledOpacity * 0.4), lineWidth: DesignSystem.borderWidth) // 增强边框感
+                    .stroke(Color.appAccent.opacity(DesignSystem.disabledOpacity * 0.5), lineWidth: DesignSystem.borderWidth)
             )
-            .shadow(color: .black.opacity(DesignSystem.glassOpacity / 3), radius: DesignSystem.atomic * 2, x: 0, y: DesignSystem.borderWidth) // 增加微弱投影，使其具备悬浮感
+            .shadow(color: .black.opacity(DesignSystem.ghostOpacity * 3), radius: DesignSystem.atomic * 2, x: 0, y: DesignSystem.borderWidth)
         }
         .buttonStyle(.plain)
         .contentShape(Capsule())
@@ -395,7 +395,7 @@ struct GraphCanvasView: View {
             guard let s = nodeLookup[edge.source], let t = nodeLookup[edge.target] else { continue }
             
             let isHighlighted = selectedNodeID == edge.source || selectedNodeID == edge.target
-            let opacity = isHighlighted ? DesignSystem.secondaryOpacity : (isAnySelected ? DesignSystem.glassOpacity / 3 : DesignSystem.dimmedOpacity)
+            let opacity = isHighlighted ? DesignSystem.secondaryOpacity : (isAnySelected ? DesignSystem.glassOpacity * 0.33 : DesignSystem.dimmedOpacity)
             let lineWidth: CGFloat = isHighlighted ? DesignSystem.Graph.highlightedLineWidth : 1.0
             
             var path = Path()

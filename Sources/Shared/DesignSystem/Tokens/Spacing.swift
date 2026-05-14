@@ -152,6 +152,11 @@ public enum Spacing {
         public static let showcaseRadius: CGFloat = 20
         /// 悬停缩放比例
         public static let hoverScale: CGFloat = 1.05
+        
+        /// 启动页 Logo 底部间距
+        public static let splashLogoBottomPadding: CGFloat = huge * 2
+        /// 启动页按钮底部间距
+        public static let splashButtonBottomPadding: CGFloat = huge * 1.5
     }
     
     /// 时间轴展示规范
@@ -242,6 +247,30 @@ public enum Spacing {
         public static let sectionSpacing: CGFloat = 24
         public static let maxTagCloudHeight: CGFloat = 300
         
+        /// 指令面板标准高度
+        public static let commandPaletteHeight: CGFloat = heroValueSize * 15.3
+        /// 功能引导图标缩放比例
+        public static let coachMarkIconScale: CGFloat = 1.3
+        /// 功能引导主要操作水平内边距
+        public static let coachMarkActionHorizontalPadding: CGFloat = heroValueSize * 1.25
+        /// 功能引导卡片圆角偏移
+        public static let coachMarkRadiusOffset: CGFloat = heroValueSize * 0.4
+        /// 功能引导阴影半径
+        public static let coachMarkShadowRadius: CGFloat = heroValueSize * 1.15
+        /// 功能引导阴影 Y 轴偏移
+        public static let coachMarkShadowY: CGFloat = heroValueSize * 0.57
+        
+        /// 欢迎页装饰点阵宽度
+        public static let welcomeHeroDotWidth: CGFloat = heroValueSize * 7.7
+        /// 欢迎页装饰点阵高度
+        public static let welcomeHeroDotHeight: CGFloat = heroValueSize * 3.85
+        /// 欢迎页装饰圆环大小
+        public static let welcomeHeroCircleSize: CGFloat = heroValueSize * 5.4
+        /// 欢迎页英雄图标大小
+        public static let welcomeHeroIconSize: CGFloat = heroValueSize * 2.76
+        /// 统计卡片最小宽度
+        public static let statCardMinWidth: CGFloat = heroValueSize * 6.15
+
         /// 标题字体大小 (20px)
         public static let titleFontSize: CGFloat = 20
         /// 小型标题字体大小 (17px)
@@ -293,8 +322,8 @@ public enum Spacing {
     
     /// 小型徽章规范
     public struct Chip {
-        public static let horizontalPadding: CGFloat = 12
-        public static let verticalPadding: CGFloat = 4
+        public static let horizontalPadding: CGFloat = 6
+        public static let verticalPadding: CGFloat = 3
         public static let spacing: CGFloat = 8
         public static let iconSpacing: CGFloat = 4
         public static let cornerRadius: CGFloat = 6
@@ -308,6 +337,11 @@ public enum Spacing {
         public static let iconBoxSize: CGFloat = 28
         public static let iconFrameWidth: CGFloat = 24
         public static let badgePadding: CGFloat = 6
+        
+        /// 笔记本切换区域阴影半径
+        public static let vaultShadowRadius: CGFloat = 5
+        /// 笔记本切换区域阴影 Y 轴偏移
+        public static let vaultShadowY: CGFloat = 3
     }
     
     /// 笔记本枢纽规范

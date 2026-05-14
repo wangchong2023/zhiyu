@@ -19,6 +19,8 @@ public enum Colors {
     
     /// 玻璃拟态透明度 (0.15)
     public static let glassOpacity: Double = 0.15
+    /// 较淡的透明度 (0.7)
+    public static let subtleOpacity: Double = 0.7
     /// 完全不透明度 (1.0)
     public static let fullOpacity: Double = 1.0
     /// 禁用状态透明度 (0.3)
@@ -31,17 +33,44 @@ public enum Colors {
     public static let secondaryOpacity: Double = 0.8
     /// 标准阴影透明度 (0.1)
     public static let shadowOpacity: Double = 0.1
+    /// 功能引导背景透明度 (0.6)
+    public static let coachMarkBackgroundOpacity: Double = 0.6
+    
+    /// 表面层透明度 (0.8)，常用于卡片叠加
+    public static let surfaceOpacity: Double = 0.8
+    /// 半透层透明度 (0.6)
+    public static let translucentOpacity: Double = 0.6
+    /// 软透层透明度 (0.4)
+    public static let softOpacity: Double = 0.4
+    /// 幽灵层透明度 (0.01)，用于交互热区
+    public static let ghostOpacity: Double = 0.01
+    
+    /// 分割线透明度 (0.5)
+    public static let dividerOpacity: Double = 0.5
+    /// 强调描边透明度 (0.3)
+    public static let accentStrokeOpacity: Double = 0.3
     
     // MARK: - 2. 预设容器颜色
     
     public struct Opacity {
         public static let glassOpacity: Double = Colors.glassOpacity
+        public static let subtleOpacity: Double = Colors.subtleOpacity
         public static let fullOpacity: Double = Colors.fullOpacity
         public static let disabledOpacity: Double = Colors.disabledOpacity
         public static let pressedOpacity: Double = Colors.pressedOpacity
         public static let dimmedOpacity: Double = Colors.dimmedOpacity
         public static let secondaryOpacity: Double = Colors.secondaryOpacity
         public static let shadowOpacity: Double = Colors.shadowOpacity
+        public static let coachMarkBackgroundOpacity: Double = Colors.coachMarkBackgroundOpacity
+        
+        public static let surfaceOpacity: Double = Colors.surfaceOpacity
+        public static let translucentOpacity: Double = Colors.translucentOpacity
+        public static let softOpacity: Double = Colors.softOpacity
+        public static let ghostOpacity: Double = Colors.ghostOpacity
+        
+        public static let dividerOpacity: Double = Colors.dividerOpacity
+        public static let accentStrokeOpacity: Double = Colors.accentStrokeOpacity
+        
         public static var shadowColor: Color { Colors.shadowColor }
     }
     

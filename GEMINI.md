@@ -45,7 +45,7 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 | **L0** | 基础设施层 | 存储引擎 (SQLite), 网络 (Network), 安全 (Keychain, SecurityManager, Logger) |
 
 ## 目录结构 (Shared)
-- `Sources/Shared/Core`: 基础设施、平台适配、全局协议与工具类 (`Logger`, `AppRouter`, `HapticFeedback`)。
+- `Sources/Shared/Core`: 基础设置、平台适配、全局协议与工具类 (`Logger`, `Router`, `HapticFeedback`)。
 - `Sources/Shared/Data`: 持久化存储 (`SQLiteStore`, `AppStore`) 与同步引擎 (`iCloudSyncService`)。
 - `Sources/Shared/Domain`: 业务领域逻辑 (`LLMService`, `LinkService`)、RAG 管道、摄取服务 (`IngestService`) 与专用处理器 (`OCR`, `PDF`, `Chunker`)。
 - `Sources/Shared/Models`: 核心领域模型 (`KnowledgePage`, `PageType`)。

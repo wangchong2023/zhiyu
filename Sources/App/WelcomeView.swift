@@ -46,16 +46,16 @@ struct WelcomeHeroSection: View {
         VStack(spacing: Spacing.standardPadding) {
             ZStack {
                 AppDotPattern(dotColor: Color.appBorder, spacing: Spacing.wide, dotSize: Spacing.atomic)
-                    .frame(width: Spacing.Metrics.heroValueSize * 7.7, height: Spacing.Metrics.heroValueSize * 3.85).opacity(Colors.fullOpacity * 0.5)
-                Circle().fill(Color.appAccent.opacity(Colors.glassOpacity * 0.8))
-                    .frame(width: Spacing.Metrics.heroValueSize * 5.4, height: Spacing.Metrics.heroValueSize * 5.4)
+                    .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight).opacity(DesignSystem.fullOpacity * 0.5)
+                Circle().fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8))
+                    .frame(width: DesignSystem.Metrics.welcomeHeroCircleSize, height: DesignSystem.Metrics.welcomeHeroCircleSize)
                     .blur(radius: Spacing.wide)
                 Image(systemName: "books.vertical.circle.fill")
-                    .font(.system(size: Spacing.Metrics.heroValueSize * 2.76))
+                    .font(.system(size: DesignSystem.Metrics.welcomeHeroIconSize))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(Colors.glassOpacity * 4), radius: Spacing.standardPadding, x: 0, y: Spacing.small)
+                    .shadow(color: .appAccent.opacity(DesignSystem.glassOpacity * 4), radius: Spacing.standardPadding, x: 0, y: Spacing.small)
             }
-            .frame(height: Spacing.Metrics.heroValueSize * 3.85)
+            .frame(height: DesignSystem.Metrics.welcomeHeroDotHeight)
             Text(Localized.tr("page.knowledge"))
                 .font(.system(size: Spacing.huge + Spacing.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
@@ -69,7 +69,7 @@ struct WelcomeHeroSection: View {
 
 struct WelcomeStatsSection: View {
     @Environment(AppStore.self) var store
-    private let columns = [GridItem(.adaptive(minimum: Spacing.Metrics.heroValueSize * 6.15, maximum: .infinity), spacing: Spacing.wide)] // 160
+    private let columns = [GridItem(.adaptive(minimum: DesignSystem.Metrics.statCardMinWidth, maximum: .infinity), spacing: Spacing.wide)]
     var body: some View {
         LazyVGrid(columns: columns, spacing: Spacing.wide) {
             StatCard(title: Localized.tr("stat.totalPages"), value: "\(store.totalPages)", icon: "doc.richtext.fill", color: .appAccent)
@@ -109,7 +109,7 @@ struct WelcomeGrowthChartSection: View {
 
 struct WelcomeRecentUpdatesSection: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Binding var selectedTab: AppTab
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.medium) {

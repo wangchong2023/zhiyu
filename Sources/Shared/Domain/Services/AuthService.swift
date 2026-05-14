@@ -13,18 +13,24 @@ import Observation
 /// 负责管理应用的访问权限，支持多种登录方式及游客模式。
 @Observable
 @MainActor
-public final class AuthService {
+public final class AuthService: AuthServiceProtocol {
     
     // MARK: - 状态属性
     
     /// 是否已通过身份认证 (登录成功)
-    public var isAuthenticated: Bool = false
+    public var isAuthenticated: Bool {
+        AuthSession.shared.isLoggedIn
+    }
     
     /// 是否处于游客模式
-    public var isGuest: Bool = false
+    public var isGuest: Bool {
+        AuthSession.shared.isGuest
+    }
     
     /// 当前登录用户 (可选)
-    public var currentUser: User?
+    public var currentUser: User? {
+        AuthSession.shared.currentUser
+    }
     
     // MARK: - 单例与初始化
     
@@ -32,8 +38,14 @@ public final class AuthService {
     
     private init() {
         // 从持久化存储加载状态 (例如 Keychain 或 UserDefaults)
-        self.isAuthenticated = UserDefaults.standard.bool(forKey: "auth.isAuthenticated")
-        self.isGuest = UserDefaults.standard.bool(forKey: "auth.isGuest")
+        let isAuthenticated = UserDefaults.standard.bool(forKey: "auth.isAuthenticated")
+        let isGuest = UserDefaults.standard.bool(forKey: "auth.isGuest")
+        
+        if isAuthenticated {
+            // 模拟从存储中恢复用户信息
+            AuthSession.shared.update(user: User(name: "User", email: "user@example.com"))
+        }
+        AuthSession.shared.isGuest = isGuest
     }
     
     // MARK: - 核心操作
@@ -41,8 +53,8 @@ public final class AuthService {
     /// 以游客身份进入系统
     @MainActor
     public func continueAsGuest() {
-        self.isGuest = true
-        self.isAuthenticated = false
+        AuthSession.shared.update(user: nil)
+        AuthSession.shared.isGuest = true
         saveState()
     }
     
@@ -54,9 +66,8 @@ public final class AuthService {
         
         // 简单模拟校验
         if !identity.isEmpty && password.count >= 6 {
-            self.isAuthenticated = true
-            self.isGuest = false
-            self.currentUser = User(id: UUID(), name: identity, avatar: "person.circle.fill")
+            let user = User(id: UUID(), name: identity, email: "\(identity.lowercased())@example.com")
+            AuthSession.shared.update(user: user)
             saveState()
             return true
         }
@@ -69,9 +80,8 @@ public final class AuthService {
         try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
         
         if phone.count >= 11 && code == "123456" && password.count >= 6 {
-            self.isAuthenticated = true
-            self.isGuest = false
-            self.currentUser = User(id: UUID(), name: phone, avatar: "person.circle.fill")
+            let user = User(id: UUID(), name: "User_\(phone.suffix(4))", email: "\(phone)@example.com")
+            AuthSession.shared.update(user: user)
             saveState()
             return true
         }
@@ -81,9 +91,7 @@ public final class AuthService {
     /// 退出登录
     @MainActor
     public func logout() {
-        self.isAuthenticated = false
-        self.isGuest = false
-        self.currentUser = nil
+        AuthSession.shared.logout()
         saveState()
     }
     
@@ -96,10 +104,4 @@ public final class AuthService {
 }
 
 // MARK: - 数据模型
-
-/// 用户信息模型
-public struct User: Identifiable, Codable {
-    public let id: UUID
-    public var name: String
-    public var avatar: String
-}
+// User 已移动至 Sources/Features/Auth/Models/User.swift

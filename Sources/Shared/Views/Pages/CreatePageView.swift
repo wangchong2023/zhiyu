@@ -12,7 +12,7 @@ import SwiftUI
 
 struct CreatePageView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var type: PageType = .concept

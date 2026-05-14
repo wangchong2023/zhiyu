@@ -17,7 +17,7 @@ import SwiftUI
 /// 负责将大屏环境下的导航从底部 Tab 切换为侧边栏 List 模式，优化空间利用率与交互路径
 struct AdaptiveSidebarView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Binding var selectedTab: AppTab
     
     var body: some View {
@@ -75,7 +75,7 @@ struct AdaptiveSidebarView: View {
 /// 负责根据侧边栏选中项动态分发内容视图，支持跨平台的导航逻辑一致性
 struct AdaptiveDetailView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Binding var selectedTab: AppTab
     @Binding var selection: SidebarSelection?
     // // @Binding var languageForceUpdate: Bool
@@ -109,11 +109,6 @@ struct AdaptiveDetailView: View {
             }
             .navigationDestination(for: KnowledgePage.self) { page in
                 PageDetailView(page: page)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    VaultBadge()
-                }
             }
         }
     }

@@ -12,7 +12,7 @@ import Foundation
 import GRDB
 
 // MARK: - Page Type
-enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible {
+public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible {
     case entity = "entity"
     case concept = "concept"
     case source = "source"
@@ -20,9 +20,9 @@ enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvert
     case map = "map"
     case raw = "raw"
     
-    var id: String { rawValue }
+    public var id: String { rawValue }
     
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .entity: return L10n.CoreModels.tr("type.entity")
         case .concept: return L10n.CoreModels.tr("type.concept")
@@ -33,7 +33,7 @@ enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvert
         }
     }
     
-    var colorName: String {
+    public var colorName: String {
         switch self {
         case .entity: return "entity"
         case .concept: return "concept"
@@ -46,13 +46,13 @@ enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvert
 }
 
 // MARK: - Page Status
-enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
+public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
     case active = "active"
     case stub = "stub"
     case needsUpdate = "needs-update"
     case deprecated = "deprecated"
     
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .active: return L10n.CoreModels.tr("status.active")
         case .stub: return L10n.CoreModels.tr("status.stub")
@@ -61,7 +61,7 @@ enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
         }
     }
     
-    var colorName: String {
+    public var colorName: String {
         switch self {
         case .active: return "green"
         case .stub: return "yellow"
@@ -72,12 +72,12 @@ enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
 }
 
 // MARK: - Confidence Level
-enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible {
+public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible {
     case high = "high"
     case medium = "medium"
     case low = "low"
     
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .high: return L10n.CoreModels.tr("confidence.high")
         case .medium: return L10n.CoreModels.tr("confidence.medium")
@@ -85,7 +85,7 @@ enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible {
         }
     }
     
-    var colorName: String {
+    public var colorName: String {
         switch self {
         case .high: return "green"
         case .medium: return "yellow"

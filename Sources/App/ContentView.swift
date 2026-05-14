@@ -5,7 +5,7 @@
 // 该视图集成了响应式布局引擎与全局反馈层，主要功能点如下：
 // 1. 多设备自适应导航：基于 SwiftUI 的 Size Class 机制，在 iPad/macOS 上自动切换为 NavigationSplitView（侧边栏模式），而在 iPhone 上呈现为现代化的 TabView。
 // 2. 全局安全与入库控制：挂载了隐私锁定层（LockOverlay）、新手引导（Onboarding）及全局通知（Toast）系统，确保应用在不同生命周期阶段的安全性。
-// 3. 动态路由编排：深度集成 AppRouter 与 ViewFactory，支持跨模块的视图跳转、Deep Link 唤起及全局指令面板（Command Palette）的弹出。
+// 3. 动态路由编排：深度集成 Router 与 ViewFactory，支持跨模块的视图跳转、Deep Link 唤起及全局指令面板（Command Palette）的弹出。
 // 4. 品牌交互反馈：实现了全局奖章（Medal）奖励弹窗与功能引导（Coach Marks）覆盖层，通过高阶动画引擎提升用户的品牌成就感。
 // 版本: 1.1
 // 修改记录:
@@ -20,7 +20,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppStore.self) var store
     @EnvironmentObject var themeManager: ThemeManager
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @Environment(AuthService.self) var authService
     @Environment(VaultService.self) var vaultService
     
@@ -40,12 +40,12 @@ struct ContentView: View {
         let tintColor = ThemeManager.colorForName(themeManager.accentColorRaw)
         
         ZStack {
-            if authService.isAuthenticated || authService.isGuest {
+            if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
                 if vaultService.selectedVaultID != nil {
                     mainContent(tintColor: tintColor)
                         .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
                 } else {
-                    VaultHomeView()
+                    NotebookHubView()
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             } else {
@@ -53,8 +53,8 @@ struct ContentView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: authService.isAuthenticated || authService.isGuest)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: vaultService.selectedVaultID)
+        .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
+        .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)
         .environmentObject(onboardingService)
     }
     
@@ -124,6 +124,7 @@ struct ContentView: View {
         #if os(watchOS)
         Text("Not used on watchOS")
         #else
+        @Bindable var store = store
         @Bindable var router = router
         NavigationSplitView {
             AdaptiveSidebarView(selectedTab: $router.selectedTab)
@@ -140,9 +141,12 @@ struct ContentView: View {
             AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, heroNamespace: heroNamespace)
         }
         .tint(tintColor)
+        .sheet(isPresented: $store.showPerfDashboard) {
+            PerformanceDashboardView(service: store.performanceService)
+        }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
+                .presentationDetents([.height(DesignSystem.Metrics.commandPaletteHeight)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -194,7 +198,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
+                .presentationDetents([.height(DesignSystem.Metrics.commandPaletteHeight)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -260,7 +264,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
-                .presentationDetents([.height(DesignSystem.Metrics.heroValueSize * 15.3)])
+                .presentationDetents([.height(DesignSystem.Metrics.commandPaletteHeight)])
                 .presentationBackground(.clear)
         }
         .background {
@@ -368,11 +372,11 @@ struct CoachMarkOverlay: View {
     var body: some View {
         ZStack {
             // 半透明背景
-            Color.black.opacity(DesignSystem.glassOpacity * 4)
+            Color.black.opacity(DesignSystem.coachMarkBackgroundOpacity)
                 .ignoresSafeArea()
                 .onTapGesture { dismissWithAnimation() }
             
-            VStack(spacing: 24) {
+            VStack(spacing: DesignSystem.giant) {
                 // 图标
                 ZStack {
                     Circle()
@@ -381,13 +385,13 @@ struct CoachMarkOverlay: View {
                         .shadow(color: .appAccent.opacity(DesignSystem.disabledOpacity), radius: DesignSystem.medium, y: DesignSystem.small + DesignSystem.atomic)
                     
                     Image(systemName: iconName)
-                        .font(.system(size: DesignSystem.Metrics.titleFontSize * 1.3, weight: .bold))
+                        .font(.system(size: DesignSystem.Metrics.titleFontSize * DesignSystem.Metrics.coachMarkIconScale, weight: .bold))
                         .foregroundStyle(.white)
                 }
                 .scaleEffect(isAnimating ? 1.0 : 0.8)
                 .opacity(isAnimating ? 1.0 : 0)
                 
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     Text(Localized.tr(titleKey))
                         .font(.title3.bold())
                         .foregroundStyle(.appText)
@@ -405,7 +409,7 @@ struct CoachMarkOverlay: View {
                     Text(Localized.tr(actionKey))
                         .font(.headline)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, DesignSystem.Metrics.heroValueSize * 1.25)
+                        .padding(.horizontal, DesignSystem.Metrics.coachMarkActionHorizontalPadding)
                         .padding(.vertical, DesignSystem.medium)
                         .background(
                             Capsule()
@@ -424,9 +428,9 @@ struct CoachMarkOverlay: View {
             }
             .padding(DesignSystem.giant + DesignSystem.Metrics.heroValueSize * 0.5)
             .background(
-                RoundedRectangle(cornerRadius: DesignSystem.largeRadius + DesignSystem.Metrics.heroValueSize * 0.4)
+                RoundedRectangle(cornerRadius: DesignSystem.largeRadius + DesignSystem.Metrics.coachMarkRadiusOffset)
                     .fill(Color.appCard)
-                    .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.heroValueSize * 1.15, x: 0, y: DesignSystem.Metrics.heroValueSize * 0.57)
+                    .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.coachMarkShadowRadius, x: 0, y: DesignSystem.Metrics.coachMarkShadowY)
             )
             .padding(DesignSystem.giant)
         }

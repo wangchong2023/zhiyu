@@ -59,19 +59,7 @@ struct IndexViewContent: View {
                 .padding(.bottom, DesignSystem.standardPadding * 2)
             }
         }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(filterType?.displayName ?? Localized.tr("sidebar.allPages"))
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            HapticFeedback.shared.trigger(.selection)
-                            store.refresh()
-                        } label: {
-                            Label(L10n.Common.tr("refresh"), systemImage: DesignSystem.Icons.refresh)
-                        }
-                    }
-                }
+        .modifier(IndexToolbarModifier(filterType: filterType, store: store))
                 .confirmationDialog(
                     pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
                     isPresented: $showDeleteConfirmation,
@@ -109,7 +97,7 @@ struct IndexViewContent: View {
                 Spacer()
             }
             .padding(.vertical, DesignSystem.tiny)
-            .background(Color.appBackground.opacity(0.01)) // 使 Header 背景透明
+            .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
         }
     }
     
@@ -131,7 +119,7 @@ struct IndexViewContent: View {
                         }
                     }
                 }
-                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
             } header: {
                 HStack {
                     Label(Localized.trf("index.entityCount", entities.count), systemImage: DesignSystem.Icons.entity)
@@ -140,7 +128,7 @@ struct IndexViewContent: View {
                     Spacer()
                 }
                 .padding(.vertical, DesignSystem.tiny)
-                .background(Color.appBackground.opacity(0.01))
+                .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
             }
         }
     }
@@ -171,7 +159,7 @@ struct IndexViewContent: View {
                         }
                     }
                 }
-                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
             } header: {
                 HStack {
                     Label(Localized.trf("index.conceptCount", concepts.count), systemImage: DesignSystem.Icons.concept)
@@ -180,7 +168,7 @@ struct IndexViewContent: View {
                     Spacer()
                 }
                 .padding(.vertical, DesignSystem.tiny)
-                .background(Color.appBackground.opacity(0.01))
+                .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
             }
         }
     }
@@ -203,7 +191,7 @@ struct IndexViewContent: View {
                         }
                     }
                 }
-                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
             } header: {
                 HStack {
                     Label(Localized.trf("index.sourceCount", sources.count), systemImage: DesignSystem.Icons.source)
@@ -212,7 +200,7 @@ struct IndexViewContent: View {
                     Spacer()
                 }
                 .padding(.vertical, DesignSystem.tiny)
-                .background(Color.appBackground.opacity(0.01))
+                .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
             }
         }
     }
@@ -235,7 +223,7 @@ struct IndexViewContent: View {
                         }
                     }
                 }
-                .appContainer(background: Color.appCard.opacity(0.8), padding: true)
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
             } header: {
                 HStack {
                     Label(Localized.trf("index.comparisonCount", comparisons.count), systemImage: DesignSystem.Icons.comparison)
@@ -244,7 +232,7 @@ struct IndexViewContent: View {
                     Spacer()
                 }
                 .padding(.vertical, DesignSystem.tiny)
-                .background(Color.appBackground.opacity(0.01))
+                .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
             }
         }
     }
@@ -269,14 +257,14 @@ struct IndexStatView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, DesignSystem.List.rowVerticalPadding)
-        .background(.ultraThinMaterial.opacity(0.8))
-        .background(Color.appCard.opacity(0.4))
+        .background(.ultraThinMaterial.opacity(DesignSystem.surfaceOpacity))
+        .background(Color.appCard.opacity(DesignSystem.softOpacity))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                .stroke(color.opacity(0.2), lineWidth: DesignSystem.borderWidth)
+                .stroke(color.opacity(DesignSystem.dimmedOpacity), lineWidth: DesignSystem.borderWidth)
         )
-        .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.black.opacity(DesignSystem.shadowOpacity * 0.25), radius: DesignSystem.medium, x: 0, y: DesignSystem.tiny)
     }
 }
 
@@ -290,7 +278,7 @@ struct IndexRowView: View {
             Image(systemName: page.displayIcon)
                 .foregroundStyle(Color.fromModelColorName(page.type.colorName))
                 .frame(width: DesignSystem.Sidebar.iconBoxSize, height: DesignSystem.Sidebar.iconBoxSize)
-                .background(Color.fromModelColorName(page.type.colorName).opacity(0.15))
+                .background(Color.fromModelColorName(page.type.colorName).opacity(DesignSystem.glassOpacity))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
 
             VStack(alignment: .leading, spacing: DesignSystem.Sidebar.rowVerticalPadding) {
@@ -338,6 +326,35 @@ struct IndexRowView: View {
             if page.isPrivate && store.isPrivacyModeEnabled {
                 Color.appBackground.opacity(0.01)
             }
+        }
+    }
+}
+
+// MARK: - Toolbar Logic
+struct IndexToolbarModifier: ViewModifier {
+    let filterType: PageType?
+    let store: AppStore
+    
+    func body(content: Content) -> some View {
+        let title = filterType?.displayName ?? Localized.tr("sidebar.allPages")
+        
+        if filterType == nil {
+            content.appTabToolbar(title: title) {
+                refreshButton
+            }
+        } else {
+            content.appSubPageToolbar(title: title) {
+                refreshButton
+            }
+        }
+    }
+    
+    private var refreshButton: some View {
+        Button {
+            HapticFeedback.shared.trigger(.selection)
+            store.refresh()
+        } label: {
+            Label(L10n.Common.tr("refresh"), systemImage: DesignSystem.Icons.refresh)
         }
     }
 }

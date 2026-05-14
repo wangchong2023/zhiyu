@@ -13,7 +13,7 @@ import SwiftUI
 import Charts
 struct KnowledgeDashboardView: View {
     @Environment(AppStore.self) var store
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     @State private var statsTask: Task<Void, Never>? = nil
     @State private var tags: [(tag: String, count: Int)] = []
@@ -35,8 +35,7 @@ struct KnowledgeDashboardView: View {
                 .padding()
             }
         }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(L10n.Dashboard.tr("title"))
+        .appTabToolbar(title: L10n.Dashboard.tr("title"))
         .onAppear {
             statsTask?.cancel()
             statsTask = Task {
@@ -105,8 +104,8 @@ struct KnowledgeDashboardView: View {
                     }
                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.tiny)
+                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
                     .background(Color.appAccent.opacity(DesignSystem.glassOpacity))
                     .clipShape(Capsule())
                 }
@@ -399,8 +398,8 @@ struct MetricBox: View {
                     }
                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
                     .foregroundStyle(.green)
-                    .padding(.horizontal, DesignSystem.small - DesignSystem.atomic) // 6
-                    .padding(.vertical, DesignSystem.atomic)
+                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
                     .background(Color.green.opacity(DesignSystem.glassOpacity))
                     .clipShape(Capsule())
                 }

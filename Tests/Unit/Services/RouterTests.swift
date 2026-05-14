@@ -1,11 +1,10 @@
-// AppRouterTests.swift
+// RouterTests.swift
 //
 // 作者: Wang Chong
-// 功能说明: 验证基础入栈逻辑
-// 版本: 1.0
+// 功能说明: 验证全局路由管理器（Router）的逻辑
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-04
-// 日期: 2026-05-04
+//   - 2026-05-13: 适配 AppRouter -> Router 重构。
 // 版权: Copyright © 2026 Wang Chong. All rights reserved.
 
 import XCTest
@@ -13,14 +12,14 @@ import SwiftUI
 @testable import ZhiYu
 
 @MainActor
-final class AppRouterTests: XCTestCase {
+final class RouterTests: XCTestCase {
     
-    var router: AppRouter!
+    var router: Router!
     
     override func setUp() {
         super.setUp()
-        // AppRouter 是单例，测试前清空历史
-        router = AppRouter.shared
+        // Router 是单例，测试前清空历史
+        router = Router.shared
         router.clearHistory()
     }
     

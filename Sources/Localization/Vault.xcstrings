@@ -77,6 +77,13 @@
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Pages" } },
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "个知识点" } }
       }
+    },
+    "vault.backToHub" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to Hub" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "回到笔记本" } }
+      }
     }
   },
   "version" : "1.0"

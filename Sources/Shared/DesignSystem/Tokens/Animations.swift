@@ -37,6 +37,11 @@ public enum Animations {
     /// 弹性动效阻尼系数 (0.8)
     public static let springDamping: Double = 0.8
     
+    /// 突出弹性动效响应时长 (0.4s)
+    public static let prominentSpringResponse: Double = 0.4
+    /// 突出弹性动效阻尼系数 (0.8)
+    public static let prominentSpringDamping: Double = 0.8
+    
     // MARK: - 4. 装饰动效令牌 (Decorator Animation Tokens)
     
     /// 闪烁动画循环时长 (1.5s)
@@ -68,6 +73,7 @@ public enum Animations {
         public static let looseDuration: Double = Animations.looseDuration
         public static let standardDamping: Double = 0.8
         public static let standardAnimation: Animation = .appStandard
+        public static let prominentAnimation: Animation = .appProminent
         public static let fastAnimation: Animation = .appFast
     }
     
@@ -91,6 +97,14 @@ extension Animation {
         .spring(
             response: Animations.springResponse,
             dampingFraction: Animations.springDamping
+        )
+    }
+    
+    /// 突出弹性动画
+    public static var appProminent: Animation {
+        .spring(
+            response: Animations.prominentSpringResponse,
+            dampingFraction: Animations.prominentSpringDamping
         )
     }
     

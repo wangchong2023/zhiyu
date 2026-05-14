@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 智宇设计系统 (ZhiYu Design System)
 /// 统一管理应用内的间距、圆角、排版、颜色与动效规范。
-enum DesignSystem {
+public enum DesignSystem {
     
     // MARK: - 1. 原子间距 (Spacing)
     public static let atomic: CGFloat = Spacing.atomic
@@ -135,6 +135,8 @@ enum DesignSystem {
         public static let containerPadding: CGFloat = Spacing.Gallery.containerPadding
         public static let showcaseRadius: CGFloat = Spacing.Gallery.showcaseRadius
         public static let hoverScale: CGFloat = Spacing.Gallery.hoverScale
+        public static let splashLogoBottomPadding: CGFloat = Spacing.Gallery.splashLogoBottomPadding
+        public static let splashButtonBottomPadding: CGFloat = Spacing.Gallery.splashButtonBottomPadding
     }
 
     // MARK: - 7. 轴线模式 (Timeline)
@@ -234,6 +236,19 @@ enum DesignSystem {
         public static let emptyStateVerticalPadding: CGFloat = Spacing.Metrics.emptyStateVerticalPadding
         public static let emptyStateIconOpacity: CGFloat = Spacing.Metrics.emptyStateIconOpacity
         public static let sectionSpacing: CGFloat = Spacing.Metrics.sectionSpacing
+        
+        public static let commandPaletteHeight: CGFloat = Spacing.Metrics.commandPaletteHeight
+        public static let coachMarkIconScale: CGFloat = Spacing.Metrics.coachMarkIconScale
+        public static let coachMarkActionHorizontalPadding: CGFloat = Spacing.Metrics.coachMarkActionHorizontalPadding
+        public static let coachMarkRadiusOffset: CGFloat = Spacing.Metrics.coachMarkRadiusOffset
+        public static let coachMarkShadowRadius: CGFloat = Spacing.Metrics.coachMarkShadowRadius
+        public static let coachMarkShadowY: CGFloat = Spacing.Metrics.coachMarkShadowY
+        
+        public static let welcomeHeroDotWidth: CGFloat = Spacing.Metrics.welcomeHeroDotWidth
+        public static let welcomeHeroDotHeight: CGFloat = Spacing.Metrics.welcomeHeroDotHeight
+        public static let welcomeHeroCircleSize: CGFloat = Spacing.Metrics.welcomeHeroCircleSize
+        public static let welcomeHeroIconSize: CGFloat = Spacing.Metrics.welcomeHeroIconSize
+        public static let statCardMinWidth: CGFloat = Spacing.Metrics.statCardMinWidth
     }
 
     // MARK: - 12. 任务规范 (Task)
@@ -262,7 +277,12 @@ enum DesignSystem {
         public static let standardDamping: Double = Animations.Interaction.standardDamping
         
         public static var standard: SwiftUI.Animation { Animations.Interaction.standardAnimation }
+        public static var prominent: SwiftUI.Animation { Animations.Interaction.prominentAnimation }
         public static var fast: SwiftUI.Animation { Animations.Interaction.fastAnimation }
+        
+        public struct Config {
+            public static var prominentSpring: SwiftUI.Animation { Animations.Interaction.prominentAnimation }
+        }
     }
 
     // MARK: - 14. 列表模式 (List)
@@ -290,6 +310,8 @@ enum DesignSystem {
         public static let iconBoxSize: CGFloat = Spacing.Sidebar.iconBoxSize
         public static let iconFrameWidth: CGFloat = Spacing.Sidebar.iconFrameWidth
         public static let badgePadding: CGFloat = Spacing.Sidebar.badgePadding
+        public static let vaultShadowRadius: CGFloat = Spacing.Sidebar.vaultShadowRadius
+        public static let vaultShadowY: CGFloat = Spacing.Sidebar.vaultShadowY
     }
 
     // MARK: - 16.5 笔记本枢纽模式 (Vault)
@@ -350,11 +372,21 @@ enum DesignSystem {
     public static let shadowOpacity: Double = Spacing.shadowOpacity
     public static let shadowColor = Colors.Opacity.shadowColor
     public static let glassOpacity: Double = Colors.Opacity.glassOpacity
+    public static let subtleOpacity: Double = Colors.Opacity.subtleOpacity
     public static let fullOpacity: Double = Colors.Opacity.fullOpacity
     public static let disabledOpacity: Double = Colors.Opacity.disabledOpacity
     public static let pressedOpacity: Double = Colors.Opacity.pressedOpacity
     public static let dimmedOpacity: Double = Colors.Opacity.dimmedOpacity
     public static let secondaryOpacity: Double = Colors.Opacity.secondaryOpacity
+    public static let coachMarkBackgroundOpacity: Double = Colors.Opacity.coachMarkBackgroundOpacity
+    
+    public static let surfaceOpacity: Double = Colors.Opacity.surfaceOpacity
+    public static let translucentOpacity: Double = Colors.Opacity.translucentOpacity
+    public static let softOpacity: Double = Colors.Opacity.softOpacity
+    public static let ghostOpacity: Double = Colors.Opacity.ghostOpacity
+    
+    public static let dividerOpacity: Double = Colors.Opacity.dividerOpacity
+    public static let accentStrokeOpacity: Double = Colors.Opacity.accentStrokeOpacity
     
     // MARK: - 20. 容器颜色 (Container Colors)
     public static var containerBackground: Color { Color.appCard }

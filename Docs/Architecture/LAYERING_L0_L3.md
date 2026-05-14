@@ -20,7 +20,7 @@ graph TD
 **核心目录** (`Sources/Shared/Core/`):
 | 目录 | 内容 | 关键组件 |
 | :--- | :--- | :--- |
-| `Platform/` | 系统级工具与平台桥接 | `Logger`, `SecurityManager`, `HapticFeedback`, `SpotlightService`, `DeepLinkService`, `PerformanceService`, `AppRouter`, `AppTab`, `ShortcutManager` |
+| `Platform/` | 系统级工具与平台桥接 | `Logger`, `SecurityManager`, `HapticFeedback`, `SpotlightService`, `DeepLinkService`, `PerformanceService`, `Router`, `AppTab`, `ShortcutManager` |
 | `Protocols/` | 核心协议定义 | `LLMServiceProtocol`, `LoggerProtocol`, `EmbeddingProvider`, `LLMClientProtocol` |
 | `Utilities/` | 通用工具与管理器 | `Localized`, `Character+CJK`, `ThemeManager`, `ServiceContainer` |
 

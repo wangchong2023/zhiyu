@@ -12,7 +12,7 @@ import SwiftUI
 struct VaultHomeView: View {
     @Environment(VaultService.self) var vaultService
     @Environment(AuthService.self) var authService
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     
     @State private var viewModel = VaultHomeViewModel()
@@ -82,30 +82,19 @@ struct VaultHomeView: View {
                     .padding(.vertical, DesignSystem.Vault.homeVerticalPadding)
                 }
             }
-            .navigationTitle(L10n.Vault.tr("homeTitle"))
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    VaultBadge()
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: DesignSystem.small) {
-                        Button(action: {
-                            withAnimation(DesignSystem.Animation.standard) {
-                                viewModel.toggleDisplayMode()
-                            }
-                        }) {
-                            Image(systemName: viewModel.displayMode.icon)
-                                .font(.system(size: DesignSystem.Metrics.dashboardLabelSize, weight: .bold))
-                                .frame(width: DesignSystem.Timeline.indicatorSize, height: DesignSystem.Timeline.indicatorSize)
-                                .background(.ultraThinMaterial)
-                                .clipShape(Circle())
-                        }
-                        .foregroundStyle(.appSecondary)
-                        
-                        UserProfileMenu()
+            .appTabToolbar(title: L10n.Vault.tr("homeTitle")) {
+                Button(action: {
+                    withAnimation(DesignSystem.Animation.standard) {
+                        viewModel.toggleDisplayMode()
                     }
+                }) {
+                    Image(systemName: viewModel.displayMode.icon)
+                        .font(.system(size: DesignSystem.Metrics.dashboardLabelSize, weight: .bold))
+                        .frame(width: DesignSystem.Timeline.indicatorSize, height: DesignSystem.Timeline.indicatorSize)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
                 }
+                .foregroundStyle(.appSecondary)
             }
             .alert(L10n.Vault.tr("create"), isPresented: $viewModel.showCreateSheet) {
                 TextField(L10n.Vault.tr("namePlaceholder"), text: $viewModel.newVaultName)

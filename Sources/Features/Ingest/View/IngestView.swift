@@ -33,7 +33,7 @@ struct ActivityItem: Identifiable {
 struct IngestView: View {
     @Environment(AppStore.self) var store
     @Environment(IngestStore.self) var ingestStore
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @EnvironmentObject var llmService: LLMService
     @EnvironmentObject var themeManager: ThemeManager
     @Binding var selectedTab: AppTab
@@ -320,7 +320,7 @@ struct SourceCardView: View {
 
 struct ActivityRow: View {
     let task: GlobalTask
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     var body: some View {
         Button(action: { if let id = task.associatedPageID { HapticFeedback.shared.trigger(.selection); router.navigateToPage(id: id) } }) {
             HStack(spacing: DesignSystem.medium) {

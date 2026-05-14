@@ -19,7 +19,7 @@ struct PageDetailView: View {
     var heroNamespace: Namespace.ID? = nil
     @Environment(AppStore.self) var store  ///< 全局知识库存储
     @Environment(AIWorkflowStore.self) var aiStore ///< AI 工作流存储
-    @Environment(AppRouter.self) var router     ///< 路由管理器
+    @Environment(Router.self) var router     ///< 路由管理器
     @State private var recommendations: [KnowledgePage] = [] ///< 语义推荐页面
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
@@ -177,12 +177,14 @@ struct PageDetailView: View {
         .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
         .background(PageBackgroundView(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle("")
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
-        .toolbar { toolbarContent }
+        .appSubPageToolbar(title: viewModel.page.title) {
+            HStack(spacing: DesignSystem.small) {
+                pinButton
+                backlinksButton
+                editButton
+                aiMenuButton
+            }
+        }
         .confirmationDialog(Localized.tr("page.confirmDelete"), isPresented: $viewModel.showDeleteConfirmation) {
             Button(Localized.trf("page.deletePageTitle", viewModel.page.title), role: .destructive) {
                 viewModel.deletePage()

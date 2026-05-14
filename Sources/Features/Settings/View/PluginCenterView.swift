@@ -13,7 +13,7 @@ import SwiftUI
 
 /// 插件中心 (Stub: 为未来生态预留位置)
 struct PluginCenterView: View {
-    @Environment(AppRouter.self) var router
+    @Environment(Router.self) var router
     @StateObject private var registry = PluginRegistry.shared
     @StateObject private var marketService = PluginMarketService()
     
