@@ -1,6 +1,6 @@
 # NotebookCard Visual Enhancement Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Implement a theme-driven background system for `NotebookCard` supporting Linear and Mesh gradients.
 
@@ -24,7 +24,7 @@
 **Files:**
 - Create: `Sources/Features/NotebookHub/Model/NotebookThemeConfig.swift`
 
-- [ ] **Step 1: Create the config struct**
+- [x] **Step 1: Create the config struct**
 ```swift
 import Foundation
 
@@ -46,7 +46,7 @@ public struct NotebookThemeConfig: Codable, Equatable, Sendable {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 ```bash
 git add Sources/Features/NotebookHub/Model/NotebookThemeConfig.swift
 git commit -m "feat: add NotebookThemeConfig model"
@@ -59,7 +59,7 @@ git commit -m "feat: add NotebookThemeConfig model"
 **Files:**
 - Create: `Sources/Features/NotebookHub/Model/NotebookThemeFactory.swift`
 
-- [ ] **Step 1: Create the factory with generation logic**
+- [x] **Step 1: Create the factory with generation logic**
 ```swift
 import Foundation
 import SwiftUI
@@ -88,7 +88,7 @@ public struct NotebookThemeFactory {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 ```bash
 git add Sources/Features/NotebookHub/Model/NotebookThemeFactory.swift
 git commit -m "feat: add NotebookThemeFactory for auto-generating themes"
@@ -101,7 +101,7 @@ git commit -m "feat: add NotebookThemeFactory for auto-generating themes"
 **Files:**
 - Modify: `Sources/Shared/Domain/Services/VaultService.swift`
 
-- [ ] **Step 1: Add themePayload property**
+- [x] **Step 1: Add themePayload property**
 ```swift
 public struct Vault: Identifiable, Codable, Hashable {
     public let id: UUID
@@ -112,7 +112,7 @@ public struct Vault: Identifiable, Codable, Hashable {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 ```bash
 git add Sources/Shared/Domain/Services/VaultService.swift
 git commit -m "feat: extend Vault model with themePayload"
@@ -125,7 +125,7 @@ git commit -m "feat: extend Vault model with themePayload"
 **Files:**
 - Create: `Sources/Features/NotebookHub/View/NotebookThemeBackgroundView.swift`
 
-- [ ] **Step 1: Create the rendering view**
+- [x] **Step 1: Create the rendering view**
 ```swift
 import SwiftUI
 
@@ -190,7 +190,7 @@ extension Color {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 ```bash
 git add Sources/Features/NotebookHub/View/NotebookThemeBackgroundView.swift
 git commit -m "feat: implement NotebookThemeBackgroundView"
@@ -203,7 +203,7 @@ git commit -m "feat: implement NotebookThemeBackgroundView"
 **Files:**
 - Modify: `Sources/Features/NotebookHub/View/NotebookHubView.swift`
 
-- [ ] **Step 1: Update NotebookCard to use the new background**
+- [x] **Step 1: Update NotebookCard to use the new background**
 Modify `NotebookCard` to resolve theme from `vault.themePayload` or generate it.
 ```swift
 struct NotebookCard: View {
@@ -256,14 +256,14 @@ struct NotebookCard: View {
 }
 ```
 
-- [ ] **Step 2: Clean up legacy colorForName method**
+- [x] **Step 2: Clean up legacy colorForName method**
 Remove the `colorForName` private method from `NotebookCard`.
 
-- [ ] **Step 3: Run final build verification**
+- [x] **Step 3: Run final build verification**
 Run: `xcodegen generate && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 Expected: BUILD SUCCEEDED
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 ```bash
 git add Sources/Features/NotebookHub/View/NotebookHubView.swift
 git commit -m "feat: integrate dynamic themes into NotebookCard"

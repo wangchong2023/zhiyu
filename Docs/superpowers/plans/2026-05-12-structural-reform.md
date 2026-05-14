@@ -124,9 +124,9 @@
 - 创建：`Tests/Features/ChatTests.swift`
 - 创建：`Tests/Infrastructure/LLMTests.swift`
 
-- [ ] **步骤 1：更新测试用例**
-确保每个重构后的模块都有对应的单元测试，且测试描述中包含 SRS ID。
-- [ ] **步骤 2：修复遗留 Bug 并验证**
-修复 `AppStore.ToolItem` 成员缺失问题，验证 iPad 性能监控 Sheet。
-- [ ] **步骤 3：提交代码**
+- [x] **步骤 1：更新测试用例**
+  确保每个重构后的模块都有对应的单元测试，且测试描述中包含 SRS ID。
+- [x] **步骤 2：修复遗留 Bug 并验证**
+  修复 `AppStore.ToolItem` 成员缺失问题，验证 iPad 性能监控 Sheet。
+- [x] **步骤 3：提交代码**
 `git commit -m "test: 同步重构模块的测试用例与质量指标"`
