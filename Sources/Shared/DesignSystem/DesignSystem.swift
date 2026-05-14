@@ -280,9 +280,25 @@ public enum DesignSystem {
         public static var prominent: SwiftUI.Animation { Animations.Interaction.prominentAnimation }
         public static var fast: SwiftUI.Animation { Animations.Interaction.fastAnimation }
         
+        /// 启动页动画序列 (Splash)
+        public enum Splash {
+            public static let quoteDelay: Double = Animations.Splash.quoteDelay
+            public static let authorDelay: Double = Animations.Splash.authorDelay
+            public static let shimmerDelay: Double = Animations.Splash.shimmerDelay
+            public static let autoDismissDelay: Double = Animations.Splash.autoDismissDelay
+        }
+        
         public struct Config {
             public static var prominentSpring: SwiftUI.Animation { Animations.Interaction.prominentAnimation }
         }
+    }
+
+    // MARK: - 13.5 全局层级 (ZIndex)
+    public enum ZIndex {
+        public static let lockOverlay: Double = ZhiYu_DesignSystem.ZIndex.lockOverlay
+        public static let medalPopup: Double = ZhiYu_DesignSystem.ZIndex.medalPopup
+        public static let coachMark: Double = ZhiYu_DesignSystem.ZIndex.coachMark
+        public static let sidebarOverlay: Double = ZhiYu_DesignSystem.ZIndex.sidebarOverlay
     }
 
     // MARK: - 14. 列表模式 (List)
@@ -312,6 +328,7 @@ public enum DesignSystem {
         public static let badgePadding: CGFloat = Spacing.Sidebar.badgePadding
         public static let vaultShadowRadius: CGFloat = Spacing.Sidebar.vaultShadowRadius
         public static let vaultShadowY: CGFloat = Spacing.Sidebar.vaultShadowY
+        public static let width: CGFloat = Spacing.Sidebar.width
     }
 
     // MARK: - 16.5 笔记本枢纽模式 (Vault)
@@ -359,10 +376,12 @@ public enum DesignSystem {
     public static let standardFontSize: CGFloat = Typography.standardFontSize
     public static let headlineFontSize: CGFloat = Typography.headlineFontSize
     public static let titleFontSize: CGFloat = Typography.titleFontSize
+    public static let title2FontSize: CGFloat = Typography.HeadingLevel.h2.size
     public static let displayFontSize: CGFloat = Typography.displayFontSize
     public static var captionFont: Font { Typography.captionFont }
     public static var caption2Font: Font { Typography.caption2Font }
     public static var secondaryFont: Font { Typography.secondaryFont }
+    public static var subheadlineFont: Font { Typography.secondaryFont }
     public static var titleFont: Font { Typography.titleFont }
 
     // MARK: - 19. 视觉风格常数 (Styling)
@@ -373,6 +392,7 @@ public enum DesignSystem {
     public static let shadowColor = Colors.Opacity.shadowColor
     public static let glassOpacity: Double = Colors.Opacity.glassOpacity
     public static let subtleOpacity: Double = Colors.Opacity.subtleOpacity
+    public static let subtleFillOpacity: Double = Colors.subtleFillOpacity
     public static let fullOpacity: Double = Colors.Opacity.fullOpacity
     public static let disabledOpacity: Double = Colors.Opacity.disabledOpacity
     public static let pressedOpacity: Double = Colors.Opacity.pressedOpacity
