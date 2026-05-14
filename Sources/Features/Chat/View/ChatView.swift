@@ -64,10 +64,22 @@ struct ChatViewContent: View {
                 chatInputBar
             }
         }
-        .appTabToolbar(title: L10n.Chat.tr("title")) {
-            chatMenu
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VaultBadge()
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: DesignSystem.small) { // 减小间距至 8px，配合精简文案消除留白
+                    chatMenu
+                    UserProfileMenu()
+                }
+            }
         }
-        .toolbarBackground(.hidden, for: .navigationBar)
         #if !os(watchOS)
         .sheet(item: $exportURL) { identifiable in
             ActivityView(activityItems: [identifiable.url])
@@ -141,9 +153,9 @@ struct ChatViewContent: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
+                .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(.appSecondary)
         }
-        .accessibilityIdentifier("menu")
         #endif
     }
     
@@ -169,37 +181,27 @@ struct ChatViewContent: View {
     
     // MARK: - Chat Message List
     private var chatMessageList: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: DesignSystem.medium) {
-                    if chatVM.chatHistory.isEmpty && !chatVM.isProcessing {
-                        chatWelcome()
-                    } else {
-                        // 按照时间正序排列，最新的在最下面
-                        ForEach(chatVM.chatHistory) { message in
-                            messageRow(for: message)
-                        }
+        ScrollView {
+            LazyVStack(spacing: DesignSystem.medium) {
+                if chatVM.chatHistory.isEmpty && !chatVM.isProcessing {
+                    chatWelcome()
+                } else {
+                    // 正在处理中，就显示流式气泡（在最顶端）
+                    if chatVM.isProcessing {
+                        streamingBubble
+                            .id("processing")
+                    }
 
-                        // 正在处理中，就显示流式气泡（在最下面）
-                        if chatVM.isProcessing {
-                            streamingBubble
-                                .id("processing")
-                        }
+                    // 按照时间倒序排列，最新的在顶端
+                    ForEach(chatVM.chatHistory.reversed()) { message in
+                        messageRow(for: message)
                     }
                 }
-                .padding(.horizontal, DesignSystem.tiny)
-                .padding(.bottom, DesignSystem.standardPadding)
             }
-            .onChange(of: chatVM.chatHistory.count) {
-                // 当有新消息时，自动滚动到底部
-                withAnimation { proxy.scrollTo(chatVM.chatHistory.last?.id, anchor: .bottom) }
-            }
-            .onChange(of: chatVM.isProcessing) {
-                if chatVM.isProcessing {
-                    withAnimation { proxy.scrollTo("processing", anchor: .bottom) }
-                }
-            }
+            .padding(.horizontal, DesignSystem.tiny)
+            .padding(.bottom, DesignSystem.standardPadding)
         }
+        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder

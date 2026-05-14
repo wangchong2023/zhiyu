@@ -95,7 +95,8 @@ final class AppStore: @preconcurrency GraphDataProvider {
 
     /// 工具项定义
     enum ToolItem: String, CaseIterable, Hashable {
-        case index, chat, log, lint, tagCloud, collab, taskCenter, weeklyReport, dashboard, pluginMarket, synthesis, healthCheck
+        case pageList = "index" // 保持原始 Key 以保证 L10n 兼容性
+        case chat, log, lint, tagCloud, collab, taskCenter, weeklyReport, dashboard, pluginMarket, synthesis, healthCheck, search, ingest, graph
     }
 
     // MARK: - Coach Marks
@@ -110,6 +111,11 @@ final class AppStore: @preconcurrency GraphDataProvider {
     var pages: [KnowledgePage] {
         _ = refreshTrigger
         return sqliteStore.pages
+    }
+    
+    /// 获取当前知识库中所有唯一的标签集合
+    var tags: [String] {
+        Array(Set(pages.flatMap { $0.tags }))
     }
     var logEntries: [LogEntry] { (logger as? Logger)?.logEntries ?? [] }
     var totalPages: Int { pages.count }

@@ -348,6 +348,9 @@ struct MarkdownRendererView: View {
                 container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.bold)
             case .italic:
                 container.swiftUI.font = (isCompact ? Font.footnote : Font.body).italic()
+            case .strikethrough:
+                container.swiftUI.font = isCompact ? Font.footnote : Font.body
+                container.swiftUI.strikethroughStyle = .single
             case .code:
                 container.swiftUI.font = .system(.caption, design: .monospaced)
                 container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)

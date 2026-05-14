@@ -2,33 +2,39 @@
 //
 // 作者: Wang Chong
 // 功能说明: 定义模块化注册协议与各层级服务的自动化注册逻辑，用于解耦 ZhiYuApp 的初始化过程。
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
 //   - 2026-05-07: 初始版本，实现 L0-L2 模块化注册。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//   - 2026-05-10: 标准化代码注释与 SRS 溯源。
+// 版权: © 2026 Wang Chong。保留所有权利。
 
 import Foundation
 import GRDB
 
 // MARK: - 注册协议
-/// 模块注册器协议：定义统一的注入入口
+/// 模块注册器协议：定义统一的注入入口 (@SR-04: 模块化沙盒管控基础)
 @MainActor
 protocol ModuleRegistrar {
+    /// 在指定的容器中注册模块服务
     static func register(in container: ServiceContainer)
 }
 
 // MARK: - 基础设施模块 (L0)
+/// 核心基础设施注册器：负责日志、平台适配、基础 UI 路由等底层服务
 @MainActor
 struct CoreModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
+        // @SRS-7.1: 初始化全局日志系统
         let logger = Logger()
         container.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
+        
         #if os(iOS) && !os(watchOS)
         container.register(iOSBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
         #else
         container.register(StubBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
         #endif
         
+        // @RR-01: 初始化 SQLite 核心存储层
         let sqliteStore = SQLiteStore()
         container.register(sqliteStore, for: SQLiteStore.self)
 
@@ -93,6 +99,7 @@ struct CoreModuleRegistrar: ModuleRegistrar {
 }
 
 // MARK: - 存储模块 (L1)
+/// 存储模块注册器：负责数据库管理、备份、加密及向量索引初始化 (@SR-02, @RR-01)
 @MainActor
 struct StorageModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
@@ -100,6 +107,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         container.register(BackupService(), for: BackupService.self)
         container.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
         
+        // @PR-05: 优化数据库冷启动加载时间
         if let writer = DatabaseManager.shared.dbWriter {
             print("✅ [DI] 数据库写入器已就绪，注册 KnowledgePageStore")
             let pageStore = KnowledgePageStore(dbWriter: writer)
@@ -108,14 +116,13 @@ struct StorageModuleRegistrar: ModuleRegistrar {
             let embeddingManager = EmbeddingManager(repository: pageStore)
             container.register(embeddingManager, for: EmbeddingManager.self)
             
-            // 异步加载缓存
+            // 异步加载向量缓存以确保启动性能
             Task {
                 await embeddingManager.loadInitialCache()
             }
         } else {
             print("⚠️ [DI] 警告：数据库写入器尚未就绪！注册空壳 KnowledgePageStore 以防崩溃。")
             // 这是一个保护性注册，防止 resolve 崩溃。
-            // 实际上 SQLiteStore 初始化是同步的，不应发生此情况。
             let dummyStore = KnowledgePageStore(dbWriter: try! DatabaseQueue())
             container.register(dummyStore, for: KnowledgePageStore.self)
         }
@@ -123,14 +130,15 @@ struct StorageModuleRegistrar: ModuleRegistrar {
 }
 
 // MARK: - 领域能力模块 (L2)
+/// 领域模块注册器：负责业务逻辑、AI 合成、插件系统及任务调度 (@PR-02, @SR-04)
 @MainActor
 struct DomainModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
         print("🚀 [DI] 开始注册领域能力模块...")
-        // 0. 认证与库服务
+        // 0. 认证与库服务 (@SR-03: 集成 LocalAuthentication)
         container.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
         container.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
-        container.register(AuthService.shared, for: AuthService.self) // 保持对具体类型的支持，防止现有代码崩溃
+        container.register(AuthService.shared, for: AuthService.self)
         container.register(VaultService.shared, for: VaultService.self)
         
         // 1. 逻辑与处理器
@@ -158,7 +166,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(iOSSpeechService(), for: (any SpeechServiceProtocol).self)
         #endif
         
-        // 2. AI 能力
+        // 2. AI 能力 (@PR-02: 混合检索链路优化)
         let llm = LLMService.shared
         container.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         container.register(llm, for: LLMService.self)
@@ -176,10 +184,9 @@ struct DomainModuleRegistrar: ModuleRegistrar {
             container.register(evaluationService, for: RAGEvaluationService.self)
         } else {
             print("❌ [DI] 错误：KnowledgePageStore 未注册！将导致 RAGEvaluationService 初始化失败。")
-            // 这里我们先不 fatalError，让 resolve 的诊断信息更清晰
         }
         
-        // 3. 插件系统
+        // 3. 插件系统 (@SR-04: API 访问白名单管控)
         container.register(PluginRegistry.shared, for: PluginRegistry.self)
         
         // 4. 注册协调器 (Coordination) - 必须在所有依赖项就绪后

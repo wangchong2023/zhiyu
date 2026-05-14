@@ -801,6 +801,23 @@
       },
       "extractionState": "manual"
     },
+    "misc.search": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索"
+          }
+        }
+      }
+    },
     "misc.unitTenThousand": {
       "localizations": {
         "zh-Hans": {

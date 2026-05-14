@@ -14,28 +14,71 @@ import SwiftUI
 import Observation
 
 /// 应用程序路由目标定义
-/// 使用枚举解耦视图的直接调用
+/// 每个 Case 对应系统中的一个物理视图或逻辑页面。
+/// 映射逻辑详见 `ViewFactory.makeView(for:)`。
 enum AppRoute: Hashable, Identifiable {
+    /// 笔记本工作台 (切换与管理不同笔记本的入口) -> `NotebookHubView`
+    case notebookHub
+
+    /// 知识仪表盘 (展示统计图表、活跃度等总览信息) -> `KnowledgeDashboardView`
     case dashboard
-    case index(filterType: PageType? = nil)
+    
+    /// 知识库页面列表 (展示所有知识条目，支持类型过滤) -> `KnowledgePageListView`
+    case pageList(filterType: PageType? = nil)
+    
+    /// 知识条目详情页 (查看与编辑具体笔记内容) -> `PageDetailView`
     case pageDetail(id: UUID)
+    
+    /// 标签云视图 (可视化展示知识标签分布) -> `TagCloudView`
     case tagCloud
+    
+    /// 任务中心 (管理与知识条目关联的待办事项) -> `TaskCenterView`
     case taskCenter
+    
+    /// AI 智能对话 (基于 RAG 架构的知识问答) -> `ChatView`
     case chat
+    
+    /// AI 合成实验室 (深度引用、知识重组与合成) -> `SynthesisView`
     case synthesis
+    
+    /// 应用设置页面 (个性化、存储与 AI 模型配置) -> `SettingsView`
     case settings
+    
+    /// 帮助与反馈 -> 系统 Web 视图
     case help
+    
+    /// 关于应用 (版本、团队及版权信息) -> `AboutView`
     case about
+    
+    /// 系统运行日志 (用于排查 RAG 管道错误) -> `LogView`
     case log
+    
+    /// 协作中心 (多人同步与知识共享状态) -> `CollaborationView`
     case collab
+    
+    /// 知识周报 (AI 自动生成的学习与知识产出总结) -> `WeeklyReportView`
     case weeklyReport
+    
+    /// 知识巡检 (Lint 检查、无效链接与冲突检测) -> `LintView`
     case lint
+    
+    /// 插件市场 (扩展 AI 处理器与导入插件) -> `PluginCenterView`
     case pluginMarket
+    
+    /// 全局搜索中心 (混合搜索与语义过滤) -> `SearchView`
+    case search
+    
+    /// 知识摄取中心 (OCR、PDF 导入、网页裁剪) -> `IngestView`
+    case ingest
+    
+    /// 知识图谱 (可视化展示页面间的关联网络) -> `GraphContainerView`
+    case graph
     
     var id: String {
         switch self {
+        case .notebookHub: return "notebookHub"
         case .dashboard: return "dashboard"
-        case .index(let type): return "index-\(type?.rawValue ?? "all")"
+        case .pageList(let type): return "pageList-\(type?.rawValue ?? "all")"
         case .pageDetail(let id): return "page-\(id.uuidString)"
         case .tagCloud: return "tagCloud"
         case .taskCenter: return "taskCenter"
@@ -49,6 +92,9 @@ enum AppRoute: Hashable, Identifiable {
         case .weeklyReport: return "weeklyReport"
         case .lint: return "lint"
         case .pluginMarket: return "pluginMarket"
+        case .search: return "search"
+        case .ingest: return "ingest"
+        case .graph: return "graph"
         }
     }
 }
@@ -65,7 +111,32 @@ final class Router {
     var path = NavigationPath()
     
     /// 当前侧边栏选中项
-    var sidebarSelection: SidebarSelection? = nil
+    var sidebarSelection: SidebarSelection? = nil {
+        didSet {
+            if let selection = sidebarSelection {
+                syncTab(for: selection)
+            }
+        }
+    }
+    
+    private func syncTab(for selection: SidebarSelection) {
+        switch selection {
+        case .tool(let tool):
+            switch tool {
+            case .chat: selectedTab = .chat
+            case .graph: selectedTab = .graph
+            case .search: selectedTab = .search
+            case .ingest: selectedTab = .ingest
+            case .pageList, .dashboard, .lint, .tagCloud, .taskCenter, .synthesis, .weeklyReport, .log, .collab, .pluginMarket:
+                selectedTab = .knowledge
+            default: break
+            }
+        case .filteredIndex:
+            selectedTab = .knowledge
+        case .page:
+            selectedTab = .knowledge
+        }
+    }
     
     /// 当前主 Tab (通过 UserDefaults 持久化，防止后台切换后状态丢失)
     var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: "app_selected_tab") ?? "") ?? .knowledge {
@@ -148,8 +219,8 @@ final class Router {
     
     private func updateSelection(for route: AppRoute) {
         switch route {
-        case .dashboard: sidebarSelection = .tool(.dashboard)
-        case .index(let type): sidebarSelection = type == nil ? .tool(.index) : .filteredIndex(type!)
+        case .notebookHub, .dashboard: sidebarSelection = .tool(.dashboard)
+        case .pageList(let type): sidebarSelection = type == nil ? .tool(.pageList) : .filteredIndex(type!)
         case .tagCloud: sidebarSelection = .tool(.tagCloud)
         case .taskCenter: sidebarSelection = .tool(.taskCenter)
         case .chat: sidebarSelection = .tool(.chat)
@@ -160,6 +231,9 @@ final class Router {
         case .weeklyReport: sidebarSelection = .tool(.weeklyReport)
         case .lint: sidebarSelection = .tool(.lint)
         case .pluginMarket: sidebarSelection = .tool(.pluginMarket)
+        case .search: sidebarSelection = .tool(.search)
+        case .ingest: sidebarSelection = .tool(.ingest)
+        case .graph: sidebarSelection = .tool(.graph)
         case .pageDetail(let id): sidebarSelection = .page(id)
         }
     }

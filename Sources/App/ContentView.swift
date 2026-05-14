@@ -71,7 +71,7 @@ struct ContentView: View {
                         .background(.ultraThinMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.card, style: .continuous))
                         .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.shadowRadius)
-                        .padding(.vertical, DesignSystem.medium)
+                        .padding(.vertical, DesignSystem.Layout.sidebarOverlayVerticalPadding)
                         .padding(.leading, DesignSystem.medium)
                     Spacer()
                 }

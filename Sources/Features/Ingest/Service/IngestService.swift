@@ -228,7 +228,7 @@ actor IngestService {
         return await withTaskGroup(of: KnowledgePage?.self) { group in
             let enumeratorArray = enumerator.compactMap { $0 as? URL }
             for fileURL in enumeratorArray {
-                group.addTask { [self, pageStore] in
+                group.addTask { [self, pageStore, type] in
                     // 智适应节流：低功耗模式下每个文件处理后强制休息，释放 CPU
                     if isLowPowerMode {
                         try? await Task.sleep(nanoseconds: 200_000_000)

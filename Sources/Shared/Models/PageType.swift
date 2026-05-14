@@ -12,7 +12,7 @@ import Foundation
 import GRDB
 
 // MARK: - Page Type
-public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible {
+public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible, Sendable {
     case entity = "entity"
     case concept = "concept"
     case source = "source"
@@ -46,7 +46,7 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValue
 }
 
 // MARK: - Page Status
-public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible {
+public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
     case active = "active"
     case stub = "stub"
     case needsUpdate = "needs-update"
@@ -72,7 +72,7 @@ public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible 
 }
 
 // MARK: - Confidence Level
-public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible {
+public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
     case high = "high"
     case medium = "medium"
     case low = "low"

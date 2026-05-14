@@ -66,10 +66,10 @@
 - 移动：`Sources/Shared/Core/Network/*` -> `Sources/Core/Network/`
 - 移动：`Sources/Shared/Core/Utilities/*` -> `Sources/Core/Utils/`
 
-- [ ] **步骤 1：执行物理移动**
-- [ ] **步骤 2：应用卓越工程标准**
+- [x] **步骤 1：执行物理移动**
+- [x] **步骤 2：应用卓越工程标准**
 补全中文头注释，检查 NBNC 行数，标注 SRS 需求 ID（如 SR-03）。
-- [ ] **步骤 3：提交代码**
+- [x] **步骤 3：提交代码**
 `git commit -m "refactor: 迁移并标准化 L0 Core 核心层"`
 
 ### 4. 迁移 RAG 组件至基础设施层 (L1)
@@ -77,9 +77,9 @@
 - 移动：`Sources/Shared/Domain/Logic/LLM*` -> `Sources/Infrastructure/LLM/`
 - 移动：`Sources/Shared/Domain/Processors/AI/VectorIndexer.swift` -> `Sources/Infrastructure/VectorDB/VectorIndexer.swift`
 
-- [ ] **步骤 1：物理移动与代码合规**
+- [x] **步骤 1：物理移动与代码合规**
 在 LLM 和向量库代码中植入 PR-01, PR-02 性能指标溯源标注。
-- [ ] **步骤 2：提交代码**
+- [x] **步骤 2：提交代码**
 `git commit -m "refactor: 迁移并标准化 L1 Infrastructure 基础设施层"`
 
 ---

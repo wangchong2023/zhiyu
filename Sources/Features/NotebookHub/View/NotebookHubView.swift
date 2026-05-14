@@ -15,6 +15,7 @@ public struct NotebookHubView: View {
     @State private var viewModel = NotebookHubViewModel()
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
+    @Inject var appEnv: any AppEnvironmentProtocol // 注入环境能力
     
     // MARK: - 初始化
     
@@ -25,90 +26,178 @@ public struct NotebookHubView: View {
     public var body: some View {
         @Bindable var viewModel = viewModel
         
-        NavigationStack {
-            ZStack {
-                themeManager.pageBackground()
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(alignment: .leading, spacing: DesignSystem.Vault.homeVerticalPadding) {
-                        headerSection
+        ZStack(alignment: .top) {
+            // 统一背景系统：自动适配深浅模式与强调色
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+                    // 1. 顶部搜索区域 (对齐图 3 现代风格)
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.appAccent)
                         
-                        notebookGridSection
+                        TextField(L10n.Common.tr("search"), text: $viewModel.searchText)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 16))
+                        
+                        if !viewModel.searchText.isEmpty {
+                            Button { viewModel.searchText = "" } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.appSecondary.opacity(0.6))
+                            }
+                        }
                     }
-                    .padding(.vertical, DesignSystem.Vault.homeVerticalPadding)
+                    .padding(.horizontal, DesignSystem.huge)
+                    .padding(.vertical, DesignSystem.medium)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Capsule())
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(.appAccent.opacity(0.12), lineWidth: 0.5)
+                    )
+                    .padding(.horizontal, DesignSystem.Vault.homePadding)
+                    .padding(.top, DesignSystem.standardPadding)
+
+                    notebookGridSection
                 }
+                .padding(.bottom, DesignSystem.huge)
             }
-            .navigationTitle(L10n.Vault.tr("homeTitle"))
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    brandLogo
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: DesignSystem.medium) {
-                        displayModeButton
-                        UserProfileMenu()
-                    }
-                }
+            .scrollIndicators(.hidden)
+        }
+        .navigationTitle(L10n.Vault.tr("homeTitle"))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.appAccent)
             }
-            .alert(L10n.Vault.tr("create"), isPresented: $viewModel.isShowingCreateSheet) {
-                TextField(L10n.Vault.tr("namePlaceholder"), text: $viewModel.newNotebookName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { viewModel.newNotebookName = "" }
-                Button(L10n.Vault.tr("create")) {
-                    viewModel.createNotebook()
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: DesignSystem.medium) {
+                    sortMenu
+                    displayModeButton
+                    UserProfileMenu()
                 }
             }
         }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: NSNotification.Name("toggleDisplayMode"), object: nil, queue: .main) { @MainActor _ in
+                viewModel.toggleDisplayMode()
+            }
+        }
+        .sheet(isPresented: $viewModel.isShowingCreateSheet) {
+            CreateNotebookSheet(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.isShowingEditSheet) {
+            EditNotebookSheet(viewModel: viewModel)
+        }
+        .alert(L10n.Vault.tr("rename"), isPresented: $viewModel.isShowingRenameAlert) {
+            TextField(L10n.Vault.tr("namePlaceholder"), text: $viewModel.editingName)
+            Button(L10n.Common.tr("cancel"), role: .cancel) { }
+            Button(L10n.Common.tr("ok")) {
+                viewModel.confirmRename()
+            }
+        } message: {
+            Text(L10n.Vault.tr("renameMessage"))
+        }
+        .environment(viewModel)
     }
     
     // MARK: - 子视图组件
     
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Text(L10n.Vault.tr("welcome"))
-                .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
-                .foregroundStyle(.appText)
-            
-            Text(L10n.Vault.tr("subtitle"))
-                .font(.system(size: DesignSystem.bodyFontSize))
-                .foregroundStyle(.appSecondary)
-        }
-        .padding(.horizontal, DesignSystem.Vault.homePadding)
-    }
-    
     private var notebookGridSection: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.medium) {
-            createNotebookCard
-            
-            ForEach(viewModel.notebooks) { notebook in
-                NotebookCard(notebook: notebook) {
-                    viewModel.selectNotebook(notebook)
+        Group {
+            if viewModel.displayMode == .grid {
+                let columns = appEnv.screenClass == .expansive 
+                    ? [GridItem(.adaptive(minimum: 250), spacing: DesignSystem.standardPadding)]
+                    : [GridItem(.flexible(), spacing: DesignSystem.standardPadding), GridItem(.flexible(), spacing: DesignSystem.standardPadding)]
+                
+                LazyVGrid(columns: columns, spacing: DesignSystem.standardPadding) {
+                    createNotebookCard
+                    
+                    ForEach(viewModel.notebooks) { notebook in
+                        NotebookCard(notebook: notebook) {
+                            viewModel.selectNotebook(notebook)
+                        }
+                    }
+                }
+            } else {
+                VStack(spacing: DesignSystem.medium) {
+                    createNotebookListRow
+                    
+                    ForEach(viewModel.notebooks) { notebook in
+                        NotebookListRow(notebook: notebook) {
+                            viewModel.selectNotebook(notebook)
+                        }
+                    }
                 }
             }
         }
         .padding(.horizontal, DesignSystem.Vault.homePadding)
+    }
+    
+    private var createNotebookListRow: some View {
+        Button(action: { viewModel.isShowingCreateSheet = true }) {
+            HStack(spacing: DesignSystem.medium) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: DesignSystem.titleFontSize))
+                    .foregroundStyle(.appAccent)
+                
+                Text(L10n.Vault.tr("new"))
+                    .font(.system(size: DesignSystem.headlineFontSize, weight: .bold))
+                    .foregroundStyle(.appText)
+                
+                Spacer()
+            }
+            .padding(DesignSystem.medium)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                    .strokeBorder(style: StrokeStyle(lineWidth: DesignSystem.borderWidth, dash: [4]))
+                    .foregroundStyle(.appAccent.opacity(DesignSystem.secondaryOpacity))
+            )
+        }
+        .buttonStyle(.plain)
     }
     
     private var createNotebookCard: some View {
         Button(action: { viewModel.isShowingCreateSheet = true }) {
             VStack(spacing: DesignSystem.medium) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: DesignSystem.Gallery.iconSize))
-                    .foregroundStyle(.appAccent)
+                Spacer()
+                
+                ZStack {
+                    Circle()
+                        .fill(Color.appAccent.opacity(0.12))
+                        .frame(width: 56, height: 56)
+                    
+                    Image(systemName: "plus")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundStyle(.appAccent)
+                }
                 
                 Text(L10n.Vault.tr("new"))
-                    .font(.system(size: DesignSystem.headlineFontSize, weight: .bold))
-                    .foregroundStyle(.appAccent)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(.appText)
+                
+                Spacer()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: DesignSystem.Vault.cardHeight)
-            .background(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
-                    .strokeBorder(style: StrokeStyle(lineWidth: DesignSystem.atomic, dash: [6]))
+            .frame(height: 180)
+            .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
                     .foregroundStyle(.appAccent.opacity(0.3))
             )
-            .background(Color.appCard.opacity(0.5))
         }
         .buttonStyle(.plain)
     }
@@ -117,8 +206,8 @@ public struct NotebookHubView: View {
         HStack(spacing: DesignSystem.tiny) {
             Image(systemName: "square.stack.3d.up.fill")
                 .foregroundStyle(LinearGradient(colors: [.appAccent, .appSource], startPoint: .top, endPoint: .bottom))
-            Text("知予")
-                .font(.headline.bold())
+            Text(L10n.Vault.tr("appName"))
+                .font(.system(size: DesignSystem.headlineFontSize, weight: .bold))
                 .foregroundStyle(.appText)
         }
     }
@@ -126,7 +215,27 @@ public struct NotebookHubView: View {
     private var displayModeButton: some View {
         Button(action: { viewModel.toggleDisplayMode() }) {
             Image(systemName: viewModel.displayMode.icon)
-                .font(.system(size: DesignSystem.Metrics.dashboardLabelSize))
+                .font(.system(size: DesignSystem.bodyFontSize))
+                .foregroundStyle(.appSecondary)
+        }
+    }
+    
+    private var sortMenu: some View {
+        Menu {
+            Button {
+                viewModel.sortOption = .date
+            } label: {
+                Label(L10n.Vault.tr("sort.date"), systemImage: "calendar")
+            }
+            
+            Button {
+                viewModel.sortOption = .name
+            } label: {
+                Label(L10n.Vault.tr("sort.name"), systemImage: "abc")
+            }
+        } label: {
+            Image(systemName: "arrow.up.arrow.down")
+                .font(.system(size: DesignSystem.bodyFontSize))
                 .foregroundStyle(.appSecondary)
         }
     }
@@ -135,6 +244,7 @@ public struct NotebookHubView: View {
 // MARK: - 辅助组件
 
 struct NotebookCard: View {
+    @Environment(NotebookHubViewModel.self) var viewModel
     let notebook: VaultService.Vault
     let action: () -> Void
     
@@ -150,35 +260,307 @@ struct NotebookCard: View {
     var body: some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                // 封面
-                ZStack(alignment: .bottomLeading) {
-                    NotebookThemeBackgroundView(config: themeConfig)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.small))
-                        .frame(height: DesignSystem.Vault.coverHeight)
+                // 1. 图标展示 (彩色光晕底座，对齐图 2)
+                ZStack {
+                    Circle()
+                        .fill(colorForVault.opacity(0.05)) // 极柔和的底座，对齐图 3
+                        .frame(width: 52, height: 52)
                     
-                    Image(systemName: "book.closed.fill")
-                        .font(.system(size: 24))
-                        .foregroundStyle(.white.opacity(0.3))
-                        .padding(DesignSystem.medium)
+                    Text(notebook.icon ?? defaultIcon)
+                        .font(.system(size: 32))
                 }
                 
+                // 2. 标题
+                Text(notebook.name)
+                    .font(.system(size: 19, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                
+                // 3. 摘要描述
+                Text(notebook.description ?? L10n.Vault.tr("defaultDescription"))
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                Spacer(minLength: DesignSystem.small)
+                
+                // 4. 元数据 (国际化相对时间)
+                Text("\(L10n.Vault.tr("lastEdited")) \(notebook.updatedAt.formatted(.relative(presentation: .numeric)))")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(.secondary.opacity(0.6))
+            }
+            .padding(DesignSystem.medium)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 180)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .overlay(
+                RoundedRectangle(cornerRadius: 28)
+                    .strokeBorder(.primary.opacity(0.04), lineWidth: 0.5)
+            )
+            .shadow(color: .black.opacity(0.03), radius: 10, y: 5)
+            .contextMenu {
+                Button {
+                    viewModel.prepareEdit(notebook)
+                } label: {
+                    Label(L10n.Vault.tr("edit"), systemImage: "pencil")
+                }
+                
+                Button(role: .destructive) {
+                    viewModel.deleteNotebook(id: notebook.id)
+                } label: {
+                    Label(L10n.Common.tr("delete"), systemImage: "trash")
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private var colorForVault: Color {
+        // 对齐图 3 的柔和底座逻辑
+        let colors: [Color] = [.blue, .purple, .orange, .green, .pink, .teal]
+        let index = abs(notebook.name.hashValue) % colors.count
+        return colors[index]
+    }
+    
+    private var defaultIcon: String {
+        let icons = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️"]
+        let index = abs(notebook.id.hashValue) % icons.count
+        return icons[index]
+    }
+}
+
+// MARK: - 列表行组件
+
+struct NotebookListRow: View {
+    @Environment(NotebookHubViewModel.self) var viewModel
+    let notebook: VaultService.Vault
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: DesignSystem.Sidebar.rowSpacing) {
+                // 1. 系统风格图标框 (对齐 KnowledgePageRow)
+                ZStack {
+                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                        .fill(Color.appAccent.opacity(DesignSystem.glassOpacity))
+                        .frame(width: DesignSystem.Sidebar.iconBoxSize, height: DesignSystem.Sidebar.iconBoxSize)
+                    
+                    Text(notebook.icon ?? defaultIcon)
+                        .font(.system(size: 20))
+                }
+                
+                // 2. 文本信息流
                 VStack(alignment: .leading, spacing: 4) {
                     Text(notebook.name)
-                        .font(.headline.bold())
+                        .font(.subheadline.weight(.bold))
                         .foregroundStyle(.appText)
                         .lineLimit(1)
                     
-                    Text("\(notebook.pageCount) " + L10n.Vault.tr("page.knowledge"))
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary)
+                    HStack(spacing: 6) {
+                        Text("\(notebook.pageCount)\(L10n.Vault.tr("page.knowledge"))")
+                        Text("·")
+                        Text(notebook.updatedAt.formatted(date: .numeric, time: .omitted))
+                    }
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
                 }
-                .padding(.horizontal, 4)
+                
+                Spacer()
+                
+                // 3. 状态与指示器
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.appSecondary.opacity(0.5))
             }
-            .padding(DesignSystem.medium)
-            .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.card))
-            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .padding(.vertical, DesignSystem.tiny)
+            .background(Color.clear)
+            .contentShape(Rectangle())
+            .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                    viewModel.deleteNotebook(id: notebook.id)
+                } label: {
+                    Label(L10n.Common.tr("delete"), systemImage: "trash")
+                }
+                
+                Button {
+                    viewModel.prepareEdit(notebook)
+                } label: {
+                    Label(L10n.Vault.tr("edit"), systemImage: "pencil")
+                }
+                .tint(.orange)
+            }
+            .contextMenu {
+                Button {
+                    viewModel.prepareEdit(notebook)
+                } label: {
+                    Label(L10n.Vault.tr("edit"), systemImage: "pencil")
+                }
+                
+                Button(role: .destructive) {
+                    viewModel.deleteNotebook(id: notebook.id)
+                } label: {
+                    Label(L10n.Common.tr("delete"), systemImage: "trash")
+                }
+            }
         }
         .buttonStyle(.plain)
+    }
+    
+    private var defaultIcon: String {
+        let icons = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️"]
+        let index = abs(notebook.id.hashValue) % icons.count
+        return icons[index]
+    }
+}
+
+// MARK: - 笔记本表单
+struct CreateNotebookSheet: View {
+    @Bindable var viewModel: NotebookHubViewModel
+    var body: some View {
+        NotebookFormSheet(
+            title: L10n.Vault.tr("new"),
+            submitLabel: L10n.Vault.tr("create"),
+            name: $viewModel.newNotebookName,
+            icon: $viewModel.newNotebookIcon,
+            description: $viewModel.newNotebookDescription,
+            onSubmit: { viewModel.createNotebook() }
+        )
+    }
+}
+
+struct EditNotebookSheet: View {
+    @Bindable var viewModel: NotebookHubViewModel
+    var body: some View {
+        NotebookFormSheet(
+            title: L10n.Vault.tr("edit"),
+            submitLabel: L10n.Common.tr("save"),
+            name: $viewModel.editingName,
+            icon: $viewModel.editingIcon,
+            description: $viewModel.editingDescription,
+            onSubmit: { viewModel.confirmEdit() }
+        )
+    }
+}
+
+struct NotebookFormSheet: View {
+    let title: String
+    let submitLabel: String
+    @Binding var name: String
+    @Binding var icon: String
+    @Binding var description: String
+    var onSubmit: () -> Void
+    
+    @Environment(\.dismiss) var dismiss
+    private let iconOptions = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️", "📅", "🎯", "🔥", "🌈", "🧩"]
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color(UIColor.systemGroupedBackground)
+                    .ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(spacing: DesignSystem.huge) {
+                        // 1. 图标选择
+                        VStack(spacing: DesignSystem.medium) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.appAccent.opacity(0.1))
+                                    .frame(width: 100, height: 100)
+                                
+                                Text(icon.isEmpty ? "📓" : icon)
+                                    .font(.system(size: 60))
+                            }
+                            
+                            Text(L10n.Vault.tr("iconLabel"))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: DesignSystem.medium) {
+                                    ForEach(iconOptions, id: \.self) { item in
+                                        Button {
+                                            icon = item
+                                        } label: {
+                                            Text(item)
+                                                .font(.title)
+                                                .frame(width: 54, height: 54)
+                                                .background(icon == item ? Color.appAccent.opacity(0.2) : Color.primary.opacity(0.05))
+                                                .clipShape(Circle())
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(icon == item ? Color.appAccent : Color.clear, lineWidth: 2)
+                                                )
+                                        }
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                        .padding(.top, DesignSystem.huge)
+                        
+                        // 2. 表单
+                        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                                Text(L10n.Vault.tr("nameLabel"))
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.secondary)
+                                
+                                TextField(L10n.Vault.tr("namePlaceholder"), text: $name)
+                                    .font(.title3.bold())
+                                    .padding()
+                                    .background(Color(.secondarySystemGroupedBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                            
+                            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                                Text(L10n.Vault.tr("descriptionLabel"))
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.secondary)
+                                
+                                TextField(L10n.Vault.tr("descriptionPlaceholder"), text: $description, axis: .vertical)
+                                    .lineLimit(3...5)
+                                    .padding()
+                                    .background(Color(.secondarySystemGroupedBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(L10n.Common.tr("cancel"))
+                            .font(.system(size: 15, weight: .medium))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.primary.opacity(0.05))
+                            .clipShape(Capsule())
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        onSubmit()
+                        dismiss()
+                    } label: {
+                        Text(submitLabel)
+                            .font(.system(size: 15, weight: .bold))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(name.isEmpty ? Color.clear : Color.appAccent.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
     }
 }

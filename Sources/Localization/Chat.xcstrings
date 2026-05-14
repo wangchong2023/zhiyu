@@ -642,7 +642,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 助手"
+            "value": "AI 对话"
           }
         }
       }
@@ -676,7 +676,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "知识库 AI 助手"
+            "value": "知识库 AI 对话"
           }
         }
       }
@@ -684,8 +684,8 @@
     "chat.aiAssistantName": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "ZhiYu AI" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "智宇 AI" } }
+        "en": { "stringUnit": { "state": "translated", "value": "ZhiYu Chat" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "智宇对话" } }
       }
     }
   },

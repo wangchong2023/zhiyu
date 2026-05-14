@@ -275,7 +275,7 @@ AppTab (Tab Bar)
 
 | AppTab | displayTitle | 说明 |
 |--------|-------------|------|
-| `.wiki` | tab.wiki | 知识库主页，包含侧边栏二级导航 |
+| `.knowledge` | tab.knowledge | 知识库主页，包含侧边栏二级导航 |
 | `.ingest` | tab.ingest | 数据摄入页面 |
 | `.search` | tab.search | 全局搜索页面 |
 | `.graph` | tab.graph | 知识图谱可视化页面 |
@@ -284,10 +284,9 @@ AppTab (Tab Bar)
 **层级二：SidebarSelection** — Wiki Tab 内的侧边栏路由枚举
 
 ```swift
-enum SidebarSelection: Hashable {
     case page(UUID)              // 直接导航到指定页面详情
     case tool(AppStore.ToolItem)  // 导航到侧边栏工具视图
-    case filteredIndex(PageType) // 按页面类型过滤的列表视图
+    case filteredIndex(PageType) // 按页面类型过滤的列表视图 (PageList)
 }
 ```
 
@@ -295,7 +294,7 @@ enum SidebarSelection: Hashable {
 
 | ToolItem | rawValue | 说明 |
 |----------|----------|------|
-| `.index` | index | 全部页面列表（启动默认页） |
+| `.pageList` | index | 全部页面列表（启动默认页） |
 | `.dashboard` | dashboard | 知识仪表盘 |
 | `.chat` | chat | AI 对话 |
 | `.synthesis` | synthesis | 知识合成实验室 |
@@ -313,7 +312,7 @@ enum SidebarSelection: Hashable {
 
 | SidebarSelection | 目标 View | 文件位置 |
 |------------------|----------|---------|
-| `.tool(.index)` / `.none` | `IndexView()` | Views/Pages/ |
+| `.tool(.pageList)` / `.none` | `KnowledgePageListView()` | Views/Pages/ |
 | `.tool(.dashboard)` | `KnowledgeDashboardView()` | Views/Core/ |
 | `.tool(.chat)` | `ChatViewContent(selectedTab:)` | Views/Features/ |
 | `.tool(.synthesis)` | `SynthesisView(selection:selectedTab:)` | Views/Core/NavigationView.swift |
@@ -324,7 +323,7 @@ enum SidebarSelection: Hashable {
 | `.tool(.pluginMarket)` | `Text(placeholder)` | 内联占位 |
 | `.tool(.log)` | `LogView()` | Views/Features/ |
 | `.tool(.collab)` | `CollaborationView()` | Views/Features/ |
-| `.filteredIndex(let type)` | `IndexView(filterType: type)` | Views/Pages/ |
+| `.filteredIndex(let type)` | `KnowledgePageListView(filterType: type)` | Views/Pages/ |
 | `.page(let id)` | `PageDetailView(page:)` 或空状态 | Views/Pages/ |
 
 ### 11.3 WikiPage 数据流
@@ -332,10 +331,10 @@ enum SidebarSelection: Hashable {
 ```
 AppStore.pages (数据源, @Observable)
   │
-  ├─→ IndexView(filterType:?)
-  │     └─ ForEach(store.pages) → IndexRow
-  │           └─ 用户点击 → store.navigationPath.append(page)
-  │                 └─ .navigationDestination(for: WikiPage.self) → PageDetailView(page:)
+  ├─→ KnowledgePageListView(filterType:?)
+  │     └─ ForEach(store.pages) → KnowledgePageRow
+  │           └─ 用户点击 → router.navigate(to: .pageDetail(id: page.id))
+  │                 └─ .navigationDestination(for: AppRoute.self) → PageDetailView(page:)
   │
   ├─→ SidebarView (已收藏列表)
   │     └─ ForEach(pinnedPages) → NavigationLink(value: .page(id))
@@ -353,7 +352,7 @@ AppStore.pages (数据源, @Observable)
 - `@SceneStorage(“sidebar.selectedPageID”)` — 状态恢复，应用重启后保持选中
 - `@SceneStorage(“sidebar.selectedTool”)` — 工具项状态恢复
 
-**PageType 过滤：** `IndexView(filterType:)` 根据 `PageType`（如 `.note`, `.doc`, `.code`）过滤 `store.pages`，仅在侧边栏该类型计数 > 0 时显示对应导航项。
+**PageType 过滤：** `KnowledgePageListView(filterType:)` 根据 `PageType`（如 `.note`, `.doc`, `.code`）过滤 `store.pages`，仅在侧边栏该类型计数 > 0 时显示对应导航项。
 
 ### 11.4 跨 Tab 页面导航
 
@@ -368,7 +367,6 @@ WikiPage 详情页可从多个 Tab 进入：
 每个 Tab 维护独立的 `NavigationPath`，通过 `.navigationDestination(for: WikiPage.self)` 共享同一 `PageDetailView` 渲染。`NavigateAction` 环境值支持页面内深度跳转（如从 PageDetailView 内链导航到另一个 WikiPage）。
 
 **启动默认路由：**
-- `selectedTab: AppTab = .wiki`（ContentView.swift:8）
-- `sidebarSelection: SidebarSelection? = .tool(.index)`（ContentView.swift:16）
-- `NavigationView.selection: SidebarSelection? = .tool(.index)`（NavigationView.swift:10）
-- 启动落地页：**IndexView（全部页面列表）**
+- `selectedTab: AppTab = .knowledge`
+- `sidebarSelection: SidebarSelection? = .tool(.pageList)`
+- 启动落地页：**KnowledgePageListView（页面列表）**

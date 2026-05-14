@@ -45,9 +45,11 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
 struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
     let title: String
     let trailingItems: Trailing
+    let showVaultBadge: Bool
     
-    init(title: String, @ViewBuilder trailing: () -> Trailing) {
+    init(title: String, showVaultBadge: Bool = false, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
+        self.showVaultBadge = showVaultBadge
         self.trailingItems = trailing()
     }
     
@@ -56,13 +58,16 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    VStack(spacing: -2) {
+                    VStack(spacing: 0) {
                         Text(title)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.system(size: 17, weight: .bold)) // 提升字号至标准 17pt
                             .foregroundStyle(.appText)
                         
-                        VaultBadge()
-                            .scaleEffect(0.85) // 子页面下略微缩小，作为上下文信息
+                        if showVaultBadge {
+                            VaultBadge()
+                                .scaleEffect(0.85)
+                                .padding(.top, -4)
+                        }
                     }
                 }
                 
@@ -84,11 +89,11 @@ extension View {
     }
     
     /// 应用子页面统一工具栏 (解决重叠，保留返回路径)
-    func appSubPageToolbar<Trailing: View>(title: String, @ViewBuilder trailing: @escaping () -> Trailing) -> some View {
-        self.modifier(AppSubPageToolbarModifier(title: title, trailing: trailing))
+    func appSubPageToolbar<Trailing: View>(title: String, showVaultBadge: Bool = false, @ViewBuilder trailing: @escaping () -> Trailing) -> some View {
+        self.modifier(AppSubPageToolbarModifier(title: title, showVaultBadge: showVaultBadge, trailing: trailing))
     }
     
-    func appSubPageToolbar(title: String) -> some View {
-        self.modifier(AppSubPageToolbarModifier(title: title, trailing: { EmptyView() }))
+    func appSubPageToolbar(title: String, showVaultBadge: Bool = false) -> some View {
+        self.modifier(AppSubPageToolbarModifier(title: title, showVaultBadge: showVaultBadge, trailing: { EmptyView() }))
     }
 }

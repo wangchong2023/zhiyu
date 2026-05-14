@@ -1,7 +1,7 @@
 import Foundation
 
 public struct NotebookThemeConfig: Codable, Equatable, Sendable {
-    public enum ThemeType: String, Codable {
+    public enum ThemeType: String, Codable, Sendable {
         case linear
         case mesh
     }

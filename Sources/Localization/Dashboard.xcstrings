@@ -1,6 +1,48 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    "dashboard.pageList.tags": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Tags" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "标签分类" } }
+      }
+    },
+    "dashboard.index.overview": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Overview" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "知识概览" } }
+      }
+    },
+    "dashboard.stats.short.entity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Ent" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "实体" } }
+      }
+    },
+    "dashboard.stats.short.pages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Pages" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "页面" } }
+      }
+    },
+    "dashboard.stats.short.new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "New" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "新增" } }
+      }
+    },
+    "dashboard.stats.short.ref": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Ref" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "关联" } }
+      }
+    },
     "dashboard.title": {
       "localizations": {
         "en": {
@@ -273,7 +315,7 @@
       },
       "extractionState": "manual"
     },
-    "dashboard.index.links": {
+    "dashboard.pageList.links": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -290,7 +332,7 @@
         }
       }
     },
-    "dashboard.index.comparisonCount": {
+    "dashboard.pageList.comparisonCount": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -307,7 +349,7 @@
         }
       }
     },
-    "dashboard.index.conceptCount": {
+    "dashboard.pageList.conceptCount": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -324,7 +366,7 @@
         }
       }
     },
-    "dashboard.index.concepts": {
+    "dashboard.pageList.concepts": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -341,7 +383,7 @@
         }
       }
     },
-    "dashboard.index.entities": {
+    "dashboard.pageList.entities": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -358,7 +400,7 @@
         }
       }
     },
-    "dashboard.index.entityCount": {
+    "dashboard.pageList.entityCount": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -426,7 +468,7 @@
         }
       }
     },
-    "dashboard.index.overview": {
+    "dashboard.pageList.overview": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -443,7 +485,7 @@
         }
       }
     },
-    "dashboard.index.pages": {
+    "dashboard.pageList.pages": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -460,7 +502,7 @@
         }
       }
     },
-    "dashboard.index.sourceCount": {
+    "dashboard.pageList.sourceCount": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -477,7 +519,7 @@
         }
       }
     },
-    "dashboard.index.sources": {
+    "dashboard.pageList.sources": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -494,7 +536,7 @@
         }
       }
     },
-    "dashboard.index.wordCount": {
+    "dashboard.pageList.wordCount": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -511,7 +553,7 @@
         }
       }
     },
-    "dashboard.index.requests": {
+    "dashboard.pageList.requests": {
       "localizations": {
         "en": { "stringUnit": { "state": "translated", "value": "API Requests" } },
         "zh-Hans": { "stringUnit": { "state": "translated", "value": "API 请求次数" } }
@@ -753,6 +795,68 @@
         }
       }
     },
+    "dashboard.stats.categoryDistribution": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Distribution"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识分布"
+          }
+        }
+      }
+    },
+    "dashboard.stats.knowledgeGrowth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Growth Curve"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "增长曲线"
+          }
+        }
+      }
+    },
+    "dashboard.stats.short.entity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Ent" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "实体" } }
+      }
+    },
+    "dashboard.stats.short.concept": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Con" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "概念" } }
+      }
+    },
+    "dashboard.stats.short.source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Src" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "来源" } }
+      }
+    },
+    "dashboard.stats.short.comparison": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Map" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "比较" } }
+      }
+    },
     "dashboard.stats.faithfulness": {
       "extractionState": "manual",
       "localizations": {
@@ -952,7 +1056,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "存储空间明细"
+            "value": "资源监控"
           }
         }
       }

@@ -1,13 +1,26 @@
 import SwiftUI
 
 /// 笔记本标识与快速切换组件
-/// 采用下拉菜单 (Menu) 模式，解决导航重叠并提供快捷操作
+/// 采用平台感知的交互模式：
+/// - 指针/触控设备：显示下拉菜单 (Menu)
+/// - 旋钮/紧凑设备：显示纯展示标签 (Label)
 struct VaultBadge: View {
     @Environment(VaultService.self) var vaultService
+    @Inject var platformEnv: any AppEnvironmentProtocol // 使用 DI 注入平台环境能力集
     @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         if let currentVault = vaultService.currentVault {
+            adaptiveContainer(currentVault: currentVault)
+        } else {
+            EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private func adaptiveContainer(currentVault: VaultService.Vault) -> some View {
+        // 根据交互样式决定是否使用 Menu (消除平台宏)
+        if platformEnv.interactionStyle != InteractionStyle.crown {
             Menu {
                 // 1. 切换笔记本操作
                 Button(action: {
@@ -18,43 +31,41 @@ struct VaultBadge: View {
                     Label(L10n.Vault.tr("backToHub"), systemImage: "arrow.left.circle")
                 }
                 
-                Divider()
-                
-                // 2. 笔记本详情/设置 (预留)
-                Button(action: {}) {
-                    Label(currentVault.name, systemImage: "info.circle")
-                }
-                .disabled(true)
-                
             } label: {
-                HStack(spacing: DesignSystem.Chip.spacing) {
-                    Image(systemName: "books.vertical.fill")
-                        .font(.system(size: DesignSystem.captionIconSize + DesignSystem.atomic)) // 14pt
-                    
-                    if !currentVault.name.isEmpty {
-                        Text(currentVault.name)
-                            .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold, design: .rounded)) // 14pt
-                            .lineLimit(1)
-                    }
-                    
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: DesignSystem.captionIconSize - DesignSystem.atomic, weight: .bold)) // 10pt
-                        .foregroundStyle(.appAccent.opacity(DesignSystem.secondaryOpacity))
-                }
-                .padding(.horizontal, DesignSystem.medium)
-                .padding(.vertical, DesignSystem.Chip.verticalPadding * 2)
-                .background(
-                    ZStack {
-                        Capsule().fill(Color.appAccent.opacity(DesignSystem.glassOpacity))
-                        Capsule().fill(.ultraThinMaterial)
-                    }
-                )
-                .compositingGroup()
-                .foregroundStyle(.appAccent)
+                badgeLabel(currentVault: currentVault)
             }
             .buttonStyle(.plain)
+            .tint(.primary)
         } else {
-            EmptyView()
+            // watchOS 或其他旋钮设备降级处理
+            badgeLabel(currentVault: currentVault)
         }
+    }
+    
+    @ViewBuilder
+    private func badgeLabel(currentVault: any VaultProtocol) -> some View {
+        HStack(spacing: DesignSystem.tiny) {
+            Image(systemName: "books.vertical.fill")
+                .imageScale(.small)
+                .foregroundStyle(.primary)
+            
+            Text(L10n.Vault.tr("label") + "：")
+                .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
+                .foregroundStyle(.primary)
+            
+            Text(vaultService.currentVault?.name ?? L10n.Vault.tr("defaultName"))
+                .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .frame(maxWidth: 160)
+            
+            if platformEnv.interactionStyle != InteractionStyle.crown {
+                Image(systemName: "chevron.up.chevron.down")
+                    .imageScale(.small)
+                    .foregroundStyle(.primary.opacity(0.4))
+            }
+        }
+        .padding(.vertical, 6)
+        .foregroundStyle(.primary)
     }
 }

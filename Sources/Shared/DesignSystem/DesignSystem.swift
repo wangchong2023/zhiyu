@@ -100,6 +100,8 @@ public enum DesignSystem {
         public static let headerVerticalPadding: CGFloat = Spacing.Layout.headerVerticalPadding
         public static let columnSpacing: CGFloat = Spacing.Layout.columnSpacing
         public static let listRowSpacing: CGFloat = Spacing.Layout.listRowSpacing
+        public static let welcomeHeaderTopPadding: CGFloat = Spacing.Layout.welcomeHeaderTopPadding
+        public static let sidebarOverlayVerticalPadding: CGFloat = Spacing.Layout.sidebarOverlayVerticalPadding
     }
 
     // MARK: - 5. 交互模式 (Action)
@@ -237,6 +239,9 @@ public enum DesignSystem {
         public static let emptyStateIconOpacity: CGFloat = Spacing.Metrics.emptyStateIconOpacity
         public static let sectionSpacing: CGFloat = Spacing.Metrics.sectionSpacing
         
+        public static let lockOverlayScaleMultiplier: CGFloat = Spacing.Metrics.lockOverlayScaleMultiplier
+        public static let splashQuoteShimmerOffset: CGFloat = Spacing.Metrics.splashQuoteShimmerOffset
+        
         public static let commandPaletteHeight: CGFloat = Spacing.Metrics.commandPaletteHeight
         public static let coachMarkIconScale: CGFloat = Spacing.Metrics.coachMarkIconScale
         public static let coachMarkActionHorizontalPadding: CGFloat = Spacing.Metrics.coachMarkActionHorizontalPadding
@@ -249,6 +254,8 @@ public enum DesignSystem {
         public static let welcomeHeroCircleSize: CGFloat = Spacing.Metrics.welcomeHeroCircleSize
         public static let welcomeHeroIconSize: CGFloat = Spacing.Metrics.welcomeHeroIconSize
         public static let statCardMinWidth: CGFloat = Spacing.Metrics.statCardMinWidth
+        /// 笔记本名称最大长度限制 (24字符)
+        public static let maxNotebookNameLength: Int = 24
     }
 
     // MARK: - 12. 任务规范 (Task)
@@ -295,10 +302,10 @@ public enum DesignSystem {
 
     // MARK: - 13.5 全局层级 (ZIndex)
     public enum ZIndex {
-        public static let lockOverlay: Double = ZhiYu_DesignSystem.ZIndex.lockOverlay
-        public static let medalPopup: Double = ZhiYu_DesignSystem.ZIndex.medalPopup
-        public static let coachMark: Double = ZhiYu_DesignSystem.ZIndex.coachMark
-        public static let sidebarOverlay: Double = ZhiYu_DesignSystem.ZIndex.sidebarOverlay
+        public static let lockOverlay: Double = ZIndexTokens.lockOverlay
+        public static let medalPopup: Double = ZIndexTokens.medalPopup
+        public static let coachMark: Double = ZIndexTokens.coachMark
+        public static let sidebarOverlay: Double = ZIndexTokens.sidebarOverlay
     }
 
     // MARK: - 14. 列表模式 (List)

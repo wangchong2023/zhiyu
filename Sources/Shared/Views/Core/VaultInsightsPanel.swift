@@ -1,0 +1,122 @@
+import SwiftUI
+
+/// 笔记本数据洞察面板
+struct VaultInsightsPanel: View {
+    @Environment(AppStore.self) var store
+    @Environment(VaultService.self) var vaultService
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: DesignSystem.huge) {
+                // 1. 头部标题
+                HStack {
+                    Label(
+                        vaultService.currentVault?.name ?? L10n.Vault.tr("homeTitle"),
+                        systemImage: vaultService.currentVault == nil ? "square.stack.3d.up.fill" : "chart.bar.fill"
+                    )
+                    .font(.title3.bold())
+                    Spacer()
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.bottom, DesignSystem.medium)
+                
+                // 2. 核心统计指标
+                HStack(spacing: DesignSystem.standardPadding) {
+                    StatBox(label: L10n.Dashboard.tr("stats.short.pages"), value: "\(store.totalPages)", color: .appAccent)
+                    StatBox(label: L10n.Dashboard.tr("stats.short.new"), value: "+12", color: .green)
+                    StatBox(label: L10n.Dashboard.tr("stats.short.ref"), value: "85%", color: .orange)
+                }
+                
+                // 3. 模拟图表：分类分布
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    Text(L10n.Dashboard.tr("stats.categoryDistribution"))
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
+                    
+                    HStack(alignment: .bottom, spacing: DesignSystem.medium) {
+                        BarItem(label: L10n.Dashboard.tr("stats.short.entity"), value: 0.6, color: .appEntity)
+                        BarItem(label: L10n.Dashboard.tr("stats.short.concept"), value: 0.8, color: .appConcept)
+                        BarItem(label: L10n.Dashboard.tr("stats.short.source"), value: 0.4, color: .appSource)
+                        BarItem(label: L10n.Dashboard.tr("stats.short.comparison"), value: 0.2, color: .appComparison)
+                    }
+                    .frame(height: DesignSystem.Metrics.chartHeight)
+                }
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
+                
+                // 4. 模拟图表：增长曲线 (极简)
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    Text(L10n.Dashboard.tr("stats.knowledgeGrowth"))
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
+                    
+                    ChartLinePlaceholder()
+                        .frame(height: DesignSystem.Metrics.chartHeight)
+                        .foregroundStyle(.appAccent.gradient)
+                }
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
+                
+                Spacer(minLength: DesignSystem.huge)
+            }
+            .padding(DesignSystem.huge)
+        }
+        .presentationDetents([.medium, .large])
+        .presentationBackground(.ultraThinMaterial)
+    }
+}
+
+// MARK: - Subviews
+private struct StatBox: View {
+    let label: String
+    let value: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: DesignSystem.tiny) {
+            Text(label)
+                .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.system(size: DesignSystem.title2FontSize, weight: .bold, design: .monospaced))
+                .foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DesignSystem.medium)
+        .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: false)
+    }
+}
+
+private struct BarItem: View {
+    let label: String
+    let value: CGFloat
+    let color: Color
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            RoundedRectangle(cornerRadius: DesignSystem.Radius.micro)
+                .fill(color.gradient)
+                .frame(height: DesignSystem.Metrics.chartHeight * value)
+            Text(label)
+                .font(.system(size: DesignSystem.caption2FontSize))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+private struct ChartLinePlaceholder: View {
+    var body: some View {
+        GeometryReader { geo in
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: geo.size.height * 0.7))
+                path.addCurve(to: CGPoint(x: geo.size.width, y: geo.size.height * 0.3),
+                             control1: CGPoint(x: geo.size.width * 0.4, y: geo.size.height * 0.9),
+                             control2: CGPoint(x: geo.size.width * 0.6, y: geo.size.height * 0.1))
+            }
+            .stroke(lineWidth: DesignSystem.Decorator.accentLineWidth)
+        }
+    }
+}

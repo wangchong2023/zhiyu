@@ -16,7 +16,7 @@ struct SplashView: View {
     @State private var quoteOpacity: Double = 0
     @State private var authorOpacity: Double = 0
     @State private var logoOpacity: Double = 0
-    @State private var shimmerOffset: CGFloat = DesignSystem.Metrics.splashQuoteShimmerOffset
+    @State private var shimmerOffset: CGFloat = -300 // 初始位移，用于名言闪光动画
     @State private var starTwinkle = false
     @State private var nodeGlow = false
     

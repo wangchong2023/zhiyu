@@ -21,6 +21,7 @@ import SwiftUI
 struct ZhiYuApp: App {
     // ── 顶层环境持有者 ──
     @State private var appEnv: AppEnvironment = AppEnvironment.shared
+    @ObservedObject private var themeManager = ThemeManager.shared
     @AppStorage("hasSeenSplash") private var hasSeenSplash = false
     
     /// 初始化应用
@@ -44,11 +45,11 @@ struct ZhiYuApp: App {
                     .environment(appEnv.store.settingsStore)
                     .environment(appEnv.ingestStore)
                     .environment(appEnv.router)
-                    .environmentObject(appEnv.themeManager)
+                    .environmentObject(themeManager)
                     .environmentObject(appEnv.llmService)
                     .environment(\.locale, Localized.currentLocale)
-                    .preferredColorScheme(appEnv.themeManager.colorSchemeMode.preferredColorScheme)
-                    .tint(appEnv.themeManager.accentColor)
+                    .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
+                    .tint(themeManager.accentColor)
 
                 // 启动闪屏层：覆盖在主视图之上
                 if !hasSeenSplash {

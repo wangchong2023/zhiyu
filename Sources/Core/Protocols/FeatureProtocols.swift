@@ -27,7 +27,8 @@ public protocol VaultServiceProtocol {
     var currentVault: VaultService.Vault? { get }
     func selectVault(_ vault: VaultService.Vault)
     func exitVault()
-    func createVault(name: String)
+    func createVault(name: String, icon: String?, description: String?)
+    func updateVault(id: UUID, name: String, icon: String?, description: String?)
     func renameVault(id: UUID, newName: String)
     func deleteVault(id: UUID)
 }

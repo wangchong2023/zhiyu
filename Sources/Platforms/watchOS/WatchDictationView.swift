@@ -16,6 +16,7 @@ import SwiftUI
 struct WatchDictationView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AppStore.self) var store
+    @Inject private var watchSync: any WatchSyncProtocol
     @State private var text = ""
     
     var body: some View {
@@ -37,10 +38,8 @@ struct WatchDictationView: View {
             }
         }
         .navigationTitle(L10n.Watch.tr("capture"))
-    @Inject private var watchSync: any WatchSyncProtocol
+    }
 
-    var body: some View {
-    ...
     private func saveAndSync() {
         _ = store.createPage(title: "Dictation \(Date().formatted())", type: .raw, content: text)
 

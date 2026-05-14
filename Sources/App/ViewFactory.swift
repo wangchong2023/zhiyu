@@ -17,10 +17,12 @@ struct ViewFactory {
     @ViewBuilder
     static func makeView(for route: AppRoute) -> some View {
         switch route {
+        case .notebookHub:
+            NotebookHubView()
         case .dashboard:
             KnowledgeDashboardView()
-        case .index(let type):
-            IndexView(filterType: type)
+        case .pageList(let type):
+            KnowledgePageListView(filterType: type)
         case .pageDetail(let id):
             PageDetailWrapper(id: id)
         case .tagCloud:
@@ -47,6 +49,12 @@ struct ViewFactory {
             LintWrapper()
         case .pluginMarket:
             PluginCenterView()
+        case .search:
+            SearchView()
+        case .ingest:
+            IngestView(selectedTab: .constant(.knowledge))
+        case .graph:
+            GraphWrapper()
         }
     }
 }
@@ -94,5 +102,14 @@ struct LintWrapper: View {
             get: { router.sidebarSelection },
             set: { router.sidebarSelection = $0 }
         ))
+    }
+}
+
+struct GraphWrapper: View {
+    @Namespace var heroNamespace
+    @Environment(Router.self) var router
+    var body: some View {
+        @Bindable var router = router
+        GraphContainerView(heroNamespace: heroNamespace, selectedTab: $router.selectedTab)
     }
 }

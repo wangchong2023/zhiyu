@@ -11,6 +11,7 @@ import Observation
 /// 全局身份认证会话
 /// 采用 Swift 6 @Observable 宏，提供响应式的登录状态追踪
 @Observable
+@MainActor
 public final class AuthSession {
     // MARK: - 状态属性
     

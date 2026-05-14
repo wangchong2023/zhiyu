@@ -15,6 +15,7 @@ struct KnowledgeDashboardView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var statsTask: Task<Void, Never>? = nil
     @State private var tags: [(tag: String, count: Int)] = []
     @State private var showDensityInfo = false
@@ -22,21 +23,73 @@ struct KnowledgeDashboardView: View {
     @State private var densityData: [DensityInfo] = []
     
     var body: some View {
-        ZStack {
-            themeManager.pageBackground()
+        ZStack(alignment: .top) {
+            // 1. 方案 D 沉浸式高级背景同步
+            ZStack {
+                Color.black.overlay(themeManager.pageBackground().opacity(0.4))
+                
+                if #available(iOS 18.0, *) {
+                    MeshGradient(
+                        width: 3,
+                        height: 3,
+                        points: [
+                            [0, 0], [0.5, 0], [1, 0],
+                            [0, 0.5], [0.5, 0.5], [1, 0.5],
+                            [0, 1], [0.5, 1], [1, 1]
+                        ],
+                        colors: [
+                            Color.appAccent.opacity(0.15), Color.appSource.opacity(0.2), Color.appAccent.opacity(0.1),
+                            Color.appConcept.opacity(0.2), Color.appAccent.opacity(0.25), Color.appConcept.opacity(0.15),
+                            Color.appSource.opacity(0.15), Color.appAccent.opacity(0.1), Color.appSource.opacity(0.2)
+                        ]
+                    )
+                    .blur(radius: 80)
+                }
+            }
+            .ignoresSafeArea()
             
             ScrollView {
-                VStack(alignment: .leading, spacing: DesignSystem.huge) { // 使用 huge (32pt) 增加板块间距
+                VStack(alignment: .leading, spacing: DesignSystem.huge) {
                     metricSection
                     densityChartSection
                     dailyInsightsSection
                     hotTopicsSection
                 }
                 .padding()
-                .padding(.bottom, DesignSystem.Metrics.chartHeight / 2) // 动态预留底部安全边距
+                .padding(.bottom, DesignSystem.Metrics.chartHeight / 2)
+            }
+            .scrollIndicators(.hidden)
+            
+        }
+        .navigationTitle(L10n.Dashboard.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    router.pop()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.appText)
+                        .frame(width: 32, height: 44)
+                }
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { 
+                    HapticFeedback.shared.trigger(.selection)
+                    router.navigate(to: .search) 
+                }) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.appSecondary)
+                }
             }
         }
-        .appTabToolbar(title: L10n.Dashboard.tr("title"))
         .onAppear {
             statsTask?.cancel()
             statsTask = Task {
@@ -61,7 +114,7 @@ struct KnowledgeDashboardView: View {
             MetricBox(
                 title: L10n.Dashboard.tr("totalPages"), 
                 value: "\(store.pages.count)", 
-                unit: L10n.Dashboard.tr("index.pages"), 
+                unit: L10n.Dashboard.tr("pageList.pages"), 
                 icon: "doc.on.doc.fill", 
                 color: .appAccent,
                 trend: "+2"
@@ -69,7 +122,7 @@ struct KnowledgeDashboardView: View {
             MetricBox(
                 title: L10n.Dashboard.tr("totalLinks"), 
                 value: "\(totalLinks)", 
-                unit: L10n.Dashboard.tr("index.links"), 
+                unit: L10n.Dashboard.tr("pageList.links"), 
                 icon: "point.3.connected.trianglepath.dotted", 
                 color: .appConcept,
                 trend: "+5"
@@ -288,7 +341,7 @@ struct KnowledgeDashboardView: View {
                     if count > 0 {
                         Button(action: {
                             HapticFeedback.shared.trigger(.selection)
-                            router.navigate(to: .index(filterType: type))
+                            router.navigate(to: .pageList(filterType: type))
                         }) {
                             HotTopicMedal(category: type.displayName, count: count, icon: type.icon, color: Color.fromModelColorName(type.colorName))
                         }
@@ -476,7 +529,7 @@ struct HotTopicMedal: View {
                 Text(category)
                     .font(.system(size: DesignSystem.titleFontSize, weight: .bold))
                     .foregroundColor(.appText)
-                Text("\(count) " + L10n.Dashboard.tr("index.pages"))
+                Text("\(count) " + L10n.Dashboard.tr("pageList.pages"))
                     .font(.system(size: DesignSystem.captionFontSize))
                     .foregroundColor(.appSecondary)
             }

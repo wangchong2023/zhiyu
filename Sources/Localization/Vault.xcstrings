@@ -1,6 +1,20 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
+    "vault.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notebook" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "笔记本" } }
+      }
+    },
+    "vault.defaultName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "My Notebook" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "我的知识库" } }
+      }
+    },
     "vault.homeTitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -81,8 +95,99 @@
     "vault.backToHub" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back to Hub" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "回到笔记本" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "All Notebooks" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所有笔记本" } }
+      }
+    },
+    "vault.iconPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tap to enter Emoji" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击输入 Emoji 图标" } }
+      }
+    },
+    "vault.descriptionLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Description (Optional)" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "描述 (可选)" } }
+      }
+    },
+    "vault.descriptionPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tell more about this notebook..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "介绍一下这个笔记本..." } }
+      }
+    },
+    "vault.defaultDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Efficient techniques for your workflow..." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "高效处理您的工作流..." } }
+      }
+    },
+    "vault.lastEdited" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Edited" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "上次编辑" } }
+      }
+    },
+    "vault.appName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "ZhiYu" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "知予" } }
+      }
+    },
+    "vault.iconLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Icon" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "图标" } }
+      }
+    },
+    "vault.edit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Edit" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑笔记本" } }
+      }
+    },
+    "vault.nameLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "笔记本名称" } }
+      }
+    },
+    "vault.rename" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rename" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重命名" } }
+      }
+    },
+    "vault.renameMessage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Please enter a new name for this notebook." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请输入新的笔记本名称" } }
+      }
+    },
+    "vault.sort.date" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sort by Date" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "按时间排序" } }
+      }
+    },
+    "vault.sort.name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sort by Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "按名称排序" } }
       }
     }
   },

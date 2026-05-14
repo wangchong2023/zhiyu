@@ -80,41 +80,45 @@ struct SearchView: View {
             // Search Header (Bar + Filters)
             VStack(spacing: 12) {
                 // Unified Search Bar
-                HStack(spacing: 0) {
-                    HStack(spacing: DesignSystem.tightPadding + DesignSystem.atomic) { // 10
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.appSecondary)
-                        TextField(Localized.tr("search.placeholder"), text: $searchText)
-                            .foregroundStyle(.appText)
-                            .accessibilityIdentifier("searchPlaceholder")
-                            .submitLabel(.search)
-                            .onSubmit {
-                                if !searchText.isEmpty {
-                                    runAdvancedSearch()
-                                }
-                            }
-
+            // 1. 现代风格搜索区域 (对齐图 3)
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.appAccent)
+                
+                TextField(Localized.tr("search.placeholder"), text: $searchText)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 16))
+                    .accessibilityIdentifier("searchPlaceholder")
+                    .submitLabel(.search)
+                    .onSubmit {
                         if !searchText.isEmpty {
-                            Button(action: { 
-                                searchText = ""
-                                useAdvancedSearch = false
-                                advancedResults = []
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.appSecondary)
-                            }
-                            .padding(.trailing, DesignSystem.tiny)
+                            runAdvancedSearch()
                         }
                     }
-                    .padding(.leading, DesignSystem.standardPadding - DesignSystem.atomic) // 14
-                    .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic) // 10
-                    .background(Color.appCard.opacity(0.8))
+
+                if !searchText.isEmpty {
+                    Button(action: { 
+                        searchText = ""
+                        useAdvancedSearch = false
+                        advancedResults = []
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.appSecondary.opacity(0.6))
+                    }
                 }
-                .frame(height: DesignSystem.inputBarHeight)
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-                .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
-                .padding(.horizontal)
-                .animation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping), value: searchText.isEmpty)
+            }
+            .padding(.horizontal, DesignSystem.huge)
+            .padding(.vertical, DesignSystem.medium)
+            .background(.ultraThinMaterial)
+            .clipShape(Capsule())
+            .overlay(
+                Capsule()
+                    .strokeBorder(.appAccent.opacity(0.1), lineWidth: 0.5)
+            )
+            .padding(.horizontal, DesignSystem.standardPadding)
+            .padding(.vertical, DesignSystem.medium)
+            .background(.ultraThinMaterial)
                 
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -294,7 +298,6 @@ struct SearchView: View {
             }
         }
         .appTabToolbar(title: Localized.tr("search.title"))
-        .toolbarBackground(.hidden, for: .navigationBar)
         .background(themeManager.pageBackground())
         .sheet(item: $previewPage) { page in
             PagePreviewSheet(page: page)
@@ -405,7 +408,7 @@ struct FilterPill: View {
         }
         .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
         .padding(.vertical, DesignSystem.Chip.verticalPadding + DesignSystem.atomic) // 6
-        .background(isSelected ? color.opacity(DesignSystem.glassOpacity * 1.66) : Color.appCard.opacity(0.8)) // 0.25
+        .background(isSelected ? color.opacity(0.12) : Color.appCard.opacity(0.6))
         .clipShape(Capsule())
         .foregroundStyle(isSelected ? color : .appSecondary)
         .contentShape(Capsule())

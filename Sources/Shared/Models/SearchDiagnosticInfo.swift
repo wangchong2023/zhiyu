@@ -11,7 +11,7 @@
 import Foundation
 
 /// 搜索诊断数据结构
-public struct SearchDiagnosticInfo: Identifiable, Equatable {
+public struct SearchDiagnosticInfo: Identifiable, Equatable, Sendable {
     public let id: UUID
     public let query: String
     public let rewrittenQuery: String
@@ -28,7 +28,7 @@ public struct SearchDiagnosticInfo: Identifiable, Equatable {
         self.rrfTopResults = rrfTopResults
     }
     
-    public struct ResultScore: Identifiable, Equatable {
+    public struct ResultScore: Identifiable, Equatable, Sendable {
         public let id: UUID
         public let title: String
         public let ftsRank: Int

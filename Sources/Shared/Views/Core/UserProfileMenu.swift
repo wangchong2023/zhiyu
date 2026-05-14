@@ -52,6 +52,7 @@ struct UserProfileMenu: View {
                 }
                 
                 Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
                     store.securityService.lock()
                 }) {
                     Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
@@ -60,16 +61,11 @@ struct UserProfileMenu: View {
             
             Section {
                 Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
                     onboardingService.reset()
                     store.pendingCoachMark = .graphDiscovery
                 }) {
                     Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
-                }
-                
-                Button(action: {
-                    showAbout = true
-                }) {
-                    Label(L10n.Common.tr("about"), systemImage: "info.circle")
                 }
             }
             
@@ -91,11 +87,13 @@ struct UserProfileMenu: View {
     private var profileLabel: some View {
         ZStack {
             if authService.isGuest {
-                Image(systemName: "person.crop.circle.badge.questionmark")
-                    .font(.system(size: 14))
+                Image(systemName: "person.crop.circle")
+                    .font(.system(size: 16, weight: .medium))
+                    .symbolRenderingMode(.hierarchical)
             } else {
-                Image(systemName: "person.circle.fill")
+                Image(systemName: "person.crop.circle.fill")
                     .font(.system(size: 16, weight: .bold))
+                    .symbolRenderingMode(.hierarchical)
             }
         }
         .frame(width: 32, height: 32)
