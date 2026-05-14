@@ -16,7 +16,7 @@ struct SplashView: View {
     @State private var quoteOpacity: Double = 0
     @State private var authorOpacity: Double = 0
     @State private var logoOpacity: Double = 0
-    @State private var shimmerOffset: CGFloat = -200
+    @State private var shimmerOffset: CGFloat = DesignSystem.Metrics.splashQuoteShimmerOffset
     @State private var starTwinkle = false
     @State private var nodeGlow = false
     
@@ -150,28 +150,28 @@ struct SplashView: View {
 
         
         // 名言淡入
-        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.standardDuration * 3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.quoteDelay) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.looseDuration * 0.8)) {
                 quoteOpacity = 1
             }
         }
         
         // 署名淡入
-        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.slowDuration + DesignSystem.Animation.standardDuration * 4.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.authorDelay) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) {
                 authorOpacity = 1
             }
         }
         
         // 闪光扫过
-        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.slowDuration + DesignSystem.Animation.standardDuration * 6.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.shimmerDelay) {
             withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration)) {
                 shimmerOffset = DesignSystem.Decorator.shimmerPhaseShift * 0.5
             }
         }
         
         // 5 秒后自动进入（仅在用户未手动点击时）
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.autoDismissDelay) {
             withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) {
                 onDismiss()
             }
