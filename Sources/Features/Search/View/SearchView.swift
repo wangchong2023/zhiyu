@@ -108,17 +108,16 @@ struct SearchView: View {
                     }
                 }
             }
-            .padding(.horizontal, DesignSystem.huge)
-            .padding(.vertical, DesignSystem.medium)
-            .background(.ultraThinMaterial)
-            .clipShape(Capsule())
+            .padding(.horizontal, DesignSystem.standardPadding)
+            .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
+            .background(Color.appCard.opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(
-                Capsule()
-                    .strokeBorder(.appAccent.opacity(0.1), lineWidth: 0.5)
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(.appAccent.opacity(0.25), lineWidth: 1)
             )
             .padding(.horizontal, DesignSystem.standardPadding)
             .padding(.vertical, DesignSystem.medium)
-            .background(.ultraThinMaterial)
                 
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {

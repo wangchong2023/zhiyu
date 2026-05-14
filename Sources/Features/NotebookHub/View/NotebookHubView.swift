@@ -33,15 +33,15 @@ public struct NotebookHubView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
-                    // 1. 顶部搜索区域 (对齐图 3 现代风格)
+                    // 1. 现代风格搜索区域
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(.appAccent)
                         
                         TextField(L10n.Common.tr("search"), text: $viewModel.searchText)
                             .textFieldStyle(.plain)
-                            .font(.system(size: 16))
+                            .font(.system(size: 15))
                         
                         if !viewModel.searchText.isEmpty {
                             Button { viewModel.searchText = "" } label: {
@@ -50,13 +50,13 @@ public struct NotebookHubView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, DesignSystem.huge)
-                    .padding(.vertical, DesignSystem.medium)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Capsule())
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
+                    .background(Color.appCard.opacity(0.6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
-                        Capsule()
-                            .strokeBorder(.appAccent.opacity(0.12), lineWidth: 0.5)
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .strokeBorder(.appAccent.opacity(0.25), lineWidth: 1)
                     )
                     .padding(.horizontal, DesignSystem.Vault.homePadding)
                     .padding(.top, DesignSystem.standardPadding)
@@ -535,28 +535,14 @@ struct NotebookFormSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button {
+                    Button(L10n.Common.tr("cancel")) {
                         dismiss()
-                    } label: {
-                        Text(L10n.Common.tr("cancel"))
-                            .font(.system(size: 15, weight: .medium))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.primary.opacity(0.05))
-                            .clipShape(Capsule())
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
+                    Button(submitLabel) {
                         onSubmit()
                         dismiss()
-                    } label: {
-                        Text(submitLabel)
-                            .font(.system(size: 15, weight: .bold))
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(name.isEmpty ? Color.clear : Color.appAccent.opacity(0.15))
-                            .clipShape(Capsule())
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }

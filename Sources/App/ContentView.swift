@@ -94,6 +94,7 @@ struct ContentView: View {
                 } else {
                     NavigationStack {
                         NotebookHubView()
+                            .id(router.languageForceUpdate)
                     }
                     .id("NotebookHub")
                     .transition(.move(edge: .bottom).combined(with: .opacity))

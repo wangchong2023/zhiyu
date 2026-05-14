@@ -175,6 +175,8 @@
 		2B11857CFECCF9F140940D19 /* SnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D88559CFE3B6C14DD54A0CF /* SnapshotService.swift */; };
 		2C0D76A74201BE3743862CBA /* WatchAppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4C08317C1A9534B6952B25 /* WatchAppEnvironment.swift */; };
 		2C1CD19143E33E6AEA87BD65 /* PDFHighlight+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1345EE024895088C8B14EE /* PDFHighlight+UI.swift */; };
+		2CB3252CF56AD51DB5809EBA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1F728629ED1D05A5C49E11EB /* README.md */; };
+		2CB61E4BB785A5409D640A11 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1F728629ED1D05A5C49E11EB /* README.md */; };
 		2CDEC0373B42B31634617434 /* AppEnvironmentProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02F0A2956B335F38F451CF3 /* AppEnvironmentProtocol.swift */; };
 		2CE0ACDFA10A38BD339442B7 /* ReadabilityModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA8303AB23ECE4B4BB114082 /* ReadabilityModifiers.swift */; };
 		2D51CE6581AD26EFF9EF2EEE /* Actions.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A3ED71750391CB7E6DD1AE01 /* Actions.xcstrings */; };
@@ -901,6 +903,7 @@
 		EDB61422F49A6537002BFB1B /* SQLiteStore+Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = B15512B0DDF1F41C35C47023 /* SQLiteStore+Tags.swift */; };
 		EDC5F82BFF8A94561BD333AA /* BacklinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C15BF0FC2B735F94054FF60 /* BacklinksView.swift */; };
 		EDCE6DAD1D844407C2E2C470 /* iCloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CC0FAB7E809D0CB7DB974E /* iCloudSyncManager.swift */; };
+		EE055DBCE931314792B0E856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 1F728629ED1D05A5C49E11EB /* README.md */; };
 		EE3B72326E13D13E2D91961A /* WatchPDFService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEB0214C5F350F5C5008513 /* WatchPDFService.swift */; };
 		EE435DA3AC10C72BF261ADCE /* LLMIngestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 856622CAC4CAB31FEA7C3D2A /* LLMIngestService.swift */; };
 		EE4B7D2E1B3A7DF2C0AB89E7 /* WatchHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB0C238850B564F701EF89 /* WatchHapticService.swift */; };
@@ -1037,6 +1040,7 @@
 		1B152924713B5E8067A4229D /* PageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailViewModel.swift; sourceTree = "<group>"; };
 		1BA6B888313581CB16E217BC /* PluginRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginRegistry.swift; sourceTree = "<group>"; };
 		1F6C3BD9917A2012F059DDCE /* KnowledgePageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgePageStore.swift; sourceTree = "<group>"; };
+		1F728629ED1D05A5C49E11EB /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1F83D8833FCE5D36D8A961F8 /* WatchSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSpeechService.swift; sourceTree = "<group>"; };
 		203B4EBD884996C5E6A88E4A /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		2080CEF984BBF997B769C375 /* StubWatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubWatchSyncService.swift; sourceTree = "<group>"; };
@@ -2696,6 +2700,7 @@
 			children = (
 				460994A6166707415B1810D0 /* AnimatedSection.swift */,
 				D04586EDD76C8BE702826E3C /* FlowLayout.swift */,
+				1F728629ED1D05A5C49E11EB /* README.md */,
 				298B4CF76CE459BE937A504F /* StandardSection.swift */,
 				2AACAF237118AEFF5AA056DD /* VaultLayout.swift */,
 			);
@@ -3463,6 +3468,7 @@
 				44945E92DC2B8C855906D2C9 /* LLMProviders.json in Resources */,
 				6BEB5E1477185779762F0260 /* Lint.xcstrings in Resources */,
 				9AB084C35F5469BF92BA88C0 /* Localizable.xcstrings in Resources */,
+				EE055DBCE931314792B0E856 /* README.md in Resources */,
 				B678FA65F0F9CC700D722233 /* Schema.xcstrings in Resources */,
 				A85BBFC8F35E923043654D26 /* Settings.xcstrings in Resources */,
 				05A82FEB75EC1E5F18F6D778 /* Transfer.xcstrings in Resources */,
@@ -3502,6 +3508,7 @@
 				F5B27EC81D8B0C5CAE12B86C /* LLMProviders.json in Resources */,
 				F8A6183025AF8526F5D13568 /* Lint.xcstrings in Resources */,
 				7AE187DDAEBB1CBDE8400C94 /* Localizable.xcstrings in Resources */,
+				2CB61E4BB785A5409D640A11 /* README.md in Resources */,
 				BA226FCE1F562664F5A025C7 /* Schema.xcstrings in Resources */,
 				80E5982E5DB49206E4A72539 /* Settings.xcstrings in Resources */,
 				F2B3B9012EE443B71BBE33F4 /* Transfer.xcstrings in Resources */,
@@ -3542,6 +3549,7 @@
 				9F9D1AD79CE9E2F661BF051C /* LaunchScreen.storyboard in Resources */,
 				BB31914E4C3408B5D4AD6759 /* Lint.xcstrings in Resources */,
 				C8C7B31E065AC9F7604A847B /* Localizable.xcstrings in Resources */,
+				2CB3252CF56AD51DB5809EBA /* README.md in Resources */,
 				BD9B408CC5CE153DF765A1AB /* Schema.xcstrings in Resources */,
 				B62757DAEA4DAD9A72A38629 /* Settings.xcstrings in Resources */,
 				158FF3A6EE27536F5154CFB4 /* Transfer.xcstrings in Resources */,

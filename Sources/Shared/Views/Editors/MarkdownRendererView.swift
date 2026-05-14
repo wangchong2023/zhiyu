@@ -375,10 +375,27 @@ struct MarkdownRendererView: View {
                 container.swiftUI.font = .system(.caption, design: .monospaced)
                 container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
                 container.swiftUI.foregroundColor = .appText
-                        if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                            container.foundation.link = URL(string: "applink://\(encoded)")
-                        }
+            case .applink:
+                container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
+                container.swiftUI.foregroundColor = Color.appAccent
+                container.swiftUI.underlineStyle = .single
+                
+                if segment.content.contains("|") {
+                    let parts = segment.content.split(separator: "|")
+                    let label = String(parts.first ?? "")
+                    let title = String(parts.last ?? "")
+                    container = AttributedString(label)
+                    container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
+                    container.swiftUI.foregroundColor = Color.appAccent
+                    container.swiftUI.underlineStyle = .single
+                    if let encoded = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                        container.foundation.link = URL(string: "applink://\(encoded)")
                     }
+                } else {
+                    if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                        container.foundation.link = URL(string: "applink://\(encoded)")
+                    }
+                }
             case .link:
                 let parts = segment.content.split(separator: "|")
                 let label = String(parts.first ?? "")

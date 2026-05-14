@@ -64,21 +64,8 @@ struct ChatViewContent: View {
                 chatInputBar
             }
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                VaultBadge()
-            }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: DesignSystem.small) { // 减小间距至 8px，配合精简文案消除留白
-                    chatMenu
-                    UserProfileMenu()
-                }
-            }
+        .appTabToolbar(title: "") {
+            chatMenu
         }
         #if !os(watchOS)
         .sheet(item: $exportURL) { identifiable in
@@ -231,34 +218,8 @@ struct ChatViewContent: View {
     }
 
     private func chatWelcome(isSheet: Bool = false) -> some View {
-        VStack(spacing: isSheet ? DesignSystem.medium : DesignSystem.small) { // 12, 8
-            if !isSheet {
-                // Remove Spacer to tighten layout
-
-                // 带光晕的图标
-                ZStack {
-                    Circle()
-                        .fill(Color.appAccent.opacity(DesignSystem.glassOpacity)) // 0.1
-                        .frame(width: DesignSystem.largeIconSize * 1.6, height: DesignSystem.largeIconSize * 1.6)
-                        .blur(radius: DesignSystem.medium)
-
-                    Image(systemName: "bubble.left.and.bubble.right.fill")
-                        .font(.system(size: DesignSystem.largeIconSize * 0.75, weight: .light))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.appAccent, .appConcept],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .shadow(color: .appAccent.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
-                }
-
-                Text(L10n.Chat.tr("welcomeTitle"))
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.appText)
-            }
-
+        VStack(spacing: isSheet ? DesignSystem.medium : DesignSystem.small) {
+            // 直接展示提问建议列表，不再显示图标和标题
             ScrollView {
                 VStack(alignment: .leading, spacing: DesignSystem.wide) { // 20
                     // 1. 我的指令 (置顶)

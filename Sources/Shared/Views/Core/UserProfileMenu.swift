@@ -44,22 +44,17 @@ struct UserProfileMenu: View {
         .sheet(isPresented: $showAbout) { aboutStack }
         #else
         Menu {
+            // 常用操作区域：设置、锁定、指引
             Section {
-                Button(action: {
-                    showSettings = true
-                }) {
+                Button(action: { showSettings = true }) {
                     Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
                 }
-                
                 Button(action: {
                     HapticFeedback.shared.trigger(.selection)
                     store.securityService.lock()
                 }) {
                     Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
                 }
-            }
-            
-            Section {
                 Button(action: {
                     HapticFeedback.shared.trigger(.selection)
                     onboardingService.reset()
@@ -68,11 +63,9 @@ struct UserProfileMenu: View {
                     Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
                 }
             }
-            
+            // 退出登录区域
             Section {
-                Button(role: .destructive, action: {
-                    authService.logout()
-                }) {
+                Button(role: .destructive, action: { authService.logout() }) {
                     Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
                 }
             }
