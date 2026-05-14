@@ -391,8 +391,9 @@ public enum DesignSystem {
     public static let shadowOpacity: Double = Spacing.shadowOpacity
     public static let shadowColor = Colors.Opacity.shadowColor
     public static let glassOpacity: Double = Colors.Opacity.glassOpacity
-    public static let subtleOpacity: Double = Colors.Opacity.subtleOpacity
+    public static let subtleOpacity: Double = Colors.subtleOpacity
     public static let subtleFillOpacity: Double = Colors.subtleFillOpacity
+    public static let halfOpacity: Double = Colors.halfOpacity
     public static let fullOpacity: Double = Colors.Opacity.fullOpacity
     public static let disabledOpacity: Double = Colors.Opacity.disabledOpacity
     public static let pressedOpacity: Double = Colors.Opacity.pressedOpacity

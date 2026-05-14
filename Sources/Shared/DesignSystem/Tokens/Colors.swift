@@ -31,6 +31,8 @@ public enum Colors {
     public static let dimmedOpacity: Double = 0.2
     /// 次要状态透明度 (0.8)
     public static let secondaryOpacity: Double = 0.8
+    /// 中等透明度 (0.5)
+    public static let halfOpacity: Double = 0.5
     /// 标准阴影透明度 (0.1)
     public static let shadowOpacity: Double = 0.1
     /// 功能引导背景透明度 (0.6)
@@ -63,6 +65,7 @@ public enum Colors {
         public static let pressedOpacity: Double = Colors.pressedOpacity
         public static let dimmedOpacity: Double = Colors.dimmedOpacity
         public static let secondaryOpacity: Double = Colors.secondaryOpacity
+        public static let halfOpacity: Double = Colors.halfOpacity
         public static let shadowOpacity: Double = Colors.shadowOpacity
         public static let coachMarkBackgroundOpacity: Double = Colors.coachMarkBackgroundOpacity
         public static let subtleFillOpacity: Double = Colors.subtleFillOpacity

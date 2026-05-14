@@ -28,7 +28,7 @@ struct WelcomeView: View {
                 }
                 WelcomeQuickActionsSection(selectedTab: $selectedTab)
             }
-            .padding(.bottom, Spacing.huge + Spacing.small)
+            .padding(.bottom, DesignSystem.Layout.welcomeHeaderTopPadding)
         }
         .background(themeManager.pageBackground())
         .alert(L10n.Common.tr("success"), isPresented: $showInjectSuccess) {
@@ -46,7 +46,7 @@ struct WelcomeHeroSection: View {
         VStack(spacing: Spacing.standardPadding) {
             ZStack {
                 AppDotPattern(dotColor: Color.appBorder, spacing: Spacing.wide, dotSize: Spacing.atomic)
-                    .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight).opacity(DesignSystem.fullOpacity * 0.5)
+                    .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight).opacity(DesignSystem.halfOpacity)
                 Circle().fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8))
                     .frame(width: DesignSystem.Metrics.welcomeHeroCircleSize, height: DesignSystem.Metrics.welcomeHeroCircleSize)
                     .blur(radius: Spacing.wide)
@@ -63,7 +63,7 @@ struct WelcomeHeroSection: View {
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
         }
-        .padding(.top, Spacing.huge + Spacing.small)
+        .padding(.top, DesignSystem.Layout.welcomeHeaderTopPadding)
     }
 }
 
