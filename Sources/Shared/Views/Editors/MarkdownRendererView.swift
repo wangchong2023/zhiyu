@@ -240,41 +240,61 @@ struct MarkdownRendererView: View {
         }
     }
 
-    // MARK: - Render Table
+    /// 渲染表格，使用 Grid 实现列宽自动同步
     @ViewBuilder
     private func renderTable(headers: [String], rows: [[String]]) -> some View {
-        ScrollView(.horizontal, showsIndicators: true) {
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    ForEach(Array(headers.enumerated()), id: \.offset) { _, cell in
-                        renderInlineContent(cell)
-                            .font(.system(.subheadline).weight(.semibold))
-                            .foregroundStyle(.appText)
-                            .frame(minWidth: 100, alignment: .leading) // 最小宽度保证列内容不被过度压缩
-                            .padding(.horizontal, DesignSystem.tightPadding)
-                            .padding(.vertical, DesignSystem.tightPadding)
-                    }
-                }
-                .background(Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5))
-
-                ForEach(Array(rows.enumerated()), id: \.offset) { rowIdx, row in
-                    HStack(spacing: 0) {
-                        ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
+        ScrollView(.horizontal, showsIndicators: false) {
+            Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
+                // 表头行
+                GridRow {
+                    ForEach(Array(headers.enumerated()), id: \.offset) { index, cell in
+                        Group {
                             renderInlineContent(cell)
-                                .font(.system(.subheadline))
-                                .foregroundStyle(.appText)
-                                .frame(minWidth: 100, alignment: .leading)
-                                .padding(.horizontal, DesignSystem.tightPadding)
-                                .padding(.vertical, DesignSystem.small - DesignSystem.atomic)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(.appAccent)
+                                .padding(.horizontal, DesignSystem.small)
+                                .padding(.vertical, DesignSystem.tightPadding)
+                                .frame(minWidth: 80, maxWidth: 180, alignment: .leading)
+                        }
+                        .background(Color.appAccent.opacity(0.1))
+                        // 列间分割线（最后一列不加）
+                        if index < headers.count - 1 {
+                            Divider()
+                                .frame(maxHeight: 36)
+                                .background(Color.appBorder.opacity(0.3))
                         }
                     }
-                    .background(rowIdx % 2 == 0 ? Color.clear : Color.appCard.opacity(DesignSystem.disabledOpacity))
+                }
+                Divider().background(Color.appBorder.opacity(0.4))
+                // 数据行
+                ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
+                    GridRow {
+                        ForEach(Array(row.enumerated()), id: \.offset) { colIndex, cell in
+                            Group {
+                                renderInlineContent(cell)
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(.appText)
+                                    .padding(.horizontal, DesignSystem.small)
+                                    .padding(.vertical, DesignSystem.tightPadding)
+                                    .frame(minWidth: 80, maxWidth: 180, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .background(rowIndex % 2 != 0 ? Color.appCard.opacity(0.3) : Color.clear)
+                            if colIndex < row.count - 1 {
+                                Divider()
+                                    .background(Color.appBorder.opacity(0.3))
+                            }
+                        }
+                    }
+                    if rowIndex < rows.count - 1 {
+                        Divider().background(Color.appBorder.opacity(0.3))
+                    }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                    .stroke(Color.appBorder.opacity(DesignSystem.disabledOpacity), lineWidth: DesignSystem.borderWidth)
+                    .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
             )
         }
         .padding(.vertical, DesignSystem.tiny)
@@ -355,23 +375,6 @@ struct MarkdownRendererView: View {
                 container.swiftUI.font = .system(.caption, design: .monospaced)
                 container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
                 container.swiftUI.foregroundColor = .appText
-                case .applink:
-                    container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
-                    container.swiftUI.foregroundColor = Color.appAccent
-                    container.swiftUI.underlineStyle = .single
-                    
-                    if segment.content.contains("|") {
-                        let parts = segment.content.split(separator: "|")
-                        let label = String(parts.first ?? "")
-                        let title = String(parts.last ?? "")
-                        container = AttributedString(label)
-                        container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
-                        container.swiftUI.foregroundColor = Color.appAccent
-                        container.swiftUI.underlineStyle = .single
-                        if let encoded = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                            container.foundation.link = URL(string: "applink://\(encoded)")
-                        }
-                    } else {
                         if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                             container.foundation.link = URL(string: "applink://\(encoded)")
                         }
