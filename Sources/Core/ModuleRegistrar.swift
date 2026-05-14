@@ -128,7 +128,9 @@ struct DomainModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
         print("🚀 [DI] 开始注册领域能力模块...")
         // 0. 认证与库服务
-        container.register(AuthService.shared, for: AuthService.self)
+        container.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
+        container.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
+        container.register(AuthService.shared, for: AuthService.self) // 保持对具体类型的支持，防止现有代码崩溃
         container.register(VaultService.shared, for: VaultService.self)
         
         // 1. 逻辑与处理器
@@ -137,6 +139,9 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(LintService(), for: LintService.self)
         container.register(UndoService(), for: UndoService.self)
         container.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
+        
+        container.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
+        container.register(ChatService.shared, for: ChatService.self)
         
         #if os(watchOS)
         container.register(WatchOCRService(), for: (any OCRServiceProtocol).self)

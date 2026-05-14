@@ -60,7 +60,6 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     // MARK: - 内部组件
     private let configStore: LLMConfigStore
     private let contextBuilder: LLMContextBuilder
-    private let historyStore: ChatHistoryStore
     
     // 专项子服务
     private var chatService: LLMChatService?
@@ -74,7 +73,6 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     
     private init() {
         self.configStore = LLMConfigStore()
-        self.historyStore = ChatHistoryStore()
         self.contextBuilder = LLMContextBuilder()
 
         // 从持久化配置中初始化发布属性
@@ -85,9 +83,6 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
         self._isEnabled = .init(initialValue: configStore.isEnabled)
         self._autoScan = .init(initialValue: configStore.autoScan)
         self._autoRefactor = .init(initialValue: configStore.autoRefactor)
-
-        // 加载历史消息
-        self.chatHistory = historyStore.messages
 
         // 初始化子服务
         updateSubServices()
@@ -110,8 +105,8 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
         // 订阅全局清理事件
         AppEventBus.shared.subscribe()
             .receive(on: RunLoop.main)
-            .sink { [weak self] event in
-                if case .clearAllDataRequested = event { self?.clearChatHistory() }
+            .sink { _ in
+                // LLMService 不再管理 ChatHistory
             }
             .store(in: &cancellables)
     }
@@ -164,16 +159,12 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     }
 
     /// 执行核心对话
-    func chat(query: String, pages: [KnowledgePage]) async throws -> ChatMessage {
+    func chat(query: String, history: [ChatMessage], pages: [KnowledgePage]) async throws -> ChatMessage {
         guard isEnabled, let chatService else { throw LLMError.notConfigured }
 
         let perf = ServiceContainer.shared.resolve(PerformanceService.self)
         
         return try await perf.measureAsync("ragChain") {
-            let userMessage = ChatMessage(role: .user, content: query)
-            self.chatHistory.append(userMessage)
-            historyStore.append(userMessage)
-
             isProcessing = true
             defer { isProcessing = false }
 
@@ -187,14 +178,11 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
             let response = try await chatService.chat(
                 systemPrompt: systemPrompt, 
                 query: query, 
-                history: Array(historyStore.recent(AppConstants.AI.maxChatHistorySize))
+                history: history
             )
             let latency = Int(Date().timeIntervalSince(startTime) * 1000)
 
             let assistantMessage = ChatMessage(role: .assistant, content: response)
-            self.chatHistory.append(assistantMessage)
-            historyStore.append(assistantMessage)
-            historyStore.persistToDisk()
 
             // 3. 异步性能记录与评估
             asyncMetrics(query: query, response: response, context: context, systemPrompt: systemPrompt, latency: latency)
@@ -204,7 +192,7 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     }
 
     /// 执行流式对话
-    func chatStream(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
+    func chatStream(query: String, history: [ChatMessage], pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream(String.self) { continuation in
             Task {
                 guard isEnabled, let chatService else {
@@ -214,28 +202,18 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
 
                 await MainActor.run {
                     isProcessing = true
-                    streamingContent = ""
-                    let userMsg = ChatMessage(role: .user, content: query)
-                    self.chatHistory.append(userMsg)
-                    historyStore.append(userMsg)
                 }
 
                 let context = await contextBuilder.buildRelevantContext(query: query)
                 let rankedPages = (try? await rerank(query: query, candidates: pages)) ?? pages
                 let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + context
-                let history = Array(historyStore.recent(AppConstants.AI.maxChatHistorySize))
 
                 do {
                     for try await chunk in chatService.streamChat(systemPrompt: systemPrompt, query: query, history: history) {
-                        await MainActor.run { streamingContent += chunk }
                         continuation.yield(chunk)
                     }
 
                     await MainActor.run {
-                        let assistantMsg = ChatMessage(role: .assistant, content: streamingContent)
-                        self.chatHistory.append(assistantMsg)
-                        historyStore.append(assistantMsg)
-                        historyStore.persistToDisk()
                         isProcessing = false
                     }
                     continuation.finish()
@@ -245,17 +223,6 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
                 }
             }
         }
-    }
-
-    /// 核心对话 (UI 兼容别名)
-    func sendChatMessage(query: String, pages: [KnowledgePage]) async throws {
-        _ = try await chat(query: query, pages: pages)
-    }
-
-    /// 取消当前正在进行的请求
-    func cancelCurrentRequest() {
-        isProcessing = false
-        // TODO: [SR-02] 深度集成 LLMClient 的取消机制
     }
 
     /// 智能内容摄入
@@ -351,12 +318,6 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
             _ = await evalService.evaluate(query: query, answer: response, context: context)
         }
     }
-
-    func clearChatHistory() {
-        chatHistory.removeAll()
-        historyStore.clear()
-        objectWillChange.send()
-    }
 }
 
 // MARK: - Validation Support
@@ -368,3 +329,4 @@ extension LLMService {
         let errorMessage: String?
     }
 }
+

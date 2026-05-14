@@ -93,18 +93,18 @@ struct ChatViewContent: View {
         Menu {
             Section {
                 Button(action: { }) {
-                    Label("\(llmService.chatHistory.count) \(Localized.tr("llm.messages"))", systemImage: "bubble.left.and.bubble.right")
+                    Label("\(chatVM.chatHistory.count) \(Localized.tr("llm.messages"))", systemImage: "bubble.left.and.bubble.right")
                 }
                 .disabled(true)
                 
                 Button(role: .destructive, action: { 
-                    llmService.clearChatHistory() 
+                    chatVM.clearChatHistory() 
                 }) {
                     Label(Localized.tr("llm.clearHistory"), systemImage: "trash")
                 }
             }
             
-            if !llmService.chatHistory.isEmpty {
+            if !chatVM.chatHistory.isEmpty {
                 Section(L10n.Chat.tr("exportConversation")) {
                     Button(action: {
                         withAnimation {
@@ -117,8 +117,8 @@ struct ChatViewContent: View {
 
                     Button(action: {
                         let history = isSelectionMode && !selectedMessageIDs.isEmpty ?
-                            llmService.chatHistory.filter { selectedMessageIDs.contains($0.id) } :
-                            llmService.chatHistory
+                            chatVM.chatHistory.filter { selectedMessageIDs.contains($0.id) } :
+                            chatVM.chatHistory
                         Task {
                             do {
                                 let url = try await chatVM.exportChat(history: history)
@@ -172,16 +172,16 @@ struct ChatViewContent: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: DesignSystem.medium) {
-                    if llmService.chatHistory.isEmpty && !llmService.isProcessing {
+                    if chatVM.chatHistory.isEmpty && !chatVM.isProcessing {
                         chatWelcome()
                     } else {
                         // 按照时间正序排列，最新的在最下面
-                        ForEach(llmService.chatHistory) { message in
+                        ForEach(chatVM.chatHistory) { message in
                             messageRow(for: message)
                         }
 
                         // 正在处理中，就显示流式气泡（在最下面）
-                        if llmService.isProcessing {
+                        if chatVM.isProcessing {
                             streamingBubble
                                 .id("processing")
                         }
@@ -190,12 +190,12 @@ struct ChatViewContent: View {
                 .padding(.horizontal, DesignSystem.tiny)
                 .padding(.bottom, DesignSystem.standardPadding)
             }
-            .onChange(of: llmService.chatHistory.count) {
+            .onChange(of: chatVM.chatHistory.count) {
                 // 当有新消息时，自动滚动到底部
-                withAnimation { proxy.scrollTo(llmService.chatHistory.last?.id, anchor: .bottom) }
+                withAnimation { proxy.scrollTo(chatVM.chatHistory.last?.id, anchor: .bottom) }
             }
-            .onChange(of: llmService.isProcessing) {
-                if llmService.isProcessing {
+            .onChange(of: chatVM.isProcessing) {
+                if chatVM.isProcessing {
                     withAnimation { proxy.scrollTo("processing", anchor: .bottom) }
                 }
             }
@@ -401,20 +401,20 @@ struct ChatViewContent: View {
                 Button(action: { showPrompts.toggle() }) {
                     Image(systemName: "sparkles.rectangle.stack")
                         .font(.title3)
-                        .foregroundStyle(llmService.isProcessing ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .appAccent)
+                        .foregroundStyle(chatVM.isProcessing ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .appAccent)
                         .frame(width: DesignSystem.Action.buttonHeight, height: DesignSystem.Action.buttonHeight)
                         .background(Color.appCard)
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-                .disabled(llmService.isProcessing)
+                .disabled(chatVM.isProcessing)
                 
-                TextField(llmService.isProcessing ? L10n.Chat.tr("aiRunning") : L10n.Chat.tr("inputPlaceholder"), text: $chatVM.inputText)
+                TextField(chatVM.isProcessing ? L10n.Chat.tr("aiRunning") : L10n.Chat.tr("inputPlaceholder"), text: $chatVM.inputText)
                     .font(.subheadline)
                     .focused($isInputFocused)
-                    .foregroundStyle(llmService.isProcessing ? .appSecondary : .appText)
+                    .foregroundStyle(chatVM.isProcessing ? .appSecondary : .appText)
                     .textFieldStyle(.plain)
-                    .disabled(llmService.isProcessing)
+                    .disabled(chatVM.isProcessing)
                     .autocorrectionDisabled(false)
                     .textInputAutocapitalization(.sentences)
                     .submitLabel(.send)
@@ -423,25 +423,25 @@ struct ChatViewContent: View {
                     }
                 
                 Button { 
-                    if llmService.isProcessing {
-                        llmService.cancelCurrentRequest()
+                    if chatVM.isProcessing {
+                        chatVM.cancelCurrentRequest()
                     } else {
                         HapticFeedback.shared.trigger(.selection)
                         sendMessage() 
                     }
                 } label: {
-                    Image(systemName: llmService.isProcessing ? "stop.circle.fill" : "arrow.up.circle.fill")
+                    Image(systemName: chatVM.isProcessing ? "stop.circle.fill" : "arrow.up.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(llmService.isProcessing ? .red : (canSend ? .appAccent : .appSecondary))
-                        .symbolEffect(.bounce, value: llmService.isProcessing)
+                        .foregroundStyle(chatVM.isProcessing ? .red : (canSend ? .appAccent : .appSecondary))
+                        .symbolEffect(.bounce, value: chatVM.isProcessing)
                         .frame(width: DesignSystem.Action.inputBarHeight, height: DesignSystem.Action.inputBarHeight)
                 }
                 .accessibilityIdentifier("send")
-                .disabled(!canSend && !llmService.isProcessing)
+                .disabled(!canSend && !chatVM.isProcessing)
             }
             .padding(.horizontal, DesignSystem.standardPadding)
             .padding(.vertical, DesignSystem.tightPadding)
-            .background(llmService.isProcessing ? Color.appCard.opacity(DesignSystem.fullOpacity * 0.5) : Color.appCard) // 0.5
+            .background(chatVM.isProcessing ? Color.appCard.opacity(DesignSystem.fullOpacity * 0.5) : Color.appCard) // 0.5
             .sheet(isPresented: $showPrompts) {
                 NavigationStack {
                     chatWelcome(isSheet: true)
@@ -461,7 +461,7 @@ struct ChatViewContent: View {
     }
     
     private var canSend: Bool {
-        !chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !llmService.isProcessing
+        !chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !chatVM.isProcessing
     }
     
     // MARK: - Send Message
@@ -469,8 +469,8 @@ struct ChatViewContent: View {
         let text = (overrideText ?? chatVM.inputText).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
         
-        if llmService.isProcessing {
-            llmService.cancelCurrentRequest()
+        if chatVM.isProcessing {
+            chatVM.cancelCurrentRequest()
             return
         }
         
@@ -479,7 +479,7 @@ struct ChatViewContent: View {
         
         Task {
             do {
-                try await llmService.sendChatMessage(query: text, pages: store.pages)
+                try await chatVM.sendChatMessage(query: text, pages: store.pages)
             } catch {
                 await MainActor.run {
                     if case LLMError.notConfigured = error {
@@ -492,6 +492,5 @@ struct ChatViewContent: View {
             }
         }
     }
-    
 }
 

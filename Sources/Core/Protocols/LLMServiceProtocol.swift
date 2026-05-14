@@ -20,8 +20,8 @@ protocol LLMChatServiceProtocol: AnyObject, Sendable {
     var isEnabled: Bool { get }
 
     // MARK: - 核心对话与推理
-    func chat(query: String, pages: [KnowledgePage]) async throws -> ChatMessage
-    func chatStream(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error>
+    func chat(query: String, history: [ChatMessage], pages: [KnowledgePage]) async throws -> ChatMessage
+    func chatStream(query: String, history: [ChatMessage], pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error>
 
     /// 通用生成接口
     /// - Parameters:
