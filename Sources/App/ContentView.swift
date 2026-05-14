@@ -33,6 +33,8 @@ struct ContentView: View {
     @StateObject private var onboardingService = OnboardingService()
     @Inject var deepLinkService: DeepLinkService
     @Inject var appEnv: any AppEnvironmentProtocol
+    
+    @State private var showSidebar = false // 方案 D: iPhone 侧边栏开关
 
     var body: some View {
         @Bindable var store = store
@@ -40,22 +42,67 @@ struct ContentView: View {
         let tintColor = ThemeManager.colorForName(themeManager.accentColorRaw)
         
         ZStack {
-            if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
-                if vaultService.selectedVaultID != nil {
-                    mainContent(tintColor: tintColor)
-                        .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
-                } else {
-                    NotebookHubView()
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+            // 背景层
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            // 主内容层
+            mainContainer(tintColor: tintColor)
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleSidebar"))) { _ in
+                    withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) {
+                        showSidebar.toggle()
+                    }
                 }
-            } else {
-                AuthView()
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            
+            // 方案 D: iPhone 侧边栏抽屉层
+            if showSidebar && appEnv.screenClass == .compact {
+                Color.black.opacity(DesignSystem.dimmedOpacity)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) {
+                            showSidebar = false
+                        }
+                    }
+                    .transition(.opacity)
+                
+                HStack {
+                    SidebarView(heroNamespace: heroNamespace)
+                        .frame(width: DesignSystem.Sidebar.width)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.card, style: .continuous))
+                        .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.shadowRadius)
+                        .padding(.vertical, DesignSystem.medium)
+                        .padding(.leading, DesignSystem.medium)
+                    Spacer()
+                }
+                .transition(.move(edge: .leading))
+                .zIndex(DesignSystem.ZIndex.sidebarOverlay)
             }
         }
         .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
         .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)
         .environmentObject(onboardingService)
+    }
+    
+    @ViewBuilder
+    private func mainContainer(tintColor: Color) -> some View {
+        if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
+            Group {
+                if vaultService.selectedVaultID != nil {
+                    mainContent(tintColor: tintColor)
+                        .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
+                } else {
+                    NavigationStack {
+                        NotebookHubView()
+                    }
+                    .id("NotebookHub")
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+        } else {
+            AuthView()
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
     }
     
     @ViewBuilder
@@ -67,6 +114,7 @@ struct ContentView: View {
                 if appEnv.screenClass != .compact {
                     adaptiveSplitView(tintColor: tintColor)
                 } else {
+                    // 恢复原版 Tab 导航 (iPhone)
                     if #available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *) {
                         modernTabView(tintColor: tintColor)
                     } else {
@@ -80,8 +128,8 @@ struct ContentView: View {
 
             if store.securityService.isLocked {
                 LockOverlayView()
-                    .transition(AnyTransition.opacity.combined(with: .scale(scale: Colors.Opacity.fullOpacity * 0.95)))
-                    .zIndex(100)
+                    .transition(AnyTransition.opacity.combined(with: .scale(scale: Colors.Opacity.fullOpacity * DesignSystem.Metrics.lockOverlayScaleMultiplier)))
+                    .zIndex(DesignSystem.ZIndex.lockOverlay)
             }
             
             OnboardingOverlay(service: onboardingService)
@@ -93,7 +141,7 @@ struct ContentView: View {
                         medalService.newlyEarnedMedal = nil
                     }
                 }
-                .zIndex(200)
+                .zIndex(DesignSystem.ZIndex.medalPopup)
                 .transition(.asymmetric(insertion: .opacity, removal: .scale.combined(with: .opacity)))
             }
             
@@ -102,7 +150,7 @@ struct ContentView: View {
                 CoachMarkOverlay(type: coachMark, selectedTab: $router.selectedTab) {
                     store.pendingCoachMark = nil
                 }
-                .zIndex(300)
+                .zIndex(DesignSystem.ZIndex.coachMark)
             }
         }
         .onAppear {
@@ -221,6 +269,9 @@ struct ContentView: View {
         @Bindable var router = router
         TabView(selection: $router.selectedTab) {
             knowledgeTabContent
+                .tabItem {
+                    Label(AppTab.knowledge.displayTitle, systemImage: AppTab.knowledge.icon)
+                }
                 .accessibilityIdentifier("Knowledge")
                 .tag(AppTab.knowledge)
 
@@ -282,8 +333,24 @@ struct ContentView: View {
     @ViewBuilder
     private var knowledgeTabContent: some View {
         @Bindable var router = router
-        NavigationView(selectedTab: $router.selectedTab, heroNamespace: heroNamespace)
-            .id(router.languageForceUpdate)
+        if appEnv.screenClass == .compact {
+            NavigationStack(path: $router.path) {
+                SidebarView(heroNamespace: heroNamespace, selection: $router.sidebarSelection) // 选本后进入侧边栏菜单 (含所有页面、知识合成等)
+                    .id(router.languageForceUpdate)
+                    .navigationDestination(for: AppRoute.self) { route in
+                        ViewFactory.makeView(for: route)
+                    }
+                    .navigationDestination(for: SidebarSelection.self) { selection in
+                        ViewFactory.makeView(for: selection.asRoute())
+                    }
+                    .navigationDestination(for: KnowledgePage.self) { page in
+                        PageDetailView(page: page)
+                    }
+            }
+        } else {
+            NavigationView(selectedTab: $router.selectedTab, heroNamespace: heroNamespace)
+                .id(router.languageForceUpdate)
+        }
     }
     
     /// Chat tab 内容
