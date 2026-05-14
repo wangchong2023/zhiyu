@@ -36,6 +36,9 @@ public enum Colors {
     /// 功能引导背景透明度 (0.6)
     public static let coachMarkBackgroundOpacity: Double = 0.6
     
+    /// 较浅的填充透明度 (0.1)，常用于标签背景
+    public static let subtleFillOpacity: Double = 0.1
+    
     /// 表面层透明度 (0.8)，常用于卡片叠加
     public static let surfaceOpacity: Double = 0.8
     /// 半透层透明度 (0.6)
@@ -62,6 +65,7 @@ public enum Colors {
         public static let secondaryOpacity: Double = Colors.secondaryOpacity
         public static let shadowOpacity: Double = Colors.shadowOpacity
         public static let coachMarkBackgroundOpacity: Double = Colors.coachMarkBackgroundOpacity
+        public static let subtleFillOpacity: Double = Colors.subtleFillOpacity
         
         public static let surfaceOpacity: Double = Colors.surfaceOpacity
         public static let translucentOpacity: Double = Colors.translucentOpacity

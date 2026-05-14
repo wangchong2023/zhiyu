@@ -59,9 +59,23 @@ public enum Animations {
     public static let shimmerEndRatio: CGFloat = 1.6
     /// 中型发光缩放倍率
     public static let glowScaleMedium: CGFloat = 1.3
-    /// 大型发光缩放倍率
+    /// 巨大发光缩放倍率
     public static let glowScaleLarge: CGFloat = 1.8
-    
+
+    // MARK: - 5. 业务场景动效 (Business Scene Animations)
+
+    /// 启动页动画序列令牌
+    public enum Splash {
+        /// 名言淡入延迟 (standardDuration * 3)
+        public static let quoteDelay: Double = standardDuration * 3
+        /// 署名与按钮淡入延迟 (slowDuration + standardDuration * 4.5)
+        public static let authorDelay: Double = slowDuration + standardDuration * 4.5
+        /// 闪光扫过延迟 (slowDuration + standardDuration * 6.5)
+        public static let shimmerDelay: Double = slowDuration + standardDuration * 6.5
+        /// 自动进入延迟 (5.0s)
+        public static let autoDismissDelay: Double = 5.0
+    }
+
     public struct Interaction {
         public static let pressScale: CGFloat = Animations.pressScale
         public static let hoverScale: CGFloat = Animations.hoverScale

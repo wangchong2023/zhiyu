@@ -99,6 +99,10 @@ public enum Spacing {
         public static let tightPadding: CGFloat = 8
         /// 页面顶部标题栏纵向边距 (12px)
         public static let headerVerticalPadding: CGFloat = 12
+        /// 欢迎页顶部内边距 (huge + small)
+        public static let welcomeHeaderTopPadding: CGFloat = huge + small
+        /// 移动端侧边栏覆盖层纵向内边距 (medium)
+        public static let sidebarOverlayVerticalPadding: CGFloat = medium
         /// 栏目间距 (16px)
         public static let columnSpacing: CGFloat = 16
         /// 列表行间距 (8px)
@@ -247,6 +251,11 @@ public enum Spacing {
         public static let sectionSpacing: CGFloat = 24
         public static let maxTagCloudHeight: CGFloat = 300
         
+        /// 安全锁定层缩放倍率 (0.95)
+        public static let lockOverlayScaleMultiplier: CGFloat = 0.95
+        /// 启动页名言闪烁偏移量 (-200)
+        public static let splashQuoteShimmerOffset: CGFloat = -200
+        
         /// 指令面板标准高度
         public static let commandPaletteHeight: CGFloat = heroValueSize * 15.3
         /// 功能引导图标缩放比例
@@ -342,6 +351,9 @@ public enum Spacing {
         public static let vaultShadowRadius: CGFloat = 5
         /// 笔记本切换区域阴影 Y 轴偏移
         public static let vaultShadowY: CGFloat = 3
+        
+        /// 侧边栏标准宽度
+        public static let width: CGFloat = 280
     }
     
     /// 笔记本枢纽规范
