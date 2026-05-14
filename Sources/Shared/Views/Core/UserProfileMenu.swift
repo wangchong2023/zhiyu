@@ -99,8 +99,14 @@ struct UserProfileMenu: View {
             }
         }
         .frame(width: 32, height: 32)
-        .background(Color.appAccent.opacity(0.12))
+        .background(
+            ZStack {
+                Circle().fill(Color.appAccent.opacity(0.08))
+                Circle().fill(.ultraThinMaterial)
+            }
+        )
         .clipShape(Circle())
+        .compositingGroup() // 关键：消除边缘白边
         .foregroundStyle(.appAccent)
     }
     

@@ -27,26 +27,29 @@ struct VaultBadge: View {
                 .disabled(true)
                 
             } label: {
-                HStack(spacing: currentVault.name.isEmpty ? 2 : 4) {
+                HStack(spacing: DesignSystem.Chip.spacing) {
                     Image(systemName: "books.vertical.fill")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.system(size: DesignSystem.captionIconSize + DesignSystem.atomic)) // 14pt
                     
                     if !currentVault.name.isEmpty {
                         Text(currentVault.name)
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold, design: .rounded)) // 14pt
                             .lineLimit(1)
                     }
                     
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 8, weight: .semibold))
-                        .opacity(0.5)
+                        .font(.system(size: DesignSystem.captionIconSize - DesignSystem.atomic, weight: .bold)) // 10pt
+                        .foregroundStyle(.appAccent.opacity(DesignSystem.secondaryOpacity))
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.vertical, DesignSystem.Chip.verticalPadding * 2)
                 .background(
-                    Capsule()
-                        .fill(Color.appAccent.opacity(0.12))
+                    ZStack {
+                        Capsule().fill(Color.appAccent.opacity(DesignSystem.glassOpacity))
+                        Capsule().fill(.ultraThinMaterial)
+                    }
                 )
+                .compositingGroup()
                 .foregroundStyle(.appAccent)
             }
             .buttonStyle(.plain)

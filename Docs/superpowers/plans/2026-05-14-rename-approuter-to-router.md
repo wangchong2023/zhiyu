@@ -1,6 +1,6 @@
 # Rename AppRouter to Router Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Rename all occurrences of `AppRouter` to `Router` across the codebase to maintain consistency with the updated `Router.swift`.
 
@@ -19,18 +19,18 @@
 - Modify: `Sources/App/ViewFactory.swift`
 - Modify: `Sources/App/WelcomeView.swift`
 
-- [ ] **Step 1: Replace AppRouter with Router in Sources/App/ContentView.swift**
-- [ ] **Step 2: Replace AppRouter with Router in Sources/App/NavigationView.swift**
-- [ ] **Step 3: Replace AppRouter with Router in Sources/App/SidebarView.swift**
-- [ ] **Step 4: Replace AppRouter with Router in Sources/App/ViewFactory.swift**
-- [ ] **Step 5: Replace AppRouter with Router in Sources/App/WelcomeView.swift**
+- [x] **Step 1: Replace AppRouter with Router in Sources/App/ContentView.swift**
+- [x] **Step 2: Replace AppRouter with Router in Sources/App/NavigationView.swift**
+- [x] **Step 3: Replace AppRouter with Router in Sources/App/SidebarView.swift**
+- [x] **Step 4: Replace AppRouter with Router in Sources/App/ViewFactory.swift**
+- [x] **Step 5: Replace AppRouter with Router in Sources/App/WelcomeView.swift**
 
 ### Task 2: Update Core and Infrastructure
 
 **Files:**
 - Modify: `Sources/Core/ModuleRegistrar.swift`
 
-- [ ] **Step 1: Fix AppRouter registration in Sources/Core/ModuleRegistrar.swift**
+- [x] **Step 1: Fix AppRouter registration in Sources/Core/ModuleRegistrar.swift**
     - Replace `container.register(AppRouter.shared, for: AppRouter.self)` with `container.register(Router.shared, for: Router.self)`
 
 ### Task 3: Update Features
@@ -49,7 +49,7 @@
 - Modify: `Sources/Features/TaskCenter/View/TaskCenterView.swift`
 - Modify: `Sources/Features/Vault/View/VaultHomeView.swift`
 
-- [ ] **Step 1: Replace AppRouter with Router in all feature views**
+- [x] **Step 1: Replace AppRouter with Router in all feature views**
 
 ### Task 4: Update Shared Views
 
@@ -61,7 +61,7 @@
 - Modify: `Sources/Shared/Views/Pages/CreatePageView.swift`
 - Modify: `Sources/Shared/Views/Pages/PageDetailView.swift`
 
-- [ ] **Step 1: Replace AppRouter with Router in shared views**
+- [x] **Step 1: Replace AppRouter with Router in shared views**
 
 ### Task 5: Update Tests
 
@@ -69,14 +69,14 @@
 - Modify: `Tests/Shared/TestMocks.swift`
 - Modify: `Tests/Unit/Services/RouterTests.swift`
 
-- [ ] **Step 1: Replace AppRouter with Router in Tests/Shared/TestMocks.swift**
-- [ ] **Step 2: Replace AppRouter with Router and update class name in Tests/Unit/Services/RouterTests.swift**
+- [x] **Step 1: Replace AppRouter with Router in Tests/Shared/TestMocks.swift**
+- [x] **Step 2: Replace AppRouter with Router and update class name in Tests/Unit/Services/RouterTests.swift**
 
 ### Task 6: Verification
 
-- [ ] **Step 1: Run iOS build**
+- [x] **Step 1: Run iOS build**
     - Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
-- [ ] **Step 2: Run macOS build**
+- [x] **Step 2: Run macOS build**
     - Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
-- [ ] **Step 3: Run Tests**
+- [x] **Step 3: Run Tests**
     - Run: `xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`

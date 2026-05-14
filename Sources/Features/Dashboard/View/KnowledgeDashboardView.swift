@@ -26,13 +26,14 @@ struct KnowledgeDashboardView: View {
             themeManager.pageBackground()
             
             ScrollView {
-                VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+                VStack(alignment: .leading, spacing: DesignSystem.huge) { // 使用 huge (32pt) 增加板块间距
                     metricSection
                     densityChartSection
                     dailyInsightsSection
                     hotTopicsSection
                 }
                 .padding()
+                .padding(.bottom, DesignSystem.Metrics.chartHeight / 2) // 动态预留底部安全边距
             }
         }
         .appTabToolbar(title: L10n.Dashboard.tr("title"))
@@ -121,7 +122,8 @@ struct KnowledgeDashboardView: View {
             }
             
             // 卡片内容
-            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {                if densityData.isEmpty {
+            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+                if densityData.isEmpty {
                     emptyView
                 } else {
                     Chart(densityData) { item in
@@ -184,9 +186,9 @@ struct KnowledgeDashboardView: View {
                         .lineSpacing(DesignSystem.atomic)
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.top, DesignSystem.tiny)
+                .padding(DesignSystem.Layout.cardContentPadding) // 使用标准卡片内边距 (16pt)
+                .appMetricCardStyle(color: .appAccent)
             }
-            .appMetricCardStyle(color: .appAccent)
         }
     }
     
@@ -262,9 +264,9 @@ struct KnowledgeDashboardView: View {
                         .font(.subheadline)
                         .foregroundColor(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.vertical, DesignSystem.medium - 2)
                 }
             }
+            .padding(DesignSystem.Layout.cardContentPadding) // 使用标准卡片内边距 (16pt)
             .appMetricCardStyle(color: .appAccent, cornerRadius: DesignSystem.standardRadius)
         }
     }
@@ -378,12 +380,12 @@ struct MetricBox: View {
     var trend: String? = nil
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium + DesignSystem.atomic) { // 14pt
             HStack {
                 ZStack {
                     Circle()
                         .fill(color.opacity(DesignSystem.glassOpacity))
-                        .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.CompositeRow.iconBoxSize)
+                        .frame(width: DesignSystem.Timeline.indicatorSize, height: DesignSystem.Timeline.indicatorSize) // 36pt
                     Image(systemName: icon)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .foregroundColor(color)

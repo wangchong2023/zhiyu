@@ -162,6 +162,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         let llm = LLMService.shared
         container.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         container.register(llm, for: LLMService.self)
+        container.register(AISynthesisService.shared as any AISynthesisServiceProtocol, for: (any AISynthesisServiceProtocol).self)
         container.register(AISynthesisService.shared, for: AISynthesisService.self)
         container.register(PromptService.shared, for: PromptService.self)
         

@@ -13,9 +13,9 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .principal) {
                     VaultBadge()
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -24,8 +24,14 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                             trailingItems
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(Color.appAccent.opacity(0.12))
+                                .background(
+                                    ZStack {
+                                        Capsule().fill(Color.appAccent.opacity(0.08))
+                                        Capsule().fill(.ultraThinMaterial)
+                                    }
+                                )
                                 .clipShape(Capsule())
+                                .compositingGroup() // 消除边缘白边
                         }
                         UserProfileMenu()
                     }
@@ -47,12 +53,17 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // 子页面下，VaultBadge 与返回按钮并排
-                ToolbarItem(placement: .topBarLeading) {
-                    VaultBadge()
-                        .padding(.leading, -4) // 微调位置以紧贴返回按钮
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: -2) {
+                        Text(title)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(.appText)
+                        
+                        VaultBadge()
+                            .scaleEffect(0.85) // 子页面下略微缩小，作为上下文信息
+                    }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {

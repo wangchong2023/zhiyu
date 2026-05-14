@@ -24,6 +24,13 @@ struct IndexViewContent: View {
     @EnvironmentObject var themeManager: ThemeManager
     var filterType: PageType? = nil
     
+    // 视图模式定义
+    enum ViewMode: String, CaseIterable {
+        case list, grid
+        var icon: String { self == .list ? "square.grid.2x2" : "list.bullet" }
+    }
+    
+    @AppStorage("app.index.viewMode") private var viewMode: ViewMode = .list
     @State private var showDeleteConfirmation = false
     @State private var pageToDelete: KnowledgePage?
 
@@ -33,33 +40,14 @@ struct IndexViewContent: View {
                 .ignoresSafeArea()
             
             ScrollView {
-                LazyVStack(spacing: DesignSystem.standardPadding, pinnedViews: [.sectionHeaders]) {
-                    if filterType == nil {
-                        summarySection
-                    }
-
-                    if filterType == nil || filterType == .entity {
-                        entitySection
-                    }
-
-                    if filterType == nil || filterType == .concept {
-                        conceptSection
-                    }
-
-                    if filterType == nil || filterType == .source {
-                        sourceSection
-                    }
-
-                    if filterType == nil || filterType == .comparison {
-                        comparisonSection
-                    }
+                if viewMode == .list {
+                    listView
+                } else {
+                    gridView
                 }
-                .padding(.horizontal, DesignSystem.huge)
-                .padding(.vertical, DesignSystem.loosePadding)
-                .padding(.bottom, DesignSystem.standardPadding * 2)
             }
         }
-        .modifier(IndexToolbarModifier(filterType: filterType, store: store))
+        .modifier(IndexToolbarModifier(filterType: filterType, store: store, viewMode: $viewMode))
                 .confirmationDialog(
                     pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
                     isPresented: $showDeleteConfirmation,
@@ -76,8 +64,71 @@ struct IndexViewContent: View {
                     }
                 } message: {
                     Text(Localized.tr("settings.clearAll.message"))
-                }
+    }
+    
+    @ViewBuilder
+    private var listView: some View {
+        LazyVStack(spacing: DesignSystem.standardPadding, pinnedViews: [.sectionHeaders]) {
+            if filterType == nil {
+                summarySection
+            }
+
+            if filterType == nil || filterType == .entity {
+                entitySection
+            }
+
+            if filterType == nil || filterType == .concept {
+                conceptSection
+            }
+
+            if filterType == nil || filterType == .source {
+                sourceSection
+            }
+
+            if filterType == nil || filterType == .comparison {
+                comparisonSection
+            }
         }
+        .padding(.horizontal, DesignSystem.huge)
+        .padding(.vertical, DesignSystem.loosePadding)
+        .padding(.bottom, DesignSystem.standardPadding * 2)
+    }
+
+    @ViewBuilder
+    private var gridView: some View {
+        let columns = [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: DesignSystem.Grid.standardSpacing)]
+        let pages = filterType == nil ? store.pages : store.pages.filter { $0.type == filterType }
+        
+        LazyVGrid(columns: columns, spacing: DesignSystem.Grid.standardSpacing) {
+            ForEach(pages) { page in
+                NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                    VStack(alignment: .leading, spacing: DesignSystem.small) {
+                        HStack {
+                            Image(systemName: page.type.icon)
+                                .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+                            Spacer()
+                            Circle()
+                                .fill(Color.fromModelColorName(page.confidence.colorName))
+                                .frame(width: 8, height: 8)
+                        }
+                        
+                        Text(page.title)
+                            .font(.subheadline.bold())
+                            .lineLimit(2)
+                            .foregroundStyle(.appText)
+                        
+                        Text(page.summary)
+                            .font(.caption2)
+                            .lineLimit(3)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: true)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(DesignSystem.huge)
+    }
     
     @ViewBuilder
     private var summarySection: some View {
@@ -334,18 +385,36 @@ struct IndexRowView: View {
 struct IndexToolbarModifier: ViewModifier {
     let filterType: PageType?
     let store: AppStore
+    @Binding var viewMode: IndexViewContent.ViewMode
     
     func body(content: Content) -> some View {
         let title = filterType?.displayName ?? Localized.tr("sidebar.allPages")
         
         if filterType == nil {
             content.appTabToolbar(title: title) {
-                refreshButton
+                HStack(spacing: DesignSystem.Action.buttonSpacing) {
+                    viewModeButton
+                    refreshButton
+                }
             }
         } else {
             content.appSubPageToolbar(title: title) {
-                refreshButton
+                HStack(spacing: DesignSystem.Action.buttonSpacing) {
+                    viewModeButton
+                    refreshButton
+                }
             }
+        }
+    }
+    
+    private var viewModeButton: some View {
+        Button {
+            HapticFeedback.shared.trigger(.selection)
+            withAnimation(.spring()) {
+                viewMode = viewMode == .list ? .grid : .list
+            }
+        } label: {
+            Image(systemName: viewMode.icon)
         }
     }
     
