@@ -375,7 +375,7 @@ final class CollaborationWorkflowTests: XCTestCase {
         let peer = MCPeerID(displayName: "peer123")
         let room = DiscoveredRoom(
             id: "room-1",
-            peerID: peer,
+            platformPeer: peer,
             roomName: "Test Room",
             owner: "HostUser"
         )

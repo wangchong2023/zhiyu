@@ -26,6 +26,7 @@
 		022B92790124114FC923256F /* PluginRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5C11049D30E174AC6BADF /* PluginRegistry.swift */; };
 		024D8F9366CE155EF258919B /* OCRServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10ECE46AA0AC55BE4FB780B8 /* OCRServiceProtocol.swift */; };
 		02A28ED622AA80E411BFD265 /* GraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18ED79E4D1F012F06A29DC5 /* GraphViewModel.swift */; };
+		02BE403AE5083C9801820601 /* ChatServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00191B7B96AAF277B5F5AA9A /* ChatServiceTests.swift */; };
 		02E4C4B89472628203E9330F /* LLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F8E3B02387479B3AF3407A /* LLMService.swift */; };
 		02EAD576CCD880ADD5A14C4B /* AppCloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFFD61BE06CFA982D0629B /* AppCloudSyncService.swift */; };
 		03074BF362677400EE3C4DDC /* PluginDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75CC60330AF2D87D7AD5FD7 /* PluginDetailView.swift */; };
@@ -987,6 +988,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00191B7B96AAF277B5F5AA9A /* ChatServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatServiceTests.swift; sourceTree = "<group>"; };
 		003BE0C14B94526769F52EC2 /* CollaborationComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaborationComponents.swift; sourceTree = "<group>"; };
 		0150E9522185BBB1D8C57076 /* WatchPasteboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPasteboardService.swift; sourceTree = "<group>"; };
 		01BB81AF07DABB911575B16D /* PageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailView.swift; sourceTree = "<group>"; };
@@ -2860,6 +2862,7 @@
 		DDDE9409B4C553F0D6BB9D57 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				00191B7B96AAF277B5F5AA9A /* ChatServiceTests.swift */,
 				E83F8796331C5AE05647CAEF /* LinkServiceTests.swift */,
 				77F0FE15F9743ACDFFB902EF /* RouterTests.swift */,
 				C226308F3C1AF4EABDB20388 /* ZhiYuServiceTests.swift */,
@@ -3371,6 +3374,7 @@
 			files = (
 				F7F5FC438EEFB4DC636C263F /* AppStoreStorageTests.swift in Sources */,
 				F5941861D4B5FC98B48150A6 /* AppStoreTests.swift in Sources */,
+				02BE403AE5083C9801820601 /* ChatServiceTests.swift in Sources */,
 				FA8A60AC508D90BAC9962DD7 /* ComponentSnapshots.swift in Sources */,
 				1F121CFB2B6C5EF4855EB118 /* GraphLayoutEngineTests.swift in Sources */,
 				09F334293AAEF46AB11C18E7 /* IngestQueueTests.swift in Sources */,

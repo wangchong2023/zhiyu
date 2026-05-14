@@ -37,14 +37,16 @@ struct WatchDictationView: View {
             }
         }
         .navigationTitle(L10n.Watch.tr("capture"))
-    }
-    
+    @Inject private var watchSync: any WatchSyncProtocol
+
+    var body: some View {
+    ...
     private func saveAndSync() {
         _ = store.createPage(title: "Dictation \(Date().formatted())", type: .raw, content: text)
-        
+
         // 增强：通过 WCSession 实时推送到 iPhone
-        WatchConnectivityService.shared.sendContent(text)
-        
+        watchSync.sendContent(text)
+
         // 触发手表端震动反馈
         WKInterfaceDevice.current().play(.success)
         

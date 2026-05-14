@@ -182,8 +182,8 @@ final class CollaborationServiceTests: XCTestCase {
 
     func testDiscoveredRoomEquality() {
         let peer = MCPeerID(displayName: "p1")
-        let room1 = DiscoveredRoom(id: "r1", peerID: peer, roomName: "Room", owner: "Host1")
-        let room2 = DiscoveredRoom(id: "r1", peerID: peer, roomName: "Room", owner: "Host1")
+        let room1 = DiscoveredRoom(id: "r1", platformPeer: peer, roomName: "Room", owner: "Host1")
+        let room2 = DiscoveredRoom(id: "r1", platformPeer: peer, roomName: "Room", owner: "Host1")
         XCTAssertEqual(room1, room2)
     }
 }

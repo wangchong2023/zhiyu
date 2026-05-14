@@ -108,11 +108,11 @@
 - 创建：`Sources/App/Router.swift`
 - 创建：`Sources/App/AppEnvironment.swift`
 
-- [ ] **步骤 1：实现 AppEnvironment**
-统一管理 Core 和 Infrastructure 层的初始化顺序。
-- [ ] **步骤 2：实现 Router**
-集中收口所有跨模块的导航逻辑。
-- [ ] **步骤 3：提交代码**
+- [x] **步骤 1：实施 AppEnvironment**
+  管理 Core 与 Infrastructure 层的初始化顺序。
+- [x] **步骤 2：实施 Router**
+  集中管理所有跨模块导航逻辑。
+- [x] **步骤 3：提交代码**
 `git commit -m "feat: 实现 App 层路由调度与全局环境管理"`
 
 ---

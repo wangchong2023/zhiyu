@@ -145,7 +145,6 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         
         // 2. 应用层核心
         container.register(Router.shared, for: Router.self)
-        container.register(AppEnvironment.shared, for: AppEnvironment.self)
         
         #if os(watchOS)
         container.register(WatchOCRService(), for: (any OCRServiceProtocol).self)

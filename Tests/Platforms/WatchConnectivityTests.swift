@@ -16,11 +16,11 @@ import WatchConnectivity
 @MainActor
 final class WatchConnectivityTests: XCTestCase {
     
-    var service: WatchConnectivityService!
+    var service: iOSWatchSyncService!
     
     override func setUp() {
         super.setUp()
-        service = WatchConnectivityService.shared
+        service = iOSWatchSyncService()
     }
     
     /// 测试数据打包逻辑

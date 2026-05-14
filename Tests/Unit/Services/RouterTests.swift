@@ -1,10 +1,10 @@
 // RouterTests.swift
 //
 // 作者: Wang Chong
-// 功能说明: 验证全局路由管理器（Router）的逻辑
+// 功能说明: 验证全局路由管理器（Router）的逻辑，对应 SRS-6.4 状态管理
 // 版本: 1.1
 // 修改记录:
-//   - 2026-05-13: 适配 AppRouter -> Router 重构。
+//   - 2026-05-13: 适配 AppRouter -> Router 重构，补全 SRS ID。
 // 版权: Copyright © 2026 Wang Chong. All rights reserved.
 
 import XCTest
@@ -31,7 +31,7 @@ final class RouterTests: XCTestCase {
     
     // MARK: - History Tests
     
-    /// 验证基础入栈逻辑
+    /// 验证基础入栈逻辑 (SRS-6.4)
     func testAddToHistory_BasicPush() {
         let pageA = KnowledgePage(title: "Page A")
         router.addToHistory(pageA)
@@ -40,7 +40,7 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(router.navigationHistory.last?.id, pageA.id)
     }
     
-    /// 验证连续去重逻辑 (A -> A 应只有 1 个 A)
+    /// 验证连续去重逻辑 (A -> A 应只有 1 个 A) (SRS-6.4)
     func testAddToHistory_Deduplication() {
         let pageA = KnowledgePage(title: "Page A")
         router.addToHistory(pageA)
@@ -49,7 +49,7 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(router.navigationHistory.count, 1, "连续添加同一页面应当去重")
     }
     
-    /// 验证非连续重复逻辑 (A -> B -> A 应保留 [A, B, A])
+    /// 验证非连续重复逻辑 (A -> B -> A 应保留 [A, B, A]) (SRS-6.4)
     /// 这是为了确保用户能从 A 跳到 B，再跳回 A 时，面包屑能正确反映路径
     func testAddToHistory_CircularNavigation() {
         let pageA = KnowledgePage(title: "Page A")
@@ -63,7 +63,7 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(router.navigationHistory.map { $0.title }, ["Page A", "Page B", "Page A"])
     }
     
-    /// 验证历史长度限制 (最大 5 个)
+    /// 验证历史长度限制 (最大 5 个) (SRS-6.4)
     func testAddToHistory_LimitLength() {
         let pages = (1...6).map { KnowledgePage(title: "Page \($0)") }
         
@@ -76,7 +76,7 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(router.navigationHistory.last?.title, "Page 6", "最新的 Page 6 应当在末尾")
     }
     
-    /// 验证清空历史功能
+    /// 验证清空历史功能 (SRS-6.4)
     func testClearHistory() {
         let pageA = KnowledgePage(title: "Page A")
         router.addToHistory(pageA)

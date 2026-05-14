@@ -29,8 +29,8 @@ final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
     var objectWillChange = ObservableObjectPublisher()
     var isProcessing = false
     var isEnabled = true
-    func chat(query: String, pages: [KnowledgePage]) async throws -> ChatMessage { ChatMessage(role: .assistant, content: "") }
-    func chatStream(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
+    func chat(query: String, history: [ChatMessage], pages: [KnowledgePage]) async throws -> ChatMessage { ChatMessage(role: .assistant, content: "") }
+    func chatStream(query: String, history: [ChatMessage], pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
     func generate(prompt: String, systemPrompt: String) async throws -> String { "" }
     func smartIngest(title: String, rawContent: String, pages: [KnowledgePage]) async throws -> SmartIngestResult {
         SmartIngestResult(compiledContent: "", suggestedTags: [], suggestedType: "", relatedTitles: [], summary: "")
@@ -66,6 +66,10 @@ extension XCTestCase {
         ServiceContainer.shared.register(WorkflowService.shared, for: WorkflowService.self)
         ServiceContainer.shared.register(DataCoordinator(), for: DataCoordinator.self)
         
+        #if os(iOS)
+        ServiceContainer.shared.register(MultipeerCollaborationProvider(), for: (any CollaborationProviderProtocol).self)
+        #endif
+        
         // 2. Storage Services (L1)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         ServiceContainer.shared.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
@@ -79,11 +83,17 @@ extension XCTestCase {
         ServiceContainer.shared.register(embeddingManager, for: EmbeddingManager.self)
         
         // 3. Domain Services (L2)
+        ServiceContainer.shared.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
+        ServiceContainer.shared.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
+        ServiceContainer.shared.register(AuthService.shared, for: AuthService.self)
+        ServiceContainer.shared.register(VaultService.shared, for: VaultService.self)
+        
         ServiceContainer.shared.register(LinkService(), for: LinkService.self)
         ServiceContainer.shared.register(IngestService(), for: IngestService.self)
         ServiceContainer.shared.register(LintService(), for: LintService.self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
+        ServiceContainer.shared.register(ChatService.shared, for: (any ChatServiceProtocol).self)
         
         let llm = MockLLMService()
         ServiceContainer.shared.register(llm, for: (any LLMServiceProtocol).self)
@@ -94,5 +104,11 @@ extension XCTestCase {
         ServiceContainer.shared.register(evaluationService, for: RAGEvaluationService.self)
         
         ServiceContainer.shared.register(PluginRegistry.shared, for: PluginRegistry.self)
+        
+        #if os(iOS)
+        ServiceContainer.shared.register(iOSOCRService(), for: (any OCRServiceProtocol).self)
+        ServiceContainer.shared.register(iOSSpeechService(), for: (any SpeechServiceProtocol).self)
+        ServiceContainer.shared.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
+        #endif
     }
 }
