@@ -66,7 +66,7 @@ enum AppRoute: Hashable, Identifiable {
     case pluginMarket
     
     /// 全局搜索中心 (混合搜索与语义过滤) -> `SearchView`
-    case search
+    case search(query: String? = nil, filterType: PageType? = nil)
     
     /// 知识摄取中心 (OCR、PDF 导入、网页裁剪) -> `IngestView`
     case ingest
@@ -92,7 +92,7 @@ enum AppRoute: Hashable, Identifiable {
         case .weeklyReport: return "weeklyReport"
         case .lint: return "lint"
         case .pluginMarket: return "pluginMarket"
-        case .search: return "search"
+        case .search(let query, let type): return "search-\(query ?? "")-\(type?.rawValue ?? "all")"
         case .ingest: return "ingest"
         case .graph: return "graph"
         }

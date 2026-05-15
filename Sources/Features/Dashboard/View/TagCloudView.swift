@@ -37,51 +37,18 @@ struct TagCloudViewContent: View {
     // ── 外部依赖 ──
     @Environment(AppStore.self) var store
     
-    // ── 交互状态 ──
-    @State private var selectedTag: String?
-    @State private var tagToRename: String?
-    @State private var newTagName = ""
-    @State private var showDeleteConfirm = false
-    @State private var tagToDelete: String?
-    @State private var showAddTagDialog = false
-    @State private var addTagName = ""
-    
-    // ── 批量管理 ──
-    @State private var isEditMode = false
-    @State private var selectedTagsForBulk = Set<String>()
+    // 使用协调器管理状态与交互
+    @State private var coordinator: TagCloudCoordinator
     @State private var showBulkDeleteConfirm = false
-    @State private var searchText = ""
-
-    /// 数据源：所有标签及其引用计数
-    @State private var tags: [(tag: String, count: Int)] = []
 
     /// 初始化路由状态
     /// - Parameter initialTag: 外部传入的初始选中标签
     init(initialTag: String? = nil) {
-        _selectedTag = State(initialValue: initialTag)
+        self._coordinator = State(initialValue: TagCloudCoordinator(initialTag: initialTag))
     }
     
-    /// 执行数据抓取
-    private func fetchData() async {
-        let allTags = await store.getAllTags()
-        await MainActor.run {
-            self.tags = allTags
-        }
-    }
-
-    /// 经过搜索过滤后的标签列表
-    var filteredTags: [(tag: String, count: Int)] {
-        if searchText.isEmpty { return tags }
-        return tags.filter { $0.tag.localizedCaseInsensitiveContains(searchText) }
-    }
-
-    /// 基于选中标签筛选的页面列表
-    var filteredPages: [KnowledgePage] {
-        guard let tag = selectedTag else { return store.pages }
-        return store.pages.filter { $0.tags.contains(tag) }
-    }
-
     var body: some View {
+        @Bindable var coordinator = coordinator
         mainContent
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(PageBackgroundView(accentColor: .blue))
@@ -89,10 +56,10 @@ struct TagCloudViewContent: View {
             .navigationBarTitleDisplayMode(.inline)
             .background(alertLayer)
             .task {
-                await fetchData()
+                await coordinator.fetchData()
             }
             .onChange(of: store.pages) { _, _ in
-                Task { await fetchData() }
+                Task { await coordinator.fetchData() }
             }
     }
 
@@ -102,30 +69,28 @@ struct TagCloudViewContent: View {
             // 1. 顶部操作栏
             HStack(spacing: DesignSystem.wide) {
                 Spacer()
-                if !isEditMode {
-                    Button(action: { showAddTagDialog = true }) {
+                if !coordinator.isEditMode {
+                    Button(action: { coordinator.showAddTagDialog = true }) {
                         Label(Localized.tr("tags.addNew"), systemImage: "plus.circle")
                             .font(.subheadline.bold())
                     }
                 }
                 
                 Button(action: {
-                    withAnimation(DesignSystem.Animation.standard) {
-                        isEditMode.toggle()
-                        if !isEditMode { selectedTagsForBulk.removeAll() }
-                    }
+                    coordinator.isEditMode.toggle()
+                    if !coordinator.isEditMode { coordinator.selectedTagsForBulk.removeAll() }
                 }) {
-                    Label(isEditMode ? L10n.Common.tr("done") : Localized.tr("tags.manageTitle"), 
-                          systemImage: isEditMode ? "checkmark.circle" : "checklist")
+                    Label(coordinator.isEditMode ? L10n.Common.tr("done") : Localized.tr("tags.manageTitle"), 
+                          systemImage: coordinator.isEditMode ? "checkmark.circle" : "checklist")
                         .font(.subheadline.bold())
-                        .foregroundStyle(isEditMode ? .green : .appAccent)
+                        .foregroundStyle(coordinator.isEditMode ? .green : .appAccent)
                 }
             }
             .padding(.horizontal, DesignSystem.wide)
             .padding(.vertical, DesignSystem.Layout.headerVerticalPadding)
 
             // 2. 标签云展示区（带标准边框的卡片）
-            if tags.isEmpty {
+            if coordinator.tags.isEmpty {
                 emptyTagsView
             } else {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
@@ -141,7 +106,7 @@ struct TagCloudViewContent: View {
                     }
                     .appContainer(background: Color.appCard.opacity(DesignSystem.glassOpacity), padding: false)
                     .overlay(alignment: .bottom) {
-                        if isEditMode && !selectedTagsForBulk.isEmpty {
+                        if coordinator.isEditMode && !coordinator.selectedTagsForBulk.isEmpty {
                             bulkActionBar
                         }
                     }
@@ -158,8 +123,8 @@ struct TagCloudViewContent: View {
                         iconColor: .appSource
                     )
                     Spacer()
-                    if let _ = selectedTag, !isEditMode {
-                        Text(Localized.trf("tag.tagPages", filteredPages.count))
+                    if let _ = coordinator.selectedTag, !coordinator.isEditMode {
+                        Text(Localized.trf("tag.tagPages", coordinator.filteredPages.count))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
@@ -182,51 +147,48 @@ struct TagCloudViewContent: View {
         Color.clear
             // 重命名对话框
             .alert(Localized.tr("tag.renameTag"), isPresented: Binding(
-                get: { tagToRename != nil },
-                set: { if !$0 { tagToRename = nil } }
+                get: { coordinator.tagToRename != nil },
+                set: { if !$0 { coordinator.tagToRename = nil } }
             )) {
-                TextField(Localized.tr("tag.newName"), text: $newTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { tagToRename = nil }
+                TextField(Localized.tr("tag.newName"), text: $coordinator.newTagName)
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToRename = nil }
                 Button(L10n.Common.tr("ok")) {
-                    performRename()
+                    coordinator.performRename()
                 }
             } message: {
-                Text(Localized.trf("tag.renameMessage", tagToRename ?? ""))
+                Text(Localized.trf("tag.renameMessage", coordinator.tagToRename ?? ""))
             }
             // 删除确认对话框
             .confirmationDialog(
-                tagToDelete.map { Localized.trf("tag.deleteMessage", $0) } ?? Localized.tr("tag.deleteTag"),
-                isPresented: $showDeleteConfirm,
+                coordinator.tagToDelete.map { Localized.trf("tag.deleteMessage", $0) } ?? Localized.tr("tag.deleteTag"),
+                isPresented: $coordinator.showDeleteConfirm,
                 titleVisibility: .visible
             ) {
                 Button(L10n.Common.tr("delete"), role: .destructive) {
-                    performDelete()
+                    coordinator.performDelete()
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { tagToDelete = nil }
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToDelete = nil }
             } message: {
                 Text(Localized.tr("settings.clearAll.message"))
             }
             // 新增标签对话框 (保持 alert 因为需要文本输入)
-            .alert(Localized.tr("tags.addNew"), isPresented: $showAddTagDialog) {
-                TextField(Localized.tr("tags.inputName"), text: $addTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { addTagName = "" }
+            .alert(Localized.tr("tags.addNew"), isPresented: $coordinator.showAddTagDialog) {
+                TextField(Localized.tr("tags.inputName"), text: $coordinator.addTagName)
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.addTagName = "" }
                 Button(L10n.Common.tr("create")) {
-                    performAddTag()
+                    coordinator.performAddTag()
                 }
             } message: {
                 Text(Localized.tr("tags.createHint"))
             }
             // 批量删除确认
             .confirmationDialog(
-                Localized.trf("tags.bulkDeleteWarning", selectedTagsForBulk.count),
+                Localized.trf("tags.bulkDeleteWarning", coordinator.selectedTagsForBulk.count),
                 isPresented: $showBulkDeleteConfirm,
                 titleVisibility: .visible
             ) {
                 Button(L10n.Common.tr("deleteAll"), role: .destructive) {
-                    store.bulkDeleteTags(selectedTagsForBulk)
-                    HapticFeedback.shared.trigger(.success)
-                    selectedTagsForBulk.removeAll()
-                    isEditMode = false
+                    coordinator.performBulkDelete()
                 }
                 Button(L10n.Common.tr("cancel"), role: .cancel) { }
             } message: {
@@ -238,7 +200,7 @@ struct TagCloudViewContent: View {
 
     private var bulkActionBar: some View {
         HStack {
-            Text(Localized.trf("tags.selectedCount", selectedTagsForBulk.count))
+            Text(Localized.trf("tags.selectedCount", coordinator.selectedTagsForBulk.count))
                 .font(.subheadline.bold())
                 .foregroundStyle(.white)
             Spacer()
@@ -278,7 +240,7 @@ struct TagCloudViewContent: View {
     private var tagScrollView: some View {
         ScrollView {
             FlowLayout(spacing: DesignSystem.Grid.flowSpacing) {
-                ForEach(filteredTags, id: \.tag) { tagItem in
+                ForEach(coordinator.filteredTags, id: \.tag) { tagItem in
                     tagCapsule(tagItem)
                 }
             }
@@ -289,18 +251,18 @@ struct TagCloudViewContent: View {
     }
 
     private func tagCapsule(_ item: (tag: String, count: Int)) -> some View {
-        let isSelected = isEditMode ? selectedTagsForBulk.contains(item.tag) : selectedTag == item.tag
+        let isSelected = coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
         
         return Button(action: {
             withAnimation(DesignSystem.Animation.prominent) {
-                if isEditMode {
-                    if selectedTagsForBulk.contains(item.tag) {
-                        selectedTagsForBulk.remove(item.tag)
+                if coordinator.isEditMode {
+                    if coordinator.selectedTagsForBulk.contains(item.tag) {
+                        coordinator.selectedTagsForBulk.remove(item.tag)
                     } else {
-                        selectedTagsForBulk.insert(item.tag)
+                        coordinator.selectedTagsForBulk.insert(item.tag)
                     }
                 } else {
-                    selectedTag = selectedTag == item.tag ? nil : item.tag
+                    coordinator.selectedTag = coordinator.selectedTag == item.tag ? nil : item.tag
                 }
             }
             HapticFeedback.shared.trigger(.selection)
@@ -329,7 +291,7 @@ struct TagCloudViewContent: View {
             .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
             .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
             .overlay(alignment: .topTrailing) {
-                if isEditMode {
+                if coordinator.isEditMode {
                     ZStack {
                         Circle()
                             .fill(isSelected ? Color.appAccent : Color.appCard)
@@ -352,16 +314,16 @@ struct TagCloudViewContent: View {
         .buttonStyle(.plain)
         .foregroundStyle(isSelected ? .appAccent : .appText)
         .contextMenu {
-            if !isEditMode {
+            if !coordinator.isEditMode {
                 Button(action: {
-                    tagToRename = item.tag
-                    newTagName = item.tag
+                    coordinator.tagToRename = item.tag
+                    coordinator.newTagName = item.tag
                 }) {
                     Label(Localized.tr("tag.rename"), systemImage: "pencil")
                 }
                 Button(role: .destructive, action: {
-                    tagToDelete = item.tag
-                    showDeleteConfirm = true
+                    coordinator.tagToDelete = item.tag
+                    coordinator.showDeleteConfirm = true
                 }) {
                     Label(Localized.tr("tag.delete"), systemImage: "trash")
                 }
@@ -371,10 +333,10 @@ struct TagCloudViewContent: View {
 
     private var pagesListView: some View {
         Group {
-            if selectedTag != nil, !isEditMode {
+            if coordinator.selectedTag != nil, !coordinator.isEditMode {
                 List {
                     Section {
-                        ForEach(filteredPages) { page in
+                        ForEach(coordinator.filteredPages) { page in
                             NavigationLink(destination: PageDetailView(page: page)) {
                                 PageRowView(page: page, compact: true)
                                     .padding(.vertical, DesignSystem.tiny)
@@ -396,10 +358,10 @@ struct TagCloudViewContent: View {
                 .frame(maxHeight: .infinity)
             } else {
                 VStack(spacing: DesignSystem.medium) {
-                    Image(systemName: isEditMode ? "checklist" : "tag")
+                    Image(systemName: coordinator.isEditMode ? "checklist" : "tag")
                         .font(.system(size: DesignSystem.iconHuge))
                         .foregroundStyle(.appSecondary.opacity(DesignSystem.translucentOpacity))
-                    Text(isEditMode ? Localized.tr("tags.selectToManage") : Localized.tr("tagcloud.selectTag"))
+                    Text(coordinator.isEditMode ? Localized.tr("tags.selectToManage") : Localized.tr("tagcloud.selectTag"))
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }
@@ -407,52 +369,12 @@ struct TagCloudViewContent: View {
                 .frame(height: DesignSystem.Metrics.sourceCardHeight)
                 .background(Color.appBackground.opacity(DesignSystem.ghostOpacity))
                 .onTapGesture {
-                    if isEditMode { isEditMode = false }
+                    if coordinator.isEditMode { coordinator.isEditMode = false }
                 }
             }
         }
     }
 
-    // MARK: - 业务逻辑执行
-
-    /**
-     * @description: 执行标签重命名逻辑，同步更新 知识库页面引用及当前选中状态
-     * @return {*}
-     */
-    private func performRename() {
-        guard let old = tagToRename, !newTagName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        let trimmed = newTagName.trimmingCharacters(in: .whitespaces)
-        store.renameTag(old, to: trimmed)
-        if selectedTag == old { selectedTag = trimmed }
-        tagToRename = nil
-    }
-
-    /**
-     * @description: 执行标签删除逻辑，并重置选中状态
-     * @return {*}
-     */
-    private func performDelete() {
-        if let tag = tagToDelete {
-            store.deleteTag(tag)
-            if selectedTag == tag { selectedTag = nil }
-        }
-        tagToDelete = nil
-    }
-
-    /**
-     * @description: 创建新标签并自动设为选中状态
-     * @return {*}
-     */
-    private func performAddTag() {
-        let trimmed = addTagName.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        
-        Task { await store.addNewTag(trimmed) }
-        
-        addTagName = ""
-        showAddTagDialog = false
-        selectedTag = trimmed
-    }
 }
 
 // 简单的模糊背景视图 (macOS only)
@@ -474,4 +396,5 @@ struct BlurView: View {
     }
 }
 #endif
+
 

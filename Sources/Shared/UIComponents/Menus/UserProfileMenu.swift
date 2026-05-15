@@ -82,15 +82,21 @@ struct UserProfileMenu: View {
         Group {
             if authService.isGuest {
                 Image(systemName: "person.crop.circle")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
             } else {
                 Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: DesignSystem.headlineFontSize, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
             }
         }
         .foregroundStyle(.appAccent)
+        .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
+        .background(
+            Circle()
+                .fill(.appAccent.opacity(DesignSystem.surfaceOpacity))
+        )
+        .contentShape(Rectangle())
     }
     
     private var settingsStack: some View {

@@ -15,6 +15,10 @@ struct SearchView: View {
     @Environment(AppStore.self) var store
     @Environment(SearchStore.self) var searchStore
     @Environment(Router.self) var router
+    // 初始值 (由外部传入)
+    let initialQuery: String?
+    let initialFilterType: PageType?
+    
     @State private var searchText = ""
     @State private var filterType: PageType?
     @State private var filterStatus: PageStatus?
@@ -24,6 +28,15 @@ struct SearchView: View {
     @State private var advancedResults: [KnowledgePage] = []
     @State private var useAdvancedSearch = false
     @State private var showDiagnostics = false
+    
+    init(initialQuery: String? = nil, initialFilterType: PageType? = nil) {
+        self.initialQuery = initialQuery
+        self.initialFilterType = initialFilterType
+        // 注意：SwiftUI @State 在 init 中只能通过 _ 赋值，但通常我们在 onAppear 中应用初始值更稳妥，
+        // 或者在此处直接初始化 _searchText。
+        self._searchText = State(initialValue: initialQuery ?? "")
+        self._filterType = State(initialValue: initialFilterType)
+    }
     
     enum SortOption: String, CaseIterable {
         case updated = "search.sort.recentlyUpdated"

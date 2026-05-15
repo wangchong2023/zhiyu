@@ -14,16 +14,15 @@ import Charts
 struct KnowledgeDashboardView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
-    @Environment(AIInsightStore.self) var aiStore
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @State private var statsTask: Task<Void, Never>? = nil
-    @State private var tags: [(tag: String, count: Int)] = []
+    
+    // 使用协调器管理状态与交互
+    @State private var coordinator = DashboardCoordinator()
     @State private var showDensityInfo = false
-    @State private var totalLinks = 0
-    @State private var densityData: [DensityInfo] = []
     
     var body: some View {
+        @Bindable var coordinator = coordinator
         ZStack(alignment: .top) {
             // 1. 方案 D 沉浸式高级背景同步
             ZStack {
@@ -68,7 +67,7 @@ struct KnowledgeDashboardView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: { 
                     HapticFeedback.shared.trigger(.selection)
-                    router.navigate(to: .search) 
+                    router.navigate(to: .search()) 
                 }) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 18))
@@ -77,19 +76,11 @@ struct KnowledgeDashboardView: View {
                 .buttonStyle(.plain)
             }
         }
-        .onAppear {
-            statsTask?.cancel()
-            statsTask = Task {
-                updateTags()
-                await calculateStats()
-                refreshInsights()
-            }
-        }
-        .onDisappear {
-            statsTask?.cancel()
+        .task {
+            await coordinator.refreshAll()
         }
         .task(id: store.pages.count) {
-            await calculateStats()
+            await coordinator.calculateStats()
         }
     }
     
@@ -104,15 +95,15 @@ struct KnowledgeDashboardView: View {
                 unit: L10n.Dashboard.tr("pageList.pages"), 
                 icon: "doc.on.doc.fill", 
                 color: .appAccent,
-                trend: "+2"
+                trend: nil
             )
             MetricBox(
                 title: L10n.Dashboard.tr("totalLinks"), 
-                value: "\(totalLinks)", 
+                value: "\(coordinator.totalLinks)", 
                 unit: L10n.Dashboard.tr("pageList.links"), 
                 icon: "point.3.connected.trianglepath.dotted", 
                 color: .appConcept,
-                trend: "+5"
+                trend: nil
             )
         }
     }
@@ -165,10 +156,10 @@ struct KnowledgeDashboardView: View {
             
             // 卡片内容
             VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
-                if densityData.isEmpty {
+                if coordinator.densityData.isEmpty {
                     emptyView
                 } else {
-                    Chart(densityData) { item in
+                    Chart(coordinator.densityData) { item in
                         BarMark(
                             x: .value("Outbound", item.outbound),
                             y: .value("Page", item.name)
@@ -244,30 +235,30 @@ struct KnowledgeDashboardView: View {
                 Text(L10n.Dashboard.tr("dailyInsights"))
                     .font(.headline)
                 Spacer()
-                Button(action: { refreshInsights() }) {
+                Button(action: { Task { await coordinator.refreshInsights() } }) {
                     Image(systemName: "arrow.clockwise")
                         .font(.caption)
                         .foregroundColor(.appSecondary)
-                        .rotationEffect(.degrees(aiStore.isGeneratingDailyRecap ? 360 : 0))
-                        .animation(aiStore.isGeneratingDailyRecap ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: aiStore.isGeneratingDailyRecap)
+                        .rotationEffect(.degrees(coordinator.isGeneratingInsights ? 360 : 0))
+                        .animation(coordinator.isGeneratingInsights ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: coordinator.isGeneratingInsights)
                 }
                 .buttonStyle(.plain)
             }
             
             VStack(alignment: .leading, spacing: 12) {
-                if aiStore.isGeneratingDailyRecap {
+                if coordinator.isGeneratingInsights {
                     HStack {
                         Spacer()
                         ProgressView()
                             .scaleEffect(0.8)
-                        Text(L10n.Dashboard.insightsLoading)
+                        Text(L10n.Dashboard.tr("insightsLoading"))
                             .font(.subheadline)
                             .foregroundColor(.appSecondary)
                             .italic()
                         Spacer()
                     }
                     .padding(.vertical, 20)
-                } else if let recap = aiStore.dailyRecap {
+                } else if let recap = coordinator.dailyRecap {
                     Button(action: {
                         HapticFeedback.shared.trigger(.selection)
                         if store.pages.contains(where: { $0.id == recap.targetPageID }) {
@@ -340,54 +331,6 @@ struct KnowledgeDashboardView: View {
                 }
             }
         }
-    }
-    
-    @Inject private var llm: LLMService
-    
-    private func refreshInsights() {
-        Task {
-            await aiStore.generateDailyRecap(forceRefresh: false)
-        }
-    }
-    
-    private func calculateStats() async {
-        let pages = store.pages
-        
-        // 1. 计算反链地图
-        var backlinkMap: [String: Int] = [:]
-        for page in pages {
-            for link in page.outgoingLinks {
-                backlinkMap[link, default: 0] += 1
-            }
-        }
-        
-        // 2. 计算总链接数
-        let links = pages.reduce(0) { $0 + $1.outgoingLinks.count }
-        
-        // 3. 计算重要度 (In + Out) Top 10
-        let density = pages.map { page in
-            let inbound = backlinkMap[page.title, default: 0]
-            let outbound = page.outgoingLinks.count
-            return DensityInfo(name: page.title, inbound: Double(inbound), outbound: Double(outbound))
-        }
-        .sorted { ($0.inbound + $0.outbound) > ($1.inbound + $1.outbound) }
-        .prefix(10)
-        .map { $0 }
-        
-        await MainActor.run {
-            self.totalLinks = links
-            self.densityData = density
-        }
-    }
-    
-    private func updateTags() {
-        var dict: [String: Int] = [:]
-        for page in store.pages {
-            for tag in page.getAllTags() {
-                dict[tag, default: 0] += 1
-            }
-        }
-        tags = dict.map { ($0.key, $0.value) }.sorted { $0.count > $1.count }
     }
 }
 
@@ -525,11 +468,4 @@ private var emptyView: some View {
             .foregroundColor(.appSecondary)
     }
     .frame(maxWidth: .infinity, minHeight: DesignSystem.Metrics.chartHeight)
-}
-
-struct DensityInfo: Identifiable {
-    let id = UUID()
-    let name: String
-    let inbound: Double
-    let outbound: Double
 }

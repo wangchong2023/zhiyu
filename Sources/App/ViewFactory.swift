@@ -49,8 +49,8 @@ struct ViewFactory {
             LintWrapper()
         case .pluginMarket:
             PluginCenterView()
-        case .search:
-            SearchView()
+        case .search(let query, let type):
+            SearchView(initialQuery: query, initialFilterType: type)
         case .ingest:
             IngestView(selectedTab: .constant(.knowledge))
         case .graph:

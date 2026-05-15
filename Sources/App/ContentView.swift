@@ -467,7 +467,7 @@ struct CoachMarkOverlay: View {
                         .padding(.horizontal)
                 }
                 .offset(y: isAnimating ? 0 : DesignSystem.loosePadding)
-                .opacity(isAnimating ? 1.0 : 0)
+                .opacity(isAnimating ? DesignSystem.fullOpacity : 0)
                 
                 Button(action: performAction) {
                     Text(Localized.tr(actionKey))
@@ -480,8 +480,8 @@ struct CoachMarkOverlay: View {
                                 .fill(Color.appAccent)
                         )
                 }
-                .scaleEffect(isAnimating ? 1.0 : 0.9)
-                .opacity(isAnimating ? 1.0 : 0)
+                .scaleEffect(isAnimating ? DesignSystem.fullOpacity : DesignSystem.Metrics.coachMarkScaleMultiplier)
+                .opacity(isAnimating ? DesignSystem.fullOpacity : 0)
                 
                 Button(action: dismissWithAnimation) {
                     Text(L10n.Common.tr("skip"))

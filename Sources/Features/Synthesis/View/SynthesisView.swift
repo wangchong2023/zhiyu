@@ -110,7 +110,17 @@ struct SynthesisView: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .appSubPageToolbar(title: Localized.tr("sidebar.synthesis"))
+        .appTabToolbar(title: L10n.Synthesis.title) {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                router.navigate(to: .search())
+            }) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.appSecondary)
+            }
+            .buttonStyle(.plain)
+        }
         .sheet(isPresented: $showOutput) { outputSheet }
         .sheet(item: $pdfURL) { identifiable in
             #if !os(watchOS)

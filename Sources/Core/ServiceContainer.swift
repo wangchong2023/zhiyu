@@ -97,9 +97,9 @@ final class ServiceContainer: @unchecked Sendable {
         }
         
         return typeString
-    }
+        }
 
-    /// 检查服务是否已注册
+        /// 检查服务是否已注册
     func hasService<T>(for type: T.Type) -> Bool {
         let key = makeKey(for: type)
         lock.lock()

@@ -39,7 +39,7 @@ enum SidebarSelection: Hashable {
             case .collab: return .collab
             case .pluginMarket: return .pluginMarket
             case .healthCheck: return .lint
-            case .search: return .search
+            case .search: return .search()
             case .ingest: return .ingest
             case .graph: return .graph
             }
@@ -56,7 +56,7 @@ struct SearchSection: View {
         Section {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
-                router.navigate(to: .search)
+                router.navigate(to: .search())
             }) {
                 HStack(spacing: DesignSystem.medium) {
                     Image(systemName: "magnifyingglass")
@@ -114,7 +114,6 @@ struct SidebarView: View {
         Group {
             if horizontalSizeClass == .compact {
                 List {
-                    SearchSection()
                     CapabilitiesSection()
                     UniverseSection()
                     PinnedSection(
@@ -126,7 +125,6 @@ struct SidebarView: View {
                 }
             } else {
                 List(selection: $router.sidebarSelection) {
-                    SearchSection()
                     CapabilitiesSection()
                     UniverseSection()
                     PinnedSection(
@@ -186,6 +184,7 @@ struct CapabilitiesSection: View {
 
 struct UniverseSection: View {
     @Environment(AppStore.self) var store
+    @Environment(Router.self) var router
     
     var body: some View {
         Section {
@@ -194,7 +193,8 @@ struct UniverseSection: View {
                     icon: "tray.full.fill",
                     colorName: "accent",
                     title: Localized.tr("sidebar.pageList"),
-                    count: store.pages.count
+                    count: store.pages.count,
+                    onSearch: { router.navigate(to: .search()) }
                 )
                 .contentShape(Rectangle())
             }
@@ -203,8 +203,10 @@ struct UniverseSection: View {
                 let count = store.pages.filter { $0.type == type }.count
                 if count > 0 {
                     NavigationLink(value: AppRoute.pageList(filterType: type)) {
-                        SidebarTypeRow(type: type, count: count)
-                            .contentShape(Rectangle())
+                        SidebarTypeRow(type: type, count: count, onSearch: {
+                            router.navigate(to: .search(filterType: type))
+                        })
+                        .contentShape(Rectangle())
                     }
                 }
             }
@@ -345,6 +347,7 @@ struct UniverseNavRow: View {
     let colorName: String
     let title: String
     let count: Int
+    var onSearch: (() -> Void)? = nil
     
     var iconColor: Color {
         colorName == "accent" ? .appAccent : Color.fromModelColorName(colorName)
@@ -377,6 +380,22 @@ struct UniverseNavRow: View {
                     .foregroundStyle(.appAccent)
                     .clipShape(Capsule())
             }
+            
+            // 垂直搜索入口
+            if let onSearch {
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    onSearch()
+                }) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .padding(DesignSystem.tiny)
+                        .background(Color.appSecondary.opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.vertical, DesignSystem.atomic)
     }
@@ -386,6 +405,7 @@ struct UniverseNavRow: View {
 struct SidebarTypeRow: View {
     let type: PageType
     let count: Int
+    var onSearch: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: DesignSystem.medium) {
@@ -412,6 +432,22 @@ struct SidebarTypeRow: View {
                 .background(Color.fromModelColorName(type.colorName).opacity(0.15))
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .clipShape(Capsule())
+            
+            // 垂直搜索入口
+            if let onSearch {
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    onSearch()
+                }) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color.fromModelColorName(type.colorName).opacity(0.7))
+                        .padding(DesignSystem.tiny)
+                        .background(Color.fromModelColorName(type.colorName).opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.vertical, DesignSystem.atomic)
     }

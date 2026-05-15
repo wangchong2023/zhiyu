@@ -240,6 +240,7 @@ public enum DesignSystem {
         public static let sectionSpacing: CGFloat = Spacing.Metrics.sectionSpacing
         
         public static let lockOverlayScaleMultiplier: CGFloat = Spacing.Metrics.lockOverlayScaleMultiplier
+        public static let coachMarkScaleMultiplier: CGFloat = Spacing.Metrics.coachMarkScaleMultiplier
         public static let splashQuoteShimmerOffset: CGFloat = Spacing.Metrics.splashQuoteShimmerOffset
         
         public static let commandPaletteHeight: CGFloat = Spacing.Metrics.commandPaletteHeight

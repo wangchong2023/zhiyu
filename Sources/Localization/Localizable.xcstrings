@@ -25854,6 +25854,23 @@
         }
       }
     },
+    "synthesis.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Knowledge Synthesis"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "知识合成"
+          }
+        }
+      }
+    },
     "synthesis.tools.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26007,23 +26024,6 @@
         }
       }
     },
-    "tab.synthesis" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Synthesis"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "合成"
-          }
-        }
-      }
-    },
     "tab.settings" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26037,6 +26037,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设置"
+          }
+        }
+      }
+    },
+    "tab.synthesis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synthesis"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合成"
           }
         }
       }

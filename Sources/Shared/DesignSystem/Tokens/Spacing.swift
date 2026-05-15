@@ -253,6 +253,8 @@ public enum Spacing {
         
         /// 安全锁定层缩放倍率 (0.95)
         public static let lockOverlayScaleMultiplier: CGFloat = 0.95
+        /// 功能引导卡片进入缩放倍率 (0.9)
+        public static let coachMarkScaleMultiplier: CGFloat = 0.9
         /// 启动页名言闪烁偏移量 (-200)
         public static let splashQuoteShimmerOffset: CGFloat = -200
         
