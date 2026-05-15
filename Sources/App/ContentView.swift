@@ -219,19 +219,15 @@ struct ContentView: View {
             Tab(AppTab.knowledge.displayTitle, systemImage: AppTab.knowledge.icon, value: AppTab.knowledge) {
                 knowledgeTabContent
             }
-
             Tab(AppTab.chat.displayTitle, systemImage: AppTab.chat.icon, value: AppTab.chat) {
                 chatTabContent
             }
-
             Tab(AppTab.ingest.displayTitle, systemImage: AppTab.ingest.icon, value: AppTab.ingest) {
                 ingestTabContent
             }
-
             Tab(AppTab.search.displayTitle, systemImage: AppTab.search.icon, value: AppTab.search) {
                 searchTabContent
             }
-
             Tab(AppTab.graph.displayTitle, systemImage: AppTab.graph.icon, value: AppTab.graph) {
                 graphTabContent
             }

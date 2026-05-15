@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 /// 笔记本工作台视图
 public struct NotebookHubView: View {
     // MARK: - 状态与环境
@@ -89,10 +90,8 @@ public struct NotebookHubView: View {
                 }
             }
         }
-        .onAppear {
-            NotificationCenter.default.addObserver(forName: NSNotification.Name("toggleDisplayMode"), object: nil, queue: .main) { @MainActor _ in
-                viewModel.toggleDisplayMode()
-            }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleDisplayMode"))) { _ in
+            viewModel.toggleDisplayMode()
         }
         .sheet(isPresented: $viewModel.isShowingCreateSheet) {
             CreateNotebookSheet(viewModel: viewModel)
@@ -254,7 +253,7 @@ public struct NotebookHubView: View {
 
 struct NotebookCard: View {
     @Environment(NotebookHubViewModel.self) var viewModel
-    let notebook: VaultService.Vault
+    let notebook: Vault
     let action: () -> Void
     
     private var themeConfig: NotebookThemeConfig {
@@ -344,7 +343,7 @@ struct NotebookCard: View {
 
 struct NotebookListRow: View {
     @Environment(NotebookHubViewModel.self) var viewModel
-    let notebook: VaultService.Vault
+    let notebook: Vault
     let action: () -> Void
     
     var body: some View {
@@ -425,6 +424,7 @@ struct NotebookListRow: View {
 }
 
 // MARK: - 笔记本表单
+@MainActor
 struct CreateNotebookSheet: View {
     @Bindable var viewModel: NotebookHubViewModel
     var body: some View {
@@ -439,6 +439,7 @@ struct CreateNotebookSheet: View {
     }
 }
 
+@MainActor
 struct EditNotebookSheet: View {
     @Bindable var viewModel: NotebookHubViewModel
     var body: some View {
@@ -453,6 +454,7 @@ struct EditNotebookSheet: View {
     }
 }
 
+@MainActor
 struct NotebookFormSheet: View {
     let title: String
     let submitLabel: String

@@ -59,7 +59,7 @@ extension XCTestCase {
         
         // 1. Core Services (L0)
         let logger = MockLogger()
-        ServiceContainer.shared.register(logger, for: (any LoggerProtocol).self)
+        ServiceContainer.shared.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
         
         let testDBURL = URL(string: "file::memory:?cache=shared")!
         let sqliteStore = SQLiteStore(dbURL: testDBURL)
@@ -75,12 +75,12 @@ extension XCTestCase {
         ServiceContainer.shared.register(DataCoordinator(), for: DataCoordinator.self)
         
         #if os(iOS)
-        ServiceContainer.shared.register(MultipeerCollaborationProvider(), for: (any CollaborationProviderProtocol).self)
+        ServiceContainer.shared.register(MultipeerCollaborationProvider() as any CollaborationProviderProtocol, for: (any CollaborationProviderProtocol).self)
         #endif
         
         // 2. Storage Services (L1)
         // 必须先于 VaultStorageSecurityService 注册，因为其 init 内有 @Inject var provider: BiometricAuthProviderProtocol 访问
-        ServiceContainer.shared.register(MockBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
+        ServiceContainer.shared.register(MockBiometricAuthProvider() as any BiometricAuthProviderProtocol, for: (any BiometricAuthProviderProtocol).self)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         ServiceContainer.shared.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
         
@@ -103,10 +103,10 @@ extension XCTestCase {
         ServiceContainer.shared.register(LintService(), for: LintService.self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
-        ServiceContainer.shared.register(ChatService.shared, for: (any ChatServiceProtocol).self)
+        ServiceContainer.shared.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
         
         let llm = MockLLMService()
-        ServiceContainer.shared.register(llm, for: (any LLMServiceProtocol).self)
+        ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         ServiceContainer.shared.register(AISynthesisService.shared, for: AISynthesisService.self)
         ServiceContainer.shared.register(PromptService.shared, for: PromptService.self)
         
@@ -116,9 +116,9 @@ extension XCTestCase {
         ServiceContainer.shared.register(PluginRegistry.shared, for: PluginRegistry.self)
         
         #if os(iOS)
-        ServiceContainer.shared.register(iOSOCRService(), for: (any OCRServiceProtocol).self)
-        ServiceContainer.shared.register(iOSSpeechService(), for: (any SpeechServiceProtocol).self)
-        ServiceContainer.shared.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
+        ServiceContainer.shared.register(iOSOCRService() as any OCRServiceProtocol, for: (any OCRServiceProtocol).self)
+        ServiceContainer.shared.register(iOSSpeechService() as any SpeechServiceProtocol, for: (any SpeechServiceProtocol).self)
+        ServiceContainer.shared.register(iOSWatchSyncService() as any WatchSyncProtocol, for: (any WatchSyncProtocol).self)
         #endif
     }
 }

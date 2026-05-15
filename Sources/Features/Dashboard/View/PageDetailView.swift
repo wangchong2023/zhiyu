@@ -157,7 +157,6 @@ struct PageDetailView: View {
                         Divider().background(Color.appBorder)
 
                         provenanceSection
-                        semanticRecommendationsSection
                         backlinksSection
                     }
                     .padding(.horizontal)
@@ -207,8 +206,8 @@ struct PageDetailView: View {
         }
         .safeAreaInset(edge: .top) {
             VStack(spacing: 0) {
-                if !router.navigationHistory.isEmpty {
-                    BreadcrumbView(history: router.navigationHistory) { id in
+                if router.navigationHistory.count > 1 {
+                    BreadcrumbView(history: Array(router.navigationHistory.dropLast())) { id in
                         let targetPage = store.pages.first { $0.id == id }
                         if let target = targetPage {
                             navigateToPage(target.title)

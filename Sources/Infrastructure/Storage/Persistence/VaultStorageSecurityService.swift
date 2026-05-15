@@ -24,17 +24,24 @@ final class VaultStorageSecurityService {
     var isLocked = false
 
     /// 当前硬件环境是否支持并已配置生物识别（FaceID/TouchID）
-    var biometricsAvailable = false
+    private var _biometricsAvailable: Bool?
+    var biometricsAvailable: Bool {
+        if let existing = _biometricsAvailable {
+            return existing
+        }
+        checkBiometrics()
+        return _biometricsAvailable ?? false
+    }
 
     /// 注入的平台策略提供者
     @ObservationIgnored @Inject var provider: BiometricAuthProviderProtocol
 
     /**
-     * @description: 初始化安全服务并执行首次硬件能力监控
+     * @description: 初始化安全服务
      * @return {*}
      */
     init() {
-        checkBiometrics()
+        // 不再在 init 中调用 checkBiometrics，推迟到首次使用时
     }
 
     /// 暂存当前的认证上下文，防止闭包回调前被释放导致闪退
@@ -46,7 +53,7 @@ final class VaultStorageSecurityService {
      */
     func checkBiometrics() {
         let context = LAContext()
-        biometricsAvailable = provider.canEvaluatePolicy(context: context)
+        _biometricsAvailable = provider.canEvaluatePolicy(context: context)
     }
 
     /**

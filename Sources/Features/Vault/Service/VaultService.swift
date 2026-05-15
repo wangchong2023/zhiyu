@@ -9,32 +9,10 @@
 import Foundation
 import Observation
 
-/// 笔记本/库基础协议
-public protocol VaultProtocol: Sendable {
-    var id: UUID { get }
-    var name: String { get }
-    var icon: String? { get }
-    var pageCount: Int { get }
-    var updatedAt: Date { get }
-}
-
 /// 笔记本/库服务
 @Observable
 @MainActor
 public final class VaultService: VaultServiceProtocol {
-    
-    // MARK: - 数据模型
-    
-    public struct Vault: Identifiable, Codable, Hashable, VaultProtocol {
-        public let id: UUID
-        public var name: String
-        public var createdAt: Date
-        public var updatedAt: Date
-        public var pageCount: Int
-        public var themePayload: String?
-        public var icon: String?
-        public var description: String?
-    }
     
     // MARK: - 状态属性
     

@@ -34,10 +34,6 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(StubBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
         #endif
         
-        // @RR-01: 初始化 SQLite 核心存储层
-        let sqliteStore = SQLiteStore()
-        container.register(sqliteStore, for: SQLiteStore.self)
-
         #if os(macOS)
         container.register(MacPasteboardService(), for: (any PasteboardProtocol).self)
         #elseif os(watchOS)
@@ -110,8 +106,6 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
         #endif
         
-        container.register(Router.shared, for: Router.self)
-        
         // 注册其他平台级服务
         container.register(DeepLinkService(), for: DeepLinkService.self)
         container.register(PerformanceService(), for: PerformanceService.self)
@@ -128,6 +122,11 @@ struct CoreModuleRegistrar: ModuleRegistrar {
 struct StorageModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
         print("📦 [DI] 开始注册存储模块...")
+        
+        // @RR-01: 初始化 SQLite 核心存储层
+        let sqliteStore = SQLiteStore()
+        container.register(sqliteStore, for: SQLiteStore.self)
+        
         container.register(BackupService(), for: BackupService.self)
         container.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
         container.register(AIInsightStore(), for: AIInsightStore.self)
@@ -177,7 +176,6 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(ChatService.shared, for: ChatService.self)
         
         // 2. 应用层核心
-        container.register(Router.shared, for: Router.self)
         
         #if os(watchOS)
         container.register(WatchOCRService(), for: (any OCRServiceProtocol).self)
@@ -219,3 +217,14 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         print("✅ [DI] 领域能力模块注册完成")
     }
 }
+
+// MARK: - 应用模块 (L3)
+/// 应用层注册器：负责路由、全局环境等顶层服务注册
+@MainActor
+struct AppModuleRegistrar: ModuleRegistrar {
+    static func register(in container: ServiceContainer) {
+        print("📱 [DI] 开始注册应用模块...")
+        container.register(Router.shared, for: Router.self)
+    }
+}
+

@@ -162,6 +162,7 @@ struct SearchView: View {
                             .clipShape(Capsule())
                             .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
                         }
+                        .buttonStyle(.plain)
                         #endif
 
                         Divider().frame(height: 24).background(Color.appBorder)
@@ -187,6 +188,7 @@ struct SearchView: View {
                             .clipShape(Capsule())
                             .foregroundStyle(.appSecondary)
                         }
+                        .buttonStyle(.plain)
                         #endif
                     }
                     .padding(.horizontal)
@@ -373,6 +375,7 @@ struct PagePreviewSheet: View {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.tr("close")) { dismiss() }
+                        .buttonStyle(.plain)
                 }
             }
         }
@@ -459,6 +462,7 @@ struct SearchDiagnosticSheet: View {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.tr("close")) { dismiss() }
+                        .buttonStyle(.plain)
                 }
             }
         }

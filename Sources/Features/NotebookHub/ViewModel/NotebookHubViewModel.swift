@@ -69,7 +69,7 @@ public final class NotebookHubViewModel {
     // ── 编辑/重命名相关状态 ──
     public var isShowingRenameAlert: Bool = false
     public var isShowingEditSheet: Bool = false
-    public var editingVault: VaultService.Vault?
+    public var editingVault: Vault?
     public var editingName: String = "" {
         didSet {
             let limit = DesignSystem.Metrics.maxNotebookNameLength
@@ -94,7 +94,7 @@ public final class NotebookHubViewModel {
     /// 所有笔记本列表
     /// 过滤后的笔记本列表
     /// 过滤且排序后的笔记本列表
-    public var notebooks: [VaultService.Vault] {
+    public var notebooks: [Vault] {
         var result = vaultService.vaults
         
         // 1. 过滤
@@ -121,7 +121,7 @@ public final class NotebookHubViewModel {
         displayMode = (displayMode == .grid) ? .list : .grid
     }
     
-    public func selectNotebook(_ notebook: VaultService.Vault) {
+    public func selectNotebook(_ notebook: Vault) {
         // 1. 路由加固：重置导航状态，使用户进入后看到 SidebarView 菜单
         Router.shared.sidebarSelection = nil
         Router.shared.selectedTab = .knowledge
@@ -158,7 +158,7 @@ public final class NotebookHubViewModel {
     }
     
     /// 准备编辑 (全量属性)
-    public func prepareEdit(_ vault: VaultService.Vault) {
+    public func prepareEdit(_ vault: Vault) {
         editingVault = vault
         editingName = vault.name
         editingIcon = vault.icon ?? ""
@@ -180,7 +180,7 @@ public final class NotebookHubViewModel {
     }
     
     /// 准备重命名 (仅名称，用于 Alert 场景)
-    public func prepareRename(_ vault: VaultService.Vault) {
+    public func prepareRename(_ vault: Vault) {
         editingVault = vault
         editingName = vault.name
         isShowingRenameAlert = true

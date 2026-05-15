@@ -305,6 +305,7 @@ struct GraphContainerView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.tr("cancel")) { viewModel.showInsights = false }
+                        .buttonStyle(.plain)
                 }
             }
         }
@@ -312,6 +313,7 @@ struct GraphContainerView: View {
 }
 
 // MARK: - 图谱画布视图
+@MainActor
 /// 知识图谱画布视图
 /// 负责 2D 环境下的节点渲染、连线绘制及平移/缩放手法交互处理
 struct GraphCanvasView: View {
@@ -427,6 +429,7 @@ struct GraphCanvasView: View {
 }
 
 // MARK: - 子视图组件
+@MainActor
 private struct GraphEmptyStateView: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
@@ -459,6 +462,7 @@ private struct GraphEmptyStateView: View {
     }
 }
 
+@MainActor
 private struct GraphFilterPillsView: View {
     @Binding var filterType: PageType?
     @ObservedObject var tooltipManager: TooltipManager

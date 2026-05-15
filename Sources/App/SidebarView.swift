@@ -49,6 +49,7 @@ enum SidebarSelection: Hashable {
 }
 
 // MARK: - Sidebar View
+@MainActor
 struct SidebarView: View {
     @Environment(AppStore.self) var store
     @Environment(VaultService.self) var vaultService
@@ -111,6 +112,7 @@ struct SidebarView: View {
             }
         }
         .appTabToolbar(title: Localized.tr("sidebar.title"))
+        .id(router.languageForceUpdate)
     }
 }
 

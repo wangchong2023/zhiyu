@@ -15,6 +15,7 @@ import SwiftUI
 /// 将传统的底部 Tab 转换为更符合大屏习惯的垂直侧边栏。
 /// 响应式侧边栏视图 (iPad/Mac 专属)
 /// 负责将大屏环境下的导航从底部 Tab 切换为侧边栏 List 模式，优化空间利用率与交互路径
+@MainActor
 struct AdaptiveSidebarView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
@@ -59,6 +60,7 @@ struct AdaptiveSidebarView: View {
                 UserProfileMenu()
             }
         }
+        .id(router.languageForceUpdate)
     }
     
     private func sidebarRow(for tab: AppTab) -> some View {
@@ -73,6 +75,7 @@ struct AdaptiveSidebarView: View {
 /// 响应式主内容区域
 /// 响应式主内容区域视图
 /// 负责根据侧边栏选中项动态分发内容视图，支持跨平台的导航逻辑一致性
+@MainActor
 struct AdaptiveDetailView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router

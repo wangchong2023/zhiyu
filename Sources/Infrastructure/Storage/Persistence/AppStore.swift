@@ -167,13 +167,14 @@ final class AppStore: @preconcurrency GraphDataProvider {
         self.aiWorkflowStore = AIWorkflowStore()
         self.aiInsightStore = AIInsightStore()
 
-        logger.addLog(action: .systemInit, target: "AppStore", details: "init called")
+        // 注册回调前先确认 sqliteStore 已就绪（@Inject 已解析）
         sqliteStore.onLog = { [weak self] a, t, d in
             self?.addLog(action: a, target: t, details: d)
         }
-        Task {
-            await seedDefaultContent()
-        }
+        
+        #if DEBUG
+        print("✅ [AppStore] 核心状态中心初始化完成")
+        #endif
     }
 
     /// 填充默认引导内容
@@ -399,7 +400,7 @@ extension AppStore {
             let repo = KnowledgePageStore(dbWriter: writer)
             for p in modifiedPages { _ = try? repo.save(p, in: db) }
         }
-        await addLog(action: .update, target: newTitle, details: "Renamed from \(oldTitle)")
+        addLog(action: .update, target: newTitle, details: "Renamed from \(oldTitle)")
         backupService.markDirty()
     }
 

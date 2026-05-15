@@ -208,8 +208,8 @@ struct IngestView: View {
             }
             .scrollContentBackground(.hidden).background(themeManager.pageBackground()).navigationTitle(coordinator.manualFormTitle).navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button(L10n.Common.tr("cancel")) { coordinator.showManualForm = false } }
-                ToolbarItem(placement: .confirmationAction) { Button(L10n.Common.tr("import")) { coordinator.performIngest() }.disabled(coordinator.newTitle.isEmpty || coordinator.newContent.isEmpty || coordinator.isIngesting) }
+                ToolbarItem(placement: .cancellationAction) { Button(L10n.Common.tr("cancel")) { coordinator.showManualForm = false }.buttonStyle(.plain) }
+                ToolbarItem(placement: .confirmationAction) { Button(L10n.Common.tr("import")) { coordinator.performIngest() }.disabled(coordinator.newTitle.isEmpty || coordinator.newContent.isEmpty || coordinator.isIngesting).buttonStyle(.plain) }
             }
         }
     }

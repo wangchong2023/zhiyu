@@ -13,10 +13,11 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 // leading 侧不放任何占位符，避免 SwiftUI 渲染白色背景底座
-                // .principal placement 在 NavigationBar 中默认物理居中，无需手动平衡
+                // .principal placement 在 NavigationBar 中默认物理居中
                 #if os(watchOS)
                 ToolbarItem(placement: .topBarTrailing) {
                     VaultBadge()

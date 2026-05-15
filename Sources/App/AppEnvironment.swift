@@ -29,10 +29,11 @@ final class AppEnvironment {
     private init() {
         print("🎬 [AppEnvironment] 开始执行初始化...")
         
-        // 1. 执行模块化注册 (L0 - L2)
+        // 1. 执行模块化注册 (L0 - L3)
         CoreModuleRegistrar.register(in: ServiceContainer.shared)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
         DomainModuleRegistrar.register(in: ServiceContainer.shared)
+        AppModuleRegistrar.register(in: ServiceContainer.shared)
         
         // 2. 初始化业务层 Stores
         // 确保在依赖注册完成后再实例化，防止 @Inject 导致的崩溃
@@ -44,6 +45,11 @@ final class AppEnvironment {
         #if os(iOS)
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.appAccent)
         #endif
+        
+        // 4. 异步触发数据种子化 (确保所有 DI 注册已完成且主线程已释放)
+        Task {
+            await self.store.seedDefaultContent()
+        }
         
         print("🚀 [AppEnvironment] 初始化完成 at \(Date())")
     }

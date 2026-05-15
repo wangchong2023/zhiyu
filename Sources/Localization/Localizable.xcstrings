@@ -90,6 +90,9 @@
         }
       }
     },
+    "#" : {
+
+    },
     "#%@" : {
       "extractionState" : "manual",
       "localizations" : {

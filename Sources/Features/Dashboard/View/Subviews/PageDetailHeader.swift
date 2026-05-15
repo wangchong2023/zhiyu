@@ -22,12 +22,11 @@ struct PageDetailHeader: View {
     @ObservedObject private var taskCenter = TaskCenter.shared
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             breadcrumb
             typeStatusConfidenceRow
             titleView
-            aliasesView
-            tagsView
+            tagsAndAliasesView
             
             // Metadata section with industrial-grade collapsible control
             #if os(watchOS)
@@ -81,9 +80,6 @@ struct PageDetailHeader: View {
             Image(systemName: "chevron.right")
                 .font(.system(size: 8))
                 .foregroundStyle(.appSecondary)
-            Text(page.type.displayName)
-                .font(.caption2)
-                .foregroundStyle(Color.fromModelColorName(page.type.colorName))
             
             // AI Status Indicator
             if taskCenter.tasks.contains(where: { if case .running = $0.status { return true }; return false }) {
@@ -135,49 +131,48 @@ struct PageDetailHeader: View {
             .accessibilityLabel(Localized.trf("page.titleAccessibility", page.title))
     }
     
-    // MARK: - Aliases
+    // MARK: - Aliases & Tags (Unified Flow)
     @ViewBuilder
-    private var aliasesView: some View {
-        if !page.aliases.isEmpty {
+    private var tagsAndAliasesView: some View {
+        let combinedTags = Array(Set(page.tags + page.aliases)).filter { $0 != page.title }.sorted()
+        
+        if !combinedTags.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.branch")
-                        .font(.caption2)
-                        .foregroundStyle(.appSource)
-                    ForEach(Array(Set(page.aliases)).sorted(), id: \.self) { alias in
-                        Text(alias)
-                            .font(.caption2)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Color.appSource.opacity(0.15))
-                            .clipShape(Capsule())
-                            .foregroundStyle(.appSource)
+                HStack(spacing: 8) {
+                    ForEach(combinedTags, id: \.self) { item in
+                        let isAlias = page.aliases.contains(item)
+                        HStack(spacing: 4) {
+                            if isAlias {
+                                Image(systemName: "arrow.branch")
+                                    .font(.system(size: 8))
+                            } else {
+                                Text("#")
+                                    .font(.system(size: 8, weight: .bold))
+                            }
+                            Text(item)
+                        }
+                        .font(.caption2.weight(.medium))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            isAlias ? 
+                            Color.appSource.opacity(0.1) : 
+                            Color.appAccent.opacity(0.1)
+                        )
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(
+                                    isAlias ? 
+                                    Color.appSource.opacity(0.2) : 
+                                    Color.appAccent.opacity(0.2), 
+                                    lineWidth: 0.5
+                                )
+                        )
+                        .foregroundStyle(isAlias ? .appSource : .appAccent)
                     }
                 }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(Localized.trf("page.aliasAccessibility", page.aliases.joined(separator: ", ")))
-            }
-        }
-    }
-    
-    // MARK: - Tags
-    @ViewBuilder
-    private var tagsView: some View {
-        if !page.tags.isEmpty {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    ForEach(Array(Set(page.tags)).sorted(), id: \.self) { tag in
-                        Text("#\(tag)")
-                            .font(.caption2)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Color.appAccent.opacity(0.15))
-                            .clipShape(Capsule())
-                            .foregroundStyle(.appAccent)
-                    }
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(Localized.trf("page.tagsAccessibility", page.tags.map { "#\($0)" }.joined(separator: ", ")))
+                .padding(.vertical, 2)
             }
         }
     }

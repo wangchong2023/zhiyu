@@ -18,7 +18,7 @@ struct VaultBadge: View {
     }
     
     @ViewBuilder
-    private func adaptiveContainer(currentVault: VaultService.Vault) -> some View {
+    private func adaptiveContainer(currentVault: Vault) -> some View {
         #if os(watchOS)
         // watchOS 降级处理：仅显示标签，不支持下拉菜单
         badgeLabel(currentVault: currentVault)

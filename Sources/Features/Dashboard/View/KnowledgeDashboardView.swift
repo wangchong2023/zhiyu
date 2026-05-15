@@ -62,6 +62,7 @@ struct KnowledgeDashboardView: View {
                         .foregroundStyle(.appText)
                         .frame(width: 32, height: 44)
                 }
+                .buttonStyle(.plain)
             }
             
             ToolbarItem(placement: .topBarTrailing) {
@@ -73,6 +74,7 @@ struct KnowledgeDashboardView: View {
                         .font(.system(size: 18))
                         .foregroundStyle(.appSecondary)
                 }
+                .buttonStyle(.plain)
             }
         }
         .onAppear {
@@ -130,6 +132,7 @@ struct KnowledgeDashboardView: View {
                         .font(.caption)
                         .foregroundColor(.appSecondary)
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
                 
@@ -148,6 +151,7 @@ struct KnowledgeDashboardView: View {
                     .background(Color.appAccent.opacity(DesignSystem.glassOpacity))
                     .clipShape(Capsule())
                 }
+                .buttonStyle(.plain)
             }
             .padding(.leading, DesignSystem.tiny)
             
@@ -247,6 +251,7 @@ struct KnowledgeDashboardView: View {
                         .rotationEffect(.degrees(aiStore.isGeneratingDailyRecap ? 360 : 0))
                         .animation(aiStore.isGeneratingDailyRecap ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: aiStore.isGeneratingDailyRecap)
                 }
+                .buttonStyle(.plain)
             }
             
             VStack(alignment: .leading, spacing: 12) {

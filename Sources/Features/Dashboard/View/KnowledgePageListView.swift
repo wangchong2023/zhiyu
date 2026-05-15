@@ -11,6 +11,7 @@
 import SwiftUI
 
 // MARK: - Index View (entry point with NavigationStack)
+@MainActor
 struct KnowledgePageListView: View {
     var filterType: PageType? = nil
     var body: some View {
@@ -19,6 +20,7 @@ struct KnowledgePageListView: View {
 }
 
 // MARK: - Knowledge Page List Content (for use inside parent NavigationStack)
+@MainActor
 struct KnowledgePageListContent: View {
     @Environment(AppStore.self) var store
     @EnvironmentObject var themeManager: ThemeManager
@@ -79,6 +81,7 @@ struct KnowledgePageListContent: View {
                         .foregroundStyle(.appText)
                         .frame(width: 32, height: 44)
                 }
+                .buttonStyle(.plain)
             }
             
             ToolbarItem(placement: .topBarTrailing) {
@@ -90,14 +93,13 @@ struct KnowledgePageListContent: View {
                         .font(.system(size: 18))
                         .foregroundStyle(.appSecondary)
                 }
+                .buttonStyle(.plain)
             }
         }
-        .onAppear {
-            NotificationCenter.default.addObserver(forName: NSNotification.Name("toggleDisplayMode"), object: nil, queue: .main) { @MainActor _ in
-                HapticFeedback.shared.trigger(.selection)
-                withAnimation(.spring()) {
-                    viewMode = (viewMode == .list) ? .grid : .list
-                }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleDisplayMode"))) { _ in
+            HapticFeedback.shared.trigger(.selection)
+            withAnimation(.spring()) {
+                viewMode = (viewMode == .list) ? .grid : .list
             }
         }
         .sheet(isPresented: $showInsights) {
@@ -475,22 +477,24 @@ struct KnowledgeListToolbar: ViewModifier {
     }
     
     private var viewModeButton: some View {
-        Button {
+        Button(action: {
             HapticFeedback.shared.trigger(.selection)
             withAnimation(.spring()) {
-                viewMode = viewMode == .list ? .grid : .list
+                viewMode = (viewMode == .list) ? .grid : .list
             }
-        } label: {
+        }) {
             Image(systemName: viewMode.icon)
         }
+        .buttonStyle(.plain)
     }
     
     private var refreshButton: some View {
-        Button {
+        Button(action: {
             HapticFeedback.shared.trigger(.selection)
             store.refresh()
-        } label: {
+        }) {
             Label(L10n.Common.tr("refresh"), systemImage: DesignSystem.Icons.refresh)
         }
+        .buttonStyle(.plain)
     }
 }

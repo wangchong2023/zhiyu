@@ -22,10 +22,10 @@ public protocol AuthServiceProtocol {
 /// 笔记本/库管理服务协议
 @MainActor
 public protocol VaultServiceProtocol {
-    var vaults: [VaultService.Vault] { get }
+    var vaults: [Vault] { get }
     var selectedVaultID: UUID? { get }
-    var currentVault: VaultService.Vault? { get }
-    func selectVault(_ vault: VaultService.Vault)
+    var currentVault: Vault? { get }
+    func selectVault(_ vault: Vault)
     func exitVault()
     func createVault(name: String, icon: String?, description: String?)
     func updateVault(id: UUID, name: String, icon: String?, description: String?)

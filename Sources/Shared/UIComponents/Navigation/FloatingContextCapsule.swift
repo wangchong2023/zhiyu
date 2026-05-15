@@ -59,7 +59,7 @@ struct FloatingContextCapsule: View {
     }
     
     @ViewBuilder
-    private func vaultMenu(_ vault: VaultService.Vault) -> some View {
+    private func vaultMenu(_ vault: Vault) -> some View {
         #if os(watchOS)
         HStack(spacing: DesignSystem.small) {
             Text(vault.name)
