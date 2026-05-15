@@ -71,7 +71,7 @@ struct AuthView: View {
                     .frame(width: 60, height: 60)
                     .blur(radius: 10)
                 
-                Image(systemName: "books.vertical.circle.fill")
+                Image(systemName: DesignSystem.Icons.knowledge)
                     .font(.system(size: DesignSystem.displayFontSize * 1.5))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .shadow(color: .appAccent.opacity(0.4), radius: 10, y: 4)
@@ -125,7 +125,7 @@ struct AuthView: View {
         .padding(4)
         .background(Color.appCard.opacity(0.8))
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.appBorder.opacity(0.2), lineWidth: 1))
+        .overlay(Capsule().stroke(Color.appBorder, lineWidth: 1)) // 增强边框对比度
         .padding(.vertical, 12)
     }
     
@@ -283,11 +283,11 @@ struct AuthTextField: View {
             }
         }
         .padding()
-        .background(Color.appCard.opacity(0.5))
+        .background(Color.appCard.opacity(0.8)) // 稍微加深背景，提升文字对比度
         .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Spacing.standardRadius)
-                .stroke(Color.appBorder.opacity(0.3), lineWidth: 1)
+                .stroke(Color.appBorder, lineWidth: 1) // 移除不透明度，确保清晰
         )
     }
 }
@@ -301,19 +301,19 @@ struct ThirdPartyButton: View {
         Button(action: {}) {
             HStack {
                 // 这里用 SF Symbols 代替实际图标，因为目前没法直接加资源
-                Image(systemName: icon == "apple_logo" ? "apple.logo" : (icon == "wechat_logo" ? "message.fill" : "person.2.fill"))
+                Image(systemName: icon == "apple_logo" ? DesignSystem.Icons.apple : (icon == "wechat_logo" ? DesignSystem.Icons.message : DesignSystem.Icons.persons))
                     .foregroundStyle(color)
                 Text(title)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, DesignSystem.medium)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: Spacing.standardRadius)
-                    .stroke(Color.appBorder.opacity(0.3), lineWidth: 1)
+                RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                    .stroke(Color.appBorder.opacity(DesignSystem.softOpacity), lineWidth: DesignSystem.borderWidth)
             )
         }
         .buttonStyle(.plain)
@@ -337,7 +337,7 @@ struct ThirdPartyIconButton: View {
             }
             .overlay(
                 Circle()
-                    .stroke(Color.appBorder.opacity(0.2), lineWidth: 1)
+                    .stroke(Color.appBorder, lineWidth: 1) // 增强图标边框
             )
         }
         .buttonStyle(.plain)

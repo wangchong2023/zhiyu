@@ -36,6 +36,9 @@ final class AIWorkflowStore {
     }
     var lintScore: Int { healthMetrics.score }
     var healthLevel: LintService.HealthLevel { healthMetrics.level }
+    
+    /// LLM 服务是否已启用
+    var isLLMEnabled: Bool { llmService.isEnabled }
 
     // ── 健康度问题存储 (Lint Issues) ──
     @ObservationIgnored private var _lintIssues: [LintIssue] = {

@@ -23,7 +23,7 @@ struct WeeklyInsightCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.loosePadding) {
             HStack {
-                AppGlow(icon: "sparkles", color: .purple, size: DesignSystem.largeIconSize - DesignSystem.tiny) // 28
+                AppGlow(icon: DesignSystem.Icons.sparkles, color: .purple, size: DesignSystem.largeIconSize - DesignSystem.tiny) // 28
                 VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                     Text(L10n.Dashboard.tr("insight.weeklyTitle"))
                         .font(.title3.bold())

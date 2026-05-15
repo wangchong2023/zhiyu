@@ -39,7 +39,10 @@ actor KnowledgeInsightService {
             return cached
         }
 
+        updateStatus(L10n.AI.Status.extracting)
+
         let now = Date()
+        // ... (省略中间逻辑)
         let calendar = Calendar.current
         let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now)!
         let longTermMin = calendar.date(byAdding: .day, value: -90, to: now)!
@@ -55,6 +58,7 @@ actor KnowledgeInsightService {
 
         do {
             let response = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.tr("insight.daily.systemPrompt"))
+            updateStatus(L10n.AI.Status.generating)
 
             // 提取并解析 JSON (增强鲁棒性：处理多行及 Markdown 代码块)
             var jsonString: String? = nil
@@ -113,6 +117,7 @@ actor KnowledgeInsightService {
 
     /// 生成最近一周的知识洞察
     func generateWeeklyInsight(pages: [KnowledgePage], llmService: any LLMServiceProtocol) async throws -> WeeklyInsight {
+        updateStatus(L10n.AI.Status.synthesizing)
         let calendar = Calendar.current
         let lastWeek = calendar.date(byAdding: .day, value: -7, to: Date()) ?? Date()
 
@@ -137,5 +142,11 @@ actor KnowledgeInsightService {
             aiSummary: summary,
             growthTraction: newPages.count > 5 ? L10n.Dashboard.tr("insight.growth.explosive") : L10n.Dashboard.tr("insight.growth.steady")
         )
+    }
+
+    private func updateStatus(_ text: String) {
+        Task { @MainActor in
+            TaskCenter.shared.updateLatestStatus(text)
+        }
     }
 }

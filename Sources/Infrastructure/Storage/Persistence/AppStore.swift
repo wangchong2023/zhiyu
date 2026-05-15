@@ -395,7 +395,7 @@ extension AppStore {
         // 核心流程：预计算链接变更 -> 批量物理写入 -> 标记备份
         let modifiedPages = await linkService.prepareRename(page: page, to: newTitle, in: pages)
 
-        self.sqliteStore.performBatchWrite { db in
+        try? self.sqliteStore.performBatchWrite { db in
             guard let writer = DatabaseManager.shared.dbWriter else { return }
             let repo = KnowledgePageStore(dbWriter: writer)
             for p in modifiedPages { _ = try? repo.save(p, in: db) }
@@ -422,7 +422,7 @@ extension AppStore {
 
     /// 批量清理选中的标签集合。
     func bulkDeleteTags(_ tags: Set<String>) {
-        sqliteStore.performBatchWrite { db in
+        try? sqliteStore.performBatchWrite { db in
             for tag in tags { try self.sqliteStore.internalDeleteTag(tag, in: db) }
         }
     }
@@ -444,17 +444,27 @@ extension AppStore {
     /// 生成标准演示数据集，用于快速体验应用功能。
     @discardableResult
     func generateDemoData() -> Int {
-        let count = DemoDataGenerator.generate(in: sqliteStore)
-        refresh()
-        return count
+        do {
+            let count = try DemoDataGenerator.generate(in: sqliteStore)
+            refresh()
+            return count
+        } catch {
+            logger.addLog(action: .error, target: "AppStore", details: "Demo generation failed: \(error.localizedDescription)")
+            return 0
+        }
     }
 
     /// 生成大规模测试数据，用于验证图谱与搜索性能。
     @discardableResult
     func generateStressTestData() -> Int {
-        let count = DemoDataGenerator.generateStressTest(in: sqliteStore)
-        refresh()
-        return count
+        do {
+            let count = try DemoDataGenerator.generateStressTest(in: sqliteStore)
+            refresh()
+            return count
+        } catch {
+            logger.addLog(action: .error, target: "AppStore", details: "Stress test generation failed: \(error.localizedDescription)")
+            return 0
+        }
     }
 
     // MARK: - 辅助操作

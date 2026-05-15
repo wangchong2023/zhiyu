@@ -40,11 +40,11 @@ struct NavigationView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("splashDismissed"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.splashDismissed)) { _ in
             router.path = NavigationPath()
             renderNonce = UUID()
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleSidebar"))) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.toggleSidebar)) { _ in
             withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) {
                 columnVisibility = columnVisibility == .detailOnly ? .all : .detailOnly
             }

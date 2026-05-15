@@ -97,6 +97,13 @@ final class SynthesisStore {
         set { withMutation(keyPath: \.synthesisStates) { _synthesisStates = newValue } }
     }
 
+    /// 预计算的聚合且排序后的所有合成文档列表（优化 UI 刷新性能）
+    var allSortedDocuments: [(SynthesisType, SynthesisDocument)] {
+        SynthesisType.allCases.flatMap { type in
+            (synthesisResults[type] ?? []).map { (type, $0) }
+        }.sorted { $0.1.createdAt > $1.1.createdAt }
+    }
+
     let maxSynthesisDocsPerType = 5
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()

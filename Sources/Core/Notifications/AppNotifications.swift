@@ -12,4 +12,8 @@ import Foundation
 
 extension Notification.Name {
     static let searchWithTag = Notification.Name("searchWithTag")
+    static let toggleSidebar = Notification.Name("toggleSidebar")
+    static let splashDismissed = Notification.Name("splashDismissed")
+    static let toggleDisplayMode = Notification.Name("toggleDisplayMode")
+    static let importFromClipboard = Notification.Name("importFromClipboard")
 }

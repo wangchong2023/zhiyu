@@ -59,7 +59,7 @@ public struct AppShimmer: View {
         LinearGradient(
             colors: [
                 .clear,
-                Color.appAccent.opacity(0.15),
+                Color.appAccent.opacity(DesignSystem.Opacity.glass),
                 .clear
             ],
             startPoint: .leading,
@@ -125,7 +125,7 @@ public struct AppSkeleton: View {
 
     public var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color.appSecondary.opacity(0.15))
+            .fill(Color.appSecondary.opacity(DesignSystem.Opacity.glass))
             .frame(width: width, height: height)
             .shimmerApp()
     }
@@ -179,7 +179,7 @@ public struct AppGlow: View {
         ZStack {
             // 外层光晕
             Circle()
-                .fill(color.opacity(0.15))
+                .fill(color.opacity(DesignSystem.Opacity.glass))
                 .frame(width: size * Spacing.Decorator.glowScaleLarge, height: size * Spacing.Decorator.glowScaleLarge)
                 .blur(radius: Spacing.Decorator.glowBlurMedium)
 

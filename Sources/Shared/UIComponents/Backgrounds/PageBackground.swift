@@ -28,7 +28,7 @@ public struct MeshGradientView: View {
                             ],
                             colors: [
                                 .appBackground, .appBackground, .appBackground,
-                                .appAccent.opacity(0.2), .appConcept.opacity(0.15), .appSource.opacity(0.18),
+                                .appAccent.opacity(0.2), .appConcept.opacity(DesignSystem.Opacity.glass), .appSource.opacity(0.18),
                                 .appBackground, .appBackground, .appBackground
                             ],
                             smoothsColors: true

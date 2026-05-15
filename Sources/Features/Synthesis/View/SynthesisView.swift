@@ -53,61 +53,43 @@ struct SynthesisView: View {
             return false
         }
         
-        return ZStack {
+        ZStack {
             themeManager.pageBackground()
                 .ignoresSafeArea()
             
-            ScrollView {
-                VStack(spacing: DesignSystem.loosePadding) {
-                    // 1. 合成操作入口
+            List {
+                Section {
                     synthesisEntryView
-                    
-                    // 2. 正在运行的任务
-                    if !runningTasks.isEmpty {
+                }
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
+                .listRowBackground(Color.clear)
+                
+                if !runningTasks.isEmpty {
+                    Section {
                         runningTasksSection(tasks: runningTasks)
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
+                    .listRowBackground(Color.clear)
+                }
+                
+                Section {
+                    listHeader
+                        .listRowInsets(EdgeInsets(top: DesignSystem.medium, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
                     
-                    // 3. 文档列表区域
-                    documentListArea
+                    filterPillsBar
+                        .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
+
+                    documentRows
                 }
-                .padding(.horizontal, DesignSystem.standardPadding)
-                .padding(.vertical, DesignSystem.widePadding)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
-            .alert(L10n.Synthesis.tr("error.noPages"), isPresented: $showNoPagesAlert) {
-                Button(L10n.Common.tr("ok"), role: .cancel) { }
-            }
-            .alert(L10n.Synthesis.tr("error.limitReached"), isPresented: $showLimitAlert) {
-                Button(L10n.Common.tr("done"), role: .cancel) { }
-            }
-            .alert(Localized.tr("tag.rename"), isPresented: $showRenameDialog) {
-                TextField(Localized.tr("tags.inputName"), text: $newDocName)
-                Button(Localized.tr("tag.rename")) {
-                    if let doc = docToRename {
-                        synthesisStore.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: newDocName)
-                    }
-                }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { }
-            }
-            .alert(Localized.tr("chat.configureFirst"), isPresented: $showLLMAlert) {
-                Button(L10n.Common.tr("confirm"), role: .cancel) { }
-            } message: {
-                Text(Localized.tr("llm.error.notConfigured"))
-            }
-            .confirmationDialog(Localized.tr("synthesis.batchDeleteConfirm"), isPresented: $showBatchDeleteConfirm, titleVisibility: .visible) {
-                Button(L10n.Common.tr("delete"), role: .destructive) {
-                    batchDelete()
-                }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { }
-            }
-            .confirmationDialog(L10n.Common.tr("deleteConfirm"), isPresented: $showDeleteDocConfirm, titleVisibility: .visible) {
-                Button(L10n.Common.tr("delete"), role: .destructive) {
-                    if let doc = docToDelete {
-                        synthesisStore.deleteSynthesisDoc(type: doc.type, docID: doc.id)
-                        HapticFeedback.shared.trigger(.success)
-                    }
-                }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { }
-            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .scrollIndicators(.hidden)
+            .padding(.top, DesignSystem.widePadding)
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .appTabToolbar(title: L10n.Synthesis.title)
@@ -119,94 +101,134 @@ struct SynthesisView: View {
             Text(identifiable.url.lastPathComponent)
             #endif
         }
+        .alert(L10n.Synthesis.tr("error.noPages"), isPresented: $showNoPagesAlert) {
+            Button(L10n.Common.tr("ok"), role: .cancel) { }
+        }
+        .alert(L10n.Synthesis.tr("error.limitReached"), isPresented: $showLimitAlert) {
+            Button(L10n.Common.tr("done"), role: .cancel) { }
+        }
+        .alert(Localized.tr("tag.rename"), isPresented: $showRenameDialog) {
+            TextField(Localized.tr("tags.inputName"), text: $newDocName)
+            Button(Localized.tr("tag.rename")) {
+                if let doc = docToRename {
+                    synthesisStore.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: newDocName)
+                }
+            }
+            Button(L10n.Common.tr("cancel"), role: .cancel) { }
+        }
+        .alert(Localized.tr("chat.configureFirst"), isPresented: $showLLMAlert) {
+            Button(L10n.Common.tr("confirm"), role: .cancel) { }
+        } message: {
+            Text(Localized.tr("llm.error.notConfigured"))
+        }
+        .confirmationDialog(Localized.tr("synthesis.batchDeleteConfirm"), isPresented: $showBatchDeleteConfirm, titleVisibility: .automatic) {
+            Button(L10n.Common.tr("delete"), role: .destructive) {
+                batchDelete()
+            }
+            Button(L10n.Common.tr("cancel"), role: .cancel) { }
+        }
+        .alert(L10n.Common.tr("deleteConfirm"), isPresented: $showDeleteDocConfirm) {
+            Button(L10n.Common.tr("delete"), role: .destructive) {
+                if let doc = docToDelete {
+                    synthesisStore.deleteSynthesisDoc(type: doc.type, docID: doc.id)
+                    HapticFeedback.shared.trigger(.success)
+                }
+                docToDelete = nil
+            }
+            Button(L10n.Common.tr("cancel"), role: .cancel) {
+                docToDelete = nil
+            }
+        }
     }
 
     // MARK: - Subviews
+    private var filterPillsBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: DesignSystem.Chip.spacing) {
+                FilterPill(title: Localized.tr("search.all"), isSelected: selectedFilterType == nil) {
+                    withAnimation(.spring()) { selectedFilterType = nil }
+                }
+                ForEach(SynthesisStore.SynthesisType.allCases) { type in
+                    FilterPill(title: type.title, icon: type.icon, color: type.formatColor, isSelected: selectedFilterType == type) {
+                        withAnimation(.spring()) { selectedFilterType = type }
+                    }
+                }
+            }
+            .padding(.vertical, DesignSystem.tiny)
+        }
+    }
 
-    /// 文档列表聚合区域
-    private var documentListArea: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            listHeader
-            
-            // 过滤器药丸栏
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignSystem.Chip.spacing) {
-                    FilterPill(
-                        title: Localized.tr("search.all"),
-                        isSelected: selectedFilterType == nil
-                    ) {
-                        withAnimation(.spring()) { selectedFilterType = nil }
-                    }
-                    
-                    ForEach(SynthesisStore.SynthesisType.allCases) { type in
-                        FilterPill(
-                            title: type.title,
-                            icon: type.icon,
-                            color: type.formatColor,
-                            isSelected: selectedFilterType == type
-                        ) {
-                            withAnimation(.spring()) { selectedFilterType = type }
-                        }
-                    }
-                }
-                .padding(.vertical, DesignSystem.tiny)
+    private var filteredDocs: [(SynthesisStore.SynthesisType, SynthesisStore.SynthesisDocument)] {
+        if let type = selectedFilterType {
+            return synthesisStore.allSortedDocuments.filter { $0.0 == type }
+        }
+        return synthesisStore.allSortedDocuments
+    }
+
+    @ViewBuilder
+    private var documentRows: some View {
+        let docs = filteredDocs
+        
+        if docs.isEmpty {
+            VStack(spacing: DesignSystem.medium) {
+                Image(systemName: "doc.text.magnifyingglass")
+                    .font(.system(size: DesignSystem.Timeline.emptyIconSize))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.Metrics.emptyStateIconOpacity))
+                Text(Localized.tr("synthesis.noDocs"))
+                    .font(.subheadline)
+                    .foregroundStyle(.appSecondary)
             }
-            
-            VStack(spacing: 0) {
-                let typesToShow = selectedFilterType == nil ? SynthesisStore.SynthesisType.allCases : [selectedFilterType!]
-                let filteredDocs = typesToShow.flatMap { type in
-                    (synthesisStore.synthesisResults[type] ?? []).map { (type, $0) }
-                }.sorted { $0.1.createdAt > $1.1.createdAt }
-                
-                if filteredDocs.isEmpty {
-                    VStack(spacing: DesignSystem.medium) {
-                        Image(systemName: "doc.text.magnifyingglass")
-                            .font(.system(size: DesignSystem.Timeline.emptyIconSize))
-                            .foregroundStyle(.appSecondary.opacity(DesignSystem.Metrics.emptyStateIconOpacity)) // 0.15
-                        Text(Localized.tr("synthesis.noDocs"))
-                            .font(.subheadline)
-                            .foregroundStyle(.appSecondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignSystem.Metrics.emptyStateVerticalPadding) // 24
-                } else {
-                    ForEach(filteredDocs, id: \.1.id) { type, doc in
-                        SynthesisDocRow(
-                            doc: doc,
-                            type: type,
-                            editMode: editMode,
-                            isSelected: selectedDocIDs.contains(doc.id),
-                            onTap: {
-                                if editMode == .active {
-                                    if selectedDocIDs.contains(doc.id) {
-                                        selectedDocIDs.remove(doc.id)
-                                    } else {
-                                        selectedDocIDs.insert(doc.id)
-                                    }
-                                } else {
-                                    selectedDoc = doc
-                                    showOutput = true
-                                }
-                            },
-                            onRename: {
-                                docToRename = doc
-                                newDocName = doc.name
-                                showRenameDialog = true
-                            },
-                            onDelete: {
-                                docToDelete = doc
-                                showDeleteDocConfirm = true
-                            }
-                        )
-                        
-                        
-                        if doc.id != filteredDocs.last?.1.id {
-                            Divider().padding(.leading, DesignSystem.Sidebar.iconBoxSize + DesignSystem.medium) 
-                        }
-                    }
-                }
-            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSystem.Metrics.emptyStateVerticalPadding)
             .appContainer(background: DesignSystem.containerMaterial)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: 0, trailing: DesignSystem.standardPadding))
+        } else {
+            ForEach(docs, id: \.1.id) { type, doc in
+                SynthesisDocRow(
+                    doc: doc,
+                    type: type,
+                    editMode: editMode,
+                    isSelected: selectedDocIDs.contains(doc.id),
+                    onTap: {
+                        if editMode == .active {
+                            if selectedDocIDs.contains(doc.id) {
+                                selectedDocIDs.remove(doc.id)
+                            } else {
+                                selectedDocIDs.insert(doc.id)
+                            }
+                        } else {
+                            selectedDoc = doc
+                            showOutput = true
+                        }
+                    },
+                    onRename: {
+                        docToRename = doc
+                        newDocName = doc.name
+                        showRenameDialog = true
+                    },
+                    onDelete: {
+                        docToDelete = doc
+                        showDeleteDocConfirm = true
+                    }
+                )
+                .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: 0, trailing: DesignSystem.standardPadding))
+                .listRowBackground(
+                    ZStack {
+                        DesignSystem.containerMaterial
+                        if doc.id != docs.last?.1.id {
+                            VStack {
+                                Spacer()
+                                Divider()
+                                    .background(Color.appBorder.opacity(DesignSystem.secondaryOpacity))
+                                    .padding(.horizontal, DesignSystem.standardPadding)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+                )
+            }
         }
     }
     

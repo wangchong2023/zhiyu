@@ -26,7 +26,7 @@ struct ChatWelcomeView: View {
                     // 1. 我的指令 (置顶)
                     SuggestionGroupView(
                         title: L10n.Chat.tr("group.user"),
-                        icon: "pin.fill",
+                        icon: DesignSystem.Icons.pinFill,
                         queries: promptService.userShortcuts.map { $0.text }
                     )
                     
@@ -39,7 +39,7 @@ struct ChatWelcomeView: View {
                     } else if !coordinator.insightfulQuestions.isEmpty {
                         SuggestionGroupView(
                             title: L10n.Chat.tr("group.ai"),
-                            icon: "sparkles",
+                            icon: DesignSystem.Icons.sparkles,
                             queries: coordinator.insightfulQuestions,
                             color: .appAccent
                         )
@@ -74,7 +74,7 @@ struct SuggestionGroupView: View {
                     Image(systemName: icon).font(.caption2)
                     Text(title).font(.caption.weight(.bold))
                     Spacer()
-                    Image(systemName: "sparkles.rectangle.stack")
+                    Image(systemName: DesignSystem.Icons.promptLibrary)
                         .font(.system(size: DesignSystem.Metrics.heroValueSize * 0.38))
                         .opacity(0.5)
                 }

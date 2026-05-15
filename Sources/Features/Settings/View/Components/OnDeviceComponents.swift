@@ -105,7 +105,7 @@ struct OnDeviceTestView: View {
                         .foregroundStyle(.appSecondary)
                     Spacer()
                     Button(action: { AppPasteboard.string = result }) {
-                        Image(systemName: "doc.on.doc")
+                        Image(systemName: DesignSystem.Icons.copy)
                             .font(.caption)
                             .foregroundStyle(.appAccent)
                     }

@@ -1,0 +1,126 @@
+// AIProcessingActivityWidget.swift
+//
+// 作者: Wang Chong
+// 功能说明: 灵动岛 (Dynamic Island) 与实时活动 UI 渲染实现。
+//           本文件定义了实时活动在锁定屏幕及灵动岛（紧凑、最小、展开模式）下的视觉布局。
+// 版本: 1.0
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+import WidgetKit
+import ActivityKit
+
+/// AI 治理扫描实时活动视图
+struct AIProcessingActivityWidget: Widget {
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: AIProcessingAttributes.self) { context in
+            // 锁定屏幕/横幅通知下的展示布局
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .foregroundColor(.purple)
+                        .font(.title2)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(context.attributes.taskName)
+                            .font(.headline)
+                        Text(context.state.status)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(Int(context.state.progress * 100))%")
+                        .font(.system(.title, design: .rounded))
+                        .bold()
+                }
+                
+                ProgressView(value: context.state.progress)
+                    .tint(.purple)
+            }
+            .padding()
+            .activityBackgroundTint(Color.indigo.opacity(0.3))
+            .activitySystemActionForegroundColor(.white)
+            
+        } dynamicIsland: { context in
+            DynamicIsland {
+                // 展开模式 (Expanded) - 左侧：图标增强
+                DynamicIslandExpandedRegion(.leading) {
+                    Image(systemName: "sparkles")
+                        .symbolRenderingMode(.multicolor)
+                        .font(.title2)
+                        .padding(.leading, 8)
+                }
+                
+                // 展开模式 - 右侧：大字号进度
+                DynamicIslandExpandedRegion(.trailing) {
+                    Text("\(Int(context.state.progress * 100))%")
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.black)
+                        .foregroundStyle(.purple)
+                        .padding(.trailing, 8)
+                }
+                
+                // 展开模式 - 底部：核心进度与状态流
+                DynamicIslandExpandedRegion(.bottom) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        // 状态标签
+                        HStack {
+                            Text(context.state.status)
+                                .font(.caption.bold())
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Capsule().fill(.purple.opacity(0.2)))
+                                .foregroundStyle(.purple)
+                            
+                            Spacer()
+                            
+                            // 耗时计算
+                            Text(timerInterval: context.attributes.startTime...Date().addingTimeInterval(3600), countsDown: false)
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        // 高亮进度条
+                        ProgressView(value: context.state.progress)
+                            .progressViewStyle(.linear)
+                            .tint(LinearGradient(colors: [.purple, .blue], startPoint: .leading, endPoint: .trailing))
+                            .scaleEffect(x: 1, y: 1.5, anchor: .center)
+                            .clipShape(Capsule())
+                    }
+                    .padding(.top, 4)
+                }
+                
+                // 展开模式 - 中心：主任务标题
+                DynamicIslandExpandedRegion(.center) {
+                    Text(context.attributes.taskName)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                }
+            } compactLeading: {
+                // 紧凑模式 - 左侧：尝试在图标旁显示极简任务标识
+                HStack(spacing: 4) {
+                    Image(systemName: "sparkles")
+                        .symbolRenderingMode(.multicolor)
+                        .font(.system(size: 14, weight: .bold))
+                    
+                    Text(context.attributes.taskName.prefix(2))
+                        .font(.system(size: 10, weight: .heavy))
+                        .foregroundStyle(.purple)
+                }
+                .padding(.leading, 4)
+            } compactTrailing: {
+                // 紧凑模式 - 右侧：增大字体并使用等宽数字，提升易读性
+                Text("\(Int(context.state.progress * 100))%")
+                    .font(.system(size: 13, weight: .black, design: .rounded).monospacedDigit())
+                    .foregroundColor(.purple)
+            } minimal: {
+                // 最小模式
+                Image(systemName: "sparkles")
+                    .symbolRenderingMode(.multicolor)
+            }
+            .keylineTint(.purple.opacity(0.5))
+        }
+    }
+}

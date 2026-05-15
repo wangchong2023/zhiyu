@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "zh-Hans",
   "strings" : {
-    "" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ""
-          }
-        }
-      }
-    },
     " " : {
       "extractionState" : "manual",
       "localizations" : {
@@ -23364,7 +23354,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Created page \\"
+            "value" : "Created page \"%@\""
           }
         },
         "zh-Hans" : {
@@ -23398,7 +23388,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No results found for \\"
+            "value" : "No results found for \"%@\""
           }
         },
         "zh-Hans" : {
@@ -27170,9 +27160,6 @@
           }
         }
       }
-    },
-    "Version 1.0.0 (Build 20260512)" : {
-
     },
     "watch.capture" : {
       "extractionState" : "manual",

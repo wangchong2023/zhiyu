@@ -53,7 +53,7 @@ enum AppTab: String, CaseIterable {
     var icon: String {
         switch self {
         case .knowledge: return "books.vertical.fill"
-        case .chat: return "sparkles"
+        case .chat: return DesignSystem.Icons.sparkles
         case .graph: return "circle.hexagongrid.fill"
         case .synthesis: return "wand.and.stars"
         case .ingest: return "tray.and.arrow.down.fill"

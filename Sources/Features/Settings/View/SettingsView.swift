@@ -164,7 +164,7 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Settings.Section.ai)
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
 
                 // ── 数据同步 ──
                 Section {
@@ -196,7 +196,7 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Settings.Section.data)
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
 
                 // ── 安全与隐私 ──
                 Section {
@@ -228,7 +228,7 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Settings.Section.security)
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
                 
                 // ── 知识治理与维护 ──
                 Section {
@@ -238,7 +238,7 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Settings.Section.maintenance)
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
 
                 #if DEBUG
                 // ── 开发者调试 ──
@@ -249,7 +249,7 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Settings.Section.developer)
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
                 #endif
 
                 Section {
@@ -257,7 +257,7 @@ struct SettingsView: View {
                         AboutView()
                     }
                 }
-                .listRowBackground(Color.appCard.opacity(0.8))
+                .listRowBackground(Color.appCard.opacity(DesignSystem.surfaceOpacity))
             }
             #if os(iOS)
             .listStyle(.insetGrouped)
@@ -267,6 +267,7 @@ struct SettingsView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Settings.title)
         .navigationBarBackButtonHidden(true)
+        .appToast()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(L10n.Common.tr("close")) {

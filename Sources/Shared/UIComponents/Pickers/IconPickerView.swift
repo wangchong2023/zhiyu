@@ -86,7 +86,7 @@ struct IconPickerView: View {
                 .font(.title)
                 .foregroundStyle(.appAccent)
                 .frame(width: 48, height: 48)
-                .background(Color.appAccent.opacity(0.15))
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
 
             VStack(alignment: .leading, spacing: 4) {

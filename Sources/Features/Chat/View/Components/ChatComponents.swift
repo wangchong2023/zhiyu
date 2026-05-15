@@ -31,7 +31,7 @@ struct ChatBubbleView: View {
     var body: some View {
         HStack(spacing: Spacing.medium) { // 12
             if isSelectionMode {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                Image(systemName: isSelected ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.emptyCircle)
                     .foregroundStyle(isSelected ? Color.appAccent : Color.appSecondary)
                     .font(.title3)
                     .transition(.move(edge: .leading).combined(with: .opacity))
@@ -52,9 +52,7 @@ struct ChatBubbleView: View {
     }
     
     private var timestampString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/M/d HH:mm"
-        return formatter.string(from: message.timestamp)
+        message.timestamp.formatted(as: Date.AppFormat.slashDetailed)
     }
     
     private var userBubble: some View {
@@ -97,9 +95,9 @@ struct ChatBubbleView: View {
             HStack(spacing: Spacing.tiny + Spacing.atomic) {
                 ZStack {
                     Circle()
-                        .fill(Color.appAccent.opacity(Colors.glassOpacity))
+                        .fill(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                         .frame(width: 22, height: 22)
-                    Image(systemName: "sparkles")
+                    Image(systemName: DesignSystem.Icons.sparkles)
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.appAccent)
                 }
@@ -190,7 +188,7 @@ struct ChatBubbleView: View {
                                         }
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
-                                        .background(Color.fromModelColorName(type.colorName).opacity(0.15))
+                                        .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.Opacity.glass))
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                         .foregroundStyle(Color.fromModelColorName(type.colorName))
                                     }
@@ -219,7 +217,7 @@ struct ChatBubbleView: View {
                 .foregroundStyle(.appSecondary.opacity(Colors.secondaryOpacity)) // 0.8
                 .padding(.horizontal, Spacing.wide) // 20
                 .padding(.vertical, Spacing.tiny) // 4
-                .background(Capsule().fill(Color.appCard.opacity(Colors.fullOpacity * 0.5))) // 0.5
+                .background(Capsule().fill(Color.appCard.opacity(DesignSystem.Opacity.soft))) // 0.5
             Spacer()
         }
         .padding(.vertical, Spacing.tightPadding) // 8
@@ -239,14 +237,14 @@ struct ChatContentView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // 清理常见的 LLM 转义符错误 (例如 \` -> `)
+            // 清理常见的 LLM 转义符错误 (确保 Markdown 渲染正常)
             let cleanedText = text.replacingOccurrences(of: "\\`", with: "`")
                 .replacingOccurrences(of: "\\*", with: "*")
                 .replacingOccurrences(of: "\\_", with: "_")
+                .replacingOccurrences(of: "\\[\\[", with: "[[")
+                .replacingOccurrences(of: "\\]\\]", with: "]]")
             
-            let displayText = expanded ? cleanedText : String(cleanedText.prefix(1500))
-            
-            MarkdownRendererView(content: displayText, isPrivate: false, onLinkTap: { title in
+            MarkdownRendererView(content: cleanedText, isPrivate: false, onLinkTap: { title in
                 let targetTitle = title.trimmingCharacters(in: .whitespaces)
                 if let page = pages.first(where: { $0.title.localizedCaseInsensitiveCompare(targetTitle) == .orderedSame }) {
                     HapticFeedback.shared.trigger(.link)
@@ -254,14 +252,6 @@ struct ChatContentView: View {
                     router.navigateToPage(id: page.id)
                 }
             }, isCompact: true)
-            
-            if text.count > 1500 && !expanded {
-                Button(L10n.Chat.tr("expandFull")) {
-                    withAnimation { expanded = true }
-                }
-                .font(.caption)
-                .foregroundStyle(.appAccent)
-            }
         }
     }
 }

@@ -94,6 +94,18 @@ class TaskCenter: ObservableObject {
 
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
+        #if os(iOS)
+        // 实时同步到当前“最活跃”的灵动岛（如果存在的话）
+        if let firstRunningTask = tasks.first(where: { if case .running = $0.status { return true }; return false }) {
+            Task {
+                if case .running(let progress) = firstRunningTask.status {
+                    await ActivityService.shared.updateProgress(id: firstRunningTask.id, progress: progress, message: text)
+                } else {
+                    await ActivityService.shared.updateProgress(id: firstRunningTask.id, progress: 0.5, message: text)
+                }
+            }
+        }
+        #endif
     }
 
     struct TaskMetrics {
@@ -132,7 +144,7 @@ class TaskCenter: ObservableObject {
         self.latestStatus = Localized.trf("aitask.status.startingFormat", name, target)
 
         #if os(iOS)
-        ActivityService.shared.startActivity(name: name, target: target)
+        ActivityService.shared.startActivity(id: task.id, name: name, target: target)
         #endif
 
         return task.id
@@ -150,19 +162,25 @@ class TaskCenter: ObservableObject {
             case .running(let progress):
                 self.latestStatus = Localized.trf("aitask.status.runningFormat", task.name, task.target)
                 #if os(iOS)
-                ActivityService.shared.updateProgress(progress, message: self.latestStatus)
+                Task {
+                    await ActivityService.shared.updateProgress(id: task.id, progress: progress, message: self.latestStatus)
+                }
                 #endif
             case .completed:
                 self.latestStatus = Localized.trf("aitask.status.completedFormat", task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
                 #if os(iOS)
-                ActivityService.shared.endActivity()
+                Task {
+                    await ActivityService.shared.endActivity(id: task.id)
+                }
                 #endif
             case .failed:
                 self.latestStatus = Localized.trf("aitask.status.failedFormat", task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
                 #if os(iOS)
-                ActivityService.shared.endActivity()
+                Task {
+                    await ActivityService.shared.endActivity(id: task.id)
+                }
                 #endif
             case .pending:
                 break

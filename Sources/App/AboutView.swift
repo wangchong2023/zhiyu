@@ -25,7 +25,7 @@ struct AboutView: View {
                             .frame(width: 100, height: 100)
                             .shadow(color: .appAccent.opacity(0.3), radius: 15, y: 8)
                         
-                        Image(systemName: "sparkles")
+                        Image(systemName: DesignSystem.Icons.sparkles)
                             .font(.system(size: 50))
                             .foregroundStyle(.white)
                     }
@@ -33,10 +33,6 @@ struct AboutView: View {
                     VStack(spacing: 4) {
                         Text(Localized.tr("app.name"))
                             .font(.title2.bold())
-                        
-                        Text("Version 1.0.0 (Build 20260512)")
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
                     }
                 }
                 .padding(.top, 40)
@@ -49,11 +45,11 @@ struct AboutView: View {
                 
                 // Info List
                 VStack(spacing: 1) {
-                    infoRow(title: "Developer", value: "Wang Chong")
+                    infoRow(title: L10n.Settings.tr("about.developer"), value: L10n.Settings.tr("about.developerName"))
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: "Website", value: "https://zhiyu.ai")
+                    infoRow(title: L10n.Settings.tr("about.website"), value: "https://zhiyu.ai")
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: "Open Source", value: "MIT License")
+                    infoRow(title: L10n.Settings.tr("about.version"), value: "1.0.0 (20260512)")
                 }
                 .background(Color.appCard.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
@@ -72,15 +68,7 @@ struct AboutView: View {
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.Settings.tr("section.about"))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(L10n.Common.tr("close")) {
-                    dismiss()
-                }
-                .fontWeight(.medium)
-            }
-        }
+        .navigationBarBackButtonHidden(false)
     }
     
     private func infoRow(title: String, value: String) -> some View {

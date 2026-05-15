@@ -26,23 +26,6 @@ struct PageDetailView: View {
         self._coordinator = State(initialValue: PageDetailCoordinator(page: page))
     }
     
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .automatic) {
-            HStack(spacing: DesignSystem.small) {
-                pinButton
-                backlinksButton
-                editButton
-                aiMenuButton
-            }
-            .padding(.horizontal, DesignSystem.small)
-            .padding(.vertical, DesignSystem.tiny)
-            .background(Color.appCard.opacity(0.5))
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(Color.appBorder.opacity(0.3), lineWidth: 1))
-        }
-    }
-    
     private var pinButton: some View {
         Button(action: { Task { await coordinator.togglePin() } }) {
             Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pin + ".fill" : DesignSystem.Icons.pin)
@@ -419,7 +402,7 @@ struct PageDetailView: View {
                 ForEach(coordinator.backlinks) { linkedPage in
                     NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
                         HStack(spacing: DesignSystem.medium) {
-                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.type.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.type.colorName).opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
+                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.type.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.type.colorName).opacity(DesignSystem.Opacity.glass)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                             Text(linkedPage.title).font(.subheadline).foregroundStyle(.appText)
                             Spacer()
                             Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)

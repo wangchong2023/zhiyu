@@ -170,6 +170,16 @@ struct AppConstants {
             static let minDistanceSq: CGFloat = 0.01
         }
     }
+
+    // MARK: - 全局存储键名 (Magic Strings)
+    struct Keys {
+        struct Storage {
+            static let languageMode = "app_language_mode"
+            static let userHasOnboarded = "app_user_has_onboarded"
+            static let lastUsedModel = "app_last_used_model"
+            static let themePreference = "app_theme_preference"
+        }
+    }
 }
 
 /// 支持的 AI 模型枚举

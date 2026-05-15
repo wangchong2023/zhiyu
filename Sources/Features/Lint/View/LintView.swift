@@ -83,62 +83,29 @@ struct LintViewContent: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(selectedTab == 0 ? L10n.Lint.tr("title") : L10n.Lint.tr("aiSuggestions"))
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    // 修复：优先使用 dismiss() 退出当前模态或 Push 栈，兜底使用路由返回
-                    if selection != nil {
-                        selection = nil // 如果是侧边栏选中的，清空选中状态以返回
-                    } else {
-                        dismiss()
-                        router.pop()
-                    }
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.appText)
-                        .frame(width: 32, height: 44) // 移除背景和形状，对齐 SynthesisView 风格
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    if selectedTab == 0 { runLint() } else { runAIScan() }
-                }) {
-                    HStack(spacing: 8) { // 略微收窄间距
-                        ZStack {
-                            ProgressView()
-                                .controlSize(.small)
-                                .opacity(isRunning || aiStore.isScanningAI ? 1 : 0)
-                            
-                            Image(systemName: selectedTab == 0 ? "stethoscope" : "sparkles")
-                                .font(.system(size: 14))
-                                .opacity(isRunning || aiStore.isScanningAI ? 0 : 1)
-                        }
-                        .frame(width: 18)
+        .appSubPageToolbar(title: selectedTab == 0 ? L10n.Lint.tr("title") : L10n.Lint.tr("aiSuggestions")) {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                if selectedTab == 0 { runLint() } else { runAIScan() }
+            }) {
+                HStack(spacing: 6) { // 减小间距，使视觉更紧凑
+                    ZStack {
+                        ProgressView()
+                            .controlSize(.small)
+                            .opacity(isRunning || aiStore.isScanningAI ? 1 : 0)
                         
-                        Text(isRunning || aiStore.isScanningAI ? L10n.Lint.tr("scanning") : (selectedTab == 0 ? L10n.Lint.tr("runCheck") : L10n.Lint.tr("runAIScan")))
+                        Image(systemName: selectedTab == 0 ? "stethoscope" : "sparkles")
+                            .font(.system(size: 13)) // 微调图标大小
+                            .opacity(isRunning || aiStore.isScanningAI ? 0 : 1)
                     }
-                    .font(.footnote.bold()) // 稍微调小一点字体使其更紧凑
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(Color.appCard.opacity(0.85)) // 略微增加透明度使其不那么厚重
-                    .clipShape(Capsule())
-                    .overlay(Capsule().stroke(Color.appBorder, lineWidth: 0.5)) // 增加精致的边框
-                    .fixedSize(horizontal: true, vertical: true) // 强制按内容收缩，消除多余留白
-                    .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 1)
-                    .foregroundStyle(buttonGradient)
+                    
+                    Text(isRunning || aiStore.isScanningAI ? L10n.Lint.tr("scanning") : (selectedTab == 0 ? L10n.Lint.tr("runCheck") : L10n.Lint.tr("runAIScan")))
                 }
-                .buttonStyle(.plain)
-                .disabled(isRunning || aiStore.isScanningAI)
-                .transaction { transaction in
-                    transaction.animation = nil // 强制禁用过渡动画，从事务层面防止重影
-                }
+                .font(.footnote.bold())
+                .foregroundStyle(buttonGradient)
             }
+            .buttonStyle(.plain)
+            .disabled(isRunning || aiStore.isScanningAI)
         }
     }
 
@@ -300,7 +267,7 @@ struct LintViewContent: View {
             HStack {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.15))
+                        .fill(color.opacity(DesignSystem.Opacity.glass))
                         .frame(width: DesignSystem.Metrics.iconBoxSize - 8, height: DesignSystem.Metrics.iconBoxSize - 8)
                     Image(systemName: icon)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
@@ -377,7 +344,7 @@ struct LintViewContent: View {
     private var emptyHealthView: some View {
         VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "checkmark.seal.fill")
+            Image(systemName: DesignSystem.Icons.seal)
                 .font(.system(size: 56))
                 .foregroundStyle(.green)
             Text(L10n.Lint.tr("noIssues"))
@@ -392,7 +359,7 @@ struct LintViewContent: View {
     private var emptyAIView: some View {
         VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "sparkles")
+            Image(systemName: DesignSystem.Icons.sparkles)
                 .font(.system(size: 56))
                 .foregroundStyle(.appAccent)
             Text(L10n.Lint.tr("noAISuggestions"))
@@ -440,17 +407,29 @@ struct LintViewContent: View {
         isRunning = true
         Task {
             // 模拟扫描耗时，增加视觉反馈
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            try? await Task.sleep(nanoseconds: 800_000_000)
             await aiStore.runLint()
             await MainActor.run {
                 isRunning = false
+                HapticFeedback.shared.trigger(.success)
+                ToastManager.shared.show(type: .success, message: L10n.Lint.tr("scanComplete"))
             }
         }
     }
 
     private func runAIScan() {
+        guard aiStore.isLLMEnabled else {
+            HapticFeedback.shared.trigger(.error)
+            ToastManager.shared.show(type: .error, message: L10n.Lint.tr("aiDisabledHint"))
+            return
+        }
+        
         Task {
             await aiStore.runAIScan()
+            await MainActor.run {
+                HapticFeedback.shared.trigger(.success)
+                ToastManager.shared.show(type: .success, message: L10n.Lint.tr("aiScanComplete"))
+            }
         }
     }
 
@@ -599,7 +578,7 @@ struct LintIssueRow: View {
                                 if isAnalyzing {
                                     ProgressView().scaleEffect(0.6)
                                 } else {
-                                    Image(systemName: "sparkles")
+                                    Image(systemName: DesignSystem.Icons.sparkles)
                                         .font(.caption2)
                                 }
                                 Text(L10n.Lint.tr("aiFixSuggestion"))

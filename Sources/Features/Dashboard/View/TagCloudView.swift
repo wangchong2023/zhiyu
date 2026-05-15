@@ -54,12 +54,60 @@ struct TagCloudViewContent: View {
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Tag.title)
             .navigationBarTitleDisplayMode(.inline)
-            .background(alertLayer)
             .task {
                 await coordinator.fetchData()
             }
             .onChange(of: store.pages) { _, _ in
                 Task { await coordinator.fetchData() }
+            }
+            // 重命名对话框
+            .alert(Localized.tr("tag.renameTag"), isPresented: Binding(
+                get: { coordinator.tagToRename != nil },
+                set: { if !$0 { coordinator.tagToRename = nil } }
+            )) {
+                TextField(Localized.tr("tag.newName"), text: $coordinator.newTagName)
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToRename = nil }
+                Button(L10n.Common.tr("ok")) {
+                    coordinator.performRename()
+                }
+            } message: {
+                Text(Localized.trf("tag.renameMessage", coordinator.tagToRename ?? ""))
+            }
+            // 删除确认对话框
+            .confirmationDialog(
+                coordinator.tagToDelete.map { Localized.trf("tag.deleteMessage", $0) } ?? Localized.tr("tag.deleteTag"),
+                isPresented: $coordinator.showDeleteConfirm,
+                titleVisibility: .automatic
+            ) {
+                Button(L10n.Common.tr("delete"), role: .destructive) {
+                    coordinator.performDelete()
+                }
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToDelete = nil }
+            } message: {
+                Text(Localized.tr("settings.clearAll.message"))
+            }
+            // 新增标签对话框
+            .alert(Localized.tr("tags.addNew"), isPresented: $coordinator.showAddTagDialog) {
+                TextField(Localized.tr("tags.inputName"), text: $coordinator.addTagName)
+                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.addTagName = "" }
+                Button(L10n.Common.tr("create")) {
+                    coordinator.performAddTag()
+                }
+            } message: {
+                Text(Localized.tr("tags.createHint"))
+            }
+            // 批量删除确认
+            .confirmationDialog(
+                Localized.trf("tags.bulkDeleteWarning", coordinator.selectedTagsForBulk.count),
+                isPresented: $showBulkDeleteConfirm,
+                titleVisibility: .automatic
+            ) {
+                Button(L10n.Common.tr("deleteAll"), role: .destructive) {
+                    coordinator.performBulkDelete()
+                }
+                Button(L10n.Common.tr("cancel"), role: .cancel) { }
+            } message: {
+                Text(Localized.tr("settings.clearAll.message"))
             }
     }
 
@@ -143,58 +191,6 @@ struct TagCloudViewContent: View {
         }
     }
 
-    private var alertLayer: some View {
-        Color.clear
-            // 重命名对话框
-            .alert(Localized.tr("tag.renameTag"), isPresented: Binding(
-                get: { coordinator.tagToRename != nil },
-                set: { if !$0 { coordinator.tagToRename = nil } }
-            )) {
-                TextField(Localized.tr("tag.newName"), text: $coordinator.newTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToRename = nil }
-                Button(L10n.Common.tr("ok")) {
-                    coordinator.performRename()
-                }
-            } message: {
-                Text(Localized.trf("tag.renameMessage", coordinator.tagToRename ?? ""))
-            }
-            // 删除确认对话框
-            .confirmationDialog(
-                coordinator.tagToDelete.map { Localized.trf("tag.deleteMessage", $0) } ?? Localized.tr("tag.deleteTag"),
-                isPresented: $coordinator.showDeleteConfirm,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.Common.tr("delete"), role: .destructive) {
-                    coordinator.performDelete()
-                }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToDelete = nil }
-            } message: {
-                Text(Localized.tr("settings.clearAll.message"))
-            }
-            // 新增标签对话框 (保持 alert 因为需要文本输入)
-            .alert(Localized.tr("tags.addNew"), isPresented: $coordinator.showAddTagDialog) {
-                TextField(Localized.tr("tags.inputName"), text: $coordinator.addTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.addTagName = "" }
-                Button(L10n.Common.tr("create")) {
-                    coordinator.performAddTag()
-                }
-            } message: {
-                Text(Localized.tr("tags.createHint"))
-            }
-            // 批量删除确认
-            .confirmationDialog(
-                Localized.trf("tags.bulkDeleteWarning", coordinator.selectedTagsForBulk.count),
-                isPresented: $showBulkDeleteConfirm,
-                titleVisibility: .visible
-            ) {
-                Button(L10n.Common.tr("deleteAll"), role: .destructive) {
-                    coordinator.performBulkDelete()
-                }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { }
-            } message: {
-                Text(Localized.tr("settings.clearAll.message"))
-            }
-    }
 
     // MARK: - 子视图组件
 

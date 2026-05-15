@@ -168,7 +168,7 @@ private struct LogEntryRow: View {
                         }
                         
                         if let dur = entry.duration {
-                            Text("•")
+                            Text(DesignSystem.Icons.bullet)
                             Text(dur.formattedAdaptive)
                                 .foregroundStyle(.appAccent)
                         }

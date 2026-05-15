@@ -1,6 +1,125 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    "ai.status.structuring": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Building logical topology..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在构建逻辑拓扑..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.extracting": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extracting core concepts..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在提炼核心概念..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.organizing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizing presentation outline..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在编排演示大纲..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.synthesizing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synthesizing cross-domain insights..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在合成跨领域洞察..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.visualizing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visualizing semantic connections..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在可视化语义联系..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.digging": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Digging into background knowledge..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在深挖背景知识..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.generating": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generating insights..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在生成洞察..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
     "ai.status.analyzing": {
       "localizations": {
         "en": {
@@ -30,6 +149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "正在预处理分块..."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "ai.status.indexing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indexing: %1$d/%2$d %3$@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在索引: %1$d/%2$d %3$@"
           }
         }
       },

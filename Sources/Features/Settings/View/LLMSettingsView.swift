@@ -36,7 +36,7 @@ struct LLMSettingsView: View {
                 // Enable/Disable
                 Section {
                     Toggle(isOn: $llmService.isEnabled) {
-                        Label(Localized.tr("llm.enableAssistant"), systemImage: "sparkles")
+                        Label(Localized.tr("llm.enableAssistant"), systemImage: DesignSystem.Icons.sparkles)
                             .foregroundStyle(.appText)
                     }
                     .tint(.appAccent)
@@ -89,7 +89,7 @@ struct LLMSettingsView: View {
                                     .foregroundStyle(.appText)
                                 Spacer()
                                 if llmService.provider == provider {
-                                    Image(systemName: "checkmark")
+                                    Image(systemName: DesignSystem.Icons.check)
                                         .foregroundStyle(.appAccent)
                                 }
                             }
@@ -121,7 +121,7 @@ struct LLMSettingsView: View {
                                 ProgressView()
                                     .tint(.appAccent)
                             } else {
-                                Image(systemName: "bolt.horizontal.fill")
+                                Image(systemName: DesignSystem.Icons.bolt)
                                     .foregroundStyle(.appAccent)
                             }
                             Text(testing ? Localized.tr("llm.testing") : Localized.tr("llm.testConnection"))
@@ -136,7 +136,7 @@ struct LLMSettingsView: View {
                             switch result {
                             case .success(let latency):
                                 HStack {
-                                    Image(systemName: "checkmark.circle.fill")
+                                    Image(systemName: DesignSystem.Icons.checkCircle)
                                         .foregroundStyle(.green)
                                     Text(Localized.tr("ondevice.connected"))
                                         .font(.subheadline.bold())
@@ -148,7 +148,7 @@ struct LLMSettingsView: View {
                                 }
                             case .failure(let code, let message, let latency):
                                 HStack(alignment: .top) {
-                                    Image(systemName: "xmark.circle.fill")
+                                    Image(systemName: DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(.red)
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(Localized.trf("ondevice.errorFormat", "\(code)"))

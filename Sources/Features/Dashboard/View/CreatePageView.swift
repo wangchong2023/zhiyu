@@ -99,6 +99,12 @@ struct CreatePageView: View {
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.Common.tr("cancel")) {
+                        dismiss()
+                    }
+                }
+                
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Creation.tr("create")) {
                         createPage()

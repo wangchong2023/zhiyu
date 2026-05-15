@@ -142,7 +142,7 @@ struct VoiceNoteView: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(speechService.isRecording ? Color.red.opacity(0.2) : Color.appAccent.opacity(0.15))
+                    .fill(speechService.isRecording ? Color.red.opacity(DesignSystem.Opacity.glass * 1.5) : Color.appAccent.opacity(DesignSystem.Opacity.glass))
                     .frame(width: 80, height: 80)
                 
                 if speechService.isRecording {

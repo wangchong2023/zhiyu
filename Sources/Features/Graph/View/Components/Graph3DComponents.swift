@@ -316,7 +316,7 @@ struct Graph3DControlsOverlay: View {
                         .background(
                             RoundedRectangle(cornerRadius: 14)
                                 .fill(.regularMaterial)
-                                .shadow(color: .black.opacity(0.15), radius: 8, x: -4, y: 4)
+                                .shadow(color: .black.opacity(DesignSystem.Opacity.glass), radius: 8, x: -4, y: 4)
                         )
                         .offset(x: -50, y: -20)
                         .transition(.asymmetric(
@@ -372,7 +372,7 @@ struct Graph3DNodeInfoBar: View {
                     .foregroundStyle(.appAccent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.appAccent.opacity(0.15))
+                    .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                     .clipShape(Capsule())
             }
             .accessibilityIdentifier("graph3d-view-page")

@@ -83,7 +83,7 @@ struct PluginDetailView: View {
             .tint(.appAccent)
             
             Button(action: {}) {
-                Image(systemName: "square.and.arrow.up")
+                Image(systemName: DesignSystem.Icons.export)
                     .padding(DesignSystem.small)
             }
             .buttonStyle(.bordered)
@@ -150,7 +150,7 @@ struct BulletPoint: View {
     let text: String
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Text("•").bold()
+            Text(DesignSystem.Icons.bullet).bold()
             Text(text).font(.subheadline).foregroundStyle(.appSecondary)
         }
     }

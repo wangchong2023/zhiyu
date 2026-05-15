@@ -1,13 +1,149 @@
 {
   "sourceLanguage": "zh-Hans",
   "strings": {
+    "settings.injectConfirm.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inject Demo Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注入演示数据"
+          }
+        }
+      }
+    },
+    "settings.injectConfirm.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This will clear current data and inject preset demo content. Continue?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将清空当前数据并注入一组预设的演示内容，确认执行吗？"
+          }
+        }
+      }
+    },
+    "settings.injectDemoData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inject Demo Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注入演示数据"
+          }
+        }
+      }
+    },
     "settings.aboutApp": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ZhiYu"
+            "value": "About ZhiYu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关于"
+          }
+        }
+      }
+    },
+    "settings.about.developer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Developer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开发者"
+          }
+        }
+      }
+    },
+    "settings.about.website": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Official Website"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "官方网站"
+          }
+        }
+      }
+    },
+    "settings.about.developerName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wang Chong"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "王冲"
+          }
+        }
+      }
+    },
+    "settings.about.version": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "版本信息"
+          }
+        }
+      }
+    },
+    "settings.section.about": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About"
           }
         },
         "zh-Hans": {
@@ -109,7 +245,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Build"
+            "value": "Build Number"
           }
         },
         "zh-Hans": {
@@ -438,7 +574,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "载入外部文件夹"
+            "value": "Load external folder"
           }
         }
       }
@@ -477,40 +613,6 @@
         }
       }
     },
-    "settings.injectConfirm.message": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This will clear current data and inject preset demo content. Continue?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这将清空当前数据并注入一组预设的演示内容，确认执行吗？"
-          }
-        }
-      }
-    },
-    "settings.injectConfirm.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inject Demo Data"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "注入演示数据"
-          }
-        }
-      }
-    },
     "settings.injectDemo.successMessage": {
       "extractionState": "manual",
       "localizations": {
@@ -524,23 +626,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "成功注入 %d 条演示数据，界面已同步更新。"
-          }
-        }
-      }
-    },
-    "settings.injectDemoData": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inject Demo Data"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "注入演示数据"
           }
         }
       }
@@ -643,6 +728,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识治理与维护"
+          }
+        }
+      }
+    },
+    "settings.developer.section.data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data Injection"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据注入"
+          }
+        }
+      }
+    },
+    "settings.developer.section.tabData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据维护"
+          }
+        }
+      }
+    },
+    "settings.developer.section.tabQuality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "质量评估"
+          }
+        }
+      }
+    },
+    "settings.injectDemo.errorMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Injection failed. Please check storage status."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "演示数据注入失败，请检查数据库连接。"
           }
         }
       }
@@ -1051,23 +1204,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "执行脚本注入"
-          }
-        }
-      }
-    },
-    "settings.section.about": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "About"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "关于"
           }
         }
       }
@@ -1497,23 +1633,6 @@
         }
       }
     },
-    "settings.developer.section.data": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Data Injection"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "数据注入"
-          }
-        }
-      }
-    },
     "settings.developer.section.performance": {
       "extractionState": "manual",
       "localizations": {
@@ -1714,6 +1833,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "此操作将清空当前数据库所有页面，仅用于性能测试。10000 节点可能会导致短时间卡顿。"
+          }
+        }
+      }
+    },
+    "about.developer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Developer"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开发者"
+          }
+        }
+      }
+    },
+    "about.website": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "官方网站"
+          }
+        }
+      }
+    },
+    "about.license": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Source"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开源协议"
+          }
+        }
+      }
+    },
+    "injectDemo.errorMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Injection failed, check database"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注入失败，请检查数据库状态"
           }
         }
       }

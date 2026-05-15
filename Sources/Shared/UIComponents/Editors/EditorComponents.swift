@@ -112,7 +112,7 @@ struct EditorToolbarButton: View {
             }
             .foregroundStyle(Color.appSecondary)
             .frame(width: 44, height: 36)
-            .background(Color.appBorder.opacity(0.15))
+            .background(Color.appBorder.opacity(DesignSystem.Opacity.glass))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
         }
         .buttonStyle(.plain)

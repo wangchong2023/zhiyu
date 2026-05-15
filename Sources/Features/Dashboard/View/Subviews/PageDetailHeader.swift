@@ -238,7 +238,7 @@ private struct StatusBadge: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(Color.fromModelColorName(page.status.colorName).opacity(0.15))
+        .background(Color.fromModelColorName(page.status.colorName).opacity(DesignSystem.Opacity.glass))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.status.colorName))
         .accessibilityElement(children: .combine)
@@ -261,7 +261,7 @@ private struct ConfidenceBadge: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(Color.fromModelColorName(page.confidence.colorName).opacity(0.15))
+        .background(Color.fromModelColorName(page.confidence.colorName).opacity(DesignSystem.Opacity.glass))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.confidence.colorName))
         .accessibilityElement(children: .combine)

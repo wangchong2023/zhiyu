@@ -92,7 +92,7 @@ struct PerformanceDashboardView: View {
                     Button {
                         service.updateMemoryUsage()
                     } label: {
-                        Image(systemName: "arrow.clockwise")
+                        Image(systemName: DesignSystem.Icons.refresh)
                     }
                 }
             }

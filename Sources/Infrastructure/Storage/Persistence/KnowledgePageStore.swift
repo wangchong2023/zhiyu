@@ -292,11 +292,25 @@ final class KnowledgePageStore: Sendable {
         }
     }
 
-    /// 获取最近 30 天的平均响应时延
-    func fetchAverageLatency() throws -> Int {
+    /// 获取最近 30 天的详细响应时延统计 (平均、最大、最小、次数)
+    func fetchLatencyStats() throws -> (avg: Int, max: Int, min: Int, count: Int) {
         try dbWriter.read { db in
-            let row = try Int.fetchOne(db, sql: "SELECT AVG(latency_ms) FROM llm_call_logs WHERE created > ?", arguments: [Date().addingTimeInterval(-AppConstants.Storage.thirtyDaysSeconds)])
-            return row ?? 0
+            let row = try Row.fetchOne(db, sql: """
+                SELECT 
+                    AVG(latency_ms) as avg, 
+                    MAX(latency_ms) as max, 
+                    MIN(latency_ms) as min, 
+                    COUNT(*) as count 
+                FROM llm_call_logs 
+                WHERE created > ?
+            """, arguments: [Date().addingTimeInterval(-AppConstants.Storage.thirtyDaysSeconds)])
+            
+            return (
+                avg: Int(row?["avg"] ?? 0),
+                max: Int(row?["max"] ?? 0),
+                min: Int(row?["min"] ?? 0),
+                count: Int(row?["count"] ?? 0)
+            )
         }
     }
 

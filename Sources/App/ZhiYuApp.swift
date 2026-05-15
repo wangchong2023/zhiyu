@@ -66,6 +66,7 @@ struct ZhiYuApp: App {
                 }
             }
             .animation(.easeInOut(duration: 0.6), value: hasSeenSplash)
+            .appToast() // 全局保底，确保任何 Sheet 或页面下的 Toast 都能被捕获并渲染在顶层
         }
         // macOS / iPadOS 原生快捷键指令组
         #if !os(watchOS)

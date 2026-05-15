@@ -21,6 +21,9 @@ final class SystemStatsCoordinator {
     var exportCount: Int = 0
     var exportSize: Int64 = 0
     var avgLatency: Int = 0
+    var maxLatency: Int = 0
+    var minLatency: Int = 0
+    var latencyCount: Int = 0
     var storageCategories: [StorageCategory] = []
     var totalPages: Int = 0
     var isLoading = true
@@ -41,67 +44,74 @@ final class SystemStatsCoordinator {
         let startTime = Date()
         let pageStore = ServiceContainer.shared.resolve(KnowledgePageStore.self)
         
-        do {
-            // 1. AI 性能与资源消耗统计
-            let daily = try pageStore.fetchDailyAIStats()
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYY-MM-dd"
-            
-            // 计算当月至今的时间底座，确保图表对齐
-            let calendar = Calendar.current
-            let today = calendar.startOfDay(for: Date())
-            let components = calendar.dateComponents([.year, .month], from: today)
-            let startDate = calendar.date(from: components)!
-            let numberOfDays = calendar.dateComponents([.day], from: startDate, to: today).day! + 1
-            
-            var statsMap: [String: DailyAIUsage] = [:]
-            for i in 0..<numberOfDays {
-                let date = calendar.date(byAdding: .day, value: i, to: startDate)!
-                let ds = dateFormatter.string(from: date)
-                statsMap[ds] = DailyAIUsage(date: date, dateString: ds, tokens: 0, requests: 0)
-            }
-            
-            for item in daily {
-                if let date = dateFormatter.date(from: item.date), statsMap[item.date] != nil {
-                    statsMap[item.date] = DailyAIUsage(
-                        date: date,
-                        dateString: item.date,
-                        tokens: item.tokens,
-                        requests: item.requests
-                    )
+        // 1. AI 性能与资源消耗统计 (容错处理)
+            if let daily = try? pageStore.fetchDailyAIStats() {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "YYYY-MM-dd"
+                
+                let calendar = Calendar.current
+                let today = calendar.startOfDay(for: Date())
+                let components = calendar.dateComponents([.year, .month], from: today)
+                let startDate = calendar.date(from: components)!
+                let numberOfDays = calendar.dateComponents([.day], from: startDate, to: today).day! + 1
+                
+                var statsMap: [String: DailyAIUsage] = [:]
+                for i in 0..<numberOfDays {
+                    let date = calendar.date(byAdding: .day, value: i, to: startDate)!
+                    let ds = dateFormatter.string(from: date)
+                    statsMap[ds] = DailyAIUsage(date: date, dateString: ds, tokens: 0, requests: 0)
                 }
+                
+                for item in daily {
+                    if let date = dateFormatter.date(from: item.date), statsMap[item.date] != nil {
+                        statsMap[item.date] = DailyAIUsage(
+                            date: date,
+                            dateString: item.date,
+                            tokens: item.tokens,
+                            requests: item.requests
+                        )
+                    }
+                }
+                self.dailyStats = statsMap.values.sorted { $0.date < $1.date }
             }
             
-            self.dailyStats = statsMap.values.sorted { $0.date < $1.date }
-            let monthly = try pageStore.fetchMonthlyTokenStats()
-            self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
-            self.avgLatency = try pageStore.fetchAverageLatency()
+            if let monthly = try? pageStore.fetchMonthlyTokenStats() {
+                self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
+            }
             
-            // 2. 存储空间分布统计
-            let storageStats = sqliteStore.getStorageStats()
+            if let latencyStats = try? pageStore.fetchLatencyStats() {
+                self.avgLatency = latencyStats.avg
+                self.maxLatency = latencyStats.max
+                self.minLatency = latencyStats.min
+                self.latencyCount = latencyStats.count
+            }
+            
+            // 2. 存储空间分布统计 (直接从数据库获取，不依赖内存缓存)
+            let storageDetails = (try? pageStore.fetchStorageStats()) ?? (total: 0, byType: [:], dbSize: 0)
+            let storageStats = sqliteStore.getStorageStats() // 获取物理文件大小
             let exportLogs = logger.logEntries.filter { $0.action == .export }
             
             let categories = [
                 StorageCategory(
-                    label: Localized.tr("storage.category.database"),
+                    label: L10n.Dashboard.System.database,
                     value: storageStats.databaseSize,
                     count: 1,
                     color: .blue
                 ),
                 StorageCategory(
-                    label: Localized.tr("storage.category.logs"),
+                    label: L10n.Dashboard.System.logs,
                     value: storageStats.logsSize,
                     count: logger.logEntries.count,
                     color: .orange
                 ),
                 StorageCategory(
-                    label: Localized.tr("storage.category.imports"),
-                    value: storageStats.importsSize,
-                    count: sqliteStore.pages.filter { $0.sourceType != nil }.count,
+                    label: L10n.Dashboard.tr("stats.storageImport"),
+                    value: storageDetails.total,
+                    count: (try? pageStore.count()) ?? 0,
                     color: .green
                 ),
                 StorageCategory(
-                    label: Localized.tr("storage.category.exports"),
+                    label: L10n.Dashboard.tr("stats.storageExport"),
                     value: storageStats.exportsSize,
                     count: exportLogs.count,
                     color: .purple
@@ -114,9 +124,10 @@ final class SystemStatsCoordinator {
             self.exportCount = exportLogs.count
             
             // 3. 溯源数据统计
-            let prov = try pageStore.fetchProvenanceStats()
-            self.provenance = (prov.importedCount, prov.importedSize, prov.createdCount, prov.createdSize)
-            self.totalPages = (try? pageStore.count()) ?? (prov.importedCount + prov.createdCount)
+            if let prov = try? pageStore.fetchProvenanceStats() {
+                self.provenance = (prov.importedCount, prov.importedSize, prov.createdCount, prov.createdSize)
+                self.totalPages = (try? pageStore.count()) ?? (prov.importedCount + prov.createdCount)
+            }
             
             let endTime = Date()
             logger.addLog(
@@ -128,13 +139,8 @@ final class SystemStatsCoordinator {
                 endTime: endTime,
                 module: "Dashboard"
             )
-            
-            self.isLoading = false
-        } catch {
-            logger.error("❌ [SystemStats] 加载监控统计失败", error: error)
-            ToastManager.shared.show(type: .error, message: L10n.Dashboard.updateFailed)
-            self.isLoading = false
-        }
+        
+        self.isLoading = false
     }
 
     /// 执行数据库深度清理

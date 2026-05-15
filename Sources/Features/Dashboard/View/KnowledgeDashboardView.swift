@@ -34,6 +34,9 @@ struct KnowledgeDashboardView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: DesignSystem.huge) {
+                    AIProcessingStatusBanner()
+                        .padding(.bottom, -DesignSystem.standardPadding)
+                        
                     metricSection
                     densityChartSection
                     dailyInsightsSection

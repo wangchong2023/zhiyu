@@ -48,7 +48,7 @@ struct ContentView: View {
             
             // 主内容层
             mainContainer(tintColor: tintColor)
-                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleSidebar"))) { _ in
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name.toggleSidebar)) { _ in
                     withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) {
                         showSidebar.toggle()
                     }

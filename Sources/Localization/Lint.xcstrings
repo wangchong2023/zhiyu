@@ -766,6 +766,57 @@
         }
       }
     },
+    "lint.scanComplete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health check complete"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "健康检查完成"
+          }
+        }
+      }
+    },
+    "lint.aiScanComplete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI governance suggestions updated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 治理建议已更新"
+          }
+        }
+      }
+    },
+    "lint.aiDisabledHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLM service disabled. Please configure in Settings to unlock AI suggestions."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LLM 服务未启用，请在设置中配置以解锁 AI 治理建议"
+          }
+        }
+      }
+    },
     "lint.startCheck": {
       "extractionState": "manual",
       "localizations": {

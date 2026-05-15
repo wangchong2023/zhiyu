@@ -40,6 +40,7 @@ struct MarkdownRendererView: View {
                         renderBlock(block)
                     }
                 }
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
         .blur(radius: (store.isPrivacyModeEnabled && isPrivate && !tempUnlocked) ? DesignSystem.cardRadius : 0)
@@ -224,10 +225,16 @@ struct MarkdownRendererView: View {
                 }
 
                 ScrollView(.horizontal, showsIndicators: true) {
-                    Text(code)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.appText.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity))
-                        .padding(DesignSystem.medium)
+                    Group {
+                        if language.isEmpty || language == "text" || language == "wiki" {
+                            renderInlineContent(code)
+                        } else {
+                            Text(code)
+                        }
+                    }
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.appText.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity))
+                    .padding(DesignSystem.medium)
                 }
             }
             .background(Color.appCard.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity * 1.5))

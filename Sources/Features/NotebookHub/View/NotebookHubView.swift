@@ -57,10 +57,13 @@ public struct NotebookHubView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(.appAccent.opacity(0.15), lineWidth: 1)
+                            .strokeBorder(.appAccent.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                     )
-                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.horizontal, DesignSystem.Vault.homePadding)
                     .padding(.top, DesignSystem.medium)
+                    
+                    AIProcessingStatusBanner()
+                        .padding(.horizontal, DesignSystem.Vault.homePadding)
 
                     notebookGridSection
                 }
@@ -75,9 +78,15 @@ public struct NotebookHubView: View {
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.appAccent)
+                Button {
+                    HapticFeedback.shared.trigger(.selection)
+                    router.navigate(to: .lint)
+                } label: {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.appAccent)
+                }
+                .buttonStyle(.plain)
             }
             
             ToolbarItem(placement: .topBarTrailing) {

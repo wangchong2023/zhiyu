@@ -23,6 +23,7 @@ struct DeveloperSettingsView: View {
     @State private var stressTestTargetCount = 1000
     
     @State private var isStressTesting = false
+    @State private var isInjecting = false
     @State private var stressTestCount: Int? = nil
     
     // ── 标签定义 ──
@@ -65,14 +66,31 @@ struct DeveloperSettingsView: View {
                 // MARK: - 数据注入 (Data Injection)
                 Section {
                     Button(action: { showInjectConfirmation = true }) {
-                        Label(L10n.Settings.tr("injectDemoData"), systemImage: "testtube.2")
+                        HStack {
+                            Label(L10n.Settings.tr("injectDemoData"), systemImage: "testtube.2")
+                            Spacer()
+                            if isInjecting {
+                                ProgressView()
+                            }
+                        }
                     }
+                    .disabled(isInjecting)
                     .alert(L10n.Settings.tr("injectConfirm.title"), isPresented: $showInjectConfirmation) {
                         Button(L10n.Common.tr("confirm")) {
-                            let count = store.generateDemoData()
-                            HapticFeedback.shared.trigger(count > 0 ? .success : .error)
-                            if count > 0 {
-                                ToastManager.shared.show(type: .success, message: L10n.Settings.trf("injectDemo.successMessage", count))
+                            Task {
+                                isInjecting = true
+                                let count = store.generateDemoData()
+                                isInjecting = false
+                                
+                                // 避开动画冲突
+                                try? await Task.sleep(nanoseconds: 300_000_000)
+                                
+                                HapticFeedback.shared.trigger(count > 0 ? .success : .error)
+                                if count > 0 {
+                                    ToastManager.shared.show(type: .success, message: L10n.Settings.trf("injectDemo.successMessage", count))
+                                } else {
+                                    ToastManager.shared.show(type: .error, message: L10n.Settings.tr("injectDemo.errorMessage"))
+                                }
                             }
                         }
                         Button(L10n.Common.tr("cancel"), role: .cancel) { }
@@ -180,6 +198,7 @@ struct DeveloperSettingsView: View {
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.tr("section.developer"))
             .navigationBarTitleDisplayMode(.inline)
+            .appToast() // 确保在二级导航页面也能正确渲染 Toast，解决被遮挡问题
             .task {
                 await loadStats()
             }
@@ -201,9 +220,8 @@ struct DeveloperSettingsView: View {
         
         try? await Task.sleep(nanoseconds: 500_000_000)
         
-        // 假设 store 有 generateStressTest 方法，或者直接调用 DemoDataGenerator
-        // 根据之前的 SystemStatsView.swift，它是调用 DemoDataGenerator
-        let count = DemoDataGenerator.generateStressTest(in: store.sqliteStore, count: targetCount)
+        // 压力测试调用修复：补全缺失的 try? 以匹配最新的 throws 签名
+        let count = (try? DemoDataGenerator.generateStressTest(in: store.sqliteStore, count: targetCount)) ?? 0
         
         await MainActor.run {
             self.stressTestCount = count
@@ -244,7 +262,7 @@ struct DeveloperSettingsView: View {
             HStack {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.15))
+                        .fill(color.opacity(DesignSystem.Opacity.glass))
                         .frame(width: DesignSystem.smallIconSize + 12, height: DesignSystem.smallIconSize + 12)
                     Image(systemName: icon)
                         .font(.system(size: DesignSystem.captionFontSize, weight: .bold))

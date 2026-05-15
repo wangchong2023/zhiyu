@@ -10,7 +10,7 @@
 
 import Foundation
 #if os(iOS)
-import ActivityKit
+@preconcurrency import ActivityKit
 #endif
 
 /// 灵动岛与实时活动管理服务 (iOS 专属)
@@ -20,36 +20,77 @@ final class ActivityService {
     static let shared = ActivityService()
 
     #if os(iOS)
-    // 注意：实际项目中需要定义具体的 ActivityAttributes
-    // 这里作为架构设计的 stub 实现
-    // private var currentActivity: Activity<AIProcessingAttributes>?
+    /// 任务 ID 与实时活动的映射表，支持多任务并发展示
+    /// 使用 nonisolated(unsafe) 绕过 Swift 6 警告，通过 @MainActor 保证安全
+    nonisolated(unsafe) private var activeActivities: [UUID: Activity<AIProcessingAttributes>] = [:]
     #endif
 
     private init() {}
 
     /// 启动实时活动
-    func startActivity(name: String, target: String) {
+    /// - Parameters:
+    ///   - id: 关联的任务 ID
+    ///   - name: 任务名称
+    ///   - target: 初始状态描述
+    func startActivity(id: UUID, name: String, target: String) {
         #if os(iOS)
-        Logger.shared.debug("🏝️ [Dynamic Island] 启动实时活动: \(name) -> \(target)")
-        // let attributes = AIProcessingAttributes(taskName: name)
-        // let contentState = AIProcessingAttributes.ContentState(progress: 0.1, status: "开始中...")
-        // currentActivity = try? Activity.request(attributes: attributes, content: .init(state: contentState, staleDate: nil))
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        
+        Task { @MainActor in
+            Logger.shared.debug("🏝️ [Dynamic Island] 准备为任务 \(id) 启动实时活动: \(name)")
+            
+            let attributes = AIProcessingAttributes(taskName: name, startTime: Date())
+            let contentState = AIProcessingAttributes.ContentState(progress: 0.05, status: target)
+            
+            do {
+                // 如果超过系统建议的并发上限 (5个)，清理最老的一个
+                if activeActivities.count >= 5 {
+                    if let oldestID = activeActivities.keys.first {
+                        await activeActivities[oldestID]?.end(nil, dismissalPolicy: .immediate)
+                        activeActivities.removeValue(forKey: oldestID)
+                    }
+                }
+                
+                let activity = try Activity<AIProcessingAttributes>.request(
+                    attributes: attributes,
+                    content: ActivityContent(state: contentState, staleDate: nil)
+                )
+                activeActivities[id] = activity
+                Logger.shared.debug("✅ [Dynamic Island] 任务 \(id) 实时活动已启动")
+            } catch {
+                Logger.shared.error("❌ [Dynamic Island] 启动失败: \(error.localizedDescription)")
+            }
+        }
         #endif
     }
 
-    /// 更新进度
-    func updateProgress(_ progress: Double, message: String) {
+    /// 更新指定任务的实时进度
+    func updateProgress(id: UUID, progress: Double, message: String) async {
         #if os(iOS)
-        // let newState = AIProcessingAttributes.ContentState(progress: progress, status: message)
-        // Task { await currentActivity?.update(using: newState) }
+        guard let activity = activeActivities[id] else { return }
+        
+        let newState = AIProcessingAttributes.ContentState(progress: progress, status: message)
+        let title = LocalizedStringResource(stringLiteral: "\(Int(progress * 100))%")
+        let body = LocalizedStringResource(stringLiteral: message)
+        let alertConfiguration = AlertConfiguration(title: title, body: body, sound: .default)
+        
+        await activity.update(
+            ActivityContent(state: newState, staleDate: nil),
+            alertConfiguration: alertConfiguration
+        )
         #endif
     }
 
-    /// 结束活动
-    func endActivity() {
+    /// 结束指定任务的实时活动
+    func endActivity(id: UUID) async {
         #if os(iOS)
-        Logger.shared.debug("🏝️ [Dynamic Island] 实时活动已结束")
-        // Task { await currentActivity?.end(dismissalPolicy: .immediate) }
+        guard let activity = activeActivities[id] else { return }
+        
+        Logger.shared.debug("🏝️ [Dynamic Island] 任务 \(id) 实时活动即将结束")
+        
+        let content = ActivityContent(state: activity.content.state, staleDate: nil)
+        await activity.end(content, dismissalPolicy: .immediate)
+        activeActivities.removeValue(forKey: id)
         #endif
     }
 }

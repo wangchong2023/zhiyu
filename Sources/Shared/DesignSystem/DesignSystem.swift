@@ -66,6 +66,7 @@ public enum DesignSystem {
         public static let pencilCircle = Typography.Icons.pencilCircle
         public static let delete = Typography.Icons.delete
         public static let pin = Typography.Icons.pin
+        public static let pinFill = "pin.fill"
         public static let unpin = Typography.Icons.unpin
         public static let history = Typography.Icons.history
         public static let refresh = Typography.Icons.refresh
@@ -77,6 +78,7 @@ public enum DesignSystem {
         public static let info = Typography.Icons.info
         public static let check = Typography.Icons.check
         public static let checkCircle = Typography.Icons.checkCircle
+        public static let emptyCircle = "circle"
         public static let errorCircle = Typography.Icons.errorCircle
         public static let timer = Typography.Icons.timer
         public static let warning = Typography.Icons.warning
@@ -87,12 +89,26 @@ public enum DesignSystem {
         public static let copy = Typography.Icons.copy
         public static let seal = Typography.Icons.seal
         public static let eyeSlash = Typography.Icons.eyeSlash
+        public static let eye = Typography.Icons.eye
         public static let faceid = Typography.Icons.faceid
         public static let archive = Typography.Icons.archive
         public static let box = Typography.Icons.box
         public static let docRichtext = Typography.Icons.docRichtext
-        
-        // ── 导航与 UI 图标 ──
+        public static let docBadgePlus = Typography.Icons.docBadgePlus
+        public static let pencilClipboard = Typography.Icons.pencilClipboard
+        public static let tray = Typography.Icons.tray
+        public static let clock = Typography.Icons.clock
+        public static let stop = Typography.Icons.stop
+        public static let stopRequest = "stop.circle.fill"
+        public static let send = Typography.Icons.send
+        public static let sendRequest = "paperplane.fill"
+        public static let apple = Typography.Icons.apple
+        public static let message = Typography.Icons.message
+        public static let sidebarToggle = "sidebar.left"
+        public static let settings = "gearshape"
+        public static let promptLibrary = "sparkles.rectangle.stack"
+        public static let thinking = Typography.Icons.sparkles
+
         public static let back = Typography.Icons.back
         public static let forward = Typography.Icons.forward
         public static let forwardCircle = Typography.Icons.forwardCircle
@@ -191,7 +207,22 @@ public enum DesignSystem {
         public static let backButtonWidth: CGFloat = Spacing.Action.backButtonWidth
     }
 
-    // MARK: - 6. 展示模式 (Gallery)
+    // MARK: - 6. 视觉令牌 (Visual Tokens)
+    public enum Opacity {
+        public static let ghost: Double = 0.05
+        public static let glass: Double = 0.15
+        public static let soft: Double = 0.5
+        public static let prominent: Double = 0.8
+        public static let disabled: Double = 0.4
+    }
+
+    public enum Shadow {
+        public static let light = (color: Color.black.opacity(0.1), radius: 5.0, x: 0.0, y: 2.0)
+        public static let standard = (color: Color.black.opacity(0.15), radius: 10.0, x: 0.0, y: 4.0)
+        public static let prominent = (color: Color.appAccent.opacity(0.3), radius: 10.0, x: 0.0, y: 5.0)
+    }
+
+    // MARK: - 7. 展示模式 (Gallery)
     public enum Gallery {
         public static let itemSize: CGFloat = Spacing.Gallery.itemSize
         public static let iconSize: CGFloat = Spacing.Gallery.iconSize

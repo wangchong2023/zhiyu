@@ -80,7 +80,7 @@ struct PluginCenterView: View {
         VStack(spacing: DesignSystem.standardPadding) {
             // 搜索框：玻璃拟态
             HStack {
-                Image(systemName: "magnifyingglass")
+                Image(systemName: DesignSystem.Icons.search)
                     .foregroundStyle(.appAccent)
                 TextField(Localized.tr("plugin.searchPlaceholder"), text: $searchText)
                     .textFieldStyle(.plain)

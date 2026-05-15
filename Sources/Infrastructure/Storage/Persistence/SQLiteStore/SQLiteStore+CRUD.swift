@@ -144,11 +144,13 @@ extension SQLiteStore {
 
     // MARK: - 批处理 (Transactions)
 
-    func performBatchWrite(_ updates: @escaping (Database) throws -> Void) {
+    /// 执行批量数据库写入操作，确保事务原子性 (@RR-01)
+    func performBatchWrite(_ updates: @escaping (Database) throws -> Void) throws {
         do {
             try DatabaseManager.shared.dbWriter?.write(updates)
         } catch {
             Logger.shared.addLog(action: .error, target: "SQLiteStore", details: "Batch write failed: \(error.localizedDescription)")
+            throw error // 重新抛出，以便调用者感知失败
         }
     }
 

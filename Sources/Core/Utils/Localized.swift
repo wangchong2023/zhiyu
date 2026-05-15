@@ -38,7 +38,7 @@ enum LanguageMode: String, CaseIterable {
 enum Localized {
 
     // MARK: - Language Preference
-    private static let languageModeKey = "app_language_mode"
+    private static let languageModeKey = AppConstants.Keys.Storage.languageMode
     private static var languageModeRaw: String {
         get { UserDefaults.standard.string(forKey: languageModeKey) ?? LanguageMode.system.rawValue }
         set { UserDefaults.standard.set(newValue, forKey: languageModeKey) }
@@ -231,6 +231,18 @@ struct L10n {
             static var preprocessing: String { AI.tr("status.preprocessing") }
             static var scanning: String { AI.tr("status.scanning") }
             static var thinking: String { AI.tr("status.thinking") }
+            static var structuring: String { AI.tr("status.structuring") }
+            static var extracting: String { AI.tr("status.extracting") }
+            static var organizing: String { AI.tr("status.organizing") }
+            static var synthesizing: String { AI.tr("status.synthesizing") }
+            static var visualizing: String { AI.tr("status.visualizing") }
+            static var digging: String { AI.tr("status.digging") }
+            static var generating: String { AI.tr("status.generating") }
+            
+            static func indexing(_ current: Int, _ total: Int, _ filename: String) -> String {
+                let template = AI.tr("status.indexing")
+                return String(format: template, current, total, filename)
+            }
         }
 
         /// 任务中心 (AITask 前缀)
@@ -327,6 +339,16 @@ struct L10n {
 
         /// 页面名称：AI 助手
         static var title: String { tr("title") }
+        static var inputPlaceholder: String { tr("inputPlaceholder") }
+        static var aiThinking: String { tr("aiThinking") }
+        static var aiRunning: String { tr("aiRunning") }
+        static var configureFirst: String { tr("configureFirst") }
+        static var exportConversation: String { tr("exportConversation") }
+        static var selectToExport: String { tr("selectToExport") }
+        static var exportPDF: String { tr("exportPDF") }
+        static var exportSelectedPDF: String { tr("exportSelectedPDF") }
+        static var llmSettings: String { tr("llmSettings") }
+        static var explorationAndPrompts: String { tr("explorationAndPrompts") }
     }
 
     /// UI 通用组件库专有文案。
@@ -497,6 +519,8 @@ struct L10n {
 
         /// 页面名称：合成实验室
         static var title: String { tr("title") }
+        static var exportPDF: String { tr("exportPDF") }
+        static var batchDeleteConfirm: String { tr("batchDeleteConfirm") }
     }
 
     /// 标签管理与分类索引。

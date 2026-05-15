@@ -40,7 +40,7 @@ struct AIPulseIndicator: View {
                         .stroke(pulseColor, lineWidth: DesignSystem.borderWidth * 2) // 2
                         .frame(width: DesignSystem.smallIconSize, height: DesignSystem.smallIconSize) // 16
                         .scaleEffect(isAnimating ? 1.5 : 1.0)
-                        .opacity(isAnimating ? 0 : DesignSystem.fullOpacity * 0.8) // 0.8
+                        .opacity(isAnimating ? 0 : DesignSystem.Opacity.prominent) // 0.8
                 }
             }
             .onAppear {
@@ -58,7 +58,7 @@ struct AIPulseIndicator: View {
                     if !TaskCenter.shared.latestStatus.isEmpty {
                         Text(TaskCenter.shared.latestStatus)
                             .font(.system(size: DesignSystem.microFontSize - 2, design: .monospaced)) // 8
-                            .foregroundStyle(.appSecondary.opacity(DesignSystem.fullOpacity * 0.8)) // 0.8
+                            .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.prominent)) // 0.8
                             .lineLimit(1)
                             .transition(.asymmetric(insertion: .push(from: .bottom), removal: .opacity))
                     }
@@ -70,7 +70,7 @@ struct AIPulseIndicator: View {
         .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic) // 6
         .background(
             Capsule()
-                .fill(Color.appCard.opacity(DesignSystem.fullOpacity * 0.8)) // 0.8
+                .fill(Color.appCard.opacity(DesignSystem.Opacity.prominent)) // 0.8
                 .shadow(color: .black.opacity(DesignSystem.shadowOpacity / 2), radius: DesignSystem.borderWidth * 2) // 0.05, 2
         )
         .animation(.spring(response: DesignSystem.Animation.standardDuration * 1.2), value: TaskCenter.shared.latestStatus) // 0.3

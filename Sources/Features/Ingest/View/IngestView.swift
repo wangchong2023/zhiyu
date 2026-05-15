@@ -139,7 +139,7 @@ struct IngestView: View {
             AppSectionHeader(title: L10n.Ingest.tr("recent"), icon: "list.bullet.rectangle").padding(.horizontal, DesignSystem.atomic * 2)
             if ingestTasks.isEmpty {
                 VStack(spacing: DesignSystem.tightPadding) {
-                    Image(systemName: "clock").font(.title2).foregroundStyle(.appSecondary.opacity(DesignSystem.dimmedOpacity))
+                    Image(systemName: DesignSystem.Icons.clock).font(.title2).foregroundStyle(.appSecondary.opacity(DesignSystem.dimmedOpacity))
                     Text(L10n.Ingest.tr("noActivities")).font(.caption).foregroundStyle(.appSecondary)
                 }.frame(maxWidth: .infinity).padding(.vertical, DesignSystem.loosePadding).appContainer()
             } else {
@@ -185,7 +185,7 @@ struct IngestView: View {
                     }
                     VStack(alignment: .leading, spacing: DesignSystem.small) {
                         HStack {
-                            Label(L10n.Ingest.tr("smartIngest"), systemImage: "sparkles").font(.subheadline.bold()).foregroundStyle(.appAccent)
+                            Label(L10n.Ingest.tr("smartIngest"), systemImage: DesignSystem.Icons.sparkles).font(.subheadline.bold()).foregroundStyle(.appAccent)
                             Spacer(); Toggle("", isOn: $coordinator.useSmartIngest).labelsHidden().tint(.appAccent)
                         }
                         if coordinator.useSmartIngest { Text(L10n.Ingest.tr("smartIngestDesc")).font(.system(size: DesignSystem.captionFontSize)).foregroundStyle(.appSecondary).lineLimit(2).fixedSize(horizontal: false, vertical: true) }

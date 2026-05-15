@@ -15,6 +15,7 @@ import GRDB
 ///
 /// 职责：用于快速填充知识库，展示图谱、检索及 AI 分析能力。
 /// 该类仅用于 Demo 或开发测试阶段，不应包含任何核心业务逻辑。
+@MainActor
 struct DemoDataGenerator {
     
     
@@ -22,18 +23,16 @@ struct DemoDataGenerator {
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     @MainActor
-    static func generate(in store: SQLiteStore) -> Int {
+    static func generate(in store: SQLiteStore) throws -> Int {
         print("🧪 [Demo] Starting demo data generation...")
         
-        // 1. 确保是一个纯净的演示环境
-        store.removeAllPages()
-        MedalService.shared.reset()
-        
-        print("🧪 [Demo] Store cleared.")
         var count = 0
         
-        // 2. 使用 performBatchWrite 确保所有演示数据在同一个事务中插入
-        store.performBatchWrite { db in
+        // 使用 performBatchWrite 确保所有演示数据在同一个事务中插入
+        try store.performBatchWrite { db in
+            // 1. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
+            try KnowledgePage.deleteAll(db)
+            
             let pagesToCreate: [(String, PageType, String, [String])] = [
                 (Localized.tr("demo.aiAgent.title"), .concept, Localized.tr("demo.aiAgent.content"), ["AI", "Agent", Localized.tr("sidebar.system")]),
                 (Localized.tr("demo.planning.title"), .concept, Localized.tr("demo.planning.content"), ["AI", "Planning", Localized.tr("sidebar.tools")]),
@@ -43,10 +42,31 @@ struct DemoDataGenerator {
             ]
             
             for (title, type, content, tags) in pagesToCreate {
-                // 直接使用 KnowledgePage 的存储能力，避免对 Repository 实例的复杂依赖检查
                 let page = KnowledgePage(title: title, type: type, content: content, tags: tags)
                 try page.save(db)
                 count += 1
+            }
+            
+            // 2. 模拟注入 AI 时延与 Token 记录，方便资源监控页面演示
+            let models = ["GPT-4o", "Claude-3.5-Sonnet", "DeepSeek-V3"]
+            let calendar = Calendar.current
+            // 2. 注入 AI 调用日志 (LLM Call Logs) - 模拟最近 50 次请求
+            for _ in 0..<50 {
+                let model = models.randomElement() ?? "GPT-4o"
+                let prompt = Int.random(in: 200...1000)
+                let completion = Int.random(in: 100...2000)
+                let latency = Int.random(in: 400...4500)
+                let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...720), to: Date())!
+                
+                try db.execute(sql: """
+                    INSERT INTO llm_call_logs (model, prompt_tokens, completion_tokens, latency_ms, status, created)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, arguments: [model, prompt, completion, latency, "success", date])
+                
+                try db.execute(sql: """
+                    INSERT INTO token_usage (model, prompt_tokens, completion_tokens, total_tokens, created)
+                    VALUES (?, ?, ?, ?, ?)
+                """, arguments: [model, prompt, completion, prompt + completion, date])
             }
         }
         
@@ -60,16 +80,15 @@ struct DemoDataGenerator {
     ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
     @MainActor
-    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) -> Int {
+    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) throws -> Int {
         print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
-        
-        // 清理旧数据以获得准确的性能评估
-        store.removeAllPages()
-        MedalService.shared.reset()
         
         var count = 0
         
-        store.performBatchWrite { db in
+        try store.performBatchWrite { db in
+            // 1. 在同一个事务中清理旧数据
+            try KnowledgePage.deleteAll(db)
+            
             // 预生成标题列表，用于建立随机链接
             let titles = (1...targetCount).map { "StressNode_\($0)" }
             let types: [PageType] = [.concept, .entity, .source, .comparison, .map]

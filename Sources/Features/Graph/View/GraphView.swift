@@ -181,7 +181,7 @@ struct GraphContainerView: View {
             viewModel.showInsights = true
         }) {
             HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                Image(systemName: "sparkles")
+                Image(systemName: DesignSystem.Icons.sparkles)
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
                 

@@ -115,7 +115,7 @@ public extension View {
                 ZStack {
                     Color.appCard.opacity(0.8) // 提高亮度
                     LinearGradient(
-                        colors: [color.opacity(0.15), .clear],
+                        colors: [color.opacity(DesignSystem.Opacity.glass), .clear],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )

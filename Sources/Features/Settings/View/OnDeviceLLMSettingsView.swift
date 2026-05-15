@@ -124,7 +124,7 @@ struct OnDeviceLLMSettingsView: View {
             
             if onDeviceService.availableModels.isEmpty {
                 VStack(spacing: 8) {
-                    Image(systemName: "cube.box")
+                    Image(systemName: DesignSystem.Icons.box)
                         .font(.title2)
                         .foregroundStyle(.appSecondary)
                     Text(Localized.tr("ondevice.noModels"))

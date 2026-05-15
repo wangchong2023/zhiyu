@@ -14,7 +14,7 @@ extension SQLiteStore {
 
     func renameTag(_ oldTag: String, to newTag: String) {
         Logger.shared.logTimed(action: .update, target: oldTag, module: "SQLiteStore", details: "Rename to: \(newTag)") {
-            performBatchWrite { db in
+            try? performBatchWrite { db in
                 try self.internalRenameTag(oldTag, to: newTag, in: db)
             }
         }
@@ -22,7 +22,7 @@ extension SQLiteStore {
 
     func deleteTag(_ tag: String) {
         Logger.shared.logTimed(action: .delete, target: tag, module: "SQLiteStore", details: "Delete Success") {
-            performBatchWrite { db in
+            try? performBatchWrite { db in
                 try self.internalDeleteTag(tag, in: db)
             }
         }

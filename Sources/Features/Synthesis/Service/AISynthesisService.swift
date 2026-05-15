@@ -171,12 +171,41 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// 统一合成入口 (Facade)
     func synthesize(type: SynthesisStore.SynthesisType, content: String) async throws -> String {
         switch type {
-        case .mindmap: return try await generateMindMap(content: content)
-        case .quiz: return try await generateQuiz(content: content)
-        case .slides: return try await generatePresentation(content: content)
-        case .report: return try await generateReport(content: content)
-        case .infographic: return try await generateInfographic(content: content)
-        case .expansion: return try await expandKnowledge(content: content)
+        case .mindmap:
+            updateStatus(L10n.AI.Status.structuring)
+            return try await generateMindMap(content: content)
+        case .quiz:
+            updateStatus(L10n.AI.Status.extracting)
+            return try await generateQuiz(content: content)
+        case .slides:
+            updateStatus(L10n.AI.Status.organizing)
+            return try await generatePresentation(content: content)
+        case .report:
+            updateStatus(L10n.AI.Status.synthesizing)
+            return try await generateReport(content: content)
+        case .infographic:
+            updateStatus(L10n.AI.Status.visualizing)
+            return try await generateInfographic(content: content)
+        case .expansion:
+            updateStatus(L10n.AI.Status.digging)
+            return try await expandKnowledge(content: content)
+        }
+    }
+
+    private func getInitialStatus(for type: SynthesisStore.SynthesisType) -> String {
+        switch type {
+        case .mindmap: return L10n.AI.Status.structuring
+        case .quiz: return L10n.AI.Status.extracting
+        case .slides: return L10n.AI.Status.organizing
+        case .report: return L10n.AI.Status.synthesizing
+        case .infographic: return L10n.AI.Status.visualizing
+        case .expansion: return L10n.AI.Status.digging
+        }
+    }
+
+    private func updateStatus(_ text: String) {
+        Task { @MainActor in
+            TaskCenter.shared.updateLatestStatus(text)
         }
     }
 }

@@ -60,7 +60,7 @@ struct OCRImagePickerArea: View {
                     .frame(height: DesignSystem.Metrics.heroValueSize * 7.7) // 200
                     .overlay(
                         VStack(spacing: DesignSystem.medium) { // 12
-                            Image(systemName: "text.viewfinder")
+                            Image(systemName: DesignSystem.Icons.ocr)
                                 .font(.system(size: DesignSystem.largeIconSize + DesignSystem.small)) // 40
                                 .foregroundStyle(.appSecondary)
                             Text(Localized.tr("ocr.selectImage"))
@@ -238,7 +238,7 @@ struct OCRSaveForm: View {
 
                         if targetCustomIcon != nil {
                             Button(action: onCustomIconClear) {
-                                Image(systemName: "xmark.circle.fill")
+                                Image(systemName: DesignSystem.Icons.errorCircle)
                                     .font(.caption)
                                     .foregroundStyle(.appSecondary)
                             }
@@ -295,7 +295,7 @@ struct TagPill: View {
                 .foregroundStyle(.appAccent)
 
             Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.errorCircle)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }

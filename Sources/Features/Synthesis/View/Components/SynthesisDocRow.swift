@@ -70,7 +70,7 @@ struct SynthesisDocRow: View {
                 
                 HStack(spacing: DesignSystem.tightPadding) {
                     Text(formatDate(doc.createdAt))
-                    Text("·")
+                    Text(DesignSystem.Icons.dotSeparator)
                     Text(formatByteSize(doc.size))
                 }
                 .font(.caption2)
@@ -86,10 +86,24 @@ struct SynthesisDocRow: View {
         }
         .padding(.horizontal, DesignSystem.standardPadding)
         .padding(.vertical, DesignSystem.medium)
-        .appCardStyle(cornerRadius: DesignSystem.CompositeRow.cornerRadius)
         .contentShape(Rectangle())
         .onTapGesture {
             onTap()
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button {
+                onDelete()
+            } label: {
+                Label(L10n.Common.tr("delete"), systemImage: "trash")
+            }
+            .tint(.red)
+            
+            Button {
+                onRename()
+            } label: {
+                Label(Localized.tr("tag.rename"), systemImage: "pencil")
+            }
+            .tint(.orange)
         }
         .contextMenu {
             Button {

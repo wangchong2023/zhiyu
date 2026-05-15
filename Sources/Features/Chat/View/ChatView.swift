@@ -76,40 +76,40 @@ struct ChatViewContent: View {
         Menu {
             Section {
                 Button(action: { }) {
-                    Label("\(coordinator.chatHistory.count) \(Localized.tr("llm.messages"))", systemImage: "bubble.left.and.bubble.right")
+                    Label("\(coordinator.chatHistory.count) \(Localized.tr("llm.messages"))", systemImage: DesignSystem.Icons.chatBubble)
                 }
                 .disabled(true)
                 
                 Button(role: .destructive, action: { 
                     coordinator.clearChatHistory() 
                 }) {
-                    Label(Localized.tr("llm.clearHistory"), systemImage: "trash")
+                    Label(Localized.tr("llm.clearHistory"), systemImage: DesignSystem.Icons.delete)
                 }
             }
             
             if !coordinator.chatHistory.isEmpty {
-                Section(L10n.Chat.tr("exportConversation")) {
+                Section(L10n.Chat.exportConversation) {
                     Button(action: {
                         coordinator.toggleSelectionMode()
                     }) {
-                        Label(coordinator.isSelectionMode ? L10n.Common.tr("done") : L10n.Chat.tr("selectToExport"), systemImage: coordinator.isSelectionMode ? "checkmark.circle.fill" : "checklist")
+                        Label(coordinator.isSelectionMode ? L10n.Common.tr("done") : L10n.Chat.selectToExport, systemImage: coordinator.isSelectionMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
                     }
 
                     Button(action: {
                         Task { await coordinator.exportChat() }
                     }) {
-                        Label(coordinator.isSelectionMode && !coordinator.selectedMessageIDs.isEmpty ? L10n.Chat.tr("exportSelectedPDF") : L10n.Chat.tr("exportPDF"), systemImage: "doc.richtext")
+                        Label(coordinator.isSelectionMode && !coordinator.selectedMessageIDs.isEmpty ? L10n.Chat.exportSelectedPDF : L10n.Chat.exportPDF, systemImage: DesignSystem.Icons.docRichtext)
                     }
                 }
             }
             
             Section {
                 NavigationLink(destination: LLMSettingsView()) {
-                    Label(L10n.Chat.tr("llmSettings"), systemImage: "gearshape")
+                    Label(L10n.Chat.llmSettings, systemImage: DesignSystem.Icons.settings)
                 }
             }
         } label: {
-            Image(systemName: "ellipsis.circle")
+            Image(systemName: DesignSystem.Icons.more)
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(.appSecondary)
         }
@@ -120,12 +120,12 @@ struct ChatViewContent: View {
     private var notConfiguredBanner: some View {
         NavigationLink(destination: LLMSettingsView()) {
             HStack(spacing: DesignSystem.small + DesignSystem.atomic) {
-                Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                Text(L10n.Chat.tr("configureFirst")).font(.subheadline).foregroundStyle(.appText)
+                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
+                Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
                 Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundStyle(.appSecondary)
+                Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
             }
-            .padding().background(Color.orange.opacity(DesignSystem.glassOpacity))
+            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
         }
         .buttonStyle(.plain)
     }
@@ -174,17 +174,17 @@ struct ChatViewContent: View {
     
     private var streamingBubble: some View {
         HStack(alignment: .top, spacing: DesignSystem.tightPadding) {
-            Image(systemName: "sparkles")
+            Image(systemName: DesignSystem.Icons.thinking)
                 .font(DesignSystem.secondaryFont)
                 .foregroundStyle(.appAccent)
                 .frame(width: DesignSystem.titleIconSize * 1.2, height: DesignSystem.titleIconSize * 1.2)
-                .background(Color.appAccent.opacity(DesignSystem.glassOpacity * 1.5))
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.glass * 1.5))
                 .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
                 if llmService.streamingContent.isEmpty {
                     VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                        Text(L10n.Chat.tr("aiThinking")).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
+                        Text(L10n.Chat.aiThinking).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
                         HStack(spacing: DesignSystem.atomic * 2) {
                             ForEach(0..<3, id: \.self) { index in
                                 Circle().fill(Color.appAccent).frame(width: 6, height: 6).modifier(PulsingDot(delay: Double(index) * 0.2))
@@ -206,14 +206,14 @@ struct ChatViewContent: View {
             Divider()
             HStack(alignment: .center, spacing: DesignSystem.medium) {
                 Button(action: { coordinator.showPrompts.toggle() }) {
-                    Image(systemName: "sparkles.rectangle.stack").font(.title3)
-                        .foregroundStyle(coordinator.isProcessing ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .appAccent)
+                    Image(systemName: DesignSystem.Icons.promptLibrary).font(.title3)
+                        .foregroundStyle(coordinator.isProcessing ? .appSecondary.opacity(DesignSystem.Opacity.disabled) : .appAccent)
                         .frame(width: DesignSystem.Action.buttonHeight, height: DesignSystem.Action.buttonHeight)
                         .background(Color.appCard).clipShape(Circle())
                 }
                 .buttonStyle(.plain).disabled(coordinator.isProcessing)
                 
-                TextField(coordinator.isProcessing ? L10n.Chat.tr("aiRunning") : L10n.Chat.tr("inputPlaceholder"), text: $coordinator.inputText)
+                TextField(coordinator.isProcessing ? L10n.Chat.aiRunning : L10n.Chat.inputPlaceholder, text: $coordinator.inputText)
                     .font(.subheadline).focused($isInputFocused)
                     .foregroundStyle(coordinator.isProcessing ? .appSecondary : .appText).textFieldStyle(.plain)
                     .disabled(coordinator.isProcessing).submitLabel(.send)
@@ -223,7 +223,7 @@ struct ChatViewContent: View {
                     if coordinator.isProcessing { coordinator.cancelCurrentRequest() }
                     else { HapticFeedback.shared.trigger(.selection); Task { await coordinator.sendMessage(pages: store.pages) } }
                 } label: {
-                    Image(systemName: coordinator.isProcessing ? "stop.circle.fill" : "arrow.up.circle.fill")
+                    Image(systemName: coordinator.isProcessing ? DesignSystem.Icons.stop : DesignSystem.Icons.send)
                         .font(.title2).foregroundStyle(coordinator.isProcessing ? .red : (canSend ? .appAccent : .appSecondary))
                         .symbolEffect(.bounce, value: coordinator.isProcessing)
                         .frame(width: DesignSystem.Action.inputBarHeight, height: DesignSystem.Action.inputBarHeight)
@@ -231,12 +231,12 @@ struct ChatViewContent: View {
                 .disabled(!canSend && !coordinator.isProcessing)
             }
             .padding(.horizontal, DesignSystem.standardPadding).padding(.vertical, DesignSystem.tightPadding)
-            .background(coordinator.isProcessing ? Color.appCard.opacity(0.5) : Color.appCard)
+            .background(coordinator.isProcessing ? Color.appCard.opacity(DesignSystem.Opacity.soft) : Color.appCard)
             .sheet(isPresented: $coordinator.showPrompts) {
                 NavigationStack {
                     ChatWelcomeView(isSheet: true)
                         .environment(coordinator)
-                        .navigationTitle(L10n.Chat.tr("explorationAndPrompts"))
+                        .navigationTitle(L10n.Chat.explorationAndPrompts)
 #if os(iOS)
                         .navigationBarTitleDisplayMode(.inline)
 #endif

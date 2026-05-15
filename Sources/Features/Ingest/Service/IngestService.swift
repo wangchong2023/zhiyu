@@ -225,8 +225,17 @@ actor IngestService {
             print(L10n.Ingest.tr("ecoIndexingLowPower"))
         }
 
-        return await withTaskGroup(of: KnowledgePage?.self) { group in
-            let enumeratorArray = enumerator.compactMap { $0 as? URL }
+        let enumeratorArray = enumerator.compactMap { $0 as? URL }
+        let totalCount = enumeratorArray.count
+        
+        // 接入 TaskCenter (由 TaskCenter 统一触发灵动岛)
+        let taskID = await TaskCenter.shared.addTask(
+            type: .ingest, 
+            name: L10n.AI.Task.tr("type.ingest"), 
+            target: url.lastPathComponent
+        )
+
+        return await withTaskGroup(of: (KnowledgePage?, String).self) { group in
             for fileURL in enumeratorArray {
                 group.addTask { [self, pageStore, type] in
                     // 智适应节流：低功耗模式下每个文件处理后强制休息，释放 CPU
@@ -234,20 +243,32 @@ actor IngestService {
                         try? await Task.sleep(nanoseconds: 200_000_000)
                     }
 
-                    if let page = await self.ingestDocument(at: fileURL, type: type, pageStore: pageStore) {
+                    let page = await self.ingestDocument(at: fileURL, type: type, pageStore: pageStore)
+                    if page != nil {
                         await MainActor.run {
                             LocalAnalyticsService.shared.trackEvent("document_ingested", properties: ["format": fileURL.pathExtension])
                         }
-                        return page
                     }
-                    return nil
+                    return (page, fileURL.lastPathComponent)
                 }
             }
 
             var results: [KnowledgePage] = []
-            for await page in group {
+            var currentIndex = 0
+            for await (page, filename) in group {
+                currentIndex += 1
                 if let p = page { results.append(p) }
+                
+                // 更新任务中心与灵动岛
+                let progress = Double(currentIndex) / Double(totalCount)
+                let status = L10n.AI.Status.indexing(currentIndex, totalCount, filename)
+                await TaskCenter.shared.updateTask(taskID, status: .running(progress: progress))
+                await TaskCenter.shared.updateLatestStatus(status)
             }
+            
+            // 完成任务
+            await TaskCenter.shared.completeTask(id: taskID)
+            
             return results
         }
     }

@@ -36,6 +36,7 @@ targets:
         excludes:
           - "Platforms/macOS/**"
           - "Platforms/watchOS/**"
+          - "Platforms/iOS/Widgets/**"
           - "MacInfo.plist"
     settings:
       base:
@@ -44,8 +45,10 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-iOS
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
+        NSSupportsLiveActivities: YES
     dependencies:
       - package: GRDB
+      - target: ZhiYuWidgets
 
   ZhiYuMac:
     type: application
@@ -55,6 +58,7 @@ targets:
       - path: Sources
         excludes:
           - "Platforms/watchOS/**"
+          - "Platforms/iOS/Widgets/**"
           - "Info.plist"
           - "Base.lproj/**"
           - "LaunchScreen.storyboard"
@@ -70,6 +74,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     dependencies:
       - package: GRDB
+      - target: ZhiYuWidgets
 
   ZhiYuWatch:
     type: application
@@ -89,9 +94,27 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-Watch
         SDKROOT: watchos
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
-        GENERATE_INFOPLIST_FILE: "YES"
+        GENERATE_INFOPLIST_FILE: "NO"
     dependencies:
       - package: GRDB
+
+  ZhiYuWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Sources/Platforms/iOS/Widgets
+      - path: Sources/Shared/Models/AIProcessingAttributes.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.widgets
+        INFOPLIST_FILE: Sources/Platforms/iOS/Widgets/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        NSSupportsLiveActivities: YES
+        CODE_SIGN_ENTITLEMENTS: Sources/ZhiYuWidgets.entitlements
+        SDKROOT: iphoneos
+        SKIP_INSTALL: "YES"
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies: []
 
   ZhiYuTests:
     type: bundle.unit-test

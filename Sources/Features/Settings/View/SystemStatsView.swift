@@ -87,7 +87,7 @@ struct SystemStatsView: View {
     private var performanceSection: some View {
         Group {
             // 1. API 请求卡片
-            StandardSection(title: L10n.Dashboard.apiRequests) {
+            StandardSection(title: L10n.Dashboard.apiRequests + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.requests })")
@@ -105,7 +105,7 @@ struct SystemStatsView: View {
             }
             
             // 2. Token 消耗卡片
-            StandardSection(title: L10n.Dashboard.tr("stats.tokensUsage")) {
+            StandardSection(title: L10n.Dashboard.tr("stats.tokensUsage") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.tokens })")
@@ -123,22 +123,14 @@ struct SystemStatsView: View {
             }
             
             // 3. 响应时延卡片
-            StandardSection(title: L10n.Dashboard.tr("stats.avgLatency")) {
-                HStack(spacing: Spacing.standardPadding) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            ZStack {
-                                Circle()
-                                    .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.15))
-                                    .frame(width: DesignSystem.Metrics.iconBoxSize - 8, height: DesignSystem.Metrics.iconBoxSize - 8)
-                                Image(systemName: "timer")
-                                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                                    .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
-                            }
-                            Spacer()
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 2) {
+            StandardSection(title: L10n.Dashboard.tr("stats.latencyTitle") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(L10n.Dashboard.tr("stats.avgLatencyShort"))
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary)
+                            
                             HStack(alignment: .firstTextBaseline, spacing: 4) {
                                 Text("\(coordinator.avgLatency)")
                                     .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
@@ -148,8 +140,29 @@ struct SystemStatsView: View {
                                     .foregroundColor(.appSecondary)
                             }
                         }
+                        
+                        Spacer()
+                        
+                        ZStack {
+                            Circle()
+                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.1))
+                                .frame(width: 44, height: 44)
+                            Image(systemName: DesignSystem.Icons.timer)
+                                .font(.title3.bold())
+                                .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
+                        }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Divider()
+                        .opacity(DesignSystem.softOpacity)
+                    
+                    HStack(spacing: 0) {
+                        latencySubValue(label: L10n.Dashboard.tr("stats.maxLatency"), value: "\(coordinator.maxLatency)")
+                        divider
+                        latencySubValue(label: L10n.Dashboard.tr("stats.minLatency"), value: "\(coordinator.minLatency)")
+                        divider
+                        latencySubValue(label: L10n.Dashboard.tr("stats.measureCount"), value: "\(coordinator.latencyCount)")
+                    }
                 }
                 .padding(Spacing.medium)
             }
@@ -168,9 +181,9 @@ struct SystemStatsView: View {
                             .frame(height: DesignSystem.Metrics.chartHeight - 20)
                     } else if coordinator.storageCategories.allSatisfy({ $0.value == 0 }) {
                         VStack(spacing: Spacing.medium) {
-                            Image(systemName: "chart.pie")
+                            Image(systemName: DesignSystem.Icons.chartPie)
                                 .font(.system(size: DesignSystem.Gallery.iconSize))
-                                .foregroundStyle(.appSecondary.opacity(0.3))
+                                .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
                             Text(L10n.Common.Empty.tr("noData"))
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
@@ -238,7 +251,7 @@ struct SystemStatsView: View {
                             if coordinator.isCleaning {
                                 ProgressView()
                             } else {
-                                Image(systemName: "chevron.right")
+                                Image(systemName: DesignSystem.Icons.forward)
                                     .font(.caption)
                                     .foregroundStyle(.appSecondary)
                             }
@@ -312,6 +325,27 @@ struct SystemStatsView: View {
             }
         }
     }
+    
+    // MARK: - 时延卡片辅助
+    
+    private func latencySubValue(label: String, value: String) -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundStyle(.appSecondary)
+            
+            Text(value)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.appText)
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private var divider: some View {
+        Divider()
+            .frame(height: 16)
+            .padding(.horizontal, 4)
+    }
 }
 
 // MARK: - 子视图：资源图表实现
@@ -329,16 +363,16 @@ struct ChartView: View {
     var body: some View {
         if stats.isEmpty {
             VStack(spacing: DesignSystem.small) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
+                Image(systemName: DesignSystem.Icons.chartLine)
                     .font(.system(size: DesignSystem.displayFontSize))
-                    .foregroundStyle(.appSecondary.opacity(0.3))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
                 Text(L10n.Common.Empty.tr("noData"))
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
             .frame(maxWidth: .infinity)
             .frame(height: DesignSystem.Metrics.chartHeight - 60)
-            .background(Color.appCard.opacity(0.3))
+            .background(Color.appCard.opacity(DesignSystem.softOpacity))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         } else {
             Chart {
@@ -405,7 +439,7 @@ struct ChartView: View {
             .chartXSelection(value: $selectedDate)
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day, count: 7)) { value in
-                    AxisGridLine().foregroundStyle(.appBorder.opacity(0.3))
+                    AxisGridLine().foregroundStyle(.appBorder.opacity(DesignSystem.softOpacity))
                     AxisValueLabel(anchor: .topTrailing) {
                         if let date = value.as(Date.self) {
                             Text(formatDate(date))

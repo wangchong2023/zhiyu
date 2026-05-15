@@ -13,18 +13,13 @@
 
 import SwiftUI
 
-// MARK: - Notification Names
-extension Notification.Name {
-    static let importFromClipboard = Notification.Name("importFromClipboard")
-}
-
 // MARK: - Ingest Hero Section
 /// 导入模块顶部宣传区域组件
 /// 负责展示导入功能的品牌视觉元素及核心价值主张
 struct IngestHeroSection: View {
     var body: some View {
         VStack(spacing: DesignSystem.medium) {
-            Image(systemName: "tray.and.arrow.down.fill")
+            Image(systemName: DesignSystem.Icons.trayArrowDown)
                 .font(.system(size: DesignSystem.iconDisplay))
                 .foregroundStyle(
                     LinearGradient(
@@ -322,7 +317,7 @@ struct IngestManualFormSection: View {
         // Submit button
         AppPrimaryButton(
             title: isIngesting ? L10n.Ingest.tr("submitting") : L10n.Ingest.tr("submit"),
-            icon: "tray.and.arrow.down.fill",
+            icon: DesignSystem.Icons.trayArrowDown,
             isLoading: isIngesting
         ) {
             onPerformIngest()
@@ -629,19 +624,19 @@ struct URLImportSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                                .stroke(Color.appAccent.opacity(DesignSystem.glassOpacity * 2), lineWidth: DesignSystem.borderWidth) // 0.2, 1
+                                .stroke(Color.appAccent.opacity(DesignSystem.Opacity.glass * 2), lineWidth: DesignSystem.borderWidth) // 0.2, 1
                         )
                 }
                 .padding()
                 
                 VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-                    Label(L10n.Ingest.tr("webDesc"), systemImage: "info.circle")
+                    Label(L10n.Ingest.tr("webDesc"), systemImage: DesignSystem.Icons.info)
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
                     
                     AppPrimaryButton(
                         title: L10n.Common.tr("import"),
-                        icon: "arrow.down.doc.fill",
+                        icon: DesignSystem.Icons.trayArrowDown,
                         isLoading: false
                     ) {
                         onImport()
