@@ -376,10 +376,7 @@ struct MarkdownRendererView: View {
                 container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
                 container.swiftUI.foregroundColor = .appText
             case .applink:
-                container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
-                container.swiftUI.foregroundColor = Color.appAccent
-                container.swiftUI.underlineStyle = .single
-                
+                // 双链样式：仅用品牌色区分，不加下划线以降低视觉噪声
                 if segment.content.contains("|") {
                     let parts = segment.content.split(separator: "|")
                     let label = String(parts.first ?? "")
@@ -387,11 +384,12 @@ struct MarkdownRendererView: View {
                     container = AttributedString(label)
                     container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
                     container.swiftUI.foregroundColor = Color.appAccent
-                    container.swiftUI.underlineStyle = .single
                     if let encoded = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                         container.foundation.link = URL(string: "applink://\(encoded)")
                     }
                 } else {
+                    container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
+                    container.swiftUI.foregroundColor = Color.appAccent
                     if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                         container.foundation.link = URL(string: "applink://\(encoded)")
                     }

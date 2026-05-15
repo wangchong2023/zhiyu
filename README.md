@@ -36,34 +36,35 @@
 
 ## 🏗️ 架构全景：知识编译生态 (Knowledge Compiler Ecosystem)
 
-Knowledge Management 不仅是 Markdown 编辑器，它是一个 **AI 原生 RAG 闭环系统**。
+智宇 (ZhiYu) 不仅是 Markdown 编辑器，它是一个 **AI 原生 RAG 闭环系统**，采用 **L0-L3 垂直功能架构** 设计。
 
 ### 1. 核心架构图谱
 
 ```mermaid
 graph TD
-    A[数据摄入层] --> B{AI 预处理器}
-    B -- 语义分块 --> C[RAG 向量库]
-    B -- 实体提取 --> D[SQLite 关系库]
+    A[数据摄入层 Ingest] --> B{AI 处理器}
+    B -- 语义分块 --> C[Infrastructure/VectorDB]
+    B -- 实体提取 --> D[Infrastructure/Storage]
     C & D --> E[混合搜索内核]
-    E --> F[产出实验室 Synthesis Lab]
+    E --> F[Features/Synthesis 实验室]
     F -- 引用跳转 --> A
 ```
 
-### 2. 三层技术模型
+### 2. 垂直化技术模型
 
-#### 🟢 深度摄入层 (Ingestion Layer)
-- **语义分块 (Semantic Chunking)**：基于 `TextChunkerProcessor` 的递归拆分算法。
-- **分块优先级**：`Header (#) > Paragraph (\n\n) > Sentence (.)`，确保检索片段的上下文连续性。
-- **多模态解析**：自动将 PDF 中的表格转化为可索引的 JSON 描述。
+#### 🟢 基础设施层 (Infrastructure)
+- **语义分块 (TextChunkerProcessor)**：基于 `Infrastructure/Processors/Document/` 的递归拆分算法。
+- **分块策略**：`Header (#) > Paragraph (\n\n) > Sentence (.)`，确保检索片段的上下文连续性。
+- **混合存储**：结合 SQLite (FTS5) 与向量距离 (Vector Index) 的双引擎召回。
 
-#### 🔵 混合存储层 (Storage & Hybrid RAG)
-- **FTS5 + Vector**：结合全文搜索的“刚性匹配”与向量距离的“柔性关联”。
-- **Security-Scoped Bookmarks**：攻克 iOS/iPadOS 沙盒权限持久化难题，实现外部 Vault 挂载。
+#### 🔵 业务功能层 (Features)
+- **对话中心 (Features/Chat)**：垂直集成的对话历史管理与 RAG 调度。
+- **产出实验室 (Features/Synthesis)**：支持生成思维导图、JSON 测验、深度总结，利用 `[[Source]]` 实现语义溯源。
+- **安全金库 (Features/Vault)**：基于生物识别的二层加密存储。
 
-#### 🟣 产出实验室 (Synthesis Lab)
-- **AI 联动交互**：基于 NotebookLM 逻辑，支持生成思维导图、JSON 测验、深度总结。
-- **Deep Citation**：在 AI 产出中使用 `[[Source]]` 实现语义溯源。
+#### 🟣 应用与共享层 (App & Shared)
+- **全局调度 (App)**：管理 `AppEnvironment` 的初始化与 `Router` 全局导航。
+- **原子设计系统 (Shared)**：统一的颜色、间距及玻璃拟态 (Glassmorphism) 视觉规范。
 
 ---
 
@@ -71,21 +72,20 @@ graph TD
 
 | 特性 | 描述 | 技术实现 |
 |------|------|---------|
-| **响应式架构** | iPad/Mac 自动进化为三栏式桌面布局 | NavigationSplitView + SizeClass 适配 |
-| **指令中枢** | 全局 Cmd+K 唤起搜索与高频指令 | KeyboardShortcut + 模糊检索模型 |
-| **空间面包屑** | 历史路径回溯，解决深度跳转迷失感 | NavigationHistory + 物理级 UI 组件 |
-| **感知透明化** | AI 实时思维日志展示 | AITaskCenter + 动态日志流渲染 |
-| **语义溯源** | 知识芯片化跳转，点击瞬间定位原文 | Markdown 解析 + 互动 Chip 组件 |
+| **响应式架构** | iPad/Mac 自动进化为三栏式桌面布局 | `NavigationSplitView` + 平台适配器 |
+| **指令中枢** | 全局 Cmd+K 唤起搜索与高频指令 | `CommandPalette` + 模糊检索模型 |
+| **感知透明化** | AI 实时思维日志展示 | `TaskCenter` 动态日志流渲染 |
+| **语义溯源** | 知识芯片化跳转，点击瞬间定位原文 | `MarkdownRenderer` + 互动 Chip 组件 |
 
 ---
 
 ## 📱 跨平台适配细节 (Adaptive Design)
 
-Knowledge Management 采用一套代码实现多端差异化交互：
+智宇采用一套代码实现多端差异化交互：
 
-- **iPhone**: 经典的 `TabView` 底栏导航，单手操作友好。
-- **iPad**: 自动切换为 **三栏式 SplitView**。左侧模块导航，中间页面列表，右侧沉浸式详情。
-- **macOS**: 完美的桌面软件体验。支持 `Cmd + K` 全局唤起，配合多窗口模式实现极致生产力。
+- **iPhone**: 经典的 `TabView` 底栏导航。
+- **iPad**: 自动切换为 **三栏式 SplitView**。左侧模块导航，中间列表，右侧详情。
+- **macOS**: Catalyst 模式，支持多窗口、全局快捷键及 `Cmd + K` 搜索。
 
 ---
 
@@ -93,12 +93,13 @@ Knowledge Management 采用一套代码实现多端差异化交互：
 
 ### 1. RAG 知识导入
 拖入 PDF 或粘贴 URL，系统会自动执行 **“深度扫描”**。
-> **Tip**: 在 `TextChunkerProcessor.swift` 中可以调整分块大小（默认 800 字符）。
+> **Tip**: 在 `Sources/Infrastructure/Processors/Document/TextChunkerProcessor.swift` 中可以调整分块大小（默认 800 字符）。
 
 ### 2. 交互式溯源
 在 AI 生成的报告中点击 `[[Source]]`：
-1. 系统会通过 **HapticManager** 提供触感反馈。
+1. 系统会通过 **HapticFeedback** 提供触感反馈。
 2. 原文编辑器会自动滚动并高亮该出处。
+
 
 ### 3. 外部库挂载
 点击侧边栏 **“挂载外部库”**，授权访问物理文件夹。Knowledge Management 将作为这些 Markdown 文件的“AI 增强层”。

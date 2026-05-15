@@ -46,23 +46,8 @@ struct KnowledgePageListContent: View {
                 // 1. 底层：通透感深色背景
                 themeManager.pageBackground().opacity(0.85)
                 
-                if #available(iOS 18.0, *) {
-                    MeshGradient(
-                        width: 3,
-                        height: 3,
-                        points: [
-                            [0, 0], [0.5, 0], [1, 0],
-                            [0, 0.5], [0.5, 0.5], [1, 0.5],
-                            [0, 1], [0.5, 1], [1, 1]
-                        ],
-                        colors: [
-                            Color.appAccent.opacity(0.25), Color.appSource.opacity(0.3), Color.appAccent.opacity(0.15),
-                            Color.appConcept.opacity(0.3), Color.appAccent.opacity(0.35), Color.appConcept.opacity(0.2),
-                            Color.appSource.opacity(0.25), Color.appAccent.opacity(0.15), Color.appSource.opacity(0.3)
-                        ]
-                    )
+                MeshGradientView()
                     .blur(radius: 80)
-                }
             }
             .ignoresSafeArea()
             

@@ -1,6 +1,6 @@
 # Localization Rename (Wiki to Knowledge) Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Update all localization files and code references to replace "Wiki" with "Knowledge" and "维基" with "知识库".
 
@@ -15,7 +15,7 @@
 **Files:**
 - Create: `Tools/Temp/rename_wiki_to_knowledge.py`
 
-- [ ] **Step 1: Create a Python script to process .xcstrings files**
+- [x] **Step 1: Create a Python script to process .xcstrings files**
 
 ```python
 import json
@@ -87,7 +87,7 @@ print(f"Processed {len(files)} files.")
 print(f"Key replacements found: {len(key_mapping)}")
 ```
 
-- [ ] **Step 2: Run the script to update .xcstrings**
+- [x] **Step 2: Run the script to update .xcstrings**
 
 Run: `python3 Tools/Temp/rename_wiki_to_knowledge.py`
 
@@ -96,7 +96,7 @@ Run: `python3 Tools/Temp/rename_wiki_to_knowledge.py`
 **Files:**
 - Modify: All relevant `.swift` files in `Sources/`
 
-- [ ] **Step 1: Read key mapping and apply to Swift files**
+- [x] **Step 1: Read key mapping and apply to Swift files**
 
 Create a temporary script to update Swift files based on `key_mapping.json`.
 
@@ -146,20 +146,20 @@ for root, dirs, files in os.walk("Sources"):
                 print(f"Updated {path}")
 ```
 
-- [ ] **Step 2: Run the Swift update script**
+- [x] **Step 2: Run the Swift update script**
 
 Run the script created in Step 1.
 
 ### Task 3: Final Synchronization and Cleanup
 
-- [ ] **Step 1: Run the localization synchronization script**
+- [x] **Step 1: Run the localization synchronization script**
 
 Run: `python3 Tools/update_localization.py`
 
-- [ ] **Step 2: Verify no build errors**
+- [x] **Step 2: Verify no build errors**
 
 Run: `xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 
-- [ ] **Step 3: Cleanup temporary scripts**
+- [x] **Step 3: Cleanup temporary scripts**
 
 Run: `rm Tools/Temp/rename_wiki_to_knowledge.py Tools/Temp/key_mapping.json Tools/Temp/update_swift_keys.py`

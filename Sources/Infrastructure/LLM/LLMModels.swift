@@ -189,10 +189,16 @@ enum LLMError: LocalizedError {
 /// Manages LLM provider configuration with UserDefaults + Keychain persistence.
 final class LLMConfigStore: ObservableObject {
     @Published var provider: LLMProvider {
-        didSet { saveConfig() }
+        didSet { 
+            if oldValue != provider {
+                saveConfig()
+                // 切换提供商时，自动加载该提供商对应的 API Key
+                self.apiKey = loadAPIKey(for: provider)
+            }
+        }
     }
     @Published var apiKey: String {
-        didSet { saveAPIKey() }
+        didSet { saveAPIKey(for: provider) }
     }
     @Published var baseURL: String {
         didSet { saveConfig() }
@@ -211,7 +217,11 @@ final class LLMConfigStore: ObservableObject {
     }
 
     private let configKey = "zhiyu_llm_config"
-    private let keychainAPIKey = "llm_api_key"
+    private let legacyKeychainAPIKey = "llm_api_key"
+    
+    private func keychainKey(for provider: LLMProvider) -> String {
+        return "llm_api_key_\(provider.rawValue)"
+    }
 
     struct Config: Codable {
         let provider: LLMProvider
@@ -223,23 +233,33 @@ final class LLMConfigStore: ObservableObject {
     }
 
     init() {
+        var initialProvider: LLMProvider = .deepSeek
+        var initialBaseURL = LLMProvider.deepSeek.defaultBaseURL
+        var initialModel = LLMProvider.deepSeek.defaultModel
+        var initialIsEnabled = false
+        var initialAutoScan = true
+        var initialAutoRefactor = false
+
         if let data = UserDefaults.standard.data(forKey: configKey),
            let config = try? JSONDecoder().decode(Config.self, from: data) {
-            self.provider = config.provider
-            self.baseURL = config.baseURL
-            self.model = config.model
-            self.isEnabled = config.isEnabled
-            self.autoScan = config.autoScan
-            self.autoRefactor = config.autoRefactor
-        } else {
-            self.provider = .deepSeek
-            self.baseURL = LLMProvider.deepSeek.defaultBaseURL
-            self.model = LLMProvider.deepSeek.defaultModel
-            self.isEnabled = false
-            self.autoScan = true
-            self.autoRefactor = false
+            initialProvider = config.provider
+            initialBaseURL = config.baseURL
+            initialModel = config.model
+            initialIsEnabled = config.isEnabled
+            initialAutoScan = config.autoScan
+            initialAutoRefactor = config.autoRefactor
         }
-        self.apiKey = (try? KeychainService.shared.retrieve(key: keychainAPIKey)) ?? ""
+        
+        self.provider = initialProvider
+        self.baseURL = initialBaseURL
+        self.model = initialModel
+        self.isEnabled = initialIsEnabled
+        self.autoScan = initialAutoScan
+        self.autoRefactor = initialAutoRefactor
+        
+        // 延迟初始化 apiKey 以支持迁移逻辑
+        self.apiKey = "" 
+        self.apiKey = loadAPIKey(for: initialProvider)
     }
 
     private func saveConfig() {
@@ -256,11 +276,30 @@ final class LLMConfigStore: ObservableObject {
         }
     }
 
-    private func saveAPIKey() {
+    private func loadAPIKey(for provider: LLMProvider) -> String {
+        let key = keychainKey(for: provider)
+        if let value = try? KeychainService.shared.retrieve(key: key) {
+            return value
+        }
+        
+        // 迁移逻辑：如果新版分提供商 Key 不存在，尝试读取旧版全局 Key
+        if let legacyValue = try? KeychainService.shared.retrieve(key: legacyKeychainAPIKey) {
+            // 只有当当前提供商是“默认”或者是“自定义”时才尝试迁移，或者简单地全部尝试迁移一次
+            try? KeychainService.shared.store(key: key, value: legacyValue)
+            // 可选：迁移后删除旧 Key（慎重，如果用户有多个提供商可能导致丢失）
+            // try? KeychainService.shared.delete(key: legacyKeychainAPIKey)
+            return legacyValue
+        }
+        
+        return ""
+    }
+
+    private func saveAPIKey(for provider: LLMProvider) {
+        let key = keychainKey(for: provider)
         guard !apiKey.isEmpty else {
-            try? KeychainService.shared.delete(key: keychainAPIKey)
+            try? KeychainService.shared.delete(key: key)
             return
         }
-        try? KeychainService.shared.store(key: keychainAPIKey, value: apiKey)
+        try? KeychainService.shared.store(key: key, value: apiKey)
     }
 }

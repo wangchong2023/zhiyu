@@ -1,12 +1,10 @@
 // TaskCenter.swift
 //
 // 作者: Wang Chong
-// 功能说明: 任务类型
-// 版本: 1.0
+// 功能说明: 任务类型与管理中心
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
+//   - 2026-05-15: 移除平台宏污染，隔离 ActivityService。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -30,7 +28,6 @@ enum TaskType: String, CaseIterable {
         }
     }
 
-    // UI 扩展逻辑映射（后续可由 View 层通过扩展覆盖，目前放在这里作为默认实现）
     var defaultColor: String {
         switch self {
         case .ingest: return "blue"
@@ -67,12 +64,11 @@ struct GlobalTask: Identifiable {
     let target: String              // 目标对象
     var status: TaskStatus          // 当前状态
     let startTime = Date()          // 启动时间
-    var isRead: Bool = false        // 用户是否已读（用于通知红点）
-    var associatedPageID: UUID? // 关联页面（完成后可跳转）
+    var isRead: Bool = false        // 用户是否已读
+    var associatedPageID: UUID? // 关联页面
 }
 
 /// 全局任务管理中心 (单例)
-/// 负责全库异步 AI 任务及导入任务的生命周期管理、状态追踪与自动清理。
 @MainActor
 class TaskCenter: ObservableObject {
     static let shared = TaskCenter()
@@ -96,12 +92,10 @@ class TaskCenter: ObservableObject {
             .store(in: &cancellables)
     }
 
-    /// 更新全局最新状态文案 (用于触发 UI 脉搏动效)
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
     }
 
-    /// 任务指标摘要
     struct TaskMetrics {
         let total: Int
         let completed: Int
@@ -109,7 +103,6 @@ class TaskCenter: ObservableObject {
         let failed: Int
     }
 
-    /// 获取指定类型的任务指标
     func metrics(for type: TaskType) -> TaskMetrics {
         let relevant = tasks.filter { $0.type == type }
         let completed = relevant.filter { $0.status == .completed }.count
@@ -123,15 +116,12 @@ class TaskCenter: ObservableObject {
         return TaskMetrics(total: relevant.count, completed: completed, running: running, failed: failed)
     }
 
-    /// 未读已完成任务数
     var unreadCount: Int {
         tasks.filter { task in
             if task.isRead { return false }
             switch task.status {
-            case .completed, .failed:
-                return true
-            default:
-                return false
+            case .completed, .failed: return true
+            default: return false
             }
         }.count
     }
@@ -141,8 +131,9 @@ class TaskCenter: ObservableObject {
         self.tasks.insert(task, at: 0)
         self.latestStatus = Localized.trf("aitask.status.startingFormat", name, target)
 
-        // 灵动岛适配：启动实时活动
+        #if os(iOS)
         ActivityService.shared.startActivity(name: name, target: target)
+        #endif
 
         return task.id
     }
@@ -158,21 +149,25 @@ class TaskCenter: ObservableObject {
             switch status {
             case .running(let progress):
                 self.latestStatus = Localized.trf("aitask.status.runningFormat", task.name, task.target)
+                #if os(iOS)
                 ActivityService.shared.updateProgress(progress, message: self.latestStatus)
+                #endif
             case .completed:
                 self.latestStatus = Localized.trf("aitask.status.completedFormat", task.name)
-                // 发送本地通知（如果用户不在任务中心）
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
+                #if os(iOS)
                 ActivityService.shared.endActivity()
+                #endif
             case .failed:
                 self.latestStatus = Localized.trf("aitask.status.failedFormat", task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
+                #if os(iOS)
                 ActivityService.shared.endActivity()
+                #endif
             case .pending:
                 break
             }
 
-            // 如果成功且任务过多，清理旧任务
             if case .completed = status {
                 if self.tasks.count > 20 {
                     self.tasks.removeLast()
@@ -181,12 +176,10 @@ class TaskCenter: ObservableObject {
         }
     }
 
-    /// 便捷方法：完成任务
     func completeTask(id: UUID, associatedPageID: UUID? = nil) {
         updateTask(id, status: .completed, associatedPageID: associatedPageID)
     }
 
-    /// 便捷方法：任务失败
     func failTask(id: UUID, error: String) {
         updateTask(id, status: .failed(error: error))
     }
@@ -211,7 +204,6 @@ class TaskCenter: ObservableObject {
         }
     }
 
-    /// 重置所有任务数据
     func reset() {
         self.tasks.removeAll()
         self.latestStatus = ""

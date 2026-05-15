@@ -14,44 +14,59 @@ graph TD
 
 ---
 
-## L0: Infrastructure Layer (基础设施层)
-**职责**：提供与操作系统和第三方库的最底层交互，定义全局协议与工具。
+## L0: Core Layer (核心基座层)
+**职责**：提供与操作系统和第三方库的最底层交互，定义全局协议与工具。此层代码严禁依赖上层。
 
-**核心目录** (`Sources/Shared/Core/`):
+**核心目录** (`Sources/Core/`):
 | 目录 | 内容 | 关键组件 |
 | :--- | :--- | :--- |
-| `Platform/` | 系统级工具与平台桥接 | `Logger`, `SecurityManager`, `HapticFeedback`, `SpotlightService`, `DeepLinkService`, `PerformanceService`, `Router`, `AppTab`, `ShortcutManager` |
-| `Protocols/` | 核心协议定义 | `LLMServiceProtocol`, `LoggerProtocol`, `EmbeddingProvider`, `LLMClientProtocol` |
-| `Utilities/` | 通用工具与管理器 | `Localized`, `Character+CJK`, `ThemeManager`, `ServiceContainer` |
+| `Logger/` | 结构化日志系统 | `Logger.swift` |
+| `Security/` | 加密与钥匙串管理 | `KeychainService`, `SecurityManager` |
+| `Protocols/` | 核心抽象协议 | `LLMServiceProtocol`, `EmbeddingProvider` |
+| `Utils/` | 跨平台通用工具 | `Localized`, `ThemeManager`, `ServiceContainer` (DI) |
 
-## L1: Service Layer (基础服务层)
-**职责**：对底层持久化技术进行原子化抽象，提供跨业务的通用数据管理能力。
+## L1: Infrastructure Layer (基础设施层)
+**职责**：实现 AI、RAG 和存储的具体技术细节，为业务层提供技术能力支撑。
 
-**核心目录** (`Sources/Shared/Data/`):
+**核心目录** (`Sources/Infrastructure/`):
 | 目录 | 内容 | 关键组件 |
 | :--- | :--- | :--- |
-| `Persistence/` | 物理存储仓库 | `SQLiteStore/` (Facade, CRUD, Search, Stats, Tags), `KnowledgePageStore`, `AppStore`, `AppBackupService`, `DatabaseManager`, `SearchStore`, `SettingsStore`, `IngestStore`, `SynthesisStore`, `AIWorkflowStore` |
-| `Sync/` | 多端同步引擎 | `AppCloudSyncService`, `iCloudSyncManager` |
+| `LLM/` | LLM 适配与网络客户端 | `LLMClient`, `LLMService`, `PromptService` |
+| `Storage/` | 持久化存储实现 | `AppStore`, `SQLiteStore`, `iCloudSyncManager` |
+| `VectorDB/` | 向量索引与检索 | `EmbeddingManager`, `VectorIndexer` |
+| `Processors/` | 物理文档处理器 | `DocumentProcessor`, `OCRProcessor`, `PDFProcessor` |
 
-## L2: Domain / Feature Layer (业务领域层)
-**职责**：封装核心业务算法与文档处理器，实现复杂的功能闭环。
+## L2: Features Layer (业务功能层)
+**职责**：垂直功能切片。每个模块封装特定的业务逻辑、视图和数据状态，实现功能闭环。
 
-**核心目录** (`Sources/Shared/Domain/`):
-| 目录 | 内容 | 关键组件 |
+**核心目录** (`Sources/Features/`):
+| 目录 | 内容 | 组织模式 |
 | :--- | :--- | :--- |
-| `Logic/AI/` | AI 专项服务群 | `LLMService` (Orchestrator), `LLMIngestService`, `LLMRetrievalService`, `LLMChatService`, `LLMRefactorService`, `LLMClient`, `LLMContextBuilder` |
-| `Logic/` | 领域算法与评估 | `AISynthesisService`, `KnowledgeInsightService`, `EmbeddingManager`, `PromptService`, `RAGEvaluationService`, `PluginRegistry` |
-| `Processors/` | 专门文档处理 | `TextChunkerProcessor`, `OCRProcessor`, `PDFProcessor`, `KnowledgeIngestPipeline`, `VectorIndexer` |
-| `Features/` | 高级功能编排 | `IngestService`, `CollaborationService`, `LintService`, `UndoService`, `TaskCenter`, `AppEventBus` |
+| `Chat/` | 对话实验室 | 内部按 V-VM-M-S 组织 (View, ViewModel, Model, Service) |
+| `Ingest/` | 智能摄取系统 | 包含队列管理与任务调度 |
+| `Dashboard/` | 知识洞察仪表盘 | 综合展示与搜索入口 |
+| `Settings/` | 系统配置与插件中心 | 集中管理应用状态与偏好 |
 
-## L3: Presentation Layer (表现层)
-**职责**：响应用户交互，展示状态，驱动导航。包含声明式 UI 与业务编排逻辑。
+## L3: App Layer (应用层)
+**职责**：负责应用的生命周期管理、全局环境初始化以及模块间的导航路由。
+
+**核心目录** (`Sources/App/`):
+| 组件 | 职责 |
+| :--- | :--- |
+| `ZhiYuApp` | 应用入口，执行 L0/L1 层服务的注册与启动 |
+| `AppEnvironment` | 管理全局依赖的状态与并发环境配置 |
+| `Router` | 跨 Features 模块的全局导航调度中心 |
+| `ViewFactory` | 依据业务逻辑动态构建视图实例 |
+
+---
+
+## Shared: 共享层 (非功能分层)
+**职责**：定义应用级的共享标准，确保多模块间的视觉与交互一致性。
 
 **核心目录** (`Sources/Shared/`):
-| 目录 | 内容 | 关键组件 |
-| :--- | :--- | :--- |
-| `ViewModels/` | 视图模型层 | `ChatViewModel`, `GraphViewModel`, `PageDetailViewModel` (解耦 View 与 Service) |
-| `Views/` | SwiftUI 视图库 | `ContentView`, `Dashboard`, `Editors`, `GraphView`, `CommandPalette` |
+- `DesignSystem/`: 原子设计令牌 (Spacing, Typography, Colors, Animations)。
+- `UIComponents/`: 跨模块通用的 SwiftUI 视图、布局模板与玻璃拟态修饰符。
+- `Models/`: 全局共享的核心领域模型 (如 `KnowledgePage`)。
 
 ---
 

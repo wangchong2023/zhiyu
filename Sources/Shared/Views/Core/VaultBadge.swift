@@ -19,27 +19,25 @@ struct VaultBadge: View {
     
     @ViewBuilder
     private func adaptiveContainer(currentVault: VaultService.Vault) -> some View {
-        // 根据交互样式决定是否使用 Menu (消除平台宏)
-        if platformEnv.interactionStyle != InteractionStyle.crown {
-            Menu {
-                // 1. 切换笔记本操作
-                Button(action: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        vaultService.exitVault()
-                    }
-                }) {
-                    Label(L10n.Vault.tr("backToHub"), systemImage: "arrow.left.circle")
+        #if os(watchOS)
+        // watchOS 降级处理：仅显示标签，不支持下拉菜单
+        badgeLabel(currentVault: currentVault)
+        #else
+        // 具有指针/触控能力的设备使用 Menu
+        Menu {
+            Button(action: {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    vaultService.exitVault()
                 }
-                
-            } label: {
-                badgeLabel(currentVault: currentVault)
+            }) {
+                Label(L10n.Vault.tr("backToHub"), systemImage: "arrow.left.circle")
             }
-            .buttonStyle(.plain)
-            .tint(.primary)
-        } else {
-            // watchOS 或其他旋钮设备降级处理
+        } label: {
             badgeLabel(currentVault: currentVault)
         }
+        .buttonStyle(.plain)
+        .tint(.primary)
+        #endif
     }
     
     @ViewBuilder

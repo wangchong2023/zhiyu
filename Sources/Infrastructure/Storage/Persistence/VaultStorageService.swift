@@ -2,10 +2,9 @@
 //
 // 作者: Wang Chong
 // 功能说明: 扫描指定文件夹下的所有 Markdown 文件
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-04
-// 日期: 2026-05-04
+//   - 2026-05-15: 移除平台宏，改用 SecurityScopedStorageProtocol 注入。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -20,6 +19,9 @@ struct ExternalPage {
 
 final class VaultStorageService {
     nonisolated(unsafe) static let shared = VaultStorageService()
+    
+    /// 注入的平台安全存储提供者
+    @ObservationIgnored @Inject var storageProvider: SecurityScopedStorageProtocol
 
     /// 扫描指定文件夹下的所有 Markdown 文件
     func scan(directory: URL) -> [ExternalPage] {
@@ -73,38 +75,13 @@ final class VaultStorageService {
         return nil
     }
 
-    /// 存储书签以备持久化访问 (macOS)
-    #if os(macOS)
+    /// 存储书签以备持久化访问
     func storeBookmark(for url: URL) {
-        do {
-            let data = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
-            UserDefaults.standard.set(data, forKey: "vault_bookmark_\(url.lastPathComponent)")
-        } catch {
-            Logger.shared.addLog(action: .error, target: "VaultStorageService", details: "Failed to create bookmark: \(error.localizedDescription)")
-        }
+        storageProvider.storeBookmark(for: url)
     }
 
-    /// 从书签恢复 URL 访问权限 (macOS)
+    /// 从书签恢复 URL 访问权限
     func restoreURL(from data: Data) -> URL? {
-        var isStale = false
-        do {
-            let url = try URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
-            if isStale {
-                return nil
-            }
-            return url
-        } catch {
-            Logger.shared.addLog(action: .error, target: "VaultStorageService", details: "Failed to resolve bookmark: \(error.localizedDescription)")
-            return nil
-        }
+        storageProvider.restoreURL(from: data)
     }
-    #else
-    func storeBookmark(for url: URL) {
-        // iOS: security-scoped bookmarks are handled via document picker
-    }
-
-    func restoreURL(from data: Data) -> URL? {
-        return nil
-    }
-    #endif
 }

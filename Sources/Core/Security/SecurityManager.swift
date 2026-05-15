@@ -26,16 +26,31 @@ final class SecurityManager: Sendable {
     /// 全局单例
     static let shared = SecurityManager()
 
-    /// 哈希盐值，用于增加指纹的不可预测性
-    private let salt: String
+    /// 哈希盐值标识符
+    private let saltKey = "zhiyu_security_salt"
     /// 签名存储在 UserDefaults 中的键前缀
     private let signatureKeyPrefix = "zhiyu.integrity.sig."
 
-    /// 初始化安全管理器
-    /// - Parameter salt: 自定义盐值
-    init(salt: String = "App-Integrity-Salt-2026") {
-        self.salt = salt
+    /// 获取动态盐值，优先从 Keychain 读取，不存在则生成
+    private var salt: String {
+        if let existing = try? KeychainService.shared.retrieve(key: saltKey) {
+            return existing
+        }
+        
+        // 兼容性检查：如果 Keychain 为空但已有签名，说明需要迁移旧的硬编码盐
+        let legacySalt = "App-Integrity-Salt-2026"
+        let newSalt = UUID().uuidString + "-" + UUID().uuidString
+        
+        // 尝试探测是否有旧签名（以 KnowledgePage.sqlite 为例）
+        let hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
+        
+        let saltToStore = hasSignatures ? legacySalt : newSalt
+        try? KeychainService.shared.store(key: saltKey, value: saltToStore)
+        return saltToStore
     }
+
+    /// 初始化安全管理器
+    init() {}
 
     /// 计算指定文件的 HMAC 签名
     /// - Parameter fileURL: 目标文件路径

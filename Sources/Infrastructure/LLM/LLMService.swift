@@ -152,7 +152,7 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
         // 记录调用指标
         recordUsageIfPossible(response: response, latency: latency)
 
-        guard let content = LLMResponseProcessor.extractContent(from: response) else {
+        guard let content = LLMUtils.extractContent(from: response) else {
             throw LLMError.invalidResponse
         }
         return content

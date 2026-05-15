@@ -58,7 +58,31 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(iOSPDFService(), for: (any PDFServiceProtocol).self)
         #endif
 
-        #if os(iOS)
+        #if os(macOS)
+        container.register(MacOSSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
+        #elseif os(watchOS)
+        container.register(WatchSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
+        #else
+        container.register(iOSSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
+        #endif
+
+        #if os(macOS)
+        container.register(CoreMLModelCompiler(), for: MLModelCompilerProtocol.self)
+        #elseif os(watchOS)
+        container.register(WatchModelCompiler(), for: MLModelCompilerProtocol.self)
+        #else
+        container.register(CoreMLModelCompiler(), for: MLModelCompilerProtocol.self)
+        #endif
+
+        #if os(macOS)
+        container.register(MacOSBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
+        #elseif os(watchOS)
+        container.register(WatchBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
+        #else
+        container.register(iOSBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
+        #endif
+
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !os(watchOS)
         container.register(ActivityService.shared, for: ActivityService.self)
         #endif
         
@@ -106,6 +130,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         print("📦 [DI] 开始注册存储模块...")
         container.register(BackupService(), for: BackupService.self)
         container.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
+        container.register(AIInsightStore(), for: AIInsightStore.self)
         
         // @PR-05: 优化数据库冷启动加载时间
         if let writer = DatabaseManager.shared.dbWriter {

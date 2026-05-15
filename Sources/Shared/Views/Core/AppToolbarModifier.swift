@@ -15,26 +15,32 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
         content
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                #if !os(watchOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    // 纯空间占位符：用于平衡右侧头像菜单，确保中间 principal 元素物理居中
+                    Spacer()
+                        .frame(width: 40)
+                }
+                #endif
+                
+                #if os(watchOS)
+                ToolbarItem(placement: .topBarTrailing) {
+                    VaultBadge()
+                }
+                #else
                 ToolbarItem(placement: .principal) {
                     VaultBadge()
                 }
+                #endif
+                
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: Spacing.medium) {
+                    HStack(spacing: DesignSystem.small) {
                         if Trailing.self != EmptyView.self {
                             trailingItems
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(
-                                    ZStack {
-                                        Capsule().fill(Color.appAccent.opacity(0.08))
-                                        Capsule().fill(.ultraThinMaterial)
-                                    }
-                                )
-                                .clipShape(Capsule())
-                                .compositingGroup() // 消除边缘白边
                         }
                         UserProfileMenu()
                     }
+                    .fixedSize()
                 }
             }
     }
@@ -57,10 +63,17 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
         content
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                #if os(watchOS)
+                ToolbarItem(placement: .topBarLeading) {
+                    Text(title)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundStyle(.appText)
+                }
+                #else
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 0) {
                         Text(title)
-                            .font(.system(size: 17, weight: .bold)) // 提升字号至标准 17pt
+                            .font(.system(size: 17, weight: .bold))
                             .foregroundStyle(.appText)
                         
                         if showVaultBadge {
@@ -70,6 +83,7 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                         }
                     }
                 }
+                #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     trailingItems

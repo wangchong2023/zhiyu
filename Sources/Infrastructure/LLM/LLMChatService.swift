@@ -60,7 +60,7 @@ final class LLMChatService: Sendable {
         let requestBody = makeChatRequestBody(systemPrompt: systemPrompt, query: query, history: history)
         let response = try await client.sendRequest(body: requestBody)
         
-        guard let content = LLMResponseProcessor.extractContent(from: response) else {
+        guard let content = LLMUtils.extractContent(from: response) else {
             throw LLMError.invalidResponse
         }
         return content

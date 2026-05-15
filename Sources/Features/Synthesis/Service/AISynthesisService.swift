@@ -165,7 +165,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         """
 
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
-        return LLMResponseProcessor.parseJSONArray(result)
+        return LLMUtils.parseJSONArray(result)
     }
 
     /// 统一合成入口 (Facade)

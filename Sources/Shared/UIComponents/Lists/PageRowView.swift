@@ -72,10 +72,10 @@ struct PageRowView: View {
             
             Spacer()
             
-            // 状态圆点指示器
-            Circle()
-                .fill(Color.fromModelColorName(page.status.colorName))
-                .frame(width: Spacing.small, height: Spacing.small)
+            // 导航箭头（标准 chevron 替代绿点，语义更清晰）
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.appSecondary.opacity(0.4))
         }
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.small)

@@ -48,6 +48,7 @@ final class AppStore: @preconcurrency GraphDataProvider {
     var searchStore: SearchStore!
     var settingsStore: SettingsStore!
     var aiWorkflowStore: AIWorkflowStore!
+    var aiInsightStore: AIInsightStore!
 
     /// 当前图谱聚类分析结果
     var clusters: [GraphClusteringService.Cluster] = []
@@ -164,6 +165,7 @@ final class AppStore: @preconcurrency GraphDataProvider {
         self.searchStore = SearchStore()
         self.settingsStore = SettingsStore()
         self.aiWorkflowStore = AIWorkflowStore()
+        self.aiInsightStore = AIInsightStore()
 
         logger.addLog(action: .systemInit, target: "AppStore", details: "init called")
         sqliteStore.onLog = { [weak self] a, t, d in

@@ -7,4 +7,4 @@
 - [x] Write design doc <!-- {id: 4} -->
 - [x] Spec self-review <!-- {id: 5} -->
 - [x] User reviews written spec <!-- {id: 6} -->
-- [ ] Transition to implementation <!-- {id: 7} -->
+- [x] Transition to implementation <!-- {id: 7} -->

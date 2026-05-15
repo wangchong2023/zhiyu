@@ -33,24 +33,28 @@ xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'gener
 xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' > build/test_results.log 2>&1
 ```
 
-## 架构规范 (L0–L3 严格分层)
+## 架构规范 (垂直化功能架构)
 
-项目遵循严格的依赖规则：**上层依赖下层，严禁反向依赖**。跨层访问必须通过协议。
+项目遵循垂直化功能架构 (Vertical Slices)，将代码按职责深度分层，并在业务逻辑层执行垂直切片，以最大化模块内聚并减少跨层耦合。
 
-| 层级 | 名称 | 内容 |
-|-------|------|-----------------|
-| **L3** | 表现层 | SwiftUI Views, `@Observable` ViewModels, 路由导航 |
-| **L2** | 领域/功能层 | 业务逻辑服务 (`KnowledgeInsightService`, `AISynthesisService`, `IngestService`) |
-| **L1** | 服务层 | 数据访问与 AI 适配器 (`AppStore`, `LLMClient`, `EmbeddingManager`) |
-| **L0** | 基础设施层 | 存储引擎 (SQLite), 网络 (Network), 安全 (Keychain, SecurityManager, Logger) |
+| 层级 | 名称 | 物理路径 | 核心职责 |
+| :--- | :--- | :--- | :--- |
+| **L3** | 应用层 (App) | `Sources/App/` | 全局入口、环境配置 (`AppEnvironment`)、路由中心 (`Router`) |
+| **L0** | 核心层 (Core) | `Sources/Core/` | 技术基座：日志 (`Logger`)、安全、底层工具类、基础协议 |
+| **L1** | 基础设施层 (Infra) | `Sources/Infrastructure/` | AI/RAG 实现：LLM 适配、向量库、持久化存储 (`Storage`) |
+| **L2** | 业务功能层 (Features) | `Sources/Features/` | 垂直业务切片 (如 Chat, Search)，内部按 V-VM-M-S 组织 |
+| **Shared** | 共享标准层 | `Sources/Shared/` | 业务共性标准：设计系统 (`DesignSystem`)、通用 UI 组件 |
 
-## 目录结构 (Shared)
-- `Sources/Shared/Core`: 基础设置、平台适配、全局协议与工具类 (`Logger`, `Router`, `HapticFeedback`)。
-- `Sources/Shared/Data`: 持久化存储 (`SQLiteStore`, `AppStore`) 与同步引擎 (`iCloudSyncService`)。
-- `Sources/Shared/Domain`: 业务领域逻辑 (`LLMService`, `LinkService`)、RAG 管道、摄取服务 (`IngestService`) 与专用处理器 (`OCR`, `PDF`, `Chunker`)。
-- `Sources/Shared/Models`: 核心领域模型 (`KnowledgePage`, `PageType`)。
-- `Sources/Shared/ViewModels`: 基于 `@Observable` 的视图模型 (如 `ChatViewModel`)。
-- `Sources/Shared/Views`: 跨平台 SwiftUI 视图。
+## 目录结构 (物理归位)
+
+- `Sources/App`: 应用启动逻辑与全局路由调度。
+- `Sources/Core`: 跨平台的底层技术设施，不包含具体业务逻辑。
+- `Sources/Infrastructure`: RAG 管道实现、LLM 客户端及底层数据库实现。
+- `Sources/Features`: 业务功能模块。每个模块（如 `Features/Chat`）都是独立的垂直切片。
+- `Sources/Shared`: 包含 `DesignSystem` (设计令牌) 和 `UIComponents` (跨业务通用组件)。
+- `Sources/Localization`: 全局 String Catalog 资源。
+- `Sources/Platforms`: 平台特有的桥接实现（iOS, macOS, watchOS）。
+- `Docs/superpowers`: 存储工程重构计划与设计文档。
 
 
 ## 开发约定

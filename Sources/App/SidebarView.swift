@@ -146,9 +146,13 @@ struct UniverseSection: View {
     var body: some View {
         Section {
             NavigationLink(value: AppRoute.pageList(filterType: nil)) {
-                Label(Localized.tr("sidebar.pageList"), systemImage: "tray.full.fill")
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
+                UniverseNavRow(
+                    icon: "tray.full.fill",
+                    colorName: "accent",
+                    title: Localized.tr("sidebar.pageList"),
+                    count: store.pages.count
+                )
+                .contentShape(Rectangle())
             }
             
             ForEach(PageType.allCases) { type in
@@ -291,25 +295,81 @@ struct SidebarRowBackground: View {
     }
 }
 
+/// 知识宇宙通用导航行（参考搜索页面卡片风格）
+struct UniverseNavRow: View {
+    let icon: String
+    let colorName: String
+    let title: String
+    let count: Int
+    
+    var iconColor: Color {
+        colorName == "accent" ? .appAccent : Color.fromModelColorName(colorName)
+    }
+    
+    var body: some View {
+        HStack(spacing: DesignSystem.medium) {
+            // 彩色图标区域
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(iconColor)
+                .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
+                .background(iconColor.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
+            
+            // 标题
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.appText)
+            
+            Spacer()
+            
+            // 数量角标
+            if count > 0 {
+                Text("\(count)")
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
+                    .background(Color.appAccent.opacity(DesignSystem.subtleFillOpacity))
+                    .foregroundStyle(.appAccent)
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(.vertical, DesignSystem.atomic)
+    }
+}
+
+/// 按类型过滤的导航行（参考搜索页面卡片风格）
 struct SidebarTypeRow: View {
     let type: PageType
     let count: Int
+    
     var body: some View {
-        Label {
-            HStack {
-                Text(type.displayName)
-                Spacer()
-                Text("\(count)")
-                    .padding(.horizontal, count > 9 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
-                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                    .background(Color.appAccent.opacity(DesignSystem.subtleFillOpacity))
-                    .clipShape(Capsule())
-            }
-        } icon: {
+        HStack(spacing: DesignSystem.medium) {
+            // 彩色图标区域（匹配类型主色）
             Image(systemName: type.icon)
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
-                .frame(width: DesignSystem.Sidebar.iconFrameWidth)
+                .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
+                .background(Color.fromModelColorName(type.colorName).opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
+            
+            // 分类名称
+            Text(type.displayName)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.appText)
+            
+            Spacer()
+            
+            // 数量角标（使用类型主色）
+            Text("\(count)")
+                .font(.caption2.weight(.bold))
+                .padding(.horizontal, count > 9 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
+                .padding(.vertical, DesignSystem.Chip.verticalPadding)
+                .background(Color.fromModelColorName(type.colorName).opacity(0.15))
+                .foregroundStyle(Color.fromModelColorName(type.colorName))
+                .clipShape(Capsule())
         }
+        .padding(.vertical, DesignSystem.atomic)
     }
 }
 

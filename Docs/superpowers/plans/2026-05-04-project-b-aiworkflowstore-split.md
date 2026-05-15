@@ -1,6 +1,6 @@
 # Project B: AIWorkflowStore 拆分 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Extract synthesis document management (~210 lines) from AIWorkflowStore (523 lines) into a separate `SynthesisStore`, reducing AIWorkflowStore to ~310 lines.
 
@@ -15,7 +15,7 @@
 **Files:**
 - Create: `Sources/Shared/Services/Storage/SynthesisStore.swift`
 
-- [ ] **Step 1: Write the new SynthesisStore class**
+- [x] **Step 1: Write the new SynthesisStore class**
 
 ```swift
 import SwiftUI
@@ -267,15 +267,15 @@ final class SynthesisStore {
 **Files:**
 - Modify: `Sources/Shared/Services/Storage/AIWorkflowStore.swift`
 
-- [ ] **Step 1: Remove synthesis models from AIWorkflowStore**
+- [x] **Step 1: Remove synthesis models from AIWorkflowStore**
 
 Delete lines 8-72 (SynthesisDocument struct, SynthesisType enum, SynthesisStatus enum).
 
-- [ ] **Step 2: Remove synthesis state properties**
+- [x] **Step 2: Remove synthesis state properties**
 
 Delete lines 121-141 (synthesisResults, synthesisStates, maxSynthesisDocsPerType).
 
-- [ ] **Step 3: Remove synthesis methods**
+- [x] **Step 3: Remove synthesis methods**
 
 Delete `loadSynthesisResults()` (lines 147-156).
 Delete `saveSynthesisResult(type:content:)` (lines 158-173).
@@ -287,7 +287,7 @@ Delete `exportSynthesisDocument(_:)` (lines 251-264).
 Delete `extractTitle(from:type:)` (lines 495-515).
 Delete `formatDateFull(_:)` (lines 517-522).
 
-- [ ] **Step 4: Remove init() synthesis load loop**
+- [x] **Step 4: Remove init() synthesis load loop**
 
 Change init() from:
 ```swift
@@ -300,7 +300,7 @@ To:
 init() {}
 ```
 
-- [ ] **Step 5: Remove synthesis parts from clearAll()**
+- [x] **Step 5: Remove synthesis parts from clearAll()**
 
 Remove these lines from clearAll():
 ```swift
@@ -317,7 +317,7 @@ for type in SynthesisType.allCases {
 - Modify: `Sources/ZhiYuApp.swift`
 - Modify: `Sources/Shared/Services/Core/ServiceContainer.swift`
 
-- [ ] **Step 1: Register SynthesisStore in ServiceContainer**
+- [x] **Step 1: Register SynthesisStore in ServiceContainer**
 
 Add to the registration block where AIWorkflowStore is registered:
 ```swift
@@ -329,7 +329,7 @@ container.register { SynthesisStore() }
 **Files:**
 - Modify: `Sources/Shared/Views/Features/SynthesisView.swift`
 
-- [ ] **Step 1: Replace @Environment(AIWorkflowStore.self) with SynthesisStore**
+- [x] **Step 1: Replace @Environment(AIWorkflowStore.self) with SynthesisStore**
 
 Change:
 ```swift
@@ -340,12 +340,12 @@ To:
 @Environment(SynthesisStore.self) var synthesisStore
 ```
 
-- [ ] **Step 2: Update all type references**
+- [x] **Step 2: Update all type references**
 
 Replace `AIWorkflowStore.SynthesisType` → `SynthesisStore.SynthesisType` (8 usages)
 Replace `AIWorkflowStore.SynthesisDocument` → `SynthesisStore.SynthesisDocument` (5 usages)
 
-- [ ] **Step 3: Update all method/property references**
+- [x] **Step 3: Update all method/property references**
 
 Replace `aiStore.synthesisResults` → `synthesisStore.synthesisResults`
 Replace `aiStore.synthesisStates` → `synthesisStore.synthesisStates`
@@ -358,7 +358,7 @@ Replace `aiStore.renameSynthesisDoc(...)` → `synthesisStore.renameSynthesisDoc
 
 ### Task 5: Verify build
 
-- [ ] **Step 1: Build and check for errors**
+- [x] **Step 1: Build and check for errors**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E "error:|BUILD"

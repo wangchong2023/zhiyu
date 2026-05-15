@@ -52,14 +52,14 @@ public struct NotebookHubView: View {
                     }
                     .padding(.horizontal, DesignSystem.standardPadding)
                     .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
-                    .background(Color.appCard.opacity(0.6))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(.appAccent.opacity(0.25), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(.appAccent.opacity(0.15), lineWidth: 1)
                     )
-                    .padding(.horizontal, DesignSystem.Vault.homePadding)
-                    .padding(.top, DesignSystem.standardPadding)
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.top, DesignSystem.medium)
 
                     notebookGridSection
                 }
@@ -81,7 +81,9 @@ public struct NotebookHubView: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: DesignSystem.medium) {
+                    #if !os(watchOS)
                     sortMenu
+                    #endif
                     displayModeButton
                     UserProfileMenu()
                 }
@@ -190,13 +192,13 @@ public struct NotebookHubView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 180)
-            .background(Color(UIColor.secondarySystemGroupedBackground).opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .frame(height: 160)
+            .background(Color.appCard.opacity(DesignSystem.subtleFillOpacity))
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 28)
-                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
-                    .foregroundStyle(.appAccent.opacity(0.3))
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
+                    .foregroundStyle(.appAccent.opacity(0.2))
             )
         }
         .buttonStyle(.plain)
@@ -220,7 +222,11 @@ public struct NotebookHubView: View {
         }
     }
     
+    @ViewBuilder
     private var sortMenu: some View {
+        #if os(watchOS)
+        EmptyView()
+        #else
         Menu {
             Button {
                 viewModel.sortOption = .date
@@ -238,6 +244,7 @@ public struct NotebookHubView: View {
                 .font(.system(size: DesignSystem.bodyFontSize))
                 .foregroundStyle(.appSecondary)
         }
+        #endif
     }
 }
 
@@ -262,12 +269,12 @@ struct NotebookCard: View {
             VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 // 1. 图标展示 (彩色光晕底座，对齐图 2)
                 ZStack {
-                    Circle()
-                        .fill(colorForVault.opacity(0.05)) // 极柔和的底座，对齐图 3
-                        .frame(width: 52, height: 52)
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(colorForVault.opacity(0.08))
+                        .frame(width: 48, height: 48)
                     
                     Text(notebook.icon ?? defaultIcon)
-                        .font(.system(size: 32))
+                        .font(.system(size: 28))
                 }
                 
                 // 2. 标题
@@ -292,14 +299,14 @@ struct NotebookCard: View {
             }
             .padding(DesignSystem.medium)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 180)
-            .background(Color(UIColor.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 28))
+            .frame(height: 160)
+            .background(Color.appCard)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 28)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .strokeBorder(.primary.opacity(0.04), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(0.03), radius: 10, y: 5)
+            .shadow(color: .black.opacity(0.02), radius: 8, y: 4)
             .contextMenu {
                 Button {
                     viewModel.prepareEdit(notebook)
@@ -458,8 +465,13 @@ struct NotebookFormSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                #if os(watchOS)
+                Color.black
+                    .ignoresSafeArea()
+                #else
                 Color(UIColor.systemGroupedBackground)
                     .ignoresSafeArea()
+                #endif
                 
                 ScrollView {
                     VStack(spacing: DesignSystem.huge) {
@@ -511,7 +523,11 @@ struct NotebookFormSheet: View {
                                 TextField(L10n.Vault.tr("namePlaceholder"), text: $name)
                                     .font(.title3.bold())
                                     .padding()
+                                    #if os(watchOS)
+                                    .background(Color.white.opacity(0.1))
+                                    #else
                                     .background(Color(.secondarySystemGroupedBackground))
+                                    #endif
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             
@@ -523,7 +539,11 @@ struct NotebookFormSheet: View {
                                 TextField(L10n.Vault.tr("descriptionPlaceholder"), text: $description, axis: .vertical)
                                     .lineLimit(3...5)
                                     .padding()
+                                    #if os(watchOS)
+                                    .background(Color.white.opacity(0.1))
+                                    #else
                                     .background(Color(.secondarySystemGroupedBackground))
+                                    #endif
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                         }

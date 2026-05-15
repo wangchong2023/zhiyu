@@ -85,19 +85,11 @@ struct UserProfileMenu: View {
                     .symbolRenderingMode(.hierarchical)
             } else {
                 Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 20, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
             }
         }
-        .frame(width: 32, height: 32)
-        .background(
-            ZStack {
-                Circle().fill(Color.appAccent.opacity(0.08))
-                Circle().fill(.ultraThinMaterial)
-            }
-        )
-        .clipShape(Circle())
-        .compositingGroup() // 关键：消除边缘白边
+        .frame(width: 44, height: 44, alignment: .trailing) // 固定标准点击区域，右对齐减少留白
         .foregroundStyle(.appAccent)
     }
     

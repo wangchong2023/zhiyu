@@ -34,7 +34,7 @@ final class LLMRetrievalService: Sendable {
         
         do {
             let response = try await client.sendRequest(body: body)
-            return LLMResponseProcessor.extractContent(from: response) ?? query
+            return LLMUtils.extractContent(from: response) ?? query
         } catch {
             return query
         }
@@ -54,8 +54,8 @@ final class LLMRetrievalService: Sendable {
         
         do {
             let response = try await client.sendRequest(body: body)
-            let content = LLMResponseProcessor.extractContent(from: response) ?? ""
-            let variations = LLMResponseProcessor.parseJSONArray(content)
+            let content = LLMUtils.extractContent(from: response) ?? ""
+            let variations = LLMUtils.parseJSONArray(content)
             return variations.isEmpty ? [query] : variations
         } catch {
             return [query]
@@ -78,8 +78,8 @@ final class LLMRetrievalService: Sendable {
         ]
 
         let response = try await client.sendRequest(body: body)
-        let content = LLMResponseProcessor.extractContent(from: response) ?? ""
-        let rankedIDs = LLMResponseProcessor.parseJSONArray(content)
+        let content = LLMUtils.extractContent(from: response) ?? ""
+        let rankedIDs = LLMUtils.parseJSONArray(content)
 
         // 根据 LLM 返回的优先级顺序重新排序
         var result = candidates
@@ -118,8 +118,8 @@ final class LLMRetrievalService: Sendable {
 
         do {
             let response = try await client.sendRequest(body: body)
-            let content = LLMResponseProcessor.extractContent(from: response) ?? ""
-            let rankedIndices = LLMResponseProcessor.parseJSONArray(content).compactMap { Int($0) }
+            let content = LLMUtils.extractContent(from: response) ?? ""
+            let rankedIndices = LLMUtils.parseJSONArray(content).compactMap { Int($0) }
 
             var result: [PageChunk] = []
             for index in rankedIndices where index < candidates.count {
@@ -154,7 +154,7 @@ final class LLMRetrievalService: Sendable {
         
         do {
             let response = try await client.sendRequest(body: body)
-            return LLMResponseProcessor.extractContent(from: response) ?? query
+            return LLMUtils.extractContent(from: response) ?? query
         } catch {
             return query
         }

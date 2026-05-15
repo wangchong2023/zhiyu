@@ -1,6 +1,6 @@
 # 重构通用 UI 组件与布局模板 (Layouts) Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking tracking.
 
 **Goal:** 将 `AppUI.swift` 中的高层 UI 组件、视图装饰器和布局模板迁移到 `Sources/Shared/UIComponents/` 目录下，并进行标准化重构，使用最新的 `Spacing` 和 `Colors` 令牌。
 
@@ -19,7 +19,7 @@
 **Files:**
 - Create: `Sources/Shared/UIComponents/Backgrounds/PageBackground.swift`
 
-- [ ] **Step 1: 创建 `PageBackground.swift` 并实现相关视图**
+- [x] **Step 1: 创建 `PageBackground.swift` 并实现相关视图**
 
 ```swift
 import SwiftUI
@@ -171,7 +171,7 @@ public struct PageBackgroundView: View {
 }
 ```
 
-- [ ] **Step 2: 编译验证**
+- [x] **Step 2: 编译验证**
 
 Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 
@@ -182,7 +182,7 @@ Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'gene
 **Files:**
 - Create: `Sources/Shared/UIComponents/Modifiers/GlassStyle.swift`
 
-- [ ] **Step 1: 创建 `GlassStyle.swift` 并实现相关修饰符**
+- [x] **Step 1: 创建 `GlassStyle.swift` 并实现相关修饰符**
 
 ```swift
 import SwiftUI
@@ -279,7 +279,7 @@ public extension View {
 }
 ```
 
-- [ ] **Step 2: 编译验证**
+- [x] **Step 2: 编译验证**
 
 Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 
@@ -290,7 +290,7 @@ Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'gene
 **Files:**
 - Create: `Sources/Shared/UIComponents/Layouts/StandardSection.swift`
 
-- [ ] **Step 1: 创建 `StandardSection.swift`**
+- [x] **Step 1: 创建 `StandardSection.swift`**
 
 ```swift
 import SwiftUI
@@ -355,7 +355,7 @@ public extension View {
 }
 ```
 
-- [ ] **Step 2: 编译验证**
+- [x] **Step 2: 编译验证**
 
 Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 
@@ -366,7 +366,7 @@ Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'gene
 **Files:**
 - Modify: `Sources/Shared/Core/Constants/AppUI.swift`
 
-- [ ] **Step 1: 从 `AppUI.swift` 中删除已迁移的代码**
+- [x] **Step 1: 从 `AppUI.swift` 中删除已迁移的代码**
 
 从 `AppUI.swift` 中删除以下内容：
 - `struct MeshGradientView`
@@ -377,7 +377,7 @@ Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'gene
 - `struct AppSection` (rename references if any)
 - `View` 扩展中的 `appGlassCardStyle`, `appListRowStyle`, `appCardStyle`, `appContainer`, `appMetricCardStyle`
 
-- [ ] **Step 2: 添加类型别名或保持向后兼容（可选，按需）**
+- [x] **Step 2: 添加类型别名或保持向后兼容（可选，按需）**
 
 如果其他地方引用了 `AppUI.AppSection`，可以添加：
 ```swift
@@ -386,10 +386,10 @@ typealias AppSection = StandardSection
 ```
 在 `AppUI` 枚举内（如果需要）。
 
-- [ ] **Step 3: 全局搜索并替换 `AppSection` 为 `StandardSection`**
+- [x] **Step 3: 全局搜索并替换 `AppSection` 为 `StandardSection`**
 
-- [ ] **Step 4: 最终编译验证**
+- [x] **Step 4: 最终编译验证**
 
 Run: `xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO`
 
-- [ ] **Step 5: 提交更改**
+- [x] **Step 5: 提交更改**

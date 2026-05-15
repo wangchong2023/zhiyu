@@ -12,25 +12,25 @@
 
 ### Task D1: 移动文件
 
-- [ ] **Step 1: 复制到新位置**
+- [x] **Step 1: 复制到新位置**
 
 ```bash
 cp Sources/Shared/Services/AI/PPTXGenerator.swift Sources/Shared/Services/Infrastructure/PPTXGenerator.swift
 ```
 
-- [ ] **Step 2: 从原目录删除**
+- [x] **Step 2: 从原目录删除**
 
 ```bash
 rm Sources/Shared/Services/AI/PPTXGenerator.swift
 ```
 
-- [ ] **Step 3: 重新生成 Xcode 项目**
+- [x] **Step 3: 重新生成 Xcode 项目**
 
 ```bash
 xcodegen generate
 ```
 
-- [ ] **Step 4: 编译验证**
+- [x] **Step 4: 编译验证**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES 2>&1 | tail -10

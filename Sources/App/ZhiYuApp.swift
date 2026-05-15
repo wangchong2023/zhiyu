@@ -40,6 +40,7 @@ struct ZhiYuApp: App {
                     .environment(VaultService.shared)
                     .environment(appEnv.store)
                     .environment(appEnv.store.aiWorkflowStore)
+                    .environment(appEnv.store.aiInsightStore)
                     .environment(appEnv.synthesisStore)
                     .environment(appEnv.store.searchStore)
                     .environment(appEnv.store.settingsStore)

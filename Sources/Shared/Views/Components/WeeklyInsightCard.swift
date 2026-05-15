@@ -16,7 +16,7 @@ import SwiftUI
 /// 集成 AI 摘要与核心增长指标的可视化面板
 struct WeeklyInsightCard: View {
     @Environment(AppStore.self) var store
-    @Environment(AIWorkflowStore.self) var aiStore
+    @Environment(AIInsightStore.self) var aiStore
     @Environment(Router.self) var router
     @State private var isGenerating = false
     

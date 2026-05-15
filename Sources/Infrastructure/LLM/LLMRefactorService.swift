@@ -43,8 +43,8 @@ final class LLMRefactorService: Sendable {
         ]
 
         let response = try await client.sendRequest(body: body)
-        let responseContent = LLMResponseProcessor.extractContent(from: response) ?? ""
-        return LLMResponseProcessor.parseJSONArray(responseContent)
+        let responseContent = LLMUtils.extractContent(from: response) ?? ""
+        return LLMUtils.parseJSONArray(responseContent)
     }
 
     // MARK: - 智能折叠 (Smart Folding)
@@ -69,7 +69,7 @@ final class LLMRefactorService: Sendable {
         ]
 
         let response = try await client.sendRequest(body: body)
-        return LLMResponseProcessor.extractContent(from: response) ?? (existingContent + "\n\n" + newContent)
+        return LLMUtils.extractContent(from: response) ?? (existingContent + "\n\n" + newContent)
     }
 
     // MARK: - 架构重构建议
@@ -93,8 +93,8 @@ final class LLMRefactorService: Sendable {
         ]
 
         let response = try await client.sendRequest(body: body)
-        let responseContent = LLMResponseProcessor.extractContent(from: response) ?? ""
-        return LLMResponseProcessor.parseRefactorSuggestions(responseContent)
+        let responseContent = LLMUtils.extractContent(from: response) ?? ""
+        return LLMUtils.parseRefactorSuggestions(responseContent)
     }
 }
 

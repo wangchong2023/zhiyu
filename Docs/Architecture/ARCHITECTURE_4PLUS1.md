@@ -62,20 +62,10 @@ classDiagram
 ## 3. 架构 4+1 视图 (4+1 Architectural View Model)
 
 ### 3.1 逻辑视图 (Logical View) - 功能分层
-- **L3 (展现层)**: `SwiftUI` 驱动的响应式视图 + `@Observable` Coordinator/ViewModel
-  - Views: `GraphView`, `ChatView`, `PageDetailView` 等
-  - ViewModel: `iCloudSyncCoordinator`（业务编排剥离自 iCloudSyncView）
-- **L2 (领域/功能层)**: 核心业务引擎与高级功能编排
-  - AI: `LLMService`, `AISynthesisService`, `EmbeddingManager`
-  - Feature: `IngestService`, `CollaborationService`, `TaskCenter`
-  - Gamification: `MedalService`
-- **L1 (服务层)**: 数据访问与 AI 适配器
-  - Storage: `AppStore`, `SQLiteStore`, `WikiPageStore`, `SynthesisStore`
-  - Logic: `LinkService`, `KnowledgeInsightService`, `RecursiveChunker`
-  - Sync: `iCloudSyncService`, `FileSystemSyncService`
-- **L0 (基础设施层)**: 存储引擎、网络、Keychain、Logger、OS 工具
-  - Infrastructure: `LogService`, `SecurityManager`, `HapticManager`, `WebViewExportService`
-  - Processors: `PDFService`, `OCRService`, `MarkdownParser`
+- **L3 (应用层)**: `ZhiYuApp` 引导，`AppEnvironment` 配置环境，`Router` 全局导航。
+- **L2 (业务功能层)**: 垂直业务切片。如 `ChatService`, `IngestService`, `GraphDataProvider` 等。
+- **L1 (基础设施层)**: 实现技术细节。如 `LLMService`, `AppStore`, `EmbeddingManager`, `TextChunkerProcessor`, `SQLiteStore`。
+- **L0 (核心层)**: 系统基座。如 `Logger`, `SecurityManager`, `ServiceContainer`, `Protocols`。
 
 ### 3.2 过程视图 (Process View) - 数据流与并发
 描述系统在执行关键任务时的动态协作关系。
@@ -200,21 +190,21 @@ graph LR
 
 为了确保系统的可维护性与测试性，我们对功能进行了逻辑解耦，形成了四层垂直模型：
 
-### 🟢 L0: 基础设施层 (Sources/Shared/Services/Infrastructure & Processors & Core/Protocols)
-*   **定位**: 底层能力的封装与数据持久化。
-*   **组件**: `SQLiteStore`, `LogService`, `SecurityManager`, `HapticManager`, `WebViewExportService`, `PDFService`, `OCRService`, `MarkdownParser`, `WikiPageRepository`, `ServiceContainer`。
+### 🟢 L0: 核心层 (Sources/Core)
+*   **职责**: 技术基座、底层工具与全局协议。
+*   **关键组件**: `Logger`, `SecurityManager`, `ServiceContainer`, `Protocols`。
 
-### 🔵 L1: 服务层 (Sources/Shared/Services/Storage & Logic & Sync)
-*   **定位**: 数据访问、原子操作、外部系统适配。
-*   **组件**: `AppStore (Facade)`, `VaultService`, `BackupService`, `LinkService`, `KnowledgeInsightService`, `RecursiveChunker`, `iCloudSyncService`, `FileSystemSyncService`, `PluginRegistry`。
+### 🔵 L1: 基础设施层 (Sources/Infrastructure)
+*   **职责**: 技术细节实现、数据持久化与 AI 引擎。
+*   **关键组件**: `LLMService`, `AppStore`, `SQLiteStore`, `EmbeddingManager`, `TextChunkerProcessor`, `OCRProcessor`, `PDFProcessor`。
 
-### 🟣 L2: 应用能力层 (Sources/Shared/Services/AI & Feature & System & Gamification)
-*   **定位**: 高级功能与智能调度。
-*   **组件**: `LLMService`, `LLMClient`, `AISynthesisService`, `EmbeddingManager`, `IngestService`, `CollaborationService`, `TaskCenter`, `MedalService`, `ActivityService`, `WikiEventBus`。
+### 🟣 L2: 业务功能层 (Sources/Features)
+*   **职责**: 垂直业务逻辑闭环。
+*   **关键组件**: `ChatService`, `IngestService`, `GraphDataProvider`, `VaultService`, `LinkService`。
 
-### 🟡 L3: 交互展现层 (Sources/Shared/Views)
-*   **定位**: 跨平台响应式视图 + ViewModel 编排。
-*   **组件**: `GraphView`, `PageDetailView`, `ChatView`, `iCloudSyncCoordinator`（ViewModel），`IngestView` 等。
+### 🟡 L3: 应用层 (Sources/App)
+*   **职责**: 全局导航、环境初始化与入口。
+*   **关键组件**: `ZhiYuApp`, `Router`, `AppEnvironment`, `ViewFactory`。
 
 ---
 
@@ -370,3 +360,4 @@ WikiPage 详情页可从多个 Tab 进入：
 - `selectedTab: AppTab = .knowledge`
 - `sidebarSelection: SidebarSelection? = .tool(.pageList)`
 - 启动落地页：**KnowledgePageListView（页面列表）**
+

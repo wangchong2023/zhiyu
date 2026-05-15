@@ -299,18 +299,60 @@ final class MarkdownProcessor: Sendable {
         return (.table(headers: headers, rows: rows), i)
     }
 
-    // MARK: - 行内解析
+    // MARK: - 行内解析（两阶段解析，第一阶段提取 applink，第二阶段解析格式化）
+    /// 两阶段解析避免 bold/italic 包裹 [[...]] 导致双链无法识别的问题
     func parseInlineSegments(_ text: String) -> [InlineSegment] {
+        let nsText = text as NSString
+        var result: [InlineSegment] = []
+        var currentOffset = 0
+
+        // 第一阶段：全局提取所有 [[...]] 位置
+        let searchRange = NSRange(location: 0, length: nsText.length)
+        let applinkMatches = NSRegularExpression.appLinkRegex.matches(in: text, options: [], range: searchRange)
+
+        for match in applinkMatches {
+            // 解析 applink 前面段落的所有格式化标记
+            if match.range.location > currentOffset {
+                let beforeRange = NSRange(location: currentOffset, length: match.range.location - currentOffset)
+                let beforeText = nsText.substring(with: beforeRange)
+                result.append(contentsOf: parseFormattingSegments(beforeText))
+            }
+
+            // 提取 [[...]] 内容
+            let raw = nsText.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
+            let content: String
+            if raw.contains("|") {
+                let parts = raw.components(separatedBy: "|")
+                let label = String(parts.first ?? "").trimmingCharacters(in: .whitespaces)
+                let title = String(parts.last ?? "").trimmingCharacters(in: .whitespaces)
+                content = "\(label)|\(title)"
+            } else {
+                content = raw
+            }
+            result.append(InlineSegment(type: .applink, content: content))
+            currentOffset = match.range.location + match.range.length
+        }
+
+        // 处理最后一个 applink 后的剩余文本
+        if currentOffset < nsText.length {
+            let remaining = nsText.substring(from: currentOffset)
+            result.append(contentsOf: parseFormattingSegments(remaining))
+        }
+
+        return result
+    }
+
+    /// 第二阶段：仅解析格式化标记（bold/italic/code/link），不处理 applink
+    private func parseFormattingSegments(_ text: String) -> [InlineSegment] {
         var segments: [InlineSegment] = []
         let nsText = text as NSString
         var currentOffset = 0
 
         let patterns: [(InlineType, NSRegularExpression)] = [
-            (.applink, .appLinkRegex),
             (.link, .linkRegex),
             (.bold, .boldRegex),
             (.italic, .italicRegex),
-            (.strikethrough, .strikethroughRegex), // 新增删除线支持
+            (.strikethrough, .strikethroughRegex),
             (.code, .codeRegex)
         ]
 
@@ -318,40 +360,22 @@ final class MarkdownProcessor: Sendable {
             var earliestMatch: (type: InlineType, match: NSTextCheckingResult)?
 
             for (type, regex) in patterns {
-                // 核心修复：使用 nsText.length 确保范围计算对多字节字符安全
                 if let match = regex.firstMatch(in: text, options: [], range: NSRange(location: currentOffset, length: nsText.length - currentOffset)) {
                     if earliestMatch == nil || match.range.location < earliestMatch!.match.range.location {
                         earliestMatch = (type, match)
-                    } else if match.range.location == earliestMatch!.match.range.location {
-                        // 优先级策略：applink > link > bold
-                        if type == .applink { earliestMatch = (type, match) }
                     }
                 }
             }
 
             if let earliest = earliestMatch {
                 let matchRange = earliest.match.range
-
-                // 添加匹配项之前的普通文本
                 if matchRange.location > currentOffset {
                     let before = nsText.substring(with: NSRange(location: currentOffset, length: matchRange.location - currentOffset))
                     segments.append(InlineSegment(type: .text, content: before))
                 }
 
-                // 处理匹配到的片段内容
                 let content: String
                 switch earliest.type {
-                case .applink:
-                    // 提取 [[ 内容 ]]
-                    let raw = nsText.substring(with: earliest.match.range(at: 1)).trimmingCharacters(in: .whitespaces)
-                    if raw.contains("|") {
-                        let parts = raw.components(separatedBy: "|")
-                        let title = String(parts.first ?? "").trimmingCharacters(in: .whitespaces)
-                        let label = String(parts.last ?? "").trimmingCharacters(in: .whitespaces)
-                        content = "\(label)|\(title)"
-                    } else {
-                        content = raw
-                    }
                 case .link:
                     let label = nsText.substring(with: earliest.match.range(at: 1))
                     let url = nsText.substring(with: earliest.match.range(at: 2))
@@ -365,15 +389,13 @@ final class MarkdownProcessor: Sendable {
                 segments.append(InlineSegment(type: earliest.type, content: content))
                 currentOffset = matchRange.location + matchRange.length
             } else {
-                // 无更多匹配，添加剩余所有文本
-                let remainingText = nsText.substring(from: currentOffset)
-                if !remainingText.isEmpty {
-                    segments.append(InlineSegment(type: .text, content: remainingText))
+                let remaining = nsText.substring(from: currentOffset)
+                if !remaining.isEmpty {
+                    segments.append(InlineSegment(type: .text, content: remaining))
                 }
                 break
             }
         }
-
         return segments
     }
 

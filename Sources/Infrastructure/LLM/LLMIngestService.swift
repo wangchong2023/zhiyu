@@ -33,9 +33,8 @@ final class LLMIngestService: Sendable {
         ]
 
         let response = try await client.sendRequest(body: body)
-        let content = LLMResponseProcessor.extractContent(from: response) ?? ""
-
-        if let result = LLMResponseProcessor.parseSmartIngest(content) {
+        let content = LLMUtils.extractContent(from: response) ?? ""
+        if let result = LLMUtils.parseSmartIngest(content) {
             return result
         }
         throw LLMError.invalidResponse

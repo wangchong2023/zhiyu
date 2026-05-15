@@ -1,6 +1,6 @@
 # 移除 "Wiki" 术语重构实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 系统性地将代码库中所有的 "Wiki" 相关术语替换为 "Knowledge"、"App" 或 "Page" 术语。
 
@@ -16,7 +16,7 @@
 - Create: `Tools/Temp/mass_rename_wiki.py`
 - Modify: `Sources/**/*`, `Tests/**/*`
 
-- [ ] **Step 1: 创建批量重命名脚本**
+- [x] **Step 1: 创建批量重命名脚本**
 
 ```python
 import os
@@ -105,12 +105,12 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 2: 执行脚本**
+- [x] **Step 2: 执行脚本**
 
 Run: `python3 Tools/Temp/mass_rename_wiki.py`
 Expected: 打印修改的文件数量。
 
-- [ ] **Step 3: 检查并提交初步修改**
+- [x] **Step 3: 检查并提交初步修改**
 
 ```bash
 git add Sources/ Tests/
@@ -124,13 +124,13 @@ git commit -m "refactor: mass rename Wiki terminology using script"
 - Modify: `Sources/Shared/Services/Storage/KnowledgePageStore.swift`
 - Modify: `Sources/Shared/Services/System/AppEventBus.swift`
 
-- [ ] **Step 1: 更新 KnowledgePage.swift 头部与注释**
+- [x] **Step 1: 更新 KnowledgePage.swift 头部与注释**
 确保文件头部注释中的文件名、描述以及 WikiLinkProcessor 的引用都已更新。
 
-- [ ] **Step 2: 更新 KnowledgePageStore.swift 头部与注释**
+- [x] **Step 2: 更新 KnowledgePageStore.swift 头部与注释**
 同步更新 WikiPageStore -> KnowledgePageStore 的所有注释描述。
 
-- [ ] **Step 3: 更新 AppEventBus.swift 头部与注释**
+- [x] **Step 3: 更新 AppEventBus.swift 头部与注释**
 同步更新 WikiEventBus -> AppEventBus 的所有注释描述。
 
 ### Task 3: UI 组件头部精修
@@ -144,31 +144,31 @@ git commit -m "refactor: mass rename Wiki terminology using script"
 - Modify: `Sources/Shared/Views/Components/AppTooltip.swift`
 - Modify: `Sources/Shared/Views/Components/AppCardComponents.swift`
 
-- [ ] **Step 1: 逐个检查并更新这些文件的头部注释**
+- [x] **Step 1: 逐个检查并更新这些文件的头部注释**
 确保所有 "Wiki" 字样都被替换为 "App" 或相应的新名称。
 
 ### Task 4: 编译与验证
 
-- [ ] **Step 1: 重新生成 Xcode 项目**
+- [x] **Step 1: 重新生成 Xcode 项目**
 
 Run: `xcodegen generate`
 
-- [ ] **Step 2: 编译 iOS 目标**
+- [x] **Step 2: 编译 iOS 目标**
 
 Run: `./env/venv/bin/python3 -c "import os; os.system('xcodebuild build -project KM.xcodeproj -scheme KM -destination \'generic/platform=iOS Simulator\' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/ios_build.log 2>&1')"`
 
-- [ ] **Step 3: 检查编译错误并修复**
+- [x] **Step 3: 检查编译错误并修复**
 如果有编译错误，逐个修复。
 
-- [ ] **Step 4: 运行单元测试**
+- [x] **Step 4: 运行单元测试**
 
 Run: `./env/venv/bin/python3 -c "import os; os.system('xcodebuild test -project KM.xcodeproj -scheme KM -destination \'platform=iOS Simulator,name=iPhone 17 Pro\' > build/test_results.log 2>&1')"`
 
-- [ ] **Step 5: 清理临时脚本**
+- [x] **Step 5: 清理临时脚本**
 
 Run: `rm Tools/Temp/mass_rename_wiki.py`
 
-- [ ] **Step 6: 最终提交**
+- [x] **Step 6: 最终提交**
 
 ```bash
 git add .

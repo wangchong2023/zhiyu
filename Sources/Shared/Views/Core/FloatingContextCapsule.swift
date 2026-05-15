@@ -60,6 +60,15 @@ struct FloatingContextCapsule: View {
     
     @ViewBuilder
     private func vaultMenu(_ vault: VaultService.Vault) -> some View {
+        #if os(watchOS)
+        HStack(spacing: DesignSystem.small) {
+            Text(vault.name)
+                .font(.custom("Avenir Next", size: 18).weight(.bold))
+                .lineLimit(1)
+        }
+        .padding(.trailing, DesignSystem.medium)
+        .frame(minHeight: 44)
+        #else
         Menu {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
@@ -90,6 +99,7 @@ struct FloatingContextCapsule: View {
             .padding(.trailing, DesignSystem.medium)
             .frame(minHeight: 44)
         }
+        #endif
     }
     
     private var hubIndicator: some View {

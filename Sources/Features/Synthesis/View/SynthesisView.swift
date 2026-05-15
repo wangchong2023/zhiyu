@@ -359,9 +359,7 @@ struct SynthesisView: View {
                     HStack(spacing: DesignSystem.headlineFontSize) {
                         Button {
                             if let doc = selectedDoc {
-                                #if os(iOS)
-                                UIPasteboard.general.string = doc.content
-                                #endif
+                                AppPasteboard.string = doc.content
                                 HapticFeedback.shared.trigger(.success)
                             }
                         } label: { Image(systemName: "doc.on.doc") }

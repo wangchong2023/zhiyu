@@ -29,6 +29,9 @@ final class OnDeviceLLMService: ObservableObject {
 
     private var currentModel: AnyObject?
     private let configKey = "zhiyu_ondevice_config"
+    
+    /// 注入的模型编译器，用于处理平台差异化编译逻辑
+    @ObservationIgnored @Inject var compiler: MLModelCompilerProtocol
 
     // MARK: - Constants
     /// Default max tokens for text generation
@@ -159,11 +162,7 @@ final class OnDeviceLLMService: ObservableObject {
             if url.pathExtension == "mlmodelc" {
                 compiledURL = url
             } else {
-                #if os(watchOS)
-                throw OnDeviceError.compilationFailed
-                #else
-                compiledURL = try await MLModel.compileModel(at: url)
-                #endif
+                compiledURL = try await compiler.compileModel(at: url)
             }
 
             let config = MLModelConfiguration()
@@ -324,13 +323,9 @@ final class OnDeviceLLMService: ObservableObject {
 
         // Compile if needed
         if destURL.pathExtension == "mlmodel" {
-            #if os(watchOS)
-            throw OnDeviceError.compilationFailed
-            #else
-            let compiledURL = try await MLModel.compileModel(at: destURL)
+            let compiledURL = try await compiler.compileModel(at: destURL)
             try FileManager.default.removeItem(at: destURL)
             try FileManager.default.moveItem(at: compiledURL, to: destURL.appendingPathExtension("mlmodelc"))
-            #endif
         }
 
         discoverModels()

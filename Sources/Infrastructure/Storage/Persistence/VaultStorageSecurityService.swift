@@ -26,7 +26,8 @@ final class VaultStorageSecurityService {
     /// 当前硬件环境是否支持并已配置生物识别（FaceID/TouchID）
     var biometricsAvailable = false
 
-    // 移除单例 context，避免跨次认证状态冲突导致闪退
+    /// 注入的平台策略提供者
+    @ObservationIgnored @Inject var provider: BiometricAuthProviderProtocol
 
     /**
      * @description: 初始化安全服务并执行首次硬件能力监控
@@ -45,12 +46,7 @@ final class VaultStorageSecurityService {
      */
     func checkBiometrics() {
         let context = LAContext()
-        var error: NSError?
-        #if os(watchOS)
-        biometricsAvailable = context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
-        #else
-        biometricsAvailable = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-        #endif
+        biometricsAvailable = provider.canEvaluatePolicy(context: context)
     }
 
     /**
@@ -77,15 +73,9 @@ final class VaultStorageSecurityService {
         let context = LAContext()
         self.activeContext = context // 保持引用
 
-        var error: NSError?
-        // 若硬件不支持，直接放行（由 UI 层负责显示不可用状态）
-        #if os(watchOS)
-        let policy: LAPolicy = .deviceOwnerAuthentication
-        #else
-        let policy: LAPolicy = .deviceOwnerAuthenticationWithBiometrics
-        #endif
+        let policy = provider.authenticationPolicy
         
-        guard context.canEvaluatePolicy(policy, error: &error) else {
+        guard provider.canEvaluatePolicy(context: context) else {
             self.activeContext = nil
             return true
         }

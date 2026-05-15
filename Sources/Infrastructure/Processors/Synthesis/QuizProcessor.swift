@@ -6,9 +6,9 @@
 // 1. 结构化解析：支持对复杂 JSON 测验协议的解析，通过内部定义的容器（QuizModelShell）映射题目、选项、标准答案及解析说明。
 // 2. 转换渲染：提供将 JSON 结构无损转换为 Markdown 交互格式的功能，并巧妙利用 HTML Details 标签实现答案的隐藏与展示。
 // 3. 容错处理：具备强大的 JSON 清洗能力，能够自动剥离 AI 响应中可能包含的 Markdown 代码块声明及冗余的前后文。
-// 版本: 1.1
+// 版本: 1.2
 // 修改记录:
-//   - 2026-05-05: 迁移至 Utils/Processors/Synthesis 并规范化文件头注释
+//   - 2026-05-15: 使用 LLMUtils 统一清洗逻辑。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -30,14 +30,14 @@ enum QuizProcessor {
 
     /// 检查文本是否可以解析为标准的交互式测验模型
     static func canDecodeAsQuizModel(_ text: String) -> Bool {
-        let cleaned = cleanJSON(text)
+        let cleaned = LLMUtils.stripMarkdown(text)
         guard let data = cleaned.data(using: .utf8) else { return false }
         return (try? JSONDecoder().decode(QuizModelShell.self, from: data)) != nil
     }
 
     /// 尝试将 JSON 测验转换为 Markdown 格式
     static func convertJSONToMarkdown(_ text: String) -> String? {
-        let cleaned = cleanJSON(text)
+        let cleaned = LLMUtils.stripMarkdown(text)
         guard let data = cleaned.data(using: .utf8) else { return nil }
 
         struct QuizJSON: Codable {
@@ -87,12 +87,5 @@ enum QuizProcessor {
         }
 
         return md
-    }
-
-    /// 清洗 AI 返回的 JSON 字符串
-    static func cleanJSON(_ text: String) -> String {
-        return text.replacingOccurrences(of: "```json", with: "")
-                   .replacingOccurrences(of: "```", with: "")
-                   .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

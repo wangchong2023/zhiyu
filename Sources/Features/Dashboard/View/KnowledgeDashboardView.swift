@@ -14,6 +14,7 @@ import Charts
 struct KnowledgeDashboardView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
+    @Environment(AIInsightStore.self) var aiStore
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     @State private var statsTask: Task<Void, Never>? = nil
@@ -27,24 +28,8 @@ struct KnowledgeDashboardView: View {
             // 1. 方案 D 沉浸式高级背景同步
             ZStack {
                 Color.black.overlay(themeManager.pageBackground().opacity(0.4))
-                
-                if #available(iOS 18.0, *) {
-                    MeshGradient(
-                        width: 3,
-                        height: 3,
-                        points: [
-                            [0, 0], [0.5, 0], [1, 0],
-                            [0, 0.5], [0.5, 0.5], [1, 0.5],
-                            [0, 1], [0.5, 1], [1, 1]
-                        ],
-                        colors: [
-                            Color.appAccent.opacity(0.15), Color.appSource.opacity(0.2), Color.appAccent.opacity(0.1),
-                            Color.appConcept.opacity(0.2), Color.appAccent.opacity(0.25), Color.appConcept.opacity(0.15),
-                            Color.appSource.opacity(0.15), Color.appAccent.opacity(0.1), Color.appSource.opacity(0.2)
-                        ]
-                    )
+                MeshGradientView()
                     .blur(radius: 80)
-                }
             }
             .ignoresSafeArea()
             
@@ -259,13 +244,13 @@ struct KnowledgeDashboardView: View {
                     Image(systemName: "arrow.clockwise")
                         .font(.caption)
                         .foregroundColor(.appSecondary)
-                        .rotationEffect(.degrees(isLoadingInsights ? 360 : 0))
-                        .animation(isLoadingInsights ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isLoadingInsights)
+                        .rotationEffect(.degrees(aiStore.isGeneratingDailyRecap ? 360 : 0))
+                        .animation(aiStore.isGeneratingDailyRecap ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: aiStore.isGeneratingDailyRecap)
                 }
             }
             
             VStack(alignment: .leading, spacing: 12) {
-                if isLoadingInsights {
+                if aiStore.isGeneratingDailyRecap {
                     HStack {
                         Spacer()
                         ProgressView()
@@ -277,7 +262,7 @@ struct KnowledgeDashboardView: View {
                         Spacer()
                     }
                     .padding(.vertical, 20)
-                } else if let recap = dailyRecap {
+                } else if let recap = aiStore.dailyRecap {
                     Button(action: {
                         HapticFeedback.shared.trigger(.selection)
                         if store.pages.contains(where: { $0.id == recap.targetPageID }) {
@@ -352,31 +337,11 @@ struct KnowledgeDashboardView: View {
         }
     }
     
-    @State private var dailyRecap: KnowledgeInsightService.DailyRecap?
-    @State private var isLoadingInsights = false
     @Inject private var llm: LLMService
     
     private func refreshInsights() {
-        guard !isLoadingInsights, llm.isEnabled, !llm.apiKey.isEmpty else { return }
-        isLoadingInsights = true
-        
         Task {
-            do {
-                let recap = try await KnowledgeInsightService.shared.generateDailyRecap(
-                    pages: store.pages,
-                    llmService: llm,
-                    forceRefresh: false
-                )
-                await MainActor.run {
-                    self.dailyRecap = recap
-                    self.isLoadingInsights = false
-                }
-            } catch {
-                await MainActor.run {
-                    self.isLoadingInsights = false
-                }
-                print("Failed to generate insights: \(error)")
-            }
+            await aiStore.generateDailyRecap(forceRefresh: false)
         }
     }
     

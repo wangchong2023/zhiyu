@@ -154,16 +154,7 @@ struct GraphNodeView: View {
                     }
                     
                     Button(action: {
-                        let link = "[[\(node.title)]]"
-                        #if os(iOS)
-                        UIPasteboard.general.string = link
-                        #elseif os(macOS)
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(link, forType: .string)
-                        #else
-                        // watchOS: 不支持剪贴板操作
-                        _ = link
-                        #endif
+                        AppPasteboard.string = "[[\(node.title)]]"
                     }) {
                         Label(L10n.Graph.tr("copyPageLink"), systemImage: "link")
                     }

@@ -21,11 +21,6 @@ final class AIWorkflowStore {
     var refactorSuggestions: [RefactorSuggestion] = []
     var potentialLinks: [PotentialLinkSuggestion] = []
 
-    // ── 洞察与报告 ──
-    var weeklyInsight: KnowledgeInsightService.WeeklyInsight?
-    var dailyRecap: KnowledgeInsightService.DailyRecap?
-    var isGeneratingDailyRecap = false
-
     // ── 页面级 AI 状态 ──
     var activePageAIResult: String?
     var isProcessingPageAI = false
@@ -85,67 +80,6 @@ final class AIWorkflowStore {
                 }
             }
             .store(in: &cancellables)
-    }
-
-    // ── AI 洞察管理 ──
-
-    func generateWeeklyInsight(forceRefresh: Bool = false) async {
-        guard llmService.isEnabled else { return }
-
-        if !forceRefresh, let cached = loadCachedWeeklyInsight() {
-            weeklyInsight = cached
-            return
-        }
-
-        do {
-            let insight = try await insightService.generateWeeklyInsight(pages: sqliteStore.pages, llmService: llmService)
-            weeklyInsight = insight
-            saveCachedWeeklyInsight(insight)
-        } catch {
-            logger.addLog(action: .error, target: "AIWorkflowStore", details: "Weekly Insight Error: \(error.localizedDescription)")
-        }
-    }
-
-    private func weeklyCacheKey() -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
-        let lang = Localized.currentLanguage
-        return "weekly_insight_\(components.yearForWeekOfYear ?? 0)_\(components.weekOfYear ?? 0)_\(lang)"
-    }
-
-    private func loadCachedWeeklyInsight() -> KnowledgeInsightService.WeeklyInsight? {
-        let key = weeklyCacheKey()
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let insight = try? JSONDecoder().decode(KnowledgeInsightService.WeeklyInsight.self, from: data) else {
-            return nil
-        }
-        return insight
-    }
-
-    private func saveCachedWeeklyInsight(_ insight: KnowledgeInsightService.WeeklyInsight) {
-        let key = weeklyCacheKey()
-        if let data = try? JSONEncoder().encode(insight) {
-            UserDefaults.standard.set(data, forKey: key)
-        }
-    }
-
-    func generateDailyRecap(forceRefresh: Bool = false) async {
-        guard !isGeneratingDailyRecap else { return }
-        guard llmService.isEnabled else { return }
-
-        isGeneratingDailyRecap = true
-        defer { isGeneratingDailyRecap = false }
-
-        do {
-            let result = try await insightService.generateDailyRecap(
-                pages: sqliteStore.pages,
-                llmService: llmService,
-                forceRefresh: forceRefresh
-            )
-            dailyRecap = result
-        } catch {
-            logger.addLog(action: .error, target: "AIWorkflowStore", details: "Generate daily recap failed: \(error.localizedDescription)")
-        }
     }
 
     // ── 扫描与健康检查逻辑 ──
@@ -293,7 +227,7 @@ final class AIWorkflowStore {
                 
                 // 针对不同类型处理结果
                 if type == .quiz {
-                    let cleaned = QuizProcessor.cleanJSON(result)
+                    let cleaned = LLMUtils.stripMarkdown(result)
                     if let data = cleaned.data(using: .utf8),
                        let quiz = try? JSONDecoder().decode(QuizModel.self, from: data) {
                         activeQuiz = quiz
@@ -315,32 +249,15 @@ final class AIWorkflowStore {
     func clearAll() {
         refactorSuggestions = []
         potentialLinks = []
-        weeklyInsight = nil
-        dailyRecap = nil
         activePageAIResult = nil
         activeQuiz = nil
         lintIssues = []
         lastLintScore = 0
         lastLintDate = nil
 
-        // 清理磁盘上的动态缓存 Key
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
-        let year = components.yearForWeekOfYear ?? 0
-        let week = components.weekOfYear ?? 0
-        let lang = Localized.currentLanguage
-
-        let weeklyKey = "weekly_insight_\(year)_\(week)_\(lang)"
-        UserDefaults.standard.removeObject(forKey: weeklyKey)
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let dailyKey = "daily_recap_\(formatter.string(from: Date()))_\(lang)"
-        UserDefaults.standard.removeObject(forKey: dailyKey)
-
         UserDefaults.standard.removeObject(forKey: "lastLintIssues")
 
-        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data and disk cache cleared.", module: "AIWorkflowStore")
+        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data cleared.", module: "AIWorkflowStore")
     }
 
     // ── 建议清理方法 ──

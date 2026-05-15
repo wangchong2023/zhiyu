@@ -30,15 +30,15 @@
 - 创建：`Sources/Shared/DesignSystem/Tokens/Animations.swift` (动效令牌)
 - 删除：`Sources/Shared/Core/Constants/AppUI.swift` (迁移完成后删除)
 
-- [ ] **步骤 1：实施间距令牌**
+- [x] **步骤 1：实施间距令牌**
 将 `AppUI` 中的间距、圆角常数提取至 `Spacing.swift`，并添加中文注释。
-- [ ] **步骤 2：实施排版令牌**
+- [x] **步骤 2：实施排版令牌**
 将字号、`HeadingLevel` 提取至 `Typography.swift`，确保满足 KISS 原则。
-- [ ] **步骤 3：实施颜色令牌**
+- [x] **步骤 3：实施颜色令牌**
 将 `Color` 扩展及十六进制转换逻辑移至 `Colors.swift`。
-- [ ] **步骤 4：实施动效令牌**
+- [x] **步骤 4：实施动效令牌**
 将 `Animation` 结构体及物理常数移至 `Animations.swift`。
-- [ ] **步骤 5：提交代码**
+- [x] **步骤 5：提交代码**
 `git commit -m "refactor: 拆分 AppUI 为原子设计系统令牌"`
 
 ### 任务 2：重构通用 UI 组件与布局模板 (Layouts)
@@ -47,13 +47,13 @@
 - 创建：`Sources/Shared/UIComponents/Layouts/StandardSection.swift`
 - 创建：`Sources/Shared/UIComponents/Modifiers/GlassStyle.swift`
 
-- [ ] **步骤 1：迁移页面背景**
+- [x] **步骤 1：迁移页面背景**
 在 `PageBackground.swift` 中实现 `MeshGradientView` 和 `PageBackgroundView`。
-- [ ] **步骤 2：迁移标准布局**
+- [x] **步骤 2：迁移标准布局**
 在 `Layouts` 目录下实现 `StandardSection`（原 `AppSection`）。
-- [ ] **步骤 3：迁移视觉修饰符**
+- [x] **步骤 3：迁移视觉修饰符**
 在 `GlassStyle.swift` 中实现玻璃拟态修饰符，确保 DFX 易用性。
-- [ ] **步骤 4：提交代码**
+- [x] **步骤 4：提交代码**
 `git commit -m "refactor: 迁移布局模式与视觉修饰符至 UIComponents"`
 
 ---

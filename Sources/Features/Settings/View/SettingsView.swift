@@ -36,7 +36,8 @@ struct SettingsView: View {
     @State private var coordinator = iCloudSyncCoordinator()
     #endif
     @State private var selectedLanguage: LanguageMode = Localized.languageMode
-    // @Binding var languageForceUpdate: Bool removed in favor of router.languageForceUpdate
+    /// 语言是否在本次 Settings 打开期间被改变（用于推迟 UI 刷新到 sheet 关闭后）
+    @State private var languageChanged = false
     @State private var showFolderImporterForImport = false
     @State private var showClearAllConfirmation = false
     @State private var showBiometricOffConfirmation = false
@@ -44,6 +45,7 @@ struct SettingsView: View {
     // 本地镜像状态，用于解决 Toggle 绑定响应延迟及回滚问题
     @State private var localPrivacyEnabled: Bool = false
     @State private var localBiometricEnabled: Bool = false
+    @State private var localRefreshID = UUID() // 用于在不关闭页面的情况下刷新本地文案
     
     /**
      * @description: 触发硬件层面的生物识别认证（FaceID/TouchID）
@@ -128,8 +130,12 @@ struct SettingsView: View {
                     .tint(.primary)
                     .id(router.languageForceUpdate)
                     .onChange(of: selectedLanguage) { _, newValue in
+                        // 1. 更新持久化偏好
                         Localized.languageMode = newValue
-                        router.languageForceUpdate.toggle()
+                        // 2. 标记全局需要刷新
+                        languageChanged = true
+                        // 3. 触发本地视图立即刷新文案
+                        localRefreshID = UUID()
                     }
                 } header: {
                     Text(L10n.Settings.Section.appearance)
@@ -306,6 +312,13 @@ struct SettingsView: View {
                 // 初始化本地状态
                 localPrivacyEnabled = settingsStore.isPrivacyModeEnabled
                 localBiometricEnabled = settingsStore.isBiometricEnabled
+            }
+            .onDisappear {
+                // 当语言在本次打开期间被修改，关闭后触发全局 UI 刷新
+                if languageChanged {
+                    router.languageForceUpdate.toggle()
+                    languageChanged = false
+                }
             }
             .alert(
                 Localized.tr("settings.biometric.disableConfirm"),

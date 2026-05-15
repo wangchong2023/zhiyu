@@ -1,6 +1,6 @@
 # Project C: ViewModel 迁移（第一轮）Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Extract business logic and UI state from 3 large View files into dedicated `@MainActor @Observable` ViewModels, reducing View complexity and enabling testability.
 
@@ -17,13 +17,13 @@
 - Modify: `Sources/Shared/Views/Features/GraphView.swift`
 - Modify: `Sources/Shared/Views/Features/Graph3DView.swift` (may share state)
 
-- [ ] **Step 1: Create ViewModels directory (if not exists)**
+- [x] **Step 1: Create ViewModels directory (if not exists)**
 
 ```bash
 mkdir -p Sources/Shared/ViewModels
 ```
 
-- [ ] **Step 2: Create GraphViewModel.swift**
+- [x] **Step 2: Create GraphViewModel.swift**
 
 ```swift
 import SwiftUI
@@ -66,7 +66,7 @@ final class GraphViewModel {
 }
 ```
 
-- [ ] **Step 3: Update GraphContainerView in GraphView.swift**
+- [x] **Step 3: Update GraphContainerView in GraphView.swift**
 
 In `GraphView.swift`:
 - Replace all 17 `@State` property declarations with `@State private var viewModel = GraphViewModel()`
@@ -75,7 +75,7 @@ In `GraphView.swift`:
 - Replace calls to `getFilteredEdges(...)` → `viewModel.getFilteredEdges(...)`
 - Keep `tooltipManager` as `@StateObject` (it has its own lifecycle)
 
-- [ ] **Step 4: Verify build**
+- [x] **Step 4: Verify build**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E "error:|BUILD"
@@ -88,7 +88,7 @@ Expected: BUILD SUCCEEDED
 - Create: `Sources/Shared/ViewModels/PageDetailViewModel.swift`
 - Modify: `Sources/Shared/Views/Pages/PageDetailView.swift`
 
-- [ ] **Step 1: Create PageDetailViewModel.swift**
+- [x] **Step 1: Create PageDetailViewModel.swift**
 
 ```swift
 import SwiftUI
@@ -169,7 +169,7 @@ final class PageDetailViewModel {
 }
 ```
 
-- [ ] **Step 2: Update PageDetailView to use PageDetailViewModel**
+- [x] **Step 2: Update PageDetailView to use PageDetailViewModel**
 
 In `PageDetailView.swift`:
 - Replace `@State var page: WikiPage` + all 6 `@State` UI toggles with `@State private var viewModel: PageDetailViewModel`
@@ -177,7 +177,7 @@ In `PageDetailView.swift`:
 - Replace `backlinks` computed property → `viewModel.backlinks`
 - Replace toolbar action calls → `viewModel` methods
 
-- [ ] **Step 3: Verify build**
+- [x] **Step 3: Verify build**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E "error:|BUILD"
@@ -190,7 +190,7 @@ Expected: BUILD SUCCEEDED
 - Create: `Sources/Shared/ViewModels/ChatViewModel.swift`
 - Modify: `Sources/Shared/Views/Features/ChatView.swift`
 
-- [ ] **Step 1: Create ChatViewModel.swift**
+- [x] **Step 1: Create ChatViewModel.swift**
 
 ```swift
 import SwiftUI
@@ -235,7 +235,7 @@ final class ChatViewModel {
 }
 ```
 
-- [ ] **Step 2: Update ChatView to use ChatViewModel**
+- [x] **Step 2: Update ChatView to use ChatViewModel**
 
 In `ChatView.swift`:
 - Replace `@State private var inputText` with `@State private var chatVM = ChatViewModel()`
@@ -243,7 +243,7 @@ In `ChatView.swift`:
 - Replace AI suggestion loading with `chatVM.loadInsightfulQuestions(pages:)`
 - Replace export logic with `chatVM.exportChat(history:)`
 
-- [ ] **Step 3: Verify build**
+- [x] **Step 3: Verify build**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E "error:|BUILD"
@@ -252,13 +252,13 @@ Expected: BUILD SUCCEEDED
 
 ### Task 4: Update project.pbxproj for new ViewModel files
 
-- [ ] **Step 1: Regenerate Xcode project**
+- [x] **Step 1: Regenerate Xcode project**
 
 ```bash
 xcodegen generate
 ```
 
-- [ ] **Step 2: Final build verification**
+- [x] **Step 2: Final build verification**
 
 ```bash
 xcodebuild build -project KM.xcodeproj -scheme KM -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E "error:|BUILD"

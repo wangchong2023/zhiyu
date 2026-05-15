@@ -54,7 +54,6 @@ targets:
     sources:
       - path: Sources
         excludes:
-          - "Platforms/iOS/**"
           - "Platforms/watchOS/**"
           - "Info.plist"
           - "Base.lproj/**"

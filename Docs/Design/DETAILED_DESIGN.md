@@ -1,13 +1,13 @@
-# 智宇 (KM) 详细设计文档 (Detailed Design)
+# 智宇 (ZhiYu) 详细设计文档 (Detailed Design)
 
-本文件深入解析 智宇 (KM) 核心引擎的内部实现细节。
+本文件深入解析 智宇 (ZhiYu) 核心引擎的内部实现细节。
 
 ## 1. 混合检索引擎 (Hybrid Search Engine)
 
 ### 1.1 数据流向与 RAG 模块化管道 (Modular Ingest Pipeline)
-智宇 (KM) 实现了端到端的 RAG 摄入管道，通过 `KnowledgeIngestPipeline` 编排以下核心阶段：
+智宇 (ZhiYu) 实现了端到端的 RAG 摄入管道，通过 `KnowledgeIngestPipeline` 编排以下核心阶段：
 1. **语义增强 (AIContentEnricher)**: 自动识别并转义 Markdown 中的图表、公式为文本描述。
-2. **递归分块 (RecursiveChunker)**: 层级感知切分。
+2. **递归分块 (TextChunkerProcessor)**: 层级感知切分。
 3. **向量索引 (VectorIndexer)**: 解耦的向量计算与存储同步。
 
 系统采用 **倒数排名融合 (Reciprocal Rank Fusion, RRF)** 算法来消除不同搜索引擎（FTS5 与 Vector）结果量纲不统一的问题。
@@ -26,7 +26,7 @@ $$Score(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$
 - **排序修正**: 修正 RRF 在处理同义词或隐式关系时的排名偏差，大幅提升首位检索精度。
 
 ### 1.2 递归语义分块 (Recursive Chunking)
-为了解决 RAG 中的“语义切断”问题，`RecursiveChunker` 实施了层级感知策略：
+为了解决 RAG 中的“语义切断”问题，`TextChunkerProcessor` 实施了层级感知策略：
 1. **优先级 1**: 查找标题分隔符 (`#`, `##`)，确保逻辑主题完整。
 2. **优先级 2**: 查找段落分隔符 (`\n\n`)。
 3. **窗口重叠**: 块大小固定为 $N$ (800 字符)，重叠窗口 $O = 150$ 字符（约 18.75%）。
@@ -47,7 +47,7 @@ $$Score(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$
 
 ## 4. API 版本化路由 (Version Routing)
 
-为了确保插件生态的长效兼容性，智宇 (KM) 实施 **“双重版本控制”**：
+为了确保插件生态的长效兼容性，智宇 (ZhiYu) 实施 **“双重版本控制”**：
 1. **内核版本 (Host Version)**: 随 App 更新。
 2. **能力版本 (Feature API Version)**: 独立于内核演进。
    * **路由策略**: 当内核升级至 2.0 且重构了拦截接口时，系统会维护一个 `v1_Adapter`。它将 1.0 插件的调用桥接到 2.0 实现上，确保旧插件无需重写即可运行。
@@ -109,20 +109,18 @@ iCloudSyncView (L3, 瘦 View)
 
 来自全工程深度审计：
 
-| 优先级 | 问题 | 目标文件 | 方案 |
-|--------|------|---------|------|
-| P0 | PluginRegistry 重复属性声明 | PluginRegistry.swift L15-17 | 删除重复行 |
-| P0 | API Key 明文存储 | LLMModels.swift | 迁移至 Keychain |
-| P0 | LogService 递归崩溃 | LogService.swift | 修复 extension 递归调用 |
-| P0 | DataExportService fatalError | DataExportService.swift | 实现或抛业务错误 |
-| P0 | SecurityManager 硬编码 salt | SecurityManager.swift | 移至配置或 keychain |
-| P1 | LLMService 上帝类 (627行) | LLMService.swift | 拆分为 ChatOrchestrator/IngestService/RefactorService |
-| P1 | AIWorkflowStore (571行) | AIWorkflowStore.swift | 按合成/扫描/洞察/建议拆分为多个 @Observable |
-| P1 | AppStore 瘦身 | AppStore.swift | PDF/OCR 操作已提取代理方法 |
-| P1 | 两套 LLM 协议 | AIProviders.swift, LLMStrategy.swift | 删除死代码体系 |
-| P1 | applyRefactorSuggestion 重复 | AppStore + AIWorkflowStore | 合并到单一 Store |
-| P2 | parseJSONArray 重复 3 次 | 多文件 | 提取 LLMUtils |
-| P2 | cosineSimilarity 重复 2 次 | EmbeddingManager.swift | 提取静态工具
+| 优先级 | 问题 | 目标文件 | 方案 | 状态 |
+|--------|------|---------|------|------|
+| P0 | PluginRegistry 重复属性声明 | PluginRegistry.swift | 删除重复行 | **已修复** |
+| P0 | LogService 递归崩溃 | LogService.swift | 修复 extension 递归调用或重构 | **已修复** |
+| P0 | 核心逻辑平台宏污染 | 多文件 | 引入平台能力协议 (DI) | **已修复** |
+| P0 | API Key 明文存储 | LLMModels.swift | 迁移至 Keychain (支持分提供商独立存储) | **已修复** |
+| P0 | SecurityManager 硬编码 salt | SecurityManager.swift | 迁移至 Keychain 动态生成与存储 | **已修复** |
+| P0 | DataExportService fatalError | DataExportService.swift | 已改为抛出 DataExportError | **已修复** |
+| P1 | LLMService 上帝类 (精简至332行) | LLMService.swift | 拆分为 Chat/Ingest/Refactor | **已修复** |
+| P1 | AIWorkflowStore (精简至355行) | AIWorkflowStore.swift | 按合成/扫描/洞察/建议拆分 | **已修复** |
+| P1 | 两套 LLM 协议并存 | LLMService | 清理旧版协议实现 | **已修复** |
+| P2 | parseJSONArray 重复实现 | 多文件 | 提取至 LLMUtils 工具类 | **已修复** |
 
 ---
 
@@ -138,4 +136,3 @@ iCloudSyncView (L3, 瘦 View)
 针对 3D 图谱，采用 **Fibonacci Sphere (斐波那契球)** 分布算法：
 - **动态半径**: 球体半径 $R = \max(40, \min(150, \sqrt{N} \times 12))$。该公式确保节点间的平均弧长在不同节点规模 ($N$) 下保持视觉舒适。
 - **层级深度**: 选中节点及其一阶邻居会通过 `SCNTransaction` 进行平滑的“向前推移”，利用 Z 轴深度突出展示上下文。
-
