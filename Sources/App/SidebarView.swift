@@ -189,7 +189,7 @@ struct PinnedSection: View {
                         onTogglePin: {
                             var p = page
                             p.isPinned.toggle()
-                            store.updatePage(p, forceDeepScan: false)
+                            Task { await store.updatePage(p, forceDeepScan: false) }
                         },
                         onDelete: {
                             pageToDelete = page

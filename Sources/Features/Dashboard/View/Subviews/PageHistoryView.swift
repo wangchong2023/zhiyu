@@ -62,7 +62,7 @@ struct PageHistoryView: View {
                 SnapshotDetailView(page: page, snapshot: snapshot, content: compareContent ?? "", onRollback: {
                     var rolledBack = page
                     rolledBack.content = compareContent ?? ""
-                    store.updatePage(rolledBack, forceDeepScan: false)
+                    Task { await store.updatePage(rolledBack, forceDeepScan: false) }
                     dismiss()
                 })
             }

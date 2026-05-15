@@ -115,15 +115,19 @@ struct CreatePageView: View {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
         
-        let page = store.createPage(
-            title: title,
-            type: type,
-            content: content,
-            tags: tagList
-        )
-        
-        router.navigateToPage(id: page.id)
-        dismiss()
+        Task {
+            let page = await store.createPage(
+                title: title,
+                type: type,
+                content: content,
+                tags: tagList
+            )
+            
+            await MainActor.run {
+                router.navigateToPage(id: page.id)
+                dismiss()
+            }
+        }
     }
     
     private var entityTemplateContent: String {

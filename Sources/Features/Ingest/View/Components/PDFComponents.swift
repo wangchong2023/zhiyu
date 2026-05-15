@@ -223,15 +223,17 @@ struct PDFIngestSheet: View {
             break
         }
         
-        let _ = store.createPage(
-            title: targetTitle,
-            type: targetType,
-            content: content,
-            tags: ["PDF", Localized.tr("logAction.ingest")]
-        )
-        store.addLog(action: .importPDF, target: targetTitle, details: Localized.trf("pdf.ingestModeFormat", ingestMode))
-        store.saveToDisk()
-        dismiss()
+        Task {
+            _ = await store.createPage(
+                title: targetTitle,
+                type: targetType,
+                content: content,
+                tags: ["PDF", Localized.tr("logAction.ingest")]
+            )
+            store.addLog(action: .importPDF, target: targetTitle, details: Localized.trf("pdf.ingestModeFormat", ingestMode))
+            store.saveToDisk()
+            dismiss()
+        }
     }
 }
 

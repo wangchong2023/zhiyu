@@ -8,6 +8,7 @@ import Foundation
 import XCTest
 import Combine
 import GRDB
+import LocalAuthentication
 @testable import ZhiYu
 
 // MARK: - Mock Logger
@@ -42,6 +43,13 @@ final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
     func rerank(query: String, candidates: [KnowledgePage]) async throws -> [KnowledgePage] { candidates }
 }
 
+// MARK: - Mock Biometric Auth Provider
+/// 测试环境用生物识别提供者：始终返回不可用，避免在测试中触发系统 UI
+final class MockBiometricAuthProvider: BiometricAuthProviderProtocol, @unchecked Sendable {
+    var authenticationPolicy: LAPolicy { .deviceOwnerAuthentication }
+    func canEvaluatePolicy(context: LAContext) -> Bool { false }
+}
+
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
@@ -71,6 +79,8 @@ extension XCTestCase {
         #endif
         
         // 2. Storage Services (L1)
+        // 必须先于 VaultStorageSecurityService 注册，因为其 init 内有 @Inject var provider: BiometricAuthProviderProtocol 访问
+        ServiceContainer.shared.register(MockBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         ServiceContainer.shared.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
         

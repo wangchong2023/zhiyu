@@ -15,14 +15,8 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
         content
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                #if !os(watchOS)
-                ToolbarItem(placement: .topBarLeading) {
-                    // 纯空间占位符：用于平衡右侧头像菜单，确保中间 principal 元素物理居中
-                    Spacer()
-                        .frame(width: 40)
-                }
-                #endif
-                
+                // leading 侧不放任何占位符，避免 SwiftUI 渲染白色背景底座
+                // .principal placement 在 NavigationBar 中默认物理居中，无需手动平衡
                 #if os(watchOS)
                 ToolbarItem(placement: .topBarTrailing) {
                     VaultBadge()
@@ -34,13 +28,12 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: DesignSystem.small) {
+                    HStack(spacing: DesignSystem.medium) {
                         if Trailing.self != EmptyView.self {
                             trailingItems
                         }
                         UserProfileMenu()
                     }
-                    .fixedSize()
                 }
             }
     }

@@ -29,7 +29,7 @@ final class PerformanceBenchmarker {
                 print("⏳ [Benchmark] 已注入 \(i) 篇... 当前 DB 总数: \(currentTotal)")
             }
 
-            _ = store.createPage(
+            _ = await store.createPage(
                 title: "Stress Test Page #\(i)",
                 type: .raw,
                 content: "这是第 \(i) 篇压测文档。它包含了模拟的文本内容，用于测试 SQLite FTS5 的索引性能以及向量检索的内存占用。\(UUID().uuidString)",

@@ -513,9 +513,7 @@ struct RefactorSuggestionRow: View {
                 Spacer()
                 
                 AppBorderedButton(title: L10n.Lint.tr("apply"), color: .appAccent, maxWidth: 80) {
-                    withAnimation {
-                        store.applyRefactorSuggestion(suggestion)
-                    }
+                    Task { await store.applyRefactorSuggestion(suggestion) }
                 }
             }
             
@@ -572,9 +570,7 @@ struct PotentialLinkRow: View {
             Spacer()
             
             AppBorderedButton(title: L10n.Lint.tr("apply"), color: .appAccent, maxWidth: 80) {
-                withAnimation {
-                    store.applyPotentialLink(link)
-                }
+                Task { await store.applyPotentialLink(link) }
             }
         }
         .padding(.vertical, 4)

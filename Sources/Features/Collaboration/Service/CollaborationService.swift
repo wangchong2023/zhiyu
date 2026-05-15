@@ -18,8 +18,8 @@ import UIKit
 @MainActor
 protocol CollaborationDelegate: AnyObject {
     var pages: [KnowledgePage] { get }
-    func applyRemoteUpdate(_ page: KnowledgePage)
-    func insertRemotePage(_ page: KnowledgePage)
+    func applyRemoteUpdate(_ page: KnowledgePage) async
+    func insertRemotePage(_ page: KnowledgePage) async
 }
 
 // MARK: - Collaboration Service
@@ -257,8 +257,10 @@ extension CollaborationService {
                 updated.tags = tags
                 updated.status = status
                 updated.updated = remoteUpdated
-                delegate.applyRemoteUpdate(updated)
-                self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+                Task {
+                    await delegate.applyRemoteUpdate(updated)
+                    self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+                }
             }
         } else {
             let newPage = KnowledgePage(
@@ -266,8 +268,10 @@ extension CollaborationService {
                 status: status, confidence: .medium, sources: [], relatedPageIDs: [], isPinned: false,
                 contentHash: nil, created: remoteUpdated, updated: remoteUpdated
             )
-            delegate.insertRemotePage(newPage)
-            self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+            Task {
+                await delegate.insertRemotePage(newPage)
+                self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+            }
         }
     }
 }

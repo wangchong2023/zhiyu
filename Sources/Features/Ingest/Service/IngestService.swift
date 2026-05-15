@@ -47,8 +47,8 @@ enum DocumentFormat {
 protocol AnyPageStore: Sendable {
     var pages: [KnowledgePage] { get }
     @discardableResult
-    func createPage(title: String, type: PageType, customIcon: String?, content: String, tags: [String], sourceURL: String?, rawSnippet: String?, fileSize: Int64?, sourceType: String?, forceDeepScan: Bool) -> KnowledgePage
-    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool)
+    func createPage(title: String, type: PageType, customIcon: String?, content: String, tags: [String], sourceURL: String?, rawSnippet: String?, fileSize: Int64?, sourceType: String?, forceDeepScan: Bool) async -> KnowledgePage
+    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?)
 }
 // Note: SQLiteStore conformance is declared in SQLiteStore.swift to avoid circular dependency

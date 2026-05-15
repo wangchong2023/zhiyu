@@ -50,19 +50,18 @@ final class VaultStorageSecurityService {
     }
 
     /**
-     * @description: 触发生物识别解锁流程，成功后更新 isLocked 状态并触发震动反馈
-     * @return {*}
+     * @description: 异步触发生物识别解锁流程，成功后更新 isLocked 状态并返回结果
+     * @return {Bool} 是否解锁成功
      */
-    func unlock() {
-        Task {
-            let success = await authenticateWithBiometrics()
-            if success {
-                self.isLocked = false
-                HapticFeedback.shared.trigger(.unlock)
-            } else {
-                HapticFeedback.shared.trigger(.error)
-            }
+    func unlock() async -> Bool {
+        let success = await authenticateWithBiometrics()
+        if success {
+            self.isLocked = false
+            HapticFeedback.shared.trigger(.unlock)
+        } else {
+            HapticFeedback.shared.trigger(.error)
         }
+        return success
     }
 
     /**

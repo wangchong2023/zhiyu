@@ -31,21 +31,21 @@ final class AppStoreStorageTests: XCTestCase {
     }
     
     /// 测试页面添加与持久化
-    func testAddPage() {
+    func testAddPage() async {
         let initialCount = store.totalPages
-        let _ = store.createPage(title: "测试页面", type: .concept, content: "内容")
+        let _ = await store.createPage(title: "测试页面", type: .concept, content: "内容")
         
         XCTAssertEqual(store.totalPages, initialCount + 1, "页面创建后总数应增加")
         XCTAssertTrue(store.pages.contains(where: { $0.title == "测试页面" }), "页面创建后应存在于列表中")
     }
     
     /// 测试页面更新逻辑 (Deep Scan 触发验证)
-    func testUpdatePage() {
-        let page = store.createPage(title: "初始标题", type: .concept, content: "初始内容")
+    func testUpdatePage() async {
+        let page = await store.createPage(title: "初始标题", type: .concept, content: "初始内容")
         
         var updatedPage = page
         updatedPage.content = "修改后的内容 [[链接测试]]"
-        store.updatePage(updatedPage, forceDeepScan: true)
+        await store.updatePage(updatedPage, forceDeepScan: true)
         
         let found = store.pages.first(where: { $0.id == page.id })
         XCTAssertEqual(found?.content, "修改后的内容 [[链接测试]]")
@@ -53,8 +53,8 @@ final class AppStoreStorageTests: XCTestCase {
     }
     
     /// 测试页面删除
-    func testDeletePage() {
-        let page = store.createPage(title: "待删除", type: .concept, content: "内容")
+    func testDeletePage() async {
+        let page = await store.createPage(title: "待删除", type: .concept, content: "内容")
         let id = page.id
         
         store.deletePage(page)
@@ -62,9 +62,9 @@ final class AppStoreStorageTests: XCTestCase {
     }
     
     /// 测试搜索建议与过滤
-    func testSearchSuggestions() {
-        _ = store.createPage(title: "Apple", type: .entity, content: "Fruit")
-        _ = store.createPage(title: "Banana", type: .entity, content: "Yellow")
+    func testSearchSuggestions() async {
+        _ = await store.createPage(title: "Apple", type: .entity, content: "Fruit")
+        _ = await store.createPage(title: "Banana", type: .entity, content: "Yellow")
         
         let results = store.sqliteStore.searchPages(query: "Ap")
         XCTAssertEqual(results.count, 1)

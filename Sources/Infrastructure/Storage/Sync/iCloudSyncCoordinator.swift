@@ -184,7 +184,7 @@ final class iCloudSyncCoordinator {
         guard let store else { return }
         try? store.clearAllData()
         for page in pages {
-            store.addImportedPage(page)
+            await store.addImportedPage(page)
         }
         store.saveToDisk()
     }

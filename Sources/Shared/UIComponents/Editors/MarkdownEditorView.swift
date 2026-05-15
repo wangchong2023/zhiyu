@@ -96,7 +96,9 @@ struct MarkdownEditorView: View {
         .onDisappear {
             page.content = editorContent
             page.updated = Date()
-            store.updatePage(page, forceDeepScan: false)
+            Task {
+                await store.updatePage(page, forceDeepScan: false)
+            }
         }
         .sheet(isPresented: $showLinkPicker) {
             PageLinkPickerSheet(page: $page, editorContent: $editorContent)

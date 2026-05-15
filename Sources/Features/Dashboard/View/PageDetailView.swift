@@ -5,26 +5,25 @@
 // 核心原则：
 // 1. 单一布局源：完全遵循 AppUI 的 Layout 和 Metrics 系统。
 // 2. 图标标准化：使用 DesignSystem.Icons 统一管理所有 SF Symbols。
-// 版本: 1.1 (工业级布局重构版)
+// 版本: 1.2
 // 修改记录:
-//   - 2026-05-07: 移除硬编码颜色与间距，对接全局 AppUI 治理体系。
+//   - 2026-05-15: 切换至 PageDetailCoordinator 驱动，并将业务状态编排（AI 任务、Toast）移出 L1 层。
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
 
 /// 页面详情视图
-///
-/// 显示知识库中单个页面的完整内容，支持查看和编辑两种模式。
 struct PageDetailView: View {
-    @State private var viewModel: PageDetailViewModel
+    @State private var coordinator: PageDetailCoordinator
     var heroNamespace: Namespace.ID? = nil
-    @Environment(AppStore.self) var store  ///< 全局知识库存储
-    @Environment(AIWorkflowStore.self) var aiStore ///< AI 工作流存储
-    @Environment(Router.self) var router     ///< 路由管理器
-    @State private var recommendations: [KnowledgePage] = [] ///< 语义推荐页面
+    @Environment(AppStore.self) var store
+    @Environment(AIWorkflowStore.self) var aiStore
+    @Environment(Router.self) var router
+    @State private var recommendations: [KnowledgePage] = []
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
         self.heroNamespace = heroNamespace
-        self._viewModel = State(initialValue: PageDetailViewModel(page: page))
+        self._coordinator = State(initialValue: PageDetailCoordinator(page: page))
     }
     
     @ToolbarContentBuilder
@@ -45,69 +44,65 @@ struct PageDetailView: View {
     }
     
     private var pinButton: some View {
-        Button(action: { viewModel.togglePin() }) {
-            Image(systemName: viewModel.page.isPinned ? DesignSystem.Icons.pin + ".fill" : DesignSystem.Icons.pin)
-                .foregroundStyle(viewModel.page.isPinned ? .orange : .appSecondary)
+        Button(action: { Task { await coordinator.togglePin() } }) {
+            Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pin + ".fill" : DesignSystem.Icons.pin)
+                .foregroundStyle(coordinator.page.isPinned ? .orange : .appSecondary)
         }
-        .accessibilityLabel(viewModel.page.isPinned ? Localized.tr("page.unpin") : Localized.tr("page.pin"))
     }
     
     private var backlinksButton: some View {
-        Button(action: { viewModel.showBacklinks.toggle() }) {
+        Button(action: { coordinator.showBacklinks.toggle() }) {
             HStack(spacing: DesignSystem.tiny) {
                 Image(systemName: DesignSystem.Icons.link)
-                Text("\(viewModel.backlinks.count)")
+                Text("\(coordinator.backlinks.count)")
             }
             .foregroundStyle(.appText)
         }
-        .accessibilityLabel(Localized.tr("page.backlinks"))
-        .accessibilityValue(Localized.trf("page.backlinksCount", viewModel.backlinks.count))
     }
     
     private var editButton: some View {
         Button(action: {
             HapticFeedback.shared.trigger(.selection)
-            if viewModel.isEditing {
-                store.updatePage(viewModel.page, forceDeepScan: false)
+            if coordinator.isEditing {
+                Task { await store.updatePage(coordinator.page, forceDeepScan: false) }
             }
-            viewModel.isEditing.toggle()
+            coordinator.isEditing.toggle()
         }) {
-            Image(systemName: viewModel.isEditing ? "checkmark.circle.fill" : DesignSystem.Icons.edit + ".circle.fill")
-                .foregroundStyle(viewModel.isEditing ? .green : .appText)
+            Image(systemName: coordinator.isEditing ? "checkmark.circle.fill" : DesignSystem.Icons.edit + ".circle.fill")
+                .foregroundStyle(coordinator.isEditing ? .green : .appText)
         }
-        .accessibilityLabel(viewModel.isEditing ? Localized.tr("page.doneEditing") : Localized.tr("page.edit"))
     }
     
     private var aiMenuButton: some View {
         #if os(watchOS)
-        Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
+        Button(action: { coordinator.generateSummary() }) {
             Image(systemName: DesignSystem.Icons.sparkles)
                 .foregroundStyle(.appAccent)
         }
-        .disabled(viewModel.isEditing)
+        .disabled(coordinator.isEditing)
         #else
         Menu {
-            Button(action: { aiStore.runPageAISummary(content: viewModel.page.content) }) {
+            Button(action: { coordinator.generateSummary() }) {
                 Label(Localized.tr("page.ai.summary"), systemImage: "wand.and.stars")
             }
-            Button(action: { aiStore.runPageAIExtractActions(content: viewModel.page.content) }) {
+            Button(action: { coordinator.extractActions() }) {
                 Label(Localized.tr("page.ai.extractActions"), systemImage: "checkmark.seal")
             }
 
             Menu {
-                Button(action: { aiStore.performPageSynthesis(type: .mindmap, title: viewModel.page.title, content: viewModel.page.content) }) {
+                Button(action: { coordinator.performSynthesis(type: .mindmap) }) {
                     Label(Localized.tr("page.ai.mindmap"), systemImage: "rectangle.stack.badge.person.crop")
                 }
-                Button(action: { aiStore.performPageSynthesis(type: .quiz, title: viewModel.page.title, content: viewModel.page.content) }) {
+                Button(action: { coordinator.performSynthesis(type: .quiz) }) {
                     Label(Localized.tr("page.ai.quiz"), systemImage: "questionmark.circle")
                 }
-                Button(action: { aiStore.performPageSynthesis(type: .slides, title: viewModel.page.title, content: viewModel.page.content) }) {
+                Button(action: { coordinator.performSynthesis(type: .slides) }) {
                     Label(Localized.tr("page.ai.slides"), systemImage: "play.rectangle")
                 }
-                Button(action: { aiStore.performPageSynthesis(type: .report, title: viewModel.page.title, content: viewModel.page.content) }) {
+                Button(action: { coordinator.performSynthesis(type: .report) }) {
                     Label(Localized.tr("page.ai.report"), systemImage: "doc.text.magnifyingglass")
                 }
-                Button(action: { aiStore.performPageSynthesis(type: .infographic, title: viewModel.page.title, content: viewModel.page.content) }) {
+                Button(action: { coordinator.performSynthesis(type: .infographic) }) {
                     Label(Localized.tr("page.ai.infographic"), systemImage: "chart.bar.doc.horizontal")
                 }
             } label: {
@@ -115,29 +110,28 @@ struct PageDetailView: View {
             }
             
             Divider()
-            Button(action: { viewModel.showSnapshotHistory = true }) {
+            Button(action: { coordinator.showSnapshotHistory = true }) {
                 Label(Localized.tr("page.history"), systemImage: DesignSystem.Icons.history)
             }
-            Button(action: { expandStub() }) {
+            Button(action: { coordinator.expandContent() }) {
                 Label(Localized.tr("page.expandStub"), systemImage: "text.badge.plus")
             }
-            Button(action: { findRelatedLinks() }) {
+            Button(action: { coordinator.findRelatedLinks() }) {
                 Label(Localized.tr("page.findLinks"), systemImage: "link.badge.plus")
             }
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
                 .foregroundStyle(.appAccent)
         }
-        .disabled(viewModel.isEditing)
+        .disabled(coordinator.isEditing)
         #endif
     }
     
     var body: some View {
-        @Bindable var viewModel = viewModel
+        @Bindable var coordinator = coordinator
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 0) {
-                    // Optimized spacing to reduce the gap between header and content
                     Color.clear.frame(height: 10)
                     
                     VStack(alignment: .leading, spacing: 0) {
@@ -146,27 +140,24 @@ struct PageDetailView: View {
                                 .id("aiResultSection")
                                 .padding(.bottom, DesignSystem.standardPadding)
                         }
-                    // Content
+                    
                     Group {
-                        if viewModel.isEditing {
-                            MarkdownEditorView(page: $viewModel.page, isEditing: $viewModel.isEditing)
+                        if coordinator.isEditing {
+                            MarkdownEditorView(page: $coordinator.page, isEditing: $coordinator.isEditing)
                                 .padding(.top, DesignSystem.wide)
-                        } else if viewModel.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        } else if coordinator.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             emptyStateView
                         } else {
-                            MarkdownRendererView(content: viewModel.page.content, isPrivate: viewModel.page.isPrivate, onLinkTap: { title in
+                            MarkdownRendererView(content: coordinator.page.content, isPrivate: coordinator.page.isPrivate, onLinkTap: { title in
                                 navigateToPage(title)
                             })
                             .padding(.vertical)
                         }
 
-                        Divider()
-                            .background(Color.appBorder)
+                        Divider().background(Color.appBorder)
 
                         provenanceSection
-
                         semanticRecommendationsSection
-                        
                         backlinksSection
                     }
                     .padding(.horizontal)
@@ -176,8 +167,8 @@ struct PageDetailView: View {
         }
         .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
-        .background(PageBackgroundView(accentColor: Color.fromModelColorName(viewModel.page.type.colorName)))
-        .appSubPageToolbar(title: viewModel.page.title) {
+        .background(PageBackgroundView(accentColor: Color.fromModelColorName(coordinator.page.type.colorName)))
+        .appSubPageToolbar(title: coordinator.page.title) {
             HStack(spacing: DesignSystem.small) {
                 pinButton
                 backlinksButton
@@ -185,33 +176,33 @@ struct PageDetailView: View {
                 aiMenuButton
             }
         }
-        .confirmationDialog(Localized.tr("page.confirmDelete"), isPresented: $viewModel.showDeleteConfirmation) {
-            Button(Localized.trf("page.deletePageTitle", viewModel.page.title), role: .destructive) {
-                viewModel.deletePage()
+        .confirmationDialog(Localized.tr("page.confirmDelete"), isPresented: $coordinator.showDeleteConfirmation) {
+            Button(Localized.trf("page.deletePageTitle", coordinator.page.title), role: .destructive) {
+                coordinator.deletePage()
             }
             Button(L10n.Common.tr("cancel"), role: .cancel) {}
         } message: {
             Text(Localized.tr("page.deleteMessage"))
         }
-        .sheet(isPresented: $viewModel.showBacklinks) {
-            BacklinksView(page: viewModel.page)
+        .sheet(isPresented: $coordinator.showBacklinks) {
+            BacklinksView(page: coordinator.page)
         }
-        .sheet(isPresented: $viewModel.showIconPicker) {
+        .sheet(isPresented: $coordinator.showIconPicker) {
             NavigationStack {
                 IconPickerView(selectedIcon: Binding(
-                    get: { viewModel.page.customIcon },
+                    get: { coordinator.page.customIcon },
                     set: { newIcon in
-                        var updated = viewModel.page
+                        var updated = coordinator.page
                         updated.customIcon = newIcon
-                        store.updatePage(updated, forceDeepScan: false)
-                        viewModel.page = updated
+                        Task { await store.updatePage(updated, forceDeepScan: false) }
+                        coordinator.page = updated
                     }
                 ))
             }
         }
-        .onChange(of: viewModel.page) { _, newValue in
-            if !viewModel.isEditing {
-                store.updatePage(newValue, forceDeepScan: false)
+        .onChange(of: coordinator.page) { _, newValue in
+            if !coordinator.isEditing {
+                Task { await store.updatePage(newValue, forceDeepScan: false) }
             }
         }
         .safeAreaInset(edge: .top) {
@@ -226,7 +217,7 @@ struct PageDetailView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
-                PageDetailHeader(page: viewModel.page, heroNamespace: heroNamespace)
+                PageDetailHeader(page: coordinator.page, heroNamespace: heroNamespace)
                     .padding(.top, router.navigationHistory.isEmpty ? DesignSystem.Layout.tightPadding : 0)
                     .background(.ultraThinMaterial)
             }
@@ -236,16 +227,16 @@ struct PageDetailView: View {
                 alignment: .bottom
             )
         }
-        .sheet(isPresented: $viewModel.showSnapshotHistory) {
-            PageHistoryView(page: viewModel.page)
+        .sheet(isPresented: $coordinator.showSnapshotHistory) {
+            PageHistoryView(page: coordinator.page)
         }
         .onAppear {
-            router.addToHistory(viewModel.page)
+            router.addToHistory(coordinator.page)
             Task {
-                recommendations = await aiStore.findSimilarPages(for: viewModel.page)
+                recommendations = await aiStore.findSimilarPages(for: coordinator.page)
             }
         }
-        .onChange(of: viewModel.page) { _, newValue in
+        .onChange(of: coordinator.page) { _, newValue in
             router.addToHistory(newValue)
             Task {
                 recommendations = await aiStore.findSimilarPages(for: newValue)
@@ -271,7 +262,7 @@ struct PageDetailView: View {
                             Button(action: {
                                 Task {
                                     @Inject var workflowService: WorkflowService
-                                    try? await workflowService.syncToReminders(text: result, title: viewModel.page.title)
+                                    try? await workflowService.syncToReminders(text: result, title: coordinator.page.title)
                                 }
                             }) {
                                 Label(L10n.Common.tr("syncToReminders"), systemImage: "checklist")
@@ -300,8 +291,7 @@ struct PageDetailView: View {
                 
                 if aiStore.isProcessingPageAI {
                     VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        AppSkeleton(height: 20)
-                            .frame(width: 200)
+                        AppSkeleton(height: 20).frame(width: 200)
                         AppSkeleton(height: 120)
                         AppSkeleton(height: 60)
                     }
@@ -339,14 +329,11 @@ struct PageDetailView: View {
     
     private var provenanceSection: some View {
         Group {
-            if let sourceURL = viewModel.page.sourceURL, let url = URL(string: sourceURL) {
+            if let sourceURL = coordinator.page.sourceURL, let url = URL(string: sourceURL) {
                 VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                     HStack {
-                        Image(systemName: "safari")
-                            .foregroundStyle(.appAccent)
-                        Text(Localized.tr("page.source.title"))
-                            .font(.headline)
-                            .foregroundStyle(.appText)
+                        Image(systemName: "safari").foregroundStyle(.appAccent)
+                        Text(Localized.tr("page.source.title")).font(.headline).foregroundStyle(.appText)
                         Spacer()
                         Link(destination: url) {
                             HStack(spacing: DesignSystem.tiny) {
@@ -359,21 +346,10 @@ struct PageDetailView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(sourceURL)
-                            .font(.caption2)
-                            .foregroundStyle(.appSecondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
+                        Text(sourceURL).font(.caption2).foregroundStyle(.appSecondary).lineLimit(1).truncationMode(.middle)
                         
-                        if let snippet = viewModel.page.rawTextSnippet, !snippet.isEmpty {
-                            Text(snippet)
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundStyle(.appSecondary)
-                                .padding(DesignSystem.small)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.appCard)
-                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
-                                .lineLimit(3)
+                        if let snippet = coordinator.page.rawTextSnippet, !snippet.isEmpty {
+                            Text(snippet).font(.system(size: 11, design: .monospaced)).foregroundStyle(.appSecondary).padding(DesignSystem.small).frame(maxWidth: .infinity, alignment: .leading).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius)).lineLimit(3)
                         }
                     }
                     .appContainer(padding: true)
@@ -391,21 +367,13 @@ struct PageDetailView: View {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     HStack(spacing: DesignSystem.small) {
                         ZStack {
-                            Circle()
-                                .fill(Color.appAccent.opacity(0.1))
-                                .frame(width: 24, height: 24)
-                            Image(systemName: DesignSystem.Icons.sparkles)
-                                .font(.system(size: DesignSystem.iconTiny))
-                                .foregroundStyle(.appAccent)
+                            Circle().fill(Color.appAccent.opacity(0.1)).frame(width: 24, height: 24)
+                            Image(systemName: DesignSystem.Icons.sparkles).font(.system(size: DesignSystem.iconTiny)).foregroundStyle(.appAccent)
                         }
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(Localized.tr("page.aiInsights"))
-                                .font(.headline)
-                                .foregroundStyle(.appText)
-                            Text(Localized.tr("page.aiInsights.desc"))
-                                .font(.system(size: 9))
-                                .foregroundStyle(.appSecondary)
+                            Text(Localized.tr("page.aiInsights")).font(.headline).foregroundStyle(.appText)
+                            Text(Localized.tr("page.aiInsights.desc")).font(.system(size: 9)).foregroundStyle(.appSecondary)
                         }
                     }
                     .padding(.bottom, DesignSystem.tiny)
@@ -416,19 +384,7 @@ struct PageDetailView: View {
                         }
                     }
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
-                        .fill(Color.appAccent.opacity(0.03))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
-                        .stroke(
-                            LinearGradient(colors: [.appAccent.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing),
-                            lineWidth: 1
-                        )
-                )
-                .padding(.vertical)
+                .padding().background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(0.03))).overlay(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).stroke(LinearGradient(colors: [.appAccent.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)).padding(.vertical)
             }
         }
     }
@@ -436,28 +392,16 @@ struct PageDetailView: View {
     private func recommendationRow(for recPage: KnowledgePage) -> some View {
         NavigationLink(value: AppRoute.pageDetail(id: recPage.id)) {
             HStack {
-                Image(systemName: recPage.displayIcon)
-                    .foregroundStyle(Color.fromModelColorName(recPage.type.colorName))
+                Image(systemName: recPage.displayIcon).foregroundStyle(Color.fromModelColorName(recPage.type.colorName))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(recPage.title)
-                        .font(.subheadline.weight(.medium))
+                    Text(recPage.title).font(.subheadline.weight(.medium))
                     let summaryText = String(recPage.content.prefix(60)) + "..."
-                    Text(summaryText)
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
+                    Text(summaryText).font(.caption2).foregroundStyle(.appSecondary)
                 }
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+                Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
             }
-            .padding(DesignSystem.medium)
-            .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding))
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignSystem.tightPadding)
-                    .stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
-            )
+            .padding(DesignSystem.medium).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding)).overlay(RoundedRectangle(cornerRadius: DesignSystem.tightPadding).stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
         }
         .buttonStyle(.plain)
     }
@@ -465,45 +409,23 @@ struct PageDetailView: View {
     private var backlinksSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
-                Image(systemName: DesignSystem.Icons.link)
-                    .foregroundStyle(.appAccent)
-                Text(Localized.tr("page.backlinks"))
-                    .font(.headline)
-                    .foregroundStyle(.appText)
-                Text("(\(viewModel.backlinks.count))")
-                    .font(.subheadline)
-                    .foregroundStyle(.appSecondary)
+                Image(systemName: DesignSystem.Icons.link).foregroundStyle(.appAccent)
+                Text(Localized.tr("page.backlinks")).font(.headline).foregroundStyle(.appText)
+                Text("(\(coordinator.backlinks.count))").font(.subheadline).foregroundStyle(.appSecondary)
             }
             
-            if viewModel.backlinks.isEmpty {
-                Text(Localized.tr("page.noBackLinks"))
-                    .font(.caption)
-                    .foregroundStyle(.appSecondary)
-                    .padding(.vertical, DesignSystem.small)
+            if coordinator.backlinks.isEmpty {
+                Text(Localized.tr("page.noBackLinks")).font(.caption).foregroundStyle(.appSecondary).padding(.vertical, DesignSystem.small)
             } else {
-                ForEach(viewModel.backlinks) { linkedPage in
+                ForEach(coordinator.backlinks) { linkedPage in
                     NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
                         HStack(spacing: DesignSystem.medium) {
-                            Image(systemName: linkedPage.displayIcon)
-                                .foregroundStyle(Color.fromModelColorName(linkedPage.type.colorName))
-                                .frame(width: 28, height: 28)
-                                .background(Color.fromModelColorName(linkedPage.type.colorName).opacity(0.15))
-                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
-
-                            Text(linkedPage.title)
-                                .font(.subheadline)
-                                .foregroundStyle(.appText)
-
+                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.type.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.type.colorName).opacity(0.15)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
+                            Text(linkedPage.title).font(.subheadline).foregroundStyle(.appText)
                             Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption2)
-                                .foregroundStyle(.appSecondary)
+                            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
                         }
-                        .padding(.horizontal, DesignSystem.tightPadding)
-                        .padding(.vertical, DesignSystem.small)
-                        .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                        .padding(.horizontal, DesignSystem.tightPadding).padding(.vertical, DesignSystem.small).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(Localized.trf("page.backlinkAccessibility", linkedPage.title, linkedPage.type.displayName))
@@ -514,66 +436,9 @@ struct PageDetailView: View {
         .padding()
     }
     
-    private func expandStub() {
-        aiStore.runPageAIExpansion(content: viewModel.page.content)
-    }
-    private func findRelatedLinks() { Task { await aiStore.runAIScan() } }
     private func navigateToPage(_ title: String) {
         if let target = store.pages.first(where: { $0.title == title }) {
             router.navigate(to: .pageDetail(id: target.id))
-        }
-    }
-}
-
-// MARK: - Internal Sections
-struct AILabSection: View {
-    let page: KnowledgePage
-    @Environment(AIWorkflowStore.self) var aiStore
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Label(Localized.tr("page.ai.lab"), systemImage: "flask.fill")
-                .font(.headline)
-                .foregroundStyle(.appAccent)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignSystem.small) {
-                    AIActionButton(title: Localized.tr("page.ai.summary"), icon: "wand.and.stars") {
-                        aiStore.runPageAISummary(content: page.content)
-                    }
-                    AIActionButton(title: Localized.tr("page.ai.quiz"), icon: "questionmark.circle") {
-                        aiStore.performPageSynthesis(type: .quiz, title: page.title, content: page.content)
-                    }
-                    AIActionButton(title: Localized.tr("page.ai.mindmap"), icon: "rectangle.stack.badge.person.crop") {
-                        aiStore.performPageSynthesis(type: .mindmap, title: page.title, content: page.content)
-                    }
-                }
-            }
-        }
-        .padding()
-        .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-    }
-}
-
-private struct AIActionButton: View {
-    let title: String
-    let icon: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: DesignSystem.tiny) {
-                Image(systemName: icon)
-                    .font(.title3)
-                Text(title)
-                    .font(.caption2.weight(.medium))
-            }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-            .background(Color.appAccent.opacity(0.1))
-            .foregroundStyle(.appAccent)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
     }
 }

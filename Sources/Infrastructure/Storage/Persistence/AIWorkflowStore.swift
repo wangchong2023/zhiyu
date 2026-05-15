@@ -146,103 +146,64 @@ final class AIWorkflowStore {
             .compactMap { res in sqliteStore.pages.first { $0.id == res.id } }
     }
 
-    // ── 页面级 AI 行为 ──
+    // ── 页面级 AI 行为 (Async 接口版) ──
 
-    func runPageAISummary(content: String) {
-        activePageAIResult = nil
-        ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
-        Task {
-            isProcessingPageAI = true
-            defer {
-                isProcessingPageAI = false
-                ToastManager.shared.dismiss()
-            }
-            do {
-                let summary = try await AISynthesisService.shared.summarize(content: content)
-                activePageAIResult = summary
-                HapticFeedback.shared.trigger(.success)
-            } catch {
-                ToastManager.shared.show(type: .error, message: error.localizedDescription)
-            }
-        }
+    /// 生成页面 AI 摘要
+    func runPageAISummary(content: String) async throws -> String {
+        isProcessingPageAI = true
+        defer { isProcessingPageAI = false }
+        
+        let summary = try await AISynthesisService.shared.summarize(content: content)
+        activePageAIResult = summary
+        return summary
     }
 
     /// 提取页面行动项
-    func runPageAIExtractActions(content: String) {
-        activePageAIResult = nil
-        ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
-        Task {
-            isProcessingPageAI = true
-            defer {
-                isProcessingPageAI = false
-                ToastManager.shared.dismiss()
-            }
-            do {
-                let actions = try await AISynthesisService.shared.extractActions(content: content)
-                activePageAIResult = actions
-                HapticFeedback.shared.trigger(.success)
-            } catch {
-                ToastManager.shared.show(type: .error, message: error.localizedDescription)
-            }
-        }
+    func runPageAIExtractActions(content: String) async throws -> String {
+        isProcessingPageAI = true
+        defer { isProcessingPageAI = false }
+        
+        let actions = try await AISynthesisService.shared.extractActions(content: content)
+        activePageAIResult = actions
+        return actions
     }
 
     /// 扩展页面存根内容
-    func runPageAIExpansion(content: String) {
-        activePageAIResult = nil
-        ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
-        Task {
-            isProcessingPageAI = true
-            defer {
-                isProcessingPageAI = false
-                ToastManager.shared.dismiss()
-            }
-            do {
-                let expanded = try await AISynthesisService.shared.expandKnowledge(content: content)
-                activePageAIResult = expanded
-                HapticFeedback.shared.trigger(.success)
-            } catch {
-                ToastManager.shared.show(type: .error, message: error.localizedDescription)
-            }
-        }
+    func runPageAIExpansion(content: String) async throws -> String {
+        isProcessingPageAI = true
+        defer { isProcessingPageAI = false }
+        
+        let expanded = try await AISynthesisService.shared.expandKnowledge(content: content)
+        activePageAIResult = expanded
+        return expanded
     }
 
-    func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) {
-        activePageAIResult = nil
-        activeQuiz = nil
+    /// 执行通用页面综合任务（MindMap, Quiz, etc.）
+    func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) async throws -> String {
+        isProcessingPageAI = true
+        defer { isProcessingPageAI = false }
+        
         let taskID = TaskCenter.shared.addTask(type: .ai, name: type.title, target: title)
-        
-        ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
-        
-        Task {
-            isProcessingPageAI = true
-            defer {
-                isProcessingPageAI = false
-                ToastManager.shared.dismiss()
-            }
+        do {
+            let result = try await AISynthesisService.shared.synthesize(type: type, content: content)
+            TaskCenter.shared.completeTask(id: taskID)
             
-            do {
-                let result = try await AISynthesisService.shared.synthesize(type: type, content: content)
-                TaskCenter.shared.completeTask(id: taskID)
-                
-                // 针对不同类型处理结果
-                if type == .quiz {
-                    let cleaned = LLMUtils.stripMarkdown(result)
-                    if let data = cleaned.data(using: .utf8),
-                       let quiz = try? JSONDecoder().decode(QuizModel.self, from: data) {
-                        activeQuiz = quiz
-                    } else {
-                        activePageAIResult = result
-                    }
+            // 针对不同类型处理结果
+            if type == .quiz {
+                let cleaned = LLMUtils.stripMarkdown(result)
+                if let data = cleaned.data(using: .utf8),
+                   let quiz = try? JSONDecoder().decode(QuizModel.self, from: data) {
+                    activeQuiz = quiz
                 } else {
                     activePageAIResult = result
                 }
-                
-                HapticFeedback.shared.trigger(.success)
-            } catch {
-                TaskCenter.shared.failTask(id: taskID, error: error.localizedDescription)
-                ToastManager.shared.show(type: .error, message: error.localizedDescription)
+            } else {
+                activePageAIResult = result
             }
+            return result
+        } catch {
+            TaskCenter.shared.failTask(id: taskID, error: error.localizedDescription)
+            throw error
         }
     }
 

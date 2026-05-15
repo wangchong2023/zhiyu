@@ -447,7 +447,7 @@ struct TagCloudViewContent: View {
         let trimmed = addTagName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         
-        store.addNewTag(trimmed)
+        Task { await store.addNewTag(trimmed) }
         
         addTagName = ""
         showAddTagDialog = false

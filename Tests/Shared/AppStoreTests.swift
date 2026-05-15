@@ -28,15 +28,15 @@ final class AppStoreTests: XCTestCase {
         try await super.tearDown()
     }
     
-    func testPageCreation() {
+    func testPageCreation() async {
         let initialCount = store.totalPages
-        let _ = store.createPage(title: "Test Page", type: .concept, content: "Test Content")
+        let _ = await store.createPage(title: "Test Page", type: .concept, content: "Test Content")
         XCTAssertEqual(store.totalPages, initialCount + 1)
     }
     
-    func testUndoRedo() {
+    func testUndoRedo() async {
         let initialCount = store.totalPages
-        _ = store.createPage(title: "Undo Test", type: .concept)
+        _ = await store.createPage(title: "Undo Test", type: .concept)
         XCTAssertEqual(store.totalPages, initialCount + 1)
         
         store.undo()
@@ -47,7 +47,7 @@ final class AppStoreTests: XCTestCase {
     }
     
     func testTagManagement() async {
-        let page = store.createPage(title: "Tag Test", type: .concept, tags: ["OldTag"])
+        let _ = await store.createPage(title: "Tag Test", type: .concept, tags: ["OldTag"])
         XCTAssertTrue(store.pages.contains { $0.tags.contains("OldTag") })
         
         store.renameTag("OldTag", to: "NewTag")

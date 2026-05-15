@@ -117,7 +117,7 @@ struct LockOverlayView: View {
                     #if os(iOS)
                     HapticFeedback.shared.trigger(.selection)
                     #endif
-                    store.securityService.unlock() 
+                    Task { await store.securityService.unlock() }
                 }) {
                     HStack(spacing: 16) {
                         Image(systemName: unlockIcon)

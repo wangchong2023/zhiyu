@@ -125,7 +125,7 @@ struct PDFLibraryView: View {
             let text = await store.extractPDFText(from: pdfDoc)
 
             if !text.isEmpty {
-                let page = store.createPage(
+                let page = await store.createPage(
                     title: doc.title,
                     type: .source,
                     content: text,

@@ -25,7 +25,7 @@ extension SQLiteStore {
         fileSize: Int64? = nil,
         sourceType: String? = nil,
         forceDeepScan: Bool = false
-    ) -> KnowledgePage {
+    ) async -> KnowledgePage {
         let startTime = Date()
         let page = KnowledgePage(
             title: title,
@@ -45,14 +45,12 @@ extension SQLiteStore {
             var savedPage = page
             savedPage.id = actualID
 
-            // 异步更新向量
-            Task {
-                await embeddingManager.updateEmbedding(for: savedPage)
-            }
+            // 同步等待向量更新 (结构化并发治理)
+            await embeddingManager.updateEmbedding(for: savedPage)
 
             // 触发深度扫描
             if forceDeepScan || content.count > 500 {
-                performDeepScan(for: page)
+                await performDeepScan(for: page)
             }
 
             logOperation(action: .create, target: title, startTime: startTime, details: "\(Localized.tr("detail.pageType")): \(type.displayName)")
@@ -68,7 +66,7 @@ extension SQLiteStore {
 
     // MARK: - 更新 (Update)
 
-    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) {
+    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         let startTime = Date()
         guard pages.contains(where: { $0.id == page.id }) else { return }
         
@@ -78,12 +76,11 @@ extension SQLiteStore {
 
         do {
             try repository.save(updated)
-            Task {
-                await embeddingManager.updateEmbedding(for: updated)
-            }
+            // 同步等待向量更新
+            await embeddingManager.updateEmbedding(for: updated)
 
             if forceDeepScan || updated.content.count > 500 {
-                performDeepScan(for: updated)
+                await performDeepScan(for: updated)
             }
 
             if !DatabaseManager.shared.isInTesting {
@@ -95,7 +92,7 @@ extension SQLiteStore {
         }
     }
 
-    func syncRemotePage(_ remotePage: KnowledgePage) {
+    func syncRemotePage(_ remotePage: KnowledgePage) async {
         if let localIndex = pages.firstIndex(where: { $0.id == remotePage.id }) {
             let localPage = pages[localIndex]
             let mergedPage = localPage.merge(with: remotePage)
@@ -104,7 +101,7 @@ extension SQLiteStore {
                 Logger.shared.debug("♻️ [LWW] 页面 \(remotePage.title) 发生冲突，自动收敛")
                 do {
                     try repository.save(mergedPage)
-                    Task { await embeddingManager.updateEmbedding(for: mergedPage) }
+                    await embeddingManager.updateEmbedding(for: mergedPage)
                 } catch {
                     Logger.shared.addLog(action: .error, target: "SQLiteStore", details: "Sync failed: \(error.localizedDescription)")
                 }
@@ -112,7 +109,7 @@ extension SQLiteStore {
         } else {
             do {
                 try repository.save(remotePage)
-                Task { await embeddingManager.updateEmbedding(for: remotePage) }
+                await embeddingManager.updateEmbedding(for: remotePage)
             } catch {
                 Logger.shared.addLog(action: .error, target: "SQLiteStore", details: "Insert remote failed: \(error.localizedDescription)")
             }

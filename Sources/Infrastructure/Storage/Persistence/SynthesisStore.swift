@@ -210,18 +210,21 @@ final class SynthesisStore {
     }
 
     /**
-     * @description: 调度 AI 合成任务，协调 TaskCenter 状态并处理并发冲突
+     * @description: 异步执行 AI 合成任务，协调 TaskCenter 状态并处理并发冲突
      * @param {SynthesisType} type 合成类型
      * @param {String} combinedContent 待合成的聚合上下文内容
-     * @return {*}
+     * @return {String} 合成后的内容
      */
-    func performSynthesis(type: SynthesisType, combinedContent: String) {
-        guard synthesisStates[type] != SynthesisStatus.generating else { return }
+    func performSynthesis(type: SynthesisType, combinedContent: String) async throws -> String {
+        guard synthesisStates[type] != SynthesisStatus.generating else { 
+            throw NSError(domain: "SynthesisStore", code: -1, userInfo: [NSLocalizedDescriptionKey: "Task already in progress"])
+        }
 
         let existingCount = synthesisResults[type]?.count ?? 0
         if existingCount >= maxSynthesisDocsPerType {
-            synthesisStates[type] = SynthesisStatus.error(Localized.tr("synthesis.error.limitReached"))
-            return
+            let errorMsg = Localized.tr("synthesis.error.limitReached")
+            synthesisStates[type] = SynthesisStatus.error(errorMsg)
+            throw NSError(domain: "SynthesisStore", code: -2, userInfo: [NSLocalizedDescriptionKey: errorMsg])
         }
 
         withMutation(keyPath: \.synthesisStates) {
@@ -229,36 +232,32 @@ final class SynthesisStore {
         }
         let taskID = TaskCenter.shared.addTask(type: .synthesis, name: type.title, target: Localized.tr("sidebar.synthesis"))
 
-        Task {
-            do {
-                let content: String
-                switch type {
-                case .mindmap:
-                    content = try await AISynthesisService.shared.generateMindMap(content: combinedContent)
-                case .slides:
-                    content = try await AISynthesisService.shared.generatePresentation(content: combinedContent)
-                case .quiz:
-                    content = try await AISynthesisService.shared.generateQuiz(content: combinedContent)
-                case .report:
-                    content = try await AISynthesisService.shared.generateReport(content: combinedContent)
-                case .infographic:
-                    content = try await AISynthesisService.shared.generateInfographic(content: combinedContent)
-                case .expansion:
-                    content = try await AISynthesisService.shared.expandKnowledge(content: combinedContent)
-                }
-
-                await MainActor.run {
-                    self.saveSynthesisResult(type: type, content: content)
-                    TaskCenter.shared.updateTask(taskID, status: .completed)
-                }
-            } catch {
-                await MainActor.run {
-                    withMutation(keyPath: \.synthesisStates) {
-                        self._synthesisStates[type] = SynthesisStatus.error(error.localizedDescription)
-                    }
-                    TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
-                }
+        do {
+            let content: String
+            switch type {
+            case .mindmap:
+                content = try await AISynthesisService.shared.generateMindMap(content: combinedContent)
+            case .slides:
+                content = try await AISynthesisService.shared.generatePresentation(content: combinedContent)
+            case .quiz:
+                content = try await AISynthesisService.shared.generateQuiz(content: combinedContent)
+            case .report:
+                content = try await AISynthesisService.shared.generateReport(content: combinedContent)
+            case .infographic:
+                content = try await AISynthesisService.shared.generateInfographic(content: combinedContent)
+            case .expansion:
+                content = try await AISynthesisService.shared.expandKnowledge(content: combinedContent)
             }
+
+            self.saveSynthesisResult(type: type, content: content)
+            TaskCenter.shared.completeTask(id: taskID)
+            return content
+        } catch {
+            withMutation(keyPath: \.synthesisStates) {
+                self._synthesisStates[type] = SynthesisStatus.error(error.localizedDescription)
+            }
+            TaskCenter.shared.failTask(id: taskID, error: error.localizedDescription)
+            throw error
         }
     }
 

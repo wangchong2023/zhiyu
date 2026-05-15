@@ -120,17 +120,21 @@ struct SaveVoiceNoteSheet: View {
         let noteTitle = title.isEmpty
             ? "\(Localized.tr("speech.voiceNote")) \(Date().formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale)))"
             : title
-        _ = store.createPage(
-            title: noteTitle,
-            type: selectedType,
-            content: speechService.transcribedText,
-            tags: [Localized.tr("speech.voiceTag")]
-        )
-        
-        let _ = speechService.saveRecording(title: noteTitle)
-        speechService.clearTranscription()
-        title = ""
-        dismiss()
+        Task {
+            _ = await store.createPage(
+                title: noteTitle,
+                type: selectedType,
+                content: speechService.transcribedText,
+                tags: [Localized.tr("speech.voiceTag")]
+            )
+            
+            await MainActor.run {
+                let _ = speechService.saveRecording(title: noteTitle)
+                speechService.clearTranscription()
+                title = ""
+                dismiss()
+            }
+        }
     }
 }
 

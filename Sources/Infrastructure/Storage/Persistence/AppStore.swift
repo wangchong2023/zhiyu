@@ -171,13 +171,15 @@ final class AppStore: @preconcurrency GraphDataProvider {
         sqliteStore.onLog = { [weak self] a, t, d in
             self?.addLog(action: a, target: t, details: d)
         }
-        seedDefaultContent()
+        Task {
+            await seedDefaultContent()
+        }
     }
 
     /// 填充默认引导内容
-    func seedDefaultContent() {
+    func seedDefaultContent() async {
         if pages.isEmpty {
-            sqliteStore.seedDefaultContent { [weak self] a, t, d in self?.addLog(action: a, target: t, details: d) }
+            await sqliteStore.seedDefaultContent { [weak self] a, t, d in self?.addLog(action: a, target: t, details: d) }
         }
     }
 
@@ -206,12 +208,12 @@ final class AppStore: @preconcurrency GraphDataProvider {
         fileSize: Int64? = nil,
         sourceType: String? = nil,
         forceDeepScan: Bool = false
-    ) -> KnowledgePage {
+    ) async -> KnowledgePage {
         // 1. 记录撤销快照，确保操作可逆
         undoService.pushSnapshot(pages)
 
         // 2. 调用底层存储引擎执行物理写入
-        let page = sqliteStore.createPage(
+        let page = await sqliteStore.createPage(
             title: title,
             type: type,
             customIcon: customIcon,
@@ -230,12 +232,8 @@ final class AppStore: @preconcurrency GraphDataProvider {
         // 4. 检查是否触发图谱发现引导（当页面达到一定数量时）
         if totalPages >= DesignSystem.Metrics.graphCoachMarkThreshold && !settingsStore.hasShownGraphCoachMark { // 3
             settingsStore.hasShownGraphCoachMark = true
-            Task {
-                try? await Task.sleep(nanoseconds: UInt64(DesignSystem.Action.animationDuration * 5 * 1_000_000_000)) // 1s delay
-                await MainActor.run {
-                    self.pendingCoachMark = .graphDiscovery
-                }
-            }
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1s delay
+            self.pendingCoachMark = .graphDiscovery
         }
 
         // 5. 发布全局事件，通知图谱、搜索等组件更新
@@ -249,15 +247,15 @@ final class AppStore: @preconcurrency GraphDataProvider {
     func getBacklinks(for id: UUID) -> [KnowledgePage] { sqliteStore.fetchBacklinksByID(for: id) }
 
     /// 更新页面内容或元数据，支持选择性触发深度扫描。
-    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) {
+    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         undoService.pushSnapshot(pages)
-        sqliteStore.updatePage(page, forceDeepScan: forceDeepScan)
+        await sqliteStore.updatePage(page, forceDeepScan: forceDeepScan)
         backupService.markDirty()
     }
 
     /// 简单的页面内容保存接口。
-    func savePage(_ page: KnowledgePage) {
-        updatePage(page, forceDeepScan: false)
+    func savePage(_ page: KnowledgePage) async {
+        await updatePage(page, forceDeepScan: false)
     }
 
     /// 删除指定页面及其关联的图谱节点。
@@ -293,9 +291,9 @@ final class AppStore: @preconcurrency GraphDataProvider {
 // MARK: - AppStore 业务扩展
 extension AppStore {
     /// 导入外部 KnowledgePage 并分配新的唯一 ID。
-    func addImportedPage(_ page: KnowledgePage) {
+    func addImportedPage(_ page: KnowledgePage) async {
         var p = page; p.id = UUID()
-        sqliteStore.syncRemotePage(p)
+        await sqliteStore.syncRemotePage(p)
     }
 
     /// 利用 AI 合成服务为当前知识库生成启发式思考问题。
@@ -304,8 +302,8 @@ extension AppStore {
     }
 
     /// 同步来自远端（如 iCloud 或协作节点）的页面。
-    func insertRemotePage(_ page: KnowledgePage) {
-        sqliteStore.syncRemotePage(page)
+    func insertRemotePage(_ page: KnowledgePage) async {
+        await sqliteStore.syncRemotePage(page)
     }
 
     /// [危险操作] 彻底清理应用数据，包括数据库文件和本地配置。
@@ -373,38 +371,36 @@ extension AppStore {
     }
 
     /// 应用 AI 结构重构建议（如重命名）。
-    func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) {
+    func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
         if suggestion.type == "rename", let page = sqliteStore.pages.first(where: { $0.title == suggestion.target }) {
-            renamePage(page, to: suggestion.suggestion)
+            await renamePage(page, to: suggestion.suggestion)
         }
         aiWorkflowStore.removeRefactorSuggestion(id: suggestion.id)
     }
 
     /// 应用 AI 发现的潜在语义链接。
-    func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) {
+    func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
         if let index = sqliteStore.pages.firstIndex(where: { $0.id == suggestion.sourcePageID }) {
             var page = sqliteStore.pages[index]
             page.content += "\n\n相关链接: [[\(suggestion.targetTitle)]]"
-            updatePage(page, forceDeepScan: false)
+            await updatePage(page, forceDeepScan: false)
         }
         aiWorkflowStore.removePotentialLink(id: suggestion.id)
     }
 
     /// 重命名页面并协调更新所有双向链接引用。
-    func renamePage(_ page: KnowledgePage, to newTitle: String) {
+    func renamePage(_ page: KnowledgePage, to newTitle: String) async {
         let oldTitle = page.title
-        Task {
-            // 核心流程：预计算链接变更 -> 批量物理写入 -> 标记备份
-            let modifiedPages = await linkService.prepareRename(page: page, to: newTitle, in: pages)
+        // 核心流程：预计算链接变更 -> 批量物理写入 -> 标记备份
+        let modifiedPages = await linkService.prepareRename(page: page, to: newTitle, in: pages)
 
-            self.sqliteStore.performBatchWrite { db in
-                guard let writer = DatabaseManager.shared.dbWriter else { return }
-                let repo = KnowledgePageStore(dbWriter: writer)
-                for p in modifiedPages { _ = try? repo.save(p, in: db) }
-            }
-            sqliteStore.onLog?(.update, newTitle, "Renamed from \(oldTitle)")
-            backupService.markDirty()
+        self.sqliteStore.performBatchWrite { db in
+            guard let writer = DatabaseManager.shared.dbWriter else { return }
+            let repo = KnowledgePageStore(dbWriter: writer)
+            for p in modifiedPages { _ = try? repo.save(p, in: db) }
         }
+        await addLog(action: .update, target: newTitle, details: "Renamed from \(oldTitle)")
+        backupService.markDirty()
     }
 
     /// 重置全库数据（Facade 接口）。
@@ -431,10 +427,10 @@ extension AppStore {
     }
 
     /// 创建一个包含特定标签的概念页面。
-    func addNewTag(_ tag: String) {
+    func addNewTag(_ tag: String) async {
         let trimmed = tag.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        _ = createPage(
+        _ = await createPage(
             title: Localized.trf("tags.pageTitle", trimmed),
             type: .concept,
             content: Localized.trf("tags.pageContent", trimmed),
@@ -526,8 +522,8 @@ extension AppStore {
 // MARK: - CollaborationDelegate 实现
 @MainActor
 extension AppStore: CollaborationDelegate {
-    func applyRemoteUpdate(_ page: KnowledgePage) {
-        updatePage(page, forceDeepScan: false)
+    func applyRemoteUpdate(_ page: KnowledgePage) async {
+        await updatePage(page, forceDeepScan: false)
     }
 }
 // MARK: - AnyPageStore 协议实现

@@ -72,13 +72,14 @@ struct UserProfileMenu: View {
         } label: {
             profileLabel
         }
+        .buttonStyle(.plain)  // 消除 SwiftUI 在 Toolbar 中给 Menu 自动添加的 bordered 白色背景
         .sheet(isPresented: $showSettings) { settingsStack }
         .sheet(isPresented: $showAbout) { aboutStack }
         #endif
     }
     
     private var profileLabel: some View {
-        ZStack {
+        Group {
             if authService.isGuest {
                 Image(systemName: "person.crop.circle")
                     .font(.system(size: 16, weight: .medium))
@@ -89,7 +90,6 @@ struct UserProfileMenu: View {
                     .symbolRenderingMode(.hierarchical)
             }
         }
-        .frame(width: 44, height: 44, alignment: .trailing) // 固定标准点击区域，右对齐减少留白
         .foregroundStyle(.appAccent)
     }
     

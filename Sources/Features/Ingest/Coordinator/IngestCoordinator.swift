@@ -65,7 +65,7 @@ final class IngestCoordinator {
                 if let icon = icon {
                     var updated = page
                     updated.customIcon = icon
-                    store.updatePage(updated, forceDeepScan: true)
+                    await store.updatePage(updated, forceDeepScan: true)
                 }
                 
                 await MainActor.run {

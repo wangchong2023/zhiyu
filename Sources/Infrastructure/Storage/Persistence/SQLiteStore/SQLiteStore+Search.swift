@@ -55,16 +55,14 @@ extension SQLiteStore {
     // MARK: - RAG 深度扫描
 
     /// 执行知识深度扫描，利用 RAG 管道进行语义切分与向量化
-    func performDeepScan(for page: KnowledgePage) {
-        Task {
-            _ = await KnowledgeIngestPipeline.shared.process(
-                content: page.content,
-                pageID: page.id,
-                llm: nil, 
-                embeddingManager: self.embeddingManager
-            )
-            onLog?(.update, page.title, "DeepScan completed (RAG Pipeline)")
-        }
+    func performDeepScan(for page: KnowledgePage) async {
+        _ = await KnowledgeIngestPipeline.shared.process(
+            content: page.content,
+            pageID: page.id,
+            llm: nil, 
+            embeddingManager: self.embeddingManager
+        )
+        onLog?(.update, page.title, "DeepScan completed (RAG Pipeline)")
     }
 
     // MARK: - 旧数据迁移
@@ -106,14 +104,14 @@ extension SQLiteStore {
 
     // MARK: - 引导填充 (Seeding)
 
-    func seedDefaultContent(logAction: (LogAction, String, String) -> Void) {
+    func seedDefaultContent(logAction: (LogAction, String, String) -> Void) async {
         let hasSeeded = UserDefaults.standard.bool(forKey: "has_seeded_initial_content")
         if hasSeeded && !pages.isEmpty { return }
 
         let appName = Localized.tr("app.name")
 
         // 1. 欢迎页
-        _ = createPage(
+        _ = await createPage(
             title: "👋 \(Localized.tr("welcome.title")) \(appName)",
             type: .concept,
             content: """
@@ -130,7 +128,7 @@ extension SQLiteStore {
         )
 
         // 2. 关于图谱
-        _ = createPage(
+        _ = await createPage(
             title: Localized.tr("sidebar.graph"),
             type: .concept,
             content: Localized.tr("demo.planning.content"),
@@ -138,7 +136,7 @@ extension SQLiteStore {
         )
 
         // 3. AI 助手指南
-        _ = createPage(
+        _ = await createPage(
             title: Localized.tr("sidebar.chat"),
             type: .concept,
             content: Localized.tr("demo.aiAgent.content"),

@@ -113,6 +113,7 @@ struct ChatViewContent: View {
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(.appSecondary)
         }
+        .buttonStyle(.plain)  // 消除 Toolbar 中 Menu 的 bordered 白色背景
         #endif
     }
     

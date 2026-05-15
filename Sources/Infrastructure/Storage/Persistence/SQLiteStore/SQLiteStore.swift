@@ -162,8 +162,8 @@ final class SQLiteStore: VectorIndexableStore {
 @MainActor
 extension SQLiteStore: AnyPageStore {
     @discardableResult
-    func createPage(title: String, type: PageType, content: String, tags: [String], sourceURL: String?, rawSnippet: String?, fileSize: Int64?, sourceType: String?, forceDeepScan: Bool) -> KnowledgePage {
-        createPage(title: title, type: type, customIcon: nil, content: content, tags: tags, sourceURL: sourceURL, rawSnippet: rawSnippet, fileSize: fileSize, sourceType: sourceType, forceDeepScan: forceDeepScan)
+    func createPage(title: String, type: PageType, content: String, tags: [String], sourceURL: String?, rawSnippet: String?, fileSize: Int64?, sourceType: String?, forceDeepScan: Bool) async -> KnowledgePage {
+        await createPage(title: title, type: type, customIcon: nil, content: content, tags: tags, sourceURL: sourceURL, rawSnippet: rawSnippet, fileSize: fileSize, sourceType: sourceType, forceDeepScan: forceDeepScan)
     }
     
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?) {

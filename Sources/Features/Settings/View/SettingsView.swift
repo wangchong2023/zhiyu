@@ -45,7 +45,6 @@ struct SettingsView: View {
     // 本地镜像状态，用于解决 Toggle 绑定响应延迟及回滚问题
     @State private var localPrivacyEnabled: Bool = false
     @State private var localBiometricEnabled: Bool = false
-    @State private var localRefreshID = UUID() // 用于在不关闭页面的情况下刷新本地文案
     
     /**
      * @description: 触发硬件层面的生物识别认证（FaceID/TouchID）
@@ -130,12 +129,9 @@ struct SettingsView: View {
                     .tint(.primary)
                     .id(router.languageForceUpdate)
                     .onChange(of: selectedLanguage) { _, newValue in
-                        // 1. 更新持久化偏好
+                        // 仅更新持久化偏好，推迟 UI 全局刷新至 sheet 关闭后（避免关闭设置页）
                         Localized.languageMode = newValue
-                        // 2. 标记全局需要刷新
                         languageChanged = true
-                        // 3. 触发本地视图立即刷新文案
-                        localRefreshID = UUID()
                     }
                 } header: {
                     Text(L10n.Settings.Section.appearance)

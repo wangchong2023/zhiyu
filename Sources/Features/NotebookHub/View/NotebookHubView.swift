@@ -220,6 +220,7 @@ public struct NotebookHubView: View {
                 .font(.system(size: DesignSystem.bodyFontSize))
                 .foregroundStyle(.appSecondary)
         }
+        .buttonStyle(.plain)  // 消除 Toolbar 中 Button 的 bordered 白色背景
     }
     
     @ViewBuilder
@@ -244,6 +245,7 @@ public struct NotebookHubView: View {
                 .font(.system(size: DesignSystem.bodyFontSize))
                 .foregroundStyle(.appSecondary)
         }
+        .buttonStyle(.plain)  // 消除 Toolbar 中 Menu 的 bordered 白色背景
         #endif
     }
 }

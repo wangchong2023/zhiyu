@@ -48,7 +48,9 @@ struct SynthesisActionButton: View {
                 }
                 
                 let combinedContent = store.pages.map { "# \($0.title)\n\($0.content)" }.joined(separator: "\n\n---\n\n")
-                synthesisStore.performSynthesis(type: type, combinedContent: combinedContent)
+                Task {
+                    try? await synthesisStore.performSynthesis(type: type, combinedContent: combinedContent)
+                }
             }) {
                 VStack(spacing: DesignSystem.tiny) {
                     ZStack {

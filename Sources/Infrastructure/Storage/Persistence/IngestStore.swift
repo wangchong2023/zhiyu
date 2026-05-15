@@ -53,7 +53,7 @@ final class IngestStore {
         page.relatedPageIDs = relatedIDs
 
         // 持久化
-        sqliteStore.syncRemotePage(page)
+        await sqliteStore.syncRemotePage(page)
 
         logger.addLog(action: .smartIngest, target: title, details: Localized.trf("ingest.smartIngestDoneDesc", type.displayName))
         HapticFeedback.shared.trigger(.success)
@@ -102,7 +102,7 @@ final class IngestStore {
                 var updatedPage = page
                 updatedPage.tags = tags
                 updatedPage.customIcon = customIcon
-                sqliteStore.updatePage(updatedPage, forceDeepScan: false)
+                await sqliteStore.updatePage(updatedPage, forceDeepScan: false)
             }
 
             TaskCenter.shared.updateTask(taskID, status: .completed, associatedPageID: page.id)
@@ -145,7 +145,7 @@ final class IngestStore {
             guard let self = self else { return }
             var p = page
             p.id = UUID()
-            self.sqliteStore.syncRemotePage(p)
+            Task { await self.sqliteStore.syncRemotePage(p) }
         }
     }
 
