@@ -423,6 +423,10 @@ struct L10n {
         static var densityDetails: String { tr("density.details") }
         static var densityOutbound: String { tr("density.outbound") }
         static var densityInbound: String { tr("density.inbound") }
+        static var densityDesc: String { tr("density.desc") }
+        
+        static var pageListPages: String { tr("pageList.pages") }
+        static var pageListLinks: String { tr("pageList.links") }
         
         static var insightsLoading: String { tr("insights.loading") }
         static var insightsPageDeleted: String { tr("insights.pageDeleted") }

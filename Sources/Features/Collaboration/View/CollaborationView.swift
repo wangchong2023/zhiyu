@@ -83,7 +83,7 @@ struct CollaborationViewContent: View {
     // MARK: - Header
     private var headerSection: some View {
         VStack(spacing: DesignSystem.medium) { // 12
-            Image(systemName: "person.2.circle.fill")
+            Image(systemName: DesignSystem.Icons.personCircle)
                 .font(.system(size: DesignSystem.iconDisplay * 1.16)) // 56
                 .foregroundStyle(
                     LinearGradient(
@@ -180,7 +180,7 @@ struct CollaborationViewContent: View {
     private var hostButton: some View {
         Button(action: { showHostingSheet = true }) {
             HStack {
-                Image(systemName: "antenna.radiowaves.left.and.right")
+                Image(systemName: DesignSystem.Icons.broadcast)
                 Text(L10n.Collaboration.tr("hostSession"))
             }
             .font(.headline)
@@ -201,7 +201,7 @@ struct CollaborationViewContent: View {
             collabService.startBrowsing()
         }) {
             HStack {
-                Image(systemName: "magnifyingglass")
+                Image(systemName: DesignSystem.Icons.search)
                 Text(L10n.Collaboration.tr("joinSession"))
             }
             .font(.headline)
@@ -260,7 +260,7 @@ struct CollaborationViewContent: View {
     private var sessionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "crown.fill")
+                Image(systemName: DesignSystem.Icons.crown)
                     .foregroundStyle(.yellow)
                 Text(collabService.roomName)
                     .font(.headline)
@@ -281,7 +281,7 @@ struct CollaborationViewContent: View {
     private var leaveButton: some View {
         Button(action: { collabService.stop() }) {
             HStack {
-                Image(systemName: "xmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.errorCircle)
                 Text(L10n.Collaboration.tr("leaveSession"))
             }
             .font(.subheadline.weight(.medium))

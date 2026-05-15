@@ -54,6 +54,8 @@ public enum Colors {
     public static let dividerOpacity: Double = 0.5
     /// 强调描边透明度 (0.3)
     public static let accentStrokeOpacity: Double = 0.3
+    /// 卡片背景基础透明度 (0.7)
+    public static let cardOpacity: Double = 0.7
     
     // MARK: - 2. 预设容器颜色
     
@@ -74,11 +76,14 @@ public enum Colors {
         public static let translucentOpacity: Double = Colors.translucentOpacity
         public static let softOpacity: Double = Colors.softOpacity
         public static let ghostOpacity: Double = Colors.ghostOpacity
+        public static let cardOpacity: Double = Colors.cardOpacity
         
         public static let dividerOpacity: Double = Colors.dividerOpacity
         public static let accentStrokeOpacity: Double = Colors.accentStrokeOpacity
         
         public static var shadowColor: Color { Colors.shadowColor }
+        public static var glassShadowColor: Color { Color.black.opacity(0.05) }
+        public static var deepShadowColor: Color { Color.black.opacity(0.12) }
     }
     
     /// 标准容器背景色

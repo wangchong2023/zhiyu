@@ -152,7 +152,7 @@ struct BackupEntryRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "archivebox.fill")
+            Image(systemName: DesignSystem.Icons.archive)
                 .font(.title3)
                 .foregroundStyle(.appAccent)
             
@@ -175,7 +175,7 @@ struct BackupEntryRow: View {
             Button {
                 onRestore()
             } label: {
-                Image(systemName: "arrow.uturn.backward")
+                Image(systemName: DesignSystem.Icons.undo)
                     .foregroundStyle(.appAccent)
             }
             .buttonStyle(.plain)

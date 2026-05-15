@@ -61,7 +61,7 @@ struct OnDeviceLLMSettingsView: View {
     // MARK: - Header
     private var headerSection: some View {
         VStack(spacing: 12) {
-            Image(systemName: "cpu.fill")
+            Image(systemName: DesignSystem.Icons.cpu)
                 .font(.system(size: DesignSystem.displayFontSize * 1.5))
                 .foregroundStyle(
                     LinearGradient(
@@ -188,7 +188,7 @@ struct OnDeviceLLMSettingsView: View {
             
             Button(action: { showImportPicker = true }) {
                 HStack {
-                    Image(systemName: "square.and.arrow.down.fill")
+                    Image(systemName: DesignSystem.Icons.importIcon)
                     Text(Localized.tr("ondevice.importModel"))
                 }
                 .font(.subheadline)

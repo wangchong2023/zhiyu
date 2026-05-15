@@ -18071,9 +18071,6 @@
         }
       }
     },
-    "PDF reading is not supported on this platform." : {
-
-    },
     "pdf.add" : {
       "extractionState" : "manual",
       "localizations" : {

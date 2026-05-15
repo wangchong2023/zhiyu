@@ -42,7 +42,7 @@ struct DiscoveredRoomRow: View {
     var body: some View {
         Button(action: onJoin) {
             HStack {
-                Image(systemName: "bubble.left.and.bubble.right.fill")
+                Image(systemName: DesignSystem.Icons.collaboration)
                     .foregroundStyle(.appAccent)
 
                 VStack(alignment: .leading) {
@@ -56,7 +56,7 @@ struct DiscoveredRoomRow: View {
 
                 Spacer()
 
-                Image(systemName: "arrow.right.circle.fill")
+                Image(systemName: DesignSystem.Icons.forwardCircle)
                     .foregroundStyle(.appAccent)
             }
             .padding()
@@ -79,7 +79,7 @@ struct ConnectedPeerRow: View {
 
     var body: some View {
         HStack {
-            Image(systemName: "person.fill")
+            Image(systemName: DesignSystem.Icons.person)
                 .foregroundStyle(.appAccent)
             Text(peer.displayName)
                 .font(.subheadline)

@@ -109,26 +109,28 @@ struct LintViewContent: View {
                     HapticFeedback.shared.trigger(.selection)
                     if selectedTab == 0 { runLint() } else { runAIScan() }
                 }) {
-                    HStack(spacing: 10) {
-                        // 使用固定身份的 ZStack 和透明度切换，彻底杜绝重影
+                    HStack(spacing: 8) { // 略微收窄间距
                         ZStack {
                             ProgressView()
                                 .controlSize(.small)
                                 .opacity(isRunning || aiStore.isScanningAI ? 1 : 0)
                             
                             Image(systemName: selectedTab == 0 ? "stethoscope" : "sparkles")
+                                .font(.system(size: 14))
                                 .opacity(isRunning || aiStore.isScanningAI ? 0 : 1)
                         }
-                        .frame(width: 20)
+                        .frame(width: 18)
                         
                         Text(isRunning || aiStore.isScanningAI ? L10n.Lint.tr("scanning") : (selectedTab == 0 ? L10n.Lint.tr("runCheck") : L10n.Lint.tr("runAIScan")))
                     }
-                    .font(.subheadline.bold())
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.appCard)
+                    .font(.footnote.bold()) // 稍微调小一点字体使其更紧凑
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.appCard.opacity(0.85)) // 略微增加透明度使其不那么厚重
                     .clipShape(Capsule())
-                    .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
+                    .overlay(Capsule().stroke(Color.appBorder, lineWidth: 0.5)) // 增加精致的边框
+                    .fixedSize(horizontal: true, vertical: true) // 强制按内容收缩，消除多余留白
+                    .shadow(color: Color.black.opacity(0.05), radius: 3, x: 0, y: 1)
                     .foregroundStyle(buttonGradient)
                 }
                 .buttonStyle(.plain)
@@ -201,13 +203,8 @@ struct LintViewContent: View {
                                 .foregroundStyle(.appSecondary)
                         }
                     }
+                    .appContainer(padding: false) // 使用统一容器，padding 设置为 false 以便内部精确控制
                     .padding(8)
-                    .background(DesignSystem.containerBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(DesignSystem.containerBorder, lineWidth: DesignSystem.borderWidth)
-                    )
                 }
                 .padding(.leading, DesignSystem.huge)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -264,13 +261,8 @@ struct LintViewContent: View {
                         }
                     }
                 }
+                .appContainer(padding: false)
                 .padding(DesignSystem.small)
-                .background(DesignSystem.containerBackground.opacity(0.9))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(DesignSystem.containerBorder, lineWidth: DesignSystem.borderWidth)
-                )
                 .padding(.trailing, DesignSystem.standardPadding)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
             }
@@ -329,29 +321,8 @@ struct LintViewContent: View {
         }
         .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            ZStack {
-                Color.appCard
-                LinearGradient(
-                    colors: [color.opacity(0.08), .clear],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            }
-        )
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Metrics.dashboardRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: DesignSystem.Metrics.dashboardRadius)
-                .stroke(
-                    LinearGradient(
-                        colors: [.appBorder.opacity(0.8), .appBorder.opacity(0.2)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
-        )
-        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 5)
+        .appContainer(background: Color.appCard, cornerRadius: DesignSystem.Metrics.dashboardRadius, padding: false)
+        .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
     }
 
     // MARK: - AI 建议板块
@@ -559,7 +530,7 @@ struct PotentialLinkRow: View {
                 Text(link.sourceTitle)
                     .font(.subheadline.bold())
                 HStack(spacing: 4) {
-                    Image(systemName: "arrow.right")
+                    Image(systemName: DesignSystem.Icons.forward)
                         .font(.caption2)
                     Text("[[\(link.targetTitle)]]")
                         .font(.caption)

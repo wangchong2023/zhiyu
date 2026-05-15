@@ -93,7 +93,7 @@ struct SuggestionGroupView: View {
                     HStack {
                         Text(query).font(.subheadline).foregroundStyle(.appText).multilineTextAlignment(.leading)
                         Spacer()
-                        Image(systemName: "arrow.up.right.circle.fill").font(.caption2).foregroundStyle(.appAccent.opacity(0.7))
+                        Image(systemName: DesignSystem.Icons.arrowUpRight).font(.caption2).foregroundStyle(.appAccent.opacity(0.7))
                     }
                     .padding()
                     .background(Color.appCard)

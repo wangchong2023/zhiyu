@@ -85,17 +85,7 @@ struct GraphContainerView: View {
                 }
             }
         }
-        .appTabToolbar(title: L10n.Graph.title) {
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                router.navigate(to: .search())
-            }) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.appSecondary)
-            }
-            .buttonStyle(.plain)
-        }
+        .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
         .onAppear { layoutGraph() }
         .onChange(of: store.pages.count) { _, _ in layoutGraph() }

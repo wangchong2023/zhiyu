@@ -83,20 +83,24 @@ public extension View {
     ///   - padding: 是否添加标准内边距
     /// - Returns: 装饰后的视图
     func appContainer(
-        background: Color = .appCard.opacity(0.7),
+        background: Color = .appCard,
         borderColor: Color = .appBorder,
         cornerRadius: CGFloat = Spacing.cardRadius,
         padding: Bool = true
     ) -> some View {
         self.padding(padding ? Spacing.standardPadding : 0)
-            .background(.ultraThinMaterial)
-            .background(background)
+            .background(
+                ZStack {
+                    Rectangle().fill(.ultraThinMaterial).opacity(0.4) // 降低材质干扰
+                    background.opacity(0.9) // 优化通透度
+                }
+            )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(borderColor.opacity(0.4), lineWidth: Spacing.borderWidth)
+                    .stroke(borderColor.opacity(0.25), lineWidth: 0.5) // 稍微增强边框，匹配任务中心
             )
-            .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
+            .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
     }
     
     /// 仪表盘指标卡片风格 (Metric Card Style)
@@ -109,9 +113,9 @@ public extension View {
         self.background(.ultraThinMaterial)
             .background(
                 ZStack {
-                    Color.appCard.opacity(0.7)
+                    Color.appCard.opacity(0.8) // 提高亮度
                     LinearGradient(
-                        colors: [color.opacity(0.12), .clear],
+                        colors: [color.opacity(0.15), .clear],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -120,15 +124,8 @@ public extension View {
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.appBorder.opacity(0.5), .appBorder.opacity(0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.5
-                    )
+                    .stroke(color.opacity(0.2), lineWidth: 0.5) // 使用强调色淡边框
             )
-            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
     }
 }

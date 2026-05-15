@@ -28,7 +28,7 @@ struct CommandPaletteView: View {
                 TextField(Localized.tr("palette.searchPlaceholder"), text: $searchText)
                     .textFieldStyle(.plain)
                     .focused($isFocused)
-                Text("ESC")
+                Text(Localized.tr("common.esc"))
                     .font(.system(size: 10, weight: .bold))
                     .padding(4)
                     .background(Color.appBorder.opacity(0.3))

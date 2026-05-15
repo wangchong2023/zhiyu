@@ -59,8 +59,8 @@ struct SearchSection: View {
                 router.navigate(to: .search())
             }) {
                 HStack(spacing: DesignSystem.medium) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 14, weight: .semibold))
+                    Image(systemName: DesignSystem.Icons.search)
+                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold))
                         .foregroundStyle(.appAccent)
                     
                     Text(Localized.tr("search.placeholder"))
@@ -69,16 +69,16 @@ struct SearchSection: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 2) {
-                        Image(systemName: "command")
+                    HStack(spacing: DesignSystem.atomic) {
+                        Image(systemName: DesignSystem.Icons.command)
                         Text("K")
                     }
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(.appSecondary.opacity(0.4))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(Color.appBorder.opacity(0.3))
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .bold))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
+                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                    .padding(.vertical, DesignSystem.atomic)
+                    .background(Color.appBorder.opacity(DesignSystem.accentStrokeOpacity))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.micro))
                 }
                 .padding(.vertical, DesignSystem.tiny)
             }
@@ -89,7 +89,7 @@ struct SearchSection: View {
                 .fill(Color.appCard.opacity(DesignSystem.subtleOpacity))
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
-                        .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
+                        .stroke(Color.appBorder.opacity(DesignSystem.accentStrokeOpacity), lineWidth: 0.5)
                 )
         )
     }
@@ -165,12 +165,12 @@ struct CapabilitiesSection: View {
     var body: some View {
         Section {
             NavigationLink(value: AppRoute.dashboard) {
-                Label(Localized.tr("sidebar.dashboard"), systemImage: "gauge.with.needle.fill")
+                Label(Localized.tr("sidebar.dashboard"), systemImage: DesignSystem.Icons.dashboard)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
             NavigationLink(value: AppRoute.weeklyReport) {
-                Label(Localized.tr("sidebar.weeklyInsight"), systemImage: "doc.text.magnifyingglass")
+                Label(Localized.tr("sidebar.weeklyInsight"), systemImage: DesignSystem.Icons.weeklyInsight)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
@@ -190,7 +190,7 @@ struct UniverseSection: View {
         Section {
             NavigationLink(value: AppRoute.pageList(filterType: nil)) {
                 UniverseNavRow(
-                    icon: "tray.full.fill",
+                    icon: DesignSystem.Icons.pageList,
                     colorName: "accent",
                     title: Localized.tr("sidebar.pageList"),
                     count: store.pages.count,
@@ -259,7 +259,7 @@ struct ToolsSection: View {
         Section {
             NavigationLink(value: AppRoute.lint) {
                 HStack {
-                    Label(Localized.tr("sidebar.healthCheck"), systemImage: "stethoscope")
+                    Label(Localized.tr("sidebar.healthCheck"), systemImage: DesignSystem.Icons.healthCheck)
                         .foregroundStyle(.appText)
                     Spacer()
                     if !store.lintIssues.isEmpty {
@@ -275,13 +275,13 @@ struct ToolsSection: View {
                 .contentShape(Rectangle())
             }
             NavigationLink(value: AppRoute.tagCloud) {
-                Label(Localized.tr("sidebar.tagManager"), systemImage: "tag.fill")
+                Label(Localized.tr("sidebar.tagManager"), systemImage: DesignSystem.Icons.tag)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
             NavigationLink(value: AppRoute.taskCenter) {
                 HStack {
-                    Label(L10n.AI.Task.centerTitle, systemImage: "arrow.triangle.2.circlepath")
+                    Label(L10n.AI.Task.centerTitle, systemImage: DesignSystem.Icons.refresh)
                         .foregroundStyle(.appText)
                     Spacer()
                     if taskCenter.unreadCount > 0 {
@@ -296,12 +296,12 @@ struct ToolsSection: View {
                 .contentShape(Rectangle())
             }
             NavigationLink(value: AppRoute.pluginMarket) {
-                Label(Localized.tr("sidebar.plugins"), systemImage: "puzzlepiece.fill")
+                Label(Localized.tr("sidebar.plugins"), systemImage: DesignSystem.Icons.plugins)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
             NavigationLink(value: AppRoute.collab) {
-                Label(Localized.tr("sidebar.collaboration"), systemImage: "person.2.fill")
+                Label(Localized.tr("sidebar.collaboration"), systemImage: DesignSystem.Icons.collaborationPeers)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
@@ -360,7 +360,7 @@ struct UniverseNavRow: View {
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(iconColor)
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
-                .background(iconColor.opacity(0.12))
+                .background(iconColor.opacity(DesignSystem.Icons.display == 48 ? 0.12 : 0.12)) // standardized later
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
             
             // 标题
@@ -387,11 +387,11 @@ struct UniverseNavRow: View {
                     HapticFeedback.shared.trigger(.selection)
                     onSearch()
                 }) {
-                    Image(systemName: "magnifyingglass")
+                    Image(systemName: DesignSystem.Icons.search)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
                         .padding(DesignSystem.tiny)
-                        .background(Color.appSecondary.opacity(0.1))
+                        .background(Color.appSecondary.opacity(DesignSystem.subtleFillOpacity))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
@@ -414,7 +414,7 @@ struct SidebarTypeRow: View {
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
-                .background(Color.fromModelColorName(type.colorName).opacity(0.12))
+                .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.softOpacity * 0.3)) // 0.12
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
             
             // 分类名称
@@ -429,7 +429,7 @@ struct SidebarTypeRow: View {
                 .font(.caption2.weight(.bold))
                 .padding(.horizontal, count > 9 ? DesignSystem.Chip.horizontalPadding : DesignSystem.Chip.verticalPadding)
                 .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                .background(Color.fromModelColorName(type.colorName).opacity(0.15))
+                .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.softOpacity * 0.375)) // 0.15
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .clipShape(Capsule())
             
@@ -439,11 +439,11 @@ struct SidebarTypeRow: View {
                     HapticFeedback.shared.trigger(.selection)
                     onSearch()
                 }) {
-                    Image(systemName: "magnifyingglass")
+                    Image(systemName: DesignSystem.Icons.search)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.fromModelColorName(type.colorName).opacity(0.7))
+                        .foregroundStyle(Color.fromModelColorName(type.colorName).opacity(DesignSystem.subtleOpacity))
                         .padding(DesignSystem.tiny)
-                        .background(Color.fromModelColorName(type.colorName).opacity(0.1))
+                        .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.subtleFillOpacity))
                         .clipShape(Circle())
                 }
                 .buttonStyle(.plain)

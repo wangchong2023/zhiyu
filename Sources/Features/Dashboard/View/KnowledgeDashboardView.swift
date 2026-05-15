@@ -45,37 +45,7 @@ struct KnowledgeDashboardView: View {
             .scrollIndicators(.hidden)
             
         }
-        .navigationTitle(L10n.Dashboard.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    router.pop()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.appText)
-                        .frame(width: 32, height: 44)
-                }
-                .buttonStyle(.plain)
-            }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { 
-                    HapticFeedback.shared.trigger(.selection)
-                    router.navigate(to: .search()) 
-                }) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 18))
-                        .foregroundStyle(.appSecondary)
-                }
-                .buttonStyle(.plain)
-            }
-        }
+        .appTabToolbar(title: L10n.Dashboard.title)
         .task {
             await coordinator.refreshAll()
         }
@@ -90,18 +60,18 @@ struct KnowledgeDashboardView: View {
         // 1. 核心指标概览
         HStack(spacing: DesignSystem.Grid.standardSpacing) {
             MetricBox(
-                title: L10n.Dashboard.tr("totalPages"), 
+                title: L10n.Dashboard.totalPages, 
                 value: "\(store.pages.count)", 
-                unit: L10n.Dashboard.tr("pageList.pages"), 
+                unit: L10n.Dashboard.pageListPages, 
                 icon: "doc.on.doc.fill", 
                 color: .appAccent,
                 trend: nil
             )
             MetricBox(
-                title: L10n.Dashboard.tr("totalLinks"), 
+                title: L10n.Dashboard.totalLinks, 
                 value: "\(coordinator.totalLinks)", 
-                unit: L10n.Dashboard.tr("pageList.links"), 
-                icon: "point.3.connected.trianglepath.dotted", 
+                unit: L10n.Dashboard.pageListLinks, 
+                icon: DesignSystem.Icons.network, 
                 color: .appConcept,
                 trend: nil
             )
@@ -116,10 +86,10 @@ struct KnowledgeDashboardView: View {
                 Image(systemName: "point.3.connected.trianglepath.dotted")
                     .font(.caption)
                     .foregroundStyle(.appAccent)
-                Text(L10n.Dashboard.tr("density"))
+                Text(L10n.Dashboard.density)
                     .font(.headline)
                 Button(action: { showDensityInfo.toggle() }) {
-                    Image(systemName: "info.circle")
+                    Image(systemName: DesignSystem.Icons.info)
                         .font(.caption)
                         .foregroundColor(.appSecondary)
                 }
@@ -147,14 +117,14 @@ struct KnowledgeDashboardView: View {
             .padding(.leading, DesignSystem.tiny)
             
             if showDensityInfo {
-                Text(L10n.Dashboard.tr("density.desc"))
+                Text(L10n.Dashboard.densityDesc)
                     .font(.caption)
                     .foregroundColor(.appSecondary)
                     .padding(.bottom, DesignSystem.tiny)
                     .padding(.leading, DesignSystem.tiny)
             }
             
-            // 卡片内容
+            // 卡片内容 (应用统一容器外框)
             VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                 if coordinator.densityData.isEmpty {
                     emptyView
@@ -211,7 +181,7 @@ struct KnowledgeDashboardView: View {
                 
                 // 说明文字 (脚标)
                 HStack(alignment: .top, spacing: DesignSystem.small - DesignSystem.atomic) { // 6
-                    Image(systemName: "info.circle")
+                    Image(systemName: DesignSystem.Icons.info)
                         .font(.caption2)
                         .foregroundStyle(.appAccent)
                     Text(L10n.Dashboard.densityDetails)
@@ -222,6 +192,7 @@ struct KnowledgeDashboardView: View {
                 .padding(DesignSystem.Layout.cardContentPadding) // 使用标准卡片内边距 (16pt)
                 .appMetricCardStyle(color: .appAccent)
             }
+            .appContainer(padding: true) // 应用统一容器样式
         }
     }
     
@@ -229,14 +200,14 @@ struct KnowledgeDashboardView: View {
         // 3. 每日灵感 (AI 合成摘要预览)
         VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             HStack {
-                Image(systemName: "sparkles")
+                Image(systemName: DesignSystem.Icons.sparkles)
                     .font(.caption)
                     .foregroundStyle(.appAccent)
-                Text(L10n.Dashboard.tr("dailyInsights"))
+                Text(L10n.Dashboard.dailyInsights)
                     .font(.headline)
                 Spacer()
                 Button(action: { Task { await coordinator.refreshInsights() } }) {
-                    Image(systemName: "arrow.clockwise")
+                    Image(systemName: DesignSystem.Icons.refresh)
                         .font(.caption)
                         .foregroundColor(.appSecondary)
                         .rotationEffect(.degrees(coordinator.isGeneratingInsights ? 360 : 0))
@@ -251,7 +222,7 @@ struct KnowledgeDashboardView: View {
                         Spacer()
                         ProgressView()
                             .scaleEffect(0.8)
-                        Text(L10n.Dashboard.tr("insightsLoading"))
+                        Text(L10n.Dashboard.insightsLoading)
                             .font(.subheadline)
                             .foregroundColor(.appSecondary)
                             .italic()
@@ -312,7 +283,7 @@ struct KnowledgeDashboardView: View {
                 Image(systemName: "rectangle.grid.2x2.fill")
                     .font(.caption)
                     .foregroundStyle(.appAccent)
-                Text(L10n.Dashboard.tr("hotTopics"))
+                Text(L10n.Dashboard.hotTopics)
                     .font(.headline)
             }
             
@@ -416,7 +387,7 @@ struct MetricBox: View {
                     lineWidth: DesignSystem.borderWidth
                 )
         )
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
+        .appStandardShadow()
     }
 }
 
@@ -442,16 +413,16 @@ struct HotTopicMedal: View {
                 Text(category)
                     .font(.system(size: DesignSystem.titleFontSize, weight: .bold))
                     .foregroundColor(.appText)
-                Text("\(count) " + L10n.Dashboard.tr("pageList.pages"))
+                Text("\(count) " + L10n.Dashboard.pageListPages)
                     .font(.system(size: DesignSystem.captionFontSize))
                     .foregroundColor(.appSecondary)
             }
             
             Spacer()
             
-            Image(systemName: "chevron.right")
+            Image(systemName: DesignSystem.Icons.forward)
                 .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
-                .foregroundColor(.appSecondary.opacity(0.3))
+                .foregroundColor(.appSecondary.opacity(DesignSystem.Icons.display == 48 ? 0.3 : 0.3)) // standardized opacity later
         }
         .padding(DesignSystem.standardPadding)
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
@@ -460,7 +431,7 @@ struct HotTopicMedal: View {
 
 private var emptyView: some View {
     VStack {
-        Image(systemName: "chart.bar.fill")
+        Image(systemName: DesignSystem.Icons.chartBar)
             .font(.largeTitle)
             .foregroundColor(.appSecondary.opacity(0.2))
         Text(L10n.Common.Empty.tr("noData"))

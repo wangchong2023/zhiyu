@@ -191,7 +191,7 @@ public struct NotebookHubView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 160)
+            .frame(height: 180)
             .background(Color.appCard.opacity(DesignSystem.subtleFillOpacity))
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
@@ -267,20 +267,21 @@ struct NotebookCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                // 1. 图标展示 (彩色光晕底座，对齐图 2)
+            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+                // 1. 图标展示 (彩色光晕底座)
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(colorForVault.opacity(0.08))
-                        .frame(width: 48, height: 48)
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(colorForVault.opacity(0.1))
+                        .frame(width: 44, height: 44)
                     
                     Text(notebook.icon ?? defaultIcon)
-                        .font(.system(size: 28))
+                        .font(.system(size: 22))
                 }
+                .padding(.top, DesignSystem.tiny) // 增加顶部呼吸空间
                 
                 // 2. 标题
                 Text(notebook.name)
-                    .font(.system(size: 19, weight: .bold, design: .rounded))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
@@ -300,7 +301,7 @@ struct NotebookCard: View {
             }
             .padding(DesignSystem.medium)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 160)
+            .frame(height: 180)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
@@ -368,7 +369,7 @@ struct NotebookListRow: View {
                     
                     HStack(spacing: 6) {
                         Text("\(notebook.pageCount)\(L10n.Vault.tr("page.knowledge"))")
-                        Text("·")
+                        Text(DesignSystem.Icons.dotSeparator)
                         Text(notebook.updatedAt.formatted(date: .numeric, time: .omitted))
                     }
                     .font(.caption2)
@@ -464,18 +465,14 @@ struct NotebookFormSheet: View {
     var onSubmit: () -> Void
     
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var themeManager: ThemeManager
     private let iconOptions = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️", "📅", "🎯", "🔥", "🌈", "🧩"]
     
     var body: some View {
         NavigationStack {
             ZStack {
-                #if os(watchOS)
-                Color.black
+                themeManager.pageBackground()
                     .ignoresSafeArea()
-                #else
-                Color(UIColor.systemGroupedBackground)
-                    .ignoresSafeArea()
-                #endif
                 
                 ScrollView {
                     VStack(spacing: DesignSystem.huge) {
@@ -527,11 +524,7 @@ struct NotebookFormSheet: View {
                                 TextField(L10n.Vault.tr("namePlaceholder"), text: $name)
                                     .font(.title3.bold())
                                     .padding()
-                                    #if os(watchOS)
-                                    .background(Color.white.opacity(0.1))
-                                    #else
-                                    .background(Color(.secondarySystemGroupedBackground))
-                                    #endif
+                                    .background(Color.appCard)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                             
@@ -543,11 +536,7 @@ struct NotebookFormSheet: View {
                                 TextField(L10n.Vault.tr("descriptionPlaceholder"), text: $description, axis: .vertical)
                                     .lineLimit(3...5)
                                     .padding()
-                                    #if os(watchOS)
-                                    .background(Color.white.opacity(0.1))
-                                    #else
-                                    .background(Color(.secondarySystemGroupedBackground))
-                                    #endif
+                                    .background(Color.appCard)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                         }

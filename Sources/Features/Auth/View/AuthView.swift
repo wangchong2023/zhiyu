@@ -78,7 +78,7 @@ struct AuthView: View {
             }
             
             VStack(spacing: Spacing.atomic) {
-                Text("ZhiYu")
+                Text(Localized.tr("app.name"))
                     .font(.system(size: 24, weight: .black, design: .rounded))
                     .foregroundStyle(.appText)
                     .tracking(1)

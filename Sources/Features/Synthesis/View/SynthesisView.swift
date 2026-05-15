@@ -110,17 +110,7 @@ struct SynthesisView: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .appTabToolbar(title: L10n.Synthesis.title) {
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                router.navigate(to: .search())
-            }) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 18))
-                    .foregroundStyle(.appSecondary)
-            }
-            .buttonStyle(.plain)
-        }
+        .appTabToolbar(title: L10n.Synthesis.title)
         .sheet(isPresented: $showOutput) { outputSheet }
         .sheet(item: $pdfURL) { identifiable in
             #if !os(watchOS)
@@ -425,13 +415,7 @@ struct SynthesisView: View {
                     }
                 }
             }
-            .background(DesignSystem.containerMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                    .stroke(DesignSystem.containerBorder.opacity(DesignSystem.dimmedOpacity), lineWidth: DesignSystem.borderWidth / 2)
-            )
-            .shadow(color: Color.black.opacity(DesignSystem.shadowOpacity * 0.3), radius: DesignSystem.small, y: DesignSystem.tiny) // 0.03
+            .appContainer(padding: false)
         }
     }
 

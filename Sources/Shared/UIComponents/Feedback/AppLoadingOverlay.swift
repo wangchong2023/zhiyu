@@ -58,7 +58,7 @@ public struct AppLoadingOverlay: View {
                             .multilineTextAlignment(.center)
                     }
                 }
-                .padding(24)
+                .padding(DesignSystem.large)
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
             }
         }

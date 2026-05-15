@@ -461,7 +461,7 @@ struct ChartView: View {
         .background {
             RoundedRectangle(cornerRadius: 6, style: .continuous)
                 .fill(Color.appCard)
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                .appStandardShadow()
         }
     }
     

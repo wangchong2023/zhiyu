@@ -263,7 +263,7 @@ struct PDFReaderView: View {
             ContentUnavailableView(Localized.tr("pdf.cannotLoadPDF"), systemImage: "exclamationmark.triangle")
         }
         #else
-        ContentUnavailableView("PDF Not Supported", systemImage: "exclamationmark.triangle", description: Text("PDF reading is not supported on this platform."))
+        ContentUnavailableView(Localized.tr("pdf.notSupported"), systemImage: DesignSystem.Icons.warning, description: Text(Localized.tr("pdf.notSupportedDesc")))
         #endif
     }
 
@@ -344,7 +344,7 @@ struct PDFReaderView: View {
                     .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             }
         }
-        .padding(12)
+        .padding(DesignSystem.medium)
         .background(Color.appCard)
     }
 

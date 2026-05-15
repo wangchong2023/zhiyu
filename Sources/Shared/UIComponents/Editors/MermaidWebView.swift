@@ -61,7 +61,7 @@ struct MermaidWebView: View {
                     .stroke(Color.appBorder.opacity(0.5), lineWidth: 0.5)
             )
             .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
-            .padding(16)
+            .padding(DesignSystem.Layout.cardContentPadding)
         }
         .frame(minHeight: 400)
         .sheet(item: $identifiablePDFURL) { identifiable in

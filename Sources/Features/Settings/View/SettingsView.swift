@@ -209,7 +209,7 @@ struct SettingsView: View {
                                     .foregroundStyle(.appSecondary)
                             }
                         } icon: {
-                            Image(systemName: "eye.slash.fill")
+                            Image(systemName: DesignSystem.Icons.eyeSlash)
                                 .foregroundStyle(.appAccent)
                         }
                     }
@@ -219,7 +219,7 @@ struct SettingsView: View {
                         Label {
                             Text(L10n.Settings.biometricProtection)
                         } icon: {
-                            Image(systemName: "faceid")
+                            Image(systemName: DesignSystem.Icons.faceid)
                                 .foregroundStyle(.blue)
                         }
                     }

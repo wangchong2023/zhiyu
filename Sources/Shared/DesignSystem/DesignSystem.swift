@@ -55,7 +55,7 @@ public enum DesignSystem {
         public static let huge: CGFloat = Spacing.iconHuge
         public static let display: CGFloat = Spacing.iconDisplay
         
-        // 系统图标符号 (来自 Typography.Icons)
+        // ── 系统图标符号 (来自 Typography.Icons) ──
         public static let trophy = Typography.Icons.trophy
         public static let tag = Typography.Icons.tag
         public static let hashtag = Typography.Icons.hashtag
@@ -63,6 +63,7 @@ public enum DesignSystem {
         public static let sparkles = Typography.Icons.sparkles
         public static let more = Typography.Icons.more
         public static let edit = Typography.Icons.edit
+        public static let pencilCircle = Typography.Icons.pencilCircle
         public static let delete = Typography.Icons.delete
         public static let pin = Typography.Icons.pin
         public static let unpin = Typography.Icons.unpin
@@ -70,9 +71,78 @@ public enum DesignSystem {
         public static let refresh = Typography.Icons.refresh
         public static let reset = Typography.Icons.reset
         public static let plus = Typography.Icons.plus
+        public static let plusCircle = Typography.Icons.plusCircle
         public static let lock = Typography.Icons.lock
         public static let lockOpen = Typography.Icons.lockOpen
+        public static let info = Typography.Icons.info
+        public static let check = Typography.Icons.check
+        public static let checkCircle = Typography.Icons.checkCircle
+        public static let errorCircle = Typography.Icons.errorCircle
+        public static let timer = Typography.Icons.timer
+        public static let warning = Typography.Icons.warning
+        public static let star = Typography.Icons.star
+        public static let dotSeparator = Typography.Icons.dotSeparator
+        public static let bullet = Typography.Icons.bullet
+        public static let undo = Typography.Icons.undo
+        public static let copy = Typography.Icons.copy
+        public static let seal = Typography.Icons.seal
+        public static let eyeSlash = Typography.Icons.eyeSlash
+        public static let faceid = Typography.Icons.faceid
+        public static let archive = Typography.Icons.archive
+        public static let box = Typography.Icons.box
+        public static let docRichtext = Typography.Icons.docRichtext
         
+        // ── 导航与 UI 图标 ──
+        public static let back = Typography.Icons.back
+        public static let forward = Typography.Icons.forward
+        public static let forwardCircle = Typography.Icons.forwardCircle
+        public static let arrowUpRight = Typography.Icons.arrowUpRight
+        public static let search = Typography.Icons.search
+        public static let command = Typography.Icons.command
+        public static let checklist = Typography.Icons.checklist
+        public static let grid = Typography.Icons.grid
+        public static let list = Typography.Icons.list
+        public static let chevronUpDown = Typography.Icons.chevronUpDown
+        
+        // ── 硬件与系统 ──
+        public static let person = Typography.Icons.person
+        public static let personCircle = Typography.Icons.personCircle
+        public static let personCheck = Typography.Icons.personCheck
+        public static let persons = Typography.Icons.persons
+        public static let personsCircle = Typography.Icons.personsCircle
+        public static let cpu = Typography.Icons.cpu
+        public static let cpuOutline = Typography.Icons.cpuOutline
+        public static let bolt = Typography.Icons.bolt
+        public static let antenna = Typography.Icons.antenna
+        
+        // ── 业务/特性专用 ──
+        public static let knowledge = Typography.Icons.knowledge
+        public static let dashboard = Typography.Icons.dashboard
+        public static let pageList = Typography.Icons.pageList
+        public static let weeklyInsight = Typography.Icons.weeklyInsight
+        public static let healthCheck = Typography.Icons.healthCheck
+        public static let plugins = Typography.Icons.plugins
+        public static let collaboration = Typography.Icons.collaboration
+        public static let collaborationPeers = Typography.Icons.persons // 兼容别名
+        public static let broadcast = Typography.Icons.antenna // 兼容别名
+        public static let crown = Typography.Icons.crown
+        public static let synthesisIcon = Typography.Icons.synthesisIcon
+        public static let chatBubble = Typography.Icons.chatBubble
+        public static let trayArrowDown = Typography.Icons.trayArrowDown
+        public static let importIcon = Typography.Icons.trayArrowDown // 兼容别名
+        public static let export = "square.and.arrow.up" // 兼容别名
+        public static let ocr = Typography.Icons.ocr
+        public static let mic = Typography.Icons.mic
+        
+        // ── 统计与图表 ──
+        public static let chartLine = Typography.Icons.chartLine
+        public static let chartPie = Typography.Icons.chartPie
+        public static let chartBar = Typography.Icons.chartBar
+        public static let network = Typography.Icons.network
+        public static let database = Typography.Icons.database
+        public static let log = Typography.Icons.log
+        
+        // ── 知识分类语义化图标 ──
         public static let entity = Typography.Icons.entity
         public static let concept = Typography.Icons.concept
         public static let source = Typography.Icons.source
@@ -410,12 +480,23 @@ public enum DesignSystem {
     public static let coachMarkBackgroundOpacity: Double = Colors.Opacity.coachMarkBackgroundOpacity
     
     public static let surfaceOpacity: Double = Colors.Opacity.surfaceOpacity
+    public static let cardOpacity: Double = Colors.Opacity.cardOpacity
     public static let translucentOpacity: Double = Colors.Opacity.translucentOpacity
     public static let softOpacity: Double = Colors.Opacity.softOpacity
     public static let ghostOpacity: Double = Colors.Opacity.ghostOpacity
     
     public static let dividerOpacity: Double = Colors.Opacity.dividerOpacity
     public static let accentStrokeOpacity: Double = Colors.Opacity.accentStrokeOpacity
+    
+    // MARK: - 19.5 标准阴影令牌 (Shadows)
+    public enum Shadows {
+        /// 玻璃拟态卡片阴影 (轻微，黑色 5%)
+        public static let glass = (color: Colors.Opacity.glassShadowColor, radius: CGFloat(10), x: CGFloat(0), y: CGFloat(5))
+        /// 标准浮动卡片阴影 (中等，黑色 6%)
+        public static let standard = (color: Colors.shadowColor, radius: CGFloat(8), x: CGFloat(0), y: CGFloat(4))
+        /// 深度悬浮阴影 (强烈，用于弹出层或深色背景，黑色 12%)
+        public static let deep = (color: Colors.Opacity.deepShadowColor, radius: CGFloat(15), x: CGFloat(0), y: CGFloat(8))
+    }
     
     // MARK: - 20. 容器颜色 (Container Colors)
     public static var containerBackground: Color { Color.appCard }

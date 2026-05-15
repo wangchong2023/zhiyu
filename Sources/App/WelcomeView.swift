@@ -43,22 +43,27 @@ struct WelcomeView: View {
 
 struct WelcomeHeroSection: View {
     var body: some View {
-        VStack(spacing: Spacing.standardPadding) {
+        VStack(spacing: DesignSystem.standardPadding) {
             ZStack {
-                AppDotPattern(dotColor: Color.appBorder, spacing: Spacing.wide, dotSize: Spacing.atomic)
-                    .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight).opacity(DesignSystem.halfOpacity)
+                AppDotPattern(dotColor: Color.appBorder, spacing: DesignSystem.wide, dotSize: DesignSystem.atomic)
+                    .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight)
+                    .opacity(DesignSystem.halfOpacity)
+                
                 Circle().fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8))
                     .frame(width: DesignSystem.Metrics.welcomeHeroCircleSize, height: DesignSystem.Metrics.welcomeHeroCircleSize)
-                    .blur(radius: Spacing.wide)
-                Image(systemName: "books.vertical.circle.fill")
+                    .blur(radius: DesignSystem.wide)
+                
+                Image(systemName: DesignSystem.Icons.knowledge)
                     .font(.system(size: DesignSystem.Metrics.welcomeHeroIconSize))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(DesignSystem.glassOpacity * 4), radius: Spacing.standardPadding, x: 0, y: Spacing.small)
+                    .shadow(color: .appAccent.opacity(DesignSystem.softOpacity), radius: DesignSystem.standardPadding)
             }
             .frame(height: DesignSystem.Metrics.welcomeHeroDotHeight)
-            Text(Localized.tr("page.knowledge"))
-                .font(.system(size: Spacing.huge + Spacing.tiny, weight: .bold, design: .rounded))
+            
+            Text(Localized.tr("app.name"))
+                .font(.system(size: DesignSystem.huge + DesignSystem.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
+            
             Text(Localized.tr("welcome.subtitle"))
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
@@ -69,13 +74,13 @@ struct WelcomeHeroSection: View {
 
 struct WelcomeStatsSection: View {
     @Environment(AppStore.self) var store
-    private let columns = [GridItem(.adaptive(minimum: DesignSystem.Metrics.statCardMinWidth, maximum: .infinity), spacing: Spacing.wide)]
+    private let columns = [GridItem(.adaptive(minimum: DesignSystem.Metrics.statCardMinWidth, maximum: .infinity), spacing: DesignSystem.wide)]
     var body: some View {
-        LazyVGrid(columns: columns, spacing: Spacing.wide) {
-            StatCard(title: Localized.tr("stat.totalPages"), value: "\(store.totalPages)", icon: "doc.richtext.fill", color: .appAccent)
-            StatCard(title: Localized.tr("stat.entities"), value: "\(store.entityCount)", icon: "person.text.rectangle.fill", color: .appEntity)
-            StatCard(title: Localized.tr("stat.concepts"), value: "\(store.conceptCount)", icon: "lightbulb.fill", color: .appConcept)
-            StatCard(title: Localized.tr("stat.sources"), value: "\(store.sourceCount)", icon: "doc.plaintext.fill", color: .appSource)
+        LazyVGrid(columns: columns, spacing: DesignSystem.wide) {
+            StatCard(title: Localized.tr("stat.totalPages"), value: "\(store.totalPages)", icon: DesignSystem.Icons.source, color: .appAccent)
+            StatCard(title: Localized.tr("stat.entities"), value: "\(store.entityCount)", icon: DesignSystem.Icons.entity, color: .appEntity)
+            StatCard(title: Localized.tr("stat.concepts"), value: "\(store.conceptCount)", icon: DesignSystem.Icons.concept, color: .appConcept)
+            StatCard(title: Localized.tr("stat.sources"), value: "\(store.sourceCount)", icon: DesignSystem.Icons.source, color: .appSource)
         }
         .padding(.horizontal)
     }
@@ -84,9 +89,9 @@ struct WelcomeStatsSection: View {
 struct WelcomeGrowthChartSection: View {
     let data: [AppStore.KnowledgeGrowthPoint]
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.medium) {
-            HStack(spacing: Spacing.small) {
-                Image(systemName: "chart.line.uptrend.xyaxis")
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            HStack(spacing: DesignSystem.small) {
+                Image(systemName: DesignSystem.Icons.chartLine)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
                 Text(Localized.tr("welcome.growthTrend"))
@@ -98,11 +103,10 @@ struct WelcomeGrowthChartSection: View {
                 LineMark(x: .value("Date", point.date), y: .value("Count", point.count))
                     .foregroundStyle(Color.appAccent)
             }
-            .frame(height: Spacing.Metrics.boxHeight)
+            .frame(height: DesignSystem.Metrics.boxHeight)
         }
-        .padding(Spacing.wide)
-        .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
+        .padding(DesignSystem.wide)
+        .appContainer(background: Color.appCard)
         .padding(.horizontal)
     }
 }
@@ -112,9 +116,9 @@ struct WelcomeRecentUpdatesSection: View {
     @Environment(Router.self) var router
     @Binding var selectedTab: AppTab
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.medium) {
-            HStack(spacing: Spacing.small) {
-                Image(systemName: "clock.arrow.circlepath")
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            HStack(spacing: DesignSystem.small) {
+                Image(systemName: DesignSystem.Icons.history)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
                 Text(Localized.tr("recentUpdates"))
@@ -137,9 +141,9 @@ struct WelcomeQuickStartGuideSection: View {
     @Binding var injectedCount: Int
     
     var body: some View {
-        VStack(spacing: Spacing.wide) {
+        VStack(spacing: DesignSystem.wide) {
             HStack {
-                Image(systemName: "sparkles")
+                Image(systemName: DesignSystem.Icons.sparkles)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
                 Text(Localized.tr("welcome.quickStart"))
@@ -148,9 +152,9 @@ struct WelcomeQuickStartGuideSection: View {
                 Spacer()
             }
             
-            VStack(alignment: .leading, spacing: Spacing.medium) {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 GuideStepRow(number: 1, text: Localized.tr("welcome.guide.createPage"), icon: "doc.badge.plus")
-                GuideStepRow(number: 2, text: Localized.tr("welcome.guide.knowledgeLink"), icon: "link")
+                GuideStepRow(number: 2, text: Localized.tr("welcome.guide.knowledgeLink"), icon: DesignSystem.Icons.link)
             }
             
             // 快捷注入演示数据入口
@@ -161,7 +165,7 @@ struct WelcomeQuickStartGuideSection: View {
                 showInjectSuccess = true
             }) {
                 HStack {
-                    VStack(alignment: .leading, spacing: Spacing.tiny) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                         Text(Localized.tr("welcome.demo.title"))
                             .font(.subheadline.bold())
                             .foregroundStyle(Color.appAccent)
@@ -170,23 +174,22 @@ struct WelcomeQuickStartGuideSection: View {
                             .foregroundStyle(Color.appSecondary)
                     }
                     Spacer()
-                    Image(systemName: "arrow.right.circle.fill")
+                    Image(systemName: DesignSystem.Icons.forwardCircle)
                         .font(.title3)
                         .foregroundStyle(Color.appAccent)
                 }
                 .padding()
-                .background(Color.appAccent.opacity(Colors.glassOpacity / 2))
-                .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
+                .background(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.5))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                 .overlay(
-                    RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                        .stroke(Color.appAccent.opacity(Colors.glassOpacity), lineWidth: Spacing.borderWidth)
+                    RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                        .stroke(Color.appAccent.opacity(DesignSystem.glassOpacity), lineWidth: DesignSystem.borderWidth)
                 )
             }
             .buttonStyle(.plain)
         }
         .padding(DesignSystem.wide)
-        .background(Color.appCard)
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        .appContainer(background: Color.appCard)
         .padding(.horizontal)
     }
 }
@@ -195,9 +198,9 @@ struct WelcomeQuickActionsSection: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.medium) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             QuickActionRow(icon: "plus.circle.fill", title: L10n.Action.tr("createPage"), subtitle: L10n.Action.tr("createPage.subtitle"), color: .appAccent) { store.showCreateSheet = true }
-            QuickActionRow(icon: "tray.and.arrow.down.fill", title: L10n.Action.tr("ingestKnowledge"), subtitle: L10n.Action.tr("ingestKnowledge.subtitle"), color: .appSource) { selectedTab = .ingest }
+            QuickActionRow(icon: DesignSystem.Icons.importIcon, title: L10n.Action.tr("ingestKnowledge"), subtitle: L10n.Action.tr("ingestKnowledge.subtitle"), color: .appSource) { selectedTab = .ingest }
         }.padding(.horizontal)
     }
 }

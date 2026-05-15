@@ -44,30 +44,32 @@ struct UserProfileMenu: View {
         .sheet(isPresented: $showAbout) { aboutStack }
         #else
         Menu {
-            // 常用操作区域：设置、锁定、指引
-            Section {
-                Button(action: { showSettings = true }) {
-                    Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
-                }
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    store.securityService.lock()
-                }) {
-                    Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
-                }
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    onboardingService.reset()
-                    store.pendingCoachMark = .graphDiscovery
-                }) {
-                    Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
-                }
+            Button(action: { showSettings = true }) {
+                Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
             }
-            // 退出登录区域
-            Section {
-                Button(role: .destructive, action: { authService.logout() }) {
-                    Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
-                }
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                store.securityService.lock()
+                store.requestRelayout() // 强制触发 UI 状态评估
+            }) {
+                Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
+            }
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                onboardingService.reset()
+                onboardingService.nextStep()
+                store.pendingCoachMark = .graphDiscovery
+                store.requestRelayout() // 强制触发 UI 状态评估
+            }) {
+                Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
+            }
+            
+            Divider()
+            
+            Button(role: .destructive, action: { authService.logout() }) {
+                Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
             }
         } label: {
             profileLabel
@@ -92,11 +94,7 @@ struct UserProfileMenu: View {
         }
         .foregroundStyle(.appAccent)
         .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
-        .background(
-            Circle()
-                .fill(.appAccent.opacity(DesignSystem.surfaceOpacity))
-        )
-        .contentShape(Rectangle())
+        .contentShape(Circle())
     }
     
     private var settingsStack: some View {

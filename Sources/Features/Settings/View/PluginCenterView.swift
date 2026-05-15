@@ -212,7 +212,7 @@ struct PluginCard: View {
                 HStack(spacing: DesignSystem.tightPadding) {
                     Text("v\(version)").font(.caption2).foregroundStyle(.appSecondary)
                     if let author = author {
-                        Text("•").font(.caption2).foregroundStyle(.appSecondary)
+                        Text(DesignSystem.Icons.bullet).font(.caption2).foregroundStyle(.appSecondary)
                         Text(author).font(.caption2).foregroundStyle(.appSecondary)
                     }
                 }

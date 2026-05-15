@@ -58,90 +58,79 @@ struct ChatBubbleView: View {
     }
     
     private var userBubble: some View {
-        VStack(alignment: .trailing, spacing: Spacing.tiny) { // 4
-            VStack(alignment: .trailing, spacing: Spacing.tiny + Spacing.atomic) { // 6
-                HStack(spacing: Spacing.tiny) { // 4
-                    Text(message.content)
-                        .font(.body)
-                        .foregroundStyle(.white)
-                    
-                    Image(systemName: "person.circle.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.white.opacity(Colors.secondaryOpacity)) // 0.8
-                        .offset(y: Spacing.atomic) // 1
-                }
+        VStack(alignment: .trailing, spacing: Spacing.tiny) {
+            HStack(alignment: .top, spacing: Spacing.tiny) {
+                Text(message.content)
+                    .font(.body)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, Spacing.standardPadding)
+                    .padding(.vertical, Spacing.medium)
+                    .background(
+                        LinearGradient(
+                            colors: [.appAccent, .appAccent.opacity(0.85)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .shadow(color: Color.appAccent.opacity(0.12), radius: 8, x: 0, y: 4)
+                
+                Image(systemName: DesignSystem.Icons.personCircle)
+                    .font(.title3)
+                    .foregroundStyle(.appAccent.opacity(0.6))
+                    .padding(.top, 4)
             }
-            .padding(.horizontal, Spacing.standardPadding) // 16
-            .padding(.vertical, Spacing.medium) // 12
-            .frame(minWidth: Spacing.huge * 1.875) // 60
-            .background(
-                LinearGradient(
-                    colors: [.appAccent, .appAccent.opacity(Colors.secondaryOpacity)], // 0.8
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
-            .shadow(color: Color.appAccent.opacity(Colors.glassOpacity * 1.5), radius: Spacing.tightPadding, x: 0, y: Spacing.tiny) // 0.15, 8, 4
             
             Text(timestampString)
-                .font(.system(size: Typography.microFontSize - Spacing.atomic)) // 9
-                .foregroundStyle(.appSecondary.opacity(Colors.secondaryOpacity * 0.75)) // 0.6
-                .padding(.trailing, Spacing.tiny) // 4
+                .font(.system(size: 9))
+                .foregroundStyle(.appSecondary.opacity(0.6))
+                .padding(.trailing, 28)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.leading, Spacing.huge * 1.875) // 60
+        .padding(.leading, 48) // 增加左侧避让
+        .padding(.trailing, Spacing.standardPadding) // 增加右侧间距，防贴边
     }
     
     private var assistantBubble: some View {
-        VStack(alignment: .leading, spacing: Spacing.tiny + Spacing.atomic) { // 6
-            VStack(alignment: .leading, spacing: Spacing.tightPadding) { // 8
-                HStack(spacing: Spacing.tiny + Spacing.atomic) { // 6
-                    ZStack {
-                        Circle()
-                            .fill(Color.appAccent.opacity(Colors.glassOpacity)) // 0.1
-                            .frame(width: Spacing.Action.iconSize, height: Spacing.Action.iconSize) // 20
-                        Image(systemName: "sparkles")
-                            .font(.system(size: Typography.microFontSize)) // 10
-                            .foregroundStyle(.appAccent)
-                    }
-                    Text(L10n.Chat.tr("aiAssistantName"))
-                        .font(.system(size: Typography.microFontSize + Spacing.atomic, weight: .bold)) // 11
+        VStack(alignment: .leading, spacing: Spacing.tiny) {
+            // Header: Assistant Identity (Outside the bubble)
+            HStack(spacing: Spacing.tiny + Spacing.atomic) {
+                ZStack {
+                    Circle()
+                        .fill(Color.appAccent.opacity(Colors.glassOpacity))
+                        .frame(width: 22, height: 22)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.appAccent)
                 }
+                Text(L10n.Chat.tr("aiAssistantName"))
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.appAccent)
                 
-                ChatContentView(text: message.content, pages: pages, selectedTab: $selectedTab)
+                Spacer()
+                
+                Text(timestampString)
+                    .font(.system(size: 9))
+                    .foregroundStyle(.appSecondary.opacity(0.6))
             }
-            .padding(.horizontal, Spacing.standardPadding) // 16
-            .padding(.vertical, Spacing.standardPadding - Spacing.atomic) // 14
-            .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: Spacing.standardRadius)
-                    .stroke(
-                        LinearGradient(
-                            colors: [.appAccent.opacity(Colors.glassOpacity), .clear], // 0.1
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: Spacing.borderWidth // 1
-                    )
-            )
-            .shadow(color: Color.black.opacity(Colors.glassOpacity * 0.4), radius: Spacing.tightPadding + Spacing.atomic, x: 0, y: Spacing.tiny + Spacing.atomic) // 0.04, 10, 5
+            .padding(.horizontal, Spacing.tiny)
+            .padding(.bottom, 2)
+            
+            // Content Bubble
+            ChatContentView(text: message.content, pages: pages, selectedTab: $selectedTab)
+                .appContainer(padding: true)
+                .frame(maxWidth: UIScreen.main.bounds.width * 0.85, alignment: .leading)
             
             // Collapsible References Panel
             if !message.relatedPageIDs.isEmpty {
                 referencesPanel
-                    .padding(.top, Spacing.atomic * 2) // 2
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.85, alignment: .leading)
+                    .padding(.top, 4)
             }
-            
-            Text(timestampString)
-                .font(.system(size: Typography.microFontSize - Spacing.atomic)) // 9
-                .foregroundStyle(.appSecondary.opacity(Colors.secondaryOpacity * 0.75)) // 0.6
-                .padding(.leading, Spacing.tiny) // 4
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.trailing, Spacing.huge) // 32
+        .padding(.leading, Spacing.standardPadding)
+        .padding(.trailing, 48)
     }
     
     /// Collapsible references panel showing cited knowledge pages grouped by type
@@ -213,12 +202,12 @@ struct ChatBubbleView: View {
                 }
             }
         }
-        .padding(10)
-        .background(Color.appCard.opacity(0.7))
-        .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
+        .padding(DesignSystem.medium)
+        .background(Color.appCard.opacity(DesignSystem.surfaceOpacity))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         .overlay(
-            RoundedRectangle(cornerRadius: Spacing.smallRadius)
-                .stroke(Color.appBorder.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                .stroke(Color.appBorder.opacity(DesignSystem.softOpacity), lineWidth: DesignSystem.borderWidth)
         )
     }
     
@@ -250,7 +239,12 @@ struct ChatContentView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            let displayText = expanded ? text : String(text.prefix(1500))
+            // 清理常见的 LLM 转义符错误 (例如 \` -> `)
+            let cleanedText = text.replacingOccurrences(of: "\\`", with: "`")
+                .replacingOccurrences(of: "\\*", with: "*")
+                .replacingOccurrences(of: "\\_", with: "_")
+            
+            let displayText = expanded ? cleanedText : String(cleanedText.prefix(1500))
             
             MarkdownRendererView(content: displayText, isPrivate: false, onLinkTap: { title in
                 let targetTitle = title.trimmingCharacters(in: .whitespaces)

@@ -129,7 +129,7 @@ struct IngestView: View {
                 Spacer()
                 Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
             }
-            .padding(DesignSystem.standardPadding).background(Color.appCard.opacity(0.8)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+            .appContainer(padding: true)
         }.buttonStyle(.plain)
     }
 
