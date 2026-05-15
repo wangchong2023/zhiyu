@@ -225,8 +225,8 @@ struct ContentView: View {
             Tab(AppTab.ingest.displayTitle, systemImage: AppTab.ingest.icon, value: AppTab.ingest) {
                 ingestTabContent
             }
-            Tab(AppTab.search.displayTitle, systemImage: AppTab.search.icon, value: AppTab.search) {
-                searchTabContent
+            Tab(AppTab.synthesis.displayTitle, systemImage: AppTab.synthesis.icon, value: AppTab.synthesis) {
+                synthesisTabContent
             }
             Tab(AppTab.graph.displayTitle, systemImage: AppTab.graph.icon, value: AppTab.graph) {
                 graphTabContent
@@ -287,12 +287,12 @@ struct ContentView: View {
                 }
                 .tag(AppTab.ingest)
 
-            searchTabContent
-                .accessibilityIdentifier("Search")
+            synthesisTabContent
+                .accessibilityIdentifier("Synthesis")
                 .tabItem {
-                    Label(AppTab.search.displayTitle, systemImage: AppTab.search.icon)
+                    Label(AppTab.synthesis.displayTitle, systemImage: AppTab.synthesis.icon)
                 }
-                .tag(AppTab.search)
+                .tag(AppTab.synthesis)
 
             graphTabContent
                 .accessibilityIdentifier("Graph")
@@ -376,12 +376,12 @@ struct ContentView: View {
         }
     }
     
-    /// Search tab 内容，languageForceUpdate 时强制刷新
+    /// Synthesis tab 内容，languageForceUpdate 时强制刷新
     @ViewBuilder
-    private var searchTabContent: some View {
+    private var synthesisTabContent: some View {
         @Bindable var router = router
         NavigationStack(path: $router.path) {
-            SearchView()
+            SynthesisView(selection: $router.sidebarSelection, selectedTab: $router.selectedTab)
                 .id(router.languageForceUpdate)
                 .navigationDestination(for: AppRoute.self) { route in
                     ViewFactory.makeView(for: route)

@@ -25,6 +25,7 @@ final class MockLogger: LoggerProtocol, @unchecked Sendable {
 }
 
 // MARK: - Mock LLM Service
+@MainActor
 @preconcurrency
 final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
     var objectWillChange = ObservableObjectPublisher()

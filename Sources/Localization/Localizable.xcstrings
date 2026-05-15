@@ -10957,6 +10957,9 @@
         }
       }
     },
+    "K" : {
+
+    },
     "linksCountFormat" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -26000,6 +26003,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索"
+          }
+        }
+      }
+    },
+    "tab.synthesis" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Synthesis"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "合成"
           }
         }
       }

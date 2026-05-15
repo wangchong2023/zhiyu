@@ -31,30 +31,44 @@ final class AppStoreTests: XCTestCase {
     func testPageCreation() async {
         let initialCount = store.totalPages
         let _ = await store.createPage(title: "Test Page", type: .concept, content: "Test Content")
+        
+        // Wait for ValueObservation
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        
         XCTAssertEqual(store.totalPages, initialCount + 1)
     }
     
     func testUndoRedo() async {
         let initialCount = store.totalPages
         _ = await store.createPage(title: "Undo Test", type: .concept)
+        
+        // Wait for ValueObservation
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount + 1)
         
         store.undo()
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount)
         
         store.redo()
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount + 1)
     }
     
     func testTagManagement() async {
         let _ = await store.createPage(title: "Tag Test", type: .concept, tags: ["OldTag"])
+        
+        // Wait for ValueObservation
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertTrue(store.pages.contains { $0.tags.contains("OldTag") })
         
         store.renameTag("OldTag", to: "NewTag")
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertTrue(store.pages.contains { $0.tags.contains("NewTag") })
         XCTAssertFalse(store.pages.contains { $0.tags.contains("OldTag") })
         
         store.deleteTag("NewTag")
+        try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertFalse(store.pages.contains { $0.tags.contains("NewTag") })
     }
 }

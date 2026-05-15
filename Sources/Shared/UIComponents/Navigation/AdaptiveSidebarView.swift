@@ -30,7 +30,7 @@ struct AdaptiveSidebarView: View {
             Section(Localized.tr("sidebar.tools")) {
                 sidebarRow(for: .chat)
                 sidebarRow(for: .ingest)
-                sidebarRow(for: .search)
+                sidebarRow(for: .synthesis)
                 sidebarRow(for: .graph)
                 
                 // 快捷跳转到任务中心 (作为 Knowledge 模块的子操作)
@@ -101,8 +101,8 @@ struct AdaptiveDetailView: View {
                     ChatView(selectedTab: $selectedTab)
                 case .graph:
                     GraphContainerView(heroNamespace: heroNamespace, selectedTab: $selectedTab)
-                case .search:
-                    SearchView()
+                case .synthesis:
+                    SynthesisView(selection: $selection, selectedTab: $selectedTab)
                 case .ingest:
                     IngestView(selectedTab: $selectedTab)
                 }

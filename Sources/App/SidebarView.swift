@@ -48,7 +48,52 @@ enum SidebarSelection: Hashable {
     }
 }
 
-// MARK: - Sidebar View
+// MARK: - Sections
+
+struct SearchSection: View {
+    @Environment(Router.self) var router
+    var body: some View {
+        Section {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                router.navigate(to: .search)
+            }) {
+                HStack(spacing: DesignSystem.medium) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.appAccent)
+                    
+                    Text(Localized.tr("search.placeholder"))
+                        .font(.subheadline)
+                        .foregroundStyle(.appSecondary)
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 2) {
+                        Image(systemName: "command")
+                        Text("K")
+                    }
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.appSecondary.opacity(0.4))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.appBorder.opacity(0.3))
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+                .padding(.vertical, DesignSystem.tiny)
+            }
+            .buttonStyle(.plain)
+        }
+        .listRowBackground(
+            RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                .fill(Color.appCard.opacity(DesignSystem.subtleOpacity))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                        .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
+                )
+        )
+    }
+}
 @MainActor
 struct SidebarView: View {
     @Environment(AppStore.self) var store
@@ -69,6 +114,7 @@ struct SidebarView: View {
         Group {
             if horizontalSizeClass == .compact {
                 List {
+                    SearchSection()
                     CapabilitiesSection()
                     UniverseSection()
                     PinnedSection(
@@ -80,6 +126,7 @@ struct SidebarView: View {
                 }
             } else {
                 List(selection: $router.sidebarSelection) {
+                    SearchSection()
                     CapabilitiesSection()
                     UniverseSection()
                     PinnedSection(
@@ -121,11 +168,6 @@ struct CapabilitiesSection: View {
         Section {
             NavigationLink(value: AppRoute.dashboard) {
                 Label(Localized.tr("sidebar.dashboard"), systemImage: "gauge.with.needle.fill")
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
-            }
-            NavigationLink(value: AppRoute.synthesis) {
-                Label(Localized.tr("sidebar.synthesis"), systemImage: "wand.and.stars")
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }

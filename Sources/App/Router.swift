@@ -125,9 +125,12 @@ final class Router {
             switch tool {
             case .chat: selectedTab = .chat
             case .graph: selectedTab = .graph
-            case .search: selectedTab = .search
             case .ingest: selectedTab = .ingest
-            case .pageList, .dashboard, .lint, .tagCloud, .taskCenter, .synthesis, .weeklyReport, .log, .collab, .pluginMarket:
+            case .synthesis: selectedTab = .synthesis
+            case .search:
+                // 搜索现在被合并到知识库 Tab
+                selectedTab = .knowledge
+            case .pageList, .dashboard, .lint, .tagCloud, .taskCenter, .weeklyReport, .log, .collab, .pluginMarket:
                 selectedTab = .knowledge
             default: break
             }
