@@ -1,7 +1,7 @@
 // ContentView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的全局根视图（ContentView），作为整个应用程序的 UI 容器与状态协调中心。
+// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的全局根视图（ContentView），作为整个应用程序的 UI 容器与状态协调中心。
 // 该视图集成了响应式布局引擎与全局反馈层，主要功能点如下：
 // 1. 多设备自适应导航：基于 SwiftUI 的 Size Class 机制，在 iPad/macOS 上自动切换为 NavigationSplitView（侧边栏模式），而在 iPhone 上呈现为现代化的 TabView。
 // 2. 全局安全与入库控制：挂载了隐私锁定层（LockOverlay）、新手引导（Onboarding）及全局通知（Toast）系统，确保应用在不同生命周期阶段的安全性。
@@ -541,10 +541,10 @@ struct CoachMarkOverlay: View {
     }
     
     private func dismissWithAnimation() {
-        withAnimation(.easeIn(duration: DesignSystem.Animation.fastDuration)) { // 0.2
+        withAnimation(.easeIn(duration: DesignSystem.Animation.fastDuration)) {
             isAnimating = false
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.fastDuration) { // 0.2
+        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.fastDuration) {
             onDismiss()
         }
     }

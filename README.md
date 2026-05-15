@@ -58,9 +58,10 @@ graph TD
 - **混合存储**：结合 SQLite (FTS5) 与向量距离 (Vector Index) 的双引擎召回。
 
 #### 🔵 业务功能层 (Features)
-- **对话中心 (Features/Chat)**：垂直集成的对话历史管理与 RAG 调度。
-- **产出实验室 (Features/Synthesis)**：支持生成思维导图、JSON 测验、深度总结，利用 `[[Source]]` 实现语义溯源。
-- **安全金库 (Features/Vault)**：基于生物识别的二层加密存储。
+- **按域分组**：目前分为 `Knowledge` (核心知识流)、`AI` (AI 实验室)、`Insight` (洞察与质量) 和 `System` (通用系统) 四大领域。
+- **对话中心 (Features/AI/Chat)**：垂直集成的对话历史管理与 RAG 调度。
+- **产出实验室 (Features/AI/Synthesis)**：支持生成思维导图、JSON 测验、深度总结，利用 `[[Source]]` 实现语义溯源。
+- **安全金库 (Features/Knowledge/Vault)**：基于生物识别的二层加密存储。
 
 #### 🟣 应用与共享层 (App & Shared)
 - **全局调度 (App)**：管理 `AppEnvironment` 的初始化与 `Router` 全局导航。

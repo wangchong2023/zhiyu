@@ -1,7 +1,7 @@
 // NavigationView.swift
 //
 // 作者: Wang Chong
-// 功能说明: struct NavigationView
+// 功能说明: [L3] 应用调度层：struct NavigationView
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02

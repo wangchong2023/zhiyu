@@ -1,7 +1,7 @@
 // PPTXProcessor.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了 PowerPoint (PPTX) 文档生成处理器（PPTXProcessor），负责将结构化知识转化为演示文稿格式。
+// 功能说明: [L1] 基础设施层：本文件实现了 PowerPoint (PPTX) 文档生成处理器（PPTXProcessor），负责将结构化知识转化为演示文稿格式。
 // 该处理器的核心功能点如下：
 // 1. 幻灯片布局映射：根据 Markdown 标题和内容自动计算幻灯片页数，实现“一标题一页面”的智能排版。
 // 2. XML 模板注入：基于标准的 PPTX XML 规范生成演示文稿，确保在所有标准办公软件中具备良好的兼容性。
@@ -46,19 +46,9 @@ final class PPTXProcessor {
             try FileManager.default.removeItem(at: outputURL)
         }
 
-        #if os(macOS)
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/zip")
-        process.currentDirectoryURL = tempDir
-        process.arguments = ["-r", outputURL.path, "."]
-
-        try process.run()
-        process.waitUntilExit()
+        @Inject var archiver: any FileArchiverProtocol
+        try await archiver.zip(directory: tempDir, to: outputURL)
         return outputURL
-        #else
-        // iOS 逻辑：目前无法在没有第三方库的情况下原生 ZIP
-        throw NSError(domain: "PPTXProcessor", code: 405, userInfo: [NSLocalizedDescriptionKey: "iOS requires macOS toolchain for native zipping"])
-        #endif
     }
 
     private func parseMarkdown(_ markdown: String) -> [Slide] {

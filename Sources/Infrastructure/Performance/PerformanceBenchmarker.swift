@@ -1,7 +1,7 @@
 // PerformanceBenchmarker.swift
 //
 // 作者: Wang Chong
-// 功能说明: 性能压测工具 (仅限 Debug/Internal 使用)
+// 功能说明: [L1] 基础设施层：性能压测工具 (仅限 Debug/Internal 使用)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -43,14 +43,14 @@ final class PerformanceBenchmarker {
         print("📈 平均速度: \(String(format: "%.2f", Double(count)/duration)) docs/s")
 
         // 触发一次全量搜索测试
-        measureSearchPerformance(store: store)
+        await measureSearchPerformance(store: store)
     }
 
-    private func measureSearchPerformance(store: SQLiteStore) {
+    private func measureSearchPerformance(store: SQLiteStore) async {
         let query = "Stress Test"
         let startTime = CFAbsoluteTimeGetCurrent()
 
-        let results = store.searchPages(query: query)
+        let results = await store.searchPages(query: query)
 
         let duration = CFAbsoluteTimeGetCurrent() - startTime
         print("🔍 [Benchmark] 搜索性能：\"\(query)\"")

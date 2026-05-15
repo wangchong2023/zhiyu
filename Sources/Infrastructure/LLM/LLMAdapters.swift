@@ -1,7 +1,7 @@
 // LLMAdapters.swift
 //
 // 作者: Wang Chong
-// 功能说明: OpenAI 兼容适配器 (DeepSeek, SiliconFlow 等)
+// 功能说明: [L1] 基础设施层：OpenAI 兼容适配器 (DeepSeek, SiliconFlow 等)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02

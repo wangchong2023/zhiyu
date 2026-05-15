@@ -15,9 +15,9 @@ import AppIntents
 // MARK: - 手表端小组件
 /// 手表端专用捕获意图（与 ShortcutManager.CaptureIntent 分离，避免元数据冲突）
 struct WatchCaptureIntent: AppIntent {
-    static var title: LocalizedStringResource = "快速记录"
-    static var description = IntentDescription("直接进入语音采集界面")
-    static var persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
+    static let title: LocalizedStringResource = .init("watch.widget.title", defaultValue: "快速记录", table: "Watch")
+    static let description = IntentDescription(.init("watch.widget.desc", defaultValue: "直接进入语音采集界面", table: "Watch"))
+    static let persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
     
     func perform() async throws -> some IntentResult {
         // 点击表盘时由系统拉起 App 并进入采集界面
@@ -33,8 +33,8 @@ struct WatchCaptureWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WatchWidgetView(entry: entry)
         }
-        .configurationDisplayName("智宇采集")
-        .description("快速捕捉灵感。")
+        .configurationDisplayName(Localized.tr("watch.widget.displayName", table: "Watch"))
+        .description(Localized.tr("watch.widget.displayDesc", table: "Watch"))
         .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryInline])
     }
 }

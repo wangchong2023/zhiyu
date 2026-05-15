@@ -1,7 +1,7 @@
 // WelcomeView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 知识管理系统的欢迎页面（首页），提供系统概览、统计数据、最近更新及快速入门指南。
+// 功能说明: [L3] 应用调度层：知识管理系统的欢迎页面（首页），提供系统概览、统计数据、最近更新及快速入门指南。
 // 版本: 1.1 (工业级重构，消除魔鬼数字并适配新 UI 模式)
 
 import SwiftUI
@@ -126,7 +126,7 @@ struct WelcomeRecentUpdatesSection: View {
                     .foregroundStyle(Color.appText)
                 Spacer()
             }.padding(.horizontal)
-            ForEach(Array(store.pages.sorted { $0.updated > $1.updated }.prefix(5))) { page in
+            ForEach(store.pages.sorted { $0.updatedAt > $1.updatedAt }.prefix(5)) { page in
                 Button(action: { router.navigateToPage(id: page.id) }) {
                     PageRowView(page: page, compact: true).padding(.horizontal)
                 }.buttonStyle(.plain)

@@ -24,11 +24,22 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     
     func sendContent(_ text: String) {
         let session = WCSession.default
-        guard session.activationState == .activated, session.isPaired, session.isWatchAppInstalled else {
-            return 
+        guard session.activationState == .activated else {
+            Logger.shared.warning("⌚ [WatchSync] 发送失败: WCSession 未激活 (当前状态: \(session.activationState.rawValue))")
+            return
         }
+        guard session.isPaired else {
+            Logger.shared.warning("⌚ [WatchSync] 发送失败: Apple Watch 未配对")
+            return
+        }
+        guard session.isWatchAppInstalled else {
+            Logger.shared.warning("⌚ [WatchSync] 发送失败: 手表端 App 未安装")
+            return
+        }
+        
         let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
         session.transferUserInfo(userInfo)
+        Logger.shared.info("⌚ [WatchSync] 已通过 UserInfo 发送内容至手表 (长度: \(text.count))")
     }
     
     // MARK: - WCSessionDelegate

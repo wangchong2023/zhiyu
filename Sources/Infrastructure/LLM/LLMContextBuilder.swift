@@ -1,7 +1,7 @@
 // LLMContextBuilder.swift
 //
 // 作者: Wang Chong
-// 功能说明: 构建系统提示词并为 LLM 查询检索相关知识库上下文。
+// 功能说明: [L1] 基础设施层：构建系统提示词并为 LLM 查询检索相关知识库上下文。
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -54,9 +54,9 @@ final class LLMContextBuilder: Sendable {
         // 总结知识库内容作为上下文
         let activePages = pages.filter { $0.status == .active || $0.status == .stub }
         let totalPages = activePages.count
-        let entities = activePages.filter { $0.type == .entity }
-        let concepts = activePages.filter { $0.type == .concept }
-        let sources = activePages.filter { $0.type == .source }
+        let entities = activePages.filter { $0.pageType == .entity }
+        let concepts = activePages.filter { $0.pageType == .concept }
+        let sources = activePages.filter { $0.pageType == .source }
 
         prompt += "\n- \(Localized.tr("llm.prompt.totalPages")): \(totalPages)"
         prompt += "\n- \(Localized.tr("llm.prompt.entityCount")): \(entities.count), \(Localized.tr("llm.prompt.conceptCount")): \(concepts.count), \(Localized.tr("llm.prompt.sourceCount")): \(sources.count)"
@@ -74,11 +74,11 @@ final class LLMContextBuilder: Sendable {
         }
 
         // Add recent changes
-        let recent = activePages.sorted { $0.updated > $1.updated }.prefix(Self.maxRecentOverview)
+        let recent = activePages.sorted { $0.updatedAt > $1.updatedAt }.prefix(Self.maxRecentOverview)
         if !recent.isEmpty {
             prompt += "\n\n\(Localized.tr("llm.prompt.recentUpdates"))"
             for page in recent {
-                prompt += "\n- \(page.title) (\(page.updated.formatted(.dateTime.month().day())))"
+                prompt += "\n- \(page.title) (\(page.updatedAt.formatted(.dateTime.month().day())))"
             }
         }
 
@@ -122,12 +122,14 @@ final class LLMContextBuilder: Sendable {
         let groupedResults = Dictionary(grouping: compressedResults) { $0.chunk.pageID }
 
         for (pageID, results) in groupedResults {
-            let store = ServiceContainer.shared.resolve(KnowledgePageStore.self)
-            if let page = try? store.fetchByID(pageID) {
-                context += "\n---\n## \(page.title) [\(Localized.tr("llm.prompt.typeLabel")): \(page.type.displayName)]\n"
+            let store = ServiceContainer.shared.resolve(KnowledgePageRepository.self)
+            if let page = try? await store.fetch(id: pageID) {
+                context += "\n---\n## \(page.title) [\(Localized.tr("llm.prompt.typeLabel")): \(page.pageType.displayName)]\n"
 
                 for (chunk, score) in results.sorted(by: { $0.score > $1.score }) {
-                    context += "\n> [相关度: \(String(format: "%.4f", score)) | 类型: \(chunk.chunkType)]\n"
+                    let relevanceLabel = Localized.tr("llm.prompt.relevanceScore", table: "AITasks")
+                    let typeLabel = Localized.tr("llm.prompt.chunkType", table: "AITasks")
+                    context += "\n> [\(relevanceLabel): \(String(format: "%.4f", score)) | \(typeLabel): \(chunk.chunkType)]\n"
                     context += chunk.content
                     context += "\n"
                 }

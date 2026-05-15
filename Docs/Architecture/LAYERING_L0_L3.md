@@ -7,45 +7,68 @@
 ```mermaid
 graph TD
     L3[L3: Presentation Layer - SwiftUI Views & ViewModels] --> L2
-    L2[L2: Domain / Feature Layer - Services & Processors] --> L1
-    L1[L1: Service Layer - Data Access & Sync Stores] --> L0
-    L0[L0: Infrastructure Layer - Core & Platform Utilities]
+    L2[L2: Feature Layer - Vertical Slices] --> L1_5
+    L1_5[L1.5: Domain Layer - Business Rules & Orchestration] --> L1
+    L1[L1: Infrastructure Layer - LLM, Storage & Processors] --> L0_5
+    L0_5[L0.5: System Layer - OS Integration: Logger, Haptic] --> L0
+    L0[L0: Base Layer - Kernel: DI, Protocols, Utils]
 ```
 
 ---
 
-## L0: Core Layer (核心基座层)
-**职责**：提供与操作系统和第三方库的最底层交互，定义全局协议与工具。此层代码严禁依赖上层。
+## L0: Base Layer (底层基座层)
+**职责**：提供应用运行的最底层支撑，严禁包含任何业务逻辑或对系统服务的直接调用。
 
-**核心目录** (`Sources/Core/`):
+**核心目录** (`Sources/Core/Base/`):
 | 目录 | 内容 | 关键组件 |
 | :--- | :--- | :--- |
-| `Logger/` | 结构化日志系统 | `Logger.swift` |
-| `Security/` | 加密与钥匙串管理 | `KeychainService`, `SecurityManager` |
-| `Protocols/` | 核心抽象协议 | `LLMServiceProtocol`, `EmbeddingProvider` |
-| `Utils/` | 跨平台通用工具 | `Localized`, `ThemeManager`, `ServiceContainer` (DI) |
+| `ServiceContainer.swift` | 依赖注入容器 | `@Inject`, `ServiceContainer` |
+| `Protocols/` | 全局抽象协议 | `ReminderServiceProtocol`, `LoggerProtocol` |
+| `Constants/` | 基础常量定义 | `AppConstants`, `Keys` |
+| `Extensions/` | 基础类型扩展 | `Date+App`, `String+Utils` |
+
+## L0.5: System Layer (系统集成层)
+**职责**：封装 OS 级能力，抹平硬件与系统 API 差异。
+
+**核心目录** (`Sources/Core/System/`):
+| 目录 | 内容 | 关键组件 |
+| :--- | :--- | :--- |
+| `Logger/` | 结构化日志服务 | `Logger` |
+| `Haptic/` | 触感反馈系统 | `HapticFeedback` |
+| `Security/` | 生物识别与加密 | `SecurityManager` |
+| `Routing/` | 物理导航与 DeepLink | `DeepLinkService` |
 
 ## L1: Infrastructure Layer (基础设施层)
-**职责**：实现 AI、RAG 和存储的具体技术细节，为业务层提供技术能力支撑。
+**职责**：实现具体的技术能力，如 LLM 通信、数据库持久化和物理文档解析。
 
 **核心目录** (`Sources/Infrastructure/`):
 | 目录 | 内容 | 关键组件 |
 | :--- | :--- | :--- |
-| `LLM/` | LLM 适配与网络客户端 | `LLMClient`, `LLMService`, `PromptService` |
-| `Storage/` | 持久化存储实现 | `AppStore`, `SQLiteStore`, `iCloudSyncManager` |
-| `VectorDB/` | 向量索引与检索 | `EmbeddingManager`, `VectorIndexer` |
-| `Processors/` | 物理文档处理器 | `DocumentProcessor`, `OCRProcessor`, `PDFProcessor` |
+| `LLM/` | 模型客户端实现 | `LLMClient`, `DeepSeekProvider` |
+| `Storage/` | 持久化引擎实现 | `SQLiteStore`, `Repository` |
+| `Processors/` | 物理文档处理器 | `PDFProcessor`, `OCRProcessor` |
+
+## L1.5: Domain Layer (领域中心层)
+**职责**：承载核心业务大脑，定义跨模块的业务规则、领域行为及合成策略。
+
+**核心目录** (`Sources/Domain/`):
+| 目录 | 内容 | 关键组件 |
+| :--- | :--- | :--- |
+| `Models/` | 核心领域模型 | `KnowledgePage`, `PageLink` |
+| `RAG/` | 检索增强生成策略 | `AIContentEnricher`, `LinkService` |
+| `Protocols/` | 业务模块契约 | `AuthServiceProtocol`, `VaultServiceProtocol` |
 
 ## L2: Features Layer (业务功能层)
-**职责**：垂直功能切片。每个模块封装特定的业务逻辑、视图和数据状态，实现功能闭环。
+**职责**：垂直功能切片。按业务域分组（Knowledge, AI, Insight, System），负责 UI 呈现与本地交互状态。
 
 **核心目录** (`Sources/Features/`):
-| 目录 | 内容 | 组织模式 |
+| 领域 (Sub-Domain) | 包含模块 | 核心职责 |
 | :--- | :--- | :--- |
-| `Chat/` | 对话实验室 | 内部按 V-VM-M-S 组织 (View, ViewModel, Model, Service) |
-| `Ingest/` | 智能摄取系统 | 包含队列管理与任务调度 |
-| `Dashboard/` | 知识洞察仪表盘 | 综合展示与搜索入口 |
-| `Settings/` | 系统配置与插件中心 | 集中管理应用状态与偏好 |
+| **Knowledge** | `Ingest`, `Graph`, `Search`, `Vault`, `NotebookHub` | 核心知识流：数据采集、图谱演化、语义搜索与存储。 |
+| **AI** | `Chat`, `Synthesis`, `TaskCenter`, `VoiceNote`, `Quiz` | AI 实验室：对话交互、合成润色、任务调度与多模态。 |
+| **Insight** | `Dashboard`, `Log`, `Lint`, `MedalWall` | 洞察与质量：数据可视化、系统日志、质量检查与成就系统。 |
+| **System** | `Auth`, `Settings`, `Collaboration` | 通用系统：身份认证、应用配置、跨端实时协作。 |
+
 
 ## L3: App Layer (应用层)
 **职责**：负责应用的生命周期管理、全局环境初始化以及模块间的导航路由。
@@ -66,7 +89,6 @@ graph TD
 **核心目录** (`Sources/Shared/`):
 - `DesignSystem/`: 原子设计令牌 (Spacing, Typography, Colors, Animations)。
 - `UIComponents/`: 跨模块通用的 SwiftUI 视图、布局模板与玻璃拟态修饰符。
-- `Models/`: 全局共享的核心领域模型 (如 `KnowledgePage`)。
 
 ---
 
@@ -75,19 +97,21 @@ graph TD
 2.  **DI (依赖注入)**：使用 `@Inject` 模式在 L2/L3 层注入 L1 服务，禁止在服务内部直接使用 `.shared`（逐步淘汰中）。
 3.  **Actor 隔离**：UI 绑定代码必须标注 `@MainActor`，异步服务应标记为 `actor` 以符合 Swift 6 要求。
 
-## ⚠️ 架构审计状态（2026-05-13 更新）
-经过代码重构，已基本清除 L1/L2 层对 SwiftUI 的直接依赖。
+## ⚠️ 架构审计状态（2026-05-16 更新）
+经过代码重构，已基本清除 L1/L2 层对 SwiftUI 的直接依赖，并完成了持久化层的模块化迁移。
 
 | 类型 | 状态 | 涉及文件 / 说明 |
 |:--- |:--- |:--- |
+| **存储层重构** | ✅ 已修复 | 已完成 Repository 模式迁移，业务 Model 物理归位至 Features。 |
 | **跨层 UI 引用** | ✅ 已修复 | `PDFProcessor.swift`, `SynthesisStore.swift` 等已剥离 Color/withAnimation |
 | **import 管理** | ✅ 已修复 | `IngestStore`, `SearchStore`, `LLMService` 等已移除 `import SwiftUI` |
 | **单例泛滥** | 🟡 正在迁移 | `HapticFeedback` 已支持 DI 但部分存量代码仍使用 `.shared` |
 | **ViewModel 覆盖率** | 🟡 持续重构 | 核心页面已覆盖，小型功能视图逻辑仍在持续剥离 |
 
 ### 重构经验记录
-1. **表现层扩展 (UI Extensions)**：当模型或服务需要定义颜色、图标等 UI 属性时，在 `Views/Styles/` 目录下创建 `Model+UI.swift` 扩展，确保逻辑层纯粹性。
-2. **Observation 框架**：在 L1/L2 层，使用 `import Observation` 替代 `import SwiftUI` 来获取 `@Observable` 能力。
+1. **Repository 模式 (仓储模式)**：在 L1 层通过 `Repository` 封装具体的 GRDB SQL 逻辑，业务层通过协议与之交互。这实现了业务模型与物理数据库表的解耦，并极大地提升了单元测试的便利性。
+2. **表现层扩展 (UI Extensions)**：当模型或服务需要定义颜色、图标等 UI 属性时，在 `Views/Styles/` 目录下创建 `Model+UI.swift` 扩展，确保逻辑层纯粹性。
+3. **Observation 框架**：在 L1/L2 层，使用 `import Observation` 替代 `import SwiftUI` 来获取 `@Observable` 能力。
 3. **解耦动画**：`withAnimation` 应留在 View 层或 ViewModel 层，Service 层仅负责数据状态变更。
 
 ---

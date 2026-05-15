@@ -21,7 +21,7 @@ struct WatchContentView: View {
         NavigationStack {
             List {
                 Section(header: Text(L10n.Watch.tr("recents"))) {
-                    let recentPages = Array(store.pages.sorted(by: { $0.updated > $1.updated }).prefix(5))
+                    let recentPages = Array(store.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5))
                     ForEach(recentPages) { page in
                         NavigationLink(value: page) {
                             HStack {
@@ -45,7 +45,7 @@ struct WatchContentView: View {
                     }
                 }
             }
-            .navigationTitle("智宇")
+            .navigationTitle(Localized.tr("app.name"))
             .navigationDestination(for: KnowledgePage.self) { page in
                 WatchPageDetailView(page: page)
             }

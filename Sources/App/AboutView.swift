@@ -1,7 +1,7 @@
 // AboutView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 关于页面：展示应用版本信息、版权声明及核心理念
+// 功能说明: [L3] 应用调度层：关于页面：展示应用版本信息、版权声明及核心理念
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-12
@@ -22,11 +22,11 @@ struct AboutView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 24)
                             .fill(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: 100, height: 100)
+                            .frame(width: DesignSystem.Domain.About.logoSize, height: DesignSystem.Domain.About.logoSize)
                             .shadow(color: .appAccent.opacity(0.3), radius: 15, y: 8)
                         
                         Image(systemName: DesignSystem.Icons.sparkles)
-                            .font(.system(size: 50))
+                            .font(.system(size: DesignSystem.Domain.About.logoSize / 2))
                             .foregroundStyle(.white)
                     }
                     

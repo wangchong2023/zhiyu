@@ -18,10 +18,11 @@ import SwiftUI
 @MainActor
 class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
-
-    @AppStorage("colorSchemeMode") var colorSchemeModeRaw: String = ColorSchemeMode.dark.rawValue
+    
+    @AppStorage(AppConstants.Keys.Storage.colorSchemeMode) var colorSchemeModeRaw: String = ColorSchemeMode.dark.rawValue
+    
     nonisolated var accentColorRaw: String {
-        get { UserDefaults.standard.string(forKey: "accentColor") ?? "blue" }
+        get { UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.accentColor) ?? "blue" }
     }
 
     /// Migrate legacy isDarkMode key on first access
@@ -33,29 +34,41 @@ class ThemeManager: ObservableObject {
                 Self.didMigrate = true
                 // Migrate: if old key exists and new key is default
                 if UserDefaults.standard.object(forKey: "isDarkMode") != nil,
-                   UserDefaults.standard.string(forKey: "colorSchemeMode") == nil {
+                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
                     let wasDark = UserDefaults.standard.bool(forKey: "isDarkMode")
                     colorSchemeModeRaw = wasDark ? ColorSchemeMode.dark.rawValue : ColorSchemeMode.light.rawValue
                     UserDefaults.standard.removeObject(forKey: "isDarkMode")
+                }
+
+                // 额外迁移：处理从 colorSchemeMode 到 app_color_scheme_mode 的重命名
+                if let oldMode = UserDefaults.standard.string(forKey: "colorSchemeMode"),
+                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
+                    colorSchemeModeRaw = oldMode
+                    UserDefaults.standard.removeObject(forKey: "colorSchemeMode")
+                }
+
+                if let oldAccent = UserDefaults.standard.string(forKey: "accentColor"),
+                   UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.accentColor) == nil {
+                    UserDefaults.standard.set(oldAccent, forKey: AppConstants.Keys.Storage.accentColor)
+                    UserDefaults.standard.removeObject(forKey: "accentColor")
                 }
             }
             return ColorSchemeMode(rawValue: colorSchemeModeRaw) ?? .dark
         }
         set {
-            objectWillChange.send()
             colorSchemeModeRaw = newValue.rawValue
         }
+    }
+
+    func setAccentColor(_ color: String) {
+        UserDefaults.standard.set(color, forKey: AppConstants.Keys.Storage.accentColor)
+        objectWillChange.send()
     }
 
     /// Live color: reads from UserDefaults on every access (no cache).
     /// @AppStorage already handles observation via Combine.
     nonisolated var accentColor: Color {
         ThemeManager.colorForName(accentColorRaw)
-    }
-
-    func setAccentColor(_ color: String) {
-        UserDefaults.standard.set(color, forKey: "accentColor")
-        objectWillChange.send()
     }
 
     /// Maps a color name string (stored in UserDefaults) to a system Color.

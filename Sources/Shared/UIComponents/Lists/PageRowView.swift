@@ -30,9 +30,9 @@ struct PageRowView: View {
             // 类型图标容器
             Image(systemName: page.displayIcon)
                 .font(.body)
-                .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+                .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
                 .frame(width: Spacing.largeIconSize, height: Spacing.largeIconSize) // 32
-                .background(Color.fromModelColorName(page.type.colorName).opacity(Colors.glassOpacity * 1.5))
+                .background(Color.fromModelColorName(page.pageType.colorName).opacity(Colors.glassOpacity * 1.5))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             
             VStack(alignment: .leading, spacing: Spacing.atomic * 1.5) { // 3
@@ -46,16 +46,16 @@ struct PageRowView: View {
                 if !compact {
                     HStack(spacing: Spacing.small) {
                         // 页面类型标签
-                        Text(page.type.displayName)
+                        Text(page.pageType.displayName)
                             .font(.caption2)
                             .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
                             .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                            .background(Color.fromModelColorName(page.type.colorName).opacity(Colors.glassOpacity * 2))
+                            .background(Color.fromModelColorName(page.pageType.colorName).opacity(Colors.glassOpacity * 2))
                             .clipShape(Capsule())
-                            .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+                            .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
                         
                         // 更新时间
-                        Text(page.updated.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
+                        Text(page.updatedAt.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                         

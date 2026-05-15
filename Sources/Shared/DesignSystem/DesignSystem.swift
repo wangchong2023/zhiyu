@@ -385,6 +385,9 @@ public enum DesignSystem {
         public static let slowDuration: Double = Animations.Interaction.slowDuration
         public static let standardDamping: Double = Animations.Interaction.standardDamping
         
+        /// 标准交错动画延迟 (0.2s)
+        public static let staggerDelay: Double = Animations.staggerDelay
+        
         public static var standard: SwiftUI.Animation { Animations.Interaction.standardAnimation }
         public static var prominent: SwiftUI.Animation { Animations.Interaction.prominentAnimation }
         public static var fast: SwiftUI.Animation { Animations.Interaction.fastAnimation }
@@ -394,7 +397,13 @@ public enum DesignSystem {
             public static let quoteDelay: Double = Animations.Splash.quoteDelay
             public static let authorDelay: Double = Animations.Splash.authorDelay
             public static let shimmerDelay: Double = Animations.Splash.shimmerDelay
+            public static let welcomeDisplayDelay: Double = Animations.Splash.welcomeDisplayDelay
             public static let autoDismissDelay: Double = Animations.Splash.autoDismissDelay
+        }
+        
+        /// AI 交互节奏
+        public enum AI {
+            public static let pulseInterval: Double = Animations.AI.pulseInterval
         }
         
         public struct Config {
@@ -567,4 +576,24 @@ public enum DesignSystem {
     public typealias LoadingOverlay = AppLoadingOverlay
     public typealias Toast = AppToast
     public typealias Tooltip = AppTooltip
+    
+    // MARK: - Domain Specific Layout Constants
+    public enum Domain {
+        public struct About {
+            public static let logoSize: CGFloat = 100
+        }
+        public struct Voice {
+            public static let recordButtonSize: CGFloat = 80
+            public static let waveScale: CGFloat = 40
+        }
+        public struct Lint {
+            public static let chartSize: CGFloat = 110
+        }
+        public struct AI {
+            public struct Chat {
+                public static let pulsingDotSize: CGFloat = 6
+                public static let bubbleIconScale: CGFloat = 1.2
+            }
+        }
+    }
 }

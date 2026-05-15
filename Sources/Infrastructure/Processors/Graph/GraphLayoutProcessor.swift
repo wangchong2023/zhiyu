@@ -1,7 +1,7 @@
 // GraphLayoutProcessor.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识图谱的力导向布局处理器（GraphLayoutProcessor），通过高度优化的物理仿真算法为复杂的知识关联网络提供自适应的空间排布方案。
+// 功能说明: [L1] 基础设施层：本文件实现了知识图谱的力导向布局处理器（GraphLayoutProcessor），通过高度优化的物理仿真算法为复杂的知识关联网络提供自适应的空间排布方案。
 // 处理器核心采用了基于模拟退火（Simulated Annealing）的迭代收敛机制，其核心功能点如下：
 // 1. 多维度动力学模型：整合了基于 Barnes-Hut 优化的节点斥力、胡克定律驱动的弹簧引力以及面向知识领域的社区向心力（Cluster Attraction）。
 // 2. 空间索引优化：引入了高效的网格剖分（Grid-based Partitioning）算法，将节点斥力计算的复杂度从 O(N^2) 有效降低至趋于线性，支撑大规模图谱。
@@ -56,7 +56,7 @@ struct GraphLayoutProcessor {
             return GraphNode(
                 id: page.id,
                 title: page.title,
-                type: page.type,
+                pageType: page.pageType,
                 position: CGPoint(
                     x: centerX + radius * cos(angle),
                     y: centerY + radius * sin(angle)

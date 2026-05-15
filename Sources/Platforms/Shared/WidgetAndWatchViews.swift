@@ -92,7 +92,7 @@ struct WatchKnowledgeStatsView: View {
         totalPages = store.totalPages
         totalWords = store.totalWords
         recentTitles = store.pages
-            .sorted { $0.updated > $1.updated }
+            .sorted { $0.updatedAt > $1.updatedAt }
             .prefix(5)
             .map { $0.title }
     }

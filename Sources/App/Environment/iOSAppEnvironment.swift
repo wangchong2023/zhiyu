@@ -1,7 +1,7 @@
 // iOSAppEnvironment.swift
 //
 // 作者: Wang Chong
-// 功能说明: AppEnvironmentProtocol 的 iOS/iPadOS 实现。
+// 功能说明: [L3] 应用调度层：AppEnvironmentProtocol 的 iOS/iPadOS 实现。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -23,6 +23,10 @@ final class iOSAppEnvironment: AppEnvironmentProtocol {
     var interactionStyle: InteractionStyle {
         // 虽然 iPad 支持指针，但主导仍为触控
         return .touch
+    }
+    
+    var deviceName: String {
+        UIDevice.current.name
     }
     
     var supportsPencil: Bool {

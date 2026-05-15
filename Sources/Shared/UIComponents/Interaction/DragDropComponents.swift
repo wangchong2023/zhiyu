@@ -46,7 +46,7 @@ struct PageDragDropModifier: ViewModifier {
                 // Drag preview
                 HStack {
                     Image(systemName: page.displayIcon)
-                        .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+                        .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
                     Text(page.title)
                         .font(.subheadline)
                 }

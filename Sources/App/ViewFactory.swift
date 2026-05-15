@@ -1,7 +1,7 @@
 // ViewFactory.swift
 //
 // 作者: Wang Chong
-// 功能说明: 视图工厂：负责将抽象路由转换为真实视图
+// 功能说明: [L3] 应用调度层：视图工厂：负责将抽象路由转换为真实视图
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-04
@@ -11,53 +11,32 @@
 import SwiftUI
 
 /// 视图工厂：负责将抽象路由转换为真实视图
-/// 它是解耦路由逻辑与 UI 实现的关键层
+/// 进化版本：基于 ViewProvider 注册表实现插件化视图发现
 @MainActor
 struct ViewFactory {
+    /// 视图提供者注册表
+    private static var providers: [FeatureDomain: any ViewProvider] = [:]
+    
+    /// 注册领域视图提供者
+    static func register(_ provider: any ViewProvider, for domain: FeatureDomain) {
+        providers[domain] = provider
+    }
+    
     @ViewBuilder
     static func makeView(for route: AppRoute) -> some View {
-        switch route {
-        case .notebookHub:
-            NotebookHubView()
-        case .dashboard:
-            KnowledgeDashboardView()
-        case .pageList(let type):
-            KnowledgePageListView(filterType: type)
-        case .pageDetail(let id):
-            PageDetailWrapper(id: id)
-        case .tagCloud:
-            TagCloudView()
-        case .taskCenter:
-            TaskCenterView()
-        case .chat:
-            ChatViewContent(selectedTab: .constant(.knowledge)) // 临时兼容，后续可进一步优化
-        case .synthesis:
-            SynthesisViewWrapper()
-        case .settings:
-            SettingsViewWrapper()
-        case .help:
-            Text("Help Coming Soon").navigationTitle(L10n.Common.tr("help"))
-        case .about:
-            AboutView().navigationTitle(L10n.Common.tr("about"))
-        case .log:
-            LogView()
-        case .collab:
-            CollaborationView()
-        case .weeklyReport:
-            WeeklyReportView()
-        case .lint:
-            LintWrapper()
-        case .pluginMarket:
-            PluginCenterView()
-        case .search(let query, let type):
-            SearchView(initialQuery: query, initialFilterType: type)
-        case .ingest:
-            IngestView(selectedTab: .constant(.knowledge))
-        case .graph:
-            GraphWrapper()
+        if let view = providers[route.domain]?.makeView(for: route) {
+            view
+        } else {
+            // 兜底逻辑：如果未找到提供者或视图，显示 404
+            ContentUnavailableView(
+                Localized.tr("error.notFound"),
+                systemImage: "exclamationmark.magnifyingglass",
+                description: Text("No view provider registered for domain: \(route.domain.rawValue)")
+            )
         }
     }
 }
+
 
 // MARK: - 包装器 (用于处理复杂的 Binding 或依赖)
 

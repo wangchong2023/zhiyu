@@ -1,7 +1,7 @@
 // iCloudSyncCoordinator.swift
 //
 // 作者: Wang Chong
-// 功能说明: 负责 iCloud 同步的业务编排，将 View 层的同步逻辑提取到服务层。
+// 功能说明: [L1] 基础设施层：负责 iCloud 同步的业务编排，将 View 层的同步逻辑提取到服务层。
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-04

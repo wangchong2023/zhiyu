@@ -61,6 +61,9 @@ public enum Animations {
     public static let glowScaleMedium: CGFloat = 1.3
     /// 巨大发光缩放倍率
     public static let glowScaleLarge: CGFloat = 1.8
+    
+    /// 标准交错动画延迟 (0.2s)
+    public static let staggerDelay: Double = 0.2
 
     // MARK: - 5. 业务场景动效 (Business Scene Animations)
 
@@ -72,8 +75,16 @@ public enum Animations {
         public static let authorDelay: Double = slowDuration + standardDuration * 4.5
         /// 闪光扫过延迟 (slowDuration + standardDuration * 6.5)
         public static let shimmerDelay: Double = slowDuration + standardDuration * 6.5
+        /// 启动延迟 (2.5s)
+        public static let welcomeDisplayDelay: Double = 2.5
         /// 自动进入延迟 (5.0s)
         public static let autoDismissDelay: Double = 5.0
+    }
+    
+    /// AI 交互节奏
+    public enum AI {
+        /// 思考脉搏周期 (1.5s)
+        public static let pulseInterval: Double = 1.5
     }
 
     public struct Interaction {

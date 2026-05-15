@@ -1,7 +1,7 @@
 // MarkdownProcessor.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了全功能 Markdown 文本解析处理器（MarkdownProcessor），是系统中内容渲染与语义理解的核心组件。
+// 功能说明: [L1] 基础设施层：本文件实现了全功能 Markdown 文本解析处理器（MarkdownProcessor），是系统中内容渲染与语义理解的核心组件。
 // 该处理器通过高性能正则引擎实现以下功能点：
 // 1. 深度标题识别：支持从 H1 到 H6 的全层级标准标题解析，并能自动去除冗余的 Markdown 符号。
 // 2. 块类型提取：精准识别并分离普通段落、无序列表、代码块以及引用块，将其转换为结构化的中间模型。
@@ -414,21 +414,21 @@ final class MarkdownProcessor: Sendable {
 extension NSRegularExpression {
     /// 匹配双向链接 [[知识标题]] 或 [[显示文本|实际标题]]
     /// 使用负向断言 (?<!\\\\) 排除转义的括号，确保 \[\[ 不被识别
-    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[([^\\]]+)\\]\\]")
+    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[(.*?)\\]\\]")
     
     /// 匹配加粗文本 **内容**
-    static let boldRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*\\*([^*]+)\\*\\*")
+    static let boldRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*\\*(.+?)\\*\\*")
     
     /// 匹配斜体文本 *内容*
-    static let italicRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*([^*]+)\\*")
+    static let italicRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*(.+?)\\*")
     
     /// 匹配删除线文本 ~~内容~~
-    static let strikethroughRegex = try! NSRegularExpression(pattern: "(?<!\\\\)~~([^~]+)~~")
+    static let strikethroughRegex = try! NSRegularExpression(pattern: "(?<!\\\\)~~(.+?)~~")
     
     /// 匹配行内代码 `代码`
-    static let codeRegex = try! NSRegularExpression(pattern: "(?<!\\\\)`([^`]+)`")
+    static let codeRegex = try! NSRegularExpression(pattern: "(?<!\\\\)`(.+?)`")
     
     /// 匹配标准 Markdown 链接 [标签](URL)
     /// 针对 URL 内部包含括号的场景进行了非贪婪优化
-    static let linkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[([^\\]]+)\\]\\(([^\\)]+)\\)")
+    static let linkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[(.+?)\\]\\((.+?)\\)")
 }

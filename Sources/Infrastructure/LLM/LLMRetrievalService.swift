@@ -1,7 +1,7 @@
 // LLMRetrievalService.swift
 //
 // 作者: Wang Chong
-// 功能说明: LLM 检索增强服务，处理查询改写、意图扩展及搜索结果重排 (Rerank)。
+// 功能说明: [L1] 基础设施层：LLM 检索增强服务，处理查询改写、意图扩展及搜索结果重排 (Rerank)。
 // MARK: [SR-02] 混合检索 (RAG) 链路优化与语义重排
 // 版本: 1.1
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。

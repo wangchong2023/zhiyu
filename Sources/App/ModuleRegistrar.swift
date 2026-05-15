@@ -1,11 +1,10 @@
 // ModuleRegistrar.swift
 //
 // 作者: Wang Chong
-// 功能说明: 定义模块化注册协议与各层级服务的自动化注册逻辑，用于解耦 ZhiYuApp 的初始化过程。
-// 版本: 1.1
+// 功能说明: [L3] 应用调度层：定义模块化注册协议与各层级服务的自动化注册逻辑，用于解耦 ZhiYuApp 的初始化过程。
+// 版本: 1.2
 // 修改记录:
-//   - 2026-05-07: 初始版本，实现 L0-L2 模块化注册。
-//   - 2026-05-10: 标准化代码注释与 SRS 溯源。
+//   - 2026-05-16: 物理归位重构：更新存储仓储与业务 Store 的类名及注册逻辑。
 // 版权: © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -106,6 +105,32 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
         #endif
         
+        #if os(watchOS)
+        container.register(UnsupportedReminderService(), for: (any ReminderServiceProtocol).self)
+        #else
+        container.register(iOSReminderService(), for: (any ReminderServiceProtocol).self)
+        #endif
+        
+        #if canImport(WebKit)
+        container.register(iOSExportService(), for: (any ExportServiceProtocol).self)
+        #else
+        container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
+        #endif
+        
+        #if os(macOS)
+        container.register(MacFileArchiver(), for: (any FileArchiverProtocol).self)
+        #elseif os(watchOS)
+        container.register(UnsupportedFileArchiver(), for: (any FileArchiverProtocol).self)
+        #else
+        container.register(iOSFileArchiver(), for: (any FileArchiverProtocol).self)
+        #endif
+        
+        #if canImport(CoreSpotlight)
+        container.register(iOSSpotlightIndexer(), for: (any SearchIndexerProtocol).self)
+        #else
+        container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
+        #endif
+        
         // 注册其他平台级服务
         container.register(DeepLinkService(), for: DeepLinkService.self)
         container.register(PerformanceService(), for: PerformanceService.self)
@@ -129,15 +154,26 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         container.register(BackupService(), for: BackupService.self)
         container.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
-        container.register(AIInsightStore(), for: AIInsightStore.self)
+        
+        // 业务特定的 InsightStore 现由 AppStore 统一实例化并注册，确保状态单一源
         
         // @PR-05: 优化数据库冷启动加载时间
         if let writer = DatabaseManager.shared.dbWriter {
-            print("✅ [DI] 数据库写入器已就绪，注册 KnowledgePageStore")
-            let pageStore = KnowledgePageStore(dbWriter: writer)
-            container.register(pageStore, for: KnowledgePageStore.self)
+            print("✅ [DI] 数据库写入器已就绪，注册垂直仓库...")
             
-            let embeddingManager = EmbeddingManager(repository: pageStore)
+            let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
+            container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
+            container.register(knowledgeRepo, for: KnowledgePageRepository.self)
+            
+            let vectorRepo = VectorDataRepository(dbWriter: writer)
+            container.register(vectorRepo as any VectorRepository, for: (any VectorRepository).self)
+            container.register(vectorRepo, for: VectorDataRepository.self)
+            
+            let governanceRepo = AIGovernanceRepository(dbWriter: writer)
+            container.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
+            container.register(governanceRepo, for: AIGovernanceRepository.self)
+            
+            let embeddingManager = EmbeddingManager(repository: vectorRepo)
             container.register(embeddingManager, for: EmbeddingManager.self)
             
             // 异步加载向量缓存以确保启动性能
@@ -145,10 +181,11 @@ struct StorageModuleRegistrar: ModuleRegistrar {
                 await embeddingManager.loadInitialCache()
             }
         } else {
-            print("⚠️ [DI] 警告：数据库写入器尚未就绪！注册空壳 KnowledgePageStore 以防崩溃。")
-            // 这是一个保护性注册，防止 resolve 崩溃。
-            let dummyStore = KnowledgePageStore(dbWriter: try! DatabaseQueue())
-            container.register(dummyStore, for: KnowledgePageStore.self)
+            print("⚠️ [DI] 警告：数据库写入器尚未就绪！注册空壳仓库以防崩溃。")
+            let dummyWriter = try! DatabaseQueue()
+            container.register(KnowledgePageRepository(dbWriter: dummyWriter) as any KnowledgeRepository, for: (any KnowledgeRepository).self)
+            container.register(VectorDataRepository(dbWriter: dummyWriter) as any VectorRepository, for: (any VectorRepository).self)
+            container.register(AIGovernanceRepository(dbWriter: dummyWriter) as any GovernanceRepository, for: (any GovernanceRepository).self)
         }
     }
 }
@@ -198,15 +235,15 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(PromptService.shared, for: PromptService.self)
         
         print("⚖️ [DI] 正在初始化 RAGEvaluationService...")
-        // 检查 KnowledgePageStore 是否已注册
-        if container.hasService(for: KnowledgePageStore.self) {
+        // 检查 GovernanceRepository 是否已注册
+        if container.hasService(for: (any GovernanceRepository).self) {
             let evaluationService = RAGEvaluationService(
                 llmService: llm,
-                store: container.resolve(KnowledgePageStore.self)
+                governanceStore: container.resolve((any GovernanceRepository).self)
             )
             container.register(evaluationService, for: RAGEvaluationService.self)
         } else {
-            print("❌ [DI] 错误：KnowledgePageStore 未注册！将导致 RAGEvaluationService 初始化失败。")
+            print("❌ [DI] 错误：GovernanceRepository 未注册！将导致 RAGEvaluationService 初始化失败。")
         }
         
         // 3. 插件系统 (@SR-04: API 访问白名单管控)
@@ -225,6 +262,11 @@ struct AppModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
         print("📱 [DI] 开始注册应用模块...")
         container.register(Router.shared, for: Router.self)
+        
+        // 注册视图提供者 (View Factory Evolution)
+        ViewFactory.register(KnowledgeViewProvider(), for: .knowledge)
+        ViewFactory.register(AIViewProvider(), for: .ai)
+        ViewFactory.register(InsightViewProvider(), for: .insight)
+        ViewFactory.register(SystemViewProvider(), for: .system)
     }
 }
-

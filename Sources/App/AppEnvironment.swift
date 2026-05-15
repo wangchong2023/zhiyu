@@ -1,7 +1,7 @@
 // AppEnvironment.swift
 //
 // 作者: Wang Chong
-// 功能说明: 应用程序全局 environment 管理器，负责 L0-L2 层的初始化顺序编排与全局状态持有。
+// 功能说明: [L3] 应用调度层：应用程序全局 environment 管理器，负责 L0-L2 层的初始化顺序编排与全局状态持有。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 

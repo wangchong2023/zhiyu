@@ -1,7 +1,7 @@
 // WebScraperProcessor.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的网络内容抓取处理器（WebScraperProcessor），负责将外部 URL 资源转化为系统可识别的 Markdown 格式。
+// 功能说明: [L1] 基础设施层：本文件实现了知识管理系统的网络内容抓取处理器（WebScraperProcessor），负责将外部 URL 资源转化为系统可识别的 Markdown 格式。
 // 该处理器主要通过集成第三方解析引擎（如 Jina Reader）实现以下核心功能：
 // 1. 跨平台网页抓取：支持将任意网页 URL 转换为干净、去除噪声的 Markdown 文本，极大地方便了 LLM 的后续处理。
 // 2. 自动标题提取：通过解析抓取后的内容流自动识别网页主标题，为知识页面的初始化提供元数据支持。

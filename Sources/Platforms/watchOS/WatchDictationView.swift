@@ -41,14 +41,16 @@ struct WatchDictationView: View {
     }
 
     private func saveAndSync() {
-        _ = store.createPage(title: "Dictation \(Date().formatted())", type: .raw, content: text)
+        Task {
+            _ = await store.createPage(title: "Dictation \(Date().formatted())", type: .raw, content: text)
 
-        // 增强：通过 WCSession 实时推送到 iPhone
-        watchSync.sendContent(text)
+            // 增强：通过 WCSession 实时推送到 iPhone
+            watchSync.sendContent(text)
 
-        // 触发手表端震动反馈
-        WKInterfaceDevice.current().play(.success)
-        
-        dismiss()
+            // 触发手表端震动反馈
+            WKInterfaceDevice.current().play(.success)
+            
+            dismiss()
+        }
     }
 }

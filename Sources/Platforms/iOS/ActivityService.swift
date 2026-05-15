@@ -2,14 +2,13 @@
 //
 // 作者: Wang Chong
 // 功能说明: 灵动岛与实时活动管理服务 (iOS 专属)
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
+//   - 2026-05-15: 适配 Mac Catalyst，禁用不支持的 ActivityKit 逻辑。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 @preconcurrency import ActivityKit
 #endif
 
@@ -19,21 +18,16 @@ import Foundation
 final class ActivityService {
     static let shared = ActivityService()
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
     /// 任务 ID 与实时活动的映射表，支持多任务并发展示
-    /// 使用 nonisolated(unsafe) 绕过 Swift 6 警告，通过 @MainActor 保证安全
     nonisolated(unsafe) private var activeActivities: [UUID: Activity<AIProcessingAttributes>] = [:]
     #endif
 
     private init() {}
 
     /// 启动实时活动
-    /// - Parameters:
-    ///   - id: 关联的任务 ID
-    ///   - name: 任务名称
-    ///   - target: 初始状态描述
     func startActivity(id: UUID, name: String, target: String) {
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         
         Task { @MainActor in
@@ -43,7 +37,6 @@ final class ActivityService {
             let contentState = AIProcessingAttributes.ContentState(progress: 0.05, status: target)
             
             do {
-                // 如果超过系统建议的并发上限 (5个)，清理最老的一个
                 if activeActivities.count >= 5 {
                     if let oldestID = activeActivities.keys.first {
                         await activeActivities[oldestID]?.end(nil, dismissalPolicy: .immediate)
@@ -66,7 +59,7 @@ final class ActivityService {
 
     /// 更新指定任务的实时进度
     func updateProgress(id: UUID, progress: Double, message: String) async {
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[id] else { return }
         
         let newState = AIProcessingAttributes.ContentState(progress: progress, status: message)
@@ -83,7 +76,7 @@ final class ActivityService {
 
     /// 结束指定任务的实时活动
     func endActivity(id: UUID) async {
-        #if os(iOS)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[id] else { return }
         
         Logger.shared.debug("🏝️ [Dynamic Island] 任务 \(id) 实时活动即将结束")

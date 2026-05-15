@@ -1,0 +1,95 @@
+// PageType.swift
+//
+// 作者: Wang Chong
+// 功能说明: [L1.5] 领域中心层：enum PageType
+// 版本: 1.0
+// 修改记录:
+//   - 创建: 2026-05-02
+// 日期: 2026-05-04
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import Foundation
+import GRDB
+
+// MARK: - Page Type
+public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible, Sendable {
+    case entity = "entity"
+    case concept = "concept"
+    case source = "source"
+    case comparison = "comparison"
+    case map = "map"
+    case raw = "raw"
+    
+    public var id: String { rawValue }
+    
+    public var displayName: String {
+        switch self {
+        case .entity: return L10n.CoreModels.tr("type.entity")
+        case .concept: return L10n.CoreModels.tr("type.concept")
+        case .source: return L10n.CoreModels.tr("type.source")
+        case .comparison: return L10n.CoreModels.tr("type.comparison")
+        case .map: return L10n.CoreModels.tr("type.map")
+        case .raw: return L10n.CoreModels.tr("type.raw")
+        }
+    }
+    
+    public var colorName: String {
+        switch self {
+        case .entity: return "entity"
+        case .concept: return "concept"
+        case .source: return "source"
+        case .comparison: return "comparison"
+        case .map: return "map"
+        case .raw: return "gray"
+        }
+    }
+}
+
+// MARK: - Page Status
+public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
+    case active = "active"
+    case stub = "stub"
+    case needsUpdate = "needs-update"
+    case deprecated = "deprecated"
+    
+    public var displayName: String {
+        switch self {
+        case .active: return L10n.CoreModels.tr("status.active")
+        case .stub: return L10n.CoreModels.tr("status.stub")
+        case .needsUpdate: return L10n.CoreModels.tr("status.needsUpdate")
+        case .deprecated: return L10n.CoreModels.tr("status.deprecated")
+        }
+    }
+    
+    public var colorName: String {
+        switch self {
+        case .active: return "green"
+        case .stub: return "yellow"
+        case .needsUpdate: return "orange"
+        case .deprecated: return "red"
+        }
+    }
+}
+
+// MARK: - Confidence Level
+public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
+    case high = "high"
+    case medium = "medium"
+    case low = "low"
+    
+    public var displayName: String {
+        switch self {
+        case .high: return L10n.CoreModels.tr("confidence.high")
+        case .medium: return L10n.CoreModels.tr("confidence.medium")
+        case .low: return L10n.CoreModels.tr("confidence.low")
+        }
+    }
+    
+    public var colorName: String {
+        switch self {
+        case .high: return "green"
+        case .medium: return "yellow"
+        case .low: return "red"
+        }
+    }
+}

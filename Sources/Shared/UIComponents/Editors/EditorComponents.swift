@@ -65,17 +65,17 @@ struct PageLinkPickerSheet: View {
                     dismiss()
                 } label: {
                     HStack(spacing: DesignSystem.medium) {
-                        Image(systemName: p.type.icon)
-                            .foregroundStyle(Color.fromModelColorName(p.type.colorName))
+                        Image(systemName: p.pageType.icon)
+                            .foregroundStyle(Color.fromModelColorName(p.pageType.colorName))
                             .frame(width: DesignSystem.Gallery.iconSize, height: DesignSystem.Gallery.iconSize)
-                            .background(Color.fromModelColorName(p.type.colorName).opacity(0.12))
+                            .background(Color.fromModelColorName(p.pageType.colorName).opacity(0.12))
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                         
                         VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                             Text(p.title)
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(Color.appText)
-                            Text(p.type.displayName)
+                            Text(p.pageType.displayName)
                                 .font(.caption2)
                                 .foregroundStyle(Color.appSecondary)
                         }

@@ -12,12 +12,16 @@
 | `id` | UUID | PRIMARY KEY | 页面唯一标识符 |
 | `title` | TEXT | NOT NULL, UNIQUE | 标题（V4 强制唯一索引） |
 | `content` | TEXT | | Markdown 原始内容 |
-| `type` | TEXT | NOT NULL | 页面类型 (concept, entity, source, etc.) |
+| `page_type` | TEXT | NOT NULL | 页面类型 (concept, entity, source, etc.) |
+| `custom_icon` | TEXT | | 用户自定义 SF Symbol 图标 |
 | `file_size` | INTEGER | NOT NULL | 物理字节大小 |
 | `tags` | TEXT | | 标签列表（以逗号分隔） |
 | `aliases` | TEXT | | 别名列表（以逗号分隔） |
+| `source_url` | TEXT | | 原始资料链接 (网页或 YouTube) |
+| `raw_snippet` | TEXT | | 原始资料片段，用于校验 |
+| `lamport_timestamp` | INTEGER | NOT NULL | 逻辑时钟，用于分布式冲突解决 |
 | `updated_at` | DATETIME | NOT NULL | 最后更新时间 |
-| `vector` | BLOB | | 页面级向量（传统 RAG 使用） |
+| `vector` | BLOB | | 页面级向量（已废弃，迁至 page_chunks） |
 
 ### 1.2 `page_chunks` (RAG 分块表)
 支持高级 RAG（层级分块、问答对、摘要）的核心存储。
@@ -76,6 +80,7 @@ CREATE VIRTUAL TABLE pages_fts USING fts5(
 | **V6** | `v6_resource_audit` | **资源治理**：创建 `token_usage` 表，支持 Token 消耗统计。 |
 | **V7** | `v7_enhanced_governance` | **增强治理**：创建 `llm_call_logs` (调用日志) 和 `rag_evaluations` (质量评估) 表。 |
 | **V8** | `v8_karpathy_metadata` | **模式增强**：补全 `pages` 表的物理溯源元数据 (`file_size`, `source_type`)。 |
+| **V9** | `v9_distributed_sync` | **同步增强**：引入 `lamport_timestamp` 逻辑时钟，添加 `source_url` 与 `custom_icon` 字段。 |
 
 ---
 

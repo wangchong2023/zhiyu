@@ -1,7 +1,7 @@
 // SidebarView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的核心导航分发中心（SidebarView）。
+// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的核心导航分发中心（SidebarView）。
 // 版本: 1.1
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -66,7 +66,6 @@ struct SearchSection: View {
                     Text(Localized.tr("search.placeholder"))
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
-                    
                     Spacer()
                     
                     HStack(spacing: DesignSystem.atomic) {
@@ -149,7 +148,7 @@ struct SidebarView: View {
         ) {
             Button(Localized.tr("page.deletePage"), role: .destructive) {
                 if let page = pageToDelete {
-                    store.deletePage(page)
+                    Task { await store.deletePage(page) }
                 }
             }
             Button(L10n.Common.tr("cancel"), role: .cancel) {
@@ -200,7 +199,7 @@ struct UniverseSection: View {
             }
             
             ForEach(PageType.allCases) { type in
-                let count = store.pages.filter { $0.type == type }.count
+                let count = store.pages.filter { $0.pageType == type }.count
                 if count > 0 {
                     NavigationLink(value: AppRoute.pageList(filterType: type)) {
                         SidebarTypeRow(type: type, count: count, onSearch: {
@@ -480,9 +479,9 @@ struct PageSidebarRow: View {
     var heroNamespace: Namespace.ID
     var body: some View {
         HStack(spacing: DesignSystem.small) {
-            Image(systemName: page.type.icon)
+            Image(systemName: page.pageType.icon)
                 .font(.system(size: DesignSystem.Icons.small))
-                .foregroundStyle(Color.fromModelColorName(page.type.colorName))
+                .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
                 .frame(width: DesignSystem.Sidebar.iconFrameWidth)
             
             Text(page.title)

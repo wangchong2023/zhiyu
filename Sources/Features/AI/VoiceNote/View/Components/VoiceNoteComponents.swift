@@ -1,0 +1,178 @@
+// VoiceNoteComponents.swift
+//
+// 作者: Wang Chong
+// 功能说明: [L2] 业务功能层：struct SaveVoiceNoteSheet
+// 版本: 1.0
+// 修改记录:
+//   - 创建: 2026-05-02
+// 日期: 2026-05-04
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+
+// MARK: - Save Voice Note Sheet
+/// 语音笔记保存配置面板组件
+/// 负责在保存语音识别结果前配置页面标题、类型，并展示转录文本预览供最终确认
+struct SaveVoiceNoteSheet: View {
+    var speechService: any SpeechServiceProtocol
+    @Binding var title: String
+    @Environment(AppStore.self) var store
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedType: PageType = .source
+    
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: DesignSystem.loosePadding) { // 20
+                    titleField
+                    typePicker
+                    previewSection
+                    saveButton
+                }
+                .padding()
+            }
+            .background(PageBackgroundView(accentColor: .appAccent))
+            .navigationTitle(Localized.tr("speech.saveTitle"))
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+        }
+    }
+    
+    private var titleField: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
+            Text(Localized.tr("speech.noteTitle"))
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.appSecondary)
+            
+            TextField(Localized.tr("speech.noteTitlePlaceholder"), text: $title)
+                #if !os(watchOS)
+                .textFieldStyle(.roundedBorder)
+                #endif
+        }
+    }
+    
+    private var typePicker: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
+            Text(Localized.tr("ocr.pageType"))
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.appSecondary)
+            
+            Picker("", selection: $selectedType) {
+                ForEach(PageType.allCases) { type in
+                    Label(type.displayName, systemImage: type.icon).tag(type)
+                }
+            }
+            #if !os(watchOS)
+            .pickerStyle(.segmented)
+            #endif
+        }
+    }
+    
+    private var previewSection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
+            Text(Localized.tr("pdf.contentPreview"))
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.appSecondary)
+            
+            #if !os(watchOS)
+            TextEditor(text: Binding(
+                get: { speechService.transcribedText },
+                set: { speechService.transcribedText = $0 }
+            ))
+                .font(.body)
+                .foregroundStyle(.appText)
+                .frame(minHeight: DesignSystem.Metrics.heroValueSize * 4.6, maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 120, 300
+                .padding(DesignSystem.small)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                        .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
+                )
+            #else
+            TextField("", text: Binding(
+                get: { speechService.transcribedText },
+                set: { speechService.transcribedText = $0 }
+            ))
+                .font(.body)
+                .foregroundStyle(.appText)
+                .padding(DesignSystem.small)
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+            #endif
+        }
+    }
+    
+    private var saveButton: some View {
+        Button(action: saveNote) {
+            Text(Localized.tr("speech.saveToKnowledge"))
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.appAccent)
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        }
+    }
+    
+    private func saveNote() {
+        let noteTitle = title.isEmpty
+            ? "\(Localized.tr("speech.voiceNote")) \(Date().formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale)))"
+            : title
+        Task {
+            _ = await store.createPage(
+                title: noteTitle,
+                type: selectedType,
+                content: speechService.transcribedText,
+                tags: [Localized.tr("speech.voiceTag")]
+            )
+            
+            await MainActor.run {
+                let _ = speechService.saveRecording(title: noteTitle)
+                speechService.clearTranscription()
+                title = ""
+                dismiss()
+            }
+        }
+    }
+}
+
+// MARK: - Voice Recording Row
+/// 语音录音列表行组件
+/// 负责展示语音笔记的摘要信息（标题、部分文本、创建日期）及波形图标
+struct VoiceRecordingRow: View {
+    let recording: VoiceRecording
+    
+    var body: some View {
+        HStack(spacing: DesignSystem.medium) {
+            Image(systemName: "waveform")
+                .foregroundStyle(.appSource)
+                .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize) // 32
+                .background(Color.appSource.opacity(DesignSystem.glassOpacity * 1.5))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+            
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(recording.title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.appText)
+                    .lineLimit(1)
+                Text(String(recording.text.prefix(50)))
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
+            
+            Text(recording.createdAt, style: .date)
+                .font(.caption2)
+                .foregroundStyle(.appSecondary)
+        }
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.medium - DesignSystem.atomic) // 10
+        .background(Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+        .frame(maxWidth: .infinity)
+    }
+}

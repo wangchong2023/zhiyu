@@ -1,7 +1,7 @@
 // DataCoordinator.swift
 //
 // 作者: Wang Chong
-// 功能说明: 数据协调器，负责编排存储与 AI 服务之间的异步同步任务。
+// 功能说明: [L1] 基础设施层：数据协调器，负责编排存储与 AI 服务之间的异步同步任务。
 // 版本: 1.1
 // 修改记录:
 //   - 2026-05-07: 初始版本，从 SQLiteStore 剥离同步逻辑。
@@ -46,6 +46,9 @@ final class DataCoordinator {
 
             // 2. 触发向量化同步 (@RR-01: 确保向量存储与主库最终一致性)
             await self.embeddingManager.syncEmbeddings(pages: self.sqliteStore.pages)
+            
+            // 3. 触发 Spotlight 索引同步
+            SpotlightService.shared.indexPages(self.sqliteStore.pages)
 
             self.logger.addLog(
                 action: .sync,

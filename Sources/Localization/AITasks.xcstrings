@@ -850,6 +850,142 @@
           }
         }
       }
+    },
+    "llm.prompt.relevanceScore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relevance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "相关度"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.prompt.chunkType": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "类型"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.systemPrompt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are an objective and fair evaluation bot."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个客观公正的评估机器人。"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.status.pass": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pass"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.status.warning": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warning"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "告警"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.status.fail": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fail"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "失败"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.status.error": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "错误"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "llm.eval.judgePrompt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a RAG system evaluation expert. Please score the AI's answer based on the following three dimensions (0.0 - 1.0):\n1. Faithfulness: Is the answer based entirely on the provided context? Are there hallucinations?\n2. Relevance: Does the answer directly and completely solve the user's question?\n3. Context Precision: Does the provided context really contain the knowledge needed to answer the question?\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"reasoning\": \"Brief explanation of the reason\"\n}"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个 RAG 系统评估专家。请根据以下三个维度对 AI 的回答进行评分 (0.0 - 1.0)：\n1. Faithfulness (忠实度): 回答是否完全基于提供的上下文？是否有幻觉？\n2. Relevance (相关度): 回答是否直接且完整地解决了用户的问题？\n3. Context Precision (上下文精确度): 提供的上下文是否真的包含回答问题所需的知识？\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"reasoning\": \"简要说明理由\"\n}"
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

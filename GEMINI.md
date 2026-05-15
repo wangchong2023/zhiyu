@@ -39,19 +39,23 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 
 | 层级 | 名称 | 物理路径 | 核心职责 |
 | :--- | :--- | :--- | :--- |
-| **L3** | 应用层 (App) | `Sources/App/` | 全局入口、环境配置 (`AppEnvironment`)、路由中心 (`Router`) |
-| **L0** | 核心层 (Core) | `Sources/Core/` | 技术基座：日志 (`Logger`)、安全、底层工具类、基础协议 |
-| **L1** | 基础设施层 (Infra) | `Sources/Infrastructure/` | AI/RAG 实现：LLM 适配、向量库、持久化存储 (`Storage`) |
-| **L2** | 业务功能层 (Features) | `Sources/Features/` | 垂直业务切片 (如 Chat, Search)，内部按 V-VM-M-S 组织 |
-| **Shared** | 共享标准层 | `Sources/Shared/` | 业务共性标准：设计系统 (`DesignSystem`)、通用 UI 组件 |
+| **L3** | 应用层 (App) | `Sources/App/` | 全局入口、环境配置、路由中心 |
+| **L2** | 业务功能层 (Features) | `Sources/Features/` | 业务域分组的垂直切片，包含 UI 及本地状态 |
+| **L1.5** | 领域层 (Domain) | `Sources/Domain/` | **核心业务大脑**：业务规则、RAG 编排、跨模块契约 |
+| **L1** | 基础设施层 (Infra) | `Sources/Infrastructure/` | 技术实现：LLM 适配、数据库持久化、文档解析 |
+| **L0.5** | 系统集成层 (System) | `Sources/Core/System/` | 系统能力封装：日志、触感、安全、硬件集成 |
+| **L0** | 底层基座层 (Base) | `Sources/Core/Base/` | 内核：DI 容器、全局协议定义、基础常量与工具 |
+| **Shared** | 共享标准层 | `Sources/Shared/` | 视觉标准：设计系统、通用 UI 原子组件 |
 
 ## 目录结构 (物理归位)
 
 - `Sources/App`: 应用启动逻辑与全局路由调度。
-- `Sources/Core`: 跨平台的底层技术设施，不包含具体业务逻辑。
-- `Sources/Infrastructure`: RAG 管道实现、LLM 客户端及底层数据库实现。
-- `Sources/Features`: 业务功能模块。每个模块（如 `Features/Chat`）都是独立的垂直切片。
-- `Sources/Shared`: 包含 `DesignSystem` (设计令牌) 和 `UIComponents` (跨业务通用组件)。
+- `Sources/Core/Base`: 极简内核，无业务逻辑，无系统依赖。
+- `Sources/Core/System`: 封装 Apple 系统框架能力。
+- `Sources/Domain`: 核心业务逻辑、领域模型与中台化服务。
+- `Sources/Infrastructure`: AI 客户端、存储引擎的具体实现。
+- `Sources/Features`: 业务功能模块，按领域分组。
+- `Sources/Shared`: 设计令牌与跨业务通用 UI 组件。
 - `Sources/Localization`: 全局 String Catalog 资源。
 - `Sources/Platforms`: 平台特有的桥接实现（iOS, macOS, watchOS）。
 - `Docs/superpowers`: 存储工程重构计划与设计文档。
@@ -62,7 +66,7 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 ### 1. 依赖注入 (DI)
 使用 `ServiceContainer` 模式和 `@Inject` 属性包装器。所有服务必须在 `ZhiYuApp.init()` 中注册。
 ```swift
-@Inject var store: AppStore
+@Inject var pageStore: any AnyPageStore
 ```
 
 ### 2. 并发模型 (Swift 6)

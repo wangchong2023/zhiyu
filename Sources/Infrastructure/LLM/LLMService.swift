@@ -1,7 +1,7 @@
 // LLMService.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的核心 AI 调度服务 (LLMService)，作为 AI 能力的统一入口与编排器。
+// 功能说明: [L1] 基础设施层：本文件实现了知识管理系统的核心 AI 调度服务 (LLMService)，作为 AI 能力的统一入口与编排器。
 // 核心职责：
 // 1. 配置管理：同步并持久化 LLM 提供商、API Key 及模型参数。
 // 2. 任务编排：将具体的 AI 任务分发至专项子服务（对齐、摄入、重构、检索）。
@@ -301,18 +301,20 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
               let modelUsed = response["model"] as? String else { return }
 
         Task.detached(priority: .background) {
-            let store = ServiceContainer.shared.resolve(KnowledgePageStore.self)
-            try? store.recordLLMCall(model: modelUsed, prompt: prompt, completion: completion, latency: latency)
+            let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
+            _ = try? await governance.logCall(model: modelUsed, promptTokens: prompt, completionTokens: completion, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
+            _ = try? await governance.logTokenUsage(model: modelUsed, promptTokens: prompt, completionTokens: completion)
         }
     }
 
     private func asyncMetrics(query: String, response: String, context: String, systemPrompt: String, latency: Int) {
         let modelName = self.model
         Task.detached(priority: .background) {
-            let store = ServiceContainer.shared.resolve(KnowledgePageStore.self)
+            let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
             let promptTokens = (systemPrompt.count + query.count) / AppConstants.AI.charactersPerToken
             let completionTokens = response.count / AppConstants.AI.charactersPerToken
-            try? store.recordLLMCall(model: modelName, prompt: promptTokens, completion: completionTokens, latency: latency)
+            _ = try? await governance.logCall(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
+            _ = try? await governance.logTokenUsage(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens)
 
             let evalService = ServiceContainer.shared.resolve(RAGEvaluationService.self)
             _ = await evalService.evaluate(query: query, answer: response, context: context)

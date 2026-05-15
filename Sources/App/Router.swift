@@ -1,7 +1,7 @@
 // Router.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的全局路由管理器（Router），作为应用导航逻辑的核心大脑。
+// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的全局路由管理器（Router），作为应用导航逻辑的核心大脑。
 // 该类基于 SwiftUI 的现代导航堆栈（NavigationPath）与观察者模式，提供了卓越的视图切换能力：
 // 1. 声明式路径管理：通过集中化的 AppRoute 枚举解耦了视图间的直接依赖，支持动态推栈、平级切换及“回到根路径”的操作。
 // 2. 状态机同步逻辑：智能维护侧边栏选中项（SidebarSelection）与主标签（AppTab）的一致性，确保在跨平台（iPadOS vs iOS）布局切换时导航状态的透明迁移。
@@ -13,10 +13,17 @@
 import SwiftUI
 import Observation
 
+/// 业务领域定义
+public enum FeatureDomain: String, CaseIterable, Sendable {
+    case knowledge
+    case ai
+    case insight
+    case system
+}
+
 /// 应用程序路由目标定义
 /// 每个 Case 对应系统中的一个物理视图或逻辑页面。
-/// 映射逻辑详见 `ViewFactory.makeView(for:)`。
-enum AppRoute: Hashable, Identifiable {
+public enum AppRoute: Hashable, Identifiable {
     /// 笔记本工作台 (切换与管理不同笔记本的入口) -> `NotebookHubView`
     case notebookHub
 
@@ -74,7 +81,12 @@ enum AppRoute: Hashable, Identifiable {
     /// 知识图谱 (可视化展示页面间的关联网络) -> `GraphContainerView`
     case graph
     
-    var id: String {
+    /// 知识测试 (基于页面的 AI 测验)
+    case quiz
+    
+    /// 勋章墙 (展示用户的知识管理成就)
+    case medalWall
+    public var id: String {
         switch self {
         case .notebookHub: return "notebookHub"
         case .dashboard: return "dashboard"
@@ -95,6 +107,22 @@ enum AppRoute: Hashable, Identifiable {
         case .search(let query, let type): return "search-\(query ?? "")-\(type?.rawValue ?? "all")"
         case .ingest: return "ingest"
         case .graph: return "graph"
+        case .quiz: return "quiz"
+        case .medalWall: return "medalWall"
+        }
+    }
+    
+    /// 获取该路由所属的业务领域
+    public var domain: FeatureDomain {
+        switch self {
+        case .notebookHub, .pageList, .pageDetail, .tagCloud, .ingest, .graph, .search:
+            return .knowledge
+        case .chat, .synthesis, .taskCenter, .weeklyReport, .quiz:
+            return .ai
+        case .dashboard, .log, .lint, .medalWall:
+            return .insight
+        case .settings, .help, .about, .collab, .pluginMarket:
+            return .system
         }
     }
 }
@@ -238,6 +266,8 @@ final class Router {
         case .ingest: sidebarSelection = .tool(.ingest)
         case .graph: sidebarSelection = .tool(.graph)
         case .pageDetail(let id): sidebarSelection = .page(id)
+        case .quiz: sidebarSelection = .tool(.synthesis) // 归属于合成/测验
+        case .medalWall: sidebarSelection = .tool(.dashboard) // 归属于仪表盘/成就
         }
     }
 }

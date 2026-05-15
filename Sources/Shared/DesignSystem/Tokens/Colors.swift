@@ -137,6 +137,13 @@ extension Color {
     public static var appEntity: Color { .orange }
     public static var appMap: Color { .indigo }
     public static var appComparison: Color { .teal }
+    
+    // MARK: - 功能性语义颜色
+    
+    /// 录音中/紧急警告色
+    public static var appRecording: Color { .red }
+    /// 一般性警告/提醒色
+    public static var appAlert: Color { .orange }
 
     // MARK: - 十六进制初始化逻辑
     
@@ -187,6 +194,8 @@ extension ShapeStyle where Self == Color {
     public static var appMap: Color { .appMap }
     public static var appComparison: Color { .appComparison }
     public static var appGloss: Color { .appGloss }
+    public static var appRecording: Color { .appRecording }
+    public static var appAlert: Color { .appAlert }
 }
 
 // MARK: - Environment 扩展

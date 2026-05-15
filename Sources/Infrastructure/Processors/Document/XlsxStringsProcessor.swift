@@ -1,7 +1,7 @@
 // XlsxSharedStringsParser.swift
 //
 // 作者: Wang Chong
-// 功能说明: Xlsx Shared Strings Parser.swift
+// 功能说明: [L1] 基础设施层：Xlsx Shared Strings Parser.swift
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-04

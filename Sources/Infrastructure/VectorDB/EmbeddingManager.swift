@@ -1,7 +1,7 @@
 // EmbeddingManager.swift
 //
 // 作者: Wang Chong
-// 功能说明: 向量管理中心，负责向量的异步计算、持久化同步以及基于 Accelerate 框架的高性能检索。
+// 功能说明: [L1] 基础设施层：向量管理中心，负责向量的异步计算、持久化同步以及基于 Accelerate 框架的高性能检索。
 // 版本: 1.2
 // 修改记录:
 //   - 2026-05-05: 升级文档规范，优化线程安全访问逻辑。
@@ -17,8 +17,8 @@ import Accelerate
 /// @SR-02: 向量数据库必须存储在 App 沙盒的私有目录下。
 /// @PR-02: 混合检索 (RAG) 链路耗时目标值 < 1.5s。
 actor EmbeddingManager {
-    /// 页面存储仓储
-    private let repository: KnowledgePageStore
+    /// 向量存储仓储
+    private let repository: any VectorRepository
     /// 自然语言嵌入模型
     private let embeddingModel: NLEmbedding?
     /// 当前使用的模型名称
@@ -36,20 +36,20 @@ actor EmbeddingManager {
         return vectorCache
     }
 
-    init(repository: KnowledgePageStore) {
+    init(repository: any VectorRepository) {
         self.repository = repository
         self.embeddingModel = NLEmbedding.sentenceEmbedding(for: .simplifiedChinese) ?? NLEmbedding.sentenceEmbedding(for: .english)
     }
 
     /// 异步加载初始缓存 (@PR-05: 优化数据库冷启动加载时间)
-    func loadInitialCache() {
+    func loadInitialCache() async {
         // 1. 加载页面级向量
-        if let embeddings = try? repository.fetchAllEmbeddings() {
+        if let embeddings = try? await repository.fetchAllEmbeddings() {
             vectorCache = embeddings
         }
 
         // 2. 加载分块级向量
-        if let chunks = try? repository.fetchAllChunksWithEmbeddings() {
+        if let chunks = try? await repository.fetchAllChunksWithEmbeddings() {
             loadChunksIntoCache(chunks)
         }
     }
@@ -92,7 +92,7 @@ actor EmbeddingManager {
         let text = "\(page.title)\n\(page.content.prefix(1000))"
         if let vector = model.vector(for: text) {
             let floatVector = vector.map { Float($0) }
-            try? self.repository.saveEmbedding(id: page.id, vector: floatVector, modelName: self.modelName)
+            try? await self.repository.saveEmbedding(id: page.id, vector: floatVector, modelName: self.modelName)
             self.vectorCache[page.id] = floatVector
         }
     }
@@ -113,7 +113,7 @@ actor EmbeddingManager {
         }
 
         // 批量持久化到数据库
-        try? self.repository.saveChunks(pageID: pageID, chunks: processedChunks)
+        try? await self.repository.saveChunks(pageID: pageID, chunks: processedChunks)
 
         // 更新内存缓存
         loadChunksIntoCache(processedChunks)

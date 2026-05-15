@@ -1,7 +1,7 @@
 // DocxProcessor.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了 Word (Docx) 文档解析处理器（DocxProcessor），通过解析 XML 压缩包结构提取结构化文本。
+// 功能说明: [L1] 基础设施层：本文件实现了 Word (Docx) 文档解析处理器（DocxProcessor），通过解析 XML 压缩包结构提取结构化文本。
 // 核心处理逻辑涵盖：
 // 1. 压缩包解压：实现对 docx 标准 zip 结构的底层解析，定位并读取 word/document.xml 核心数据。
 // 2. XML 语义转换：将 Docx 内部的 XML 标记（如 w:p, w:t）精准转换为 Markdown 或纯文本格式，保留基本的段落结构。

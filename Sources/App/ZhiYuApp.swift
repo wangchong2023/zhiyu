@@ -1,7 +1,7 @@
 // ZhiYuApp.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件是“知识灵动 (Knowledge Management)”应用程序的顶层入口点。
+// 功能说明: [L3] 应用调度层：本文件是“知识灵动 (Knowledge Management)”应用程序的顶层入口点。
 // 它负责协调整个应用的生命周期，并执行以下核心任务：
 // 1. 基础设施注入：初始化 Logger, SQLiteStore, SecurityManager 等底层服务。
 // 2. 依赖注入管理：利用 ServiceContainer 实现跨层级服务的解耦与注册。
@@ -22,7 +22,7 @@ struct ZhiYuApp: App {
     // ── 顶层环境持有者 ──
     @State private var appEnv: AppEnvironment = AppEnvironment.shared
     @ObservedObject private var themeManager = ThemeManager.shared
-    @AppStorage("hasSeenSplash") private var hasSeenSplash = false
+    @AppStorage(AppConstants.Keys.Storage.hasSeenSplash) private var hasSeenSplash = false
     
     /// 初始化应用
     init() {
@@ -56,9 +56,9 @@ struct ZhiYuApp: App {
                 if !hasSeenSplash {
                     SplashView(onDismiss: {
                         if hasSeenSplash { return }
-                        withAnimation(.easeInOut(duration: 0.6)) {
+                        withAnimation(.easeInOut(duration: DesignSystem.Animation.slowDuration)) {
                             hasSeenSplash = true
-                            NotificationCenter.default.post(name: NSNotification.Name("splashDismissed"), object: nil)
+                            NotificationCenter.default.post(name: .splashDismissed, object: nil)
                         }
                     })
                     .transition(.opacity)

@@ -95,7 +95,7 @@ struct MarkdownEditorView: View {
         .onAppear { editorContent = page.content }
         .onDisappear {
             page.content = editorContent
-            page.updated = Date()
+            page.updatedAt = Date()
             Task {
                 await store.updatePage(page, forceDeepScan: false)
             }

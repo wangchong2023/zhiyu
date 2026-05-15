@@ -1,7 +1,7 @@
 // AppCloudSyncService.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了基于 CloudKit 的云端同步服务，负责知识金库跨设备的数据一致性。
+// 功能说明: [L1] 基础设施层：本文件实现了基于 CloudKit 的云端同步服务，负责知识金库跨设备的数据一致性。
 // 核心职责：
 // 1. 差异化同步：基于 LWW (Last-Writer-Wins) 策略解决数据冲突。
 // 2. 数据安全：确保所有同步操作符合隐私白名单规范。
@@ -461,7 +461,7 @@ class iCloudSyncService: ObservableObject {
             if let localIndex = merged.firstIndex(where: { $0.id == remotePage.id }) {
                 // ID 冲突：保留较新版本
                 let localPage = merged[localIndex]
-                if remotePage.updated > localPage.updated {
+                if remotePage.updatedAt > localPage.updatedAt {
                     merged[localIndex] = remotePage
                 }
             } else if !merged.contains(where: { $0.title == remotePage.title }) {

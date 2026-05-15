@@ -1,7 +1,7 @@
 // FileSystemSyncService.swift
 //
 // 作者: Wang Chong
-// 功能说明: 文件系统同步服务：将数据库内容导出为物理 Markdown 文件
+// 功能说明: [L1] 基础设施层：文件系统同步服务：将数据库内容导出为物理 Markdown 文件
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -40,9 +40,9 @@ final class FileSystemSyncService {
             let yaml = """
             ---
             title: \(page.title)
-            type: \(page.type.rawValue)
+            type: \(page.pageType.rawValue)
             tags: \(page.tags.joined(separator: ", "))
-            updated: \(page.updated.formatted())
+            updated: \(page.updatedAt.formatted())
             ---
             
             """

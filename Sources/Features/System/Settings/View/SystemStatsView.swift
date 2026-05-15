@@ -1,0 +1,512 @@
+// SystemStatsView.swift
+//
+// 作者: Wang Chong
+// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的资源监控中心（SystemMonitorView）。
+// 作为系统的“仪表盘”，该视图为用户提供了关于 AI 资源消耗、存储分布及 RAG 质量评估的深度可观测性。
+// 版本: 1.2
+// 修改记录:
+//   - 2026-05-15: 引入 SystemStatsCoordinator 实现业务逻辑解耦。
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+import Charts
+
+// MARK: - 资源监控视图
+/// [L3] 表现层：资源监控视图 (原资源监控)
+/// 提供 AI 资源消耗、存储空间分布及数据溯源的多维度监控。
+struct SystemStatsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(AppStore.self) var store
+    @EnvironmentObject var themeManager: ThemeManager
+    
+    // 使用协调器管理状态与交互
+    @State private var coordinator = SystemStatsCoordinator()
+    @State private var selectedTab: Tab = .performance
+    
+    enum Tab: String, CaseIterable {
+        case performance = "performance"
+        case storage = "storage"
+        
+        var title: String {
+            switch self {
+            case .performance: return L10n.Dashboard.tr("stats.tabPerf")
+            case .storage: return L10n.Dashboard.tr("stats.tabStorage")
+            }
+        }
+    }
+    
+    var body: some View {
+        ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+            
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    // 分段选择器
+                    StandardSection {
+                        Picker("", selection: $selectedTab) {
+                            ForEach(Tab.allCases, id: \.self) { tab in
+                                Text(tab.title).tag(tab)
+                            }
+                        }
+                        #if !os(watchOS)
+                        .pickerStyle(.segmented)
+                        #endif
+                        .padding(Spacing.tiny)
+                    }
+                    .padding(.top, Spacing.medium)
+                    
+                    if coordinator.isLoading {
+                        VStack {
+                            ProgressView()
+                                .padding(.vertical, DesignSystem.large * 2.5)
+                        }
+                    } else {
+                        switch selectedTab {
+                        case .performance:
+                            performanceSection
+                        case .storage:
+                            storageSection
+                        }
+                    }
+                }
+                .padding(.bottom, DesignSystem.large * 2) // 底部留白
+            }
+            .background(PageBackgroundView(accentColor: .appAccent))
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .navigationTitle(L10n.Dashboard.tr("stats.navigationTitleMonitor"))
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await coordinator.loadStats()
+        }
+    }
+    
+    // MARK: - 性能与 AI 资源分区
+    @ViewBuilder
+    private var performanceSection: some View {
+        Group {
+            // 1. API 请求卡片
+            StandardSection(title: L10n.Dashboard.apiRequests + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+                VStack(alignment: .leading, spacing: Spacing.tiny) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.requests })")
+                            .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
+                            .foregroundStyle(.appText)
+                        Text(L10n.Dashboard.tr("stats.requestsUsage"))
+                            .font(.caption)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    
+                    ChartView(stats: coordinator.dailyStats, type: .requests)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 40)
+                }
+                .padding(Spacing.medium)
+            }
+            
+            // 2. Token 消耗卡片
+            StandardSection(title: L10n.Dashboard.tr("stats.tokensUsage") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+                VStack(alignment: .leading, spacing: Spacing.tiny) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.tokens })")
+                            .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
+                            .foregroundStyle(.appText)
+                        Text(L10n.Dashboard.tokens)
+                            .font(.caption)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    
+                    ChartView(stats: coordinator.dailyStats, type: .tokens)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 40)
+                }
+                .padding(Spacing.medium)
+            }
+            
+            // 3. 响应时延卡片
+            StandardSection(title: L10n.Dashboard.tr("stats.latencyTitle") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(L10n.Dashboard.tr("stats.avgLatencyShort"))
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary)
+                            
+                            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                                Text("\(coordinator.avgLatency)")
+                                    .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
+                                    .foregroundColor(.appText)
+                                Text(L10n.Dashboard.unitMs)
+                                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold))
+                                    .foregroundColor(.appSecondary)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        ZStack {
+                            Circle()
+                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.1))
+                                .frame(width: 44, height: 44)
+                            Image(systemName: DesignSystem.Icons.timer)
+                                .font(.title3.bold())
+                                .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
+                        }
+                    }
+                    
+                    Divider()
+                        .opacity(DesignSystem.softOpacity)
+                    
+                    HStack(spacing: 0) {
+                        latencySubValue(label: L10n.Dashboard.tr("stats.maxLatency"), value: "\(coordinator.maxLatency)")
+                        divider
+                        latencySubValue(label: L10n.Dashboard.tr("stats.minLatency"), value: "\(coordinator.minLatency)")
+                        divider
+                        latencySubValue(label: L10n.Dashboard.tr("stats.measureCount"), value: "\(coordinator.latencyCount)")
+                    }
+                }
+                .padding(Spacing.medium)
+            }
+        }
+    }
+    
+    // MARK: - 存储与治理分区
+    @ViewBuilder
+    private var storageSection: some View {
+        Group {
+            // 1. 知识库资产分布 (饼图 + 详细图例)
+            StandardSection(title: L10n.Dashboard.tr("stats.storageDistribution")) {
+                VStack(spacing: Spacing.medium) {
+                    if coordinator.storageCategories.isEmpty {
+                        ProgressView()
+                            .frame(height: DesignSystem.Metrics.chartHeight - 20)
+                    } else if coordinator.storageCategories.allSatisfy({ $0.value == 0 }) {
+                        VStack(spacing: Spacing.medium) {
+                            Image(systemName: DesignSystem.Icons.chartPie)
+                                .font(.system(size: DesignSystem.Gallery.iconSize))
+                                .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
+                            Text(L10n.Common.Empty.tr("noData"))
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: DesignSystem.Metrics.chartHeight - 20)
+                    } else {
+                        HStack(spacing: Spacing.medium) {
+                            #if os(watchOS)
+                            chartContainer
+                            #else
+                            chartContainer
+                                .frame(maxWidth: .infinity)
+                            #endif
+                            
+                            legendContainer
+                                .frame(maxWidth: .infinity)
+                        }
+                        .padding(.vertical, Spacing.small)
+                    }
+                }
+                .padding(Spacing.medium)
+            }
+            
+            // 2. 存储空间分布列表
+            StandardSection(title: L10n.Dashboard.tr("stats.storageDetails")) {
+                ForEach(coordinator.storageCategories.indices, id: \.self) { index in
+                    let category = coordinator.storageCategories[index]
+                    HStack(spacing: Spacing.standardPadding) {
+                        Image(systemName: coordinator.iconForCategory(category.label))
+                            .foregroundStyle(category.color)
+                            .frame(width: DesignSystem.giant)
+                        
+                        Text(category.label)
+                            .foregroundStyle(.appText)
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Text(coordinator.formatBytes(category.value))
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.appText)
+                            }
+                            
+                            if coordinator.totalStorage > 0 {
+                                let percent = Int(Double(category.value) / Double(coordinator.totalStorage) * 100)
+                                Text("\(percent)%")
+                                    .font(.system(size: DesignSystem.microFontSize, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
+                    }
+                    .appListRowStyle(showDivider: index < coordinator.storageCategories.count - 1)
+                }
+            }
+            
+            // 3. 治理与维护
+            StandardSection(title: L10n.Dashboard.maintenance) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Button(action: { Task { await coordinator.cleanupData() } }) {
+                        HStack {
+                            Label(L10n.Dashboard.cleanupAction, systemImage: "sparkles")
+                            Spacer()
+                            if coordinator.isCleaning {
+                                ProgressView()
+                            } else {
+                                Image(systemName: DesignSystem.Icons.forward)
+                                    .font(.caption)
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.appAccent)
+                    
+                    if let count = coordinator.cleanedCount {
+                        Text("\(L10n.Dashboard.cleanedPrefix) \(count) \(L10n.Dashboard.cleanedSuffix)")
+                            .font(.caption)
+                            .foregroundColor(Color.green)
+                    }
+                }
+                .padding(Spacing.medium)
+            }
+        }
+    }
+    
+    // MARK: - 辅助组件
+    
+    private var chartContainer: some View {
+        ZStack {
+            Chart(coordinator.storageCategories) { category in
+                SectorMark(
+                    angle: .value("Size", Double(category.value)),
+                    innerRadius: .ratio(0.65),
+                    angularInset: 3
+                )
+                .cornerRadius(6)
+                .foregroundStyle(category.color)
+            }
+            .chartLegend(.hidden)
+            .frame(height: DesignSystem.Metrics.chartHeight - 40)
+            
+            VStack(spacing: 4) {
+                Text(coordinator.formatBytes(coordinator.totalStorage))
+                    .font(.system(size: DesignSystem.titleFontSize + 2, weight: .bold, design: .rounded))
+                    .foregroundStyle(.appAccent)
+                Text(L10n.Dashboard.totalStorage)
+                    .font(.system(size: DesignSystem.microFontSize, weight: .black))
+                    .foregroundStyle(.appSecondary)
+                    .kerning(1)
+                    .textCase(.uppercase)
+            }
+        }
+    }
+    
+    private var legendContainer: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            ForEach(coordinator.storageCategories) { category in
+                HStack(spacing: DesignSystem.tiny) {
+                    Circle()
+                        .fill(category.color)
+                        .frame(width: DesignSystem.tiny + 2, height: DesignSystem.tiny + 2)
+                    
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(category.label)
+                            .font(DesignSystem.caption2Font)
+                            .foregroundStyle(.appText)
+                            .lineLimit(1)
+                        HStack(spacing: 4) {
+                            Text(coordinator.formatBytes(category.value))
+                            let percent = coordinator.totalStorage > 0 ? Int(Double(category.value) / Double(coordinator.totalStorage) * 100) : 0
+                            Text("(\(percent)%)")
+                        }
+                        .font(.system(size: DesignSystem.microFontSize))
+                        .foregroundStyle(.appSecondary)
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - 时延卡片辅助
+    
+    private func latencySubValue(label: String, value: String) -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundStyle(.appSecondary)
+            
+            Text(value)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.appText)
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private var divider: some View {
+        Divider()
+            .frame(height: 16)
+            .padding(.horizontal, 4)
+    }
+}
+
+// MARK: - 子视图：资源图表实现
+struct ChartView: View {
+    enum ChartType {
+        case requests
+        case tokens
+    }
+    
+    let stats: [DailyAIUsage]
+    let type: ChartType
+    @EnvironmentObject var themeManager: ThemeManager
+    @State private var selectedDate: Date?
+    
+    var body: some View {
+        if stats.isEmpty {
+            VStack(spacing: DesignSystem.small) {
+                Image(systemName: DesignSystem.Icons.chartLine)
+                    .font(.system(size: DesignSystem.displayFontSize))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
+                Text(L10n.Common.Empty.tr("noData"))
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: DesignSystem.Metrics.chartHeight - 60)
+            .background(Color.appCard.opacity(DesignSystem.softOpacity))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        } else {
+            Chart {
+                ForEach(stats) { stat in
+                    let value = type == .requests ? Double(stat.requests) : Double(stat.tokens)
+                    
+                    if type == .requests {
+                        AreaMark(
+                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                            y: .value(L10n.Dashboard.chartValue, value)
+                        )
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.01)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .interpolationMethod(.catmullRom)
+                        
+                        LineMark(
+                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                            y: .value(L10n.Dashboard.chartValue, value)
+                        )
+                        .foregroundStyle(themeManager.accentColor)
+                        .lineStyle(StrokeStyle(lineWidth: 2))
+                        .interpolationMethod(.catmullRom)
+                    } else {
+                        BarMark(
+                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                            y: .value(L10n.Dashboard.chartValue, value),
+                            width: .fixed(DesignSystem.small)
+                        )
+                        .foregroundStyle(themeManager.accentColor.opacity(0.7).gradient)
+                        .cornerRadius(1)
+                    }
+                }
+                
+                // 交互指示器
+                if let selectedDate {
+                    RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
+                        .foregroundStyle(Color.appSecondary.opacity(0.5))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
+                        .annotation(position: .automatic, alignment: .center, spacing: 4) {
+                            if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                                tooltipView(stat: stat)
+                            }
+                        }
+                    
+                    if type == .requests, let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                        PointMark(
+                            x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day),
+                            y: .value(L10n.Dashboard.chartValue, Double(stat.requests))
+                        )
+                        .symbol {
+                            Circle()
+                                .stroke(themeManager.accentColor, lineWidth: 2)
+                                .background(Circle().fill(.white))
+                                .frame(width: DesignSystem.small, height: DesignSystem.small)
+                        }
+                    }
+                }
+            }
+            .chartXSelection(value: $selectedDate)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .day, count: 7)) { value in
+                    AxisGridLine().foregroundStyle(.appBorder.opacity(DesignSystem.softOpacity))
+                    AxisValueLabel(anchor: .topTrailing) {
+                        if let date = value.as(Date.self) {
+                            Text(formatDate(date))
+                                .font(.system(size: DesignSystem.microFontSize))
+                                .foregroundStyle(.appSecondary)
+                        }
+                    }
+                }
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { value in
+                    AxisGridLine().foregroundStyle(.appBorder.opacity(0.5))
+                    AxisValueLabel {
+                        if let intValue = value.as(Int.self) {
+                            Text("\(intValue)")
+                                .font(.system(size: DesignSystem.microFontSize))
+                                .foregroundStyle(.appSecondary)
+                        }
+                    }
+                }
+            }
+            .chartXScale(domain: currentMonthRange().start...currentMonthRange().end.addingTimeInterval(86400)) // 增加一天偏移，防止月底标签截断
+            .chartYScale(domain: 0...(max(100, maxValue() * 1.2)))
+        }
+    }
+    
+    private func currentMonthRange() -> (start: Date, end: Date) {
+        let calendar = Calendar.current
+        let now = Date()
+        let components = calendar.dateComponents([.year, .month], from: now)
+        let startOfMonth = calendar.date(from: components)!
+        let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)!
+        return (startOfMonth, endOfMonth)
+    }
+    
+    private func tooltipView(stat: DailyAIUsage) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(stat.date, format: .dateTime.year().month().day())
+                .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
+                .foregroundStyle(.appText)
+            
+            HStack(spacing: 4) {
+                Text(type == .requests ? L10n.Dashboard.apiRequests : L10n.Dashboard.tokens)
+                    .font(.system(size: DesignSystem.caption2FontSize))
+                    .foregroundStyle(.appSecondary)
+                Text("\(type == .requests ? stat.requests : stat.tokens)")
+                    .font(.system(size: DesignSystem.caption2FontSize, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.appText)
+            }
+        }
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.vertical, DesignSystem.small)
+        .background {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(Color.appCard)
+                .appStandardShadow()
+        }
+    }
+    
+    private func maxValue() -> Double {
+        let maxVal = stats.map { type == .requests ? Double($0.requests) : Double($0.tokens) }.max() ?? 100
+        return maxVal == 0 ? 100 : maxVal
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M-d"
+        return formatter.string(from: date)
+    }
+}

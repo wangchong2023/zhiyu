@@ -74,7 +74,6 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     dependencies:
       - package: GRDB
-      - target: ZhiYuWidgets
 
   ZhiYuWatch:
     type: application
@@ -103,7 +102,7 @@ targets:
     platform: iOS
     sources:
       - path: Sources/Platforms/iOS/Widgets
-      - path: Sources/Shared/Models/AIProcessingAttributes.swift
+      - path: Sources/Domain/Models/AIProcessingAttributes.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.widgets

@@ -1,7 +1,7 @@
 // WatchAppEnvironment.swift
 //
 // 作者: Wang Chong
-// 功能说明: AppEnvironmentProtocol 的 watchOS 实现。
+// 功能说明: [L3] 应用调度层：AppEnvironmentProtocol 的 watchOS 实现。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -21,6 +21,10 @@ final class WatchAppEnvironment: AppEnvironmentProtocol {
     var isMobile: Bool { return true }
     
     var platformName: String { return "watchOS" }
+    
+    var deviceName: String {
+        return WKInterfaceDevice.current().name
+    }
     
     var isCloudSyncSupported: Bool { return false }
 }

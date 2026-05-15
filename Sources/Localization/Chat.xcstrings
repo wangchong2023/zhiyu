@@ -69,6 +69,40 @@
         }
       }
     },
+    "chat.clearHistory.confirm.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This action will permanently delete all messages in the current conversation and cannot be undone."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此操作将永久删除当前对话的所有消息记录，且不可撤销。"
+          }
+        }
+      }
+    },
+    "chat.clearHistory.confirm.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear Chat History?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认清空对话记录？"
+          }
+        }
+      }
+    },
     "chat.configureFirst": {
       "extractionState": "manual",
       "localizations": {
