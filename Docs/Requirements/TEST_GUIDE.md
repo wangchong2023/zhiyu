@@ -14,14 +14,14 @@
 - [x] **本地大模型 (Local Model)**：支持 CoreML 模型加载、卸载及推理速度 (tok/s) 监测。
 
 ### 1.2 知识编译与进化 (Knowledge Evolution)
-- [x] **智能编译 (Smart Ingest)**：原始文本 -> 结构化 Wiki (包含摘要、标签、关联页面建议)。
+- [x] **智能编译 (Smart Ingest)**：原始文本 -> 结构化 知识库 (包含摘要、标签、关联页面建议)。
 - [x] **增量折叠 (Smart Folding)**：自动识别现有页面内容，将新信息融合进旧页面，防止内容碎片化。
 - [x] **URL 智能摄入**：集成 Jina Reader 自动去广告去干扰，保留纯净 Markdown。
 - [x] **知识溯源 (Provenance)**：在页面底部自动生成 `Sources` 区域，保留原始链接与引用片段。
 
 ---
 
-## 二、知识管理与维护 (Wiki & Maintenance)
+## 二、知识管理与维护 (知识库 & Maintenance)
 
 ### 2.1 页面详情 (Page Detail)
 - [x] **现代视觉**：详情页顶部采用毛玻璃 (Material) 背景，支持沉浸式阅读。

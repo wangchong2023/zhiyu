@@ -68,6 +68,10 @@
 	<string>Automatic</string>
 	<key>NSSpotlightUsageDescription</key>
 	<string>ZhiYu will index your knowledge vault so you can find pages directly via system search.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>ZhiYu needs reminders access to sync your action items to the system Reminders app.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2026 ZhiYu. All rights reserved.</string>
 	<key>LSApplicationCategoryType</key>

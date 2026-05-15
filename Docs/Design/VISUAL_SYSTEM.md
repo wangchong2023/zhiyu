@@ -48,7 +48,7 @@
 *   **代码/单字**：SF Mono (用于标签与技术参数)。
 
 ## 5. 交互反馈 (Interaction)
-*   **触感触发器**（`HapticManager.shared.trigger(_:)`）：
+*   **触感触发器**（`HapticFeedback.shared.trigger(_:)`）：
     *   `.selection`: 普通点击、选中切换。
     *   `.success`: 操作成功（保存、导出完成）。
     *   `.error`: 操作失败、AI 任务异常。
@@ -111,9 +111,9 @@
 ```mermaid
 graph TD
     Root[ContentView] --> Tab[TabView / SplitView]
-    Tab --> Wiki[NavigationView / WikiModule]
-    Wiki --> Sidebar[SidebarView]
-    Wiki --> Detail[DetailContentView]
+    Tab --> Knowledge[NavigationView / KnowledgeModule]
+    Knowledge --> Sidebar[SidebarView]
+    Knowledge --> Detail[DetailContentView]
     Detail --> PageDetail[PageDetailView]
     PageDetail --> Header[PageDetailHeader]
     PageDetail --> Bread[BreadcrumbView]

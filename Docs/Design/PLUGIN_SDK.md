@@ -52,11 +52,11 @@ protocol InterceptionPlugin: KnowledgePlugin {
 ```swift
 protocol UIExtensionPlugin: KnowledgePlugin {
     @ViewBuilder
-    func pageDetailFooter(page: WikiPage) -> AnyView
+    func pageDetailFooter(page: KnowledgePage) -> AnyView
     @ViewBuilder
     func sidebarToolbarItem() -> AnyView?
     @ViewBuilder
-    func editorToolbarAction(page: WikiPage) -> AnyView?
+    func editorToolbarAction(page: KnowledgePage) -> AnyView?
 }
 ```
 
@@ -71,7 +71,7 @@ protocol UIExtensionPlugin: KnowledgePlugin {
 | **hostVersion** | `var hostVersion: String` | 无 | 宿主内核版本号（当前 `"2.0.0"`） |
 | **log** | `func log(_ message: String)` | 无 | 统一日志输出，自动添加 `[Plugin:id]` 前缀 |
 | **requestAIAccess** | `func requestAIAccess(prompt:) async -> String?` | `"llm"` (manifest) | 调用 LLM，未声明权限返回 `nil` 并记录安全检查 |
-| **queryPages** | `func queryPages(matching:) async -> [WikiPage]` | `"pages.read"` (manifest) | 模糊搜索页面，未声明权限返回空数组 |
+| **queryPages** | `func queryPages(matching:) async -> [KnowledgePage]` | `"pages.read"` (manifest) | 模糊搜索页面，未声明权限返回空数组 |
 
 ### 权限管控流程
 

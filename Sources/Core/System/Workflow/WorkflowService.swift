@@ -36,7 +36,7 @@ final class WorkflowService: ObservableObject {
     func syncToReminders(text: String, title: String) async throws {
         let hasAccess = await requestAccess()
         guard hasAccess else {
-            ToastManager.shared.show(type: .error, message: "无法访问提醒事项，请在系统设置中授权")
+            ToastManager.shared.show(type: .error, message: "无法访问提醒事项。请检查：设置 -> 隐私与安全 -> 提醒事项 -> 智宇")
             throw WorkflowError.accessDenied 
         }
         
@@ -49,6 +49,7 @@ final class WorkflowService: ObservableObject {
             }
             .map { line -> String in
                 var cleaned = line
+                // 1. 剔除列表前缀
                 if cleaned.hasPrefix("- [ ] ") || cleaned.hasPrefix("- [x] ") || cleaned.hasPrefix("- [X] ") {
                     cleaned = String(cleaned.dropFirst(6))
                 } else if cleaned.hasPrefix("- ") || cleaned.hasPrefix("* ") {
@@ -56,6 +57,16 @@ final class WorkflowService: ObservableObject {
                 } else if let dotIndex = cleaned.firstIndex(of: "."), !cleaned.prefix(upTo: dotIndex).isEmpty, cleaned.prefix(upTo: dotIndex).allSatisfy({ $0.isNumber }) {
                     cleaned = String(cleaned[cleaned.index(after: dotIndex)...])
                 }
+                
+                // 2. 剔除 Markdown 样式标记（加粗、斜体、删除线、行内代码）
+                cleaned = cleaned.replacingOccurrences(of: "***", with: "") // 粗斜体
+                cleaned = cleaned.replacingOccurrences(of: "**", with: "")  // 加粗
+                cleaned = cleaned.replacingOccurrences(of: "__", with: "")  // 下划线加粗
+                cleaned = cleaned.replacingOccurrences(of: "*", with: "")   // 斜体
+                cleaned = cleaned.replacingOccurrences(of: "_", with: "")   // 下划线斜体
+                cleaned = cleaned.replacingOccurrences(of: "~~", with: "")  // 删除线
+                cleaned = cleaned.replacingOccurrences(of: "`", with: "")   // 行内代码
+                
                 return cleaned.trimmingCharacters(in: .whitespaces)
             }
             .filter { !$0.isEmpty }

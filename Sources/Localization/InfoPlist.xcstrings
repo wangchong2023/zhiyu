@@ -126,6 +126,30 @@
         }
       }
     },
+    "NSRemindersFullAccessUsageDescription" : {
+      "comment" : "Privacy - Reminders Full Access Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows."
+          }
+        }
+      }
+    },
+    "NSRemindersUsageDescription" : {
+      "comment" : "Privacy - Reminders Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ZhiYu needs reminders access to sync your action items to the system Reminders app."
+          }
+        }
+      }
+    },
     "NSSpeechRecognitionUsageDescription" : {
       "comment" : "Privacy - Speech Recognition Usage Description",
       "extractionState" : "manual",

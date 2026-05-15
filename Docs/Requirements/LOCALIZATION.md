@@ -38,7 +38,7 @@
 1.  **新增词条**：根据所属功能找到对应的 `.xcstrings` 分表进行添加。
 2.  **Key 命名空间**：采用 `[模块名].[功能].[描述]` 格式。
     *   示例：`ingest.error.unsupportedFormat` 或 `chat.placeholder.thinking`。
-3.  **类型安全访问**：严禁直接在 View 中书写 `"string_key"`。必须通过 `Sources/Shared/Core/Utilities/Localized.swift` 中定义的 `L10n` 结构体进行访问。
+3. **类型安全访问**：严禁直接在 View 中书写 `"string_key"`。必须通过 `Sources/Core/Base/Utils/Localized.swift` 中定义的 `L10n` 结构体进行访问。
     *   示例：`Text(L10n.Chat.title)`。
 
 ### 2.2 自动化同步 (Sync Mechanism)

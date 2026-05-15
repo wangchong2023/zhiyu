@@ -114,7 +114,7 @@ LLM 服务协议定义在 `Sources/Shared/Services/Core/Protocols/LLMServiceProt
 - **`AppStore`**：`@MainActor @Observable` 门面类，管理页面列表、搜索状态、导航路径、隐私模式
 - **`@Inject` 依赖注入**：通过 `ServiceContainer` 解析服务实例，支持测试 Mock 替换
 - **`SceneStorage` 桥接**：通过自定义 Binding 包装器将 `@Observable` 状态同步到 SwiftUI `@SceneStorage`，确保多窗口状态隔离
-- **`WikiEventBus`**：发布订阅总线，`SQLiteStore` 发布 `.pageUpdated` 事件，`GraphView` 等订阅者自动刷新
+- **`AppNotifications`**：基于 `Notification.Name` 扩展的事件总线，`SQLiteStore` 发布数据变更信号，`GraphView` 等订阅者自动刷新。
 
 ### 6.5 分布式冲突解决 (LWW Strategy)
 

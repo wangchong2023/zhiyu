@@ -5,9 +5,9 @@
 ## 1. 混合检索引擎 (Hybrid Search Engine)
 
 ### 1.1 数据流向与 RAG 模块化管道 (Modular Ingest Pipeline)
-智宇 (ZhiYu) 实现了端到端的 RAG 摄入管道，通过 `KnowledgeIngestPipeline` 编排以下核心阶段：
+智宇 (ZhiYu) 实现了端到端的 RAG 摄入管道，通过 `KnowledgeIngestPipeline` (位于 `Domain/RAG`) 编排以下核心阶段：
 1. **语义增强 (AIContentEnricher)**: 自动识别并转义 Markdown 中的图表、公式为文本描述。
-2. **递归分块 (TextChunkerProcessor)**: 层级感知切分。
+2. **递归分块 (TextChunkerProcessor)**: 层级感知切分（基于 `Infrastructure/Processors`）。
 3. **向量索引 (VectorIndexer)**: 解耦的向量计算与存储同步。
 
 系统采用 **倒数排名融合 (Reciprocal Rank Fusion, RRF)** 算法来消除不同搜索引擎（FTS5 与 Vector）结果量纲不统一的问题。
@@ -59,7 +59,7 @@ $$Score(d) = \sum_{r \in R} \frac{1}{k + r(d)}$$
     ```swift
     final_version = (remote.lamport > local.lamport) ? remote : local
     ```
-*   **物理模式**: 每次页面更新，`lamportTimestamp` 自动递增。在同步冲突时，通过 `WikiPage.merge(with:)` 算法自动收敛数据，避免产生重复文件或内容丢失。
+*   **物理模式**: 每次页面更新，`lamportTimestamp` 自动递增。在同步冲突时，通过 `KnowledgePage.merge(with:)` 算法自动收敛数据，避免产生重复文件或内容丢失。
 
 ## 6. 向量库同步一致性协议 (Vector DB Consistency Protocol)
 

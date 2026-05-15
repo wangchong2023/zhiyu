@@ -37,16 +37,46 @@
 
 | 后缀 | 层级 | 用途 | 示例 |
 |------|------|------|------|
-| `Store` | L1 | 数据存储操作 | `SQLiteStore`, `SettingsStore` |
-| `Service` | L2 | 业务逻辑服务 | `LintService`, `CollaborationService` |
-| `Manager` | L0 | 基础设施/资源管理 | `DatabaseManager`, `SecurityManager` |
-| `Provider` | — | 协议级功能抽象 | `EmbeddingProvider`, `GraphDataProvider` |
-| `Adapter` | — | 适配器抽象 | `LLMAdapter` |
-| `Plugin` | — | 插件接口（需实现协议） | `KnowledgePlugin`, `InterceptionPlugin` |
-| `Delegate` | — | 回调代理 | `CollaborationDelegate` |
+| `Store` | L1 | 数据持久化与存储库实现 | `SQLiteStore`, `KnowledgePageStore` |
+| `Service` | L1.5/L2 | 业务逻辑、领域行为或 UI 服务 | `LinkService`, `ChatService` |
+| `Manager` | L0.5 | 系统资源管理与 OS 能力封装 | `SecurityManager`, `DatabaseManager` |
+| `Provider` | — | 协议级功能或视图插件提供者 | `EmbeddingProvider`, `ViewProvider` |
+| `Adapter` | — | 第三方服务或老旧接口适配 | `LLMAdapter` |
+| `Coordinator`| L3 | 复杂视图导航或状态流转编排 | `iCloudSyncCoordinator` |
+| `Delegate` | — | 跨层或跨模块回调代理 | `CollaborationDelegate` |
 
-- 数据库/存储操作类用 `Store`，避免 `Repository`
-- 业务逻辑用 `Service`，基础设施管理用 `Manager`
+- 持久化操作统一后缀为 `Store`。
+- 业务大脑逻辑统一后缀为 `Service`。
+- 系统/硬件集成统一后缀为 `Manager`。
+
+## 跨平台开发与平台宏规范 (Platform Macro Conventions)
+
+为了确保“智宇”能够优雅地在 iOS, macOS, watchOS 间复用代码，必须严格执行以下三原则：
+
+### 1. 协议屏蔽 (Rule 1: Protocol Shielding)
+业务逻辑层（L1, L1.5, L2）**严禁散落** `#if os()`。任何涉及平台差异的功能（如触感、文件导出、提醒事项）必须：
+- 在 `Base` 层定义抽象协议 (Protocol)。
+- 在 `Platforms/` 目录下为各平台编写独立实现。
+- 业务代码仅通过注入的协议引用，无需感知具体平台。
+
+### 2. DI 路由 (Rule 2: DI Routing)
+`#if` 唯一合法的**非 UI 场所**是 `ModuleRegistrar.swift`。
+- 利用预编译宏在 `ModuleRegistrar` 中决定向 `ServiceContainer` 注入哪个平台的具体实现。
+
+### 3. UI 优雅隔离 (Rule 3: UI Isolation)
+在 SwiftUI 视图中，仅在无法通过原生修饰符抹平差异时才允许使用条件编译。
+- 必须将差异部分提炼为独立的 `@ViewBuilder` 组件或局部视图结构。
+- 严禁在主视图的布局逻辑中嵌套大段的 `#if os` 块。
+
+---
+
+## 属性包装器使用规范
+
+- **依赖注入**: 统一使用 `@Inject` 访问跨层服务。
+- **状态管理**: 逻辑层使用 `Observation` 框架的 `@Observable`；View 层使用 `@State`, `@Environment`。
+- **持久化**: 全局偏好设置使用 `@AppStorage`（Key 必须来源于 `AppConstants.Keys.Storage`）。
+
+---
 
 ## Protocol 命名
 
@@ -127,4 +157,4 @@ var shouldRefresh: Bool       // 条件判断
 
 ### 协议遵循用 Extension
 
-协议实现放在独立 `extension` 中，不在类型声明体内联。`Identifiable`、`Equatable` 等无方法实现的协议可直接标注。
+协议实现放在独立 `extension` 中，不在类型声明体内联。`Identifiable`、`Equatable` 等无方法实现的协议可 SDK 直接标注。

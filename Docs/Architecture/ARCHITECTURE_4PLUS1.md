@@ -28,7 +28,7 @@ classDiagram
     }
     class AppStore {
         <<Facade>>
-        +pages: [WikiPage]
+        +pages: [KnowledgePage]
         +createPage()
         +searchPages()
         +generateWeeklyInsight()
@@ -36,7 +36,7 @@ classDiagram
         +recognizeText()
     }
     class SQLiteStore {
-        +repository: WikiPageStore
+        +repository: KnowledgePageStore
     }
     class LLMService {
         <<GodClass (正在拆解)>>
@@ -54,7 +54,7 @@ classDiagram
     AppStore --> SQLiteStore : 持久化委派
     AppStore --> LLMService : AI 能力
     AppStore --> VaultService : 外部库同步
-    SQLiteStore --> WikiPageStore : GRDB 封装
+    SQLiteStore --> KnowledgePageStore : GRDB 封装
 ```
 
 ---
@@ -62,10 +62,12 @@ classDiagram
 ## 3. 架构 4+1 视图 (4+1 Architectural View Model)
 
 ### 3.1 逻辑视图 (Logical View) - 功能分层
-- **L3 (应用层)**: `ZhiYuApp` 引导，`AppEnvironment` 配置环境，`Router` 全局导航。
-- **L2 (业务功能层)**: 垂直业务切片。如 `ChatService`, `IngestService`, `GraphDataProvider` 等。
-- **L1 (基础设施层)**: 实现技术细节。如 `LLMService`, `AppStore`, `EmbeddingManager`, `TextChunkerProcessor`, `SQLiteStore`。
-- **L0 (核心层)**: 系统基座。如 `Logger`, `SecurityManager`, `ServiceContainer`, `Protocols`。
+- **L3 (应用调度层)**: `ZhiYuApp` 引导，`AppEnvironment` 配置环境，`Router` 全局导航。
+- **L2 (业务功能层)**: 垂直功能切片。按领域分组（Knowledge, AI, Insight, System）。
+- **L1.5 (领域中心层)**: 核心业务大脑。如 RAG 编排、领域模型、跨模块契约协议。
+- **L1 (基础设施层)**: 技术能力实现。如 LLM 适配、数据库持久化引擎、物理文档处理器。
+- **L0.5 (系统集成层)**: OS 能力封装。如 `Logger`, `HapticFeedback`, `SecurityManager`。
+- **L0 (底层基座层)**: 极简内核。如 `ServiceContainer` (DI), 全局协议定义, 基础常量与扩展。
 
 ### 3.2 过程视图 (Process View) - 数据流与并发
 描述系统在执行关键任务时的动态协作关系。
@@ -94,7 +96,7 @@ sequenceDiagram
 
 ### 模块组织结构
 - **Sources/Shared**: 跨端共用的核心逻辑。
-    - **Models**: 数据实体（WikiPage, AsyncStatus）。
+    - **Models**: 数据实体（KnowledgePage, AsyncStatus）。
     - **Services**: 核心逻辑抽象层。
         - `AI`: 大模型通信 (LLMService)、向量计算、知识合成 (AISynthesisService)。
         - `Storage`: 数据持久化与备份 (SQLiteStore, AppStore, VaultService)。
@@ -246,11 +248,34 @@ graph LR
 - **解耦交互**: 视图层通过 `keyboardShortcut` 监听指令，由 `CommandPaletteView` 统一委派动作。
 - **语义唤起**: 支持对全库页面、近期任务与系统指令的模糊检索，实现了从”点击驱动”到”意图驱动”的跨越。
 
+### 10.6 跨平台治理策略 (Cross-Platform Governance)
+智宇 (ZhiYu) 通过“协议化分发”与“物理隔离”两手抓，实现了 iOS, macOS, watchOS 的高内聚、低耦合开发。
+
+#### 1. 物理隔离拓扑 (Physical Isolation)
+```mermaid
+graph LR
+    L2[L2: Features Layer] -- 引用 --> Base[L0: Base Protocols]
+    Base -- 声明契约 --> P_iOS[Platforms/iOS]
+    Base -- 声明契约 --> P_macOS[Platforms/macOS]
+    Base -- 声明契约 --> P_watchOS[Platforms/watchOS]
+    
+    Registrar[ModuleRegistrar] -- 编译宏分发 --> P_iOS
+    Registrar -- 编译宏分发 --> P_macOS
+    Registrar -- 编译宏分发 --> P_watchOS
+    
+    P_iOS -- 注入实现 --> L2
+```
+
+#### 2. 三大红线准则
+- **协议屏蔽 (Protocol Shielding)**: 严禁在 L1/L2 层出现 `#if os()`。任何平台能力差异（如 Haptic, Reminders, Spotlight）必须抽象为 Protocol，业务代码仅对协议编程。
+- **DI 路由 (DI Routing)**: `#if` 宏的唯一合法非 UI 存放地是 `ModuleRegistrar.swift`，作为全工程的“平台分路器”。
+- **UI 优雅隔离**: 视图中的平台宏必须提炼为独立的子 View 或 `@ViewBuilder`，保持主视图逻辑纯净。
+
 ---
 
 ## 11. 页面-视图路由映射 (Page-View Routing Map)
 
-本节完整记录从顶层 Tab 到最终渲染视图的导航链路，以及 WikiPage 数据在各视图间的流转关系。
+本节完整记录从顶层 Tab 到最终渲染视图的导航链路，以及 KnowledgePage 数据在各视图间的流转关系。
 
 ### 11.1 导航路由链路 (Navigation Routing Chain)
 
@@ -316,7 +341,7 @@ AppTab (Tab Bar)
 | `.filteredIndex(let type)` | `KnowledgePageListView(filterType: type)` | Views/Pages/ |
 | `.page(let id)` | `PageDetailView(page:)` 或空状态 | Views/Pages/ |
 
-### 11.3 WikiPage 数据流
+### 11.3 KnowledgePage 数据流
 
 ```
 AppStore.pages (数据源, @Observable)
@@ -332,7 +357,7 @@ AppStore.pages (数据源, @Observable)
   │
   └─→ GraphView / Graph3DView (图谱节点)
         └─ 节点点击 → graphPath.append(page)
-              └─ .navigationDestination(for: WikiPage.self) → PageDetailView(page:)
+              └─ .navigationDestination(for: KnowledgePage.self) → PageDetailView(page:)
 ```
 
 **关键数据绑定：**
@@ -346,7 +371,7 @@ AppStore.pages (数据源, @Observable)
 
 ### 11.4 跨 Tab 页面导航
 
-WikiPage 详情页可从多个 Tab 进入：
+KnowledgePage 详情页可从多个 Tab 进入：
 
 | 来源 Tab | 导航方式 | 详情页路径 |
 |----------|---------|-----------|
@@ -354,7 +379,17 @@ WikiPage 详情页可从多个 Tab 进入：
 | **Graph** | 图谱节点点击 | `NavigationStack(path: $graphPath)` → `PageDetailView` |
 | **Search** | 搜索结果点击 | `NavigationStack(path: $searchPath)` → `PageDetailView` |
 
-每个 Tab 维护独立的 `NavigationPath`，通过 `.navigationDestination(for: WikiPage.self)` 共享同一 `PageDetailView` 渲染。`NavigateAction` 环境值支持页面内深度跳转（如从 PageDetailView 内链导航到另一个 WikiPage）。
+每个 Tab 维护独立的 `NavigationPath`，通过 `.navigationDestination(for: KnowledgePage.self)` 共享同一 `PageDetailView` 渲染。`NavigateAction` 环境值支持页面内深度跳转（如从 PageDetailView 内链导航到另一个 KnowledgePage）。
+
+**启动默认路由：**
+- `selectedTab: AppTab = .knowledge`
+- `sidebarSelection: SidebarSelection? = .tool(.pageList)`
+- 启动落地页：**KnowledgePageListView（页面列表）**
+
+debarSelection? = .tool(.pageList)`
+- 启动落地页：**KnowledgePageListView（页面列表）**
+
+nDestination(for: KnowledgePage.self)` 共享同一 `PageDetailView` 渲染。`NavigateAction` 环境值支持页面内深度跳转（如从 PageDetailView 内链导航到另一个 KnowledgePage）。
 
 **启动默认路由：**
 - `selectedTab: AppTab = .knowledge`
