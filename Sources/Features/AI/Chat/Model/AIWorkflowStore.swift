@@ -2,10 +2,10 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L2] 业务功能层：AI 工作流存储，管理 AI 扫描状态、洞察及建议。
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-04
-// 日期: 2026-05-04
+//   - 2026-05-04: 创建版本。
+//   - 2026-05-16: 职责解耦：物理可见性优化，支持 AppStore 聚合。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -15,47 +15,50 @@ import Combine
 /// AI 工作流存储，管理 AI 扫描状态、洞察及建议。
 @MainActor
 @Observable
-final class AIWorkflowStore {
+public final class AIWorkflowStore {
+    // ── 子 Store 聚合 ──
+    public var insightStore: AIInsightStore = AIInsightStore()
+
     // ── 扫描与分析状态 ──
-    var isScanningAI = false
-    var refactorSuggestions: [RefactorSuggestion] = []
-    var potentialLinks: [PotentialLinkSuggestion] = []
+    public var isScanningAI = false
+    public var refactorSuggestions: [RefactorSuggestionDTO] = []
+    public var potentialLinks: [PotentialLinkSuggestion] = []
 
     // ── 页面级 AI 状态 ──
-    var activePageAIResult: String?
-    var isProcessingPageAI = false
-    var activeQuiz: QuizModel?
+    public var activePageAIResult: String?
+    public var isProcessingPageAI = false
+    public var activeQuiz: QuizModel?
 
     // ── 健康度状态 ──
-    var lastLintScore: Int = 0
-    var lastLintDate: Date?
+    public var lastLintScore: Int = 0
+    public var lastLintDate: Date?
 
     // ── 健康度代理 (由 LintService 实时计算) ──
-    var healthMetrics: (score: Int, level: LintService.HealthLevel) {
+    public var healthMetrics: (score: Int, level: LintService.HealthLevel) {
         lintService.calculateHealthMetrics(issues: lintIssues)
     }
-    var lintScore: Int { healthMetrics.score }
-    var healthLevel: LintService.HealthLevel { healthMetrics.level }
+    public var lintScore: Int { healthMetrics.score }
+    public var healthLevel: LintService.HealthLevel { healthMetrics.level }
     
     /// LLM 服务是否已启用
-    var isLLMEnabled: Bool { llmService.isEnabled }
+    public var isLLMEnabled: Bool { llmService.isEnabled }
 
     // ── 健康度问题存储 (Lint Issues) ──
     @ObservationIgnored private var _lintIssues: [LintIssue] = {
-        if let data = UserDefaults.standard.data(forKey: "lastLintIssues"),
+        if let data = UserDefaults.standard.data(forKey: AppConstants.Keys.Storage.lastLintIssues),
            let decoded = try? JSONDecoder().decode([LintIssue].self, from: data) {
             return decoded
         }
         return []
     }()
 
-    var lintIssues: [LintIssue] {
+    public var lintIssues: [LintIssue] {
         get { access(keyPath: \.lintIssues); return _lintIssues }
         set {
             withMutation(keyPath: \.lintIssues) {
                 _lintIssues = newValue
                 if let data = try? JSONEncoder().encode(newValue) {
-                    UserDefaults.standard.set(data, forKey: "lastLintIssues")
+                    UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.lastLintIssues)
                 }
             }
         }
@@ -70,32 +73,19 @@ final class AIWorkflowStore {
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
-    init() {
-        setupSubscriptions()
-    }
-
-    private func setupSubscriptions() {
-        AppEventBus.shared.subscribe()
-            .receive(on: RunLoop.main)
-            .sink { [weak self] event in
-                if case .clearAllDataRequested = event {
-                    self?.clearAll()
-                }
-            }
-            .store(in: &cancellables)
-    }
+    public init() {}
 
     // ── 扫描与健康检查逻辑 ──
 
-    func runLint() async {
-        let taskID = TaskCenter.shared.addTask(type: .healthCheck, name: Localized.tr("sidebar.healthCheck"), target: "System")
-        let issues = await lintService.runLint(pages: sqliteStore.pages, linkService: linkService)
+    public func runLint() async {
+        let taskID = TaskCenter.shared.addTask(type: .healthCheck, name: L10n.Common.Sidebar.healthCheck, target: "System")
+        let issues = await lintService.runLint(pages: await sqliteStore.pages, linkService: linkService)
         lintIssues = issues
         lastLintDate = Date()
         TaskCenter.shared.updateTask(taskID, status: .completed)
     }
 
-    func runAIScan() async {
+    public func runAIScan() async {
         guard llmService.isEnabled else {
             logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
             return
@@ -105,11 +95,11 @@ final class AIWorkflowStore {
         let taskID = TaskCenter.shared.addTask(type: .ai, name: L10n.AI.Task.tr("scanTaskName"), target: "System")
 
         do {
-            let samplePages = Array(sqliteStore.pages.prefix(10))
+            let samplePages = Array(await sqliteStore.pages.prefix(10))
             let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
 
-            let activePages = sqliteStore.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
-            let existingTitles = sqliteStore.pages.map { $0.title }
+            let activePages = await sqliteStore.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
+            let existingTitles = await sqliteStore.pages.map { $0.title }
 
             var tempLinks: [PotentialLinkSuggestion] = []
             var seenLinks = Set<String>()
@@ -135,24 +125,31 @@ final class AIWorkflowStore {
         }
     }
 
-    func fetchFixSuggestion(for issue: LintIssue) async throws -> String {
+    public func fetchFixSuggestion(for issue: LintIssue) async throws -> String {
         HapticFeedback.shared.trigger(.selection)
-        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: sqliteStore.pages)
+        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: await sqliteStore.pages)
     }
 
     /// 查找与当前页面语义相似的页面（基于向量嵌入）
-    func findSimilarPages(for page: KnowledgePage, limit: Int = 3) async -> [KnowledgePage] {
+    public func findSimilarPages(for page: KnowledgePage, limit: Int = 3) async -> [KnowledgePage] {
         let results = await sqliteStore.embeddingManager.search(query: page.title, topK: limit + 1)
-        return results
-            .filter { $0.id != page.id }
-            .prefix(limit)
-            .compactMap { res in sqliteStore.pages.first { $0.id == res.id } }
+        
+        var similarPages: [KnowledgePage] = []
+        let allPages = await sqliteStore.pages
+        for res in results {
+            if res.id == page.id { continue }
+            if let p = allPages.first(where: { $0.id == res.id }) {
+                similarPages.append(p)
+            }
+            if similarPages.count >= limit { break }
+        }
+        return similarPages
     }
 
     // ── 页面级 AI 行为 (Async 接口版) ──
 
     /// 生成页面 AI 摘要
-    func runPageAISummary(content: String) async throws -> String {
+    public func runPageAISummary(content: String) async throws -> String {
         isProcessingPageAI = true
         defer { isProcessingPageAI = false }
         
@@ -162,7 +159,7 @@ final class AIWorkflowStore {
     }
 
     /// 提取页面行动项
-    func runPageAIExtractActions(content: String) async throws -> String {
+    public func runPageAIExtractActions(content: String) async throws -> String {
         isProcessingPageAI = true
         defer { isProcessingPageAI = false }
         
@@ -172,7 +169,7 @@ final class AIWorkflowStore {
     }
 
     /// 扩展页面存根内容
-    func runPageAIExpansion(content: String) async throws -> String {
+    public func runPageAIExpansion(content: String) async throws -> String {
         isProcessingPageAI = true
         defer { isProcessingPageAI = false }
         
@@ -182,7 +179,7 @@ final class AIWorkflowStore {
     }
 
     /// 执行通用页面综合任务（MindMap, Quiz, etc.）
-    func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) async throws -> String {
+    public func performPageSynthesis(type: SynthesisStore.SynthesisType, title: String, content: String) async throws -> String {
         isProcessingPageAI = true
         defer { isProcessingPageAI = false }
         
@@ -210,7 +207,7 @@ final class AIWorkflowStore {
         }
     }
 
-    func clearAll() {
+    public func clearAll() {
         refactorSuggestions = []
         potentialLinks = []
         activePageAIResult = nil
@@ -219,18 +216,17 @@ final class AIWorkflowStore {
         lastLintScore = 0
         lastLintDate = nil
 
-        UserDefaults.standard.removeObject(forKey: "lastLintIssues")
+        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.lastLintIssues)
 
         logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data cleared.", module: "AIWorkflowStore")
     }
 
     // ── 建议清理方法 ──
-    func removePotentialLink(id: UUID) {
+    public func removePotentialLink(id: UUID) {
         potentialLinks.removeAll { $0.id == id }
     }
 
-    func removeRefactorSuggestion(id: String) {
+    public func removeRefactorSuggestion(id: String) {
         refactorSuggestions.removeAll { $0.id == id }
     }
-
 }
