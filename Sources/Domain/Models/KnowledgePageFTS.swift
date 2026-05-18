@@ -11,7 +11,7 @@ import GRDB
 
 /// 全文搜索索引模型 (FTS5)
 public struct KnowledgePageFTS: Codable, FetchableRecord, PersistableRecord, Sendable {
-    public static let databaseTableName: String = "pages_fts"
+    public static let databaseTableName: String = AppConstants.Storage.Tables.pagesFTS
     
     public var id: String
     public var title: String

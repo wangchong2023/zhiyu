@@ -16,7 +16,7 @@ import Observation
 /// @SRS-7.2: 性能指标监控起点
 @MainActor
 final class DataCoordinator {
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
+    @ObservationIgnored @Inject private var sqliteStore: any AnyPageStore
     @ObservationIgnored @Inject private var embeddingManager: EmbeddingManager
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     

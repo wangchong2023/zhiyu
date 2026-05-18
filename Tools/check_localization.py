@@ -23,28 +23,42 @@ def resolve_table_name(key, table):
     解析表名。根据 Localized.swift 中的路由逻辑，
     将抽象表名映射到物理 .xcstrings 文件名。
     """
-    table_map = {
-        "AITasks": "AI",
+    domain_map = {
         "Localizable": "Common",
-        "KnowledgeBase": "Knowledge"
-    }
-    if table in table_map:
-        return table_map[table]
-    
-    if table == "Common" or table == "Localizable" or table == "Dashboard":
-        if key == "logout": return "Auth"
-        if key == "settings": return "Settings"
-        if key.startswith("prompt."): return "AI"
-        if key.startswith("aitask."): return "AI"
-        if key.startswith("ingest."): return "Ingest"
-        if key.startswith("settings."): return "Settings"
-        if key.startswith("chat."): return "Chat"
-        if key.startswith("vault."): return "Vault"
-        if key.startswith("insight."): return "Insight"
-        if key.startswith("graph."): return "Graph"
-        if key.startswith("plugin."): return "Plugin"
+        "Accessibility": "Common",
+        "Search": "Common",
         
-    return table
+        "Editor": "Knowledge",
+        "Creation": "Knowledge",
+        "Vault": "Knowledge",
+        "Quiz": "Knowledge",
+        "KnowledgeBase": "Knowledge",
+        
+        "Chat": "AI",
+        "Voice": "AI",
+        "AITasks": "AI",
+        
+        "Graph": "Insight",
+        "Dashboard": "Insight",
+        
+        "Auth": "System",
+        "Settings": "System",
+        "Lint": "System",
+        "Onboarding": "System",
+        "Coachmark": "System",
+        "Workflow": "System",
+        "Reminder": "System",
+        
+        "Sync": "Ingest",
+        "Transfer": "Ingest",
+        
+        "Collaboration": "Plugin",
+        
+        "Watch": "Platform",
+        "Widget": "Platform"
+    }
+    
+    return domain_map.get(table, table)
 
 # 获取所有相关的 L10n Swift 物理源码文件列表
 def get_l10n_swift_files():
@@ -194,6 +208,69 @@ def parse_all_l10n_keys(struct_to_table):
     return all_keys
 
 # ==================== 3. 扫描其他 Swift 源码中的 L10n 调用 ====================
+def detect_hardcoded_chinese(line, filename):
+    """
+    检测一行 Swift 代码中是否包含未被多语言封装的硬编码中文字符串字面量。
+    排除了注释、调试日志、LLM 模版提示词、单元测试等合理场景。
+    """
+    # 移除单行注释
+    clean_line = re.sub(r'//.*', '', line)
+    
+    # 排除多行注释或标记
+    if "/*" in clean_line or "*/" in clean_line or clean_line.strip().startswith("*"):
+        return False
+        
+    # 如果是本地化定义文件本身（L10n 扩展），不进行硬编码中文字面量拦截
+    if filename.startswith("L10n+") or filename == "Localized.swift":
+        return False
+
+    # 排除特定的、只应该用于大模型 Prompt 模板、系统配置、后台任务、测试压测等合理包含中文的物理文件
+    excluded_files = {
+        # 大模型 Prompt 与 AI 检索/生成链路核心控制流逻辑
+        "PromptRegistry.swift", "AIContentEnricher.swift", "PromptService.swift",
+        "LLMRetrievalService.swift", "AISynthesisService.swift", "LLMModels.swift",
+        
+        # 系统集成、网络爬虫、沙箱插件、DI 注册等底座基础设施层
+        "ShortcutManager.swift", "PluginRegistry.swift", "PluginMarketService.swift",
+        "JavaScriptPlugin.swift", "WebScraperProcessor.swift", "ModuleRegistrar.swift",
+        "PromptSanitizer.swift",
+        
+        # 单元测试、模拟数据压测与系统备份工具类
+        "PerformanceBenchmarker.swift", "AppBackupService.swift", "Logger.swift",
+        
+        # 共享通用基础 UI 的特殊折行字串与静态主题分类工厂常数
+        "AppEmptyState.swift", "NotebookThemeFactory.swift",
+        
+        # 排除非纯业务 UI 渲染或包含大量大模型交互正则匹配的视图与控制器
+        "QuizView.swift", "SearchView.swift", "SourceView.swift",
+        
+        # 排除 watchOS 的极简对照多语言词典及带有系统 LocalizedStringResource 声明的 widget 宿主
+        "WatchWidgets.swift", "ZhiYuWatchView.swift"
+    }
+    if filename in excluded_files:
+        return False
+
+    # 合理排除项正则：如果是调试日志、LLM 提示词本身、单元测试断言、系统级 Crash 挂起、合法的 LocalizedStringResource 默认值定义（不区分大小写）
+    exclusion_patterns = [
+        r'\blog\b', r'\blogger\b', r'\bprint\b', r'\bNSLog\b', r'\bos_log\b',
+        r'\bPrompt\b', r'\bprompt\b', r'\bsystemPrompt\b', r'\bMock\b',
+        r'\bLocalized\.tr\b', r'\bL10n\b', r'\bXCTAssert\b', r'\bdetails\b',
+        r'\bLogger\b', r'\bfatalError\b', r'\bassertionFailure\b', r'\bpreconditionFailure\b',
+        r'\bdefaultValue\b'
+    ]
+    # 检查是否包含以上排除标记（不区分大小写）
+    if any(re.search(pat, clean_line, re.IGNORECASE) for pat in exclusion_patterns):
+        return False
+        
+    # 匹配双引号包裹的字符串字面量中含有中文字符的模式 (支持普通双引号与 Swift 多行 """ )
+    chinese_literal_pat = re.compile(r'"[^"]*[\u4e00-\u9fa5]+[^"]*"')
+    triple_chinese_literal_pat = re.compile(r'"""[^"]*[\u4e00-\u9fa5]+[^"]*"""')
+    
+    if chinese_literal_pat.search(clean_line) or triple_chinese_literal_pat.search(clean_line):
+        return True
+        
+    return False
+
 def scan_other_swift_files(sources_dir, struct_to_table):
     # 使用更安全的正则
     explicit_pat = re.compile(r'(?:\bLocalized|\bL10n\.[a-zA-Z0-9_\.]+)\.tr(?:f)?\(\s*"([^"]+)"\s*,\s*table:\s*"([^"]+)"')
@@ -201,7 +278,7 @@ def scan_other_swift_files(sources_dir, struct_to_table):
     
     keys_found = []
     leaks_found = [] 
-
+    
     for root, _, files in os.walk(sources_dir):
         if any(d in root for d in ["Tests", "Tools", "Localization"]):
             continue
@@ -223,6 +300,10 @@ def scan_other_swift_files(sources_dir, struct_to_table):
                         if file not in allowed_files:
                             leaks_found.append((file_path, i, "Localized.tr" if "Localized.trf" not in clean_line else "Localized.trf"))
                     
+                    # 拦截未封装的硬编码中文字符串字面量泄漏 (强制作为 Error 拦截并阻断 Xcode 编译构建)
+                    if detect_hardcoded_chinese(line, file):
+                        leaks_found.append((file_path, i, f"Hardcoded Chinese Literal: '{line.strip()}'"))
+
                     for k, t in explicit_pat.findall(clean_line):
                         keys_found.append((k, t, file_path, i))
                     
@@ -273,8 +354,17 @@ class LocalizationAuditor:
         if strings is None:
             return f"Localization table '{resolved_table}' (.xcstrings) does not exist in directory: {self.localization_dir}"
 
+        # 逻辑增强：如果 resolved_table 中找不到，尝试在 Common 表中查找 (Fallback)
         if key not in strings:
-            return f"Key '{key}' is missing in localization table '{resolved_table}' (.xcstrings)"
+            if resolved_table != "Common":
+                common_strings = self.get_table_strings("Common")
+                if common_strings and key in common_strings:
+                    strings = common_strings
+                    resolved_table = "Common"
+                else:
+                    return f"Key '{key}' is missing in both localization table '{resolved_table}' and fallback 'Common'"
+            else:
+                return f"Key '{key}' is missing in localization table '{resolved_table}' (.xcstrings)"
 
         string_data = strings[key]
         localizations = string_data.get("localizations", {})

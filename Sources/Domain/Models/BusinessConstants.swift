@@ -48,6 +48,8 @@ public struct BusinessConstants {
         public static let semanticThresholdLong: Float = 0.75
         /// 短查询语义高信度门槛
         public static let semanticShortHighConfidence: Float = 0.88
+        /// 短查询字符数判断阈值 (消除硬编码魔鬼数字)
+        public static let shortQueryThreshold: Int = 4
     }
 
     // MARK: - 图谱物理仿真与布局

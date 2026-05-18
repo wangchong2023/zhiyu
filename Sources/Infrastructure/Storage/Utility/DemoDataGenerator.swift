@@ -20,7 +20,7 @@ struct DemoDataGenerator {
     /// 执行演示数据生成
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
-    static func generate(in store: SQLiteStore) async throws -> Int {
+    static func generate(in store: any AnyPageStore) async throws -> Int {
         print("🧪 [Demo] Starting demo data generation...")
         
         var count = 0
@@ -87,7 +87,7 @@ struct DemoDataGenerator {
     ///   - store: 目标存储对象
     ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
-    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) async throws -> Int {
+    static func generateStressTest(in store: any AnyPageStore, count targetCount: Int = 1000) async throws -> Int {
         print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
         
         var count = 0

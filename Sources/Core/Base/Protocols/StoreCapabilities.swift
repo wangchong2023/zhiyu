@@ -99,6 +99,9 @@ public protocol AnyPageStore: Sendable {
 
     /// 记录审计日志
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?)
+    
+    /// 获取存储统计信息
+    func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64)
 }
 
 /// 聚合存储能力协议 (L0-Base)

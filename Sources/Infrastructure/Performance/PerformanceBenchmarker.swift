@@ -17,7 +17,7 @@ final class PerformanceBenchmarker {
     static let shared = PerformanceBenchmarker()
 
     /// 模拟海量文档导入并测量索引耗时
-    func runStressTest(count: Int = 50000, store: SQLiteStore) async {
+    func runStressTest(count: Int = 50000, store: any AnyPageStore) async {
         print("🚀 [Benchmark] 开始极限压测：生成 \(count) 篇文档...")
 
         let startTime = CFAbsoluteTimeGetCurrent()
@@ -32,8 +32,13 @@ final class PerformanceBenchmarker {
             _ = try? await store.createPage(
                 title: "Stress Test Page #\(i)",
                 pageType: .raw,
+                customIcon: nil,
                 content: "这是第 \(i) 篇压测文档。它包含了模拟的文本内容，用于测试 SQLite FTS5 的索引性能以及向量检索的内存占用。\(UUID().uuidString)",
-                tags: ["benchmark", "stress-test"]
+                tags: ["benchmark", "stress-test"],
+                sourceURL: nil,
+                rawSnippet: nil,
+                fileSize: nil,
+                sourceType: nil
             )
         }
 
@@ -46,7 +51,7 @@ final class PerformanceBenchmarker {
         await measureSearchPerformance(store: store)
     }
 
-    private func measureSearchPerformance(store: SQLiteStore) async {
+    private func measureSearchPerformance(store: any AnyPageStore) async {
         let query = "Stress Test"
         let startTime = CFAbsoluteTimeGetCurrent()
 

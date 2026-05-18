@@ -101,14 +101,14 @@ actor LinkService {
         let semanticScored = await embeddingManager.search(query: query)
 
         // 动态门槛：对于短查询，语义门槛要极高，否则噪音太大
-        let similarityThreshold: Float = query.count < 4 
+        let similarityThreshold: Float = query.count < BusinessConstants.RAG.shortQueryThreshold 
             ? BusinessConstants.RAG.semanticThresholdShort 
             : BusinessConstants.RAG.semanticThresholdLong
 
         let semanticResults = semanticScored
             .filter { res -> Bool in
                 // 动态门槛：对于短查询，语义门槛要极高
-                if query.count < 4 {
+                if query.count < BusinessConstants.RAG.shortQueryThreshold {
                     // 对于短词，如果语义得分不足高信度阈值，则必须包含关键词
                     if res.score > BusinessConstants.RAG.semanticShortHighConfidence { return true }
                     if let page = pages.first(where: { $0.id == res.id }) {
@@ -129,7 +129,7 @@ actor LinkService {
         var diagMap: [UUID: (fts: Int, vec: Int)] = [:]
 
         // 动态权重：对于短查询（如 "3D"），关键词匹配更可靠
-        let keywordWeight = query.count < 4 ? 1.5 : 1.0
+        let keywordWeight = query.count < BusinessConstants.RAG.shortQueryThreshold ? 1.5 : 1.0
         let semanticWeight = 1.0
 
         for (index, page) in keywordResults.enumerated() {

@@ -15,14 +15,14 @@ extension L10n {
         public static func permTitle(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
-                return Localized.tr("plugin.perm.content", table: "Plugin")
+                return Localized.tr("plugin.perm.content", table: t)
             case "network":
-                return Localized.tr("plugin.perm.network", table: "Plugin")
+                return Localized.tr("plugin.perm.network", table: t)
             case "sandbox":
-                return Localized.tr("plugin.perm.sandbox", table: "Plugin")
+                return Localized.tr("plugin.perm.sandbox", table: t)
             default:
                 let key = "plugin.perm." + perm
-                let localized = Localized.tr(key, table: "Plugin")
+                let localized = Localized.tr(key, table: t)
                 return localized == key ? perm.capitalized : localized
             }
         }
@@ -31,19 +31,19 @@ extension L10n {
             switch perm {
             case "writeContent", "content":
                 let key = "plugin.perm.content.desc"
-                let localized = Localized.tr(key, table: "Plugin")
+                let localized = Localized.tr(key, table: t)
                 return localized == key ? "允许插件修改您的知识库内容" : localized
             case "network":
                 let key = "plugin.perm.network.desc"
-                let localized = Localized.tr(key, table: "Plugin")
+                let localized = Localized.tr(key, table: t)
                 return localized == key ? "允许插件访问外部网络服务" : localized
             case "sandbox":
                 let key = "plugin.perm.sandbox.desc"
-                let localized = Localized.tr(key, table: "Plugin")
+                let localized = Localized.tr(key, table: t)
                 return localized == key ? "在安全沙盒内运行，限制文件系统访问" : localized
             default:
                 let key = "plugin.perm." + perm + ".desc"
-                let localized = Localized.tr(key, table: "Plugin")
+                let localized = Localized.tr(key, table: t)
                 return localized == key ? "要求获取 \(perm) 权限" : localized
             }
         }
@@ -98,6 +98,15 @@ extension L10n {
         public enum Stats {
             public static var downloads: String { Plugin.tr("plugin.stats.downloads") }
             public static var rating: String { Plugin.tr("plugin.stat.rating") }
+            public static var resourceUsage: String { Plugin.tr("plugin.stats.resourceUsage") }
+            public static var noUsage: String { Plugin.tr("plugin.stats.noUsage") }
+            public static func callCountFormat(calls: Int, avgMs: Double) -> String {
+                Plugin.trf("plugin.stats.callCountFormat", calls, avgMs)
+            }
+        }
+
+        public enum settings {
+            public static var noSettings: String { Plugin.tr("plugin.settings.noSettings") }
         }
 
         public enum Action {

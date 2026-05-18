@@ -8,12 +8,12 @@ import Foundation
 
 extension L10n {
     public struct Watch {
-        public static let t = "Watch"
+        public static let t = "Platform"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var capture: String { tr("watch.capture") }
-        public static var recents: String { Localized.tr("watch.recents", table: "Watch") }
-        public static var dictateHint: String { Localized.tr("watch.dictate.hint", table: "Watch") }
-        public static var widgetDisplayName: String { Localized.tr("watch.widget.displayName", table: "Watch") }
-        public static var widgetDisplayDesc: String { Localized.tr("watch.widget.displayDesc", table: "Watch") }
+        public static var recents: String { Localized.tr("watch.recents", table: t) }
+        public static var dictateHint: String { Localized.tr("watch.dictate.hint", table: t) }
+        public static var widgetDisplayName: String { Localized.tr("watch.widget.displayName", table: t) }
+        public static var widgetDisplayDesc: String { Localized.tr("watch.widget.displayDesc", table: t) }
     }
 }

@@ -15,42 +15,42 @@ extension L10n {
         /// 获取智能导入完成的提示描述
         /// - Parameter type: 导入类型
         /// - Returns: 本地化文案
-        public static func smartIngestDoneDesc(_ type: String) -> String { Localized.trf("ingest.smartIngestDoneDesc", table: "Ingest", type) }
+        public static func smartIngestDoneDesc(_ type: String) -> String { Localized.trf("ingest.smartIngestDoneDesc", table: t, type) }
 
         /// 获取当前活动导入任务数文案
         /// - Parameter count: 活动任务数
         /// - Returns: 本地化文案
-        public static func activeTasks(_ count: Int) -> String { Localized.trf("ingest.activeTasks", table: "Ingest", count) }
+        public static func activeTasks(_ count: Int) -> String { Localized.trf("ingest.activeTasks", table: t, count) }
 
         /// 获取PDF页数格式化文案
         /// - Parameter count: 页数
         /// - Returns: 本地化文案
-        public static func pdfPageCountFormat(_ count: Int) -> String { Localized.trf("pdf.pageCountFormat", table: "Ingest", count) }
+        public static func pdfPageCountFormat(_ count: Int) -> String { Localized.trf("pdf.pageCountFormat", table: t, count) }
 
         /// 获取PDF创建页面后的提示文案
         /// - Parameter title: 页面标题
         /// - Returns: 本地化文案
-        public static func pdfCreatedPage(_ title: String) -> String { Localized.trf("pdf.createdPage", table: "Ingest", title) }
+        public static func pdfCreatedPage(_ title: String) -> String { Localized.trf("pdf.createdPage", table: t, title) }
 
         /// 获取PDF页码文本
         /// - Parameter num: 页码
         /// - Returns: 本地化文案
-        public static func pdfPageNumber(_ num: Int) -> String { Localized.trf("pdf.pageNumber", table: "Ingest", num) }
+        public static func pdfPageNumber(_ num: Int) -> String { Localized.trf("pdf.pageNumber", table: t, num) }
 
         /// 获取OCR扫描识别字符数字文案
         /// - Parameter count: 字符数
         /// - Returns: 本地化文案
-        public static func ocrCharCountFormat(_ count: Int) -> String { Localized.trf("ocr.charCountFormat", table: "Ingest", count) }
+        public static func ocrCharCountFormat(_ count: Int) -> String { Localized.trf("ocr.charCountFormat", table: t, count) }
 
         /// 获取PDF导入模式格式化文案
         /// - Parameter mode: 导入模式描述
         /// - Returns: 本地化文案
-        public static func pdfIngestModeFormat(_ mode: String) -> String { Localized.trf("pdf.ingestModeFormat", table: "Ingest", mode) }
+        public static func pdfIngestModeFormat(_ mode: String) -> String { Localized.trf("pdf.ingestModeFormat", table: t, mode) }
 
         /// 获取PDF高亮标记个数格式化文案
         /// - Parameter count: 高亮标记数
         /// - Returns: 本地化文案
-        public static func pdfHighlightCountFormat(_ count: Int) -> String { Localized.trf("pdf.highlightCountFormat", table: "Ingest", count) }
+        public static func pdfHighlightCountFormat(_ count: Int) -> String { Localized.trf("pdf.highlightCountFormat", table: t, count) }
 
         // MARK: - Ingest 表词条
         public static var title: String { tr("ingest.title") }

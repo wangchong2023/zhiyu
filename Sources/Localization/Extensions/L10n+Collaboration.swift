@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public enum Collaboration {
-        public static let t = "Collaboration"
+        public static let t = "Plugin"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("collab.title") }
         public static var subtitle: String { tr("collab.subtitle") }
@@ -35,18 +35,18 @@ extension L10n {
         public static var simulatorWarning: String { tr("collab.simulatorWarning") }
 
         public enum role {
-            public static var editor: String { Localized.tr("collab.role.editor", table: "Collaboration") }
-            public static var owner: String { Localized.tr("collab.role.owner", table: "Collaboration") }
-            public static var viewer: String { Localized.tr("collab.role.viewer", table: "Collaboration") }
+            public static var editor: String { Localized.tr("collab.role.editor", table: t) }
+            public static var owner: String { Localized.tr("collab.role.owner", table: t) }
+            public static var viewer: String { Localized.tr("collab.role.viewer", table: t) }
         }
 
         public enum Error {
-            public static var connectionTimeout: String { Localized.tr("collab.error.connectionTimeout", table: "Collaboration") }
-            public static var noPermission: String { Localized.tr("collab.error.noPermission", table: "Collaboration") }
+            public static var connectionTimeout: String { Localized.tr("collab.error.connectionTimeout", table: t) }
+            public static var noPermission: String { Localized.tr("collab.error.noPermission", table: t) }
         }
 
         public enum Status {
-            public static let t = "Collaboration"
+            public static let t = "Plugin"
             public static var simulatorNotSupported: String { Localized.tr("collab.status.simulatorNotSupported", table: t) }
             public static var disconnected: String { Localized.tr("collab.status.disconnected", table: t) }
             public static var connecting: String { Localized.tr("collab.status.connecting", table: t) }
@@ -61,9 +61,9 @@ extension L10n {
         }
 
         public enum info {
-            public static var encrypted: String { Localized.tr("collab.info.encrypted", table: "Collaboration") }
-            public static var maxPeers: String { Localized.tr("collab.info.maxPeers", table: "Collaboration") }
-            public static var local: String { Localized.tr("collab.info.local", table: "Collaboration") }
+            public static var encrypted: String { Localized.tr("collab.info.encrypted", table: t) }
+            public static var maxPeers: String { Localized.tr("collab.info.maxPeers", table: t) }
+            public static var local: String { Localized.tr("collab.info.local", table: t) }
         }
     }
 }

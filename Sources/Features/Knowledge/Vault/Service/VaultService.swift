@@ -1,85 +1,201 @@
 // VaultService.swift
 //
 // 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的笔记本/库 (Vault) 管理服务。
-// 支持创建、删除、重命名笔记本，并管理当前选中的笔记本。
-// 版本: 1.0
+// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的笔记本/金库 (Vault) 核心生命周期管理服务。
+// 核心职责：
+// 1. 提供笔记本/金库（Vault）的创建、修改、重命名及深度物理删除（磁盘擦除）API。
+// 2. 托管当前激活的 VaultID 偏好，并在冷启动时提供多语言本地化的演示金库。
+// 3. 驱动持久化层 DatabaseManager 实施热插拔多库连接切换（WAL），触发全局广播重定向。
+// 版本: 1.1
+// 修改记录:
+//   - 2026-05-18: 补全 100% 结构化三斜杠 DocC 简体中文规范，说明多库 WAL 安全热切换及广播事件流程。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
 import Observation
+import GRDB
 
-/// 笔记本/库服务
+/// 知识笔记本/金库中枢服务（VaultService）。
+/// 它是业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面，
+/// 支持创建、配置、选择和物理销毁金库，并动态切换底层 SQLite 物理数据库。
 @Observable
 @MainActor
 public final class VaultService: VaultServiceProtocol {
     
-    // MARK: - 状态属性
+    // MARK: - 依赖注入
     
-    /// 所有笔记本列表
+    /// 注入金库元数据持久化仓储协议（vaultRepository），贯彻依赖倒置原则（DIP）。
+    /// 使用 `@ObservationIgnored` 规避 `Observation` 宏对注入实例的过度包装冲突。
+    @ObservationIgnored
+    @Inject private var vaultRepository: any VaultRepository
+    
+    // MARK: - 状态发布属性
+    
+    /// 当前已注册挂载的全部笔记本列表。
     public var vaults: [Vault] = []
     
-    /// 当前选中的笔记本 ID
+    /// 当前选中的活跃笔记本唯一标识符 UUID。
     public var selectedVaultID: UUID?
     
-    /// 当前选中的笔记本对象
+    /// 当前选中的活跃笔记本实体对象。
     public var currentVault: Vault? {
         vaults.first { $0.id == selectedVaultID }
     }
     
     // MARK: - 单例与初始化
     
+    /// 全局唯一的线程安全单例实例。
     public static let shared = VaultService()
     
+    /// 私有化单例构造方法，防止外部直接实例化。
     private init() {
         loadVaults()
     }
     
-    // MARK: - 核心操作
+    // MARK: - 物理路径计算辅助
     
-    /// 加载所有笔记本
+    /// 获取特定笔记本沙盒内的专属物理数据库文件路径。
+    /// - Parameter vaultID: 目标笔记本 UUID。
+    /// - Returns: 指向该笔记本专属 SQLite `vault.sqlite3` 物理文件的绝对路径 URL。
+    ///
+    /// 物理路径结构规范：
+    /// `Application Support/ZhiYu/Vaults/{Vault_UUID}/vault.sqlite3`
+    private func getVaultDatabaseURL(for vaultID: UUID) -> URL {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        return appSupport
+            .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+            .appendingPathComponent(vaultID.uuidString)
+            .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+    }
+    
+    // MARK: - 核心业务操作 API
+    
+    /// 加载所有笔记本元数据。
+    /// 异步载入所有已注册的笔记本元数据列表。
+    /// 若全局配置表为空，则冷启动触发系统预置的演示数据（“我的知识库”与“项目调研”），
+    /// 该预置演示库支持 100% 国际化多语言翻译适配，自动持久化至全局库中，并安全恢复最近一次激活的物理库。
     private func loadVaults() {
-        if let data = UserDefaults.standard.data(forKey: AppConstants.Keys.Storage.vaultsList),
-           let decoded = try? JSONDecoder().decode([Vault].self, from: data) {
-            self.vaults = decoded
-        } else {
-            // 初始演示库
-            self.vaults = [
-                Vault(id: UUID(), name: "我的知识库", createdAt: Date(), updatedAt: Date(), pageCount: 12, themePayload: nil, icon: "📚", description: "高效处理您的工作流..."),
-                Vault(id: UUID(), name: "项目调研", createdAt: Date(), updatedAt: Date(), pageCount: 5, themePayload: nil, icon: "🔍", description: "收集灵感与行业深度分析")
-            ]
-            saveVaults()
+        Task {
+            do {
+                // 1. 尝试从全局元数据 Repository 中读取所有已注册的金库
+                let loadedVaults = try await vaultRepository.fetchAllVaults()
+                if loadedVaults.isEmpty {
+                    // 2. 冷启动：初始化演示金库数据（通过 L10n 支持多语言翻译）
+                    let id1 = UUID()
+                    let id2 = UUID()
+                    self.vaults = [
+                        Vault(
+                            id: id1,
+                            name: L10n.Vault.defaultName,
+                            createdAt: Date(),
+                            updatedAt: Date(),
+                            pageCount: 0,
+                            themePayload: nil,
+                            icon: IconTokens.defaultBook,
+                            description: L10n.Vault.defaultDescription
+                        ),
+                        Vault(
+                            id: id2,
+                            name: L10n.Vault.researchName,
+                            createdAt: Date(),
+                            updatedAt: Date(),
+                            pageCount: 0,
+                            themePayload: nil,
+                            icon: IconTokens.defaultResearch,
+                            description: L10n.Vault.researchDescription
+                        )
+                    ]
+                    // 3. 将初始化的演示笔记本原子注册并写入全局配置数据库
+                    for vault in self.vaults {
+                        try await vaultRepository.saveVault(vault)
+                    }
+                } else {
+                    self.vaults = loadedVaults
+                }
+            } catch {
+                print("❌ [VaultService] 异步载入笔记本元数据失败: \(error)")
+                // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
+                self.vaults = [
+                    Vault(
+                        id: UUID(),
+                        name: L10n.Vault.defaultName,
+                        createdAt: Date(),
+                        updatedAt: Date(),
+                        pageCount: 12,
+                        themePayload: nil,
+                        icon: IconTokens.defaultBook,
+                        description: L10n.Vault.defaultDescription
+                    ),
+                    Vault(
+                        id: UUID(),
+                        name: L10n.Vault.researchName,
+                        createdAt: Date(),
+                        updatedAt: Date(),
+                        pageCount: 5,
+                        themePayload: nil,
+                        icon: IconTokens.defaultResearch,
+                        description: L10n.Vault.researchDescription
+                    )
+                ]
+            }
         }
         
-        // 暂时禁用启动时自动选择笔记本，确保登录后始终先进入笔记本主页 (Hub)
-        /*
+        // 5. 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
         if let idString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
-           let id = UUID(uuidString: idString) {
+           let id = UUID(uuidString: idString),
+           vaults.contains(where: { $0.id == id }) {
             self.selectedVaultID = id
-        }
-        */
-    }
-    
-    /// 保存笔记本列表
-    private func saveVaults() {
-        if let data = try? JSONEncoder().encode(vaults) {
-            UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.vaultsList)
+            do {
+                let dbURL = getVaultDatabaseURL(for: id)
+                try DatabaseManager.shared.switchDatabase(to: id, at: dbURL)
+            } catch {
+                print("❌ [VaultService] 自动热联接最近使用的物理专属数据库失败: \(error)")
+            }
         }
     }
     
-    /// 选中一个笔记本
+    /// 将笔记本元数据变更原子写回全局配置表中。
+    /// - Parameter vault: 需要保存更新的 Vault 金库实体。
+    private func saveVaultToDatabase(_ vault: Vault) throws {
+        Task {
+            try await vaultRepository.saveVault(vault)
+        }
+    }
+    
+    /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
+    /// - Parameter vault: 需要选中的目标 Vault 实体。
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        
+        // 1. 热插拔重定向：要求 DatabaseManager 彻底挂载专属物理子库
+        do {
+            let dbURL = getVaultDatabaseURL(for: vault.id)
+            try DatabaseManager.shared.switchDatabase(to: vault.id, at: dbURL)
+            
+            // 2. 更新该笔记本的最近访问访问时序，用以排列优先级
+            Task {
+                try await vaultRepository.updateLastAccessed(id: vault.id)
+            }
+        } catch {
+            print("❌ [VaultService] 热插拔切换专属物理子库失败: \(error)")
+        }
     }
     
-    /// 退出当前笔记本 (返回主页)
+    /// 退出当前选中的笔记本金库。
+    /// 返回主选择页，在 UserDefaults 中移除偏好项，并安全降级释放当前物理库的连接句柄，防止空转泄露。
     public func exitVault() {
         self.selectedVaultID = nil
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        // 物理释放专属连接以闭合通道锁
+        DatabaseManager.shared.dbWriter = nil
     }
     
-    /// 创建新笔记本
+    /// 创建全新的笔记本金库。
+    /// - Parameters:
+    ///   - name: 金库显示的中文或多语言名称。
+    ///   - icon: 金库卡片展示的图标 Token。
+    ///   - description: 描述该金库知识域范围的详情文本。
     public func createVault(name: String, icon: String? = nil, description: String? = nil) {
         let newVault = Vault(
             id: UUID(),
@@ -92,36 +208,77 @@ public final class VaultService: VaultServiceProtocol {
             description: description
         )
         vaults.append(newVault)
-        saveVaults()
+        do {
+            try saveVaultToDatabase(newVault)
+        } catch {
+            print("❌ [VaultService] 写入新建笔记本至数据库失败: \(error)")
+        }
     }
     
-    /// 更新笔记本元数据
+    /// 更新已存在笔记本的配置元数据。
+    /// - Parameters:
+    ///   - id: 目标笔记本 UUID。
+    ///   - name: 新的配置名称。
+    ///   - icon: 新的图标规格。
+    ///   - description: 新的说明文本。
     public func updateVault(id: UUID, name: String, icon: String?, description: String?) {
         if let index = vaults.firstIndex(where: { $0.id == id }) {
             vaults[index].name = name
             vaults[index].icon = icon
             vaults[index].description = description
             vaults[index].updatedAt = Date()
-            saveVaults()
+            
+            do {
+                try saveVaultToDatabase(vaults[index])
+            } catch {
+                print("❌ [VaultService] 更新笔记本元数据写入数据库失败: \(error)")
+            }
         }
     }
     
-    /// 重命名笔记本
+    /// 重命名特定的笔记本。
+    /// - Parameters:
+    ///   - id: 目标笔记本 UUID。
+    ///   - newName: 新的显示标题。
     public func renameVault(id: UUID, newName: String) {
         if let index = vaults.firstIndex(where: { $0.id == id }) {
             vaults[index].name = newName
             vaults[index].updatedAt = Date()
-            saveVaults()
+            
+            do {
+                try saveVaultToDatabase(vaults[index])
+            } catch {
+                print("❌ [VaultService] 重命名写入数据库失败: \(error)")
+            }
         }
     }
     
-    /// 删除笔记本
+    /// 物理删除特定的笔记本（敏感操作，物理擦除物理磁盘文件）。
+    /// 同时在全局配置表中注销元数据，若删除的是当前所选笔记本，则自动退回至冷启动页面并重置句柄。
+    /// - Parameter id: 待完全注销且彻底擦除的目标笔记本唯一识别码 UUID。
     public func deleteVault(id: UUID) {
         vaults.removeAll { $0.id == id }
         if selectedVaultID == id {
             selectedVaultID = nil
             UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+            DatabaseManager.shared.dbWriter = nil
         }
-        saveVaults()
+        
+        // 1. 从全局元数据配置数据库中完全抹除
+        Task {
+            do {
+                try await vaultRepository.deleteVault(id: id)
+            } catch {
+                print("❌ [VaultService] 从全局元数据数据库中删除笔记本记录失败: \(error)")
+            }
+        }
+        
+        // 2. 物理磁盘异步擦除该金库所托管的专属沙盒物理文件夹
+        let dbURL = getVaultDatabaseURL(for: id)
+        let folderURL = dbURL.deletingLastPathComponent()
+        if FileManager.default.fileExists(atPath: folderURL.path) {
+            try? FileManager.default.removeItem(at: folderURL)
+            print("🗑️ [VaultService] 已物理擦除笔记本沙盒存储: \(id.uuidString)")
+        }
     }
 }

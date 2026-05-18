@@ -15,7 +15,7 @@ import Combine
 /// AI 工作流存储，管理 AI 扫描状态、洞察及建议。
 @MainActor
 @Observable
-public final class AIWorkflowStore {
+public final class AIWorkflowStore: AIWorkflowCapabilities {
     // ── 子 Store 聚合 ──
     public var insightStore: AIInsightStore = AIInsightStore()
 
@@ -66,7 +66,7 @@ public final class AIWorkflowStore {
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
     @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var lintService: LintService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var linkService: LinkService
@@ -79,7 +79,7 @@ public final class AIWorkflowStore {
 
     public func runLint() async {
         let taskID = TaskCenter.shared.addTask(type: .healthCheck, name: L10n.Common.Sidebar.healthCheck, target: "System")
-        let issues = await lintService.runLint(pages: await sqliteStore.pages, linkService: linkService)
+        let issues = await lintService.runLint(pages: await pageStore.pages, linkService: linkService)
         lintIssues = issues
         lastLintDate = Date()
         TaskCenter.shared.updateTask(taskID, status: .completed)
@@ -95,11 +95,11 @@ public final class AIWorkflowStore {
         let taskID = TaskCenter.shared.addTask(type: .ai, name: L10n.AI.Task.tr("scanTaskName"), target: "System")
 
         do {
-            let samplePages = Array(await sqliteStore.pages.prefix(10))
+            let samplePages = Array(await pageStore.pages.prefix(10))
             let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
 
-            let activePages = await sqliteStore.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
-            let existingTitles = await sqliteStore.pages.map { $0.title }
+            let activePages = await pageStore.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
+            let existingTitles = await pageStore.pages.map { $0.title }
 
             var tempLinks: [PotentialLinkSuggestion] = []
             var seenLinks = Set<String>()
@@ -127,15 +127,15 @@ public final class AIWorkflowStore {
 
     public func fetchFixSuggestion(for issue: LintIssue) async throws -> String {
         HapticFeedback.shared.trigger(.selection)
-        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: await sqliteStore.pages)
+        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: await pageStore.pages)
     }
 
     /// 查找与当前页面语义相似的页面（基于向量嵌入）
     public func findSimilarPages(for page: KnowledgePage, limit: Int = 3) async -> [KnowledgePage] {
-        let results = await sqliteStore.embeddingManager.search(query: page.title, topK: limit + 1)
+        let results = await pageStore.embeddingManager.search(query: page.title, topK: limit + 1)
         
         var similarPages: [KnowledgePage] = []
-        let allPages = await sqliteStore.pages
+        let allPages = await pageStore.pages
         for res in results {
             if res.id == page.id { continue }
             if let p = allPages.first(where: { $0.id == res.id }) {

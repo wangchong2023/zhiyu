@@ -72,6 +72,35 @@ classDiagram
 ### 3.2 过程视图 (Process View) - 数据流与并发
 描述系统在执行关键任务时的动态协作关系。
 
+#### 时序图：多笔记本物理数据库热插拔切换时序流
+
+```mermaid
+sequenceDiagram
+    participant User as UI (NotebookHub)
+    participant VS as VaultService
+    participant DB as DatabaseManager
+    participant EM as EmbeddingManager
+    participant AS as AppStore
+
+    User->>VS: 选中某笔记本 selectVault(vault)
+    VS->>DB: 异步请求热切换 switchDatabase(to: vault.id)
+    Note over DB: 1. 关闭现有物理连接并写入 WAL
+    Note over DB: 2. 挂载新物理文件 vault.sqlite3
+    Note over DB: 3. 自动执行数据库 Migrator 架构迁移
+    DB-->>VS: 返回连接建立成功
+    DB->>NotificationCenter: 广播全局通知 databaseDidSwitch
+    par 监听器并发响应通知
+        NotificationCenter->>EM: 触发状态重置
+        Note over EM: 驱逐旧 VectorCache 内存缓存
+        EM->>DB: 从新库加载当前 embeddings 并重活
+    and
+        NotificationCenter->>AS: 触发 PageStore 重置
+        Note over AS: 清空旧内存知识页面数据集
+        AS->>DB: 从新物理库重新拉取当前知识页
+    end
+    AS-->>User: 触发全局 UI 零噪点平滑刷新
+```
+
 #### 时序图：页面保存与插件拦截流 (Watchdog 2.0 Pipeline)
 
 ```mermaid
@@ -130,32 +159,39 @@ sequenceDiagram
 ---
 
 ## 5. 物理视图 (Physical View)
-描述软件到硬件的映射，以及沙盒环境下的权限拓扑。
+描述软件到硬件的映射，以及沙盒环境下的权限拓扑。系统从单物理库升级为了全新的物理多库隔离拓扑：
 
 ```mermaid
-graph LR
-    subgraph "Apple Sandbox (智宇 (ZhiYu) App)"
-        DB[(km.sqlite3)]
-        VectorIndex[(Vector Store)]
+graph TD
+    subgraph "Apple Sandbox (智宇 App 专属物理沙盒)"
+        subgraph "Global Config Space (全局主配置目录)"
+            G_DB[(global.sqlite3)]
+            G_Settings[global_settings]
+            G_Sigs[file_signatures]
+            G_DB --- G_Settings
+            G_DB --- G_Sigs
+        end
+        
+        subgraph "Vault A Sub-directory (物理隔离沙盒 A)"
+            VA_DB[(vault.sqlite3)]
+            VA_Vec[(Vector Store Cache)]
+        end
+        
+        subgraph "Vault B Sub-directory (物理隔离沙盒 B)"
+            VB_DB[(vault.sqlite3)]
+            VB_Vec[(Vector Store Cache)]
+        end
+        
         BookmarkStore[UserDefaults Bookmarks]
-        
-        subgraph "Plugin Storage (AES-GCM)"
-            PData[pluginID.json]
-        end
-        
-        subgraph "Plugins Directory"
-            P1[Plugin-A/manifest.json]
-        end
     end
     
-    subgraph "External Storage"
-        Obsidian[Local Obsidian Vault]
+    subgraph "External File System (挂载的外部存储)"
+        Obsidian[Local Obsidian Vault Folder]
     end
     
-    BookmarkStore -- Scoped URL --> Obsidian
-    智宇 (ZhiYu) -- Keychain Key --> PData
-    智宇 (ZhiYu) -- Dynamic Load --> P1
-```
+    BookmarkStore -- Scoped URL 权限恢复 --> Obsidian
+    Obsidian -->|外链挂载只读/读写映射| VA_DB
+
 
 ---
 
@@ -278,8 +314,34 @@ graph LR
 
 #### 2. 三大红线准则
 - **协议屏蔽 (Protocol Shielding)**: 严禁在 L1/L2 层出现 `#if os()`。任何平台能力差异（如 Haptic, Reminders, Spotlight）必须抽象为 Protocol，业务代码仅对协议编程。
-- **DI 路由 (DI Routing)**: `#if` 宏的唯一合法非 UI 存放地是 `ModuleRegistrar.swift`，作为全工程的“平台分路器”。
+- **DI 路由 (DI Routing)**: `#if` 宏 the 唯一合法非 UI 存放地是 `ModuleRegistrar.swift`，作为全工程的“平台分路器”。
 - **UI 优雅隔离**: 视图中的平台宏必须提炼为独立的子 View 或 `@ViewBuilder`，保持主视图逻辑纯净。
+
+#### 3. 依赖注入冷启动时序 (Dependency Injection Cold Boot)
+在应用冷启动时，`ModuleRegistrar` 识别当前编译目标系统类型，按需拉起具体的平台专属实现（例如 `iOSPlatformCapabilities` 适配器，其实现了 `PlatformCapabilities` 协议），并将其注入至容器，时序图如下：
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Engine as ZhiYuApp.init()
+    participant Reg as ModuleRegistrar
+    participant Container as ServiceContainer
+    participant iOS as iOSPlatformCapabilities (under Platforms/iOS)
+    participant Watch as WatchPlatformCapabilities (under Platforms/watchOS)
+
+    Engine->>Reg: 触发多平台依赖注册
+    rect rgb(40, 45, 55)
+        Note over Reg: 条件编译进行分流分配
+        #if os(iOS)
+        Reg->>iOS: 实例化适配类
+        Reg->>Container: 注册 platformCapabilities -> iOSPlatformCapabilities
+        #elseif os(watchOS)
+        Reg->>Watch: 实例化适配类
+        Reg->>Container: 注册 platformCapabilities -> WatchPlatformCapabilities
+        #endif
+    end
+    Container-->>Engine: 注册完成，初始化就绪
+```
 
 ---
 
@@ -395,14 +457,3 @@ KnowledgePage 详情页可从多个 Tab 进入：
 - `selectedTab: AppTab = .knowledge`
 - `sidebarSelection: SidebarSelection? = .tool(.pageList)`
 - 启动落地页：**KnowledgePageListView（页面列表）**
-
-debarSelection? = .tool(.pageList)`
-- 启动落地页：**KnowledgePageListView（页面列表）**
-
-nDestination(for: KnowledgePage.self)` 共享同一 `PageDetailView` 渲染。`NavigateAction` 环境值支持页面内深度跳转（如从 PageDetailView 内链导航到另一个 KnowledgePage）。
-
-**启动默认路由：**
-- `selectedTab: AppTab = .knowledge`
-- `sidebarSelection: SidebarSelection? = .tool(.pageList)`
-- 启动落地页：**KnowledgePageListView（页面列表）**
-

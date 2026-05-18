@@ -26,7 +26,7 @@ public final class SearchStore {
 
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored @Inject private var linkService: LinkService
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
@@ -39,8 +39,8 @@ public final class SearchStore {
 
         let res = await linkService.hybridSearchWithDiagnostics(
             query: query,
-            in: await sqliteStore.pages,
-            embeddingManager: sqliteStore.embeddingManager
+            in: await pageStore.pages,
+            embeddingManager: pageStore.embeddingManager
         )
 
         lastSearchDiagnostic = res.diagnostic
@@ -65,8 +65,8 @@ public final class SearchStore {
 
             let res = await linkService.hybridSearchWithDiagnostics(
                 query: query,
-                in: await sqliteStore.pages,
-                embeddingManager: sqliteStore.embeddingManager
+                in: await pageStore.pages,
+                embeddingManager: pageStore.embeddingManager
             )
 
             if !Task.isCancelled {

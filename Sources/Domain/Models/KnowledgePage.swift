@@ -20,7 +20,7 @@ import GRDB
 // MARK: - Knowledge Page
 /// 知识管理系统核心数据模型
 public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord, Sendable, KnowledgePageRepresentable {
-    public static let databaseTableName: String = "pages"
+    public static let databaseTableName: String = AppConstants.Storage.Tables.pages
     
     public enum CodingKeys: String, CodingKey {
         case id, title, content, aliases, tags, status, confidence, sources

@@ -11,9 +11,9 @@ struct PluginStatsSection: View {
     @ObservedObject var registry = PluginRegistry.shared
     
     var body: some View {
-        StandardSection(title: "插件资源占用 (Watchdog 2.0)") {
+        StandardSection(title: L10n.Plugin.Stats.resourceUsage) {
             if registry.pluginResourceUsage.isEmpty {
-                Text("暂无活跃插件统计")
+                Text(L10n.Plugin.Stats.noUsage)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .padding()
@@ -32,7 +32,8 @@ struct PluginStatsSection: View {
                                     .font(.system(size: 13, weight: .bold, design: .monospaced))
                                     .foregroundStyle(.appText)
                                 
-                                Text("调用次数: \(usage.callCount) | 平均耗时: \(String(format: "%.1f", (usage.totalExecutionTime / Double(max(1, usage.callCount))) * 1000))ms")
+                                let avgMs = (usage.totalExecutionTime / Double(max(1, usage.callCount))) * 1000
+                                Text(L10n.Plugin.Stats.callCountFormat(calls: usage.callCount, avgMs: avgMs))
                                     .font(.system(size: 10))
                                     .foregroundStyle(.appSecondary)
                             }

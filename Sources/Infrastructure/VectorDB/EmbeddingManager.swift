@@ -39,13 +39,39 @@ public actor EmbeddingManager {
     init(repository: any VectorRepository) {
         self.repository = repository
         self.embeddingModel = NLEmbedding.sentenceEmbedding(for: .simplifiedChinese) ?? NLEmbedding.sentenceEmbedding(for: .english)
+        // 绑定数据库物理热插拔切换全局通知监听
+        setupNotificationObserver()
+    }
+
+    /// 绑定数据库热插拔通知监听
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: .databaseDidSwitch,
+            object: nil,
+            queue: nil
+        ) { _ in
+            Task {
+                await self.clearCacheAndReload()
+            }
+        }
+    }
+
+    /// 物理清空所有驻留内存的向量缓存，并从新专属物理子库动态重载向量索引
+    func clearCacheAndReload() async {
+        print("🧹 [EmbeddingManager] 物理驱逐内存向量缓存并开始从新库重载...")
+        self.vectorCache.removeAll()
+        self.chunkVectorCache.removeAll()
+        self.chunkMetadata.removeAll()
+        
+        await loadInitialCache()
+        print("🚀 [EmbeddingManager] 向量缓存重载载入完毕")
     }
 
     /// 异步加载初始缓存 (@PR-05: 优化数据库冷启动加载时间)
     func loadInitialCache() async {
         // 1. 加载页面级向量
         if let embeddings = try? await repository.fetchAllEmbeddings() {
-            vectorCache = embeddings
+            self.vectorCache = embeddings
         }
 
         // 2. 加载分块级向量

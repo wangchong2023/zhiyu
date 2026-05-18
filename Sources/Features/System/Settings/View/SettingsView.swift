@@ -12,6 +12,7 @@ struct SettingsView: View {
     @Environment(Router.self) var router
     @Environment(AppEnvironment.self) var appEnv
     @Environment(\.dismiss) var dismiss
+    @Environment(SettingsStore.self) var settingsStore
     @EnvironmentObject var onboardingService: OnboardingService
     @ObservedObject var themeManager: ThemeManager = ThemeManager.shared
     
@@ -130,14 +131,14 @@ struct SettingsView: View {
     }
     
     private func securitySection(store: AppStore) -> some View {
-        @Bindable var store = store
+        @Bindable var settingsStore = settingsStore
         return Section {
-            Toggle(isOn: $store.settingsStore.isPrivacyModeEnabled) {
+            Toggle(isOn: $settingsStore.isPrivacyModeEnabled) {
                 Label(L10n.Settings.privacyMode, systemImage: "eye.slash.fill")
             }
             
             if appEnv.platformEnv.interactionStyle == .touch { 
-                Toggle(isOn: $store.settingsStore.isBiometricEnabled) {
+                Toggle(isOn: $settingsStore.isBiometricEnabled) {
                     Label(L10n.Settings.biometricProtection, systemImage: "faceid")
                 }
             }

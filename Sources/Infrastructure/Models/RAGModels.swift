@@ -12,7 +12,7 @@ import GRDB
 
 /// 知识分块模型：用于 RAG 检索的原子单位
 public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
-    public static let databaseTableName: String = "page_chunks"
+    public static let databaseTableName: String = AppConstants.Storage.Tables.pageChunks
     
     public var id: String        // 格式: pageID_index 或特定前缀
     public var pageID: UUID
@@ -69,7 +69,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
 
 /// 页面级向量映射模型
 public struct PageEmbedding: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
-    public static let databaseTableName: String = "page_embeddings"
+    public static let databaseTableName: String = AppConstants.Storage.Tables.pageEmbeddings
     
     public var id: UUID          // 对应 KnowledgePage.id
     public var vector: [Float]

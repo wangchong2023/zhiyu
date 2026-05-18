@@ -186,8 +186,8 @@ public final class LintService: @unchecked Sendable {
                     severity: .warning,
                     type: .generic,
                     pageID: page.id,
-                    message: "存在重名页面: \"\(page.title)\" (Duplicate page title detected)",
-                    suggestion: "请修改其中一个页面的标题以避免引用混淆。"
+                    message: L10n.Lint.duplicateTitleMessage(page.title),
+                    suggestion: L10n.Lint.duplicateTitleSuggestion
                 ))
             }
         }

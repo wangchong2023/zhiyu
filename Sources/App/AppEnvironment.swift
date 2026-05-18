@@ -25,6 +25,7 @@ final class AppEnvironment {
     // ── 系统级状态 ──
     let themeManager: ThemeManager = ThemeManager.shared
     let llmService: LLMService = LLMService.shared
+    let llmConfig: LLMConfigManager = ServiceContainer.shared.resolve(LLMConfigManager.self)
     
     private init() {
         print("🎬 [AppEnvironment] 开始执行初始化...")
@@ -62,6 +63,7 @@ final class AppEnvironment {
         container.register(self.store.searchStore, for: SearchStore.self)
         container.register(self.store.settingsStore, for: SettingsStore.self)
         container.register(self.store.aiWorkflowStore, for: AIWorkflowStore.self)
+        container.register(self.store.aiWorkflowStore as any AIWorkflowCapabilities, for: (any AIWorkflowCapabilities).self)
         container.register(self.store.aiInsightStore, for: AIInsightStore.self)
         container.register(self.store.tagStore, for: TagStore.self)
         

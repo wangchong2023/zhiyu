@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public struct Coachmark {
-        public static let t = "Coachmark"
+        public static let t = "System"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 引导对话框：发现隐藏关联标题

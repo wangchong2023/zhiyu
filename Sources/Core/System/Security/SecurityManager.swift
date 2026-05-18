@@ -14,11 +14,17 @@
 
 import Foundation
 import CryptoKit
+import GRDB
 
 /// 安全管理器：负责数据签名、加密与完整性校验。
 final class SecurityManager: Sendable {
     /// 全局单例
     static let shared = SecurityManager()
+
+    // MARK: - 依赖注入
+    
+    /// 注入文件指纹签名仓储，贯彻 DIP 依赖倒置原则
+    @Inject private var signatureRepository: any FileSignatureRepository
 
     // MARK: - 存储键名
     private let saltKey = AppConstants.Keys.Storage.securitySalt
@@ -26,28 +32,32 @@ final class SecurityManager: Sendable {
     private let signatureKeyPrefix = AppConstants.Keys.Storage.signaturePrefix
 
     // MARK: - 初始化
-    init() {}
+    private init() {}
 
     // MARK: - 缓存
-    private var cachedPassphrase: String?
+    // 使用 nonisolated(unsafe) 配合 actor 同步访问或确保单线程访问
+    // 此处由于 SecurityManager 是 Sendable 且 singleton，我们采用锁或 MainActor 隔离来保护缓存
+    // 为简化实现且保证性能，我们将缓存操作也放在辅助方法中
+    private let lock = NSLock()
+    private var _cachedPassphrase: String?
+    private var cachedPassphrase: String? {
+        get { lock.withLock { _cachedPassphrase } }
+        set { lock.withLock { _cachedPassphrase = newValue } }
+    }
 
     // MARK: - 物理加密 (SQLCipher)
     
-    /// 获取/生成数据库物理加密密钥
-    /// 密钥采用 UUID + Base64 随机串组合，确保极高的熵值，且持久化于 Keychain。
+    /// 获取或生成数据库物理加密所用的密钥
     func getDatabasePassphrase() -> String {
-        // 1. 优先返回内存缓存 (解决测试环境 Keychain 失败导致的密钥不一致问题)
         if let cached = cachedPassphrase {
             return cached
         }
         
-        // 2. 尝试从 Keychain 读取
         if let existing = try? KeychainService.shared.retrieve(key: dbPassphraseKey) {
             cachedPassphrase = existing
             return existing
         }
         
-        // 3. 生成新密钥并持久化
         let newPassphrase = UUID().uuidString + "-" + Data(UUID().uuidString.utf8).base64EncodedString()
         try? KeychainService.shared.store(key: dbPassphraseKey, value: newPassphrase)
         cachedPassphrase = newPassphrase
@@ -56,7 +66,6 @@ final class SecurityManager: Sendable {
 
     // MARK: - 内容级加密 (AES-GCM)
 
-    /// 对敏感内容进行 AES-GCM 加密
     func encrypt(_ text: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let data = text.data(using: .utf8) else { throw SecurityError.encodingFailed }
@@ -64,7 +73,6 @@ final class SecurityManager: Sendable {
         return sealedBox.combined?.base64EncodedString() ?? ""
     }
 
-    /// 对 AES-GCM 加密内容进行解密
     func decrypt(_ base64Combined: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let combinedData = Data(base64Encoded: base64Combined) else { throw SecurityError.decodingFailed }
@@ -76,25 +84,30 @@ final class SecurityManager: Sendable {
 
     // MARK: - 完整性校验 (HMAC)
 
-    /// 获取动态盐值，优先从 Keychain 读取，不存在则生成
-    private var salt: String {
+    private func getSalt() async -> String {
         if let existing = try? KeychainService.shared.retrieve(key: saltKey) {
             return existing
         }
         
-        let legacySalt = "App-Integrity-Salt-2026"
+        let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
         let newSalt = UUID().uuidString + "-" + UUID().uuidString
-        let hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
+        
+        var hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
+        
+        if !hasSignatures {
+            let count = (try? await signatureRepository.fetchSignatureCount()) ?? 0
+            hasSignatures = count > 0
+        }
         
         let saltToStore = hasSignatures ? legacySalt : newSalt
         try? KeychainService.shared.store(key: saltKey, value: saltToStore)
         return saltToStore
     }
 
-    /// 计算指定文件的 HMAC 签名
-    func calculateHMAC(for fileURL: URL) throws -> String {
+    func calculateHMAC(for fileURL: URL) async throws -> String {
         let fileData = try Data(contentsOf: fileURL, options: .mappedIfSafe)
-        guard let saltData = salt.data(using: .utf8) else {
+        let currentSalt = await getSalt()
+        guard let saltData = currentSalt.data(using: .utf8) else {
             throw SecurityError.invalidSalt
         }
         let key = SymmetricKey(data: saltData)
@@ -102,31 +115,41 @@ final class SecurityManager: Sendable {
         return Data(signature).base64EncodedString()
     }
     
-    /// 保存签名到持久化存储
-    func saveSignature(_ signature: String, forFileName fileName: String) {
-        UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
+    func saveSignature(_ signature: String, forFilePath filePath: String) async {
+        let currentSalt = await getSalt()
+        do {
+            try await signatureRepository.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
+        } catch {
+            print("❌ [SecurityManager] 保存文件 HMAC 指纹失败: \(error)")
+            let fileName = URL(fileURLWithPath: filePath).lastPathComponent
+            UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
+        }
     }
     
-    /// 验证文件完整性
-    func verifyIntegrity(for fileURL: URL) -> Bool {
-        let fileName = fileURL.lastPathComponent
-        guard let storedSig = UserDefaults.standard.string(forKey: signatureKeyPrefix + fileName) else {
-            return true 
+    func verifyIntegrity(for fileURL: URL) async -> Bool {
+        let filePath = fileURL.path
+        let storedSig = try? await signatureRepository.fetchSignature(forFilePath: filePath)
+        
+        var finalStoredSig = storedSig
+        if finalStoredSig == nil {
+            let fileName = fileURL.lastPathComponent
+            finalStoredSig = UserDefaults.standard.string(forKey: signatureKeyPrefix + fileName)
         }
         
+        guard let expectedSig = finalStoredSig else { return true }
+        
         do {
-            let currentSig = try calculateHMAC(for: fileURL)
-            return currentSig == storedSig
+            let currentSig = try await calculateHMAC(for: fileURL)
+            return currentSig == expectedSig
         } catch {
             return false
         }
     }
     
-    /// 更新文件签名
-    func updateSignature(for fileURL: URL) {
+    func updateSignature(for fileURL: URL) async {
         do {
-            let sig = try calculateHMAC(for: fileURL)
-            saveSignature(sig, forFileName: fileURL.lastPathComponent)
+            let sig = try await calculateHMAC(for: fileURL)
+            await saveSignature(sig, forFilePath: fileURL.path)
         } catch {
             Logger.shared.addLog(action: .error, target: "SecurityManager", details: "Failed to update signature: \(error.localizedDescription)", module: "Security")
         }

@@ -134,7 +134,7 @@ targets:
     platform: iOS
     sources:
       - path: Sources/Platforms/iOS/Widgets
-      - path: Sources/Domain/Models/AIProcessingAttributes.swift
+      - path: Sources/Platforms/iOS/Activity/AIProcessingAttributes.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.widgets

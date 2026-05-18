@@ -41,6 +41,7 @@ struct ZhiYuApp: App {
                     .environment(appEnv.store.searchStore)
                     .environment(appEnv.store.tagStore)
                     .environment(appEnv.store.settingsStore)
+                    .environment(appEnv.llmConfig)
                     .environment(appEnv.router)
                     .environment(appEnv.ingestStore)
                     .environment(appEnv.synthesisStore)

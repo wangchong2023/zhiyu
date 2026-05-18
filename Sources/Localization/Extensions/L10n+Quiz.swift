@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public enum Quiz {
-        public static let t = "Quiz"
+        public static let t = "Knowledge"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 

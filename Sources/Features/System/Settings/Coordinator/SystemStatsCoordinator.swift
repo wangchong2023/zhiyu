@@ -31,10 +31,10 @@ final class SystemStatsCoordinator {
     var cleanedCount: Int? = nil
 
     // ── 基础设施依赖 ──
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
-    @ObservationIgnored @Inject private var knowledgeStore: KnowledgePageRepository
-    @ObservationIgnored @Inject private var vectorStore: VectorDataRepository
-    @ObservationIgnored @Inject private var governanceStore: AIGovernanceRepository
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
+    @ObservationIgnored @Inject private var knowledgeRepo: any KnowledgeRepository
+    @ObservationIgnored @Inject private var vectorRepo: any VectorRepository
+    @ObservationIgnored @Inject private var governanceRepo: any GovernanceRepository
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var haptic: any HapticFeedbackProtocol
 
@@ -47,7 +47,7 @@ final class SystemStatsCoordinator {
         let startTime = Date()
         
         // 1. AI 性能与资源消耗统计 (容错处理)
-        if let daily = try? await governanceStore.fetchDailyAIStats(days: 30) {
+        if let daily = try? await governanceRepo.fetchDailyAIStats(days: 30) {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
             
@@ -78,14 +78,14 @@ final class SystemStatsCoordinator {
             self.dailyStats = statsMap.values.sorted { $0.date < $1.date }
         }
         
-        if let monthly = try? await governanceStore.fetchMonthlyTokenStats() {
+        if let monthly = try? await governanceRepo.fetchMonthlyTokenStats() {
             self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
         }
         
-        _ = try? await governanceStore.calculateAverageRAGScores(days: 30)
+        _ = try? await governanceRepo.calculateAverageRAGScores(days: 30)
         
         // 2. 存储空间分布统计
-        let stats = await sqliteStore.getStorageStats()
+        let stats = await pageStore.getStorageStats()
         let dbSize = stats.databaseSize
         let logsSize = stats.logsSize
         let exportsSize = stats.exportsSize
@@ -108,7 +108,7 @@ final class SystemStatsCoordinator {
             StorageCategory(
                 label: L10n.Dashboard.stats.storageImport,
                 value: 0, // 页面内容暂不单独计算字节
-                count: (try? await knowledgeStore.count()) ?? 0,
+                count: (try? await knowledgeRepo.count()) ?? 0,
                 color: .green
             ),
             StorageCategory(
@@ -125,7 +125,7 @@ final class SystemStatsCoordinator {
         self.exportCount = allLogEntries.filter { $0.action == .export }.count
         
         // 3. 页面统计
-        self.totalPages = (try? await knowledgeStore.count()) ?? 0
+        self.totalPages = (try? await knowledgeRepo.count()) ?? 0
         
         let endTime = Date()
         logger.addLog(
@@ -145,7 +145,7 @@ final class SystemStatsCoordinator {
     func cleanupData() async {
         isCleaning = true
         do {
-            let count = try await vectorStore.cleanupOrphanedChunks()
+            let count = try await vectorRepo.cleanupOrphanedChunks()
             self.cleanedCount = count
             haptic.trigger(.success)
             await loadStats() // 刷新统计

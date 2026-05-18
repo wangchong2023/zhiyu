@@ -16,10 +16,10 @@ extension L10n {
         public static var ingestKnowledgeSubtitle: String { tr("action.ingestKnowledgeSubtitle") }
 
         public struct cmd {
-            public static var deepExplore: String { Localized.tr("action.cmd.deepExplore", table: "Common") }
-            public static var newKnowledgePage: String { Localized.tr("action.cmd.newKnowledgePage", table: "Common") }
-            public static var quickActions: String { Localized.tr("action.cmd.quickActions", table: "Common") }
-            public static var recentAccess: String { Localized.tr("action.cmd.recentAccess", table: "Common") }
+            public static var deepExplore: String { Localized.tr("action.cmd.deepExplore", table: t) }
+            public static var newKnowledgePage: String { Localized.tr("action.cmd.newKnowledgePage", table: t) }
+            public static var quickActions: String { Localized.tr("action.cmd.quickActions", table: t) }
+            public static var recentAccess: String { Localized.tr("action.cmd.recentAccess", table: t) }
         }
     }
 }

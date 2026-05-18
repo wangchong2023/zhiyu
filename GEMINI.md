@@ -63,13 +63,14 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 
 ## 开发约定
 
-### 1. 依赖注入 (DI)
-使用 `ServiceContainer` 模式和 `@Inject` 属性包装器。所有服务必须在 `ZhiYuApp.init()` 中注册。
-```swift
-@Inject var pageStore: any AnyPageStore
-```
+### 1. 依赖注入 (DI) 与依赖倒置 (DIP)
+- 使用 `ServiceContainer` 模式和 `@Inject` 属性包装器。
+- **强制约束**：业务功能层 (Features) 严禁直接依赖基础设施的具体实现类（如 `SQLiteStore`）。必须通过定义在 `Core/Base` 或 `Domain/Protocols` 中的协议（如 `any AnyPageStoreCapabilities`）进行注入。所有服务必须在 `ZhiYuApp.init()` 中注册。
 
-### 2. 并发模型 (Swift 6)
+### 2. 领域层纯净化 (Domain Purity)
+- **强制约束**：L1.5 领域层必须保持平台无关。严禁在 Domain 层导入 `ActivityKit`, `UIKit`, `AppKit` 或使用 `#if os` 宏进行业务分支。平台相关的能力必须抽象为协议并下沉至 `Platforms/` 或 `Core/System/` 实现。
+
+### 3. 并发模型 (Swift 6)
 - 启用 `SWIFT_STRICT_CONCURRENCY: complete`。
 - 优先使用 `async/await` 和 `actor`；避免使用传统锁。
 - UI 绑定代码必须标注 `@MainActor`。

@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public struct Settings {
-        public static let t = "Settings"
+        public static let t = "System"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
@@ -35,50 +35,50 @@ extension L10n {
         public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
         public static var promptLab: String { tr("promptLab") }
-        public static var iCloudSync: String { Localized.tr("settings.iCloudSync", table: "Settings") }
+        public static var iCloudSync: String { Localized.tr("settings.iCloudSync", table: t) }
         public static var backupRestore: String { Localized.tr("backup.restore", table: "Transfer") }
-        public static var operationLog: String { Localized.tr("settings.operationLog", table: "Settings") }
+        public static var operationLog: String { Localized.tr("settings.operationLog", table: t) }
         public static var privacyMode: String { tr("privacyMode") }
         public static var biometricProtection: String { tr("biometricProtection") }
-        public static var injectDemoData: String { Localized.tr("settings.injectDemoData", table: "Settings") }
+        public static var injectDemoData: String { Localized.tr("settings.injectDemoData", table: t) }
         public static var resetData: String { tr("resetData") }
-        public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: "Settings") }
+        public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: t) }
         public static var about: String { tr("aboutApp") }
         public static var version: String { tr("version") }
 
         public struct resetOnboarding {
-            public static var title: String { Localized.tr("settings.resetOnboarding.title", table: "Settings") }
-            public static var message: String { Localized.tr("settings.resetOnboarding.message", table: "Settings") }
-            public static var label: String { Localized.tr("settings.resetOnboarding", table: "Settings") }
+            public static var title: String { Localized.tr("settings.resetOnboarding.title", table: t) }
+            public static var message: String { Localized.tr("settings.resetOnboarding.message", table: t) }
+            public static var label: String { Localized.tr("settings.resetOnboarding", table: t) }
         }
 
         public struct clearAll {
-            public static var action: String { Localized.tr("settings.clearAll.action", table: "Settings") }
-            public static var confirmTitle: String { Localized.tr("settings.clearAll.confirmTitle", table: "Settings") }
-            public static var message: String { Localized.tr("settings.clearAll.message", table: "Settings") }
-            public static var label: String { Localized.tr("settings.clearAll", table: "Settings") }
+            public static var action: String { Localized.tr("settings.clearAll.action", table: t) }
+            public static var confirmTitle: String { Localized.tr("settings.clearAll.confirmTitle", table: t) }
+            public static var message: String { Localized.tr("settings.clearAll.message", table: t) }
+            public static var label: String { Localized.tr("settings.clearAll", table: t) }
         }
 
         public struct injectConfirm {
-            public static var title: String { Localized.tr("settings.injectConfirm.title", table: "Settings") }
-            public static var message: String { Localized.tr("settings.injectConfirm.message", table: "Settings") }
+            public static var title: String { Localized.tr("settings.injectConfirm.title", table: t) }
+            public static var message: String { Localized.tr("settings.injectConfirm.message", table: t) }
         }
 
         public struct developer {
             public struct section {
-                public static var data: String { Localized.tr("settings.developer.section.data", table: "Settings") }
-                public static var dataReset: String { Localized.tr("settings.developer.section.dataReset", table: "Settings") }
-                public static var operationInfo: String { Localized.tr("settings.developer.section.operationInfo", table: "Settings") }
-                public static var performance_test: String { Localized.tr("settings.developer.section.performance_test", table: "Settings") }
+                public static var data: String { Localized.tr("settings.developer.section.data", table: t) }
+                public static var dataReset: String { Localized.tr("settings.developer.section.dataReset", table: t) }
+                public static var operationInfo: String { Localized.tr("settings.developer.section.operationInfo", table: t) }
+                public static var performance_test: String { Localized.tr("settings.developer.section.performance_test", table: t) }
             }
 
             public struct stressTest {
-                public static var count: String { Localized.tr("settings.developer.stressTest.count", table: "Settings") }
-                public static var run: String { Localized.tr("settings.developer.stressTest.run", table: "Settings") }
-                public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: "Settings") }
-                public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: "Settings") }
-                public static func success(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.success", table: "Settings", n) }
-                public static func confirmAction(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.confirmAction", table: "Settings", n) }
+                public static var count: String { Localized.tr("settings.developer.stressTest.count", table: t) }
+                public static var run: String { Localized.tr("settings.developer.stressTest.run", table: t) }
+                public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
+                public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
+                public static func success(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.success", table: t, n) }
+                public static func confirmAction(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.confirmAction", table: t, n) }
             }
         }
 
@@ -90,26 +90,26 @@ extension L10n {
             public static var maintenance: String { Settings.tr("section.maintenance") }
             public static var about: String { Settings.tr("section.about") }
             public static var developer: String { Settings.tr("section.developer") }
-            public static var tabData: String { Localized.tr("settings.developer.section.tabData", table: "Settings") }
-            public static var tabQuality: String { Localized.tr("settings.developer.section.tabQuality", table: "Settings") }
+            public static var tabData: String { Localized.tr("settings.developer.section.tabData", table: t) }
+            public static var tabQuality: String { Localized.tr("settings.developer.section.tabQuality", table: t) }
         }
 
         public struct InjectDemo {
-            public static func successMessage(_ n: Int) -> String { Localized.trf("settings.injectDemo.successMessage", table: "Settings", n) }
-            public static var errorMessage: String { Localized.tr("settings.injectDemo.errorMessage", table: "Settings") }
+            public static func successMessage(_ n: Int) -> String { Localized.trf("settings.injectDemo.successMessage", table: t, n) }
+            public static var errorMessage: String { Localized.tr("settings.injectDemo.errorMessage", table: t) }
         }
 
         public struct About {
-            public static var developer: String { Localized.tr("settings.about.developer", table: "Settings") }
-            public static var developerName: String { Localized.tr("settings.about.developerName", table: "Settings") }
-            public static var website: String { Localized.tr("settings.about.website", table: "Settings") }
-            public static var version: String { Localized.tr("settings.about.version", table: "Settings") }
+            public static var developer: String { Localized.tr("settings.about.developer", table: t) }
+            public static var developerName: String { Localized.tr("settings.about.developerName", table: t) }
+            public static var website: String { Localized.tr("settings.about.website", table: t) }
+            public static var version: String { Localized.tr("settings.about.version", table: t) }
         }
 
         public struct theme {
-            public static var dark: String { Localized.tr("settings.theme.dark", table: "Settings") }
-            public static var light: String { Localized.tr("settings.theme.light", table: "Settings") }
-            public static var system: String { Localized.tr("settings.theme.system", table: "Settings") }
+            public static var dark: String { Localized.tr("settings.theme.dark", table: t) }
+            public static var light: String { Localized.tr("settings.theme.light", table: t) }
+            public static var system: String { Localized.tr("settings.theme.system", table: t) }
         }
     }
 }

@@ -89,9 +89,9 @@ struct NotebookListRow: View {
         .buttonStyle(.plain)
     }
     
+    /// 获取根据笔记本 ID 哈希值计算出来的兜底默认 Emoji 图标
     private var defaultIcon: String {
-        let icons = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️"]
-        let index = abs(notebook.id.hashValue) % icons.count
-        return icons[index]
+        let index = abs(notebook.id.hashValue) % IconTokens.options.count
+        return IconTokens.options[index]
     }
 }

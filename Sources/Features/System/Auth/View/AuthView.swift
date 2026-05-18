@@ -251,7 +251,7 @@ struct AuthView: View {
             }
             
             if !success {
-                errorMessage = "认证失败，请重试"
+                errorMessage = L10n.Auth.authFailed
                 HapticFeedback.shared.trigger(.error)
             } else {
                 HapticFeedback.shared.trigger(.success)

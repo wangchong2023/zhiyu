@@ -17,6 +17,7 @@ struct LLMSettingsView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(Router.self) var router
     @EnvironmentObject var llmService: LLMService
+    @Environment(LLMConfigManager.self) var config
     @State private var testing = false
     @State private var testResult: TestResult?
     @State private var showAPIKey = false
@@ -28,6 +29,7 @@ struct LLMSettingsView: View {
     }
     
     var body: some View {
+        @Bindable var config = config
         ZStack {
             themeManager.pageBackground()
                 .ignoresSafeArea()
@@ -35,7 +37,7 @@ struct LLMSettingsView: View {
             Form {
                 // Enable/Disable
                 Section {
-                    Toggle(isOn: $llmService.isEnabled) {
+                    Toggle(isOn: $config.isEnabled) {
                         Label(L10n.AI.LLM.enableAssistant, systemImage: DesignSystem.Icons.sparkles)
                             .foregroundStyle(.appText)
                     }
@@ -56,10 +58,10 @@ struct LLMSettingsView: View {
                     }
                     .padding(.vertical, DesignSystem.tiny)
                     
-                    Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $llmService.autoScan)
+                    Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $config.autoScan)
                         .tint(.appAccent)
                     
-                    Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $llmService.autoRefactor)
+                    Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $config.autoRefactor)
                         .tint(.appAccent)
                 } header: {
                     Text(L10n.Settings.advancedMaintenance)
@@ -71,12 +73,12 @@ struct LLMSettingsView: View {
                         Button(action: {
                             let selectedProvider = provider
                             testResult = nil
-                            llmService.provider = selectedProvider
+                            config.provider = selectedProvider
                             if !selectedProvider.defaultBaseURL.isEmpty {
-                                llmService.baseURL = selectedProvider.defaultBaseURL
+                                config.baseURL = selectedProvider.defaultBaseURL
                             }
                             if !selectedProvider.defaultModel.isEmpty {
-                                llmService.model = selectedProvider.defaultModel
+                                config.model = selectedProvider.defaultModel
                             }
                             withAnimation {
                                 isConfigExpanded = true
@@ -88,7 +90,7 @@ struct LLMSettingsView: View {
                                 Text(provider.displayName)
                                     .foregroundStyle(.appText)
                                 Spacer()
-                                if llmService.provider == provider {
+                                if config.provider == provider {
                                     Image(systemName: DesignSystem.Icons.check)
                                         .foregroundStyle(.appAccent)
                                 }
@@ -128,8 +130,8 @@ struct LLMSettingsView: View {
                                 .foregroundStyle(.appText)
                         }
                     }
-                    .disabled(testing || llmService.apiKey.isEmpty || llmService.baseURL.isEmpty)
-                    .opacity(llmService.apiKey.isEmpty || llmService.baseURL.isEmpty ? 0.6 : 1.0)
+                    .disabled(testing || config.apiKey.isEmpty || config.baseURL.isEmpty)
+                    .opacity(config.apiKey.isEmpty || config.baseURL.isEmpty ? 0.6 : 1.0)
                     
                     if let result = testResult {
                         VStack(alignment: .leading, spacing: 8) {
@@ -197,7 +199,8 @@ struct LLMSettingsView: View {
     
     /// 配置内容视图（API Key / Base URL / Model 输入）
     private var configurationContent: some View {
-        VStack(spacing: 20) {
+        @Bindable var config = config
+        return VStack(spacing: 20) {
             // API Key
             VStack(alignment: .leading, spacing: 6) {
                 Text(L10n.AI.LLM.apiKey)
@@ -205,12 +208,12 @@ struct LLMSettingsView: View {
                     .foregroundStyle(.appSecondary)
                 HStack {
                     if showAPIKey {
-                        TextField("sk-...", text: $llmService.apiKey)
+                        TextField("sk-...", text: $config.apiKey)
                             .textFieldStyle(.plain)
                             .foregroundStyle(.appText)
                             .font(.system(.body, design: .monospaced))
                     } else {
-                        SecureField("sk-...", text: $llmService.apiKey)
+                        SecureField("sk-...", text: $config.apiKey)
                             .textFieldStyle(.plain)
                             .foregroundStyle(.appText)
                             .font(.system(.body, design: .monospaced))
@@ -233,7 +236,7 @@ struct LLMSettingsView: View {
                 Text(L10n.AI.LLM.apiAddress)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
-                TextField("https://api.example.com/v1", text: $llmService.baseURL)
+                TextField("https://api.example.com/v1", text: $config.baseURL)
                     .textFieldStyle(.plain)
                     .font(.system(.body, design: .monospaced))
                     .foregroundStyle(.appText)
@@ -254,7 +257,7 @@ struct LLMSettingsView: View {
                 Text(L10n.AI.LLM.model)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
-                TextField("model-name", text: $llmService.model)
+                TextField("model-name", text: $config.model)
                     .textFieldStyle(.plain)
                     .font(.system(.body, design: .monospaced))
                     .foregroundStyle(.appText)
@@ -273,14 +276,14 @@ struct LLMSettingsView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(suggestedModels, id: \.self) { model in
-                        Button(action: { llmService.model = model }) {
+                        Button(action: { config.model = model }) {
                             Text(model)
                                 .font(.caption)
                                 .padding(.horizontal, DesignSystem.medium - 2)
                                 .padding(.vertical, DesignSystem.small - 2)
-                                .background(llmService.model == model ? Color.appAccent.opacity(0.2) : Color.appCard.opacity(0.8))
+                                .background(config.model == model ? Color.appAccent.opacity(0.2) : Color.appCard.opacity(0.8))
                                 .clipShape(Capsule())
-                                .foregroundStyle(llmService.model == model ? .appAccent : .appSecondary)
+                                .foregroundStyle(config.model == model ? .appAccent : .appSecondary)
                         }
                         .buttonStyle(.plain)
                     }
@@ -291,7 +294,7 @@ struct LLMSettingsView: View {
     }
     
     private var suggestedModels: [String] {
-        llmService.provider.suggestedModels
+        config.provider.suggestedModels
     }
     
     private func testConnection() {

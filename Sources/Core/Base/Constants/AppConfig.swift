@@ -75,6 +75,9 @@ enum AppConfig {
         
         /// 评估模型 (用于 LLM-as-a-Judge)
         static var evaluatorModel: String { getPerformance("evaluator_model", default: AppModel.gpt4o.rawValue) }
+        
+        /// 默认大模型名称
+        static var defaultModel: String { getPerformance("default_model", default: "deepseek-v4-pro") }
     }
     
     // MARK: - UI 交互与动画

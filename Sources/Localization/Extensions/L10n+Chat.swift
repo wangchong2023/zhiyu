@@ -8,33 +8,33 @@ import Foundation
 
 extension L10n {
     public struct Chat {
-        public static let t = "Chat"
+        public static let t = "AI"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 获取活跃会话个数文案
         /// - Parameter count: 会话个数
         /// - Returns: 本地化格式化文案
-        public static func activeSessionCount(_ count: Int) -> String { Localized.trf("chat.activeSessionCount", table: "Chat", count) }
+        public static func activeSessionCount(_ count: Int) -> String { Localized.trf("chat.activeSessionCount", table: t, count) }
 
         /// 获取消息条数文案
         /// - Parameter count: 消息条数
         /// - Returns: 本地化格式化文案
-        public static func messageCount(_ count: Int) -> String { Localized.trf("chat.messageCount", table: "Chat", count) }
+        public static func messageCount(_ count: Int) -> String { Localized.trf("chat.messageCount", table: t, count) }
 
         /// 获取消耗 Token 数文案
         /// - Parameter count: Token数
         /// - Returns: 本地化格式化文案
-        public static func tokenUsage(_ count: Int) -> String { Localized.trf("chat.tokenUsage", table: "Chat", count) }
+        public static func tokenUsage(_ count: Int) -> String { Localized.trf("chat.tokenUsage", table: t, count) }
 
         /// 获取引用文献个数文案
         /// - Parameter count: 引用文献个数
         /// - Returns: 本地化格式化文案
-        public static func referenceCount(_ count: Int) -> String { Localized.trf("chat.referenceCount", table: "Chat", count) }
+        public static func referenceCount(_ count: Int) -> String { Localized.trf("chat.referenceCount", table: t, count) }
 
         /// 获取上下文超限警告文案
         /// - Parameter limit: 限制数
         /// - Returns: 本地化格式化文案
-        public static func contextLimitWarning(_ limit: Int) -> String { Localized.trf("chat.contextLimitWarning", table: "Chat", limit) }
+        public static func contextLimitWarning(_ limit: Int) -> String { Localized.trf("chat.contextLimitWarning", table: t, limit) }
 
         public static var title: String { tr("chat.title") }
         public static var welcomeDesc: String { tr("chat.welcomeDesc") }
@@ -63,7 +63,7 @@ extension L10n {
         /// 获取深度探索/总体探索的提示词文案
         /// - Parameter topic: 探索主题
         /// - Returns: 本地化格式化文案
-        public static func deepExplorePrompt(_ topic: String) -> String { Localized.trf("chat.deepExplorePrompt", table: "Chat", topic) }
+        public static func deepExplorePrompt(_ topic: String) -> String { Localized.trf("chat.deepExplorePrompt", table: t, topic) }
 
         public struct ai {
             public static var thinking: String { Chat.tr("chat.ai.thinking") }

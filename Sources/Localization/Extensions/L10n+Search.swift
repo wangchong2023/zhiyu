@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public enum Search {
-        public static let t = "Search"
+        public static let t = "Common"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 

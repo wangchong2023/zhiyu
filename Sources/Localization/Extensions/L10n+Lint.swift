@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public struct Lint {
-        public static let t = "Lint"
+        public static let t = "System"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("title") }
         public static var refactorSection: String { tr("refactorSection") }
@@ -22,13 +22,15 @@ extension L10n {
         public static var orphanPage: String { tr("orphan.page") }
         public static var orphanSuggestion: String { tr("orphan.suggestion") }
         public static var cycleMessage: String { tr("cycle.message") }
-        public static var cycleSuggestion: String { Localized.tr("lint.cycleSuggestion", table: "Lint") }
+        public static var cycleSuggestion: String { Localized.tr("lint.cycleSuggestion", table: t) }
         public static var brokenLink: String { tr("brokenLink.message") }
         public static var brokenLinkSuggestion: String { tr("brokenLink.suggestion") }
         public static var stubContent: String { tr("stub.message") }
-        public static var stubSuggestion: String { Localized.tr("lint.stubSuggestion", table: "Lint") }
+        public static var stubSuggestion: String { Localized.tr("lint.stubSuggestion", table: t) }
         public static var outdated: String { tr("outdated.message") }
-        public static var outdatedSuggestion: String { Localized.tr("lint.outdatedSuggestion", table: "Lint") }
+        public static var outdatedSuggestion: String { Localized.tr("lint.outdatedSuggestion", table: t) }
+        public static func duplicateTitleMessage(_ title: String) -> String { Localized.trf("duplicateTitle.message", table: t, title) }
+        public static var duplicateTitleSuggestion: String { tr("duplicateTitle.suggestion") }
         public static var aiSuggestions: String { tr("aiSuggestions") }
         public static var detailIssues: String { tr("detailIssues") }
         public static var lastCheckTitle: String { tr("lastCheckTitle") }

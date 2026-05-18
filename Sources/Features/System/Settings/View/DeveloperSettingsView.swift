@@ -220,9 +220,9 @@ struct DeveloperSettingsView: View {
         
         try? await Task.sleep(nanoseconds: 500_000_000)
         
-        // 压力测试调用修复：补全缺失的 try? 以匹配最新的 throws 签名
+        // 压力测试调用修复：使用协议而非具体类
         var count = 0
-        if let engine = store.sqliteStore as? SQLiteStore {
+        if let engine = store.pageStore as? any AnyPageStoreCapabilities {
             count = (try? await DemoDataGenerator.generateStressTest(in: engine, count: targetCount)) ?? 0
         }
         

@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public enum ICloud {
-        public static let t = "Sync"
+        public static let t = "Ingest"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         public static var pushToCloud: String { tr("icloud.push") }

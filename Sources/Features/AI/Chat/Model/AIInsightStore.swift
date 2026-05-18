@@ -48,7 +48,7 @@ public final class AIInsightStore {
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
     @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
@@ -57,7 +57,7 @@ public final class AIInsightStore {
 
     /// 更新全局统计指标
     public func updateStatistics() async {
-        let pages = await sqliteStore.pages
+        let pages = await pageStore.pages
         
         self.sourceCount = pages.filter { $0.pageType == .source }.count
         self.entityCount = pages.filter { $0.pageType == .entity }.count
@@ -97,7 +97,7 @@ public final class AIInsightStore {
     // MARK: - 周报业务
 
     func generateWeeklyInsight(forceRefresh: Bool = false) async {
-        let pages = await sqliteStore.pages
+        let pages = await pageStore.pages
         do {
             let insight = try await insightService.generateWeeklyInsight(pages: pages, llmService: llmService)
             self.weeklyInsight = insight
@@ -110,7 +110,7 @@ public final class AIInsightStore {
         isGeneratingDailyRecap = true
         defer { isGeneratingDailyRecap = false }
         
-        let pages = await sqliteStore.pages
+        let pages = await pageStore.pages
         do {
             let recap = try await insightService.generateDailyRecap(pages: pages, llmService: llmService, forceRefresh: forceRefresh)
             self.dailyRecap = recap

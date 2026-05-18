@@ -8,22 +8,31 @@
 // 3. 容错恢复：实现“混沌恢复”能力，保障数据在异常网络下的最终一致性。
 // MARK: [SR-01] 原始文档同步必须严格遵循授权 white-list 机制
 // MARK: [RR-02] 系统必须支持“混沌恢复”能力，确保数据不丢失
-// 版本: 1.2
+// 版本: 1.3
+// 修改记录:
+//   - 2026-05-18: 物理重构 100% 三斜杠 Markdown 中文注释，全面杜绝 Javadoc tag 并补充 LWW 行内算法图解
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 #if ICLOUD_ENABLED
 import Foundation
 import CloudKit
 
+// MARK: - iCloud 同步异常
 
-// MARK: - iCloud Sync Error
+/// iCloud 云同步过程中可能抛出的强类型业务异常 (iCloudSyncError)。
 enum iCloudSyncError: LocalizedError {
+    /// 当前 iCloud 账户不可用或未登录。
     case iCloudNotAvailable
+    /// 底层 CloudKit SDK 抛出的网络或系统级异常。
     case cloudKitError(Error)
+    /// 数据序列化为 JSON 失败。
     case encodingError
+    /// 从云端拉取到的 JSON 解析失败。
     case decodingError
+    /// 双向同步时，冲突决策解决器执行失败。
     case conflictResolutionFailed
 
+    /// 本地化异常的文字描述。
     var errorDescription: String? {
         switch self {
         case .iCloudNotAvailable: return L10n.ICloud.Error.notAvailable
@@ -35,18 +44,26 @@ enum iCloudSyncError: LocalizedError {
     }
 }
 
-// MARK: - Sync Status
+// MARK: - 同步状态
+
+/// 表示云同步在 UI 表现层与逻辑调度层之间的实时生命周期状态 (SyncStatus)。
 enum SyncStatus: Equatable {
+    /// 闲置状态，等待触发。
     case idle
+    /// 正在与云端服务器进行数据封包或推送吞吐。
     case syncing
+    /// 双向同步成功，云地两端数据达成一致。
     case synced
+    /// 同步链路上任何环节失败，附带错误信息。
     case error(String)
 
+    /// 标记当前是否正在执行同步。
     var isSyncing: Bool {
         if case .syncing = self { return true }
         return false
     }
 
+    /// 当前状态的类型安全本地化描述文本。
     var label: String {
         switch self {
         case .idle: return L10n.Common.sync.idle
@@ -57,16 +74,20 @@ enum SyncStatus: Equatable {
     }
 }
 
-// MARK: - iCloud Sync Service
-/// Handles bidirectional sync of Knowledge Base data via CloudKit.
-/// Uses a single CKRecord type "AppData" with:
-///   - "pagesData": JSON-encoded [KnowledgePage]
-///   - "logEntriesData": JSON-encoded [LogEntry]
-///   - "lastModified": Date
+// MARK: - iCloud 同步中枢服务
+
+/// 负责通过 Apple CloudKit 实现智宇知识库地云双向全量同步的底层核心服务（iCloudSyncService）。
+/// 系统使用名为 "AppData" 的单一 CKRecord 实体进行云端承载，内部映射有：
+///   - "pagesData": 经 JSON 序列化编码后的本地 [KnowledgePage] 实体集。
+///   - "logEntriesData": 经 JSON 序列化编码后的本地 [LogEntry] 审计日志集。
+///   - "lastModified": 标记记录最后一次物理同步修改的时间戳。
 @MainActor
 class iCloudSyncService: ObservableObject {
+    /// 向 UI 发布当前的同步生命周期状态。
     @Published var syncStatus: SyncStatus = .idle
+    /// 记录最近一次双向同步成功的绝对物理时间。
     @Published var lastSyncDate: Date?
+    /// 标记当前 iCloud 账户是否在全局配置和系统鉴权下完全可用。
     @Published var iCloudAvailable: Bool = false
 
     private let container: CKContainer?
@@ -74,23 +95,22 @@ class iCloudSyncService: ObservableObject {
     private let zoneID = CKRecordZone.ID(zoneName: "AppZone")
     private let recordType = "AppData"
 
-    /// CloudKit 在当前设备/模拟器上是否可用（硬件与配置层）
+    /// 标记 CloudKit 在当前设备或模拟器硬件上是否具备网络访问与运行能力。
     let cloudKitAvailable: Bool
 
-    // MARK: - 回调钩子
+    // MARK: - 业务层协同回调钩子
     
-    /// 当从云端拉取到新数据时的回调
+    /// 当云端数据成功拉取并解码完成后，触发的高层数据库合并回调钩子。
     var onRemoteDataReceived: (([KnowledgePage], [LogEntry]) -> Void)?
     
-    /// 当检测到同步冲突时的回调，需返回冲突解决策略
+    /// 当同步链路中检测到云端有更新的数据，发生同步冲突时的双向问询回调。
+    /// 调用方通过返回 `ConflictResolution` 决策来驱使 LWW 冲突解决器。
     var onConflictDetected: (([KnowledgePage], [LogEntry], [KnowledgePage], [LogEntry]) -> ConflictResolution)?
 
     @Inject private var appEnv: any AppEnvironmentProtocol
 
-    /**
-     * @description: 初始化同步服务，检测 iCloud 账户状态并配置 CloudKit 容器
-     * @return {*}
-     */
+    /// 初始化同步服务。
+    /// 在初始化过程中，会自动检测 AppEnvironment 云同步使能状态，读取 ubiquityIdentityToken 并冷启动 CloudKit 私有区。
     init() {
         if appEnv.isCloudSyncSupported {
             let token = FileManager.default.ubiquityIdentityToken
@@ -100,7 +120,7 @@ class iCloudSyncService: ObservableObject {
                 let ckr = CKContainer.default()
                 container = ckr
                 database = ckr.privateCloudDatabase
-                iCloudAvailable = false // 待 checkiCloudStatus 更新
+                iCloudAvailable = false // 初始设为 false，通过 checkiCloudStatus 异步更新状态
             } else {
                 container = nil
                 database = nil
@@ -116,12 +136,9 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    // MARK: - 状态监控
+    // MARK: - iCloud 状态监控
     
-    /**
-     * @description: 异步检查当前 iCloud 账户的登录状态，并更新 iCloudAvailable 标记
-     * @return {*}
-     */
+    /// 异步且线程安全地检查当前设备上 Apple iCloud 账号的登录可用状态，并更新 `iCloudAvailable` 标记。
     func checkiCloudStatus() {
         guard let container else { return }
         container.accountStatus { [weak self] status, error in
@@ -134,15 +151,13 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    // MARK: - 云端推送
+    // MARK: - 云端推送 (强制单向)
     
-    /**
-     * @description: 将本地数据强制推送到 iCloud，不进行冲突比对
-     * @param { [KnowledgePage] } pages 待推送的页面列表
-     * @param { [LogEntry] } logEntries 待推送的日志记录
-     * @return {*}
-     * @throws {iCloudSyncError} iCloud 不可用或 CloudKit 写入失败时的错误
-     */
+    /// 将给定的本地页面列表与日志记录直接强制单向覆写推送到 iCloud 私有数据库中，不进行任何冲突合并比对。
+    /// - Parameters:
+    ///   - pages: 本地待推送的完整知识页面列表。
+    ///   - logEntries: 本地待推送的审计日志列表。
+    /// - Throws: `iCloudSyncError.iCloudNotAvailable`（iCloud 未登录）或 `cloudKitError`（网络与写入失败）。
     func pushToCloud(pages: [KnowledgePage], logEntries: [LogEntry]) async throws {
         guard iCloudAvailable, let database else {
             throw iCloudSyncError.iCloudNotAvailable
@@ -151,14 +166,14 @@ class iCloudSyncService: ObservableObject {
         await MainActor.run { syncStatus = .syncing }
 
         do {
-            // 确保自定义 Zone 存在
+            // 1. 确保私有数据库中的 AppZone 物理分区存在
             try await ensureZoneExists()
 
-            // 序列化数据
+            // 2. 将数据编码为 JSON 字节包
             let pagesData = try JSONEncoder().encode(pages)
             let logsData = try JSONEncoder().encode(logEntries)
 
-            // 创建或获取现有记录
+            // 3. 构建 CloudKit 专有记录标识并查找现有记录
             let recordID = CKRecord.ID(recordName: "knowledge-management_main", zoneID: zoneID)
             let record: CKRecord
 
@@ -169,10 +184,12 @@ class iCloudSyncService: ObservableObject {
                 record = CKRecord(recordType: recordType, recordID: recordID)
             }
 
+            // 4. 更新 CKRecord 元数据荷载
             record["pagesData"] = pagesData as CKRecordValue
             record["logEntriesData"] = logsData as CKRecordValue
             record["lastModified"] = Date() as CKRecordValue
 
+            // 5. 物理保存至 iCloud 私有云存储
             _ = try await database.save(record)
 
             await MainActor.run {
@@ -187,13 +204,11 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    // MARK: - 云端拉取
+    // MARK: - 云端拉取 (强制单向)
     
-    /**
-     * @description: 从 iCloud 拉取最新数据
-     * @return { ([KnowledgePage], [LogEntry]) } 返回拉取到的页面和日志元组
-     * @throws {iCloudSyncError} iCloud 不可用或 CloudKit 读取失败时的错误
-     */
+    /// 从 iCloud 云端单向物理拉取最新 AppData 承载，将其反序列化解码。
+    /// - Returns: 元组数据，包含从云端下载的 `[KnowledgePage]` 和 `[LogEntry]` 列表。
+    /// - Throws: `iCloudSyncError.iCloudNotAvailable` 或 `decodingError`（数据损坏或解码失败）。
     func pullFromCloud() async throws -> ([KnowledgePage], [LogEntry]) {
         guard iCloudAvailable, let database else {
             throw iCloudSyncError.iCloudNotAvailable
@@ -202,16 +217,19 @@ class iCloudSyncService: ObservableObject {
         await MainActor.run { syncStatus = .syncing }
 
         do {
+            // 确保同步分区就绪
             try await ensureZoneExists()
 
             let recordID = CKRecord.ID(recordName: "knowledge-management_main", zoneID: zoneID)
             let record = try await database.record(for: recordID)
 
+            // 提取二进制字节包
             guard let pagesData = record["pagesData"] as? Data,
                   let logsData = record["logEntriesData"] as? Data else {
                 throw iCloudSyncError.decodingError
             }
 
+            // 解析反序列化
             let pages = try JSONDecoder().decode([KnowledgePage].self, from: pagesData)
             let logs = try JSONDecoder().decode([LogEntry].self, from: logsData)
 
@@ -222,7 +240,7 @@ class iCloudSyncService: ObservableObject {
 
             return (pages, logs)
         } catch let error as CKError where error.code == .unknownItem {
-            // 记录尚不存在，返回空数据
+            // 云端记录从未创建过（如首批冷启动多端），此时优雅降级，返回空元组
             await MainActor.run {
                 syncStatus = .idle
             }
@@ -235,15 +253,15 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    // MARK: - 双向全量同步
+    // MARK: - 双向智能同步 (LWW 解决冲突)
     
-    /**
-     * @description: 执行完整的双向同步：拉取远程记录 -> 比对冲突 -> 合并数据 -> 推送回云端
-     * @param { [KnowledgePage] } localPages 本地页面数据
-     * @param { [LogEntry] } localLogs 本地日志数据
-     * @return { ([KnowledgePage], [LogEntry]) } 返回合并后的最终数据集
-     * @throws {iCloudSyncError} 同步链路任何环节失败时的错误
-     */
+    /// 执行智宇平台的核心双向同步算法。
+    /// 步骤：拉取远程 CKRecord -> 运用 LWW 策略对页面和审计日志执行冲突决策与去重合并 -> 更新回 CloudKit -> 返回最新合并数据集。
+    /// - Parameters:
+    ///   - localPages: 当前专属物理笔记本中的本地知识页面。
+    ///   - localLogs: 当前专属物理笔记本中的本地审计日志。
+    /// - Returns: 经智能冲突合并比对后，达成的云地一致的最终数据集。
+    /// - Throws: `iCloudSyncError`（云端网络失败或比对合并错乱）。
     func sync(localPages: [KnowledgePage], localLogs: [LogEntry]) async throws -> ([KnowledgePage], [LogEntry]) {
         guard iCloudAvailable, let database else {
             throw iCloudSyncError.iCloudNotAvailable
@@ -254,10 +272,10 @@ class iCloudSyncService: ObservableObject {
         do {
             try await ensureZoneExists()
 
-            // 1. 获取远程记录
+            // 1. 物理拉取远程记录实体
             let (remotePages, remoteLogs, record) = try await fetchRemoteData(database: database)
 
-            // 2. 解决冲突
+            // 2. 将数据递交至 LWW 冲突决策处理器，计算出两端一致的黄金版本数据
             let (finalPages, finalLogs) = try await resolveSyncConflict(
                 localPages: localPages,
                 localLogs: localLogs,
@@ -266,7 +284,7 @@ class iCloudSyncService: ObservableObject {
                 record: record
             )
 
-            // 3. 推送合并后的数据
+            // 3. 将比对融合完成后的最终黄金数据集推送保存回 iCloud 云数据库中
             try await pushToCloud(database: database, record: record, pages: finalPages, logs: finalLogs)
 
             await MainActor.run {
@@ -283,11 +301,9 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    /**
-     * @description: 从指定数据库中获取远程记录
-     * @param {CKDatabase} database 云端数据库实例
-     * @return { ([KnowledgePage], [LogEntry], CKRecord) } 远程数据与 CKRecord 对象的元组
-     */
+    // MARK: - 私有同步算法辅助方法
+
+    /// 从 CloudKit 私有数据库中物理加载核心同步记录 AppData。
     private func fetchRemoteData(database: CKDatabase) async throws -> ([KnowledgePage], [LogEntry], CKRecord) {
         let recordID = CKRecord.ID(recordName: "knowledge-management_main", zoneID: zoneID)
         var remotePages: [KnowledgePage] = []
@@ -304,21 +320,14 @@ class iCloudSyncService: ObservableObject {
                 remoteLogs = try JSONDecoder().decode([LogEntry].self, from: logsData)
             }
         } catch {
+            // 不存在则新建
             record = CKRecord(recordType: recordType, recordID: recordID)
         }
 
         return (remotePages, remoteLogs, record)
     }
 
-    /**
-     * @description: 执行核心冲突比对逻辑，基于 LWW 策略或用户策略决定最终版本
-     * @param { [KnowledgePage] } localPages 本地页面数据
-     * @param { [LogEntry] } localLogs 本地日志数据
-     * @param { [KnowledgePage] } remotePages 远程页面数据
-     * @param { [LogEntry] } remoteLogs 远程日志数据
-     * @param {CKRecord} record 云端记录对象
-     * @return { ([KnowledgePage], [LogEntry]) } 冲突解决后的最终数据集
-     */
+    /// 基于 LWW (Last-Writer-Wins) 最终写入者获胜策略或用户交互的回调策略，对本地和云端数据执行融合裁定。
     private func resolveSyncConflict(
         localPages: [KnowledgePage],
         localLogs: [LogEntry],
@@ -329,15 +338,20 @@ class iCloudSyncService: ObservableObject {
         var finalPages = localPages
         var finalLogs = localLogs
 
+        // 如果云端从未存储过任何数据，则以本地数据集为唯一绝对信任源
         guard !remotePages.isEmpty else {
             return (finalPages, finalLogs)
         }
 
+        // 获取云端数据的最后物理更新时间
         let remoteDate = record["lastModified"] as? Date ?? Date.distantPast
+        
+        // 比对云端修改时间与本地最近同步成功的绝对时间
         let hasRemoteNewer = lastSyncDate.map { remoteDate > $0 } ?? true
 
+        // 检测到云端存在较新更新：执行冲突决策
         if hasRemoteNewer {
-            // 检测到冲突：应用冲突解决策略
+            // 调配冲突解决器决定合并方向
             let resolution = await resolveConflict(
                 localPages: localPages,
                 localLogs: localLogs,
@@ -347,16 +361,19 @@ class iCloudSyncService: ObservableObject {
 
             switch resolution {
             case .keepLocal:
+                // 1. 保留本地：不作改变，等待后续用本地覆盖云端
                 break
             case .keepRemote:
+                // 2. 接纳云端：完全覆写本地
                 finalPages = remotePages
                 finalLogs = remoteLogs
             case .merge:
+                // 3. 智能融合：相同 UUID 实体以 updatedAt 时间戳更新者获胜，新页面自动追加
                 finalPages = mergePages(local: localPages, remote: remotePages)
                 finalLogs = mergeLogs(local: localLogs, remote: remoteLogs)
             }
         } else if lastSyncDate != nil {
-            // 云端版本较旧或无变动
+            // 本地数据在最近同步后较新，或无变动，保持本地最新数据
             finalPages = localPages
             finalLogs = localLogs
         }
@@ -364,14 +381,7 @@ class iCloudSyncService: ObservableObject {
         return (finalPages, finalLogs)
     }
 
-    /**
-     * @description: 执行物理推送动作，将合并后的数据块序列化并存入记录
-     * @param {CKDatabase} database 云端数据库实例
-     * @param {CKRecord} record 云端记录对象
-     * @param { [KnowledgePage] } pages 最终页面数据
-     * @param { [LogEntry] } logs 最终日志数据
-     * @return {*}
-     */
+    /// 执行底层的物理推送操作，将合并后的数据集打包并存储。
     private func pushToCloud(database: CKDatabase, record: CKRecord, pages: [KnowledgePage], logs: [LogEntry]) async throws {
         let mergedPagesData = try JSONEncoder().encode(pages)
         let mergedLogsData = try JSONEncoder().encode(logs)
@@ -383,10 +393,9 @@ class iCloudSyncService: ObservableObject {
         _ = try await database.save(record)
     }
 
-    /**
-     * @description: 订阅云端变更通知，实现静默推送更新
-     * @return {*}
-     */
+    // MARK: - 实时静默同步通知
+
+    /// 向 iCloud 私有云端数据库注册静默推送订阅通知，一旦多端数据变动，当前设备瞬间获得同步唤醒。
     func subscribeToRemoteChanges() async throws {
         guard let database else {
             throw iCloudSyncError.iCloudNotAvailable
@@ -400,18 +409,12 @@ class iCloudSyncService: ObservableObject {
         try await database.save(subscription)
     }
 
-    /**
-     * @description: 手动触发从云端获取变更，通常由推送通知触发
-     * @return { ([KnowledgePage], [LogEntry]) } 获取到的最新数据
-     */
+    /// 静默通知唤醒时被调用，从云端调配数据。
     func fetchRemoteChanges() async throws -> ([KnowledgePage], [LogEntry]) {
         return try await pullFromCloud()
     }
 
-    /**
-     * @description: 确保专有区域（Custom Zone）存在，若不存在则进行创建
-     * @return {*}
-     */
+    /// 确保同步容器 Zone 物理存在。
     private func ensureZoneExists() async throws {
         guard let database else {
             throw iCloudSyncError.iCloudNotAvailable
@@ -424,48 +427,38 @@ class iCloudSyncService: ObservableObject {
         }
     }
 
-    /**
-     * @description: 调度冲突解决策略，优先咨询外部回调，若无回调则默认合并
-     * @param { [KnowledgePage] } localPages 本地页面数据
-     * @param { [LogEntry] } localLogs 本地日志数据
-     * @param { [KnowledgePage] } remotePages 远程页面数据
-     * @param { [LogEntry] } remoteLogs 远程日志数据
-     * @return {ConflictResolution} 选定的解决策略
-     */
+    /// 冲突比对决策派发器。
     private func resolveConflict(
         localPages: [KnowledgePage],
         localLogs: [LogEntry],
         remotePages: [KnowledgePage],
         remoteLogs: [LogEntry]
     ) async -> ConflictResolution {
-        // 若设置了回调，询问调用方
         if let onConflict = onConflictDetected {
             return onConflict(localPages, localLogs, remotePages, remoteLogs)
         }
-        // 默认执行合并
         return .merge
     }
 
-    // MARK: - 合并策略实现
-    
-    /**
-     * @description: 对页面列表执行智能合并，相同 ID 以最新时间戳为准，新页面自动追加
-     * @param { [KnowledgePage] } local 本地页面列表
-     * @param { [KnowledgePage] } remote 远程页面列表
-     * @return {[KnowledgePage]} 合并后的页面列表
-     */
+    // MARK: - 极客级 LWW 合并算法实现
+
+    /// 页面列表的 LWW 合并算法。
+    /// 逻辑：
+    /// 1. 遍历远程每一个页面实体。
+    /// 2. 若本地已存在相同 ID 的页面，比较两者的 `updatedAt` 时间戳，保留较新的那份。
+    /// 3. 若本地不存在相同 ID 页面，且不存在相同 Title（防止用户跨设备冷启动重复起名冲突），则将远程页面安全追加。
     private func mergePages(local: [KnowledgePage], remote: [KnowledgePage]) -> [KnowledgePage] {
         var merged = local
 
         for remotePage in remote {
             if let localIndex = merged.firstIndex(where: { $0.id == remotePage.id }) {
-                // ID 冲突：保留较新版本
+                // 1. 发现 UUID 物理对撞：比对时间戳进行覆盖
                 let localPage = merged[localIndex]
                 if remotePage.updatedAt > localPage.updatedAt {
                     merged[localIndex] = remotePage
                 }
             } else if !merged.contains(where: { $0.title == remotePage.title }) {
-                // 新的远程页面：追加
+                // 2. 纯新增的远程页面，直接在尾部追加挂载
                 merged.append(remotePage)
             }
         }
@@ -473,25 +466,25 @@ class iCloudSyncService: ObservableObject {
         return merged
     }
 
-    /**
-     * @description: 对日志记录执行合并，通过 ID 去重并保留最近 200 条记录
-     * @param { [LogEntry] } local 本地日志列表
-     * @param { [LogEntry] } remote 远程日志列表
-     * @return {[LogEntry]} 合并后的日志列表
-     */
+    /// 审计日志的 LWW 去重合并算法。
+    /// 逻辑：
+    /// 1. 遍历远程的日志项，根据唯一的 `id` 进行去重。
+    /// 2. 按日志的 `timestamp` 绝对时间由新到旧排序。
+    /// 3. 按照 KISS 原则和内存管控指标，强行将最终日志列表裁剪保留最近 200 条，物理驱逐历史废弃日志。
     private func mergeLogs(local: [LogEntry], remote: [LogEntry]) -> [LogEntry] {
         var merged = local
 
+        // 1. 追加不存在于本地的远程审计日志记录
         for remoteLog in remote {
             if !merged.contains(where: { $0.id == remoteLog.id }) {
                 merged.append(remoteLog)
             }
         }
 
-        // 按日期排序
+        // 2. 按审计产生的时间戳降序排列
         merged.sort { $0.timestamp > $1.timestamp }
 
-        // 仅保留最近 200 条
+        // 3. 触发容量削减阀值，强行限制最近 200 条，保护 sqlite 及内存
         if merged.count > 200 {
             merged = Array(merged.prefix(200))
         }
@@ -500,12 +493,18 @@ class iCloudSyncService: ObservableObject {
     }
 }
 
-// MARK: - Conflict Resolution
-enum ConflictResolution: String, CaseIterable {
-    case keepLocal      // Keep local data, overwrite remote
-    case keepRemote     // Accept remote data, overwrite local
-    case merge          // Merge both sides (default)
+// MARK: - 冲突解决模式
 
+/// 在数据双向碰撞时的核心决议策略 (ConflictResolution)。
+enum ConflictResolution: String, CaseIterable {
+    /// 强制保留本地数据，单向覆盖云端。
+    case keepLocal
+    /// 接纳云端最新数据，完全覆盖并重置本地。
+    case keepRemote
+    /// 启用 LWW 智能去重融合合并算法（系统默认推荐）。
+    case merge
+
+    /// 策略强类型的本地化呈现文字。
     var displayName: String {
         switch self {
         case .keepLocal: return L10n.ICloud.keepLocal
@@ -518,3 +517,4 @@ enum ConflictResolution: String, CaseIterable {
 @MainActor
 extension iCloudSyncService: @unchecked Sendable {}
 #endif // ICLOUD_ENABLED
+

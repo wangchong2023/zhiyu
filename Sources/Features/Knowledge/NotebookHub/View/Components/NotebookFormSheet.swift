@@ -48,7 +48,8 @@ struct NotebookFormSheet: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var themeManager: ThemeManager
-    private let iconOptions = ["📓", "📚", "💡", "🧠", "✍️", "🚀", "🎨", "📁", "🌟", "🛠️", "📅", "🎯", "🔥", "🌈", "🧩"]
+    /// 笔记本可供选择的高品质 Emoji 图标数组，引用自 Shared 设计令牌
+    private let iconOptions = IconTokens.options
     
     var body: some View {
         NavigationStack {

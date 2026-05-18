@@ -15,8 +15,18 @@ public struct AppConstants {
     
     // MARK: - 存储与基础配置
     public struct Storage {
-        /// 数据库文件名
+        /// 数据库文件名 (向下兼容)
         public static let databaseName: String = "App.sqlite"
+        /// 系统全局配置数据库文件名
+        public static let globalDatabaseName: String = "global.sqlite3"
+        /// 笔记本专属物理数据库文件名
+        public static let vaultDatabaseName: String = "vault.sqlite3"
+        /// 旧版本 legacy 物理数据库文件名 (兼容向下迁移)
+        public static let legacyDatabaseName: String = "App.sqlite"
+        /// 笔记本沙盒存储子目录名称
+        public static let vaultsDirectoryName: String = "Vaults"
+        /// 间隔重复算法(SRS)默认易用度因子 (SuperMemo-2 经典默认值)
+        public static let defaultEaseFactor: Double = 2.5
         /// 日志文件名
         public static let logsFileName: String = "audit_logs.json"
         /// 性能监控回溯天数 (最近 30 天)
@@ -37,6 +47,13 @@ public struct AppConstants {
             public static let tokenUsage = "token_usage"
             public static let llmCallLogs = "llm_call_logs"
             public static let ragEvaluations = "rag_evaluations"
+            public static let globalVaults = "global_vaults"
+            public static let fileSignatures = "file_signatures"
+            public static let globalSettings = "global_settings"
+            public static let auditLogs = "audit_logs"
+            public static let tags = "tags"
+            public static let pageTags = "page_tags"
+            public static let srsMetadata = "srs_metadata"
         }
 
         // MARK: - 通用列名 (物理)
@@ -105,6 +122,7 @@ public struct AppConstants {
             public static let signaturePrefix = "zhiyu.integrity.sig."
             public static let securitySalt = "zhiyu_security_salt"
             public static let dbPassphrase = "zhiyu_db_passphrase"
+            public static let defaultLegacySalt = "App-Integrity-Salt-2026"
             public static let suspendedPlugins = "zhiyu.security.suspendedPlugins"
             
             // ── 语音与录音 ──

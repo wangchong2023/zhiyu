@@ -17,7 +17,7 @@ import Combine
 @MainActor
 @Observable
 final class IngestStore {
-    @ObservationIgnored @Inject private var sqliteStore: SQLiteStore
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var ingestService: IngestService
@@ -119,20 +119,20 @@ final class IngestStore {
         // 自动建立关联
         var relatedIDs: [UUID] = []
         for t in result.relatedTitles {
-            if let linked = await sqliteStore.pages.first(where: { $0.title == t }) {
+            if let linked = await pageStore.pages.first(where: { $0.title == t }) {
                 relatedIDs.append(linked.id)
             }
         }
         page.relatedPageIDs = relatedIDs
 
         // 持久化
-        await sqliteStore.syncRemotePage(page)
+        await pageStore.syncRemotePage(page)
 
         logger.addLog(action: .smartIngest, target: title, details: L10n.Ingest.smartIngestDoneDesc(type.displayName))
         HapticFeedback.shared.trigger(.success)
 
         // 刷新缓存
-        await sqliteStore.reloadFromDisk()
+        await pageStore.reloadFromDisk()
 
         return page
     }
@@ -155,7 +155,7 @@ final class IngestStore {
         do {
             let page: KnowledgePage
             if useSmart && llmService.isEnabled {
-                let result = try await llmService.smartIngest(title: title, rawContent: content, pages: await sqliteStore.pages)
+                let result = try await llmService.smartIngest(title: title, rawContent: content, pages: await pageStore.pages)
                 let pageType = PageType(rawValue: result.suggestedType) ?? type
 
                 // 借用 finalizeSmartIngest 的 logic 进行创建
@@ -175,12 +175,12 @@ final class IngestStore {
                 var updatedPage = page
                 updatedPage.tags = tags
                 updatedPage.customIcon = customIcon
-                _ = try? await sqliteStore.updatePage(updatedPage)
+                _ = try? await pageStore.updatePage(updatedPage)
             }
 
             TaskCenter.shared.updateTask(taskID, status: .completed, associatedPageID: page.id)
             HapticFeedback.shared.trigger(.success)
-            await sqliteStore.reloadFromDisk() // 确保数据同步
+            await pageStore.reloadFromDisk() // 确保数据同步
             return page
         } catch {
             TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
@@ -195,7 +195,7 @@ final class IngestStore {
             type: type,
             forceDeepScan: forceDeepScan,
             llmService: llmService,
-            pageStore: sqliteStore,
+            pageStore: pageStore,
             fileSize: fileSize,
             sourceType: sourceType
         )
@@ -209,7 +209,7 @@ final class IngestStore {
             return
         }
 
-        let p = await sqliteStore.pages
+        let p = await pageStore.pages
         IngestQueue.shared.enqueue(
             title: url.deletingPathExtension().lastPathComponent,
             content: content,
@@ -219,7 +219,7 @@ final class IngestStore {
             guard let self = self else { return }
             var p = page
             p.id = UUID()
-            Task { await self.sqliteStore.syncRemotePage(p) }
+            Task { await self.pageStore.syncRemotePage(p) }
         }
     }
 
@@ -240,13 +240,13 @@ final class IngestStore {
 
             // 全局容量限制 (1GB)
             let totalLimit: Int64 = 1024 * 1024 * 1024
-            let currentTotal = await sqliteStore.pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
+            let currentTotal = await pageStore.pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
             if currentTotal + Int64(fileSize) > totalLimit {
                 throw NSError(domain: "IngestStore", code: 4, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.storageFull])
             }
         }
 
-        guard let extracted = await ingestService.ingestDocument(at: url, pageStore: sqliteStore) else {
+        guard let extracted = await ingestService.ingestDocument(at: url, pageStore: pageStore) else {
             throw NSError(domain: "IngestStore", code: 3, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.error])
         }
 

@@ -33,7 +33,7 @@ actor KnowledgeInsightService {
     /// 生成每日主动召回见解 (Smart Recall)
     /// 每天仅生成一次，结果缓存至 UserDefaults。用户手动刷新时跳过缓存。
     func generateDailyRecap(pages: [KnowledgePage], llmService: any LLMServiceProtocol, forceRefresh: Bool = false) async throws -> DailyRecap {
-        guard pages.count > 0 else { throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: "请先添加知识页面以生成见解"]) }
+        guard pages.count > 0 else { throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Dashboard.insight.addPagesFirst]) }
 
         if !forceRefresh, let cached = loadCachedDailyRecap() {
             return cached

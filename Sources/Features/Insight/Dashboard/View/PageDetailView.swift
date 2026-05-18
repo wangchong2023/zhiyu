@@ -118,32 +118,19 @@ struct PageDetailView: View {
                     Color.clear.frame(height: 10)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        if aiStore.isProcessingPageAI || aiStore.activePageAIResult != nil {
-                            aiResultDisplaySection
-                                .id("aiResultSection")
-                                .padding(.bottom, DesignSystem.standardPadding)
+                        PageDetailAISection(pageTitle: coordinator.page.title, onLinkTap: navigateToPage)
+                            .id("aiResultSection")
+                            .padding(.bottom, DesignSystem.standardPadding)
+                        
+                        Group {
+                            PageDetailContentSection(page: $coordinator.page, isEditing: $coordinator.isEditing, onLinkTap: navigateToPage)
+                            
+                            Divider().background(Color.appBorder)
+                            
+                            PageDetailMetadataSection(page: coordinator.page, backlinks: coordinator.backlinks, recommendations: recommendations)
                         }
-                    
-                    Group {
-                    if coordinator.isEditing {
-                        MarkdownEditorView(text: $coordinator.page.content, placeholder: L10n.Editor.placeholder)
-                            .padding(.top, DesignSystem.wide)
-                    } else if coordinator.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-
-                            emptyStateView
-                        } else {
-                            MarkdownRendererView(content: coordinator.page.content, isPrivate: coordinator.page.isPrivate, onLinkTap: { title in
-                                navigateToPage(title)
-                            })
-                            .padding(.vertical)
-                        }
-
-                        Divider().background(Color.appBorder)
-
-                        provenanceSection
-                        backlinksSection
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .scrollIndicators(.hidden)
@@ -227,199 +214,8 @@ struct PageDetailView: View {
             }
         }
         .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
-        }
     }
-    
-    @ViewBuilder
-    private var aiResultDisplaySection: some View {
-        if aiStore.isProcessingPageAI || aiStore.activePageAIResult != nil {
-            VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                HStack {
-                    Image(systemName: DesignSystem.Icons.sparkles)
-                        .foregroundStyle(.appAccent)
-                    Text(L10n.Knowledge.Page.AI.labOutput)
-                        .font(.headline)
-                        .foregroundStyle(.appText)
-                    Spacer()
-                    if !aiStore.isProcessingPageAI {
-                        if let result = aiStore.activePageAIResult, result.contains("- ") {
-                            Button(action: {
-                                Task {
-                                    @Inject var workflowService: WorkflowService
-                                    try await workflowService.syncToReminders(text: result, title: coordinator.page.title)
-                                }
-                            }) {
-                                Label(L10n.Common.syncToReminders, systemImage: DesignSystem.Icons.checklist)
-                                    .font(.caption)
-                                    .foregroundStyle(.appAccent)
-                            }
-                            .padding(.trailing, DesignSystem.small)
-                        }
-                        
-                        Button(action: { 
-                            AppPasteboard.string = aiStore.activePageAIResult
-                            HapticFeedback.shared.trigger(.success)
-                        }) {
-                            Image(systemName: DesignSystem.Icons.copy)
-                                .font(.caption)
-                                .foregroundStyle(.appSecondary)
-                        }
-                        
-                        Button(action: { aiStore.activePageAIResult = nil }) {
-                            Image(systemName: DesignSystem.Icons.xmarkCircle)
-                                .font(.caption)
-                                .foregroundStyle(.appSecondary)
-                        }
-                    }
-                }
-                
-                if aiStore.isProcessingPageAI {
-                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        AppSkeleton(height: 20).frame(width: 200)
-                        AppSkeleton(height: 120)
-                        AppSkeleton(height: 60)
-                    }
-                } else if let result = aiStore.activePageAIResult {
-                    MarkdownRendererView(content: result, isPrivate: false, onLinkTap: { text in
-                        navigateToPage(text)
-                    })
-                    .appContainer(padding: true)
-                }
-            }
-            .padding()
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-        }
-    }
-    
-    private var emptyStateView: some View {
-        VStack(spacing: DesignSystem.medium) {
-            Image(systemName: DesignSystem.Icons.pencilLine)
-                .font(.system(size: DesignSystem.huge))
-                .foregroundStyle(.appSecondary)
-            Text(L10n.Knowledge.Page.empty)
-                .font(.subheadline)
-                .foregroundStyle(.appSecondary)
-            Text(L10n.Knowledge.Page.emptyHint)
-                .font(.caption)
-                .foregroundStyle(.appAccent.opacity(0.7))
-                .padding(.horizontal, DesignSystem.wide)
-                .padding(.vertical, DesignSystem.small)
-                .background(Color.appAccent.opacity(0.06))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-        }
-        .frame(maxWidth: .infinity, minHeight: 200)
-        .padding()
-    }
-    
-    private var provenanceSection: some View {
-        Group {
-            if let sourceURL = coordinator.page.sourceURL, let url = URL(string: sourceURL) {
-                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
-                    HStack {
-                        Image(systemName: DesignSystem.Icons.safari).foregroundStyle(.appAccent)
-                        Text(L10n.Knowledge.Page.Source.title).font(.headline).foregroundStyle(.appText)
-                        Spacer()
-                        Link(destination: url) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Text(L10n.Knowledge.Page.Source.open)
-                                Image(systemName: DesignSystem.Icons.arrowUpRightCircle)
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.appAccent)
-                        }
-                    }
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(sourceURL).font(.caption2).foregroundStyle(.appSecondary).lineLimit(1).truncationMode(.middle)
-                        
-                        if let snippet = coordinator.page.rawTextSnippet, !snippet.isEmpty {
-                            Text(snippet).font(.system(size: 11, design: .monospaced)).foregroundStyle(.appSecondary).padding(DesignSystem.small).frame(maxWidth: .infinity, alignment: .leading).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius)).lineLimit(3)
-                        }
-                    }
-                    .appContainer(padding: true)
-                }
-                .padding()
-            } else {
-                EmptyView()
-            }
-        }
-    }
-    
-    private var semanticRecommendationsSection: some View {
-        Group {
-            if !recommendations.isEmpty {
-                VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                    HStack(spacing: DesignSystem.small) {
-                        ZStack {
-                            Circle().fill(Color.appAccent.opacity(0.1)).frame(width: 24, height: 24)
-                            Image(systemName: DesignSystem.Icons.sparkles).font(.system(size: DesignSystem.iconTiny)).foregroundStyle(.appAccent)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text(L10n.Knowledge.Page.AI.insights).font(.headline).foregroundStyle(.appText)
-                            Text(L10n.Knowledge.Page.AI.insightsDesc).font(.system(size: 9)).foregroundStyle(.appSecondary)
-                        }
-                    }
-                    .padding(.bottom, DesignSystem.tiny)
-                    
-                    VStack(spacing: DesignSystem.tightPadding) {
-                        ForEach(recommendations) { recPage in
-                            recommendationRow(for: recPage)
-                        }
-                    }
-                }
-                .padding().background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(0.03))).overlay(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).stroke(LinearGradient(colors: [.appAccent.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)).padding(.vertical)
-            }
-        }
-    }
-    
-    private func recommendationRow(for recPage: KnowledgePage) -> some View {
-        NavigationLink(value: AppRoute.pageDetail(id: recPage.id)) {
-            HStack {
-                Image(systemName: recPage.displayIcon).foregroundStyle(Color.fromModelColorName(recPage.pageType.colorName))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(recPage.title).font(.subheadline.weight(.medium))
-                    let summaryText = String(recPage.content.prefix(60)) + "..."
-                    Text(summaryText).font(.caption2).foregroundStyle(.appSecondary)
-                }
-                Spacer()
-                Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
-            }
-            .padding(DesignSystem.medium).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding)).overlay(RoundedRectangle(cornerRadius: DesignSystem.tightPadding).stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-    }
-    
-    private var backlinksSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            HStack {
-                Image(systemName: DesignSystem.Icons.link).foregroundStyle(.appAccent)
-                Text(L10n.Knowledge.Page.backlinks).font(.headline).foregroundStyle(.appText)
-                Text("(\(coordinator.backlinks.count))").font(.subheadline).foregroundStyle(.appSecondary)
-            }
-            
-            if coordinator.backlinks.isEmpty {
-                Text(L10n.Knowledge.Page.noBackLinks).font(.caption).foregroundStyle(.appSecondary).padding(.vertical, DesignSystem.small)
-            } else {
-                ForEach(coordinator.backlinks) { linkedPage in
-                    NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
-                        HStack(spacing: DesignSystem.medium) {
-                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.pageType.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
-                            Text(linkedPage.title).font(.subheadline).foregroundStyle(.appText)
-                            Spacer()
-                            Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
-                        }
-                        .padding(.horizontal, DesignSystem.tightPadding).padding(.vertical, DesignSystem.small).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(L10n.Knowledge.Page.backlinkAccessibility(linkedPage.title, linkedPage.pageType.displayName))
-                    .accessibilityHint(L10n.Knowledge.Page.doubleTapToNavigate)
-                }
-            }
-        }
-        .padding()
-    }
-    
+
     private func navigateToPage(_ title: String) {
         if let target = store.pages.first(where: { $0.title == title }) {
             router.navigate(to: .pageDetail(id: target.id))

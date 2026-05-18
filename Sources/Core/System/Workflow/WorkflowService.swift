@@ -36,7 +36,8 @@ final class WorkflowService: ObservableObject {
     func syncToReminders(text: String, title: String) async throws {
         let hasAccess = await requestAccess()
         guard hasAccess else {
-            ToastManager.shared.show(type: .error, message: "无法访问提醒事项。请检查：设置 -> 隐私与安全 -> 提醒事项 -> 智宇")
+            // 重构：将 Toast 硬编码文字替换为 L10n 强类型多语言接口
+            ToastManager.shared.show(type: .error, message: L10n.Workflow.accessDeniedMessage)
             throw WorkflowError.accessDenied 
         }
         
@@ -75,28 +76,33 @@ final class WorkflowService: ObservableObject {
         
         guard !tasks.isEmpty else {
             print("⚠️ [Workflow] 未能在文本中解析出待办事项")
-            ToastManager.shared.show(type: .info, message: "未发现可同步的待办事项（需以列表格式编写）")
+            // 重构：将 Toast 硬编码文字替换为 L10n 强类型多语言接口
+            ToastManager.shared.show(type: .info, message: L10n.Workflow.noTasksFoundMessage)
             return
         }
         
-        ToastManager.shared.show(type: .processing, message: "正在同步 \(tasks.count) 条事项...", duration: 0)
+        // 重构：将带有插值的 Toast 消息转换为强类型格式化本地化输出
+        ToastManager.shared.show(type: .processing, message: L10n.Workflow.syncingMessage(tasks.count), duration: 0)
         
         do {
             for task in tasks {
                 try await reminderService.createReminder(
                     title: task,
-                    notes: "来自智宇：\(title)"
+                    // 重构：将外部同步标签备注信息格式化为多语言引用
+                    notes: L10n.Workflow.sourceNotes(title)
                 )
             }
             
             print("✅ [Workflow] 成功同步 \(tasks.count) 条事项至提醒事项")
             ToastManager.shared.dismiss()
-            ToastManager.shared.show(type: .success, message: "成功同步 \(tasks.count) 条待办事项")
+            // 重构：将成功同步的 Toast 提示转换为多语言强类型输出
+            ToastManager.shared.show(type: .success, message: L10n.Workflow.syncSuccessMessage(tasks.count))
             HapticFeedback.shared.trigger(.success)
         } catch {
             print("❌ [Workflow] 同步失败: \(error.localizedDescription)")
             ToastManager.shared.dismiss()
-            ToastManager.shared.show(type: .error, message: "同步失败: \(error.localizedDescription)")
+            // 重构：将失败同步的 Toast 错误描述转换为多语言强类型输出
+            ToastManager.shared.show(type: .error, message: L10n.Workflow.syncErrorMessage(error.localizedDescription))
             throw error
         }
     }

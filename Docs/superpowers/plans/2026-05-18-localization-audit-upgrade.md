@@ -19,7 +19,7 @@
 **Files:**
 - Modify: `Tools/check_localization.py`
 
-- [ ] **Step 1: Update Regex and Routing Logic**
+- [x] **Step 1: Update Regex and Routing Logic**
 
 Modify `Tools/check_localization.py` to support `enum`, `static let t`, and dynamic routing.
 
@@ -80,12 +80,12 @@ Also, in `scan_other_swift_files`, change the hardcoded "Common" to "Localizable
 >>>>
 ```
 
-- [ ] **Step 2: Run the audit and verify results**
+- [x] **Step 2: Run the audit and verify results**
 
 Run: `./env/venv/bin/python3 Tools/check_localization.py`
 Expected: "L10n Static Audit Finished: Found 0 error(s)"
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add Tools/check_localization.py
@@ -98,25 +98,25 @@ git commit -m "tool: upgrade localization audit radar to support decentralized a
 - Modify: `project.yml`
 - Delete: `Tools/Temp/*.py`
 
-- [ ] **Step 1: Verify `project.yml` and regenerate**
+- [x] **Step 1: Verify `project.yml` and regenerate**
 
 Ensure no stale references to `Localizable.xcstrings`.
 
 Run: `xcodegen generate`
 
-- [ ] **Step 2: Clean Derived Data and Build**
+- [x] **Step 2: Clean Derived Data and Build**
 
 Run: `rm -rf build/* && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/ios_build.log 2>&1`
 
-- [ ] **Step 3: Verify zero errors/warnings**
+- [x] **Step 3: Verify zero errors/warnings**
 
 Check `build/ios_build.log`.
 
-- [ ] **Step 4: Cleanup Temp Scripts**
+- [x] **Step 4: Cleanup Temp Scripts**
 
 Run: `rm Tools/Temp/*.py`
 
-- [ ] **Step 5: Commit changes**
+- [x] **Step 5: Commit changes**
 
 ```bash
 git add project.yml
@@ -128,11 +128,11 @@ git commit -m "chore: cleanup project configuration and temporary migration scri
 **Files:**
 - Create: `walkthrough.md`
 
-- [ ] **Step 1: Write `walkthrough.md`**
+- [x] **Step 1: Write `walkthrough.md`**
 
 Summarize the refactoring results, architecture changes, and verification status.
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add walkthrough.md

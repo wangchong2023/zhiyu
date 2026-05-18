@@ -40,7 +40,7 @@ final class PluginRegistry: ObservableObject {
     /// 已挂起的插件 ID (Security Watchdog)
     /// 采用持久化存储，防止僵尸插件在重启后循环导致崩溃。
     private var suspendedPluginIDs: Set<String> = {
-        let saved = UserDefaults.standard.stringArray(forKey: "zhiyu.security.suspendedPlugins") ?? []
+        let saved = UserDefaults.standard.stringArray(forKey: AppConstants.Keys.Storage.suspendedPlugins) ?? []
         return Set(saved)
     }()
 
@@ -76,7 +76,7 @@ final class PluginRegistry: ObservableObject {
         customViews.removeAll()
         eventListeners.removeAll()
         suspendedPluginIDs.removeAll()
-        UserDefaults.standard.removeObject(forKey: "zhiyu.security.suspendedPlugins")
+        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.suspendedPlugins)
         pluginCallCounts.removeAll()
         pluginResourceUsage.removeAll()
     }
@@ -85,7 +85,7 @@ final class PluginRegistry: ObservableObject {
     private func suspendPlugin(_ id: String) {
         suspendedPluginIDs.insert(id)
         let array = Array(suspendedPluginIDs)
-        UserDefaults.standard.set(array, forKey: "zhiyu.security.suspendedPlugins")
+        UserDefaults.standard.set(array, forKey: AppConstants.Keys.Storage.suspendedPlugins)
         
         // 物理回收：从活跃插件列表中彻底移除，释放 JSContext 内存
         if let index = plugins.firstIndex(where: { $0.manifest.id == id }) {

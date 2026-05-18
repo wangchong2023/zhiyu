@@ -158,7 +158,6 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         let sqliteStore = SQLiteStore(dbWriter: writer)
         container.register(sqliteStore as any AnyPageStoreCapabilities, for: (any AnyPageStoreCapabilities).self)
-        container.register(sqliteStore, for: SQLiteStore.self)
         
         container.register(BackupService(), for: BackupService.self)
         container.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
@@ -180,6 +179,15 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         let governanceRepo = AIGovernanceRepository(dbWriter: writer)
         container.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
         container.register(governanceRepo, for: AIGovernanceRepository.self)
+        
+        // 注册全新的 Vault 笔记本与 FileSignature 文件签名仓储协议 (纯 ORM，无 raw SQL)
+        if let globalWriter = DatabaseManager.shared.globalWriter {
+            let vaultRepo = SQLiteVaultRepository(dbWriter: globalWriter)
+            container.register(vaultRepo as any VaultRepository, for: (any VaultRepository).self)
+            
+            let fileSigRepo = SQLiteFileSignatureRepository(dbWriter: globalWriter)
+            container.register(fileSigRepo as any FileSignatureRepository, for: (any FileSignatureRepository).self)
+        }
         
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
         container.register(embeddingManager, for: EmbeddingManager.self)
@@ -209,6 +217,8 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(LintService(), for: LintService.self)
         container.register(UndoService(), for: UndoService.self)
         container.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
+        container.register(KnowledgePageManager(), for: KnowledgePageManager.self)
+        container.register(MaintenanceService(), for: MaintenanceService.self)
         
         container.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
         container.register(ChatService.shared, for: ChatService.self)
@@ -228,6 +238,10 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         #endif
         
         // 2. AI 能力 (@PR-02: 混合检索链路优化)
+        container.register(LLMConfigManager(), for: LLMConfigManager.self)
+        container.register(AIAnalyticsService(), for: AIAnalyticsService.self)
+        container.register(RAGOrchestrator(), for: RAGOrchestrator.self)
+        
         let llm = LLMService.shared
         container.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         container.register(llm, for: LLMService.self)

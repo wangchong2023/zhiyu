@@ -13,7 +13,7 @@
 //   - 2026-05-16: 架构升级：重构为 actor 化存储后的异步对齐。
 //   - 2026-05-16: 职责剥离：将 PDF/OCR 业务迁移至 IngestStore，标签/统计下沉至独立 Store。
 //   - 2026-05-16: 初始化优化：移除 @Observable 对子 Store 的 lazy 干扰，采用手动初始化。
-//   - 2026-05-16: DIP 重构：将 sqliteStore 依赖改为 any AnyPageStoreCapabilities 协议。
+//   - 2026-05-16: DIP 重构：将 pageStore 依赖改为 any AnyPageStoreCapabilities 协议。
 // 版权: © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
@@ -94,21 +94,22 @@ public final class AppStore {
     }
 
     // ── 核心依赖 (DI) ──
-    @ObservationIgnored @Inject var sqliteStore: any AnyPageStoreCapabilities
-    @ObservationIgnored @Inject var linkService: LinkService
-    @ObservationIgnored @Inject var ingestService: IngestService
-    @ObservationIgnored @Inject var undoService: UndoService
-    @ObservationIgnored @Inject var backupService: BackupService
+    @ObservationIgnored @Inject var pageStore: any AnyPageStoreCapabilities
+    @ObservationIgnored @Inject var pageManager: KnowledgePageManager
+    @ObservationIgnored @Inject var maintenanceService: MaintenanceService
     @ObservationIgnored @Inject var logger: any LoggerProtocol
     @ObservationIgnored @Inject var performanceService: PerformanceService
     @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
-    @ObservationIgnored @Inject var snapshotService: SnapshotService
-    @ObservationIgnored @Inject var insightService: KnowledgeInsightService
+    @ObservationIgnored @Inject var settingsStore: SettingsStore
+    @ObservationIgnored @Inject var linkService: LinkService
+    @ObservationIgnored @Inject var backupService: BackupService
+    @ObservationIgnored @Inject var undoService: UndoService
+    @ObservationIgnored @Inject var ingestService: IngestService
     @ObservationIgnored @Inject var securityService: VaultStorageSecurityService
+    @ObservationIgnored @Inject var snapshotService: SnapshotService
 
     // ── 职责解耦：子 Store 聚合 ──
     @ObservationIgnored public var searchStore: SearchStore!
-    @ObservationIgnored public var settingsStore: SettingsStore!
     @ObservationIgnored public var aiWorkflowStore: AIWorkflowStore!
     @ObservationIgnored public var tagStore: TagStore!
     
@@ -122,9 +123,8 @@ public final class AppStore {
     public init() {
         print("🏛️ [AppStore] 正在初始化核心引擎...")
         
-        // 1. 初始化子 Store (顺序敏感)
+        // 1. 初始化子 Store
         self.searchStore = SearchStore()
-        self.settingsStore = SettingsStore()
         self.aiWorkflowStore = AIWorkflowStore()
         self.tagStore = TagStore()
         
@@ -152,13 +152,28 @@ public final class AppStore {
                 }
             }
             .store(in: &cancellables)
+            
+        // 动态绑定物理专属数据库热切换监听，保证数据物理沙盒隔离
+        NotificationCenter.default.publisher(for: .databaseDidSwitch)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                print("🔄 [AppStore] 监测到专属物理库热切换成功，开始内存驱逐与 UI 重新绘制...")
+                self.pages = []
+                self.totalPages = 0
+                self.totalWords = 0
+                Task { [weak self] in
+                    await self?.refresh()
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - 基础管理
 
     public func refresh() async {
         let startTime = Date()
-        self.pages = (try? await sqliteStore.fetchAllPages()) ?? []
+        self.pages = (try? await pageStore.fetchAllPages()) ?? []
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
         
@@ -170,18 +185,14 @@ public final class AppStore {
     }
 
     func seedDefaultContent() async {
-        if pages.isEmpty {
-            await sqliteStore.seedDefaultContent { [weak self] a, t, d in
-                guard let self = self else { return }
-                self.addLog(action: a, target: t, details: d)
-            }
-        }
+        await maintenanceService.seedDefaultContent(pages: pages)
+        await refresh()
     }
 
     // ── 核心业务逻辑 ──
 
     public func pageByTitle(_ title: String) async -> KnowledgePage? {
-        await linkService.pageByTitle(title, in: pages)
+        await pageManager.pageByTitle(title, in: pages)
     }
 
     @discardableResult
@@ -197,9 +208,7 @@ public final class AppStore {
         sourceType: String? = nil,
         forceDeepScan: Bool = false
     ) async -> KnowledgePage {
-        undoService.pushSnapshot(pages)
-
-        let page = (try? await sqliteStore.createPage(
+        let page = (try? await pageManager.createPage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
@@ -208,10 +217,9 @@ public final class AppStore {
             sourceURL: sourceURL,
             rawSnippet: rawSnippet,
             fileSize: fileSize,
-            sourceType: sourceType
+            sourceType: sourceType,
+            currentPages: pages
         )) ?? KnowledgePage(title: title)
-
-        backupService.markDirty()
 
         if totalPages >= 3 && !settingsStore.hasShownGraphCoachMark {
             settingsStore.hasShownGraphCoachMark = true
@@ -219,54 +227,49 @@ public final class AppStore {
             self.pendingCoachMark = .graphDiscovery
         }
 
-        let totalLinks = pages.reduce(0) { $0 + $1.outgoingLinks.count }
-        AppEventBus.shared.publish(.pageCreated(id: page.id, title: page.title, nodeCount: pages.count, linkCount: totalLinks))
-
+        await refresh()
         return page
     }
 
-    public func getBacklinks(for id: UUID) async -> [KnowledgePage] { await sqliteStore.fetchBacklinksByID(for: id) }
+    public func getBacklinks(for id: UUID) async -> [KnowledgePage] { await pageStore.fetchBacklinksByID(for: id) }
 
     public func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
-        undoService.pushSnapshot(pages)
-        _ = try? await sqliteStore.updatePage(page)
-        backupService.markDirty()
-        let totalLinks = pages.reduce(0) { $0 + $1.outgoingLinks.count }
-        AppEventBus.shared.publish(.pageUpdated(id: page.id, nodeCount: pages.count, linkCount: totalLinks))
+        try? await pageManager.updatePage(page, currentPages: pages)
+        await refresh()
     }
 
     public func savePage(_ page: KnowledgePage) async {
-        await updatePage(page, forceDeepScan: false)
-        PluginRegistry.shared.emitEvent("onPageSave", data: page.id.uuidString)
+        try? await pageManager.savePage(page, currentPages: pages)
+        await refresh()
     }
 
     public func deletePage(_ page: KnowledgePage) async {
-        undoService.pushSnapshot(pages)
-        _ = try? await sqliteStore.deletePage(page)
-        AppEventBus.shared.publish(.pageDeleted(id: page.id))
-        PluginRegistry.shared.emitEvent("onPageDelete", data: page.id.uuidString)
+        try? await pageManager.deletePage(page, currentPages: pages)
+        await refresh()
     }
 
     func undo() async {
-        if let prev = undoService.undo(currentPages: pages) {
-            await sqliteStore.replaceAllPages(prev)
+        if let newPages = try? await pageManager.undo(currentPages: pages) {
+            self.pages = newPages
             await refresh()
         }
     }
 
     func redo() async {
-        if let next = undoService.redo(currentPages: pages) {
-            await sqliteStore.replaceAllPages(next)
+        if let newPages = try? await pageManager.redo(currentPages: pages) {
+            self.pages = newPages
             await refresh()
         }
     }
 
     func saveToDisk() async {
-        await logger.saveToDisk()
-        backupService.createBackup(pages: pages)
+        await maintenanceService.saveToDisk(pages: pages)
     }
 
-    func loadFromDisk() async { await sqliteStore.reloadFromDisk(); await logger.loadFromDisk() }
+    func loadFromDisk() async { 
+        await maintenanceService.loadFromDisk()
+        await refresh()
+    }
 
     public func requestRelayout() {
         AppEventBus.shared.publish(.graphRelayoutRequested)
@@ -276,86 +279,55 @@ public final class AppStore {
         Logger.shared.addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module)
     }
 
-    func clearLogs() async { await logger.clearAllLogs() }
+    func clearLogs() async { await maintenanceService.clearLogs() }
 }
 
 // MARK: - AppStore 业务扩展
 extension AppStore: CollaborationDelegate {
     @discardableResult
     func generateDemoData() async -> Int {
-        do {
-            guard let engine = sqliteStore as? SQLiteStore else { return 0 }
-            let count = try await DemoDataGenerator.generate(in: engine)
-            await refresh()
-            return count
-        } catch {
-            addLog(action: .error, target: "Demo", details: "Failed to generate demo data: \(error.localizedDescription)")
-            return 0
-        }
+        let count = await maintenanceService.generateDemoData()
+        if count > 0 { await refresh() }
+        return count
     }
 
     public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
-        guard var page = pages.first(where: { $0.id == suggestion.sourcePageID }) else { return }
-        
-        let oldContent = page.content
-        let newContent = oldContent.replacingOccurrences(
-            of: suggestion.targetTitle,
-            with: "[[\(suggestion.targetTitle)]]",
-            options: .caseInsensitive
-        )
-        
-        if oldContent != newContent {
-            page.content = newContent
-            await updatePage(page, forceDeepScan: false)
-            addLog(action: .update, target: page.title, details: "Applied potential link to [[\(suggestion.targetTitle)]]")
-        }
+        try? await pageManager.applyPotentialLink(suggestion, currentPages: pages)
+        await refresh()
     }
 
     func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
-        if suggestion.type == "rename", let page = pages.first(where: { $0.title == suggestion.target }) {
-            await renamePage(page, to: suggestion.suggestion)
-        }
-        aiWorkflowStore.removeRefactorSuggestion(id: suggestion.id)
+        try? await pageManager.applyRefactorSuggestion(suggestion, currentPages: pages)
+        await refresh()
     }
 
     public func applyRemoteUpdate(_ page: KnowledgePage) async {
-        _ = try? await sqliteStore.updatePage(page)
-        addLog(action: .sync, target: page.title, details: "Remote update applied.")
+        try? await pageManager.updatePage(page, currentPages: pages)
+        await refresh()
     }
 
     public func insertRemotePage(_ page: KnowledgePage) async {
-        await sqliteStore.syncRemotePage(page)
-        addLog(action: .sync, target: page.title, details: "Remote page inserted.")
+        await pageStore.syncRemotePage(page)
+        await refresh()
     }
 
     func renamePage(_ page: KnowledgePage, to newTitle: String) async {
-        let oldTitle = page.title
-        let modifiedPages = await linkService.prepareRename(page: page, to: newTitle, in: pages)
-
-        try? await self.sqliteStore.performBatchWrite { db in
-            for p in modifiedPages { try? p.save(db) }
-        }
-        addLog(action: .update, target: newTitle, details: "Renamed from \(oldTitle)")
-        backupService.markDirty()
+        try? await pageManager.renamePage(page, to: newTitle, currentPages: pages)
+        await refresh()
     }
 
     func clearAllDeveloperData() {
         Task {
-            undoService.clear()
-            try? await sqliteStore.resetDatabase()
-            
-            // 显式重置子 Store，确立单向数据流控制权 (替代被动的 EventBus 监听)
+            await maintenanceService.clearAllDeveloperData()
             searchStore.clearAll()
             settingsStore.reset()
             aiWorkflowStore.clearAll()
-            
-            AppEventBus.shared.publish(.pagesCleared)
             await refresh()
         }
     }
 
     func ingestFolder(at url: URL) async {
-        _ = await ingestService.ingestFolder(at: url, pageStore: self)
+        await pageManager.ingestFolder(at: url, pageStore: self)
         await refresh()
     }
 
@@ -366,17 +338,17 @@ extension AppStore: CollaborationDelegate {
     }
 
     public func renameTag(_ oldTag: String, to newTag: String) async {
-        await tagStore.renameTag(old: oldTag, to: newTag)
+        await pageManager.renameTag(oldTag, to: newTag)
         await refresh()
     }
 
     public func deleteTag(_ tag: String) async {
-        await tagStore.deleteTag(tag)
+        await pageManager.deleteTag(tag)
         await refresh()
     }
 
     public func bulkDeleteTags(_ tags: [String]) async {
-        await tagStore.bulkDeleteTags(tags)
+        await pageManager.bulkDeleteTags(tags)
         await refresh()
     }
 
@@ -391,24 +363,24 @@ extension AppStore: AnyPageStore {
     public var logEntries: [LogEntry] { [] }
 
     public func fetchAllPages() async throws -> [KnowledgePage] {
-        try await sqliteStore.fetchAllPages()
+        try await pageStore.fetchAllPages()
     }
 
     public func reloadFromDisk() async {
-        await sqliteStore.reloadFromDisk()
+        await pageStore.reloadFromDisk()
     }
 
     public func replaceAllPages(_ newPages: [KnowledgePage]) async {
-        try? await sqliteStore.replaceAllPages(newPages)
+        try? await pageStore.replaceAllPages(newPages)
         await refresh()
     }
 
     public func resetDatabase() async throws {
-        try await sqliteStore.resetDatabase()
+        try await pageStore.resetDatabase()
     }
 
     public func performBatchWrite(_ block: @escaping @Sendable (Database) throws -> Void) async throws {
-        try await sqliteStore.performBatchWrite(block)
+        try await pageStore.performBatchWrite(block)
     }
 
     public func createPage(
@@ -422,7 +394,7 @@ extension AppStore: AnyPageStore {
         fileSize: Int64?,
         sourceType: String?
     ) async throws -> KnowledgePage {
-        try await sqliteStore.createPage(
+        try await pageStore.createPage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
@@ -461,7 +433,7 @@ extension AppStore: AnyPageStore {
     }
 
     public func updatePage(_ page: KnowledgePage) async throws {
-        try await sqliteStore.updatePage(page)
+        try await pageStore.updatePage(page)
     }
 
     public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
@@ -473,19 +445,23 @@ extension AppStore: AnyPageStore {
     }
 
     public func syncRemotePage(_ page: KnowledgePage) async {
-        await sqliteStore.syncRemotePage(page)
+        await pageStore.syncRemotePage(page)
     }
 
     public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
-        await sqliteStore.fetchBacklinksByID(for: id)
+        await pageStore.fetchBacklinksByID(for: id)
     }
 
     public func searchPages(query: String) async -> [KnowledgePage] {
-        await sqliteStore.searchPages(query: query)
+        await pageStore.searchPages(query: query)
     }
 
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        await sqliteStore.seedDefaultContent(logger: logger)
+        await pageStore.seedDefaultContent(logger: logger)
+    }
+
+    public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
+        await pageStore.getStorageStats()
     }
 }
 

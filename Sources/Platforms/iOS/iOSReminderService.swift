@@ -1,7 +1,7 @@
 // iOSReminderService.swift
 //
 // 作者: Wang Chong
-// 功能说明: ReminderServiceProtocol 的 iOS/macOS 实现，基于 EventKit。
+// 功能说明: [Shared] 平台特有桥接实现，基于 EventKit 的提醒事项服务封装。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -35,7 +35,8 @@ final class iOSReminderService: ReminderServiceProtocol, @unchecked Sendable {
         } else {
             let calendars = eventStore.calendars(for: .reminder)
             guard let firstCalendar = calendars.first else {
-                throw NSError(domain: "ZhiYu.ReminderService", code: 404, userInfo: [NSLocalizedDescriptionKey: "找不到可用的提醒事项列表，请检查系统提醒事项 App 是否已启用。"])
+                // 将硬编码中文字符串替换为强类型多语言引用，防止 L10n 静态扫描泄露并保障 watchOS/iOS 的多语言统一
+                throw NSError(domain: "ZhiYu.ReminderService", code: 404, userInfo: [NSLocalizedDescriptionKey: L10n.Reminder.noListAvailableMessage])
             }
             reminder.calendar = firstCalendar
         }

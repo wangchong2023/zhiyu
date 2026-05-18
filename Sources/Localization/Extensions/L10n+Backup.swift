@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public enum Backup {
-        public static let t = "Transfer"
+        public static let t = "Ingest"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("backup.title") }
         public static var autoBackup: String { tr("backup.autoBackup") }

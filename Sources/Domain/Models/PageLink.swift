@@ -11,7 +11,7 @@ import GRDB
 
 /// 知识图谱链接模型
 public struct PageLink: Codable, Hashable, FetchableRecord, PersistableRecord, Sendable {
-    public static let databaseTableName: String = "links"
+    public static let databaseTableName: String = AppConstants.Storage.Tables.links
     
     public var sourceID: UUID
     public var targetID: UUID

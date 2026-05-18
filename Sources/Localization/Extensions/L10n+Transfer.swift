@@ -8,7 +8,7 @@ import Foundation
 
 extension L10n {
     public struct Transfer {
-        public static let t = "Transfer"
+        public static let t = "Ingest"
         public struct Export {
             public static func trf(_ key: String, _ args: CVarArg...) -> String {
                 Localized.trf(key, table: Transfer.t, arguments: args)

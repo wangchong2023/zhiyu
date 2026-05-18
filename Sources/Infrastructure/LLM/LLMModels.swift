@@ -75,7 +75,7 @@ final class LLMRegistry {
 
 // MARK: - LLM 提供商枚举
 /// 智宇支持的所有 AI 服务商
-enum LLMProvider: String, Codable, CaseIterable, Identifiable {
+public enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     case zhipu = "zhipu"
     case minimax = "minimax"
     case qwen = "qwen"
@@ -85,7 +85,7 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     case custom = "custom"
 
     /// 获取提供商唯一标识
-    var id: String { rawValue }
+    public var id: String { rawValue }
 
     /// 内部获取关联元数据
     private var metadata: LLMProviderMetadata? {
@@ -93,7 +93,7 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     }
 
     /// 本地化显示名称
-    var displayName: String {
+    public var displayName: String {
         if let key = metadata?.nameKey {
             return Localized.tr(key)
         }
@@ -101,21 +101,21 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     }
 
     /// 默认 API 基础路径
-    var defaultBaseURL: String {
+    public var defaultBaseURL: String {
         metadata?.baseURL ?? ""
     }
 
     /// 默认模型名称
-    var defaultModel: String {
+    public var defaultModel: String {
         metadata?.defaultModel ?? ""
     }
 
     /// 建议模型列表
-    var suggestedModels: [String] {
+    public var suggestedModels: [String] {
         metadata?.suggestedModels ?? ["default"]
     }
 
-    var icon: String {
+    public var icon: String {
         metadata?.icon ?? "server.rack"
     }
 }

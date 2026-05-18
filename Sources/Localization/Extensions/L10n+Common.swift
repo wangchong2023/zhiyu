@@ -260,16 +260,16 @@ extension L10n {
         }
 
         public enum Misc {
-            public static var correct: String { Localized.tr("misc.correct", table: "Common") }
-            public static var incorrect: String { Localized.tr("misc.incorrect", table: "Common") }
-            public static var nextQuestion: String { Localized.tr("misc.nextQuestion", table: "Common") }
-            public static var viewResults: String { Localized.tr("misc.viewResults", table: "Common") }
-            public static var create: String { Localized.tr("misc.create", table: "Common") }
-            public static var clear: String { Localized.tr("misc.clear", table: "Common") }
-            public static var clearAll: String { Localized.tr("misc.clearAll", table: "Common") }
-            public static var `import`: String { Localized.tr("misc.import", table: "Common") }
-            public static var deleteAll: String { Localized.tr("misc.deleteAll", table: "Common") }
-            public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: "Common") }
+            public static var correct: String { Localized.tr("misc.correct", table: t) }
+            public static var incorrect: String { Localized.tr("misc.incorrect", table: t) }
+            public static var nextQuestion: String { Localized.tr("misc.nextQuestion", table: t) }
+            public static var viewResults: String { Localized.tr("misc.viewResults", table: t) }
+            public static var create: String { Localized.tr("misc.create", table: t) }
+            public static var clear: String { Localized.tr("misc.clear", table: t) }
+            public static var clearAll: String { Localized.tr("misc.clearAll", table: t) }
+            public static var `import`: String { Localized.tr("misc.import", table: t) }
+            public static var deleteAll: String { Localized.tr("misc.deleteAll", table: t) }
+            public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: t) }
         }
     }
 }

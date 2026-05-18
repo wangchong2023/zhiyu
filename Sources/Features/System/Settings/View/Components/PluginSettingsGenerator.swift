@@ -20,7 +20,7 @@ struct PluginCustomSettingsView: View {
         Form {
             if schemaItems.isEmpty {
                 Section {
-                    Text("该插件尚未提供可配置的选项。")
+                    Text(L10n.Plugin.settings.noSettings)
                         .foregroundStyle(.secondary)
                 }
             } else {
