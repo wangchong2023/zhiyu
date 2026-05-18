@@ -17,58 +17,59 @@ final class LLMContextBuilder: Sendable {
 
     // MARK: - Configuration Constants
     /// Max entities listed in the system prompt overview.
-    private static let maxEntityOverview = AppConstants.RAG.maxEntityOverview
+    private static let maxEntityOverview = BusinessConstants.RAG.maxEntityOverview
     /// Max concepts listed in the system prompt overview.
-    private static let maxConceptOverview = AppConstants.RAG.maxConceptOverview
+    private static let maxConceptOverview = BusinessConstants.RAG.maxConceptOverview
     /// Max sources listed in the system prompt overview.
-    private static let maxSourceOverview = AppConstants.RAG.maxSourceOverview
+    private static let maxSourceOverview = BusinessConstants.RAG.maxSourceOverview
     /// Max recent pages shown in the system prompt overview.
-    private static let maxRecentOverview = AppConstants.RAG.maxRecentOverview
+    private static let maxRecentOverview = BusinessConstants.RAG.maxRecentOverview
     /// Content preview length per page in system prompt.
-    private static let contentPreviewLength = AppConstants.RAG.contentPreviewLength
+    private static let contentPreviewLength = BusinessConstants.RAG.contentPreviewLength
     /// Max pages included in the relevant context for a query.
-    private static let maxContextPages = AppConstants.RAG.maxContextPages
+    private static let maxContextPages = BusinessConstants.RAG.maxContextPages
     /// Content preview length per page in query context.
-    private static let contextPreviewLength = AppConstants.RAG.contextPreviewLength
+    private static let contextPreviewLength = BusinessConstants.RAG.contextPreviewLength
 
     // MARK: - System Prompt
-    func buildSystemPrompt(pages: [KnowledgePage]) -> String {
+    func buildSystemPrompt(pages: [any KnowledgePageRepresentable]) -> String {
         var prompt = """
-        \(Localized.tr("llm.prompt.role"))
+        \(L10n.AI.LLM.Prompt.role)
 
-        \(L10n.Chat.tr("welcomeDesc"))：
-        \(Localized.tr("llm.prompt.duty1"))
-        \(Localized.tr("llm.prompt.duty2"))
-        \(Localized.tr("llm.prompt.duty3"))
-        \(Localized.tr("llm.prompt.duty4"))
+        \(L10n.Chat.welcomeDesc)：
+        \(L10n.AI.LLM.Prompt.duty1)
+        \(L10n.AI.LLM.Prompt.duty2)
+        \(L10n.AI.LLM.Prompt.duty3)
+        \(L10n.AI.LLM.Prompt.duty4)
 
-        \(Localized.tr("ingest.compileRules"))
-        \(Localized.tr("llm.prompt.rule1"))
-        \(Localized.tr("llm.prompt.rule2"))
-        \(Localized.tr("llm.prompt.rule3"))
-        \(Localized.tr("llm.prompt.rule4"))
+        \(L10n.AI.LLM.Ingest.compileRules)
+        \(L10n.AI.LLM.Prompt.rule1)
+        \(L10n.AI.LLM.Prompt.rule2)
+        \(L10n.AI.LLM.Prompt.rule3)
+        \(L10n.AI.LLM.Prompt.rule4)
 
-        \(Localized.tr("llm.prompt.overview"))
+        \(L10n.AI.LLM.Prompt.overview)
         """
 
         // 总结知识库内容作为上下文
-        let activePages = pages.filter { $0.status == .active || $0.status == .stub }
+        let concretePages = pages.compactMap { $0 as? KnowledgePage }
+        let activePages = concretePages.filter { $0.status == .active || $0.status == .stub }
         let totalPages = activePages.count
         let entities = activePages.filter { $0.pageType == .entity }
         let concepts = activePages.filter { $0.pageType == .concept }
         let sources = activePages.filter { $0.pageType == .source }
 
-        prompt += "\n- \(Localized.tr("llm.prompt.totalPages")): \(totalPages)"
-        prompt += "\n- \(Localized.tr("llm.prompt.entityCount")): \(entities.count), \(Localized.tr("llm.prompt.conceptCount")): \(concepts.count), \(Localized.tr("llm.prompt.sourceCount")): \(sources.count)"
-        prompt += "\n\n\(Localized.tr("llm.prompt.entityList"))"
+        prompt += "\n- \(L10n.AI.LLM.Prompt.totalPages): \(totalPages)"
+        prompt += "\n- \(L10n.AI.LLM.Prompt.entityCount): \(entities.count), \(L10n.AI.LLM.Prompt.conceptCount): \(concepts.count), \(L10n.AI.LLM.Prompt.sourceCount): \(sources.count)"
+        prompt += "\n\n\(L10n.AI.LLM.Prompt.entityList)"
         for entity in entities.prefix(Self.maxEntityOverview) {
             prompt += "\n- [[\(entity.title)]]: \(String(entity.content.prefix(Self.contentPreviewLength)))"
         }
-        prompt += "\n\n\(Localized.tr("llm.prompt.conceptList"))"
+        prompt += "\n\n\(L10n.AI.LLM.Prompt.conceptList)"
         for concept in concepts.prefix(Self.maxConceptOverview) {
             prompt += "\n- [[\(concept.title)]]: \(String(concept.content.prefix(Self.contentPreviewLength)))"
         }
-        prompt += "\n\n\(Localized.tr("llm.prompt.sourceList"))"
+        prompt += "\n\n\(L10n.AI.LLM.Prompt.sourceList)"
         for source in sources.prefix(Self.maxSourceOverview) {
             prompt += "\n- [[\(source.title)]]"
         }
@@ -76,7 +77,7 @@ final class LLMContextBuilder: Sendable {
         // Add recent changes
         let recent = activePages.sorted { $0.updatedAt > $1.updatedAt }.prefix(Self.maxRecentOverview)
         if !recent.isEmpty {
-            prompt += "\n\n\(Localized.tr("llm.prompt.recentUpdates"))"
+            prompt += "\n\n\(L10n.AI.LLM.Prompt.recentUpdates)"
             for page in recent {
                 prompt += "\n- \(page.title) (\(page.updatedAt.formatted(.dateTime.month().day())))"
             }
@@ -86,18 +87,18 @@ final class LLMContextBuilder: Sendable {
     }
 
     /// 使用多路召回 (Multi-Query) 和向量搜索获取高度相关的知识片段。
-    func buildRelevantContext(query: String) async -> String {
+    /// - Returns: (格式化后的 Prompt 字符串, 提取出的信源数据对象列表)
+    func buildRelevantContext(query: String) async -> (context: String, sources: [KnowledgeSource]) {
         let embeddingManager = ServiceContainer.shared.resolve(EmbeddingManager.self)
 
         // 1. 执行多路召回
         let searchResults = await embeddingManager.multiQuerySearch(query: query, topK: AppConfig.AI.topKResults)
 
         guard !searchResults.isEmpty else {
-            return "\(Localized.tr("llm.prompt.relevantPages"))\n\(Localized.tr("common.noData"))\n"
+            return ("\(L10n.AI.LLM.Prompt.relevantPages)\n\(L10n.Common.Global.noData)\n", [])
         }
 
         // 2. 智能压缩逻辑 (Compression)
-        // 如果分块过多导致上下文过长，则优先使用摘要分块或执行截断
         let maxContextLength = AppConfig.AI.maxContextLength
         var currentLength = 0
         var compressedResults: [(chunk: PageChunk, score: Float)] = []
@@ -105,60 +106,69 @@ final class LLMContextBuilder: Sendable {
         for res in searchResults.sorted(by: { $0.score > $1.score }) {
             let chunkLen = res.chunk.content.count
             if currentLength + chunkLen > maxContextLength {
-                // 如果已经太长了，只保留摘要或高度相关的短句
                 if res.chunk.chunkType == "summary" || res.score > 0.8 {
                     compressedResults.append(res)
                     currentLength += chunkLen
                 }
-                if currentLength > maxContextLength + 500 { break } // 彻底封顶
+                if currentLength > maxContextLength + 500 { break } 
             } else {
                 compressedResults.append(res)
                 currentLength += chunkLen
             }
         }
 
-        // 3. 聚合分块上下文
-        var context = "\(Localized.tr("llm.prompt.relevantPages"))\n"
+        // 3. 聚合分块上下文并提取 Source 模型
+        var context = "\(L10n.AI.LLM.Prompt.relevantPages)\n"
+        var sources: [KnowledgeSource] = []
         let groupedResults = Dictionary(grouping: compressedResults) { $0.chunk.pageID }
 
         for (pageID, results) in groupedResults {
             let store = ServiceContainer.shared.resolve(KnowledgePageRepository.self)
             if let page = try? await store.fetch(id: pageID) {
-                context += "\n---\n## \(page.title) [\(Localized.tr("llm.prompt.typeLabel")): \(page.pageType.displayName)]\n"
+                context += "\n---\n## \(page.title) [\(L10n.AI.LLM.Prompt.typeLabel): \(page.pageType.displayName)]\n"
 
                 for (chunk, score) in results.sorted(by: { $0.score > $1.score }) {
-                    let relevanceLabel = Localized.tr("llm.prompt.relevanceScore", table: "AITasks")
-                    let typeLabel = Localized.tr("llm.prompt.chunkType", table: "AITasks")
+                    let relevanceLabel = L10n.AI.Prompt.relevanceScore
+                    let typeLabel = L10n.AI.Prompt.chunkType
                     context += "\n> [\(relevanceLabel): \(String(format: "%.4f", score)) | \(typeLabel): \(chunk.chunkType)]\n"
                     context += chunk.content
                     context += "\n"
+                    
+                    // 构建 Source 模型
+                    sources.append(KnowledgeSource(
+                        pageID: page.id,
+                        title: page.title,
+                        snippet: chunk.content,
+                        anchorPath: chunk.anchorPath,
+                        score: Double(score)
+                    ))
                 }
             }
         }
 
-        return context
+        return (context, sources)
     }
 
     // MARK: - Ingest Prompt Builder
-    func buildIngestPrompt(title: String, rawContent: String, pages: [KnowledgePage]) -> String {
+    func buildIngestPrompt(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) -> String {
         let existingTitles = pages.map(\.title).joined(separator: ", ")
 
         return """
-        \(Localized.tr("llm.ingest.compileInstruction"))
+        \(L10n.AI.LLM.Ingest.compileInstruction)
 
-        \(Localized.tr("llm.ingest.compileRules"))
-        \(Localized.tr("llm.ingest.rule1"))
-        \(Localized.tr("llm.ingest.rule2"))
-        \(Localized.tr("llm.ingest.rule3"))
-        \(Localized.tr("llm.ingest.rule4"))
-        \(Localized.tr("llm.ingest.rule5"))
-        \(Localized.tr("llm.ingest.rule6"))
+        \(L10n.AI.LLM.Ingest.compileRules)
+        \(L10n.AI.LLM.Ingest.rule1)
+        \(L10n.AI.LLM.Ingest.rule2)
+        \(L10n.AI.LLM.Ingest.rule3)
+        \(L10n.AI.LLM.Ingest.rule4)
+        \(L10n.AI.LLM.Ingest.rule5)
+        \(L10n.AI.LLM.Ingest.rule6)
 
-        \(Localized.tr("llm.ingest.existingPages"))：\(existingTitles)
+        \(L10n.AI.LLM.Ingest.existingPages)：\(existingTitles)
 
-        \(Localized.tr("llm.ingest.rawTitle"))：\(title)
+        \(L10n.AI.LLM.Ingest.rawTitle)：\(title)
 
-        \(Localized.tr("llm.ingest.rawContent"))
+        \(L10n.AI.LLM.Ingest.rawContent)
         \(rawContent)
 
         ---
@@ -170,11 +180,11 @@ final class LLMContextBuilder: Sendable {
 
         请严格按照以下 JSON 格式输出结果：
         {
-          "compiledContent": "\(Localized.tr("llm.ingest.jsonCompiledContent"))",
-          "suggestedTags": ["\(Localized.tr("llm.ingest.jsonSuggestedTags"))1", "\(Localized.tr("llm.ingest.jsonSuggestedTags"))2"],
+          "compiledContent": "\(L10n.AI.LLM.Ingest.jsonCompiledContent)",
+          "suggestedTags": ["\(L10n.AI.LLM.Ingest.jsonSuggestedTags)1", "\(L10n.AI.LLM.Ingest.jsonSuggestedTags)2"],
           "suggestedType": "entity|concept|source|comparison|map",
           "relatedTitles": [],
-          "summary": "\(Localized.tr("llm.ingest.jsonSummary"))"
+          "summary": "\(L10n.AI.LLM.Ingest.jsonSummary)"
         }
         """
     }
@@ -182,17 +192,15 @@ final class LLMContextBuilder: Sendable {
     // MARK: - Query Rewrite Builder
     func buildRewritePrompt(query: String) -> String {
         """
-        \(Localized.tr("prompt.queryRewrite.instruction"))
+        \(L10n.AI.Prompt.QueryRewrite.instruction)
+        \(L10n.AI.Prompt.QueryRewrite.rules)
+        1. \(L10n.AI.Prompt.QueryRewrite.rule1)
+        2. \(L10n.AI.Prompt.QueryRewrite.rule2)
+        3. \(L10n.AI.Prompt.QueryRewrite.rule3)
+        4. \(L10n.AI.Prompt.QueryRewrite.rule4)
+        \(L10n.AI.Prompt.QueryRewrite.userQuery): \(query)
+        \(L10n.AI.Prompt.QueryRewrite.footer)
 
-        \(Localized.tr("prompt.queryRewrite.rules"))
-        1. \(Localized.tr("prompt.queryRewrite.rule1"))
-        2. \(Localized.tr("prompt.queryRewrite.rule2"))
-        3. \(Localized.tr("prompt.queryRewrite.rule3"))
-        4. \(Localized.tr("prompt.queryRewrite.rule4"))
-
-        \(Localized.tr("prompt.queryRewrite.userQuery")): \(query)
-
-        \(Localized.tr("prompt.queryRewrite.footer"))
         """
     }
 }
@@ -200,7 +208,7 @@ final class LLMContextBuilder: Sendable {
 // MARK: - Chat History Store
 /// Manages chat message persistence with UserDefaults.
 final class ChatHistoryStore: ObservableObject {
-    var messages: [ChatMessage] = []
+    var messages: [ChatMessageDTO] = []
 
     private let historyKey = "zhiyu_chat_history"
 
@@ -208,12 +216,12 @@ final class ChatHistoryStore: ObservableObject {
         load()
     }
 
-    func append(_ message: ChatMessage) {
+    func append(_ message: ChatMessageDTO) {
         messages.append(message)
         persistToDisk()
     }
 
-    func appendBatch(_ newMessages: [ChatMessage]) {
+    func appendBatch(_ newMessages: [ChatMessageDTO]) {
         messages.append(contentsOf: newMessages)
         persistToDisk()
     }
@@ -231,7 +239,7 @@ final class ChatHistoryStore: ObservableObject {
     }
 
     /// Returns the last N messages (typically for LLM context window).
-    func recent(_ count: Int) -> ArraySlice<ChatMessage> {
+    func recent(_ count: Int) -> ArraySlice<ChatMessageDTO> {
         messages.suffix(count)
     }
 
@@ -243,7 +251,7 @@ final class ChatHistoryStore: ObservableObject {
 
     private func load() {
         if let data = UserDefaults.standard.data(forKey: historyKey),
-           let history = try? JSONDecoder().decode([ChatMessage].self, from: data) {
+           let history = try? JSONDecoder().decode([ChatMessageDTO].self, from: data) {
             messages = history
         }
     }

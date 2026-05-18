@@ -1,7 +1,7 @@
 // ActivityService.swift
 //
 // 作者: Wang Chong
-// 功能说明: 灵动岛与实时活动管理服务 (iOS 专属)
+// 功能说明: [Shared] 灵动岛与实时活动管理服务 (iOS 专属)
 // 版本: 1.1
 // 修改记录:
 //   - 2026-05-15: 适配 Mac Catalyst，禁用不支持的 ActivityKit 逻辑。
@@ -15,7 +15,7 @@ import Foundation
 /// 灵动岛与实时活动管理服务 (iOS 专属)
 /// 负责在 Dynamic Island 展示 AI 扫描、导出、同步等长时任务的进度。
 @MainActor
-final class ActivityService {
+final class ActivityService: LiveActivityProtocol {
     static let shared = ActivityService()
 
     #if os(iOS) && !targetEnvironment(macCatalyst)

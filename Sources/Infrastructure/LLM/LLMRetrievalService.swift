@@ -65,7 +65,7 @@ final class LLMRetrievalService: Sendable {
     // MARK: - 重排 (Rerank)
 
     /// 对候选页面列表执行语义重排
-    func rerank(query: String, candidates: [KnowledgePage]) async throws -> [KnowledgePage] {
+    func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] {
         guard !candidates.isEmpty else { return candidates }
 
         let titles = candidates.map { "\($0.title) (ID: \($0.id))" }.joined(separator: "\n")

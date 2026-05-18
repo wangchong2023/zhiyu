@@ -132,31 +132,17 @@ struct GraphNodeView: View {
                 }
                 #endif
                 .overlay {
-                    if isHovered {
-                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                            Text(node.title)
-                                .font(.caption.bold())
-                            Text(node.pageType.displayName)
-                                .font(.system(size: DesignSystem.microFontSize - 2))
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding(.horizontal, DesignSystem.small)
-                        .padding(.vertical, DesignSystem.tiny)
-                        .background(.ultraThinMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .offset(y: -DesignSystem.huge - DesignSystem.tiny)
-                        .transition(.scale.combined(with: .opacity))
-                    }
+                    hoverTooltip
                 }
                 .contextMenu {
                     Button(action: { onSelect() }) {
-                        Label(L10n.Graph.tr("viewDetail"), systemImage: "doc.text.magnifyingglass")
+                        Label(L10n.Graph.viewDetail, systemImage: DesignSystem.Icons.weeklyInsight)
                     }
                     
                     Button(action: {
                         AppPasteboard.string = "[[\(node.title)]]"
                     }) {
-                        Label(L10n.Graph.tr("copyPageLink"), systemImage: "link")
+                        Label(L10n.Graph.copyPageLink, systemImage: DesignSystem.Icons.link)
                     }
                     
                     Divider()
@@ -165,7 +151,7 @@ struct GraphNodeView: View {
                     Button(action: {
                         // macOS 新窗口功能预留
                     }) {
-                        Label(L10n.Common.tr("openInNewWindow"), systemImage: "macwindow.badge.plus")
+                        Label(L10n.Common.openInNewWindow, systemImage: DesignSystem.Icons.macwindowBadgePlus)
                     }
                     #endif
                 }
@@ -187,10 +173,29 @@ struct GraphNodeView: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(node.title), \(node.pageType.displayName)")
-        .accessibilityValue(L10n.Graph.trf("linksCountFormat", linkCount))
-        .accessibilityHint(L10n.Graph.tr("accessibility.nodeHint"))
+        .accessibilityValue(L10n.Graph.linksCountFormat(linkCount))
+        .accessibilityHint(L10n.Graph.accessibility.nodeHint)
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : [.isButton])
         .accessibilityAction { onSelect() }
+    }
+    
+    @ViewBuilder
+    private var hoverTooltip: some View {
+        if isHovered {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(node.title)
+                    .font(.caption.bold())
+                Text(node.pageType.displayName)
+                    .font(.system(size: DesignSystem.microFontSize - 2))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, DesignSystem.small)
+            .padding(.vertical, DesignSystem.tiny)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+            .offset(y: -DesignSystem.huge - DesignSystem.tiny)
+            .transition(.scale.combined(with: .opacity))
+        }
     }
 }
 
@@ -244,7 +249,7 @@ struct GraphZoomControls: View {
                 withAnimation { scale = max(0.5, scale - 0.2) }
                 lastScale = scale
             }) {
-                Image(systemName: "minus.magnifyingglass")
+                Image(systemName: DesignSystem.Icons.minusMagnifyingglass)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -258,7 +263,7 @@ struct GraphZoomControls: View {
                 withAnimation { scale = min(3.0, scale + 0.2) }
                 lastScale = scale
             }) {
-                Image(systemName: "plus.magnifyingglass")
+                Image(systemName: DesignSystem.Icons.plusMagnifyingglass)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -276,7 +281,7 @@ struct GraphZoomControls: View {
                     lastOffset = .zero
                 }
             }) {
-                Image(systemName: "scope")
+                Image(systemName: DesignSystem.Icons.scope)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -289,7 +294,7 @@ struct GraphZoomControls: View {
             Button(action: {
                 withAnimation(.spring(response: 0.5)) { onFitToScreen() }
             }) {
-                Image(systemName: "viewfinder")
+                Image(systemName: DesignSystem.Icons.viewfinder)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -302,7 +307,7 @@ struct GraphZoomControls: View {
             Button(action: {
                 withAnimation(.spring(response: 0.6)) { onRelayout() }
             }) {
-                Image(systemName: "arrow.clockwise")
+                Image(systemName: DesignSystem.Icons.refresh)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -313,7 +318,7 @@ struct GraphZoomControls: View {
             Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
             Button(action: { show3D = true }) {
-                Image(systemName: "view.3d")
+                Image(systemName: DesignSystem.Icons.view3d)
                     .font(.body)
                     .foregroundStyle(.appSecondary)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
@@ -355,10 +360,10 @@ struct GraphLegend: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                Image(systemName: "list.bullet.rectangle.portrait")
+                Image(systemName: DesignSystem.Icons.listBulletRectanglePortrait)
                     .font(.caption)
                     .foregroundStyle(.appAccent)
-                Text(L10n.Graph.tr("legend"))
+                Text(L10n.Graph.legend)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.appText)
             }
@@ -417,14 +422,14 @@ struct GraphSelectedNodeCard: View {
                 Text(page.title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Text("\(page.pageType.displayName) · \(page.wordCount) \(Localized.tr("page.wordCountUnit")) · \(page.outgoingLinks.count) \(Localized.tr("page.outLinkUnit"))")
+                Text("\(page.pageType.displayName) · \(page.wordCount) \(L10n.Knowledge.Page.wordCountUnit) · \(page.outgoingLinks.count) \(L10n.Knowledge.Page.outLinkUnit)")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
             }
 
             Spacer()
 
-            Image(systemName: "chevron.right")
+            Image(systemName: DesignSystem.Icons.forward)
                 .foregroundStyle(.appSecondary)
         }
         .padding()
@@ -455,37 +460,37 @@ struct GraphInsightsPanel: View {
             VStack(spacing: 16) {
                     insightSection(
                         id: "surprising",
-                        icon: "link Badge",
-                        title: L10n.Graph.tr("insightSurprising"),
+                        icon: DesignSystem.Icons.link,
+                        title: L10n.Graph.insightSurprising,
                         count: surprising.count,
-                        description: L10n.Graph.tr("insightSurprisingDesc"),
+                        description: L10n.Graph.insightSurprisingDesc,
                         color: .appComparison
                     )
                     
                     insightSection(
                         id: "orphans",
-                        icon: "questionmark.circle",
-                        title: L10n.Graph.tr("insightOrphans"),
+                        icon: DesignSystem.Icons.questionCircle,
+                        title: L10n.Graph.insightOrphans,
                         count: orphans.count,
-                        description: L10n.Graph.tr("insightOrphansDesc"),
+                        description: L10n.Graph.insightOrphansDesc,
                         color: .appSecondary
                     )
                     
                     insightSection(
                         id: "sparse",
-                        icon: "chart.bar.xaxis",
-                        title: L10n.Graph.tr("insightSparse"),
+                        icon: DesignSystem.Icons.chartBarXaxis,
+                        title: L10n.Graph.insightSparse,
                         count: sparse.count,
-                        description: L10n.Graph.tr("insightSparseDesc"),
+                        description: L10n.Graph.insightSparseDesc,
                         color: .orange
                     )
                     
                     insightSection(
                         id: "bridges",
-                        icon: "arrow.triangle.branch",
-                        title: L10n.Graph.tr("insightBridges"),
+                        icon: DesignSystem.Icons.arrowTriangleBranch,
+                        title: L10n.Graph.insightBridges,
                         count: bridges.count,
-                        description: L10n.Graph.tr("insightBridgesDesc"),
+                        description: L10n.Graph.insightBridgesDesc,
                         color: .appAccent
                     )
                 }
@@ -526,7 +531,7 @@ struct GraphInsightsPanel: View {
                     
                     Spacer()
                     
-                    Image(systemName: expandedSections.contains(id) ? "chevron.down" : "chevron.right")
+                    Image(systemName: expandedSections.contains(id) ? DesignSystem.Icons.down : DesignSystem.Icons.forward)
                         .font(.footnote)
                         .foregroundStyle(.appSecondary)
                 }

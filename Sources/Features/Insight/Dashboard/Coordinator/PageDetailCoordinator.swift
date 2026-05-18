@@ -54,7 +54,7 @@ final class PageDetailCoordinator {
 
     func generateSummary() {
         Task {
-            ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
+            ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
             do {
                 _ = try await aiStore.runPageAISummary(content: page.content)
                 HapticFeedback.shared.trigger(.success)
@@ -67,7 +67,7 @@ final class PageDetailCoordinator {
 
     func extractActions() {
         Task {
-            ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
+            ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
             do {
                 _ = try await aiStore.runPageAIExtractActions(content: page.content)
                 HapticFeedback.shared.trigger(.success)
@@ -80,7 +80,7 @@ final class PageDetailCoordinator {
 
     func expandContent() {
         Task {
-            ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
+            ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
             do {
                 _ = try await aiStore.runPageAIExpansion(content: page.content)
                 HapticFeedback.shared.trigger(.success)
@@ -93,7 +93,7 @@ final class PageDetailCoordinator {
 
     func performSynthesis(type: SynthesisStore.SynthesisType) {
         Task {
-            ToastManager.shared.show(type: .processing, message: L10n.Common.tr("aiThinking"), duration: 0)
+            ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
             do {
                 _ = try await aiStore.performPageSynthesis(type: type, title: page.title, content: page.content)
                 HapticFeedback.shared.trigger(.success)

@@ -25,13 +25,13 @@ final class PerformanceBenchmarker {
         // 批量创建模拟数据
         for i in 1...count {
             if i % 5000 == 0 {
-                let currentTotal = store.totalPages
+                let currentTotal = await store.pages.count
                 print("⏳ [Benchmark] 已注入 \(i) 篇... 当前 DB 总数: \(currentTotal)")
             }
 
-            _ = await store.createPage(
+            _ = try? await store.createPage(
                 title: "Stress Test Page #\(i)",
-                type: .raw,
+                pageType: .raw,
                 content: "这是第 \(i) 篇压测文档。它包含了模拟的文本内容，用于测试 SQLite FTS5 的索引性能以及向量检索的内存占用。\(UUID().uuidString)",
                 tags: ["benchmark", "stress-test"]
             )

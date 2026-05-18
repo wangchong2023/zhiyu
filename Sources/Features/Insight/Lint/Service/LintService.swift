@@ -17,13 +17,20 @@ import Foundation
 // MARK: - Lint Service (Health Check)
 /// 对知识库进行健康检查：断裂链接、孤立页面、存根页面、陈旧内容。
 /// Returns issues without side effects — caller decides what to do with results.
-final class LintService: @unchecked Sendable {
+public final class LintService: @unchecked Sendable {
 
     /// 知识库健康等级
-    enum HealthLevel: String, CaseIterable, Sendable {
+    public enum HealthLevel: String, CaseIterable, Sendable {
         case excellent, good, fair, poor
 
-        var title: String { L10n.Lint.tr("health.\(self.rawValue)") }
+        var title: String {
+            switch self {
+            case .excellent: return L10n.Lint.healthExcellent
+            case .good: return L10n.Lint.healthGood
+            case .fair: return L10n.Lint.healthFair
+            case .poor: return L10n.Lint.healthPoor
+            }
+        }
 
         var colorName: String {
             switch self {
@@ -42,8 +49,8 @@ final class LintService: @unchecked Sendable {
     func runLint(pages: [KnowledgePage], linkService: LinkService) async -> [LintIssue] {
         var issues: [LintIssue] = []
 
-        // 1. 性能预优化：构建查找索引
-        let titleMap = Dictionary(uniqueKeysWithValues: pages.map { ($0.title.lowercased(), $0) })
+        // 1. 性能预优化：构建查找索引 (使用 uniquingKeysWith 避免因重复标题导致的崩溃)
+        let titleMap = Dictionary(pages.map { ($0.title.lowercased(), $0) }, uniquingKeysWith: { first, _ in first })
         var incomingLinksCount: [UUID: Int] = [:]
         for page in pages {
             for link in page.outgoingLinks {
@@ -58,6 +65,7 @@ final class LintService: @unchecked Sendable {
         issues += checkCircularReferences(pages: pages, titleMap: titleMap)
         issues += checkBrokenLinks(pages: pages, titleMap: titleMap)
         issues += checkStubsAndStale(pages: pages)
+        issues += checkDuplicateTitles(pages: pages)
 
         return issues
     }
@@ -76,16 +84,16 @@ final class LintService: @unchecked Sendable {
                     severity: .warning,
                     type: .island,
                     pageID: page.id,
-                    message: String(format: L10n.Lint.tr("islandMessage"), page.title),
-                    suggestion: L10n.Lint.tr("islandSuggestion")
+                    message: String(format: L10n.Lint.islandMessage, page.title),
+                    suggestion: L10n.Lint.islandSuggestion
                 ))
             } else if inCount == 0 {
                 issues.append(LintIssue(
                     severity: .info,
                     type: .orphan,
                     pageID: page.id,
-                    message: String(format: L10n.Lint.tr("orphanPage"), page.title),
-                    suggestion: String(format: L10n.Lint.tr("orphanSuggestion"), page.title)
+                    message: String(format: L10n.Lint.orphanPage, page.title),
+                    suggestion: String(format: L10n.Lint.orphanSuggestion, page.title)
                 ))
             }
         }
@@ -103,8 +111,8 @@ final class LintService: @unchecked Sendable {
                             severity: .info,
                             type: .cycle,
                             pageID: pageA.id,
-                            message: String(format: L10n.Lint.tr("cycleMessage"), pageA.title, pageB.title),
-                            suggestion: L10n.Lint.tr("cycleSuggestion")
+                            message: String(format: L10n.Lint.cycleMessage, pageA.title, pageB.title),
+                            suggestion: L10n.Lint.cycleSuggestion
                         ))
                     }
                 }
@@ -123,8 +131,8 @@ final class LintService: @unchecked Sendable {
                         severity: .error,
                         type: .brokenLink,
                         pageID: page.id,
-                        message: String(format: L10n.Lint.tr("brokenLink"), page.title, link),
-                        suggestion: String(format: L10n.Lint.tr("brokenLinkSuggestion"), link)
+                        message: String(format: L10n.Lint.brokenLink, page.title, link),
+                        suggestion: String(format: L10n.Lint.brokenLinkSuggestion, link)
                     ))
                 }
             }
@@ -144,8 +152,8 @@ final class LintService: @unchecked Sendable {
                     severity: .info,
                     type: .stub,
                     pageID: page.id,
-                    message: String(format: L10n.Lint.tr("stubContent"), page.title),
-                    suggestion: L10n.Lint.tr("stubSuggestion")
+                    message: String(format: L10n.Lint.stubContent, page.title),
+                    suggestion: L10n.Lint.stubSuggestion
                 ))
             }
 
@@ -155,8 +163,31 @@ final class LintService: @unchecked Sendable {
                     severity: .info,
                     type: .stale,
                     pageID: page.id,
-                    message: String(format: L10n.Lint.tr("outdated"), page.title),
-                    suggestion: L10n.Lint.tr("outdatedSuggestion")
+                    message: String(format: L10n.Lint.outdated, page.title),
+                    suggestion: L10n.Lint.outdatedSuggestion
+                ))
+            }
+        }
+        return issues
+    }
+
+    /// 检查重名的页面
+    private func checkDuplicateTitles(pages: [KnowledgePage]) -> [LintIssue] {
+        var issues: [LintIssue] = []
+        var titleGroups: [String: [KnowledgePage]] = [:]
+        for page in pages {
+            let key = page.title.lowercased()
+            titleGroups[key, default: []].append(page)
+        }
+
+        for (_, group) in titleGroups where group.count > 1 {
+            for page in group {
+                issues.append(LintIssue(
+                    severity: .warning,
+                    type: .generic,
+                    pageID: page.id,
+                    message: "存在重名页面: \"\(page.title)\" (Duplicate page title detected)",
+                    suggestion: "请修改其中一个页面的标题以避免引用混淆。"
                 ))
             }
         }

@@ -43,7 +43,7 @@ actor KnowledgeIngestPipeline {
             // 任务 A: 全局摘要索引 (Summary Indexing)
             if let llm = llm {
                 group.addTask {
-                    let summaryPrompt = "请为以下内容生成一段 200 字以内的专业摘要，直接输出摘要内容：\n\n\(enrichedContent.prefix(2000))"
+                    let summaryPrompt = PromptRegistry.Ingest.summary(content: String(enrichedContent.prefix(2000)))
                     if let summary = try? await llm.generate(prompt: summaryPrompt, systemPrompt: "你是一个专业的知识管理助手。") {
                         return [PageChunk(
                             id: "sum_\(pageID.uuidString)",
@@ -107,6 +107,7 @@ actor KnowledgeIngestPipeline {
             parentID: nil,
             chunkType: "regular",
             content: pChunk.text,
+            anchorPath: pChunk.anchorPath, // 注入语义路径
             index: pIndex,
             startIndex: pChunk.startIndex,
             embedding: nil,
@@ -119,13 +120,14 @@ actor KnowledgeIngestPipeline {
         let children = self.chunker.split(text: pChunk.text, config: childConfig)
         for (cIndex, cChunk) in children.enumerated() {
             let childRecord = PageChunk(
-                id: "c_\(parentChunkID)_\(cIndex)",
+                id: "\(parentChunkID)_c\(cIndex)",
                 pageID: pageID,
                 parentID: parentChunkID,
-                chunkType: "regular",
+                chunkType: "child",
                 content: cChunk.text,
+                anchorPath: pChunk.anchorPath, // 子块继承父块的语义路径
                 index: cIndex,
-                startIndex: pChunk.startIndex + cChunk.startIndex,
+                startIndex: cChunk.startIndex,
                 embedding: nil,
                 createdAt: Date(),
                 updatedAt: Date()
@@ -135,7 +137,7 @@ actor KnowledgeIngestPipeline {
 
         // 3. 反向提问 (Reverse Q&A)
         if let llm = llm {
-            let qaPrompt = "针对以下文本片段，生成 3 个用户可能会提出的核心问题。要求：问题必须专业、简练，每行一个问题。直接输出问题：\n\n\(pChunk.text)"
+            let qaPrompt = PromptRegistry.Ingest.reverseQA(content: pChunk.text)
             if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: "你是一个专业的知识发现助手。") {
                 let questions = qaResponse.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
                 for (qIndex, question) in questions.prefix(3).enumerated() {

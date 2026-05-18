@@ -1,11 +1,10 @@
 // AppStoreTests.swift
 //
 // 作者: Wang Chong
-// 功能说明: ZhiYu存储Tests.swift
-// 版本: 1.0
+// 功能说明: ZhiYu 核心存储与状态管理测试
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
+//   - 2026-05-16: 架构适配：补全异步调用 await (@P0)。
 // 版权: Copyright © 2026 Wang Chong. All rights reserved.
 
 import XCTest
@@ -23,6 +22,8 @@ final class AppStoreTests: XCTestCase {
     
     override func tearDown() async throws {
         store = nil
+        // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
+        try? await Task.sleep(nanoseconds: 50_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
@@ -30,7 +31,7 @@ final class AppStoreTests: XCTestCase {
     
     func testPageCreation() async {
         let initialCount = store.totalPages
-        let _ = await store.createPage(title: "Test Page", type: .concept, content: "Test Content")
+        let _ = await store.createPage(title: "Test Page", pageType: .concept, content: "Test Content")
         
         // Wait for ValueObservation
         try? await Task.sleep(nanoseconds: 200_000_000)
@@ -40,34 +41,34 @@ final class AppStoreTests: XCTestCase {
     
     func testUndoRedo() async {
         let initialCount = store.totalPages
-        _ = await store.createPage(title: "Undo Test", type: .concept)
+        _ = await store.createPage(title: "Undo Test", pageType: .concept)
         
         // Wait for ValueObservation
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount + 1)
         
-        store.undo()
+        await store.undo()
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount)
         
-        store.redo()
+        await store.redo()
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertEqual(store.totalPages, initialCount + 1)
     }
     
     func testTagManagement() async {
-        let _ = await store.createPage(title: "Tag Test", type: .concept, tags: ["OldTag"])
+        let _ = await store.createPage(title: "Tag Test", pageType: .concept, tags: ["OldTag"])
         
         // Wait for ValueObservation
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertTrue(store.pages.contains { $0.tags.contains("OldTag") })
         
-        store.renameTag("OldTag", to: "NewTag")
+        await store.renameTag("OldTag", to: "NewTag")
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertTrue(store.pages.contains { $0.tags.contains("NewTag") })
         XCTAssertFalse(store.pages.contains { $0.tags.contains("OldTag") })
         
-        store.deleteTag("NewTag")
+        await store.deleteTag("NewTag")
         try? await Task.sleep(nanoseconds: 200_000_000)
         XCTAssertFalse(store.pages.contains { $0.tags.contains("NewTag") })
     }

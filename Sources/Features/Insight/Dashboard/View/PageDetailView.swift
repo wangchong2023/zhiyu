@@ -28,7 +28,7 @@ struct PageDetailView: View {
     
     private var pinButton: some View {
         Button(action: { Task { await coordinator.togglePin() } }) {
-            Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pin + ".fill" : DesignSystem.Icons.pin)
+            Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pinFill : DesignSystem.Icons.pin)
                 .foregroundStyle(coordinator.page.isPinned ? .orange : .appSecondary)
         }
     }
@@ -51,7 +51,7 @@ struct PageDetailView: View {
             }
             coordinator.isEditing.toggle()
         }) {
-            Image(systemName: coordinator.isEditing ? "checkmark.circle.fill" : DesignSystem.Icons.edit + ".circle.fill")
+            Image(systemName: coordinator.isEditing ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.edit + ".circle.fill")
                 .foregroundStyle(coordinator.isEditing ? .green : .appText)
         }
     }
@@ -66,41 +66,41 @@ struct PageDetailView: View {
         #else
         Menu {
             Button(action: { coordinator.generateSummary() }) {
-                Label(Localized.tr("page.ai.summary"), systemImage: "wand.and.stars")
+                Label(L10n.Knowledge.Page.AI.summary, systemImage: DesignSystem.Icons.aiSummary)
             }
             Button(action: { coordinator.extractActions() }) {
-                Label(Localized.tr("page.ai.extractActions"), systemImage: "checkmark.seal")
+                Label(L10n.Knowledge.Page.AI.extractActions, systemImage: DesignSystem.Icons.aiExtract)
             }
 
             Menu {
                 Button(action: { coordinator.performSynthesis(type: .mindmap) }) {
-                    Label(Localized.tr("page.ai.mindmap"), systemImage: "rectangle.stack.badge.person.crop")
+                    Label(L10n.Knowledge.Page.AI.mindmap, systemImage: DesignSystem.Icons.mindmap)
                 }
                 Button(action: { coordinator.performSynthesis(type: .quiz) }) {
-                    Label(Localized.tr("page.ai.quiz"), systemImage: "questionmark.circle")
+                    Label(L10n.Knowledge.Page.AI.quiz, systemImage: DesignSystem.Icons.quiz)
                 }
                 Button(action: { coordinator.performSynthesis(type: .slides) }) {
-                    Label(Localized.tr("page.ai.slides"), systemImage: "play.rectangle")
+                    Label(L10n.Knowledge.Page.AI.slides, systemImage: DesignSystem.Icons.slides)
                 }
                 Button(action: { coordinator.performSynthesis(type: .report) }) {
-                    Label(Localized.tr("page.ai.report"), systemImage: "doc.text.magnifyingglass")
+                    Label(L10n.Knowledge.Page.AI.report, systemImage: DesignSystem.Icons.report)
                 }
                 Button(action: { coordinator.performSynthesis(type: .infographic) }) {
-                    Label(Localized.tr("page.ai.infographic"), systemImage: "chart.bar.doc.horizontal")
+                    Label(L10n.Knowledge.Page.AI.infographic, systemImage: DesignSystem.Icons.infographic)
                 }
             } label: {
-                Label(Localized.tr("page.ai.lab"), systemImage: "flask")
+                Label(L10n.Knowledge.Page.AI.lab, systemImage: DesignSystem.Icons.lab)
             }
             
             Divider()
             Button(action: { coordinator.showSnapshotHistory = true }) {
-                Label(Localized.tr("page.history"), systemImage: DesignSystem.Icons.history)
+                Label(L10n.Knowledge.Page.History.title, systemImage: DesignSystem.Icons.history)
             }
             Button(action: { coordinator.expandContent() }) {
-                Label(Localized.tr("page.expandStub"), systemImage: "text.badge.plus")
+                Label(L10n.Knowledge.Page.expandStub, systemImage: DesignSystem.Icons.expandStub)
             }
             Button(action: { coordinator.findRelatedLinks() }) {
-                Label(Localized.tr("page.findLinks"), systemImage: "link.badge.plus")
+                Label(L10n.Knowledge.Page.findLinks, systemImage: DesignSystem.Icons.findLinks)
             }
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
@@ -125,10 +125,11 @@ struct PageDetailView: View {
                         }
                     
                     Group {
-                        if coordinator.isEditing {
-                            MarkdownEditorView(page: $coordinator.page, isEditing: $coordinator.isEditing)
-                                .padding(.top, DesignSystem.wide)
-                        } else if coordinator.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if coordinator.isEditing {
+                        MarkdownEditorView(text: $coordinator.page.content, placeholder: L10n.Editor.placeholder)
+                            .padding(.top, DesignSystem.wide)
+                    } else if coordinator.page.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+
                             emptyStateView
                         } else {
                             MarkdownRendererView(content: coordinator.page.content, isPrivate: coordinator.page.isPrivate, onLinkTap: { title in
@@ -158,13 +159,14 @@ struct PageDetailView: View {
                 aiMenuButton
             }
         }
-        .confirmationDialog(Localized.tr("page.confirmDelete"), isPresented: $coordinator.showDeleteConfirmation) {
-            Button(Localized.trf("page.deletePageTitle", coordinator.page.title), role: .destructive) {
+        .confirmationDialog(L10n.Knowledge.Page.confirmDelete, isPresented: $coordinator.showDeleteConfirmation) {
+            let deleteTitle = L10n.Vault.Page.deletePageTitle(coordinator.page.title)
+            Button(deleteTitle, role: .destructive) {
                 Task { await coordinator.deletePage() }
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(Localized.tr("page.deleteMessage"))
+            Text(L10n.Knowledge.Page.deleteMessage)
         }
         .sheet(isPresented: $coordinator.showBacklinks) {
             BacklinksView(page: coordinator.page)
@@ -235,7 +237,7 @@ struct PageDetailView: View {
                 HStack {
                     Image(systemName: DesignSystem.Icons.sparkles)
                         .foregroundStyle(.appAccent)
-                    Text(Localized.tr("page.ai.labOutput"))
+                    Text(L10n.Knowledge.Page.AI.labOutput)
                         .font(.headline)
                         .foregroundStyle(.appText)
                     Spacer()
@@ -247,7 +249,7 @@ struct PageDetailView: View {
                                     try await workflowService.syncToReminders(text: result, title: coordinator.page.title)
                                 }
                             }) {
-                                Label(L10n.Common.tr("syncToReminders"), systemImage: "checklist")
+                                Label(L10n.Common.syncToReminders, systemImage: DesignSystem.Icons.checklist)
                                     .font(.caption)
                                     .foregroundStyle(.appAccent)
                             }
@@ -258,13 +260,13 @@ struct PageDetailView: View {
                             AppPasteboard.string = aiStore.activePageAIResult
                             HapticFeedback.shared.trigger(.success)
                         }) {
-                            Image(systemName: "doc.on.doc")
+                            Image(systemName: DesignSystem.Icons.copy)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
                         
                         Button(action: { aiStore.activePageAIResult = nil }) {
-                            Image(systemName: "xmark.circle")
+                            Image(systemName: DesignSystem.Icons.xmarkCircle)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
@@ -291,13 +293,13 @@ struct PageDetailView: View {
     
     private var emptyStateView: some View {
         VStack(spacing: DesignSystem.medium) {
-            Image(systemName: "pencil.line")
+            Image(systemName: DesignSystem.Icons.pencilLine)
                 .font(.system(size: DesignSystem.huge))
                 .foregroundStyle(.appSecondary)
-            Text(Localized.tr("page.empty"))
+            Text(L10n.Knowledge.Page.empty)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
-            Text(Localized.tr("page.emptyHint"))
+            Text(L10n.Knowledge.Page.emptyHint)
                 .font(.caption)
                 .foregroundStyle(.appAccent.opacity(0.7))
                 .padding(.horizontal, DesignSystem.wide)
@@ -314,13 +316,13 @@ struct PageDetailView: View {
             if let sourceURL = coordinator.page.sourceURL, let url = URL(string: sourceURL) {
                 VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                     HStack {
-                        Image(systemName: "safari").foregroundStyle(.appAccent)
-                        Text(Localized.tr("page.source.title")).font(.headline).foregroundStyle(.appText)
+                        Image(systemName: DesignSystem.Icons.safari).foregroundStyle(.appAccent)
+                        Text(L10n.Knowledge.Page.Source.title).font(.headline).foregroundStyle(.appText)
                         Spacer()
                         Link(destination: url) {
                             HStack(spacing: DesignSystem.tiny) {
-                                Text(Localized.tr("page.source.open"))
-                                Image(systemName: "arrow.up.right.circle")
+                                Text(L10n.Knowledge.Page.Source.open)
+                                Image(systemName: DesignSystem.Icons.arrowUpRightCircle)
                             }
                             .font(.caption)
                             .foregroundStyle(.appAccent)
@@ -354,8 +356,8 @@ struct PageDetailView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(Localized.tr("page.aiInsights")).font(.headline).foregroundStyle(.appText)
-                            Text(Localized.tr("page.aiInsights.desc")).font(.system(size: 9)).foregroundStyle(.appSecondary)
+                            Text(L10n.Knowledge.Page.AI.insights).font(.headline).foregroundStyle(.appText)
+                            Text(L10n.Knowledge.Page.AI.insightsDesc).font(.system(size: 9)).foregroundStyle(.appSecondary)
                         }
                     }
                     .padding(.bottom, DesignSystem.tiny)
@@ -381,7 +383,7 @@ struct PageDetailView: View {
                     Text(summaryText).font(.caption2).foregroundStyle(.appSecondary)
                 }
                 Spacer()
-                Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
+                Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
             }
             .padding(DesignSystem.medium).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding)).overlay(RoundedRectangle(cornerRadius: DesignSystem.tightPadding).stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
         }
@@ -392,12 +394,12 @@ struct PageDetailView: View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
                 Image(systemName: DesignSystem.Icons.link).foregroundStyle(.appAccent)
-                Text(Localized.tr("page.backlinks")).font(.headline).foregroundStyle(.appText)
+                Text(L10n.Knowledge.Page.backlinks).font(.headline).foregroundStyle(.appText)
                 Text("(\(coordinator.backlinks.count))").font(.subheadline).foregroundStyle(.appSecondary)
             }
             
             if coordinator.backlinks.isEmpty {
-                Text(Localized.tr("page.noBackLinks")).font(.caption).foregroundStyle(.appSecondary).padding(.vertical, DesignSystem.small)
+                Text(L10n.Knowledge.Page.noBackLinks).font(.caption).foregroundStyle(.appSecondary).padding(.vertical, DesignSystem.small)
             } else {
                 ForEach(coordinator.backlinks) { linkedPage in
                     NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
@@ -405,13 +407,13 @@ struct PageDetailView: View {
                             Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.pageType.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                             Text(linkedPage.title).font(.subheadline).foregroundStyle(.appText)
                             Spacer()
-                            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
+                            Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
                         }
                         .padding(.horizontal, DesignSystem.tightPadding).padding(.vertical, DesignSystem.small).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(Localized.trf("page.backlinkAccessibility", linkedPage.title, linkedPage.pageType.displayName))
-                    .accessibilityHint(Localized.tr("page.doubleTapToNavigate"))
+                    .accessibilityLabel(L10n.Knowledge.Page.backlinkAccessibility(linkedPage.title, linkedPage.pageType.displayName))
+                    .accessibilityHint(L10n.Knowledge.Page.doubleTapToNavigate)
                 }
             }
         }
@@ -422,5 +424,12 @@ struct PageDetailView: View {
         if let target = store.pages.first(where: { $0.title == title }) {
             router.navigate(to: .pageDetail(id: target.id))
         }
+    }
+}
+
+// MARK: - Text Extension for aiInsightsVal
+extension Text {
+    init(_ aiInsights: L10n.Knowledge.Page.AIInsightsVal) {
+        self.init(aiInsights.title)
     }
 }

@@ -29,7 +29,7 @@ struct OCRImagePickerArea: View {
         VStack(spacing: DesignSystem.standardPadding) { // 16
             if let image = selectedImage {
                 #if os(watchOS)
-                Text(Localized.tr("status.simulatorNotSupported"))
+                Text(L10n.Common.Status.simulatorNotSupported)
                 #elseif canImport(UIKit)
                 Image(uiImage: image)
                     .resizable()
@@ -63,7 +63,7 @@ struct OCRImagePickerArea: View {
                             Image(systemName: DesignSystem.Icons.ocr)
                                 .font(.system(size: DesignSystem.largeIconSize + DesignSystem.small)) // 40
                                 .foregroundStyle(.appSecondary)
-                            Text(Localized.tr("ocr.selectImage"))
+                            Text(L10n.Ingest.OCR.selectImage)
                                 .font(.subheadline)
                                 .foregroundStyle(.appSecondary)
                         }
@@ -81,7 +81,7 @@ struct OCRImagePickerArea: View {
                     get: { selectedPhoto },
                     set: { onPhotoSelected($0) }
                 ), matching: .images) {
-                    Label(Localized.tr("ocr.fromAlbum"), systemImage: "photo.on.rectangle")
+                    Label(L10n.Ingest.OCR.fromAlbum, systemImage: DesignSystem.Icons.photoOnRectangle)
                         .font(.subheadline)
                         .foregroundStyle(.appAccent)
                         .padding(.horizontal, DesignSystem.standardPadding) // 16
@@ -98,7 +98,7 @@ struct OCRImagePickerArea: View {
                                     .tint(.white)
                                     .scaleEffect(DesignSystem.fullOpacity * 0.8) // 0.8
                             }
-                            Text(isProcessing ? Localized.tr("ocr.processing") : Localized.tr("ocr.recognize"))
+                            Text(isProcessing ? L10n.Ingest.OCR.processing : L10n.Ingest.OCR.recognize)
                         }
                         .font(.subheadline)
                         .foregroundStyle(.white)
@@ -125,14 +125,14 @@ struct OCRResultDisplay: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
             HStack {
-                Label(Localized.tr("ocr.result"), systemImage: "doc.text")
+                Label(L10n.Ingest.OCR.result, systemImage: DesignSystem.Icons.document)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
 
                 Spacer()
 
                 Button(action: onCopy) {
-                    Label(Localized.tr("ocr.copy"), systemImage: "doc.on.doc")
+                    Label(L10n.Ingest.OCR.copy, systemImage: DesignSystem.Icons.copy)
                         .font(.caption)
                         .foregroundStyle(.appAccent)
                 }
@@ -158,7 +158,7 @@ struct OCRResultDisplay: View {
                 )
 
             HStack {
-                Text(Localized.trf("ocr.charCountFormat", recognizedText.count))
+                Text(L10n.Ingest.ocrCharCountFormat(recognizedText.count))
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
 
@@ -191,11 +191,11 @@ struct OCRSaveForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-            Text(Localized.tr("ocr.saveToKnowledge"))
+            Text(L10n.Ingest.OCR.saveToKnowledge)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.appText)
 
-            TextField(Localized.tr("ocr.pageTitle"), text: $targetTitle)
+            TextField(L10n.Ingest.OCR.pageTitle, text: $targetTitle)
                 .font(.subheadline)
                 .foregroundStyle(.appText)
                 .padding(DesignSystem.small + DesignSystem.atomic) // 10
@@ -206,7 +206,7 @@ struct OCRSaveForm: View {
                 )
                 .accessibilityIdentifier("ocr-page-title")
 
-            Picker(Localized.tr("ocr.pageType"), selection: $targetType) {
+            Picker(L10n.Ingest.OCR.pageType, selection: $targetType) {
                 ForEach(PageType.allCases, id: \.self) { type in
                     Label(type.displayName, systemImage: type.icon).tag(type)
                 }
@@ -217,7 +217,7 @@ struct OCRSaveForm: View {
 
             // Icon picker row
             HStack {
-                Text(Localized.tr("page.icon"))
+                Text(L10n.Knowledge.Page.icon)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
 
@@ -232,7 +232,7 @@ struct OCRSaveForm: View {
                             .background((targetCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(targetType.colorName)).opacity(DesignSystem.glassOpacity * 1.5)) // 0.15
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
 
-                        Text(targetCustomIcon != nil ? Localized.tr("ocr.changeIcon") : Localized.tr("ocr.customIcon"))
+                        Text(targetCustomIcon != nil ? L10n.Ingest.OCR.changeIcon : L10n.Ingest.OCR.customIcon)
                             .font(.caption)
                             .foregroundStyle(.appAccent)
 
@@ -257,7 +257,7 @@ struct OCRSaveForm: View {
                     }
 
                     Button(action: onAddTag) {
-                        Image(systemName: "plus.circle.fill")
+                        Image(systemName: DesignSystem.Icons.plusCircle)
                             .font(.caption)
                             .foregroundStyle(.appAccent)
                     }
@@ -266,7 +266,7 @@ struct OCRSaveForm: View {
             }
 
             Button(action: onSave) {
-                Label(Localized.tr("ocr.saveToKnowledge"), systemImage: "square.and.arrow.down")
+                Label(L10n.Ingest.OCR.saveToKnowledge, systemImage: DesignSystem.Icons.trayArrowDown)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)

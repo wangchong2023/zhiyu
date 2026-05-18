@@ -23,7 +23,7 @@ struct CreatePageView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(L10n.Creation.tr("pageTitle"), text: $title)
+                    TextField(L10n.Creation.pageTitle, text: $title)
                         .font(.body)
                         .accessibilityIdentifier("pageTitle")
                     
@@ -53,9 +53,9 @@ struct CreatePageView: View {
                         }
                     }
                     
-                    TextField(L10n.Creation.tr("tagsPlaceholder"), text: $tags)
+                    TextField(L10n.Creation.tagsPlaceholder, text: $tags)
                 } header: {
-                    Text(L10n.Creation.tr("basicInfo"))
+                    Text(L10n.Creation.basicInfo)
                 }
                 
                 Section {
@@ -69,9 +69,9 @@ struct CreatePageView: View {
                     #endif
                 } header: {
                     HStack {
-                        Text(L10n.Creation.tr("content"))
+                        Text(L10n.Creation.content)
                         Spacer()
-                        Text(L10n.Editor.tr("bidirectionalLinks"))
+                        Text(L10n.Editor.bidirectionalLinks)
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
@@ -80,33 +80,33 @@ struct CreatePageView: View {
                 // Quick templates
                 Section {
                     Button(action: applyEntityTemplate) {
-                        Label(L10n.Creation.tr("entityTemplate"), systemImage: "person.text.rectangle.fill")
+                        Label(L10n.Creation.entityTemplate, systemImage: DesignSystem.Icons.entity)
                     }
                     Button(action: applyConceptTemplate) {
-                        Label(L10n.Creation.tr("conceptTemplate"), systemImage: "lightbulb.fill")
+                        Label(L10n.Creation.conceptTemplate, systemImage: DesignSystem.Icons.concept)
                     }
                     Button(action: applyComparisonTemplate) {
-                        Label(L10n.Creation.tr("comparisonTemplate"), systemImage: "arrow.left.arrow.right.circle.fill")
+                        Label(L10n.Creation.comparisonTemplate, systemImage: DesignSystem.Icons.comparison)
                     }
                 } header: {
-                    Text(L10n.Creation.tr("quickTemplates"))
+                    Text(L10n.Creation.quickTemplates)
                 }
             }
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(L10n.Creation.tr("title"))
+            .navigationTitle(L10n.Creation.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.tr("cancel")) {
+                    Button(L10n.Common.cancel) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(L10n.Creation.tr("create")) {
+                    Button(L10n.Creation.create) {
                         createPage()
                     }
                     .disabled(title.isEmpty)
@@ -124,7 +124,7 @@ struct CreatePageView: View {
         Task {
             let page = await store.createPage(
                 title: title,
-                type: type,
+                pageType: type,
                 content: content,
                 tags: tagList
             )
@@ -140,14 +140,14 @@ struct CreatePageView: View {
         """
         # \(title)
         
-        【\(L10n.Creation.tr("template.entity.overview"))】
-        \(L10n.Creation.tr("template.entity.overviewPlaceholder"))
+        【\(L10n.Creation.template.entity.overview)】
+        \(L10n.Creation.template.entity.overviewPlaceholder)
         
-        【\(L10n.Creation.tr("template.entity.contributions"))】
-        \(L10n.Creation.tr("template.entity.contributionsPlaceholder"))
+        【\(L10n.Creation.template.entity.contributions)】
+        \(L10n.Creation.template.entity.contributionsPlaceholder)
         
-        【\(L10n.Creation.tr("template.entity.related"))】
-        \(L10n.Creation.tr("template.entity.relatedPlaceholder"))
+        【\(L10n.Creation.template.entity.related)】
+        \(L10n.Creation.template.entity.relatedPlaceholder)
         
         """
     }
@@ -160,27 +160,27 @@ struct CreatePageView: View {
         content = """
         # \(title)
 
-        【\(L10n.Creation.tr("template.concept.definition"))】
-        \(L10n.Creation.tr("template.concept.definitionPlaceholder"))
+        【\(L10n.Creation.template.concept.definition)】
+        \(L10n.Creation.template.concept.definitionPlaceholder)
 
-        【\(L10n.Creation.tr("template.concept.analysis"))】
-        \(L10n.Creation.tr("template.concept.analysisPlaceholder"))
+        【\(L10n.Creation.template.concept.analysis)】
+        \(L10n.Creation.template.concept.analysisPlaceholder)
 
-        【\(L10n.Creation.tr("template.concept.links"))】
-        \(L10n.Creation.tr("template.concept.linksPlaceholder"))
+        【\(L10n.Creation.template.concept.links)】
+        \(L10n.Creation.template.concept.linksPlaceholder)
 
         """
     }
 
     private func applyComparisonTemplate() {
         content = """
-        # \(title) \(L10n.Creation.tr("template.comparison.suffix"))
+        # \(title) \(L10n.Creation.template.comparison.suffix)
 
-        【\(L10n.Creation.tr("template.comparison.dimensions"))】
-        \(L10n.Creation.tr("template.comparison.dimensionsPlaceholder"))
+        【\(L10n.Creation.template.comparison.dimensions)】
+        \(L10n.Creation.template.comparison.dimensionsPlaceholder)
 
-        【\(L10n.Creation.tr("template.comparison.conclusion"))】
-        \(L10n.Creation.tr("template.comparison.conclusionPlaceholder"))
+        【\(L10n.Creation.template.comparison.conclusion)】
+        \(L10n.Creation.template.comparison.conclusionPlaceholder)
 
         """
     }

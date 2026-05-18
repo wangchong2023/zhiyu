@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct KnowledgeViewProvider: ViewProvider {
-    func makeView(for route: AppRoute) -> AnyView? {
-        guard route.domain == .knowledge else { return nil }
+    func makeView(for route: AnyHashable) -> AnyView? {
+        guard let route = route as? AppRoute, route.domain == .knowledge else { return nil }
         
         switch route {
         case .notebookHub:
@@ -26,6 +26,8 @@ struct KnowledgeViewProvider: ViewProvider {
             return AnyView(GraphWrapper())
         case .search(let query, let type):
             return AnyView(SearchView(initialQuery: query, initialFilterType: type))
+        case .sources:
+            return AnyView(SourceView())
         default:
             return nil
         }

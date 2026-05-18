@@ -3,10 +3,11 @@
 // 作者: Wang Chong
 // 功能说明: [L1] 基础设施层：本文件实现了知识管理系统的核心存储仓库（KnowledgePageRepository）。
 // 核心职责：负责 KnowledgePage 及其关联链接（Graph）的物理持久化。
-// 遵循 KnowledgeRepository 协议，采用 GRDB ORM 模式实现。
-// 版本: 1.9
+// 遵循 Domain 层定义的 KnowledgeRepository 协议，采用 GRDB ORM 模式实现。
+// 版本: 1.11
 // 修改记录:
-//   - 2026-05-16: 物理归位重构：更名为 KnowledgePageRepository。
+//   - 2026-05-16: 安全加固：集成应用级 AES-GCM 内容加密 (@P0)。
+//   - 2026-05-16: 架构对齐：遵循迁移至 L1.5 领域层的 KnowledgeRepository 协议。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -24,18 +25,10 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
 
     // MARK: - 页面操作 (CRUD)
 
+    /// 保存单个页面
     func save(_ page: KnowledgePage) async throws {
         _ = try await dbWriter.write { db in
             try self.save(page, in: db)
-        }
-    }
-
-    /// 批量保存页面 (用于导入/同步)
-    func saveAll(_ pages: [KnowledgePage]) async throws {
-        try await dbWriter.write { db in
-            for page in pages {
-                try self.save(page, in: db)
-            }
         }
     }
 
@@ -47,9 +40,22 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
         return savedID
     }
 
-    /// 执行具体的 Upsert 逻辑
+    /// 执行具体的 Upsert 逻辑 (包含加密拦截)
     private func upsert(_ page: KnowledgePage, in db: Database) throws -> UUID {
         var p = page
+        
+        // --- 隐私加固：应用级内容加密 (@P0) ---
+        if p.isPrivate {
+            do {
+                p.content = try SecurityManager.shared.encrypt(p.content)
+                if let snippet = p.rawTextSnippet {
+                    p.rawTextSnippet = try SecurityManager.shared.encrypt(snippet)
+                }
+            } catch {
+                Logger.shared.error("Failed to encrypt private page content", error: error)
+            }
+        }
+        
         // 查找是否已存在同名标题
         if let existing = try KnowledgePage.filter(KnowledgePage.Columns.title == page.title).fetchOne(db) {
             p.id = existing.id
@@ -75,64 +81,47 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
 
     func fetchAll() async throws -> [KnowledgePage] {
         try await dbWriter.read { db in
-            try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc).fetchAll(db)
+            let rawPages = try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc).fetchAll(db)
+            return rawPages.map { self.decryptIfPrivate($0) }
         }
     }
 
     func fetch(id: UUID) async throws -> KnowledgePage? {
         try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.id == id).fetchOne(db)
+            let page = try KnowledgePage.filter(KnowledgePage.Columns.id == id).fetchOne(db)
+            return page.map { self.decryptIfPrivate($0) }
         }
     }
 
     func fetch(title: String) async throws -> KnowledgePage? {
         try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.title == title).fetchOne(db)
-        }
-    }
-
-    func fetchPinned() async throws -> [KnowledgePage] {
-        try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.isPinned == true)
-                .order(KnowledgePage.Columns.updatedAt.desc)
-                .fetchAll(db)
+            let page = try KnowledgePage.filter(KnowledgePage.Columns.title == title).fetchOne(db)
+            return page.map { self.decryptIfPrivate($0) }
         }
     }
 
     func fetchRecentlyUpdated(limit: Int) async throws -> [KnowledgePage] {
         try await dbWriter.read { db in
-            try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc)
+            let rawPages = try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc)
                 .limit(limit)
                 .fetchAll(db)
-        }
-    }
-
-    func fetch(type: PageType) async throws -> [KnowledgePage] {
-        try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.pageType == type.rawValue)
-                .order(KnowledgePage.Columns.updatedAt.desc)
-                .fetchAll(db)
-        }
-    }
-
-    func exists(title: String) async throws -> Bool {
-        try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.title == title).fetchCount(db) > 0
+            return rawPages.map { self.decryptIfPrivate($0) }
         }
     }
 
     func search(query: String) async throws -> [KnowledgePage] {
         try await dbWriter.read { db in
-            // FTS5 搜索：通过关联查询实现，避免裸写 SQL
-            // 使用 FTS5Pattern 确保查询语法的合法性
             guard let pattern = FTS5Pattern(matchingAnyTokenIn: query) else {
                 return []
             }
             
-            return try KnowledgePage
-                .joining(required: KnowledgePage.contentSnapshot.filter(Column("content").match(pattern)))
+            // 注意：加密后的私密内容无法通过 FTS5 全文搜索，但标题仍可搜到
+            // 核心改进：匹配 pages_fts 虚拟表全字段（包括 title, content, tags, aliases），支持标题和内容的混合检索
+            let rawPages = try KnowledgePage
+                .joining(required: KnowledgePage.contentSnapshot.filter(Column("pages_fts").match(pattern)))
                 .order(sql: "rank")
                 .fetchAll(db)
+            return rawPages.map { self.decryptIfPrivate($0) }
         }
     }
 
@@ -157,7 +146,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
 
     // MARK: - 标签管理 (Tag Management)
 
-    func renameTag(_ oldTag: String, to newTag: String) async throws {
+    func renameTag(old oldTag: String, to newTag: String) async throws {
         try await dbWriter.write { db in
             let pagesToUpdate = try KnowledgePage.filter(KnowledgePage.Columns.tags.like("%\"\(oldTag)\"%")).fetchAll(db)
             for p in pagesToUpdate {
@@ -187,6 +176,13 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
         }
     }
 
+    func deleteAll() async throws {
+        _ = try await dbWriter.write { db in
+            try KnowledgePage.deleteAll(db)
+            try PageLink.deleteAll(db)
+        }
+    }
+
     // MARK: - 统计 (Stats)
 
     func count() async throws -> Int {
@@ -195,24 +191,25 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
         }
     }
 
-    func count(type: PageType) async throws -> Int {
-        try await dbWriter.read { db in
-            try KnowledgePage.filter(KnowledgePage.Columns.pageType == type.rawValue).fetchCount(db)
+    // MARK: - 辅助解密逻辑
+    
+    private func decryptIfPrivate(_ page: KnowledgePage) -> KnowledgePage {
+        guard page.isPrivate else { return page }
+        var p = page
+        do {
+            p.content = try SecurityManager.shared.decrypt(p.content)
+            if let snippet = p.rawTextSnippet {
+                p.rawTextSnippet = try SecurityManager.shared.decrypt(snippet)
+            }
+        } catch {
+            Logger.shared.error("Failed to decrypt private page: \(page.title)", error: error)
         }
-    }
-
-    func deleteAll() async throws {
-        _ = try await dbWriter.write { db in
-            try KnowledgePage.deleteAll(db)
-            try PageLink.deleteAll(db)
-        }
+        return p
     }
 }
 
 // MARK: - GRDB 关联定义
 
 extension KnowledgePage {
-    /// 定义 FTS5 关联，使用物理 ID 进行连接
-    /// 允许使用 Query Interface 进行混合搜索
     nonisolated(unsafe) static let contentSnapshot = belongsTo(KnowledgePageFTS.self, using: ForeignKey(["id"], to: ["id"]))
 }

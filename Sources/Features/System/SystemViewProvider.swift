@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct SystemViewProvider: ViewProvider {
-    func makeView(for route: AppRoute) -> AnyView? {
-        guard route.domain == .system else { return nil }
+    func makeView(for route: AnyHashable) -> AnyView? {
+        guard let route = route as? AppRoute, route.domain == .system else { return nil }
         
         switch route {
         case .settings:
             return AnyView(SettingsViewWrapper())
         case .about:
-            return AnyView(AboutView().navigationTitle(L10n.Common.tr("about")))
+            return AnyView(AboutView().navigationTitle(L10n.Common.about))
         case .help:
-            return AnyView(Text("Help Coming Soon").navigationTitle(L10n.Common.tr("help")))
+            return AnyView(Text("Help Coming Soon").navigationTitle(L10n.Common.help))
         case .collab:
             return AnyView(CollaborationView())
         case .pluginMarket:

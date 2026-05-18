@@ -27,22 +27,22 @@ struct MedalWallView: View {
             VStack(alignment: .leading, spacing: DesignSystem.loosePadding) {
                 // 顶部统计
                 HStack(spacing: DesignSystem.widePadding) {
-                    statBox(title: Localized.tr("medal.totalEarned"), value: "\(medalService.earnedMedalIDs.count)", icon: "trophy.fill", color: .orange)
-                    statBox(title: Localized.tr("medal.progress"), value: "\(Int(Double(medalService.earnedMedalIDs.count) / 7.0 * 100))%", icon: "chart.bar.fill", color: .blue)
+                    statBox(title: L10n.Insight.Medal.totalEarned, value: "\(medalService.earnedMedalIDs.count)", icon: "trophy.fill", color: .orange)
+                    statBox(title: L10n.Insight.Medal.progress, value: "\(Int(Double(medalService.earnedMedalIDs.count) / 7.0 * 100))%", icon: "chart.bar.fill", color: .blue)
                 }
                 .padding(.horizontal, DesignSystem.standardPadding)
                 
                 // 分类展示
-                medalSection(title: Localized.tr("medal.category.explore"), category: .explore)
-                medalSection(title: Localized.tr("medal.category.accumulation"), category: .accumulation)
-                medalSection(title: Localized.tr("medal.category.connection"), category: .connection)
+                medalSection(title: L10n.Insight.Medal.Category.explore, category: .explore)
+                medalSection(title: L10n.Insight.Medal.Category.accumulation, category: .accumulation)
+                medalSection(title: L10n.Insight.Medal.Category.connection, category: .connection)
                 
                 Spacer(minLength: DesignSystem.huge)
             }
             .padding(.vertical, DesignSystem.standardPadding)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(Localized.tr("medal.wall.title"))
+        .navigationTitle(L10n.Insight.Medal.Wall.title)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

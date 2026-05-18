@@ -1,7 +1,7 @@
 // iOSExportService.swift
 //
 // 作者: Wang Chong
-// 功能说明: ExportServiceProtocol 的 iOS 实现，基于 WebKit。
+// 功能说明: [Shared] ExportServiceProtocol 的 iOS 实现，基于 WebKit。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -217,7 +217,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
                     });
                 }
                 
-                slide.addText('\(L10n.Transfer.Export.trf("generatedBy", Localized.tr("app.name")))', { x: 0.5, y: 5.0, fontSize: 10, color: 'B2BEC3' });
+                slide.addText('\(L10n.Transfer.Export.trf("generatedBy", L10n.Common.appName))', { x: 0.5, y: 5.0, fontSize: 10, color: 'B2BEC3' });
             });
             
             const base64 = await pptx.write('base64');

@@ -21,8 +21,81 @@ final class IngestStore {
     @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var ingestService: IngestService
+    @ObservationIgnored @Inject private var pdfService: any PDFServiceProtocol
+    @ObservationIgnored @Inject private var ocrService: any OCRServiceProtocol
 
     init() {}
+
+    // MARK: - OCR 业务
+
+    /// 从图像中提取文本
+    public func recognizeText(from image: AppImage) async throws -> String {
+        try await ocrService.recognizeText(from: image)
+    }
+
+    // MARK: - PDF 业务操作
+
+    /// 加载所有保存的 PDF 文档元数据
+    public func loadPDFDocuments() async -> [PDFDocumentInfo] {
+        await pdfService.loadDocumentsInfo()
+    }
+
+    /// 加载单个 PDF 文档元数据
+    public func loadPDFDocument(id: UUID) async -> PDFDocumentInfo? {
+        let all = await pdfService.loadDocumentsInfo()
+        return all.first { $0.id == id }
+    }
+
+    /// 根据文件名加载 PDF 物理路径
+    public func loadPDFDocument(fileName: String) async -> URL? {
+        pdfService.getPDFURL(fileName: fileName)
+    }
+
+    /// 保存 PDF 文档元数据
+    public func savePDFDocument(_ document: PDFDocumentInfo) async {
+        var all = await pdfService.loadDocumentsInfo()
+        if let idx = all.firstIndex(where: { $0.id == document.id }) {
+            all[idx] = document
+        } else {
+            all.append(document)
+        }
+        await pdfService.saveDocumentsInfo(all)
+    }
+
+    /// 批量保存 PDF 文档元数据
+    public func savePDFDocuments(_ documents: [PDFDocumentInfo]) async {
+        await pdfService.saveDocumentsInfo(documents)
+    }
+
+    /// 物理保存 PDF 文件并返回其物理路径
+    @discardableResult
+    public func savePDFDocument(data: Data, fileName: String) async -> URL? {
+        await pdfService.savePDF(data: data, fileName: fileName)
+    }
+
+    /// 删除 PDF 文档及其元数据
+    public func deletePDFDocument(_ document: PDFDocumentInfo) async {
+        var all = await pdfService.loadDocumentsInfo()
+        all.removeAll { $0.id == document.id }
+        await pdfService.saveDocumentsInfo(all)
+        _ = await pdfService.deletePDF(fileName: document.fileName)
+    }
+
+    /// 根据文件名物理删除 PDF 文件
+    @discardableResult
+    public func deletePDFDocument(fileName: String) async -> Bool {
+        await pdfService.deletePDF(fileName: fileName)
+    }
+
+    /// 从 PDF 中提取全量文本内容
+    public func extractPDFText(from url: URL) async -> String {
+        await pdfService.extractText(from: url) ?? ""
+    }
+
+    /// 从 PDF 中提取指定页码范围的文本内容
+    public func extractPDFText(from url: URL, pageRange: Range<Int>) async -> String {
+        await pdfService.extractText(from: url, pageRange: pageRange) ?? ""
+    }
 
     struct ExtractedURLContent { let title: String; let content: String }
 
@@ -46,7 +119,7 @@ final class IngestStore {
         // 自动建立关联
         var relatedIDs: [UUID] = []
         for t in result.relatedTitles {
-            if let linked = sqliteStore.pages.first(where: { $0.title == t }) {
+            if let linked = await sqliteStore.pages.first(where: { $0.title == t }) {
                 relatedIDs.append(linked.id)
             }
         }
@@ -55,11 +128,11 @@ final class IngestStore {
         // 持久化
         await sqliteStore.syncRemotePage(page)
 
-        logger.addLog(action: .smartIngest, target: title, details: Localized.trf("ingest.smartIngestDoneDesc", type.displayName))
+        logger.addLog(action: .smartIngest, target: title, details: L10n.Ingest.smartIngestDoneDesc(type.displayName))
         HapticFeedback.shared.trigger(.success)
 
         // 刷新缓存
-        sqliteStore.reloadFromDisk()
+        await sqliteStore.reloadFromDisk()
 
         return page
     }
@@ -77,19 +150,19 @@ final class IngestStore {
         fileSize: Int64? = nil,
         sourceType: String? = nil
     ) async throws -> KnowledgePage {
-        let taskID = TaskCenter.shared.addTask(type: .ingest, name: Localized.tr("ingest.manualEntry"), target: title)
+        let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.manualEntry, target: title)
 
         do {
             let page: KnowledgePage
             if useSmart && llmService.isEnabled {
-                let result = try await llmService.smartIngest(title: title, rawContent: content, pages: sqliteStore.pages)
+                let result = try await llmService.smartIngest(title: title, rawContent: content, pages: await sqliteStore.pages)
                 let pageType = PageType(rawValue: result.suggestedType) ?? type
 
-                // 借用 finalizeSmartIngest 的逻辑进行创建
+                // 借用 finalizeSmartIngest 的 logic 进行创建
                 page = await finalizeSmartIngest(title: title, result: result, customIcon: customIcon)
-                logger.addLog(action: .smartIngest, target: title, details: Localized.trf("ingest.smartIngestDoneDesc", pageType.displayName))
+                logger.addLog(action: .smartIngest, target: title, details: L10n.Ingest.smartIngestDoneDesc(pageType.displayName))
             } else {
-                // 使用 IngestService 的标准流程
+                // 使用 IngestService 的 standard 流程
                 page = try await ingestWithFolding(
                     title: title,
                     content: content,
@@ -102,12 +175,12 @@ final class IngestStore {
                 var updatedPage = page
                 updatedPage.tags = tags
                 updatedPage.customIcon = customIcon
-                await sqliteStore.updatePage(updatedPage, forceDeepScan: false)
+                _ = try? await sqliteStore.updatePage(updatedPage)
             }
 
             TaskCenter.shared.updateTask(taskID, status: .completed, associatedPageID: page.id)
             HapticFeedback.shared.trigger(.success)
-            sqliteStore.reloadFromDisk() // 确保数据同步
+            await sqliteStore.reloadFromDisk() // 确保数据同步
             return page
         } catch {
             TaskCenter.shared.updateTask(taskID, status: .failed(error: error.localizedDescription))
@@ -129,18 +202,19 @@ final class IngestStore {
     }
 
     /// 从外部文件直接导入（拖拽/文件选择器），异步处理
-    func importFile(at url: URL) {
+    func importFile(at url: URL) async {
         logger.debug("📥 [IngestStore] 正在导入文件：\(url.lastPathComponent)")
         guard let content = try? String(contentsOf: url) else {
             logger.error("❌ [IngestStore] 无法读取文件内容：\(url.path)")
             return
         }
 
+        let p = await sqliteStore.pages
         IngestQueue.shared.enqueue(
             title: url.deletingPathExtension().lastPathComponent,
             content: content,
             llmService: llmService,
-            pages: sqliteStore.pages
+            pages: p
         ) { [weak self] page in
             guard let self = self else { return }
             var p = page
@@ -161,19 +235,19 @@ final class IngestStore {
            let fileSize = resources.fileSize {
             let singleLimit = 50 * 1024 * 1024
             if fileSize > singleLimit {
-                throw NSError(domain: "IngestStore", code: 2, userInfo: [NSLocalizedDescriptionKey: Localized.tr("ingest.fileTooLarge")])
+                throw NSError(domain: "IngestStore", code: 2, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.fileTooLarge])
             }
 
             // 全局容量限制 (1GB)
             let totalLimit: Int64 = 1024 * 1024 * 1024
-            let currentTotal = sqliteStore.pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
+            let currentTotal = await sqliteStore.pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
             if currentTotal + Int64(fileSize) > totalLimit {
-                throw NSError(domain: "IngestStore", code: 4, userInfo: [NSLocalizedDescriptionKey: Localized.tr("ingest.storageFull")])
+                throw NSError(domain: "IngestStore", code: 4, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.storageFull])
             }
         }
 
         guard let extracted = await ingestService.ingestDocument(at: url, pageStore: sqliteStore) else {
-            throw NSError(domain: "IngestStore", code: 3, userInfo: [NSLocalizedDescriptionKey: Localized.tr("ingest.error")])
+            throw NSError(domain: "IngestStore", code: 3, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.error])
         }
 
         let fileSize = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize).map { Int64($0) } ?? 0

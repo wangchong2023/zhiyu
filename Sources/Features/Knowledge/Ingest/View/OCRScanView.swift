@@ -18,13 +18,13 @@ struct OCRScanView: View {
     var onFinish: ((String, String) -> Void)?
     
     var body: some View {
-        Text(Localized.tr("status.simulatorNotSupported"))
+        Text(L10n.Common.Status.simulatorNotSupported)
     }
 }
 #else
 @MainActor
 struct OCRScanView: View {
-    @Environment(AppStore.self) var store
+    @Environment(IngestStore.self) var ingestStore
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var selectedImage: AppImage?
     @State private var recognizedText = ""
@@ -33,7 +33,7 @@ struct OCRScanView: View {
     @State private var targetTitle = ""
     @State private var targetType: PageType = .source
     @State private var targetCustomIcon: String? = nil
-    @State private var targetTags: [String] = ["OCR", Localized.tr("ocr.scanTag")]
+    @State private var targetTags: [String] = ["OCR", L10n.Ingest.OCR.scanTag]
     @State private var showIconPicker = false
     @State private var showOCRError = false
     @State private var ocrErrorMessage = ""
@@ -70,8 +70,8 @@ struct OCRScanView: View {
                             dismiss()
                         }) {
                             HStack {
-                                Image(systemName: "square.and.pencil")
-                                Text(Localized.tr("ocr.confirmAndEdit"))
+                                Image(systemName: DesignSystem.Icons.squareAndPencil)
+                                Text(L10n.Ingest.OCR.confirmAndEdit)
                             }
                             .font(.headline)
                             .foregroundStyle(.white)
@@ -87,13 +87,13 @@ struct OCRScanView: View {
             }
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(Localized.tr("ocr.title"))
+            .navigationTitle(L10n.Ingest.OCR.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("cancel")) {
+                    Button(L10n.Common.cancel) {
                         dismiss()
                     }
                 }
@@ -104,22 +104,22 @@ struct OCRScanView: View {
             .sheet(isPresented: $showIconPicker) {
                 IconPickerView(selectedIcon: $targetCustomIcon)
             }
-            .alert(Localized.tr("ocr.scanFailed"), isPresented: $showOCRError) {
-                Button(L10n.Common.tr("ok"), role: .cancel) {}
+            .alert(L10n.Ingest.OCR.scanFailed, isPresented: $showOCRError) {
+                Button(L10n.Common.ok, role: .cancel) {}
             } message: {
                 Text(ocrErrorMessage)
             }
-            .alert(L10n.Editor.tr("addTag"), isPresented: $showAddTagInput) {
-                TextField(L10n.Editor.tr("enterTag"), text: $newTagText)
+            .alert(L10n.Editor.addTag, isPresented: $showAddTagInput) {
+                TextField(L10n.Editor.enterTag, text: $newTagText)
                     .accessibilityIdentifier("enterTagName")
-                Button(Localized.tr("ocr.addTag")) {
+                Button(L10n.Ingest.OCR.addTag) {
                     commitNewTag()
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) {
+                Button(L10n.Common.cancel, role: .cancel) {
                     newTagText = ""
                 }
             } message: {
-                Text(L10n.Editor.tr("enterTag"))
+                Text(L10n.Editor.enterTag)
             }
         }
     }
@@ -142,7 +142,7 @@ struct OCRScanView: View {
         
         Task {
             do {
-                let text = try await store.recognizeText(from: image)
+                let text = try await ingestStore.recognizeText(from: image)
                 await MainActor.run {
                     recognizedText = text
                     isProcessing = false

@@ -20,21 +20,21 @@ final class SchemaService {
         .entity: PageSchema(
             type: .entity,
             requiredFields: [
-                L10n.Schema.tr("entity.field.definition"),
-                L10n.Schema.tr("entity.field.attributes"),
-                L10n.Schema.tr("entity.field.relations")
+                L10n.Schema.entity.field.definition,
+                L10n.Schema.entity.field.attributes,
+                L10n.Schema.entity.field.relations
             ],
-            template: L10n.Schema.tr("entity.template"),
-            promptInstruction: L10n.Schema.tr("entity.prompt")
+            template: L10n.Schema.entity.template,
+            promptInstruction: L10n.Schema.entity.prompt
         ),
         .concept: PageSchema(
             type: .concept,
             requiredFields: [
-                L10n.Schema.tr("concept.field.theory"),
-                L10n.Schema.tr("concept.field.applications")
+                L10n.Schema.concept.field.theory,
+                L10n.Schema.concept.field.applications
             ],
-            template: L10n.Schema.tr("concept.template"),
-            promptInstruction: L10n.Schema.tr("concept.prompt")
+            template: L10n.Schema.concept.template,
+            promptInstruction: L10n.Schema.concept.prompt
         )
     ]
 

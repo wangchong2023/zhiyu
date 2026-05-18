@@ -1,7 +1,7 @@
 // WatchPlatformCapabilities.swift
 //
 // 作者: Wang Chong
-// 功能说明: watchOS 平台能力实现，提供降级与空实现。
+// 功能说明: [Shared] watchOS 平台能力实现，提供降级与空实现。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -17,6 +17,14 @@ struct WatchBiometricAuthProvider: BiometricAuthProviderProtocol {
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
+    }
+    
+    func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
     }
 }
 

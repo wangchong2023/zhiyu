@@ -36,14 +36,14 @@ final class AccessibilityService: ObservableObject {
         parts.append(page.pageType.displayName)
         parts.append(page.status.displayName)
         if !page.tags.isEmpty {
-            parts.append(L10n.Accessibility.tr("tags") + ": " + page.tags.joined(separator: ", "))
+            parts.append(L10n.Accessibility.tags + ": " + page.tags.joined(separator: ", "))
         }
-        let wordStr = "\(page.wordCount) " + L10n.Accessibility.tr("words")
+        let wordStr = "\(page.wordCount) " + L10n.Accessibility.words
         parts.append(wordStr)
         return parts.joined(separator: ", ")
     }
     
     static func graphNodeAnnouncement(_ node: GraphNode, linkCount: Int) -> String {
-        "\(node.title), \(node.pageType.displayName), \(linkCount) " + L10n.Accessibility.tr("links")
+        "\(node.title), \(node.pageType.displayName), \(linkCount) " + L10n.Accessibility.links
     }
 }

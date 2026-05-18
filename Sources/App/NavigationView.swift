@@ -77,9 +77,9 @@ struct DetailContentView: View {
 
     private var appLandingView: some View {
         ContentUnavailableView(
-            Localized.tr("sidebar.title"),
+            L10n.Common.Sidebar.title,
             systemImage: "books.vertical.fill",
-            description: Text(Localized.tr("sidebar.allPages"))
+            description: Text(L10n.Common.Sidebar.allPages)
         )
     }
 }

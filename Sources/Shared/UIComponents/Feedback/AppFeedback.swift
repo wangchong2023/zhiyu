@@ -1,7 +1,7 @@
 // AppFeedback.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的反馈与加载状态组件体系。
+// 功能说明: [Shared] 本文件定义了智宇 (ZhiYu) 的反馈与加载状态组件体系。
 // 核心职责：
 // 1. 提供视觉反馈组件，如脉冲点 (Pulse)、闪烁加载 (Shimmer) 及骨架屏 (Skeleton)。
 // 2. 封装成功提示横幅及光晕效果。
@@ -148,7 +148,7 @@ public struct AppSuccessBanner: View {
 
     public var body: some View {
         HStack(spacing: Spacing.tiny + Spacing.atomic) { // 6
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: DesignSystem.Icons.checkCircle)
                 .foregroundStyle(.green)
             Text(message)
                 .font(bannerFont)

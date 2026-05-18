@@ -1,7 +1,7 @@
 // BreadcrumbView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 空间导航面包屑 (UX 视角：解决深度跳转后的心理迷失)
+// 功能说明: [Shared] 空间导航面包屑 (UX 视角：解决深度跳转后的心理迷失)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -36,7 +36,7 @@ struct BreadcrumbView: View {
                         .buttonStyle(.plain)
                         
                         if index < history.count - 1 {
-                            Image(systemName: "chevron.right")
+                            Image(systemName: DesignSystem.Icons.forward)
                                 .font(.system(size: 8))
                                 .foregroundStyle(.appBorder)
                         }

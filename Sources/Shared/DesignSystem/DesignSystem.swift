@@ -1,7 +1,7 @@
 // DesignSystem.swift
 //
 // 作者: Wang Chong
-// 功能说明: 智宇 (ZhiYu) 设计系统核心入口。
+// 功能说明: [Shared] 智宇 (ZhiYu) 设计系统核心入口。
 // 本文件整合了原子令牌 (Tokens)，为应用提供统一的视觉与交互规范。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -58,6 +58,7 @@ public enum DesignSystem {
         // ── 系统图标符号 (来自 Typography.Icons) ──
         public static let trophy = Typography.Icons.trophy
         public static let tag = Typography.Icons.tag
+        public static let tagFill = Typography.Icons.tagFill
         public static let hashtag = Typography.Icons.hashtag
         public static let link = Typography.Icons.link
         public static let sparkles = Typography.Icons.sparkles
@@ -75,6 +76,7 @@ public enum DesignSystem {
         public static let plusCircle = Typography.Icons.plusCircle
         public static let lock = Typography.Icons.lock
         public static let lockOpen = Typography.Icons.lockOpen
+        public static let logout = Typography.Icons.logout
         public static let info = Typography.Icons.info
         public static let check = Typography.Icons.check
         public static let checkCircle = Typography.Icons.checkCircle
@@ -89,6 +91,7 @@ public enum DesignSystem {
         public static let copy = Typography.Icons.copy
         public static let seal = Typography.Icons.seal
         public static let eyeSlash = Typography.Icons.eyeSlash
+        public static let eyeSlashOutline = Typography.Icons.eyeSlashOutline
         public static let eye = Typography.Icons.eye
         public static let faceid = Typography.Icons.faceid
         public static let archive = Typography.Icons.archive
@@ -104,18 +107,101 @@ public enum DesignSystem {
         public static let sendRequest = "paperplane.fill"
         public static let apple = Typography.Icons.apple
         public static let message = Typography.Icons.message
-        public static let sidebarToggle = "sidebar.left"
-        public static let settings = "gearshape"
+        public static let sidebarToggle = Typography.Icons.sidebarLeft
+        public static let settings = Typography.Icons.gearshape
         public static let promptLibrary = "sparkles.rectangle.stack"
         public static let thinking = Typography.Icons.sparkles
+        public static let library = "books.vertical.fill"
+        public static let arrowRight = Typography.Icons.arrowRight
+        public static let arrowLeft = Typography.Icons.arrowLeft
+        public static let arrowUpRightSimple = Typography.Icons.arrowUpRightSimple
+        public static let arrowUpRightSquare = Typography.Icons.arrowUpRightSquare
+        public static let arrowUpRightCircle = Typography.Icons.arrowUpRightCircle
+        public static let arrowDownDoc = Typography.Icons.arrowDownDoc
+        public static let arrowDownCircle = Typography.Icons.arrowDownCircle
+        public static let arrowBranch = Typography.Icons.arrowBranch
+        public static let micFill = Typography.Icons.micFill
+        public static let micSlashFill = Typography.Icons.micSlashFill
+        public static let libraryCircle = "books.vertical.circle.fill"
+        public static let booksVerticalFill = Typography.Icons.booksVerticalFill
+        public static let stackFill = Typography.Icons.stackFill
+        public static let sortUpDown = Typography.Icons.sortUpDown
+        public static let gridOutline = Typography.Icons.gridOutline
+        public static let xmarkCircle = Typography.Icons.xmarkCircle
+        public static let lockShieldFill = Typography.Icons.lockShieldFill
+        public static let shieldFill = Typography.Icons.shieldFill
+        public static let shieldSlash = Typography.Icons.shieldSlash
+        public static let puzzlepieceExtension = Typography.Icons.puzzlepieceExtension
+        public static let pluginOutline = Typography.Icons.pluginOutline
+        public static let storefront = Typography.Icons.storefront
+        public static let brain = Typography.Icons.brain
+        public static let keyFill = Typography.Icons.keyFill
+        public static let trayFill = Typography.Icons.trayFill
+        public static let scope = Typography.Icons.scope
+        public static let plusMagnifyingglass = Typography.Icons.plusMagnifyingglass
+        public static let minusMagnifyingglass = Typography.Icons.minusMagnifyingglass
+        public static let viewfinder = Typography.Icons.viewfinder
+        public static let view3d = Typography.Icons.view3d
+        public static let fullscreenEnter = Typography.Icons.fullscreenEnter
+        public static let fullscreenExit = Typography.Icons.fullscreenExit
+        public static let refreshCircle = Typography.Icons.refreshCircle
+        public static let refreshCircleFill = Typography.Icons.refreshCircleFill
+        public static let chartBarXaxis = Typography.Icons.chartBarXaxis
+        public static let arrowTriangleBranch = Typography.Icons.arrowTriangleBranch
+        public static let cellularbars = Typography.Icons.cellularbars
+        public static let flag = Typography.Icons.flag
+        public static let docOnClipboardFill = Typography.Icons.docOnClipboardFill
+        public static let boltShieldFill = Typography.Icons.boltShieldFill
+        public static let loop = Typography.Icons.arrowTriangle2Circlepath
+        public static let exclamationCircleFill = Typography.Icons.exclamationmarkCircleFill
+        public static let circle = Typography.Icons.circle
+        public static let emptySquare = Typography.Icons.square
+        public static let checkSquareFill = Typography.Icons.checkSquareFill
+        public static let safari = Typography.Icons.safari
+        public static let visionpro = Typography.Icons.visionpro
+        public static let cubeTransparent = Typography.Icons.cubeTransparentFill
+        public static let handTap = Typography.Icons.handTapFill
+        public static let eyeFill = Typography.Icons.eyeFill
+        public static let personCropPlus = Typography.Icons.personCropCircleBadgePlus
+        public static let filterCircle = Typography.Icons.filterCircle
+        public static let line3Horizontal = Typography.Icons.line3Horizontal
+        public static let waveform = Typography.Icons.waveform
+        public static let waveformCircleFill = Typography.Icons.waveformCircleFill
+        public static let documentFill = Typography.Icons.documentFill
+        public static let document = Typography.Icons.document
+        public static let photoOnRectangle = Typography.Icons.photoOnRectangle
+        public static let highlighterFill = Typography.Icons.highlighterFill
+        public static let starSquareFill = Typography.Icons.starSquareFill
+        public static let docOnClipboard = Typography.Icons.docOnClipboard
+        public static let listBulletRectangle = Typography.Icons.listBulletRectangle
+        public static let listBulletRectanglePortrait = Typography.Icons.listBulletRectanglePortrait
+        public static let trashSlashOutline = Typography.Icons.trashSlashOutline
+        public static let trashSlash = Typography.Icons.trashSlash
+        public static let pencilLine = Typography.Icons.pencilLine
+        public static let pencilOutline = Typography.Icons.pencilOutline
+        public static let squareAndPencil = Typography.Icons.squareAndPencil
+        public static let quoteOpening = Typography.Icons.quoteOpening
+        public static let quoteClosing = Typography.Icons.quoteClosing
+        public static let docOnDocFill = Typography.Icons.docOnDocFill
+        public static let circleGrid3x3Fill = Typography.Icons.circleGrid3x3Fill
+        public static let hexagonGridFill = Typography.Icons.hexagonGridFill
 
+        public static let quoteBubble = Typography.Icons.quoteBubbleFill
+        public static let bold = Typography.Icons.bold
+        public static let italic = Typography.Icons.italic
+        public static let xmark = Typography.Icons.xmark
+        public static let personCrop = Typography.Icons.personCropCircle
+        public static let personCropFill = Typography.Icons.personCropCircleFill
         public static let back = Typography.Icons.back
+        public static let backToHub = Typography.Icons.backCircle
         public static let forward = Typography.Icons.forward
         public static let forwardCircle = Typography.Icons.forwardCircle
         public static let arrowUpRight = Typography.Icons.arrowUpRight
         public static let search = Typography.Icons.search
         public static let command = Typography.Icons.command
         public static let checklist = Typography.Icons.checklist
+        public static let up = Typography.Icons.chevronUp
+        public static let down = Typography.Icons.chevronDown
         public static let grid = Typography.Icons.grid
         public static let list = Typography.Icons.list
         public static let chevronUpDown = Typography.Icons.chevronUpDown
@@ -163,6 +249,44 @@ public enum DesignSystem {
         public static let concept = Typography.Icons.concept
         public static let source = Typography.Icons.source
         public static let comparison = Typography.Icons.comparison
+        
+        // ── 扩展映射 ──
+        public static let photoAlbum = Typography.Icons.photoAlbum
+        public static let highlighter = Typography.Icons.highlighter
+        public static let wand = Typography.Icons.wand
+        public static let aiSummary = Typography.Icons.wand
+        public static let aiExtract = Typography.Icons.sealCheck
+        public static let mindmap = Typography.Icons.mindmap
+        public static let quiz = Typography.Icons.questionCircle
+        public static let questionCircle = Typography.Icons.questionCircle
+        public static let slides = Typography.Icons.playRectangle
+        public static let report = Typography.Icons.weeklyInsight
+        public static let infographic = Typography.Icons.chartBarDoc
+        public static let lab = Typography.Icons.flask
+        public static let expandStub = Typography.Icons.textBadgePlus
+        public static let findLinks = Typography.Icons.linkBadgePlus
+        public static let sortName = Typography.Icons.sortName
+        public static let sortDate = Typography.Icons.calendar
+        public static let wordCount = Typography.Icons.textformat
+        public static let pushToCloud = Typography.Icons.icloudArrowUp
+        public static let pullFromCloud = Typography.Icons.pullFromCloud
+        public static let bidirectionalSync = Typography.Icons.icloudSync
+        public static let clearCloudData = Typography.Icons.trashICloud
+        public static let injectDemoData = Typography.Icons.testtube
+        public static let stressTest = Typography.Icons.gauge100
+        public static let llmConfig = Typography.Icons.sliderHorizontal
+        public static let theme = Typography.Icons.paintbrush
+        public static let language = Typography.Icons.globe
+        public static let llmSettings = Typography.Icons.brainProfile
+        public static let promptLab = Typography.Icons.terminal
+        public static let iCloudSync = Typography.Icons.icloud
+        public static let operationLog = Typography.Icons.listBulletRectangle
+        public static let privacyMode = Typography.Icons.eyeSlash
+        public static let developer = Typography.Icons.hammer
+        public static let promptWorkshop = Typography.Icons.flaskFill
+        public static let macwindowBadgePlus = Typography.Icons.macwindowBadgePlus
+        public static let photo = Typography.Icons.photo
+        public static let externaldrive = Typography.Icons.externaldrive
     }
     
     // 兼容原 DesignSystem.iconTiny 等命名
@@ -575,7 +699,9 @@ public enum DesignSystem {
     public typealias EmptyState = AppEmptyState
     public typealias LoadingOverlay = AppLoadingOverlay
     public typealias Toast = AppToast
+    #if !os(watchOS)
     public typealias Tooltip = AppTooltip
+    #endif
     
     // MARK: - Domain Specific Layout Constants
     public enum Domain {
@@ -593,6 +719,9 @@ public enum DesignSystem {
             public struct Chat {
                 public static let pulsingDotSize: CGFloat = 6
                 public static let bubbleIconScale: CGFloat = 1.2
+                public static let avatarSize: CGFloat = 22
+                public static let bubbleCornerRadius: CGFloat = 18
+                public static let referencePanelCornerRadius: CGFloat = 6
             }
         }
     }

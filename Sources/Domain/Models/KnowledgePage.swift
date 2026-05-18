@@ -19,7 +19,7 @@ import GRDB
 
 // MARK: - Knowledge Page
 /// 知识管理系统核心数据模型
-public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord, Sendable {
+public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord, Sendable, KnowledgePageRepresentable {
     public static let databaseTableName: String = "pages"
     
     public enum CodingKeys: String, CodingKey {
@@ -38,31 +38,66 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, P
         case lamportTimestamp = "lamport_timestamp"
     }
     
+    /// 唯一标识符
     public var id: UUID
+    
+    /// 页面标题
     public var title: String
+    
+    /// 页面类型 (concept, entity, source, etc.)
     public var pageType: PageType
-    public var customIcon: String?   // User-selected SF Symbol, nil = use type.icon
+    
+    /// 用户自定义图标 (SF Symbol 名称)，若为 nil 则使用类型默认图标
+    public var customIcon: String?
+    
+    /// Markdown 原始内容
     public var content: String
+    
+    /// 别名列表
     public var aliases: [String]
+    
+    /// 标签列表
     public var tags: [String]
+    
+    /// 页面处理状态
     public var status: PageStatus
+    
+    /// AI 提取内容的置信度
     public var confidence: Confidence
-    public var sources: [String]  // references to raw source IDs
+    
+    /// 原始资料来源 ID 引用列表
+    public var sources: [String]
+    
+    /// 关联页面 ID 列表
     public var relatedPageIDs: [UUID]
+    
+    /// 是否已置顶
     public var isPinned: Bool
+    
+    /// 内容哈希，用于检测变更
     public var contentHash: String?
+    
+    /// 创建时间
     public var createdAt: Date
+    
+    /// 更新时间
     public var updatedAt: Date
+    
     // MARK: - 分布式冲突解决 (LWW 策略)
-    public var lamportTimestamp: Int64 // 逻辑时钟，用于解决多端同步冲突
+    /// 逻辑时钟，用于解决多端同步冲突
+    public var lamportTimestamp: Int64
     
     // MARK: - 溯源字段 (Karpathy 模式)
-    public var sourceURL: String?      // 原始资料链接 (网页或 YouTube)
-    public var rawTextSnippet: String? // 原始资料片段，用于校验
-    public var fileSize: Int64?       // 文件大小 (字节)
-    public var sourceType: String?    // 来源类型 (pdf, text, doc, etc.)
+    /// 原始资料链接 (网页或 YouTube)
+    public var sourceURL: String?
+    /// 原始资料片段，用于校验
+    public var rawTextSnippet: String?
+    /// 文件大小 (字节)
+    public var fileSize: Int64?
+    /// 来源类型 (pdf, text, doc, etc.)
+    public var sourceType: String?
     
-    /// Display icon: customIcon if set, otherwise pageType.icon
+    /// 显示图标：优先使用自定义图标，否则使用页面类型默认图标
     public var displayIcon: String {
         customIcon ?? pageType.icon
     }
@@ -152,14 +187,14 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, P
         }
     }
     
-    // Extract [[knowledge links]] from content
+    /// 执行 [[知识链接]] 提取
     public var outgoingLinks: [String] {
         AppLinkProcessor.extractOutgoingLinks(from: content)
     }
     
+    /// 计算字数 (支持中英混排)
+    /// 逻辑：中文按字符计费；英文按单词计数。
     public var wordCount: Int {
-        // Support both Chinese and English word counting
-        // Chinese: count CJK characters individually; English: count by spaces
         var count = 0
         var inEnglishWord = false
         
@@ -181,11 +216,12 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, P
         return count
     }
     
+    /// 是否为存根页面 (内容过少)
     public var isStub: Bool {
         content.count < 100
     }
     
-    
+    /// 获取存储文件夹名称
     public var folderName: String {
         switch pageType {
         case .entity: return "entities"

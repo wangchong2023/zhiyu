@@ -24,7 +24,7 @@ protocol ModuleRegistrar {
 struct CoreModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
         // @SRS-7.1: 初始化全局日志系统
-        let logger = Logger()
+        let logger = Logger.shared
         container.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
         
         #if os(iOS) && !os(watchOS)
@@ -78,7 +78,9 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         #endif
 
         #if os(iOS) && !targetEnvironment(macCatalyst) && !os(watchOS)
-        container.register(ActivityService.shared, for: ActivityService.self)
+        container.register(ActivityService.shared as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
+        #else
+        container.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
         #endif
         
         #if os(macOS)
@@ -149,7 +151,13 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         print("📦 [DI] 开始注册存储模块...")
         
         // @RR-01: 初始化 SQLite 核心存储层
-        let sqliteStore = SQLiteStore()
+        // 智宇架构核心：数据库必须在 Storage 模块注册前就绪，否则视为不可恢复的配置错误
+        guard let writer = DatabaseManager.shared.dbWriter else {
+            fatalError("❌ [DI] 数据库初始化失败：dbWriter 为空。请检查 DatabaseManager 初始化顺序。")
+        }
+        
+        let sqliteStore = SQLiteStore(dbWriter: writer)
+        container.register(sqliteStore as any AnyPageStoreCapabilities, for: (any AnyPageStoreCapabilities).self)
         container.register(sqliteStore, for: SQLiteStore.self)
         
         container.register(BackupService(), for: BackupService.self)
@@ -158,34 +166,27 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         // 业务特定的 InsightStore 现由 AppStore 统一实例化并注册，确保状态单一源
         
         // @PR-05: 优化数据库冷启动加载时间
-        if let writer = DatabaseManager.shared.dbWriter {
-            print("✅ [DI] 数据库写入器已就绪，注册垂直仓库...")
-            
-            let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
-            container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
-            container.register(knowledgeRepo, for: KnowledgePageRepository.self)
-            
-            let vectorRepo = VectorDataRepository(dbWriter: writer)
-            container.register(vectorRepo as any VectorRepository, for: (any VectorRepository).self)
-            container.register(vectorRepo, for: VectorDataRepository.self)
-            
-            let governanceRepo = AIGovernanceRepository(dbWriter: writer)
-            container.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
-            container.register(governanceRepo, for: AIGovernanceRepository.self)
-            
-            let embeddingManager = EmbeddingManager(repository: vectorRepo)
-            container.register(embeddingManager, for: EmbeddingManager.self)
-            
-            // 异步加载向量缓存以确保启动性能
-            Task {
-                await embeddingManager.loadInitialCache()
-            }
-        } else {
-            print("⚠️ [DI] 警告：数据库写入器尚未就绪！注册空壳仓库以防崩溃。")
-            let dummyWriter = try! DatabaseQueue()
-            container.register(KnowledgePageRepository(dbWriter: dummyWriter) as any KnowledgeRepository, for: (any KnowledgeRepository).self)
-            container.register(VectorDataRepository(dbWriter: dummyWriter) as any VectorRepository, for: (any VectorRepository).self)
-            container.register(AIGovernanceRepository(dbWriter: dummyWriter) as any GovernanceRepository, for: (any GovernanceRepository).self)
+        // 此时 writer 已由上方 guard 确认存在
+        print("✅ [DI] 数据库写入器已就绪，注册垂直仓库...")
+        
+        let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
+        container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
+        container.register(knowledgeRepo, for: KnowledgePageRepository.self)
+        
+        let vectorRepo = VectorDataRepository(dbWriter: writer)
+        container.register(vectorRepo as any VectorRepository, for: (any VectorRepository).self)
+        container.register(vectorRepo, for: VectorDataRepository.self)
+        
+        let governanceRepo = AIGovernanceRepository(dbWriter: writer)
+        container.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
+        container.register(governanceRepo, for: AIGovernanceRepository.self)
+        
+        let embeddingManager = EmbeddingManager(repository: vectorRepo)
+        container.register(embeddingManager, for: EmbeddingManager.self)
+        
+        // 异步加载向量缓存以确保启动性能
+        Task {
+            await embeddingManager.loadInitialCache()
         }
     }
 }

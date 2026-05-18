@@ -15,14 +15,14 @@ import Combine
 /// 搜索状态存储，负责处理搜索过滤、防抖及结果缓存。
 @MainActor
 @Observable
-final class SearchStore {
-    var searchText: String = "" {
+public final class SearchStore {
+    public var searchText: String = "" {
         didSet { performDebouncedSearch(query: searchText) }
     }
-    var searchResults: [KnowledgePage] = []
-    var isSearching = false
-    var lastSearchDiagnostic: SearchDiagnosticInfo?
-    var isAdvancedSearching = false
+    public var searchResults: [KnowledgePage] = []
+    public var isSearching = false
+    public var lastSearchDiagnostic: SearchDiagnosticInfo?
+    public var isAdvancedSearching = false
 
     @ObservationIgnored private var searchTask: Task<Void, Never>?
     @ObservationIgnored @Inject private var linkService: LinkService
@@ -30,16 +30,7 @@ final class SearchStore {
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
-    init() {
-        AppEventBus.shared.subscribe()
-            .receive(on: RunLoop.main)
-            .sink { [weak self] event in
-                if case .clearAllDataRequested = event {
-                    self?.clearAll()
-                }
-            }
-            .store(in: &cancellables)
-    }
+    init() {}
 
     /// 执行高级（混合）搜索
     func performAdvancedSearch(query: String) async -> [KnowledgePage] {
@@ -48,7 +39,7 @@ final class SearchStore {
 
         let res = await linkService.hybridSearchWithDiagnostics(
             query: query,
-            in: sqliteStore.pages,
+            in: await sqliteStore.pages,
             embeddingManager: sqliteStore.embeddingManager
         )
 
@@ -74,7 +65,7 @@ final class SearchStore {
 
             let res = await linkService.hybridSearchWithDiagnostics(
                 query: query,
-                in: sqliteStore.pages,
+                in: await sqliteStore.pages,
                 embeddingManager: sqliteStore.embeddingManager
             )
 

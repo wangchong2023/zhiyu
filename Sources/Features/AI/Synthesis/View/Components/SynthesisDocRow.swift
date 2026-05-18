@@ -43,7 +43,7 @@ struct SynthesisDocRow: View {
             // ══ 固定宽度的选择指示器插槽 ══
             Group {
                 if editMode == .active {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    Image(systemName: isSelected ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.circle)
                         .font(.system(size: DesignSystem.Graph.nodeSizeReference))
                         .foregroundStyle(isSelected ? .appAccent : .appSecondary.opacity(DesignSystem.disabledOpacity * 1.33)) // 0.4
                         .onTapGesture {
@@ -79,7 +79,7 @@ struct SynthesisDocRow: View {
             Spacer()
             
             if editMode == .inactive {
-                Image(systemName: "chevron.right")
+                Image(systemName: DesignSystem.Icons.forward)
                     .font(.system(size: DesignSystem.captionFontSize))
                     .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.6)) // 0.5
             }
@@ -94,14 +94,14 @@ struct SynthesisDocRow: View {
             Button {
                 onDelete()
             } label: {
-                Label(L10n.Common.tr("delete"), systemImage: "trash")
+                Label(L10n.Common.delete, systemImage: DesignSystem.Icons.delete)
             }
             .tint(.red)
             
             Button {
                 onRename()
             } label: {
-                Label(Localized.tr("tag.rename"), systemImage: "pencil")
+                Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
             }
             .tint(.orange)
         }
@@ -109,13 +109,13 @@ struct SynthesisDocRow: View {
             Button {
                 onRename()
             } label: {
-                Label(Localized.tr("tag.rename"), systemImage: "pencil")
+                Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
             }
             
             Button(role: .destructive) {
                 onDelete()
             } label: {
-                Label(L10n.Common.tr("delete"), systemImage: "trash")
+                Label(L10n.Common.delete, systemImage: DesignSystem.Icons.delete)
             }
         }
     }

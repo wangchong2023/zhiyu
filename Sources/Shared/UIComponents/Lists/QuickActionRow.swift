@@ -1,7 +1,7 @@
 // QuickActionRow.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了快速操作行组件，用于在仪表盘或工具箱中提供直观的功能入口。
+// 功能说明: [Shared] 本文件定义了快速操作行组件，用于在仪表盘或工具箱中提供直观的功能入口。
 // MARK: [PR-03] 统一快速操作项规范，增强交互反馈与视觉层级
 // 版本: 1.1
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
@@ -64,7 +64,7 @@ public struct QuickActionRow: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
+                Image(systemName: DesignSystem.Icons.forward)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary.opacity(Colors.dimmedOpacity))
             }

@@ -54,7 +54,7 @@ struct KnowledgePageListContent: View {
             .scrollIndicators(.hidden)
             
         }
-        .navigationTitle(filterType?.displayName ?? Localized.tr("sidebar.pageList"))
+        .navigationTitle(filterType?.displayName ?? L10n.Common.Sidebar.pageList)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbarBackground(.visible, for: .navigationBar)
@@ -65,7 +65,7 @@ struct KnowledgePageListContent: View {
                     HapticFeedback.shared.trigger(.selection)
                     Router.shared.pop()
                 }) {
-                    Image(systemName: "chevron.left")
+                    Image(systemName: DesignSystem.Icons.back)
                         .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
                         .foregroundStyle(.appText)
                         .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.Action.buttonHeight)
@@ -93,21 +93,21 @@ struct KnowledgePageListContent: View {
             VaultInsightsPanel()
         }
         .confirmationDialog(
-            pageToDelete.map { Localized.trf("page.deletePageTitle", $0.title) } ?? Localized.tr("page.deletePage"),
+            pageToDelete.map { L10n.Vault.Page.deletePageTitle( $0.title) } ?? L10n.Knowledge.Page.deletePage,
             isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button(Localized.tr("page.deletePage"), role: .destructive) {
+            Button(L10n.Knowledge.Page.deletePage, role: .destructive) {
                 if let page = pageToDelete {
                     Task { await store.deletePage(page) }
                     HapticFeedback.shared.trigger(.success)
                 }
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {
+            Button(L10n.Common.cancel, role: .cancel) {
                 pageToDelete = nil
             }
         } message: {
-            Text(Localized.tr("settings.clearAll.message"))
+            Text(L10n.Settings.clearAll.message)
         }
     }
     
@@ -146,17 +146,17 @@ struct KnowledgePageListContent: View {
         Section {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DesignSystem.standardPadding) {
-                    KnowledgeStatItem(label: L10n.Dashboard.tr("totalPages"), value: "\(store.pages.count)", color: .appAccent)
-                    KnowledgeStatItem(label: L10n.Dashboard.tr("totalLinks"), value: "\(totalLinks)", color: .appSource)
-                    KnowledgeStatItem(label: L10n.Dashboard.tr("pageList.tags"), value: "\(store.tags.count)", color: .appConcept)
-                    KnowledgeStatItem(label: L10n.Dashboard.tr("pageList.sources"), value: "\(store.sourceCount)", color: .appSource)
+                    KnowledgeStatItem(label: L10n.Dashboard.totalPages, value: "\(store.pages.count)", color: .appAccent)
+                    KnowledgeStatItem(label: L10n.Dashboard.totalLinks, value: "\(totalLinks)", color: .appSource)
+                    KnowledgeStatItem(label: L10n.Dashboard.pageList.tags, value: "\(store.tags.count)", color: .appConcept)
+                    KnowledgeStatItem(label: L10n.Dashboard.pageList.sources, value: "\(store.sourceCount)", color: .appSource)
                 }
                 .padding(.horizontal, DesignSystem.tiny)
             }
             .padding(.vertical, DesignSystem.tiny)
         } header: {
             HStack {
-                Text(L10n.Dashboard.tr("pageList.overview"))
+                Text(L10n.Dashboard.pageList.overview)
                     .font(.subheadline.bold())
                     .foregroundStyle(.appSecondary)
                 Spacer()
@@ -183,7 +183,7 @@ struct KnowledgePageListContent: View {
                 }
             } header: {
                 HStack {
-                    Label(Localized.trf("pageList.entityCount", entities.count), systemImage: DesignSystem.Icons.entity)
+                    Label(L10n.Dashboard.pageList.entityCount(entities.count), systemImage: DesignSystem.Icons.entity)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appEntity)
                     Spacer()
@@ -211,7 +211,7 @@ struct KnowledgePageListContent: View {
                 }
             } header: {
                 HStack {
-                    Label(Localized.trf("pageList.conceptCount", concepts.count), systemImage: DesignSystem.Icons.concept)
+                    Label(L10n.Dashboard.pageList.conceptCount(concepts.count), systemImage: DesignSystem.Icons.concept)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appConcept)
                     Spacer()
@@ -239,7 +239,7 @@ struct KnowledgePageListContent: View {
                 }
             } header: {
                 HStack {
-                    Label(Localized.trf("pageList.sourceCount", sources.count), systemImage: DesignSystem.Icons.source)
+                    Label(L10n.Dashboard.pageList.sourceCount(sources.count), systemImage: DesignSystem.Icons.source)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appSource)
                     Spacer()
@@ -267,7 +267,7 @@ struct KnowledgePageListContent: View {
                 }
             } header: {
                 HStack {
-                    Label(Localized.trf("pageList.comparisonCount", comparisons.count), systemImage: DesignSystem.Icons.comparison)
+                    Label(L10n.Dashboard.pageList.comparisonCount(comparisons.count), systemImage: DesignSystem.Icons.comparison)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appComparison)
                     Spacer()
@@ -361,10 +361,9 @@ struct KnowledgePageModernRow: View {
                 }
             }
             
-            // 4. 元数据底部栏 (可读性增强)
             HStack(spacing: DesignSystem.medium) {
                 metadataItem(icon: DesignSystem.Icons.history, text: page.updatedAt.timeAgoDisplay())
-                metadataItem(icon: "text.alignleft", text: Localized.trf("pageList.wordCount", page.wordCount))
+                metadataItem(icon: DesignSystem.Icons.wordCount, text: L10n.Dashboard.pageList.wordCount(page.wordCount))
                 
                 if !page.outgoingLinks.isEmpty {
                     metadataItem(icon: DesignSystem.Icons.link, text: "\(page.outgoingLinks.count)")

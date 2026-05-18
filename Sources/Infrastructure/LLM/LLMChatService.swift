@@ -22,7 +22,7 @@ final class LLMChatService: Sendable {
     // MARK: - 请求构造
 
     /// 构建标准对话消息数组
-    private func buildChatMessages(systemPrompt: String, query: String, history: [ChatMessage]) -> [[String: Any]] {
+    private func buildChatMessages(systemPrompt: String, query: String, history: [ChatMessageDTO]) -> [[String: Any]] {
         let fullSystemPrompt = systemPrompt + PromptService.shared.languageInstruction
         var messages: [[String: Any]] = [["role": "system", "content": fullSystemPrompt]]
         
@@ -37,7 +37,7 @@ final class LLMChatService: Sendable {
     }
 
     /// 构造非流式请求体
-    private func makeChatRequestBody(systemPrompt: String, query: String, history: [ChatMessage]) -> [String: Any] {
+    private func makeChatRequestBody(systemPrompt: String, query: String, history: [ChatMessageDTO]) -> [String: Any] {
         [
             "model": model,
             "messages": buildChatMessages(systemPrompt: systemPrompt, query: query, history: history),
@@ -47,7 +47,7 @@ final class LLMChatService: Sendable {
     }
 
     /// 构造流式请求体
-    private func makeStreamingRequestBody(systemPrompt: String, query: String, history: [ChatMessage]) -> [String: Any] {
+    private func makeStreamingRequestBody(systemPrompt: String, query: String, history: [ChatMessageDTO]) -> [String: Any] {
         var body = makeChatRequestBody(systemPrompt: systemPrompt, query: query, history: history)
         body["stream"] = true
         return body
@@ -56,7 +56,7 @@ final class LLMChatService: Sendable {
     // MARK: - 对话执行
 
     /// 执行单次非流式对话
-    func chat(systemPrompt: String, query: String, history: [ChatMessage]) async throws -> String {
+    func chat(systemPrompt: String, query: String, history: [ChatMessageDTO]) async throws -> String {
         let requestBody = makeChatRequestBody(systemPrompt: systemPrompt, query: query, history: history)
         let response = try await client.sendRequest(body: requestBody)
         
@@ -71,7 +71,7 @@ final class LLMChatService: Sendable {
     }
 
     /// 执行流式对话，返回异步抛出流
-    func streamChat(systemPrompt: String, query: String, history: [ChatMessage]) -> AsyncThrowingStream<String, Error> {
+    func streamChat(systemPrompt: String, query: String, history: [ChatMessageDTO]) -> AsyncThrowingStream<String, Error> {
         let requestBody = makeStreamingRequestBody(systemPrompt: systemPrompt, query: query, history: history)
         let localClient = self.client
         

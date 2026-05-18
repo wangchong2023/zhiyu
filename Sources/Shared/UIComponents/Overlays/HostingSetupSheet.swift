@@ -1,7 +1,7 @@
 // HostingSetupSheet.swift
 //
 // 作者: Wang Chong
-// 功能说明: struct HostingSetupSheet
+// 功能说明: [Shared] struct HostingSetupSheet
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -31,7 +31,7 @@ struct HostingSetupSheet: View {
                 .padding()
             }
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(L10n.Collaboration.tr("hostSession"))
+            .navigationTitle(L10n.Collaboration.hostSession)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -39,24 +39,24 @@ struct HostingSetupSheet: View {
     }
     
     private var headerIcon: some View {
-        Image(systemName: "antenna.radiowaves.left.and.right")
+        Image(systemName: DesignSystem.Icons.antenna)
             .font(.system(size: 48))
             .foregroundStyle(.appAccent)
     }
     
     private var titleText: some View {
-        Text(L10n.Collaboration.tr("hostSetup"))
+        Text(L10n.Collaboration.hostSetup)
             .font(.headline)
             .foregroundStyle(.appText)
     }
     
     private var roomNameField: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(L10n.Collaboration.tr("roomName"))
+            Text(L10n.Collaboration.roomName)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
-            TextField(L10n.Collaboration.tr("roomNamePlaceholder"), text: $roomName)
+            TextField(L10n.Collaboration.roomNamePlaceholder, text: $roomName)
                 #if !os(watchOS)
                 .textFieldStyle(.roundedBorder)
                 #endif
@@ -66,13 +66,13 @@ struct HostingSetupSheet: View {
     
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.Collaboration.tr("howItWorks"))
+            Text(L10n.Collaboration.howItWorks)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
-            CollabInfoRow(icon: "wifi", text: L10n.Collaboration.tr("info.local"))
-            CollabInfoRow(icon: "lock.shield.fill", text: L10n.Collaboration.tr("info.encrypted"))
-            CollabInfoRow(icon: "person.2.fill", text: L10n.Collaboration.tr("info.maxPeers"))
+            CollabInfoRow(icon: "wifi", text: L10n.Collaboration.info.local)
+            CollabInfoRow(icon: DesignSystem.Icons.lockShieldFill, text: L10n.Collaboration.info.encrypted)
+            CollabInfoRow(icon: DesignSystem.Icons.persons, text: L10n.Collaboration.info.maxPeers)
         }
         .padding()
         .background(Color.appCard)
@@ -81,11 +81,11 @@ struct HostingSetupSheet: View {
     
     private var startButton: some View {
         Button(action: {
-            let name = roomName.isEmpty ? L10n.Collaboration.tr("room") : roomName
+            let name = roomName.isEmpty ? L10n.Collaboration.room : roomName
             collabService.startHosting(roomName: name)
             dismiss()
         }) {
-            Text(L10n.Collaboration.tr("startHosting"))
+            Text(L10n.Collaboration.startHosting)
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)

@@ -25,7 +25,7 @@ struct ChatWelcomeView: View {
                 VStack(alignment: .leading, spacing: DesignSystem.wide) {
                     // 1. 我的指令 (置顶)
                     SuggestionGroupView(
-                        title: L10n.Chat.tr("group.user"),
+                        title: L10n.Chat.group.user,
                         icon: DesignSystem.Icons.pinFill,
                         queries: promptService.userShortcuts.map { $0.text }
                     )
@@ -34,11 +34,11 @@ struct ChatWelcomeView: View {
                     if coordinator.isGeneratingAIQuestions {
                         HStack {
                             ProgressView().scaleEffect(0.8)
-                            Text(L10n.Chat.tr("ai.thinking")).font(.caption).foregroundStyle(.appSecondary)
+                            Text(L10n.Chat.ai.thinking).font(.caption).foregroundStyle(.appSecondary)
                         }.padding(.leading)
                     } else if !coordinator.insightfulQuestions.isEmpty {
                         SuggestionGroupView(
-                            title: L10n.Chat.tr("group.ai"),
+                            title: L10n.Chat.group.ai,
                             icon: DesignSystem.Icons.sparkles,
                             queries: coordinator.insightfulQuestions,
                             color: .appAccent
@@ -67,7 +67,7 @@ struct SuggestionGroupView: View {
             // 标题现在支持点击直接触发“总体探索”
             Button(action: {
                 HapticFeedback.shared.trigger(.link)
-                let query = Localized.trf("chat.deepExplorePrompt", title)
+                let query = L10n.Chat.deepExplorePrompt(title)
                 Task { await coordinator.sendMessage(query: query, pages: store.pages) }
             }) {
                 HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {

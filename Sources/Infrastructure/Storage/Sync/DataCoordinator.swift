@@ -23,10 +23,8 @@ final class DataCoordinator {
     /// 同步任务句柄
     private var syncTask: Task<Void, Never>?
     
-    init() {
-        // 启动时初次同步
-        sync()
-    }
+    /// 构造函数：由于强依赖通过外部 DI 注入，不在此处直接同步触发 sync() 副作用以避免启动并发注册竞争
+    init() {}
     
     /// 执行数据同步编排
     /// 负责监控存储层的页面变化，并触发向量化同步任务 (@PR-02, @PR-05)
@@ -45,10 +43,11 @@ final class DataCoordinator {
             )
 
             // 2. 触发向量化同步 (@RR-01: 确保向量存储与主库最终一致性)
-            await self.embeddingManager.syncEmbeddings(pages: self.sqliteStore.pages)
+            let currentPages = await self.sqliteStore.pages
+            await self.embeddingManager.syncEmbeddings(pages: currentPages)
             
             // 3. 触发 Spotlight 索引同步
-            SpotlightService.shared.indexPages(self.sqliteStore.pages)
+            SpotlightService.shared.indexPages(currentPages)
 
             self.logger.addLog(
                 action: .sync,

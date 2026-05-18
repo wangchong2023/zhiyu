@@ -48,6 +48,9 @@ public enum AppRoute: Hashable, Identifiable {
     /// AI 合成实验室 (深度引用、知识重组与合成) -> `SynthesisView`
     case synthesis
     
+    /// 当前 AI 会话信源 (对标 NotebookLM) -> `SourceView`
+    case sources
+    
     /// 应用设置页面 (个性化、存储与 AI 模型配置) -> `SettingsView`
     case settings
     
@@ -109,13 +112,37 @@ public enum AppRoute: Hashable, Identifiable {
         case .graph: return "graph"
         case .quiz: return "quiz"
         case .medalWall: return "medalWall"
+        case .sources: return "sources"
+        }
+    }
+    
+    /// 获取该路由对应的侧边栏选中项
+    public var sidebarSelection: SidebarSelection? {
+        switch self {
+        case .notebookHub, .dashboard, .medalWall: return .tool(.dashboard)
+        case .pageList(let type): return type == nil ? .tool(.pageList) : .filteredIndex(type!)
+        case .tagCloud: return .tool(.tagCloud)
+        case .taskCenter: return .tool(.taskCenter)
+        case .chat: return .tool(.chat)
+        case .synthesis, .quiz: return .tool(.synthesis)
+        case .log: return .tool(.log)
+        case .collab: return .tool(.collab)
+        case .weeklyReport: return .tool(.weeklyReport)
+        case .lint: return .tool(.lint)
+        case .pluginMarket: return .tool(.pluginMarket)
+        case .search: return .tool(.search)
+        case .ingest: return .tool(.ingest)
+        case .graph: return .tool(.graph)
+        case .sources: return .tool(.sources)
+        case .pageDetail(let id): return .page(id)
+        case .settings, .help, .about: return nil
         }
     }
     
     /// 获取该路由所属的业务领域
     public var domain: FeatureDomain {
         switch self {
-        case .notebookHub, .pageList, .pageDetail, .tagCloud, .ingest, .graph, .search:
+        case .notebookHub, .pageList, .pageDetail, .tagCloud, .ingest, .graph, .search, .sources:
             return .knowledge
         case .chat, .synthesis, .taskCenter, .weeklyReport, .quiz:
             return .ai
@@ -143,6 +170,11 @@ final class Router {
         didSet {
             if let selection = sidebarSelection {
                 syncTab(for: selection)
+                
+                // 触发插件事件：页面打开
+                if case .page(let id) = selection {
+                    PluginRegistry.shared.emitEvent("onFileOpen", data: id.uuidString)
+                }
             }
         }
     }
@@ -170,9 +202,9 @@ final class Router {
     }
     
     /// 当前主 Tab (通过 UserDefaults 持久化，防止后台切换后状态丢失)
-    var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: "app_selected_tab") ?? "") ?? .knowledge {
+    var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.selectedTab) ?? "") ?? .knowledge {
         didSet {
-            UserDefaults.standard.set(selectedTab.rawValue, forKey: "app_selected_tab")
+            UserDefaults.standard.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
         }
     }
     
@@ -182,6 +214,19 @@ final class Router {
     /// 强制 UI 刷新标识（主要用于多语言切换）
     var languageForceUpdate: Bool = false
     
+    /// 是否正在显示设置面板
+    var isShowingSettingsSheet: Bool = false
+    
+    /// 触发全局语言刷新
+    func triggerLanguageRefresh() {
+        languageForceUpdate.toggle()
+    }
+    
+    /// 关闭当前显示的 sheet (通过单例路由协调)
+    func dismissSheet() {
+        isShowingSettingsSheet = false
+    }
+
     private init() {}
     
     // MARK: - 导航指令
@@ -249,25 +294,8 @@ final class Router {
     }
     
     private func updateSelection(for route: AppRoute) {
-        switch route {
-        case .notebookHub, .dashboard: sidebarSelection = .tool(.dashboard)
-        case .pageList(let type): sidebarSelection = type == nil ? .tool(.pageList) : .filteredIndex(type!)
-        case .tagCloud: sidebarSelection = .tool(.tagCloud)
-        case .taskCenter: sidebarSelection = .tool(.taskCenter)
-        case .chat: sidebarSelection = .tool(.chat)
-        case .synthesis: sidebarSelection = .tool(.synthesis)
-        case .settings, .help, .about: break
-        case .log: sidebarSelection = .tool(.log)
-        case .collab: sidebarSelection = .tool(.collab)
-        case .weeklyReport: sidebarSelection = .tool(.weeklyReport)
-        case .lint: sidebarSelection = .tool(.lint)
-        case .pluginMarket: sidebarSelection = .tool(.pluginMarket)
-        case .search: sidebarSelection = .tool(.search)
-        case .ingest: sidebarSelection = .tool(.ingest)
-        case .graph: sidebarSelection = .tool(.graph)
-        case .pageDetail(let id): sidebarSelection = .page(id)
-        case .quiz: sidebarSelection = .tool(.synthesis) // 归属于合成/测验
-        case .medalWall: sidebarSelection = .tool(.dashboard) // 归属于仪表盘/成就
+        if let selection = route.sidebarSelection {
+            sidebarSelection = selection
         }
     }
 }

@@ -1,7 +1,7 @@
 // WatchWidgets.swift
 //
 // 作者: Wang Chong
-// 功能说明: 定义表盘点击意图
+// 功能说明: [Shared] 定义表盘点击意图
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -33,8 +33,8 @@ struct WatchCaptureWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WatchWidgetView(entry: entry)
         }
-        .configurationDisplayName(Localized.tr("watch.widget.displayName", table: "Watch"))
-        .description(Localized.tr("watch.widget.displayDesc", table: "Watch"))
+        .configurationDisplayName(L10n.Watch.widgetDisplayName)
+        .description(L10n.Watch.widgetDisplayDesc)
         .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryInline])
     }
 }
@@ -68,7 +68,7 @@ struct WatchWidgetView: View {
             ZStack {
                 Circle()
                     .fill(Color.appAccent.gradient)
-                Image(systemName: "mic.fill")
+                Image(systemName: DesignSystem.Icons.micFill)
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(.white)
             }

@@ -97,16 +97,23 @@ graph TD
 2.  **DI (依赖注入)**：使用 `@Inject` 模式在 L2/L3 层注入 L1 服务，禁止在服务内部直接使用 `.shared`（逐步淘汰中）。
 3.  **Actor 隔离**：UI 绑定代码必须标注 `@MainActor`，异步服务应标记为 `actor` 以符合 Swift 6 要求。
 
-## ⚠️ 架构审计状态（2026-05-16 更新）
-经过代码重构，已基本清除 L1/L2 层对 SwiftUI 的直接依赖，并完成了持久化层的模块化迁移。
+## ⚠️ 架构审计状态（2026-05-16 全深度审查更新）
+
+经过 2026-05-16 的全工程深度审查，智宇项目在架构纯净度上表现优异，但在核心契约和状态聚合上发现了关键优化点。
 
 | 类型 | 状态 | 涉及文件 / 说明 |
 |:--- |:--- |:--- |
-| **存储层重构** | ✅ 已修复 | 已完成 Repository 模式迁移，业务 Model 物理归位至 Features。 |
-| **跨层 UI 引用** | ✅ 已修复 | `PDFProcessor.swift`, `SynthesisStore.swift` 等已剥离 Color/withAnimation |
-| **import 管理** | ✅ 已修复 | `IngestStore`, `SearchStore`, `LLMService` 等已移除 `import SwiftUI` |
-| **单例泛滥** | 🟡 正在迁移 | `HapticFeedback` 已支持 DI 但部分存量代码仍使用 `.shared` |
-| **ViewModel 覆盖率** | 🟡 持续重构 | 核心页面已覆盖，小型功能视图逻辑仍在持续剥离 |
+| **存储层重构** | ✅ 已修复 | 已完成 Repository 模式迁移，且存储协议已全部异步化适配 Actor。 |
+| **依赖倒置 (DIP)** | ✅ 已修复 | 所有的仓储协议已物理下沉至 L1.5 (Domain) 层，实现彻底解耦。 |
+| **AppStore 治理** | ✅ 已修复 | `AppStore` 已完成瘦身，标签、统计、PDF 等逻辑已迁移至专有领域 Store。 |
+| **跨层 UI 引用** | ✅ 已修复 | 逻辑层已完全剥离 SwiftUI 依赖。 |
+| **平台宏泄漏** | ✅ 已修复 | 已通过 `LiveActivityProtocol` 抽象硬件能力，业务层无宏。 |
+| **常量治理** | ✅ 已修复 | 业务常量已从 AppConstants 迁移至 BusinessConstants。 |
+
+### 2026-05-16 深度审查核心结论 (已实施)
+1. **Repository 协议下沉**：已完成所有仓储协议从 L1 (Infrastructure) 至 L1.5 (Domain) 的物理迁移，实现了物理层面的依赖倒置。
+2. **Facade 精简**：`AppStore` 已剥离非核心业务，PDF、OCR 逻辑下沉至 `IngestStore`，标签管理下沉至 `TagStore`，统计下沉至 `AIInsightStore`。
+3. **消除残留宏**：通过 `LiveActivityProtocol` 成功屏蔽了硬件差异，`TaskCenter` 等核心业务已实现跨平台无宏编译。
 
 ### 重构经验记录
 1. **Repository 模式 (仓储模式)**：在 L1 层通过 `Repository` 封装具体的 GRDB SQL 逻辑，业务层通过协议与之交互。这实现了业务模型与物理数据库表的解耦，并极大地提升了单元测试的便利性。

@@ -171,7 +171,7 @@ struct Graph3DControlsOverlay: View {
                     if !isFullScreen { hideControls = false } // 退出全屏时强制显示
                 } 
             }) {
-                Image(systemName: isFullScreen ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                Image(systemName: isFullScreen ? DesignSystem.Icons.fullscreenExit : DesignSystem.Icons.fullscreenEnter)
                     .font(.title3)
                     .foregroundStyle(iconColor)
                     .padding(DesignSystem.small + DesignSystem.atomic)
@@ -187,7 +187,7 @@ struct Graph3DControlsOverlay: View {
                         hideControls = true
                     }
                 }) {
-                    Image(systemName: "eye.slash")
+                    Image(systemName: DesignSystem.Icons.eyeSlashOutline)
                         .font(.title3)
                         .foregroundStyle(iconColor)
                         .padding(DesignSystem.small + DesignSystem.atomic)
@@ -200,7 +200,7 @@ struct Graph3DControlsOverlay: View {
             // Auto-rotate toggle - 仅在全屏模式下显示
             if isFullScreen {
                 Button(action: onAutoRotateToggle) {
-                    Image(systemName: autoRotate ? "arrow.clockwise.circle.fill" : "arrow.clockwise.circle")
+                    Image(systemName: autoRotate ? DesignSystem.Icons.refreshCircleFill : DesignSystem.Icons.refreshCircle)
                         .font(.title3)
                         .foregroundStyle(autoRotate ? Color.appAccent : iconColor)
                         .padding(DesignSystem.small + DesignSystem.atomic)
@@ -212,7 +212,7 @@ struct Graph3DControlsOverlay: View {
 
             // Reset camera
             Button(action: onResetCamera) {
-                Image(systemName: "scope")
+                Image(systemName: DesignSystem.Icons.scope)
                     .font(.title3)
                     .foregroundStyle(iconColor)
                     .padding(DesignSystem.small + DesignSystem.atomic)
@@ -223,7 +223,7 @@ struct Graph3DControlsOverlay: View {
             
             // Zoom In
             Button(action: onZoomIn) {
-                Image(systemName: "plus.magnifyingglass")
+                Image(systemName: DesignSystem.Icons.plusMagnifyingglass)
                     .font(.title3)
                     .foregroundStyle(iconColor)
                     .padding(DesignSystem.small + DesignSystem.atomic)
@@ -234,7 +234,7 @@ struct Graph3DControlsOverlay: View {
             
             // Zoom Out
             Button(action: onZoomOut) {
-                Image(systemName: "minus.magnifyingglass")
+                Image(systemName: DesignSystem.Icons.minusMagnifyingglass)
                     .font(.title3)
                     .foregroundStyle(iconColor)
                     .padding(DesignSystem.small + DesignSystem.atomic)
@@ -246,7 +246,7 @@ struct Graph3DControlsOverlay: View {
             // Filter - 全屏模式下根据用户要求隐藏
             if !isFullScreen {
                 Button(action: { withAnimation(.spring(response: DesignSystem.Animation.springResponse + 0.05)) { showFilterPopup.toggle() } }) {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
+                    Image(systemName: DesignSystem.Icons.filterCircle)
                         .font(.title3)
                         .foregroundStyle(filterType == nil ? iconColor : Color.appAccent)
                         .padding(DesignSystem.small + DesignSystem.atomic)
@@ -257,7 +257,7 @@ struct Graph3DControlsOverlay: View {
                 .overlay(alignment: .bottomTrailing) {
                     if showFilterPopup {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text(L10n.Graph.tr("filter"))
+                            Text(L10n.Graph.filter)
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundStyle(.appSecondary)
                                 .padding(.horizontal, 12)
@@ -270,13 +270,13 @@ struct Graph3DControlsOverlay: View {
                                 VStack(alignment: .leading, spacing: 0) {
                                     Button(action: { filterType = nil; showFilterPopup = false }) {
                                         HStack {
-                                            Image(systemName: "square.grid.2x2")
+                                            Image(systemName: DesignSystem.Icons.gridOutline)
                                                 .font(.system(size: 12))
-                                            Text(L10n.Graph.tr("all"))
+                                            Text(L10n.Graph.all)
                                                 .font(.system(size: 13))
                                             Spacer()
                                             if filterType == nil {
-                                                Image(systemName: "checkmark")
+                                                Image(systemName: DesignSystem.Icons.check)
                                                     .font(.system(size: 10, weight: .bold))
                                             }
                                         }
@@ -296,7 +296,7 @@ struct Graph3DControlsOverlay: View {
                                                     .font(.system(size: 13))
                                                 Spacer()
                                                 if filterType == type {
-                                                    Image(systemName: "checkmark")
+                                                    Image(systemName: DesignSystem.Icons.check)
                                                         .font(.system(size: 10, weight: .bold))
                                                 }
                                             }

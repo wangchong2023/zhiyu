@@ -3,7 +3,9 @@
 // 作者: Wang Chong
 // 功能说明: [L0.5] 系统集成层：本文件实现了知识管理系统的运行期性能监控与诊断服务，负责资源监控、耗时分析及性能看板数据支撑。
 // MARK: [RR-03] 内存占用在常规运行下不得超过 300MB，防止被系统 OOM
-// 版本: 1.3
+// 版本: 1.4
+// 修改记录:
+//   - 2026-05-16: 接口规范化：引入 MetricType 枚举及 record 方法。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import Foundation
@@ -18,6 +20,16 @@ final class PerformanceService: ObservableObject {
     @Published var metrics: PerformanceMetrics = PerformanceMetrics()
     @Published var isMonitoring: Bool = false
     
+    /// 性能指标类型
+    enum MetricType: Sendable {
+        case databaseLoad
+        case databaseSave
+        case ragChain
+        case search
+        case graphLayout
+        case lint
+    }
+
     struct PerformanceMetrics: Identifiable {
         let id = UUID()
         var pageCount: Int = 0
@@ -40,6 +52,19 @@ final class PerformanceService: ObservableObject {
     }
     
     // MARK: - Timing Helpers
+
+    /// 记录特定类型的耗时
+    func record(_ type: MetricType, duration: TimeInterval) {
+        switch type {
+        case .databaseLoad: updateMetric("load", duration: duration)
+        case .databaseSave: updateMetric("save", duration: duration)
+        case .ragChain: updateMetric("ragChain", duration: duration)
+        case .search: updateMetric("search", duration: duration)
+        case .graphLayout: updateMetric("graphLayout", duration: duration)
+        case .lint: updateMetric("lint", duration: duration)
+        }
+    }
+
     func measure<T>(_ label: String, operation: () -> T) -> T {
         let start = CFAbsoluteTimeGetCurrent()
         let result = operation()
@@ -113,16 +138,16 @@ final class PerformanceService: ObservableObject {
     // MARK: - Summary
     var summary: String {
         """
-        \(Localized.tr("perf.summary.title"))
+        \(L10n.Common.Perf.summary.title)
         ━━━━━━━━━━━━━━━━━━━
-        \(Localized.tr("perf.summary.pages")): \(metrics.pageCount) (\(metrics.totalWords) \(Localized.tr("perf.summary.words")))
-        \(Localized.tr("perf.summary.graph")): \(metrics.graphNodeCount) \(Localized.tr("perf.summary.nodes")), \(metrics.graphEdgeCount) \(Localized.tr("perf.summary.edges"))
-        \(Localized.tr("perf.summary.memory")): \(String(format: "%.1f", metrics.memoryUsageMB)) MB
-        \(Localized.tr("perf.summary.save")): \(String(format: "%.3f", metrics.saveDuration))s
-        \(Localized.tr("perf.summary.load")): \(String(format: "%.3f", metrics.loadDuration))s
-        \(Localized.tr("perf.summary.lint")): \(String(format: "%.3f", metrics.lintDuration))s
-        \(Localized.tr("perf.summary.graphLayout")): \(String(format: "%.3f", metrics.graphLayoutDuration))s
-        \(Localized.tr("perf.summary.search")): \(String(format: "%.3f", metrics.searchDuration))s
+        \(L10n.Common.Perf.summary.pages): \(metrics.pageCount) (\(metrics.totalWords) \(L10n.Common.Perf.summary.words))
+        \(L10n.Common.Perf.summary.graph): \(metrics.graphNodeCount) \(L10n.Common.Perf.summary.nodes), \(metrics.graphEdgeCount) \(L10n.Common.Perf.summary.edges)
+        \(L10n.Common.Perf.summary.memory): \(String(format: "%.1f", metrics.memoryUsageMB)) MB
+        \(L10n.Common.Perf.summary.save): \(String(format: "%.3f", metrics.saveDuration))s
+        \(L10n.Common.Perf.summary.load): \(String(format: "%.3f", metrics.loadDuration))s
+        \(L10n.Common.Perf.summary.lint): \(String(format: "%.3f", metrics.lintDuration))s
+        \(L10n.Common.Perf.summary.graphLayout): \(String(format: "%.3f", metrics.graphLayoutDuration))s
+        \(L10n.Common.Perf.summary.search): \(String(format: "%.3f", metrics.searchDuration))s
         """
     }
 }

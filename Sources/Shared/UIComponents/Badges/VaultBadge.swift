@@ -1,3 +1,4 @@
+// 功能说明: [Shared]
 import SwiftUI
 
 /// 笔记本标识与快速切换组件
@@ -30,7 +31,7 @@ struct VaultBadge: View {
                     vaultService.exitVault()
                 }
             }) {
-                Label(L10n.Vault.tr("backToHub"), systemImage: "arrow.left.circle")
+                Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
             }
         } label: {
             badgeLabel(currentVault: currentVault)
@@ -43,22 +44,22 @@ struct VaultBadge: View {
     @ViewBuilder
     private func badgeLabel(currentVault: any VaultProtocol) -> some View {
         HStack(spacing: DesignSystem.tiny) {
-            Image(systemName: "books.vertical.fill")
+            Image(systemName: DesignSystem.Icons.booksVerticalFill)
                 .imageScale(.small)
                 .foregroundStyle(.primary)
             
-            Text(L10n.Vault.tr("label") + "：")
+            Text(L10n.Vault.label + "：")
                 .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
                 .foregroundStyle(.primary)
             
-            Text(vaultService.currentVault?.name ?? L10n.Vault.tr("defaultName"))
+            Text(vaultService.currentVault?.name ?? L10n.Vault.defaultName)
                 .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
                 .foregroundStyle(.primary)
                 .lineLimit(1)
                 .frame(maxWidth: 160)
             
             if platformEnv.interactionStyle != InteractionStyle.crown {
-                Image(systemName: "chevron.up.chevron.down")
+                Image(systemName: DesignSystem.Icons.chevronUpDown)
                     .imageScale(.small)
                     .foregroundStyle(.primary.opacity(0.4))
             }

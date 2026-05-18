@@ -39,7 +39,7 @@ public final class VaultService: VaultServiceProtocol {
     
     /// 加载所有笔记本
     private func loadVaults() {
-        if let data = UserDefaults.standard.data(forKey: "vaults.list"),
+        if let data = UserDefaults.standard.data(forKey: AppConstants.Keys.Storage.vaultsList),
            let decoded = try? JSONDecoder().decode([Vault].self, from: data) {
             self.vaults = decoded
         } else {
@@ -53,7 +53,7 @@ public final class VaultService: VaultServiceProtocol {
         
         // 暂时禁用启动时自动选择笔记本，确保登录后始终先进入笔记本主页 (Hub)
         /*
-        if let idString = UserDefaults.standard.string(forKey: "vaults.selectedID"),
+        if let idString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
            let id = UUID(uuidString: idString) {
             self.selectedVaultID = id
         }
@@ -63,20 +63,20 @@ public final class VaultService: VaultServiceProtocol {
     /// 保存笔记本列表
     private func saveVaults() {
         if let data = try? JSONEncoder().encode(vaults) {
-            UserDefaults.standard.set(data, forKey: "vaults.list")
+            UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.vaultsList)
         }
     }
     
     /// 选中一个笔记本
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
-        UserDefaults.standard.set(vault.id.uuidString, forKey: "vaults.selectedID")
+        UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
     }
     
     /// 退出当前笔记本 (返回主页)
     public func exitVault() {
         self.selectedVaultID = nil
-        UserDefaults.standard.removeObject(forKey: "vaults.selectedID")
+        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
     }
     
     /// 创建新笔记本
@@ -120,7 +120,7 @@ public final class VaultService: VaultServiceProtocol {
         vaults.removeAll { $0.id == id }
         if selectedVaultID == id {
             selectedVaultID = nil
-            UserDefaults.standard.removeObject(forKey: "vaults.selectedID")
+            UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         }
         saveVaults()
     }

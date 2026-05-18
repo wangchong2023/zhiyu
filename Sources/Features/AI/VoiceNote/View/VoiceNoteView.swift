@@ -43,7 +43,7 @@ struct VoiceNoteView: View {
             .padding(.bottom, 24)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(Localized.tr("speech.title"))
+        .navigationTitle(L10n.Voice.Speech.title)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -56,7 +56,7 @@ struct VoiceNoteView: View {
     // MARK: - Header
     private var headerSection: some View {
         VStack(spacing: 10) {
-            Image(systemName: "waveform.circle.fill")
+            Image(systemName: DesignSystem.Icons.waveformCircleFill)
                 .font(.system(size: DesignSystem.displayFontSize * 1.5))
                 .foregroundStyle(
                     LinearGradient(
@@ -66,7 +66,7 @@ struct VoiceNoteView: View {
                     )
                 )
             
-            Text(Localized.tr("speech.subtitle"))
+            Text(L10n.Voice.Speech.subtitle)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
@@ -77,11 +77,11 @@ struct VoiceNoteView: View {
     // MARK: - Language Picker
     private var languagePicker: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(Localized.tr("speech.language"))
+            Text(L10n.Voice.Speech.Language)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
-            Picker(Localized.tr("speech.language"), selection: Binding(
+            Picker(L10n.Voice.Speech.Language, selection: Binding(
                 get: { speechService.selectedLanguage },
                 set: { speechService.selectedLanguage = $0 }
             )) {
@@ -111,17 +111,17 @@ struct VoiceNoteView: View {
     
     private var permissionSection: some View {
         VStack(spacing: 12) {
-            Image(systemName: "mic.slash.fill")
+            Image(systemName: DesignSystem.Icons.micSlashFill)
                 .font(.title)
                 .foregroundStyle(.red)
             
-            Text(Localized.tr("speech.needPermission"))
+            Text(L10n.Voice.Speech.needPermission)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
             
             Button(action: { speechService.checkPermission() }) {
-                Text(Localized.tr("speech.requestPermission"))
+                Text(L10n.Voice.Speech.requestPermission)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 20)
@@ -150,7 +150,7 @@ struct VoiceNoteView: View {
                         .fill(Color.appRecording)
                         .frame(width: DesignSystem.Domain.Voice.recordButtonSize * 0.375, height: DesignSystem.Domain.Voice.recordButtonSize * 0.375)
                 } else {
-                    Image(systemName: "mic.fill")
+                    Image(systemName: DesignSystem.Icons.micFill)
                         .font(.system(size: DesignSystem.displayFontSize))
                         .foregroundStyle(.appAccent)
                 }
@@ -161,7 +161,7 @@ struct VoiceNoteView: View {
     
     private var recordingStatusText: some View {
         VStack(spacing: 4) {
-            Text(speechService.isRecording ? Localized.tr("speech.tapToStop") : Localized.tr("speech.tapToRecord"))
+            Text(speechService.isRecording ? L10n.Voice.Speech.tapToStop : L10n.Voice.Speech.tapToRecord)
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
             
@@ -178,7 +178,7 @@ struct VoiceNoteView: View {
     // MARK: - 波形展示
     private var waveformSection: some View {
         VStack(spacing: 8) {
-            Text(Localized.tr("speech.audioLevel"))
+            Text(L10n.Voice.Speech.audioLevel)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
 
@@ -198,20 +198,20 @@ struct VoiceNoteView: View {
     private var transcriptionSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text(Localized.tr("speech.result"))
+                Text(L10n.Voice.Speech.result)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 
                 Spacer()
                 
                 Button(action: { AppPasteboard.string = speechService.transcribedText }) {
-                    Image(systemName: "doc.on.doc.fill")
+                    Image(systemName: DesignSystem.Icons.docOnDocFill)
                         .font(.caption)
                         .foregroundStyle(.appAccent)
                 }
                 
                 Button(action: { speechService.clearTranscription() }) {
-                    Image(systemName: "xmark.circle.fill")
+                    Image(systemName: DesignSystem.Icons.errorCircle)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
@@ -245,19 +245,19 @@ struct VoiceNoteView: View {
             #endif
             
             HStack {
-                Text("\(speechService.transcribedText.count) \(Localized.tr("speech.characters"))")
+                Text("\(speechService.transcribedText.count) \(L10n.Voice.Speech.characters)")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
                 
                 Spacer()
                 
                 Button(action: { 
-                    onFinish?(Localized.tr("speech.defaultTitle"), speechService.transcribedText)
+                    onFinish?(L10n.Voice.Speech.defaultTitle, speechService.transcribedText)
                     dismiss()
                 }) {
                     HStack {
-                        Image(systemName: "square.and.pencil")
-                        Text(Localized.tr("speech.confirmAndEdit"))
+                        Image(systemName: DesignSystem.Icons.squareAndPencil)
+                        Text(L10n.Voice.Speech.confirmAndEdit)
                     }
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
@@ -274,7 +274,7 @@ struct VoiceNoteView: View {
     private var recordingsSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(Localized.tr("speech.history"))
+                Text(L10n.Voice.Speech.history)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 

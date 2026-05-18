@@ -51,22 +51,98 @@ swiftlint --strict
 
 | 层级 | 名称 | 内容 |
 |-------|------|-----------------|
-| **L3** | 表现层 | SwiftUI Views、`@Observable` ViewModels、导航 |
-| **L2** | 领域/功能层 | 业务逻辑服务 — `KnowledgeInsightService`、`AISynthesisService`、`IngestService` |
-| **L1** | 服务层 | 数据访问与 AI 适配器 — `AppStore`、`LLMClient`、`EmbeddingManager` |
-| **L0** | 基础设施层 | 存储引擎 (SQLite)、网络、Keychain、Logger、OS 工具 |
+| **L3** | 表现层 | SwiftUI Views、`@Observable` ViewModels、导航（Router、ViewFactory） |
+| **L2** | 领域/功能层 | 业务逻辑服务 — 按功能域组织（AI / Knowledge / Insight / System） |
+| **L1** | 服务层 | 数据仓储（Repository）、AI 适配器（LLM、Embedding）、存储引擎 |
+| **L0** | 基础设施层 | SQLite (GRDB)、网络、Keychain、Logger、平台适配、插件系统 |
+
+## 项目结构（关键路径）
+
+```
+Sources/
+├── App/                         # [L3] @main 入口、环境初始化、路由、AppStore、主题
+│   ├── ZhiYuApp.swift           # 入口点，场景定义，全局环境注入
+│   ├── AppEnvironment.swift     # L0-L2 初始化顺序编排，所有 Store 单例持有者
+│   ├── ModuleRegistrar.swift    # 模块化 DI 注册（Core/Storage/Domain/App 四模块）
+│   ├── Router.swift             # 全局导航状态管理（NavigationPath + AppRoute 枚举）
+│   ├── ViewFactory.swift        # 按功能域注册 ViewProvider，解耦视图创建
+│   ├── Store/AppStore.swift     # 全局状态树
+│   └── Environment/             # 平台 AppEnvironmentProtocol 实现
+├── Core/                        # [L0] ServiceContainer (DI)、协议、工具类、系统能力
+│   ├── Base/                    # ServiceContainer、@Inject、协议定义、扩展、DTOs
+│   └── System/                  # Logger、Analytics、Haptic、Security、Routing 等
+├── Infrastructure/              # [L0–L1] 存储引擎、AI 客户端、向量索引、处理器
+│   ├── LLM/                     # LLMService、LLMClient、PromptService、适配器
+│   ├── Plugins/                 # PluginRegistry、PluginProtocols
+│   ├── VectorDB/                # EmbeddingManager、VectorIndexer
+│   ├── Storage/                 # SQLiteStore（GRDB）、Repository 实现、同步引擎、备份
+│   ├── Processors/              # 文档处理器（TextChunker、Markdown、OCR）、图谱布局
+│   └── Performance/             # PerformanceBenchmarker
+├── Domain/                      # [L2] 模型定义、领域协议、RAG 管道抽象
+│   ├── Models/                  # KnowledgePage、PageLink、PageSchema 等核心模型
+│   ├── Protocols/               # KnowledgeRepository、VectorRepository 等仓储协议
+│   └── RAG/                     # KnowledgeIngestPipeline、PromptRegistry、RAGEvaluation
+├── Features/                    # [L2–L3] 按功能域组织的业务逻辑与视图
+│   ├── AI/                      # Chat、Synthesis、Quiz、VoiceNote、TaskCenter
+│   ├── Knowledge/               # Ingest、Graph、Search、Vault、NotebookHub
+│   ├── Insight/                 # Dashboard、Lint、Log、MedalWall
+│   └── System/                  # Settings、Auth、Collaboration
+├── Shared/                      # [L3] 跨平台共享
+│   ├── DesignSystem/            # 设计令牌（Colors、Typography、Spacing）、主题管理
+│   ├── UIComponents/            # 通用 UI 组件库（Buttons、Cards、Editors、Overlays 等）
+│   └── Platforms/Adaptor/       # 跨平台适配
+├── Platforms/                   # 平台特定实现 (iOS / macOS / watchOS)
+└── Localization/                # 多语言 .xcstrings（含分表，通过 update_localization.py 合并）
+Tests/
+├── Unit/                        # 单元测试（AI、Graph、Plugins、Security、Services、Storage）
+├── Integration/                 # 集成测试（如 RAGPipelineTests）
+├── UI/                          # UI 测试
+├── SnapshotTests/               # 快照测试（使用 pointfreeco/swift-snapshot-testing）
+├── Boundary/                    # 边界测试
+├── Performance/                 # 性能测试
+└── Shared/                      # 共享测试资源（AppStoreTests、TestMocks）
+```
 
 ## 关键模式
 
-### 依赖注入 — `@Inject` 属性包装器
+### 启动顺序与依赖注入
 
-服务通过 `ServiceContainer`（服务定位器模式）在 `ZhiYuApp.init()` 中注册。在任何 View、ViewModel 或其他服务中使用：
+服务注册遵循严格的初始化链条（见 `AppEnvironment.init()`）：
+
+1. **数据库** → `DatabaseManager.shared.setup(at:)` 确保护航数据库就绪
+2. **L0 注册** → `CoreModuleRegistrar`：Logger、平台适配器、系统服务
+3. **L1 注册** → `StorageModuleRegistrar`：SQLiteStore、Repository 实现、EmbeddingManager
+4. **L2 注册** → `DomainModuleRegistrar`：LLMService、AISynthesisService、IngestService 等
+5. **L3 注册** → `AppModuleRegistrar`：Router、ViewFactory 注册各功能域 ViewProvider
+6. **Store 初始化** → `IngestStore()`、`SynthesisStore()`、`AppStore()` （在 DI 完成后实例化）
+
+### `@Inject` 属性包装器
 
 ```swift
 @Inject var store: AppStore
 ```
 
-`@Inject` 包装器从 `ServiceContainer.shared` 解析。服务必须在使用前注册——未注册会导致 `fatalError`。
+从 `ServiceContainer.shared` 解析服务。服务必须在使用前注册——未注册会触发 `fatalError`。
+对于 `@Observable` 类型，一般由 `AppEnvironment` 直接持有并通过 SwiftUI `.environment()` 注入，而非通过 `@Inject` 解析。
+
+### 模块化注册 — ModuleRegistrar 协议
+
+所有服务注册通过实现 `ModuleRegistrar` 协议完成。四个注册器按序执行，解耦 ZhiYuApp 的初始化：
+- `CoreModuleRegistrar` — 日志、平台适配、系统级服务
+- `StorageModuleRegistrar` — 数据库、仓储、向量索引（`guard` 确保数据库就绪）
+- `DomainModuleRegistrar` — 业务逻辑、AI 能力、插件系统
+- `AppModuleRegistrar` — Router、ViewFactory
+
+### 路由系统
+
+`Router` 是全局导航状态管理者（`@Observable`，`@MainActor`，单例）：
+- `AppRoute` 枚举定义所有路由目标（含 `.sidebarSelection`、`.domain` 映射）
+- `NavigationPath` 管理推栈导航；顶层切换时自动清空路径
+- 详情页（`.pageDetail`、`.settings` 等）推入路径，顶层工具切换替换 `sidebarSelection`
+
+### 视图工厂 — ViewFactory
+
+功能域视图通过 `ViewFactory` + `ViewProvider` 协议注册，按 `FeatureDomain`（knowledge/ai/insight/system）分派视图创建，解耦全局路由与具体视图实现。
 
 ### 并发
 
@@ -75,35 +151,20 @@ swiftlint --strict
 - UI 绑定代码必须标注 `@MainActor`
 - 非 `Sendable` 单例类，将 `static let shared` 标记为 `nonisolated(unsafe)`。
 
-## 项目结构（关键路径）
-
-```
-Sources/
-├── ZhiYuApp.swift                # @main 入口点，服务注册中心
-├── Shared/
-│   ├── Core/                  # ServiceContainer (DI)、协议定义、平台适配、工具类
-│   ├── Data/                  # SQLiteStore、AppStore、VaultService、同步引擎 (iCloud/FS)
-│   ├── Domain/                # LLMService、AISynthesisService、IngestService、处理器 (OCR/PDF/Chunker)
-│   ├── Models/                # Entity、Concept、Page 模型定义
-│   ├── ViewModels/            # 基于 @Observable 的业务逻辑编排层 (ChatViewModel, GraphViewModel)
-│   ├── Views/                 # 跨平台 SwiftUI 视图组件
-│   └── Resources/             # 跨平台静态资源
-├── Platforms/                 # 平台特定实现 (iOS, macOS, watchOS)
-└── Resources/                 # App 资源 (Assets, Info.plist)
-Tests/                         # 单元测试、集成测试、快照测试、性能测试
-Tools/                         # 开发者辅助工具 (MockServer, Scripts)
-```
-
 ## Targets
 
 - **ZhiYu** — iOS 应用（iPhone/iPad），主 target
 - **ZhiYuMac** — Mac Catalyst 应用
 - **ZhiYuWatch** — 独立 watchOS 应用
+- **ZhiYuWidgets** — iOS Widget 扩展（Live Activities）
 - **ZhiYuTests** — 单元测试 bundle
 
-## 提交规范
+## 外部依赖
 
-使用 Conventional Commits 格式：
+- [GRDB](https://github.com/groue/GRDB.swift.git) (~> 6.29) — SQLite + FTS5 数据库
+- [swift-snapshot-testing](https://github.com/pointfreeco/swift-snapshot-testing) (~> 1.17) — 快照测试
+
+## 提交规范
 
 - `feat:` — 新功能
 - `fix:` — 缺陷修复
@@ -114,7 +175,6 @@ Tools/                         # 开发者辅助工具 (MockServer, Scripts)
 ## 注释规范
 
 统一使用**简体中文**书写所有注释：
-
-- **文档注释（`///`）**：解释“为什么”，用于公开 API。
-- **实现注释（`//`）**：解释“怎么做”，用于内部逻辑。
+- **文档注释（`///`）**：解释"为什么"，用于公开 API。
+- **实现注释（`//`）**：解释"怎么做"，用于内部逻辑。
 - **MARK 标签**：使用 `// MARK: - 中文标题` 格式。

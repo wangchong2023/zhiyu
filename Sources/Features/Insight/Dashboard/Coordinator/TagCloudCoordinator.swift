@@ -2,9 +2,9 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L2] 业务功能层：标签云功能协调器，负责标签管理（增删改查）与 UI 状态编排。
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
-//   - 2026-05-15: 初始版本，从 TagCloudView 剥离业务逻辑。
+//   - 2026-05-16: 类型安全优化：修复标签集合转换与异步调用标签。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
@@ -54,8 +54,8 @@ final class TagCloudCoordinator {
 
     /// 执行数据抓取
     func fetchData() async {
-        let allTags = await store.getAllTags()
-        self.tags = allTags
+        let allTags = store.getAllTags()
+        self.tags = allTags.map { (tag: $0.key, count: $0.value) }.sorted { $0.tag < $1.tag }
     }
 
     /// 执行标签重命名逻辑
@@ -90,7 +90,7 @@ final class TagCloudCoordinator {
         guard !trimmed.isEmpty else { return }
         
         Task {
-            await store.addNewTag(trimmed)
+            store.addNewTag(trimmed)
             await fetchData()
             self.selectedTag = trimmed
         }
@@ -104,7 +104,7 @@ final class TagCloudCoordinator {
     func performBulkDelete() {
         guard !selectedTagsForBulk.isEmpty else { return }
         Task {
-            await store.bulkDeleteTags(selectedTagsForBulk)
+            await store.bulkDeleteTags(Array(selectedTagsForBulk))
             selectedTagsForBulk.removeAll()
             await fetchData()
         }

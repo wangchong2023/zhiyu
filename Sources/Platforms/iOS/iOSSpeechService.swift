@@ -1,7 +1,7 @@
 // iOSSpeechService.swift
 //
 // 作者: Wang Chong
-// 功能说明: SpeechServiceProtocol 的 iOS/iPadOS/macOS (Apple Speech) 实现。
+// 功能说明: [Shared] SpeechServiceProtocol 的 iOS/iPadOS/macOS (Apple Speech) 实现。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -49,15 +49,15 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
                 self.hasPermission = status == .authorized
                 switch status {
                 case .authorized:
-                    self.statusMessage = Localized.tr("speech.status.ready")
+                    self.statusMessage = L10n.Voice.Speech.Status.ready
                 case .denied:
-                    self.statusMessage = Localized.tr("speech.status.denied")
+                    self.statusMessage = L10n.Voice.Speech.Status.denied
                 case .restricted:
-                    self.statusMessage = Localized.tr("speech.status.restricted")
+                    self.statusMessage = L10n.Voice.Speech.Status.restricted
                 case .notDetermined:
-                    self.statusMessage = Localized.tr("speech.status.notDetermined")
+                    self.statusMessage = L10n.Voice.Speech.Status.notDetermined
                 @unknown default:
-                    self.statusMessage = Localized.tr("speech.status.unknown")
+                    self.statusMessage = L10n.Voice.Speech.Status.unknown
                 }
             }
         }
@@ -66,16 +66,16 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 
     private func loadSupportedLanguages() {
         let locales: [(String, String)] = [
-            ("zh-CN", Localized.tr("speech.lang.zhHans")),
-            ("zh-TW", Localized.tr("speech.lang.zhHant")),
-            ("en-US", Localized.tr("speech.lang.enUS")),
-            ("en-GB", Localized.tr("speech.lang.enGB")),
-            ("ja-JP", Localized.tr("speech.lang.jaJP")),
-            ("ko-KR", Localized.tr("speech.lang.koKR")),
-            ("fr-FR", Localized.tr("speech.lang.frFR")),
-            ("de-DE", Localized.tr("speech.lang.deDE")),
-            ("es-ES", Localized.tr("speech.lang.esES")),
-            ("pt-BR", Localized.tr("speech.lang.ptBR"))
+            ("zh-CN", L10n.Voice.Speech.Lang.zhHans),
+            ("zh-TW", L10n.Voice.Speech.Lang.zhHant),
+            ("en-US", L10n.Voice.Speech.Lang.enUS),
+            ("en-GB", L10n.Voice.Speech.Lang.enGB),
+            ("ja-JP", L10n.Voice.Speech.Lang.jaJP),
+            ("ko-KR", L10n.Voice.Speech.Lang.koKR),
+            ("fr-FR", L10n.Voice.Speech.Lang.frFR),
+            ("de-DE", L10n.Voice.Speech.Lang.deDE),
+            ("es-ES", L10n.Voice.Speech.Lang.esES),
+            ("pt-BR", L10n.Voice.Speech.Lang.ptBR)
         ]
 
 #if canImport(Speech)
@@ -96,14 +96,14 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 
     func startRecording() {
         guard hasPermission else {
-            statusMessage = Localized.tr("speech.status.denied")
+            statusMessage = L10n.Voice.Speech.Status.denied
             return
         }
 
 #if canImport(Speech)
         let locale = Locale(identifier: selectedLanguage)
         guard let recognizer = SFSpeechRecognizer(locale: locale) else {
-            statusMessage = Localized.tr("speech.status.localeNotSupported")
+            statusMessage = L10n.Voice.Speech.Status.localeNotSupported
             return
         }
 
@@ -112,7 +112,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         self.audioEngine = audioEngine
 
         #if targetEnvironment(simulator)
-        statusMessage = Localized.tr("speech.status.simulatorNotSupported")
+        statusMessage = L10n.Voice.Speech.Status.simulatorNotSupported
         #else
         setupRecognitionRequest()
         guard recognitionRequest != nil else { return }
@@ -161,9 +161,9 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         do {
             try audioEngine.start()
             isRecording = true
-            statusMessage = Localized.tr("speech.status.recording")
+            statusMessage = L10n.Voice.Speech.Status.recording
         } catch {
-            statusMessage = Localized.tr("speech.status.audioError")
+            statusMessage = L10n.Voice.Speech.Status.audioError
         }
     }
 
@@ -171,14 +171,15 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 #if canImport(Speech)
         guard let request = recognitionRequest else { return }
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 if let result = result {
-                    self?.transcribedText = result.bestTranscription.formattedString
-                    if result.isFinal { self?.stopRecording() }
+                    self.transcribedText = result.bestTranscription.formattedString
+                    if result.isFinal { self.stopRecording() }
                 }
                 if let error = error {
-                    self?.statusMessage = "\(Localized.tr("speech.status.error")): \(error.localizedDescription)"
-                    self?.stopRecording()
+                    self.statusMessage = "\(L10n.Voice.Speech.Status.error): \(error.localizedDescription)"
+                    self.stopRecording()
                 }
             }
         }
@@ -195,7 +196,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         isRecording = false
         audioLevel = 0
         audioLevelHistory = Array(repeating: 0, count: 20)
-        statusMessage = transcribedText.isEmpty ? Localized.tr("speech.status.ready") : Localized.tr("speech.status.complete")
+        statusMessage = transcribedText.isEmpty ? L10n.Voice.Speech.Status.ready : L10n.Voice.Speech.Status.complete
     }
 
     func transcribeFile(url: URL) async throws -> String {
@@ -231,10 +232,10 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 
     func clearTranscription() {
         transcribedText = ""
-        statusMessage = Localized.tr("speech.status.ready")
+        statusMessage = L10n.Voice.Speech.Status.ready
     }
 
-    private let recordingsKey = "zhiyu_voice_recordings"
+    private let recordingsKey = AppConstants.Keys.Storage.voiceRecordings
     private func loadRecordings() {
         if let data = UserDefaults.standard.data(forKey: recordingsKey), let decoded = try? JSONDecoder().decode([VoiceRecording].self, from: data) { recordings = decoded }
     }

@@ -5,8 +5,8 @@
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
+//   - 更新: 2026-05-17
+// 日期: 2026-05-17
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
@@ -29,40 +29,16 @@ struct LogViewContent: View {
     @State private var expandedEntryIDs: Set<UUID> = []
     @State private var showConfirmation = false
 
+    private var emptyPadding: CGFloat {
+        DesignSystem.loosePadding * 1.5
+    }
+
     var body: some View {
         List {
             if store.logEntries.isEmpty {
-                VStack(spacing: DesignSystem.medium) {
-                    Image(systemName: "clock.arrow.circlepath")
-                        .font(.system(size: DesignSystem.Timeline.emptyIconSize))
-                        .foregroundStyle(.appSecondary)
-                    Text(L10n.Log.noLogs)
-                        .font(.subheadline)
-                        .foregroundStyle(.appSecondary)
-                    Text(L10n.Log.noLogs)
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity))
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, DesignSystem.loosePadding * 1.5)
+                emptyStateView
             } else {
-                ForEach(store.logEntries) { entry in
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) {
-                            if expandedEntryIDs.contains(entry.id) {
-                                expandedEntryIDs.remove(entry.id)
-                            } else {
-                                expandedEntryIDs.insert(entry.id)
-                            }
-                        }
-                    }) {
-                        LogEntryRow(
-                            entry: entry,
-                            isExpanded: expandedEntryIDs.contains(entry.id)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                }
+                logListRows
             }
         }
 #if os(iOS)
@@ -70,7 +46,7 @@ struct LogViewContent: View {
 #endif
         .scrollContentBackground(.hidden)
         .background(themeManager.pageBackground())
-        .navigationTitle(L10n.Settings.tr("operationLog"))
+        .navigationTitle(L10n.Settings.operationLog)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -79,7 +55,7 @@ struct LogViewContent: View {
                 Button(role: .destructive) {
                     showConfirmation = true
                 } label: {
-                    Label(L10n.Common.tr("clear"), systemImage: "trash.slash.fill")
+                    Label(L10n.Common.Misc.clear, systemImage: DesignSystem.Icons.trashSlash)
                 }
             }
         }
@@ -88,19 +64,59 @@ struct LogViewContent: View {
             isPresented: $showConfirmation,
             titleVisibility: .visible
         ) {
-            Button(L10n.Common.tr("clearAll"), role: .destructive) {
+            Button(L10n.Common.Misc.clearAll, role: .destructive) {
                 HapticFeedback.shared.trigger(.warning)
-                store.clearLogs()
+                Task { await store.clearLogs() }
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.Settings.tr("clearAll.message"))
+            Text(L10n.Settings.clearAll.message)
         }
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
 #if os(iOS)
         .toolbarBackground(.visible, for: .navigationBar)
 #endif
+    }
+
+    // MARK: - 子视图提取
+
+    @ViewBuilder
+    private var emptyStateView: some View {
+        VStack(spacing: DesignSystem.medium) {
+            Image(systemName: DesignSystem.Icons.history)
+                .font(.system(size: DesignSystem.Timeline.emptyIconSize))
+                .foregroundStyle(.appSecondary)
+            Text(L10n.Log.noLogs)
+                .font(.subheadline)
+                .foregroundStyle(.appSecondary)
+            Text(L10n.Log.noLogs)
+                .font(.caption)
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, emptyPadding)
+    }
+
+    @ViewBuilder
+    private var logListRows: some View {
+        ForEach(store.logEntries) { entry in
+            Button(action: {
+                withAnimation(.easeInOut(duration: DesignSystem.Animation.standardDuration)) {
+                    if expandedEntryIDs.contains(entry.id) {
+                        expandedEntryIDs.remove(entry.id)
+                    } else {
+                        expandedEntryIDs.insert(entry.id)
+                    }
+                }
+            }) {
+                LogEntryRow(
+                    entry: entry,
+                    isExpanded: expandedEntryIDs.contains(entry.id)
+                )
+            }
+            .buttonStyle(.plain)
+        }
     }
 }
 
@@ -111,148 +127,223 @@ private struct LogEntryRow: View {
     let entry: LogEntry
     let isExpanded: Bool
 
+    // 提前计算复杂的布局常量，避免在 View 渲染中进行繁重的算术运算导致编译器超时
+    private var vspacing: CGFloat {
+        DesignSystem.tiny + DesignSystem.atomic
+    }
+    private var modFontSize: CGFloat {
+        DesignSystem.microFontSize - DesignSystem.atomic / 2.0
+    }
+    private var modVerticalPadding: CGFloat {
+        DesignSystem.atomic / 2.0
+    }
+    private var modCornerRadius: CGFloat {
+        DesignSystem.microRadius - DesignSystem.atomic / 2.0
+    }
+    private var statusFontSize: CGFloat {
+        DesignSystem.caption2FontSize - DesignSystem.atomic / 2.0
+    }
+    private var statusHorizontalPadding: CGFloat {
+        DesignSystem.small - DesignSystem.atomic
+    }
+    private var actionBgOpacity: Double {
+        DesignSystem.dimmedOpacity * 0.5
+    }
+    private var statusBgOpacity: Double {
+        DesignSystem.glassOpacity
+    }
+    private var detailBgOpacity: Double {
+        DesignSystem.disabledOpacity * 1.33
+    }
+    private var failureBgOpacity: Double {
+        DesignSystem.dimmedOpacity * 0.25
+    }
+    private var failureTextOpacity: Double {
+        DesignSystem.secondaryOpacity
+    }
+
+    private var statusBackgroundColor: Color {
+        guard let status = entry.status else { return .clear }
+        return status == .success ? Color.green.opacity(statusBgOpacity) : Color.red.opacity(statusBgOpacity)
+    }
+    private var statusForegroundColor: Color {
+        guard let status = entry.status else { return .clear }
+        return status == .success ? .green : .red
+    }
+    private var startFormattedString: String {
+        entry.startTime?.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale)) ?? ""
+    }
+    private var endFormattedString: String {
+        entry.endTime?.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale)) ?? ""
+    }
+    private var timeRangeString: String {
+        if entry.startTime != nil && entry.endTime != nil {
+            return "\(startFormattedString) - \(endFormattedString)"
+        } else {
+            return entry.timestamp.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Localized.currentLocale))
+        }
+    }
+    private var detailStartString: String {
+        entry.startTime?.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)) ?? ""
+    }
+    private var detailEndString: String {
+        entry.endTime?.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)) ?? ""
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
+        VStack(alignment: .leading, spacing: vspacing) {
             HStack(spacing: DesignSystem.medium) {
-                // 动作图标
-                ZStack {
-                    Circle()
-                        .fill(Color.fromModelColorName(entry.action.colorName).opacity(DesignSystem.dimmedOpacity * 0.5)) // 0.1
-                        .frame(width: DesignSystem.Timeline.iconCircleSize, height: DesignSystem.Timeline.iconCircleSize)
-                    
-                    Image(systemName: entry.action.icon)
-                        .foregroundStyle(Color.fromModelColorName(entry.action.colorName))
-                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                }
+                actionIcon
                 
                 VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                    HStack {
-                        Text(entry.action.localizedName)
-                            .font(.headline)
-                            .foregroundStyle(Color.fromModelColorName(entry.action.colorName))
-                        
-                        Text(entry.target)
-                            .font(.headline)
-                            .foregroundStyle(.appText)
-                            .lineLimit(1)
-                        
-                        if let mod = entry.module {
-                            Text(mod)
-                                .font(.system(size: DesignSystem.microFontSize - DesignSystem.atomic / 2, weight: .bold)) // 9
-                                .padding(.horizontal, DesignSystem.tiny)
-                                .padding(.vertical, DesignSystem.atomic / 2) // 1
-                                .background(Color.appSecondary.opacity(DesignSystem.glassOpacity))
-                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius - DesignSystem.atomic / 2)) // 3
-                                .foregroundStyle(.appSecondary)
-                        }
-                        
-                        Spacer()
-                        
-                        // 状态标签
-                        if let status = entry.status {
-                            Text(status.localizedName)
-                                .font(.system(size: DesignSystem.caption2FontSize - DesignSystem.atomic / 2, weight: .bold)) // 10
-                                .padding(.horizontal, DesignSystem.small - DesignSystem.atomic) // 6
-                                .padding(.vertical, DesignSystem.atomic)
-                                .background(status == .success ? Color.green.opacity(DesignSystem.glassOpacity) : Color.red.opacity(DesignSystem.glassOpacity))
-                                .foregroundStyle(status == .success ? .green : .red)
-                                .clipShape(Capsule())
-                        }
-                    }
-                    
-                    HStack(spacing: DesignSystem.tightPadding) {
-                        if let start = entry.startTime, let end = entry.endTime {
-                            Text("\(start.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale))) - \(end.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale)))")
-                        } else {
-                            Text(entry.timestamp.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Localized.currentLocale)))
-                        }
-                        
-                        if let dur = entry.duration {
-                            Text(DesignSystem.Icons.bullet)
-                            Text(dur.formattedAdaptive)
-                                .foregroundStyle(.appAccent)
-                        }
-                    }
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+                    mainHeaderRow
+                    timeAndDurationRow
                 }
 
-                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                Image(systemName: isExpanded ? DesignSystem.Icons.up : DesignSystem.Icons.down)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
 
             if isExpanded {
-                VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                    // 时间详情
-                    HStack(spacing: DesignSystem.wide) {
-                        if let start = entry.startTime {
-                            VStack(alignment: .leading) {
-                                Text(L10n.Log.startTime)
-                                    .font(.caption2)
-                                    .foregroundStyle(.appSecondary)
-                                Text(start.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)))
-                                    .font(.system(.caption2, design: .monospaced))
-                            }
-                        }
-                        
-                        if let end = entry.endTime {
-                            VStack(alignment: .leading) {
-                                Text(L10n.Log.endTime)
-                                    .font(.caption2)
-                                    .foregroundStyle(.appSecondary)
-                                Text(end.formatted(Date.FormatStyle(date: .omitted, time: .standard, locale: Localized.currentLocale)))
-                                    .font(.system(.caption2, design: .monospaced))
-                            }
-                        }
-                        
-                        if let dur = entry.duration {
-                            VStack(alignment: .leading) {
-                                Text(L10n.Log.duration)
-                                    .font(.caption2)
-                                    .foregroundStyle(.appSecondary)
-                                Text(dur.formattedAdaptive)
-                                    .font(.system(.caption2, design: .monospaced).bold())
-                                    .foregroundStyle(.appAccent)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, DesignSystem.Timeline.detailHorizontalPadding)
-                    .padding(.vertical, DesignSystem.Timeline.detailVerticalPadding)
-                    .background(Color.appCard.opacity(DesignSystem.disabledOpacity * 1.33)) // 0.4
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-
-                    // 失败原因
-                    if let reason = entry.failureReason {
-                        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                            Text(L10n.Log.failureReason)
-                                .font(.caption2.bold())
-                                .foregroundStyle(.red)
-                            Text(reason)
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundStyle(.red.opacity(DesignSystem.secondaryOpacity))
-                        }
-                        .padding(DesignSystem.Timeline.detailHorizontalPadding)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.red.opacity(DesignSystem.dimmedOpacity * 0.25)) // 0.05
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
-                    }
-
-                    if !entry.details.isEmpty {
-                        Text(entry.details)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.appSecondary)
-                            .padding(DesignSystem.Timeline.detailHorizontalPadding)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.appCard)
-                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
-                    }
-                }
-                .padding(.leading, DesignSystem.Timeline.indentPadding)
-                .padding(.top, DesignSystem.tiny)
+                expandedDetailsView
             }
         }
         .padding(.vertical, DesignSystem.Timeline.rowVerticalPadding)
     }
 
+    // MARK: - 子视图组件拆分
+
+    @ViewBuilder
+    private var actionIcon: some View {
+        ZStack {
+            Circle()
+                .fill(Color.fromModelColorName(entry.action.colorName).opacity(actionBgOpacity))
+                .frame(width: DesignSystem.Timeline.iconCircleSize, height: DesignSystem.Timeline.iconCircleSize)
+            
+            Image(systemName: entry.action.icon)
+                .foregroundStyle(Color.fromModelColorName(entry.action.colorName))
+                .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
+        }
+    }
+
+    @ViewBuilder
+    private var mainHeaderRow: some View {
+        HStack {
+            Text(entry.action.localizedName)
+                .font(.headline)
+                .foregroundStyle(Color.fromModelColorName(entry.action.colorName))
+            
+            Text(entry.target)
+                .font(.headline)
+                .foregroundStyle(.appText)
+                .lineLimit(1)
+            
+            if let mod = entry.module {
+                Text(mod)
+                    .font(.system(size: modFontSize, weight: .bold))
+                    .padding(.horizontal, DesignSystem.tiny)
+                    .padding(.vertical, modVerticalPadding)
+                    .background(Color.appSecondary.opacity(statusBgOpacity))
+                    .clipShape(RoundedRectangle(cornerRadius: modCornerRadius))
+                    .foregroundStyle(.appSecondary)
+            }
+            
+            Spacer()
+            
+            if let status = entry.status {
+                Text(status.localizedName)
+                    .font(.system(size: statusFontSize, weight: .bold))
+                    .padding(.horizontal, statusHorizontalPadding)
+                    .padding(.vertical, DesignSystem.atomic)
+                    .background(statusBackgroundColor)
+                    .foregroundStyle(statusForegroundColor)
+                    .clipShape(Capsule())
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var timeAndDurationRow: some View {
+        HStack(spacing: DesignSystem.tightPadding) {
+            Text(timeRangeString)
+            
+            if let dur = entry.duration {
+                Text(DesignSystem.Icons.bullet)
+                Text(dur.formattedAdaptive)
+                    .foregroundStyle(.appAccent)
+            }
+        }
+        .font(.caption2)
+        .foregroundStyle(.appSecondary)
+    }
+
+    @ViewBuilder
+    private var expandedDetailsView: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            HStack(spacing: DesignSystem.wide) {
+                if entry.startTime != nil {
+                    VStack(alignment: .leading) {
+                        Text(L10n.Log.startTime)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                        Text(detailStartString)
+                            .font(.system(.caption2, design: .monospaced))
+                    }
+                }
+                
+                if entry.endTime != nil {
+                    VStack(alignment: .leading) {
+                        Text(L10n.Log.endTime)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                        Text(detailEndString)
+                            .font(.system(.caption2, design: .monospaced))
+                    }
+                }
+                
+                if let dur = entry.duration {
+                    VStack(alignment: .leading) {
+                        Text(L10n.Log.duration)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                        Text(dur.formattedAdaptive)
+                            .font(.system(.caption2, design: .monospaced).bold())
+                            .foregroundStyle(.appAccent)
+                    }
+                }
+            }
+            .padding(.horizontal, DesignSystem.Timeline.detailHorizontalPadding)
+            .padding(.vertical, DesignSystem.Timeline.detailVerticalPadding)
+            .background(Color.appCard.opacity(detailBgOpacity))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+
+            if let reason = entry.failureReason {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                    Text(L10n.Log.failureReason)
+                        .font(.caption2.bold())
+                        .foregroundStyle(.red)
+                    Text(reason)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(.red.opacity(failureTextOpacity))
+                }
+                .padding(DesignSystem.Timeline.detailHorizontalPadding)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.red.opacity(failureBgOpacity))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+            }
+
+            if !entry.details.isEmpty {
+                Text(entry.details)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.appSecondary)
+                    .padding(DesignSystem.Timeline.detailHorizontalPadding)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.appCard)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+            }
+        }
+        .padding(.leading, DesignSystem.Timeline.indentPadding)
+        .padding(.top, DesignSystem.tiny)
+    }
 }

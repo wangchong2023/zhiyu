@@ -32,7 +32,7 @@ struct SaveVoiceNoteSheet: View {
                 .padding()
             }
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(Localized.tr("speech.saveTitle"))
+            .navigationTitle(L10n.Voice.Speech.saveTitle)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -41,11 +41,11 @@ struct SaveVoiceNoteSheet: View {
     
     private var titleField: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-            Text(Localized.tr("speech.noteTitle"))
+            Text(L10n.Voice.Speech.noteTitle)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
-            TextField(Localized.tr("speech.noteTitlePlaceholder"), text: $title)
+            TextField(L10n.Voice.Speech.noteTitlePlaceholder, text: $title)
                 #if !os(watchOS)
                 .textFieldStyle(.roundedBorder)
                 #endif
@@ -54,7 +54,7 @@ struct SaveVoiceNoteSheet: View {
     
     private var typePicker: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-            Text(Localized.tr("ocr.pageType"))
+            Text(L10n.Ingest.OCR.pageType)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
@@ -71,7 +71,7 @@ struct SaveVoiceNoteSheet: View {
     
     private var previewSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-            Text(Localized.tr("pdf.contentPreview"))
+            Text(L10n.Ingest.PDF.contentPreview)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
             
@@ -106,7 +106,7 @@ struct SaveVoiceNoteSheet: View {
     
     private var saveButton: some View {
         Button(action: saveNote) {
-            Text(Localized.tr("speech.saveToKnowledge"))
+            Text(L10n.Voice.Speech.saveToKnowledge)
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -118,14 +118,14 @@ struct SaveVoiceNoteSheet: View {
     
     private func saveNote() {
         let noteTitle = title.isEmpty
-            ? "\(Localized.tr("speech.voiceNote")) \(Date().formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale)))"
+            ? "\(L10n.Voice.Speech.voiceNote) \(Date().formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale)))"
             : title
         Task {
             _ = await store.createPage(
                 title: noteTitle,
-                type: selectedType,
+                pageType: selectedType,
                 content: speechService.transcribedText,
-                tags: [Localized.tr("speech.voiceTag")]
+                tags: [L10n.Voice.Speech.voiceTag]
             )
             
             await MainActor.run {
@@ -146,7 +146,7 @@ struct VoiceRecordingRow: View {
     
     var body: some View {
         HStack(spacing: DesignSystem.medium) {
-            Image(systemName: "waveform")
+            Image(systemName: DesignSystem.Icons.waveform)
                 .foregroundStyle(.appSource)
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize) // 32
                 .background(Color.appSource.opacity(DesignSystem.glassOpacity * 1.5))

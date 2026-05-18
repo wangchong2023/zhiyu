@@ -49,7 +49,7 @@ struct DiscoveredRoomRow: View {
                     Text(room.roomName)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
-                    Text("\(L10n.Collaboration.tr("hostedBy")) \(room.owner)")
+                    Text("\(L10n.Collaboration.hostedBy) \(room.owner)")
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
@@ -111,7 +111,7 @@ struct RecentEditRow: View {
 
     var body: some View {
         HStack {
-            Image(systemName: "pencil.circle.fill")
+            Image(systemName: DesignSystem.Icons.pencilCircle)
                 .foregroundStyle(.appConcept)
 
             VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 2

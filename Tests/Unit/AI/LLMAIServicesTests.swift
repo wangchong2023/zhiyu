@@ -83,8 +83,8 @@ final class LLMAIServicesTests: XCTestCase {
     func testRerank() async throws {
         let service = LLMRetrievalService(client: mockClient, model: "gpt-4o", contextBuilder: contextBuilder)
         
-        let page1 = KnowledgePage(title: "Page 1", type: .concept, content: "C1")
-        let page2 = KnowledgePage(title: "Page 2", type: .concept, content: "C2")
+        let page1 = KnowledgePage(title: "Page 1", pageType: .concept, content: "C1")
+        let page2 = KnowledgePage(title: "Page 2", pageType: .concept, content: "C2")
         let candidates = [page1, page2]
         
         // 模拟返回排序后的 ID 数组

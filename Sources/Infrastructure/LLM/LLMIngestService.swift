@@ -24,7 +24,7 @@ final class LLMIngestService: Sendable {
     // MARK: - 智能摄入 (Smart Ingest)
 
     /// 对原始内容进行智能编译，提取摘要、标签、关联建议等
-    func smartIngest(title: String, rawContent: String, pages: [KnowledgePage]) async throws -> SmartIngestResult {
+    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         let prompt = contextBuilder.buildIngestPrompt(title: title, rawContent: rawContent, pages: pages)
         let body: [String: Any] = [
             "model": model,
@@ -34,7 +34,18 @@ final class LLMIngestService: Sendable {
 
         let response = try await client.sendRequest(body: body)
         let content = LLMUtils.extractContent(from: response) ?? ""
-        if let result = LLMUtils.parseSmartIngest(content) {
+        if var result = LLMUtils.parseSmartIngest(content) {
+            // 如果返回的 JSON 中 title 为空，则使用传入的默认标题
+            if result.title == nil || result.title?.isEmpty == true {
+                result = SmartIngestResultDTO(
+                    title: title,
+                    compiledContent: result.compiledContent,
+                    suggestedTags: result.suggestedTags,
+                    suggestedType: result.suggestedType,
+                    relatedTitles: result.relatedTitles,
+                    summary: result.summary
+                )
+            }
             return result
         }
         throw LLMError.invalidResponse

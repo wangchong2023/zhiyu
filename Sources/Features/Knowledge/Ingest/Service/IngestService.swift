@@ -39,20 +39,6 @@ enum DocumentFormat {
     }
 }
 
-// MARK: - Page Store Protocol
-
-/// Abstraction layer allowing different store implementations to serve as data sources.
-/// SQLiteStore is the sole implementation; PageStore was removed (JSON-based, unused).
-@MainActor
-protocol AnyPageStore: Sendable {
-    var pages: [KnowledgePage] { get }
-    @discardableResult
-    func createPage(title: String, type: PageType, customIcon: String?, content: String, tags: [String], sourceURL: String?, rawSnippet: String?, fileSize: Int64?, sourceType: String?, forceDeepScan: Bool) async -> KnowledgePage
-    func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async
-    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?)
-}
-// Note: SQLiteStore conformance is declared in SQLiteStore.swift to avoid circular dependency
-
 // MARK: - Ingest Service (Knowledge Ingestion)
 actor IngestService {
     let scraper = WebScraperProcessor()
@@ -76,6 +62,9 @@ actor IngestService {
         let startTime = Date()
         let pageID = UUID()
 
+        // 1. 安全脱敏：拦截恶意指令注入 (@P0: Security)
+        let sanitizedRawContent = PromptSanitizer.sanitize(content)
+
         // --- RAG 摄入管道集成 ---
         let processedContent: String
         if forceDeepScan || llmService != nil {
@@ -83,23 +72,23 @@ actor IngestService {
             if let vectorStore = pageStore as? any VectorIndexableStore {
                 let manager = await MainActor.run { vectorStore.embeddingManager }
                 processedContent = await KnowledgeIngestPipeline.shared.process(
-                    content: content,
+                    content: sanitizedRawContent,
                     pageID: pageID,
                     llm: llmService,
                     embeddingManager: manager
                 )
             } else {
                 // fallback: 如果 Store 不支持向量，则仅保留内容
-                processedContent = content
+                processedContent = sanitizedRawContent
             }
         } else {
-            processedContent = content
+            processedContent = sanitizedRawContent
         }
 
         // Create raw source page with provenance
-        let rawPage = await pageStore.createPage(
+        let rawPage = await pageStore.anyCreatePage(
             title: title,
-            type: type,
+            pageType: type,
             customIcon: nil,
             content: processedContent,
             tags: ["ingested"],
@@ -124,7 +113,7 @@ actor IngestService {
 
         var page = rawPage
         page.content = updatedContent
-        await pageStore.updatePage(page, forceDeepScan: forceDeepScan)
+        await pageStore.anyUpdatePage(page, forceDeepScan: forceDeepScan)
 
         let duration = Date().timeIntervalSince(startTime)
         await pageStore.addLog(
@@ -222,7 +211,7 @@ actor IngestService {
 
         let isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         if isLowPowerMode {
-            print(L10n.Ingest.tr("ecoIndexingLowPower"))
+            print(L10n.Ingest.ecoIndexingLowPower)
         }
 
         let enumeratorArray = enumerator.compactMap { $0 as? URL }
@@ -262,7 +251,7 @@ actor IngestService {
                 // 更新任务中心与灵动岛
                 let progress = Double(currentIndex) / Double(totalCount)
                 let status = L10n.AI.Status.indexing(currentIndex, totalCount, filename)
-                await TaskCenter.shared.updateTask(taskID, status: .running(progress: progress))
+                await TaskCenter.shared.updateTask(taskID, status: .running(progress: progress, stage: .general))
                 await TaskCenter.shared.updateLatestStatus(status)
             }
             

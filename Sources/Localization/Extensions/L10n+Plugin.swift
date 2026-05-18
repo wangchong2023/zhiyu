@@ -1,0 +1,118 @@
+// 功能说明: [Shared]
+//
+// L10n+Plugin.swift
+// 智宇 (ZhiYu) 多语言 Plugin 垂直切片强类型扩展定义
+//
+
+import Foundation
+
+extension L10n {
+    public enum Plugin {
+        public static let t = "Plugin"
+        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
+
+        public static func permTitle(for perm: String) -> String {
+            switch perm {
+            case "writeContent", "content":
+                return Localized.tr("plugin.perm.content", table: "Plugin")
+            case "network":
+                return Localized.tr("plugin.perm.network", table: "Plugin")
+            case "sandbox":
+                return Localized.tr("plugin.perm.sandbox", table: "Plugin")
+            default:
+                let key = "plugin.perm." + perm
+                let localized = Localized.tr(key, table: "Plugin")
+                return localized == key ? perm.capitalized : localized
+            }
+        }
+
+        public static func permDesc(for perm: String) -> String {
+            switch perm {
+            case "writeContent", "content":
+                let key = "plugin.perm.content.desc"
+                let localized = Localized.tr(key, table: "Plugin")
+                return localized == key ? "允许插件修改您的知识库内容" : localized
+            case "network":
+                let key = "plugin.perm.network.desc"
+                let localized = Localized.tr(key, table: "Plugin")
+                return localized == key ? "允许插件访问外部网络服务" : localized
+            case "sandbox":
+                let key = "plugin.perm.sandbox.desc"
+                let localized = Localized.tr(key, table: "Plugin")
+                return localized == key ? "在安全沙盒内运行，限制文件系统访问" : localized
+            default:
+                let key = "plugin.perm." + perm + ".desc"
+                let localized = Localized.tr(key, table: "Plugin")
+                return localized == key ? "要求获取 \(perm) 权限" : localized
+            }
+        }
+
+        public static var centerTitle: String { tr("plugin.market") }
+        public static var marketTitle: String { tr("plugin.market") }
+        public static var myPlugins: String { tr("plugin.myPlugins") }
+        public static var safeModeTitle: String { tr("plugin.safeMode") }
+        public static var safeModeWarningTitle: String { tr("plugin.safeMode.warning.title") }
+        public static var safeModeWarningMessage: String { tr("plugin.safeMode.warning.message") }
+        public static var safeModeTurnOff: String { tr("plugin.safeMode.turnOff") }
+        public static var searchPlaceholder: String { tr("plugin.searchPlaceholder") }
+        public static var noPlugins: String { tr("plugin.noPlugins") }
+        public static var noPluginsHint: String { tr("plugin.noPluginsHint") }
+        public static var noResults: String { tr("plugin.noResults") }
+        public static var noResultsHint: String { tr("plugin.noResultsHint") }
+        public static func permissionMessage(_ name: String) -> String { trf("plugin.permission.message", name) }
+
+        public enum Sidebar {
+            public static var currentSources: String { Plugin.tr("sidebar.currentSources") }
+        }
+        
+        public typealias Section = section
+        public enum section {
+            public static var rag: String { Plugin.tr("section.rag") }
+            public static var pluginSettings: String { Plugin.tr("section.pluginSettings") }
+            public static var permissions: String { Plugin.tr("plugin.section.permissions") }
+            public static var about: String { Plugin.tr("plugin.section.about") }
+            public static var ribbon: String { Plugin.tr("plugin.section.ribbon") }
+        }
+
+        public enum Status {
+            public static var enabled: String { Plugin.tr("plugin.status.enabled") }
+            public static var disabled: String { Plugin.tr("plugin.status.disabled") }
+        }
+
+        public enum market {
+            public static var empty: String { Plugin.tr("plugin.market.empty") }
+            public static var emptyHint: String { Plugin.tr("plugin.market.emptyHint") }
+            public static var connectionError: String { Plugin.tr("plugin.market.connectionError") }
+        }
+
+        public enum commands {
+            public static var title: String { Plugin.tr("plugin.commands.title") }
+        }
+
+        public enum local {
+            public static var mount: String { Plugin.tr("plugin.local.mount") }
+            public static var desc: String { Plugin.tr("plugin.local.desc") }
+        }
+
+        public enum Stats {
+            public static var downloads: String { Plugin.tr("plugin.stats.downloads") }
+            public static var rating: String { Plugin.tr("plugin.stat.rating") }
+        }
+
+        public enum Action {
+            public static var install: String { Plugin.tr("plugin.action.install") }
+            public static var uninstall: String { Plugin.tr("plugin.action.uninstall") }
+            public static var confirmInstall: String { Plugin.tr("plugin.action.confirmInstall") }
+        }
+
+        public enum perm {
+            public static var none: String { Plugin.tr("plugin.perm.none") }
+        }
+
+        public enum permission {
+            public static var title: String { Plugin.tr("plugin.permission.title") }
+            public static func message(_ name: String) -> String { Plugin.trf("plugin.permission.message", name) }
+        }
+    }
+}

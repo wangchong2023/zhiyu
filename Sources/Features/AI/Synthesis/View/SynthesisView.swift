@@ -2,17 +2,14 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的“知识合成”功能（SynthesisView），利用 LLM 能力将零散的知识点转化为结构化的高级产出。
-// 版本: 1.2
+// 版本: 1.5
 // 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，规范化 UI 常量与物理常数
-//   - 2026-05-06: 架构重构，提取子组件到 Views/Components/Synthesis/
+//   - 2026-05-16: 视图拆分：极致扁平化 body 结构，彻底解决 Swift 编译器对复杂视图的性能瓶颈。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
 
 // MARK: - 合成视图入口
-/// 知识合成功能主视图
-/// 负责利用 LLM 将分散知识转化为思维导图、测验、报告等高级结构化产出，并管理生成文档的生命周期
 struct SynthesisView: View {
     @Binding var selection: SidebarSelection?
     @Binding var selectedTab: AppTab
@@ -34,7 +31,6 @@ struct SynthesisView: View {
     @State private var showDeleteDocConfirm = false
     @State private var showRenameDialog = false
     
-    // 统一使用 SynthesisDocRow.EditMode（跨平台一致）
     @State private var editMode: SynthesisDocRow.EditMode = .inactive
     @State private var selectedDocIDs = Set<UUID>()
     @State private var showLimitAlert = false
@@ -47,111 +43,95 @@ struct SynthesisView: View {
 
     var body: some View {
         @Bindable var synthesisStore = synthesisStore
-        let runningTasks = taskCenter.tasks.filter { task in
-            guard task.type == .synthesis else { return false }
-            if case .running = task.status { return true }
-            return false
-        }
         
-        ZStack {
-            themeManager.pageBackground()
-                .ignoresSafeArea()
-            
-            List {
-                Section {
-                    synthesisEntryView
-                }
-                #if !os(watchOS)
-                .listRowSeparator(.hidden)
-                #endif
-                .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
-                .listRowBackground(Color.clear)
+        NavigationStack {
+            ZStack {
+                themeManager.pageBackground()
+                    .ignoresSafeArea()
                 
-                if !runningTasks.isEmpty {
-                    Section {
-                        runningTasksSection(tasks: runningTasks)
-                    }
-                    #if !os(watchOS)
+                mainList
+            }
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .appTabToolbar(title: L10n.AI.Synthesis.title)
+            .synthesisViewPresentations(
+                showOutput: $showOutput,
+                pdfURL: $pdfURL,
+                showNoPagesAlert: $showNoPagesAlert,
+                showLimitAlert: $showLimitAlert,
+                showRenameDialog: $showRenameDialog,
+                showLLMAlert: $showLLMAlert,
+                showBatchDeleteConfirm: $showBatchDeleteConfirm,
+                showDeleteDocConfirm: $showDeleteDocConfirm,
+                newDocName: $newDocName,
+                docToRename: docToRename,
+                docToDelete: docToDelete,
+                batchDelete: batchDelete,
+                outputSheet: outputSheet
+            )
+        }
+    }
+
+    private var mainList: some View {
+        List {
+            entrySection
+            runningTasksContainer
+            mainContentSection
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .scrollIndicators(.hidden)
+        .padding(.top, DesignSystem.widePadding)
+    }
+
+    private var runningTasksContainer: some View {
+        let tasks = taskCenter.tasks.filter { task in
+            if task.type != .synthesis { return false }
+            switch task.status {
+            case .running: return true
+            default: return false
+            }
+        }
+        return Group {
+            if !tasks.isEmpty {
+                runningTasksSection(tasks: tasks)
                     .listRowSeparator(.hidden)
-                    #endif
                     .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
                     .listRowBackground(Color.clear)
-                }
-                
-                Section {
-                    listHeader
-                        .listRowInsets(EdgeInsets(top: DesignSystem.medium, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
-                    
-                    filterPillsBar
-                        .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
-
-                    documentRows
-                }
-                #if !os(watchOS)
-                .listRowSeparator(.hidden)
-                #endif
-                .listRowBackground(Color.clear)
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .scrollIndicators(.hidden)
-            .padding(.top, DesignSystem.widePadding)
-        }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .appTabToolbar(title: L10n.Synthesis.title)
-        .sheet(isPresented: $showOutput) { outputSheet }
-        .sheet(item: $pdfURL) { identifiable in
-            #if !os(watchOS)
-            PDFPreviewWrapper(url: identifiable.url)
-            #else
-            Text(identifiable.url.lastPathComponent)
-            #endif
-        }
-        .alert(L10n.Synthesis.tr("error.noPages"), isPresented: $showNoPagesAlert) {
-            Button(L10n.Common.tr("ok"), role: .cancel) { }
-        }
-        .alert(L10n.Synthesis.tr("error.limitReached"), isPresented: $showLimitAlert) {
-            Button(L10n.Common.tr("done"), role: .cancel) { }
-        }
-        .alert(Localized.tr("tag.rename"), isPresented: $showRenameDialog) {
-            TextField(Localized.tr("tags.inputName"), text: $newDocName)
-            Button(Localized.tr("tag.rename")) {
-                if let doc = docToRename {
-                    synthesisStore.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: newDocName)
-                }
-            }
-            Button(L10n.Common.tr("cancel"), role: .cancel) { }
-        }
-        .alert(Localized.tr("chat.configureFirst"), isPresented: $showLLMAlert) {
-            Button(L10n.Common.tr("confirm"), role: .cancel) { }
-        } message: {
-            Text(Localized.tr("llm.error.notConfigured"))
-        }
-        .confirmationDialog(Localized.tr("synthesis.batchDeleteConfirm"), isPresented: $showBatchDeleteConfirm, titleVisibility: .automatic) {
-            Button(L10n.Common.tr("delete"), role: .destructive) {
-                batchDelete()
-            }
-            Button(L10n.Common.tr("cancel"), role: .cancel) { }
-        }
-        .alert(L10n.Common.tr("deleteConfirm"), isPresented: $showDeleteDocConfirm) {
-            Button(L10n.Common.tr("delete"), role: .destructive) {
-                if let doc = docToDelete {
-                    synthesisStore.deleteSynthesisDoc(type: doc.type, docID: doc.id)
-                    HapticFeedback.shared.trigger(.success)
-                }
-                docToDelete = nil
-            }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {
-                docToDelete = nil
             }
         }
     }
 
-    // MARK: - Subviews
+    private var entrySection: some View {
+        Section {
+            synthesisEntryView
+        }
+        #if !os(watchOS)
+        .listRowSeparator(.hidden)
+        #endif
+        .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
+        .listRowBackground(Color.clear)
+    }
+
+    private var mainContentSection: some View {
+        Section {
+            listHeader
+                .listRowInsets(EdgeInsets(top: DesignSystem.medium, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
+            
+            filterPillsBar
+                .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
+
+            documentRows
+        }
+        #if !os(watchOS)
+        .listRowSeparator(.hidden)
+        #endif
+        .listRowBackground(Color.clear)
+    }
+
     private var filterPillsBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DesignSystem.Chip.spacing) {
-                FilterPill(title: Localized.tr("search.all"), isSelected: selectedFilterType == nil) {
+                FilterPill(title: L10n.Search.all, isSelected: selectedFilterType == nil) {
                     withAnimation(.spring()) { selectedFilterType = nil }
                 }
                 ForEach(SynthesisStore.SynthesisType.allCases) { type in
@@ -177,10 +157,10 @@ struct SynthesisView: View {
         
         if docs.isEmpty {
             VStack(spacing: DesignSystem.medium) {
-                Image(systemName: "doc.text.magnifyingglass")
+                Image(systemName: DesignSystem.Icons.weeklyInsight)
                     .font(.system(size: DesignSystem.Timeline.emptyIconSize))
                     .foregroundStyle(.appSecondary.opacity(DesignSystem.Metrics.emptyStateIconOpacity))
-                Text(Localized.tr("synthesis.noDocs"))
+                Text(L10n.AI.Synthesis.noDocs)
                     .font(.subheadline)
                     .foregroundStyle(.appSecondary)
             }
@@ -241,9 +221,8 @@ struct SynthesisView: View {
     private var listHeader: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack {
-                Text(L10n.Synthesis.tr("documentList")).font(.title3.bold())
+                Text(L10n.AI.Synthesis.documentList).font(.title3.bold())
                 Spacer()
-                // “编辑/完成”按钮始终在顶部右侧
                 Button(action: {
                     HapticFeedback.shared.trigger(.selection)
                     withAnimation(DesignSystem.standardAnimation) {
@@ -255,14 +234,13 @@ struct SynthesisView: View {
                         }
                     }
                 }) {
-                    Text(editMode == .active ? L10n.Common.tr("done") : L10n.Common.tr("edit"))
+                    Text(editMode == .active ? L10n.Common.done : L10n.Common.edit)
                         .font(.subheadline.bold())
                         .foregroundStyle(Color.appAccent)
                 }
                 .buttonStyle(.plain)
             }
             
-            // 编辑模式下的批量操作按钮移至第二行，并支持水平滚动以防溢出
             if editMode == .active {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: DesignSystem.medium) {
@@ -271,8 +249,8 @@ struct SynthesisView: View {
                             showBatchDeleteConfirm = true
                         }) {
                             HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: "trash")
-                                Text(L10n.Common.tr("delete"))
+                                Image(systemName: DesignSystem.Icons.delete)
+                                Text(L10n.Common.delete)
                             }
                             .font(.footnote.bold())
                             .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .white)
@@ -292,8 +270,8 @@ struct SynthesisView: View {
                             showClearAllConfirm = true
                         }) {
                             HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: "trash.slash")
-                                Text(L10n.Common.tr("clearAll"))
+                                Image(systemName: DesignSystem.Icons.trashSlash)
+                                Text(L10n.Common.Misc.clearAll)
                             }
                             .font(.footnote.bold())
                             .foregroundStyle(.appSecondary)
@@ -303,12 +281,12 @@ struct SynthesisView: View {
                                 Capsule().stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
                             )
                         }
-                        .confirmationDialog(Localized.tr("synthesis.clearAllConfirm"), isPresented: $showClearAllConfirm, titleVisibility: .visible) {
-                            Button(L10n.Common.tr("clearAll"), role: .destructive) {
+                        .confirmationDialog(L10n.AI.Synthesis.clearAllConfirm, isPresented: $showClearAllConfirm, titleVisibility: .visible) {
+                            Button(L10n.Common.Misc.clearAll, role: .destructive) {
                                 synthesisStore.clearAll()
                                 HapticFeedback.shared.trigger(.success)
                             }
-                            Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                            Button(L10n.Common.cancel, role: .cancel) { }
                         }
                     }
                     .padding(.vertical, DesignSystem.tiny)
@@ -321,23 +299,6 @@ struct SynthesisView: View {
         .textCase(nil)
     }
 
-    
-    private var backButton: some View {
-        Button(action: {
-            HapticFeedback.shared.trigger(.selection)
-            if selection != nil {
-                withAnimation(DesignSystem.standardAnimation) { selection = nil }
-            } else {
-                router.pop()
-            }
-        }) {
-            Image(systemName: "chevron.left")
-                .font(.system(size: DesignSystem.iconSmall, weight: .bold))
-                .foregroundStyle(.appText)
-                .frame(width: DesignSystem.Action.backButtonWidth, height: DesignSystem.inputBarHeight)
-        }
-    }
-    
     private func batchDelete() {
         HapticFeedback.shared.trigger(.warning)
         synthesisStore.batchDeleteSynthesisDocs(ids: selectedDocIDs)
@@ -381,7 +342,7 @@ struct SynthesisView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button(L10n.Common.tr("done")) { showOutput = false }
+                    Button(L10n.Common.done) { showOutput = false }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: DesignSystem.headlineFontSize) {
@@ -390,9 +351,9 @@ struct SynthesisView: View {
                                 AppPasteboard.string = doc.content
                                 HapticFeedback.shared.trigger(.success)
                             }
-                        } label: { Image(systemName: "doc.on.doc") }
+                        } label: { Image(systemName: DesignSystem.Icons.copy) }
 
-                        Button { exportAction() } label: { Image(systemName: "square.and.arrow.up") }
+                        Button { exportAction() } label: { Image(systemName: DesignSystem.Icons.export) }
                     }
                 }
             }
@@ -425,11 +386,9 @@ struct SynthesisView: View {
         }
     }
 
-    /// 正在运行的任务区域
-    @ViewBuilder
     private func runningTasksSection(tasks: [GlobalTask]) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Text(L10n.AI.Task.tr("status.running"))
+            Text(L10n.AI.Task.running)
                 .font(.title3.bold())
                 .foregroundStyle(.appAccent)
                 .padding(.horizontal, DesignSystem.tiny)
@@ -447,7 +406,6 @@ struct SynthesisView: View {
         }
     }
 
-    /// 渲染任务状态行
     private func synthesisTaskRow(task: GlobalTask) -> some View {
         HStack(spacing: DesignSystem.standardPadding) {
             ZStack {
@@ -456,17 +414,16 @@ struct SynthesisView: View {
             }
             VStack(alignment: .leading, spacing: DesignSystem.small) {
                 Text(task.name).font(.subheadline.weight(.semibold))
-                if case .running(let progress) = task.status {
+                if case .running(let progress, _) = task.status {
                     ProgressView(value: progress).tint(.appAccent)
                 }
             }
         }
     }
 
-    /// 合成操作入口视图
     private var synthesisEntryView: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            AppSectionHeader(title: L10n.Synthesis.tr("actions"), icon: "wand.and.stars")
+            AppSectionHeader(title: L10n.AI.Synthesis.actions, icon: DesignSystem.Icons.wand)
                 .padding(.horizontal, DesignSystem.tiny)
             
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.medium) {
@@ -481,8 +438,6 @@ struct SynthesisView: View {
             .appContainer(padding: true)
         }
     }
-
-    // MARK: - Logic Helpers
 
     private func extractTitle(from content: String) -> String? {
         let lines = content.components(separatedBy: .newlines)
@@ -506,5 +461,122 @@ struct SynthesisView: View {
         }
         .joined(separator: "\n")
         .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+// MARK: - 辅助扩展：解耦 View Presentations
+extension View {
+    func synthesisViewPresentations(
+        showOutput: Binding<Bool>,
+        pdfURL: Binding<IdentifiableURL?>,
+        showNoPagesAlert: Binding<Bool>,
+        showLimitAlert: Binding<Bool>,
+        showRenameDialog: Binding<Bool>,
+        showLLMAlert: Binding<Bool>,
+        showBatchDeleteConfirm: Binding<Bool>,
+        showDeleteDocConfirm: Binding<Bool>,
+        newDocName: Binding<String>,
+        docToRename: SynthesisStore.SynthesisDocument?,
+        docToDelete: SynthesisStore.SynthesisDocument?,
+        batchDelete: @escaping () -> Void,
+        outputSheet: some View
+    ) -> some View {
+        self
+            .sheet(isPresented: showOutput) { outputSheet }
+            .sheet(item: pdfURL) { identifiable in
+                #if !os(watchOS)
+                PDFPreviewWrapper(url: identifiable.url)
+                #else
+                Text(identifiable.url.lastPathComponent)
+                #endif
+            }
+            .synthesisAlerts(
+                showNoPagesAlert: showNoPagesAlert,
+                showLimitAlert: showLimitAlert,
+                showRenameDialog: showRenameDialog,
+                showLLMAlert: showLLMAlert,
+                showBatchDeleteConfirm: showBatchDeleteConfirm,
+                showDeleteDocConfirm: showDeleteDocConfirm,
+                newDocName: newDocName,
+                docToRename: docToRename,
+                docToDelete: docToDelete,
+                batchDelete: batchDelete
+            )
+    }
+
+    private func synthesisAlerts(
+        showNoPagesAlert: Binding<Bool>,
+        showLimitAlert: Binding<Bool>,
+        showRenameDialog: Binding<Bool>,
+        showLLMAlert: Binding<Bool>,
+        showBatchDeleteConfirm: Binding<Bool>,
+        showDeleteDocConfirm: Binding<Bool>,
+        newDocName: Binding<String>,
+        docToRename: SynthesisStore.SynthesisDocument?,
+        docToDelete: SynthesisStore.SynthesisDocument?,
+        batchDelete: @escaping () -> Void
+    ) -> some View {
+        self
+            .alertNoPages(isPresented: showNoPagesAlert)
+            .alertLimitReached(isPresented: showLimitAlert)
+            .alertRenameDoc(isPresented: showRenameDialog, name: newDocName, doc: docToRename)
+            .alertLLMNotConfigured(isPresented: showLLMAlert)
+            .confirmBatchDelete(isPresented: showBatchDeleteConfirm, action: batchDelete)
+            .alertDeleteDoc(isPresented: showDeleteDocConfirm, doc: docToDelete)
+    }
+}
+
+extension View {
+    func alertNoPages(isPresented: Binding<Bool>) -> some View {
+        self.alert(L10n.AI.Synthesis.Error.noPages, isPresented: isPresented) {
+            Button(L10n.Common.ok, role: .cancel) { }
+        }
+    }
+    
+    func alertLimitReached(isPresented: Binding<Bool>) -> some View {
+        self.alert(L10n.AI.Synthesis.Error.limitReached, isPresented: isPresented) {
+            Button(L10n.Common.done, role: .cancel) { }
+        }
+    }
+    
+    func alertRenameDoc(isPresented: Binding<Bool>, name: Binding<String>, doc: SynthesisStore.SynthesisDocument?) -> some View {
+        self.alert(L10n.Tag.Action.rename, isPresented: isPresented) {
+            TextField(L10n.Tag.Management.inputName, text: name)
+            Button(L10n.Tag.Action.rename) {
+                if let doc = doc {
+                    @Inject var store: SynthesisStore
+                    store.renameSynthesisDoc(type: doc.type, docID: doc.id, newName: name.wrappedValue)
+                }
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        }
+    }
+    
+    func alertLLMNotConfigured(isPresented: Binding<Bool>) -> some View {
+        self.alert(L10n.Chat.configureFirst, isPresented: isPresented) {
+            Button(L10n.Common.confirm, role: .cancel) { }
+        } message: {
+            Text(L10n.AI.LLM.Error.notConfigured)
+        }
+    }
+    
+    func confirmBatchDelete(isPresented: Binding<Bool>, action: @escaping () -> Void) -> some View {
+        self.confirmationDialog(L10n.AI.Synthesis.batchDeleteConfirm, isPresented: isPresented, titleVisibility: .automatic) {
+            Button(L10n.Common.delete, role: .destructive) { action() }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        }
+    }
+    
+    func alertDeleteDoc(isPresented: Binding<Bool>, doc: SynthesisStore.SynthesisDocument?) -> some View {
+        self.alert(L10n.Common.deleteConfirm, isPresented: isPresented) {
+            Button(L10n.Common.delete, role: .destructive) {
+                if let doc = doc {
+                    @Inject var store: SynthesisStore
+                    store.deleteSynthesisDoc(type: doc.type, docID: doc.id)
+                    HapticFeedback.shared.trigger(.success)
+                }
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        }
     }
 }

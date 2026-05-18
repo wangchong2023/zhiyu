@@ -225,16 +225,31 @@ final class MarkdownProcessor: Sendable {
         return (.taskList(items: items), i)
     }
 
+    private func getIndentLevel(_ line: String) -> Int {
+        var count = 0
+        for char in line {
+            if char == " " {
+                count += 1
+            } else if char == "\t" {
+                count += 4
+            } else {
+                break
+            }
+        }
+        return count
+    }
+
     // MARK: - 解析无序列表
     private func parseBulletList(lines: [String], startIndex: Int) -> (block: BlockType, nextIndex: Int)? {
-        let trimmed = lines[startIndex].trimmingCharacters(in: .whitespaces)
+        let startLine = lines[startIndex]
+        let trimmedStart = startLine.trimmingCharacters(in: .whitespaces)
 
         // Check if it's a bullet list
-        let isBulletList = trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
+        let isBulletList = trimmedStart.hasPrefix("- ") || trimmedStart.hasPrefix("* ")
         // Check if it's a numbered list (e.g. "1. " or "1.[[")
         let isNumberedList: Bool
-        if let dotIndex = trimmed.firstIndex(of: "."), dotIndex < trimmed.index(trimmed.startIndex, offsetBy: 4) {
-            let prefix = trimmed[..<dotIndex]
+        if let dotIndex = trimmedStart.firstIndex(of: "."), dotIndex < trimmedStart.index(trimmedStart.startIndex, offsetBy: 4) {
+            let prefix = trimmedStart[..<dotIndex]
             isNumberedList = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
         } else {
             isNumberedList = false
@@ -242,21 +257,42 @@ final class MarkdownProcessor: Sendable {
 
         guard isBulletList || isNumberedList else { return nil }
 
+        let startIndent = getIndentLevel(startLine)
         var items: [String] = []
         var i = startIndex
 
         while i < lines.count {
-            let listLine = lines[i].trimmingCharacters(in: .whitespaces)
+            let line = lines[i]
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            let indent = getIndentLevel(line)
 
-            if isBulletList && (listLine.hasPrefix("- ") || listLine.hasPrefix("* ")) {
-                items.append(String(listLine.dropFirst(2)))
-            } else if isNumberedList, let dotIndex = listLine.firstIndex(of: ".") {
-                let prefix = listLine[..<dotIndex]
-                if prefix.allSatisfy({ $0.isNumber }) && !prefix.isEmpty {
-                    let content = String(listLine[listLine.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces)
-                    items.append(content)
-                } else {
+            if trimmed.isEmpty {
+                break
+            }
+
+            let isItem = trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
+            let isNumItem: Bool
+            if let dotIndex = trimmed.firstIndex(of: "."), dotIndex < trimmed.index(trimmed.startIndex, offsetBy: 4) {
+                let prefix = trimmed[..<dotIndex]
+                isNumItem = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
+            } else {
+                isNumItem = false
+            }
+
+            if isItem || isNumItem {
+                if indent == startIndent {
+                    if isBulletList && isItem {
+                        items.append(String(trimmed.dropFirst(2)))
+                    } else if isNumberedList && isNumItem, let dotIndex = trimmed.firstIndex(of: ".") {
+                        let content = String(trimmed[trimmed.index(after: dotIndex)...]).trimmingCharacters(in: .whitespaces)
+                        items.append(content)
+                    } else {
+                        break
+                    }
+                } else if indent < startIndent {
                     break
+                } else {
+                    // Nested list item: do not include in parent list items, but continue scanning parent list
                 }
             } else {
                 break
@@ -264,7 +300,7 @@ final class MarkdownProcessor: Sendable {
             i += 1
         }
 
-        return (.bulletList(items: items, indent: isNumberedList ? -1 : 0), i) // 使用 -1 表示有序列表
+        return (.bulletList(items: items, indent: isNumberedList ? -1 : startIndent), i)
     }
 
     // MARK: - 解析引用块
@@ -414,13 +450,13 @@ final class MarkdownProcessor: Sendable {
 extension NSRegularExpression {
     /// 匹配双向链接 [[知识标题]] 或 [[显示文本|实际标题]]
     /// 使用负向断言 (?<!\\\\) 排除转义的括号，确保 \[\[ 不被识别
-    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[(.*?)\\]\\]")
+    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[(.+?)\\]\\]")
     
     /// 匹配加粗文本 **内容**
     static let boldRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*\\*(.+?)\\*\\*")
     
-    /// 匹配斜体文本 *内容*
-    static let italicRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*(.+?)\\*")
+    /// 匹配斜体文本 *内容* 或 _内容_
+    static let italicRegex = try! NSRegularExpression(pattern: "(?<!\\\\)[\\*_](.+?)[\\*_]")
     
     /// 匹配删除线文本 ~~内容~~
     static let strikethroughRegex = try! NSRegularExpression(pattern: "(?<!\\\\)~~(.+?)~~")

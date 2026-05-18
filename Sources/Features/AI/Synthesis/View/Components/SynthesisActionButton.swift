@@ -65,7 +65,7 @@ struct SynthesisActionButton: View {
                                 .scaleEffect(DesignSystem.Animation.pressScale) // 0.9
                                 .tint(type.formatColor)
                         } else if isLimitReached {
-                            Image(systemName: "lock.fill")
+                            Image(systemName: DesignSystem.Icons.lock)
                                 .font(.system(size: DesignSystem.iconTiny, weight: .bold))
                                 .foregroundStyle(.red.opacity(DesignSystem.secondaryOpacity))
                         }
@@ -84,7 +84,7 @@ struct SynthesisActionButton: View {
             .animation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping), value: isLimitReached)
             
             if isLimitReached {
-                Text(Localized.tr("synthesis.limitReachedWarning"))
+                Text(L10n.AI.Synthesis.limitReachedWarning)
                     .font(.system(size: DesignSystem.microFontSize, weight: .medium))
                     .foregroundStyle(.red)
                     .transition(.opacity.combined(with: .move(edge: .top)))

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AIViewProvider: ViewProvider {
-    func makeView(for route: AppRoute) -> AnyView? {
-        guard route.domain == .ai else { return nil }
+    func makeView(for route: AnyHashable) -> AnyView? {
+        guard let route = route as? AppRoute, route.domain == .ai else { return nil }
         
         switch route {
         case .chat:

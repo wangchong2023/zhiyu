@@ -78,19 +78,13 @@ final class VaultStorageSecurityService {
     func authenticateWithBiometrics() async -> Bool {
         let context = LAContext()
         self.activeContext = context // 保持引用
-
-        let policy = provider.authenticationPolicy
         
         guard provider.canEvaluatePolicy(context: context) else {
             self.activeContext = nil
             return true
         }
 
-        let result = await withCheckedContinuation { continuation in
-            context.evaluatePolicy(policy, localizedReason: Localized.tr("security.unlockReason")) { success, _ in
-                continuation.resume(returning: success)
-            }
-        }
+        let result = await provider.evaluatePolicy(context: context, reason: L10n.Common.Security.unlockReason)
 
         self.activeContext = nil
         return result

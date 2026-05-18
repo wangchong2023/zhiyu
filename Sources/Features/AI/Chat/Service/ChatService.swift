@@ -37,7 +37,7 @@ final class ChatService: ChatServiceProtocol, @unchecked Sendable {
         let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
         
         logger.debug("🗣️ [ChatService] 开始构建对话上下文与流式请求: \(query)")
-        let history = Array(historyStore.recent(AppConstants.AI.maxChatHistorySize))
+        let history = Array(historyStore.recent(BusinessConstants.AI.maxChatHistorySize))
         return llmService.chatStream(query: query, history: history, pages: pages)
     }
 }

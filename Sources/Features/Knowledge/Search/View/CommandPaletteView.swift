@@ -23,12 +23,12 @@ struct CommandPaletteView: View {
         VStack(spacing: 0) {
             // 搜索栏
             HStack {
-                Image(systemName: "command")
+                Image(systemName: DesignSystem.Icons.command)
                     .foregroundStyle(.appAccent)
-                TextField(Localized.tr("palette.searchPlaceholder"), text: $searchText)
+                TextField(L10n.Common.Palette.searchPlaceholder, text: $searchText)
                     .textFieldStyle(.plain)
                     .focused($isFocused)
-                Text(Localized.tr("common.esc"))
+                Text(L10n.Common.Global.esc)
                     .font(.system(size: 10, weight: .bold))
                     .padding(4)
                     .background(Color.appBorder.opacity(0.3))
@@ -41,17 +41,35 @@ struct CommandPaletteView: View {
             
             // 结果列表
             List {
-                Section(L10n.Action.tr("cmd.quickActions")) {
-                    CommandRow(icon: "sparkles", title: L10n.Action.tr("cmd.deepExplore"), shortcut: "↵") {
+                Section(L10n.Action.cmd.quickActions) {
+                    CommandRow(icon: DesignSystem.Icons.sparkles, title: L10n.Action.cmd.deepExplore, shortcut: "↵") {
                         // 触发逻辑
                         dismiss()
                     }
-                    CommandRow(icon: "doc.badge.plus", title: L10n.Action.tr("cmd.newKnowledgePage"), shortcut: "N") {
+                    CommandRow(icon: DesignSystem.Icons.docBadgePlus, title: L10n.Action.cmd.newKnowledgePage, shortcut: "N") {
                         dismiss()
                     }
                 }
                 
-                Section(L10n.Action.tr("cmd.recentAccess")) {
+                // 插件指令板块
+                if !PluginRegistry.shared.commands.isEmpty {
+                    let filteredCommands = PluginRegistry.shared.commands.filter { 
+                        searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) 
+                    }
+                    
+                    if !filteredCommands.isEmpty {
+                        Section(L10n.Plugin.commands.title) {
+                            ForEach(filteredCommands) { command in
+                                CommandRow(icon: DesignSystem.Icons.pluginOutline, title: command.name) {
+                                    command.action()
+                                    dismiss()
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                Section(L10n.Action.cmd.recentAccess) {
                     ForEach(store.pages.prefix(3)) { page in
                         CommandRow(icon: page.pageType.icon, title: page.title) {
                             dismiss()

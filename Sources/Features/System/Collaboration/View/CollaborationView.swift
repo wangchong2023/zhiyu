@@ -57,14 +57,14 @@ struct CollaborationViewContent: View {
             .padding()
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(L10n.Collaboration.tr("title"))
+        .navigationTitle(L10n.Collaboration.title)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
         .sheet(isPresented: $showHostingSheet) {
             HostingSetupSheet(collabService: collabService, roomName: $roomName)
         }
-        .alert(L10n.Collaboration.tr("error.connectionTimeout"), isPresented: $showConnectionError) {
+        .alert(L10n.Collaboration.Error.connectionTimeout, isPresented: $showConnectionError) {
             Button(L10n.Common.ok, role: .cancel) { }
         } message: {
             Text(collabService.connectionError ?? "")
@@ -93,7 +93,7 @@ struct CollaborationViewContent: View {
                     )
                 )
             
-            Text(L10n.Collaboration.tr("subtitle"))
+            Text(L10n.Collaboration.subtitle)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
@@ -104,10 +104,10 @@ struct CollaborationViewContent: View {
     // MARK: - Simulator Warning
     private var simulatorWarning: some View {
         HStack(spacing: 12) {
-            Image(systemName: "exclamationmark.triangle.fill")
+            Image(systemName: DesignSystem.Icons.warning)
                 .foregroundStyle(.orange)
             
-            Text(L10n.Collaboration.tr("simulatorWarning"))
+            Text(L10n.Collaboration.simulatorWarning)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
         }
@@ -156,14 +156,14 @@ struct CollaborationViewContent: View {
     
     private var usernameField: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(L10n.Collaboration.tr("username"))
+            Text(L10n.Collaboration.username)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
 
             HStack {
-                Image(systemName: "person.fill")
+                Image(systemName: DesignSystem.Icons.person)
                     .foregroundStyle(.appAccent)
-                TextField(L10n.Collaboration.tr("usernamePlaceholder"), text: $userName)
+                TextField(L10n.Collaboration.usernamePlaceholder, text: $userName)
                     .textFieldStyle(.plain)
                     .font(.subheadline)
                     .accessibilityIdentifier("collab-username-field")
@@ -181,7 +181,7 @@ struct CollaborationViewContent: View {
         Button(action: { showHostingSheet = true }) {
             HStack {
                 Image(systemName: DesignSystem.Icons.broadcast)
-                Text(L10n.Collaboration.tr("hostSession"))
+                Text(L10n.Collaboration.hostSession)
             }
             .font(.headline)
             .foregroundStyle(.white)
@@ -202,7 +202,7 @@ struct CollaborationViewContent: View {
         }) {
             HStack {
                 Image(systemName: DesignSystem.Icons.search)
-                Text(L10n.Collaboration.tr("joinSession"))
+                Text(L10n.Collaboration.joinSession)
             }
             .font(.headline)
             .foregroundStyle(.appAccent)
@@ -221,7 +221,7 @@ struct CollaborationViewContent: View {
             showBrowsing = false
             collabService.stop()
         }) {
-            Text(L10n.Collaboration.tr("stopSearching"))
+            Text(L10n.Collaboration.stopSearching)
                 .font(.subheadline)
                 .foregroundStyle(.red)
         }
@@ -231,14 +231,14 @@ struct CollaborationViewContent: View {
     // MARK: - Discovered Rooms
     private var discoveredRoomsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.Collaboration.tr("nearbyRooms"))
+            Text(L10n.Collaboration.nearbyRooms)
                 .font(.headline)
                 .foregroundStyle(.appText)
             
             if collabService.discoveredRooms.isEmpty {
                 HStack {
                     ProgressView()
-                    Text(L10n.Collaboration.tr("searching"))
+                    Text(L10n.Collaboration.searching)
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }
@@ -282,7 +282,7 @@ struct CollaborationViewContent: View {
         Button(action: { collabService.stop() }) {
             HStack {
                 Image(systemName: DesignSystem.Icons.errorCircle)
-                Text(L10n.Collaboration.tr("leaveSession"))
+                Text(L10n.Collaboration.leaveSession)
             }
             .font(.subheadline.weight(.medium))
             .foregroundStyle(.red)
@@ -297,14 +297,14 @@ struct CollaborationViewContent: View {
     // MARK: - Peers
     private var peersSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.Collaboration.tr("connectedUsers"))
+            Text(L10n.Collaboration.connectedUsers)
                 .font(.headline)
                 .foregroundStyle(.appText)
                 .accessibilityIdentifier("collab-peers-header")
 
             // Self
             HStack {
-                Image(systemName: "person.fill.checkmark")
+                Image(systemName: DesignSystem.Icons.personCheck)
                     .foregroundStyle(.green)
                 Text(userName)
                     .font(.subheadline.weight(.medium))
@@ -329,13 +329,13 @@ struct CollaborationViewContent: View {
     // MARK: - Recent Edits
     private var editsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.Collaboration.tr("recentEdits"))
+            Text(L10n.Collaboration.recentEdits)
                 .font(.headline)
                 .foregroundStyle(.appText)
                 .accessibilityIdentifier("collab-edits-header")
 
             if recentEditsSnapshot.isEmpty {
-                Text(L10n.Collaboration.tr("noEdits"))
+                Text(L10n.Collaboration.noEdits)
                     .font(.subheadline)
                     .foregroundStyle(.appSecondary)
                     .padding()

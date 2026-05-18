@@ -22,7 +22,7 @@ public final class NotebookHubViewModel {
         case grid, list
         
         var icon: String {
-            self == .grid ? "square.grid.2x2" : "list.bullet"
+            self == .grid ? DesignSystem.Icons.gridOutline : DesignSystem.Icons.list
         }
     }
     
@@ -31,7 +31,7 @@ public final class NotebookHubViewModel {
         case date, name
         
         var icon: String {
-            self == .date ? "calendar" : "abc"
+            self == .date ? DesignSystem.Icons.sortDate : DesignSystem.Icons.sortName
         }
     }
     

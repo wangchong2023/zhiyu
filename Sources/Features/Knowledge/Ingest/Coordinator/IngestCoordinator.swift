@@ -22,7 +22,7 @@ final class IngestCoordinator {
     // ── UI 控制状态 ──
     var isIngesting = false
     var showManualForm = false
-    var manualFormTitle = L10n.Ingest.tr("manualEntry")
+    var manualFormTitle = L10n.Ingest.manualEntry
     var showOCRScan = false
     var showURLImport = false
     var showFileImporter = false
@@ -77,7 +77,7 @@ final class IngestCoordinator {
             } catch {
                 await MainActor.run {
                     self.isIngesting = false
-                    self.errorMessage = L10n.Ingest.tr("importFailed")
+                    self.errorMessage = L10n.Ingest.importFailed
                     self.showError = true
                     HapticFeedback.shared.trigger(.error)
                 }
@@ -89,7 +89,7 @@ final class IngestCoordinator {
         if case .success(let urls) = result {
             for url in urls {
                 let _ = url.startAccessingSecurityScopedResource()
-                let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.tr("importingFile"), target: url.lastPathComponent)
+                let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: url.lastPathComponent)
                 Task {
                     defer { url.stopAccessingSecurityScopedResource() }
                     let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
@@ -98,7 +98,7 @@ final class IngestCoordinator {
                             TaskCenter.shared.updateTask(taskID, status: .completed)
                             HapticFeedback.shared.trigger(.success)
                         } else {
-                            TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.tr("importFailed")))
+                            TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
                             HapticFeedback.shared.trigger(.error)
                         }
                     }
@@ -112,12 +112,12 @@ final class IngestCoordinator {
 
     func handleURLImport() {
         guard let url = URL(string: newURL) else {
-            errorMessage = L10n.Ingest.tr("invalidURL")
+            errorMessage = L10n.Ingest.invalidURL
             showError = true
             return
         }
         showURLImport = false
-        let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.tr("fetchingURL"), target: url.host ?? url.absoluteString)
+        let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.fetchingURL, target: url.host ?? url.absoluteString)
         Task {
             let page = try? await store.ingestService.ingestURL(urlString: url.absoluteString, pageStore: store)
             await MainActor.run {
@@ -126,7 +126,7 @@ final class IngestCoordinator {
                     HapticFeedback.shared.trigger(.success)
                     self.newURL = ""
                 } else {
-                    TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.tr("importFailed")))
+                    TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
                     HapticFeedback.shared.trigger(.error)
                 }
             }
@@ -137,7 +137,7 @@ final class IngestCoordinator {
         if let content = AppPasteboard.string, !content.isEmpty {
             self.newTitle = String(content.prefix(20))
             self.newContent = content
-            self.manualFormTitle = L10n.Ingest.tr("manualEntry")
+            self.manualFormTitle = L10n.Ingest.manualEntry
             self.showManualForm = true
         }
     }

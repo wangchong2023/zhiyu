@@ -59,8 +59,8 @@ struct LintViewContent: View {
             VStack(spacing: 0) {
                 // 选项卡切换
                 Picker("", selection: $selectedTab) {
-                    Text(L10n.Lint.tr("title")).tag(0)
-                    Text(L10n.Lint.tr("aiSuggestions")).tag(1)
+                    Text(L10n.Lint.title).tag(0)
+                    Text(L10n.Lint.aiSuggestions).tag(1)
                 }
                 #if !os(watchOS)
                 .pickerStyle(.segmented)
@@ -83,7 +83,7 @@ struct LintViewContent: View {
             }
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .appSubPageToolbar(title: selectedTab == 0 ? L10n.Lint.tr("title") : L10n.Lint.tr("aiSuggestions")) {
+        .appSubPageToolbar(title: selectedTab == 0 ? L10n.Lint.title : L10n.Lint.aiSuggestions) {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 if selectedTab == 0 { runLint() } else { runAIScan() }
@@ -94,12 +94,12 @@ struct LintViewContent: View {
                             .controlSize(.small)
                             .opacity(isRunning || aiStore.isScanningAI ? 1 : 0)
                         
-                        Image(systemName: selectedTab == 0 ? "stethoscope" : "sparkles")
+                        Image(systemName: selectedTab == 0 ? DesignSystem.Icons.healthCheck : DesignSystem.Icons.sparkles)
                             .font(.system(size: 13)) // 微调图标大小
                             .opacity(isRunning || aiStore.isScanningAI ? 0 : 1)
                     }
                     
-                    Text(isRunning || aiStore.isScanningAI ? L10n.Lint.tr("scanning") : (selectedTab == 0 ? L10n.Lint.tr("runCheck") : L10n.Lint.tr("runAIScan")))
+                    Text(isRunning || aiStore.isScanningAI ? L10n.Lint.scanning : (selectedTab == 0 ? L10n.Lint.runCheck : L10n.Lint.runAIScan))
                 }
                 .font(.footnote.bold())
                 .foregroundStyle(buttonGradient)
@@ -109,7 +109,7 @@ struct LintViewContent: View {
         }
     }
 
-    // MARK: - 健康检查板块 (重构为 Dashboard 模式)
+    // MARK: - 健康检查板块 (重构为 Dashboard模式)
     private var healthCheckSection: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -123,22 +123,22 @@ struct LintViewContent: View {
                 // 3. Issue List (如果存在问题)
                 if !aiStore.lintIssues.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(L10n.Lint.tr("detailIssues"))
+                        Text(L10n.Lint.detailIssues)
                             .font(.headline)
                             .padding(.horizontal, DesignSystem.huge)
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            issueSection(title: Localized.trf("lint.errors", aiStore.lintIssues.filter { $0.severity == .error }.count), 
+                            issueSection(title: L10n.Lint.errors(aiStore.lintIssues.filter { $0.severity == .error }.count), 
                                          issues: aiStore.lintIssues.filter { $0.severity == .error }, 
-                                         icon: "xmark.circle.fill", color: .red)
+                                         icon: DesignSystem.Icons.errorCircle, color: .red)
                             
-                            issueSection(title: Localized.trf("lint.warnings", aiStore.lintIssues.filter { $0.severity == .warning }.count), 
+                            issueSection(title: L10n.Lint.warnings(aiStore.lintIssues.filter { $0.severity == .warning }.count), 
                                          issues: aiStore.lintIssues.filter { $0.severity == .warning }, 
-                                         icon: "exclamationmark.triangle.fill", color: .orange)
+                                         icon: DesignSystem.Icons.warning, color: .orange)
                             
-                            issueSection(title: Localized.trf("lint.tips", aiStore.lintIssues.filter { $0.severity == .info }.count), 
+                            issueSection(title: L10n.Lint.tips(aiStore.lintIssues.filter { $0.severity == .info }.count), 
                                          issues: aiStore.lintIssues.filter { $0.severity == .info }, 
-                                         icon: "info.circle.fill", color: .blue)
+                                         icon: DesignSystem.Icons.info, color: .blue)
                         }
                         .appContainer(padding: true)
                         .padding(.horizontal, DesignSystem.huge)
@@ -154,7 +154,7 @@ struct LintViewContent: View {
             ZStack {
                 // 上次检查时间展示在左上角
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(L10n.Lint.tr("lastCheck.title"))
+                    Text(L10n.Lint.lastCheckTitle)
                         .font(.system(size: DesignSystem.captionFontSize, weight: .bold)) // 提升字号并加粗
                         .foregroundStyle(.appText) // 改为正文颜色更醒目
                         .padding(.leading, 4)
@@ -165,7 +165,7 @@ struct LintViewContent: View {
                                 .font(.system(size: 10, design: .monospaced))
                                 .foregroundStyle(.appText)
                         } else {
-                            Text(L10n.Lint.tr("lastCheck.never"))
+                            Text(L10n.Lint.lastCheckNever)
                                 .font(.system(size: DesignSystem.microFontSize))
                                 .foregroundStyle(.appSecondary)
                         }
@@ -210,10 +210,10 @@ struct LintViewContent: View {
                 // 评分标准展示在右下角
                 VStack(alignment: .trailing, spacing: 4) {
                     let ranges = [
-                        (L10n.Lint.tr("health.excellent"), "90-100"),
-                        (L10n.Lint.tr("health.good"), "70-89"),
-                        (L10n.Lint.tr("health.fair"), "50-69"),
-                        (L10n.Lint.tr("health.poor"), "< 50")
+                        (L10n.Lint.healthExcellent, "90-100"),
+                        (L10n.Lint.healthGood, "70-89"),
+                        (L10n.Lint.healthFair, "50-69"),
+                        (L10n.Lint.healthPoor, "< 50")
                     ]
                     
                     ForEach(ranges, id: \.1) { label, range in
@@ -239,24 +239,24 @@ struct LintViewContent: View {
     
     private var metricsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-            metricCard(title: L10n.Lint.tr("metric.pages"), 
+            metricCard(title: L10n.Lint.metricPages, 
                        value: "\(store.pages.count)", 
-                       icon: "doc.text.fill", 
+                       icon: DesignSystem.Icons.documentFill, 
                        color: .blue)
             
-            metricCard(title: L10n.Lint.tr("metric.broken"), 
+            metricCard(title: L10n.Lint.metricBroken, 
                        value: "\(store.brokenLinkCount)", 
-                       icon: "link", 
+                       icon: DesignSystem.Icons.link, 
                        color: .red)
             
-            metricCard(title: L10n.Lint.tr("metric.orphans"), 
+            metricCard(title: L10n.Lint.metricOrphans, 
                        value: "\(store.orphanPageCount)", 
                        icon: "person.fill.questionmark", 
                        color: .orange)
             
-            metricCard(title: L10n.Lint.tr("metric.links"), 
+            metricCard(title: L10n.Lint.metricLinks, 
                        value: "\(store.totalConnectionCount)", 
-                       icon: "point.3.connected.trianglepath.dotted", 
+                       icon: DesignSystem.Icons.network, 
                        color: .appAccent)
         }
         .padding(.horizontal, DesignSystem.huge)
@@ -294,13 +294,13 @@ struct LintViewContent: View {
 
     // MARK: - AI 建议板块
     private var aiSuggestionsSection: some View {
-        Group {
+        VStack {
             if aiStore.refactorSuggestions.isEmpty && aiStore.potentialLinks.isEmpty {
                 emptyAIView
             } else {
                 List {
                     if !aiStore.refactorSuggestions.isEmpty {
-                        Section(L10n.Lint.tr("refactorSection")) {
+                        Section(L10n.Lint.refactorSection) {
                             ForEach(aiStore.refactorSuggestions) { suggestion in
                                 RefactorSuggestionRow(suggestion: suggestion)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -309,7 +309,7 @@ struct LintViewContent: View {
                                                 aiStore.removeRefactorSuggestion(id: suggestion.id)
                                             }
                                         } label: {
-                                            Label(L10n.Common.tr("ignore"), systemImage: "eye.slash")
+                                            Label(L10n.Common.ignore, systemImage: DesignSystem.Icons.privacyMode)
                                         }
                                     }
                             }
@@ -317,7 +317,7 @@ struct LintViewContent: View {
                     }
                     
                     if !aiStore.potentialLinks.isEmpty {
-                        Section(L10n.Lint.tr("linkDiscoverySection")) {
+                        Section(L10n.Lint.linkDiscoverySection) {
                             ForEach(aiStore.potentialLinks) { link in
                                 PotentialLinkRow(link: link)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -326,7 +326,7 @@ struct LintViewContent: View {
                                                 aiStore.removePotentialLink(id: link.id)
                                             }
                                         } label: {
-                                            Label(L10n.Common.tr("ignore"), systemImage: "eye.slash")
+                                            Label(L10n.Common.ignore, systemImage: DesignSystem.Icons.privacyMode)
                                         }
                                     }
                             }
@@ -347,9 +347,9 @@ struct LintViewContent: View {
             Image(systemName: DesignSystem.Icons.seal)
                 .font(.system(size: 56))
                 .foregroundStyle(.green)
-            Text(L10n.Lint.tr("noIssues"))
+            Text(L10n.Lint.noIssues)
                 .font(.title3.weight(.semibold))
-            Text(L10n.Lint.tr("noIssuesHint"))
+            Text(L10n.Lint.noIssuesHint)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
             Spacer()
@@ -362,9 +362,9 @@ struct LintViewContent: View {
             Image(systemName: DesignSystem.Icons.sparkles)
                 .font(.system(size: 56))
                 .foregroundStyle(.appAccent)
-            Text(L10n.Lint.tr("noAISuggestions"))
+            Text(L10n.Lint.noAISuggestions)
                 .font(.title3.weight(.semibold))
-            Text(L10n.Lint.tr("noAISuggestionsHint"))
+            Text(L10n.Lint.noAISuggestionsHint)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
@@ -412,7 +412,7 @@ struct LintViewContent: View {
             await MainActor.run {
                 isRunning = false
                 HapticFeedback.shared.trigger(.success)
-                ToastManager.shared.show(type: .success, message: L10n.Lint.tr("scanComplete"))
+                ToastManager.shared.show(type: .success, message: L10n.Lint.scanComplete)
             }
         }
     }
@@ -420,7 +420,7 @@ struct LintViewContent: View {
     private func runAIScan() {
         guard aiStore.isLLMEnabled else {
             HapticFeedback.shared.trigger(.error)
-            ToastManager.shared.show(type: .error, message: L10n.Lint.tr("aiDisabledHint"))
+            ToastManager.shared.show(type: .error, message: L10n.Lint.aiDisabledHint)
             return
         }
         
@@ -428,7 +428,7 @@ struct LintViewContent: View {
             await aiStore.runAIScan()
             await MainActor.run {
                 HapticFeedback.shared.trigger(.success)
-                ToastManager.shared.show(type: .success, message: L10n.Lint.tr("aiScanComplete"))
+                ToastManager.shared.show(type: .success, message: L10n.Lint.aiScanComplete)
             }
         }
     }
@@ -460,7 +460,7 @@ struct RefactorSuggestionRow: View {
                 
                 Spacer()
                 
-                AppBorderedButton(title: L10n.Lint.tr("apply"), color: .appAccent, maxWidth: 80) {
+                AppBorderedButton(title: L10n.Lint.apply, color: .appAccent, maxWidth: 80) {
                     Task { await store.applyRefactorSuggestion(suggestion) }
                 }
             }
@@ -469,7 +469,7 @@ struct RefactorSuggestionRow: View {
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
             
-            Text(Localized.trf("lint.aiFixSuggestion", suggestion.suggestion))
+            Text(L10n.Lint.aiFixSuggestion(suggestion.suggestion))
                 .font(.caption2)
                 .padding(6)
                 .background(Color.appCard)
@@ -517,7 +517,7 @@ struct PotentialLinkRow: View {
             
             Spacer()
             
-            AppBorderedButton(title: L10n.Lint.tr("apply"), color: .appAccent, maxWidth: 80) {
+            AppBorderedButton(title: L10n.Lint.apply, color: .appAccent, maxWidth: 80) {
                 Task { await store.applyPotentialLink(link) }
             }
         }
@@ -551,7 +551,7 @@ struct LintIssueRow: View {
 
             if !issue.suggestion.isEmpty {
                 HStack(spacing: 4) {
-                    Image(systemName: "lightbulb.fill")
+                    Image(systemName: DesignSystem.Icons.concept)
                         .font(.caption2)
                         .foregroundStyle(.yellow)
                     Text(issue.suggestion)
@@ -565,7 +565,7 @@ struct LintIssueRow: View {
                store.pages.contains(where: { $0.id == pageID }) {
                 HStack(spacing: 12) {
                     Button(action: { router.navigateToPage(id: pageID) }) {
-                        Text(L10n.Lint.tr("goToPage"))
+                        Text(L10n.Lint.goToPage)
                             .font(.caption2)
                             .foregroundStyle(.appAccent)
                     }
@@ -579,7 +579,7 @@ struct LintIssueRow: View {
                                     Image(systemName: DesignSystem.Icons.sparkles)
                                         .font(.caption2)
                                 }
-                                Text(L10n.Lint.tr("aiFixSuggestion"))
+                                Text(L10n.Lint.aiFixSuggestionShort)
                                     .font(.caption2)
                             }
                             .foregroundStyle(.purple)
@@ -623,7 +623,7 @@ struct LintIssueRow: View {
                 }
             } catch {
                 await MainActor.run {
-                    self.aiSuggestion = Localized.trf("lint.aiSuggestionError", error.localizedDescription)
+                    self.aiSuggestion = L10n.Lint.aiSuggestionError(error.localizedDescription)
                     self.isAnalyzing = false
                 }
             }

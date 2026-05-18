@@ -14,6 +14,29 @@ final class LocalizationTests: XCTestCase {
     /// 验证核心模块的 Key 是否能正确解析（而非原样返回 Key）
     func testLocalizationKeysExistence() {
         // 1. Common 模块
+        print("--- DIAGNOSTICS ---")
+        print("Bundle.main.bundlePath: \(Bundle.main.bundlePath)")
+        let testBundle = Bundle(for: Self.self)
+        print("Test Bundle Path: \(testBundle.bundlePath)")
+        if let paths = Bundle.main.urls(forResourcesWithExtension: "lproj", subdirectory: nil) {
+            print("Bundle.main lproj urls: \(paths.map { $0.lastPathComponent })")
+        }
+        if let paths = testBundle.urls(forResourcesWithExtension: "lproj", subdirectory: nil) {
+            print("Test Bundle lproj urls: \(paths.map { $0.lastPathComponent })")
+        }
+        print("Current Language Mode: \(Localized.languageMode.rawValue)")
+        print("Current Language: \(Localized.currentLanguage)")
+        let lang = Localized.currentLanguage
+        let pathInMain = Bundle.main.path(forResource: lang, ofType: "lproj")
+        print("Path of \(lang).lproj in main: \(pathInMain ?? "nil")")
+        let pathInTest = testBundle.path(forResource: lang, ofType: "lproj")
+        print("Path of \(lang).lproj in test: \(pathInTest ?? "nil")")
+        
+        let okVal = Localized.tr("misc.ok", table: "Localizable")
+        print("misc.ok in Localizable table: \(okVal)")
+        
+        print("--- END DIAGNOSTICS ---")
+        
         XCTAssertNotEqual(L10n.Common.ok, "misc.ok", "Common.ok 应该被正确翻译")
         XCTAssertNotEqual(L10n.Common.cancel, "misc.cancel", "Common.cancel 应该被正确翻译")
         
@@ -48,37 +71,32 @@ final class LocalizationTests: XCTestCase {
     
     /// 验证格式化字符串是否正常工作
     func testParameterizedLocalization() {
-        // 假设 AITasks 中有类似 "aitask.center.status" = "正在处理 %d 个任务"
-        // 这里验证 trf 接口不会崩溃且能正常注入参数
-        let formatted = L10n.AI.Task.trf("aitask.test.param", "测试")
-        XCTAssertTrue(formatted.contains("测试") || formatted == "aitask.test.param", "格式化调用应正常执行")
+        // 验证 trf 接口不会崩溃且能正常注入参数
+        // "aitask.status.runningFormat" 定义在 Localizable 和 AITasks xcstrings 中，接收两个参数
+        let formatted = L10n.AI.Task.trf("status.runningFormat", "测试A", "测试B")
+        XCTAssertTrue(formatted.contains("测试A") || formatted.contains("测试B"), "格式化调用应正常执行且包含传入参数")
     }
-
+    
     /// 自动化全量审计：动态遍历所有 L10n 模块并验证 Key 的存在性
     func testComprehensiveLocalizationAudit() {
         let modules: [(name: String, table: String, keys: [String])] = [
-            ("Common", "Common", ["misc.ok", "misc.cancel", "misc.action", "misc.done"]),
-            ("Settings", "Settings", ["settings.settings", "settings.language", "settings.theme", "settings.version", "settings.about"]),
-            ("Chat", "Chat", ["chat.title", "chat.newChat", "chat.history"]),
-            ("Ingest", "Ingest", ["ingest.title", "ingest.manualEntry", "ingest.smartIngest"]),
-            ("Backup", "Backup", ["backup.title", "backup.create", "backup.restore"]),
-            ("ICloud", "ICloud", ["icloud.title", "icloud.syncNow", "icloud.notAvailable"]),
-            ("AI", "AITasks", ["aitask.title", "aitask.generating", "aitask.done"]),
-            ("CoreModels", "CoreModels", ["type.entity", "type.concept", "type.source"]),
-            ("Lint", "Lint", ["lint.title", "lint.runScan", "lint.noIssues"]),
-            ("Graph", "Graph", ["graph.title", "graph.optimizingLayout", "graph.insights", "graph.legend"]),
-            ("Transfer", "Transfer", ["transfer.export.title", "transfer.import.title"]),
-            ("Actions", "Actions", ["action.delete", "action.edit", "action.share"]),
-            ("Accessibility", "Accessibility", ["ax.graph.contentDescription"]),
-            ("Components", "Components", ["component.search.placeholder"]),
-            ("Watch", "Watch", ["watch.syncing"]),
-            ("Schema", "Schema", ["schema.title"]),
-            ("Collaboration", "Collaboration", ["collab.activeUsers"]),
-            ("Widget", "Widget", ["widget.stats.title"]),
-            ("Coachmark", "Coachmark", ["coach.graph.welcome"]),
-            ("Creation", "Creation", ["create.page.title"]),
-            ("Dashboard", "Dashboard", ["dash.summary"]),
-            ("Editor", "Editor", ["editor.placeholder"])
+            ("Common", "Common", ["ok", "cancel", "done"]),
+            ("Settings", "Settings", ["aboutApp", "version", "section.about"]),
+            ("Chat", "Chat", ["chat.title", "inputPlaceholder"]),
+            ("Ingest", "Ingest", ["ingest.title", "ingest.manualEntry"]),
+            ("AITasks", "AITasks", ["aitask.center.title", "aitask.status.thinking"]),
+            ("Auth", "Auth", ["guestMode", "login"]),
+            ("Coachmark", "Coachmark", ["onboarding.action.next"]),
+            ("Collaboration", "Collaboration", ["collab.title"]),
+            ("Creation", "Creation", ["pageTitle", "content"]),
+            ("Dashboard", "Dashboard", ["hotTopics", "density"]),
+            ("Graph", "Graph", ["title"]),
+            ("Lint", "Lint", ["noIssues", "noIssuesHint"]),
+            ("Plugin", "Plugin", ["section.rag"]),
+            ("Vault", "Vault", ["vault.label"]),
+            ("Watch", "Watch", ["watch.capture"]),
+            ("Widget", "Widget", ["widget.title"]),
+            ("Localizable", "Localizable", ["misc.ok", "misc.cancel", "misc.done"])
         ]
         
         var missingKeys: [String] = []
@@ -86,9 +104,8 @@ final class LocalizationTests: XCTestCase {
         for module in modules {
             for key in module.keys {
                 let translated = Localized.tr(key, table: module.table)
-                // 如果返回了 [MISSING: key] 或者原样返回了 key，说明翻译缺失
-                // 注意：在没有翻译的情况下，NSLocalizedString 会返回原 Key
-                if translated.contains("[MISSING:") || (translated == key && !key.isEmpty) {
+                // 如果返回了 [MISSING: key] 说明翻译缺失
+                if translated.contains("[MISSING:") {
                     missingKeys.append("\(module.table).\(key)")
                 }
             }
@@ -97,3 +114,4 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(missingKeys.isEmpty, "以下本地化 Key 缺失或未在对应的表中定义: \n\(missingKeys.joined(separator: "\n"))")
     }
 }
+

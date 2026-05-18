@@ -25,7 +25,7 @@ struct WeeklyInsightCard: View {
             HStack {
                 AppGlow(icon: DesignSystem.Icons.sparkles, color: .purple, size: DesignSystem.largeIconSize - DesignSystem.tiny) // 28
                 VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                    Text(L10n.Dashboard.tr("insight.weeklyTitle"))
+                    Text(L10n.Dashboard.insight.weeklyTitle)
                         .font(.title3.bold())
                         .foregroundStyle(.appText)
                     if let insight = aiStore.weeklyInsight {
@@ -40,7 +40,7 @@ struct WeeklyInsightCard: View {
                     ProgressView().scaleEffect(DesignSystem.Animation.pressScale) // 0.8
                 } else {
                     Button(action: { generateInsight(forceRefresh: true) }) {
-                        Image(systemName: "arrow.clockwise")
+                        Image(systemName: DesignSystem.Icons.refresh)
                             .font(.caption.bold())
                             .foregroundStyle(.appSecondary)
                             .padding(DesignSystem.small)
@@ -62,9 +62,9 @@ struct WeeklyInsightCard: View {
                     // 核心指标 (奖牌化设计)
                     VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                         HStack(spacing: DesignSystem.Metrics.sectionSpacing) { // 24
-                            InsightStat(label: Localized.tr("stat.newPages"), value: "\(insight.totalNewPages)", icon: "doc.badge.plus", color: .blue)
+                            InsightStat(label: L10n.Common.Stats.newPages, value: "\(insight.totalNewPages)", icon: DesignSystem.Icons.docBadgePlus, color: .blue)
                             Divider().frame(height: DesignSystem.Action.buttonHeight - DesignSystem.small) // 36
-                            InsightStat(label: Localized.tr("stat.growth"), value: insight.growthTraction, icon: "chart.line.uptrend.xyaxis", color: .green)
+                            InsightStat(label: L10n.Common.Stats.growth, value: insight.growthTraction, icon: DesignSystem.Icons.chartLine, color: .green)
                         }
                         
                         if !insight.topKeywords.isEmpty {
@@ -92,7 +92,7 @@ struct WeeklyInsightCard: View {
                     // 摘要正文
                     VStack(alignment: .leading, spacing: DesignSystem.standardPadding) { // 12
                         HStack {
-                            Image(systemName: "quote.opening")
+                            Image(systemName: DesignSystem.Icons.quoteOpening)
                                 .font(.title2)
                                 .foregroundStyle(.appAccent.opacity(DesignSystem.dimmedOpacity * 1.5)) // 0.3
                             Spacer()
@@ -107,7 +107,7 @@ struct WeeklyInsightCard: View {
                         
                         HStack {
                             Spacer()
-                            Image(systemName: "quote.closing")
+                            Image(systemName: DesignSystem.Icons.quoteClosing)
                                 .font(.title2)
                                 .foregroundStyle(.appAccent.opacity(DesignSystem.disabledOpacity))
                         }
@@ -129,13 +129,13 @@ struct WeeklyInsightCard: View {
                 Button(action: { generateInsight(forceRefresh: true) }) {
                     HStack {
                         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                            Text(L10n.Dashboard.tr("insight.generateReport"))
+                            Text(L10n.Dashboard.insight.generateReport)
                                 .font(.headline)
-                            Text(Localized.tr("weekly.aiAnalysis"))
+                            Text(L10n.Insight.Weekly.aiAnalysis)
                                 .font(.caption)
                         }
                         Spacer()
-                        Image(systemName: "sparkles")
+                        Image(systemName: DesignSystem.Icons.sparkles)
                             .font(.title2)
                     }
                     .padding(DesignSystem.Metrics.sectionSpacing) // 24
@@ -224,13 +224,13 @@ struct WeeklyReportView: View {
                 // 深度建议
                 VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                     HStack {
-                        Image(systemName: "lightbulb.fill")
+                        Image(systemName: DesignSystem.Icons.concept)
                             .foregroundStyle(.orange)
-                        Text(L10n.Dashboard.tr("insight.tips.title"))
+                        Text(L10n.Dashboard.insight.tips.title)
                             .font(.headline)
                     }
                     
-                    Text(L10n.Dashboard.tr("insight.tips.content"))
+                    Text(L10n.Dashboard.insight.tips.content)
                         .font(.subheadline)
                         .lineSpacing(DesignSystem.tiny + DesignSystem.atomic) // 5
                         .foregroundStyle(.appSecondary)
@@ -251,7 +251,7 @@ struct WeeklyReportView: View {
             .padding(DesignSystem.loosePadding)
         }
         .background(PageBackgroundView(accentColor: .purple))
-        .navigationTitle(Localized.tr("sidebar.weeklyInsight"))
+        .navigationTitle(L10n.Common.Sidebar.weeklyInsight)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

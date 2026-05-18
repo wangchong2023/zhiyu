@@ -25,6 +25,8 @@ final class AppStoreStorageTests: XCTestCase {
     
     override func tearDown() async throws {
         store = nil
+        // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
+        try? await Task.sleep(nanoseconds: 50_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
@@ -33,7 +35,7 @@ final class AppStoreStorageTests: XCTestCase {
     /// 测试页面添加与持久化
     func testAddPage() async {
         let initialCount = store.totalPages
-        let _ = await store.createPage(title: "测试页面", type: .concept, content: "内容")
+        let _ = await store.createPage(title: "测试页面", pageType: .concept, content: "内容")
         
         // 等待观察者更新内存状态
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
@@ -44,7 +46,7 @@ final class AppStoreStorageTests: XCTestCase {
     
     /// 测试页面更新逻辑 (Deep Scan 触发验证)
     func testUpdatePage() async {
-        let page = await store.createPage(title: "初始标题", type: .concept, content: "初始内容")
+        let page = await store.createPage(title: "初始标题", pageType: .concept, content: "初始内容")
         
         // 关键：必须等待观察者将新创建的页面同步到内存中，否则 updatePage 的 guard 将失败
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
@@ -63,19 +65,19 @@ final class AppStoreStorageTests: XCTestCase {
     
     /// 测试页面删除
     func testDeletePage() async {
-        let page = await store.createPage(title: "待删除", type: .concept, content: "内容")
+        let page = await store.createPage(title: "待删除", pageType: .concept, content: "内容")
         let id = page.id
         
-        store.deletePage(page)
+        await store.deletePage(page)
         XCTAssertFalse(store.pages.contains(where: { $0.id == id }), "页面删除后不应存在")
     }
     
     /// 测试搜索建议与过滤
     func testSearchSuggestions() async {
-        _ = await store.createPage(title: "Apple", type: .entity, content: "Fruit")
-        _ = await store.createPage(title: "Banana", type: .entity, content: "Yellow")
+        _ = await store.createPage(title: "Apple", pageType: .entity, content: "Fruit")
+        _ = await store.createPage(title: "Banana", pageType: .entity, content: "Yellow")
         
-        let results = store.sqliteStore.searchPages(query: "Ap")
+        let results = await store.sqliteStore.searchPages(query: "Apple")
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first?.title, "Apple")
     }

@@ -119,3 +119,28 @@ struct InfoRow: View {
     }
 }
 
+
+// MARK: - 插件扩展组件
+
+struct PluginExtensionsSection: View {
+    @ObservedObject var registry = PluginRegistry.shared
+    
+    var body: some View {
+        if !registry.settingTabs.isEmpty {
+            Section(header: Text(L10n.Plugin.section.pluginSettings)) {
+                ForEach(registry.settingTabs) { tab in
+                    NavigationLink(destination: PluginCustomSettingsView(tab: tab)) {
+                        HStack {
+                            Image(systemName: DesignSystem.Icons.puzzlepieceExtension)
+                                .foregroundStyle(.appAccent)
+                                .frame(width: 24)
+                            Text(tab.name)
+                                .foregroundStyle(.appText)
+                            Spacer()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

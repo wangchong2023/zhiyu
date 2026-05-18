@@ -27,7 +27,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     @Published var isHosting: Bool = false
     @Published var isJoined: Bool = false
     @Published var connectedPeers: [CollabUser] = []
-    @Published var role: CollabRole = .owner
+    @Published var role: CollabRole = .viewer
     @Published var roomName: String = ""
     @Published var recentEdits: [CollabEdit] = []
     @Published var statusMessage: String = ""
@@ -71,10 +71,10 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     private func checkAvailability() {
         #if targetEnvironment(simulator)
         isAvailable = false
-        statusMessage = L10n.Collaboration.tr("status.simulatorNotSupported")
+        statusMessage = L10n.Collaboration.Status.simulatorNotSupported
         #else
         isAvailable = true
-        statusMessage = L10n.Collaboration.tr("status.ready")
+        statusMessage = L10n.Collaboration.Status.ready
         #endif
     }
 
@@ -249,7 +249,7 @@ extension CollaborationService {
                 updated.updatedAt = remoteUpdated
                 Task {
                     await delegate.applyRemoteUpdate(updated)
-                    self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+                    self.statusMessage = L10n.Collaboration.Status.pageReceived
                 }
             }
         } else {
@@ -260,7 +260,7 @@ extension CollaborationService {
             )
             Task {
                 await delegate.insertRemotePage(newPage)
-                self.statusMessage = L10n.Collaboration.tr("status.pageReceived")
+                self.statusMessage = L10n.Collaboration.Status.pageReceived
             }
         }
     }

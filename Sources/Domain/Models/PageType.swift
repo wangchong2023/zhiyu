@@ -24,12 +24,12 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValue
     
     public var displayName: String {
         switch self {
-        case .entity: return L10n.CoreModels.tr("type.entity")
-        case .concept: return L10n.CoreModels.tr("type.concept")
-        case .source: return L10n.CoreModels.tr("type.source")
-        case .comparison: return L10n.CoreModels.tr("type.comparison")
-        case .map: return L10n.CoreModels.tr("type.map")
-        case .raw: return L10n.CoreModels.tr("type.raw")
+        case .entity: return L10n.CoreModels.type.entity
+        case .concept: return L10n.CoreModels.type.concept
+        case .source: return L10n.CoreModels.type.source
+        case .comparison: return L10n.CoreModels.type.comparison
+        case .map: return L10n.CoreModels.type.map
+        case .raw: return L10n.CoreModels.type.raw
         }
     }
     
@@ -54,10 +54,10 @@ public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible,
     
     public var displayName: String {
         switch self {
-        case .active: return L10n.CoreModels.tr("status.active")
-        case .stub: return L10n.CoreModels.tr("status.stub")
-        case .needsUpdate: return L10n.CoreModels.tr("status.needsUpdate")
-        case .deprecated: return L10n.CoreModels.tr("status.deprecated")
+        case .active: return L10n.CoreModels.Status.active
+        case .stub: return L10n.CoreModels.Status.stub
+        case .needsUpdate: return L10n.CoreModels.Status.needsUpdate
+        case .deprecated: return L10n.CoreModels.Status.deprecated
         }
     }
     
@@ -79,9 +79,9 @@ public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible,
     
     public var displayName: String {
         switch self {
-        case .high: return L10n.CoreModels.tr("confidence.high")
-        case .medium: return L10n.CoreModels.tr("confidence.medium")
-        case .low: return L10n.CoreModels.tr("confidence.low")
+        case .high: return L10n.CoreModels.confidence.high
+        case .medium: return L10n.CoreModels.confidence.medium
+        case .low: return L10n.CoreModels.confidence.low
         }
     }
     

@@ -47,6 +47,9 @@ public protocol AppEnvironmentProtocol: Sendable {
     /// 平台显示名称 (用于调试或关于页面)
     var platformName: String { get }
     
+    /// 应用程序版本号 (如 "1.0.0 (42)")
+    var appVersion: String { get }
+    
     /// 硬件特权：是否支持 iCloud 同步 (考虑模拟器限制与 entitlements)
     var isCloudSyncSupported: Bool { get }
 }

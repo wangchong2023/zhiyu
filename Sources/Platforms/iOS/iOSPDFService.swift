@@ -1,7 +1,7 @@
 // iOSPDFService.swift
 //
 // 作者: Wang Chong
-// 功能说明: PDFServiceProtocol 的 iOS/macOS 实现，基于 PDFKit。
+// 功能说明: [Shared] PDFServiceProtocol 的 iOS/macOS 实现，基于 PDFKit。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -76,7 +76,7 @@ final class iOSPDFService: PDFServiceProtocol {
         for i in start..<end {
             if let page = document.page(at: i) {
                 text += page.string ?? ""
-                text += String(format: Localized.tr("pdf.pageSeparator"), i + 1)
+                text += String(format: L10n.Ingest.PDF.pageSeparator, i + 1)
             }
         }
         return text

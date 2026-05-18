@@ -20,8 +20,8 @@ protocol LLMChatServiceProtocol: AnyObject, Sendable {
     var isEnabled: Bool { get }
 
     // MARK: - 核心对话与推理
-    func chat(query: String, history: [ChatMessage], pages: [KnowledgePage]) async throws -> ChatMessage
-    func chatStream(query: String, history: [ChatMessage], pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error>
+    func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO
+    func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error>
 
     /// 通用生成接口
     /// - Parameters:
@@ -34,10 +34,10 @@ protocol LLMChatServiceProtocol: AnyObject, Sendable {
 
 @MainActor
 protocol LLMKnowledgeServiceProtocol: AnyObject, Sendable {
-    func smartIngest(title: String, rawContent: String, pages: [KnowledgePage]) async throws -> SmartIngestResult
+    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO
     func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String]
     func foldContent(existingContent: String, newContent: String, title: String) async throws -> String
-    func analyzeForRefactoring(pages: [KnowledgePage]) async throws -> [RefactorSuggestion]
+    func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO]
 }
 
 // MARK: - LLM 检索增强服务协议
@@ -45,7 +45,7 @@ protocol LLMKnowledgeServiceProtocol: AnyObject, Sendable {
 @MainActor
 protocol LLMRetrievalServiceProtocol: AnyObject, Sendable {
     func rewriteQuery(_ query: String) async -> String
-    func rerank(query: String, candidates: [KnowledgePage]) async throws -> [KnowledgePage]
+    func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable]
 }
 
 // MARK: - LLM 服务组合协议

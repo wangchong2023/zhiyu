@@ -2,11 +2,11 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L1] 基础设施层：[Infra] AI 治理存储实现：负责 Token 计费、调用日志及 RAG 质量评估记录。
-// 遵循 GovernanceRepository 协议，采用 GRDB ORM 模式实现。
-// 版本: 1.7
+// 遵循 Domain 层定义的 GovernanceRepository 协议，采用 GRDB ORM 模式实现。
+// 版本: 1.9
 // 修改记录:
-//   - 2026-05-16: 物理归位重构：更名为 AIGovernanceRepository。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//   - 2026-05-16: 接口对齐：全面适配 Domain 层的 GovernanceRepository 协议。
+// 版权: © 2026 Wang Chong。保留所有权利。
 
 import Foundation
 import GRDB
@@ -122,23 +122,28 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
 
     // MARK: - RAG 评估 (Evaluations)
 
-    func saveEvaluation(query: String, answer: String, faithfulness: Double, relevance: Double, precision: Double, model: String) async throws {
+    func saveRAGEvaluation(_ evaluation: RAGEvaluation) async throws {
         try await dbWriter.write { db in
-            var evaluation = RAGEvaluation(
-                query: query,
-                answer: answer,
-                faithfulness: faithfulness,
-                relevance: relevance,
-                precision: precision,
-                evaluatorModel: model
-            )
-            try evaluation.insert(db)
+            var mutableEvaluation = evaluation
+            try mutableEvaluation.insert(db)
         }
     }
 
-    func fetchAverageMetrics() async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
+    func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation] {
         try await dbWriter.read { db in
+            try RAGEvaluation
+                .order(RAGEvaluation.Columns.createdAt.desc)
+                .limit(limit)
+                .fetchAll(db)
+        }
+    }
+
+    func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
+        try await dbWriter.read { db in
+            let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            
             let request = RAGEvaluation
+                .filter(RAGEvaluation.Columns.createdAt >= dateThreshold)
                 .select(
                     average(RAGEvaluation.Columns.faithfulness),
                     average(RAGEvaluation.Columns.relevance),

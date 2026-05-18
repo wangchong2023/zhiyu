@@ -46,8 +46,8 @@ final class GraphLayoutProcessorTests: XCTestCase {
     // MARK: - 链接与边创建
     
     func testLayoutWithBidirectionalLinks() {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
-        let pageB = KnowledgePage(title: "B", type: .concept, content: "Links to [[A]]")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[B]]")
+        let pageB = KnowledgePage(title: "B", pageType: .concept, content: "Links to [[A]]")
 
         let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
@@ -64,8 +64,8 @@ final class GraphLayoutProcessorTests: XCTestCase {
     }
 
     func testLayoutWithOneWayLink() {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
-        let pageB = KnowledgePage(title: "B", type: .concept, content: "No outgoing links")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[B]]")
+        let pageB = KnowledgePage(title: "B", pageType: .concept, content: "No outgoing links")
 
         let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
@@ -83,8 +83,8 @@ final class GraphLayoutProcessorTests: XCTestCase {
     }
 
     func testLayoutNoDuplicateEdges() {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]] and [[B]]")
-        let pageB = KnowledgePage(title: "B", type: .concept, content: "Content")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[B]] and [[B]]")
+        let pageB = KnowledgePage(title: "B", pageType: .concept, content: "Content")
 
         let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
@@ -102,8 +102,8 @@ final class GraphLayoutProcessorTests: XCTestCase {
     // MARK: - 边界与辅助属性
     
     func testLayoutRelatedPageIDsCreateEdges() {
-        var pageA = KnowledgePage(title: "A", type: .entity, content: "Content")
-        var pageB = KnowledgePage(title: "B", type: .concept, content: "Content")
+        var pageA = KnowledgePage(title: "A", pageType: .entity, content: "Content")
+        var pageB = KnowledgePage(title: "B", pageType: .concept, content: "Content")
         pageB.relatedPageIDs = [pageA.id]
 
         let result = GraphLayoutProcessor.layout(
@@ -118,7 +118,7 @@ final class GraphLayoutProcessorTests: XCTestCase {
     }
 
     func testLayoutWithBrokenLinkDoesNotCreateEdge() {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[NonExistent]]")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[NonExistent]]")
 
         let result = GraphLayoutProcessor.layout(
             pages: [pageA],

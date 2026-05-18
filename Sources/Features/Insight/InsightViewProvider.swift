@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct InsightViewProvider: ViewProvider {
-    func makeView(for route: AppRoute) -> AnyView? {
-        guard route.domain == .insight else { return nil }
+    func makeView(for route: AnyHashable) -> AnyView? {
+        guard let route = route as? AppRoute, route.domain == .insight else { return nil }
         
         switch route {
         case .dashboard:

@@ -11,17 +11,17 @@ final class StubCollaborationProvider: CollaborationProviderProtocol {
     weak var delegate: CollaborationProviderDelegate?
     
     func startHosting(roomName: String, userName: String) {
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.simulatorNotSupported"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.simulatorNotSupported)
     }
     
     func startBrowsing(userName: String) {
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.simulatorNotSupported"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.simulatorNotSupported)
     }
     
     func joinRoom(_ room: DiscoveredRoom) {}
     
     func stop() {
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.disconnected"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.disconnected)
     }
     
     func broadcast(data: Data) {}

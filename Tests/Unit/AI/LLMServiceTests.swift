@@ -38,8 +38,8 @@ final class LLMServiceTests: XCTestCase {
     func testRerankLogic() async throws {
         let query = "Apple"
         let candidates = [
-            KnowledgePage(title: "Fruit", type: .entity, content: "Apple is a fruit"),
-            KnowledgePage(title: "Tech", type: .entity, content: "Apple Inc is a tech company")
+            KnowledgePage(title: "Fruit", pageType: .entity, content: "Apple is a fruit"),
+            KnowledgePage(title: "Tech", pageType: .entity, content: "Apple Inc is a tech company")
         ]
         
         // 验证 Rerank 接口存在且能处理候选列表

@@ -29,7 +29,7 @@ struct IngestHeroSection: View {
                     )
                 )
             // 移除重复的标题，因为导航栏已经有了
-            Text(L10n.Ingest.tr("hero.subtitle"))
+            Text(L10n.Ingest.hero.subtitle)
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
@@ -72,8 +72,8 @@ struct IngestEntryCardsSection: View {
                 showFileImporter = true
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("fileImport"),
-                    icon: "doc.badge.plus",
+                    title: L10n.Ingest.fileImport,
+                    icon: DesignSystem.Icons.docBadgePlus,
                     color: .blue
                 )
             }
@@ -85,8 +85,8 @@ struct IngestEntryCardsSection: View {
                 showManualForm = true
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("manualEntry"),
-                    icon: "pencil.and.list.clipboard",
+                    title: L10n.Ingest.manualEntry,
+                    icon: DesignSystem.Icons.pencilClipboard,
                     color: .orange
                 )
             }
@@ -98,8 +98,8 @@ struct IngestEntryCardsSection: View {
                 showURLImport = true
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("urlImport"),
-                    icon: "link",
+                    title: L10n.Ingest.urlImport,
+                    icon: DesignSystem.Icons.link,
                     color: .teal
                 )
             }
@@ -111,8 +111,8 @@ struct IngestEntryCardsSection: View {
                 showOCRScan = true
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("ocrScan"),
-                    icon: "text.viewfinder",
+                    title: L10n.Ingest.ocrScan,
+                    icon: DesignSystem.Icons.ocr,
                     color: .purple
                 )
             }
@@ -124,8 +124,8 @@ struct IngestEntryCardsSection: View {
                 NotificationCenter.default.post(name: .importFromClipboard, object: nil)
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("clipboardImport"),
-                    icon: "doc.on.clipboard",
+                    title: L10n.Ingest.clipboardImport,
+                    icon: DesignSystem.Icons.docOnClipboard,
                     color: .green
                 )
             }
@@ -137,8 +137,8 @@ struct IngestEntryCardsSection: View {
                 showVoiceNote = true
             }) {
                 entryCardContent(
-                    title: L10n.Ingest.tr("voiceNote"),
-                    icon: "waveform",
+                    title: L10n.Ingest.voiceNote,
+                    icon: DesignSystem.Icons.waveform,
                     color: .red
                 )
             }
@@ -205,7 +205,7 @@ struct IngestManualFormSection: View {
             VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                 // Title field
                 VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                    Text(L10n.Ingest.tr("field.title"))
+                    Text(L10n.Ingest.field.title)
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -219,7 +219,7 @@ struct IngestManualFormSection: View {
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                             .onTapGesture { showIconPicker = true }
                         
-                        TextField(L10n.Ingest.tr("field.titlePlaceholder"), text: $newTitle)
+                        TextField(L10n.Ingest.field.titlePlaceholder, text: $newTitle)
                             .font(.headline)
                             .padding()
                             .background(Color.appCard)
@@ -235,17 +235,17 @@ struct IngestManualFormSection: View {
                 
                 // Tags field
                 VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-                    Text(L10n.Ingest.tr("field.tags"))
+                    Text(L10n.Ingest.field.tags)
                         .font(fieldLabelFont)
                         .foregroundStyle(.appSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    AppTagField(placeholder: L10n.Ingest.tr("field.tagsPlaceholder"), tags: $newTags)
+                    AppTagField(placeholder: L10n.Ingest.field.tagsPlaceholder, tags: $newTags)
                 }
             }
 
             // Content editor
             VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-                Text(L10n.Ingest.tr("field.content"))
+                Text(L10n.Ingest.field.content)
                     .font(fieldLabelFont)
                     .foregroundStyle(.appSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading) // 强制左对齐
@@ -259,10 +259,10 @@ struct IngestManualFormSection: View {
             if llmService.isEnabled && !llmService.apiKey.isEmpty {
                 Toggle(isOn: $useSmartIngest) {
                     HStack(spacing: DesignSystem.small) { // 8
-                        Image(systemName: "sparkles")
+                        Image(systemName: DesignSystem.Icons.sparkles)
                             .foregroundStyle(.appAccent)
                             .frame(width: DesignSystem.smallIconSize) // 20
-                        Text(L10n.Ingest.tr("smartToggle"))
+                        Text(L10n.Ingest.smartToggle)
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.appText)
                     }
@@ -276,10 +276,10 @@ struct IngestManualFormSection: View {
             
             Toggle(isOn: $useDeepScan) {
                 HStack(spacing: DesignSystem.small) { // 8
-                    Image(systemName: "cpu")
+                    Image(systemName: DesignSystem.Icons.cpu)
                         .foregroundStyle(.appSource)
                         .frame(width: DesignSystem.smallIconSize) // 20
-                    Text(L10n.Ingest.tr("deepScan"))
+                    Text(L10n.Ingest.deepScan)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
                 }
@@ -290,12 +290,12 @@ struct IngestManualFormSection: View {
             if useSmartIngest || useDeepScan {
                 VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 4
                     if useSmartIngest {
-                        Text(L10n.Ingest.tr("smartToggleHint"))
+                        Text(L10n.Ingest.smartToggleHint)
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     }
                     if useDeepScan {
-                        Text(L10n.Ingest.tr("deepScanDesc"))
+                        Text(L10n.Ingest.deepScanDesc)
                             .font(.caption)
                             .foregroundStyle(.appSource)
                     }
@@ -316,7 +316,7 @@ struct IngestManualFormSection: View {
 
         // Submit button
         AppPrimaryButton(
-            title: isIngesting ? L10n.Ingest.tr("submitting") : L10n.Ingest.tr("submit"),
+            title: isIngesting ? L10n.Ingest.submitting : L10n.Ingest.submit,
             icon: DesignSystem.Icons.trayArrowDown,
             isLoading: isIngesting
         ) {
@@ -332,9 +332,9 @@ struct IngestManualFormSection: View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Toggle(isOn: $useSmartIngest) {
                 HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                    Image(systemName: "sparkles")
+                    Image(systemName: DesignSystem.Icons.sparkles)
                         .foregroundStyle(.appAccent)
-                    Text(L10n.Ingest.tr("smartToggle"))
+                    Text(L10n.Ingest.smartToggle)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
                 }
@@ -343,7 +343,7 @@ struct IngestManualFormSection: View {
             .accessibilityIdentifier("ingest.smartToggleAction")
 
             if useSmartIngest {
-                Text(L10n.Ingest.tr("smartToggleHint"))
+                Text(L10n.Ingest.smartToggleHint)
                     .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                     .foregroundStyle(.appSecondary)
             }
@@ -355,9 +355,9 @@ struct IngestManualFormSection: View {
         VStack(alignment: .leading, spacing: DesignSystem.small) { // 8
             Toggle(isOn: $useDeepScan) {
                 HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) { // 6
-                    Image(systemName: "cpu")
+                    Image(systemName: DesignSystem.Icons.cpuOutline)
                         .foregroundStyle(.appSource)
-                    Text(L10n.Ingest.tr("deepScan"))
+                    Text(L10n.Ingest.deepScan)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.appText)
                 }
@@ -365,7 +365,7 @@ struct IngestManualFormSection: View {
             .tint(.appSource)
             
             if useDeepScan {
-                Text(L10n.Ingest.tr("deepScanDesc"))
+                Text(L10n.Ingest.deepScanDesc)
                     .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                     .foregroundStyle(.appSource)
                     .padding(.leading, DesignSystem.Metrics.smallIconBoxSize + DesignSystem.atomic) // 30
@@ -379,7 +379,7 @@ struct IngestManualFormSection: View {
 
     private var pageTypeSelector: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-            Text(L10n.Ingest.tr("field.type"))
+            Text(L10n.Ingest.field.type)
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
@@ -403,7 +403,7 @@ struct IngestManualFormSection: View {
 
     private var iconPickerSection: some View {
         HStack(spacing: DesignSystem.small + DesignSystem.atomic) { // 10
-            Text(L10n.Ingest.tr("field.icon"))
+            Text(L10n.Ingest.field.icon)
                 .font(fieldLabelFont)
                 .foregroundStyle(.appSecondary)
 
@@ -415,10 +415,10 @@ struct IngestManualFormSection: View {
                         .frame(width: DesignSystem.smallIconSize, height: DesignSystem.smallIconSize) // 20
                         .background((newCustomIcon != nil ? Color.appAccent : Color.fromModelColorName(newType.colorName)).opacity(DesignSystem.glassOpacity * 1.5)) // 0.15
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
-                    Text(newCustomIcon != nil ? L10n.Ingest.tr("iconCustom") : L10n.Ingest.tr("iconDefault"))
+                    Text(newCustomIcon != nil ? L10n.Ingest.iconCustom : L10n.Ingest.iconDefault)
                         .font(horizontalSizeClass == .regular ? .subheadline : .caption)
                         .foregroundStyle(newCustomIcon != nil ? .appAccent : .appSecondary)
-                    Image(systemName: "chevron.up.chevron.down")
+                    Image(systemName: DesignSystem.Icons.chevronUpDown)
                         .font(.system(size: DesignSystem.microFontSize - DesignSystem.atomic / 2)) // 9
                         .foregroundStyle(.appSecondary)
                 }
@@ -436,7 +436,7 @@ struct IngestManualFormSection: View {
 
             if newCustomIcon != nil {
                 Button(action: { newCustomIcon = nil }) {
-                    Text(L10n.Ingest.tr("iconReset"))
+                    Text(L10n.Ingest.iconReset)
                         .font(horizontalSizeClass == .regular ? .caption : .caption2)
                         .foregroundStyle(.appSecondary)
                         .padding(.horizontal, DesignSystem.small)
@@ -469,17 +469,17 @@ struct SmartIngestPreview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             AppSectionHeader(
-                title: L10n.Ingest.tr("preview"),
-                icon: "sparkles",
+                title: L10n.Ingest.preview,
+                icon: DesignSystem.Icons.sparkles,
                 iconColor: .appAccent,
                 trailing: AnyView(
                     HStack {
                         Button(action: onConfirm) {
-                            AppCapsuleButton(title: L10n.Ingest.tr("previewConfirm"), icon: "checkmark", isPrimary: true, color: .appAccent)
+                            AppCapsuleButton(title: L10n.Ingest.previewConfirm, icon: DesignSystem.Icons.check, isPrimary: true, color: .appAccent)
                         }
                         .buttonStyle(.plain)
                         Button(action: onDiscard) {
-                            AppCapsuleButton(title: L10n.Ingest.tr("previewDiscard"), icon: nil, isPrimary: false)
+                            AppCapsuleButton(title: L10n.Ingest.previewDiscard, icon: nil, isPrimary: false)
                         }
                         .buttonStyle(.plain)
                     }
@@ -520,13 +520,13 @@ struct SmartIngestPreview: View {
                 // Related titles
                 if !result.relatedTitles.isEmpty {
                     VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 4
-                        Text(L10n.Ingest.tr("suggestLinks"))
+                        Text(L10n.Ingest.suggestLinks)
                             .font(previewFont.weight(.medium))
                             .foregroundStyle(.appSecondary)
 
                         ForEach(result.relatedTitles, id: \.self) { title in
                             HStack(spacing: DesignSystem.atomic) { // 4
-                                Image(systemName: "link")
+                                Image(systemName: DesignSystem.Icons.link)
                                     .font(.caption2)
                                 Text("[[\(title)]]")
                                     .font(previewFont)
@@ -547,25 +547,25 @@ struct SmartIngestPreview: View {
 struct IngestTipsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            AppSectionHeader(title: L10n.Ingest.tr("tips"), icon: "lightbulb.fill", iconColor: .orange)
+            AppSectionHeader(title: L10n.Ingest.tips, icon: DesignSystem.Icons.concept, iconColor: .orange)
                 .padding(.horizontal, DesignSystem.tiny)
 
             // Three import method cards
             HStack(spacing: DesignSystem.small + DesignSystem.atomic) { // 10
                 importMethodCard(
-                    icon: "doc.badge.plus",
-                    title: L10n.Ingest.tr("method.file"),
-                    desc: L10n.Ingest.tr("method.fileDesc")
+                    icon: DesignSystem.Icons.docBadgePlus,
+                    title: L10n.Ingest.method.file,
+                    desc: L10n.Ingest.method.fileDesc
                 )
                 importMethodCard(
-                    icon: "text.viewfinder",
-                    title: L10n.Ingest.tr("method.ocr"),
-                    desc: L10n.Ingest.tr("method.ocrDesc")
+                    icon: DesignSystem.Icons.ocr,
+                    title: L10n.Ingest.method.ocr,
+                    desc: L10n.Ingest.method.ocrDesc
                 )
                 importMethodCard(
-                    icon: "pencil.and.list.clipboard",
-                    title: L10n.Ingest.tr("method.manual"),
-                    desc: L10n.Ingest.tr("method.manualDesc")
+                    icon: DesignSystem.Icons.pencilClipboard,
+                    title: L10n.Ingest.method.manual,
+                    desc: L10n.Ingest.method.manualDesc
                 )
             }
             .appContainer(padding: true)
@@ -606,7 +606,7 @@ struct URLImportSheet: View {
         NavigationStack {
             VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-                    Text(L10n.Ingest.tr("urlImportPlaceholder"))
+                    Text(L10n.Ingest.urlImportPlaceholder)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                     
@@ -630,12 +630,12 @@ struct URLImportSheet: View {
                 .padding()
                 
                 VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-                    Label(L10n.Ingest.tr("webDesc"), systemImage: DesignSystem.Icons.info)
+                    Label(L10n.Ingest.webDesc, systemImage: DesignSystem.Icons.info)
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
                     
                     AppPrimaryButton(
-                        title: L10n.Common.tr("import"),
+                        title: L10n.Common.import,
                         icon: DesignSystem.Icons.trayArrowDown,
                         isLoading: false
                     ) {
@@ -646,13 +646,13 @@ struct URLImportSheet: View {
                 .padding()
                 .background(Color.appCard)
             }
-            .navigationTitle(L10n.Ingest.tr("urlImport"))
+            .navigationTitle(L10n.Ingest.urlImport)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("cancel")) {
+                    Button(L10n.Common.cancel) {
                         dismiss()
                     }
                 }

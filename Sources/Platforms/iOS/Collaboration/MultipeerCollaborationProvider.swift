@@ -1,7 +1,7 @@
 // MultipeerCollaborationProvider.swift
 //
 // 作者: Wang Chong
-// 功能说明: 基于 MultipeerConnectivity 的协作提供商实现。
+// 功能说明: [Shared] 基于 MultipeerConnectivity 的协作提供商实现。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -44,7 +44,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
         advertiser?.delegate = advertiserDelegate
         advertiser?.startAdvertisingPeer()
         
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.hosting"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.hosting)
     }
     
     func startBrowsing(userName: String) {
@@ -58,7 +58,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
                 let room = DiscoveredRoom(
                     id: peerID.displayName,
                     platformPeer: peerID,
-                    roomName: info?["room"] ?? L10n.Collaboration.tr("defaultRoom"),
+                    roomName: info?["room"] ?? L10n.Collaboration.defaultRoom,
                     owner: info?["owner"] ?? peerID.displayName
                 )
                 self?.delegate?.providerDidDiscoverRoom(room)
@@ -74,13 +74,13 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
         browser?.delegate = browserDelegate
         browser?.startBrowsingForPeers()
         
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.searching"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.searching)
     }
     
     func joinRoom(_ room: DiscoveredRoom) {
         guard let session = session, let browser = browser, let targetPeer = room.platformPeer as? MCPeerID else { return }
         browser.invitePeer(targetPeer, to: session, withContext: nil, timeout: 30)
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.joining"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.joining)
     }
     
     func stop() {
@@ -90,7 +90,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
         browser = nil
         session?.disconnect()
         session = nil
-        delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.disconnected"))
+        delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.disconnected)
     }
     
     func broadcast(data: Data) {
@@ -113,7 +113,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
             },
             onStatusChange: { [weak self] state, _ in
                 if state == .connecting {
-                    self?.delegate?.providerDidUpdateStatus(L10n.Collaboration.tr("status.connecting"))
+                    self?.delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.connecting)
                 }
             }
         )

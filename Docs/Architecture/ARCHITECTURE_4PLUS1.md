@@ -72,19 +72,28 @@ classDiagram
 ### 3.2 过程视图 (Process View) - 数据流与并发
 描述系统在执行关键任务时的动态协作关系。
 
-#### 时序图：页面保存与插件拦截流 (Pre-persistence Pipeline)
+#### 时序图：页面保存与插件拦截流 (Watchdog 2.0 Pipeline)
 
 ```mermaid
 sequenceDiagram
     participant User as UI (Editor)
     participant KM as AppStore
     participant PR as PluginRegistry
+    participant WD as Watchdog
     participant DB as SQLiteStore
 
     User->>KM: 发起 updatePage(content)
     KM->>PR: 调用 applyPreProcess(content)
-    Note over PR: 遍历所有 Hook 插件
-    PR-->>KM: 返回过滤后的 Content
+    PR->>WD: 启动 500ms 竞速计时
+    loop 插件 Hook 遍历
+        PR->>PR: 执行插件脚本
+        opt 执行超时
+            WD-->>PR: 触发熔断
+            PR->>PR: 持久化封禁 (Suspend ID)
+            PR->>PR: 销毁 JSContext 物理内存
+        end
+    end
+    PR-->>KM: 返回过滤后的 Content (或原文)
     KM->>DB: 执行物理更新
     KM-->>User: 触发 UI 刷新
 ```
@@ -101,9 +110,9 @@ sequenceDiagram
         - `AI`: 大模型通信 (LLMService)、向量计算、知识合成 (AISynthesisService)。
         - `Storage`: 数据持久化与备份 (SQLiteStore, AppStore, VaultService)。
         - `Logic`: 业务逻辑编排 (IngestService, LinkService, RecursiveChunker)。
-        - `Infrastructure`: 基础设施 (Log, Analytics, Haptic, Spotlight)。
+        - `Infrastructure`: 基础设施 (Log, Analytics, Haptic, Spotlight, PluginRegistry)。
         - `Core`: 服务容器与基础协议 (ServiceContainer, Protocols)。
-        - `System`: 任务调度与系统事件 (ActivityService, WikiEventBus)。
+        - `System`: 任务调度与系统事件 (ActivityService)。
     - **Views**: SwiftUI 响应式通用视图。
         - `UIComponents`: UI 组件体系。
             - `DesignSystem`: 存放公共统一设计标准（如全局的 Colors, Spacing, Typography 等）。
@@ -130,20 +139,21 @@ graph LR
         VectorIndex[(Vector Store)]
         BookmarkStore[UserDefaults Bookmarks]
         
+        subgraph "Plugin Storage (AES-GCM)"
+            PData[pluginID.json]
+        end
+        
         subgraph "Plugins Directory"
             P1[Plugin-A/manifest.json]
-            P2[Plugin-B/main.bundle]
         end
     end
     
     subgraph "External Storage"
         Obsidian[Local Obsidian Vault]
-        Documents[External PDF/Docs]
     end
     
     BookmarkStore -- Scoped URL --> Obsidian
-    BookmarkStore -- Scoped URL --> Documents
-    智宇 (ZhiYu) -- Accelerate.framework --> VectorIndex
+    智宇 (ZhiYu) -- Keychain Key --> PData
     智宇 (ZhiYu) -- Dynamic Load --> P1
 ```
 

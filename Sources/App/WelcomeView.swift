@@ -2,7 +2,10 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L3] 应用调度层：知识管理系统的欢迎页面（首页），提供系统概览、统计数据、最近更新及快速入门指南。
-// 版本: 1.1 (工业级重构，消除魔鬼数字并适配新 UI 模式)
+// 版本: 1.2
+// 修改记录:
+//   - 2026-05-16: 规范化治理：使用 DesignSystem 令牌替换硬编码图标，适配重构后的统计属性。
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
 import Charts
@@ -31,15 +34,15 @@ struct WelcomeView: View {
             .padding(.bottom, DesignSystem.Layout.welcomeHeaderTopPadding)
         }
         .background(themeManager.pageBackground())
-        .alert(L10n.Common.tr("success"), isPresented: $showInjectSuccess) {
-            Button(L10n.Common.tr("awesome"), role: .cancel) { }
+        .alert(L10n.Common.success, isPresented: $showInjectSuccess) {
+            Button(L10n.Common.awesome, role: .cancel) { }
         } message: {
-            Text(Localized.trf("settings.injectDemo.successMessage", injectedCount))
+            Text(L10n.Settings.InjectDemo.successMessage(injectedCount))
         }
     }
 }
 
-// MARK: - Sub-views
+// MARK: - 子视图组件
 
 struct WelcomeHeroSection: View {
     var body: some View {
@@ -60,11 +63,11 @@ struct WelcomeHeroSection: View {
             }
             .frame(height: DesignSystem.Metrics.welcomeHeroDotHeight)
             
-            Text(Localized.tr("app.name"))
+            Text(L10n.Common.appName)
                 .font(.system(size: DesignSystem.huge + DesignSystem.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
             
-            Text(Localized.tr("welcome.subtitle"))
+            Text(L10n.Onboarding.subtitle)
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
         }
@@ -77,10 +80,10 @@ struct WelcomeStatsSection: View {
     private let columns = [GridItem(.adaptive(minimum: DesignSystem.Metrics.statCardMinWidth, maximum: .infinity), spacing: DesignSystem.wide)]
     var body: some View {
         LazyVGrid(columns: columns, spacing: DesignSystem.wide) {
-            StatCard(title: Localized.tr("stat.totalPages"), value: "\(store.totalPages)", icon: DesignSystem.Icons.source, color: .appAccent)
-            StatCard(title: Localized.tr("stat.entities"), value: "\(store.entityCount)", icon: DesignSystem.Icons.entity, color: .appEntity)
-            StatCard(title: Localized.tr("stat.concepts"), value: "\(store.conceptCount)", icon: DesignSystem.Icons.concept, color: .appConcept)
-            StatCard(title: Localized.tr("stat.sources"), value: "\(store.sourceCount)", icon: DesignSystem.Icons.source, color: .appSource)
+            StatCard(title: L10n.Common.Stat.totalPages, value: "\(store.totalPages)", icon: DesignSystem.Icons.source, color: .appAccent)
+            StatCard(title: L10n.Common.Stat.entities, value: "\(store.entityCount)", icon: DesignSystem.Icons.entity, color: .appEntity)
+            StatCard(title: L10n.Common.Stat.concepts, value: "\(store.conceptCount)", icon: DesignSystem.Icons.concept, color: .appConcept)
+            StatCard(title: L10n.Common.Stat.sources, value: "\(store.sourceCount)", icon: DesignSystem.Icons.source, color: .appSource)
         }
         .padding(.horizontal)
     }
@@ -94,7 +97,7 @@ struct WelcomeGrowthChartSection: View {
                 Image(systemName: DesignSystem.Icons.chartLine)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
-                Text(Localized.tr("welcome.growthTrend"))
+                Text(L10n.Onboarding.growthTrend)
                     .font(.headline)
                     .foregroundStyle(Color.appText)
                 Spacer()
@@ -121,7 +124,7 @@ struct WelcomeRecentUpdatesSection: View {
                 Image(systemName: DesignSystem.Icons.history)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
-                Text(Localized.tr("recentUpdates"))
+                Text(L10n.Common.recentUpdates)
                     .font(.headline)
                     .foregroundStyle(Color.appText)
                 Spacer()
@@ -146,30 +149,32 @@ struct WelcomeQuickStartGuideSection: View {
                 Image(systemName: DesignSystem.Icons.sparkles)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Color.appText)
-                Text(Localized.tr("welcome.quickStart"))
+                Text(L10n.Onboarding.quickStart)
                     .font(.headline)
                     .foregroundStyle(Color.appText)
                 Spacer()
             }
             
             VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                GuideStepRow(number: 1, text: Localized.tr("welcome.guide.createPage"), icon: "doc.badge.plus")
-                GuideStepRow(number: 2, text: Localized.tr("welcome.guide.knowledgeLink"), icon: DesignSystem.Icons.link)
+                GuideStepRow(number: 1, text: L10n.Onboarding.Guide.createPage, icon: DesignSystem.Icons.docBadgePlus)
+                GuideStepRow(number: 2, text: L10n.Onboarding.Guide.knowledgeLink, icon: DesignSystem.Icons.link)
             }
             
             // 快捷注入演示数据入口
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
-                injectedCount = store.generateDemoData()
-                HapticFeedback.shared.trigger(.success)
-                showInjectSuccess = true
+                Task {
+                    injectedCount = await store.generateDemoData()
+                    HapticFeedback.shared.trigger(.success)
+                    showInjectSuccess = true
+                }
             }) {
                 HStack {
                     VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                        Text(Localized.tr("welcome.demo.title"))
+                        Text(L10n.Onboarding.Demo.title)
                             .font(.subheadline.bold())
                             .foregroundStyle(Color.appAccent)
-                        Text(Localized.tr("welcome.demo.desc"))
+                        Text(L10n.Onboarding.Demo.desc)
                             .font(.caption2)
                             .foregroundStyle(Color.appSecondary)
                     }
@@ -199,8 +204,8 @@ struct WelcomeQuickActionsSection: View {
     @Binding var selectedTab: AppTab
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            QuickActionRow(icon: "plus.circle.fill", title: L10n.Action.tr("createPage"), subtitle: L10n.Action.tr("createPage.subtitle"), color: .appAccent) { store.showCreateSheet = true }
-            QuickActionRow(icon: DesignSystem.Icons.importIcon, title: L10n.Action.tr("ingestKnowledge"), subtitle: L10n.Action.tr("ingestKnowledge.subtitle"), color: .appSource) { selectedTab = .ingest }
+            QuickActionRow(icon: DesignSystem.Icons.plusCircle, title: L10n.Action.createPage, subtitle: L10n.Action.createPageSubtitle, color: .appAccent) { store.showCreateSheet = true }
+            QuickActionRow(icon: DesignSystem.Icons.importIcon, title: L10n.Action.ingestKnowledge, subtitle: L10n.Action.ingestKnowledgeSubtitle, color: .appSource) { selectedTab = .ingest }
         }.padding(.horizontal)
     }
 }

@@ -1,7 +1,7 @@
 // AIProcessingStatusBanner.swift
 //
 // 作者: Wang Chong
-// 功能说明: 全局 AI 任务处理状态条。
+// 功能说明: [Shared] 全局 AI 任务处理状态条。
 //           当系统正在进行后台 AI 分析、知识合成或治理扫描时，在页面顶部展示动态图标与状态描述。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
@@ -49,7 +49,7 @@ struct AIProcessingStatusBanner: View {
                     Spacer()
                     
                     // 3. 进度指示 (如果是执行中)
-                    if case .running(let progress) = activeTask.status {
+                    if case .running(let progress, _) = activeTask.status {
                         Text("\(Int(progress * 100))%")
                             .font(.system(size: 12, weight: .bold, design: .monospaced))
                             .foregroundStyle(.appAccent)

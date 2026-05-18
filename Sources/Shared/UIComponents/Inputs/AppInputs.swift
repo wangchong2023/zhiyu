@@ -1,7 +1,7 @@
 // AppInputs.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的标准输入控件体系，包括文本框、标签/令牌输入框及等宽编辑器。
+// 功能说明: [Shared] 本文件定义了智宇 (ZhiYu) 的标准输入控件体系，包括文本框、标签/令牌输入框及等宽编辑器。
 // 核心职责：
 // 1. 提供统一样式的输入组件，封装背景、圆角及交互反馈。
 // 2. 支持自动分词的标签输入逻辑及针对代码/Markdown 优化的等宽编辑器。
@@ -62,7 +62,7 @@ public struct AppTagField: View {
                                 tags.removeAll { $0 == tag }
                             }
                         }) {
-                            Image(systemName: "xmark")
+                            Image(systemName: DesignSystem.Icons.xmark)
                                 .font(.system(size: DesignSystem.microFontSize - 1))
                                 .foregroundStyle(.appSecondary)
                         }

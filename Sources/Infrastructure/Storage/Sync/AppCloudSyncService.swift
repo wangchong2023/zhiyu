@@ -26,11 +26,11 @@ enum iCloudSyncError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .iCloudNotAvailable: return L10n.ICloud.tr("error.notAvailable")
-        case .cloudKitError(let error): return "\(L10n.ICloud.tr("error.cloudKit"))：\(error.localizedDescription)"
-        case .encodingError: return L10n.ICloud.tr("error.encoding")
-        case .decodingError: return L10n.ICloud.tr("error.decoding")
-        case .conflictResolutionFailed: return L10n.ICloud.tr("error.conflictResolution")
+        case .iCloudNotAvailable: return L10n.ICloud.Error.notAvailable
+        case .cloudKitError(let error): return "\(L10n.ICloud.Error.cloudKit)：\(error.localizedDescription)"
+        case .encodingError: return L10n.ICloud.Error.encoding
+        case .decodingError: return L10n.ICloud.Error.decoding
+        case .conflictResolutionFailed: return L10n.ICloud.Error.conflictResolution
         }
     }
 }
@@ -49,10 +49,10 @@ enum SyncStatus: Equatable {
 
     var label: String {
         switch self {
-        case .idle: return Localized.tr("sync.idle")
-        case .syncing: return Localized.tr("sync.syncing")
-        case .synced: return Localized.tr("sync.synced")
-        case .error(let msg): return "\(Localized.tr("sync.error"))：\(msg)"
+        case .idle: return L10n.Common.sync.idle
+        case .syncing: return L10n.Common.sync.syncing
+        case .synced: return L10n.Common.sync.synced
+        case .error(let msg): return "\(L10n.Common.sync.error)：\(msg)"
         }
     }
 }
@@ -105,14 +105,14 @@ class iCloudSyncService: ObservableObject {
                 container = nil
                 database = nil
                 iCloudAvailable = false
-                syncStatus = .error(L10n.ICloud.tr("notAvailable"))
+                syncStatus = .error(L10n.ICloud.notAvailable)
             }
         } else {
             cloudKitAvailable = false
             container = nil
             database = nil
             iCloudAvailable = false
-            syncStatus = .error(L10n.ICloud.tr("notAvailable"))
+            syncStatus = .error(L10n.ICloud.notAvailable)
         }
     }
 
@@ -128,7 +128,7 @@ class iCloudSyncService: ObservableObject {
             Task { @MainActor in
                 self?.iCloudAvailable = (status == .available)
                 if status != .available {
-                    self?.syncStatus = .error(L10n.ICloud.tr("notAvailable"))
+                    self?.syncStatus = .error(L10n.ICloud.notAvailable)
                 }
             }
         }
@@ -508,9 +508,9 @@ enum ConflictResolution: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .keepLocal: return L10n.ICloud.tr("keepLocal")
-        case .keepRemote: return L10n.ICloud.tr("keepRemote")
-        case .merge: return L10n.ICloud.tr("merge")
+        case .keepLocal: return L10n.ICloud.keepLocal
+        case .keepRemote: return L10n.ICloud.keepRemote
+        case .merge: return L10n.ICloud.merge
         }
     }
 }

@@ -16,4 +16,5 @@ extension Notification.Name {
     static let splashDismissed = Notification.Name("splashDismissed")
     static let toggleDisplayMode = Notification.Name("toggleDisplayMode")
     static let importFromClipboard = Notification.Name("importFromClipboard")
+    static let languageChanged = Notification.Name("languageChanged")
 }

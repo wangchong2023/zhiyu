@@ -21,26 +21,26 @@ public struct SearchResult: Sendable {
 actor LinkService {
 
     // MARK: - Link Resolution
-    /**
-     * @description: 根据标题或别名查找页面 (不区分大小写)
-     * @param {String} title 目标标题
-     * @param {[KnowledgePage]} pages 搜索范围
-     * @return {KnowledgePage?} 匹配到的页面
-     */
+    
+    /// 根据标题或别名查找页面 (不区分大小写)
+    /// - Parameters:
+    ///   - title: 目标标题
+    ///   - pages: 搜索范围
+    /// - Returns: 匹配到的页面，若未找到返回 nil
     func pageByTitle(_ title: String, in pages: [KnowledgePage]) -> KnowledgePage? {
         pages.first { $0.title.lowercased() == title.lowercased() }
             ?? pages.first { $0.aliases.contains(where: { $0.lowercased() == title.lowercased() }) }
     }
 
-    /**
-     * @description: 获取引用了指定页面的所有反向链接页面
-     * @param {UUID} pageID 目标页面 ID
-     * @param {[KnowledgePage]} pages 搜索范围
-     * @return {[KnowledgePage]} 引用者页面列表
-     */
+    /// 获取引用了指定页面的所有反向链接页面
+    /// - Parameters:
+    ///   - pageID: 目标页面 ID
+    ///   - pages: 搜索范围
+    /// - Returns: 引用者页面列表
     func backlinks(for pageID: UUID, in pages: [KnowledgePage]) -> [KnowledgePage] {
         guard let page = pages.first(where: { $0.id == pageID }) else { return [] }
         return pages.filter { p in
+            p.relatedPageIDs.contains(pageID) ||
             p.outgoingLinks.contains(where: { link in
                 link.lowercased() == page.title.lowercased() ||
                 page.aliases.contains(where: { $0.lowercased() == link.lowercased() })
@@ -102,15 +102,15 @@ actor LinkService {
 
         // 动态门槛：对于短查询，语义门槛要极高，否则噪音太大
         let similarityThreshold: Float = query.count < 4 
-            ? AppConstants.RAG.semanticThresholdShort 
-            : AppConstants.RAG.semanticThresholdLong
+            ? BusinessConstants.RAG.semanticThresholdShort 
+            : BusinessConstants.RAG.semanticThresholdLong
 
         let semanticResults = semanticScored
             .filter { res -> Bool in
                 // 动态门槛：对于短查询，语义门槛要极高
                 if query.count < 4 {
                     // 对于短词，如果语义得分不足高信度阈值，则必须包含关键词
-                    if res.score > AppConstants.RAG.semanticShortHighConfidence { return true }
+                    if res.score > BusinessConstants.RAG.semanticShortHighConfidence { return true }
                     if let page = pages.first(where: { $0.id == res.id }) {
                         let lowerTitle = page.title.lowercased()
                         let lowerQuery = query.lowercased()
@@ -124,7 +124,7 @@ actor LinkService {
                 pages.first { $0.id == res.id }
             }
 
-        let k = AppConstants.RAG.rrfK
+        let k = BusinessConstants.RAG.rrfK
         var scores: [UUID: Double] = [:]
         var diagMap: [UUID: (fts: Int, vec: Int)] = [:]
 
@@ -133,12 +133,12 @@ actor LinkService {
         let semanticWeight = 1.0
 
         for (index, page) in keywordResults.enumerated() {
-            scores[page.id, default: 0] += (1.0 / Double(k + index + 1)) * keywordWeight
+            scores[page.id, default: 0.0] += (1.0 / Double(k + index + 1)) * keywordWeight
             diagMap[page.id] = (index + 1, -1)
         }
 
         for (index, page) in semanticResults.enumerated() {
-            scores[page.id, default: 0] += (1.0 / Double(k + index + 1)) * semanticWeight
+            scores[page.id, default: 0.0] += (1.0 / Double(k + index + 1)) * semanticWeight
             let existing = diagMap[page.id] ?? (-1, -1)
             diagMap[page.id] = (existing.fts, index + 1)
         }

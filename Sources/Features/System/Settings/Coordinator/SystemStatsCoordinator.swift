@@ -82,12 +82,15 @@ final class SystemStatsCoordinator {
             self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
         }
         
-        _ = try? await governanceStore.fetchAverageMetrics()
+        _ = try? await governanceStore.calculateAverageRAGScores(days: 30)
         
         // 2. 存储空间分布统计
-        let dbSize = sqliteStore.getStorageStats().databaseSize
-        let logsSize = sqliteStore.getStorageStats().logsSize
-        let exportsSize = sqliteStore.getStorageStats().exportsSize
+        let stats = await sqliteStore.getStorageStats()
+        let dbSize = stats.databaseSize
+        let logsSize = stats.logsSize
+        let exportsSize = stats.exportsSize
+        
+        let allLogEntries = await logger.getLogEntries()
         
         let categories = [
             StorageCategory(
@@ -99,19 +102,19 @@ final class SystemStatsCoordinator {
             StorageCategory(
                 label: L10n.Dashboard.System.logs,
                 value: logsSize,
-                count: logger.logEntries.count,
+                count: allLogEntries.count,
                 color: .orange
             ),
             StorageCategory(
-                label: L10n.Dashboard.tr("stats.storageImport"),
+                label: L10n.Dashboard.stats.storageImport,
                 value: 0, // 页面内容暂不单独计算字节
                 count: (try? await knowledgeStore.count()) ?? 0,
                 color: .green
             ),
             StorageCategory(
-                label: L10n.Dashboard.tr("stats.storageExport"),
+                label: L10n.Dashboard.stats.storageExport,
                 value: exportsSize,
-                count: logger.logEntries.filter { $0.action == .export }.count,
+                count: allLogEntries.filter { $0.action == .export }.count,
                 color: .purple
             )
         ]
@@ -119,7 +122,7 @@ final class SystemStatsCoordinator {
         self.storageCategories = categories
         self.totalStorage = categories.reduce(0) { $0 + $1.value }
         self.exportSize = exportsSize
-        self.exportCount = logger.logEntries.filter { $0.action == .export }.count
+        self.exportCount = allLogEntries.filter { $0.action == .export }.count
         
         // 3. 页面统计
         self.totalPages = (try? await knowledgeStore.count()) ?? 0
@@ -127,7 +130,7 @@ final class SystemStatsCoordinator {
         let endTime = Date()
         logger.addLog(
             action: .update,
-            target: L10n.Dashboard.tr("stats.navigationTitleMonitor"),
+            target: L10n.Dashboard.stats.navigationTitleMonitor,
             details: L10n.Dashboard.updateSuccess,
             duration: endTime.timeIntervalSince(startTime),
             startTime: startTime,
@@ -164,8 +167,8 @@ final class SystemStatsCoordinator {
     func iconForCategory(_ label: String) -> String {
         if label == L10n.Dashboard.System.database { return "cylinder.split.1x2.fill" }
         if label == L10n.Dashboard.System.logs { return "doc.text.below.ecg.fill" }
-        if label == L10n.Dashboard.tr("stats.storageImport") { return "books.vertical.fill" }
-        if label == L10n.Dashboard.tr("stats.storageExport") { return "square.and.arrow.up.fill" }
+        if label == L10n.Dashboard.stats.storageImport { return "books.vertical.fill" }
+        if label == L10n.Dashboard.stats.storageExport { return "square.and.arrow.up.fill" }
         return "folder.fill"
     }
 }

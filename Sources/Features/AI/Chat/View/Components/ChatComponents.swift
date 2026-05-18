@@ -101,7 +101,7 @@ struct ChatBubbleView: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(.appAccent)
                 }
-                Text(L10n.Chat.tr("aiAssistantName"))
+                Text(L10n.Chat.aiAssistantName)
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.appAccent)
                 
@@ -152,7 +152,7 @@ struct ChatBubbleView: View {
                     Image(systemName: referencesExpanded ? "chevron.down" : "chevron.right")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
-                    Text(referencesExpanded ? L10n.Chat.tr("referencesExpanded") : L10n.Chat.tr("referencesCollapsed"))
+                    Text(referencesExpanded ? L10n.Chat.referencesExpanded : L10n.Chat.referencesCollapsed)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.appSecondary)
                     Spacer()

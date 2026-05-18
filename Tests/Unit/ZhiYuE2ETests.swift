@@ -10,6 +10,7 @@
 
 import XCTest
 import MultipeerConnectivity
+import GRDB
 @testable import ZhiYu
 
 // MARK: - E2E: Complete Knowledge Page Workflow Tests
@@ -29,9 +30,9 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         DatabaseManager.shared.reset()
         DatabaseManager.shared.isInTesting = true
         
-        // 2. 初始化测试专用服务 (使用内存数据库，防止磁盘 IO 干扰与数据残留)
-        let testDBURL = URL(string: "file:memdb?mode=memory")!
-        let sqliteStore = SQLiteStore(dbURL: testDBURL)
+        // 2. 初始化测试专用服务 (使用内存数据库)
+        let dbQueue = try DatabaseQueue()
+        let sqliteStore = SQLiteStore(dbWriter: dbQueue)
         let linkService = LinkService()
         let lintService = LintService()
         
@@ -39,7 +40,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         ServiceContainer.shared.register(linkService, for: LinkService.self)
         ServiceContainer.shared.register(lintService, for: LintService.self)
-        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
+        ServiceContainer.shared.register(Logger.shared, for: (any LoggerProtocol).self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         
@@ -52,6 +53,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         store = nil
         linkService = nil
         lintService = nil
+        // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
+        try? await Task.sleep(nanoseconds: 50_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
@@ -62,7 +65,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     func testCreatePageWithAllFields() {
         let page = KnowledgePage(
             title: "E2E Test Page",
-            type: .entity,
+            pageType: .entity,
             customIcon: "star.fill",
             content: "This is test content with enough characters to not be a stub. We need to reach at least one hundred characters to satisfy the business logic in KnowledgePage.",
             aliases: ["E2E Alias", "Test Alias"],
@@ -75,7 +78,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         )
 
         XCTAssertEqual(page.title, "E2E Test Page")
-        XCTAssertEqual(page.type, .entity)
+        XCTAssertEqual(page.pageType, .entity)
         XCTAssertEqual(page.displayIcon, "star.fill")
         XCTAssertEqual(page.aliases, ["E2E Alias", "Test Alias"])
         XCTAssertEqual(page.tags, ["e2e", "test", "automation"])
@@ -86,24 +89,24 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     }
 
     func testCreatePageAutoCalculatesIsStub() {
-        let shortContent = KnowledgePage(title: "Short", type: .entity, content: "Tiny")
+        let shortContent = KnowledgePage(title: "Short", pageType: .entity, content: "Tiny")
         XCTAssertTrue(shortContent.isStub)
 
-        let longContent = KnowledgePage(title: "Long", type: .entity, content: String(repeating: "word ", count: 30))
+        let longContent = KnowledgePage(title: "Long", pageType: .entity, content: String(repeating: "word ", count: 30))
         XCTAssertFalse(longContent.isStub)
     }
 
     // MARK: - Page Editing
 
     func testUpdatePageTitlePropagation() {
-        var page = KnowledgePage(title: "Original Title", type: .concept, content: "Content here")
+        var page = KnowledgePage(title: "Original Title", pageType: .concept, content: "Content here")
         page.title = "Updated Title"
 
         XCTAssertEqual(page.title, "Updated Title")
     }
 
     func testUpdatePageTags() {
-        var page = KnowledgePage(title: "Tagged Page", type: .entity, content: String(repeating: "x ", count: 30))
+        var page = KnowledgePage(title: "Tagged Page", pageType: .entity, content: String(repeating: "x ", count: 30))
 
         XCTAssertTrue(page.tags.isEmpty)
 
@@ -115,8 +118,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     // MARK: - PageLinks
 
     func testBidirectionalLinkCreation() async {
-        var pageA = KnowledgePage(title: "Page A", type: .entity, content: "Links to [[Page B]]")
-        var pageB = KnowledgePage(title: "Page B", type: .concept, content: "Links to [[Page A]]")
+        var pageA = KnowledgePage(title: "Page A", pageType: .entity, content: "Links to [[Page B]]")
+        var pageB = KnowledgePage(title: "Page B", pageType: .concept, content: "Links to [[Page A]]")
 
         // Outgoing links
         XCTAssertEqual(pageA.outgoingLinks, ["Page B"])
@@ -132,15 +135,15 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     }
 
     func testSelfReferencingLinkHandled() {
-        let page = KnowledgePage(title: "Self", type: .entity, content: "Links to [[Self]] and [[self]]")
+        let page = KnowledgePage(title: "Self", pageType: .entity, content: "Links to [[Self]] and [[self]]")
         XCTAssertEqual(page.outgoingLinks.count, 2)
         XCTAssertEqual(page.outgoingLinks, ["Self", "self"])
     }
 
     func testBrokenPageLinksIdentified() async {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[NonExistent Page]]")
-        let pageB = KnowledgePage(title: "B", type: .concept, content: "Real link to [[C]]")
-        var pageC = KnowledgePage(title: "C", type: .source, content: "Content here")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[NonExistent Page]]")
+        let pageB = KnowledgePage(title: "B", pageType: .concept, content: "Real link to [[C]]")
+        var pageC = KnowledgePage(title: "C", pageType: .source, content: "Content here")
 
         let pages = [pageA, pageB, pageC]
 
@@ -156,9 +159,9 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     func testUndoRedoFullCycle() {
         let undoService = UndoService()
 
-        let v1 = [KnowledgePage(title: "V1", type: .entity, content: "Version 1 content")]
-        let v2 = [KnowledgePage(title: "V2", type: .concept, content: "Version 2 content")]
-        let v3 = [KnowledgePage(title: "V3", type: .source, content: "Version 3 content")]
+        let v1 = [KnowledgePage(title: "V1", pageType: .entity, content: "Version 1 content")]
+        let v2 = [KnowledgePage(title: "V2", pageType: .concept, content: "Version 2 content")]
+        let v3 = [KnowledgePage(title: "V3", pageType: .source, content: "Version 3 content")]
 
         // Push initial state
         undoService.pushSnapshot(v1)
@@ -185,8 +188,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     // MARK: - Page Deletion
 
     func testDeletePageRemovesFromList() {
-        let page1 = KnowledgePage(title: "To Delete", type: .entity, content: "Content")
-        let page2 = KnowledgePage(title: "To Keep", type: .concept, content: "More content here")
+        let page1 = KnowledgePage(title: "To Delete", pageType: .entity, content: "Content")
+        let page2 = KnowledgePage(title: "To Keep", pageType: .concept, content: "More content here")
 
         var pages = [page1, page2]
         pages.removeAll { $0.id == page1.id }
@@ -198,8 +201,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     // MARK: - Health Check Integration
 
     func testHealthCheckNoIssuesForHealthyKnowledge() async {
-        var page1 = KnowledgePage(title: "Healthy A", type: .entity, content: String(repeating: "Healthy content here. ", count: 10))
-        var page2 = KnowledgePage(title: "Healthy B", type: .concept, content: "Links to [[Healthy A]]. " + String(repeating: "More healthy content. ", count: 10))
+        var page1 = KnowledgePage(title: "Healthy A", pageType: .entity, content: String(repeating: "Healthy content here. ", count: 10))
+        var page2 = KnowledgePage(title: "Healthy B", pageType: .concept, content: "Links to [[Healthy A]]. " + String(repeating: "More healthy content. ", count: 10))
 
         let pages = [page1, page2]
 
@@ -211,7 +214,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
     }
 
     func testStubPagesFlaggedByHealthCheck() async {
-        let stubPage = KnowledgePage(title: "Stubby", type: .entity, content: "Too short")
+        let stubPage = KnowledgePage(title: "Stubby", pageType: .entity, content: "Too short")
 
         let pages = [stubPage]
         let issues = await lintService.runLint(pages: pages, linkService: linkService)
@@ -238,14 +241,13 @@ final class SearchFilterWorkflowTests: XCTestCase {
         DatabaseManager.shared.reset()
         DatabaseManager.shared.isInTesting = true
         
-        let uniqueDBName = "km_test_search_\(UUID().uuidString)"
-        let testDBURL = URL(string: "file:\(uniqueDBName)?mode=memory&cache=shared")!
-        let sqliteStore = SQLiteStore(dbURL: testDBURL)
+        let dbQueue = try DatabaseQueue()
+        let sqliteStore = SQLiteStore(dbWriter: dbQueue)
         linkService = LinkService()
         
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         ServiceContainer.shared.register(linkService, for: LinkService.self)
-        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
+        ServiceContainer.shared.register(Logger.shared, for: (any LoggerProtocol).self)
     }
     
     override func tearDown() async throws {
@@ -257,9 +259,9 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
     func testSearchByTitleExactMatch() async {
         let pages = [
-            KnowledgePage(title: "Machine Learning", type: .concept, content: "ML content"),
-            KnowledgePage(title: "Deep Learning", type: .concept, content: "DL content"),
-            KnowledgePage(title: "Machine", type: .entity, content: "Just machine")
+            KnowledgePage(title: "Machine Learning", pageType: .concept, content: "ML content"),
+            KnowledgePage(title: "Deep Learning", pageType: .concept, content: "DL content"),
+            KnowledgePage(title: "Machine", pageType: .entity, content: "Just machine")
         ]
 
         let results = await linkService.search(query: "Machine Learning", in: pages)
@@ -269,8 +271,8 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
     func testSearchByPartialTitle() async {
         let pages = [
-            KnowledgePage(title: "Neural Network", type: .entity, content: "Content"),
-            KnowledgePage(title: "Network Analysis", type: .concept, content: "Content")
+            KnowledgePage(title: "Neural Network", pageType: .entity, content: "Content"),
+            KnowledgePage(title: "Network Analysis", pageType: .concept, content: "Content")
         ]
 
         let results = await linkService.search(query: "Network", in: pages)
@@ -279,8 +281,8 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
     func testSearchByContent() async {
         let pages = [
-            KnowledgePage(title: "Doc A", type: .source, content: "Python is a great language for data science"),
-            KnowledgePage(title: "Doc B", type: .source, content: "JavaScript is great for web")
+            KnowledgePage(title: "Doc A", pageType: .source, content: "Python is a great language for data science"),
+            KnowledgePage(title: "Doc B", pageType: .source, content: "JavaScript is great for web")
         ]
 
         let results = await linkService.search(query: "data science", in: pages)
@@ -290,8 +292,8 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
     func testSearchByTag() async {
         let pages = [
-            KnowledgePage(title: "Tagged", type: .entity, content: "Content", tags: ["important", "priority"]),
-            KnowledgePage(title: "Untagged", type: .concept, content: "Content", tags: [])
+            KnowledgePage(title: "Tagged", pageType: .entity, content: "Content", tags: ["important", "priority"]),
+            KnowledgePage(title: "Untagged", pageType: .concept, content: "Content", tags: [])
         ]
 
         let results = await linkService.search(query: "important", in: pages)
@@ -301,28 +303,28 @@ final class SearchFilterWorkflowTests: XCTestCase {
 
     func testFilterByPageType() {
         let pages = [
-            KnowledgePage(title: "Entity Page", type: .entity, content: "Content " + String(repeating: "x ", count: 30)),
-            KnowledgePage(title: "Concept Page", type: .concept, content: "Content " + String(repeating: "y ", count: 30)),
-            KnowledgePage(title: "Source Page", type: .source, content: "Content " + String(repeating: "z ", count: 30)),
-            KnowledgePage(title: "Another Entity", type: .entity, content: "Content " + String(repeating: "a ", count: 30))
+            KnowledgePage(title: "Entity Page", pageType: .entity, content: "Content " + String(repeating: "x ", count: 30)),
+            KnowledgePage(title: "Concept Page", pageType: .concept, content: "Content " + String(repeating: "y ", count: 30)),
+            KnowledgePage(title: "Source Page", pageType: .source, content: "Content " + String(repeating: "z ", count: 30)),
+            KnowledgePage(title: "Another Entity", pageType: .entity, content: "Content " + String(repeating: "a ", count: 30))
         ]
 
-        let entityPages = pages.filter { $0.type == .entity }
+        let entityPages = pages.filter { $0.pageType == .entity }
         XCTAssertEqual(entityPages.count, 2)
 
-        let conceptPages = pages.filter { $0.type == .concept }
+        let conceptPages = pages.filter { $0.pageType == .concept }
         XCTAssertEqual(conceptPages.count, 1)
     }
 
     func testSortByRecentlyUpdated() {
-        var oldPage = KnowledgePage(title: "Old", type: .entity, content: "Content")
-        var newPage = KnowledgePage(title: "New", type: .entity, content: "Content")
+        var oldPage = KnowledgePage(title: "Old", pageType: .entity, content: "Content")
+        var newPage = KnowledgePage(title: "New", pageType: .entity, content: "Content")
 
         // Simulate dates
         oldPage = KnowledgePage(
             id: oldPage.id,
             title: oldPage.title,
-            type: oldPage.type,
+            pageType: oldPage.pageType,
             content: oldPage.content,
             aliases: oldPage.aliases,
             tags: oldPage.tags,
@@ -331,11 +333,11 @@ final class SearchFilterWorkflowTests: XCTestCase {
             sources: oldPage.sources,
             relatedPageIDs: oldPage.relatedPageIDs,
             isPinned: oldPage.isPinned,
-            created: Date().addingTimeInterval(-86400),
-            updated: Date().addingTimeInterval(-86400)
+            createdAt: Date().addingTimeInterval(-86400),
+            updatedAt: Date().addingTimeInterval(-86400)
         )
 
-        let sorted = [oldPage, newPage].sorted { $0.updated > $1.updated }
+        let sorted = [oldPage, newPage].sorted { $0.updatedAt > $1.updatedAt }
         XCTAssertEqual(sorted.first?.title, "New")
     }
 }
@@ -420,8 +422,8 @@ final class BackupRestoreWorkflowTests: XCTestCase {
 
     func testCreateAndRestoreBackup() {
         let original = [
-            KnowledgePage(title: "Page A", type: .entity, content: "Content A " + String(repeating: "x ", count: 20)),
-            KnowledgePage(title: "Page B", type: .concept, content: "Content B " + String(repeating: "y ", count: 20))
+            KnowledgePage(title: "Page A", pageType: .entity, content: "Content A " + String(repeating: "x ", count: 20)),
+            KnowledgePage(title: "Page B", pageType: .concept, content: "Content B " + String(repeating: "y ", count: 20))
         ]
 
         backupService.createBackup(pages: original)
@@ -441,7 +443,7 @@ final class BackupRestoreWorkflowTests: XCTestCase {
     func testBackupPreservesAllPageTypes() {
         var pages: [KnowledgePage] = []
         for type in PageType.allCases {
-            pages.append(KnowledgePage(title: "\(type.rawValue.capitalized) Page", type: type, content: "Content for \(type.rawValue) " + String(repeating: "x ", count: 20)))
+            pages.append(KnowledgePage(title: "\(type.rawValue.capitalized) Page", pageType: type, content: "Content for \(type.rawValue) " + String(repeating: "x ", count: 20)))
         }
 
         backupService.createBackup(pages: pages)
@@ -453,7 +455,7 @@ final class BackupRestoreWorkflowTests: XCTestCase {
         XCTAssertEqual(restored?.count, PageType.allCases.count)
 
         for type in PageType.allCases {
-            let found = restored?.contains { $0.type == type } ?? false
+            let found = restored?.contains { $0.pageType == type } ?? false
             XCTAssertTrue(found, "Page of type \(type.rawValue) should be in restored backup")
         }
     }
@@ -490,10 +492,10 @@ final class IngestPipelineTests: XCTestCase {
 
     func testExtractConceptsFromMixedContent() async {
         let existingPages = [
-            KnowledgePage(title: "Machine Learning", type: .concept, content: "ML content"),
-            KnowledgePage(title: "Neural Network", type: .entity, content: "NN content"),
-            KnowledgePage(title: "Deep Learning", type: .concept, content: "DL content"),
-            KnowledgePage(title: "Python", type: .source, content: "Python content")
+            KnowledgePage(title: "Machine Learning", pageType: .concept, content: "ML content"),
+            KnowledgePage(title: "Neural Network", pageType: .entity, content: "NN content"),
+            KnowledgePage(title: "Deep Learning", pageType: .concept, content: "DL content"),
+            KnowledgePage(title: "Python", pageType: .source, content: "Python content")
         ]
 
         let newContent = """
@@ -539,7 +541,7 @@ final class GraphLayoutRealisticTests: XCTestCase {
         for i in 0..<100 {
             var page = KnowledgePage(
                 title: "Page \(i)",
-                type: PageType.allCases[i % 6],
+                pageType: PageType.allCases[i % 6],
                 content: "Content for page \(i). " + String(repeating: "word ", count: 20)
             )
             // Create some links between pages
@@ -547,7 +549,7 @@ final class GraphLayoutRealisticTests: XCTestCase {
                 page = KnowledgePage(
                     id: page.id,
                     title: page.title,
-                    type: page.type,
+                    pageType: page.pageType,
                     content: "Links to [[Page \(i - 1)]] and [[Page \(i - 2)]]",
                     aliases: page.aliases,
                     tags: page.tags,
@@ -556,8 +558,8 @@ final class GraphLayoutRealisticTests: XCTestCase {
                     sources: page.sources,
                     relatedPageIDs: page.relatedPageIDs,
                     isPinned: page.isPinned,
-                    created: page.created,
-                    updated: page.updated
+                    createdAt: page.createdAt,
+                    updatedAt: page.updatedAt
                 )
             }
             pages.append(page)
@@ -586,12 +588,12 @@ final class GraphLayoutRealisticTests: XCTestCase {
         // Create a graph with clear community structure
         var communityA: [KnowledgePage] = []
         for i in 0..<5 {
-            var page = KnowledgePage(title: "A\(i)", type: .entity, content: "Content A " + String(repeating: "x ", count: 20))
+            var page = KnowledgePage(title: "A\(i)", pageType: .entity, content: "Content A " + String(repeating: "x ", count: 20))
             if i > 0 {
                 page = KnowledgePage(
                     id: page.id,
                     title: page.title,
-                    type: page.type,
+                    pageType: page.pageType,
                     content: "Links to [[A\(i - 1)]]",
                     aliases: page.aliases,
                     tags: page.tags,
@@ -600,8 +602,8 @@ final class GraphLayoutRealisticTests: XCTestCase {
                     sources: page.sources,
                     relatedPageIDs: page.relatedPageIDs,
                     isPinned: page.isPinned,
-                    created: page.created,
-                    updated: page.updated
+                    createdAt: page.createdAt,
+                    updatedAt: page.updatedAt
                 )
             }
             communityA.append(page)
@@ -609,12 +611,12 @@ final class GraphLayoutRealisticTests: XCTestCase {
 
         var communityB: [KnowledgePage] = []
         for i in 0..<5 {
-            var page = KnowledgePage(title: "B\(i)", type: .concept, content: "Content B " + String(repeating: "y ", count: 20))
+            var page = KnowledgePage(title: "B\(i)", pageType: .concept, content: "Content B " + String(repeating: "y ", count: 20))
             if i > 0 {
                 page = KnowledgePage(
                     id: page.id,
                     title: page.title,
-                    type: page.type,
+                    pageType: page.pageType,
                     content: "Links to [[B\(i - 1)]]",
                     aliases: page.aliases,
                     tags: page.tags,
@@ -623,8 +625,8 @@ final class GraphLayoutRealisticTests: XCTestCase {
                     sources: page.sources,
                     relatedPageIDs: page.relatedPageIDs,
                     isPinned: page.isPinned,
-                    created: page.created,
-                    updated: page.updated
+                    createdAt: page.createdAt,
+                    updatedAt: page.updatedAt
                 )
             }
             communityB.append(page)
@@ -748,36 +750,42 @@ final class LogAuditTrailTests: XCTestCase {
         ServiceContainer.shared.reset()
         try await super.tearDown()
     }
-    func testLogEntryCapturesAllActionTypes() {
+    func testLogEntryCapturesAllActionTypes() async {
         logService.addLog(action: .create, target: "Test Page", details: "Created new page")
         logService.addLog(action: .update, target: "Test Page", details: "Updated content")
         logService.addLog(action: .delete, target: "Test Page", details: "Deleted page")
         logService.addLog(action: .lint, target: "Knowledge", details: "Ran full lint: 3 issues found")
 
-        XCTAssertEqual(logService.logEntries.count, 4)
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertEqual(entries.count, 4)
 
         // Verify action types
-        let actions = logService.logEntries.map(\.action)
+        let actions = entries.map(\.action)
         XCTAssertTrue(actions.contains(.create))
         XCTAssertTrue(actions.contains(.update))
         XCTAssertTrue(actions.contains(.delete))
         XCTAssertTrue(actions.contains(.lint))
     }
 
-    func testLogOrderingNewestFirst() {
+    func testLogOrderingNewestFirst() async {
         logService.addLog(action: .update, target: "T1", details: "first")
         logService.addLog(action: .update, target: "T2", details: "second")
         logService.addLog(action: .update, target: "T3", details: "third")
 
-        XCTAssertEqual(logService.logEntries.first?.target, "T3")
-        XCTAssertEqual(logService.logEntries.last?.target, "T1")
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertEqual(entries.first?.target, "T3")
+        XCTAssertEqual(entries.last?.target, "T1")
     }
 
-    func testLogMaxEntriesCapped() {
+    func testLogMaxEntriesCapped() async {
         for i in 0..<600 {
             logService.addLog(action: .update, target: "page_\(i)", details: "Log entry \(i)")
         }
 
-        XCTAssertLessThanOrEqual(logService.logEntries.count, 500, "Log should cap at 500 entries")
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertLessThanOrEqual(entries.count, 500, "Log should cap at 500 entries")
     }
 }

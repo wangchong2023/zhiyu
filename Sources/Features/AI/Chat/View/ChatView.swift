@@ -60,8 +60,8 @@ struct ChatViewContent: View {
             ActivityView(activityItems: [identifiable.url])
         }
         #endif
-        .alert(L10n.Common.tr("error"), isPresented: $coordinator.showError) {
-            Button(L10n.Common.tr("ok")) { coordinator.errorMessage = nil }
+        .alert(L10n.Common.error, isPresented: $coordinator.showError) {
+            Button(L10n.Common.ok) { coordinator.errorMessage = nil }
         } message: {
             Text(coordinator.errorMessage ?? "")
         }
@@ -88,14 +88,14 @@ struct ChatViewContent: View {
         Menu {
             Section {
                 Button(action: { }) {
-                    Label("\(coordinator.chatHistory.count) \(Localized.tr("llm.messages"))", systemImage: DesignSystem.Icons.chatBubble)
+                    Label("\(coordinator.chatHistory.count) \(L10n.AI.LLM.messages)", systemImage: DesignSystem.Icons.chatBubble)
                 }
                 .disabled(true)
                 
                 Button(role: .destructive, action: { 
                     coordinator.showClearConfirmation = true
                 }) {
-                    Label(Localized.tr("llm.clearHistory"), systemImage: DesignSystem.Icons.delete)
+                    Label(L10n.AI.LLM.clearHistory, systemImage: DesignSystem.Icons.delete)
                 }
             }
             
@@ -104,7 +104,7 @@ struct ChatViewContent: View {
                     Button(action: {
                         coordinator.toggleSelectionMode()
                     }) {
-                        Label(coordinator.isSelectionMode ? L10n.Common.tr("done") : L10n.Chat.selectToExport, systemImage: coordinator.isSelectionMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
+                        Label(coordinator.isSelectionMode ? L10n.Common.done : L10n.Chat.selectToExport, systemImage: coordinator.isSelectionMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
                     }
 
                     Button(action: {
@@ -195,22 +195,25 @@ struct ChatViewContent: View {
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
                 if llmService.streamingContent.isEmpty {
-                    VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                        Text(L10n.Chat.aiThinking).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
-                        HStack(spacing: DesignSystem.atomic * 2) {
-                            ForEach(0..<3, id: \.self) { index in
-                                Circle().fill(Color.appAccent)
-                                    .frame(width: DesignSystem.Domain.AI.Chat.pulsingDotSize, height: DesignSystem.Domain.AI.Chat.pulsingDotSize)
-                                    .modifier(PulsingDot(delay: Double(index) * DesignSystem.Animation.staggerDelay))
+                    // 获取当前活跃任务的阶段
+                    let stage: TaskStage = {
+                        if let runningTask = TaskCenter.shared.tasks.first(where: { if case .running = $0.status { return true }; return false }) {
+                            if case .running(_, let stage) = runningTask.status {
+                                return stage
                             }
                         }
-                    }
+                        return .general
+                    }()
+                    
+                    AppAILoadingSkeleton(stage: stage)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
                     MarkdownRendererView(content: llmService.streamingContent, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
+                        .padding(DesignSystem.medium)
+                        .background(Color.appCard)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
                 }
             }
-            .padding(DesignSystem.medium).background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
             Spacer(minLength: DesignSystem.largeIconSize * 0.8)
         }
     }
@@ -254,7 +257,7 @@ struct ChatViewContent: View {
 #if os(iOS)
                         .navigationBarTitleDisplayMode(.inline)
 #endif
-                        .toolbar { ToolbarItem(placement: .automatic) { Button(L10n.Common.tr("close")) { coordinator.showPrompts = false } } }
+                        .toolbar { ToolbarItem(placement: .automatic) { Button(L10n.Common.close) { coordinator.showPrompts = false } } }
                 }
                 .presentationDetents([.medium, .large])
             }

@@ -1,7 +1,7 @@
 // EditorComponents.swift
 //
 // 作者: Wang Chong
-// 功能说明: 编辑器辅助组件集，包含页面选择器、工具栏按钮及标签管理组件。
+// 功能说明: [Shared] 编辑器辅助组件集，包含页面选择器、工具栏按钮及标签管理组件。
 // 核心原则：
 // 1. 去硬编码：所有布局数值必须引用 AppUI 模式。
 // 2. 视觉一致性：通过 Pattern-based 布局确保全工程交互体验统一。
@@ -32,7 +32,7 @@ struct PageLinkPickerSheet: View {
                 pageList
             }
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(L10n.Editor.tr("insertPageLink"))
+            .navigationTitle(L10n.Editor.insertPageLink)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -41,13 +41,13 @@ struct PageLinkPickerSheet: View {
     
     private var searchBar: some View {
         HStack(spacing: DesignSystem.small) {
-            Image(systemName: "magnifyingglass")
+            Image(systemName: DesignSystem.Icons.search)
                 .foregroundStyle(Color.appSecondary)
-            TextField(L10n.Editor.tr("searchPages"), text: $searchText)
+            TextField(L10n.Editor.searchPages, text: $searchText)
                 .foregroundStyle(Color.appText)
             if !searchText.isEmpty {
                 Button(action: { searchText = "" }) {
-                    Image(systemName: "xmark.circle.fill")
+                    Image(systemName: DesignSystem.Icons.errorCircle)
                         .foregroundStyle(Color.appSecondary)
                 }
             }
@@ -82,7 +82,7 @@ struct PageLinkPickerSheet: View {
                         
                         Spacer()
                         
-                        Image(systemName: "plus.circle")
+                        Image(systemName: DesignSystem.Icons.plusCircle)
                             .foregroundStyle(Color.appText)
                     }
                     .padding(.vertical, DesignSystem.tiny)
@@ -132,7 +132,7 @@ struct TagChip: View {
                 .font(.caption)
                 .foregroundStyle(Color.appAccent)
             Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.errorCircle)
                     .font(.caption2)
                     .foregroundStyle(Color.appSecondary)
             }
@@ -156,7 +156,7 @@ struct AliasChip: View {
                 .font(.caption)
                 .foregroundStyle(Color.appSource)
             Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.errorCircle)
                     .font(.caption2)
                     .foregroundStyle(Color.appSecondary)
             }
@@ -177,7 +177,7 @@ struct InlineTagInput: View {
     
     var body: some View {
         HStack(spacing: DesignSystem.small) {
-            TextField(L10n.Editor.tr("enterTag"), text: $text)
+            TextField(L10n.Editor.enterTag, text: $text)
                 .font(.caption)
                 .textFieldStyle(.plain)
                 .padding(.horizontal, DesignSystem.medium)
@@ -188,13 +188,13 @@ struct InlineTagInput: View {
                 .onSubmit { onCommit() }
             
             Button(action: onCommit) {
-                Image(systemName: "checkmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.checkCircle)
                     .font(.caption)
                     .foregroundStyle(.green)
             }
             
             Button(action: onCancel) {
-                Image(systemName: "xmark.circle.fill")
+                Image(systemName: DesignSystem.Icons.errorCircle)
                     .font(.caption)
                     .foregroundStyle(Color.appSecondary)
             }

@@ -1,7 +1,7 @@
 // MermaidWebView.swift
 //
 // 作者: Wang Chong
-// 功能说明: struct IdentifiableURL
+// 功能说明: [Shared] struct IdentifiableURL
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -45,14 +45,14 @@ struct MermaidWebView: View {
             
             // Zoom Controls (统一图谱风格：合拢式排列)
             HStack(spacing: 0) {
-                zoomButton(icon: "minus.magnifyingglass") { zoom(by: 0.8) }
-                zoomButton(icon: "plus.magnifyingglass") { zoom(by: 1.2) }
+                zoomButton(icon: DesignSystem.Icons.minusMagnifyingglass) { zoom(by: 0.8) }
+                zoomButton(icon: DesignSystem.Icons.plusMagnifyingglass) { zoom(by: 1.2) }
                 
                 Divider()
                     .frame(width: 1, height: 20)
                     .background(Color.appBorder.opacity(0.5))
                 
-                zoomButton(icon: "arrow.counterclockwise") { resetZoom() }
+                zoomButton(icon: DesignSystem.Icons.refresh) { resetZoom() }
             }
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
@@ -71,9 +71,9 @@ struct MermaidWebView: View {
         }
         #else
         VStack {
-            Image(systemName: "chart.bar.doc.horizontal")
+            Image(systemName: DesignSystem.Icons.chartBarDoc)
                 .font(.largeTitle)
-            Text(Localized.tr("synthesis.mindmap.renderError"))
+            Text(L10n.AI.Synthesis.Mindmap.renderError)
             Text("Mermaid diagrams are not supported on this platform.")
                 .font(.caption)
         }
@@ -120,7 +120,7 @@ struct MermaidWebView: View {
         webView.createPDF(configuration: config) { result in
             switch result {
             case .success(let data):
-                let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(Localized.tr("synthesis.mindmap.title")).pdf")
+                let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(L10n.AI.Synthesis.Mindmap.title).pdf")
                 try? data.write(to: tempURL)
                 self.identifiablePDFURL = IdentifiableURL(url: tempURL)
             case .failure(let error):
@@ -193,7 +193,7 @@ struct MermaidWKWebView: UIViewRepresentable {
                     } catch (e) {
                         root.innerHTML = `
                             <div class="error-container">
-                                <div>\(Localized.tr("synthesis.mindmap.renderError"))</div>
+                                <div>\(L10n.AI.Synthesis.Mindmap.renderError)</div>
                                 <div class="error-details">${e.message || e}</div>
                             </div>
                         `;
@@ -270,7 +270,7 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
                     } catch (e) {
                         root.innerHTML = `
                             <div class="error-container">
-                                <div>\(Localized.tr("synthesis.mindmap.renderError"))</div>
+                                <div>\(L10n.AI.Synthesis.Mindmap.renderError)</div>
                                 <div class="error-details">${e.message || e}</div>
                             </div>
                         `;

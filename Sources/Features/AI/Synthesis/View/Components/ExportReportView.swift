@@ -18,7 +18,7 @@ struct ExportReportView: View {
         VStack(alignment: .leading, spacing: DesignSystem.wide) {
             // 页眉：品牌标识
             HStack {
-                Text(Localized.tr("report.appName"))
+                Text(L10n.Insight.Report.appName)
                     .font(.system(size: DesignSystem.large, weight: .bold))
                     .foregroundStyle(Color.appAccent)
                 Spacer()
@@ -31,11 +31,11 @@ struct ExportReportView: View {
             Divider()
             
             // 报告标题
-            Text(Localized.tr("report.title"))
+            Text(L10n.Insight.Report.title)
                 .font(.system(size: DesignSystem.huge, weight: .black))
                 .padding(.vertical, DesignSystem.small)
             
-            Text(Localized.trf("report.nodeCount", pages.count))
+            Text(L10n.Insight.Report.nodeCount(pages.count))
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
             
@@ -77,7 +77,7 @@ struct ExportReportView: View {
             
             // 页脚
             Divider()
-            Text(Localized.tr("report.footer"))
+            Text(L10n.Insight.Report.footer)
                 .font(.caption2)
                 .foregroundStyle(Color.appBorder)
                 .frame(maxWidth: .infinity, alignment: .center)

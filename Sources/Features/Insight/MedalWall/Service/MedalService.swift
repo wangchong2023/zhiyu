@@ -108,12 +108,12 @@ final class MedalService: ObservableObject {
 
     private func saveEarnedMedals() {
         if let data = try? JSONEncoder().encode(earnedMedalIDs) {
-            UserDefaults.standard.set(data, forKey: "earned_medals")
+            UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.earnedMedals)
         }
     }
 
     private func loadEarnedMedals() {
-        if let data = UserDefaults.standard.data(forKey: "earned_medals"),
+        if let data = UserDefaults.standard.data(forKey: AppConstants.Keys.Storage.earnedMedals),
            let decoded = try? JSONDecoder().decode(Set<String>.self, from: data) {
             earnedMedalIDs = decoded
         }
@@ -123,6 +123,6 @@ final class MedalService: ObservableObject {
     func reset() {
         earnedMedalIDs.removeAll()
         newlyEarnedMedal = nil
-        UserDefaults.standard.removeObject(forKey: "earned_medals")
+        UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.earnedMedals)
     }
 }

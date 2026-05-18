@@ -30,7 +30,7 @@ struct MedalCard: View {
                     .foregroundStyle(isEarned ? baseColor : .appSecondary.opacity(DesignSystem.secondaryOpacity * 0.625)) // 0.5
                 
                 if !isEarned {
-                    Image(systemName: "lock.fill")
+                    Image(systemName: DesignSystem.Icons.lock)
                         .font(.caption2)
                         .padding(DesignSystem.tiny)
                         .background(Circle().fill(.ultraThinMaterial))
@@ -39,11 +39,11 @@ struct MedalCard: View {
             }
             
             VStack(spacing: DesignSystem.tiny) {
-                Text(Localized.tr(medal.titleKey))
+                Text(L10n.Coachmark.tr(medal.titleKey))
                     .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                     .foregroundStyle(isEarned ? .appText : .appSecondary)
                 
-                Text(Localized.tr(medal.descKey))
+                Text(L10n.Coachmark.tr(medal.descKey))
                     .font(.system(size: DesignSystem.microFontSize))
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)
@@ -102,16 +102,16 @@ struct MedalRewardPopup: View {
                 .padding(.top, DesignSystem.Gallery.blurRadius)
                 
                 VStack(spacing: DesignSystem.medium) {
-                    Text(Localized.tr("medal.congrats"))
+                    Text(L10n.Insight.Medal.congrats)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
                         .kerning(2)
                     
-                    Text(Localized.tr(medal.titleKey))
+                    Text(L10n.Coachmark.tr(medal.titleKey))
                         .font(.title.bold())
                         .foregroundStyle(.appText)
                     
-                    Text(Localized.tr(medal.descKey))
+                    Text(L10n.Coachmark.tr(medal.descKey))
                         .font(.body)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)
@@ -120,7 +120,7 @@ struct MedalRewardPopup: View {
                 
                 Button(action: onDismiss) {
                     let baseColor = Color(hex: medal.colorHex)
-                    Text(L10n.Common.tr("awesome"))
+                    Text(L10n.Common.awesome)
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(width: DesignSystem.Gallery.callToActionWidth, height: DesignSystem.Gallery.callToActionHeight)

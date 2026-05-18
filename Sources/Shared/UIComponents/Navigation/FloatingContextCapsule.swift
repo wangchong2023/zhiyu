@@ -1,3 +1,4 @@
+// 功能说明: [Shared]
 import SwiftUI
 
 /// 方案 D 核心组件：悬浮上下文胶囊
@@ -16,7 +17,7 @@ struct FloatingContextCapsule: View {
                 HapticFeedback.shared.trigger(.selection)
                 NotificationCenter.default.post(name: NSNotification.Name("toggleDisplayMode"), object: nil)
             } label: {
-                Image(systemName: "line.3.horizontal")
+                Image(systemName: DesignSystem.Icons.line3Horizontal)
                     .font(.system(size: 18, weight: .medium))
                     .frame(width: 44, height: 44)
             }
@@ -74,7 +75,7 @@ struct FloatingContextCapsule: View {
                 HapticFeedback.shared.trigger(.selection)
                 onShowInsights?()
             }) {
-                Label(L10n.Dashboard.tr("index.overview"), systemImage: DesignSystem.Icons.comparison)
+                Label(L10n.Dashboard.index.overview, systemImage: DesignSystem.Icons.comparison)
             }
             
             Divider()
@@ -84,7 +85,7 @@ struct FloatingContextCapsule: View {
                     vaultService.exitVault()
                 }
             }) {
-                Label(L10n.Vault.tr("backToHub"), systemImage: "arrow.left.circle")
+                Label(L10n.Vault.backToHub, systemImage: DesignSystem.Icons.backToHub)
             }
         } label: {
             HStack(spacing: DesignSystem.small) {
@@ -92,7 +93,7 @@ struct FloatingContextCapsule: View {
                     .font(.custom("Avenir Next", size: 18).weight(.bold))
                     .lineLimit(1)
                 
-                Image(systemName: "chevron.down")
+                Image(systemName: DesignSystem.Icons.down)
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.white.opacity(0.6))
             }
@@ -107,7 +108,7 @@ struct FloatingContextCapsule: View {
             Text("My Knowledge") // 完美对齐图 1
                 .font(.custom("Avenir Next", size: 18).weight(.bold))
             
-            Image(systemName: "chevron.down")
+            Image(systemName: DesignSystem.Icons.down)
                 .font(.system(size: 12, weight: .bold))
                 .foregroundStyle(.white.opacity(0.6))
         }

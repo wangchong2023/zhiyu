@@ -44,13 +44,13 @@ struct BacklinksView: View {
                 // Outgoing links
                 Section {
                     if outgoingPages.isEmpty {
-                        Text(L10n.Components.tr("noOutgoing"))
+                        Text(L10n.Components.noOutgoing)
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     } else {
                         ForEach(outgoingPages) { linkedPage in
                             HStack(spacing: 10) {
-                                Image(systemName: "arrow.right")
+                                Image(systemName: DesignSystem.Icons.arrowRight)
                                     .font(.caption)
                                     .foregroundStyle(.appAccent)
                                 
@@ -74,21 +74,21 @@ struct BacklinksView: View {
                     }
                 } header: {
                     HStack {
-                        Image(systemName: "arrow.right")
-                        Text(Localized.trf("backlinks.outgoingCount", outgoingPages.count))
+                        Image(systemName: DesignSystem.Icons.arrowRight)
+                        Text(L10n.Vault.Backlinks.outgoing( outgoingPages.count))
                     }
                 }
                 
                 // Backlinks
                 Section {
                     if backlinks.isEmpty {
-                        Text(L10n.Components.tr("noBackLinks"))
+                        Text(L10n.Components.noBackLinks)
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     } else {
                         ForEach(backlinks) { linkingPage in
                             HStack(spacing: 10) {
-                                Image(systemName: "arrow.left")
+                                Image(systemName: DesignSystem.Icons.arrowLeft)
                                     .font(.caption)
                                     .foregroundStyle(.appComparison)
                                 
@@ -112,8 +112,8 @@ struct BacklinksView: View {
                     }
                 } header: {
                     HStack {
-                        Image(systemName: "arrow.left")
-                        Text(Localized.trf("backlinks.backlinksCount", backlinks.count))
+                        Image(systemName: DesignSystem.Icons.arrowLeft)
+                        Text(L10n.Vault.Backlinks.count( backlinks.count))
                     }
                 }
             }

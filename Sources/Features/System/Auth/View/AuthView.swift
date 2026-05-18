@@ -78,12 +78,12 @@ struct AuthView: View {
             }
             
             VStack(spacing: Spacing.atomic) {
-                Text(Localized.tr("app.name"))
+                Text(L10n.Common.appName)
                     .font(.system(size: 24, weight: .black, design: .rounded))
                     .foregroundStyle(.appText)
                     .tracking(1)
                 
-                Text(Localized.tr("welcome.subtitle"))
+                Text(L10n.Onboarding.subtitle)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
             }
@@ -104,7 +104,7 @@ struct AuthView: View {
                         isRegisterMode = false 
                     }
                 }) {
-                    Text(L10n.Common.tr("login"))
+                    Text(L10n.Auth.login)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .frame(width: 120, height: 38)
                         .foregroundStyle(!isRegisterMode ? .white : .appSecondary)
@@ -115,7 +115,7 @@ struct AuthView: View {
                         isRegisterMode = true 
                     }
                 }) {
-                    Text(L10n.Common.tr("register"))
+                    Text(L10n.Auth.register)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                         .frame(width: 120, height: 38)
                         .foregroundStyle(isRegisterMode ? .white : .appSecondary)
@@ -133,13 +133,13 @@ struct AuthView: View {
         VStack(spacing: Spacing.medium) {
             AuthTextField(
                 icon: "person.fill",
-                placeholder: L10n.Auth.tr("identity.placeholder"), // 手机号/邮箱/微信
+                placeholder: L10n.Auth.identityPlaceholder, // 手机号/邮箱/微信
                 text: $identity
             )
             
             AuthTextField(
                 icon: "lock.fill",
-                placeholder: L10n.Auth.tr("password.placeholder"),
+                placeholder: L10n.Auth.passwordPlaceholder,
                 text: $password,
                 isSecure: true
             )
@@ -150,19 +150,19 @@ struct AuthView: View {
         VStack(spacing: Spacing.medium) {
             AuthTextField(
                 icon: "iphone",
-                placeholder: L10n.Auth.tr("phone.placeholder"),
+                placeholder: L10n.Auth.phonePlaceholder,
                 text: $phone
             )
             
             HStack(spacing: Spacing.small) {
                 AuthTextField(
                     icon: "shield.fill",
-                    placeholder: L10n.Auth.tr("code.placeholder"),
+                    placeholder: L10n.Auth.codePlaceholder,
                     text: $code
                 )
                 
                 Button(action: {}) {
-                    Text(L10n.Auth.tr("getCode"))
+                    Text(L10n.Auth.getCode)
                         .font(.caption.bold())
                         .foregroundStyle(.appAccent)
                         .padding(.horizontal, 12)
@@ -174,7 +174,7 @@ struct AuthView: View {
             
             AuthTextField(
                 icon: "lock.fill",
-                placeholder: L10n.Auth.tr("setPassword.placeholder"),
+                placeholder: L10n.Auth.setPasswordPlaceholder,
                 text: $password,
                 isSecure: true
             )
@@ -188,7 +188,7 @@ struct AuthView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text(isRegisterMode ? L10n.Common.tr("register") : L10n.Common.tr("login"))
+                    Text(isRegisterMode ? L10n.Auth.register : L10n.Auth.login)
                         .font(.headline)
                         .foregroundStyle(.white)
                 }
@@ -206,7 +206,7 @@ struct AuthView: View {
         VStack(spacing: Spacing.medium) {
             HStack {
                 Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
-                Text(L10n.Auth.tr("thirdParty"))
+                Text(L10n.Auth.thirdParty)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                 Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
@@ -222,7 +222,7 @@ struct AuthView: View {
     
     private var guestButton: some View {
         Button(action: { authService.continueAsGuest() }) {
-            Text(L10n.Auth.tr("guestMode"))
+            Text(L10n.Auth.guestMode)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .padding(.vertical, 12)

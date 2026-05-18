@@ -36,33 +36,33 @@ struct LLMSettingsView: View {
                 // Enable/Disable
                 Section {
                     Toggle(isOn: $llmService.isEnabled) {
-                        Label(Localized.tr("llm.enableAssistant"), systemImage: DesignSystem.Icons.sparkles)
+                        Label(L10n.AI.LLM.enableAssistant, systemImage: DesignSystem.Icons.sparkles)
                             .foregroundStyle(.appText)
                     }
                     .tint(.appAccent)
                 } header: {
-                    Text(Localized.tr("llm.status"))
+                    Text(L10n.AI.LLM.status)
                 }
                 
                 // Karpathy Mode
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(Localized.tr("ondevice.assistMode"))
+                        Text(L10n.AI.OnDevice.assistMode)
                             .font(.headline)
                             .foregroundStyle(.appText)
-                        Text(Localized.tr("ondevice.assistDesc"))
+                        Text(L10n.AI.OnDevice.assistDesc)
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     }
                     .padding(.vertical, DesignSystem.tiny)
                     
-                    Toggle(Localized.tr("ondevice.enableAutoScan"), isOn: $llmService.autoScan)
+                    Toggle(L10n.AI.OnDevice.enableAutoScan, isOn: $llmService.autoScan)
                         .tint(.appAccent)
                     
-                    Toggle(Localized.tr("ondevice.autoRefactor"), isOn: $llmService.autoRefactor)
+                    Toggle(L10n.AI.OnDevice.autoRefactor, isOn: $llmService.autoRefactor)
                         .tint(.appAccent)
                 } header: {
-                    Text(L10n.Settings.tr("advancedMaintenance"))
+                    Text(L10n.Settings.advancedMaintenance)
                 }
                 
                 // Provider
@@ -96,7 +96,7 @@ struct LLMSettingsView: View {
                         }
                     }
                 } header: {
-                    Text(Localized.tr("llm.provider"))
+                    Text(L10n.AI.LLM.Provider.title)
                 }
                 
                 // Configuration
@@ -105,7 +105,7 @@ struct LLMSettingsView: View {
                     DisclosureGroup(isExpanded: $isConfigExpanded) {
                         configurationContent
                     } label: {
-                        Label(Localized.tr("llm.configuration"), systemImage: "slider.horizontal.3")
+                        Label(L10n.AI.LLM.configuration, systemImage: "slider.horizontal.3")
                             .foregroundStyle(.appText)
                     }
                     #else
@@ -124,7 +124,7 @@ struct LLMSettingsView: View {
                                 Image(systemName: DesignSystem.Icons.bolt)
                                     .foregroundStyle(.appAccent)
                             }
-                            Text(testing ? Localized.tr("llm.testing") : Localized.tr("llm.testConnection"))
+                            Text(testing ? L10n.AI.LLM.testing : L10n.AI.LLM.testConnection)
                                 .foregroundStyle(.appText)
                         }
                     }
@@ -138,7 +138,7 @@ struct LLMSettingsView: View {
                                 HStack {
                                     Image(systemName: DesignSystem.Icons.checkCircle)
                                         .foregroundStyle(.green)
-                                    Text(Localized.tr("ondevice.connected"))
+                                    Text(L10n.AI.OnDevice.connected)
                                         .font(.subheadline.bold())
                                         .foregroundStyle(.green)
                                     Spacer()
@@ -151,7 +151,7 @@ struct LLMSettingsView: View {
                                     Image(systemName: DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(.red)
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text(Localized.trf("ondevice.errorFormat", "\(code)"))
+                                        Text(L10n.AI.OnDevice.errorFormat("\(code)"))
                                             .font(.subheadline.bold())
                                         Text(message)
                                             .font(.caption)
@@ -169,19 +169,17 @@ struct LLMSettingsView: View {
                         .padding(.vertical, DesignSystem.tiny)
                     }
                 } header: {
-                    Text(Localized.tr("llm.validation"))
-                }
-                
-                // Info
-                Section {
-                    VStack(alignment: .leading, spacing: 10) {
-                        InfoRow(icon: "lock.shield", text: Localized.tr("llm.info.localKey"))
-                        InfoRow(icon: "doc.text", text: Localized.tr("llm.info.contextSent"))
-                        InfoRow(icon: "network", text: Localized.tr("llm.info.openAICompatible"))
-                        InfoRow(icon: "arrow.down.doc", text: Localized.tr("llm.info.smartIngest"))
+                    Text(L10n.AI.LLM.validation)
+                } footer: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        InfoRow(icon: "lock.shield", text: L10n.AI.LLM.info.localKey)
+                        InfoRow(icon: "doc.text", text: L10n.AI.LLM.info.contextSent)
+                        InfoRow(icon: "network", text: L10n.AI.LLM.info.openAICompatible)
+                        InfoRow(icon: "arrow.down.doc", text: L10n.AI.LLM.info.smartIngest)
                     }
-                } header: {
-                    Text(Localized.tr("llm.info"))
+                    .padding(.top, 8)
+                    Text(L10n.AI.LLM.infoString)
+                        .padding(.top, 8)
                 }
             }
             #if !os(watchOS)
@@ -191,7 +189,7 @@ struct LLMSettingsView: View {
             .scrollContentBackground(.hidden)
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(Localized.tr("llm.title"))
+        .navigationTitle(L10n.AI.LLM.title)
         #if !os(watchOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -202,7 +200,7 @@ struct LLMSettingsView: View {
         VStack(spacing: 20) {
             // API Key
             VStack(alignment: .leading, spacing: 6) {
-                Text(Localized.tr("llm.apiKey"))
+                Text(L10n.AI.LLM.apiKey)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
                 HStack {
@@ -232,7 +230,7 @@ struct LLMSettingsView: View {
             }
             // Base URL
             VStack(alignment: .leading, spacing: 6) {
-                Text(Localized.tr("llm.apiAddress"))
+                Text(L10n.AI.LLM.apiAddress)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
                 TextField("https://api.example.com/v1", text: $llmService.baseURL)
@@ -253,7 +251,7 @@ struct LLMSettingsView: View {
             }
             // Model
             VStack(alignment: .leading, spacing: 6) {
-                Text(Localized.tr("llm.model"))
+                Text(L10n.AI.LLM.model)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
                 TextField("model-name", text: $llmService.model)

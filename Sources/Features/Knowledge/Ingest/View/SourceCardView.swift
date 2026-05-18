@@ -24,7 +24,7 @@ struct SourceCardView: View {
             HStack {
                 Text(page.createdAt.formatted(.relative(presentation: .named).locale(Localized.currentLocale))).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
                 Spacer()
-                Text(L10n.Common.trf("wordCount", page.wordCount)).font(.system(size: 10, weight: .medium, design: .rounded)).foregroundStyle(.appSecondary)
+                Text(L10n.Knowledge.Page.wordCount(page.wordCount)).font(.system(size: 10, weight: .medium, design: .rounded)).foregroundStyle(.appSecondary)
             }
         }.padding(DesignSystem.medium).frame(width: DesignSystem.Metrics.sourceCardWidth, height: DesignSystem.Metrics.sourceCardHeight).appMetricCardStyle(color: Color.fromModelColorName(page.pageType.colorName), cornerRadius: DesignSystem.standardRadius)
     }

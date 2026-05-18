@@ -49,6 +49,7 @@ struct TagCloudViewContent: View {
     
     var body: some View {
         @Bindable var coordinator = coordinator
+        
         mainContent
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(PageBackgroundView(accentColor: .blue))
@@ -60,54 +61,73 @@ struct TagCloudViewContent: View {
             .onChange(of: store.pages) { _, _ in
                 Task { await coordinator.fetchData() }
             }
+            // 关键优化：将繁重的弹窗及确认对话框逻辑移至独立子视图，规避 SwiftUI 闭包过深导致的 Swift 编译器类型推演超时 (Type-Checking Timeout)
+            .background {
+                dialogsView
+            }
+    }
+
+    /// 弹窗与确认对话框集合视图
+    /// 提取该视图可以极大缩短编译时间，提升类型检查效率
+    @ViewBuilder
+    private var dialogsView: some View {
+        @Bindable var coordinator = coordinator
+        
+        let isRenamePresented = Binding<Bool>(
+            get: { coordinator.tagToRename != nil },
+            set: { if !$0 { coordinator.tagToRename = nil } }
+        )
+        
+        let renameMessage = L10n.Tag.Action.renameMessage(coordinator.tagToRename ?? "")
+        let deleteMessage = coordinator.tagToDelete.map { L10n.Tag.Action.deleteMessage($0) } ?? L10n.Tag.Action.deleteTag
+        let bulkDeleteMessage = L10n.Tag.Management.bulkDeleteWarning(coordinator.selectedTagsForBulk.count)
+        
+        Color.clear
             // 重命名对话框
-            .alert(Localized.tr("tag.renameTag"), isPresented: Binding(
-                get: { coordinator.tagToRename != nil },
-                set: { if !$0 { coordinator.tagToRename = nil } }
-            )) {
-                TextField(Localized.tr("tag.newName"), text: $coordinator.newTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToRename = nil }
-                Button(L10n.Common.tr("ok")) {
+            .alert(L10n.Tag.Action.renameTag, isPresented: isRenamePresented) {
+                TextField(L10n.Tag.Action.newName, text: $coordinator.newTagName)
+                Button(L10n.Common.cancel, role: .cancel) { coordinator.tagToRename = nil }
+                Button(L10n.Common.ok) {
                     coordinator.performRename()
                 }
             } message: {
-                Text(Localized.trf("tag.renameMessage", coordinator.tagToRename ?? ""))
+                Text(renameMessage)
             }
             // 删除确认对话框
             .confirmationDialog(
-                coordinator.tagToDelete.map { Localized.trf("tag.deleteMessage", $0) } ?? Localized.tr("tag.deleteTag"),
+                deleteMessage,
                 isPresented: $coordinator.showDeleteConfirm,
                 titleVisibility: .automatic
             ) {
-                Button(L10n.Common.tr("delete"), role: .destructive) {
+                Button(L10n.Common.delete, role: .destructive) {
                     coordinator.performDelete()
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.tagToDelete = nil }
+                Button(L10n.Common.cancel, role: .cancel) { coordinator.tagToDelete = nil }
             } message: {
-                Text(Localized.tr("settings.clearAll.message"))
+                Text(L10n.Settings.clearAll.message)
             }
             // 新增标签对话框
-            .alert(Localized.tr("tags.addNew"), isPresented: $coordinator.showAddTagDialog) {
-                TextField(Localized.tr("tags.inputName"), text: $coordinator.addTagName)
-                Button(L10n.Common.tr("cancel"), role: .cancel) { coordinator.addTagName = "" }
-                Button(L10n.Common.tr("create")) {
+            .alert(L10n.Tag.Management.addNew, isPresented: $coordinator.showAddTagDialog) {
+                TextField(L10n.Tag.Management.inputName, text: $coordinator.addTagName)
+                Button(L10n.Common.cancel, role: .cancel) { coordinator.addTagName = "" }
+                Button(L10n.Common.create) {
                     coordinator.performAddTag()
                 }
             } message: {
-                Text(Localized.tr("tags.createHint"))
+                Text(L10n.Tag.Management.createHint)
             }
             // 批量删除确认
             .confirmationDialog(
-                Localized.trf("tags.bulkDeleteWarning", coordinator.selectedTagsForBulk.count),
+                bulkDeleteMessage,
                 isPresented: $showBulkDeleteConfirm,
                 titleVisibility: .automatic
             ) {
-                Button(L10n.Common.tr("deleteAll"), role: .destructive) {
+                Button(L10n.Common.deleteAll, role: .destructive) {
                     coordinator.performBulkDelete()
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                Button(L10n.Common.cancel, role: .cancel) { }
             } message: {
-                Text(Localized.tr("settings.clearAll.message"))
+                Text(L10n.Settings.clearAll.message)
             }
     }
 
@@ -119,7 +139,7 @@ struct TagCloudViewContent: View {
                 Spacer()
                 if !coordinator.isEditMode {
                     Button(action: { coordinator.showAddTagDialog = true }) {
-                        Label(Localized.tr("tags.addNew"), systemImage: "plus.circle")
+                        Label(L10n.Tag.Management.addNew, systemImage: DesignSystem.Icons.plusCircle)
                             .font(.subheadline.bold())
                     }
                 }
@@ -128,8 +148,8 @@ struct TagCloudViewContent: View {
                     coordinator.isEditMode.toggle()
                     if !coordinator.isEditMode { coordinator.selectedTagsForBulk.removeAll() }
                 }) {
-                    Label(coordinator.isEditMode ? L10n.Common.tr("done") : Localized.tr("tags.manageTitle"), 
-                          systemImage: coordinator.isEditMode ? "checkmark.circle" : "checklist")
+                    Label(coordinator.isEditMode ? L10n.Common.done : L10n.Tag.Management.manageTitle, 
+                          systemImage: coordinator.isEditMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
                         .font(.subheadline.bold())
                         .foregroundStyle(coordinator.isEditMode ? .green : .appAccent)
                 }
@@ -144,7 +164,7 @@ struct TagCloudViewContent: View {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     AppSectionHeader(
                         title: L10n.Tag.allTags,
-                        icon: "tag.fill",
+                        icon: DesignSystem.Icons.tag,
                         iconColor: .appAccent
                     )
                     .padding(.horizontal, DesignSystem.tiny) // 4
@@ -167,12 +187,12 @@ struct TagCloudViewContent: View {
                 HStack {
                     AppSectionHeader(
                         title: L10n.Tag.relatedPagesTitle,
-                        icon: "doc.on.doc.fill",
+                        icon: DesignSystem.Icons.docOnDocFill,
                         iconColor: .appSource
                     )
                     Spacer()
                     if let _ = coordinator.selectedTag, !coordinator.isEditMode {
-                        Text(Localized.trf("tag.tagPages", coordinator.filteredPages.count))
+                        Text(L10n.Tag.Action.tagPages(coordinator.filteredPages.count))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
@@ -196,12 +216,12 @@ struct TagCloudViewContent: View {
 
     private var bulkActionBar: some View {
         HStack {
-            Text(Localized.trf("tags.selectedCount", coordinator.selectedTagsForBulk.count))
+            Text(L10n.Tag.Management.selectedCount(coordinator.selectedTagsForBulk.count))
                 .font(.subheadline.bold())
                 .foregroundStyle(.white)
             Spacer()
             Button(role: .destructive, action: { showBulkDeleteConfirm = true }) {
-                Text(L10n.Common.tr("bulkDelete"))
+                Text(L10n.Common.bulkDelete)
                     .padding(.horizontal, DesignSystem.large)
                     .padding(.vertical, DesignSystem.small - DesignSystem.atomic) // 6
                     .background(Color.red)
@@ -219,13 +239,13 @@ struct TagCloudViewContent: View {
 
     private var emptyTagsView: some View {
         VStack(spacing: DesignSystem.medium) {
-            Image(systemName: "tag")
+            Image(systemName: DesignSystem.Icons.tag)
                 .font(.system(size: DesignSystem.iconHuge))
                 .foregroundStyle(.appSecondary)
-            Text(Localized.tr("tag.noTags"))
+            Text(L10n.Tag.Action.noTags)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
-            Text(Localized.tr("tag.noTagsHint"))
+            Text(L10n.Tag.Action.noTagsHint)
                 .font(.caption)
                 .foregroundStyle(.appSecondary.opacity(DesignSystem.subtleOpacity))
                 .multilineTextAlignment(.center)
@@ -294,7 +314,7 @@ struct TagCloudViewContent: View {
                             .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
                         
                         if isSelected {
-                            Image(systemName: "checkmark")
+                            Image(systemName: DesignSystem.Icons.check)
                                 .font(.system(size: DesignSystem.microFontSize, weight: .black))
                                 .foregroundStyle(.white)
                         } else {
@@ -315,13 +335,13 @@ struct TagCloudViewContent: View {
                     coordinator.tagToRename = item.tag
                     coordinator.newTagName = item.tag
                 }) {
-                    Label(Localized.tr("tag.rename"), systemImage: "pencil")
+                    Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
                 }
                 Button(role: .destructive, action: {
                     coordinator.tagToDelete = item.tag
                     coordinator.showDeleteConfirm = true
                 }) {
-                    Label(Localized.tr("tag.delete"), systemImage: "trash")
+                    Label(L10n.Tag.Action.delete, systemImage: DesignSystem.Icons.delete)
                 }
             }
         }
@@ -354,10 +374,10 @@ struct TagCloudViewContent: View {
                 .frame(maxHeight: .infinity)
             } else {
                 VStack(spacing: DesignSystem.medium) {
-                    Image(systemName: coordinator.isEditMode ? "checklist" : "tag")
+                    Image(systemName: coordinator.isEditMode ? DesignSystem.Icons.checklist : DesignSystem.Icons.tag)
                         .font(.system(size: DesignSystem.iconHuge))
                         .foregroundStyle(.appSecondary.opacity(DesignSystem.translucentOpacity))
-                    Text(coordinator.isEditMode ? Localized.tr("tags.selectToManage") : Localized.tr("tagcloud.selectTag"))
+                    Text(coordinator.isEditMode ? L10n.Tag.Management.selectToManage : L10n.Tag.Cloud.selectTag)
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }

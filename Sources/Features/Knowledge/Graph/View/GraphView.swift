@@ -185,11 +185,11 @@ struct GraphContainerView: View {
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
                 
-                Text(L10n.Graph.trf("nodesConnections", viewModel.getFilteredNodes().count, viewModel.getFilteredEdges(for: viewModel.getFilteredNodes()).count))
+                Text(L10n.Graph.nodesConnections(viewModel.getFilteredNodes().count, viewModel.getFilteredEdges(for: viewModel.getFilteredNodes()).count))
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold)) // 加粗文字增强视觉重心
                     .foregroundStyle(.appSecondary)
                 
-                Image(systemName: "chevron.right")
+                Image(systemName: DesignSystem.Icons.forward)
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     .foregroundStyle(.appAccent.opacity(DesignSystem.softOpacity))
             }
@@ -301,10 +301,10 @@ struct GraphContainerView: View {
                     viewModel.showInsights = false
                 }
             )
-            .navigationTitle(L10n.Graph.tr("insights"))
+            .navigationTitle(L10n.Graph.insights)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.tr("cancel")) { viewModel.showInsights = false }
+                    Button(L10n.Common.cancel) { viewModel.showInsights = false }
                         .buttonStyle(.plain)
                 }
             }
@@ -436,13 +436,13 @@ private struct GraphEmptyStateView: View {
     
     var body: some View {
         VStack(spacing: DesignSystem.loosePadding) {
-            Image(systemName: "circle.grid.3x3.fill")
+            Image(systemName: DesignSystem.Icons.circleGrid3x3Fill)
                 .font(.system(size: DesignSystem.Graph.emptyIconSize))
                 .foregroundStyle(.appAccent.gradient)
             
             VStack(spacing: DesignSystem.tightPadding) {
-                Text(L10n.Graph.tr("emptyTitle")).font(.title2.bold())
-                Text(L10n.Graph.tr("emptyDesc"))
+                Text(L10n.Graph.emptyTitle).font(.title2.bold())
+                Text(L10n.Graph.emptyDesc)
                     .font(.subheadline)
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)
@@ -450,7 +450,7 @@ private struct GraphEmptyStateView: View {
             }
             
             Button(action: { store.showCreateSheet = true }) {
-                Text(L10n.Graph.tr("startBuilding"))
+                Text(L10n.Graph.startBuilding)
                     .font(.headline)
                     .padding(.horizontal, DesignSystem.loosePadding + DesignSystem.small)
                     .padding(.vertical, DesignSystem.standardPadding - DesignSystem.atomic)
@@ -469,7 +469,7 @@ private struct GraphFilterPillsView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DesignSystem.small) {
-                FilterPill(title: Localized.tr("search.all"), isSelected: filterType == nil) { filterType = nil }
+                FilterPill(title: L10n.Search.all, isSelected: filterType == nil) { filterType = nil }
                 ForEach(PageType.allCases) { type in
                     FilterPill(title: type.displayName, icon: type.icon, color: Color.fromModelColorName(type.colorName), isSelected: filterType == type) { filterType = type }
                 }

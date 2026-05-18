@@ -2,11 +2,9 @@
 //
 // 作者: Wang Chong
 // 功能说明: [L2] 业务功能层：struct PDFLibraryView
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
+//   - 2026-05-16: 职责剥离：将 PDF 业务逻辑从 AppStore 迁移至 IngestStore。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
@@ -20,20 +18,21 @@ import UniformTypeIdentifiers
 @MainActor
 struct PDFLibraryView: View {
     var body: some View {
-        Text(Localized.tr("status.simulatorNotSupported"))
+        Text(L10n.Common.Status.simulatorNotSupported)
     }
 }
 
 struct PDFReaderView: View {
     let documentInfo: PDFDocumentInfo
     var body: some View {
-        Text(Localized.tr("status.simulatorNotSupported"))
+        Text(L10n.Common.Status.simulatorNotSupported)
     }
 }
 #else
 @MainActor
 struct PDFLibraryView: View {
     @Environment(AppStore.self) var store
+    @Environment(IngestStore.self) var ingestStore
     @State private var documents: [PDFDocumentInfo] = []
     @State private var showFilePicker = false
     @State private var selectedDoc: PDFDocumentInfo?
@@ -52,11 +51,11 @@ struct PDFLibraryView: View {
                     )
                 }
             }
-            .navigationTitle(Localized.tr("pdf.title"))
+            .navigationTitle(L10n.Ingest.PDF.title)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(action: { showFilePicker = true }) {
-                        Image(systemName: "plus")
+                        Image(systemName: DesignSystem.Icons.plus)
                     }
                 }
             }
@@ -72,7 +71,7 @@ struct PDFLibraryView: View {
             }
             .onAppear {
                 Task {
-                    documents = await store.loadPDFDocuments()
+                    documents = await ingestStore.loadPDFDocuments()
                 }
             }
         }
@@ -92,7 +91,7 @@ struct PDFLibraryView: View {
             let fileName = "\(UUID().uuidString).pdf"
 
             Task {
-                if let _ = await store.savePDFDocument(data: data, fileName: fileName) {
+                if let _ = await ingestStore.savePDFDocument(data: data, fileName: fileName) {
                     let pdfDoc = PDFKit.PDFDocument(data: data)
                     let docInfo = PDFDocumentInfo(
                         title: url.deletingPathExtension().lastPathComponent,
@@ -100,8 +99,8 @@ struct PDFLibraryView: View {
                         pageCount: pdfDoc?.pageCount ?? 0
                     )
                     documents.append(docInfo)
-                    await store.savePDFDocuments(documents)
-                    store.addLog(action: .importPDF, target: docInfo.title, details: Localized.trf("pdf.pageCountFormat", docInfo.pageCount))
+                    await ingestStore.savePDFDocuments(documents)
+                    store.addLog(action: .importPDF, target: docInfo.title, details: L10n.Ingest.pdfPageCountFormat(docInfo.pageCount))
                 }
             }
 
@@ -112,27 +111,27 @@ struct PDFLibraryView: View {
 
     private func deleteDocument(_ doc: PDFDocumentInfo) {
         Task {
-            _ = await store.deletePDFDocument(fileName: doc.fileName)
+            _ = await ingestStore.deletePDFDocument(fileName: doc.fileName)
             documents.removeAll { $0.id == doc.id }
-            await store.savePDFDocuments(documents)
+            await ingestStore.savePDFDocuments(documents)
             store.addLog(action: .deletePDF, target: doc.title, details: "")
         }
     }
 
     private func ingestPDF(_ doc: PDFDocumentInfo) {
         Task {
-            guard let pdfDoc = await store.loadPDFDocument(fileName: doc.fileName) else { return }
-            let text = await store.extractPDFText(from: pdfDoc)
+            guard let pdfDoc = await ingestStore.loadPDFDocument(fileName: doc.fileName) else { return }
+            let text = await ingestStore.extractPDFText(from: pdfDoc)
 
             if !text.isEmpty {
                 let page = await store.createPage(
                     title: doc.title,
-                    type: .source,
+                    pageType: .source,
                     content: text,
-                    tags: ["PDF", Localized.tr("logAction.ingest")]
+                    tags: ["PDF", L10n.Common.LogAction.ingest]
                 )
-                store.addLog(action: .importPDF, target: doc.title, details: Localized.trf("pdf.createdPage", page.title))
-                store.saveToDisk()
+                store.addLog(action: .importPDF, target: doc.title, details: L10n.Ingest.pdfCreatedPage(page.title))
+                await store.saveToDisk()
             }
         }
     }
@@ -144,11 +143,11 @@ private struct PDFLibraryEmptyView: View {
 
     var body: some View {
         ContentUnavailableView {
-            Label(Localized.tr("pdf.library"), systemImage: "doc.richtext")
+            Label(L10n.Ingest.PDF.library, systemImage: DesignSystem.Icons.docRichtext)
         } description: {
-            Text(Localized.tr("pdf.libraryHint"))
+            Text(L10n.Ingest.PDF.libraryHint)
         } actions: {
-            AppPrimaryButton(title: Localized.tr("pdf.add"), action: onAdd)
+            AppPrimaryButton(title: L10n.Ingest.PDF.add, action: onAdd)
                 .frame(maxWidth: 200)
         }
     }
@@ -172,11 +171,11 @@ private struct PDFDocumentListView: View {
                     Button(role: .destructive) {
                         onDelete(doc)
                     } label: {
-                        Label(Localized.tr("pdf.delete"), systemImage: "trash")
+                        Label(L10n.Ingest.PDF.delete, systemImage: DesignSystem.Icons.delete)
                     }
 
                     Button(action: { onIngest(doc) }) {
-                        Label(Localized.tr("pdf.ingest"), systemImage: "arrow.down.doc")
+                        Label(L10n.Ingest.PDF.ingest, systemImage: DesignSystem.Icons.arrowDownDoc)
                     }
                     .tint(.appAccent)
                 }
@@ -194,6 +193,7 @@ private struct PDFDocumentListView: View {
 struct PDFReaderView: View {
     let documentInfo: PDFDocumentInfo
     @Environment(AppStore.self) var store
+    @Environment(IngestStore.self) var ingestStore
 
     @State private var currentPage = 0
     @State private var highlights: [PDFHighlight] = []
@@ -223,21 +223,21 @@ struct PDFReaderView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .automatic) {
                     Button(action: { showHighlightPanel.toggle() }) {
-                        Image(systemName: showHighlightPanel ? "highlighter.fill" : "highlighter")
+                        Image(systemName: showHighlightPanel ? DesignSystem.Icons.highlighterFill : DesignSystem.Icons.highlighter)
                     }
 
                     Button(action: { showIngestSheet = true }) {
-                        Image(systemName: "arrow.down.doc")
+                        Image(systemName: DesignSystem.Icons.arrowDownDoc)
                     }
                 }
             }
             .sheet(isPresented: $showIngestSheet) {
-                PDFIngestSheet(documentInfo: documentInfo, store: store, pdfDocument: pdfDocument)
+                PDFIngestSheet(documentInfo: documentInfo, ingestStore: ingestStore, pdfDocument: pdfDocument)
             }
         }
         .onAppear {
             Task {
-                if let url = await store.loadPDFDocument(fileName: documentInfo.fileName) {
+                if let url = await ingestStore.loadPDFDocument(fileName: documentInfo.fileName) {
                     #if canImport(PDFKit)
                     pdfDocument = PDFDocument(url: url)
                     #endif
@@ -260,10 +260,10 @@ struct PDFReaderView: View {
             )
             .ignoresSafeArea()
         } else {
-            ContentUnavailableView(Localized.tr("pdf.cannotLoadPDF"), systemImage: "exclamationmark.triangle")
+            ContentUnavailableView(L10n.Ingest.PDF.cannotLoadPDF, systemImage: DesignSystem.Icons.warning)
         }
         #else
-        ContentUnavailableView(Localized.tr("pdf.notSupported"), systemImage: DesignSystem.Icons.warning, description: Text(Localized.tr("pdf.notSupportedDesc")))
+        ContentUnavailableView(L10n.Ingest.PDF.notSupported, systemImage: DesignSystem.Icons.warning, description: Text(L10n.Ingest.PDF.notSupportedDesc))
         #endif
     }
 
@@ -289,7 +289,7 @@ struct PDFReaderView: View {
 
                 if !highlights.isEmpty {
                     Button(action: { showHighlightPanel.toggle() }) {
-                        Label("\(highlights.count)", systemImage: "highlighter")
+                        Label("\(highlights.count)", systemImage: DesignSystem.Icons.highlighter)
                             .font(.caption)
                             .foregroundStyle(.appAccent)
                     }
@@ -304,7 +304,7 @@ struct PDFReaderView: View {
     // MARK: - Highlight Editor
     private var highlightEditor: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(Localized.tr("pdf.annotateSelected"))
+            Text(L10n.Ingest.PDF.annotateSelected)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.appText)
 
@@ -328,14 +328,14 @@ struct PDFReaderView: View {
                 Spacer()
             }
 
-            TextField(Localized.tr("pdf.addNote"), text: $highlightNote)
+            TextField(L10n.Ingest.PDF.addNote, text: $highlightNote)
                 .font(.caption)
 #if os(iOS) || os(macOS)
                 .textFieldStyle(.roundedBorder)
 #endif
 
             Button(action: saveHighlight) {
-                Text(Localized.tr("pdf.saveAnnotation"))
+                Text(L10n.Ingest.PDF.saveAnnotation)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, Spacing.medium)
@@ -359,10 +359,10 @@ struct PDFReaderView: View {
         highlights.append(highlight)
 
         Task {
-            var docs = await store.loadPDFDocuments()
+            var docs = await ingestStore.loadPDFDocuments()
             if let index = docs.firstIndex(where: { $0.id == documentInfo.id }) {
                 docs[index].highlights = highlights
-                await store.savePDFDocuments(docs)
+                await ingestStore.savePDFDocuments(docs)
             }
         }
 
@@ -370,7 +370,7 @@ struct PDFReaderView: View {
         highlightNote = ""
         showHighlightPanel = false
 
-        store.addLog(action: .highlight, target: documentInfo.title, details: Localized.trf("pdf.pageNumber", currentPage + 1))
+        store.addLog(action: .highlight, target: documentInfo.title, details: L10n.Ingest.pdfPageNumber(currentPage + 1))
     }
 }
 

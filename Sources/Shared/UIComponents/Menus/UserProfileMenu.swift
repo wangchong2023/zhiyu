@@ -1,7 +1,7 @@
 // UserProfileMenu.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了全系统通用的用户个人资料菜单（UserProfileMenu）。
+// 功能说明: [Shared] 本文件实现了全系统通用的用户个人资料菜单（UserProfileMenu）。
 // 该组件集成了：
 // 1. 账户管理：显示当前登录状态并支持登出。
 // 2. 安全控制：快捷锁定应用程序。
@@ -30,13 +30,13 @@ struct UserProfileMenu: View {
         .sheet(isPresented: $showWatchMenu) {
             List {
                 Button(action: { showSettings = true; showWatchMenu = false }) {
-                    Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
+                    Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
                 }
                 Button(action: { store.securityService.lock(); showWatchMenu = false }) {
-                    Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
+                    Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
                 }
                 Button(role: .destructive, action: { authService.logout(); showWatchMenu = false }) {
-                    Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
+                    Label(L10n.Auth.logout, systemImage: DesignSystem.Icons.logout)
                 }
             }
         }
@@ -44,8 +44,8 @@ struct UserProfileMenu: View {
         .sheet(isPresented: $showAbout) { aboutStack }
         #else
         Menu {
-            Button(action: { showSettings = true }) {
-                Label(L10n.Common.tr("settings"), systemImage: "gearshape.fill")
+            Button(action: { router.isShowingSettingsSheet = true }) {
+                Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
             }
             
             Button(action: {
@@ -53,7 +53,7 @@ struct UserProfileMenu: View {
                 store.securityService.lock()
                 store.requestRelayout() // 强制触发 UI 状态评估
             }) {
-                Label(L10n.Common.tr("lock"), systemImage: "lock.fill")
+                Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
             }
             
             Button(action: {
@@ -63,13 +63,13 @@ struct UserProfileMenu: View {
                 store.pendingCoachMark = .graphDiscovery
                 store.requestRelayout() // 强制触发 UI 状态评估
             }) {
-                Label(L10n.Common.tr("help"), systemImage: "questionmark.circle")
+                Label(L10n.Common.help, systemImage: DesignSystem.Icons.questionCircle)
             }
             
             Divider()
             
             Button(role: .destructive, action: { authService.logout() }) {
-                Label(L10n.Auth.tr("logout"), systemImage: "rectangle.portrait.and.arrow.right")
+                Label(L10n.Auth.logout, systemImage: DesignSystem.Icons.logout)
             }
         } label: {
             profileLabel
@@ -83,11 +83,11 @@ struct UserProfileMenu: View {
     private var profileLabel: some View {
         Group {
             if authService.isGuest {
-                Image(systemName: "person.crop.circle")
+                Image(systemName: DesignSystem.Icons.personCrop)
                     .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
             } else {
-                Image(systemName: "person.crop.circle.fill")
+                Image(systemName: DesignSystem.Icons.personCropFill)
                     .font(.system(size: DesignSystem.headlineFontSize, weight: .medium))
                     .symbolRenderingMode(.hierarchical)
             }
@@ -99,7 +99,7 @@ struct UserProfileMenu: View {
     
     private var settingsStack: some View {
         NavigationStack {
-            SettingsView(onboardingService: onboardingService)
+            SettingsView()
         }
     }
     

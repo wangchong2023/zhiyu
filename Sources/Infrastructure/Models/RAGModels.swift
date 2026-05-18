@@ -19,6 +19,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
     public var parentID: String?  // 父块 ID (用于层级索引)
     public var chunkType: String  // "regular", "summary", "qa_pair"
     public var content: String
+    public var anchorPath: String? // 语义层级路径 (例如: "核心原理 > 量子力学")
     public var index: Int         // 排序索引
     public var startIndex: Int    // 在原始文本中的偏移量
     public var embedding: Data?   // 序列化的向量数据
@@ -31,6 +32,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
         static let parentID = Column("parent_id")
         static let chunkType = Column("chunk_type")
         static let content = Column("content")
+        static let anchorPath = Column("anchor_path")
         static let index = Column("chunk_index")
         static let startIndex = Column("start_index")
         static let embedding = Column("embedding")
@@ -44,6 +46,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
         parentID: String? = nil,
         chunkType: String = "regular",
         content: String,
+        anchorPath: String? = nil,
         index: Int,
         startIndex: Int = 0,
         embedding: Data? = nil,
@@ -55,6 +58,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
         self.parentID = parentID
         self.chunkType = chunkType
         self.content = content
+        self.anchorPath = anchorPath
         self.index = index
         self.startIndex = startIndex
         self.embedding = embedding

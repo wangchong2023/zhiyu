@@ -22,7 +22,7 @@ struct ActivityRow: View {
                     Text(task.startTime.formatted(Date.FormatStyle(locale: Localized.currentLocale))).font(.system(size: DesignSystem.captionFontSize)).foregroundStyle(.appSecondary)
                 }
                 Spacer()
-                if task.associatedPageID != nil { Image(systemName: "chevron.right").font(.system(size: DesignSystem.captionFontSize, weight: .bold)).foregroundStyle(.appSecondary.opacity(DesignSystem.disabledOpacity)) }
+                if task.associatedPageID != nil { Image(systemName: DesignSystem.Icons.forward).font(.system(size: DesignSystem.captionFontSize, weight: .bold)).foregroundStyle(.appSecondary.opacity(DesignSystem.disabledOpacity)) }
             }.padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic).padding(.horizontal, DesignSystem.medium)
         }.buttonStyle(.plain)
     }
@@ -36,10 +36,10 @@ struct ActivityRow: View {
     }
     private var taskIcon: String {
         switch task.status {
-        case .completed: return "checkmark.circle.fill"
-        case .failed: return "exclamationmark.circle.fill"
-        case .running: return "arrow.triangle.2.circlepath"
-        case .pending: return "clock"
+        case .completed: return DesignSystem.Icons.checkCircle
+        case .failed: return DesignSystem.Icons.errorCircle
+        case .running: return DesignSystem.Icons.refresh
+        case .pending: return DesignSystem.Icons.clock
         }
     }
 }

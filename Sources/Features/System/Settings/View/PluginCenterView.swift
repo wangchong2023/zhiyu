@@ -31,8 +31,8 @@ struct PluginCenterView: View {
                 
                 // 2. 分段切换 (带动效)
                 Picker("", selection: $selectedTab) {
-                    Text(Localized.tr("plugin.market")).tag(0)
-                    Text(Localized.tr("plugin.myPlugins")).tag(1)
+                    Text(L10n.Plugin.marketTitle).tag(0)
+                    Text(L10n.Plugin.myPlugins).tag(1)
                 }
                 #if !os(watchOS)
                 .pickerStyle(.segmented)
@@ -50,7 +50,7 @@ struct PluginCenterView: View {
             }
                 .background(PageBackgroundView(accentColor: .appAccent))
                 .id(router.languageForceUpdate)
-                .navigationTitle(Localized.tr("plugin.center"))
+                .navigationTitle(L10n.Plugin.centerTitle)
 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -60,19 +60,19 @@ struct PluginCenterView: View {
                 }
 #endif
                 .confirmationDialog(
-            Localized.tr("plugin.safeMode.warning.title"),
+            L10n.Plugin.safeModeWarningTitle,
             isPresented: $showSafeModeWarning,
             titleVisibility: .visible
         ) {
-            Button(Localized.tr("plugin.safeMode.turnOff"), role: .destructive) {
+            Button(L10n.Plugin.safeModeTurnOff, role: .destructive) {
                 isSafeModeOn = false
                 HapticFeedback.shared.trigger(.warning)
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {
+            Button(L10n.Common.cancel, role: .cancel) {
                 isSafeModeOn = true
             }
         } message: {
-            Text(Localized.tr("plugin.safeMode.warning.message"))
+            Text(L10n.Plugin.safeModeWarningMessage)
         }
     }
     
@@ -82,7 +82,7 @@ struct PluginCenterView: View {
             HStack {
                 Image(systemName: DesignSystem.Icons.search)
                     .foregroundStyle(.appAccent)
-                TextField(Localized.tr("plugin.searchPlaceholder"), text: $searchText)
+                TextField(L10n.Plugin.searchPlaceholder, text: $searchText)
                     .textFieldStyle(.plain)
             }
             .padding(DesignSystem.medium)
@@ -94,7 +94,7 @@ struct PluginCenterView: View {
             HStack(spacing: DesignSystem.wide) {
                 // 安全模式切换
                 HStack(spacing: DesignSystem.small) {
-                    Label(Localized.tr("plugin.safeMode"), systemImage: isSafeModeOn ? "shield.fill" : "shield.slash")
+                    Label(L10n.Plugin.safeModeTitle, systemImage: isSafeModeOn ? DesignSystem.Icons.shieldFill : DesignSystem.Icons.shieldSlash)
                         .font(.subheadline.bold())
                         .foregroundStyle(isSafeModeOn ? .green : .orange)
                     
@@ -120,7 +120,7 @@ struct PluginCenterView: View {
                     HapticFeedback.shared.trigger(.selection)
                     showFileImporter = true 
                 }) {
-                    Label(Localized.tr("plugin.local.mount"), systemImage: "plus.circle")
+                    Label(L10n.Plugin.local.mount, systemImage: DesignSystem.Icons.plusCircle)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
                 }
@@ -136,7 +136,7 @@ struct PluginCenterView: View {
             let filtered = registry.plugins.filter { searchText.isEmpty || $0.manifest.name.localizedCaseInsensitiveContains(searchText) }
             
             if !filtered.isEmpty {
-                Text(Localized.tr("plugin.status.enabled"))
+                Text(L10n.Plugin.Status.enabled)
                     .font(.caption.bold())
                     .foregroundStyle(.appSecondary)
                     .padding(.horizontal)
@@ -147,10 +147,10 @@ struct PluginCenterView: View {
                 .padding(.horizontal)
             } else if searchText.isEmpty {
                 // 如果没有插件且不在搜索状态，显示空状态
-                emptyStateView(icon: "puzzlepiece", title: Localized.tr("plugin.noPlugins"), sub: Localized.tr("plugin.noPluginsHint"))
+                emptyStateView(icon: DesignSystem.Icons.pluginOutline, title: L10n.Plugin.noPlugins, sub: L10n.Plugin.noPluginsHint)
             } else {
                 // 搜索结果为空
-                emptyStateView(icon: "magnifyingglass", title: Localized.tr("plugin.noResults"), sub: Localized.tr("plugin.noResultsHint"))
+                emptyStateView(icon: DesignSystem.Icons.search, title: L10n.Plugin.noResults, sub: L10n.Plugin.noResultsHint)
             }
         }
     }
@@ -163,10 +163,10 @@ struct PluginCenterView: View {
                 let filtered = marketService.availablePlugins.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }
                 
                 if filtered.isEmpty {
-                    emptyStateView(icon: "storefront", title: Localized.tr("plugin.market.empty"), sub: Localized.tr("plugin.market.emptyHint"))
+                    emptyStateView(icon: DesignSystem.Icons.storefront, title: L10n.Plugin.market.empty, sub: L10n.Plugin.market.emptyHint)
                 } else {
                     ForEach(filtered) { p in
-                        NavigationLink(destination: PluginDetailView(name: p.name, author: p.author, version: p.version, description: p.description, icon: p.icon)) {
+                        NavigationLink(destination: PluginDetailView(plugin: p, marketService: marketService)) {
                             PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon)
                         }
                     }
@@ -219,15 +219,15 @@ struct PluginCard: View {
                 
                 if let downloads = downloads, let rating = rating {
                     HStack(spacing: DesignSystem.tightPadding) {
-                        Label(downloads, systemImage: "arrow.down.circle").font(.system(size: DesignSystem.microFontSize))
-                        Label(String(format: "%.1f", rating), systemImage: "star.fill").font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.yellow)
+                        Label(downloads, systemImage: DesignSystem.Icons.arrowDownCircle).font(.system(size: DesignSystem.microFontSize))
+                        Label(String(format: "%.1f", rating), systemImage: DesignSystem.Icons.star).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.yellow)
                     }
                     .foregroundStyle(.appSecondary)
                     .padding(.top, DesignSystem.atomic)
                 }
             }
             Spacer()
-            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.appSecondary)
+            Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
         }
         .padding()
         .background(Color.appCard.opacity(DesignSystem.glassOpacity * 4))

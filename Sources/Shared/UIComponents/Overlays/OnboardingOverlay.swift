@@ -1,7 +1,7 @@
 // OnboardingOverlay.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了新手引导蒙层视图，用于向新用户展示系统的核心能力与操作指引。
+// 功能说明: [Shared] 本文件定义了新手引导蒙层视图，用于向新用户展示系统的核心能力与操作指引。
 // 日期: 2026-05-07
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -43,7 +43,7 @@ struct OnboardingOverlay: View {
                             service.nextStep()
                         }
                     }) {
-                        Text(step == .vault ? Localized.tr("onboarding.action.start") : Localized.tr("onboarding.action.next"))
+                        Text(step == .vault ? L10n.Onboarding.Action.start : L10n.Onboarding.Action.next)
                             .font(.headline)
                             .foregroundStyle(.white)
                             .padding(.horizontal, Spacing.huge * 1.25) // 40
@@ -52,7 +52,7 @@ struct OnboardingOverlay: View {
                             .clipShape(Capsule())
                     }
                     
-                    Button(Localized.tr("onboarding.action.skip")) {
+                    Button(L10n.Onboarding.Action.skip) {
                         withAnimation {
                             service.completeOnboarding()
                         }

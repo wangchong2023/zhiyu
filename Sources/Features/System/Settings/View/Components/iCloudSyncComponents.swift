@@ -48,7 +48,7 @@ struct SyncStatusRow: View {
                     .foregroundStyle(.appText)
 
                 if let date = syncService.lastSyncDate {
-                    Text(Localized.trf("icloud.lastSyncFormat", date.formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale))))
+                    Text(L10n.ICloud.lastSyncFormat(date.formatted(Date.FormatStyle(date: .numeric, time: .shortened, locale: Localized.currentLocale))))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
@@ -80,7 +80,7 @@ struct SyncActionsSection: View {
         Section {
             // Push to iCloud
             Button(action: onPush) {
-                Label(L10n.ICloud.tr("pushToCloud"), systemImage: "icloud.and.arrow.up")
+                Label(L10n.ICloud.pushToCloud, systemImage: "icloud.and.arrow.up")
                     .foregroundStyle(.appText)
             }
             .accessibilityIdentifier("push-to-icloud")
@@ -88,7 +88,7 @@ struct SyncActionsSection: View {
 
             // Pull from iCloud
             Button(action: onPullRequest) {
-                Label(L10n.ICloud.tr("pullFromCloud"), systemImage: "icloud.and.arrow.down")
+                Label(L10n.ICloud.pullFromCloud, systemImage: "icloud.and.arrow.down")
                     .foregroundStyle(.appText)
             }
             .accessibilityIdentifier("pull-from-icloud")
@@ -96,12 +96,12 @@ struct SyncActionsSection: View {
 
             // Bidirectional sync
             Button(action: onBidirectional) {
-                Label(L10n.ICloud.tr("bidirectionalSync"), systemImage: "arrow.triangle.2.circlepath.icloud")
+                Label(L10n.ICloud.bidirectionalSync, systemImage: "arrow.triangle.2.circlepath.icloud")
                     .foregroundStyle(.appText)
             }
             .disabled(!syncService.iCloudAvailable || isSyncing)
         } header: {
-            Text(L10n.ICloud.tr("syncActions"))
+            Text(L10n.ICloud.syncActions)
         }
     }
 }
@@ -118,7 +118,7 @@ struct SyncSettingsSection: View {
 
     var body: some View {
         Section {
-            Toggle(L10n.ICloud.tr("autoSync"), isOn: $autoSync)
+            Toggle(L10n.ICloud.autoSync, isOn: $autoSync)
                 .foregroundStyle(.appText)
                 .accessibilityIdentifier("auto-sync")
                 .onChange(of: autoSync) { _, newValue in
@@ -126,7 +126,7 @@ struct SyncSettingsSection: View {
                 }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.ICloud.tr("conflictPolicy"))
+                Text(L10n.ICloud.conflictPolicy)
                     .font(.subheadline)
                     .foregroundStyle(.appText)
 
@@ -138,7 +138,7 @@ struct SyncSettingsSection: View {
                 .pickerStyle(.segmented)
             }
         } header: {
-            Text(L10n.ICloud.tr("syncSettings"))
+            Text(L10n.ICloud.syncSettings)
         }
     }
 }

@@ -12,23 +12,30 @@
 import Foundation
 
 // MARK: - Potential Link Suggestion
-struct PotentialLinkSuggestion: Identifiable, Codable, Sendable {
-    var id = UUID()
-    let sourcePageID: UUID
-    let sourceTitle: String
-    let targetTitle: String
+public struct PotentialLinkSuggestion: Identifiable, Codable, Sendable {
+    public var id = UUID()
+    public let sourcePageID: UUID
+    public let sourceTitle: String
+    public let targetTitle: String
+    
+    public init(id: UUID = UUID(), sourcePageID: UUID, sourceTitle: String, targetTitle: String) {
+        self.id = id
+        self.sourcePageID = sourcePageID
+        self.sourceTitle = sourceTitle
+        self.targetTitle = targetTitle
+    }
 }
 
 // MARK: - Lint Issue
-struct LintIssue: Identifiable, Codable, Sendable {
-    var id = UUID()
-    var severity: LintSeverity
-    var type: IssueType = .generic
-    var pageID: UUID?
-    var message: String
-    var suggestion: String
+public struct LintIssue: Identifiable, Codable, Sendable {
+    public var id = UUID()
+    public var severity: LintSeverity
+    public var type: IssueType = .generic
+    public var pageID: UUID?
+    public var message: String
+    public var suggestion: String
     
-    enum IssueType: String, Codable, Sendable {
+    public enum IssueType: String, Codable, Sendable {
         case generic = "generic"
         case brokenLink = "brokenLink"
         case orphan = "orphan"
@@ -37,7 +44,7 @@ struct LintIssue: Identifiable, Codable, Sendable {
         case stub = "stub"
         case stale = "stale"
         
-        var icon: String {
+        public var icon: String {
             switch self {
             case .brokenLink: return "link"
             case .orphan: return "person.crop.circle.badge.questionmark"
@@ -50,12 +57,12 @@ struct LintIssue: Identifiable, Codable, Sendable {
         }
     }
 
-    enum LintSeverity: String, Codable, Sendable {
+    public enum LintSeverity: String, Codable, Sendable {
         case error = "error"
         case warning = "warning"
         case info = "info"
 
-        var icon: String {
+        public var icon: String {
             switch self {
             case .error: return "xmark.circle.fill"
             case .warning: return "exclamationmark.triangle.fill"
@@ -63,13 +70,21 @@ struct LintIssue: Identifiable, Codable, Sendable {
             }
         }
 
-        var colorName: String {
+        public var colorName: String {
             switch self {
             case .error: return "red"
             case .warning: return "orange"
             case .info: return "blue"
             }
         }
+    }
 
+    public init(id: UUID = UUID(), severity: LintSeverity, type: IssueType = .generic, pageID: UUID? = nil, message: String, suggestion: String) {
+        self.id = id
+        self.severity = severity
+        self.type = type
+        self.pageID = pageID
+        self.message = message
+        self.suggestion = suggestion
     }
 }

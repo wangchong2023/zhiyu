@@ -13,14 +13,14 @@ import Foundation
 
 /// 图谱聚类服务 (Architect 视角：知识涌现)
 /// 负责对知识库中的页面进行语义聚类。
-final class GraphClusteringService {
+public final class GraphClusteringService {
 
-    struct Cluster: Identifiable {
-        let id = UUID()
-        let name: String
-        let pageIDs: Set<UUID>
-        let centroid: [Float]
-        let colorName: String
+    public struct Cluster: Identifiable {
+        public let id = UUID()
+        public let name: String
+        public let pageIDs: Set<UUID>
+        public let centroid: [Float]
+        public let colorName: String
     }
 
     /// 执行 K-Means 聚类
@@ -54,7 +54,7 @@ final class GraphClusteringService {
 
         return (0..<k).map { i in
             Cluster(
-                name: Localized.trf("graph.cluster.name", i + 1),
+                name: L10n.Graph.clusterName(i + 1),
                 pageIDs: Set(clusters[i]),
                 centroid: centroids[i],
                 colorName: clusterColors[i % clusterColors.count]

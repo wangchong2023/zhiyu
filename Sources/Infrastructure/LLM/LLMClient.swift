@@ -37,6 +37,10 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
     
     // MARK: - Initialization
     
+    /// 初始化 LLM 客户端
+    /// - Parameters:
+    ///   - baseURL: API 基础路径
+    ///   - apiKey: API 密钥
     init(baseURL: String, apiKey: String) {
         self.baseURL = baseURL
         self.apiKey = apiKey
@@ -51,6 +55,9 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
     // MARK: - Standard Request
     
     /// 发送非流式对话补全请求 (支持自动重试机制)
+    /// - Parameter body: 请求体字典
+    /// - Returns: API 响应字典
+    /// - Throws: 网络或 API 错误
     func sendRequest(body: [String: Any]) async throws -> [String: Any] {
         var lastError: Error?
         
@@ -134,6 +141,9 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
     // MARK: - Streaming Request
     
     /// 发送流式对话补全请求，返回原始 AsyncBytes 流
+    /// - Parameter body: 请求体字典
+    /// - Returns: 异步字节流
+    /// - Throws: 网络或 API 错误
     func sendStreamingRequest(body: [String: Any]) async throws -> URLSession.AsyncBytes {
         guard let url = URL(string: "\(normalizedBaseURL)/chat/completions") else {
             throw LLMError.invalidURL

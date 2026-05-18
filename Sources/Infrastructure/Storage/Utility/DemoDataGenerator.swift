@@ -15,31 +15,29 @@ import GRDB
 ///
 /// 职责：用于快速填充知识库，展示图谱、检索及 AI 分析能力。
 /// 该类仅用于 Demo 或开发测试阶段，不应包含任何核心业务逻辑。
-@MainActor
 struct DemoDataGenerator {
     
     /// 执行演示数据生成
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
-    @MainActor
-    static func generate(in store: SQLiteStore) throws -> Int {
+    static func generate(in store: SQLiteStore) async throws -> Int {
         print("🧪 [Demo] Starting demo data generation...")
         
         var count = 0
         
         // 使用 performBatchWrite 确保所有演示数据在同一个事务中插入
-        try store.performBatchWrite { db in
+        try await store.performBatchWrite { db in
             // 1. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
             try KnowledgePage.deleteAll(db)
             try TokenUsage.deleteAll(db)
             try LLMCallLog.deleteAll(db)
             
             let pagesToCreate: [(String, PageType, String, [String])] = [
-                (Localized.tr("demo.aiAgent.title"), .concept, Localized.tr("demo.aiAgent.content"), ["AI", "Agent", Localized.tr("sidebar.system")]),
-                (Localized.tr("demo.planning.title"), .concept, Localized.tr("demo.planning.content"), ["AI", "Planning", Localized.tr("sidebar.tools")]),
-                (Localized.tr("demo.memory.title"), .concept, Localized.tr("demo.memory.content"), ["AI", "Memory", "RAG"]),
-                (Localized.tr("demo.toolUse.title"), .concept, Localized.tr("demo.toolUse.content"), ["AI", "ToolUse", "API"]),
-                (Localized.tr("demo.llm.title"), .concept, Localized.tr("demo.llm.content"), ["AI", "LLM", Localized.tr("sidebar.capabilities")])
+                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content, ["AI", "Agent", L10n.Common.Sidebar.system]),
+                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content, ["AI", "Planning", L10n.Common.Sidebar.tools]),
+                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content, ["AI", "Memory", "RAG"]),
+                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content, ["AI", "ToolUse", "API"]),
+                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content, ["AI", "LLM", L10n.Common.Sidebar.capabilities])
             ]
             
             for (title, type, content, tags) in pagesToCreate {
@@ -89,13 +87,12 @@ struct DemoDataGenerator {
     ///   - store: 目标存储对象
     ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
-    @MainActor
-    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) throws -> Int {
+    static func generateStressTest(in store: SQLiteStore, count targetCount: Int = 1000) async throws -> Int {
         print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
         
         var count = 0
         
-        try store.performBatchWrite { db in
+        try await store.performBatchWrite { db in
             // 1. 在同一个事务中清理旧数据
             try KnowledgePage.deleteAll(db)
             

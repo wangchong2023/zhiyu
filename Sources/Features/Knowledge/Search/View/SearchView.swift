@@ -95,11 +95,11 @@ struct SearchView: View {
                 // Unified Search Bar
             // 1. 现代风格搜索区域 (对齐图 3)
             HStack {
-                Image(systemName: "magnifyingglass")
+                Image(systemName: DesignSystem.Icons.search)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.appAccent)
                 
-                TextField(Localized.tr("search.placeholder"), text: $searchText)
+                TextField(L10n.SearchPlaceholder, text: $searchText)
                     .textFieldStyle(.plain)
                     .font(.system(size: 16))
                     .accessibilityIdentifier("searchPlaceholder")
@@ -116,7 +116,7 @@ struct SearchView: View {
                         useAdvancedSearch = false
                         advancedResults = []
                     }) {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: DesignSystem.Icons.errorCircle)
                             .foregroundStyle(.appSecondary.opacity(0.6))
                     }
                 }
@@ -135,7 +135,7 @@ struct SearchView: View {
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        FilterPill(title: Localized.tr("search.all"), accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
+                        FilterPill(title: L10n.Search.all, accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
                             HapticFeedback.shared.trigger(.selection)
                             filterType = nil
                         }
@@ -158,22 +158,22 @@ struct SearchView: View {
                         // Status Filters
                         #if !os(watchOS)
                         Menu {
-                            Button(L10n.Common.tr("all")) { filterStatus = nil }
+                            Button(L10n.Common.all) { filterStatus = nil }
                             ForEach(PageStatus.allCases, id: \.self) { status in
                                 Button(status.displayName) { filterStatus = status }
                             }
                         } label: {
                             HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: "flag")
+                                Image(systemName: DesignSystem.Icons.flag)
                                     .font(.caption)
-                                Text(filterStatus?.displayName ?? Localized.tr("page.status"))
+                                Text(filterStatus?.displayName ?? L10n.Knowledge.Page.status)
                                     .font(.caption)
                             }
                             .padding(.horizontal, DesignSystem.tightPadding + DesignSystem.atomic) // 10
                             .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic) // 5
-                            .background(filterStatus == nil ? Color.appCard.opacity(0.8) : Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5)) // 0.1
+                            .background(filterStatusBackgroundColor)
                             .clipShape(Capsule())
-                            .foregroundStyle(filterStatus == nil ? .appSecondary : .appAccent)
+                            .foregroundStyle(filterStatusLabelColor)
                         }
                         .buttonStyle(.plain)
                         #endif
@@ -185,12 +185,12 @@ struct SearchView: View {
                         Menu {
                             ForEach(SortOption.allCases, id: \.self) { option in
                                 Button(action: { sortBy = option }) {
-                                    Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? "checkmark" : "")
+                                    Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? DesignSystem.Icons.check : "")
                                 }
                             }
                         } label: {
                             HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: "arrow.up.arrow.down")
+                                Image(systemName: DesignSystem.Icons.sortUpDown)
                                     .font(.caption)
                                 Text(Localized.tr(sortBy.rawValue))
                                     .font(.caption)
@@ -233,16 +233,16 @@ struct SearchView: View {
                 } else if filteredPages.isEmpty {
                     VStack(spacing: DesignSystem.standardPadding) {
                         Spacer()
-                        Image(systemName: searchText.isEmpty ? "magnifyingglass" : "doc.text.magnifyingglass")
+                        Image(systemName: searchText.isEmpty ? DesignSystem.Icons.search : DesignSystem.Icons.weeklyInsight)
                             .font(.system(size: DesignSystem.Metrics.heroValueSize * 1.5)) // 48
                             .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.625)) // 0.5
                         
-                        Text(searchText.isEmpty ? Localized.tr("search.placeholder") : Localized.tr("search.noResults"))
+                        Text(searchText.isEmpty ? L10n.SearchPlaceholder : L10n.Search.noResults)
                             .font(.headline)
                             .foregroundStyle(.appSecondary)
                         
                         if !searchText.isEmpty {
-                            Text(Localized.tr("search.noResultsHint"))
+                            Text(L10n.Search.noResultsHint)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.875)) // 0.7
                                 .multilineTextAlignment(.center)
@@ -269,13 +269,13 @@ struct SearchView: View {
                                     HapticFeedback.shared.trigger(.selection)
                                     previewPage = page
                                 } label: {
-                                    Label(L10n.Common.tr("quickPreview"), systemImage: "eye")
+                                    Label(L10n.Common.quickPreview, systemImage: DesignSystem.Icons.eye)
                                 }
                                 
                                 Button {
                                     AppPasteboard.string = "[[\(page.title)]]"
                                 } label: {
-                                    Label(L10n.Common.tr("copyPageLink"), systemImage: "link")
+                                    Label(L10n.Common.copyPageLink, systemImage: "link")
                                 }
                             }
                         }
@@ -291,14 +291,14 @@ struct SearchView: View {
             if !filteredPages.isEmpty {
                 Divider().background(Color.appBorder.opacity(DesignSystem.secondaryOpacity * 0.625)) // 0.5
                 HStack {
-                    Text(Localized.trf("search.pagesCount", filteredPages.count))
+                    Text(L10n.Search.pagesCount(filteredPages.count))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                     
                     if useAdvancedSearch {
                         Spacer()
                         Button(action: { showDiagnostics = true }) {
-                            Label(Localized.tr("search.diagnostics"), systemImage: "info.circle")
+                            Label(L10n.Search.Diagnostics, systemImage: DesignSystem.Icons.info)
                                 .font(.caption2)
                                 .foregroundStyle(.appAccent)
                         }
@@ -311,7 +311,7 @@ struct SearchView: View {
                 .background(themeManager.pageBackground())
             }
         }
-        .appTabToolbar(title: Localized.tr("search.title"))
+        .appTabToolbar(title: L10n.Search.title)
         .background(themeManager.pageBackground())
         .sheet(item: $previewPage) { page in
             PagePreviewSheet(page: page)
@@ -344,6 +344,14 @@ struct SearchView: View {
                 }
             }
         }
+    }
+    
+    private var filterStatusLabelColor: Color {
+        filterStatus == nil ? .appSecondary : .appAccent
+    }
+    
+    private var filterStatusBackgroundColor: Color {
+        filterStatus == nil ? Color.appCard.opacity(0.8) : Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5)
     }
 }
 
@@ -381,13 +389,13 @@ struct PagePreviewSheet: View {
                 .padding()
             }
             .background(themeManager.pageBackground())
-            .navigationTitle(L10n.Common.tr("preview"))
+            .navigationTitle(L10n.Common.preview)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("close")) { dismiss() }
+                    Button(L10n.Common.close) { dismiss() }
                         .buttonStyle(.plain)
                 }
             }
@@ -440,26 +448,26 @@ struct SearchDiagnosticSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(Localized.tr("search.diag.rewrite")) {
+                Section(L10n.Search.Diag.rewrite) {
                     VStack(alignment: .leading, spacing: 8) {
-                        LabeledContent(Localized.tr("search.diag.originalQuery"), value: info.query)
-                        LabeledContent(Localized.tr("search.diag.rewrittenQuery"), value: info.rewrittenQuery)
+                        LabeledContent(L10n.Search.Diag.originalQuery, value: info.query)
+                        LabeledContent(L10n.Search.Diag.rewrittenQuery, value: info.rewrittenQuery)
                             .foregroundStyle(.purple)
                     }
                     .font(.subheadline)
                 }
                 
-                Section(Localized.tr("search.diag.rrfDetail")) {
+                Section(L10n.Search.Diag.rrfDetail) {
                     ForEach(info.rrfTopResults) { res in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(res.title)
                                 .font(.headline)
                             
                             HStack {
-                                SearchBadgeView(label: "\(Localized.tr("search.diag.ftsRank")): \(res.ftsRank > 0 ? "\(res.ftsRank)" : Localized.tr("search.diag.miss"))", color: res.ftsRank > 0 ? .blue : .gray)
-                                SearchBadgeView(label: "\(Localized.tr("search.diag.vectorRank")): \(res.vectorRank > 0 ? "\(res.vectorRank)" : Localized.tr("search.diag.miss"))", color: res.vectorRank > 0 ? .green : .gray)
+                                SearchBadgeView(label: "\(L10n.Search.Diag.ftsRank): \(res.ftsRank > 0 ? "\(res.ftsRank)" : L10n.Search.Diag.miss)", color: res.ftsRank > 0 ? .blue : .gray)
+                                SearchBadgeView(label: "\(L10n.Search.Diag.vectorRank): \(res.vectorRank > 0 ? "\(res.vectorRank)" : L10n.Search.Diag.miss)", color: res.vectorRank > 0 ? .green : .gray)
                                 Spacer()
-                                Text(String(format: Localized.tr("search.diag.scoreFormat"), res.finalScore))
+                                Text(String(format: L10n.Search.Diag.scoreFormat, res.finalScore))
                                     .font(.caption2.monospaced())
                                     .foregroundStyle(.appSecondary)
                             }
@@ -468,13 +476,13 @@ struct SearchDiagnosticSheet: View {
                     }
                 }
             }
-            .navigationTitle(Localized.tr("search.diag.title"))
+            .navigationTitle(L10n.Search.Diag.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("close")) { dismiss() }
+                    Button(L10n.Common.close) { dismiss() }
                         .buttonStyle(.plain)
                 }
             }

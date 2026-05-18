@@ -21,11 +21,11 @@ struct GraphLayoutProcessor {
 
     /// 布局配置参数
     struct Config {
-        var repulsion: CGFloat = AppConstants.Graph.Physics.repulsionForce
-        var attraction: CGFloat = AppConstants.Graph.Physics.attractionForce
-        var damping: CGFloat = AppConstants.Graph.Physics.damping
-        var centerGravity: CGFloat = AppConstants.Graph.Physics.centerGravity
-        var iterations: Int = AppConstants.Graph.TwoD.simulationIterations
+        var repulsion: CGFloat = BusinessConstants.Graph.Physics.repulsionForce
+        var attraction: CGFloat = BusinessConstants.Graph.Physics.attractionForce
+        var damping: CGFloat = BusinessConstants.Graph.Physics.damping
+        var centerGravity: CGFloat = BusinessConstants.Graph.Physics.centerGravity
+        var iterations: Int = BusinessConstants.Graph.TwoD.simulationIterations
         var padding: CGFloat = DesignSystem.Graph.layoutPadding
 
         static let `default` = Config()
@@ -42,7 +42,7 @@ struct GraphLayoutProcessor {
 
         // ── 动态画布计算 ──
         let nodeCount = pages.count
-        let baseExpansion = 1.0 + CGFloat(max(0, CGFloat(nodeCount) - AppConstants.Graph.TwoD.baseExpansionOffset)) * AppConstants.Graph.TwoD.expansionFactor
+        let baseExpansion = 1.0 + CGFloat(max(0, CGFloat(nodeCount) - BusinessConstants.Graph.TwoD.baseExpansionOffset)) * BusinessConstants.Graph.TwoD.expansionFactor
         let virtualWidth = canvasSize.width * baseExpansion
         let virtualHeight = canvasSize.height * baseExpansion
 
@@ -64,17 +64,21 @@ struct GraphLayoutProcessor {
             )
         }
 
-        // ── 创建边 (确保无向去重) ──
+        // ── 创建边 (有向去重，允许双向链接各自拥有一条边) ──
+        struct DirectedEdge: Hashable {
+            let source: UUID
+            let target: UUID
+        }
         var edges: [GraphEdge] = []
-        var edgeSet: Set<EdgePair> = []
+        var edgeSet: Set<DirectedEdge> = []
         let pageIDSet = Set(pages.map { $0.id })
 
         for page in pages {
             // 解析出站链接
             for link in page.outgoingLinks {
                 if let targetPage = linkResolver(link), pageIDSet.contains(targetPage.id) {
-                    let pair = EdgePair(min(page.id, targetPage.id), max(page.id, targetPage.id))
-                    if page.id != targetPage.id && edgeSet.insert(pair).inserted {
+                    let directed = DirectedEdge(source: page.id, target: targetPage.id)
+                    if page.id != targetPage.id && edgeSet.insert(directed).inserted {
                         edges.append(GraphEdge(source: page.id, target: targetPage.id))
                     }
                 }
@@ -82,8 +86,8 @@ struct GraphLayoutProcessor {
             // 解析相关页面
             for relatedID in page.relatedPageIDs {
                 if pageIDSet.contains(relatedID) {
-                    let pair = EdgePair(min(page.id, relatedID), max(page.id, relatedID))
-                    if page.id != relatedID && edgeSet.insert(pair).inserted {
+                    let directed = DirectedEdge(source: page.id, target: relatedID)
+                    if page.id != relatedID && edgeSet.insert(directed).inserted {
                         edges.append(GraphEdge(source: page.id, target: relatedID))
                     }
                 }
@@ -180,7 +184,7 @@ struct GraphLayoutProcessor {
 
     /// 计算节点间的网格斥力
     private static func computeRepulsionForces(nodes: [GraphNode], forces: inout [CGPoint], config: Config) {
-        let gridSize = AppConstants.Graph.Physics.gridSize
+        let gridSize = BusinessConstants.Graph.Physics.gridSize
         var grid: [Int: [Int]] = [:]
 
         for i in nodes.indices {
@@ -205,10 +209,10 @@ struct GraphLayoutProcessor {
                         let distSq = dx * dx + dy * dy
 
                         // 忽略过远或极近的节点
-                        if distSq > AppConstants.Graph.Physics.maxRepulsionDistanceSq || distSq < AppConstants.Graph.Physics.minDistanceSq { continue }
+                        if distSq > BusinessConstants.Graph.Physics.maxRepulsionDistanceSq || distSq < BusinessConstants.Graph.Physics.minDistanceSq { continue }
 
                         let dist = sqrt(distSq)
-                        let collisionForce: CGFloat = dist < AppConstants.Graph.Physics.collisionDistance ? AppConstants.Graph.Physics.collisionForce : 0
+                        let collisionForce: CGFloat = dist < BusinessConstants.Graph.Physics.collisionDistance ? BusinessConstants.Graph.Physics.collisionForce : 0
                         let force = (config.repulsion / distSq) + collisionForce
 
                         let fx = (dx / dist) * force

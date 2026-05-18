@@ -1,7 +1,7 @@
 // MarkdownRendererView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了基于文本块解析的高级 Markdown 渲染组件（MarkdownRendererView），负责将抽象的 Markdown 语法树转化为原生 SwiftUI 视图流。
+// 功能说明: [Shared] 本文件实现了基于文本块解析的高级 Markdown 渲染组件（MarkdownRendererView），负责将抽象的 Markdown 语法树转化为原生 SwiftUI 视图流。
 // 该渲染引擎通过以下核心功能点确保了知识内容的高效展示与沉浸式阅读体验：
 // 1. 结构化块渲染：支持标题（H1-H6）、段落、列表、引用块、代码块及表格的差异化渲染，并自动适配系统的 AppUI 设计规范。
 // 2. 交互式内联解析：实现了 知识库链接 内部链接、标准超链接、加粗、斜体及行内代码的混合解析，支持点击跳转至关联页面。
@@ -47,14 +47,14 @@ struct MarkdownRendererView: View {
         .overlay {
             if store.isPrivacyModeEnabled && isPrivate && !tempUnlocked {
                 VStack(spacing: DesignSystem.medium) {
-                    Image(systemName: "eye.slash.fill")
+                    Image(systemName: DesignSystem.Icons.privacyMode)
                         .font(.system(size: DesignSystem.largeIconSize / 1.5))
-                    Text(Localized.tr("security.privacyMasked"))
+                    Text(L10n.Common.Security.privacyMasked)
                         .font(DesignSystem.titleFont)
                     Button(action: {
                         authenticate()
                     }) {
-                        Label(Localized.tr("security.unlockToView"), systemImage: "lock.open.fill")
+                        Label(L10n.Common.Security.unlockToView, systemImage: DesignSystem.Icons.lockOpen)
                             .padding(.horizontal, DesignSystem.standardPadding)
                             .padding(.vertical, DesignSystem.tightPadding)
                             .background(Color.appAccent)
@@ -321,7 +321,7 @@ struct MarkdownRendererView: View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
             ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                 HStack(spacing: DesignSystem.tightPadding) {
-                    Image(systemName: item.checked ? "checkmark.square.fill" : "square")
+                    Image(systemName: item.checked ? DesignSystem.Icons.checkSquareFill : DesignSystem.Icons.emptySquare)
                         .font(.body)
                         .foregroundStyle(item.checked ? .green : .appSecondary)
                     renderInlineContent(item.text)

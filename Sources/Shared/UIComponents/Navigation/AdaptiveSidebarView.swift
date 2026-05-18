@@ -1,7 +1,7 @@
 // AdaptiveSidebarView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 响应式侧边栏 (iPad/Mac 专属)
+// 功能说明: [Shared] 响应式侧边栏 (iPad/Mac 专属)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -23,11 +23,11 @@ struct AdaptiveSidebarView: View {
     
     var body: some View {
         List {
-            Section(Localized.tr("sidebar.knowledge")) {
+            Section(L10n.Common.Sidebar.knowledge) {
                 sidebarRow(for: .knowledge)
             }
             
-            Section(Localized.tr("sidebar.tools")) {
+            Section(L10n.Common.Sidebar.tools) {
                 sidebarRow(for: .chat)
                 sidebarRow(for: .ingest)
                 sidebarRow(for: .synthesis)
@@ -45,7 +45,7 @@ struct AdaptiveSidebarView: View {
         #if !os(watchOS)
         .listStyle(.sidebar)
         #endif
-        .navigationTitle(Localized.tr("app.name"))
+        .navigationTitle(L10n.Common.appName)
         .toolbar {
             #if os(watchOS)
             ToolbarItem(placement: .automatic) {

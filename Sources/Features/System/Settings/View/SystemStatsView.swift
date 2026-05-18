@@ -29,8 +29,8 @@ struct SystemStatsView: View {
         
         var title: String {
             switch self {
-            case .performance: return L10n.Dashboard.tr("stats.tabPerf")
-            case .storage: return L10n.Dashboard.tr("stats.tabStorage")
+            case .performance: return L10n.Dashboard.stats.tabPerf
+            case .storage: return L10n.Dashboard.stats.tabStorage
             }
         }
     }
@@ -43,18 +43,16 @@ struct SystemStatsView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     // 分段选择器
-                    StandardSection {
-                        Picker("", selection: $selectedTab) {
-                            ForEach(Tab.allCases, id: \.self) { tab in
-                                Text(tab.title).tag(tab)
-                            }
+                    Picker("", selection: $selectedTab) {
+                        ForEach(Tab.allCases, id: \.self) { tab in
+                            Text(tab.title).tag(tab)
                         }
-                        #if !os(watchOS)
-                        .pickerStyle(.segmented)
-                        #endif
-                        .padding(Spacing.tiny)
                     }
-                    .padding(.top, Spacing.medium)
+                    #if !os(watchOS)
+                    .pickerStyle(.segmented)
+                    #endif
+                    .padding(.horizontal, Spacing.medium)
+                    .padding(.vertical, Spacing.medium)
                     
                     if coordinator.isLoading {
                         VStack {
@@ -75,7 +73,7 @@ struct SystemStatsView: View {
             .background(PageBackgroundView(accentColor: .appAccent))
         }
         .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(L10n.Dashboard.tr("stats.navigationTitleMonitor"))
+        .navigationTitle(L10n.Dashboard.stats.navigationTitleMonitor)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await coordinator.loadStats()
@@ -87,13 +85,13 @@ struct SystemStatsView: View {
     private var performanceSection: some View {
         Group {
             // 1. API 请求卡片
-            StandardSection(title: L10n.Dashboard.apiRequests + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+            StandardSection(title: L10n.Dashboard.apiRequests + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.requests })")
                             .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
-                        Text(L10n.Dashboard.tr("stats.requestsUsage"))
+                        Text(L10n.Dashboard.stats.requestsUsage)
                             .font(.caption)
                             .foregroundStyle(.appSecondary)
                     }
@@ -105,7 +103,7 @@ struct SystemStatsView: View {
             }
             
             // 2. Token 消耗卡片
-            StandardSection(title: L10n.Dashboard.tr("stats.tokensUsage") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+            StandardSection(title: L10n.Dashboard.stats.tokensUsage + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.tokens })")
@@ -123,11 +121,11 @@ struct SystemStatsView: View {
             }
             
             // 3. 响应时延卡片
-            StandardSection(title: L10n.Dashboard.tr("stats.latencyTitle") + " (\(L10n.Dashboard.tr("stats.rangeThirtyDays")))") {
+            StandardSection(title: L10n.Dashboard.stats.latencyTitle + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(L10n.Dashboard.tr("stats.avgLatencyShort"))
+                            Text(L10n.Dashboard.stats.avgLatencyShort)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                             
@@ -157,15 +155,18 @@ struct SystemStatsView: View {
                         .opacity(DesignSystem.softOpacity)
                     
                     HStack(spacing: 0) {
-                        latencySubValue(label: L10n.Dashboard.tr("stats.maxLatency"), value: "\(coordinator.maxLatency)")
+                        latencySubValue(label: L10n.Dashboard.stats.maxLatency, value: "\(coordinator.maxLatency)")
                         divider
-                        latencySubValue(label: L10n.Dashboard.tr("stats.minLatency"), value: "\(coordinator.minLatency)")
+                        latencySubValue(label: L10n.Dashboard.stats.minLatency, value: "\(coordinator.minLatency)")
                         divider
-                        latencySubValue(label: L10n.Dashboard.tr("stats.measureCount"), value: "\(coordinator.latencyCount)")
+                        latencySubValue(label: L10n.Dashboard.stats.measureCount, value: "\(coordinator.latencyCount)")
                     }
                 }
                 .padding(Spacing.medium)
             }
+            
+            // 4. 插件资源占用
+            PluginStatsSection()
         }
     }
     
@@ -174,7 +175,7 @@ struct SystemStatsView: View {
     private var storageSection: some View {
         Group {
             // 1. 知识库资产分布 (饼图 + 详细图例)
-            StandardSection(title: L10n.Dashboard.tr("stats.storageDistribution")) {
+            StandardSection(title: L10n.Dashboard.stats.storageDistribution) {
                 VStack(spacing: Spacing.medium) {
                     if coordinator.storageCategories.isEmpty {
                         ProgressView()
@@ -184,7 +185,7 @@ struct SystemStatsView: View {
                             Image(systemName: DesignSystem.Icons.chartPie)
                                 .font(.system(size: DesignSystem.Gallery.iconSize))
                                 .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
-                            Text(L10n.Common.Empty.tr("noData"))
+                            Text(L10n.Common.Global.noData)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                         }
@@ -209,7 +210,7 @@ struct SystemStatsView: View {
             }
             
             // 2. 存储空间分布列表
-            StandardSection(title: L10n.Dashboard.tr("stats.storageDetails")) {
+            StandardSection(title: L10n.Dashboard.stats.storageDetails) {
                 ForEach(coordinator.storageCategories.indices, id: \.self) { index in
                     let category = coordinator.storageCategories[index]
                     HStack(spacing: Spacing.standardPadding) {
@@ -366,7 +367,7 @@ struct ChartView: View {
                 Image(systemName: DesignSystem.Icons.chartLine)
                     .font(.system(size: DesignSystem.displayFontSize))
                     .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
-                Text(L10n.Common.Empty.tr("noData"))
+                Text(L10n.Common.Global.noData)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
@@ -375,94 +376,140 @@ struct ChartView: View {
             .background(Color.appCard.opacity(DesignSystem.softOpacity))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         } else {
-            Chart {
-                ForEach(stats) { stat in
-                    let value = type == .requests ? Double(stat.requests) : Double(stat.tokens)
-                    
-                    if type == .requests {
-                        AreaMark(
-                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
-                            y: .value(L10n.Dashboard.chartValue, value)
-                        )
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.01)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .interpolationMethod(.catmullRom)
-                        
-                        LineMark(
-                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
-                            y: .value(L10n.Dashboard.chartValue, value)
-                        )
-                        .foregroundStyle(themeManager.accentColor)
-                        .lineStyle(StrokeStyle(lineWidth: 2))
-                        .interpolationMethod(.catmullRom)
-                    } else {
-                        BarMark(
-                            x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
-                            y: .value(L10n.Dashboard.chartValue, value),
-                            width: .fixed(DesignSystem.small)
-                        )
-                        .foregroundStyle(themeManager.accentColor.opacity(0.7).gradient)
-                        .cornerRadius(1)
-                    }
-                }
+            switch type {
+            case .requests:
+                requestsChart
+            case .tokens:
+                tokensChart
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var requestsChart: some View {
+        let monthRange = currentMonthRange()
+        let start = monthRange.start
+        let end = monthRange.end.addingTimeInterval(86400)
+        let domainX = start...end
+        let domainY = 0.0...(max(100.0, maxValue() * 1.2))
+        
+        Chart {
+            ForEach(stats) { stat in
+                AreaMark(
+                    x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                    y: .value(L10n.Dashboard.chartValue, Double(stat.requests))
+                )
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.01)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .interpolationMethod(.catmullRom)
                 
-                // 交互指示器
-                if let selectedDate {
-                    RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
-                        .foregroundStyle(Color.appSecondary.opacity(0.5))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
-                        .annotation(position: .automatic, alignment: .center, spacing: 4) {
-                            if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
-                                tooltipView(stat: stat)
-                            }
+                LineMark(
+                    x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                    y: .value(L10n.Dashboard.chartValue, Double(stat.requests))
+                )
+                .foregroundStyle(themeManager.accentColor)
+                .lineStyle(StrokeStyle(lineWidth: 2))
+                .interpolationMethod(.catmullRom)
+            }
+            
+            if let selectedDate {
+                RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
+                    .foregroundStyle(Color.appSecondary.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
+                    .annotation(position: .automatic, alignment: .center, spacing: 4) {
+                        if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                            tooltipView(stat: stat)
                         }
-                    
-                    if type == .requests, let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
-                        PointMark(
-                            x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day),
-                            y: .value(L10n.Dashboard.chartValue, Double(stat.requests))
-                        )
-                        .symbol {
-                            Circle()
-                                .stroke(themeManager.accentColor, lineWidth: 2)
-                                .background(Circle().fill(.white))
-                                .frame(width: DesignSystem.small, height: DesignSystem.small)
-                        }
+                    }
+                
+                if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                    PointMark(
+                        x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day),
+                        y: .value(L10n.Dashboard.chartValue, Double(stat.requests))
+                    )
+                    .symbol {
+                        Circle()
+                            .stroke(themeManager.accentColor, lineWidth: 2)
+                            .background(Circle().fill(.white))
+                            .frame(width: DesignSystem.small, height: DesignSystem.small)
                     }
                 }
             }
-            .chartXSelection(value: $selectedDate)
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day, count: 7)) { value in
-                    AxisGridLine().foregroundStyle(.appBorder.opacity(DesignSystem.softOpacity))
-                    AxisValueLabel(anchor: .topTrailing) {
-                        if let date = value.as(Date.self) {
-                            Text(formatDate(date))
-                                .font(.system(size: DesignSystem.microFontSize))
-                                .foregroundStyle(.appSecondary)
+        }
+        .chartXSelection(value: $selectedDate)
+        .chartXAxis { xAxisMarks }
+        .chartYAxis { yAxisMarks }
+        .chartXScale(domain: domainX)
+        .chartYScale(domain: domainY)
+    }
+    
+    @ViewBuilder
+    private var tokensChart: some View {
+        let monthRange = currentMonthRange()
+        let start = monthRange.start
+        let end = monthRange.end.addingTimeInterval(86400)
+        let domainX = start...end
+        let domainY = 0.0...(max(100.0, maxValue() * 1.2))
+        
+        Chart {
+            ForEach(stats) { stat in
+                BarMark(
+                    x: .value(L10n.Dashboard.chartDate, stat.date, unit: .day),
+                    y: .value(L10n.Dashboard.chartValue, Double(stat.tokens)),
+                    width: .fixed(DesignSystem.small)
+                )
+                .foregroundStyle(themeManager.accentColor.opacity(0.7).gradient)
+                .cornerRadius(1)
+            }
+            
+            if let selectedDate {
+                RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
+                    .foregroundStyle(Color.appSecondary.opacity(0.5))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
+                    .annotation(position: .automatic, alignment: .center, spacing: 4) {
+                        if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
+                            tooltipView(stat: stat)
                         }
                     }
+            }
+        }
+        .chartXSelection(value: $selectedDate)
+        .chartXAxis { xAxisMarks }
+        .chartYAxis { yAxisMarks }
+        .chartXScale(domain: domainX)
+        .chartYScale(domain: domainY)
+    }
+    
+    @AxisContentBuilder
+    private var xAxisMarks: some AxisContent {
+        AxisMarks(values: .stride(by: .day, count: 7)) { value in
+            AxisGridLine().foregroundStyle(.appBorder.opacity(DesignSystem.softOpacity))
+            AxisValueLabel(anchor: .topTrailing) {
+                if let date = value.as(Date.self) {
+                    Text(formatDate(date))
+                        .font(.system(size: DesignSystem.microFontSize))
+                        .foregroundStyle(.appSecondary)
                 }
             }
-            .chartYAxis {
-                AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { value in
-                    AxisGridLine().foregroundStyle(.appBorder.opacity(0.5))
-                    AxisValueLabel {
-                        if let intValue = value.as(Int.self) {
-                            Text("\(intValue)")
-                                .font(.system(size: DesignSystem.microFontSize))
-                                .foregroundStyle(.appSecondary)
-                        }
-                    }
+        }
+    }
+    
+    @AxisContentBuilder
+    private var yAxisMarks: some AxisContent {
+        AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { value in
+            AxisGridLine().foregroundStyle(.appBorder.opacity(0.5))
+            AxisValueLabel {
+                if let intValue = value.as(Int.self) {
+                    Text("\(intValue)")
+                        .font(.system(size: DesignSystem.microFontSize))
+                        .foregroundStyle(.appSecondary)
                 }
             }
-            .chartXScale(domain: currentMonthRange().start...currentMonthRange().end.addingTimeInterval(86400)) // 增加一天偏移，防止月底标签截断
-            .chartYScale(domain: 0...(max(100, maxValue() * 1.2)))
         }
     }
     

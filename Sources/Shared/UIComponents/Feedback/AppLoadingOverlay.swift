@@ -1,7 +1,7 @@
 // AppLoadingOverlay.swift
 //
 // 作者: Wang Chong
-// 功能说明: 全屏加载遮罩，统一各页面的 Loading 状态展示。
+// 功能说明: [Shared] 全屏加载遮罩，统一各页面的 Loading 状态展示。
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -43,7 +43,7 @@ public struct AppLoadingOverlay: View {
                 backgroundColor
                     .ignoresSafeArea()
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel(message ?? L10n.Common.tr("loading"))
+                    .accessibilityLabel(message ?? L10n.Common.loading)
 
                 VStack(spacing: 16) {
                     ProgressView()

@@ -1,7 +1,7 @@
 // iOSOCRService.swift
 //
 // 作者: Wang Chong
-// 功能说明: OCRServiceProtocol 的 iOS/macOS 实现，基于 Vision 框架。
+// 功能说明: [Shared] OCRServiceProtocol 的 iOS/macOS 实现，基于 Vision 框架。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -58,9 +58,9 @@ enum OCRError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidImage: return Localized.tr("ocr.error.invalidImage")
-        case .noResults: return Localized.tr("ocr.error.noResults")
-        case .cameraUnavailable: return Localized.tr("ocr.error.cameraUnavailable")
+        case .invalidImage: return L10n.Ingest.OCR.Error.invalidImage
+        case .noResults: return L10n.Ingest.OCR.Error.noResults
+        case .cameraUnavailable: return L10n.Ingest.OCR.Error.cameraUnavailable
         }
     }
 }

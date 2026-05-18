@@ -1,7 +1,7 @@
 // iOSPlatformCapabilities.swift
 //
 // 作者: Wang Chong
-// 功能说明: iOS 平台能力实现，解耦核心业务逻辑。
+// 功能说明: [Shared] iOS 平台能力实现，解耦核心业务逻辑。
 // 版本: 1.0
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -18,6 +18,14 @@ struct iOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
+    }
+    
+    func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
+                continuation.resume(returning: success)
+            }
+        }
     }
 }
 

@@ -70,18 +70,18 @@ enum QuizProcessor {
 
         guard let quiz = try? JSONDecoder().decode(QuizJSON.self, from: data) else { return nil }
 
-        var md = "# \(quiz.title ?? Localized.tr("quiz.title"))\n\n"
+        var md = "# \(quiz.title ?? L10n.Quiz.title)\n\n"
         for (index, q) in quiz.questions.enumerated() {
             md += "## \(index + 1). \(q.text)\n\n"
             for opt in q.options {
                 md += "* \(opt)\n"
             }
-            md += "\n<details>\n<summary>\(Localized.tr("quiz.showAnswer"))</summary>\n\n"
+            md += "\n<details>\n<summary>\(L10n.Quiz.showAnswer)</summary>\n\n"
             if let ans = q.answer {
-                md += "**\(Localized.tr("quiz.correctAnswer"))：** \(ans.stringValue)\n\n"
+                md += "**\(L10n.Quiz.correctAnswer)：** \(ans.stringValue)\n\n"
             }
             if let exp = q.explanation {
-                md += "**\(Localized.tr("quiz.explanation"))：** \(exp)\n"
+                md += "**\(L10n.Quiz.explanation)：** \(exp)\n"
             }
             md += "\n</details>\n\n"
         }

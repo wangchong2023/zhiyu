@@ -31,25 +31,25 @@ struct AboutView: View {
                     }
                     
                     VStack(spacing: 4) {
-                        Text(Localized.tr("app.name"))
+                        Text(L10n.Common.appName)
                             .font(.title2.bold())
                     }
                 }
                 .padding(.top, 40)
                 
                 // Description
-                Text(L10n.Vault.tr("subtitle"))
+                Text(L10n.Vault.subtitle)
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, Spacing.huge)
                 
                 // Info List
                 VStack(spacing: 1) {
-                    infoRow(title: L10n.Settings.tr("about.developer"), value: L10n.Settings.tr("about.developerName"))
+                    infoRow(title: L10n.Settings.About.developer, value: L10n.Settings.About.developerName)
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: L10n.Settings.tr("about.website"), value: "https://zhiyu.ai")
+                    infoRow(title: L10n.Settings.About.website, value: "https://zhiyu.ai")
                     Divider().padding(.leading, Spacing.standardPadding)
-                    infoRow(title: L10n.Settings.tr("about.version"), value: "1.0.0 (20260512)")
+                    infoRow(title: L10n.Settings.About.version, value: "1.0.0 (20260512)")
                 }
                 .background(Color.appCard.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
@@ -66,7 +66,7 @@ struct AboutView: View {
             }
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(L10n.Settings.tr("section.about"))
+        .navigationTitle(L10n.Settings.Section.about)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(false)
     }

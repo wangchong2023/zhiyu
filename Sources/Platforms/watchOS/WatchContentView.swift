@@ -1,7 +1,7 @@
 // WatchContentView.swift
 //
 // 作者: Wang Chong
-// 功能说明: ZhiYuWatch 主界面 (Apple Watch)
+// 功能说明: [Shared] ZhiYuWatch 主界面 (Apple Watch)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -20,7 +20,7 @@ struct WatchContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(header: Text(L10n.Watch.tr("recents"))) {
+                Section(header: Text(L10n.Watch.recents)) {
                     let recentPages = Array(store.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5))
                     ForEach(recentPages) { page in
                         NavigationLink(value: page) {
@@ -40,12 +40,12 @@ struct WatchContentView: View {
                 
                 Section {
                     Button(action: { isShowingDictation = true }) {
-                        Label(L10n.Watch.tr("capture"), systemImage: "mic.fill")
+                        Label(L10n.Watch.capture, systemImage: "mic.fill")
                             .foregroundStyle(.appAccent)
                     }
                 }
             }
-            .navigationTitle(Localized.tr("app.name"))
+            .navigationTitle(L10n.Common.appName)
             .navigationDestination(for: KnowledgePage.self) { page in
                 WatchPageDetailView(page: page)
             }

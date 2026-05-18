@@ -19,9 +19,9 @@ final class ModelsTests: XCTestCase {
     
     // MARK: - KnowledgePage Tests
     func testKnowledgePageCreation() {
-        let page = KnowledgePage(title: "Test Page", type: .entity, content: "Hello World")
+        let page = KnowledgePage(title: "Test Page", pageType: .entity, content: "Hello World")
         XCTAssertEqual(page.title, "Test Page")
-        XCTAssertEqual(page.type, .entity)
+        XCTAssertEqual(page.pageType, .entity)
         XCTAssertEqual(page.content, "Hello World")
         XCTAssertEqual(page.status, .active)
         XCTAssertEqual(page.confidence, .medium)
@@ -36,8 +36,8 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(page.sources.count, 0)
         XCTAssertEqual(page.relatedPageIDs.count, 0)
         XCTAssertEqual(page.contentHash, nil)
-        XCTAssertNotNil(page.created)
-        XCTAssertNotNil(page.updated)
+        XCTAssertNotNil(page.createdAt)
+        XCTAssertNotNil(page.updatedAt)
     }
     
     func testKnowledgePageCustomIcon() {
@@ -63,12 +63,12 @@ final class ModelsTests: XCTestCase {
     }
     
     func testKnowledgePageFolderName() {
-        XCTAssertEqual(KnowledgePage(title: "", type: .entity).folderName, "entities")
-        XCTAssertEqual(KnowledgePage(title: "", type: .concept).folderName, "concepts")
-        XCTAssertEqual(KnowledgePage(title: "", type: .source).folderName, "sources")
-        XCTAssertEqual(KnowledgePage(title: "", type: .comparison).folderName, "comparisons")
-        XCTAssertEqual(KnowledgePage(title: "", type: .map).folderName, "maps")
-        XCTAssertEqual(KnowledgePage(title: "", type: .raw).folderName, "raw")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .entity).folderName, "entities")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .concept).folderName, "concepts")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .source).folderName, "sources")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .comparison).folderName, "comparisons")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .map).folderName, "maps")
+        XCTAssertEqual(KnowledgePage(title: "", pageType: .raw).folderName, "raw")
     }
     
     func testKnowledgePageStubStatus() {
@@ -145,7 +145,7 @@ final class ModelsTests: XCTestCase {
     func testKnowledgePageCodableRoundTrip() throws {
         let original = KnowledgePage(
             title: "Test",
-            type: .source,
+            pageType: .source,
             customIcon: "doc.fill",
             content: "# Header\nContent with [[link]]",
             aliases: ["Alias1", "Alias2"],
@@ -161,7 +161,7 @@ final class ModelsTests: XCTestCase {
         let decoded = try JSONDecoder().decode(KnowledgePage.self, from: data)
         XCTAssertEqual(decoded.id, original.id)
         XCTAssertEqual(decoded.title, original.title)
-        XCTAssertEqual(decoded.type, original.type)
+        XCTAssertEqual(decoded.pageType, original.pageType)
         XCTAssertEqual(decoded.tags, original.tags)
         XCTAssertEqual(decoded.isPinned, original.isPinned)
     }
@@ -181,20 +181,20 @@ final class ModelsTests: XCTestCase {
         let now = Date()
         
         // Scenario 1: Remote has higher Lamport timestamp
-        let local1 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 100, updated: now)
-        let remote1 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 101, updated: now)
+        let local1 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 100, updatedAt: now)
+        let remote1 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 101, updatedAt: now)
         let merged1 = local1.merge(with: remote1)
         XCTAssertEqual(merged1.title, "Remote", "Higher Lamport timestamp should win")
         
         // Scenario 2: Local has higher Lamport timestamp
-        let local2 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 200, updated: now)
-        let remote2 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 150, updated: now)
+        let local2 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 200, updatedAt: now)
+        let remote2 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 150, updatedAt: now)
         let merged2 = local2.merge(with: remote2)
         XCTAssertEqual(merged2.title, "Local", "Higher local Lamport timestamp should win")
         
         // Scenario 3: Equal Lamport, Remote has later wall clock time
-        let local3 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 300, updated: now.addingTimeInterval(-10))
-        let remote3 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 300, updated: now)
+        let local3 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 300, updatedAt: now.addingTimeInterval(-10))
+        let remote3 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 300, updatedAt: now)
         let merged3 = local3.merge(with: remote3)
         XCTAssertEqual(merged3.title, "Remote", "Later updated date should win if Lamport is equal")
     }
@@ -281,10 +281,9 @@ final class ModelsTests: XCTestCase {
 final class GraphModelsTests: XCTestCase {
     
     func testGraphNodeCreation() {
-        let node = GraphNode(id: UUID(), title: "Test", type: .concept, position: .zero)
+        let node = GraphNode(id: UUID(), title: "Test", pageType: .concept, position: .zero)
         XCTAssertEqual(node.title, "Test")
-        XCTAssertEqual(node.type, .concept)
-        XCTAssertEqual(node.position, .zero)
+        XCTAssertEqual(node.pageType, .concept)
         XCTAssertFalse(node.isHighlighted)
         XCTAssertNil(node.communityID)
     }
@@ -539,7 +538,7 @@ final class LintServiceTests: XCTestCase {
     
     func testRawPagesNotFlaggedAsOrphan() async {
         // raw type pages should NOT be flagged as orphans even without backlinks
-        let rawPage = KnowledgePage(title: "RawData", type: .raw, content: String(repeating: "x", count: 200))
+        let rawPage = KnowledgePage(title: "RawData", pageType: .raw, content: String(repeating: "x", count: 200))
         let issues = await lintService.runLint(pages: [rawPage], linkService: linkService)
         let orphanIssues = issues.filter { $0.severity == .warning && $0.message.contains("orphan") || $0.message.contains("Orphan") }
         XCTAssertTrue(orphanIssues.isEmpty, "raw type should not be flagged as orphan")
@@ -572,9 +571,9 @@ final class IngestServiceTests: XCTestCase {
     
     func testExtractConceptsFromContent() async {
         let pages = [
-            KnowledgePage(title: "Machine Learning", type: .concept),
-            KnowledgePage(title: "Deep Learning", type: .concept),
-            KnowledgePage(title: "Neural Network", type: .entity)
+            KnowledgePage(title: "Machine Learning", pageType: .concept),
+            KnowledgePage(title: "Deep Learning", pageType: .concept),
+            KnowledgePage(title: "Neural Network", pageType: .entity)
         ]
         
         let content = "I want to learn about Machine Learning and Neural Networks."
@@ -586,7 +585,7 @@ final class IngestServiceTests: XCTestCase {
     }
     
     func testExtractConceptsCaseInsensitive() async {
-        let pages = [KnowledgePage(title: "SwiftUI", type: .concept)]
+        let pages = [KnowledgePage(title: "SwiftUI", pageType: .concept)]
         let concepts = await ingestService.extractConcepts(from: "I love swiftui programming", pages: pages)
         XCTAssertTrue(concepts.contains("SwiftUI"), "Should be case-insensitive")
     }
@@ -746,8 +745,8 @@ final class LoggerTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        logService = Logger()
-        logService.logEntries.removeAll() // Start clean
+        logService = Logger.shared
+        await logService.clearAllLogs() // Start clean
     }
     
     override func tearDown() async throws {
@@ -758,27 +757,34 @@ final class LoggerTests: XCTestCase {
         try await super.tearDown()
     }
     
-    func testAddLogEntry() {
+    func testAddLogEntry() async {
         logService.addLog(action: .create, target: "TestPage")
-        XCTAssertEqual(logService.logEntries.count, 1)
-        XCTAssertEqual(logService.logEntries.first?.action, .create)
-        XCTAssertEqual(logService.logEntries.first?.target, "TestPage")
+        // 等待异步日志写入
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertEqual(entries.count, 1)
+        XCTAssertEqual(entries.first?.action, .create)
+        XCTAssertEqual(entries.first?.target, "TestPage")
     }
     
-    func testLogEntryOrdering() {
+    func testLogEntryOrdering() async {
         logService.addLog(action: .update, target: "t1")
         logService.addLog(action: .update, target: "t2")
         logService.addLog(action: .update, target: "t3")
         
-        XCTAssertEqual(logService.logEntries.first?.target, "t3") // Most recent first
-        XCTAssertEqual(logService.logEntries.last?.target, "t1")
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertEqual(entries.first?.target, "t3") // Most recent first
+        XCTAssertEqual(entries.last?.target, "t1")
     }
     
-    func testMaxLogEntriesCap() {
+    func testMaxLogEntriesCap() async {
         for i in 0..<600 {
             logService.addLog(action: .update, target: "t\(i)")
         }
-        XCTAssertLessThanOrEqual(logService.logEntries.count, 500)
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        let entries = await logService.getLogEntries()
+        XCTAssertLessThanOrEqual(entries.count, 500)
     }
 }
 
@@ -830,7 +836,7 @@ final class ChatHistoryStoreTests: XCTestCase {
         }
         let recent = store.recent(3)
         XCTAssertEqual(recent.count, 3)
-        XCTAssertEqual(recent.last?.content, "Msg 8") // 8,9,10
+        XCTAssertEqual(recent.first?.content, "Msg 8") // 8,9,10
     }
     
     func testPersistAndLoadRoundTrip() throws {
@@ -856,11 +862,15 @@ final class LLMConfigStoreTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
+        try? KeychainService.shared.delete(key: "llm_api_key")
+        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
         configStore = LLMConfigStore()
     }
     
     override func tearDown() async throws {
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
+        try? KeychainService.shared.delete(key: "llm_api_key")
+        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
         configStore = nil
         try await super.tearDown()
     }

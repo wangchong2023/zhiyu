@@ -14,20 +14,20 @@ import SwiftUI
 // MARK: - 测评数据模型
 /// 知识测评（Quiz）整体数据模型
 /// 负责封装单次测评的所有题目及其元数据，支持 Codable 序列化以实现 AI 生成内容的解析
-struct QuizModel: Codable, Identifiable {
-    var id: String { title }
-    let title: String
-    let questions: [QuizQuestion]
+public struct QuizModel: Codable, Identifiable {
+    public var id: String { title }
+    public let title: String
+    public let questions: [QuizQuestion]
 }
 
 /// 测评题目模型
 /// 负责封装单条题目内容、备选项、正确答案索引及解析文本
-struct QuizQuestion: Codable, Identifiable {
-    let id: Int
-    let text: String
-    let options: [String]
-    let answer: Int
-    let explanation: String
+public struct QuizQuestion: Codable, Identifiable {
+    public let id: Int
+    public let text: String
+    public let options: [String]
+    public let answer: Int
+    public let explanation: String
 }
 
 // MARK: - 视图核心
@@ -57,11 +57,11 @@ struct QuizView: View {
                 // 进度页眉
                 VStack(spacing: Spacing.small) {
                     HStack {
-                        Text(Localized.trf("quiz.questionFormat", currentIndex + 1, quiz.questions.count))
+                        Text(L10n.Quiz.questionFormat(currentIndex + 1, quiz.questions.count))
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                             .foregroundStyle(.appAccent)
                         Spacer()
-                        Text(Localized.trf("quiz.scoreFormat", score))
+                        Text(L10n.Quiz.scoreFormat(score))
                             .font(.system(size: 13, weight: .medium, design: .rounded))
                             .foregroundStyle(.appSecondary)
                     }
@@ -100,9 +100,9 @@ struct QuizView: View {
                             let correctIdx = quiz.questions[currentIndex].answer
                             VStack(alignment: .leading, spacing: 12) {
                                 HStack {
-                                    Image(systemName: selectedOption == correctIdx ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                    Image(systemName: selectedOption == correctIdx ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(selectedOption == correctIdx ? .green : .red)
-                                    Text(selectedOption == correctIdx ? L10n.Common.tr("correct") : L10n.Common.tr("incorrect"))
+                                    Text(selectedOption == correctIdx ? L10n.Common.correct : L10n.Common.incorrect)
                                         .font(.subheadline.bold())
                                 }
 
@@ -130,7 +130,7 @@ struct QuizView: View {
                 // Footer Action
                 if showResult {
                     Button(action: nextQuestion) {
-                        Text(currentIndex + 1 < quiz.questions.count ? L10n.Common.tr("nextQuestion") : L10n.Common.tr("viewResults"))
+                        Text(currentIndex + 1 < quiz.questions.count ? L10n.Common.nextQuestion : L10n.Common.viewResults)
                             .font(.system(size: 17, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -144,14 +144,14 @@ struct QuizView: View {
             } else {
                 // Completion View
                 VStack(spacing: DesignSystem.loosePadding) {
-                    Image(systemName: "trophy.fill")
+                    Image(systemName: DesignSystem.Icons.trophy)
                         .font(.system(size: DesignSystem.Metrics.heroValueSize * 2.5)) // 80
                         .foregroundStyle(.appAccent)
                     
                     VStack(spacing: DesignSystem.tightPadding) {
-                        Text(Localized.tr("quiz.completed"))
+                        Text(L10n.Quiz.completed)
                             .font(.title.bold())
-                        Text(Localized.tr("quiz.yourScore"))
+                        Text(L10n.Quiz.yourScore)
                             .font(.subheadline)
                             .foregroundStyle(.appSecondary)
                         Text("\(score) / \(quiz.questions.count)")
@@ -160,7 +160,7 @@ struct QuizView: View {
                     }
                     
                     Button(action: { dismiss() }) {
-                        Text(Localized.tr("quiz.backToPage"))
+                        Text(L10n.Quiz.backToPage)
                             .font(.system(size: 17, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -246,14 +246,14 @@ private struct OptionRow: View {
                 Spacer()
                 if showResult {
                     if isCorrect {
-                        Image(systemName: "checkmark.circle.fill")
+                        Image(systemName: DesignSystem.Icons.checkCircle)
                             .foregroundStyle(.green)
                     } else if isSelected {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: DesignSystem.Icons.errorCircle)
                             .foregroundStyle(.red)
                     }
                 } else if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
+                    Image(systemName: DesignSystem.Icons.checkCircle)
                         .foregroundStyle(.appAccent)
                 }
             }

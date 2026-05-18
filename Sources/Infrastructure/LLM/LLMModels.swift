@@ -12,17 +12,23 @@
 
 import Foundation
 
-// MARK: - LLM Provider Metadata
+// MARK: - LLM 提供商元数据
 
 /// LLM 提供商元数据
 /// 包含 API 端点、默认模型及 UI 展示参数。
 @MainActor
 struct LLMProviderMetadata: Codable {
+    /// 唯一标识符
     let id: String
+    /// 本地化名称键值
     let nameKey: String
+    /// API 基础路径
     let baseURL: String
+    /// 默认使用的模型名称
     let defaultModel: String
+    /// 建议的模型列表
     let suggestedModels: [String]
+    /// 显示图标 (SF Symbol)
     let icon: String
 }
 
@@ -61,12 +67,14 @@ final class LLMRegistry {
         }
     }
 
+    /// 根据 ID 获取提供商元数据
     func metadata(for id: String) -> LLMProviderMetadata? {
         providers[id]
     }
 }
 
-// MARK: - LLM Provider
+// MARK: - LLM 提供商枚举
+/// 智宇支持的所有 AI 服务商
 enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     case zhipu = "zhipu"
     case minimax = "minimax"
@@ -76,12 +84,15 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     case siliconflow = "siliconflow"
     case custom = "custom"
 
+    /// 获取提供商唯一标识
     var id: String { rawValue }
 
+    /// 内部获取关联元数据
     private var metadata: LLMProviderMetadata? {
         LLMRegistry.shared.metadata(for: rawValue)
     }
 
+    /// 本地化显示名称
     var displayName: String {
         if let key = metadata?.nameKey {
             return Localized.tr(key)
@@ -89,14 +100,17 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
         return rawValue.capitalized
     }
 
+    /// 默认 API 基础路径
     var defaultBaseURL: String {
         metadata?.baseURL ?? ""
     }
 
+    /// 默认模型名称
     var defaultModel: String {
         metadata?.defaultModel ?? ""
     }
 
+    /// 建议模型列表
     var suggestedModels: [String] {
         metadata?.suggestedModels ?? ["default"]
     }
@@ -107,50 +121,10 @@ enum LLMProvider: String, Codable, CaseIterable, Identifiable {
 }
 
 // MARK: - Chat Message
-struct ChatMessage: Identifiable, Codable {
-    let id: UUID
-    let role: MessageRole
-    let content: String
-    let timestamp: Date
-    var relatedPageIDs: [UUID]
-
-    enum MessageRole: String, Codable {
-        case system = "system"
-        case user = "user"
-        case assistant = "assistant"
-    }
-
-    init(
-        id: UUID = UUID(),
-        role: MessageRole,
-        content: String,
-        timestamp: Date = Date(),
-        relatedPageIDs: [UUID] = []
-    ) {
-        self.id = id
-        self.role = role
-        self.content = content
-        self.timestamp = timestamp
-        self.relatedPageIDs = relatedPageIDs
-    }
-}
+typealias ChatMessage = ChatMessageDTO
 
 // MARK: - Smart Ingest Result
-struct SmartIngestResult: Codable {
-    let compiledContent: String
-    let suggestedTags: [String]
-    let suggestedType: String
-    let relatedTitles: [String]
-    let summary: String
-
-    enum CodingKeys: String, CodingKey {
-        case compiledContent = "compiled_content"
-        case suggestedTags = "suggested_tags"
-        case suggestedType = "suggested_type"
-        case relatedTitles = "related_titles"
-        case summary
-    }
-}
+typealias SmartIngestResult = SmartIngestResultDTO
 
 // MARK: - LLM Errors
 enum LLMError: LocalizedError {
@@ -166,21 +140,21 @@ enum LLMError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            return Localized.tr("llm.error.notConfigured")
+            return L10n.AI.LLM.Error.notConfigured
         case .invalidURL:
-            return Localized.tr("llm.error.invalidURL")
+            return L10n.AI.LLM.Error.invalidURL
         case .invalidResponse:
-            return Localized.tr("llm.error.invalidResponse")
+            return L10n.AI.LLM.Error.invalidResponse
         case .unauthorized:
-            return Localized.tr("llm.error.unauthorized")
+            return L10n.AI.LLM.Error.unauthorized
         case .rateLimited:
-            return Localized.tr("llm.error.rateLimited")
+            return L10n.AI.LLM.Error.rateLimited
         case .httpError(let code):
-            return "\(Localized.tr("llm.error.httpError")): \(code)"
+            return "\(L10n.AI.LLM.Error.httpError): \(code)"
         case .apiError(let message):
-            return "\(Localized.tr("llm.error.apiError")): \(message)"
+            return "\(L10n.AI.LLM.Error.apiError): \(message)"
         case .cancelled:
-            return Localized.tr("llm.error.cancelled")
+            return L10n.AI.LLM.Error.cancelled
         }
     }
 }

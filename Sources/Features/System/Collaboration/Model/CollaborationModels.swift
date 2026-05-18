@@ -40,9 +40,9 @@ enum CollabRole: String, Codable {
 
     var displayName: String {
         switch self {
-        case .owner: return L10n.Collaboration.tr("role.owner")
-        case .editor: return L10n.Collaboration.tr("role.editor")
-        case .viewer: return L10n.Collaboration.tr("role.viewer")
+        case .owner: return L10n.Collaboration.role.owner
+        case .editor: return L10n.Collaboration.role.editor
+        case .viewer: return L10n.Collaboration.role.viewer
         }
     }
 

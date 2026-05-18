@@ -11,11 +11,40 @@
 import Foundation
 
 /// 插件元数据定义
+@MainActor
 struct PluginManifest: Codable {
     let id: String
-    let name: String
     let version: String
-    let permissions: [String] // 如 "llm", "filesystem", "pages.read"
+    let author: String
+    let permissions: [String]
+    let allowedDomains: [String]? // 网络白名单：仅允许访问指定的域名
+    
+    /// 本地化显示名称 (Key 为语言代码，如 "en", "zh-Hans")
+    private let names: [String: String]
+    /// 本地化描述信息
+    private let descriptions: [String: String]
+    
+    init(id: String, version: String, author: String = "Unknown", permissions: [String] = [], allowedDomains: [String]? = nil, names: [String: String], descriptions: [String: String]) {
+        self.id = id
+        self.version = version
+        self.author = author
+        self.permissions = permissions
+        self.allowedDomains = allowedDomains
+        self.names = names
+        self.descriptions = descriptions
+    }
+    
+    /// 获取当前语言环境下的显示名称
+    var name: String {
+        let lang = Locale.current.language.languageCode?.identifier ?? "en"
+        return names[lang] ?? names["en"] ?? names.values.first ?? id
+    }
+    
+    /// 获取当前语言环境下的描述信息
+    var description: String {
+        let lang = Locale.current.language.languageCode?.identifier ?? "en"
+        return descriptions[lang] ?? descriptions["en"] ?? descriptions.values.first ?? ""
+    }
 }
 
 /// 插件权限定义
@@ -43,6 +72,75 @@ protocol PluginContext {
     func log(_ message: String)
     func requestAIAccess(prompt: String) async -> String?
     func queryPages(matching query: String) async -> [KnowledgePage]
+    
+    // MARK: - 扩展点注册 (Obsidian-like)
+    
+    /// 注册全局命令（显示在 Command Palette 中）
+    func registerCommand(id: String, name: String, callback: @escaping @MainActor () -> Void)
+    
+    /// 在侧边栏注册快捷入口 (Ribbon Icon)
+    func registerRibbonItem(icon: String, title: String, callback: @escaping @MainActor () -> Void)
+    
+    // MARK: - 高级扩展点 (Advanced Expansion)
+    
+    /// 注册插件设置面板 (支持声明式 UI Schema)
+    func registerSettingTab(name: String, schema: String?, callback: @escaping @MainActor (String?) -> Void)
+    
+    /// 注册插件自定义视图 (作为侧边栏 Tab 展现)
+    func registerView(id: String, title: String, icon: String, callback: @escaping @MainActor () -> Void)
+    
+    /// 监听系统事件 (如 onFileOpen, onVaultRename)
+    func addEventListener(event: String, callback: @escaping @MainActor (Any?) -> Void)
+    
+    // MARK: - 持久化存储 (Phase 2)
+    
+    /// 保存插件私有数据
+    func saveData(key: String, value: String)
+    
+    /// 读取插件私有数据
+    func loadData(key: String) -> String?
+}
+
+/// 插件命令定义
+struct PluginCommand: Identifiable {
+    let id: String
+    let pluginID: String
+    let name: String
+    let action: @MainActor () -> Void
+}
+
+/// 侧边栏快捷项定义
+struct PluginRibbonItem: Identifiable {
+    let id = UUID()
+    let pluginID: String
+    let icon: String
+    let title: String
+    let action: @MainActor () -> Void
+}
+
+/// 插件设置页项
+struct PluginSettingTab: Identifiable {
+    let id = UUID()
+    let pluginID: String
+    let name: String
+    let schema: String? // 可选的 JSON 描述文件
+    let action: @MainActor (String?) -> Void
+}
+
+/// 插件自定义视图项
+struct PluginCustomView: Identifiable {
+    let id: String // 视图唯一 ID
+    let pluginID: String
+    let title: String
+    let icon: String
+    let action: @MainActor () -> Void
+}
+
+/// 插件事件监听器
+struct PluginEventListener {
+    let pluginID: String
+    let event: String
+    let callback: @MainActor (Any?) -> Void
 }
 
 /// 知识库插件基础协议

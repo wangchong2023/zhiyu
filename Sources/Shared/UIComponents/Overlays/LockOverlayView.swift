@@ -1,7 +1,7 @@
 // LockOverlayView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 锁定界面 (Security & Design 视角：提供高级感与安全感)
+// 功能说明: [Shared] 锁定界面 (Security & Design 视角：提供高级感与安全感)
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -82,7 +82,7 @@ struct LockOverlayView: View {
                         .animation(.linear(duration: 25).repeatForever(autoreverses: false), value: isAnimating)
 
                     VStack(spacing: 20) {
-                        Image(systemName: "lock.shield.fill")
+                        Image(systemName: DesignSystem.Icons.lockShieldFill)
                             .font(.system(size: 80, weight: .ultraLight))
                             .foregroundStyle(
                                 LinearGradient(
@@ -98,11 +98,11 @@ struct LockOverlayView: View {
                 
                 // 3. Information & Copy
                 VStack(spacing: 12) {
-                    Text(Localized.tr("security.vaultLocked"))
+                    Text(L10n.Common.Security.vaultLocked)
                         .font(.system(size: titleSize, weight: .bold, design: .rounded))
                         .foregroundStyle(.appText)
                     
-                    Text(Localized.tr("security.unlockHint"))
+                    Text(L10n.Common.Security.unlockHint)
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)
@@ -123,7 +123,7 @@ struct LockOverlayView: View {
                         Image(systemName: unlockIcon)
                             .font(.title2)
                         
-                        Text(Localized.tr("security.unlock"))
+                        Text(L10n.Common.Security.unlock)
                             .font(.headline)
                     }
                     .padding(.horizontal, 40)

@@ -27,17 +27,17 @@ struct PromptWorkshopView: View {
             Section {
                 #if os(watchOS)
                 VStack(alignment: .leading, spacing: 12) {
-                    Label(Localized.tr("prompt.workshop.intro.title"), systemImage: "flask.fill")
+                    Label(L10n.AI.Prompt.Workshop.Intro.title, systemImage: DesignSystem.Icons.promptWorkshop)
                         .font(.headline)
                         .foregroundStyle(.appAccent)
-                    Text(Localized.tr("prompt.workshop.intro.desc"))
+                    Text(L10n.AI.Prompt.Workshop.Intro.desc)
                         .font(.subheadline)
                         .foregroundStyle(.appSecondary)
                 }
                 #else
                 DisclosureGroup(isExpanded: $isIntroExpanded) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(Localized.tr("prompt.workshop.intro.desc"))
+                        Text(L10n.AI.Prompt.Workshop.Intro.desc)
                             .font(.subheadline)
                             .foregroundStyle(.appSecondary)
                             .lineSpacing(4)
@@ -45,10 +45,10 @@ struct PromptWorkshopView: View {
                     }
                 } label: {
                     HStack(spacing: 12) {
-                        Image(systemName: "flask.fill")
+                        Image(systemName: DesignSystem.Icons.promptWorkshop)
                             .font(.title3)
                             .foregroundStyle(.appAccent)
-                        Text(Localized.tr("prompt.workshop.intro.title"))
+                        Text(L10n.AI.Prompt.Workshop.Intro.title)
                             .font(.headline)
                     }
                 }
@@ -59,11 +59,11 @@ struct PromptWorkshopView: View {
             Section {
                 ForEach($promptService.userShortcuts) { $item in
                     HStack {
-                        TextField(Localized.tr("prompt.workshop.input.placeholder"), text: $item.text)
+                        TextField(L10n.AI.Prompt.workshop.input.placeholder, text: $item.text)
                             .font(.subheadline)
                         
                         if promptService.userShortcuts.count > 1 {
-                            Image(systemName: "line.3.horizontal")
+                            Image(systemName: DesignSystem.Icons.line3Horizontal)
                                 .foregroundStyle(.appSecondary.opacity(0.5))
                         }
                     }
@@ -76,16 +76,16 @@ struct PromptWorkshopView: View {
                 }
                 
                 Button(action: { 
-                    promptService.userShortcuts.append(ShortcutItem(text: Localized.tr("prompt.workshop.add")))
+                    promptService.userShortcuts.append(ShortcutItem(text: L10n.AI.Prompt.workshop.add))
                 }) {
-                    Label(Localized.tr("prompt.workshop.add"), systemImage: "plus.circle.fill")
+                    Label(L10n.AI.Prompt.workshop.add, systemImage: DesignSystem.Icons.plusCircle)
                         .font(.subheadline)
                         .foregroundStyle(.appAccent)
                 }
             } header: {
-                Label(Localized.tr("prompt.workshop.shortcuts.title"), systemImage: "pin.fill")
+                Label(L10n.AI.Prompt.workshop.shortcuts.title, systemImage: DesignSystem.Icons.pinFill)
             } footer: {
-                Text(Localized.tr("prompt.workshop.shortcuts.footer"))
+                Text(L10n.AI.Prompt.workshop.shortcuts.footer)
             }
 
             
@@ -93,13 +93,13 @@ struct PromptWorkshopView: View {
                 Button(role: .destructive, action: { showResetAlert = true }) {
                     HStack {
                         Spacer()
-                        Text(Localized.tr("prompt.reset.factory"))
+                        Text(L10n.AI.Prompt.reset.factory)
                         Spacer()
                     }
                 }
             }
         }
-        .navigationTitle(Localized.tr("prompt.factory.title"))
+        .navigationTitle(L10n.AI.Prompt.factory.title)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -110,13 +110,13 @@ struct PromptWorkshopView: View {
             promptService.save()
             HapticFeedback.shared.trigger(.success)
         }
-        .alert(Localized.tr("prompt.resetConfirm"), isPresented: $showResetAlert) {
-            Button(L10n.Common.tr("reset"), role: .destructive) {
+        .alert(L10n.AI.Prompt.resetConfirm, isPresented: $showResetAlert) {
+            Button(L10n.Common.reset, role: .destructive) {
                 promptService.reset()
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(Localized.tr("prompt.resetWarning"))
+            Text(L10n.AI.Prompt.resetWarning)
         }
     }
 }

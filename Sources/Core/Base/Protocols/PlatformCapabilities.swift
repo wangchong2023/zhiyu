@@ -17,6 +17,9 @@ public protocol BiometricAuthProviderProtocol: Sendable {
     
     /// 检查生物识别是否可用
     func canEvaluatePolicy(context: LAContext) -> Bool
+    
+    /// 执行生物识别鉴权
+    func evaluatePolicy(context: LAContext, reason: String) async -> Bool
 }
 
 // MARK: - 模型编译能力

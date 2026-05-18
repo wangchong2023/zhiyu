@@ -19,13 +19,36 @@ struct AIPulseIndicator: View {
         store.llmService.isProcessing || store.isScanningAI
     }
     
+    private var currentStage: TaskStage {
+        if let runningTask = TaskCenter.shared.tasks.first(where: { if case .running = $0.status { return true }; return false }) {
+            if case .running(_, let stage) = runningTask.status {
+                return stage
+            }
+        }
+        return .general
+    }
+    
     private var pulseColor: Color {
         if store.llmService.isProcessing {
-            return .purple // AI 正在思考
+            switch currentStage {
+            case .embedding: return .cyan
+            case .retrieval: return .blue
+            case .synthesis: return .purple
+            default: return .purple
+            }
         } else if store.isScanningAI {
-            return .appAccent // 正在全库扫描
+            return .appAccent // 正在全库扫描 (Orange)
         }
         return .appSecondary.opacity(DesignSystem.disabledOpacity) // 0.3
+    }
+
+    private var animationDuration: Double {
+        switch currentStage {
+        case .embedding: return 0.6  // 快速频率，表示计算密集
+        case .retrieval: return 1.0  // 中速频率，表示检索等待
+        case .synthesis: return 2.0  // 慢速呼吸，表示模型吐字
+        default: return 1.5
+        }
     }
     
     var body: some View {
@@ -44,14 +67,16 @@ struct AIPulseIndicator: View {
                 }
             }
             .onAppear {
-                withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration).repeatForever(autoreverses: false)) { // 1.5
-                    isAnimating = true
-                }
+                startAnimation()
+            }
+            .onChange(of: currentStage) {
+                // 阶段改变时重置动画频率
+                startAnimation()
             }
             
             if isActive {
                 VStack(alignment: .leading, spacing: DesignSystem.atomic) { // 2
-                    Text(store.llmService.isProcessing ? Localized.tr("ai.status.thinking") : Localized.tr("ai.status.scanning"))
+                    Text(currentStageTitle)
                         .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .rounded)) // 10
                         .foregroundStyle(pulseColor)
                     
@@ -79,6 +104,25 @@ struct AIPulseIndicator: View {
             if newValue {
                 startHapticPulse()
             }
+        }
+    }
+
+    private var currentStageTitle: String {
+        if !store.llmService.isProcessing && store.isScanningAI {
+            return L10n.AI.Status.scanning
+        }
+        switch currentStage {
+        case .embedding: return "VECTORIZING..."
+        case .retrieval: return "RETRIEVING..."
+        case .synthesis: return L10n.AI.Status.thinking
+        default: return L10n.AI.Status.thinking
+        }
+    }
+
+    private func startAnimation() {
+        isAnimating = false
+        withAnimation(.easeInOut(duration: animationDuration).repeatForever(autoreverses: false)) {
+            isAnimating = true
         }
     }
     

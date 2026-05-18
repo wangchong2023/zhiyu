@@ -11,21 +11,23 @@
 import SwiftUI
 
 struct PluginDetailView: View {
-    let name: String
-    let author: String
-    let version: String
-    let description: String
-    let icon: String
+    let plugin: MarketPlugin
+    @ObservedObject var marketService: PluginMarketService
     
     @Environment(\.dismiss) var dismiss
-    @State private var isInstalled = false
+    @State private var showPermissionSheet = false
+    @State private var isInstalling = false
+    
+    private var isInstalled: Bool {
+        PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == plugin.id })
+    }
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // Header section
                 HStack(spacing: 20) {
-                    Image(systemName: icon)
+                    Image(systemName: plugin.icon)
                         .font(.system(size: DesignSystem.Gallery.mainIconSize))
                         .foregroundStyle(.white)
                         .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
@@ -34,12 +36,12 @@ struct PluginDetailView: View {
                         .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(name).font(.title2.bold()).foregroundStyle(.appText)
-                        Text(author).font(.subheadline).foregroundStyle(.appSecondary)
+                        Text(plugin.name).font(.title2.bold()).foregroundStyle(.appText)
+                        Text(plugin.author).font(.subheadline).foregroundStyle(.appSecondary)
                         
                         HStack(spacing: 15) {
-                            statItem(label: Localized.tr("plugin.stat.downloads"), value: "1.2K", icon: "arrow.down.circle")
-                            statItem(label: Localized.tr("plugin.stat.rating"), value: "4.9", icon: "star.fill", color: .yellow)
+                            statItem(label: L10n.Plugin.Stats.downloads, value: plugin.downloads, icon: DesignSystem.Icons.arrowDownCircle)
+                            statItem(label: L10n.Plugin.Stats.rating, value: String(format: "%.1f", plugin.rating), icon: DesignSystem.Icons.star, color: .yellow)
                         }
                         .padding(.top, DesignSystem.tiny)
                     }
@@ -47,6 +49,10 @@ struct PluginDetailView: View {
                 
                 // Action Section
                 actionButtons
+                
+                if let error = marketService.errorMessage {
+                    Text(error).font(.caption).foregroundStyle(.red).padding(.top, -DesignSystem.small)
+                }
                 
                 Divider()
                 
@@ -63,6 +69,16 @@ struct PluginDetailView: View {
             .padding()
         }
         .background(PageBackgroundView(accentColor: .appAccent))
+        .sheet(isPresented: $showPermissionSheet) {
+            PermissionConfirmationSheet(plugin: plugin) {
+                Task {
+                    showPermissionSheet = false
+                    isInstalling = true
+                    _ = await marketService.downloadPlugin(plugin)
+                    isInstalling = false
+                }
+            }
+        }
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif
@@ -71,16 +87,27 @@ struct PluginDetailView: View {
     private var actionButtons: some View {
         HStack(spacing: 12) {
             Button(action: {
-                withAnimation { isInstalled.toggle() }
-                HapticFeedback.shared.trigger(.success)
+                if isInstalled {
+                    PluginRegistry.shared.unloadPlugin(id: plugin.id)
+                    HapticFeedback.shared.trigger(.success)
+                } else {
+                    showPermissionSheet = true
+                }
             }) {
-                Label(isInstalled ? Localized.tr("plugin.action.uninstall") : Localized.tr("plugin.action.install"), systemImage: isInstalled ? "trash" : "icloud.and.arrow.down")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignSystem.small)
+                HStack {
+                    if isInstalling || marketService.downloadingPluginID == plugin.id {
+                        ProgressView().tint(.white).padding(.trailing, 8)
+                    }
+                    Label(isInstalled ? L10n.Plugin.Action.uninstall : L10n.Plugin.Action.install, 
+                          systemImage: isInstalled ? DesignSystem.Icons.delete : DesignSystem.Icons.pullFromCloud)
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, DesignSystem.small)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.appAccent)
+            .tint(isInstalled ? .red : .appAccent)
+            .disabled(isInstalling || marketService.downloadingPluginID == plugin.id)
             
             Button(action: {}) {
                 Image(systemName: DesignSystem.Icons.export)
@@ -103,23 +130,27 @@ struct PluginDetailView: View {
     
     private var permissionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(Localized.tr("plugin.section.permissions"))
+            Text(L10n.Plugin.section.permissions)
                 .font(.headline)
             
-            HStack(spacing: 8) {
-                PermissionTag(icon: "lock.shield", text: Localized.tr("plugin.perm.sandbox"), color: .green)
-                PermissionTag(icon: "network", text: Localized.tr("plugin.perm.network"), color: .blue)
-                PermissionTag(icon: "pencil.and.outline", text: Localized.tr("plugin.perm.content"), color: .orange)
+            if let perms = plugin.requiredPermissions, !perms.isEmpty {
+                FlowLayout(spacing: 8) {
+                    ForEach(perms, id: \.self) { perm in
+                        PermissionTag(perm: perm)
+                    }
+                }
+            } else {
+                Text(L10n.Plugin.perm.none).font(.subheadline).foregroundStyle(.appSecondary)
             }
         }
     }
     
     private var descriptionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(Localized.tr("plugin.section.about"))
+            Text(L10n.Plugin.section.about)
                 .font(.headline)
             
-            Text(description)
+            Text(plugin.description)
                 .font(.body)
                 .foregroundStyle(.appText)
                 .lineSpacing(6)
@@ -127,15 +158,100 @@ struct PluginDetailView: View {
     }
 }
 
+/// 权限确认面板
+struct PermissionConfirmationSheet: View {
+    let plugin: MarketPlugin
+    var onConfirm: () -> Void
+    
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 12) {
+                Image(systemName: DesignSystem.Icons.lockShieldFill)
+                    .font(.system(size: 48))
+                    .foregroundStyle(.appAccent)
+                
+                Text(L10n.Plugin.permission.title)
+                    .font(.title3.bold())
+                
+                Text(L10n.Plugin.permissionMessage(plugin.name))
+                    .font(.subheadline)
+                    .foregroundStyle(.appSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top)
+            
+            VStack(alignment: .leading, spacing: 16) {
+                Text(L10n.Plugin.section.permissions).font(.caption.bold()).foregroundStyle(.appSecondary)
+                
+                if let perms = plugin.requiredPermissions {
+                    ForEach(perms, id: \.self) { perm in
+                        HStack(spacing: 12) {
+                            Image(systemName: permIcon(for: perm))
+                                .foregroundStyle(.appAccent)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(permTitle(for: perm)).font(.subheadline.bold())
+                                Text(permDesc(for: perm)).font(.caption).foregroundStyle(.appSecondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .padding()
+            .background(Color.appCard)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            
+            Spacer()
+            
+            VStack(spacing: 12) {
+                Button(action: onConfirm) {
+                    Text(L10n.Plugin.Action.confirmInstall)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.appAccent)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                
+                Button(L10n.Common.cancel) {
+                    dismiss()
+                }
+                .foregroundStyle(.appSecondary)
+            }
+        }
+        .padding(24)
+        .background(PageBackgroundView(accentColor: .appAccent))
+    }
+    
+    private func permIcon(for perm: String) -> String {
+        switch perm {
+        case "writeContent": return DesignSystem.Icons.pencilOutline
+        case "llm": return DesignSystem.Icons.brain
+        case "pages.read": return DesignSystem.Icons.weeklyInsight
+        default: return DesignSystem.Icons.keyFill
+        }
+    }
+    
+    private func permTitle(for perm: String) -> String {
+        L10n.Plugin.permTitle(for: perm)
+    }
+    
+    private func permDesc(for perm: String) -> String {
+        L10n.Plugin.permDesc(for: perm)
+    }
+}
+
 struct PermissionTag: View {
-    let icon: String
-    let text: String
-    let color: Color
+    let perm: String
     
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-            Text(text)
+            Text(L10n.Plugin.permTitle(for: perm))
         }
         .font(.caption2.bold())
         .padding(.horizontal, DesignSystem.small)
@@ -144,7 +260,26 @@ struct PermissionTag: View {
         .foregroundStyle(color)
         .clipShape(Capsule())
     }
+    
+    private var color: Color {
+        switch perm {
+        case "writeContent": return .orange
+        case "llm": return .purple
+        case "pages.read": return .blue
+        default: return .appSecondary
+        }
+    }
+    
+    private var icon: String {
+        switch perm {
+        case "writeContent": return DesignSystem.Icons.pencilOutline
+        case "llm": return DesignSystem.Icons.brain
+        case "pages.read": return DesignSystem.Icons.weeklyInsight
+        default: return DesignSystem.Icons.keyFill
+        }
+    }
 }
+
 
 struct BulletPoint: View {
     let text: String

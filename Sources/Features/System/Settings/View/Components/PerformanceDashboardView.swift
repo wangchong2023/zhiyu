@@ -21,7 +21,7 @@ struct PerformanceDashboardView: View {
                 VStack(spacing: 20) {
                     // Memory
                     MetricCardView(
-                        title: Localized.tr("perf.memory"),
+                        title: L10n.Common.Perf.memory,
                         value: String(format: "%.1f MB", service.metrics.memoryUsageMB),
                         icon: "memorychip",
                         color: .blue
@@ -30,13 +30,13 @@ struct PerformanceDashboardView: View {
                     // Page Stats
                     HStack(spacing: 12) {
                         MetricCardView(
-                            title: Localized.tr("perf.pages"),
+                            title: L10n.Common.Perf.pages,
                             value: "\(service.metrics.pageCount)",
                             icon: "doc.fill",
                             color: .green
                         )
                         MetricCardView(
-                            title: Localized.tr("perf.words"),
+                            title: L10n.Common.Perf.words,
                             value: "\(service.metrics.totalWords)",
                             icon: "textformat",
                             color: .purple
@@ -46,13 +46,13 @@ struct PerformanceDashboardView: View {
                     // Graph Stats
                     HStack(spacing: 12) {
                         MetricCardView(
-                            title: Localized.tr("perf.nodes"),
+                            title: L10n.Common.Perf.nodes,
                             value: "\(service.metrics.graphNodeCount)",
                             icon: "circle.fill",
                             color: .orange
                         )
                         MetricCardView(
-                            title: Localized.tr("perf.edges"),
+                            title: L10n.Common.Perf.edges,
                             value: "\(service.metrics.graphEdgeCount)",
                             icon: "line.diagonal",
                             color: .pink
@@ -61,29 +61,29 @@ struct PerformanceDashboardView: View {
                     
                     // Timing
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(Localized.tr("perf.timing"))
+                        Text(L10n.Common.Perf.timing)
                             .font(.headline)
                             .foregroundStyle(.appText)
                         
-                        TimingRowView(label: Localized.tr("perf.save"), duration: service.metrics.saveDuration, color: .green)
-                        TimingRowView(label: Localized.tr("perf.load"), duration: service.metrics.loadDuration, color: .blue)
-                        TimingRowView(label: Localized.tr("perf.lint"), duration: service.metrics.lintDuration, color: .orange)
-                        TimingRowView(label: Localized.tr("perf.graphLayout"), duration: service.metrics.graphLayoutDuration, color: .purple)
-                        TimingRowView(label: Localized.tr("perf.search"), duration: service.metrics.searchDuration, color: .pink)
+                        TimingRowView(label: L10n.Common.Perf.save, duration: service.metrics.saveDuration, color: .green)
+                        TimingRowView(label: L10n.Common.Perf.load, duration: service.metrics.loadDuration, color: .blue)
+                        TimingRowView(label: L10n.Common.Perf.lint, duration: service.metrics.lintDuration, color: .orange)
+                        TimingRowView(label: L10n.Common.Perf.graphLayout, duration: service.metrics.graphLayoutDuration, color: .purple)
+                        TimingRowView(label: L10n.Common.Perf.search, duration: service.metrics.searchDuration, color: .pink)
                     }
                     .padding()
                     .background(Color.appCard)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                     
                     // Last Updated
-                    Text(Localized.tr("perf.lastUpdated") + ": " + service.metrics.lastUpdated.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
+                    Text(L10n.Common.Perf.lastUpdated + ": " + service.metrics.lastUpdated.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
                 .padding()
             }
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(Localized.tr("perf.title"))
+            .navigationTitle(L10n.Common.Perf.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif

@@ -1,7 +1,7 @@
 // WidgetAndWatchViews.swift
 //
 // 作者: Wang Chong
-// 功能说明: Lightweight view for Apple Watch showing key knowledge stats and recent pages
+// 功能说明: [Shared] Lightweight view for Apple Watch showing key knowledge stats and recent pages
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -38,7 +38,7 @@ struct WatchKnowledgeStatsView: View {
                         Text("\(totalPages)")
                             .font(.title3.weight(.bold))
                             .foregroundStyle(Color.appText)
-                        Text(L10n.Widget.tr("pages"))
+                        Text(L10n.Widget.pages)
                             .font(.caption2)
                             .foregroundStyle(Color.appSecondary)
                     }
@@ -50,7 +50,7 @@ struct WatchKnowledgeStatsView: View {
                         Text(formatNumber(totalWords))
                             .font(.caption.weight(.bold))
                             .foregroundStyle(Color.appText)
-                        Text(L10n.Widget.tr("words"))
+                        Text(L10n.Widget.words)
                             .font(.caption2)
                             .foregroundStyle(Color.appSecondary)
                     }
@@ -60,7 +60,7 @@ struct WatchKnowledgeStatsView: View {
                 
                 // Recent pages
                 VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                    Text(L10n.Widget.tr("recentUpdates"))
+                    Text(L10n.Widget.recentUpdates)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(Color.appSecondary)
                     
@@ -80,26 +80,28 @@ struct WatchKnowledgeStatsView: View {
             }
             .padding(DesignSystem.small)
         }
-        .navigationTitle(L10n.Widget.tr("title"))
+        .navigationTitle(L10n.Widget.title)
         .onAppear {
             loadData()
         }
     }
     
     private func loadData() {
-        let store = AppStore()
-        store.loadFromDisk()
-        totalPages = store.totalPages
-        totalWords = store.totalWords
-        recentTitles = store.pages
-            .sorted { $0.updatedAt > $1.updatedAt }
-            .prefix(5)
-            .map { $0.title }
+        Task {
+            let store = await AppStore()
+            await store.loadFromDisk()
+            totalPages = store.totalPages
+            totalWords = store.totalWords
+            recentTitles = store.pages
+                .sorted { $0.updatedAt > $1.updatedAt }
+                .prefix(5)
+                .map { $0.title }
+        }
     }
     
     private func formatNumber(_ n: Int) -> String {
         if n >= 10000 {
-            return String(format: "%.1f%@", Double(n) / 10000.0, L10n.Common.tr("unitTenThousand"))
+            return String(format: "%.1f%@", Double(n) / 10000.0, L10n.Common.unitTenThousand)
         } else if n >= 1000 {
             return String(format: "%.1fk", Double(n) / 1000.0)
         }
@@ -122,13 +124,13 @@ struct AppWidgetPreview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack {
-                Image(systemName: "books.vertical.circle.fill")
+                Image(systemName: DesignSystem.Icons.libraryCircle)
                     .font(.title3)
                     .foregroundStyle(Color.appAccent)
-                Text(L10n.Widget.tr("title"))
+                Text(L10n.Widget.title)
                     .font(.caption.weight(.bold))
                 Spacer()
-                Text(Localized.trf("widget.pages", totalPages))
+                Text(L10n.Widget.pages( totalPages))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -138,26 +140,26 @@ struct AppWidgetPreview: View {
             HStack(spacing: DesignSystem.medium) {
                 VStack(spacing: DesignSystem.atomic) {
                     Text("\(totalWords)").font(.caption.weight(.bold))
-                    Text(L10n.Widget.tr("characters")).font(.caption2).foregroundStyle(.secondary)
+                    Text(L10n.Widget.characters).font(.caption2).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 
                 VStack(spacing: DesignSystem.atomic) {
                     Text("\(activeCount)").font(.caption.weight(.bold))
-                    Text(L10n.Widget.tr("active")).font(.caption2).foregroundStyle(.secondary)
+                    Text(L10n.Widget.active).font(.caption2).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
                 
                 VStack(spacing: DesignSystem.atomic) {
                     Text("\(stubCount)").font(.caption.weight(.bold))
-                    Text(L10n.Widget.tr("stub")).font(.caption2).foregroundStyle(.secondary)
+                    Text(L10n.Widget.stub).font(.caption2).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
             }
             
             if !recentTitles.isEmpty {
                 VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                    Text(L10n.Widget.tr("recentUpdates"))
+                    Text(L10n.Widget.recentUpdates)
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(.secondary)
                     
@@ -180,6 +182,6 @@ struct AppWidgetPreview: View {
         totalWords: 4500,
         activeCount: 7,
         stubCount: 2,
-        recentTitles: ["LLM 知识库", "nanoGPT", L10n.Widget.tr("knowledgeCompile")]
+        recentTitles: ["LLM 知识库", "nanoGPT", L10n.Widget.knowledgeCompile]
     )
 }

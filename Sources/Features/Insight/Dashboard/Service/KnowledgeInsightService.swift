@@ -15,19 +15,19 @@ import Foundation
 actor KnowledgeInsightService {
     static let shared = KnowledgeInsightService()
 
-    struct WeeklyInsight: Codable, Equatable {
-        let dateRange: String
-        let totalNewPages: Int
-        let topKeywords: [String]
-        let aiSummary: String
-        let growthTraction: String // 增长趋势描述
+    public struct WeeklyInsight: Codable, Equatable {
+        public let dateRange: String
+        public let totalNewPages: Int
+        public let topKeywords: [String]
+        public let aiSummary: String
+        public let growthTraction: String // 增长趋势描述
     }
 
-    struct DailyRecap: Codable, Equatable {
-        let targetPageID: UUID
-        let targetPageTitle: String
-        let insight: String
-        let suggestedConnection: String
+    public struct DailyRecap: Codable, Equatable {
+        public let targetPageID: UUID
+        public let targetPageTitle: String
+        public let insight: String
+        public let suggestedConnection: String
     }
 
     /// 生成每日主动召回见解 (Smart Recall)
@@ -49,15 +49,15 @@ actor KnowledgeInsightService {
         let longTermMax = calendar.date(byAdding: .day, value: -30, to: now)!
 
         let recentPages = pages.filter { $0.updatedAt >= recentThreshold }
-        let recentFocus = recentPages.isEmpty ? Localized.tr("insight.daily.noUpdate") : recentPages.map { $0.title }.joined(separator: " ")
+        let recentFocus = recentPages.isEmpty ? L10n.Insight.InsightSection.Daily.noUpdate : recentPages.map { $0.title }.joined(separator: " ")
 
         let candidates = pages.filter { $0.updatedAt >= longTermMin && $0.updatedAt <= longTermMax }
         let target = candidates.randomElement() ?? pages.sorted { $0.updatedAt < $1.updatedAt }.first!
 
-        let prompt = Localized.trf("insight.daily.prompt.recent", recentFocus, target.title, String(target.content.prefix(500)))
+        let prompt = L10n.Dashboard.insight.daily.promptRecent(recentFocus, target.title, String(target.content.prefix(500)))
 
         do {
-            let response = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.tr("insight.daily.systemPrompt"))
+            let response = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.insight.daily.systemPrompt)
             updateStatus(L10n.AI.Status.generating)
 
             // 提取并解析 JSON (增强鲁棒性：处理多行及 Markdown 代码块)
@@ -82,7 +82,7 @@ actor KnowledgeInsightService {
                     targetPageID: target.id,
                     targetPageTitle: target.title,
                     insight: response,
-                    suggestedConnection: L10n.Dashboard.tr("insight.recap.tip")
+                    suggestedConnection: L10n.Dashboard.insight.recap.tip
                 )
                 saveCachedDailyRecap(recap)
                 return recap
@@ -96,7 +96,7 @@ actor KnowledgeInsightService {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
         let lang = Localized.currentLanguage
-        return "daily_recap_\(formatter.string(from: Date()))_\(lang)"
+        return "\(AppConstants.Keys.Storage.dailyRecapPrefix)\(formatter.string(from: Date()))_\(lang)"
     }
 
     private func loadCachedDailyRecap() -> DailyRecap? {
@@ -124,9 +124,9 @@ actor KnowledgeInsightService {
         let newPages = pages.filter { $0.createdAt >= lastWeek }
         let newTitles = newPages.map { $0.title }.joined(separator: ", ")
 
-        let prompt = Localized.trf("insight.weekly.prompt", newTitles)
+        let prompt = L10n.Dashboard.insight.weekly.prompt(newTitles)
 
-        let summary = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.tr("insight.weekly.systemPrompt"))
+        let summary = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.insight.weekly.systemPrompt)
         let allTags = newPages.flatMap { $0.tags }
         let keywords = Array(Set(allTags)).sorted().prefix(5).map { String($0) }
 
@@ -140,7 +140,7 @@ actor KnowledgeInsightService {
             totalNewPages: newPages.count,
             topKeywords: keywords,
             aiSummary: summary,
-            growthTraction: newPages.count > 5 ? L10n.Dashboard.tr("insight.growth.explosive") : L10n.Dashboard.tr("insight.growth.steady")
+            growthTraction: newPages.count > 5 ? L10n.Dashboard.insight.growth.explosive : L10n.Dashboard.insight.growth.steady
         )
     }
 

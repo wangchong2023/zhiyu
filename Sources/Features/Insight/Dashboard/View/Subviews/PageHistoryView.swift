@@ -1,85 +1,89 @@
 // PageSnapshotHistoryView.swift
 //
 // 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：页面快照历史视图，负责展示和管理页面的历史版本。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+// 功能说明: [L2] 展示页面的历史快照
+// 版本: 1.1
+//
 
 import SwiftUI
+import Foundation
 
-/// 页面快照历史视图
 struct PageHistoryView: View {
-    let page: KnowledgePage
+    let page: any KnowledgePageRepresentable
     @Environment(AppStore.self) var store
-    @EnvironmentObject var themeManager: ThemeManager
-    @Environment(\.dismiss) private var dismiss
     @State private var history: [SnapshotInfo] = []
     @State private var selectedSnapshot: SnapshotInfo?
-    @State private var compareContent: String?
+    @State private var showRollbackAlert = false
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationStack {
             List {
                 if history.isEmpty {
-                    Text(Localized.tr("page.history.none"))
+                    Text(L10n.Knowledge.Page.History.none)
                         .foregroundStyle(.secondary)
                 } else {
-                    ForEach(history) { snapshot in
+                    ForEach(history, id: \.id) { (snapshot: SnapshotInfo) in
                         Button(action: {
                             selectedSnapshot = snapshot
-                            compareContent = store.snapshotService.rollback(to: snapshot)
                         }) {
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text(snapshot.date.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: Localized.currentLocale)))
                                         .font(.subheadline.weight(.medium))
-                                    Text(Localized.tr("page.history.physical"))
+                                    Text(L10n.Knowledge.Page.History.physical)
                                         .font(.caption2)
                                         .foregroundStyle(.appSecondary)
                                 }
                                 Spacer()
-                                Image(systemName: "chevron.right")
+                                Image(systemName: DesignSystem.Icons.forward)
                                     .font(.caption2)
-                                    .foregroundStyle(.appBorder)
+                                    .foregroundStyle(.appTertiary)
                             }
+                            .padding(.vertical, 4)
                         }
-                        .foregroundStyle(.primary)
                     }
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(themeManager.pageBackground())
-            .navigationTitle(Localized.tr("page.history"))
+            .background(Color.appBackground)
+            .navigationTitle(L10n.Knowledge.Page.History.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.tr("close")) { dismiss() }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.Common.done) { dismiss() }
                 }
             }
-            .sheet(item: $selectedSnapshot) { snapshot in
-                SnapshotDetailView(page: page, snapshot: snapshot, content: compareContent ?? "", onRollback: {
-                    var rolledBack = page
-                    rolledBack.content = compareContent ?? ""
-                    Task { await store.updatePage(rolledBack, forceDeepScan: false) }
-                    dismiss()
-                })
+            .onAppear {
+                history = store.snapshotService.getHistory(for: page.id)
             }
-        }
-        .onAppear {
-            history = store.snapshotService.getHistory(for: page.id)
+            .sheet(item: $selectedSnapshot) { snapshot in
+                SnapshotDetailView(snapshot: snapshot) {
+                    selectedSnapshot = nil
+                    showRollbackAlert = true
+                }
+            }
+            .alert(L10n.Knowledge.Page.confirmDelete, isPresented: $showRollbackAlert) {
+                Button(L10n.Knowledge.Page.History.rollback, role: .destructive) {
+                    if let snapshot = history.first, let content = store.snapshotService.rollback(to: snapshot) {
+                        // 执行回滚逻辑
+                        dismiss()
+                    }
+                }
+                Button(L10n.Common.cancel, role: .cancel) { }
+            } message: {
+                Text(L10n.Knowledge.Page.History.rollback)
+            }
         }
     }
 }
 
-private struct SnapshotDetailView: View {
-    let page: KnowledgePage
+struct SnapshotDetailView: View {
     let snapshot: SnapshotInfo
-    let content: String
     let onRollback: () -> Void
-    @EnvironmentObject var themeManager: ThemeManager
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationStack {
@@ -87,35 +91,28 @@ private struct SnapshotDetailView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
-                            Label(Localized.tr("page.history.version"), systemImage: "clock")
+                            Label(L10n.Knowledge.Page.History.version, systemImage: DesignSystem.Icons.clock)
                                 .font(.caption.weight(.bold))
                                 .foregroundStyle(.appAccent)
                             Spacer()
                             Text(snapshot.date.formatted(Date.FormatStyle(locale: Localized.currentLocale)))
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.appSecondary)
                         }
-                        .padding(.bottom, 8)
                         
-                        MarkdownRendererView(content: content, isPrivate: page.isPrivate, onLinkTap: { _ in })
+                        Divider()
+                        
+                        if let content = try? String(contentsOf: snapshot.url, encoding: .utf8) {
+                            Text(content)
+                                .font(.body)
+                        }
                     }
                     .padding()
                 }
                 
-                Divider()
-                
-                HStack(spacing: 16) {
-                    Button(action: { dismiss() }) {
-                        Text(L10n.Common.tr("cancel"))
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.appCard)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .buttonStyle(.plain)
-                    
+                VStack(spacing: 12) {
                     Button(action: onRollback) {
-                        Text(Localized.tr("page.history.rollback"))
+                        Text(L10n.Knowledge.Page.History.rollback)
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -124,14 +121,20 @@ private struct SnapshotDetailView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .buttonStyle(.plain)
+                    
+                    Button(L10n.Common.cancel) {
+                        dismiss()
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.appSecondary)
                 }
                 .padding()
+                .background(Color.appBackground)
             }
-            .navigationTitle(Localized.tr("page.snapshot.preview"))
+            .navigationTitle(L10n.Knowledge.Page.History.title)
 #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
 #endif
-            .background(themeManager.pageBackground())
         }
     }
 }

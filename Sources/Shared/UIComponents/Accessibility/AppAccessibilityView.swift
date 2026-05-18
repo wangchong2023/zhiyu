@@ -1,7 +1,7 @@
 // AppAccessibilityView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了无障碍增强视图扩展、环境键及动画修饰符，用于提升系统的包容性与交互体验。
+// 功能说明: [Shared] 本文件定义了无障碍增强视图扩展、环境键及动画修饰符，用于提升系统的包容性与交互体验。
 // 日期: 2026-05-07
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -22,7 +22,7 @@ extension View {
         self
             .accessibilityElement(children: .combine)
             .accessibilityLabel(AccessibilityService.pageAnnouncement(page))
-            .accessibilityHint(L10n.Accessibility.tr("tapToOpen"))
+            .accessibilityHint(L10n.Accessibility.tapToOpen)
             .accessibilityAddTraits(.isButton)
     }
     
@@ -30,8 +30,8 @@ extension View {
     func appGraphNode(title: String, type: PageType, linkCount: Int) -> some View {
         self
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(title), \(type.displayName), \(linkCount) " + L10n.Accessibility.tr("links"))
-            .accessibilityHint(L10n.Accessibility.tr("tapToOpen"))
+            .accessibilityLabel("\(title), \(type.displayName), \(linkCount) " + L10n.Accessibility.links)
+            .accessibilityHint(L10n.Accessibility.tapToOpen)
             .accessibilityAddTraits(.isButton)
     }
     

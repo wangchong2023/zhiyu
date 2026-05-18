@@ -1,3 +1,4 @@
+// 功能说明: [L2]
 import SwiftUI
 
 /// 笔记本数据洞察面板
@@ -12,13 +13,13 @@ struct VaultInsightsPanel: View {
                 // 1. 头部标题
                 HStack {
                     Label(
-                        vaultService.currentVault?.name ?? L10n.Vault.tr("homeTitle"),
-                        systemImage: vaultService.currentVault == nil ? "square.stack.3d.up.fill" : "chart.bar.fill"
+                        vaultService.currentVault?.name ?? L10n.Vault.noSelection,
+                        systemImage: vaultService.currentVault == nil ? DesignSystem.Icons.stackFill : DesignSystem.Icons.chartBar
                     )
-                    .font(.title3.bold())
+                    .font(.headline)
                     Spacer()
                     Button { dismiss() } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: DesignSystem.Icons.errorCircle)
                             .font(.title2)
                             .foregroundStyle(.secondary)
                     }
@@ -27,21 +28,21 @@ struct VaultInsightsPanel: View {
                 
                 // 2. 核心统计指标
                 HStack(spacing: DesignSystem.standardPadding) {
-                    StatBox(label: L10n.Dashboard.tr("stats.short.pages"), value: "\(store.totalPages)", color: .appAccent)
-                    StatBox(label: L10n.Dashboard.tr("stats.short.new"), value: "+12", color: .green)
-                    StatBox(label: L10n.Dashboard.tr("stats.short.ref"), value: "85%", color: .orange)
+                    StatBox(label: L10n.Dashboard.stats.short.pages, value: "\(store.totalPages)", color: .appAccent)
+                    StatBox(label: L10n.Dashboard.stats.short.new, value: "+12", color: .green)
+                    StatBox(label: L10n.Dashboard.stats.short.ref, value: "85%", color: .orange)
                 }
                 
                 // 3. 模拟图表：分类分布
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                    Text(L10n.Dashboard.tr("stats.categoryDistribution"))
+                    Text(L10n.Dashboard.stats.categoryDistribution)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                     
                     HStack(alignment: .bottom, spacing: DesignSystem.medium) {
-                        BarItem(label: L10n.Dashboard.tr("stats.short.entity"), value: 0.6, color: .appEntity)
-                        BarItem(label: L10n.Dashboard.tr("stats.short.concept"), value: 0.8, color: .appConcept)
-                        BarItem(label: L10n.Dashboard.tr("stats.short.source"), value: 0.4, color: .appSource)
-                        BarItem(label: L10n.Dashboard.tr("stats.short.comparison"), value: 0.2, color: .appComparison)
+                        BarItem(label: L10n.Dashboard.stats.short.entity, value: 0.6, color: .appEntity)
+                        BarItem(label: L10n.Dashboard.stats.short.concept, value: 0.8, color: .appConcept)
+                        BarItem(label: L10n.Dashboard.stats.short.source, value: 0.4, color: .appSource)
+                        BarItem(label: L10n.Dashboard.stats.short.comparison, value: 0.2, color: .appComparison)
                     }
                     .frame(height: DesignSystem.Metrics.chartHeight)
                 }
@@ -49,7 +50,7 @@ struct VaultInsightsPanel: View {
                 
                 // 4. 模拟图表：增长曲线 (极简)
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                    Text(L10n.Dashboard.tr("stats.knowledgeGrowth"))
+                    Text(L10n.Dashboard.stats.knowledgeGrowth)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                     
                     ChartLinePlaceholder()

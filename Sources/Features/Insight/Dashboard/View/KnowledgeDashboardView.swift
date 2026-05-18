@@ -66,7 +66,7 @@ struct KnowledgeDashboardView: View {
                 title: L10n.Dashboard.totalPages, 
                 value: "\(store.pages.count)", 
                 unit: L10n.Dashboard.pageListPages, 
-                icon: "doc.on.doc.fill", 
+                icon: DesignSystem.Icons.documentFill, 
                 color: .appAccent,
                 trend: nil
             )
@@ -86,7 +86,7 @@ struct KnowledgeDashboardView: View {
         VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             // 标题 (边框外左上角)
             HStack(spacing: DesignSystem.tiny) {
-                Image(systemName: "point.3.connected.trianglepath.dotted")
+                Image(systemName: DesignSystem.Icons.network)
                     .font(.caption)
                     .foregroundStyle(.appAccent)
                 Text(L10n.Dashboard.density)
@@ -105,7 +105,7 @@ struct KnowledgeDashboardView: View {
                     router.selectedTab = .graph
                 }) {
                     HStack(spacing: DesignSystem.tiny) {
-                        Image(systemName: "circle.grid.3x3.fill")
+                        Image(systemName: DesignSystem.Icons.circleGrid3x3Fill)
                         Text(L10n.Dashboard.graphShortcut)
                     }
                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
@@ -172,9 +172,9 @@ struct KnowledgeDashboardView: View {
                     }
                     .chartXAxisLabel(position: .bottom, alignment: .center) {
                         HStack(spacing: 12) {
-                            Label(L10n.Dashboard.densityOutbound, systemImage: "arrow.right.circle.fill")
+                            Label(L10n.Dashboard.densityOutbound, systemImage: DesignSystem.Icons.forwardCircle)
                                 .foregroundStyle(.appAccent)
-                            Label(L10n.Dashboard.densityInbound, systemImage: "arrow.left.circle.fill")
+                            Label(L10n.Dashboard.densityInbound, systemImage: DesignSystem.Icons.back)
                                 .foregroundStyle(.purple)
                         }
                         .font(.system(size: DesignSystem.microFontSize, weight: .bold))
@@ -254,7 +254,7 @@ struct KnowledgeDashboardView: View {
                             
                             if !recap.suggestedConnection.isEmpty {
                                 HStack(alignment: .top, spacing: DesignSystem.tiny) {
-                                    Image(systemName: "lightbulb.fill")
+                                    Image(systemName: DesignSystem.Icons.concept)
                                         .font(.system(size: DesignSystem.caption2FontSize))
                                         .foregroundColor(.orange)
                                     Text(recap.suggestedConnection)
@@ -283,7 +283,7 @@ struct KnowledgeDashboardView: View {
         // 4. 热门领域 (PageType 分布)
         VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             HStack(spacing: DesignSystem.tiny) {
-                Image(systemName: "rectangle.grid.2x2.fill")
+                Image(systemName: DesignSystem.Icons.grid)
                     .font(.caption)
                     .foregroundStyle(.appAccent)
                 Text(L10n.Dashboard.hotTopics)
@@ -335,7 +335,7 @@ struct MetricBox: View {
                 
                 if let trend = trend {
                     HStack(spacing: DesignSystem.atomic) {
-                        Image(systemName: "arrow.up.right")
+                        Image(systemName: DesignSystem.Icons.arrowUpRightSimple)
                         Text(trend)
                     }
                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))

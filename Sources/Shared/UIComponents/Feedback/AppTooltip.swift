@@ -1,7 +1,7 @@
 // AppTooltip.swift
 //
 // 作者: Wang Chong
-// 功能说明: 引导提示组件，用于首次使用时的操作引导。
+// 功能说明: [Shared] 引导提示组件，用于首次使用时的操作引导。
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -132,8 +132,8 @@ extension View {
         self.overlay(alignment: .bottom) {
             if isPresented.wrappedValue {
                 AppTooltip(
-                    title: Localized.tr(type.titleKey),
-                    description: Localized.tr(type.descriptionKey),
+                    title: L10n.Coachmark.tr(type.titleKey),
+                    description: L10n.Coachmark.tr(type.descriptionKey),
                     icon: type.icon,
                     arrowDirection: .top,
                     accentColor: .appAccent

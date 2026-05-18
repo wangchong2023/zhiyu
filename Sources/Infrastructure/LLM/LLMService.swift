@@ -50,7 +50,7 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     /// 当前流式输出的增量内容
     @Published var streamingContent = ""
     /// 内存中的对话历史
-    @Published var chatHistory: [ChatMessage] = []
+    @Published var chatHistory: [ChatMessageDTO] = []
 
     /// 服务是否已就绪（配置完整且开启）
     var isReady: Bool {
@@ -159,7 +159,7 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     }
 
     /// 执行核心对话
-    func chat(query: String, history: [ChatMessage], pages: [KnowledgePage]) async throws -> ChatMessage {
+    func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
         guard isEnabled, let chatService else { throw LLMError.notConfigured }
 
         let perf = ServiceContainer.shared.resolve(PerformanceService.self)
@@ -168,12 +168,22 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
             isProcessing = true
             defer { isProcessing = false }
 
-            // 1. 构建 RAG 上下文
-            let context = await contextBuilder.buildRelevantContext(query: query)
+            // 0. 创建或获取当前任务 ID
+            let taskID = TaskCenter.shared.addTask(type: .ai, name: "AI Chat", target: query)
+
+            // 1. 构建 RAG 上下文 (包含 Embedding / Retrieval)
+            await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.2, stage: .embedding))
+            let (context, sources) = await contextBuilder.buildRelevantContext(query: query)
+            
+            // 同步信源至 SourceStore
+            await SourceStore.shared.updateSources(sources)
+            
+            await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.5, stage: .retrieval))
             let rankedPages = (try? await rerank(query: query, candidates: pages)) ?? pages
             let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + context
 
-            // 2. 调用对话服务
+            // 2. 调用对话服务 (Synthesis)
+            await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.8, stage: .synthesis))
             let startTime = Date()
             let response = try await chatService.chat(
                 systemPrompt: systemPrompt, 
@@ -182,17 +192,19 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
             )
             let latency = Int(Date().timeIntervalSince(startTime) * 1000)
 
-            let assistantMessage = ChatMessage(role: .assistant, content: response)
+            let assistantMessage = ChatMessageDTO(role: .assistant, content: response)
 
             // 3. 异步性能记录与评估
             asyncMetrics(query: query, response: response, context: context, systemPrompt: systemPrompt, latency: latency)
+            
+            await TaskCenter.shared.completeTask(id: taskID)
 
             return assistantMessage
         }
     }
 
     /// 执行流式对话
-    func chatStream(query: String, history: [ChatMessage], pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
+    func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream(String.self) { continuation in
             Task {
                 guard isEnabled, let chatService else {
@@ -200,25 +212,46 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
                     return
                 }
 
+                let taskID = await TaskCenter.shared.addTask(type: .ai, name: "AI Chat Stream", target: query)
+
                 await MainActor.run {
                     isProcessing = true
                 }
-
-                let context = await contextBuilder.buildRelevantContext(query: query)
-                let rankedPages = (try? await rerank(query: query, candidates: pages)) ?? pages
-                let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + context
+                
+                defer {
+                    Task {
+                        await MainActor.run { isProcessing = false }
+                        await TaskCenter.shared.completeTask(id: taskID)
+                    }
+                }
 
                 do {
+                    // 1. 构建 RAG 上下文
+                    await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.2, stage: .embedding))
+                    let (context, sources) = await contextBuilder.buildRelevantContext(query: query)
+                    
+                    // 同步信源至 SourceStore
+                    await SourceStore.shared.updateSources(sources)
+                    
+                    await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.5, stage: .retrieval))
+                    let rankedPages = (try? await rerank(query: query, candidates: pages)) ?? pages
+                    let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + context
+
+                    // 2. 调用对话服务
+                    await TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.8, stage: .synthesis))
+                    
+                    var fullResponse = ""
                     for try await chunk in chatService.streamChat(systemPrompt: systemPrompt, query: query, history: history) {
+                        fullResponse += chunk
+                        await MainActor.run { self.streamingContent = fullResponse }
                         continuation.yield(chunk)
                     }
 
-                    await MainActor.run {
-                        isProcessing = false
-                    }
+                    // 3. 异步指标记录
+                    asyncMetrics(query: query, response: fullResponse, context: context, systemPrompt: systemPrompt, latency: 0)
+
                     continuation.finish()
                 } catch {
-                    await MainActor.run { isProcessing = false }
                     continuation.finish(throwing: error)
                 }
             }
@@ -226,7 +259,7 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     }
 
     /// 智能内容摄入
-    func smartIngest(title: String, rawContent: String, pages: [KnowledgePage]) async throws -> SmartIngestResult {
+    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         guard let ingestService else { throw LLMError.notConfigured }
         return try await ingestService.smartIngest(title: title, rawContent: rawContent, pages: pages)
     }
@@ -244,38 +277,38 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
     }
 
     /// 重构建议分析
-    func analyzeForRefactoring(pages: [KnowledgePage]) async throws -> [RefactorSuggestion] {
+    func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO] {
         guard let refactorService else { return [] }
         return try await refactorService.analyzeForRefactoring(pages: pages)
     }
 
     /// 查询改写
     func rewriteQuery(_ query: String) async -> String {
-        guard let retrievalService else { return query }
+        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return query }
         return await retrievalService.rewriteQuery(query)
     }
 
     /// 意图扩展
     func expandQuery(_ query: String) async -> [String] {
-        guard let retrievalService else { return [query] }
+        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return [query] }
         return await retrievalService.expandQuery(query)
     }
 
     /// 语义重排
-    func rerank(query: String, candidates: [KnowledgePage]) async throws -> [KnowledgePage] {
-        guard let retrievalService else { return candidates }
+    func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] {
+        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return candidates }
         return try await retrievalService.rerank(query: query, candidates: candidates)
     }
 
     /// 文本分块重排
     func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk] {
-        guard let retrievalService else { return chunks }
+        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return chunks }
         return await retrievalService.rerankChunks(query: query, chunks: chunks)
     }
 
     /// 生成假设性文档 (HyDE)
     func generateHypotheticalDocument(query: String) async -> String {
-        guard let retrievalService else { return query }
+        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return query }
         return await retrievalService.generateHypotheticalDocument(query: query)
     }
 
@@ -311,8 +344,8 @@ final class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendabl
         let modelName = self.model
         Task.detached(priority: .background) {
             let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
-            let promptTokens = (systemPrompt.count + query.count) / AppConstants.AI.charactersPerToken
-            let completionTokens = response.count / AppConstants.AI.charactersPerToken
+            let promptTokens = (systemPrompt.count + query.count) / BusinessConstants.AI.charactersPerToken
+            let completionTokens = response.count / BusinessConstants.AI.charactersPerToken
             _ = try? await governance.logCall(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
             _ = try? await governance.logTokenUsage(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens)
 

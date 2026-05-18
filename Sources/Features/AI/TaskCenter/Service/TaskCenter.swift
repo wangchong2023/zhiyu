@@ -38,19 +38,28 @@ enum TaskType: String, CaseIterable {
     }
 }
 
+/// RAG / AI 执行阶段 (用于多维视觉反馈)
+public enum TaskStage: String, Equatable {
+    case pending       = "pending"      // 准备阶段
+    case embedding     = "embedding"    // 向量化/特征提取 (Teal)
+    case retrieval     = "retrieval"    // 数据库检索/BM25 (Blue)
+    case synthesis     = "synthesis"    // 大模型合成生成 (Purple)
+    case general       = "general"      // 通用执行 (Orange)
+}
+
 /// 任务执行状态
 enum TaskStatus: Equatable {
-    case pending                    // 等待中
-    case running(progress: Double)  // 执行中（带进度）
-    case completed                  // 已完成
-    case failed(error: String)      // 执行失败（带错误信息）
+    case pending                                      // 等待中
+    case running(progress: Double, stage: TaskStage)  // 执行中（带进度与具体阶段）
+    case completed                                    // 已完成
+    case failed(error: String)                        // 执行失败（带错误信息）
 
     static func == (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
         switch (lhs, rhs) {
         case (.pending, .pending): return true
         case (.completed, .completed): return true
-        case (.running(let p1), .running(let p2)): return p1 == p2
-        case (.failed(let e1), .failed(let e2)): return e1 == e2
+        case let (.running(p1, s1), .running(p2, s2)): return p1 == p2 && s1 == s2
+        case let (.failed(e1), .failed(e2)): return e1 == e2
         default: return false
         }
     }
@@ -76,6 +85,9 @@ class TaskCenter: ObservableObject {
     @Published var tasks: [GlobalTask] = []
     @Published var latestStatus: String = ""
     private var cancellables = Set<AnyCancellable>()
+    
+    /// 注入实时活动能力，支持跨平台解耦
+    private let activityService: any LiveActivityProtocol = ServiceContainer.shared.resolve((any LiveActivityProtocol).self)
 
     init() {
         setupSubscriptions()
@@ -94,18 +106,16 @@ class TaskCenter: ObservableObject {
 
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
-        #if os(iOS)
-        // 实时同步到当前“最活跃”的灵动岛（如果存在的话）
+        // 实时同步到当前“最活跃”的灵动岛（如果平台支持）
         if let firstRunningTask = tasks.first(where: { if case .running = $0.status { return true }; return false }) {
             Task {
-                if case .running(let progress) = firstRunningTask.status {
-                    await ActivityService.shared.updateProgress(id: firstRunningTask.id, progress: progress, message: text)
+                if case .running(let progress, _) = firstRunningTask.status {
+                    await activityService.updateProgress(id: firstRunningTask.id, progress: progress, message: text)
                 } else {
-                    await ActivityService.shared.updateProgress(id: firstRunningTask.id, progress: 0.5, message: text)
+                    await activityService.updateProgress(id: firstRunningTask.id, progress: 0.5, message: text)
                 }
             }
         }
-        #endif
     }
 
     struct TaskMetrics {
@@ -141,11 +151,9 @@ class TaskCenter: ObservableObject {
     func addTask(type: TaskType = .ai, name: String, target: String) -> UUID {
         let task = GlobalTask(type: type, name: name, target: target, status: .pending)
         self.tasks.insert(task, at: 0)
-        self.latestStatus = Localized.trf("aitask.status.startingFormat", name, target)
+        self.latestStatus = L10n.AI.Task.starting( name, target)
 
-        #if os(iOS)
-        ActivityService.shared.startActivity(id: task.id, name: name, target: target)
-        #endif
+        activityService.startActivity(id: task.id, name: name, target: target)
 
         return task.id
     }
@@ -159,29 +167,23 @@ class TaskCenter: ObservableObject {
 
             let task = self.tasks[index]
             switch status {
-            case .running(let progress):
-                self.latestStatus = Localized.trf("aitask.status.runningFormat", task.name, task.target)
-                #if os(iOS)
+            case .running(let progress, _):
+                self.latestStatus = L10n.AI.Task.running( task.name, task.target)
                 Task {
-                    await ActivityService.shared.updateProgress(id: task.id, progress: progress, message: self.latestStatus)
+                    await activityService.updateProgress(id: task.id, progress: progress, message: self.latestStatus)
                 }
-                #endif
             case .completed:
-                self.latestStatus = Localized.trf("aitask.status.completedFormat", task.name)
+                self.latestStatus = L10n.AI.Task.completed( task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
-                #if os(iOS)
                 Task {
-                    await ActivityService.shared.endActivity(id: task.id)
+                    await activityService.endActivity(id: task.id)
                 }
-                #endif
             case .failed:
-                self.latestStatus = Localized.trf("aitask.status.failedFormat", task.name)
+                self.latestStatus = L10n.AI.Task.failed( task.name)
                 NotificationCenter.default.post(name: .taskCompleted, object: task)
-                #if os(iOS)
                 Task {
-                    await ActivityService.shared.endActivity(id: task.id)
+                    await activityService.endActivity(id: task.id)
                 }
-                #endif
             case .pending:
                 break
             }

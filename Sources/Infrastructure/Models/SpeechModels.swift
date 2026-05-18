@@ -36,9 +36,9 @@ public enum SpeechError: LocalizedError, Sendable {
 
     public var errorDescription: String? {
         switch self {
-        case .localeNotSupported: return Localized.tr("speech.error.localeNotSupported")
-        case .notAuthorized: return Localized.tr("speech.error.notAuthorized")
-        case .audioEngineError: return Localized.tr("speech.error.audioEngine")
+        case .localeNotSupported: return L10n.Voice.Speech.Error.localeNotSupported
+        case .notAuthorized: return L10n.Voice.Speech.Error.notAuthorized
+        case .audioEngineError: return L10n.Voice.Speech.Error.audioEngine
         }
     }
 }

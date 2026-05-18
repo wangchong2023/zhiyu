@@ -1,3 +1,4 @@
+// 功能说明: [L2]
 //
 //  NotebookThemeBackgroundView.swift
 //  ZhiYu
@@ -16,31 +17,57 @@ struct NotebookThemeBackgroundView: View {
     
     var body: some View {
         ZStack {
+            let colors = config.colors.map { Color(hex: $0) }
+            
             switch config.type {
             case .linear:
                 // 渲染线性渐变背景
                 LinearGradient(
-                    colors: config.colors.map { Color(hex: $0) },
+                    colors: colors,
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             case .mesh:
-                // 如果是 iOS 18.0 或 macOS 15.0 以上版本，可以考虑实现 MeshGradient
-                // 目前先回退到线性渐变，直到具体的网格参数被精细化
+                // 如果是 iOS 18.0 或 macOS 15.0 以上版本，实装真正的 MeshGradient
                 if #available(iOS 18.0, macOS 15.0, *) {
-                    // TODO: 在后续版本中实现真正的 MeshGradient 渲染逻辑
-                    // 需要根据 seed 和 colors 计算网格点位置
-                    LinearGradient(
-                        colors: config.colors.map { Color(hex: $0) },
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                    // 使用 3x3 网格实现流体效果
+                    // 9个顶点颜色通过对 config.colors 的循环采样获得
+                    let meshColors: [Color] = (0..<9).map { i in
+                        colors[i % colors.count]
+                    }
+                    
+                    // 基于 seed 计算中点的扰动偏移，增加“AI 随机感”
+                    let s = Double(config.seed % 100) / 100.0
+                    let offsetX = Float(s * 0.2 - 0.1) // -0.1 ~ 0.1
+                    let offsetY = Float(((Double(config.seed) / 10.0).truncatingRemainder(dividingBy: 10.0) / 10.0) * 0.2 - 0.1)
+                    
+                    MeshGradient(
+                        width: 3,
+                        height: 3,
+                        points: [
+                            [0, 0], [0.5, 0], [1, 0],
+                            [0, 0.5], [0.5 + offsetX, 0.5 + offsetY], [1, 0.5],
+                            [0, 1], [0.5, 1], [1, 1]
+                        ],
+                        colors: meshColors
                     )
+                    .ignoresSafeArea()
                 } else {
-                    LinearGradient(
-                        colors: config.colors.map { Color(hex: $0) },
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    // 低版本回退到多色径向渐变，模拟流体感
+                    ZStack {
+                        colors[0]
+                        ForEach(1..<colors.count, id: \.self) { i in
+                            Circle()
+                                .fill(colors[i])
+                                .frame(width: 300, height: 300)
+                                .blur(radius: 80)
+                                .offset(
+                                    x: CGFloat(sin(Double(config.seed + i)) * 100),
+                                    y: CGFloat(cos(Double(config.seed + i)) * 100)
+                                )
+                        }
+                    }
+                    .clipped()
                 }
             }
         }

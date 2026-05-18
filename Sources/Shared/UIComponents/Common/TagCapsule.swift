@@ -1,7 +1,7 @@
 // TagCapsule.swift
 //
 // 作者: Wang Chong
-// 功能说明: struct TagCapsule
+// 功能说明: [Shared] struct TagCapsule
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -18,7 +18,7 @@ struct TagCapsule: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: "tag.fill")
+            Image(systemName: DesignSystem.Icons.tagFill)
                 .font(.caption2)
             Text(tag)
                 .font(.subheadline.weight(.medium))

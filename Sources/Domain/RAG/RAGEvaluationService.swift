@@ -35,8 +35,8 @@ final class RAGEvaluationService {
     ///   - answer: AI 生成的回答
     ///   - context: 检索到的上下文片段
     func evaluate(query: String, answer: String, context: String) async -> EvaluationReport {
-        let prompt = Localized.trf("llm.eval.judgePrompt", table: "AITasks", context, query, answer)
-        let systemPrompt = Localized.tr("llm.eval.systemPrompt", table: "AITasks")
+        let prompt = L10n.AI.Eval.judgePrompt(context, query, answer)
+        let systemPrompt = L10n.AI.Eval.systemPrompt
 
         do {
             let response = try await llmService.generate(prompt: prompt, systemPrompt: systemPrompt)
@@ -49,22 +49,23 @@ final class RAGEvaluationService {
 
                 let status: String
                 if f < 0.5 {
-                    status = Localized.tr("llm.eval.status.fail", table: "AITasks")
+                    status = L10n.AI.Eval.Status.fail
                 } else if f < 0.7 {
-                    status = Localized.tr("llm.eval.status.warning", table: "AITasks")
+                    status = L10n.AI.Eval.Status.warning
                 } else {
-                    status = Localized.tr("llm.eval.status.pass", table: "AITasks")
+                    status = L10n.AI.Eval.Status.pass
                 }
 
                 // 持久化评估结果到数据库
-                try? await governanceStore.saveEvaluation(
+                let eval = RAGEvaluation(
                     query: query,
                     answer: answer,
                     faithfulness: f,
                     relevance: r,
                     precision: p,
-                    model: AppConfig.AI.evaluatorModel
+                    evaluatorModel: AppConfig.AI.evaluatorModel
                 )
+                try? await governanceStore.saveRAGEvaluation(eval)
 
                 return EvaluationReport(query: query, answer: answer, faithfulness: f, relevance: r, precision: p, status: status)
             }
@@ -72,6 +73,6 @@ final class RAGEvaluationService {
             print("Evaluation failed: \(error)")
         }
 
-        return EvaluationReport(query: query, answer: answer, faithfulness: 0, relevance: 0, precision: 0, status: Localized.tr("llm.eval.status.error", table: "AITasks"))
+        return EvaluationReport(query: query, answer: answer, faithfulness: 0, relevance: 0, precision: 0, status: L10n.AI.Eval.Status.error)
     }
 }

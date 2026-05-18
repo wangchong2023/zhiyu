@@ -19,7 +19,7 @@ import SceneKit
 struct Graph3DView: View {
     @Environment(AppStore.self) var store
     @State private var scene: SCNScene?
-    @State private var cameraDistance: Float = AppConstants.Graph.ThreeD.defaultCameraDistance
+    @State private var cameraDistance: Float = BusinessConstants.Graph.ThreeD.defaultCameraDistance
     @State private var autoRotate = false
     @State private var filterType: PageType? = nil
     @State private var showNodeInfo = false
@@ -179,8 +179,8 @@ struct Graph3DView: View {
         }
 
         // 优化 3D 布局空间：根据节点数量动态扩展球体半径，确保节点间距足够
-        let baseRadius = sqrt(Double(pages.count)) * AppConstants.Graph.ThreeD.baseSphereRadiusMultiplier
-        let radius: CGFloat = CGFloat(max(AppConstants.Graph.ThreeD.minSphereRadius, min(AppConstants.Graph.ThreeD.maxSphereRadius, baseRadius)))
+        let baseRadius = sqrt(Double(pages.count)) * BusinessConstants.Graph.ThreeD.baseSphereRadiusMultiplier
+        let radius: CGFloat = CGFloat(max(BusinessConstants.Graph.ThreeD.minSphereRadius, min(BusinessConstants.Graph.ThreeD.maxSphereRadius, baseRadius)))
         let positions = generateSpherePositions(count: pages.count, radius: radius)
 
         let nodeMap = createPageNodes(pages: pages, positions: positions, scene: newScene)
@@ -197,7 +197,7 @@ struct Graph3DView: View {
     }
 
     private func addStarfield(to scene: SCNScene) {
-        let starCount = AppConstants.Graph.ThreeD.starCount
+        let starCount = BusinessConstants.Graph.ThreeD.starCount
         let starGeometry = SCNSphere(radius: DesignSystem.Graph.ThreeD.starRadius)
         starGeometry.firstMaterial?.emission.contents = UIColor(Color.appAccent).withAlphaComponent(DesignSystem.surfaceOpacity)
         starGeometry.firstMaterial?.diffuse.contents = UIColor(Color.appAccent).withAlphaComponent(DesignSystem.softOpacity)
@@ -235,8 +235,8 @@ struct Graph3DView: View {
     private func setupCamera(scene: SCNScene) {
         let camera = SCNNode()
         camera.camera = SCNCamera()
-        camera.camera?.zNear = AppConstants.Graph.ThreeD.cameraZNear
-        camera.camera?.zFar = AppConstants.Graph.ThreeD.cameraZFar 
+        camera.camera?.zNear = BusinessConstants.Graph.ThreeD.cameraZNear
+        camera.camera?.zFar = BusinessConstants.Graph.ThreeD.cameraZFar 
         camera.position = SCNVector3(0, 15, Float(cameraDistance))
         camera.look(at: SCNVector3(0, 0, 0))
         camera.name = "mainCamera"
@@ -452,7 +452,7 @@ struct Graph3DView: View {
     private func resetCamera() {
         guard let camera = cameraNode else { return }
         HapticFeedback.shared.trigger(.selection)
-        cameraDistance = AppConstants.Graph.ThreeD.defaultCameraDistance 
+        cameraDistance = BusinessConstants.Graph.ThreeD.defaultCameraDistance 
         SCNTransaction.begin()
         SCNTransaction.animationDuration = 0.8
         #if !os(watchOS)

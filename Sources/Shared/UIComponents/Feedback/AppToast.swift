@@ -1,7 +1,7 @@
 // AppToast.swift
 //
 // 作者: Wang Chong
-// 功能说明: enum AppToastType
+// 功能说明: [Shared] enum AppToastType
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-04
@@ -23,10 +23,10 @@ public enum AppToastType: Equatable {
     
     var icon: String {
         switch self {
-        case .success: return "checkmark.circle.fill"
-        case .error: return "exclamationmark.triangle.fill"
-        case .info: return "info.circle.fill"
-        case .processing: return "sparkles"
+        case .success: return DesignSystem.Icons.checkCircle
+        case .error: return DesignSystem.Icons.warning
+        case .info: return DesignSystem.Icons.info
+        case .processing: return DesignSystem.Icons.sparkles
         }
     }
     
@@ -111,7 +111,7 @@ struct AppToastView: View {
             Spacer()
             
             Button(action: onDismiss) {
-                Image(systemName: "xmark")
+                Image(systemName: DesignSystem.Icons.xmark)
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(.appSecondary)
             }

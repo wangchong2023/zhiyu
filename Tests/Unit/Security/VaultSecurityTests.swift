@@ -2,14 +2,39 @@
 //
 // 作者: Wang Chong
 // 功能说明: 金库安全服务测试
-// 版本: 1.0
+// 版本: 1.1
 // 修改记录:
 //   - 创建: 2026-05-03
-// 日期: 2026-05-04
+//   - 更新: 2026-05-16 补全 Mock 及核心流程测试
+// 日期: 2026-05-16
 // 版权: Copyright © 2026 Wang Chong. All rights reserved.
 
 import XCTest
+import LocalAuthentication
 @testable import ZhiYu
+
+/// Mock 生物识别提供者，用于控制测试环境下的认证结果
+struct VaultSecurityMockBiometricAuthProvider: BiometricAuthProviderProtocol {
+    var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
+    
+    var isAvailable: Bool = true
+    var shouldAuthSucceed: Bool = true
+    var evaluateDelay: TimeInterval = 0.01 // 模拟硬件延迟
+    
+    func canEvaluatePolicy(context: LAContext) -> Bool {
+        return isAvailable
+    }
+    
+    func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
+        try? await Task.sleep(nanoseconds: UInt64(evaluateDelay * 1_000_000_000))
+        return shouldAuthSucceed
+    }
+}
+
+/// Mock 触感反馈，防止测试中崩溃
+struct MockHapticFeedback: HapticFeedbackProtocol {
+    func trigger(_ pattern: HapticPattern) {}
+}
 
 /// 金库安全服务测试
 /// 验证 VaultSecurityService 的锁定/解锁状态切换及生物识别可用性检测。
@@ -17,14 +42,26 @@ import XCTest
 final class VaultSecurityTests: XCTestCase {
 
     var vault: VaultStorageSecurityService!
+    var mockProvider: VaultSecurityMockBiometricAuthProvider!
 
     override func setUp() async throws {
         try await super.setUp()
+        // 重置依赖注入环境
+        ServiceContainer.shared.reset()
+        
+        // 注册 HapticFeedbackProtocol
+        ServiceContainer.shared.register(MockHapticFeedback() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
+        
+        mockProvider = VaultSecurityMockBiometricAuthProvider()
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        
         vault = VaultStorageSecurityService()
     }
 
     override func tearDown() async throws {
         vault = nil
+        mockProvider = nil
+        ServiceContainer.shared.reset()
         try await super.tearDown()
     }
 
@@ -36,10 +73,16 @@ final class VaultSecurityTests: XCTestCase {
 
     func testBiometricsAvailabilityIsCheckedOnInit() {
         let available = vault.biometricsAvailable
-        XCTAssertTrue(available || !available, "biometricsAvailable 应为有效 Bool 值")
+        XCTAssertTrue(available, "由于 mockProvider isAvailable=true，生物识别应为可用")
+        
+        // 测试不可用状态
+        mockProvider.isAvailable = false
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        let newVault = VaultStorageSecurityService()
+        XCTAssertFalse(newVault.biometricsAvailable, "注入不可用的 provider 后应反映其状态")
     }
 
-    // MARK: - 锁定/解锁
+    // MARK: - 锁定
 
     func testLockSetsIsLockedToTrue() {
         vault.lock()
@@ -70,4 +113,55 @@ final class VaultSecurityTests: XCTestCase {
             XCTAssertFalse(vault.isLocked)
         }
     }
+
+    // MARK: - 生物识别交互
+
+    func testAuthenticateWithBiometricsReturnsTrueIfNoProvider() async {
+        // 配置一个不支持生物识别的 Provider
+        mockProvider.isAvailable = false
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        
+        let result = await vault.authenticateWithBiometrics()
+        XCTAssertTrue(result, "在无硬件或未配置策略时，应返回 true 以免死锁")
+    }
+    
+    func testAuthenticateWithBiometricsSuccess() async {
+        mockProvider.shouldAuthSucceed = true
+        let result = await vault.authenticateWithBiometrics()
+        XCTAssertTrue(result, "在 Mock 成功环境下，认证应当成功返回 true")
+    }
+    
+    func testAuthenticateWithBiometricsFailure() async {
+        mockProvider.shouldAuthSucceed = false
+        // 重新注册更新状态的 mock (结构体需要重新注册)
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        
+        let result = await vault.authenticateWithBiometrics()
+        XCTAssertFalse(result, "在 Mock 失败环境下，认证应当失败返回 false")
+    }
+    
+    func testUnlockSuccessSetsIsLockedToFalse() async {
+        vault.lock()
+        XCTAssertTrue(vault.isLocked)
+        
+        mockProvider.shouldAuthSucceed = true
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        
+        let result = await vault.unlock()
+        XCTAssertTrue(result, "解锁方法应当返回 true")
+        XCTAssertFalse(vault.isLocked, "成功解锁后，isLocked 状态应被翻转为 false")
+    }
+    
+    func testUnlockFailureKeepsIsLockedTrue() async {
+        vault.lock()
+        XCTAssertTrue(vault.isLocked)
+        
+        mockProvider.shouldAuthSucceed = false
+        ServiceContainer.shared.register(mockProvider, for: BiometricAuthProviderProtocol.self)
+        
+        let result = await vault.unlock()
+        XCTAssertFalse(result, "失败的解锁应当返回 false")
+        XCTAssertTrue(vault.isLocked, "解锁失败后，金库仍应处于锁定状态")
+    }
 }
+

@@ -1,7 +1,7 @@
 // ColorSchemeMode.swift
 //
 // 作者: Wang Chong
-// 功能说明: enum ColorSchemeMode
+// 功能说明: [Shared] enum ColorSchemeMode
 // 版本: 1.0
 // 修改记录:
 //   - 创建: 2026-05-02
@@ -18,9 +18,9 @@ enum ColorSchemeMode: String, CaseIterable {
 
     var displayName: String {
         switch self {
-        case .system: return L10n.Settings.tr("theme.system")
-        case .light: return L10n.Settings.tr("theme.light")
-        case .dark: return L10n.Settings.tr("theme.dark")
+        case .system: return L10n.Settings.theme.system
+        case .light: return L10n.Settings.theme.light
+        case .dark: return L10n.Settings.theme.dark
         }
     }
 

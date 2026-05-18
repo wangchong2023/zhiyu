@@ -1,7 +1,7 @@
 // PageRowView.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了知识库页面行视图，用于在列表中展示 WikiPage 的核心摘要信息。
+// 功能说明: [Shared] 本文件定义了知识库页面行视图，用于在列表中展示 WikiPage 的核心摘要信息。
 // MARK: [PR-03] 统一页面项展示规范，优化列表渲染性能与视觉反馈
 // 版本: 1.1
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
@@ -73,7 +73,7 @@ struct PageRowView: View {
             Spacer()
             
             // 导航箭头（标准 chevron 替代绿点，语义更清晰）
-            Image(systemName: "chevron.right")
+            Image(systemName: DesignSystem.Icons.forward)
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(.appSecondary.opacity(0.4))
         }

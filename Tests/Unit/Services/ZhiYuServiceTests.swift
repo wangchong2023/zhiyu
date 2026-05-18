@@ -10,6 +10,7 @@
 
 import XCTest
 import SwiftUI
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 // MARK: - BackupService Tests
@@ -38,8 +39,8 @@ final class BackupServiceTests: XCTestCase {
 
     func testCreateBackupGeneratesEntry() {
         let pages = [
-            KnowledgePage(title: "Page A", type: .entity, content: "Content A"),
-            KnowledgePage(title: "Page B", type: .concept, content: "Content B")
+            KnowledgePage(title: "Page A", pageType: .entity, content: "Content A"),
+            KnowledgePage(title: "Page B", pageType: .concept, content: "Content B")
         ]
 
         backupService.createBackup(pages: pages)
@@ -51,7 +52,7 @@ final class BackupServiceTests: XCTestCase {
     }
 
     func testBackupEntryContainsCorrectMetadata() {
-        let pages = [KnowledgePage(title: "Test", type: .source, content: "x")]
+        let pages = [KnowledgePage(title: "Test", pageType: .source, content: "x")]
         backupService.createBackup(pages: pages)
 
         let entry = backupService.backupEntries.first
@@ -62,8 +63,8 @@ final class BackupServiceTests: XCTestCase {
 
     func testRestoreBackupReturnsCorrectPages() {
         let original = [
-            KnowledgePage(title: "Restored Page", type: .entity, content: "Restored content"),
-            KnowledgePage(title: "Page 2", type: .concept, content: "More content here with enough chars")
+            KnowledgePage(title: "Restored Page", pageType: .entity, content: "Restored content"),
+            KnowledgePage(title: "Page 2", pageType: .concept, content: "More content here with enough chars")
         ]
         backupService.createBackup(pages: original)
 
@@ -79,7 +80,7 @@ final class BackupServiceTests: XCTestCase {
     }
 
     func testDeleteBackupRemovesEntry() {
-        let pages = [KnowledgePage(title: "To Delete", type: .raw, content: "content")]
+        let pages = [KnowledgePage(title: "To Delete", pageType: .raw, content: "content")]
         backupService.createBackup(pages: pages)
 
         let countBefore = backupService.backupEntries.count
@@ -101,8 +102,9 @@ final class BackupServiceTests: XCTestCase {
 
     func testMultipleBackupsCreateMultipleEntries() {
         for i in 0..<3 {
-            let pages = [KnowledgePage(title: "Page \(i)", type: .entity, content: "Content \(i)")]
+            let pages = [KnowledgePage(title: "Page \(i)", pageType: .entity, content: "Content \(i)")]
             backupService.createBackup(pages: pages)
+            backupService.lastBackupDate = nil
         }
         XCTAssertEqual(backupService.backupEntries.count, 3)
     }
@@ -119,18 +121,8 @@ final class CollaborationServiceTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        ServiceContainer.shared.reset()
-        DatabaseManager.shared.reset()
-        
-        // 为测试准备内存数据库
-        let testDBURL = URL(string: "file::memory:?cache=shared")!
-        let sqliteStore = SQLiteStore(dbURL: testDBURL)
-        ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
-        ServiceContainer.shared.register(Logger(), for: (any LoggerProtocol).self)
-        ServiceContainer.shared.register(LinkService(), for: LinkService.self)
-        ServiceContainer.shared.register(LintService(), for: LintService.self)
-        ServiceContainer.shared.register(UndoService(), for: UndoService.self)
-        ServiceContainer.shared.register(BackupService(), for: BackupService.self)
+        // 统一配置标准测试 Mock 环境，将协作提供商与环境适配等服务一并就绪，确保完全物理隔离且不崩溃
+        setupFullMockEnvironment()
         
         collabService = CollaborationService()
         store = AppStore()
@@ -140,6 +132,8 @@ final class CollaborationServiceTests: XCTestCase {
         collabService.stop()
         collabService = nil
         store = nil
+        // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
+        try? await Task.sleep(nanoseconds: 50_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
@@ -391,7 +385,7 @@ final class LinkServiceEdgeCasesTests: XCTestCase {
     func testBacklinksForPageWithNoIncomingLinks() async {
         let pages = [
             KnowledgePage(title: "A", content: "Content"),
-            KnowledgePage(title: "B", type: .concept, content: "More content")
+            KnowledgePage(title: "B", pageType: .concept, content: "More content")
         ]
         let aID = pages[0].id
         let backlinks = await linkService.backlinks(for: aID, in: pages)
@@ -399,15 +393,15 @@ final class LinkServiceEdgeCasesTests: XCTestCase {
     }
 
     func testPageByTitleWithWhitespace() async {
-        let pages = [KnowledgePage(title: "  Trimmed Title  ", type: .entity, content: "Content")]
+        let pages = [KnowledgePage(title: "  Trimmed Title  ", pageType: .entity, content: "Content")]
         let found = await linkService.pageByTitle("Trimmed Title", in: pages)
         XCTAssertNil(found, "pageByTitle should not trim whitespace in title")
     }
 
     func testSearchQueryCaseSensitivity() async {
         let pages = [
-            KnowledgePage(title: "UPPERCASE", type: .entity, content: "Content"),
-            KnowledgePage(title: "lowercase", type: .concept, content: "Content")
+            KnowledgePage(title: "UPPERCASE", pageType: .entity, content: "Content"),
+            KnowledgePage(title: "lowercase", pageType: .concept, content: "Content")
         ]
         let upperResults = await linkService.search(query: "UPPERCASE", in: pages)
         let lowerResults = await linkService.search(query: "uppercase", in: pages)
@@ -417,7 +411,7 @@ final class LinkServiceEdgeCasesTests: XCTestCase {
 
     func testSearchByTag() async {
         let pages = [
-            KnowledgePage(title: "Tagged", type: .entity, content: "Content", tags: ["important", "work"])
+            KnowledgePage(title: "Tagged", pageType: .entity, content: "Content", tags: ["important", "work"])
         ]
         let results = await linkService.search(query: "important", in: pages)
         XCTAssertTrue(results.contains { $0.title == "Tagged" })
@@ -425,8 +419,8 @@ final class LinkServiceEdgeCasesTests: XCTestCase {
 
     func testAllTagsDeduplication() async {
         let pages = [
-            KnowledgePage(title: "A", type: .entity, content: "Content", tags: ["shared"]),
-            KnowledgePage(title: "B", type: .concept, content: "Content", tags: ["shared", "unique"])
+            KnowledgePage(title: "A", pageType: .entity, content: "Content", tags: ["shared"]),
+            KnowledgePage(title: "B", pageType: .concept, content: "Content", tags: ["shared", "unique"])
         ]
         let tags = await linkService.allTags(in: pages)
         let sharedTagCount = tags.filter { $0.tag == "shared" }.count
@@ -450,7 +444,7 @@ final class LintServiceEdgeCasesTests: XCTestCase {
     func testNoFalsePositivesForRawPages() async {
         // raw pages should not be flagged as orphans
         let pages = [
-            KnowledgePage(title: "DataDump", type: .raw, content: String(repeating: "x ", count: 50))
+            KnowledgePage(title: "DataDump", pageType: .raw, content: String(repeating: "x ", count: 50))
         ]
         let issues = await lintService.runLint(pages: pages, linkService: linkService)
         let orphanIssues = issues.filter {
@@ -461,15 +455,15 @@ final class LintServiceEdgeCasesTests: XCTestCase {
     }
 
     func testSelfReferencingLinkNotFlaggedAsBroken() async {
-        let page = KnowledgePage(title: "SelfRef", type: .entity, content: "Links to [[SelfRef]]")
+        let page = KnowledgePage(title: "SelfRef", pageType: .entity, content: "Links to [[SelfRef]]")
         let issues = await lintService.runLint(pages: [page], linkService: linkService)
         let brokenIssues = issues.filter { $0.severity == .error && ($0.message.localizedCaseInsensitiveContains("broken") || $0.message.localizedCaseInsensitiveContains("不存在")) }
         XCTAssertTrue(brokenIssues.isEmpty, "Self-referencing link should not be broken")
     }
 
     func testCircularLinksHandledGracefully() {
-        let pageA = KnowledgePage(title: "A", type: .entity, content: "Links to [[B]]")
-        let pageB = KnowledgePage(title: "B", type: .concept, content: "Links to [[A]]")
+        let pageA = KnowledgePage(title: "A", pageType: .entity, content: "Links to [[B]]")
+        let pageB = KnowledgePage(title: "B", pageType: .concept, content: "Links to [[A]]")
 
         let result = GraphLayoutProcessor.layout(
             pages: [pageA, pageB],
@@ -490,8 +484,8 @@ final class LintServiceEdgeCasesTests: XCTestCase {
 
     func testDuplicatePageTitlesDetected() async {
         let pages = [
-            KnowledgePage(title: "Duplicate", type: .entity, content: String(repeating: "x ", count: 30)),
-            KnowledgePage(title: "Duplicate", type: .concept, content: String(repeating: "y ", count: 30))
+            KnowledgePage(title: "Duplicate", pageType: .entity, content: String(repeating: "x ", count: 30)),
+            KnowledgePage(title: "Duplicate", pageType: .concept, content: String(repeating: "y ", count: 30))
         ]
         let issues = await lintService.runLint(pages: pages, linkService: linkService)
         let dupIssues = issues.filter {
@@ -514,14 +508,14 @@ final class IngestServiceEdgeCasesTests: XCTestCase {
     }
 
     func testExtractConceptsNoMatch() async {
-        let pages = [KnowledgePage(title: "Existing", type: .concept)]
+        let pages = [KnowledgePage(title: "Existing", pageType: .concept)]
         let content = "This mentions Nothing That Exists"
         let concepts = await ingestService.extractConcepts(from: content, pages: pages)
         XCTAssertTrue(concepts.isEmpty)
     }
 
     func testExtractConceptsCaseInsensitive() async {
-        let pages = [KnowledgePage(title: "SwiftUI", type: .concept)]
+        let pages = [KnowledgePage(title: "SwiftUI", pageType: .concept)]
         let concepts1 = await ingestService.extractConcepts(from: "swiftui", pages: pages)
         let concepts2 = await ingestService.extractConcepts(from: "SWIFTUI", pages: pages)
         XCTAssertFalse(concepts1.isEmpty)
@@ -529,7 +523,7 @@ final class IngestServiceEdgeCasesTests: XCTestCase {
     }
 
     func testExtractConceptsPartialMatch() async {
-        let pages = [KnowledgePage(title: "Machine Learning", type: .concept)]
+        let pages = [KnowledgePage(title: "Machine Learning", pageType: .concept)]
         // Partial match should not trigger
         let concepts = await ingestService.extractConcepts(from: "Machines are everywhere", pages: pages)
         XCTAssertTrue(concepts.isEmpty, "Partial word match should not extract concept")
@@ -558,9 +552,9 @@ final class PageLifecycleIntegrationTests: XCTestCase {
 
     func testCreateAndLinkPagesFullLifecycle() async {
         // 1. Create pages
-        var pageA = KnowledgePage(title: "Machine Learning", type: .concept, content: "Related to [[Neural Network]]")
-        var pageB = KnowledgePage(title: "Neural Network", type: .entity, content: "Part of [[Machine Learning]]")
-        var pageC = KnowledgePage(title: "Data Science", type: .concept, content: "Uses machine learning")
+        var pageA = KnowledgePage(title: "Machine Learning", pageType: .concept, content: "Related to [[Neural Network]]")
+        var pageB = KnowledgePage(title: "Neural Network", pageType: .entity, content: "Part of [[Machine Learning]]")
+        var pageC = KnowledgePage(title: "Data Science", pageType: .concept, content: "Uses machine learning")
 
         // 2. Add related page
         pageC.relatedPageIDs = [pageA.id]
@@ -596,16 +590,16 @@ final class PageLifecycleIntegrationTests: XCTestCase {
 
     func testPageTypeClassificationAffectsStubDetection() {
         // raw pages with lots of content should not be stub
-        let rawPage = KnowledgePage(title: "RawData", type: .raw, content: String(repeating: "x ", count: 80))
+        let rawPage = KnowledgePage(title: "RawData", pageType: .raw, content: String(repeating: "x ", count: 80))
         XCTAssertFalse(rawPage.isStub, "raw page with 80 words should not be stub")
 
         // But entity with < 100 chars is stub
-        let entityPage = KnowledgePage(title: "ShortEntity", type: .entity, content: "Too short")
+        let entityPage = KnowledgePage(title: "ShortEntity", pageType: .entity, content: "Too short")
         XCTAssertTrue(entityPage.isStub)
     }
 
     func testWordCountForMixedCJKAndEnglish() {
-        let page = KnowledgePage(title: "Mixed", type: .concept, content: "Hello世界123测试456")
+        let page = KnowledgePage(title: "Mixed", pageType: .concept, content: "Hello世界123测试")
         // English words: Hello(1), 123(1) = 2, CJK chars: 世界测试 = 4
         // Total = 6
         XCTAssertEqual(page.wordCount, 6)
@@ -621,7 +615,7 @@ final class PageLifecycleIntegrationTests: XCTestCase {
             (.raw, "raw")
         ]
         for (type, expected) in typeFolderPairs {
-            XCTAssertEqual(KnowledgePage(title: "", type: type).folderName, expected)
+            XCTAssertEqual(KnowledgePage(title: "", pageType: type).folderName, expected)
         }
     }
 }
@@ -655,6 +649,7 @@ final class PluginRegistryTests: XCTestCase {
 }
 
 // Mock Plugin Helper
+@MainActor
 final class MockPlugin: InterceptionPlugin {
     let manifest: PluginManifest
     var monetization: MonetizationInfo? = nil
@@ -662,7 +657,14 @@ final class MockPlugin: InterceptionPlugin {
     var preProcessor: ((String) -> String)? = nil
     
     init(id: String, preProcessor: ((String) -> String)? = nil) {
-        self.manifest = PluginManifest(id: id, name: id, version: "1.0.0", permissions: ["writeContent"])
+        self.manifest = PluginManifest(
+            id: id,
+            version: "1.0.0",
+            author: "Tester",
+            permissions: ["writeContent"],
+            names: ["en": id],
+            descriptions: ["en": "Test plugin"]
+        )
         self.preProcessor = preProcessor
     }
     

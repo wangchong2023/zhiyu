@@ -15,59 +15,93 @@
 import Foundation
 
 /// 递归分块器 (RAG 核心：语义保真)
-/// 负责将长文档拆分为适合向量检索的小块。
+/// 负责将长文档拆分为适合向量检索的小块，对标 Karpathy 的 LLM Wiki 切片标准。
 struct TextChunkerProcessor: Sendable {
 
-    struct Chunk: Identifiable {
-        let id = UUID()
-        let text: String
-        let startIndex: Int
+    /// 增强型分块模型
+    public struct Chunk: Identifiable {
+        public let id = UUID()
+        public let text: String       // 分块文本内容
+        public let startIndex: Int    // 原始文本起始偏移
+        public let anchorPath: String // 标题层级路径 (例如: "核心原理 > 量子力学")
+        public let isCode: Bool       // 是否包含完整代码块
     }
 
     /// 分块配置
-    struct Config {
-        let chunkSize: Int      // 每个块的最大字符数
-        let chunkOverlap: Int   // 块与块之间的重叠字符数
-        let separators: [String] // 拆分优先级：换行 > 句号 > 空格
+    public struct Config {
+        public let chunkSize: Int      // 目标字符数 (800-1200 推荐)
+        public let chunkOverlap: Int   // 重叠窗口大小 (150-200 推荐)
+        public let separators: [String] // 优先级梯度
     }
 
-    static let `default` = Config(
-        chunkSize: 800,
-        chunkOverlap: 150,
-        separators: ["\n# ", "\n## ", "\n### ", "\n\n", "\n", "。", ".", " ", ""]
+    public static let `default` = Config(
+        chunkSize: 1000,
+        chunkOverlap: 200,
+        separators: ["\n# ", "\n## ", "\n### ", "\n#### ", "\n\n", "\n", "。 ", ". ", " ", ""]
     )
 
-    /// 执行递归分块
+    /**
+     * @description: 执行高级语义分块
+     * @param {String} text 原始文本
+     * @return {[Chunk]} 包含元数据的高质量切片
+     */
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
         var chunks: [Chunk] = []
-        var remainingText = text
-        var currentIndex = 0
-
-        while !remainingText.isEmpty {
-            if remainingText.count <= config.chunkSize {
-                chunks.append(Chunk(text: remainingText, startIndex: currentIndex))
-                break
+        let lines = text.components(separatedBy: .newlines)
+        
+        var currentChunkText = ""
+        var currentAnchor = "Root"
+        var currentStartIndex = 0
+        var isInCodeBlock = false
+        
+        for line in lines {
+            // 1. 状态追踪：代码块保护
+            if line.trimmingCharacters(in: .whitespaces).hasPrefix("```") {
+                isInCodeBlock.toggle()
             }
-
-            // 寻找最佳拆分点
-            var splitPoint = config.chunkSize
-            for separator in config.separators {
-                let range = remainingText.startIndex..<remainingText.index(remainingText.startIndex, offsetBy: config.chunkSize)
-                if let foundRange = remainingText.range(of: separator, options: .backwards, range: range) {
-                    splitPoint = remainingText.distance(from: remainingText.startIndex, to: foundRange.lowerBound) + separator.count
-                    break
-                }
+            
+            // 2. 标题路径追踪 (Anchor Tracking)
+            if !isInCodeBlock && line.hasPrefix("#") {
+                currentAnchor = line.replacingOccurrences(of: "#", with: "").trimmingCharacters(in: .whitespaces)
             }
-
-            let chunkText = String(remainingText.prefix(splitPoint))
-            chunks.append(Chunk(text: chunkText, startIndex: currentIndex))
-
-            // 处理重叠
-            let step = max(1, splitPoint - config.chunkOverlap)
-            remainingText = String(remainingText.dropFirst(step))
-            currentIndex += step
+            
+            let lineWithNewline = line + "\n"
+            
+            // 3. 贪婪聚合与重叠判定
+            if (currentChunkText.count + lineWithNewline.count) > config.chunkSize && !isInCodeBlock {
+                // 当前块已满，执行封装
+                chunks.append(Chunk(
+                    text: currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines),
+                    startIndex: currentStartIndex,
+                    anchorPath: currentAnchor,
+                    isCode: currentChunkText.contains("```")
+                ))
+                
+                // 计算重叠：保留当前块的末尾作为下一个块的开头
+                let overlapIndex = currentChunkText.index(currentChunkText.endIndex, offsetBy: -config.chunkOverlap, default: currentChunkText.startIndex)
+                currentChunkText = String(currentChunkText[overlapIndex...]) + lineWithNewline
+                currentStartIndex += (currentChunkText.count - config.chunkOverlap)
+            } else {
+                currentChunkText += lineWithNewline
+            }
+        }
+        
+        // 补全最后一个块
+        if !currentChunkText.isEmpty {
+            chunks.append(Chunk(
+                text: currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines),
+                startIndex: currentStartIndex,
+                anchorPath: currentAnchor,
+                isCode: currentChunkText.contains("```")
+            ))
         }
 
         return chunks
+    }
+}
+
+private extension String {
+    func index(_ index: String.Index, offsetBy offset: Int, default defaultIndex: String.Index) -> String.Index {
+        return self.index(index, offsetBy: offset, limitedBy: self.startIndex) ?? defaultIndex
     }
 }

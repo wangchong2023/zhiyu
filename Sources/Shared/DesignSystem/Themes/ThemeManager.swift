@@ -1,7 +1,7 @@
 // ThemeManager.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件实现了知识管理系统的全局主题治理与视觉偏好配置服务（ThemeManager），负责跨平台的视觉风格协调与动态样式注入。
+// 功能说明: [Shared] 本文件实现了知识管理系统的全局主题治理与视觉偏好配置服务（ThemeManager），负责跨平台的视觉风格协调与动态样式注入。
 // 该服务作为 UI 表现层的基座，通过以下核心功能点确保系统的美学一致性与个性化体验：
 // 1. 智适应色彩方案：支持深色（Dark）、浅色（Light）及跟随系统的主题模式切换，并内置了从旧版 isDarkMode 标志位的全量迁移逻辑。
 // 2. 动态品牌色系统：管理应用的核心强调色（Accent Color），支持在运行时实时更新并广播至所有底层组件。
@@ -33,24 +33,24 @@ class ThemeManager: ObservableObject {
             if !Self.didMigrate {
                 Self.didMigrate = true
                 // Migrate: if old key exists and new key is default
-                if UserDefaults.standard.object(forKey: "isDarkMode") != nil,
+                if UserDefaults.standard.object(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode) != nil,
                    UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
-                    let wasDark = UserDefaults.standard.bool(forKey: "isDarkMode")
+                    let wasDark = UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
                     colorSchemeModeRaw = wasDark ? ColorSchemeMode.dark.rawValue : ColorSchemeMode.light.rawValue
-                    UserDefaults.standard.removeObject(forKey: "isDarkMode")
+                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.isDarkMode)
                 }
 
                 // 额外迁移：处理从 colorSchemeMode 到 app_color_scheme_mode 的重命名
-                if let oldMode = UserDefaults.standard.string(forKey: "colorSchemeMode"),
+                if let oldMode = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode),
                    UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.colorSchemeMode) == nil {
                     colorSchemeModeRaw = oldMode
-                    UserDefaults.standard.removeObject(forKey: "colorSchemeMode")
+                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.colorSchemeMode)
                 }
 
-                if let oldAccent = UserDefaults.standard.string(forKey: "accentColor"),
+                if let oldAccent = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.Legacy.accentColor),
                    UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.accentColor) == nil {
                     UserDefaults.standard.set(oldAccent, forKey: AppConstants.Keys.Storage.accentColor)
-                    UserDefaults.standard.removeObject(forKey: "accentColor")
+                    UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.Legacy.accentColor)
                 }
             }
             return ColorSchemeMode(rawValue: colorSchemeModeRaw) ?? .dark

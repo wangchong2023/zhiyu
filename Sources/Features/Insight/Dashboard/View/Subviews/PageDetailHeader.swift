@@ -32,7 +32,7 @@ struct PageDetailHeader: View {
             #if os(watchOS)
             VStack(alignment: .leading) {
                 HStack {
-                    Label(Localized.tr("page.metaInfo"), systemImage: "info.circle")
+                    Label(L10n.Knowledge.Page.metaInfo, systemImage: "info.circle")
                         .font(.caption2.bold())
                         .foregroundStyle(.appSecondary)
                     Spacer()
@@ -49,7 +49,7 @@ struct PageDetailHeader: View {
                 content: { metaInfoView.padding(.top, 4) },
                 label: {
                     HStack {
-                        Label(Localized.tr("page.metaInfo"), systemImage: "info.circle")
+                        Label(L10n.Knowledge.Page.metaInfo, systemImage: DesignSystem.Icons.info)
                             .font(.caption2.bold())
                             .foregroundStyle(.appSecondary)
                         Spacer()
@@ -71,22 +71,22 @@ struct PageDetailHeader: View {
     // MARK: - Breadcrumb
     private var breadcrumb: some View {
         HStack(spacing: 4) {
-            Image(systemName: "books.vertical.fill")
+            Image(systemName: DesignSystem.Icons.booksVerticalFill)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
-            Text(Localized.tr("page.knowledge"))
+            Text(L10n.Knowledge.Page.knowledge)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
-            Image(systemName: "chevron.right")
+            Image(systemName: DesignSystem.Icons.forward)
                 .font(.system(size: 8))
                 .foregroundStyle(.appSecondary)
             
             // AI Status Indicator
             if taskCenter.tasks.contains(where: { if case .running = $0.status { return true }; return false }) {
                 HStack(spacing: 4) {
-                    Image(systemName: "cpu.fill")
+                    Image(systemName: DesignSystem.Icons.cpu)
                         .font(.system(size: 10))
-                    Text(L10n.AI.Task.tr("status.running"))
+                    Text(L10n.AI.Task.running)
                         .font(.system(size: 8, weight: .bold))
                 }
                 .foregroundStyle(.appAccent)
@@ -99,7 +99,7 @@ struct PageDetailHeader: View {
 
             if page.isPinned {
                 Spacer()
-                Image(systemName: "pin.fill")
+                Image(systemName: DesignSystem.Icons.pinFill)
                     .font(.caption2)
                     .foregroundStyle(.appComparison)
             }
@@ -128,7 +128,7 @@ struct PageDetailHeader: View {
             .font(.system(size: 28, weight: .bold, design: .rounded))
             .foregroundStyle(.appText)
             .accessibilityAddTraits(.isHeader)
-            .accessibilityLabel(Localized.trf("page.titleAccessibility", page.title))
+            .accessibilityLabel(L10n.Knowledge.Page.titleAccessibility(page.title))
     }
     
     // MARK: - Aliases & Tags (Unified Flow)
@@ -143,7 +143,7 @@ struct PageDetailHeader: View {
                         let isAlias = page.aliases.contains(item)
                         HStack(spacing: 4) {
                             if isAlias {
-                                Image(systemName: "arrow.branch")
+                                Image(systemName: DesignSystem.Icons.arrowBranch)
                                     .font(.system(size: 8))
                             } else {
                                 Text("#")
@@ -180,15 +180,15 @@ struct PageDetailHeader: View {
     // MARK: - Meta Info
     private var metaInfoView: some View {
         HStack(spacing: 16) {
-            Label(Localized.trf("page.createdAtFormat", page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: "calendar")
-            Label(Localized.trf("page.updatedAtFormat", page.updatedAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: "clock")
-            Label(Localized.trf("page.wordCount", page.wordCount), systemImage: "textformat")
-            Label(Localized.trf("page.outLinksCount", page.outgoingLinks.count), systemImage: "link")
+            Label(L10n.Knowledge.Page.createdAtFormat(page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.sortDate)
+            Label(L10n.Knowledge.Page.updatedAtFormat(page.updatedAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.clock)
+            Label(L10n.Knowledge.Page.wordCount(page.wordCount), systemImage: DesignSystem.Icons.wordCount)
+            Label(L10n.Knowledge.Page.outLinksCount(page.outgoingLinks.count), systemImage: DesignSystem.Icons.link)
         }
         .font(.caption)
         .foregroundStyle(.appSecondary)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Localized.trf("page.metaAccessibility", page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale)), page.wordCount, page.outgoingLinks.count))
+        .accessibilityLabel(L10n.Knowledge.Page.metaAccessibility(page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale)), page.wordCount, page.outgoingLinks.count))
     }
 }
 
@@ -218,7 +218,7 @@ private struct TypeBadge: View {
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Localized.trf("page.pageTypeAccessibility", page.pageType.displayName))
+        .accessibilityLabel(L10n.Knowledge.Page.pageTypeAccessibility(page.pageType.displayName))
     }
 }
 
@@ -242,7 +242,7 @@ private struct StatusBadge: View {
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.status.colorName))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Localized.trf("page.statusAccessibility", page.status.displayName))
+        .accessibilityLabel(L10n.Knowledge.Page.statusAccessibility(page.status.displayName))
     }
 }
 
@@ -254,7 +254,7 @@ private struct ConfidenceBadge: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: "cellularbars")
+            Image(systemName: DesignSystem.Icons.cellularbars)
                 .font(.caption2)
             Text(page.confidence.displayName)
                 .font(.caption)
@@ -265,6 +265,6 @@ private struct ConfidenceBadge: View {
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.confidence.colorName))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Localized.trf("page.confidenceAccessibility", page.confidence.displayName))
+        .accessibilityLabel(L10n.Knowledge.Page.confidenceAccessibility(page.confidence.displayName))
     }
 }

@@ -199,11 +199,11 @@ struct TaskCenterView: View {
             isPresented: $showClearConfirm,
             titleVisibility: .visible
         ) {
-            Button(L10n.Common.tr("clearAll"), role: .destructive) {
+            Button(L10n.Common.Misc.clearAll, role: .destructive) {
                 taskCenter.reset()
                 HapticFeedback.shared.trigger(.success)
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
             Text(L10n.AI.Task.tr("clearConfirmMessage"))
         }
@@ -274,7 +274,7 @@ struct TaskCenterView: View {
                     .fill(Color.appAccent.opacity(DesignSystem.glassOpacity / 2))
                     .frame(width: DesignSystem.Gallery.displayIconSize, height: DesignSystem.Gallery.displayIconSize)
                 
-                Image(systemName: "tray.fill")
+                Image(systemName: DesignSystem.Icons.trayFill)
                     .font(.system(size: DesignSystem.Gallery.splashIconSize - DesignSystem.medium))
                     .foregroundStyle(
                         LinearGradient(
@@ -285,7 +285,7 @@ struct TaskCenterView: View {
                     )
                     .offset(y: DesignSystem.tiny)
                 
-                Image(systemName: "sparkles")
+                Image(systemName: DesignSystem.Icons.sparkles)
                     .font(.system(size: DesignSystem.Action.largeIconSize))
                     .foregroundStyle(.purple)
                     .offset(x: DesignSystem.standardPadding + DesignSystem.medium, y: -(DesignSystem.standardPadding + DesignSystem.medium))
@@ -377,7 +377,7 @@ private struct TaskRow: View {
                         .font(.subheadline.bold())
                         .lineLimit(1)
                     if task.associatedPageID != nil {
-                        Image(systemName: "arrow.up.right.square")
+                        Image(systemName: DesignSystem.Icons.arrowUpRightSquare)
                             .font(.caption2)
                             .foregroundStyle(.appAccent)
                     }
@@ -423,12 +423,12 @@ private struct TaskRow: View {
             Text(L10n.AI.Task.tr("status.pending"))
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
-        case .running(let progress):
+        case .running(let progress, _):
             HStack(spacing: DesignSystem.tiny) {
                 ProgressView(value: progress)
                     .progressViewStyle(.linear)
                     .frame(width: DesignSystem.Task.progressWidth)
-                Text(L10n.AI.Task.tr("status.running"))
+                Text(L10n.AI.Task.running)
                     .font(.caption2)
                     .foregroundStyle(.appAccent)
             }

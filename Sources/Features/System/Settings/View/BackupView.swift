@@ -29,12 +29,12 @@ struct BackupView: View {
                 // Auto Backup Toggle
                 Section {
                     Toggle(isOn: $backupService.isAutoBackupEnabled) {
-                        Label(L10n.Backup.tr("autoBackup"), systemImage: "clock.arrow.circlepath")
+                        Label(L10n.Backup.autoBackup, systemImage: "clock.arrow.circlepath")
                     }
                     
                     if let lastDate = backupService.lastBackupDate {
                         HStack {
-                            Text(L10n.Backup.tr("lastBackup"))
+                            Text(L10n.Backup.lastBackup)
                                 .foregroundStyle(.appSecondary)
                             Spacer()
                             Text(lastDate.formatted(Date.FormatStyle(date: .numeric, time: .standard, locale: Localized.currentLocale)))
@@ -42,7 +42,7 @@ struct BackupView: View {
                         }
                     }
                 } header: {
-                    Text(L10n.Backup.tr("settings"))
+                    Text(L10n.Backup.settings)
                 }
                 
                 // Manual Actions
@@ -51,26 +51,26 @@ struct BackupView: View {
                         backupService.createBackup(pages: store.pages)
                         HapticFeedback.shared.trigger(.selection)
                     } label: {
-                        Label(L10n.Backup.tr("createNow"), systemImage: "plus.circle.fill")
+                        Label(L10n.Backup.createNow, systemImage: "plus.circle.fill")
                     }
                     
                     Button {
-                        store.saveToDisk()
+                        Task { await store.saveToDisk() }
                         backupService.markClean()
                     } label: {
-                        Label(L10n.Backup.tr("exportCurrent"), systemImage: "square.and.arrow.up")
+                        Label(L10n.Backup.exportCurrent, systemImage: "square.and.arrow.up")
                     }
                 } header: {
-                    Text(L10n.Backup.tr("actions"))
+                    Text(L10n.Backup.actions)
                 }
                 
                 // Backup History
                 Section {
                     if backupService.backupEntries.isEmpty {
                         ContentUnavailableView(
-                            L10n.Backup.tr("noBackups"),
+                            L10n.Backup.noBackups,
                             systemImage: "archivebox",
-                            description: Text(L10n.Backup.tr("noBackupsDesc"))
+                            description: Text(L10n.Backup.noBackupsDesc)
                         )
                     } else {
                         ForEach(backupService.backupEntries) { entry in
@@ -85,7 +85,7 @@ struct BackupView: View {
                         }
                     }
                 } header: {
-                    Text(L10n.Backup.tr("history"))
+                    Text(L10n.Backup.history)
                 }
             }
             #if !os(watchOS)
@@ -98,32 +98,32 @@ struct BackupView: View {
             .navigationBarTitleDisplayMode(.inline)
 #endif
             .confirmationDialog(
-                L10n.Backup.tr("restoreTitle"),
+                L10n.Backup.restoreTitle,
                 isPresented: $showRestoreConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(L10n.Backup.tr("restore"), role: .destructive) {
+                Button(L10n.Backup.restore, role: .destructive) {
                     restoreFromBackup()
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { selectedEntry = nil }
+                Button(L10n.Common.cancel, role: .cancel) { selectedEntry = nil }
             } message: {
-                Text(L10n.Backup.tr("restoreMessage"))
+                Text(L10n.Backup.restoreMessage)
             }
             .confirmationDialog(
-                L10n.Backup.tr("deleteConfirmTitle"),
+                L10n.Backup.deleteConfirmTitle,
                 isPresented: $showDeleteConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(L10n.Common.tr("delete"), role: .destructive) {
+                Button(L10n.Common.delete, role: .destructive) {
                     if let entry = backupToDelete {
                         backupService.deleteBackup(entry)
                         HapticFeedback.shared.trigger(.success)
                     }
                     backupToDelete = nil
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) { backupToDelete = nil }
+                Button(L10n.Common.cancel, role: .cancel) { backupToDelete = nil }
             } message: {
-                Text(L10n.Backup.tr("deleteConfirmMessage"))
+                Text(L10n.Backup.deleteConfirmMessage)
             }
         }
     }
@@ -138,7 +138,7 @@ struct BackupView: View {
         // Replace with backup data
         Task {
             await store.replaceAllPages(pages)
-            store.saveToDisk()
+            await store.saveToDisk()
             HapticFeedback.shared.trigger(.success)
         }
     }
@@ -163,8 +163,8 @@ struct BackupEntryRow: View {
                     .foregroundStyle(.appText)
                 
                 HStack(spacing: 12) {
-                    Label("\(entry.pageCount) " + L10n.Backup.tr("pages"), systemImage: "doc.richtext.fill")
-                    Label("\(entry.totalWords) " + L10n.Backup.tr("words"), systemImage: "textformat")
+                    Label("\(entry.pageCount) " + L10n.Backup.pages, systemImage: "doc.richtext.fill")
+                    Label("\(entry.totalWords) " + L10n.Backup.words, systemImage: "textformat")
                     Label(entry.fileSize(in: backupDirectory), systemImage: "externaldrive")
                 }
                 .font(.caption)
@@ -186,7 +186,7 @@ struct BackupEntryRow: View {
             Button(role: .destructive) {
                 onDelete()
             } label: {
-                Label(L10n.Common.tr("delete"), systemImage: "trash")
+                Label(L10n.Common.delete, systemImage: "trash")
             }
         }
     }

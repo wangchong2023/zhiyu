@@ -68,10 +68,10 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// 生成测验题
     func generateQuiz(content: String) async throws -> String {
         let prompt = PromptService.shared.quizPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
-        let quizTitle = Localized.tr("prompt.quiz.defaultTitle")
-        let questionLabel = Localized.tr("prompt.quiz.question")
-        let optionLabel = Localized.tr("prompt.quiz.option")
-        let explanationLabel = Localized.tr("prompt.quiz.explanation")
+        let quizTitle = L10n.AI.Prompt.Quiz.defaultTitle
+        let questionLabel = L10n.AI.Prompt.Quiz.question
+        let optionLabel = L10n.AI.Prompt.Quiz.option
+        let explanationLabel = L10n.AI.Prompt.Quiz.explanation
 
         let jsonFormat = """
         {"title":"\(quizTitle)","questions":[{"id":0,"text":"\(questionLabel)?","options":["\(optionLabel) A","\(optionLabel) B","\(optionLabel) C","\(optionLabel) D"],"answer":0,"explanation":"\(explanationLabel)"}]}
@@ -120,7 +120,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     /// 针对具体的 Lint 问题提供 AI 修复建议
     func suggestFix(issue: LintIssue, pages: [KnowledgePage]) async throws -> String {
-        let pageTitle = pages.first(where: { $0.id == issue.pageID })?.title ?? L10n.Common.tr("unknown")
+        let pageTitle = pages.first(where: { $0.id == issue.pageID })?.title ?? L10n.Common.unknown
         let pageContent = pages.first(where: { $0.title == pageTitle })?.content ?? ""
         let otherTitles = pages.map { $0.title }.filter { $0 != pageTitle }
 
@@ -128,16 +128,16 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(PromptService.shared.fixSuggestionPrompt)
         \(PromptService.shared.languageInstruction)
 
-        \(Localized.tr("llm.prompt.pageTitle"))：\(pageTitle)
-        \(Localized.tr("llm.prompt.issueDesc"))：\(issue.message)
-        \(Localized.tr("llm.prompt.issueType"))：\(issue.type.icon)
+        \(L10n.AI.LLM.Prompt.pageTitle)：\(pageTitle)
+        \(L10n.AI.LLM.Prompt.issueDesc)：\(issue.message)
+        \(L10n.AI.LLM.Prompt.issueType)：\(issue.type.icon)
 
-        \(Localized.tr("llm.prompt.pageContentSnippet"))：
+        \(L10n.AI.LLM.Prompt.pageContentSnippet)：
         \"\"\"
         \(pageContent.prefix(500))
         \"\"\"
 
-        \(Localized.tr("llm.prompt.otherPageTitles"))：
+        \(L10n.AI.LLM.Prompt.otherPageTitles)：
         \(otherTitles.prefix(50).joined(separator: ", "))
         """
 

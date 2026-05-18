@@ -27,7 +27,7 @@ extension Date {
         }
         
         if let day = components.day, day > 0 {
-            if day == 1 { return Localized.tr("date.yesterday", table: "Common") }
+            if day == 1 { return L10n.Common.yesterday }
             return formatter.localizedString(from: components)
         }
         
@@ -39,6 +39,6 @@ extension Date {
             return formatter.localizedString(from: components)
         }
         
-        return Localized.tr("date.justNow", table: "Common")
+        return L10n.Common.justNow
     }
 }

@@ -67,7 +67,7 @@ struct DeveloperSettingsView: View {
                 Section {
                     Button(action: { showInjectConfirmation = true }) {
                         HStack {
-                            Label(L10n.Settings.tr("injectDemoData"), systemImage: "testtube.2")
+                            Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
                             Spacer()
                             if isInjecting {
                                 ProgressView()
@@ -75,11 +75,11 @@ struct DeveloperSettingsView: View {
                         }
                     }
                     .disabled(isInjecting)
-                    .alert(L10n.Settings.tr("injectConfirm.title"), isPresented: $showInjectConfirmation) {
-                        Button(L10n.Common.tr("confirm")) {
+                    .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
+                        Button(L10n.Common.confirm) {
                             Task {
                                 isInjecting = true
-                                let count = store.generateDemoData()
+                                let count = await store.generateDemoData()
                                 isInjecting = false
                                 
                                 // 避开动画冲突
@@ -87,50 +87,50 @@ struct DeveloperSettingsView: View {
                                 
                                 HapticFeedback.shared.trigger(count > 0 ? .success : .error)
                                 if count > 0 {
-                                    ToastManager.shared.show(type: .success, message: L10n.Settings.trf("injectDemo.successMessage", count))
+                                    ToastManager.shared.show(type: .success, message: L10n.Settings.InjectDemo.successMessage(count))
                                 } else {
-                                    ToastManager.shared.show(type: .error, message: L10n.Settings.tr("injectDemo.errorMessage"))
+                                    ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
                                 }
                             }
                         }
-                        Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                        Button(L10n.Common.cancel, role: .cancel) { }
                     } message: {
-                        Text(L10n.Settings.tr("injectConfirm.message"))
+                        Text(L10n.Settings.injectConfirm.message)
                     }
                     
                 } header: {
-                    Text(L10n.Settings.tr("developer.section.data"))
+                    Text(L10n.Settings.developer.section.data)
                 }
                 
                 // MARK: - 数据重置 (Data Reset)
                 Section {
                     Button(action: { showResetOnboardingConfirmation = true }) {
-                        Label(L10n.Settings.tr("resetOnboarding"), systemImage: "arrow.triangle.2.circlepath")
+                        Label(L10n.Settings.resetOnboarding.label, systemImage: "arrow.triangle.2.circlepath")
                     }
-                    .alert(L10n.Settings.tr("resetOnboarding.title"), isPresented: $showResetOnboardingConfirmation) {
-                        Button(L10n.Common.tr("confirm"), role: .destructive) {
+                    .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetOnboardingConfirmation) {
+                        Button(L10n.Common.confirm, role: .destructive) {
                             onboardingService.reset()
                             HapticFeedback.shared.trigger(.success)
                         }
-                        Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                        Button(L10n.Common.cancel, role: .cancel) { }
                     } message: {
-                        Text(L10n.Settings.tr("resetOnboarding.message"))
+                        Text(L10n.Settings.resetOnboarding.message)
                     }
                     
                     Button(role: .destructive, action: { showClearAllConfirmation = true }) {
-                        Label(L10n.Settings.tr("clearAll"), systemImage: "trash.slash.fill")
+                        Label(L10n.Settings.clearAll.label, systemImage: "trash.slash.fill")
                     }
-                    .confirmationDialog(L10n.Settings.tr("clearAll.confirmTitle"), isPresented: $showClearAllConfirmation, titleVisibility: .visible) {
-                        Button(L10n.Settings.tr("clearAll.action"), role: .destructive) {
+                    .confirmationDialog(L10n.Settings.clearAll.confirmTitle, isPresented: $showClearAllConfirmation, titleVisibility: .visible) {
+                        Button(L10n.Settings.clearAll.action, role: .destructive) {
                             store.clearAllDeveloperData()
                             HapticFeedback.shared.trigger(.success)
                         }
-                        Button(L10n.Common.tr("cancel"), role: .cancel) { }
+                        Button(L10n.Common.cancel, role: .cancel) { }
                     } message: {
-                        Text(L10n.Settings.tr("clearAll.message"))
+                        Text(L10n.Settings.clearAll.message)
                     }
                 } header: {
-                    Text(L10n.Settings.tr("developer.section.dataReset"))
+                    Text(L10n.Settings.developer.section.dataReset)
                 }
 
                 // MARK: - 操作信息 (Operation Info)
@@ -139,13 +139,13 @@ struct DeveloperSettingsView: View {
                         LogView()
                     }
                 } header: {
-                    Text(L10n.Settings.tr("developer.section.operationInfo"))
+                    Text(L10n.Settings.developer.section.operationInfo)
                 }
             } else {
                 // MARK: - 性能测试 (Performance Testing)
                 Section {
                     HStack {
-                        Label(L10n.Settings.tr("developer.stressTest.count"), systemImage: "number.circle")
+                        Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
                         Spacer()
                         Picker("", selection: $stressTestTargetCount) {
                             Text("100").tag(100)
@@ -161,7 +161,7 @@ struct DeveloperSettingsView: View {
                     
                     Button(action: { showStressTestConfirmation = true }) {
                         HStack {
-                            Label(L10n.Settings.tr("developer.stressTest.run"), systemImage: "gauge.with.dots.needle.bottom.100percent")
+                            Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
                             Spacer()
                             if isStressTesting {
                                 ProgressView()
@@ -170,10 +170,10 @@ struct DeveloperSettingsView: View {
                     }
                     .disabled(isStressTesting)
                 } header: {
-                    Text(L10n.Settings.tr("developer.section.performance_test"))
+                    Text(L10n.Settings.developer.section.performance_test)
                 } footer: {
                     if let count = stressTestCount {
-                        Text(L10n.Settings.trf("developer.stressTest.success", count))
+                        Text(L10n.Settings.developer.stressTest.success(count))
                             .font(.caption)
                             .foregroundColor(.orange)
                     }
@@ -183,7 +183,7 @@ struct DeveloperSettingsView: View {
                 Section {
                     qualityGrid
                 } header: {
-                    Text(L10n.Dashboard.tr("stats.benchmark"))
+                    Text(L10n.Dashboard.stats.benchmark)
                 } footer: {
                     Text(L10n.Dashboard.benchmarkDescription)
                         .font(.caption)
@@ -196,19 +196,19 @@ struct DeveloperSettingsView: View {
             .listRowBackground(Color.appCard.opacity(0.8))
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .blue))
-            .navigationTitle(L10n.Settings.tr("section.developer"))
+            .navigationTitle(L10n.Settings.Section.developer)
             .navigationBarTitleDisplayMode(.inline)
             .appToast() // 确保在二级导航页面也能正确渲染 Toast，解决被遮挡问题
             .task {
                 await loadStats()
             }
-            .confirmationDialog(L10n.Settings.tr("developer.stressTest.confirmTitle"), isPresented: $showStressTestConfirmation, titleVisibility: .visible) {
-                Button(L10n.Settings.trf("developer.stressTest.confirmAction", stressTestTargetCount), role: .destructive) {
+            .confirmationDialog(L10n.Settings.developer.stressTest.confirmTitle, isPresented: $showStressTestConfirmation, titleVisibility: .visible) {
+                Button(L10n.Settings.developer.stressTest.confirmAction(stressTestTargetCount), role: .destructive) {
                     Task { await runStressTest(count: stressTestTargetCount) }
                 }
-                Button(L10n.Common.tr("cancel"), role: .cancel) {}
+                Button(L10n.Common.cancel, role: .cancel) {}
             } message: {
-                Text(L10n.Settings.tr("developer.stressTest.confirmMessage"))
+                Text(L10n.Settings.developer.stressTest.confirmMessage)
             }
         }
 
@@ -221,21 +221,26 @@ struct DeveloperSettingsView: View {
         try? await Task.sleep(nanoseconds: 500_000_000)
         
         // 压力测试调用修复：补全缺失的 try? 以匹配最新的 throws 签名
-        let count = (try? DemoDataGenerator.generateStressTest(in: store.sqliteStore, count: targetCount)) ?? 0
+        var count = 0
+        if let engine = store.sqliteStore as? SQLiteStore {
+            count = (try? await DemoDataGenerator.generateStressTest(in: engine, count: targetCount)) ?? 0
+        }
         
         await MainActor.run {
             self.stressTestCount = count
             self.isStressTesting = false
-            store.refresh()
-            AppEventBus.shared.publish(.pagesCleared)
-            Task { await loadStats() } // 压力测试后重新加载统计
+            Task {
+                await store.refresh()
+                AppEventBus.shared.publish(.pagesCleared)
+                await loadStats() // 压力测试后重新加载统计
+            }
         }
     }
     
     private func loadStats() async {
         let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
         do {
-            let stats = try await governance.fetchAverageMetrics()
+            let stats = try await governance.calculateAverageRAGScores(days: 30)
             await MainActor.run {
                 self.evalStats = [
                     EvaluationMetric.faithfulness.rawValue: stats.faithfulness,
@@ -254,9 +259,9 @@ struct DeveloperSettingsView: View {
     
     private var qualityGrid: some View {
         HStack(spacing: DesignSystem.standardPadding) {
-            metricCard(title: L10n.Dashboard.tr("stats.faithfulness"), value: evalStats[EvaluationMetric.faithfulness.rawValue] ?? 0, icon: "checkmark.shield", color: .appAccent)
-            metricCard(title: L10n.Dashboard.tr("stats.relevance"), value: evalStats[EvaluationMetric.relevance.rawValue] ?? 0, icon: "target", color: .appAccent)
-            metricCard(title: L10n.Dashboard.tr("stats.precision"), value: evalStats[EvaluationMetric.precision.rawValue] ?? 0, icon: "scope", color: .appAccent)
+            metricCard(title: L10n.Dashboard.stats.faithfulness, value: evalStats[EvaluationMetric.faithfulness.rawValue] ?? 0, icon: "checkmark.shield", color: .appAccent)
+            metricCard(title: L10n.Dashboard.stats.relevance, value: evalStats[EvaluationMetric.relevance.rawValue] ?? 0, icon: "target", color: .appAccent)
+            metricCard(title: L10n.Dashboard.stats.precision, value: evalStats[EvaluationMetric.precision.rawValue] ?? 0, icon: "scope", color: .appAccent)
         }
         .padding(.vertical, DesignSystem.small)
     }

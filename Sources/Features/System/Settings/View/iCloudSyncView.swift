@@ -25,7 +25,7 @@ struct iCloudSyncView: View {
             Section {
                 SyncStatusRow(syncService: coordinator.syncService)
             } header: {
-                Text(L10n.ICloud.tr("syncStatus"))
+                Text(L10n.ICloud.syncStatus)
             }
 
             // MARK: - Actions Section
@@ -53,14 +53,14 @@ struct iCloudSyncView: View {
             // MARK: - Info Section
             Section {
                 VStack(alignment: .leading, spacing: 12) {
-                    SyncInfoRow(icon: "1.circle.fill", text: L10n.ICloud.tr("info1"))
-                    SyncInfoRow(icon: "2.circle.fill", text: L10n.ICloud.tr("info2"))
-                    SyncInfoRow(icon: "3.circle.fill", text: L10n.ICloud.tr("info3"))
-                    SyncInfoRow(icon: "4.circle.fill", text: L10n.ICloud.tr("info4"))
+                    SyncInfoRow(icon: "1.circle.fill", text: L10n.ICloud.info1)
+                    SyncInfoRow(icon: "2.circle.fill", text: L10n.ICloud.info2)
+                    SyncInfoRow(icon: "3.circle.fill", text: L10n.ICloud.info3)
+                    SyncInfoRow(icon: "4.circle.fill", text: L10n.ICloud.info4)
                 }
                 .padding(.vertical, DesignSystem.tiny)
             } header: {
-                Text(L10n.ICloud.tr("aboutSync"))
+                Text(L10n.ICloud.aboutSync)
             }
 
             // MARK: - Danger Section
@@ -68,7 +68,7 @@ struct iCloudSyncView: View {
                 Button(role: .destructive) {
                     coordinator.showClearCloudConfirmation = true
                 } label: {
-                    Label(L10n.ICloud.tr("clearCloudData"), systemImage: "trash.icloud")
+                    Label(L10n.ICloud.clearCloudData, systemImage: "trash.icloud")
                         .foregroundStyle(.red)
                 }
                 .disabled(coordinator.isSyncing)
@@ -79,13 +79,13 @@ struct iCloudSyncView: View {
 #endif
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
-        .navigationTitle(L10n.ICloud.tr("title"))
-        .alert(L10n.ICloud.tr("syncError"), isPresented: $coordinator.showError) {
-            Button(L10n.Common.tr("ok"), role: .cancel) {}
+        .navigationTitle(L10n.ICloud.title)
+        .alert(L10n.ICloud.syncError, isPresented: $coordinator.showError) {
+            Button(L10n.Common.ok, role: .cancel) {}
         } message: {
             Text(coordinator.errorMessage)
         }
-        .alert(L10n.ICloud.tr("conflictDetected"), isPresented: $coordinator.showConflictAlert) {
+        .alert(L10n.ICloud.conflictDetected, isPresented: $coordinator.showConflictAlert) {
             Button(ConflictResolution.merge.displayName) {
                 coordinator.conflictResolution = .merge
                 settingsStore.iCloudConflictResolution = ConflictResolution.merge.rawValue
@@ -98,28 +98,28 @@ struct iCloudSyncView: View {
                 coordinator.conflictResolution = .keepRemote
                 settingsStore.iCloudConflictResolution = ConflictResolution.keepRemote.rawValue
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.ICloud.tr("conflictMessage"))
+            Text(L10n.ICloud.conflictMessage)
         }
-        .confirmationDialog(L10n.ICloud.tr("pullWillOverwrite"), isPresented: $coordinator.showPullConfirmation, titleVisibility: .visible) {
-            Button(L10n.ICloud.tr("download"), role: .destructive) {
+        .confirmationDialog(L10n.ICloud.pullWillOverwrite, isPresented: $coordinator.showPullConfirmation, titleVisibility: .visible) {
+            Button(L10n.ICloud.download, role: .destructive) {
                 coordinator.pullFromCloud()
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.ICloud.tr("pullOverwriteMessage"))
+            Text(L10n.ICloud.pullOverwriteMessage)
         }
-        .confirmationDialog(L10n.ICloud.tr("clearCloudData"), isPresented: $coordinator.showClearCloudConfirmation, titleVisibility: .visible) {
-            Button(L10n.Common.tr("clearAll"), role: .destructive) {
+        .confirmationDialog(L10n.ICloud.clearCloudData, isPresented: $coordinator.showClearCloudConfirmation, titleVisibility: .visible) {
+            Button(L10n.Common.Misc.clearAll, role: .destructive) {
                 coordinator.clearCloudData()
             }
-            Button(L10n.Common.tr("cancel"), role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.ICloud.tr("clearCloudDataMessage"))
+            Text(L10n.ICloud.clearCloudDataMessage)
         }
-        .alert(L10n.ICloud.tr("autoSyncFailed"), isPresented: $coordinator.showAutoSyncError) {
-            Button(L10n.Common.tr("ok"), role: .cancel) {}
+        .alert(L10n.ICloud.autoSyncFailed, isPresented: $coordinator.showAutoSyncError) {
+            Button(L10n.Common.ok, role: .cancel) {}
         } message: {
             Text(coordinator.autoSyncErrorMessage)
         }

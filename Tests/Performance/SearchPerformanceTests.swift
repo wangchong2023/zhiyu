@@ -25,6 +25,8 @@ final class SearchPerformanceTests: XCTestCase {
 
     override func tearDown() async throws {
         store = nil
+        // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
+        try? await Task.sleep(nanoseconds: 50_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
@@ -72,9 +74,7 @@ final class SearchPerformanceTests: XCTestCase {
         }
 
         // 将模拟数据写入存储
-        store.replaceAllPages(testPages)
-        // 直接同步 pages 数组，确保测量时数据已就绪
-        store.sqliteStore.pages = testPages
+        await store.replaceAllPages(testPages)
 
         // 记录开始时间
         let start = CFAbsoluteTimeGetCurrent()
