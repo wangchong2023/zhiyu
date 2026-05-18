@@ -40,11 +40,11 @@ public final class AuthService: AuthServiceProtocol {
         // 从持久化存储加载状态 (例如 Keychain 或 UserDefaults)
         // 暂时禁用自动登录与游客模式恢复，遵循用户“进入程序进入登录页面”的要求
         /*
-        let isAuthenticated = UserDefaults.standard.bool(forKey: "auth.isAuthenticated")
+        let isAuthenticated = UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.authIsAuthenticated)
         if isAuthenticated {
             AuthSession.shared.update(user: User(name: "User", email: "user@example.com"))
         }
-        let isGuest = UserDefaults.standard.bool(forKey: "auth.isGuest")
+        let isGuest = UserDefaults.standard.bool(forKey: AppConstants.Keys.Storage.authIsGuest)
         AuthSession.shared.isGuest = isGuest
         */
     }
@@ -101,8 +101,8 @@ public final class AuthService: AuthServiceProtocol {
     // MARK: - 私有方法
     
     private func saveState() {
-        UserDefaults.standard.set(isAuthenticated, forKey: "auth.isAuthenticated")
-        UserDefaults.standard.set(isGuest, forKey: "auth.isGuest")
+        UserDefaults.standard.set(isAuthenticated, forKey: AppConstants.Keys.Storage.authIsAuthenticated)
+        UserDefaults.standard.set(isGuest, forKey: AppConstants.Keys.Storage.authIsGuest)
     }
 }
 
