@@ -1,7 +1,7 @@
 // Colors.swift
 //
 // 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 设计系统的核心语义颜色、十六进制逻辑及透明度令牌。
+// 功能说明: [Shared] 共享标准层：本文件定义了智宇 (ZhiYu) 设计系统的核心语义颜色、十六进制逻辑及透明度令牌。
 // 适配全平台亮暗模式，确保视觉一致性与可访问性。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
@@ -116,6 +116,7 @@ extension Color {
     public static var appCard: Color { Color(light: Color(hex: "ffffff"), dark: Color(hex: "252640")) }
     public static var appText: Color { Color(light: Color(hex: "1a1a2e"), dark: Color(hex: "e8e8f0")) }
     public static var appSecondary: Color { Color(light: Color(hex: "6b6b87"), dark: Color(hex: "ababc7")) }
+    public static var appTertiary: Color { Color(light: Color(hex: "9e9eb3"), dark: Color(hex: "7a7a91")) }
     public static var appBorder: Color { Color(light: Color(hex: "ebebf2"), dark: Color(hex: "303142")) }
     
     /// 主题强调色 (通过 ThemeManager 获取，确保在主线程访问)
@@ -185,6 +186,7 @@ extension ShapeStyle where Self == Color {
     public static var appAccent: Color { .appAccent }
     public static var appText: Color { .appText }
     public static var appSecondary: Color { .appSecondary }
+    public static var appTertiary: Color { .appTertiary }
     public static var appBorder: Color { .appBorder }
     public static var appCard: Color { .appCard }
     public static var appBackground: Color { .appBackground }

@@ -1,0 +1,275 @@
+//
+// L10n+Common.swift
+//
+// 作者: Wang Chong
+// 功能说明: [Shared] 共享标准层：智宇 (ZhiYu) 多语言 Common 垂直切片强类型扩展定义
+// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//
+
+import Foundation
+
+extension L10n {
+    public static var SearchPlaceholder: String { Common.searchPlaceholder }
+
+    public enum Common {
+        public static let t = "Common"
+        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
+
+        // MARK: - App Metadata
+        public static var appName: String { tr("app.name") }
+        public static var aiThinking: String { tr("aiThinking") }
+        
+        // MARK: - Basic Actions
+        public static var ok: String { tr("ok") }
+        public static var cancel: String { tr("cancel") }
+        public static var done: String { tr("done") }
+        public static var save: String { tr("save") }
+        public static var delete: String { tr("delete") }
+        public static var edit: String { tr("edit") }
+        public static var refresh: String { tr("refresh") }
+        public static var success: String { tr("success") }
+        public static var failed: String { tr("failed") }
+        public static var error: String { tr("error") }
+        public static var logout: String { tr("logout") }
+        public static var settings: String { tr("settings") }
+        public static var help: String { tr("help") }
+        public static var lock: String { tr("lock") }
+        public static var skip: String { tr("skip") }
+        public static var action: String { tr("action") }
+        public static var confirm: String { tr("confirm") }
+        public static var deleteConfirm: String { tr("deleteConfirm") }
+        public static var ignore: String { tr("ignore") }
+        public static var preview: String { tr("preview") }
+        public static var quickPreview: String { tr("quickPreview") }
+        public static var copyPageLink: String { tr("copyPageLink") }
+        public static var syncToReminders: String { tr("syncToReminders") }
+        public static var `import`: String { tr("misc.import") }
+        public static var create: String { Localized.tr("misc.create", table: t) }
+        public static var deleteAll: String { Localized.tr("misc.deleteAll", table: t) }
+        public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: t) }
+        public static var close: String { Localized.tr("misc.close", table: t) }
+        public static var reset: String { Localized.tr("misc.reset", table: t) }
+        public static var correct: String { Localized.tr("misc.correct", table: t) }
+        public static var incorrect: String { Localized.tr("misc.incorrect", table: t) }
+        public static var nextQuestion: String { Localized.tr("misc.nextQuestion", table: t) }
+        public static var viewResults: String { Localized.tr("misc.viewResults", table: t) }
+
+        // MARK: - Generic States
+        public static var loading: String { tr("loading") }
+        public static var awesome: String { tr("awesome") }
+        public static var recentUpdates: String { tr("recentUpdates") }
+        public static var unitTenThousand: String { tr("unitTenThousand") }
+        public static var searchPlaceholder: String { tr("searchPlaceholder") }
+        public static var pinned: String { tr("pinned") }
+        public static var yesterday: String { tr("yesterday") }
+        public static var justNow: String { tr("justNow") }
+        public static var about: String { tr("about") }
+        public static var unknown: String { tr("unknown") }
+        public static var none: String { Localized.tr("misc.none", table: t) }
+        public static var all: String { Localized.tr("misc.all", table: t) }
+
+        public enum Error {
+            public static var notFound: String { Common.tr("Error.notFound") }
+        }
+
+        public enum Security {
+            public static var title: String { Common.tr("security") }
+            public static var unlockReason: String { Common.tr("security.unlockReason") }
+            public static var unlockToView: String { Common.tr("security.unlockToView") }
+            public static var privacyMasked: String { Common.tr("security.privacyMasked") }
+            public static var unlock: String { Common.tr("security.unlock") }
+            public static var unlockHint: String { Common.tr("security.unlockHint") }
+            public static var vaultLocked: String { Common.tr("security.vaultLocked") }
+        }
+
+        public enum LogAction {
+            public static var create: String { Common.tr("logAction.create") }
+            public static var delete: String { Common.tr("logAction.delete") }
+            public static var update: String { Common.tr("logAction.update") }
+            public static var ingest: String { Common.tr("logAction.ingest") }
+        }
+
+        public enum Stat {
+            public static var newPages: String { Common.tr("stats.newPages") }
+            public static var growth: String { Common.tr("stats.growth") }
+            public static var title: String { Common.tr("stats.title") }
+            public static var totalPages: String { Common.tr("stat.totalPages") }
+            public static var totalWords: String { Common.tr("stat.totalWords") }
+            public static var entities: String { Common.tr("stat.entities") }
+            public static var concepts: String { Common.tr("stat.concepts") }
+            public static var sources: String { Common.tr("stat.sources") }
+        }
+        
+        public enum Stats {
+            public static var newPages: String { Common.tr("stats.newPages") }
+            public static var growth: String { Common.tr("stats.growth") }
+            public static var title: String { Common.tr("stats.title") }
+        }
+
+        public enum Sidebar {
+            public static var title: String { Common.tr("sidebar.title") }
+            public static var weeklyInsight: String { Common.tr("sidebar.weeklyInsight") }
+            public static var dashboard: String { Common.tr("sidebar.dashboard") }
+            public static var allPages: String { Common.tr("sidebar.allPages") }
+            public static var tags: String { Common.tr("sidebar.tags") }
+            public static var trash: String { Common.tr("sidebar.trash") }
+            public static var synthesis: String { Common.tr("sidebar.synthesis") }
+            public static var system: String { Common.tr("sidebar.system") }
+            public static var tools: String { Common.tr("sidebar.tools") }
+            public static var capabilities: String { Common.tr("sidebar.capabilities") }
+            public static var healthCheck: String { Common.tr("sidebar.healthCheck") }
+            public static var knowledge: String { Common.tr("sidebar.knowledge") }
+            public static var pageList: String { Common.tr("sidebar.pageList") }
+            public static var universe: String { Common.tr("sidebar.universe") }
+            public static var tagManager: String { Common.tr("sidebar.tagManager") }
+            public static var plugins: String { Common.tr("sidebar.plugins") }
+            public static var collaboration: String { Common.tr("sidebar.collaboration") }
+        }
+
+        public enum Tab {
+            public static var knowledge: String { Common.tr("tab.knowledge") }
+            public static var chat: String { Common.tr("tab.chat") }
+            public static var graph: String { Common.tr("tab.graph") }
+            public static var synthesis: String { Common.tr("tab.synthesis") }
+            public static var ingest: String { Common.tr("tab.ingest") }
+            public static var settings: String { Common.tr("tab.settings") }
+            public static var voice: String { Common.tr("tab.voice") }
+            public static var pdf: String { Common.tr("tab.pdf") }
+            public static var collab: String { Common.tr("tab.collab") }
+            public static var search: String { Common.tr("tab.search") }
+        }
+
+        public enum Global {
+            public static var noData: String { Common.tr("common.noData") }
+            public static var esc: String { Common.tr("esc") }
+        }
+
+        public enum Empty {
+            public static func tr(_ key: String) -> String { Common.tr(key) }
+            public static var noData: String { Common.tr("common.noData") }
+        }
+
+        public enum Log {
+            public enum Status {
+                public static var success: String { Common.tr("log.status.success") }
+                public static var failure: String { Common.tr("log.status.failure") }
+                public static var processing: String { Common.tr("log.status.processing") }
+            }
+        }
+
+        public enum Perf {
+            public static var title: String { Common.tr("perf.title") }
+            public static var lastUpdated: String { Common.tr("perf.lastUpdated") }
+            public static var memory: String { Common.tr("perf.memory") }
+            public static var timing: String { Common.tr("perf.timing") }
+            public static var pages: String { Common.tr("perf.pages") }
+            public static var words: String { Common.tr("perf.words") }
+            public static var nodes: String { Common.tr("perf.nodes") }
+            public static var load: String { Common.tr("perf.load") }
+            public static var lint: String { Common.tr("perf.lint") }
+            public static var graphLayout: String { Common.tr("perf.graphLayout") }
+            public static var search: String { Common.tr("perf.search") }
+            public static var edges: String { Common.tr("perf.edges") }
+            public static var save: String { Common.tr("perf.save") }
+            
+            public enum summary {
+                public static var title: String { Common.tr("perf.summary.title") }
+                public static var search: String { Common.tr("perf.summary.search") }
+                public static var pages: String { Common.tr("perf.summary.pages") }
+                public static var words: String { Common.tr("perf.summary.words") }
+                public static var nodes: String { Common.tr("perf.summary.nodes") }
+                public static var edges: String { Common.tr("perf.summary.edges") }
+                public static var load: String { Common.tr("perf.summary.load") }
+                public static var save: String { Common.tr("perf.summary.save") }
+                public static var graph: String { Common.tr("perf.summary.graph") }
+                public static var lint: String { Common.tr("perf.summary.lint") }
+                public static var memory: String { Common.tr("perf.summary.memory") }
+                public static var graphLayout: String { Common.tr("perf.summary.graphLayout") }
+            }
+        }
+
+        public enum Palette {
+            public static var searchPlaceholder: String { Common.tr("palette.searchPlaceholder") }
+        }
+
+        public enum Splash {
+            public static var appName: String { Common.tr("splash.appName") }
+            public static var author: String { Common.tr("splash.author") }
+            public static var enter: String { Common.tr("splash.enter") }
+            public static var quote: String { Common.tr("splash.quote") }
+            public static var title: String { Common.tr("splash.title") }
+        }
+
+        public enum Spatial {
+            public static var title: String { Common.tr("spatial.title") }
+            public static var subtitle: String { Common.tr("spatial.subtitle") }
+            public static var features: String { Common.tr("spatial.features") }
+            public static var requirement: String { Common.tr("spatial.requirement") }
+            
+            public static var featureGraph3D: String { Feature.Graph3D.title }
+            public static var featureGraph3DDesc: String { Feature.Graph3D.desc }
+            public static var featureGaze: String { Feature.Gaze.title }
+            public static var featureGazeDesc: String { Feature.Gaze.desc }
+            public static var featureGesture: String { Feature.Gesture.title }
+            public static var featureGestureDesc: String { Feature.Gesture.desc }
+            public static var featureSpatialAudio: String { Feature.SpatialAudio.title }
+            public static var featureSpatialAudioDesc: String { Feature.SpatialAudio.desc }
+
+            public enum Feature {
+                public enum Gaze {
+                    public static var title: String { Common.tr("spatial.feature.gaze") }
+                    public static var desc: String { Common.tr("spatial.feature.gaze.desc") }
+                }
+                public enum Gesture {
+                    public static var title: String { Common.tr("spatial.feature.gesture") }
+                    public static var desc: String { Common.tr("spatial.feature.gesture.desc") }
+                }
+                public enum SpatialAudio {
+                    public static var title: String { Common.tr("spatial.feature.spatialAudio") }
+                    public static var desc: String { Common.tr("spatial.feature.spatialAudio.desc") }
+                }
+                public enum Graph3D {
+                    public static var title: String { Common.tr("spatial.feature.3dGraph") }
+                    public static var desc: String { Common.tr("spatial.feature.3dGraph.desc") }
+                }
+            }
+        }
+
+        public enum Demo {
+            public enum aiAgent {
+                public static var title: String { Common.tr("demo.aiAgent.title") }
+                public static var content: String { Common.tr("demo.aiAgent.content") }
+            }
+            public enum planning {
+                public static var title: String { Common.tr("demo.planning.title") }
+                public static var content: String { Common.tr("demo.planning.content") }
+            }
+            public enum memory {
+                public static var title: String { Common.tr("demo.memory.title") }
+                public static var content: String { Common.tr("demo.memory.content") }
+            }
+            public enum toolUse {
+                public static var title: String { Common.tr("demo.toolUse.title") }
+                public static var content: String { Common.tr("demo.toolUse.content") }
+            }
+            public enum llm {
+                public static var title: String { Common.tr("demo.llm.title") }
+                public static var content: String { Common.tr("demo.llm.content") }
+            }
+        }
+
+        public enum Misc {
+            public static var correct: String { Localized.tr("misc.correct", table: "Common") }
+            public static var incorrect: String { Localized.tr("misc.incorrect", table: "Common") }
+            public static var nextQuestion: String { Localized.tr("misc.nextQuestion", table: "Common") }
+            public static var viewResults: String { Localized.tr("misc.viewResults", table: "Common") }
+            public static var create: String { Localized.tr("misc.create", table: "Common") }
+            public static var clear: String { Localized.tr("misc.clear", table: "Common") }
+            public static var clearAll: String { Localized.tr("misc.clearAll", table: "Common") }
+            public static var `import`: String { Localized.tr("misc.import", table: "Common") }
+            public static var deleteAll: String { Localized.tr("misc.deleteAll", table: "Common") }
+            public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: "Common") }
+        }
+    }
+}
