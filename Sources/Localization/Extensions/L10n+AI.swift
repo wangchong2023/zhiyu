@@ -282,7 +282,12 @@ extension L10n {
 
         public enum Task {
             public static let t = "AI"
+            public static func tr(_ key: String) -> String { Localized.tr("aitask." + key, table: t) }
+            public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("aitask." + key, table: t, args) }
+            
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
+            public static var processing: String { Localized.tr("aitask.processing", table: t) }
+            public static var typeIngest: String { Localized.tr("aitask.type.ingest", table: t) }
             public static var centerTitle: String { Localized.tr("aitask.center.title", table: t) }
             public static var emptyTitle: String { Status.emptyTitle }
             public static var emptyDesc: String { Status.emptyDesc }

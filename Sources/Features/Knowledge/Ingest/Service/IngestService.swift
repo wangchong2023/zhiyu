@@ -220,7 +220,7 @@ actor IngestService {
         // 接入 TaskCenter (由 TaskCenter 统一触发灵动岛)
         let taskID = await TaskCenter.shared.addTask(
             type: .ingest, 
-            name: L10n.AI.Task.tr("type.ingest"), 
+            name: L10n.AI.Task.typeIngest, 
             target: url.lastPathComponent
         )
 

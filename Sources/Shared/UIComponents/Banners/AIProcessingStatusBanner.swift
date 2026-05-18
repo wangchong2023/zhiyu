@@ -40,7 +40,7 @@ struct AIProcessingStatusBanner: View {
                             .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(.appText)
                         
-                        Text(taskCenter.latestStatus.isEmpty ? L10n.AI.Task.tr("processing") : taskCenter.latestStatus)
+                        Text(taskCenter.latestStatus.isEmpty ? L10n.AI.Task.processing : taskCenter.latestStatus)
                             .font(.system(size: 11))
                             .foregroundStyle(.appSecondary)
                             .lineLimit(1)
