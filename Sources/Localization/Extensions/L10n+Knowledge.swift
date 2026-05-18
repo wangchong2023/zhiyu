@@ -13,7 +13,7 @@ extension L10n {
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public enum Page {
-            public static var title: String { Knowledge.tr("page.title") }
+            public static var title: String { Common.tr("pageTitle") }
             public static var edit: String { Knowledge.tr("page.edit") }
             public static var doneEditing: String { Knowledge.tr("page.doneEditing") }
             public static var deletePage: String { Knowledge.tr("page.deletePage") }

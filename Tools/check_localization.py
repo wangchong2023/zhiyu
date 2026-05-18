@@ -31,12 +31,18 @@ def resolve_table_name(key, table):
     if table in table_map:
         return table_map[table]
     
-    if table == "Common":
+    if table == "Common" or table == "Localizable" or table == "Dashboard":
+        if key == "logout": return "Auth"
+        if key == "settings": return "Settings"
         if key.startswith("prompt."): return "AI"
+        if key.startswith("aitask."): return "AI"
         if key.startswith("ingest."): return "Ingest"
         if key.startswith("settings."): return "Settings"
         if key.startswith("chat."): return "Chat"
         if key.startswith("vault."): return "Vault"
+        if key.startswith("insight."): return "Insight"
+        if key.startswith("graph."): return "Graph"
+        if key.startswith("plugin."): return "Plugin"
         
     return table
 
@@ -92,7 +98,6 @@ def build_struct_table_mapping():
             if t_match and struct_stack:
                 struct_stack[-1]['table'] = t_match.group(1)
 
-            # 修正括号深度，支持嵌套 struct 出栈
             brace_depth += opened - closed
             while struct_stack and brace_depth <= struct_stack[-1]['depth']:
                 popped = struct_stack.pop()
@@ -118,16 +123,16 @@ def parse_single_l10n_swift(file_path, struct_to_table):
 
     # 匹配显式的 Localized.tr / trf 并提取 (key, table)
     explicit_pat = re.compile(r'Localized\.tr(?:f)?\("([^"]+)"\,\s*table:\s*"([^"]+)"\)')
-    # 匹配隐式的本地 tr("key") 调用 (确保前面不是 ".")
-    tr_pat = re.compile(r'(?<!\.)\btr(?:f)?\("([^"]+)"\)')
-    # 匹配跨结构体调用，如 Plugin.tr("...") (确保前面不是 "Localized.")
-    cross_struct_pat = re.compile(r'(?<!Localized\.)\b([a-zA-Z0-9_]+)\.tr(?:f)?\("([^"]+)"\)')
+    # 匹配隐式的本地 tr("key") 或 trf("key", ...) 调用
+    tr_pat = re.compile(r'(?<!\.)\btr(?:f)?\("([^"]+)"')
+    # 匹配跨结构体调用，如 Plugin.tr("...") 或 Dashboard.trf("...", args)
+    cross_struct_pat = re.compile(r'(?<!Localized\.)\b([a-zA-Z0-9_]+)\.tr(?:f)?\("([^"]+)"')
     # 匹配结构体定义
     struct_pat = re.compile(r"\b(?:struct|enum)\s+([a-zA-Z0-9_]+)")
     # 匹配结构体内指定的本地化表 let t = "Table"
-    t_pat = re.compile(r"\b(?:public\s+|static\s+)*let\s+t\s*=\s*\"([^\"]+)\"")
+    t_pat = re.compile(r"\b(?:public\s+|static\s+|private\s+|internal\s+|fileprivate\s+)*let\s+t\s*=\s*\"([^\"]+)\"")
 
-    # 从文件名推断默认的垂直分表 table 名，如果是 L10n+Editor.swift 则为 Editor
+    # 从文件名推断默认的垂直分表 table 名
     filename = os.path.basename(file_path)
     default_table = "Common"
     if filename.startswith("L10n+") and filename.endswith(".swift"):
@@ -142,10 +147,11 @@ def parse_single_l10n_swift(file_path, struct_to_table):
         struct_match = struct_pat.search(clean_line)
         if struct_match:
             struct_name = struct_match.group(1)
+            parent_table = struct_info[-1]['table'] if struct_info else default_table
             struct_info.append({
                 'depth': brace_depth,
                 'name': struct_name,
-                'table': struct_to_table.get(struct_name, default_table)
+                'table': parent_table
             })
 
         t_match = t_pat.search(clean_line)
@@ -172,8 +178,10 @@ def parse_single_l10n_swift(file_path, struct_to_table):
 
         # 3. 隐式本地 tr("...") 调用
         for k in tr_pat.findall(clean_line):
-            if "Localized.tr" not in clean_line and not any(f"{s}.tr" in clean_line for s in struct_to_table):
-                keys_found.append((k, active_table, file_path, i))
+            # 排除已经被 explicit_pat 或 cross_struct_pat 捕获的情况
+            if "Localized.tr" in clean_line: continue
+            if any(f"{s}.tr" in clean_line for s in struct_to_table): continue
+            keys_found.append((k, active_table, file_path, i))
 
     return keys_found
 
@@ -187,17 +195,15 @@ def parse_all_l10n_keys(struct_to_table):
 
 # ==================== 3. 扫描其他 Swift 源码中的 L10n 调用 ====================
 def scan_other_swift_files(sources_dir, struct_to_table):
-    # 显式指定 table: "xxx" 的调用
-    explicit_pat = re.compile(r'(?:\bLocalized|\bL10n\.[a-zA-Z0-9_]+)\.tr(?:f)?\(\s*"([^"]+)"\s*,\s*table:\s*"([^"]+)"')
-    
-    # 隐式调用的前缀捕获
-    implicit_pat = re.compile(r'(\bLocalized|\bL10n\.[a-zA-Z0-9_]+)\.tr(?:f)?\(\s*"([^"]+)"')
+    # 使用更安全的正则
+    explicit_pat = re.compile(r'(?:\bLocalized|\bL10n\.[a-zA-Z0-9_\.]+)\.tr(?:f)?\(\s*"([^"]+)"\s*,\s*table:\s*"([^"]+)"')
+    implicit_pat = re.compile(r'(\bLocalized|\bL10n\.[a-zA-Z0-9_\.]+)\.tr(?:f)?\(\s*"([^"]+)"')
     
     keys_found = []
     leaks_found = [] 
 
     for root, _, files in os.walk(sources_dir):
-        if "Tests" in root or "Tools" in root or "Localization" in root:
+        if any(d in root for d in ["Tests", "Tools", "Localization"]):
             continue
         for file in files:
             if not file.endswith(".swift"):
@@ -207,29 +213,29 @@ def scan_other_swift_files(sources_dir, struct_to_table):
                 continue
 
             with open(file_path, "r", encoding="utf-8") as f:
-                for i, line in enumerate(f, 1):
+                content = f.read()
+                lines = content.split("\n")
+                for i, line in enumerate(lines, 1):
                     clean_line = re.sub(r'//.*', '', line)
                     
-                    # 拦截越权直接调用 Localized.tr / Localized.trf 泄漏
                     if "Localized.tr" in clean_line:
                         allowed_files = {"LLMModels.swift", "SourceView.swift", "SearchView.swift"}
                         if file not in allowed_files:
                             leaks_found.append((file_path, i, "Localized.tr" if "Localized.trf" not in clean_line else "Localized.trf"))
                     
-                    # 1. 优先匹配显式指定 table 的情况
                     for k, t in explicit_pat.findall(clean_line):
                         keys_found.append((k, t, file_path, i))
                     
-                    # 2. 如果没有显式指定 table，匹配隐式调用
                     if "table:" not in clean_line:
                         for prefix, k in implicit_pat.findall(clean_line):
                             if prefix == "Localized":
                                 t = "Localizable"
                             else:
-                                # 提取 L10n.StructName 中的 StructName
-                                struct_name = prefix.split(".")[1]
-                                t = struct_to_table.get(struct_name, struct_name)
-                            keys_found.append((k, t, file_path, i))
+                                parts = prefix.split(".")
+                                if len(parts) > 1:
+                                    struct_name = parts[1]
+                                    t = struct_to_table.get(struct_name, struct_name)
+                                    keys_found.append((k, t, file_path, i))
 
     return keys_found, leaks_found
 
@@ -281,7 +287,6 @@ class LocalizationAuditor:
             if not val and val != "":
                 return f"Empty or invalid translation unit for language '{lang}' for key '{key}' in table '{resolved_table}'"
             
-            # 强化检查：严防将翻译值敷衍地设置为了 Key 自身
             if val == key:
                 critical_prefixes = ["template.", "create.template.", "settings.clearAll", "synthesis.clearAll"]
                 critical_keys = {"clearAll", "searchPlaceholder", "customIcon", "newPage", "pageType", "confirm"}
@@ -294,11 +299,9 @@ class LocalizationAuditor:
 def main():
     print("--- Running L10n Comprehensive Static Audit (Decentralized Version) ---")
     
-    # 1. 扫描所有 L10n 物理扩展 Swift 文件的 struct 表映射
     struct_to_table = build_struct_table_mapping()
     print(f"Loaded {len(struct_to_table)} namespaces mappings.")
     
-    # 2. 从分布式 L10n Swift 代码和全量 Swift 源码中提取 Key
     keys_from_localized = parse_all_l10n_keys(struct_to_table)
     keys_from_code, leaks = scan_other_swift_files(SOURCES_DIR, struct_to_table)
     all_calls = keys_from_localized + keys_from_code
@@ -309,12 +312,10 @@ def main():
     error_count = 0
     reported_errors = set()
 
-    # 3. 优先输出泄漏越权直接调用底层翻译器错误
     for file_path, line, method in leaks:
         print(f"{file_path}:{line}: error: [L10n Leak] Directly calling '{method}' is strictly prohibited outside of L10n extensions. Please wrap it as a strongly-typed static member in 'L10n' extensions instead.", file=sys.stderr)
         error_count += 1
 
-    # 4. 校验翻译存在性与语言完整性
     for key, table, file_path, line in all_calls:
         error_msg = auditor.audit_key(key, table)
         if error_msg:

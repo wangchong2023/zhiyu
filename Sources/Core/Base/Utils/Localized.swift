@@ -72,16 +72,22 @@ internal struct Localized {
         }
         
         // 2. 特定 Key 路由逻辑 (如果 Key 包含前缀，自动推断表名)
-        if table == "Common" {
+        if table == "Common" || table == "Localizable" || table == "Dashboard" {
+            if key == "logout" { return "Auth" }
+            if key == "settings" { return "Settings" }
             if key.hasPrefix("prompt.") { return "AI" }
+            if key.hasPrefix("aitask.") { return "AI" }
             if key.hasPrefix("ingest.") { return "Ingest" }
             if key.hasPrefix("settings.") { return "Settings" }
             if key.hasPrefix("chat.") { return "Chat" }
             if key.hasPrefix("vault.") { return "Vault" }
+            if key.hasPrefix("insight.") { return "Insight" }
+            if key.hasPrefix("graph.") { return "Graph" }
+            if key.hasPrefix("plugin.") { return "Plugin" }
         }
-        
+
         return table
-    }
+        }
 
     /// 获取特定本地化词条内容
     /// - Parameters:

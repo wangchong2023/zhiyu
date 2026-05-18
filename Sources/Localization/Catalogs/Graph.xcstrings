@@ -493,6 +493,40 @@
           }
         }
       }
+    },
+    "desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semantic connections between knowledge nodes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识节点间的语义联系"
+          }
+        }
+      }
+    },
+    "viewPage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看页面"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

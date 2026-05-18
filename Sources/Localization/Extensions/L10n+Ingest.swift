@@ -84,7 +84,7 @@ extension L10n {
         public static var tips: String { Ingest.tr("ingest.tips") }
         public static var urlImportPlaceholder: String { Ingest.tr("ingest.urlImportPlaceholder") }
         public static var webDesc: String { Ingest.tr("ingest.webDesc") }
-        public static var ok: String { Ingest.tr("ingest.ok") }
+        public static var ok: String { Common.tr("misc.ok") }
         public static var llmRequired: String { Ingest.tr("ingest.llmRequired") }
         public static var actions: String { Ingest.tr("ingest.actions") }
         public static var sources: String { Ingest.tr("ingest.sources") }
@@ -129,7 +129,7 @@ extension L10n {
             public static var fromAlbum: String { Ingest.tr("ocr.fromAlbum") }
             public static var recognize: String { Ingest.tr("ocr.recognize") }
             public static var copy: String { Ingest.tr("ocr.copy") }
-            public static var pageTitle: String { Ingest.tr("ocr.pageTitle") }
+            public static var pageTitle: String { Common.tr("pageTitle") }
             public static var changeIcon: String { Ingest.tr("ocr.changeIcon") }
             public static var customIcon: String { Ingest.tr("ocr.customIcon") }
             public static var scanTag: String { Ingest.tr("ocr.scanTag") }
@@ -153,7 +153,7 @@ extension L10n {
 
             public static var ingestToKnowledge: String { Ingest.tr("pdf.ingestToKnowledge") }
             public static var ingest: String { Ingest.tr("pdf.ingest") }
-            public static var pageTitle: String { Ingest.tr("pdf.pageTitle") }
+            public static var pageTitle: String { Common.tr("pageTitle") }
             public static var pageType: String { Ingest.tr("pdf.pageType") }
             public static var targetPage: String { Ingest.tr("pdf.targetPage") }
             public static var extractionMethod: String { Ingest.tr("pdf.extractionMethod") }
@@ -171,7 +171,7 @@ extension L10n {
             public static var title: String { Ingest.tr("pdf.title") }
             public static var library: String { Ingest.tr("pdf.library") }
             public static var libraryHint: String { Ingest.tr("pdf.libraryHint") }
-            public static var delete: String { Ingest.tr("pdf.delete") }
+            public static var delete: String { Common.tr("misc.delete") }
             public static var annotateSelected: String { Ingest.tr("pdf.annotateSelected") }
             public static var add: String { Ingest.tr("pdf.add") }
             public static var addNote: String { Ingest.tr("pdf.addNote") }

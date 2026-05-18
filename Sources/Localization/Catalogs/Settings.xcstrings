@@ -2227,6 +2227,57 @@
           }
         }
       }
+    },
+    "plugin.permission.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plugin is requesting permission to access protected resources."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此插件正在请求访问受保护资源的权限。"
+          }
+        }
+      }
+    },
+    "ondevice.errorFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On-device model error: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "端侧模型错误：%@"
+          }
+        }
+      }
+    },
+    "icloud.lastSyncFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last sync: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最后同步时间：%@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

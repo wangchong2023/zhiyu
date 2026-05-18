@@ -391,6 +391,23 @@
           }
         }
       }
+    },
+    "search.resultsCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found %lld results"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找到 %lld 个结果"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

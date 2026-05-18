@@ -437,7 +437,7 @@ private var emptyView: some View {
         Image(systemName: DesignSystem.Icons.chartBar)
             .font(.largeTitle)
             .foregroundColor(.appSecondary.opacity(0.2))
-        Text(L10n.Common.Empty.tr("noData"))
+        Text(L10n.Common.Global.noData)
             .font(.caption)
             .foregroundColor(.appSecondary)
     }

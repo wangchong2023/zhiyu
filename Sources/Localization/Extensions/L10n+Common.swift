@@ -85,7 +85,7 @@ extension L10n {
 
         public enum LogAction {
             public static var create: String { Common.tr("logAction.create") }
-            public static var delete: String { Common.tr("logAction.delete") }
+            public static var delete: String { Common.tr("misc.delete") }
             public static var update: String { Common.tr("logAction.update") }
             public static var ingest: String { Common.tr("logAction.ingest") }
         }
@@ -167,7 +167,7 @@ extension L10n {
             public static var words: String { Common.tr("perf.words") }
             public static var nodes: String { Common.tr("perf.nodes") }
             public static var load: String { Common.tr("perf.load") }
-            public static var lint: String { Common.tr("perf.lint") }
+            public static var lint: String { Common.tr("action.healthCheck") }
             public static var graphLayout: String { Common.tr("perf.graphLayout") }
             public static var search: String { Common.tr("perf.search") }
             public static var edges: String { Common.tr("perf.edges") }
@@ -183,7 +183,7 @@ extension L10n {
                 public static var load: String { Common.tr("perf.summary.load") }
                 public static var save: String { Common.tr("perf.summary.save") }
                 public static var graph: String { Common.tr("perf.summary.graph") }
-                public static var lint: String { Common.tr("perf.summary.lint") }
+                public static var lint: String { Common.tr("action.healthCheck") }
                 public static var memory: String { Common.tr("perf.summary.memory") }
                 public static var graphLayout: String { Common.tr("perf.summary.graphLayout") }
             }

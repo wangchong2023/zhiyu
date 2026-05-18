@@ -103,7 +103,7 @@ extension L10n {
                 public static var typeLabel: String { AI.tr("llm.prompt.typeLabel") }
                 public static var relevanceScore: String { AI.tr("llm.prompt.relevanceScore") }
                 public static var chunkType: String { AI.tr("llm.prompt.chunkType") }
-                public static var pageTitle: String { AI.tr("llm.prompt.pageTitle") }
+                public static var pageTitle: String { Common.tr("pageTitle") }
                 public static var issueDesc: String { AI.tr("llm.prompt.issueDesc") }
                 public static var issueType: String { AI.tr("llm.prompt.issueType") }
                 public static var pageContentSnippet: String { AI.tr("llm.prompt.pageContentSnippet") }
@@ -281,27 +281,27 @@ extension L10n {
         }
 
         public enum Task {
-            public static func tr(_ key: String) -> String { AI.tr("aitask." + key) }
-            public static func trf(_ key: String, _ args: CVarArg...) -> String { AI.trf("aitask." + key, args) }
+            public static let t = "AI"
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
-            public static var centerTitle: String { AI.tr("aitask.center.title") }
+            public static var centerTitle: String { Localized.tr("aitask.center.title", table: t) }
             public static var emptyTitle: String { Status.emptyTitle }
             public static var emptyDesc: String { Status.emptyDesc }
             
             public static func starting(_ name: String, _ target: String) -> String {
-                AI.trf("aitask.status.startingFormat", name, target)
+                Localized.trf("aitask.status.startingFormat", table: t, name, target)
             }
             public static func running(_ name: String, _ target: String) -> String {
-                AI.trf("aitask.status.runningFormat", name, target)
+                Localized.trf("aitask.status.runningFormat", table: t, name, target)
             }
             public static func completed(_ name: String) -> String {
-                AI.trf("aitask.status.completedFormat", name)
+                Localized.trf("aitask.status.completedFormat", table: t, name)
             }
             public static func failed(_ name: String) -> String {
-                AI.trf("aitask.status.failedFormat", name)
+                Localized.trf("aitask.status.failedFormat", table: t, name)
             }
 
             public enum Status {
+                public static let t = "AI"
                 public static var ready: String { Localized.tr("aitask.status.ready", table: t) }
                 public static var running: String { Localized.tr("aitask.status.running", table: t) }
                 public static var emptyTitle: String { Localized.tr("aitask.empty.title", table: t) }
