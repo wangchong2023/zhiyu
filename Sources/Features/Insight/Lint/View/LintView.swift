@@ -66,7 +66,7 @@ struct LintViewContent: View {
                 .pickerStyle(.segmented)
                 #endif
                 .padding(.horizontal, DesignSystem.huge)
-                .padding(.vertical, 10)
+                .padding(.vertical, DesignSystem.tiny)
                 .background(.ultraThinMaterial.opacity(0.3))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .padding(.horizontal, DesignSystem.standardPadding)
@@ -95,7 +95,7 @@ struct LintViewContent: View {
                             .opacity(isRunning || aiStore.isScanningAI ? 1 : 0)
                         
                         Image(systemName: selectedTab == 0 ? DesignSystem.Icons.healthCheck : DesignSystem.Icons.sparkles)
-                            .font(.system(size: 13)) // 微调图标大小
+                            .font(.system(size: DesignSystem.subheadlineFontSize)) // 工具栏图标与文字对齐
                             .opacity(isRunning || aiStore.isScanningAI ? 0 : 1)
                     }
                     
@@ -103,6 +103,7 @@ struct LintViewContent: View {
                 }
                 .font(.footnote.bold())
                 .foregroundStyle(buttonGradient)
+                .padding(.horizontal, 8) // 补偿 iOS 胶囊背景缺少内边距的问题
             }
             .buttonStyle(.plain)
             .disabled(isRunning || aiStore.isScanningAI)
@@ -155,14 +156,14 @@ struct LintViewContent: View {
                 // 上次检查时间展示在左上角
                 VStack(alignment: .leading, spacing: 6) {
                     Text(L10n.Lint.lastCheckTitle)
-                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold)) // 提升字号并加粗
-                        .foregroundStyle(.appText) // 改为正文颜色更醒目
-                        .padding(.leading, 4)
+                        .font(.system(size: DesignSystem.microFontSize, weight: .bold))
+                        .foregroundStyle(.appText)
+                        .padding(.leading, DesignSystem.tiny)
 
                     VStack(alignment: .leading, spacing: 2) {
                         if let date = aiStore.lastLintDate {
                             Text(formatDate(date))
-                                .font(.system(size: 10, design: .monospaced))
+                                .font(.system(size: DesignSystem.microFontSize, design: .monospaced))
                                 .foregroundStyle(.appText)
                         } else {
                             Text(L10n.Lint.lastCheckNever)
@@ -196,7 +197,7 @@ struct LintViewContent: View {
                         
                         VStack(spacing: 0) {
                             Text("\(aiStore.lintScore)")
-                                .font(.system(size: 38, weight: .bold, design: .rounded))
+                                .font(.system(size: DesignSystem.Domain.Lint.scoreFontSize, weight: .bold, design: .rounded))
                                 .foregroundStyle(.appText)
                             
                             Text(aiStore.healthLevel.title)
@@ -217,12 +218,12 @@ struct LintViewContent: View {
                     ]
                     
                     ForEach(ranges, id: \.1) { label, range in
-                        HStack(spacing: 6) {
+                        HStack(spacing: DesignSystem.small) {
                             Text(label)
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                                 .frame(width: 32, alignment: .trailing)
                             Text(range)
-                                .font(.system(size: 10, design: .monospaced))
+                                .font(.system(size: DesignSystem.microFontSize, design: .monospaced))
                                 .foregroundStyle(.appSecondary.opacity(0.8))
                                 .frame(width: 46, alignment: .leading)
                         }
@@ -238,7 +239,7 @@ struct LintViewContent: View {
     }
     
     private var metricsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: DesignSystem.standardPadding), GridItem(.flexible(), spacing: DesignSystem.standardPadding)], spacing: DesignSystem.standardPadding) {
             metricCard(title: L10n.Lint.metricPages, 
                        value: "\(store.pages.count)", 
                        icon: DesignSystem.Icons.documentFill, 
@@ -251,7 +252,7 @@ struct LintViewContent: View {
             
             metricCard(title: L10n.Lint.metricOrphans, 
                        value: "\(store.orphanPageCount)", 
-                       icon: "person.fill.questionmark", 
+                       icon: DesignSystem.Icons.orphanPage, 
                        color: .orange)
             
             metricCard(title: L10n.Lint.metricLinks, 
@@ -278,7 +279,7 @@ struct LintViewContent: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
                     .foregroundColor(.appSecondary)
                 
                 Text(value)
@@ -289,7 +290,7 @@ struct LintViewContent: View {
         .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .appContainer(background: Color.appCard, cornerRadius: DesignSystem.Metrics.dashboardRadius, padding: false)
-        .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
+        .shadow(color: Color.black.opacity(0.04), radius: DesignSystem.small + DesignSystem.tiny, x: 0, y: DesignSystem.tiny + DesignSystem.atomic)
     }
 
     // MARK: - AI 建议板块
@@ -345,7 +346,7 @@ struct LintViewContent: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: DesignSystem.Icons.seal)
-                .font(.system(size: 56))
+                .font(.system(size: DesignSystem.Domain.Lint.emptyIconSize))
                 .foregroundStyle(.green)
             Text(L10n.Lint.noIssues)
                 .font(.title3.weight(.semibold))
@@ -360,7 +361,7 @@ struct LintViewContent: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: DesignSystem.Icons.sparkles)
-                .font(.system(size: 56))
+                .font(.system(size: DesignSystem.Domain.Lint.emptyIconSize))
                 .foregroundStyle(.appAccent)
             Text(L10n.Lint.noAISuggestions)
                 .font(.title3.weight(.semibold))
@@ -473,17 +474,17 @@ struct RefactorSuggestionRow: View {
                 .font(.caption2)
                 .padding(6)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
         }
         .padding(.vertical, 4)
     }
     
     private var iconName: String {
         switch suggestion.type {
-        case "merge": return "arrow.merge"
-        case "split": return "arrow.branch"
-        case "rename": return "character.cursor.ibeam"
-        default: return "sparkles"
+        case "merge": return DesignSystem.Icons.merge
+        case "split": return DesignSystem.Icons.branch
+        case "rename": return DesignSystem.Icons.cursorIbeam
+        default: return DesignSystem.Icons.sparkles
         }
     }
     
@@ -595,9 +596,9 @@ struct LintIssueRow: View {
                     .font(.caption)
                     .padding(8)
                     .background(Color.purple.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                             .stroke(Color.purple.opacity(0.2), lineWidth: 1)
                     )
                     .padding(.leading, 24)

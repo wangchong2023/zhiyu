@@ -48,7 +48,7 @@ struct ChatBubbleView: View {
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
     }
     
     private var timestampString: String {
@@ -70,22 +70,22 @@ struct ChatBubbleView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Domain.AI.Chat.bubbleCornerRadius))
                     .shadow(color: Color.appAccent.opacity(0.12), radius: 8, x: 0, y: 4)
                 
                 Image(systemName: DesignSystem.Icons.personCircle)
                     .font(.title3)
                     .foregroundStyle(.appAccent.opacity(0.6))
-                    .padding(.top, 4)
+                    .padding(.top, DesignSystem.tiny)
             }
             
             Text(timestampString)
-                .font(.system(size: 9))
+                .font(.system(size: DesignSystem.caption2FontSize))
                 .foregroundStyle(.appSecondary.opacity(0.6))
-                .padding(.trailing, 28)
+                .padding(.trailing, DesignSystem.small + DesignSystem.tiny + DesignSystem.tiny)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.leading, 48) // 增加左侧避让
+        .padding(.leading, DesignSystem.Domain.AI.Chat.bubbleTrailingPadding) // 左侧与 trailing 对称避让
         .padding(.trailing, Spacing.standardPadding) // 增加右侧间距，防贴边
     }
     
@@ -96,29 +96,26 @@ struct ChatBubbleView: View {
                 ZStack {
                     Circle()
                         .fill(Color.appAccent.opacity(DesignSystem.Opacity.glass))
-                        .frame(width: 22, height: 22)
+                        .frame(width: DesignSystem.Domain.AI.Chat.avatarSize, height: DesignSystem.Domain.AI.Chat.avatarSize)
                     Image(systemName: DesignSystem.Icons.sparkles)
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                         .foregroundStyle(.appAccent)
                 }
                 Text(L10n.Chat.aiAssistantName)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
                 
                 Spacer()
                 
                 Text(timestampString)
-                    .font(.system(size: 9))
+                    .font(.system(size: DesignSystem.caption2FontSize))
                     .foregroundStyle(.appSecondary.opacity(0.6))
             }
             .padding(.horizontal, Spacing.tiny)
-            .padding(.bottom, 2)
+            .padding(.bottom, DesignSystem.atomic)
             
-            #if os(watchOS)
-            let bubbleMaxWidth = WKInterfaceDevice.current().screenBounds.width * 0.9
-            #else
-            let bubbleMaxWidth = UIScreen.main.bounds.width * 0.85
-            #endif
+            // 气泡最大宽度通过 AppScreen 统一封装，屏蔽 UIScreen/WKInterfaceDevice 平台差异
+            let bubbleMaxWidth = AppScreen.bubbleMaxWidth
             
             // Content Bubble
             ChatContentView(text: message.content, pages: pages, selectedTab: $selectedTab)
@@ -127,20 +124,14 @@ struct ChatBubbleView: View {
             
             // Collapsible References Panel
             if !message.relatedPageIDs.isEmpty {
-                #if os(watchOS)
-                let panelMaxWidth = WKInterfaceDevice.current().screenBounds.width * 0.9
-                #else
-                let panelMaxWidth = UIScreen.main.bounds.width * 0.85
-                #endif
-                
                 referencesPanel
-                    .frame(maxWidth: panelMaxWidth, alignment: .leading)
-                    .padding(.top, 4)
+                    .frame(maxWidth: AppScreen.bubbleMaxWidth, alignment: .leading)
+                    .padding(.top, DesignSystem.tiny)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, Spacing.standardPadding)
-        .padding(.trailing, 48)
+        .padding(.trailing, DesignSystem.Domain.AI.Chat.bubbleTrailingPadding)
     }
     
     /// Collapsible references panel showing cited knowledge pages grouped by type
@@ -159,8 +150,8 @@ struct ChatBubbleView: View {
                     Text("\(message.relatedPageIDs.count)")
                         .font(.caption2)
                         .foregroundStyle(.appAccent)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.atomic)
                         .background(Color.appAccent.opacity(0.1))
                         .clipShape(Capsule())
                 }
@@ -183,7 +174,7 @@ struct ChatBubbleView: View {
                                     .font(.caption.weight(.medium))
                             }
                             .foregroundStyle(Color.fromModelColorName(type.colorName))
-                            .padding(.top, 4)
+                            .padding(.top, DesignSystem.tiny)
                             
                             // Page chips
                             FlowLayout(spacing: 6) {
@@ -198,10 +189,10 @@ struct ChatBubbleView: View {
                                             Text(page.title)
                                                 .font(.caption)
                                         }
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, DesignSystem.small)
+                                        .padding(.vertical, DesignSystem.tiny)
                                         .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.Opacity.glass))
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Domain.AI.Chat.referencePanelCornerRadius))
                                         .foregroundStyle(Color.fromModelColorName(type.colorName))
                                     }
                                     .buttonStyle(.plain)

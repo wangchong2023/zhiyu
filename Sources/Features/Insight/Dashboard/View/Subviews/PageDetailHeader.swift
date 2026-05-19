@@ -39,8 +39,8 @@ struct PageDetailHeader: View {
                 }
                 metaInfoView.padding(.top, 4)
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.small)
             .background(Color.appCard.opacity(0.4))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #else
@@ -57,8 +57,8 @@ struct PageDetailHeader: View {
                 }
             )
             .tint(.appSecondary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.small)
             .background(Color.appCard.opacity(0.4))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #endif
@@ -78,16 +78,16 @@ struct PageDetailHeader: View {
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
             Image(systemName: DesignSystem.Icons.forward)
-                .font(.system(size: 8))
+                .font(.system(size: DesignSystem.caption2FontSize))
                 .foregroundStyle(.appSecondary)
             
             // AI Status Indicator
             if taskCenter.tasks.contains(where: { if case .running = $0.status { return true }; return false }) {
                 HStack(spacing: 4) {
                     Image(systemName: DesignSystem.Icons.cpu)
-                        .font(.system(size: 10))
+                        .font(.system(size: DesignSystem.microFontSize))
                     Text(L10n.AI.Task.running)
-                        .font(.system(size: 8, weight: .bold))
+                        .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                 }
                 .foregroundStyle(.appAccent)
                 .padding(.horizontal, 6)
@@ -125,7 +125,7 @@ struct PageDetailHeader: View {
     // MARK: - Title
     private var titleView: some View {
         Text(page.title)
-            .font(.system(size: 28, weight: .bold, design: .rounded))
+            .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
             .foregroundStyle(.appText)
             .accessibilityAddTraits(.isHeader)
             .accessibilityLabel(L10n.Knowledge.Page.titleAccessibility(page.title))
@@ -141,19 +141,19 @@ struct PageDetailHeader: View {
                 HStack(spacing: 8) {
                     ForEach(combinedTags, id: \.self) { item in
                         let isAlias = page.aliases.contains(item)
-                        HStack(spacing: 4) {
+                        HStack(spacing: DesignSystem.tiny) {
                             if isAlias {
                                 Image(systemName: DesignSystem.Icons.arrowBranch)
-                                    .font(.system(size: 8))
+                                    .font(.system(size: DesignSystem.caption2FontSize))
                             } else {
                                 Text("#")
-                                    .font(.system(size: 8, weight: .bold))
+                                    .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                             }
                             Text(item)
                         }
                         .font(.caption2.weight(.medium))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, DesignSystem.medium)
+                        .padding(.vertical, DesignSystem.tiny)
                         .background(
                             isAlias ? 
                             Color.appSource.opacity(0.1) : 

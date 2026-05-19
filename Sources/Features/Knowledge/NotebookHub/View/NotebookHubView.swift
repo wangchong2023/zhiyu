@@ -16,6 +16,7 @@ public struct NotebookHubView: View {
     // MARK: - 状态与环境
     
     @State private var viewModel = NotebookHubViewModel()
+    @State private var showLintSheet = false   // 控制知识巡检面板弹出
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     @Inject var appEnv: any AppEnvironmentProtocol // 注入环境能力
@@ -87,6 +88,19 @@ public struct NotebookHubView: View {
             Text(L10n.Vault.renameMessage)
         }
         .environment(viewModel)
+        // 以 sheet 弹出知识巡检视图（因 NotebookHub 的 NavigationStack 无 navigationDestination）
+        .sheet(isPresented: $showLintSheet) {
+            NavigationStack {
+                LintWrapper()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button(L10n.Common.close) {
+                                showLintSheet = false
+                            }
+                        }
+                    }
+            }
+        }
     }
     
     // MARK: - 子视图组件
@@ -154,7 +168,9 @@ public struct NotebookHubView: View {
     private var sparklesButton: some View {
         Button {
             HapticFeedback.shared.trigger(.selection)
-            router.navigate(to: .lint)
+            // NotebookHub 处于独立 NavigationStack（无 navigationDestination），
+            // 以 sheet 方式弹出 LintView 避免路由无法响应的问题
+            showLintSheet = true
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
                 .font(.system(size: 16, weight: .bold))

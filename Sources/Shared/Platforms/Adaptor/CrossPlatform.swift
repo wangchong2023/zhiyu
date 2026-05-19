@@ -36,3 +36,18 @@ public typealias AppImage = NSImage
 #else
 public struct AppImage: Sendable {}
 #endif
+
+// MARK: - 跨平台屏幕工具
+
+/// 跨平台屏幕尺寸适配工具
+/// 封装 UIScreen / WKInterfaceDevice 差异，避免 Features 层直接依赖平台 API
+public enum AppScreen {
+    /// AI 对话气泡最大宽度（屏幕宽度的 85%，watchOS 为 90%）
+    public static var bubbleMaxWidth: CGFloat {
+        #if os(watchOS)
+        return WKInterfaceDevice.current().screenBounds.width * 0.9
+        #else
+        return UIScreen.main.bounds.width * 0.85
+        #endif
+    }
+}

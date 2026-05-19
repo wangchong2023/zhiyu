@@ -287,6 +287,22 @@ public enum DesignSystem {
         public static let macwindowBadgePlus = Typography.Icons.macwindowBadgePlus
         public static let photo = Typography.Icons.photo
         public static let externaldrive = Typography.Icons.externaldrive
+        
+        // ── 未归类补充 ──
+        /// 孤立页面图标 (用于 Lint 孤儿节点)
+        public static let orphanPage = "person.fill.questionmark"
+        /// 合并操作图标
+        public static let merge = "arrow.merge"
+        /// 分支操作图标
+        public static let branch = "arrow.branch"
+        /// 重命名/光标图标
+        public static let cursorIbeam = "character.cursor.ibeam"
+        /// 空白虚线框 (OnDevice 下载前占位)
+        public static let squareDashed = "square.dashed"
+        /// 文字气泡
+        public static let textBubble = "text.bubble.fill"
+        /// 柱状图统计
+        public static let chartBarFill = "chart.bar.fill"
     }
     
     // 兼容原 DesignSystem.iconTiny 等命名
@@ -713,7 +729,12 @@ public enum DesignSystem {
             public static let waveScale: CGFloat = 40
         }
         public struct Lint {
+            /// 巡检健康圆环图直径
             public static let chartSize: CGFloat = 110
+            /// 健康分数超大展示字号 (仅用于分数数字)
+            public static let scoreFontSize: CGFloat = 38
+            /// 健康检查空状态图标尺寸
+            public static let emptyIconSize: CGFloat = 56
         }
         public struct AI {
             public struct Chat {
@@ -722,6 +743,8 @@ public enum DesignSystem {
                 public static let avatarSize: CGFloat = 22
                 public static let bubbleCornerRadius: CGFloat = 18
                 public static let referencePanelCornerRadius: CGFloat = 6
+                /// 气泡区块右侧最小留白 (防止遮挡头像)
+                public static let bubbleTrailingPadding: CGFloat = 48
             }
         }
     }

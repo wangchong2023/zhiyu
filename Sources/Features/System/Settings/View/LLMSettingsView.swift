@@ -145,7 +145,7 @@ struct LLMSettingsView: View {
                                         .font(.subheadline.bold())
                                         .foregroundStyle(.green)
                                     Spacer()
-                                    Text("\(latency) \(L10n.Dashboard.unitMs)")
+                                    Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
                                         .font(.caption.monospaced())
                                         .foregroundStyle(.appSecondary)
                                 }
@@ -162,7 +162,7 @@ struct LLMSettingsView: View {
                                     }
                                     Spacer()
                                     if let l = latency {
-                                        Text("\(l) \(L10n.Dashboard.unitMs)")
+                                        Text(L10n.AI.LLM.latency("\(l) \(L10n.Dashboard.unitMs)"))
                                             .font(.caption.monospaced())
                                             .foregroundStyle(.appSecondary)
                                     }

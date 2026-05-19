@@ -10,7 +10,7 @@ extension L10n {
     public struct Lint {
         public static let t = "System"
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-        public static var title: String { tr("title") }
+        public static var title: String { Localized.tr("lint.title", table: t) }
         public static var refactorSection: String { tr("refactorSection") }
         public static var linkDiscoverySection: String { tr("linkDiscoverySection") }
         public static var healthExcellent: String { tr("health.excellent") }

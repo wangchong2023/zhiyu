@@ -3435,6 +3435,23 @@
         }
       }
     },
+    "llm.latency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latency: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "时延：%@"
+          }
+        }
+      }
+    },
     "noHistory": {
       "extractionState": "manual",
       "localizations": {

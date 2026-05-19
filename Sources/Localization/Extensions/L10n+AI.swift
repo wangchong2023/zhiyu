@@ -41,6 +41,7 @@ extension L10n {
             public static var connectionSuccess: String { AI.tr("llm.connectionSuccess") }
             public static var validation: String { AI.tr("llm.validation") }
             public static var validationFailed: String { AI.tr("llm.validationFailed") }
+            public static func latency(_ value: String) -> String { AI.trf("llm.latency", value) }
             public static var configuration: String { AI.tr("llm.configuration") }
             public static var enableAssistant: String { AI.tr("llm.enableAssistant") }
             public static var chatHistory: String { AI.tr("llm.chatHistory") }

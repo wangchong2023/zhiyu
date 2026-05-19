@@ -213,10 +213,9 @@ struct KnowledgeDashboardView: View {
                     Image(systemName: DesignSystem.Icons.refresh)
                         .font(.caption)
                         .foregroundColor(.appSecondary)
-                        .rotationEffect(.degrees(coordinator.isGeneratingInsights ? 360 : 0))
-                        .animation(coordinator.isGeneratingInsights ? .linear(duration: 1).repeatForever(autoreverses: false) : .default, value: coordinator.isGeneratingInsights)
                 }
                 .buttonStyle(.plain)
+                .disabled(coordinator.isGeneratingInsights)
             }
             
             VStack(alignment: .leading, spacing: 12) {
