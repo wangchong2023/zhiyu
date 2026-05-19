@@ -102,7 +102,7 @@ struct KnowledgeDashboardView: View {
                 
                 Button(action: {
                     HapticFeedback.shared.trigger(.selection)
-                    router.selectedTab = .graph
+                    router.navigate(to: .graph)
                 }) {
                     HStack(spacing: DesignSystem.tiny) {
                         Image(systemName: DesignSystem.Icons.circleGrid3x3Fill)
@@ -132,11 +132,13 @@ struct KnowledgeDashboardView: View {
                 if coordinator.densityData.isEmpty {
                     emptyView
                 } else {
+                    // 💡 密度图表重塑：双物理指示直角 Canvas 双箭头坐标轴系统 (去除了所有冗余 layout，彻底对齐 Y 轴与图间距，拉开底轴空气留白)
                     Chart(coordinator.densityData) { item in
                         BarMark(
                             x: .value("Outbound", item.outbound),
                             y: .value("Page", item.name)
                         )
+                        .cornerRadius(DesignSystem.Radius.small)
                         .foregroundStyle(LinearGradient(
                             colors: [.appAccent, .appAccent.opacity(0.6)],
                             startPoint: .leading,
@@ -147,53 +149,84 @@ struct KnowledgeDashboardView: View {
                             x: .value("Inbound", item.inbound),
                             y: .value("Page", item.name)
                         )
+                        .cornerRadius(DesignSystem.Radius.small)
                         .foregroundStyle(LinearGradient(
                             colors: [.purple, .purple.opacity(0.6)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
                     }
-                    .frame(height: DesignSystem.Metrics.chartHeight + 20)
-                    .chartXAxis {
-                        AxisMarks(position: .bottom) { _ in
-                            AxisGridLine(stroke: StrokeStyle(dash: [2, 4]))
-                                .foregroundStyle(Color.appBorder)
-                            AxisValueLabel()
-                                .font(.system(size: DesignSystem.caption2FontSize, weight: .medium))
-                                .foregroundStyle(.appSecondary)
-                        }
-                    }
+                    .frame(height: DesignSystem.Metrics.chartHeight + DesignSystem.medium)
+                    .chartXAxis(.hidden) // 彻底删除冗余“0个关联”等繁杂文案，回归极其大气的物理大厂留白
                     .chartYAxis {
-                        AxisMarks(position: .leading) { _ in
-                            AxisValueLabel()
-                                .font(.system(size: DesignSystem.caption2FontSize, weight: .medium))
-                                .foregroundStyle(.appSource)
+                        AxisMarks(position: .leading) { value in
+                            AxisValueLabel {
+                                if let name = value.as(String.self) {
+                                    // 正常完整展示具体的页面文案内容（最多支持 12 个汉字，完美适应 iPhone 屏幕宽度，超过时以 "..." 雅致折叠）
+                                    Text(name.prefix(12) + (name.count > 12 ? "..." : ""))
+                                        .font(.system(size: DesignSystem.captionFontSize, weight: .medium, design: .rounded))
+                                        .foregroundStyle(.appSource)
+                                }
+                            }
                         }
-                    }
-                    .chartXAxisLabel(position: .bottom, alignment: .center) {
-                        HStack(spacing: 12) {
-                            Label(L10n.Dashboard.densityOutbound, systemImage: DesignSystem.Icons.forwardCircle)
-                                .foregroundStyle(.appAccent)
-                            Label(L10n.Dashboard.densityInbound, systemImage: DesignSystem.Icons.back)
-                                .foregroundStyle(.purple)
-                        }
-                        .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     }
                     .chartLegend(.hidden)
+                    .padding(.bottom, DesignSystem.small) // 额外物理扩展图表底部外边距，形成高级空气流动美感
+                    
+                    // 💡 完美的「图例与 X 轴含义说明单行看板」 (Legend & X-Axis Note Panel)
+                    // 左右完美对称，信息量饱满且布局轻盈开阔，彻底移除了沉重的胶囊和重复的“纵轴说明”
+                    HStack {
+                        // 左侧图例（带高亮圆点，富有呼吸感和大厂精致度）
+                        HStack(spacing: DesignSystem.small) {
+                            HStack(spacing: DesignSystem.atomic) {
+                                Circle()
+                                    .fill(Color.appAccent)
+                                    .frame(width: 6, height: 6)
+                                Text(L10n.Dashboard.densityOutbound)
+                                    .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                            
+                            HStack(spacing: DesignSystem.atomic) {
+                                Circle()
+                                    .fill(Color.purple)
+                                    .frame(width: 6, height: 6)
+                                Text(L10n.Dashboard.densityInbound)
+                                    .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        // 右侧双轴物理含义释义 (箭头+含义，通过 | 分隔，完美揭示空间物理轴方向)
+                        HStack(spacing: DesignSystem.tiny) {
+                            HStack(spacing: DesignSystem.atomic) {
+                                Image(systemName: "arrow.up")
+                                    .font(.system(size: DesignSystem.caption2FontSize - 1, weight: .bold))
+                                    .foregroundColor(.appAccent)
+                                Text(L10n.Dashboard.axisPages)
+                                    .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                            
+                            Text("｜")
+                                .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
+                                .foregroundStyle(.appAccent.opacity(0.4))
+                            
+                            HStack(spacing: DesignSystem.atomic) {
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: DesignSystem.caption2FontSize - 1, weight: .bold))
+                                    .foregroundColor(.appAccent)
+                                Text(L10n.Dashboard.axisRelations)
+                                    .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
+                    }
+                    .padding(.top, -DesignSystem.tiny)
+                    .padding(.bottom, DesignSystem.tiny)
                 }
-                
-                // 说明文字 (脚标)
-                HStack(alignment: .top, spacing: DesignSystem.small - DesignSystem.atomic) { // 6
-                    Image(systemName: DesignSystem.Icons.info)
-                        .font(.caption2)
-                        .foregroundStyle(.appAccent)
-                    Text(L10n.Dashboard.densityDetails)
-                        .font(.system(size: DesignSystem.caption2FontSize))
-                        .lineSpacing(DesignSystem.atomic)
-                        .foregroundStyle(.appSecondary)
-                }
-                .padding(DesignSystem.Layout.cardContentPadding) // 使用标准卡片内边距 (16pt)
-                .appMetricCardStyle(color: .appAccent)
             }
             .appContainer(padding: true) // 应用统一容器样式
         }
@@ -441,4 +474,21 @@ private var emptyView: some View {
             .foregroundColor(.appSecondary)
     }
     .frame(maxWidth: .infinity, minHeight: DesignSystem.Metrics.chartHeight)
+}
+
+/// 💡 极奢精细虚线，用于无损呈现大厂直角坐标轴 (Y轴最左侧垂直虚线)
+private struct DashedLine: Shape {
+    let isVertical: Bool
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        if isVertical {
+            path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        } else {
+            path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        }
+        return path
+    }
 }

@@ -114,6 +114,8 @@ extension L10n {
         public static var densityDetails: String { Localized.tr("dashboard.density.details", table: t) }
         public static var densityOutbound: String { Localized.tr("dashboard.density.outbound", table: t) }
         public static var densityInbound: String { Localized.tr("dashboard.density.inbound", table: t) }
+        public static var axisPages: String { Localized.tr("dashboard.axis.pages", table: t) }
+        public static var axisRelations: String { Localized.tr("dashboard.axis.relations", table: t) }
         public static var benchmarkDescription: String { Localized.tr("dashboard.stats.benchmark.description", table: t) }
         public static var cleanupAction: String { Dashboard.tr("cleanupAction") }
         public static var updateSuccess: String { Localized.tr("dashboard.updateSuccess", table: t) }

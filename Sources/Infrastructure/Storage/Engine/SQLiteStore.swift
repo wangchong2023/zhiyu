@@ -171,8 +171,8 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
         
-        if let enumerator = FileManager.default.enumerator(at: vaultsDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
-            for case let fileURL as URL in enumerator {
+        if let fileURLs = try? FileManager.default.contentsOfDirectory(at: vaultsDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
+            for fileURL in fileURLs {
                 let isSqlite = fileURL.pathExtension == "sqlite3" || fileURL.pathExtension == "sqlite"
                 let isCompanion = fileURL.path.hasSuffix("-wal") || fileURL.path.hasSuffix("-shm")
                 

@@ -4148,6 +4148,40 @@
           }
         }
       }
+    },
+    "dashboard.axis.pages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页面"
+          }
+        }
+      }
+    },
+    "dashboard.axis.relations": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relations & Citations"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关联与引用数"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

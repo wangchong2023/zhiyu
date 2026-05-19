@@ -146,7 +146,7 @@ graph TD
     Sidebar --> Tag[TagCloudView]
     Sidebar --> Collab[CollaborationView]
     Sidebar --> Medal[MedalWallView]
-    Sidebar --> Plugin[PluginMarketView]
+    Sidebar --> Plugin[PluginCenterView]
     Sidebar --> Log[LogView]
     Sidebar --> Export[ExportReportView]
 

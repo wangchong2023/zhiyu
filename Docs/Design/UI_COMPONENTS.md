@@ -6,7 +6,7 @@
 
 核心设计资产（Token）和基础视觉定义，位于 `Sources/Shared/DesignSystem/`。最终 DesignSystem 存放公共统一标准。
 
-- `Tokens/Colors.swift`: 全局语义化色彩定义，必须支持 Dark/Light Mode 切换。
+- `Tokens/Colors.swift`: 全局语义化色彩定义，必须 support Dark/Light Mode 切换。
 - `Tokens/Spacing.swift`: 间距与圆角常量定义。严禁在视图中使用散落的硬编码数字（魔鬼数字）。
 - `Tokens/Typography.swift`: 排版与字号层级，映射为逻辑缩放大小。
 - `Tokens/Animations.swift`: 系统级物理动效定义。
@@ -46,8 +46,11 @@
 | **RR-01/03** | ACID 与 内存管控 | `DETAILED_DESIGN.md` | `SQLiteStore.swift`, `PerformanceBenchmarker.swift` | `TransactionTests.swift`, `MemoryFootprintTests.swift` |
 
 ### 4.2 代码中的强制溯源
+
 代码中必须以注释的形式显式标注其对应的需求编号，以实现最强的可回溯性。
+
 示例：
+
 ```swift
 // MARK: @SR-03 (金库级锁定实现)
 /// 遵循 @Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md
@@ -65,11 +68,25 @@
    - 文件与类名必须做到“见名知意”，如 `DataCoordinator` (数据协调)、`SQLiteStore` (SQL存储)。
    - 绝不出现如 `Utils.swift` 或 `Manager.swift` 这种指代不明的巨型神仙类。
 
-## 6. xcstrings (本地化) 模块化划分
-随着代码目录迁移至按功能领域 (Features L2) 划分，`.xcstrings` 的模块化必须与 Features 一一对应。
-- `Dashboard.xcstrings` -> `Sources/Features/Dashboard`
-- `Chat.xcstrings` -> `Sources/Features/Chat`
-- `Vault.xcstrings` -> `Sources/Features/Vault`
-- `Common.xcstrings` -> `Sources/Shared/UIComponents`
+## 6. xcstrings (本地化) 分表架构规范
 
-确保所有的字符串均从上述字典表中通过类型安全的 `Localized.tr()` 动态加载，严禁 UI 视图中出现硬编码中文或魔鬼字符串。
+为避免单一主表过大引起的冲突与构建性能损耗，系统采用多维度分表存储架构（物理文件存放在 `Sources/Localization/Catalogs/`）。
+具体的逻辑子域（路由）与物理 `.xcstrings` 映射关系如下：
+
+### 6.1 本地化映射路由表
+
+| 物理 Catalog 文件 | 对应的逻辑模块子域（表名） | 覆盖的业务 Features 范畴 |
+| :--- | :--- | :--- |
+| **`Common.xcstrings`** | `Common`, `Localizable`, `Accessibility`, `Search` | 全局基础、无障碍标记、通用检索 |
+| **`Knowledge.xcstrings`** | `KnowledgeBase`, `Editor`, `Creation`, `Vault`, `Quiz` | 知识图谱、编辑器、新建向导、锁定金库 |
+| **`AI.xcstrings`** | `Chat`, `Voice`, `AITasks` | 对话助手、语音笔记、任务合成 |
+| **`Insight.xcstrings`** | `Graph`, `Dashboard` | 3D图谱计算、巡检看板 |
+| **`System.xcstrings`** | `Auth`, `Settings`, `Lint`, `Onboarding`, `Coachmark` | 注册登录、系统设置、深度健康检查、新手引导 |
+| **`Ingest.xcstrings`** | `Sync`, `Transfer` | 云同步、迁移导入 |
+| **`Plugin.xcstrings`** | `Collaboration` | 插件市场、协同服务 |
+| **`Platform.xcstrings`** | `Watch`, `Widget` | watchOS 宿主、桌面微件平台桥接 |
+
+### 6.2 语言调用红线约束
+
+- **强类型向 L10n 收口**：严禁直接调用底层的 `Localized.tr()` 隐式动态加载（以防拼写错误在编译期无法被捕获）。必须通过 `L10n.<Domain>.<Key>` 强类型访问。
+- **严禁硬编码中文字面量**：任何直接写在 UI View 中的中文字串都会被 `check_localization.py` 静态审查拦截并导致构建中断。

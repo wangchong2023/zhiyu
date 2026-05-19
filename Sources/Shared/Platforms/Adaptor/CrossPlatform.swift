@@ -43,6 +43,7 @@ public struct AppImage: Sendable {}
 /// 封装 UIScreen / WKInterfaceDevice 差异，避免 Features 层直接依赖平台 API
 public enum AppScreen {
     /// AI 对话气泡最大宽度（屏幕宽度的 85%，watchOS 为 90%）
+    @MainActor
     public static var bubbleMaxWidth: CGFloat {
         #if os(watchOS)
         return WKInterfaceDevice.current().screenBounds.width * 0.9

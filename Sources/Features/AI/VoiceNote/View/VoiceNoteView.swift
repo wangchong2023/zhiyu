@@ -20,7 +20,7 @@ struct VoiceNoteView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: Spacing.standardPadding) {
                 headerSection
                 languagePicker
                 recordingSection
@@ -38,9 +38,9 @@ struct VoiceNoteView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 24)
+            .padding(.horizontal, Spacing.standardPadding)
+            .padding(.top, Spacing.medium)
+            .padding(.bottom, Spacing.giant)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.Voice.Speech.title)
@@ -55,7 +55,7 @@ struct VoiceNoteView: View {
     
     // MARK: - Header
     private var headerSection: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: Spacing.large) {
             Image(systemName: DesignSystem.Icons.waveformCircleFill)
                 .font(.system(size: DesignSystem.displayFontSize * 1.5))
                 .foregroundStyle(
@@ -71,12 +71,12 @@ struct VoiceNoteView: View {
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
         }
-        .padding(.top, 8)
+        .padding(.top, Spacing.medium)
     }
     
     // MARK: - Language Picker
     private var languagePicker: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Spacing.small) {
             Text(L10n.Voice.Speech.Language)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -99,7 +99,7 @@ struct VoiceNoteView: View {
     
     // MARK: - 录音控制板块
     private var recordingSection: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: DesignSystem.Domain.Voice.recordingSectionSpacing) {
             if !speechService.hasPermission {
                 permissionSection
             } else {
@@ -110,7 +110,7 @@ struct VoiceNoteView: View {
     }
     
     private var permissionSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignSystem.Domain.Voice.permissionSectionSpacing) {
             Image(systemName: DesignSystem.Icons.micSlashFill)
                 .font(.title)
                 .foregroundStyle(.red)
@@ -124,9 +124,9 @@ struct VoiceNoteView: View {
                 Text(L10n.Voice.Speech.requestPermission)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, Spacing.wide)
                     .background(Color.appAccent)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
             }
         }
         .appContainer(cornerRadius: DesignSystem.cardRadius, padding: true)
@@ -160,7 +160,7 @@ struct VoiceNoteView: View {
     }
     
     private var recordingStatusText: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: DesignSystem.Domain.Voice.statusTextSpacing) {
             Text(speechService.isRecording ? L10n.Voice.Speech.tapToStop : L10n.Voice.Speech.tapToRecord)
                 .font(.caption)
                 .foregroundStyle(.appSecondary)
@@ -168,35 +168,35 @@ struct VoiceNoteView: View {
             Text(speechService.statusMessage)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
+                .padding(.horizontal, DesignSystem.Domain.Voice.statusLabelHorizontalPadding)
+                .padding(.vertical, DesignSystem.Domain.Voice.statusLabelVerticalPadding)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
         }
     }
     
     // MARK: - 波形展示
     private var waveformSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: Spacing.medium) {
             Text(L10n.Voice.Speech.audioLevel)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
 
-            HStack(spacing: 3) {
+            HStack(spacing: DesignSystem.Domain.Voice.waveBarSpacing) {
                 ForEach(0..<20, id: \.self) { i in
                     RoundedRectangle(cornerRadius: DesignSystem.tiny)
                         .fill(Color.appAccent)
-                        .frame(width: 5, height: max(4, CGFloat(speechService.audioLevelHistory[i]) * DesignSystem.Domain.Voice.waveScale))
+                        .frame(width: DesignSystem.Domain.Voice.waveBarWidth, height: max(DesignSystem.Domain.Voice.waveBarMinHeight, CGFloat(speechService.audioLevelHistory[i]) * DesignSystem.Domain.Voice.waveScale))
                 }
             }
-            .frame(height: 44)
+            .frame(height: DesignSystem.Domain.Voice.waveformHeight)
         }
         .appContainer(cornerRadius: DesignSystem.cardRadius, padding: true)
     }
     
     // MARK: - 转写结果
     private var transcriptionSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Spacing.large) {
             HStack {
                 Text(L10n.Voice.Speech.result)
                     .font(.subheadline.weight(.semibold))
@@ -224,13 +224,13 @@ struct VoiceNoteView: View {
             ))
                 .font(.body)
                 .foregroundStyle(.appText)
-                .frame(minHeight: 100, maxHeight: 200)
-                .padding(8)
+                .frame(minHeight: DesignSystem.Domain.Voice.transcriptionEditorMinHeight, maxHeight: DesignSystem.Domain.Voice.transcriptionEditorMaxHeight)
+                .padding(Spacing.medium)
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(Color.appBorder, lineWidth: 1)
+                        .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
                 )
             #else
             TextField("", text: Binding(
@@ -239,7 +239,7 @@ struct VoiceNoteView: View {
             ))
                 .font(.body)
                 .foregroundStyle(.appText)
-                .padding(8)
+                .padding(Spacing.medium)
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             #endif
@@ -261,9 +261,9 @@ struct VoiceNoteView: View {
                     }
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, Spacing.standardPadding)
                     .background(Color.appAccent)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
                 }
             }
         }
@@ -272,7 +272,7 @@ struct VoiceNoteView: View {
     
     // MARK: - Recordings History
     private var recordingsSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.medium) {
             HStack {
                 Text(L10n.Voice.Speech.history)
                     .font(.subheadline.weight(.semibold))
@@ -281,12 +281,12 @@ struct VoiceNoteView: View {
                 Text("\(speechService.recordings.count)")
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, Spacing.small)
                     .background(Color.appAccent)
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .clipShape(RoundedRectangle(cornerRadius: Spacing.microRadius))
             }
             
-            VStack(spacing: 6) {
+            VStack(spacing: Spacing.small) {
                 ForEach(Array(speechService.recordings.prefix(5))) { recording in
                     VoiceRecordingRow(recording: recording)
                 }

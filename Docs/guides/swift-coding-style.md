@@ -1,6 +1,6 @@
 # Swift 编码风格指南
 
-> 本文档是 CLAUDE.md 中 `## 代码风格约定` 的详细展开。高频规范保留在 CLAUDE.md，细节约定在此。
+> 本文档是 GEMINI.md 中 `## 代码风格约定` 的详细展开。高频规范保留在 GEMINI.md，细节约定在此。
 
 ## 代码质量与复杂度指标 (Complexity & Quality)
 

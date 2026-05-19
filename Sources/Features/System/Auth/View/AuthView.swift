@@ -71,7 +71,7 @@ struct AuthView: View {
             ZStack {
                 Circle()
                     .fill(LinearGradient(colors: [.appAccent.opacity(0.2), .appConcept.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 60, height: 60)
+                    .frame(width: DesignSystem.Domain.Auth.logoBackgroundSize, height: DesignSystem.Domain.Auth.logoBackgroundSize)
                     .blur(radius: 10)
                 
                 Image(systemName: DesignSystem.Icons.knowledge)
@@ -82,24 +82,24 @@ struct AuthView: View {
             
             VStack(spacing: Spacing.small) { // 增加间距到 8px，完全拉开字距，告别拥挤
                 Text(L10n.Common.appName)
-                    .font(.system(size: 24, weight: .black, design: .rounded))
+                    .font(.system(size: DesignSystem.titleFontSize, weight: .black, design: .rounded))
                     .foregroundStyle(.appText)
                     .tracking(1)
                 
                 Text(L10n.Onboarding.subtitle)
-                    .font(.system(size: 14, weight: .medium)) // 优化字号至 14pt，字重提升，前景色柔和，确保清晰与品质感
+                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .medium)) // 优化字号至 14pt，字重提升，前景色柔和，确保清晰与品质感
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)
             }
         }
-        .padding(.top, 20)
+        .padding(.top, Spacing.wide)
     }
     
     private var modePicker: some View {
         ZStack(alignment: isRegisterMode ? .trailing : .leading) {
             Capsule()
                 .fill(Color.appAccent)
-                .frame(width: 120, height: 38)
+                .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
                 .shadow(color: .appAccent.opacity(0.3), radius: 8, y: 4)
             
             HStack(spacing: 0) {
@@ -110,7 +110,7 @@ struct AuthView: View {
                 }) {
                     Text(L10n.Auth.login)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                        .frame(width: 120, height: 38)
+                        .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
                         .foregroundStyle(!isRegisterMode ? .white : .appSecondary)
                 }
                 
@@ -121,16 +121,16 @@ struct AuthView: View {
                 }) {
                     Text(L10n.Auth.register)
                         .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                        .frame(width: 120, height: 38)
+                        .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
                         .foregroundStyle(isRegisterMode ? .white : .appSecondary)
                 }
             }
         }
-        .padding(4)
+        .padding(Spacing.tightPadding)
         .background(Color.appCard.opacity(0.8))
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.appBorder, lineWidth: 1)) // 增强边框对比度
-        .padding(.vertical, 12)
+        .overlay(Capsule().stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)) // 增强边框对比度
+        .padding(.vertical, Spacing.standardPadding)
     }
     
     private var loginForm: some View {
@@ -169,8 +169,8 @@ struct AuthView: View {
                     Text(L10n.Auth.getCode)
                         .font(.caption.bold())
                         .foregroundStyle(.appAccent)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, DesignSystem.Domain.Auth.getCodeButtonHorizontalPadding)
+                        .padding(.vertical, DesignSystem.Domain.Auth.getCodeButtonVerticalPadding)
                         .background(Color.appAccent.opacity(0.1))
                         .clipShape(Capsule())
                 }
@@ -198,7 +198,7 @@ struct AuthView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
+            .padding(.vertical, DesignSystem.Domain.Auth.actionButtonVerticalPadding)
             .background(Color.appAccent)
             .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             .shadow(color: .appAccent.opacity(0.3), radius: 10, y: 5)
@@ -229,15 +229,15 @@ struct AuthView: View {
             Text(L10n.Auth.guestMode)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
+                .padding(.vertical, Spacing.standardPadding)
+                .padding(.horizontal, Spacing.giant)
                 .overlay(
                     RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                        .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4]))
+                        .strokeBorder(style: StrokeStyle(lineWidth: DesignSystem.borderWidth, dash: [Spacing.tightPadding]))
                         .foregroundStyle(.appBorder)
                 )
         }
-        .padding(.top, 10)
+        .padding(.top, DesignSystem.Domain.Auth.guestButtonTopPadding)
     }
     
     // MARK: - 逻辑
@@ -278,7 +278,7 @@ struct AuthTextField: View {
         HStack(spacing: Spacing.small) {
             Image(systemName: icon)
                 .foregroundStyle(.appSecondary)
-                .frame(width: 20)
+                .frame(width: Spacing.wide)
             
             if isSecure {
                 SecureField(placeholder, text: $text)
@@ -291,7 +291,7 @@ struct AuthTextField: View {
         .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Spacing.standardRadius)
-                .stroke(Color.appBorder, lineWidth: 1) // 移除不透明度，确保清晰
+                .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 移除不透明度，确保清晰
         )
     }
 }
@@ -332,16 +332,16 @@ struct ThirdPartyIconButton: View {
             ZStack {
                 Circle()
                     .fill(Color.appCard)
-                    .frame(width: 50, height: 50)
+                    .frame(width: DesignSystem.Domain.Auth.thirdPartyIconContainerSize, height: DesignSystem.Domain.Auth.thirdPartyIconContainerSize)
                     .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
                 
                 Image(systemName: icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: DesignSystem.Domain.Auth.thirdPartyIconFontSize))
                     .foregroundStyle(color)
             }
             .overlay(
                 Circle()
-                    .stroke(Color.appBorder, lineWidth: 1) // 增强图标边框
+                    .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 增强图标边框
             )
         }
         .buttonStyle(.plain)

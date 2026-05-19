@@ -102,8 +102,8 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 
 ## 关键文件路径
 - `Sources/ZhiYuApp.swift`: 应用入口与服务注册中心。
-- `Sources/Shared/Core/ServiceContainer.swift`: DI 容器实现。
-- `Sources/Shared/Models/`: 核心领域模型。
-- `Sources/Shared/Views/`: 跨平台 SwiftUI 视图。
+- `Sources/Core/Base/ServiceContainer.swift`: DI 容器实现。
+- `Sources/Domain/Models/`: 核心领域模型。
+- `Sources/Shared/UIComponents/`: 跨平台 SwiftUI 通用视图。
 - `Tools/`: 开发者辅助工具（同步、模拟器、MockServer）。
 - `project.yml`: XcodeGen 项目定义。
