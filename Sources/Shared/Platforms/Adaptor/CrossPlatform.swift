@@ -1,4 +1,5 @@
 // AppPasteboard.swift
+// [Shared]
 //
 // 作者: Wang Chong
 // 功能说明: 跨平台剪贴板包装器 (Facade 模式：作为具体平台实现的统一入口)

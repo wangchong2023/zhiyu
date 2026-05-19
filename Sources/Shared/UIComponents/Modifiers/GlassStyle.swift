@@ -1,4 +1,5 @@
 // GlassStyle.swift
+// [Shared]
 //
 // 作者: Wang Chong
 // 功能说明: 本文件实现了智宇 (ZhiYu) 设计系统中的玻璃拟态 (Glassmorphism) 视觉样式。
