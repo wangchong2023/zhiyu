@@ -33,5 +33,5 @@ public typealias AppImage = UIImage
 import AppKit
 public typealias AppImage = NSImage
 #else
-public struct AppImage {}
+public struct AppImage: Sendable {}
 #endif

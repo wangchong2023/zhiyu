@@ -65,7 +65,24 @@ python3 Tools/update_localization.py
 
 ---
 
-## 4. 注意事项
+## 4. 本地化静态审查工具 (`check_localization.py`)
+
+用于在编译前（Xcode Build Phases）或本地进行国际化翻译架构审查。
+
+### 核心功能
+- **全分表交叉对比**：验证源码中引用的所有 `L10n.XXX.tr` 在对应的 `.xcstrings` 物理分表中真实存在，防止运行时 MISSING 发生。
+- **强制架构收口**：严禁业务层直接使用带有隐式 Fallback 危险的 `Localized.tr(key)`，强制要求使用类型安全的 `L10n.XXX.tr`。
+- **硬编码中文字符串拦截**：拒绝一切裸露在 UI 中的中文字符串字面量，保障 100% 本地化覆盖率。
+
+### 使用方法
+```bash
+# 全局扫描 (通常集成在 Xcode Build Phases 中自动执行)
+python3 Tools/check_localization.py
+```
+
+---
+
+## 5. 注意事项
 - **Python 环境**：建议使用 Python 3.8+。
 - **权限说明**：在 macOS 上操作模拟器容器路径可能需要全盘访问权限（通常 Terminal 会自动请求）。
 - **同步建议**：建议在修改数据库架构（Schema）后，同步更新 `seed_data.py` 中的 `INSERT` 语句。

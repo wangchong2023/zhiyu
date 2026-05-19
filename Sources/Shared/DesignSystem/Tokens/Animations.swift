@@ -1,18 +1,21 @@
-// Animations.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 设计系统的原子动效令牌及物理交互参数。
-// 遵循工业级动效规范，支持弹性过渡与高性能视觉反馈。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//  Animations.swift
+//  ZhiYu
+//
+//  Created by Wang Chong on 2026-05-18.
+//  Copyright © 2026 Wang Chong. All rights reserved.
+//
 
 import SwiftUI
 
-/// 智宇动效令牌 (Animation Tokens)
-/// 包含物理动效常数、弹性参数及标准动画时长。
+/// 智宇设计系统原子动效令牌 (Animation Tokens)
+/// 
+/// 本类型集中管理全局所有物理交互参数、弹簧系数及时间基准。
+/// 严格遵循 iOS 高端物理仿真动效规范，支持平滑、轻盈的空间连续性过渡。
 public enum Animations {
     
     // MARK: - 1. 物理交互参数 (Physical Interaction)
-    // MARK: @PR-03: 交互动效参数需经过性能调优以维持高帧率交互
+    // MARK: @PR-03: 交互动效参数经过优化以维持高帧率交互
     
     /// 点击按下的缩放比例 (0.97)
     public static let pressScale: CGFloat = 0.97
@@ -32,15 +35,20 @@ public enum Animations {
     
     // MARK: - 3. 弹性动效参数 (Spring Parameters)
     
-    /// 弹性动效响应时长 (0.3s)
+    /// 标准弹性动效响应时长 (0.3s)
     public static let springResponse: Double = 0.3
-    /// 弹性动效阻尼系数 (0.8)
+    /// 标准弹性动效阻尼系数 (0.8)
     public static let springDamping: Double = 0.8
     
     /// 突出弹性动效响应时长 (0.4s)
     public static let prominentSpringResponse: Double = 0.4
-    /// 突出弹性动效阻尼系数 (0.8)
-    public static let prominentSpringDamping: Double = 0.8
+    
+    /// 突出弹性动效阻尼系数 (0.58)
+    /// 
+    /// - Note: 经由 Task 2 微动效交互革新，该值从原先稳重的临界阻尼 0.8 调整为 **0.58**。
+    /// 0.58 属于精心调优的**欠阻尼 (Underdamped)** 物理状态，能够为大盘金库切库、全局 Tab 视图大切换等
+    /// 跨度较大的界面连续运动，赋予极为生动、自然、且伴随轻微视觉物理回弹的高端苹果风交互体验。
+    public static let prominentSpringDamping: Double = 0.58
     
     // MARK: - 4. 装饰动效令牌 (Decorator Animation Tokens)
     

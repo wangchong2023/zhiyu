@@ -210,6 +210,8 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
         container.register(AuthService.shared, for: AuthService.self)
         container.register(VaultService.shared, for: VaultService.self)
+        // 提前实例化并注册全局唯一的设置存储中心，供 AppStore 及各层级视图 @Inject 调用，彻底阻断循环依赖评估闪退 (@SRP)
+        container.register(SettingsStore(), for: SettingsStore.self)
         
         // 1. 逻辑与处理器
         container.register(LinkService(), for: LinkService.self)
@@ -218,6 +220,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(UndoService(), for: UndoService.self)
         container.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
         container.register(KnowledgePageManager(), for: KnowledgePageManager.self)
+        container.register(KnowledgeStore(), for: KnowledgeStore.self)
         container.register(MaintenanceService(), for: MaintenanceService.self)
         
         container.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)

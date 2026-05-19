@@ -138,10 +138,57 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     // MARK: - 统计与系统
 
+    /// 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
+    /// - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
-        let path = await MainActor.run { DatabaseManager.shared.dbURL?.path ?? "" }
-        let dbSize = (try? FileManager.default.attributesOfItem(atPath: path)[.size] as? Int64) ?? 0
-        return (dbSize, 0, 0)
+        let (dbPath, globalDBPath) = await MainActor.run {
+            (DatabaseManager.shared.dbURL?.path ?? "", DatabaseManager.shared.globalDBURL?.path ?? "")
+        }
+        
+        var totalDbSize: Int64 = 0
+        
+        // 1. 累加当前活跃的专属笔记本数据库物理文件大小及其 WAL/SHM 缓存文件
+        if !dbPath.isEmpty {
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: dbPath)[.size] as? Int64) ?? 0
+            
+            let walPath = dbPath + "-wal"
+            let shmPath = dbPath + "-shm"
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: walPath)[.size] as? Int64) ?? 0
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: shmPath)[.size] as? Int64) ?? 0
+        }
+        
+        // 2. 累加全局主配置库大小及其 WAL/SHM 缓存文件
+        if !globalDBPath.isEmpty {
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: globalDBPath)[.size] as? Int64) ?? 0
+            
+            let globalWalPath = globalDBPath + "-wal"
+            let globalShmPath = globalDBPath + "-shm"
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: globalWalPath)[.size] as? Int64) ?? 0
+            totalDbSize += (try? FileManager.default.attributesOfItem(atPath: globalShmPath)[.size] as? Int64) ?? 0
+        }
+        
+        // 3. 级联遍历扫描沙盒目录，累加其他非激活状态笔记本专属库大小
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+        
+        if let enumerator = FileManager.default.enumerator(at: vaultsDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
+            for case let fileURL as URL in enumerator {
+                let isSqlite = fileURL.pathExtension == "sqlite3" || fileURL.pathExtension == "sqlite"
+                let isCompanion = fileURL.path.hasSuffix("-wal") || fileURL.path.hasSuffix("-shm")
+                
+                if isSqlite || isCompanion {
+                    // 排除已经累计过的当前活跃库路径
+                    if !dbPath.isEmpty && !fileURL.path.hasPrefix(dbPath) {
+                        let resourceValues = try? fileURL.resourceValues(forKeys: [.fileSizeKey])
+                        if let fileSize = resourceValues?.fileSize {
+                            totalDbSize += Int64(fileSize)
+                        }
+                    }
+                }
+            }
+        }
+        
+        return (totalDbSize, 0, 0)
     }
     
     /// 执行批量数据库写入操作 (在隔离环境内)
@@ -153,6 +200,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     /// 填充默认引导内容
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
         let pagesToCreate: [(String, PageType, String, [String])] = [
+            (L10n.Common.Demo.Welcome.title, .concept, L10n.Common.Demo.Welcome.content, [L10n.Common.Demo.Welcome.tag1, L10n.Common.Demo.Welcome.tag2, L10n.Common.Demo.Welcome.tag3]),
             (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content, ["AI", "Agent"]),
             (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content, ["AI", "Planning"]),
             (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content, ["AI", "Memory", "RAG"])

@@ -1530,6 +1530,142 @@
           }
         }
       }
+    },
+    "plugin.error.sandboxBlocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sandbox Intercepted: High-risk system/network keywords detected in the plugin script. Execution blocked!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "沙盒拦截：检测到插件脚本中包含高危底层系统/网络操作关键字，执行被阻断！"
+          }
+        }
+      }
+    },
+    "plugin.error.dlpScriptBlocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DLP Intercepted: High-risk data exfiltration keywords detected in the plugin script. Execution blocked!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DLP 拦截：检测到插件脚本中包含高危数据外泄(Data Exfiltration)网络连接关键字，执行被阻断！"
+          }
+        }
+      }
+    },
+    "plugin.error.dlpFetchBlocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DLP Intercepted: This plugin attempted unauthorized external network transmission to (%@) (fetch)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DLP 拦截：此插件试图发起向未授权外网域名(%@)的网络传输(fetch)"
+          }
+        }
+      }
+    },
+    "plugin.error.preProcessException": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin pre-process execution exception or CPU time limit exceeded: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件预处理执行异常或 CPU 时间超限: %@"
+          }
+        }
+      }
+    },
+    "plugin.error.payloadTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin returned payload too large (Payload Too Large)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件返回数据过大 (Payload Too Large)"
+          }
+        }
+      }
+    },
+    "plugin.error.postProcessException": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin post-process execution exception or CPU time limit exceeded: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件后处理执行异常或 CPU 时间超限: %@"
+          }
+        }
+      }
+    },
+    "plugin.error.invalidURL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid network request URL: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无效的网络请求地址: %@"
+          }
+        }
+      }
+    },
+    "plugin.error.keyLengthExceeded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Storage key name length exceeded limit (%d characters)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储键名超过最大长度限制 (%d 字符)"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

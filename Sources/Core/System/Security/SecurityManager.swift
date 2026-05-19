@@ -17,7 +17,7 @@ import CryptoKit
 import GRDB
 
 /// 安全管理器：负责数据签名、加密与完整性校验。
-final class SecurityManager: Sendable {
+final class SecurityManager: @unchecked Sendable {
     /// 全局单例
     static let shared = SecurityManager()
 

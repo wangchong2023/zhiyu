@@ -18,6 +18,8 @@ final class LLMServiceTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        ServiceContainer.shared.reset()
+        ServiceContainer.shared.register(LLMConfigManager(), for: LLMConfigManager.self)
         // 使用单例进行基础冒烟测试
         service = LLMService.shared
     }

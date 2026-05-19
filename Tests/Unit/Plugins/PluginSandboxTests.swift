@@ -17,9 +17,13 @@ import XCTest
 final class PluginSandboxTests: XCTestCase {
 
     var registry: PluginRegistry!
+    var dbQueue: Any!
 
     override func setUp() async throws {
         try await super.setUp()
+        // 关键点：搭建标准的 Mock 环境以防止底层 resolve 找不到所需服务
+        dbQueue = setupFullMockEnvironment()
+        
         registry = PluginRegistry.shared
         await registry.reset()
     }
@@ -27,6 +31,8 @@ final class PluginSandboxTests: XCTestCase {
     override func tearDown() async throws {
         await registry.reset()
         registry = nil
+        ServiceContainer.shared.reset()
+        dbQueue = nil
         try await super.tearDown()
     }
 

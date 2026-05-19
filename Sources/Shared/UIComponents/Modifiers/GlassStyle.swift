@@ -129,3 +129,45 @@ public extension View {
             .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
     }
 }
+
+// MARK: - 统一列表行毛玻璃背景
+
+/// 统一的列表行磨砂玻璃背景组件
+/// 使用系统的超薄材质 (.ultraThinMaterial) 叠加轻微微透的强调底色，保障其在深色模式与浅色模式下均具有极佳的视觉可读性与高级感
+public struct AppListRowBackground: View {
+    // MARK: - 初始化
+    
+    /// 初始化磨砂玻璃背景组件
+    public init() {}
+    
+    // MARK: - 视图主体
+    
+    public var body: some View {
+        Color.appCard.opacity(DesignSystem.subtleOpacity)
+            .background(.ultraThinMaterial)
+    }
+}
+
+/// 列表行磨砂玻璃背景修饰符
+public struct AppListRowBackgroundModifier: ViewModifier {
+    // MARK: - 初始化
+    
+    /// 初始化修饰符
+    public init() {}
+    
+    // MARK: - 视图转换
+    
+    public func body(content: Content) -> some View {
+        content
+            .listRowBackground(AppListRowBackground())
+    }
+}
+
+public extension View {
+    /// 为列表项或 Section 统一应用高级磨砂玻璃背景样式
+    /// - Returns: 挂载了磨砂玻璃背景后的视图
+    func appListRowBackground() -> some View {
+        self.modifier(AppListRowBackgroundModifier())
+    }
+}
+

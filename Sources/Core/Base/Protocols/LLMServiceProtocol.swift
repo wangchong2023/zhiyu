@@ -45,7 +45,10 @@ protocol LLMKnowledgeServiceProtocol: AnyObject, Sendable {
 @MainActor
 protocol LLMRetrievalServiceProtocol: AnyObject, Sendable {
     func rewriteQuery(_ query: String) async -> String
+    func expandQuery(_ query: String) async -> [String]
     func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable]
+    func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk]
+    func generateHypotheticalDocument(query: String) async -> String
 }
 
 // MARK: - LLM 服务组合协议

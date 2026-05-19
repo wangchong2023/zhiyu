@@ -1475,7 +1475,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "资源监控"
+            "value": "用量"
           }
         }
       }
@@ -1492,7 +1492,58 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "资源监控"
+            "value": "用量"
+          }
+        }
+      }
+    },
+    "dashboard.stats.vaultStorageTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vault Storage"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "各笔记本占用"
+          }
+        }
+      }
+    },
+    "dashboard.stats.activeVaultStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前笔记本"
+          }
+        }
+      }
+    },
+    "dashboard.stats.inactiveVaultStatus": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inactive"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未激活"
           }
         }
       }
@@ -1799,6 +1850,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "数据导出"
+          }
+        }
+      }
+    },
+    "dashboard.stats.multiVaultDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includes %d isolated vaults & global config"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "含 %d 个独立笔记本与全局配置"
           }
         }
       }
@@ -3839,6 +3907,244 @@
           "stringUnit": {
             "state": "translated",
             "value": "核心领域"
+          }
+        }
+      }
+    },
+    "graph.accessibility.zoomInLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom In"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放大图谱"
+          }
+        }
+      }
+    },
+    "graph.accessibility.zoomInHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to zoom in the knowledge graph view"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击以放大知识图谱视图"
+          }
+        }
+      }
+    },
+    "graph.accessibility.zoomOutLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom Out"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缩小图谱"
+          }
+        }
+      }
+    },
+    "graph.accessibility.zoomOutHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to zoom out the knowledge graph view"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击以缩小知识图谱视图"
+          }
+        }
+      }
+    },
+    "graph.accessibility.resetLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset Graph"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重置图谱"
+          }
+        }
+      }
+    },
+    "graph.accessibility.resetHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to reset the graph zoom and center its position"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击以将图谱缩放与位置重置居中"
+          }
+        }
+      }
+    },
+    "graph.accessibility.fitToScreenLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fit to Screen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "适应屏幕"
+          }
+        }
+      }
+    },
+    "graph.accessibility.fitToScreenHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to fit all knowledge nodes within the screen viewport"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击使所有知识节点完整适应屏幕视口"
+          }
+        }
+      }
+    },
+    "graph.accessibility.relayoutLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recalculate Layout"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新计算布局"
+          }
+        }
+      }
+    },
+    "graph.accessibility.relayoutHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to reshuffle and recalculate force-directed layout"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击使力导向图节点重新洗牌排列布局"
+          }
+        }
+      }
+    },
+    "graph.accessibility.threeDLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle 3D Graph"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换3D图谱"
+          }
+        }
+      }
+    },
+    "graph.accessibility.threeDHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to toggle between 2D force-directed layout and high-tech 3D topology graph"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击在二维力导向图与高科技三维拓扑图谱间进行模式切换"
+          }
+        }
+      }
+    },
+    "graph.accessibility.statsBarLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Graph Stats"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识图谱统计数据"
+          }
+        }
+      }
+    },
+    "graph.accessibility.statsBarHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to display the deep knowledge base insights report panel"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双击以弹出知识库深度洞察报告面板"
           }
         }
       }

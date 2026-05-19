@@ -60,18 +60,62 @@ class KnowledgeBaseUITests: XCTestCase {
         }
     }
 
+    /// 跨系统版本与多语言自适应的 Tab 点击辅助方法
+    func tapTab(named tabName: String) {
+        let tabButton = app.tabBars.buttons[tabName].exists ? app.tabBars.buttons[tabName] : app.buttons[tabName]
+        if tabButton.exists {
+            tabButton.tap()
+        } else {
+            // 如果本地化语言不同，尝试用中英文互转作为后备
+            let fallbackName: String
+            switch tabName {
+            case "设置": fallbackName = "Settings"
+            case "知识", "主页": fallbackName = "Knowledge"
+            case "图谱": fallbackName = "Graph"
+            case "搜索", "检索": fallbackName = "Search"
+            case "导入": fallbackName = "Ingest"
+            case "Settings": fallbackName = "设置"
+            case "Knowledge": fallbackName = "知识"
+            case "Graph": fallbackName = "图谱"
+            case "Search": fallbackName = "搜索"
+            case "Ingest": fallbackName = "导入"
+            default: fallbackName = ""
+            }
+            if !fallbackName.isEmpty {
+                let fallbackBtn = app.tabBars.buttons[fallbackName].exists ? app.tabBars.buttons[fallbackName] : app.buttons[fallbackName]
+                if fallbackBtn.exists {
+                    fallbackBtn.tap()
+                    return
+                }
+            }
+            // 最后的物理位置索引后备
+            let index: Int
+            switch tabName {
+            case "Knowledge", "知识", "主页": index = 0
+            case "Graph", "图谱": index = 1
+            case "Search", "搜索", "检索": index = 2
+            case "Ingest", "导入": index = 3
+            case "Settings", "设置": index = 4
+            default: index = 0
+            }
+            let firstButton = app.tabBars.buttons.count > index ? app.tabBars.buttons.element(boundBy: index) : app.buttons.element(boundBy: index)
+            if firstButton.exists {
+                firstButton.tap()
+            } else {
+                XCTFail("找不到任何能点击的 Tab 按钮: \(tabName)")
+            }
+        }
+    }
+
     /// 导航到 Knowledge Tab
     func navigateToKnowledgeTab() async {
-        if !app.tabBars.buttons["Knowledge"].exists {
-            app.tabBars.buttons.element(boundBy: 0).tap()
-        }
-        app.tabBars.buttons["Knowledge"].tap()
+        tapTab(named: "Knowledge")
         try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
 
     /// 导航到设置 Tab
     func navigateToSettingsTab() async {
-        app.tabBars.buttons["Settings"].tap()
+        tapTab(named: "Settings")
         try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
     }
 }
@@ -83,8 +127,11 @@ final class TabNavigationTests: KnowledgeBaseUITests {
     func testAllFiveTabsAreTappable() async {
         let tabs = ["Knowledge", "Graph", "Search", "Ingest", "Settings"]
         for tab in tabs {
-            XCTAssertTrue(app.tabBars.buttons[tab].exists, "Tab '\(tab)' 不存在")
-            app.tabBars.buttons[tab].tap()
+            let tabButton = app.tabBars.buttons[tab].exists ? app.tabBars.buttons[tab] : app.buttons[tab]
+            XCTAssertTrue(tabButton.exists, "Tab '\(tab)' 不存在")
+            if tabButton.exists {
+                tabButton.tap()
+            }
             try? await Task.sleep(nanoseconds: 1 * 1_000_000_000)
         }
     }
@@ -216,7 +263,7 @@ final class SearchTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        app.tabBars.buttons["Search"].tap()
+        tapTab(named: "Search")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
@@ -390,7 +437,7 @@ final class IngestTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        app.tabBars.buttons["Ingest"].tap()
+        tapTab(named: "Ingest")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
@@ -471,7 +518,7 @@ final class GraphTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        app.tabBars.buttons["Graph"].tap()
+        tapTab(named: "Graph")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
@@ -540,7 +587,7 @@ final class ChatTests: KnowledgeBaseUITests {
 
     override func setUp() async throws {
         try await super.setUp()
-        app.tabBars.buttons["Knowledge"].tap()
+        tapTab(named: "Knowledge")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
         // 从 Knowledge tab 导航到 Chat
         let chatNav = app.cells.matching(identifier: "AI-Chat").firstMatch
@@ -865,10 +912,7 @@ final class BackupTests: KnowledgeBaseUITests {
 
     func testBackupViewExists() async {
         // Navigate to settings
-        if !app.tabBars.buttons["设置"].exists {
-            app.tabBars.buttons.element(boundBy: 4).tap()
-        }
-        app.tabBars.buttons["设置"].tap()
+        tapTab(named: "设置")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Look for backup section
@@ -1010,10 +1054,7 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
 final class SettingsE2ETests: KnowledgeBaseUITests {
 
     func testSettingsAllSectionsAccessible() async {
-        if !app.tabBars.buttons["设置"].exists {
-            app.tabBars.buttons.element(boundBy: 4).tap()
-        }
-        app.tabBars.buttons["设置"].tap()
+        tapTab(named: "设置")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Scroll through settings to verify all sections load without crash
@@ -1030,10 +1071,7 @@ final class SettingsE2ETests: KnowledgeBaseUITests {
     }
 
     func testLanguageSwitching() async {
-        if !app.tabBars.buttons["Settings"].exists {
-            app.tabBars.buttons.element(boundBy: 4).tap()
-        }
-        app.tabBars.buttons["Settings"].tap()
+        tapTab(named: "Settings")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Find language setting
@@ -1046,10 +1084,7 @@ final class SettingsE2ETests: KnowledgeBaseUITests {
     }
 
     func testThemeAccentColorChange() async {
-        if !app.tabBars.buttons["设置"].exists {
-            app.tabBars.buttons.element(boundBy: 4).tap()
-        }
-        app.tabBars.buttons["设置"].tap()
+        tapTab(named: "设置")
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         // Find accent color buttons (usually colored circles/squares)

@@ -47,7 +47,7 @@ public final class AIInsightStore {
     public var growthSeries: [AppStore.KnowledgeGrowthPoint] = []
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
-    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject private var llmService: LLMService
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
 

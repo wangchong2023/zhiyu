@@ -12,6 +12,7 @@ import Foundation
 import Combine
 
 /// 图谱数据提供者协议 (Module Designer 视角：实现视图与具体 Store 的解耦)
+@MainActor
 protocol GraphDataProvider: ObservableObject {
     var pages: [KnowledgePage] { get }
     var clusters: [GraphClusteringService.Cluster] { get }

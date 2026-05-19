@@ -68,6 +68,21 @@ struct SynthesisView: View {
                 batchDelete: batchDelete,
                 outputSheet: outputSheet
             )
+            .onChange(of: taskCenter.tasks) { oldTasks, newTasks in
+                // 找出从 running 变为 completed 或 failed 的任务，进行 VoiceOver 主动语音公告播报
+                for newTask in newTasks {
+                    if let oldTask = oldTasks.first(where: { $0.id == newTask.id }) {
+                        switch (oldTask.status, newTask.status) {
+                        case (.running, .completed):
+                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFinishedAnnouncement(newTask.name))
+                        case (.running, .failed(let error)):
+                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "，" + error)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -219,80 +234,61 @@ struct SynthesisView: View {
     }
     
     private var listHeader: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack {
-                Text(L10n.AI.Synthesis.documentList).font(.title3.bold())
-                Spacer()
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    withAnimation(DesignSystem.standardAnimation) {
-                        if editMode == .inactive {
-                            editMode = .active
-                        } else {
-                            editMode = .inactive
-                            selectedDocIDs.removeAll()
-                        }
-                    }
-                }) {
-                    Text(editMode == .active ? L10n.Common.done : L10n.Common.edit)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(Color.appAccent)
-                }
-                .buttonStyle(.plain)
-            }
+        HStack(alignment: .firstTextBaseline, spacing: DesignSystem.medium) {
+            Text(L10n.AI.Synthesis.documentList)
+                .font(.title3.bold())
+            
+            Spacer()
             
             if editMode == .active {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: DesignSystem.medium) {
-                        Button(action: {
-                            HapticFeedback.shared.trigger(.warning)
-                            showBatchDeleteConfirm = true
-                        }) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: DesignSystem.Icons.delete)
-                                Text(L10n.Common.delete)
-                            }
-                            .font(.footnote.bold())
-                            .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .white)
-                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
-                            .padding(.vertical, DesignSystem.smallRadius)
-                            .background(
-                                Capsule().fill(selectedDocIDs.isEmpty ? Color.clear : Color.red)
-                            )
-                            .overlay(
-                                Capsule().stroke(selectedDocIDs.isEmpty ? Color.appBorder : Color.red, lineWidth: DesignSystem.borderWidth)
-                            )
-                        }
-                        .disabled(selectedDocIDs.isEmpty)
-                        
-                        Button(action: {
-                            HapticFeedback.shared.trigger(.warning)
-                            showClearAllConfirm = true
-                        }) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: DesignSystem.Icons.trashSlash)
-                                Text(L10n.Common.Misc.clearAll)
-                            }
-                            .font(.footnote.bold())
-                            .foregroundStyle(.appSecondary)
-                            .padding(.horizontal, DesignSystem.medium)
-                            .padding(.vertical, DesignSystem.smallRadius)
-                            .background(
-                                Capsule().stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
-                            )
-                        }
-                        .confirmationDialog(L10n.AI.Synthesis.clearAllConfirm, isPresented: $showClearAllConfirm, titleVisibility: .visible) {
-                            Button(L10n.Common.Misc.clearAll, role: .destructive) {
-                                synthesisStore.clearAll()
-                                HapticFeedback.shared.trigger(.success)
-                            }
-                            Button(L10n.Common.cancel, role: .cancel) { }
-                        }
+                HStack(alignment: .firstTextBaseline, spacing: DesignSystem.medium) {
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.warning)
+                        showBatchDeleteConfirm = true
+                    }) {
+                        Text(L10n.Common.delete)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .red)
                     }
-                    .padding(.vertical, DesignSystem.tiny)
+                    .disabled(selectedDocIDs.isEmpty)
+                    .buttonStyle(.plain)
+                    
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.warning)
+                        showClearAllConfirm = true
+                    }) {
+                        Text(L10n.Common.Misc.clear)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .buttonStyle(.plain)
+                    .confirmationDialog(L10n.AI.Synthesis.clearAllConfirm, isPresented: $showClearAllConfirm, titleVisibility: .visible) {
+                        Button(L10n.Common.Misc.clear, role: .destructive) {
+                            synthesisStore.clearAll()
+                            HapticFeedback.shared.trigger(.success)
+                        }
+                        Button(L10n.Common.cancel, role: .cancel) { }
+                    }
                 }
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(.move(edge: .trailing).combined(with: .opacity))
             }
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                withAnimation(DesignSystem.standardAnimation) {
+                    if editMode == .inactive {
+                        editMode = .active
+                    } else {
+                        editMode = .inactive
+                        selectedDocIDs.removeAll()
+                    }
+                }
+            }) {
+                Text(editMode == .active ? L10n.Common.done : L10n.Common.edit)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(Color.appAccent)
+            }
+            .buttonStyle(.plain)
         }
         .padding(.vertical, DesignSystem.tightPadding)
         .foregroundStyle(.appText)
@@ -418,6 +414,33 @@ struct SynthesisView: View {
                     ProgressView(value: progress).tint(.appAccent)
                 }
             }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(buildTaskAccessibilityLabel(task))
+    }
+
+    /// 构造任务在运行中的无障碍语音标签
+    /// - Parameter task: 异步后台任务
+    /// - Returns: 结合了进度与执行阶段描述的文本
+    private func buildTaskAccessibilityLabel(_ task: GlobalTask) -> String {
+        let base = "\(task.name)，\(L10n.AI.Task.Accessibility.taskInProgress)"
+        if case .running(let progress, let stage) = task.status {
+            let percentage = Int(progress * 100)
+            let stageName = localizedStageName(stage)
+            return base + "，" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
+        }
+        return base
+    }
+
+    /// 将 RAG 执行阶段转化为强类型多语言 Status 描述文案
+    /// - Parameter stage: RAG 任务阶段
+    /// - Returns: 对应的本地化描述文案
+    private func localizedStageName(_ stage: TaskStage) -> String {
+        switch stage {
+        case .embedding: return L10n.AI.Status.extracting
+        case .retrieval: return L10n.AI.Status.scanning
+        case .synthesis: return L10n.AI.Status.synthesizing
+        default: return L10n.AI.Status.thinking
         }
     }
 

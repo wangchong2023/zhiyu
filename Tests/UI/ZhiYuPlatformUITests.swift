@@ -39,6 +39,8 @@ class ZhiYuPlatformUITests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        // 防御性设计：测试退出时强行校准模拟器方向为竖屏，彻底根治此前因测试意外熔断导致模拟器被锁定在横屏的顽疾
+        XCUIDevice.shared.orientation = .portrait
         app?.terminate()
         try await super.tearDown()
     }
@@ -520,10 +522,16 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
     // MARK: - Helpers
     private func navigateToKnowledgeTab() async {
-        if !app.tabBars.buttons["Knowledge"].exists {
-            app.tabBars.buttons.element(boundBy: 0).tap()
+        let tabButton = app.tabBars.buttons["Knowledge"].exists ? app.tabBars.buttons["Knowledge"] : app.buttons["Knowledge"]
+        if !tabButton.exists {
+            let fallbackButton = app.tabBars.buttons.count > 0 ? app.tabBars.buttons.element(boundBy: 0) : app.buttons.element(boundBy: 0)
+            if fallbackButton.exists {
+                fallbackButton.tap()
+            }
         }
-        app.tabBars.buttons["Knowledge"].tap()
+        if tabButton.exists {
+            tabButton.tap()
+        }
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }

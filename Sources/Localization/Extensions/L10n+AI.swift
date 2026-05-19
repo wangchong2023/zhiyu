@@ -312,6 +312,32 @@ extension L10n {
                 public static var emptyTitle: String { Localized.tr("aitask.empty.title", table: t) }
                 public static var emptyDesc: String { Localized.tr("aitask.empty.desc", table: t) }
             }
+
+            /// AI 异步合成任务专属无障碍本地化定义
+            public enum Accessibility {
+                public static let t = "AI"
+                
+                /// 骨架屏占位描述标签
+                public static var skeletonLabel: String { Localized.tr("ai.accessibility.skeletonLabel", table: t) }
+                
+                /// 任务运行中的无障碍基础声明
+                public static var taskInProgress: String { Localized.tr("ai.accessibility.taskInProgress", table: t) }
+                
+                /// 任务圆满完成的主动公告文案模板
+                public static func taskFinishedAnnouncement(_ name: String) -> String {
+                    Localized.trf("ai.accessibility.taskFinishedAnnouncement", table: t, name)
+                }
+                
+                /// 任务不幸失败的主动公告文案模板
+                public static func taskFailedAnnouncement(_ name: String) -> String {
+                    Localized.trf("ai.accessibility.taskFailedAnnouncement", table: t, name)
+                }
+                
+                /// 动态进度及执行阶段拼接模板
+                public static func progressValue(_ percent: Int, _ stage: String) -> String {
+                    Localized.trf("ai.accessibility.progressValueFormat", table: t, percent, stage)
+                }
+            }
         }
     }
 }

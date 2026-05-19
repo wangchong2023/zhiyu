@@ -32,7 +32,13 @@ public final class AuthSession {
     public static let shared = AuthSession()
     
     private init() {
-        // 后续可在此处添加持久化状态恢复逻辑
+        // 如果是 UI 测试环境，默认以游客身份直接进入系统，避开 Onboarding 玻璃拟态登录界面以供用例直接进入主界面
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
+           ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            self.isGuest = true
+        }
+        #endif
     }
     
     // MARK: - 核心操作

@@ -29,6 +29,17 @@ final class SystemStatsCoordinator {
     var isLoading = true
     var isCleaning = false
     var cleanedCount: Int? = nil
+    
+    // ── 内部类型定义与多笔记本存储状态 ──
+    struct VaultStorageItem: Identifiable, Sendable {
+        let id: UUID
+        let name: String
+        let icon: String
+        let size: Int64
+    }
+    
+    /// 各多笔记本 (Vault) 的精细化存储大小发布列表
+    var vaultStorageItems: [VaultStorageItem] = []
 
     // ── 基础设施依赖 ──
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
@@ -96,7 +107,7 @@ final class SystemStatsCoordinator {
             StorageCategory(
                 label: L10n.Dashboard.System.database,
                 value: dbSize,
-                count: 1,
+                count: VaultService.shared.vaults.count,
                 color: .blue
             ),
             StorageCategory(
@@ -123,6 +134,35 @@ final class SystemStatsCoordinator {
         self.totalStorage = categories.reduce(0) { $0 + $1.value }
         self.exportSize = exportsSize
         self.exportCount = allLogEntries.filter { $0.action == .export }.count
+        
+        // 4. 级联提取各个笔记本 (Vault) 沙盒目录下的物理占用大小，并依据大小降序排列
+        var items: [VaultStorageItem] = []
+        let fileManager = FileManager.default
+        if let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+            
+            for vault in VaultService.shared.vaults {
+                let vaultDir = vaultsDir.appendingPathComponent(vault.id.uuidString)
+                var totalVaultSize: Int64 = 0
+                if let enumerator = fileManager.enumerator(at: vaultDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
+                    // 使用 nextObject() 代替 for-in 以避免 Swift 6 异步上下文下的迭代器不安全警告
+                    while let fileURL = enumerator.nextObject() as? URL {
+                        if let resourceValues = try? fileURL.resourceValues(forKeys: [.fileSizeKey]),
+                           let fileSize = resourceValues.fileSize {
+                            totalVaultSize += Int64(fileSize)
+                        }
+                    }
+                }
+                
+                items.append(VaultStorageItem(
+                    id: vault.id,
+                    name: vault.name,
+                    icon: vault.icon ?? "",
+                    size: totalVaultSize
+                ))
+            }
+        }
+        self.vaultStorageItems = items.sorted { $0.size > $1.size }
         
         // 3. 页面统计
         self.totalPages = (try? await knowledgeRepo.count()) ?? 0

@@ -459,33 +459,42 @@ final class MarkdownProcessor: Sendable {
 
     // MARK: - 行内解析（核心两阶段解析算法）
 
-    /// 两阶段行内样式解析法。
-    /// - 核心背景：为了彻底避免斜体、加粗格式化标记包围智宇双链（`[[知识库页面]]`）时，
-    /// 正则引擎贪婪匹配错乱，导致双链标记被错误截断损坏的问题。
-    /// - 阶段一：首选全局提取出所有的 Applink 位置，将其置为受保护的 applink 独立节点。
-    /// - 阶段二：对夹在双链之间的中间碎裂文本段，进行 bold/italic/code 样式的深度正则格式化。
-    /// - Parameter text: 待解析的完整行内文本正文。
-    /// - Returns: 解析完成后微观渲染片段 `InlineSegment` 的有序数组。
+    /// 智宇系统核心：基于两阶段行内样式解析法提取富文本片段。
+    ///
+    /// - 核心设计初衷 (Conflict Prevention):
+    ///   标准的正则表达式引擎在面对复合嵌套样式（如加粗斜体包围智宇双链，形如 `***[[知识页面]]***`）时，
+    ///   极易发生贪婪模式匹配错乱，导致双链标志 `[[` 与 `]]` 被错误切断破坏。
+    ///   为彻底根除此项工业级痛点，我们设计了精妙的“两阶段解析算法”：
+    ///   1. **阶段一 (Applink 保护区)**：优先全局检索并提取所有的智宇双链 `[[...]]` 位置。将其视为高级黄金保护节点固定下来。
+    ///   2. **阶段二 (格式化碎裂匹配)**：在两个双链节点之间的物理夹缝文本段中，依次级联运行 Bold、Italic、Strikethrough、Link 与 Code 正则，
+    ///      从而实现防对撞、防截断的完美富文本物理分割。
+    ///
+    /// - Parameter text: 包含各种行内标记的原始单行 Markdown 字符串。
+    /// - Returns: 有序排列的行内样式片段（`InlineSegment`）实体数组。
     func parseInlineSegments(_ text: String) -> [InlineSegment] {
+        // 步骤 1.1：为避免 Objective-C NSString 范围与 Swift String.Index 偏移冲突导致崩溃，将输入字符串安全转换为 NSString
         let nsText = text as NSString
         var result: [InlineSegment] = []
         var currentOffset = 0
 
-        // 1. 第一阶段：全局检索提取所有不受干扰的 [[...]] 表达式位置
+        // 步骤 1.2：第一阶段——寻找所有的 Applink。定义整行覆盖范围，并利用预编译的 appLinkRegex 查找全部 `[[双向链接]]`
         let searchRange = NSRange(location: 0, length: nsText.length)
         let applinkMatches = NSRegularExpression.appLinkRegex.matches(in: text, options: [], range: searchRange)
 
+        // 步骤 1.3：启动双链迭代扫描，将每一个捕获到的双链区域视为绝对保护段
         for match in applinkMatches {
-            // 2. 解析双链前方碎屑区间的所有粗斜格式化片段并装载
+            // 步骤 1.4：如果当前双链匹配的起点大于记录 of 偏移量，说明中间夹有非双链文本，截取子串并调度二级格式化解析器进行深度匹配
             if match.range.location > currentOffset {
                 let beforeRange = NSRange(location: currentOffset, length: match.range.location - currentOffset)
                 let beforeText = nsText.substring(with: beforeRange)
                 result.append(contentsOf: parseFormattingSegments(beforeText))
             }
 
-            // 3. 提取双链 [[...]] 承载的内容，区分并处理 label 别名 (e.g. [[别名|实际页面]])
+            // 步骤 1.5：提取双链中由第一捕获组 `(.+?)` 所包裹的原始字面量，并安全剔除首尾多余空格
             let raw = nsText.substring(with: match.range(at: 1)).trimmingCharacters(in: .whitespaces)
             let content: String
+            
+            // 步骤 1.6：若包含管线符 `|`，说明是别名双链（如 `[[我的链接|实际页面]]`），进行物理切分，将别名与真实页面组合编码以备后续使用
             if raw.contains("|") {
                 let parts = raw.components(separatedBy: "|")
                 let label = String(parts.first ?? "").trimmingCharacters(in: .whitespaces)
@@ -494,11 +503,13 @@ final class MarkdownProcessor: Sendable {
             } else {
                 content = raw
             }
+            
+            // 步骤 1.7：将处理完毕的双链封装为 .applink 段追加进结果中，并将偏移量同步平移到双链闭合括号 `]]` 的下一位
             result.append(InlineSegment(type: .applink, content: content))
             currentOffset = match.range.location + match.range.length
         }
 
-        // 4. 解析最后一个双链节点后面的扫尾剩余文本段并装载
+        // 步骤 1.8：首阶段扫尾。若最后一个双链解析完毕后，偏移量距离字符串总长度还有剩余，说明尾端存在碎屑文本，再次调用二级解析器扫尾
         if currentOffset < nsText.length {
             let remaining = nsText.substring(from: currentOffset)
             result.append(contentsOf: parseFormattingSegments(remaining))
@@ -507,15 +518,16 @@ final class MarkdownProcessor: Sendable {
         return result
     }
 
-    /// 第二阶段解析：仅提取普通格式化标记（加粗、斜体、删除线、代码、超链接），不处理双链。
-    /// - Parameter text: 夹在双链片段之间的子区间文本。
-    /// - Returns: 行内格式化片段列表。
+    /// 第二阶段解析：在双链保护区夹缝中，深度级联提取普通富文本标记（加粗、斜体、删除线、外链及代码块）。
+    ///
+    /// - Parameter text: 夹在双链片段之间的子区间纯文本字串。
+    /// - Returns: 解析完毕的局域行内格式化片段列表。
     private func parseFormattingSegments(_ text: String) -> [InlineSegment] {
         var segments: [InlineSegment] = []
         let nsText = text as NSString
         var currentOffset = 0
 
-        // 优先级模式字典
+        // 步骤 2.1：定义高优先级贪婪度格式正则的级联匹配字典，严格按照“外链 -> 粗体 -> 斜体 -> 删除线 -> 行内代码”的物理次序层级递归
         let patterns: [(InlineType, NSRegularExpression)] = [
             (.link, .linkRegex),
             (.bold, .boldRegex),
@@ -524,11 +536,11 @@ final class MarkdownProcessor: Sendable {
             (.code, .codeRegex)
         ]
 
-        // 依次扫描子文本段
+        // 步骤 2.2：启动位置平移指针，开始循环扫描碎屑区间的所有微观格式
         while currentOffset < nsText.length {
             var earliestMatch: (type: InlineType, match: NSTextCheckingResult)?
 
-            // 寻找当前偏移量之后最先被正则命中的格式化前缀
+            // 步骤 2.3：为防止跨样式对冲命中，在当前偏移量后依次运行所有格式正则，寻找“首个被物理命中的最前方格式前缀”（即 location 最小者）
             for (type, regex) in patterns {
                 if let match = regex.firstMatch(in: text, options: [], range: NSRange(location: currentOffset, length: nsText.length - currentOffset)) {
                     if earliestMatch == nil || match.range.location < earliestMatch!.match.range.location {
@@ -537,16 +549,16 @@ final class MarkdownProcessor: Sendable {
                 }
             }
 
+            // 步骤 2.4：若检测到有效格式命中，则提取该匹配段前方的纯文本字串，将其安全封包为 `.text` 原始片段
             if let earliest = earliestMatch {
                 let matchRange = earliest.match.range
                 
-                // 1. 装载格式化匹配段前方的纯文本片段
                 if matchRange.location > currentOffset {
                     let before = nsText.substring(with: NSRange(location: currentOffset, length: matchRange.location - currentOffset))
                     segments.append(InlineSegment(type: .text, content: before))
                 }
 
-                // 2. 匹配格式化内含标签，并做子串裁剪
+                // 步骤 2.5：核心内容清洗——剥离格式化引导符（如 `**`、`~~`、`[ ]`），精准还原捕获组内的真正正文，并区分处理 Markdown 外链
                 let content: String
                 switch earliest.type {
                 case .link:
@@ -559,10 +571,11 @@ final class MarkdownProcessor: Sendable {
                     content = ""
                 }
 
+                // 步骤 2.6：装载匹配到的 Segment 实例，并瞬间平移当前偏移量至整个匹配区间（如整个 **粗体**）的闭合标记之后
                 segments.append(InlineSegment(type: earliest.type, content: content))
                 currentOffset = matchRange.location + matchRange.length
             } else {
-                // 3. 没有任何格式化命中，则将剩余部分全部封装为普通文本装载
+                // 步骤 2.7：当没有任何格式化正则被命中的情况下，将剩余所有字符合并打包为最后的普通 `.text` Segment 载荷，打断循环
                 let remaining = nsText.substring(from: currentOffset)
                 if !remaining.isEmpty {
                     segments.append(InlineSegment(type: .text, content: remaining))
@@ -575,12 +588,18 @@ final class MarkdownProcessor: Sendable {
 
     // MARK: - 表格辅助解析方法
 
-    /// 是否是符合表格结构的行定义。
+    /// 诊断并测试给定的纯文本行是否完全符合 Markdown 表格管线布局的物理特征。
+    ///
+    /// - Parameter line: 已经过首尾去空格处理的待检测单行字符串。
+    /// - Returns: 若起首和收尾字符均为管线符 `|`，则判定为是，返回 `true`，否则返回 `false`。
     private func isTableLine(_ line: String) -> Bool {
         line.hasPrefix("|") && line.hasSuffix("|")
     }
 
-    /// 提取表格行中被管线符 | 切割拆分出的多列单元格文字。
+    /// 提取表格行中被管线符 `|` 物理分隔的多列单元格文本。
+    ///
+    /// - Parameter line: 包含管线符的 Markdown 原始表格单行字符串。
+    /// - Returns: 清除首尾空格并物理过滤掉虚线对齐分隔符后，所包含的单元格字符有序数组。
     private func parseTableCells(_ line: String) -> [String] {
         line.split(separator: "|")
             .map { $0.trimmingCharacters(in: .whitespaces) }

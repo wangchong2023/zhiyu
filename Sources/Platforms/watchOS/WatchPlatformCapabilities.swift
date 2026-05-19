@@ -11,6 +11,7 @@ import LocalAuthentication
 // MARK: - 生物识别
 
 /// watchOS 平台的鉴权提供者（使用设备密码）
+@MainActor
 struct WatchBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthentication }
     

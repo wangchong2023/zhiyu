@@ -20,12 +20,12 @@ final class AppEnvironment {
     let store: AppStore
     let ingestStore: IngestStore
     let synthesisStore: SynthesisStore
-    let router: Router = Router.shared
+    let router: Router
     
     // ── 系统级状态 ──
-    let themeManager: ThemeManager = ThemeManager.shared
-    let llmService: LLMService = LLMService.shared
-    let llmConfig: LLMConfigManager = ServiceContainer.shared.resolve(LLMConfigManager.self)
+    let themeManager: ThemeManager
+    let llmService: LLMService
+    let llmConfig: LLMConfigManager
     
     private init() {
         print("🎬 [AppEnvironment] 开始执行初始化...")
@@ -49,6 +49,12 @@ final class AppEnvironment {
         DomainModuleRegistrar.register(in: ServiceContainer.shared)
         AppModuleRegistrar.register(in: ServiceContainer.shared)
         
+        // 1.5 在模块注册完成后，解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
+        self.router = Router.shared
+        self.themeManager = ThemeManager.shared
+        self.llmConfig = ServiceContainer.shared.resolve(LLMConfigManager.self)
+        self.llmService = LLMService.shared
+        
         // 2. 初始化业务层 Stores
         // 确保在依赖注册完成后再实例化，防止 @Inject 导致的崩溃
         self.ingestStore = IngestStore()
@@ -61,7 +67,6 @@ final class AppEnvironment {
         container.register(self.ingestStore, for: IngestStore.self)
         container.register(self.synthesisStore, for: SynthesisStore.self)
         container.register(self.store.searchStore, for: SearchStore.self)
-        container.register(self.store.settingsStore, for: SettingsStore.self)
         container.register(self.store.aiWorkflowStore, for: AIWorkflowStore.self)
         container.register(self.store.aiWorkflowStore as any AIWorkflowCapabilities, for: (any AIWorkflowCapabilities).self)
         container.register(self.store.aiInsightStore, for: AIInsightStore.self)

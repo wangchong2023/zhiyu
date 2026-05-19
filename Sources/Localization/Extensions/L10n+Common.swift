@@ -35,6 +35,7 @@ extension L10n {
         public static var settings: String { tr("settings") }
         public static var help: String { tr("help") }
         public static var lock: String { tr("lock") }
+        public static var usage: String { tr("menu.stats") }
         public static var skip: String { tr("skip") }
         public static var action: String { tr("action") }
         public static var confirm: String { tr("confirm") }
@@ -66,6 +67,7 @@ extension L10n {
         public static var justNow: String { tr("justNow") }
         public static var about: String { tr("about") }
         public static var unknown: String { tr("unknown") }
+        public static var testRunnerWorking: String { tr("common.testRunnerWorking") }
         public static var none: String { Localized.tr("misc.none", table: t) }
         public static var all: String { Localized.tr("misc.all", table: t) }
 
@@ -237,6 +239,17 @@ extension L10n {
         }
 
         public enum Demo {
+            public enum Welcome {
+                public static var title: String { Common.tr("demo.welcome.title") }
+                public static var content: String { Common.tr("demo.welcome.content") }
+                public static var prompt: String { Common.tr("demo.welcome.prompt") }
+                public static var tag1: String { Common.tr("demo.welcome.tag1") }
+                public static var tag2: String { Common.tr("demo.welcome.tag2") }
+                public static var tag3: String { Common.tr("demo.welcome.tag3") }
+                public static var cardTitle: String { Common.tr("demo.welcome.card.title") }
+                public static var cardDesc: String { Common.tr("demo.welcome.card.desc") }
+                public static var cardRecommend: String { Common.tr("demo.welcome.card.recommend") }
+            }
             public enum aiAgent {
                 public static var title: String { Common.tr("demo.aiAgent.title") }
                 public static var content: String { Common.tr("demo.aiAgent.content") }

@@ -216,7 +216,7 @@ final class PluginRegistry: ObservableObject {
                 Logger.shared.error("🛡️ [安全拦截] 插件 \(manifest.id) 尝试查询页面，但未声明 'pages.read' 权限。", error: nil)
                 return []
             }
-            let pages = await PluginRegistry.shared.pagesProvider?() ?? []
+            let pages = PluginRegistry.shared.pagesProvider?() ?? []
             return await ServiceContainer.shared.resolve(LinkService.self).search(query: query, in: pages)
         }
         
@@ -230,6 +230,13 @@ final class PluginRegistry: ObservableObject {
             let item = PluginRibbonItem(pluginID: manifest.id, icon: icon, title: title, action: callback)
             PluginRegistry.shared.ribbonItems.append(item)
             log("已注册侧边栏入口: \(title)")
+        }
+
+        func registerPageProcessor(_ processor: any KnowledgePageProcessor) {
+            // 通过 ServiceContainer 获取 KnowledgeStore 并注册，关联当前插件 ID
+            let store = ServiceContainer.shared.resolve(KnowledgeStore.self)
+            store.registerProcessor(processor, pluginID: manifest.id)
+            log("已注册页面处理器: \(processor.name)")
         }
         
         func registerSettingTab(name: String, schema: String?, callback: @escaping @MainActor (String?) -> Void) {
@@ -272,6 +279,9 @@ final class PluginRegistry: ObservableObject {
         settingTabs.removeAll(where: { $0.pluginID == id })
         customViews.removeAll(where: { $0.pluginID == id })
         eventListeners.removeAll(where: { $0.pluginID == id })
+        
+        // 注销页面处理器
+        ServiceContainer.shared.resolve(KnowledgeStore.self).unregisterProcessors(for: id)
         
         analytics?.trackEvent("plugin_unloaded", properties: ["id": id])
     }

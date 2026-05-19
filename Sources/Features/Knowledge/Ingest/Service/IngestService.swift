@@ -63,7 +63,7 @@ actor IngestService {
         let pageID = UUID()
 
         // 1. 安全脱敏：拦截恶意指令注入 (@P0: Security)
-        let sanitizedRawContent = PromptSanitizer.sanitize(content)
+        let sanitizedRawContent = PromptSanitizer.shared.sanitize(content)
 
         // --- RAG 摄入管道集成 ---
         let processedContent: String
@@ -116,7 +116,7 @@ actor IngestService {
         await pageStore.anyUpdatePage(page, forceDeepScan: forceDeepScan)
 
         let duration = Date().timeIntervalSince(startTime)
-        await pageStore.addLog(
+        pageStore.addLog(
             action: .create,
             target: title,
             details: "Ingested \(processedContent.count) chars. DeepScan: \(forceDeepScan)",

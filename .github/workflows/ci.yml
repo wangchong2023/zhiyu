@@ -1,0 +1,50 @@
+# ci.yml
+#
+# 作者: Wang Chong
+# 功能说明: 智宇 (ZhiYu) 全自动 GitHub Actions 持续集成流 (含覆盖率红线熔断)
+# 版本: 1.1
+# 日期: 2026-05-18
+
+name: ZhiYu CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    name: Build, Lint and Test (with Coverage Enforcer)
+    runs-on: macos-14
+
+    steps:
+      # 1. 检出代码仓库
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. 挂载标准的 Xcode 环境
+      - name: Set up Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
+
+      # 3. 准备系统依赖工具箱
+      - name: Install System Dependencies
+        run: |
+          brew install xcodegen swiftlint fastlane
+
+      # 4. 基于 project.yml 配置动态生成 Xcode 工程结构 (开发规范强绑定)
+      - name: Generate Xcode Project via XcodeGen
+        run: |
+          xcodegen generate
+
+      # 5. 执行 Fastlane 自动化跑测与静态风格规约扫描，并将 code_coverage 转储至 DerivedData
+      - name: Run CI Pipeline via Fastlane
+        run: |
+          bundle exec fastlane ci_test || fastlane ci_test
+
+      # 6. 拉起领域层 (Domain) 85% 代码覆盖率红线熔断拦截校验，低于红线则阻断 CI 流程！
+      - name: Run Domain Layer 85% Code Coverage Enforcer
+        run: |
+          ./Tools/check_coverage.py

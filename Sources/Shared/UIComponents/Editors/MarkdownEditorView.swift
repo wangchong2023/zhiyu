@@ -72,14 +72,14 @@ struct OCRPickerModifier: ViewModifier {
         content
             #if !os(watchOS)
             .photosPicker(isPresented: $isPresented, selection: $selectedItem, matching: .images)
-            .onChange(of: selectedItem) { newItem in
-                guard let newItem = newItem else { return }
+            .onChange(of: selectedItem) { oldValue, newValue in
+                guard let newItem = newValue else { return }
                 Task {
                     if let data = try? await newItem.loadTransferable(type: Data.self),
                        let image = AppImage(data: data) {
                         do {
                             let text = try await ingestStore.recognizeText(from: image)
-                            await MainActor.run { onResult(text) }
+                            onResult(text)
                         } catch {
                             // 错误处理通常由 UI 层展示 Toast
                             print("❌ [OCR] Failed: \(error.localizedDescription)")

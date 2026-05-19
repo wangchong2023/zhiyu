@@ -7,12 +7,14 @@
 // 2. 安全性：该页面仅在 DEBUG 模式下可见，涉及破坏性操作时需二次确认。
 // 修改记录:
 //   - 2026-05-08: 从 SettingsView 与 SystemStatsView 整合开发者工具，创建分级菜单。
+//   - 2026-05-18: 架构对齐：引入 KnowledgeStore 处理页面刷新。
 // 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
 
 import SwiftUI
 
 struct DeveloperSettingsView: View {
     @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var knowledgeStore
     @Environment(SettingsStore.self) var settingsStore
     @ObservedObject var onboardingService: OnboardingService
     
@@ -101,6 +103,7 @@ struct DeveloperSettingsView: View {
                 } header: {
                     Text(L10n.Settings.developer.section.data)
                 }
+                .appListRowBackground()
                 
                 // MARK: - 数据重置 (Data Reset)
                 Section {
@@ -132,6 +135,7 @@ struct DeveloperSettingsView: View {
                 } header: {
                     Text(L10n.Settings.developer.section.dataReset)
                 }
+                .appListRowBackground()
 
                 // MARK: - 操作信息 (Operation Info)
                 Section {
@@ -141,6 +145,7 @@ struct DeveloperSettingsView: View {
                 } header: {
                     Text(L10n.Settings.developer.section.operationInfo)
                 }
+                .appListRowBackground()
             } else {
                 // MARK: - 性能测试 (Performance Testing)
                 Section {
@@ -178,6 +183,7 @@ struct DeveloperSettingsView: View {
                             .foregroundColor(.orange)
                     }
                 }
+                .appListRowBackground()
 
                 // MARK: - RAG 质量评估 (RAG Quality Evaluation)
                 Section {
@@ -188,12 +194,12 @@ struct DeveloperSettingsView: View {
                     Text(L10n.Dashboard.benchmarkDescription)
                         .font(.caption)
                 }
+                .appListRowBackground()
             }
             }
             #if os(iOS)
             .listStyle(.insetGrouped)
             #endif
-            .listRowBackground(Color.appCard.opacity(0.8))
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.Section.developer)
@@ -220,17 +226,13 @@ struct DeveloperSettingsView: View {
         
         try? await Task.sleep(nanoseconds: 500_000_000)
         
-        // 压力测试调用修复：使用协议而非具体类
-        var count = 0
-        if let engine = store.pageStore as? any AnyPageStoreCapabilities {
-            count = (try? await DemoDataGenerator.generateStressTest(in: engine, count: targetCount)) ?? 0
-        }
+        let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
         
         await MainActor.run {
             self.stressTestCount = count
             self.isStressTesting = false
             Task {
-                await store.refresh()
+                await knowledgeStore.refresh()
                 AppEventBus.shared.publish(.pagesCleared)
                 await loadStats() // 压力测试后重新加载统计
             }
@@ -282,7 +284,7 @@ struct DeveloperSettingsView: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: DesignSystem.microFontSize, weight: .medium))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.appSecondary)
                     .lineLimit(1)
                 

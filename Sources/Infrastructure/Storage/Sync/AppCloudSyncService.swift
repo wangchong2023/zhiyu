@@ -255,12 +255,50 @@ class iCloudSyncService: ObservableObject {
 
     // MARK: - 双向智能同步 (LWW 解决冲突)
     
+    /*
+     * ┌────────────────────────────────────────────────────────┐
+     * │              智宇地云双向 LWW 冲突仲裁与同步算法            │
+     * └────────────────────────────────────────────────────────┘
+     * 
+     *      [开始同步] ──► 1. 物理拉取远程 CKRecord 实体
+     *                            │
+     *                            ▼
+     *                     2. 读取 lastModified 时间戳
+     *                            │
+     *             ┌──────────────┴──────────────┐
+     *             ▼ [云端时间戳较旧/无变动]       ▼ [云端时间戳较新/有更新]
+     *       保持本地最新数据                  3. 触发 conflictResolution
+     *             │                              │
+     *             │                       ┌──────┴──────┐
+     *             │                       ▼ [Merge 模式] ▼ [接纳云端/本地获胜]
+     *             │               4. 智能合并算法LWW   完全覆盖/强推本地
+     *             │                (UUID对撞时间戳胜出)     │
+     *             │                (新页面无冲突追加)       │
+     *             │                       │              │
+     *             └───────────────────────┼──────────────┘
+     *                                     ▼
+     *                       5. 限制审计日志滑动窗口 (最新200条)
+     *                                     │
+     *                                     ▼
+     *                       6. 将黄金数据集打包上传/推回 CloudKit
+     *                                     │
+     *                                     ▼
+     *                                  [完成同步]
+     */
+    
     /// 执行智宇平台的核心双向同步算法。
-    /// 步骤：拉取远程 CKRecord -> 运用 LWW 策略对页面和审计日志执行冲突决策与去重合并 -> 更新回 CloudKit -> 返回最新合并数据集。
+    ///
+    /// - 架构核心设计说明 (Bi-directional Synchronization Engine):
+    ///   本方法贯彻 RAG 系统的“多端一致性最终闭环”原则，通过 CloudKit 私有数据库的分区机制进行跨设备数据融合：
+    ///   1. **步骤一**：网络物理拉取远程的 CKRecord 二进制字节流，自动还原为内存云端页面与日志集。
+    ///   2. **步骤二**：通过 `resolveSyncConflict` 对两端的时间线（Timeline）进行时间戳比对。
+    ///   3. **步骤三**：若云端发生更新修改，则调配 LWW（Last-Writer-Wins，最近写入者胜出）合并算法，执行无损融合去重。
+    ///   4. **步骤四**：同步完成的黄金版本数据再次被序列化强推回 CloudKit，以此达成全局最终一致性。
+    ///
     /// - Parameters:
-    ///   - localPages: 当前专属物理笔记本中的本地知识页面。
-    ///   - localLogs: 当前专属物理笔记本中的本地审计日志。
-    /// - Returns: 经智能冲突合并比对后，达成的云地一致的最终数据集。
+    ///   - localPages: 当前专属物理笔记本中的本地知识页面列表。
+    ///   - localLogs: 当前专属物理笔记本中的本地审计日志列表。
+    /// - Returns: 经智能冲突合并比对后，达成的云地一致的最终黄金数据集（页面数组 + 审计日志数组）。
     /// - Throws: `iCloudSyncError`（云端网络失败或比对合并错乱）。
     func sync(localPages: [KnowledgePage], localLogs: [LogEntry]) async throws -> ([KnowledgePage], [LogEntry]) {
         guard iCloudAvailable, let database else {
@@ -270,12 +308,13 @@ class iCloudSyncService: ObservableObject {
         await MainActor.run { syncStatus = .syncing }
 
         do {
+            // 步骤 A.1：验证 CloudKit 的自定义物理 Zone 空间是否已就绪挂载
             try await ensureZoneExists()
 
-            // 1. 物理拉取远程记录实体
+            // 步骤 A.2：物理从 iCloud 私有云端拉取最新的 CKRecord 实体包
             let (remotePages, remoteLogs, record) = try await fetchRemoteData(database: database)
 
-            // 2. 将数据递交至 LWW 冲突决策处理器，计算出两端一致的黄金版本数据
+            // 步骤 A.3：将拉取到的云端记录与本地数据库进行基于 LWW 冲突解决器的时间轴比对
             let (finalPages, finalLogs) = try await resolveSyncConflict(
                 localPages: localPages,
                 localLogs: localLogs,
@@ -284,7 +323,7 @@ class iCloudSyncService: ObservableObject {
                 record: record
             )
 
-            // 3. 将比对融合完成后的最终黄金数据集推送保存回 iCloud 云数据库中
+            // 步骤 A.4：将最终融合打磨出的黄金数据集重新序列化，物理推回 CloudKit 云存储以同步给其他多终端设备
             try await pushToCloud(database: database, record: record, pages: finalPages, logs: finalLogs)
 
             await MainActor.run {
@@ -327,7 +366,16 @@ class iCloudSyncService: ObservableObject {
         return (remotePages, remoteLogs, record)
     }
 
-    /// 基于 LWW (Last-Writer-Wins) 最终写入者获胜策略或用户交互的回调策略，对本地和云端数据执行融合裁定。
+    /// 基于 LWW (Last-Writer-Wins) 最近写入者获胜策略，或用户交互的回调策略，对本地和云端数据执行融合裁定。
+    ///
+    /// - 详细算法步骤说明 (LWW Conflict Arbitration):
+    ///   1. **空置判断**：若云端从未被写入（无任何 Pages 数据），意味着本地为绝对主权数据，直接返回本地数据集。
+    ///   2. **时间比对**：从 CKRecord 提取云端数据的物理最后更新修改时间戳 `remoteDate`。
+    ///   3. **时序断言**：将 `remoteDate` 与本地上一次同步成功成功的物理时刻进行时序比对，以确定“云端是否被其他设备写入过更新的知识片”。
+    ///   4. **裁决解决**：若云端更新，则激活 `ConflictResolution` 决策树：
+    ///      - `.keepLocal`：拒绝云端，维持本地主权。
+    ///      - `.keepRemote`：全面臣服云端，地端数据做完全覆写。
+    ///      - `.merge`（默认）：两端原子交融，相同 UUID 记录以最近更新时间戳为准胜出，新增记录双向无冲突合并。
     private func resolveSyncConflict(
         localPages: [KnowledgePage],
         localLogs: [LogEntry],
@@ -338,20 +386,20 @@ class iCloudSyncService: ObservableObject {
         var finalPages = localPages
         var finalLogs = localLogs
 
-        // 如果云端从未存储过任何数据，则以本地数据集为唯一绝对信任源
+        // 步骤 B.1：防空容错判定——如果云端从未存储过任何数据，则以本地数据集为唯一绝对信任源直接输出
         guard !remotePages.isEmpty else {
             return (finalPages, finalLogs)
         }
 
-        // 获取云端数据的最后物理更新时间
+        // 步骤 B.2：读取远程记录的 CKRecord 元数据时间戳，若遗失则以远古时刻（distantPast）兜底
         let remoteDate = record["lastModified"] as? Date ?? Date.distantPast
         
-        // 比对云端修改时间与本地最近同步成功的绝对时间
+        // 步骤 B.3：评估时序状态——判断云端修改时间是否大于本地最近同步成功的绝对时间
         let hasRemoteNewer = lastSyncDate.map { remoteDate > $0 } ?? true
 
-        // 检测到云端存在较新更新：执行冲突决策
+        // 步骤 B.4：检测到云端存在较新更新，立刻执行物理冲突决策树逻辑
         if hasRemoteNewer {
-            // 调配冲突解决器决定合并方向
+            // 调配冲突解决器确定具体的合并方案（默认走 LWW 智能去重合并）
             let resolution = await resolveConflict(
                 localPages: localPages,
                 localLogs: localLogs,
@@ -361,19 +409,19 @@ class iCloudSyncService: ObservableObject {
 
             switch resolution {
             case .keepLocal:
-                // 1. 保留本地：不作改变，等待后续用本地覆盖云端
+                // 方案一：保留本地。原地端不变，等待后续用本地数据单向强制覆写云端
                 break
             case .keepRemote:
-                // 2. 接纳云端：完全覆写本地
+                // 方案二：保留云端。本地无条件接受云端覆盖，以云端页面及日志为最新基准
                 finalPages = remotePages
                 finalLogs = remoteLogs
             case .merge:
-                // 3. 智能融合：相同 UUID 实体以 updatedAt 时间戳更新者获胜，新页面自动追加
+                // 方案三：智能融合。相同 UUID 实体以 updatedAt 最近更新时间戳获胜，新页面自动追加
                 finalPages = mergePages(local: localPages, remote: remotePages)
                 finalLogs = mergeLogs(local: localLogs, remote: remoteLogs)
             }
         } else if lastSyncDate != nil {
-            // 本地数据在最近同步后较新，或无变动，保持本地最新数据
+            // 步骤 B.5：本地数据在最近同步后较新，或无变动，保持本地最新数据，继续等待后续地推云
             finalPages = localPages
             finalLogs = localLogs
         }
@@ -442,23 +490,26 @@ class iCloudSyncService: ObservableObject {
 
     // MARK: - 极客级 LWW 合并算法实现
 
-    /// 页面列表的 LWW 合并算法。
-    /// 逻辑：
-    /// 1. 遍历远程每一个页面实体。
-    /// 2. 若本地已存在相同 ID 的页面，比较两者的 `updatedAt` 时间戳，保留较新的那份。
-    /// 3. 若本地不存在相同 ID 页面，且不存在相同 Title（防止用户跨设备冷启动重复起名冲突），则将远程页面安全追加。
+    /// 页面列表的极客级 LWW 合并算法实现。
+    ///
+    /// - 详细融合逻辑 (Merge Logic):
+    ///   1. **物理对撞处理**：遍历远程的每一个知识页面实体。如果本地已存在相同 ID 的页面，
+    ///      比较两者的 `updatedAt` 时间戳，保留较新的那份（最新写入者胜出）。
+    ///   2. **重名防止机制**：若本地不存在相同 ID 页面，但由于防冲突规约，检查地端是否有重名 Title。
+    ///      如果有相同 Title（通常发生在跨设备独立冷启动起名），则不进行直接追加，以确保唯一索引健壮性；
+    ///      若毫无冲突，则认定为纯新增，将其直接在尾部追加挂载。
     private func mergePages(local: [KnowledgePage], remote: [KnowledgePage]) -> [KnowledgePage] {
         var merged = local
 
         for remotePage in remote {
             if let localIndex = merged.firstIndex(where: { $0.id == remotePage.id }) {
-                // 1. 发现 UUID 物理对撞：比对时间戳进行覆盖
+                // 1. 发现 UUID 物理对撞：比对时间戳进行最新时间戳覆盖
                 let localPage = merged[localIndex]
                 if remotePage.updatedAt > localPage.updatedAt {
                     merged[localIndex] = remotePage
                 }
             } else if !merged.contains(where: { $0.title == remotePage.title }) {
-                // 2. 纯新增的远程页面，直接在尾部追加挂载
+                // 2. 纯新增 of 远程页面，且无重名 Title 冲突，直接在尾部安全追加挂载
                 merged.append(remotePage)
             }
         }
@@ -467,24 +518,26 @@ class iCloudSyncService: ObservableObject {
     }
 
     /// 审计日志的 LWW 去重合并算法。
-    /// 逻辑：
-    /// 1. 遍历远程的日志项，根据唯一的 `id` 进行去重。
-    /// 2. 按日志的 `timestamp` 绝对时间由新到旧排序。
-    /// 3. 按照 KISS 原则和内存管控指标，强行将最终日志列表裁剪保留最近 200 条，物理驱逐历史废弃日志。
+    ///
+    /// - 日志合并及驱逐约束 (Log Merge & Eviction Metrics):
+    ///   1. 遍历远程的日志项，根据唯一的 `id` 进行物理去重追加。
+    ///   2. 按日志的 `timestamp` 绝对时间由新到旧（降序）排序，排列出最新的操作轨迹。
+    ///   3. **滑动窗口物理驱逐**：为了极致节省多笔记本沙盒内 SQLite 持久化空间与内存吞吐开销，
+    ///      严格限制最多仅保留最近 200 条审计记录。一旦超出阀值，旧日志将被瞬间物理驱逐。
     private func mergeLogs(local: [LogEntry], remote: [LogEntry]) -> [LogEntry] {
         var merged = local
 
-        // 1. 追加不存在于本地的远程审计日志记录
+        // 1. 追加不存在于本地的远程审计日志记录，按 id 进行去重判断
         for remoteLog in remote {
             if !merged.contains(where: { $0.id == remoteLog.id }) {
                 merged.append(remoteLog)
             }
         }
 
-        // 2. 按审计产生的时间戳降序排列
+        // 2. 将去重融合后的审计日志按产生时间戳进行降序（由新到旧）排列
         merged.sort { $0.timestamp > $1.timestamp }
 
-        // 3. 触发容量削减阀值，强行限制最近 200 条，保护 sqlite 及内存
+        // 3. 触发容量削减阀值限制，强行裁剪保留最近 200 条，物理驱逐历史废弃日志，保护 sqlite 性能及内存
         if merged.count > 200 {
             merged = Array(merged.prefix(200))
         }

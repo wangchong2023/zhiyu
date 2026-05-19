@@ -28,25 +28,34 @@ struct SettingsView: View {
                 
                 List {
                     appearanceSection
+                        .appListRowBackground()
                     
                     aiSection
+                        .appListRowBackground()
                     
                     dataManagementSection
+                        .appListRowBackground()
 
                     // 插件配置扩展
                     PluginExtensionsSection()
+                        .appListRowBackground()
 
                     securitySection(store: store)
+                        .appListRowBackground()
                     
-                    maintenanceSection
+                    developerSection
+                        .appListRowBackground()
                     
-                    aboutSection                }
+                    aboutSection
+                        .appListRowBackground()
+                }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
             }
             .navigationTitle(L10n.Settings.title)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
+                    // 完成按钮：保存状态并退出偏好设置页面
                     Button(L10n.Common.done) {
                         if languageChanged {
                             router.triggerLanguageRefresh()
@@ -55,6 +64,7 @@ struct SettingsView: View {
                         router.isShowingSettingsSheet = false
                         dismiss()
                     }
+                    .bold()
                 }
             }
         }
@@ -91,7 +101,13 @@ struct SettingsView: View {
             NavigationLink {
                 LLMSettingsView()
             } label: {
-                Label(L10n.Settings.llmSettings, systemImage: "brain.head.profile")
+                Label(L10n.Settings.llmSettings, systemImage: "network")
+            }
+            
+            NavigationLink {
+                OnDeviceLLMSettingsView()
+            } label: {
+                Label(L10n.Settings.onDeviceLLM, systemImage: "cpu")
             }
             
             NavigationLink {
@@ -125,6 +141,13 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.operationLog, systemImage: "list.bullet.rectangle.fill")
             }
+            
+            // 数据重置：清理开发数据与沙盒存储
+            Button(role: .destructive) {
+                showResetConfirmation = true
+            } label: {
+                Label(L10n.Settings.resetData, systemImage: "trash.fill")
+            }
         } header: {
             Text(L10n.Settings.Section.data)
         }
@@ -147,46 +170,24 @@ struct SettingsView: View {
         }
     }
     
-    private var maintenanceSection: some View {
+    /// 开发者独立设置区域，介于系统维护与关于之间
+    private var developerSection: some View {
         Section {
-            NavigationLink {
-                SystemStatsView()
-            } label: {
-                Label(L10n.Dashboard.stats.navigationTitleMonitor, systemImage: "chart.bar.fill")
-            }
-            
             NavigationLink {
                 DeveloperSettingsView(onboardingService: onboardingService)
             } label: {
                 Label(L10n.Settings.Section.developer, systemImage: "hammer.fill")
             }
-        } header: {
-            Text(L10n.Settings.Section.maintenance)
         }
     }
     
     private var aboutSection: some View {
         Section {
-            HStack {
-                Text(L10n.Settings.version)
-                Spacer()
-                Text(appEnv.platformEnv.appVersion)
-                    .foregroundStyle(.secondary)
-            }
-            
             NavigationLink {
                 AboutView()
             } label: {
-                Text(L10n.Settings.about)
+                Label(L10n.Settings.Section.about, systemImage: "info.circle")
             }
-            
-            Button(role: .destructive) {
-                showResetConfirmation = true
-            } label: {
-                Text(L10n.Settings.resetData)
-            }
-        } header: {
-            Text(L10n.Settings.Section.about)
         }
         .confirmationDialog(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
             Button(L10n.Settings.clearAll.action, role: .destructive) {

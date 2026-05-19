@@ -28,6 +28,7 @@ struct ChatView: View {
 // MARK: - 视图核心
 struct ChatViewContent: View {
     @Environment(AppStore.self) var store
+    @Environment(Router.self) var router
     @EnvironmentObject var llmService: LLMService
     @StateObject private var promptService = PromptService.shared
     @Binding var selectedTab: AppTab
@@ -79,6 +80,21 @@ struct ChatViewContent: View {
         }
         .task {
             await coordinator.loadInsightfulQuestions(pages: store.pages)
+            
+            // MARK: - [Cold Start Aha Moment] 自动识别并投递向导提问 Prompt
+            if let prompt = router.pendingInitialChatPrompt, !prompt.isEmpty {
+                // 立即清空，确保该 Prompt 在整个生命周期中仅被单次且安全消费
+                router.pendingInitialChatPrompt = nil
+                
+                // 自动装填至对话框
+                coordinator.inputText = prompt
+                
+                // 阻尼等待，保证过渡过渡的弹性动效平滑呈现
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                
+                // 即刻触发 RAG 检索回答流
+                await coordinator.sendMessage(pages: store.pages)
+            }
         }
     }
     

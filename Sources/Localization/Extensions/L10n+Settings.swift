@@ -35,6 +35,7 @@ extension L10n {
         public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
         public static var promptLab: String { tr("promptLab") }
+        public static var onDeviceLLM: String { tr("settings.onDeviceLLM") }
         public static var iCloudSync: String { Localized.tr("settings.iCloudSync", table: t) }
         public static var backupRestore: String { Localized.tr("backup.restore", table: "Transfer") }
         public static var operationLog: String { Localized.tr("settings.operationLog", table: t) }

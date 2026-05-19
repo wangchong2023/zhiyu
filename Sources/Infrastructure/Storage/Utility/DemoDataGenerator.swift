@@ -20,12 +20,12 @@ struct DemoDataGenerator {
     /// 执行演示数据生成
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
+    /// 执行演示数据生成
+    /// - Parameter store: 目标存储对象
+    /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
         print("🧪 [Demo] Starting demo data generation...")
         
-        var count = 0
-        
-        // 使用 performBatchWrite 确保所有演示数据在同一个事务中插入
         try await store.performBatchWrite { db in
             // 1. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
             try KnowledgePage.deleteAll(db)
@@ -43,7 +43,6 @@ struct DemoDataGenerator {
             for (title, type, content, tags) in pagesToCreate {
                 let page = KnowledgePage(title: title, pageType: type, content: content, tags: tags)
                 try page.save(db)
-                count += 1
             }
             
             // 2. 模拟注入 AI 时延与 Token 记录，方便资源监控页面演示
@@ -78,10 +77,11 @@ struct DemoDataGenerator {
             }
         }
         
+        let count = 5
         print("🧪 [Demo] Generation finished. Total: \(count)")
         return count
     }
-
+ 
     /// 执行图谱压力测试数据生成
     /// - Parameters:
     ///   - store: 目标存储对象
@@ -89,8 +89,6 @@ struct DemoDataGenerator {
     /// - Returns: 生成的页面数量
     static func generateStressTest(in store: any AnyPageStore, count targetCount: Int = 1000) async throws -> Int {
         print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
-        
-        var count = 0
         
         try await store.performBatchWrite { db in
             // 1. 在同一个事务中清理旧数据
@@ -100,6 +98,7 @@ struct DemoDataGenerator {
             let titles = (1...targetCount).map { "StressNode_\($0)" }
             let types: [PageType] = [.concept, .entity, .source, .comparison, .map]
             
+            var localCount = 0
             for i in 0..<targetCount {
                 let title = titles[i]
                 let type = types[i % types.count]
@@ -127,15 +126,15 @@ struct DemoDataGenerator {
                 )
                 
                 try page.save(db)
-                count += 1
+                localCount += 1
                 
-                if count % 100 == 0 {
-                    print("🧪 [StressTest] Injected \(count) nodes...")
+                if localCount % 100 == 0 {
+                    print("🧪 [StressTest] Injected \(localCount) nodes...")
                 }
             }
         }
         
-        print("🧪 [StressTest] Finished. Total: \(count)")
-        return count
+        print("🧪 [StressTest] Finished. Total: \(targetCount)")
+        return targetCount
     }
 }

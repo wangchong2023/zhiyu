@@ -28,30 +28,33 @@ struct AuthView: View {
                 .ignoresSafeArea()
             
             ScrollView(showsIndicators: false) {
-                VStack(spacing: Spacing.medium) {
-                    // 1. Logo & 标语
+                VStack(spacing: Spacing.huge) { // 增加板块之间的巨型间距 (32px)，让顶部 Header 得到完美释放
+                    // 1. Logo & 标语 (品牌展示板块)
                     heroHeader
                     
-                    // 2. 模式切换 (登录/注册)
-                    modePicker
-                    
-                    // 3. 表单区域
-                    VStack(spacing: Spacing.medium) {
-                        if isRegisterMode {
-                            registerForm
-                        } else {
-                            loginForm
-                        }
+                    // 2. 表单与操作交互板块 (组群内聚)
+                    VStack(spacing: Spacing.standardPadding) { // 组群内部间距调整为更舒适的 16px
+                        // 模式切换 (登录/注册)
+                        modePicker
                         
-                        actionButton
+                        // 表单区域 (输入框 + 主操作按钮)
+                        VStack(spacing: Spacing.medium) {
+                            if isRegisterMode {
+                                registerForm
+                            } else {
+                                loginForm
+                            }
+                            
+                            actionButton
+                        }
+                        .padding(Spacing.standardPadding)
+                        .appContainer(cornerRadius: Spacing.largeRadius)
                     }
-                    .padding(Spacing.standardPadding)
-                    .appContainer(cornerRadius: Spacing.largeRadius)
                     
-                    // 4. 第三方登录
+                    // 3. 第三方登录
                     thirdPartySection
                     
-                    // 5. 游客模式
+                    // 4. 游客模式
                     guestButton
                 }
                 .padding(.horizontal, Spacing.wide)
@@ -64,7 +67,7 @@ struct AuthView: View {
     // MARK: - 子视图
     
     private var heroHeader: some View {
-        VStack(spacing: Spacing.medium) {
+        VStack(spacing: Spacing.giant) { // 增加空气感，给予 Logo 到主标题足够的呼吸空间
             ZStack {
                 Circle()
                     .fill(LinearGradient(colors: [.appAccent.opacity(0.2), .appConcept.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -77,15 +80,16 @@ struct AuthView: View {
                     .shadow(color: .appAccent.opacity(0.4), radius: 10, y: 4)
             }
             
-            VStack(spacing: Spacing.atomic) {
+            VStack(spacing: Spacing.small) { // 增加间距到 8px，完全拉开字距，告别拥挤
                 Text(L10n.Common.appName)
                     .font(.system(size: 24, weight: .black, design: .rounded))
                     .foregroundStyle(.appText)
                     .tracking(1)
                 
                 Text(L10n.Onboarding.subtitle)
-                    .font(.caption.weight(.medium))
+                    .font(.system(size: 14, weight: .medium)) // 优化字号至 14pt，字重提升，前景色柔和，确保清晰与品质感
                     .foregroundStyle(.appSecondary)
+                    .multilineTextAlignment(.center)
             }
         }
         .padding(.top, 20)

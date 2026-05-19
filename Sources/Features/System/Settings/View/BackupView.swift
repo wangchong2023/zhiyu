@@ -44,6 +44,7 @@ struct BackupView: View {
                 } header: {
                     Text(L10n.Backup.settings)
                 }
+                .appListRowBackground()
                 
                 // Manual Actions
                 Section {
@@ -63,6 +64,7 @@ struct BackupView: View {
                 } header: {
                     Text(L10n.Backup.actions)
                 }
+                .appListRowBackground()
                 
                 // Backup History
                 Section {
@@ -87,9 +89,10 @@ struct BackupView: View {
                 } header: {
                     Text(L10n.Backup.history)
                 }
+                .appListRowBackground()
             }
             #if !os(watchOS)
-            .listStyle(.inset)
+            .listStyle(.insetGrouped)
             #endif
             .scrollContentBackground(.hidden)
             .background(themeManager.pageBackground())

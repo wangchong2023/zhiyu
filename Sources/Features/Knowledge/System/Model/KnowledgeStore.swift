@@ -1,0 +1,253 @@
+// KnowledgeStore.swift
+//
+// 作者: Wang Chong
+// 功能说明: [L2] 业务功能层：知识页面状态存储中心，负责页面状态的响应式管理、CRUD 事件处理及跨服务同步。
+// 它通过 @Observable 驱动 UI 更新，将页面管理逻辑从 AppStore 解耦。
+// 版本: 1.0
+// 修改记录:
+//   - 2026-05-18: 从 AppStore 剥离页面管理状态，实现 Phase 2 架构瘦身。
+// 版权: © 2026 Wang Chong。保留所有权利。
+
+import SwiftUI
+import Combine
+import Observation
+
+/// 知识页面状态存储中心 (L2-Feature Store)
+/// 负责管理全量页面状态、搜索缓存及 UI 交互状态。
+@Observable
+@MainActor
+public final class KnowledgeStore {
+    
+    // MARK: - 状态属性
+    
+    /// 全量页面镜像
+    public var pages: [KnowledgePage] = []
+    
+    /// 页面总数
+    public var totalPages: Int = 0
+    
+    /// 全文总字数
+    public var totalWords: Int = 0
+    
+    /// 是否正在执行 AI 扫描/处理
+    public var isScanning: Bool = false
+    
+    /// 是否显示创建页面表单
+    public var showCreateSheet: Bool = false
+    
+    // MARK: - 核心依赖 (DI)
+    
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
+    @ObservationIgnored @Inject private var pageManager: KnowledgePageManager
+    @ObservationIgnored @Inject private var maintenanceService: MaintenanceService
+    @ObservationIgnored @Inject private var performanceService: PerformanceService
+    @ObservationIgnored @Inject private var settingsStore: SettingsStore
+    @ObservationIgnored @Inject private var logger: any LoggerProtocol
+
+    // MARK: - 私有属性
+    
+    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
+
+    // MARK: - 初始化
+    
+    public init() {
+        print("📂 [KnowledgeStore] 正在初始化页面引擎...")
+        setupSubscriptions()
+    }
+
+    private func setupSubscriptions() {
+        // 订阅全局事件总线
+        AppEventBus.shared.subscribe()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] event in
+                guard let self = self else { return }
+                switch event {
+                case .pagesCleared:
+                    self.pages = []
+                    self.totalPages = 0
+                    self.totalWords = 0
+                case .pageCreated, .pageUpdated, .pageDeleted:
+                    Task { [weak self] in
+                        await self?.refresh()
+                    }
+                case .clearAllDataRequested:
+                    self.clearAllData()
+                default: break
+                }
+            }
+            .store(in: &cancellables)
+            
+        // 监听物理库热切换
+        NotificationCenter.default.publisher(for: .databaseDidSwitch)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] notification in
+                guard let self = self else { return }
+                print("🔄 [KnowledgeStore] 监测到数据库切换，正在清空内存并重载...")
+                self.pages = []
+                self.totalPages = 0
+                self.totalWords = 0
+                Task { [weak self] in
+                    guard let self = self else { return }
+                    await self.refresh()
+                    
+                    // 🎬 RAG 冷启动魔法时刻 (Aha Moment)：
+                    // 在新建金库首次切换进入时，如果数据库为空且未播种过，则自动注入欢迎与引导数据
+                    if let vaultID = notification.userInfo?["vaultID"] as? UUID {
+                        let seedKey = "seeded_vault_\(vaultID.uuidString)"
+                        if !UserDefaults.standard.bool(forKey: seedKey) {
+                            print("🌱 [KnowledgeStore] 识别到新笔记本 \(vaultID.uuidString)，自动注入冷启动演示数据...")
+                            await self.seedDefaultContent()
+                            UserDefaults.standard.set(true, forKey: seedKey)
+                        }
+                    }
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - 基础管理
+
+    /// 注册页面处理器 (Phase 3)
+    public func registerProcessor(_ processor: any KnowledgePageProcessor, pluginID: String? = nil) {
+        pageManager.registerProcessor(processor, pluginID: pluginID)
+    }
+
+    /// 注销页面处理器 (Phase 3)
+    public func unregisterProcessor(id: String) {
+        pageManager.unregisterProcessor(id: id)
+    }
+
+    /// 注销指定插件的所有处理器 (Phase 3)
+    public func unregisterProcessors(for pluginID: String) {
+        pageManager.unregisterProcessors(for: pluginID)
+    }
+
+    /// 刷新内存镜像
+    public func refresh() async {
+        let startTime = Date()
+        self.pages = (try? await pageStore.fetchAllPages()) ?? []
+        self.totalPages = pages.count
+        self.totalWords = pages.reduce(0) { $0 + $1.content.count }
+        
+        let duration = Date().timeIntervalSince(startTime)
+        performanceService.record(.databaseLoad, duration: duration)
+    }
+
+    /// 填充默认内容
+    public func seedDefaultContent() async {
+        await maintenanceService.seedDefaultContent(pages: pages)
+        await refresh()
+    }
+
+    // MARK: - 核心业务逻辑
+
+    /// 根据标题查找页面
+    public func pageByTitle(_ title: String) async -> KnowledgePage? {
+        await pageManager.pageByTitle(title, in: pages)
+    }
+
+    /// 创建页面
+    @discardableResult
+    public func createPage(
+        title: String,
+        pageType: PageType,
+        customIcon: String? = nil,
+        content: String = "",
+        tags: [String] = [],
+        sourceURL: String? = nil,
+        rawSnippet: String? = nil,
+        fileSize: Int64? = nil,
+        sourceType: String? = nil
+    ) async -> KnowledgePage {
+        let page = (try? await pageManager.createPage(
+            title: title,
+            pageType: pageType,
+            customIcon: customIcon,
+            content: content,
+            tags: tags,
+            sourceURL: sourceURL,
+            rawSnippet: rawSnippet,
+            fileSize: fileSize,
+            sourceType: sourceType,
+            currentPages: pages
+        )) ?? KnowledgePage(title: title)
+
+        // 检查是否需要显示图谱引导 (@SRS-UI-01)
+        if totalPages >= 3 && !settingsStore.hasShownGraphCoachMark {
+            // 此处逻辑暂留，AppStore 可能会处理全局引导弹窗
+            // 我们只负责触发事件或状态更新
+            NotificationCenter.default.post(name: NSNotification.Name("ShowGraphCoachMark"), object: nil)
+        }
+
+        await refresh()
+        return page
+    }
+
+    /// 更新页面
+    public func updatePage(_ page: KnowledgePage) async {
+        try? await pageManager.updatePage(page, currentPages: pages)
+        await refresh()
+    }
+
+    /// 保存页面
+    public func savePage(_ page: KnowledgePage) async {
+        try? await pageManager.savePage(page, currentPages: pages)
+        await refresh()
+    }
+
+    /// 删除页面
+    public func deletePage(_ page: KnowledgePage) async {
+        try? await pageManager.deletePage(page, currentPages: pages)
+        await refresh()
+    }
+
+    /// 重命名页面
+    public func renamePage(_ page: KnowledgePage, to newTitle: String) async {
+        try? await pageManager.renamePage(page, to: newTitle, currentPages: pages)
+        await refresh()
+    }
+
+    // MARK: - 事务与同步
+
+    public func undo() async {
+        if let newPages = try? await pageManager.undo(currentPages: pages) {
+            self.pages = newPages
+            await refresh()
+        }
+    }
+
+    public func redo() async {
+        if let newPages = try? await pageManager.redo(currentPages: pages) {
+            self.pages = newPages
+            await refresh()
+        }
+    }
+
+    public func saveToDisk() async {
+        await maintenanceService.saveToDisk(pages: pages)
+    }
+
+    public func loadFromDisk() async { 
+        await maintenanceService.loadFromDisk()
+        await refresh()
+    }
+
+    // MARK: - 业务协同
+
+    public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
+        try? await pageManager.applyPotentialLink(suggestion, currentPages: pages)
+        await refresh()
+    }
+
+    public func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
+        try? await pageManager.applyRefactorSuggestion(suggestion, currentPages: pages)
+        await refresh()
+    }
+
+    private func clearAllData() {
+        Task {
+            await maintenanceService.clearAllDeveloperData()
+            await refresh()
+        }
+    }
+}

@@ -12,7 +12,8 @@ import SwiftUI
 @MainActor
 struct SidebarView: View {
     // MARK: - Environment & Store
-    @Environment(AppStore.self) var store
+    @Environment(AppStore.self) var appStore
+    @Environment(KnowledgeStore.self) var store
     @Environment(VaultService.self) var vaultService
     @Environment(IngestStore.self) var ingestStore
     @Environment(Router.self) var router
@@ -34,7 +35,6 @@ struct SidebarView: View {
         Group {
             if horizontalSizeClass == .compact {
                 List {
-                    SearchSection()
                     CapabilitiesSection()
                     SourcesSection()
                     UniverseSection()
@@ -48,7 +48,6 @@ struct SidebarView: View {
                 }
             } else {
                 List(selection: $router.sidebarSelection) {
-                    SearchSection()
                     CapabilitiesSection()
                     SourcesSection()
                     UniverseSection()

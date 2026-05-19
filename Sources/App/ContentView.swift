@@ -55,6 +55,16 @@ struct ContentView: View {
             if showSidebar && appEnv.screenClass == .compact {
                 sidebarOverlayLayer
             }
+            
+            // 全局新手引导蒙层：确保在工作台及主界面均能正常展示与交互
+            OnboardingOverlay(service: onboardingService)
+            
+            // 全局安全锁定覆盖层：覆盖所有笔记本及工作台视图
+            if store.securityService.isLocked {
+                LockOverlayView()
+                    .transition(AnyTransition.opacity.combined(with: .scale(scale: 1.0 * DesignSystem.Metrics.lockOverlayScaleMultiplier)))
+                    .zIndex(DesignSystem.ZIndex.lockOverlay)
+            }
         }
         .sheet(isPresented: $router.isShowingSettingsSheet) {
             NavigationStack {

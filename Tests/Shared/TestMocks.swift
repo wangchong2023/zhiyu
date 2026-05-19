@@ -32,24 +32,42 @@ final class MockLogger: LoggerProtocol, @unchecked Sendable {
 
 // MARK: - Mock LLM Service
 @MainActor
-@preconcurrency
-final class MockLLMService: NSObject, LLMServiceProtocol, @unchecked Sendable {
-    var objectWillChange = ObservableObjectPublisher()
-    var isProcessing = false
-    var isEnabled = true
-    func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO { ChatMessageDTO(role: .assistant, content: "") }
-    func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
-    func generate(prompt: String, systemPrompt: String) async throws -> String {
+final class MockLLMService: LLMService, @unchecked Sendable {
+    override var isProcessing: Bool { get { _isProcessing } set { _isProcessing = newValue } }
+    private var _isProcessing = false
+    
+    override var isEnabled: Bool { get { _isEnabled } set { _isEnabled = newValue } }
+    private var _isEnabled = true
+    
+    var generateHandler: (@Sendable (String, String) async throws -> String)?
+    var chatStreamHandler: (@Sendable (String, [ChatMessageDTO], [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error>)?
+    
+    override func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO { ChatMessageDTO(role: .assistant, content: "") }
+    
+    override func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
+        if let handler = chatStreamHandler {
+            return handler(query, history, pages)
+        }
+        return AsyncThrowingStream { $0.finish() }
+    }
+    
+    override func generate(prompt: String, systemPrompt: String) async throws -> String {
+        if let handler = generateHandler {
+            return try await handler(prompt, systemPrompt)
+        }
         return "智宇是一款优秀的基于 RAG 的知识管理应用，具备双向链接功能。"
     }
-    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
+    override func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         SmartIngestResultDTO(title: title, compiledContent: "", suggestedTags: [], suggestedType: "", relatedTitles: [], summary: "")
     }
-    func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] { [] }
-    func foldContent(existingContent: String, newContent: String, title: String) async throws -> String { "" }
-    func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO] { [] }
-    func rewriteQuery(_ query: String) async -> String { query }
-    func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] { candidates }
+    override func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] { [] }
+    override func foldContent(existingContent: String, newContent: String, title: String) async throws -> String { "" }
+    override func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO] { [] }
+    override func rewriteQuery(_ query: String) async -> String { query }
+    override func expandQuery(_ query: String) async -> [String] { [query] }
+    override func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] { candidates }
+    override func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk] { chunks }
+    override func generateHypotheticalDocument(query: String) async -> String { query }
 }
 
 // MARK: - Mock Biometric Auth Provider
@@ -69,6 +87,14 @@ extension XCTestCase {
         // 1. Core Services (L0)
         let logger = MockLogger()
         ServiceContainer.shared.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
+        
+        #if os(macOS)
+        ServiceContainer.shared.register(MacHapticService() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
+        #elseif os(watchOS)
+        ServiceContainer.shared.register(WatchHapticService() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
+        #else
+        ServiceContainer.shared.register(iOSHapticService() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
+        #endif
         
         ServiceContainer.shared.register(HapticFeedback.shared, for: HapticFeedback.self)
         ServiceContainer.shared.register(Router.shared, for: Router.self)
@@ -108,6 +134,13 @@ extension XCTestCase {
         ServiceContainer.shared.register(sqliteStore as any AnyPageStoreCapabilities, for: (any AnyPageStoreCapabilities).self)
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         
+        ServiceContainer.shared.register(LLMConfigManager(), for: LLMConfigManager.self)
+        ServiceContainer.shared.register(AIAnalyticsService(), for: AIAnalyticsService.self)
+        
+        let llm = MockLLMService()
+        ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
+        ServiceContainer.shared.register(llm, for: LLMService.self)
+
         // 注册 Mock 环境下的 EmbeddingManager 和仓库，加固向量同步功能
         let vectorRepo = VectorDataRepository(dbWriter: dbQueue)
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
@@ -119,22 +152,33 @@ extension XCTestCase {
         let governanceRepo = AIGovernanceRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
 
+        if let globalWriter = DatabaseManager.shared.globalWriter {
+            let vaultRepo = SQLiteVaultRepository(dbWriter: globalWriter)
+            ServiceContainer.shared.register(vaultRepo as any VaultRepository, for: (any VaultRepository).self)
+            
+            let fileSigRepo = SQLiteFileSignatureRepository(dbWriter: globalWriter)
+            ServiceContainer.shared.register(fileSigRepo as any FileSignatureRepository, for: (any FileSignatureRepository).self)
+        }
+
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
         ServiceContainer.shared.register(VaultStorageSecurityService(), for: VaultStorageSecurityService.self)
         
         // 3. Domain Services (L2)
         ServiceContainer.shared.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
         ServiceContainer.shared.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
+        // 注册设置存储中心以供测试沙盒内需要注入 SettingsStore 的类能正常解析，避免测试时闪退
+        ServiceContainer.shared.register(SettingsStore(), for: SettingsStore.self)
         
         ServiceContainer.shared.register(LinkService(), for: LinkService.self)
         ServiceContainer.shared.register(IngestService(), for: IngestService.self)
         ServiceContainer.shared.register(LintService(), for: LintService.self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
+        // 注册知识页面核心管理器，供 AppStore 等服务 @Inject 注入，确保单测数据读写与修改流正常 (@DIP)
+        ServiceContainer.shared.register(KnowledgePageManager(), for: KnowledgePageManager.self)
+        // 注册系统维护服务，健全单测生命周期的全局重置与清理链路 (@DIP)
+        ServiceContainer.shared.register(MaintenanceService(), for: MaintenanceService.self)
         ServiceContainer.shared.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
-        
-        let llm = MockLLMService()
-        ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         ServiceContainer.shared.register(AISynthesisService.shared, for: AISynthesisService.self)
         ServiceContainer.shared.register(PromptService.shared, for: PromptService.self)
         
@@ -149,7 +193,30 @@ extension XCTestCase {
         ServiceContainer.shared.register(iOSWatchSyncService() as any WatchSyncProtocol, for: (any WatchSyncProtocol).self)
         #endif
         
-        // 4. Data Sync Coordination (L1.5) - 必须在底层所有 Mock 物理仓储和 L1 基础设施就绪后注册，以防时序竞争崩溃
+        // 4. Data Sync Coordination (L1.5) & Sibling Stores - 必须在底层所有 Mock 物理仓储和 L1 基础设施就绪后注册，以防时序竞争崩溃
+        ServiceContainer.shared.register(IngestStore(), for: IngestStore.self)
+        ServiceContainer.shared.register(SynthesisStore(), for: SynthesisStore.self)
         ServiceContainer.shared.register(DataCoordinator(), for: DataCoordinator.self)
+        
+        // 5. L2 Features & Sidebar Row Components Dependencies
+        // 注册知识页面状态存储中心，防止插件卸载/加载等环节因获取不到 KnowledgeStore 导致测试崩溃 (@DIP)
+        ServiceContainer.shared.register(KnowledgeStore(), for: KnowledgeStore.self)
+    }
+}
+
+// MARK: - Mock Knowledge Page
+public struct MockPage: KnowledgePageRepresentable, Hashable {
+    public var id = UUID()
+    public var title: String
+    public var content: String
+    public var tags: [String] = []
+    public var pageType: PageType = .concept
+    
+    public init(id: UUID = UUID(), title: String, content: String, tags: [String] = [], pageType: PageType = .concept) {
+        self.id = id
+        self.title = title
+        self.content = content
+        self.tags = tags
+        self.pageType = pageType
     }
 }

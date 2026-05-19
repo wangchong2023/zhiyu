@@ -95,7 +95,6 @@ targets:
           - "Features/Insight/**/View/**"
           - "Features/Insight/**/Coordinator/**"
           - "Features/System/**/View/**"
-          - "Features/System/Settings/Model/SettingsStore.swift"
           - "Features/AI/AIViewProvider.swift"
           - "Features/Knowledge/KnowledgeViewProvider.swift"
           - "Features/Insight/InsightViewProvider.swift"
@@ -152,9 +151,21 @@ targets:
     platform: iOS
     sources:
       - path: Tests
+        excludes:
+          - "UITests/**"
+          - "UI/**"
     dependencies:
       - target: ZhiYu
       - package: SnapshotTesting
+
+  ZhiYuUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: Tests/UITests
+      - path: Tests/UI
+    dependencies:
+      - target: ZhiYu
 
 schemes:
   ZhiYu:
@@ -164,6 +175,7 @@ schemes:
     test:
       targets:
         - ZhiYuTests
+        - ZhiYuUITests
     run:
       executable: ZhiYu
 

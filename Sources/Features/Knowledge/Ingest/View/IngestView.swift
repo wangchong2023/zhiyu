@@ -12,7 +12,7 @@ import UniformTypeIdentifiers
 
 // MARK: - 视图核心
 struct IngestView: View {
-    @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var store
     @Environment(IngestStore.self) var ingestStore
     @Environment(Router.self) var router
     @EnvironmentObject var llmService: LLMService

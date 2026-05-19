@@ -1,0 +1,32 @@
+# Fastfile
+#
+# 作者: Wang Chong
+# 功能说明: [Infra] Fastlane 全自动持续集成管道指令集
+# 版本: 1.0
+# 日期: 2026-05-18
+
+default_platform(:ios)
+
+platform :ios do
+  desc "执行全量 CI 流水线检查：包括 SwiftLint 规约扫描与 Xcode 模拟器单元/UI自动化跑测"
+  lane :ci_test do
+    # 1. 运行 SwiftLint 规则扫描
+    begin
+      sh("swiftlint lint --config .swiftlint.yml")
+      UI.success("✓ SwiftLint 代码审查通过！")
+    rescue => ex
+      UI.important("! SwiftLint 发现部分可优化警告项。")
+    end
+
+    # 2. 调用 Fastlane Scan 驱动 xcodebuild 进行全量跑测
+    # 强力激活 code_coverage (代码覆盖率) 收集，并自定义 derived_data_path 方便后续解析
+    scan(
+      project: "ZhiYu.xcodeproj",
+      scheme: "ZhiYu",
+      device: "iPhone 17 Pro",
+      code_coverage: true,
+      clean: true,
+      derived_data_path: "build/DerivedData"
+    )
+  end
+end

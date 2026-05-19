@@ -59,7 +59,7 @@ graph TD
 | `Protocols/` | 业务模块契约 | `AuthServiceProtocol`, `VaultServiceProtocol` |
 
 ## L2: Features Layer (业务功能层)
-**职责**：垂直功能切片。按业务域分组（Knowledge, AI, Insight, System），负责 UI 呈现与本地交互状态。
+**职责**：垂直功能切片。按业务域分组（Knowledge, AI, Insight, System），负责 UI 呈现与本地交互状态管理（通过 `KnowledgeStore` 等专用 Feature Store 实现）。
 
 **核心目录** (`Sources/Features/`):
 | 领域 (Sub-Domain) | 包含模块 | 核心职责 |
@@ -107,7 +107,7 @@ graph TD
 | **物理多库隔离** | ✅ 已修复 | 重构 `DatabaseManager` 支持动态 `switchDatabase(to:)` 物理切换，解除单库强寄生。 |
 | **全局库化下沉** | ✅ 已修复 | 建立全局配置库 `global.sqlite3` 结构化托管笔记本卡片列表、防篡改签名表等全局数据。 |
 | **依赖倒置 (DIP)** | ✅ 已修复 | 所有的仓储协议已物理下沉至 L1.5 (Domain) 层，实现彻底解耦。 |
-| **AppStore 治理** | ✅ 已修复 | `AppStore` 已完成瘦身，标签、统计、PDF 等逻辑已迁移至专有领域 Store。 |
+| **AppStore 治理** | ✅ 已修复 | `AppStore` 已完成瘦身，页面管理 (`KnowledgeStore`)、标签、统计、PDF 等逻辑已迁移至专有领域 Store。 |
 | **安全与常量治理**| ✅ 已修复 | 补全 `SecurityManager` 核心 API 三斜杠中文注释，消除短字 `4` 等魔鬼数字并收拢全局盐值。 |
 | **跨层 UI 引用** | ✅ 已修复 | 逻辑层已完全剥离 SwiftUI 依赖。 |
 | **平台宏泄漏** | ✅ 已修复 | 已通过 `LiveActivityProtocol` 抽象硬件能力，业务层无宏。 |

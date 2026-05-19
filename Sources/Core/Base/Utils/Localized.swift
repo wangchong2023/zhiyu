@@ -47,11 +47,14 @@ public enum LanguageMode: String, CaseIterable, Identifiable {
 /// - 支持跨表 Fallback 策略：当在特定垂直业务域（如 `Knowledge`）表查无此 Key 时，自动降级至 `Common` 共享表检索，彻底规避线上 Missing 崩溃。
 internal struct Localized {
     
+    /// 锁屏障，保证静态缓存读写的并发安全
+    private static let cacheLock = NSLock()
+    
     /// 缓存的已加载本地化 Bundle 实例，实现内存级常驻。
-    private static var cachedBundle: Bundle?
+    nonisolated(unsafe) private static var cachedBundle: Bundle?
     
     /// 当前缓存的 Bundle 对应的语言标识码（如 "zh-Hans" 或 "en"）。
-    private static var cachedLanguage: String?
+    nonisolated(unsafe) private static var cachedLanguage: String?
     
     /// 获取当前应用处于激活状态的首选语言代码（如 "zh-Hans", "en"）。
     static var currentLanguage: String {
@@ -85,6 +88,8 @@ internal struct Localized {
     
     /// 清除当前的 Bundle 缓存，迫使下一次翻译查找时执行磁盘装载。
     private static func clearBundleCache() {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
         cachedBundle = nil
         cachedLanguage = nil
     }
@@ -94,6 +99,9 @@ internal struct Localized {
     /// - Returns: 指向对应语言的 `.lproj` 常驻 Bundle 实例。
     private static func getOrLoadBundle() -> Bundle {
         let currentLang = currentLanguage
+        
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
         
         // 击中缓存：如果已经装载过相同语言的 Bundle，直接闪回内存对象
         if let cached = cachedBundle, cachedLanguage == currentLang {

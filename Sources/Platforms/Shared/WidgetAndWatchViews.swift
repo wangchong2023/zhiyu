@@ -14,6 +14,7 @@ import WidgetKit
 #if !os(watchOS)
 // MARK: - Apple Watch Quick View
 /// Lightweight view for Apple Watch showing key knowledge stats and recent pages
+@MainActor
 struct WatchKnowledgeStatsView: View {
     @State private var totalPages = 0
     @State private var totalWords = 0
@@ -88,7 +89,7 @@ struct WatchKnowledgeStatsView: View {
     
     private func loadData() {
         Task {
-            let store = await AppStore()
+            let store = AppStore()
             await store.loadFromDisk()
             totalPages = store.totalPages
             totalWords = store.totalWords

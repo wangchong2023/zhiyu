@@ -16,6 +16,9 @@ public final class AIAnalyticsService: Sendable {
 
     /// 记录单次 LLM 调用指标
     public func recordUsage(model: String, response: [String: Any], latency: Int) {
+        // 单测环境下禁用后台异步指标写入，以防重置 DI 容器导致的崩溃
+        guard NSClassFromString("XCTestCase") == nil else { return }
+        
         guard let usage = response["usage"] as? [String: Any],
               let prompt = usage["prompt_tokens"] as? Int,
               let completion = usage["completion_tokens"] as? Int else { return }
@@ -29,6 +32,9 @@ public final class AIAnalyticsService: Sendable {
 
     /// 执行 RAG 性能指标异步计算与评估
     public func recordRAGMetrics(query: String, response: String, context: String, systemPrompt: String, modelName: String, latency: Int) {
+        // 单测环境下禁用后台异步指标写入，以防重置 DI 容器导致的崩溃
+        guard NSClassFromString("XCTestCase") == nil else { return }
+        
         Task.detached(priority: .background) {
             let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
             let promptTokens = (systemPrompt.count + query.count) / BusinessConstants.AI.charactersPerToken

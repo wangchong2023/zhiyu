@@ -87,7 +87,7 @@ public actor Logger: LoggerProtocol {
     public static let shared = Logger()
     
     private var _logEntries: [LogEntry] = []
-    private let entriesSubject = CurrentValueSubject<[LogEntry], Never>([])
+    private nonisolated(unsafe) let entriesSubject = CurrentValueSubject<[LogEntry], Never>([])
     
     public nonisolated var logEntriesPublisher: AnyPublisher<[LogEntry], Never> {
         entriesSubject.eraseToAnyPublisher()

@@ -256,8 +256,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("zoom-out")
-
-
+            .accessibilityLabel(L10n.Graph.accessibility.zoomOutLabel)
+            .accessibilityHint(L10n.Graph.accessibility.zoomOutHint)
 
             Button(action: {
                 withAnimation { scale = min(3.0, scale + 0.2) }
@@ -270,6 +270,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("zoom-in")
+            .accessibilityLabel(L10n.Graph.accessibility.zoomInLabel)
+            .accessibilityHint(L10n.Graph.accessibility.zoomInHint)
 
             Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
@@ -288,6 +290,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("reset")
+            .accessibilityLabel(L10n.Graph.accessibility.resetLabel)
+            .accessibilityHint(L10n.Graph.accessibility.resetHint)
 
             Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
@@ -301,6 +305,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("fit-to-screen")
+            .accessibilityLabel(L10n.Graph.accessibility.fitToScreenLabel)
+            .accessibilityHint(L10n.Graph.accessibility.fitToScreenHint)
 
             Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
@@ -314,6 +320,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("relayout")
+            .accessibilityLabel(L10n.Graph.accessibility.relayoutLabel)
+            .accessibilityHint(L10n.Graph.accessibility.relayoutHint)
 
             Divider().frame(width: DesignSystem.borderWidth, height: DesignSystem.iconLarge).background(Color.appBorder)
 
@@ -325,6 +333,8 @@ struct GraphZoomControls: View {
                     .background(Color.appCard)
             }
             .accessibilityIdentifier("graph-3d")
+            .accessibilityLabel(L10n.Graph.accessibility.threeDLabel)
+            .accessibilityHint(L10n.Graph.accessibility.threeDHint)
         }
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
         .shadow(color: .black.opacity(0.05), radius: 5, y: 2)

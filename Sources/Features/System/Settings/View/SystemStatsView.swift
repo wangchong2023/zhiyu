@@ -75,6 +75,14 @@ struct SystemStatsView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Dashboard.stats.navigationTitleMonitor)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button(L10n.Common.done) {
+                    dismiss()
+                }
+                .bold()
+            }
+        }
         .task {
             await coordinator.loadStats()
         }
@@ -218,8 +226,16 @@ struct SystemStatsView: View {
                             .foregroundStyle(category.color)
                             .frame(width: DesignSystem.giant)
                         
-                        Text(category.label)
-                            .foregroundStyle(.appText)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(category.label)
+                                .foregroundStyle(.appText)
+                            
+                            if category.label == L10n.Dashboard.System.database {
+                                Text(L10n.Dashboard.stats.multiVaultDesc(category.count))
+                                    .font(.system(size: DesignSystem.microFontSize))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
                         
                         Spacer()
                         
@@ -239,6 +255,59 @@ struct SystemStatsView: View {
                         }
                     }
                     .appListRowStyle(showDivider: index < coordinator.storageCategories.count - 1)
+                }
+            }
+            
+            // 2.5 各笔记本存储占用 (仅在存在多笔记本时渲染)
+            if !coordinator.vaultStorageItems.isEmpty {
+                StandardSection(title: L10n.Dashboard.stats.vaultStorageTitle) {
+                    ForEach(coordinator.vaultStorageItems.indices, id: \.self) { index in
+                        let item = coordinator.vaultStorageItems[index]
+                        HStack(spacing: Spacing.standardPadding) {
+                            // 笔记本专属图标
+                            ZStack {
+                                Circle()
+                                    .fill(Color.appAccent.opacity(0.1))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: item.icon.isEmpty ? "books.vertical.fill" : item.icon)
+                                    .font(.system(size: DesignSystem.captionFontSize))
+                                    .foregroundStyle(.appAccent)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(item.name)
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.appText)
+                                
+                                // 当前是否处于激活/选中使用中
+                                if item.id == VaultService.shared.selectedVaultID {
+                                    Text(L10n.Dashboard.stats.activeVaultStatus)
+                                        .font(.system(size: 10))
+                                        .foregroundStyle(Color.green)
+                                } else {
+                                    Text(L10n.Dashboard.stats.inactiveVaultStatus)
+                                        .font(.system(size: 10))
+                                        .foregroundStyle(.appSecondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(coordinator.formatBytes(item.size))
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.appText)
+                                
+                                // 计算所占总数据库大小的百分比
+                                let dbTotal = coordinator.storageCategories.first { $0.label == L10n.Dashboard.System.database }?.value ?? 1
+                                let percent = Int(Double(item.size) / Double(max(1, dbTotal)) * 100)
+                                Text("\(percent)%")
+                                    .font(.system(size: DesignSystem.microFontSize, design: .rounded))
+                                    .foregroundStyle(.appSecondary)
+                            }
+                        }
+                        .appListRowStyle(showDivider: index < coordinator.vaultStorageItems.count - 1)
+                    }
                 }
             }
             

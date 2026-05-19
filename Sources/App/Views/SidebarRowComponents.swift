@@ -51,52 +51,6 @@ public enum SidebarSelection: Hashable {
     }
 }
 
-// MARK: - Sections
-
-struct SearchSection: View {
-    @Environment(Router.self) var router
-    var body: some View {
-        Section {
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                router.navigate(to: .search())
-            }) {
-                HStack(spacing: DesignSystem.medium) {
-                    Image(systemName: DesignSystem.Icons.search)
-                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .semibold))
-                        .foregroundStyle(.appAccent)
-                    
-                    Text(L10n.SearchPlaceholder)
-                        .font(.subheadline)
-                        .foregroundStyle(.appSecondary)
-                    Spacer()
-                    
-                    HStack(spacing: DesignSystem.atomic) {
-                        Image(systemName: DesignSystem.Icons.command)
-                        Text("K")
-                    }
-                    .font(.system(size: DesignSystem.microFontSize, weight: .bold))
-                    .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
-                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
-                    .padding(.vertical, DesignSystem.atomic)
-                    .background(Color.appBorder.opacity(DesignSystem.accentStrokeOpacity))
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.micro))
-                }
-                .padding(.vertical, DesignSystem.tiny)
-            }
-            .buttonStyle(.plain)
-        }
-        .listRowBackground(
-            RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
-                .fill(Color.appCard.opacity(DesignSystem.subtleOpacity))
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
-                        .stroke(Color.appBorder.opacity(DesignSystem.accentStrokeOpacity), lineWidth: 0.5)
-                )
-        )
-    }
-}
-
 struct CapabilitiesSection: View {
     var body: some View {
         Section {
@@ -153,7 +107,7 @@ struct SourcesSection: View {
 }
 
 struct UniverseSection: View {
-    @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var store
     @Environment(Router.self) var router
     
     var body: some View {
@@ -163,8 +117,7 @@ struct UniverseSection: View {
                     icon: DesignSystem.Icons.pageList,
                     colorName: "accent",
                     title: L10n.Common.Sidebar.pageList,
-                    count: store.pages.count,
-                    onSearch: { router.navigate(to: .search()) }
+                    count: store.pages.count
                 )
                 .contentShape(Rectangle())
             }
@@ -173,15 +126,15 @@ struct UniverseSection: View {
                 let count = store.pages.filter { $0.pageType == type }.count
                 if count > 0 {
                     NavigationLink(value: AppRoute.pageList(filterType: type)) {
-                        SidebarTypeRow(type: type, count: count, onSearch: {
-                            router.navigate(to: .search(filterType: type))
-                        })
+                        SidebarTypeRow(
+                            type: type,
+                            count: count
+                        )
                         .contentShape(Rectangle())
                     }
                 }
             }
-        }
- header: {
+        } header: {
             Text(L10n.Common.Sidebar.universe)
         }
         .listRowBackground(SidebarRowBackground())
@@ -189,7 +142,7 @@ struct UniverseSection: View {
 }
 
 struct PinnedSection: View {
-    @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var store
     var heroNamespace: Namespace.ID
     @Binding var pageToDelete: KnowledgePage?
     @Binding var showDeleteConfirmation: Bool
@@ -205,7 +158,7 @@ struct PinnedSection: View {
                         onTogglePin: {
                             var p = page
                             p.isPinned.toggle()
-                            Task { await store.updatePage(p, forceDeepScan: false) }
+                            Task { await store.updatePage(p) }
                         },
                         onDelete: {
                             pageToDelete = page
@@ -222,7 +175,7 @@ struct PinnedSection: View {
 }
 
 struct ToolsSection: View {
-    @Environment(AppStore.self) var store
+    @Environment(AppStore.self) var appStore
     @ObservedObject var taskCenter = TaskCenter.shared
     
     var body: some View {
@@ -232,8 +185,8 @@ struct ToolsSection: View {
                     Label(L10n.Common.Sidebar.healthCheck, systemImage: DesignSystem.Icons.healthCheck)
                         .foregroundStyle(.appText)
                     Spacer()
-                    if !store.lintIssues.isEmpty {
-                        Text("\(store.lintIssues.count)")
+                    if !appStore.lintIssues.isEmpty {
+                        Text("\(appStore.lintIssues.count)")
                             .font(DesignSystem.caption2Font)
                             .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
                             .padding(.vertical, DesignSystem.Chip.verticalPadding)
@@ -297,7 +250,6 @@ struct UniverseNavRow: View {
     let colorName: String
     let title: String
     let count: Int
-    var onSearch: (() -> Void)? = nil
     
     var iconColor: Color {
         colorName == "accent" ? .appAccent : Color.fromModelColorName(colorName)
@@ -330,22 +282,6 @@ struct UniverseNavRow: View {
                     .foregroundStyle(.appAccent)
                     .clipShape(Capsule())
             }
-            
-            // 垂直搜索入口
-            if let onSearch {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    onSearch()
-                }) {
-                    Image(systemName: DesignSystem.Icons.search)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.appSecondary.opacity(DesignSystem.softOpacity))
-                        .padding(DesignSystem.tiny)
-                        .background(Color.appSecondary.opacity(DesignSystem.subtleFillOpacity))
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-            }
         }
         .padding(.vertical, DesignSystem.atomic)
     }
@@ -355,7 +291,6 @@ struct UniverseNavRow: View {
 struct SidebarTypeRow: View {
     let type: PageType
     let count: Int
-    var onSearch: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: DesignSystem.medium) {
@@ -382,22 +317,6 @@ struct SidebarTypeRow: View {
                 .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.softOpacity * 0.375)) // 0.15
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .clipShape(Capsule())
-            
-            // 垂直搜索入口
-            if let onSearch {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    onSearch()
-                }) {
-                    Image(systemName: DesignSystem.Icons.search)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.fromModelColorName(type.colorName).opacity(DesignSystem.subtleOpacity))
-                        .padding(DesignSystem.tiny)
-                        .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.subtleFillOpacity))
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-            }
         }
         .padding(.vertical, DesignSystem.atomic)
     }

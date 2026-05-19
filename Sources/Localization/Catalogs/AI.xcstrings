@@ -2234,13 +2234,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.systemPrompt"
+            "value": "You are a RAG system evaluation expert (LLM-as-a-Judge)."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.systemPrompt"
+            "value": "你是一个 RAG 系统评估专家 (LLM-as-a-Judge)。"
           }
         }
       }
@@ -3390,13 +3390,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Model Settings"
+            "value": "Online LLMs"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "模型设置"
+            "value": "在线大模型"
           }
         }
       }
@@ -6491,6 +6491,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识导入"
+          }
+        }
+      }
+    },
+    "ai.accessibility.skeletonLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Deep Knowledge Synthesis in progress"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 深度知识合成进行中"
+          }
+        }
+      }
+    },
+    "ai.accessibility.taskInProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing AI synthesis task"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在处理 AI 合成任务"
+          }
+        }
+      }
+    },
+    "ai.accessibility.taskFinishedAnnouncement": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Task: %@ has been successfully generated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 任务：%@ 已成功生成完毕"
+          }
+        }
+      }
+    },
+    "ai.accessibility.taskFailedAnnouncement": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Task: %@ failed to generate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 任务：%@ 生成失败"
+          }
+        }
+      }
+    },
+    "ai.accessibility.progressValueFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress %lld percent, currently in stage: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进度百分之%lld，当前处于：%@阶段"
           }
         }
       }

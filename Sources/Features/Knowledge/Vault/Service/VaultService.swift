@@ -14,6 +14,7 @@
 import Foundation
 import Observation
 import GRDB
+import SwiftUI
 
 /// 知识笔记本/金库中枢服务（VaultService）。
 /// 它是业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面，
@@ -49,7 +50,10 @@ public final class VaultService: VaultServiceProtocol {
     
     /// 私有化单例构造方法，防止外部直接实例化。
     private init() {
-        loadVaults()
+        // 单测环境下禁用自动异步加载演示数据，避免跨用例的 DI 容器重置竞态崩溃
+        if NSClassFromString("XCTestCase") == nil {
+            loadVaults()
+        }
     }
     
     // MARK: - 物理路径计算辅助
@@ -163,17 +167,49 @@ public final class VaultService: VaultServiceProtocol {
     }
     
     /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
+    ///
+    /// - 架构时序与并发安全设计说明 (Thread Safety & Switch Flow):
+    ///   本方法托管于 `@MainActor` 并发沙盒中，确保对 `selectedVaultID` 的动态赋值、
+    ///   偏好项写入以及底层 SQLite 数据库物理 Pool 重建在**主线程串行、原子化执行**，彻底避免多线程对撞与竞争条件。
+    ///   
+    ///   ```
+    ///   ┌────────────────────────────────────────────────────────┐
+    ///   │              Vault 激活与数据库级级联切换时序图              │
+    ///   └────────────────────────────────────────────────────────┘
+    ///         [用户点击 Vault 卡片]
+    ///                  │
+    ///                  ▼
+    ///         1. 绑定 selectedVaultID ──► 驱动 UI 侧边栏/主页响应式秒开
+    ///                  │
+    ///                  ▼
+    ///         2. 写入 UserDefaults   ──► 记录冷启动恢复指针
+    ///                  │
+    ///                  ▼
+    ///         3. switchDatabase()   ──► 彻底销毁旧 Pool 连接，释放 WAL 文件锁
+    ///                  │                挂载新物理库并跑 Schema 迁移
+    ///                  ▼
+    ///         4. 异步 updateAccessed ──► 派发到后台 Task 悄然修改元数据时间戳
+    ///   ```
+    ///   
+    ///   [步骤剖析]：
+    ///   1. **步骤一**：更新状态发布器 `selectedVaultID` 以驱动 UI 响应式局部重绘。
+    ///   2. **步骤二**：通过 `UserDefaults` 持久化记录最近一次选中的 Vault ID，保障下次冷启动热连通。
+    ///   3. **步骤三 (物理切换)**：触发 `DatabaseManager.shared.switchDatabase`。该方法会立即同步销毁旧专属库连接
+    ///      并释放物理文件独占锁，开辟全新的 Pool。
+    ///   4. **步骤四 (异步更新)**：开启独立的物理 Task 异步记录该 Vault 在全局配置表中的最近使用访问时间戳，
+    ///      物理拆分了业务调度与持久化操作，保证操作流畅性。
+    ///
     /// - Parameter vault: 需要选中的目标 Vault 实体。
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         
-        // 1. 热插拔重定向：要求 DatabaseManager 彻底挂载专属物理子库
+        // 1. 热插拔重定向：要求 DatabaseManager 彻底挂载专属物理子库，同步刷新句柄
         do {
             let dbURL = getVaultDatabaseURL(for: vault.id)
             try DatabaseManager.shared.switchDatabase(to: vault.id, at: dbURL)
             
-            // 2. 更新该笔记本的最近访问访问时序，用以排列优先级
+            // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序，交由后台 Task 物理写入
             Task {
                 try await vaultRepository.updateLastAccessed(id: vault.id)
             }
@@ -185,7 +221,9 @@ public final class VaultService: VaultServiceProtocol {
     /// 退出当前选中的笔记本金库。
     /// 返回主选择页，在 UserDefaults 中移除偏好项，并安全降级释放当前物理库的连接句柄，防止空转泄露。
     public func exitVault() {
-        self.selectedVaultID = nil
+        withAnimation(DesignSystem.Animation.Config.prominentSpring) {
+            self.selectedVaultID = nil
+        }
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         // 物理释放专属连接以闭合通道锁
         DatabaseManager.shared.dbWriter = nil

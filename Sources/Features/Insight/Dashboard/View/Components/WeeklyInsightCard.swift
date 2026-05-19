@@ -57,6 +57,7 @@ struct WeeklyInsightCard: View {
                     AppSkeleton(width: 260, height: 16)
                     AppSkeleton(width: 280, height: 16)
                 }
+                .transition(.opacity)
             } else if let insight = aiStore.weeklyInsight {
                 VStack(alignment: .leading, spacing: DesignSystem.Metrics.sectionSpacing) { // 24
                     // 核心指标 (奖牌化设计)

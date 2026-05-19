@@ -624,6 +624,18 @@ final class PageLifecycleIntegrationTests: XCTestCase {
 final class PluginRegistryTests: XCTestCase {
     
     @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        setupFullMockEnvironment()
+    }
+    
+    @MainActor
+    override func tearDown() async throws {
+        ServiceContainer.shared.reset()
+        try await super.tearDown()
+    }
+    
+    @MainActor
     func testMultiPluginInterceptorConsistency() {
         let registry = PluginRegistry.shared
         

@@ -66,6 +66,7 @@ public struct AppAILoadingSkeleton: View {
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
                 .stroke(stageColor.opacity(0.1), lineWidth: 1)
         )
+        .accessibilityHidden(true)
     }
     
     private func skeletonRow(widthRatio: CGFloat) -> some View {

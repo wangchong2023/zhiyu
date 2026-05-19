@@ -26,6 +26,20 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
     public var createdAt: Date
     public var updatedAt: Date
     
+    public enum CodingKeys: String, CodingKey {
+        case id
+        case pageID = "page_id"
+        case parentID = "parent_id"
+        case chunkType = "chunk_type"
+        case content
+        case anchorPath = "anchor_path"
+        case index = "chunk_index"
+        case startIndex = "start_index"
+        case embedding
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+
     public enum Columns {
         static let id = Column("id")
         static let pageID = Column("page_id")

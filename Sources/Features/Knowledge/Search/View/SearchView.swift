@@ -12,7 +12,7 @@
 import SwiftUI
 
 struct SearchView: View {
-    @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var store
     @Environment(SearchStore.self) var searchStore
     @Environment(Router.self) var router
     // 初始值 (由外部传入)
@@ -185,14 +185,14 @@ struct SearchView: View {
                         Menu {
                             ForEach(SortOption.allCases, id: \.self) { option in
                                 Button(action: { sortBy = option }) {
-                                    Label(Localized.tr(option.rawValue), systemImage: sortBy == option ? DesignSystem.Icons.check : "")
+                                    Label(L10n.Common.tr(option.rawValue), systemImage: sortBy == option ? DesignSystem.Icons.check : "")
                                 }
                             }
                         } label: {
                             HStack(spacing: DesignSystem.tiny) {
                                 Image(systemName: DesignSystem.Icons.sortUpDown)
                                     .font(.caption)
-                                Text(Localized.tr(sortBy.rawValue))
+                                Text(L10n.Common.tr(sortBy.rawValue))
                                     .font(.caption)
                             }
                             .padding(.horizontal, DesignSystem.tightPadding + DesignSystem.atomic) // 10

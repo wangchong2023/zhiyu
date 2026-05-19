@@ -109,7 +109,7 @@ extension L10n {
         }
 
         public static var title: String { tr("title") }
-        public static var unitMs: String { Localized.tr("dashboard.stats.unitMs") }
+        public static var unitMs: String { Localized.tr("dashboard.stats.unitMs", table: t) }
         public static var densityDesc: String { Localized.tr("dashboard.density.desc", table: t) }
         public static var densityDetails: String { Localized.tr("dashboard.density.details", table: t) }
         public static var densityOutbound: String { Localized.tr("dashboard.density.outbound", table: t) }
@@ -164,6 +164,15 @@ extension L10n {
             /// 存储空间分布详情卡片标题
             public static var storageDetails: String { Localized.tr("dashboard.stats.storageDetails", table: t) }
             public static var chartValue: String { Localized.tr("dashboard.stats.chartValue", table: t) }
+            /// 存储空间多分库笔记本的详情描述
+            public static func multiVaultDesc(_ count: Int) -> String { Localized.trf("dashboard.stats.multiVaultDesc", table: t, count) }
+            
+            /// 各笔记本占用标题
+            public static var vaultStorageTitle: String { Localized.tr("dashboard.stats.vaultStorageTitle", table: t) }
+            /// 当前激活笔记本的状态文本
+            public static var activeVaultStatus: String { Localized.tr("dashboard.stats.activeVaultStatus", table: t) }
+            /// 未激活笔记本的状态文本
+            public static var inactiveVaultStatus: String { Localized.tr("dashboard.stats.inactiveVaultStatus", table: t) }
 
             public struct short {
                 public static var entity: String { Dashboard.tr("stats.short.entity") }

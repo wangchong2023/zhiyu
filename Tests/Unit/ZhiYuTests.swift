@@ -197,6 +197,41 @@ final class ModelsTests: XCTestCase {
         let remote3 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 300, updatedAt: now)
         let merged3 = local3.merge(with: remote3)
         XCTAssertEqual(merged3.title, "Remote", "Later updated date should win if Lamport is equal")
+        
+        // Scenario 4: Equal Lamport, Local has later wall clock time (remote is older or equal)
+        let local4 = KnowledgePage(id: baseID, title: "Local", lamportTimestamp: 300, updatedAt: now)
+        let remote4 = KnowledgePage(id: baseID, title: "Remote", lamportTimestamp: 300, updatedAt: now.addingTimeInterval(-10))
+        let merged4 = local4.merge(with: remote4)
+        XCTAssertEqual(merged4.title, "Local", "Local should win if equal Lamport and local has later/equal updated date")
+    }
+    
+    // MARK: - Privacy and Tag Extraction Tests
+    /// 测试知识页面隐私敏感度判定与中英文标签的智能解析提取功能
+    func testKnowledgePageIsPrivateAndTagExtraction() {
+        // 显式标签列表中包含 "private"
+        let pageWithPrivateTag = KnowledgePage(title: "Secret", content: "Confidential info", tags: ["private"])
+        XCTAssertTrue(pageWithPrivateTag.isPrivate)
+        
+        // 内容中通过 #private 内联声明
+        let pageWithPrivateContentTag = KnowledgePage(title: "Secret 2", content: "Confidential info #private tag", tags: [])
+        XCTAssertTrue(pageWithPrivateContentTag.isPrivate)
+        
+        // 复合型中英文内联标签清洗提取
+        let pageWithMixedTags = KnowledgePage(
+            title: "Mixed Tags",
+            content: "This is #swift and this is #人工智能 (AI) and #private.",
+            tags: ["static-tag"]
+        )
+        let extractedTags = pageWithMixedTags.getAllTags()
+        XCTAssertTrue(extractedTags.contains("static-tag"))
+        XCTAssertTrue(extractedTags.contains("swift"))
+        XCTAssertTrue(extractedTags.contains("人工智能"))
+        XCTAssertTrue(extractedTags.contains("private"))
+        XCTAssertTrue(pageWithMixedTags.isPrivate)
+        
+        // 常规公开页面
+        let normalPage = KnowledgePage(title: "Public", content: "Hello world #public tag", tags: ["public"])
+        XCTAssertFalse(normalPage.isPrivate)
     }
     
     // MARK: - PageType Tests

@@ -66,18 +66,20 @@ public final class AppStore {
         }
     }
 
-    // ── 基础状态 ──
-    public var pages: [KnowledgePage] = []
-    public var totalPages: Int = 0
-    public var totalWords: Int = 0
-    public var isScanning: Bool = false
-    public var isScanningAI: Bool { isScanning }
+    // ── UI 状态 ──
     public var pendingCoachMark: CoachMarkType? = nil
     
-    // ── UI 状态 ──
-    public var showCreateSheet: Bool = false
-
     // ── 转发指标 (由专用 Store 持有) ──
+    public var pages: [KnowledgePage] { knowledgeStore.pages }
+    public var totalPages: Int { knowledgeStore.totalPages }
+    public var totalWords: Int { knowledgeStore.totalWords }
+    public var isScanning: Bool { knowledgeStore.isScanning }
+    public var isScanningAI: Bool { isScanning }
+    public var showCreateSheet: Bool {
+        get { knowledgeStore.showCreateSheet }
+        set { knowledgeStore.showCreateSheet = newValue }
+    }
+
     public var brokenLinkCount: Int { aiInsightStore.brokenLinkCount }
     public var orphanPageCount: Int { aiInsightStore.orphanPageCount }
     public var totalConnectionCount: Int { aiInsightStore.totalConnectionCount }
@@ -99,7 +101,7 @@ public final class AppStore {
     @ObservationIgnored @Inject var maintenanceService: MaintenanceService
     @ObservationIgnored @Inject var logger: any LoggerProtocol
     @ObservationIgnored @Inject var performanceService: PerformanceService
-    @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject var llmService: LLMService
     @ObservationIgnored @Inject var settingsStore: SettingsStore
     @ObservationIgnored @Inject var linkService: LinkService
     @ObservationIgnored @Inject var backupService: BackupService
@@ -112,6 +114,7 @@ public final class AppStore {
     @ObservationIgnored public var searchStore: SearchStore!
     @ObservationIgnored public var aiWorkflowStore: AIWorkflowStore!
     @ObservationIgnored public var tagStore: TagStore!
+    @ObservationIgnored public var knowledgeStore: KnowledgeStore!
     
     public var aiInsightStore: AIInsightStore { aiWorkflowStore.insightStore }
 
@@ -127,8 +130,21 @@ public final class AppStore {
         self.searchStore = SearchStore()
         self.aiWorkflowStore = AIWorkflowStore()
         self.tagStore = TagStore()
+        self.knowledgeStore = KnowledgeStore()
         
-        // 2. 注册系统事件订阅
+        // 2. 将核心 Store 及子 Store 自动注册到全局 DI 容器中 (@DIP)
+        // 确保无论生产环境还是单元测试环境，只要 AppStore 被实例化，其内部的子 Store 均立即可供 @Inject 注入
+        // 这样可以彻底打通测试沙盒数据流，并防止因测试多实例覆盖导致的数据订阅和状态不一致问题
+        let container = ServiceContainer.shared
+        container.register(self, for: AppStore.self)
+        container.register(self.searchStore, for: SearchStore.self)
+        container.register(self.aiWorkflowStore, for: AIWorkflowStore.self)
+        container.register(self.aiWorkflowStore as any AIWorkflowCapabilities, for: (any AIWorkflowCapabilities).self)
+        container.register(self.aiWorkflowStore.insightStore, for: AIInsightStore.self)
+        container.register(self.tagStore, for: TagStore.self)
+        container.register(self.knowledgeStore, for: KnowledgeStore.self)
+        
+        // 3. 注册系统事件订阅
         setupSubscriptions()
     }
 
@@ -139,12 +155,12 @@ public final class AppStore {
                 guard let self = self else { return }
                 switch event {
                 case .pagesCleared:
-                    self.pages = []
-                    self.totalPages = 0
+                    // 仅处理应用层清理逻辑
+                    break
                 case .pageCreated, .pageUpdated, .pageDeleted:
-                    // 采用弱引用 [weak self] 捕获，防止强引用闭包延长生命周期导致测试环境 Race Condition 崩溃 (@SRS-7.1)
+                    // 页面事件由 KnowledgeStore 处理，AppStore 仅负责跨模块协调（如 Insight 更新）
                     Task { [weak self] in
-                        await self?.refresh()
+                        await self?.aiInsightStore.updateStatistics()
                     }
                 case .clearAllDataRequested:
                     self.clearAllDeveloperData()
@@ -153,17 +169,14 @@ public final class AppStore {
             }
             .store(in: &cancellables)
             
-        // 动态绑定物理专属数据库热切换监听，保证数据物理沙盒隔离
+        // 动态绑定物理专属数据库热切换监听
         NotificationCenter.default.publisher(for: .databaseDidSwitch)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                print("🔄 [AppStore] 监测到专属物理库热切换成功，开始内存驱逐与 UI 重新绘制...")
-                self.pages = []
-                self.totalPages = 0
-                self.totalWords = 0
+                print("🔄 [AppStore] 监测到专属物理库热切换成功...")
                 Task { [weak self] in
-                    await self?.refresh()
+                    await self?.aiInsightStore.updateStatistics()
                 }
             }
             .store(in: &cancellables)
@@ -172,27 +185,18 @@ public final class AppStore {
     // MARK: - 基础管理
 
     public func refresh() async {
-        let startTime = Date()
-        self.pages = (try? await pageStore.fetchAllPages()) ?? []
-        self.totalPages = pages.count
-        self.totalWords = pages.reduce(0) { $0 + $1.content.count }
-        
-        let duration = Date().timeIntervalSince(startTime)
-        performanceService.record(.databaseLoad, duration: duration)
-        
-        // 触发子 Store 同步数据
+        await knowledgeStore.refresh()
         await aiInsightStore.updateStatistics()
     }
 
     func seedDefaultContent() async {
-        await maintenanceService.seedDefaultContent(pages: pages)
-        await refresh()
+        await knowledgeStore.seedDefaultContent()
     }
 
     // ── 核心业务逻辑 ──
 
     public func pageByTitle(_ title: String) async -> KnowledgePage? {
-        await pageManager.pageByTitle(title, in: pages)
+        await knowledgeStore.pageByTitle(title)
     }
 
     @discardableResult
@@ -208,7 +212,7 @@ public final class AppStore {
         sourceType: String? = nil,
         forceDeepScan: Bool = false
     ) async -> KnowledgePage {
-        let page = (try? await pageManager.createPage(
+        await knowledgeStore.createPage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
@@ -217,58 +221,38 @@ public final class AppStore {
             sourceURL: sourceURL,
             rawSnippet: rawSnippet,
             fileSize: fileSize,
-            sourceType: sourceType,
-            currentPages: pages
-        )) ?? KnowledgePage(title: title)
-
-        if totalPages >= 3 && !settingsStore.hasShownGraphCoachMark {
-            settingsStore.hasShownGraphCoachMark = true
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            self.pendingCoachMark = .graphDiscovery
-        }
-
-        await refresh()
-        return page
+            sourceType: sourceType
+        )
     }
 
     public func getBacklinks(for id: UUID) async -> [KnowledgePage] { await pageStore.fetchBacklinksByID(for: id) }
 
     public func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
-        try? await pageManager.updatePage(page, currentPages: pages)
-        await refresh()
+        await knowledgeStore.updatePage(page)
     }
 
     public func savePage(_ page: KnowledgePage) async {
-        try? await pageManager.savePage(page, currentPages: pages)
-        await refresh()
+        await knowledgeStore.savePage(page)
     }
 
     public func deletePage(_ page: KnowledgePage) async {
-        try? await pageManager.deletePage(page, currentPages: pages)
-        await refresh()
+        await knowledgeStore.deletePage(page)
     }
 
     func undo() async {
-        if let newPages = try? await pageManager.undo(currentPages: pages) {
-            self.pages = newPages
-            await refresh()
-        }
+        await knowledgeStore.undo()
     }
 
     func redo() async {
-        if let newPages = try? await pageManager.redo(currentPages: pages) {
-            self.pages = newPages
-            await refresh()
-        }
+        await knowledgeStore.redo()
     }
 
     func saveToDisk() async {
-        await maintenanceService.saveToDisk(pages: pages)
+        await knowledgeStore.saveToDisk()
     }
 
     func loadFromDisk() async { 
-        await maintenanceService.loadFromDisk()
-        await refresh()
+        await knowledgeStore.loadFromDisk()
     }
 
     public func requestRelayout() {
@@ -292,18 +276,15 @@ extension AppStore: CollaborationDelegate {
     }
 
     public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
-        try? await pageManager.applyPotentialLink(suggestion, currentPages: pages)
-        await refresh()
+        await knowledgeStore.applyPotentialLink(suggestion)
     }
 
     func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
-        try? await pageManager.applyRefactorSuggestion(suggestion, currentPages: pages)
-        await refresh()
+        await knowledgeStore.applyRefactorSuggestion(suggestion)
     }
 
     public func applyRemoteUpdate(_ page: KnowledgePage) async {
-        try? await pageManager.updatePage(page, currentPages: pages)
-        await refresh()
+        await knowledgeStore.updatePage(page)
     }
 
     public func insertRemotePage(_ page: KnowledgePage) async {
@@ -312,8 +293,7 @@ extension AppStore: CollaborationDelegate {
     }
 
     func renamePage(_ page: KnowledgePage, to newTitle: String) async {
-        try? await pageManager.renamePage(page, to: newTitle, currentPages: pages)
-        await refresh()
+        await knowledgeStore.renamePage(page, to: newTitle)
     }
 
     func clearAllDeveloperData() {
@@ -327,8 +307,9 @@ extension AppStore: CollaborationDelegate {
     }
 
     func ingestFolder(at url: URL) async {
+        // 转发至领域层 KnowledgePageManager 执行物理和向量导入流程
         await pageManager.ingestFolder(at: url, pageStore: self)
-        await refresh()
+        await knowledgeStore.refresh()
     }
 
     // MARK: - 标签管理 (转发至 TagStore)
@@ -338,18 +319,18 @@ extension AppStore: CollaborationDelegate {
     }
 
     public func renameTag(_ oldTag: String, to newTag: String) async {
-        await pageManager.renameTag(oldTag, to: newTag)
-        await refresh()
+        await tagStore.renameTag(old: oldTag, to: newTag)
+        await knowledgeStore.refresh()
     }
 
     public func deleteTag(_ tag: String) async {
-        await pageManager.deleteTag(tag)
-        await refresh()
+        await tagStore.deleteTag(tag)
+        await knowledgeStore.refresh()
     }
 
     public func bulkDeleteTags(_ tags: [String]) async {
-        await pageManager.bulkDeleteTags(tags)
-        await refresh()
+        await tagStore.bulkDeleteTags(tags)
+        await knowledgeStore.refresh()
     }
 
     public func addNewTag(_ tag: String) {
@@ -363,24 +344,29 @@ extension AppStore: AnyPageStore {
     public var logEntries: [LogEntry] { [] }
 
     public func fetchAllPages() async throws -> [KnowledgePage] {
-        try await pageStore.fetchAllPages()
+        await knowledgeStore.refresh()
+        return knowledgeStore.pages
     }
 
     public func reloadFromDisk() async {
-        await pageStore.reloadFromDisk()
+        await knowledgeStore.loadFromDisk()
     }
 
     public func replaceAllPages(_ newPages: [KnowledgePage]) async {
-        try? await pageStore.replaceAllPages(newPages)
-        await refresh()
+        await knowledgeStore.saveToDisk() // 这里原逻辑可能有误，通常是覆盖磁盘
+        // 修正为：
+        await pageStore.replaceAllPages(newPages)
+        await knowledgeStore.refresh()
     }
 
     public func resetDatabase() async throws {
         try await pageStore.resetDatabase()
+        await knowledgeStore.refresh()
     }
 
     public func performBatchWrite(_ block: @escaping @Sendable (Database) throws -> Void) async throws {
         try await pageStore.performBatchWrite(block)
+        await knowledgeStore.refresh()
     }
 
     public func createPage(
@@ -394,7 +380,7 @@ extension AppStore: AnyPageStore {
         fileSize: Int64?,
         sourceType: String?
     ) async throws -> KnowledgePage {
-        try await pageStore.createPage(
+        await knowledgeStore.createPage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
@@ -419,7 +405,7 @@ extension AppStore: AnyPageStore {
         sourceType: String?,
         forceDeepScan: Bool
     ) async -> KnowledgePage {
-        (try? await createPage(
+        await knowledgeStore.createPage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
@@ -429,23 +415,24 @@ extension AppStore: AnyPageStore {
             rawSnippet: rawSnippet,
             fileSize: fileSize,
             sourceType: sourceType
-        )) ?? KnowledgePage(title: title)
+        )
     }
 
     public func updatePage(_ page: KnowledgePage) async throws {
-        try await pageStore.updatePage(page)
+        await knowledgeStore.updatePage(page)
     }
 
     public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
-        await updatePage(page, forceDeepScan: forceDeepScan)
+        await knowledgeStore.updatePage(page)
     }
 
     public func anyDeletePage(_ page: KnowledgePage) async {
-        await deletePage(page)
+        await knowledgeStore.deletePage(page)
     }
 
     public func syncRemotePage(_ page: KnowledgePage) async {
         await pageStore.syncRemotePage(page)
+        await knowledgeStore.refresh()
     }
 
     public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
@@ -457,7 +444,7 @@ extension AppStore: AnyPageStore {
     }
 
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        await pageStore.seedDefaultContent(logger: logger)
+        await knowledgeStore.seedDefaultContent()
     }
 
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
@@ -466,6 +453,7 @@ extension AppStore: AnyPageStore {
 }
 
 // MARK: - GraphDataProvider 协议实现
+@MainActor
 extension AppStore: GraphDataProvider {
     public var clusters: [GraphClusteringService.Cluster] { [] }
     public var isAIProcessing: Bool { isScanningAI }

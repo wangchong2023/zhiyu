@@ -14,7 +14,8 @@ import Observation
 /// 知识图谱顶层容器
 /// 负责管理图谱画布、统计信息、过滤器及详情卡片的组合布局
 struct GraphContainerView: View {
-    @Environment(AppStore.self) var store
+    @Environment(AppStore.self) var appStore
+    @Environment(KnowledgeStore.self) var store
     @Environment(Router.self) var router
     var heroNamespace: Namespace.ID
     @Binding var selectedTab: AppTab
@@ -22,66 +23,71 @@ struct GraphContainerView: View {
     @State private var viewModel = GraphViewModel()
     @StateObject private var tooltipManager = TooltipManager.shared
 
-    var body: some View {
-        let currentFilteredNodes = viewModel.getFilteredNodes()
-        let currentFilteredEdges = viewModel.getFilteredEdges(for: currentFilteredNodes)
+    /// 动态过滤后的边列表
+    private var currentFilteredEdges: [GraphEdge] {
+        let filteredNodes = viewModel.getFilteredNodes()
+        return viewModel.getFilteredEdges(for: filteredNodes)
+    }
 
-        return ZStack {
+    var body: some View {
+        ZStack {
             themeManager.pageBackground()
                 .ignoresSafeArea()
             
-            Group {
-                if viewModel.nodes.isEmpty {
-                    GraphEmptyStateView(selectedTab: $selectedTab)
-                } else {
-                    // 2. 主体布局：标题/过滤项 + 画布
-                    VStack(spacing: DesignSystem.medium) {
-                        // 顶部非描边区域：统计与过滤器
-                        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                            graphStatsBar
-                            
-                            GraphFilterPillsView(
-                                filterType: $viewModel.filterType,
-                                tooltipManager: tooltipManager
-                            )
-                        }
-                        .padding(.horizontal, DesignSystem.standardPadding)
-                        .padding(.top, DesignSystem.medium)
-                        .zIndex(10) // 确保在画布之上
-
-                        // 核心绘图区：应用柔和边框与裁剪
-                        ZStack {
-                            GraphCanvasView(
-                                nodes: $viewModel.nodes,
-                                filteredEdges: currentFilteredEdges,
-                                provider: store,
-                                filterType: viewModel.filterType,
-                                useClustering: viewModel.useClustering,
-                                selectedNodeID: $viewModel.selectedNodeID,
-                                isAnimating: $viewModel.isAnimating,
-                                scale: $viewModel.scale,
-                                lastScale: $viewModel.lastScale,
-                                offset: $viewModel.offset,
-                                lastOffset: $viewModel.lastOffset,
-                                graphSize: $viewModel.graphSize,
-                                heroNamespace: heroNamespace
-                            ) { node in
-                                handleNodeTap(node)
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                dismissCard()
-                            }
-                        }
-                        .background(DesignSystem.containerBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                .stroke(DesignSystem.containerBorder, lineWidth: DesignSystem.borderWidth)
+            if viewModel.nodes.isEmpty {
+                GraphEmptyStateView(selectedTab: $selectedTab)
+            } else {
+                // 2. 主体布局：标题/过滤项 + 画布
+                VStack(spacing: DesignSystem.medium) {
+                    // 顶部非描边区域：统计与过滤器
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                        graphStatsBar
+                        
+                        GraphFilterPillsView(
+                            filterType: $viewModel.filterType,
+                            tooltipManager: tooltipManager
                         )
-                        .padding(.horizontal, DesignSystem.standardPadding)
-                        .padding(.bottom, DesignSystem.standardPadding)
                     }
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.top, DesignSystem.medium)
+                    .zIndex(10) // 确保在画布之上
+
+                    // 核心绘图区：应用柔和边框与裁剪
+                    ZStack {
+                        GraphCanvasView(
+                            nodes: $viewModel.nodes,
+                            filteredEdges: currentFilteredEdges,
+                            provider: appStore,
+                            filterType: viewModel.filterType,
+                            useClustering: viewModel.useClustering,
+                            selectedNodeID: $viewModel.selectedNodeID,
+                            isAnimating: $viewModel.isAnimating,
+                            scale: $viewModel.scale,
+                            lastScale: $viewModel.lastScale,
+                            offset: $viewModel.offset,
+                            lastOffset: $viewModel.lastOffset,
+                            graphSize: $viewModel.graphSize,
+                            heroNamespace: heroNamespace
+                        ) { node in
+                            handleNodeTap(node)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            dismissCard()
+                        }
+                        // MARK: - A11y 专项适配
+                        .accessibilityElement(children: .contain)
+                        .accessibilityLabel(L10n.Graph.accessibility.canvasLabel)
+                        .accessibilityHint(L10n.Graph.accessibility.canvasHint)
+                    }
+                    .background(DesignSystem.containerBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                            .stroke(DesignSystem.containerBorder, lineWidth: DesignSystem.borderWidth)
+                    )
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.bottom, DesignSystem.standardPadding)
                 }
             }
         }
@@ -207,6 +213,11 @@ struct GraphContainerView: View {
         }
         .buttonStyle(.plain)
         .contentShape(Capsule())
+        // MARK: - A11y 专项适配
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L10n.Graph.accessibility.statsBarLabel)
+        .accessibilityValue(L10n.Graph.nodesConnections(viewModel.getFilteredNodes().count, viewModel.getFilteredEdges(for: viewModel.getFilteredNodes()).count))
+        .accessibilityHint(L10n.Graph.accessibility.statsBarHint)
     }
 
     /**

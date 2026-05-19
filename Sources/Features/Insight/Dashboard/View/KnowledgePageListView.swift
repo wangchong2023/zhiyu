@@ -29,9 +29,64 @@ struct KnowledgePageListContent: View {
     @State private var showDeleteConfirmation = false
     @State private var pageToDelete: KnowledgePage?
     @State private var showInsights = false
+    @State private var searchText = ""
+    
+    // 全局混合搜索与语义检索核心状态
+    @State private var searchResults: [KnowledgePage] = []
+    @State private var isSearchingAdvanced = false
+    @State private var searchTask: Task<Void, Never>? = nil
     
     private var totalLinks: Int {
         store.pages.reduce(0) { $0 + $1.outgoingLinks.count }
+    }
+    
+    private func filteredPages(for type: PageType) -> [KnowledgePage] {
+        if isSearchingAdvanced {
+            // 如果处于高级全文搜索模式下，直接按 SearchStore 算出的 RRF 混合排名的权重顺序输出过滤列表，不进行强制字典序重排
+            return searchResults.filter { $0.pageType == type }
+        }
+        
+        // 否则回退为原本的笔记本页面全量字典序排序
+        return store.pages.filter { $0.pageType == type }.sorted { $0.title < $1.title }
+    }
+    
+    private var hasSearchResults: Bool {
+        if searchText.isEmpty { return true }
+        if let filterType {
+            return !filteredPages(for: filterType).isEmpty
+        }
+        return PageType.allCases.contains { type in
+            !filteredPages(for: type).isEmpty
+        }
+    }
+
+    private func triggerSearch(query: String) {
+        searchTask?.cancel()
+        
+        let cleanedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanedQuery.isEmpty else {
+            withAnimation(.easeInOut) {
+                searchResults = []
+                isSearchingAdvanced = false
+            }
+            return
+        }
+        
+        searchTask = Task {
+            // 防抖 150ms 确连贯输入体验与节省 SQLite 核心物理 FTS5 开销
+            try? await Task.sleep(for: .milliseconds(150))
+            if Task.isCancelled { return }
+            
+            let results = await store.searchStore.performAdvancedSearch(query: cleanedQuery)
+            if Task.isCancelled { return }
+            
+            await MainActor.run {
+                withAnimation(.easeInOut) {
+                    self.searchResults = results
+                    self.isSearchingAdvanced = true
+                }
+            }
+        }
     }
 
     var body: some View {
@@ -72,18 +127,9 @@ struct KnowledgePageListContent: View {
                 }
                 .buttonStyle(.plain)
             }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { 
-                    HapticFeedback.shared.trigger(.selection)
-                    Router.shared.navigate(to: .search()) 
-                }) {
-                    Image(systemName: DesignSystem.Icons.hashtag)
-                        .font(.system(size: DesignSystem.headlineFontSize))
-                        .foregroundStyle(.appSecondary)
-                }
-                .buttonStyle(.plain)
-            }
+        }
+        .onChange(of: searchText) { _, newValue in
+            triggerSearch(query: newValue)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("toggleDisplayMode"))) { _ in
             // 响应全局模式切换（如果需要）
@@ -114,45 +160,80 @@ struct KnowledgePageListContent: View {
     @ViewBuilder
     private var listView: some View {
         LazyVStack(spacing: DesignSystem.standardPadding, pinnedViews: [.sectionHeaders]) {
-            if filterType == nil {
+            // 全局统一的高级毛玻璃搜索输入卡片，完美融合于顶端！
+            searchBarSection
+            
+            if filterType == nil && searchText.isEmpty {
                 summarySection
             }
 
-            if filterType == nil || filterType == .entity {
-                entitySection
-            }
+            if store.searchStore.isSearching {
+                // 如果正在执行混合检索，展示高精度骨架屏呼吸卡片
+                VStack(spacing: DesignSystem.standardPadding) {
+                    ForEach(0..<4) { _ in
+                        HStack(spacing: DesignSystem.medium) {
+                            AppSkeleton(width: DesignSystem.Sidebar.iconBoxSize, height: DesignSystem.Sidebar.iconBoxSize)
+                            VStack(alignment: .leading, spacing: 4) {
+                                AppSkeleton(width: 140, height: DesignSystem.standardFontSize)
+                                AppSkeleton(width: 240, height: DesignSystem.microFontSize)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .padding(.top, 20)
+                }
+            } else if hasSearchResults {
+                if filterType == nil || filterType == .entity {
+                    entitySection
+                }
 
-            if filterType == nil || filterType == .concept {
-                conceptSection
-            }
+                if filterType == nil || filterType == .concept {
+                    conceptSection
+                }
 
-            if filterType == nil || filterType == .source {
-                sourceSection
-            }
+                if filterType == nil || filterType == .source {
+                    sourceSection
+                }
 
-            if filterType == nil || filterType == .comparison {
-                comparisonSection
+                if filterType == nil || filterType == .comparison {
+                    comparisonSection
+                }
+            } else {
+                VStack(spacing: DesignSystem.standardPadding) {
+                    Spacer(minLength: 60)
+                    Image(systemName: DesignSystem.Icons.weeklyInsight)
+                        .font(.system(size: DesignSystem.Metrics.heroValueSize * 1.5))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.625))
+                    
+                    Text(L10n.Search.noResults)
+                        .font(.headline)
+                        .foregroundStyle(.appSecondary)
+                    
+                    Text(L10n.Search.noResultsHint)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.875))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, DesignSystem.huge)
+                    Spacer()
+                }
+                .padding(.top, 40)
             }
         }
         .padding(.horizontal, DesignSystem.standardPadding)
         .padding(.vertical, DesignSystem.loosePadding)
         .padding(.bottom, DesignSystem.standardPadding * 2)
     }
-
-    // GridView 已被用户要求移除以支持更充实的内容列表
     
     @ViewBuilder
     private var summarySection: some View {
         Section {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignSystem.standardPadding) {
-                    KnowledgeStatItem(label: L10n.Dashboard.totalPages, value: "\(store.pages.count)", color: .appAccent)
-                    KnowledgeStatItem(label: L10n.Dashboard.totalLinks, value: "\(totalLinks)", color: .appSource)
-                    KnowledgeStatItem(label: L10n.Dashboard.pageList.tags, value: "\(store.tags.count)", color: .appConcept)
-                    KnowledgeStatItem(label: L10n.Dashboard.pageList.sources, value: "\(store.sourceCount)", color: .appSource)
-                }
-                .padding(.horizontal, DesignSystem.tiny)
+            HStack(spacing: DesignSystem.standardPadding) {
+                KnowledgeStatItem(label: L10n.Dashboard.totalPages, value: "\(store.pages.count)", color: .appAccent)
+                KnowledgeStatItem(label: L10n.Dashboard.totalLinks, value: "\(totalLinks)", color: .appSource)
+                KnowledgeStatItem(label: L10n.Dashboard.pageList.tags, value: "\(store.tags.count)", color: .appConcept)
+                KnowledgeStatItem(label: L10n.Dashboard.pageList.sources, value: "\(store.sourceCount)", color: .appSource)
             }
+            .padding(.horizontal, DesignSystem.tiny)
             .padding(.vertical, DesignSystem.tiny)
         } header: {
             HStack {
@@ -167,18 +248,15 @@ struct KnowledgePageListContent: View {
     
     @ViewBuilder
     private var entitySection: some View {
-        let entities = store.pages.filter { $0.pageType == .entity }.sorted { $0.title < $1.title }
+        let entities = filteredPages(for: .entity)
         if !entities.isEmpty {
             Section {
-                ForEach(entities) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        KnowledgePageModernRow(page: page)
-                    }
-                    .buttonStyle(AppPressButtonStyle())
-                    
-                    if page.id != entities.last?.id {
-                        Divider()
-                            .padding(.vertical, DesignSystem.tiny)
+                VStack(spacing: 12) {
+                    ForEach(entities) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .buttonStyle(AppPressButtonStyle())
                     }
                 }
             } header: {
@@ -195,18 +273,15 @@ struct KnowledgePageListContent: View {
     
     @ViewBuilder
     private var conceptSection: some View {
-        let concepts = store.pages.filter { $0.pageType == .concept }.sorted { $0.title < $1.title }
+        let concepts = filteredPages(for: .concept)
         if !concepts.isEmpty {
             Section {
-                ForEach(concepts) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        KnowledgePageModernRow(page: page)
-                    }
-                    .buttonStyle(AppPressButtonStyle())
-                    
-                    if page.id != concepts.last?.id {
-                        Divider()
-                            .padding(.vertical, DesignSystem.tiny)
+                VStack(spacing: 12) {
+                    ForEach(concepts) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .buttonStyle(AppPressButtonStyle())
                     }
                 }
             } header: {
@@ -223,18 +298,15 @@ struct KnowledgePageListContent: View {
     
     @ViewBuilder
     private var sourceSection: some View {
-        let sources = store.pages.filter { $0.pageType == .source }.sorted { $0.title < $1.title }
+        let sources = filteredPages(for: .source)
         if !sources.isEmpty {
             Section {
-                ForEach(sources) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        KnowledgePageModernRow(page: page)
-                    }
-                    .buttonStyle(AppPressButtonStyle())
-                    
-                    if page.id != sources.last?.id {
-                        Divider()
-                            .padding(.vertical, DesignSystem.tiny)
+                VStack(spacing: 12) {
+                    ForEach(sources) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .buttonStyle(AppPressButtonStyle())
                     }
                 }
             } header: {
@@ -251,18 +323,15 @@ struct KnowledgePageListContent: View {
     
     @ViewBuilder
     private var comparisonSection: some View {
-        let comparisons = store.pages.filter { $0.pageType == .comparison }.sorted { $0.title < $1.title }
+        let comparisons = filteredPages(for: .comparison)
         if !comparisons.isEmpty {
             Section {
-                ForEach(comparisons) { page in
-                    NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                        KnowledgePageModernRow(page: page)
-                    }
-                    .buttonStyle(AppPressButtonStyle())
-                    
-                    if page.id != comparisons.last?.id {
-                        Divider()
-                            .padding(.vertical, DesignSystem.tiny)
+                VStack(spacing: 12) {
+                    ForEach(comparisons) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .buttonStyle(AppPressButtonStyle())
                     }
                 }
             } header: {
@@ -276,6 +345,48 @@ struct KnowledgePageListContent: View {
             }
         }
     }
+    
+    @ViewBuilder
+    private var searchBarSection: some View {
+        HStack(spacing: DesignSystem.medium) {
+            Image(systemName: DesignSystem.Icons.search)
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.appAccent)
+            
+            TextField(L10n.SearchPlaceholder, text: $searchText)
+                .textFieldStyle(.plain)
+                .font(.system(size: 15))
+                .foregroundStyle(.appText)
+                .accessibilityIdentifier("searchPlaceholder")
+                .submitLabel(.search)
+                .onSubmit {
+                    if !searchText.isEmpty {
+                        triggerSearch(query: searchText)
+                    }
+                }
+
+            if !searchText.isEmpty {
+                Button(action: { 
+                    searchText = ""
+                    triggerSearch(query: "")
+                }) {
+                    Image(systemName: DesignSystem.Icons.errorCircle)
+                        .foregroundStyle(.appSecondary.opacity(0.6))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, DesignSystem.standardPadding)
+        .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
+        .background(Color.appCard.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(Color.appAccent.opacity(0.25), lineWidth: DesignSystem.borderWidth)
+        )
+        .padding(.horizontal, DesignSystem.tiny)
+        .padding(.bottom, DesignSystem.tiny)
+    }
 }
 
 // MARK: - Knowledge Stat Item
@@ -287,17 +398,17 @@ struct KnowledgeStatItem: View {
     var body: some View {
         VStack(spacing: DesignSystem.tiny) {
             Text(label)
-                .font(.system(size: DesignSystem.microFontSize, weight: .semibold))
+                .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(.appSecondary)
                 .textCase(.uppercase)
             
             Text(value)
-                .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, DesignSystem.List.rowVerticalPadding)
-        .background(.ultraThinMaterial)
+        .padding(.vertical, 12)
+        .background(Color.appCard.opacity(0.8))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                 .stroke(.white.opacity(DesignSystem.accentStrokeOpacity), lineWidth: DesignSystem.borderWidth / 2)
@@ -309,97 +420,6 @@ struct KnowledgeStatItem: View {
                 .stroke(color.opacity(DesignSystem.dimmedOpacity), lineWidth: DesignSystem.borderWidth)
         )
         .shadow(color: Color.black.opacity(DesignSystem.shadowOpacity * DesignSystem.subtleOpacity), radius: DesignSystem.medium, x: 0, y: DesignSystem.tiny)
-    }
-}
-
-// MARK: - Knowledge Page Modern Row (高密度内容流)
-struct KnowledgePageModernRow: View {
-    let page: KnowledgePage
-    @Environment(AppStore.self) var store
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack(alignment: .top, spacing: DesignSystem.medium) {
-                // 1. 紧凑型图标
-                Image(systemName: page.displayIcon)
-                    .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                    .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
-                    .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.CompositeRow.iconBoxSize)
-                    .background(Color.fromModelColorName(page.pageType.colorName).opacity(DesignSystem.surfaceOpacity))
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.small, style: .continuous))
-                
-                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                    // 2. 标题与状态
-                    HStack(spacing: DesignSystem.tiny) {
-                        Text(page.title)
-                            .font(.system(size: DesignSystem.headlineFontSize - 1, weight: .bold)) // 17px
-                            .foregroundStyle(.appText)
-                            .lineLimit(1)
-                        
-                        if page.isPinned {
-                            Image(systemName: DesignSystem.Icons.pin)
-                                .font(.system(size: DesignSystem.microFontSize))
-                                .foregroundStyle(.appAccent)
-                                .rotationEffect(.degrees(45))
-                        }
-                        
-                        Spacer()
-                        
-                        // 信心度小点
-                        Circle()
-                            .fill(Color.fromModelColorName(page.confidence.colorName))
-                            .frame(width: DesignSystem.small / 2, height: DesignSystem.small / 2)
-                    }
-                    
-                    // 3. 内容摘要 (充实感核心)
-                    Text(page.content)
-                        .font(.system(size: DesignSystem.subheadlineFontSize))
-                        .foregroundStyle(.appSecondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                        .padding(.top, DesignSystem.atomic)
-                }
-            }
-            
-            HStack(spacing: DesignSystem.medium) {
-                metadataItem(icon: DesignSystem.Icons.history, text: page.updatedAt.timeAgoDisplay())
-                metadataItem(icon: DesignSystem.Icons.wordCount, text: L10n.Dashboard.pageList.wordCount(page.wordCount))
-                
-                if !page.outgoingLinks.isEmpty {
-                    metadataItem(icon: DesignSystem.Icons.link, text: "\(page.outgoingLinks.count)")
-                }
-                
-                Spacer()
-                
-                // 标签序列 (截断处理)
-                if !page.tags.isEmpty {
-                    HStack(spacing: DesignSystem.tiny) {
-                        ForEach(page.tags.prefix(2), id: \.self) { tag in
-                            Text("#\(tag)")
-                                .font(.system(size: DesignSystem.microFontSize, weight: .medium))
-                                .padding(.horizontal, DesignSystem.small)
-                                .padding(.vertical, DesignSystem.tiny / 2)
-                                .background(Color.appAccent.opacity(DesignSystem.ghostOpacity))
-                                .foregroundStyle(.appAccent)
-                                .clipShape(Capsule())
-                        }
-                    }
-                }
-            }
-            .padding(.top, DesignSystem.tiny)
-        }
-        .padding(.vertical, DesignSystem.medium)
-        .contentShape(Rectangle())
-    }
-    
-    private func metadataItem(icon: String, text: String) -> some View {
-        HStack(spacing: DesignSystem.tiny) {
-            Image(systemName: icon)
-                .font(.system(size: DesignSystem.microFontSize))
-            Text(text)
-                .font(.system(size: DesignSystem.caption2FontSize, weight: .medium))
-        }
-        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity))
     }
 }
 

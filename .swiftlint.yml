@@ -1,0 +1,32 @@
+# .swiftlint.yml
+#
+# 作者: Wang Chong
+# 功能说明: 智宇 (ZhiYu) 项目的全局 SwiftLint 编码规范清单
+# 版本: 1.0
+# 日期: 2026-05-18
+
+# 1. 强制启用与禁用的校验规则
+disabled_rules:
+  - trailing_whitespace       # 允许行尾留白，避免干扰编辑流
+  - line_length               # 禁用强硬行长限制，由阅读者审美自行把控
+  - type_body_length          # 允许较长的复杂视图容器（SwiftUI 主体拆分已另行保障）
+  - file_length               # 允许大型文件
+
+opt_in_rules:
+  - empty_count               # 优先使用 isEmpty 而非 count == 0
+  - force_unwrapping          # 提示杜绝非必要强解包，促进安全编码
+  - discouraged_object_literal # 鼓励在非界面定义层代码中使用类型安全资产
+
+# 2. 扫描区域限制
+included:
+  - Sources
+  - Tests
+
+excluded:
+  - Carthage
+  - Pods
+  - build                     # 过滤掉编译日志和临时生成缓存
+
+# 3. 错误红线配置
+force_cast: error             # 强转 Cast 直接升级为编译错误
+force_try: error              # 强行 try 直接升级为编译错误

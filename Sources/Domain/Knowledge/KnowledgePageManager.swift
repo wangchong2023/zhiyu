@@ -25,6 +25,51 @@ public final class KnowledgePageManager {
     @ObservationIgnored @Inject private var tagStore: TagStore
     @ObservationIgnored @Inject private var aiWorkflowStore: any AIWorkflowCapabilities
 
+    // MARK: - 动态处理器 (Phase 3)
+    
+    /// 注册处理器项
+    private struct RegisteredProcessor {
+        let processor: any KnowledgePageProcessor
+        let pluginID: String?
+    }
+
+    /// 注册的页面处理器链
+    private var processors: [RegisteredProcessor] = []
+    
+    /// 注册页面处理器
+    /// - Parameters:
+    ///   - processor: 处理器实现
+    ///   - pluginID: 所属插件 ID (可选，用于生命周期管理)
+    public func registerProcessor(_ processor: any KnowledgePageProcessor, pluginID: String? = nil) {
+        if !processors.contains(where: { $0.processor.id == processor.id }) {
+            processors.append(RegisteredProcessor(processor: processor, pluginID: pluginID))
+            logger.debug("🔌 [KnowledgePageManager] 已挂载页面处理器: \(processor.name) (Plugin: \(pluginID ?? "System"))")
+        }
+    }
+    
+    /// 注销页面处理器
+    public func unregisterProcessor(id: String) {
+        processors.removeAll { $0.processor.id == id }
+    }
+
+    /// 注销指定插件的所有处理器
+    public func unregisterProcessors(for pluginID: String) {
+        processors.removeAll { $0.pluginID == pluginID }
+    }
+    
+    /// 应用处理器链
+    private func applyProcessors(to page: KnowledgePage) async -> KnowledgePage {
+        var result = page
+        for item in processors {
+            do {
+                result = try await item.processor.process(page: result)
+            } catch {
+                logger.error("❌ [KnowledgePageManager] 处理器 \(item.processor.name) 执行失败", error: error)
+            }
+        }
+        return result
+    }
+
     public init() {}
 
     // MARK: - 核心 CRUD
@@ -50,16 +95,30 @@ public final class KnowledgePageManager {
     ) async throws -> KnowledgePage {
         undoService.pushSnapshot(currentPages)
 
-        let page = try await pageStore.createPage(
+        // 构造初始页面并执行处理器
+        let initialPage = KnowledgePage(
             title: title,
             pageType: pageType,
             customIcon: customIcon,
             content: content,
             tags: tags,
             sourceURL: sourceURL,
-            rawSnippet: rawSnippet,
+            rawTextSnippet: rawSnippet,
             fileSize: fileSize,
             sourceType: sourceType
+        )
+        let processedPage = await applyProcessors(to: initialPage)
+
+        let page = try await pageStore.createPage(
+            title: processedPage.title,
+            pageType: processedPage.pageType,
+            customIcon: processedPage.customIcon,
+            content: processedPage.content,
+            tags: processedPage.tags,
+            sourceURL: processedPage.sourceURL,
+            rawSnippet: processedPage.rawTextSnippet,
+            fileSize: processedPage.fileSize,
+            sourceType: processedPage.sourceType
         )
 
         backupService.markDirty()
@@ -73,11 +132,15 @@ public final class KnowledgePageManager {
     /// 更新页面
     public func updatePage(_ page: KnowledgePage, currentPages: [KnowledgePage]) async throws {
         undoService.pushSnapshot(currentPages)
-        try await pageStore.updatePage(page)
+        
+        // 执行处理器增强
+        let processedPage = await applyProcessors(to: page)
+        
+        try await pageStore.updatePage(processedPage)
         backupService.markDirty()
         
         let totalLinks = currentPages.reduce(0) { $0 + $1.outgoingLinks.count }
-        AppEventBus.shared.publish(.pageUpdated(id: page.id, nodeCount: currentPages.count, linkCount: totalLinks))
+        AppEventBus.shared.publish(.pageUpdated(id: processedPage.id, nodeCount: currentPages.count, linkCount: totalLinks))
     }
 
     /// 保存页面 (含插件事件触发)

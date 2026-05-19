@@ -16,7 +16,6 @@ struct SplashView: View {
     @State private var quoteOpacity: Double = 0
     @State private var authorOpacity: Double = 0
     @State private var logoOpacity: Double = 0
-    @State private var shimmerOffset: CGFloat = -300 // 初始位移，用于名言闪光动画
     @State private var starTwinkle = false
     @State private var nodeGlow = false
     
@@ -61,29 +60,6 @@ struct SplashView: View {
                         .lineSpacing(DesignSystem.small)
                         .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
                         .opacity(quoteOpacity)
-                    
-                    // 闪光效果
-                    Text(L10n.Common.Splash.quote)
-                        .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.clear, .white.opacity(DesignSystem.secondaryOpacity), .clear],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(DesignSystem.small)
-                        .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
-                        .offset(x: shimmerOffset)
-                        .mask(
-                            Text(L10n.Common.Splash.quote)
-                                .font(.system(size: DesignSystem.bodyFontSize, weight: .medium, design: .serif))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(DesignSystem.small)
-                                .padding(.horizontal, DesignSystem.Metrics.largeIconBoxSize)
-                        )
-                        .opacity(quoteOpacity > DesignSystem.pressedOpacity * 0.5 ? DesignSystem.glassOpacity * 4 : 0)
                     
                     // 署名 (仅保留装饰线)
                     HStack(spacing: 0) {
@@ -160,13 +136,6 @@ struct SplashView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.authorDelay) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.slowDuration)) {
                 authorOpacity = 1
-            }
-        }
-        
-        // 闪光扫过
-        DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.shimmerDelay) {
-            withAnimation(.easeInOut(duration: DesignSystem.Animation.looseDuration)) {
-                shimmerOffset = DesignSystem.Decorator.shimmerPhaseShift * 0.5
             }
         }
         

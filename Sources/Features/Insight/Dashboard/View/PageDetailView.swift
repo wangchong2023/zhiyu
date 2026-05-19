@@ -109,6 +109,77 @@ struct PageDetailView: View {
         .disabled(coordinator.isEditing)
         #endif
     }
+    private var welcomeAhaPromptCard: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            HStack(spacing: DesignSystem.small) {
+                Image(systemName: DesignSystem.Icons.sparkles)
+                    .font(.title2)
+                    .foregroundStyle(LinearGradient(
+                        colors: [.appAccent, .orange],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ))
+                
+                Text(L10n.Common.Demo.Welcome.cardTitle)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.appText)
+            }
+            
+            Text(L10n.Common.Demo.Welcome.cardDesc)
+                .font(.subheadline)
+                .foregroundStyle(.appSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                router.pendingInitialChatPrompt = L10n.Common.Demo.Welcome.prompt
+                router.navigateToTool(.chat)
+            }) {
+                HStack(spacing: DesignSystem.small) {
+                    Text("\(L10n.Common.Demo.Welcome.cardRecommend)\"\(L10n.Common.Demo.Welcome.prompt)\"")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .lineLimit(1)
+                    
+                    Image(systemName: DesignSystem.Icons.arrowRight)
+                        .font(.caption)
+                        .fontWeight(.bold)
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.vertical, DesignSystem.small)
+                .background(
+                    LinearGradient(
+                        colors: [.appAccent, .appAccent.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(Capsule())
+                .shadow(color: .appAccent.opacity(0.3), radius: 5, x: 0, y: 3)
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+        .padding(DesignSystem.standardPadding)
+        .background(
+            RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
+                .fill(Color.appCard.opacity(0.6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
+                .stroke(
+                    LinearGradient(
+                        colors: [.appAccent.opacity(0.4), .orange.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+        .padding(.vertical, DesignSystem.medium)
+    }
     
     var body: some View {
         @Bindable var coordinator = coordinator
@@ -124,6 +195,10 @@ struct PageDetailView: View {
                         
                         Group {
                             PageDetailContentSection(page: $coordinator.page, isEditing: $coordinator.isEditing, onLinkTap: navigateToPage)
+                            
+                            if coordinator.page.title == L10n.Common.Demo.Welcome.title {
+                                welcomeAhaPromptCard
+                            }
                             
                             Divider().background(Color.appBorder)
                             

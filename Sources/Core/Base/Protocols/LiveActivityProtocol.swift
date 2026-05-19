@@ -9,6 +9,7 @@ import Foundation
 
 /// [Infra] 实时活动服务协议
 /// 旨在抹平 iOS 灵动岛 (Live Activity) 与其他平台的差异，实现业务层无宏。
+@MainActor
 public protocol LiveActivityProtocol: Sendable {
     /// 开启一个新的实时活动
     /// - Parameters:

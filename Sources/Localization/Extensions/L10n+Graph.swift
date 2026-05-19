@@ -53,8 +53,51 @@ extension L10n {
         public static var insightBridgesDesc: String { Localized.tr("graph.insightBridgesDesc", table: t) }
 
         public static let accessibility = Accessibility()
+        
+        /// 知识图谱专属无障碍本地化定义结构体
         public struct Accessibility: Sendable {
+            /// 节点双击查看详情提示文案
             public var nodeHint: String { Localized.tr("graph.accessibility.nodeHint", table: t) }
+            
+            /// 放大图谱按钮无障碍标签
+            public var zoomInLabel: String { Localized.tr("graph.accessibility.zoomInLabel", table: t) }
+            /// 放大图谱按钮无障碍操作暗示
+            public var zoomInHint: String { Localized.tr("graph.accessibility.zoomInHint", table: t) }
+            
+            /// 缩小图谱按钮无障碍标签
+            public var zoomOutLabel: String { Localized.tr("graph.accessibility.zoomOutLabel", table: t) }
+            /// 缩小图谱按钮无障碍操作暗示
+            public var zoomOutHint: String { Localized.tr("graph.accessibility.zoomOutHint", table: t) }
+            
+            /// 重置并居中图谱按钮无障碍标签
+            public var resetLabel: String { Localized.tr("graph.accessibility.resetLabel", table: t) }
+            /// 重置并居中图谱按钮无障碍操作暗示
+            public var resetHint: String { Localized.tr("graph.accessibility.resetHint", table: t) }
+            
+            /// 自适应视口图谱按钮无障碍标签
+            public var fitToScreenLabel: String { Localized.tr("graph.accessibility.fitToScreenLabel", table: t) }
+            /// 自适应视口图谱按钮无障碍操作暗示
+            public var fitToScreenHint: String { Localized.tr("graph.accessibility.fitToScreenHint", table: t) }
+            
+            /// 重新计算图谱布局按钮无障碍标签
+            public var relayoutLabel: String { Localized.tr("graph.accessibility.relayoutLabel", table: t) }
+            /// 重新计算图谱布局按钮无障碍操作暗示
+            public var relayoutHint: String { Localized.tr("graph.accessibility.relayoutHint", table: t) }
+            
+            /// 切换 3D 图谱模式按钮无障碍标签
+            public var threeDLabel: String { Localized.tr("graph.accessibility.threeDLabel", table: t) }
+            /// 切换 3D 图谱模式按钮无障碍操作暗示
+            public var threeDHint: String { Localized.tr("graph.accessibility.threeDHint", table: t) }
+            
+            /// 顶部图谱数据面板无障碍标签
+            public var statsBarLabel: String { Localized.tr("graph.accessibility.statsBarLabel", table: t) }
+            /// 顶部图谱数据面板无障碍操作暗示
+            public var statsBarHint: String { Localized.tr("graph.accessibility.statsBarHint", table: t) }
+            
+            /// 2D 图谱画布无障碍标签
+            public var canvasLabel: String { Localized.tr("graph.accessibility.canvasLabel", table: t) }
+            /// 2D 图谱画布无障碍操作暗示
+            public var canvasHint: String { Localized.tr("graph.accessibility.canvasHint", table: t) }
         }
 
         public struct ThreeD {

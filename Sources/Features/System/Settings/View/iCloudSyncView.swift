@@ -27,6 +27,7 @@ struct iCloudSyncView: View {
             } header: {
                 Text(L10n.ICloud.syncStatus)
             }
+            .appListRowBackground()
 
             // MARK: - Actions Section
             SyncActionsSection(
@@ -36,6 +37,7 @@ struct iCloudSyncView: View {
                 onPullRequest: { coordinator.showPullConfirmation = true },
                 onBidirectional: coordinator.bidirectionalSync
             )
+            .appListRowBackground()
 
             // MARK: - Settings Section
             SyncSettingsSection(
@@ -49,6 +51,7 @@ struct iCloudSyncView: View {
                     }
                 }
             )
+            .appListRowBackground()
 
             // MARK: - Info Section
             Section {
@@ -62,6 +65,7 @@ struct iCloudSyncView: View {
             } header: {
                 Text(L10n.ICloud.aboutSync)
             }
+            .appListRowBackground()
 
             // MARK: - Danger Section
             Section {
@@ -73,6 +77,7 @@ struct iCloudSyncView: View {
                 }
                 .disabled(coordinator.isSyncing)
             }
+            .appListRowBackground()
         }
 #if os(iOS)
         .listStyle(.insetGrouped)

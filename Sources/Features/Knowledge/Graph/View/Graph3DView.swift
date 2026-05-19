@@ -17,7 +17,7 @@ import SceneKit
 /// 负责在 3D 空间（SceneKit）中渲染知识节点与关联线条，提供力导向布局、自动旋转及空间交互体验
 @MainActor
 struct Graph3DView: View {
-    @Environment(AppStore.self) var store
+    @Environment(KnowledgeStore.self) var store
     @State private var scene: SCNScene?
     @State private var cameraDistance: Float = BusinessConstants.Graph.ThreeD.defaultCameraDistance
     @State private var autoRotate = false

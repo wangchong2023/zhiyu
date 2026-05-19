@@ -51,11 +51,25 @@ final class DatabaseManager: Sendable {
     /// - Throws: SQLite Schema 架构自动化迁移异常。
     func setupForTesting(with writer: any DatabaseWriter) throws {
         self.dbWriter = writer
-        self.globalWriter = writer
         self.isInTesting = true
-        // 核心步骤：对测试环境下瞬态内存数据库同步跑完所有 Schema 架构迁移，建立完整的物理表、虚拟表（如 FTS5）与触发器
+        
+        // 核心步骤 1：对测试环境下的专属瞬态内存主数据库跑 Schema 架构迁移，建立完整的物理表、虚拟表（如 FTS5）与触发器
         try migrator.migrate(writer)
-        try globalMigrator.migrate(writer)
+        
+        // 核心步骤 2：单独开辟一个独立的内存型全局配置数据库，彻底隔离并规避不同迁移器对 grdb_migrations 表的命名冲突与擦除问题
+        let globalQueue = try DatabaseQueue()
+        self.globalWriter = globalQueue
+        try globalMigrator.migrate(globalQueue)
+        
+        let tables = try writer.read { db in
+            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        let globalTables = try globalQueue.read { db in
+            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type='table'")
+        }
+        print("📊 [DatabaseManager] setupForTesting completed.")
+        print("   - Vault Tables: \(tables)")
+        print("   - Global Tables: \(globalTables)")
     }
     
     /// 初始化全局共享的主配置库（global.sqlite3）连接。
@@ -71,11 +85,8 @@ final class DatabaseManager: Sendable {
             try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         }
         
-        // 2. 配置连接池，启用外键约束
-        var config = Configuration()
-        config.prepareDatabase { db in
-            try db.execute(sql: "PRAGMA foreign_keys = ON")
-        }
+        // 2. 配置连接池并注入物理调优 PRAGMA 参数
+        let config = createDatabaseConfiguration()
         
         // 3. 建立连接并自动运行全局迁移
         let globalPool = try DatabasePool(path: path, configuration: config)
@@ -102,10 +113,7 @@ final class DatabaseManager: Sendable {
             try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         }
         
-        var config = Configuration()
-        config.prepareDatabase { db in
-            try db.execute(sql: "PRAGMA foreign_keys = ON")
-        }
+        let config = createDatabaseConfiguration()
         
         let dbPool = try DatabasePool(path: path, configuration: config)
         self.dbWriter = dbPool
@@ -115,7 +123,46 @@ final class DatabaseManager: Sendable {
     }
     
     /// 物理热切换当前激活的专属笔记本数据库（Multi-Vault Switching）。
-    /// 该操作支持 WAL 安全锁断开旧的并发池连接，安全重定向，热挂载目标新数据库，并触发全局状态广播。
+    ///
+    /// - 架构防死锁与 WAL 连接池生命周期深度设计规范 (WAL Exclusive Lock Release & Anti-Deadlock Specification):
+    ///   在多租户 (Multi-Vault) 热插拔架构中，由于 SQLite 启用了高性能的 WAL (Write-Ahead Logging) 模式，
+    ///   操作系统会在沙盒中生成并映射 `.sqlite3`、`.sqlite3-wal` 及 `.sqlite3-shm` 三个物理文件。
+    ///   
+    ///   ```
+    ///   ┌────────────────────────────────────────────────────────┐
+    ///   │           SQLite WAL 并发独占锁释放与重构生命周期           │
+    ///   └────────────────────────────────────────────────────────┘
+    ///         [旧数据库激活]
+    ///               │
+    ///               ▼
+    ///         1. 显式 dbWriter = nil  ──► 触发 ARC 同步析构，注销所有 Reader / Writer 句柄
+    ///               │                      物理闭合并刷新 .sqlite3-wal 缓存，彻底释放 Shared/Exclusive 锁
+    ///               ▼
+    ///         2. 重定向 dbURL = url   ──► 指向新物理笔记本路径
+    ///               │
+    ///               ▼
+    ///         3. 重建 DatabasePool   ──► 动态开辟全新隔离的连接池通道
+    ///               │
+    ///               ▼
+    ///         4. 跑 Schema 架构迁移  ──► 自动化建立新专属库元数据与虚拟表
+    ///               │
+    ///               ▼
+    ///         5. 广播 databaseDidSwitch 通知 ──► 各子服务（Embedding/Search）执行内存缓存强力驱逐
+    ///   ```
+    ///   
+    ///   [死锁场景剖析 (Deadlock Risk)]：
+    ///   如果之前的 `DatabasePool` 连接句柄没有被 100% 销毁，它的多个读取连接与写入连接可能仍隐式保持着 SQLite 的
+    ///   Shared 或 Reserved/Exclusive 锁状态。若此时立即去加载、删除、移动或者在其他线程重入读写这个数据库文件，
+    ///   将瞬间触发 SQLite 的 `SQLITE_BUSY` (数据库锁对撞)，甚至导致系统主线程永久性锁死死锁。
+    ///
+    ///   [金牌防死锁架构解决路径]：
+    ///   1. **步骤一 (物理断联释放锁)**：显式执行 `self.dbWriter = nil`。根据 Swift ARC 机制，这会触发旧 `DatabasePool` 实例
+    ///      及其底层所有活跃 SQLite 句柄的**同步析构与强物理销毁**。这一步是释放 SQLite WAL 锁、将缓冲区刷新至磁盘、
+    ///      并强行解开文件独占锁的黄金法门。
+    ///   2. **步骤二 (物理重定向)**：确立全新的 `self.dbURL = url`。
+    ///   3. **步骤三 (串行重建与安全隔离)**：在此基础上重新配置并唤醒目标物理库的并发 Pool，以隔离态重新跑 Schema 迁移，
+    ///      物理切断新旧库之间的任何锁传染通路。
+    ///
     /// - Parameters:
     ///   - vaultID: 切换目标笔记本的唯一识别码 UUID。
     ///   - url: 目标笔记本数据库在沙盒中的物理绝对路径 URL。
@@ -123,7 +170,8 @@ final class DatabaseManager: Sendable {
     func switchDatabase(to vaultID: UUID, at url: URL) throws {
         print("🔄 [DatabaseManager] 开始执行物理多库热切换 => 目标: \(url.lastPathComponent)")
         
-        // 1. 优雅断开并销毁旧的专属库 DatabasePool 资源，防止 WAL 发生多进程锁对撞
+        // 1. 【安全核心步骤】：显式重置为 nil 以强制触发旧专属库 DatabasePool 资源 ARC 同步析构
+        // 彻底释放 WAL 模式下对 .sqlite3-wal 及 .sqlite3-shm 物理文件的读写独占锁，防止后续多库切换或物理移动擦除时发生 SQLITE_BUSY 死锁。
         self.dbWriter = nil
         self.dbURL = url
         
@@ -133,25 +181,53 @@ final class DatabaseManager: Sendable {
             try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         }
         
-        // 3. 重新配置并开辟新库的并发池连接
-        var config = Configuration()
-        config.prepareDatabase { db in
-            try db.execute(sql: "PRAGMA foreign_keys = ON")
-        }
+        // 3. 重新配置并开辟新库的并发池连接，确保外键约束正常挂载
+        // 3. 重新配置并开辟新库的并发池连接，应用高性能调优 PRAGMA
+        let config = createDatabaseConfiguration()
         
         let dbPool = try DatabasePool(path: url.path, configuration: config)
         self.dbWriter = dbPool
         
-        // 4. 对新专属库自动运行最新版本的 Schema 架构迁移
+        // 4. 对新专属库自动运行最新版本的 Schema 架构迁移（FTS5、Pages、SRS等表级热挂载）
         try migrator.migrate(dbPool)
         print("✅ [DatabaseManager] 专属物理库已成功切换重挂载 => \(url.lastPathComponent)")
         
-        // 5. 广播系统全局通知，引导 EmbeddingManager 和 AppStore 精准完成内存向量/数据实体驱逐与载入
+        // 5. 广播系统全局通知，引导 EmbeddingManager 和 AppStore 精准完成内存向量/数据实体驱逐与载入，重置搜索索引状态
         NotificationCenter.default.post(
             name: .databaseDidSwitch,
             object: nil,
             userInfo: ["vaultID": vaultID]
         )
+    }
+    
+    // MARK: - 数据库高性能配置
+    
+    /// 构建极尽压榨物理 I/O 并发吞吐的 SQLite 高性能配置
+    /// 包含：WAL 读写分离最大并发度、NORMAL 同步级别、内存 temp_store、10MB 连接页缓存、256MB mmap 内存映射与 5秒锁延迟。
+    private func createDatabaseConfiguration() -> Configuration {
+        var config = Configuration()
+        
+        // 1. 设置并发读取最大线程数（WAL 读写分离高阶连接池）
+        config.maximumReaderCount = 5
+        // 2. 将读取线程的系统优先调度级别（QoS）调至用户高优先级，防范卡顿
+        config.qos = .userInitiated
+        
+        config.prepareDatabase { db in
+            // 3. 开启物理级外键约束
+            try db.execute(sql: "PRAGMA foreign_keys = ON")
+            // 4. 采用 SQLite NORMAL 同步模式：WAL 模式下的黄金同步级别，兼顾 100% 事务安全性与超高写吞吐
+            try db.execute(sql: "PRAGMA synchronous = NORMAL")
+            // 5. 将临时表及中间索引文件全部强制置于 RAM 内存中，缩短排序耗时
+            try db.execute(sql: "PRAGMA temp_store = MEMORY")
+            // 6. 分配 10MB 的连接级大页面缓存页（缓存大小为 10000 字节，负数代表以 KB 为单位）
+            try db.execute(sql: "PRAGMA cache_size = -10000")
+            // 7. 启用 256MB 的内存映射 I/O，极速加载 FTS5 全文索引虚拟表，免除系统调用开销
+            try db.execute(sql: "PRAGMA mmap_size = 268435456")
+            // 8. 设定 5000 毫秒锁等待超时，打消多线程冷读写瞬时争用触发的 SQLITE_BUSY 风险
+            try db.execute(sql: "PRAGMA busy_timeout = 5000")
+        }
+        
+        return config
     }
     
     // MARK: - 专属笔记本库迁移方案 (DatabaseMigrator)

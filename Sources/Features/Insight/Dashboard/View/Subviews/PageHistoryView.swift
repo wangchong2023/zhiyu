@@ -67,7 +67,7 @@ struct PageHistoryView: View {
             }
             .alert(L10n.Knowledge.Page.confirmDelete, isPresented: $showRollbackAlert) {
                 Button(L10n.Knowledge.Page.History.rollback, role: .destructive) {
-                    if let snapshot = history.first, let content = store.snapshotService.rollback(to: snapshot) {
+                    if let snapshot = history.first, store.snapshotService.rollback(to: snapshot) != nil {
                         // 执行回滚逻辑
                         dismiss()
                     }

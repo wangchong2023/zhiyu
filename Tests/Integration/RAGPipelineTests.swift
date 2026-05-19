@@ -33,40 +33,46 @@ final class RAGPipelineTests: XCTestCase {
         try await super.tearDown()
     }
     
+    /// 测试全链路 RAG 管道系统集成
+    /// 验证从 原始文档导入 -> 向量化与词向量生成 -> 混合搜索与精确检索 -> LLM 生成回复 的完整闭环。
     func testFullRAGPipeline() async throws {
-        // 1. 导入 (Ingest)
+        // 从 DI 容器解析测试所需的具体持久化与向量模块
+        let sqliteStore = ServiceContainer.shared.resolve(SQLiteStore.self)
+        let embeddingManager = ServiceContainer.shared.resolve(EmbeddingManager.self)
+        
+        // 1. 导入数据并提取语义结构 (Ingest)
         let testContent = "智宇 (ZhiYu) 是一款基于 RAG 架构的知识管理 software，支持双向链接。"
         let page = await store.ingestService.ingestRawContent(
             title: "智宇简介",
             content: testContent,
             forceDeepScan: true,
             llmService: store.llmService,
-            pageStore: store.sqliteStore
+            pageStore: sqliteStore
         )
         
         let pageID = page.id
         XCTAssertNotNil(pageID)
         
-        // 2. 向量化验证 (Vectorization)
-        // 手动同步并等待向量和 AppStore 刷新以应对测试环境中的异步性
-        let currentPages = await store.sqliteStore.pages
-        await store.sqliteStore.embeddingManager.syncEmbeddings(pages: currentPages)
+        // 2. 向量化转换与对齐 (Vectorization)
+        // 手动同步内存中的页面并注入向量数据库以对齐检索基准
+        let currentPages = await sqliteStore.pages
+        await embeddingManager.syncEmbeddings(pages: currentPages)
         await store.refresh()
         
-        let allEmbeddings = await store.sqliteStore.embeddingManager.allEmbeddings
+        let allEmbeddings = await embeddingManager.allEmbeddings
         let embedding = allEmbeddings[pageID]
         XCTAssertNotNil(embedding, "向量化任务应在导入后完成")
         
-        // 3. 检索 (Hybrid Search)
+        // 3. 混合多模态检索 (Hybrid Search)
         let searchResult = await store.linkService.hybridSearchWithDiagnostics(
             query: "什么是智宇",
             in: store.pages,
-            embeddingManager: store.sqliteStore.embeddingManager
+            embeddingManager: embeddingManager
         )
         let searchResults = searchResult.results
         XCTAssertTrue(searchResults.contains(where: { $0.id == pageID }), "混合检索应能根据关键词召回导入的内容")
         
-        // 4. AI 总结 (Generation)
+        // 4. AI 总结回复合成 (Generation)
         let prompt = "根据已知内容回答：智宇的特点是什么？"
         let systemPrompt = "你是一个专业的知识管理助手。"
         let aiResponse = try await store.llmService.generate(prompt: prompt, systemPrompt: systemPrompt)

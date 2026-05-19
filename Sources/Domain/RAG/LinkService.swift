@@ -170,7 +170,7 @@ actor LinkService {
 
     /// Reciprocal Rank Fusion (RRF) 算法
     /// 公式: score = sum(1 / (k + rank))
-    private func rrf(keywordResults: [KnowledgePage], semanticResults: [KnowledgePage], k: Int = 60) -> [KnowledgePage] {
+    func rrf(keywordResults: [KnowledgePage], semanticResults: [KnowledgePage], k: Int = 60) -> [KnowledgePage] {
         var scores: [UUID: Double] = [:]
 
         // 为关键词结果打分

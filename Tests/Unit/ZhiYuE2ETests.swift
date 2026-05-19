@@ -43,6 +43,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         ServiceContainer.shared.register(Logger.shared, for: (any LoggerProtocol).self)
         ServiceContainer.shared.register(UndoService(), for: UndoService.self)
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)
+        ServiceContainer.shared.register(SettingsStore(), for: SettingsStore.self)
         
         self.store = AppStore()
         self.linkService = linkService

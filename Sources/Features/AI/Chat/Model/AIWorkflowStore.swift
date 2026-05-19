@@ -65,7 +65,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     }
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
-    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject private var llmService: LLMService
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var lintService: LintService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol

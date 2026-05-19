@@ -11,6 +11,7 @@ import LocalAuthentication
 // MARK: - 生物识别能力
 
 /// 平台生物识别策略提供者
+@MainActor
 public protocol BiometricAuthProviderProtocol: Sendable {
     /// 获取当前平台适用的鉴权策略 (LAPolicy)
     var authenticationPolicy: LAPolicy { get }
@@ -21,6 +22,7 @@ public protocol BiometricAuthProviderProtocol: Sendable {
     /// 执行生物识别鉴权
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool
 }
+
 
 // MARK: - 模型编译能力
 

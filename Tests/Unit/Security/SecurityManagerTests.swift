@@ -10,17 +10,20 @@ import XCTest
 import CryptoKit
 @testable import ZhiYu
 
+@MainActor
 final class SecurityManagerTests: XCTestCase {
     
     private var securityManager: SecurityManager!
     
     override func setUp() {
         super.setUp()
+        setupFullMockEnvironment()
         securityManager = SecurityManager.shared
     }
     
     override func tearDown() {
         securityManager = nil
+        ServiceContainer.shared.reset()
         super.tearDown()
     }
     
@@ -50,7 +53,9 @@ final class SecurityManagerTests: XCTestCase {
     
     // MARK: - HMAC 完整性校验测试
     
-    func testHMACIntegrityCheck() throws {
+    /// 测试 HMAC 完整性验证流
+    /// 验证文件创建、初始签名生成与校验、物理篡改后的签名失效等端到端逻辑。
+    func testHMACIntegrityCheck() async throws {
         // 创建临时测试文件
         let tempDir = FileManager.default.temporaryDirectory
         let fileURL = tempDir.appendingPathComponent("integrity_test.db")
@@ -59,18 +64,20 @@ final class SecurityManagerTests: XCTestCase {
         
         defer { try? FileManager.default.removeItem(at: fileURL) }
         
-        // 1. 生成并保存签名
-        securityManager.updateSignature(for: fileURL)
+        // 1. 生成并保存文件初始的签名指纹
+        await securityManager.updateSignature(for: fileURL)
         
-        // 2. 验证初始状态 (应通过)
-        XCTAssertTrue(securityManager.verifyIntegrity(for: fileURL), "初始生成的签名应验证通过")
+        // 2. 验证初始状态下签名应校验通过
+        let isInitialValid = await securityManager.verifyIntegrity(for: fileURL)
+        XCTAssertTrue(isInitialValid, "初始生成的签名应验证通过")
         
         // 3. 篡改文件内容
         let corruptedContent = "Corrupted Data".data(using: .utf8)!
         try corruptedContent.write(to: fileURL)
         
-        // 4. 验证篡改后状态 (应失败)
-        XCTAssertFalse(securityManager.verifyIntegrity(for: fileURL), "文件被篡改后，签名验证应失败")
+        // 4. 验证文件被篡改后，签名校验应该敏锐捕获失效并返回 false
+        let isCorruptedValid = await securityManager.verifyIntegrity(for: fileURL)
+        XCTAssertFalse(isCorruptedValid, "文件被篡改后，签名验证应失败")
     }
     
     // MARK: - 密钥管理测试

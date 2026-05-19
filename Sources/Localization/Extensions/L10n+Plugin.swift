@@ -123,5 +123,18 @@ extension L10n {
             public static var title: String { Plugin.tr("plugin.permission.title") }
             public static func message(_ name: String) -> String { Plugin.trf("plugin.permission.message", name) }
         }
+
+        // MARK: - 沙盒与 DLP 安全拦截报错词条
+        public enum Error {
+            public static var sandboxBlocked: String { Plugin.tr("plugin.error.sandboxBlocked") }
+            public static var dlpScriptBlocked: String { Plugin.tr("plugin.error.dlpScriptBlocked") }
+            public static func dlpFetchBlocked(_ host: String) -> String { Plugin.trf("plugin.error.dlpFetchBlocked", host) }
+            public static func preProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.preProcessException", reason) }
+            public static var payloadTooLarge: String { Plugin.tr("plugin.error.payloadTooLarge") }
+            public static func postProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.postProcessException", reason) }
+            public static func invalidURL(_ url: String) -> String { Plugin.trf("plugin.error.invalidURL", url) }
+            public static func keyLengthExceeded(_ limit: Int) -> String { Plugin.trf("plugin.error.keyLengthExceeded", limit) }
+        }
     }
 }
+

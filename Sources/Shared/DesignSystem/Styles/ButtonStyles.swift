@@ -1,19 +1,34 @@
-// ButtonStyles.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了应用内通用的按钮样式，确保交互动效的一致性与物理感。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//  ButtonStyles.swift
+//  ZhiYu
+//
+//  Created by Wang Chong on 2026-05-18.
+//  Copyright © 2026 Wang Chong. All rights reserved.
+//
 
 import SwiftUI
 
-/// 适用于卡片类按钮的标准缩放与透明度交互样式
+// MARK: - 卡片按压交互样式
+
+/// 适用于卡片类按钮的标准物理阻尼缩放与透明度按压交互样式。
+/// 
+/// 该样式通过将普通的线性插值缓动替换为高性能拟真弹簧阻尼算法，
+/// 为金库工作台卡片、列表行等交互性容器组件提供拟真的物理下沉与快速回弹反馈。
 struct AppCardButtonStyle: ButtonStyle {
+    
+    /// 创建并定制按钮的主体外观，动态注入拟真物理弹簧缩放及触压透明度变化。
+    /// 
+    /// - Parameter configuration: 系统提供的按钮状态配置，包含当前标签内容及是否处于手指/鼠标按压状态 (`isPressed`)。
+    /// - Returns: 已经融合了物理阻尼回弹反馈机制的高响应度定制按钮视图。
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            // 确保整个矩形区域（包括空白部分）都可以接收点击热区响应
             .contentShape(Rectangle())
+            // 当用户按下时，卡片产生物理微缩效果，松开时弹性恢复原尺寸
             .scaleEffect(configuration.isPressed ? DesignSystem.Animation.pressScale : 1.0)
+            // 按下时透明度略微调降以提供亮度衰减层面的视觉暗示
             .opacity(configuration.isPressed ? DesignSystem.pressedOpacity : DesignSystem.fullOpacity)
-            .animation(.easeInOut(duration: DesignSystem.Animation.standardDuration / 2), value: configuration.isPressed)
+            // 绑定苹果设备物理质感的欠阻尼弹簧曲线，实现干脆而又带微小惯性回弹的完美手感
+            .animation(.spring(response: 0.25, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }

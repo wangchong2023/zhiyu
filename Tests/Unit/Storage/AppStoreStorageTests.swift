@@ -73,11 +73,19 @@ final class AppStoreStorageTests: XCTestCase {
     }
     
     /// 测试搜索建议与过滤
+    /// 验证在数据库中建立索引数据后，能够通过 SQLiteStore 检索出匹配模糊查询条件的页面。
     func testSearchSuggestions() async {
+        // 1. 创建用于检索的实体测试页面
         _ = await store.createPage(title: "Apple", pageType: .entity, content: "Fruit")
         _ = await store.createPage(title: "Banana", pageType: .entity, content: "Yellow")
         
-        let results = await store.sqliteStore.searchPages(query: "Apple")
+        // 2. 从依赖注入容器中解析底层的 SQLite 数据库存储实例
+        let sqliteStore = ServiceContainer.shared.resolve(SQLiteStore.self)
+        
+        // 3. 执行关键词搜索
+        let results = await sqliteStore.searchPages(query: "Apple")
+        
+        // 4. 断言验证检索精度
         XCTAssertEqual(results.count, 1)
         XCTAssertEqual(results.first?.title, "Apple")
     }

@@ -46,4 +46,15 @@ final class AccessibilityService: ObservableObject {
     static func graphNodeAnnouncement(_ node: GraphNode, linkCount: Int) -> String {
         "\(node.title), \(node.pageType.displayName), \(linkCount) " + L10n.Accessibility.links
     }
+    
+    // MARK: - Post Announcement
+    /// 主动向 VoiceOver 系统发送语音公告，提升视障用户的即时状态感知能力
+    /// - Parameter text: 公告文案
+    public static func postAnnouncement(_ text: String) {
+        #if os(iOS)
+        UIAccessibility.post(notification: .announcement, argument: text)
+        #elseif targetEnvironment(macCatalyst)
+        UIAccessibility.post(notification: .announcement, argument: text)
+        #endif
+    }
 }

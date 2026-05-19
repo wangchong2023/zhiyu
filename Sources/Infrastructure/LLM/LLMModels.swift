@@ -95,7 +95,7 @@ public enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     /// 本地化显示名称
     public var displayName: String {
         if let key = metadata?.nameKey {
-            return Localized.tr(key)
+            return L10n.AI.tr(key)
         }
         return rawValue.capitalized
     }
@@ -252,16 +252,18 @@ final class LLMConfigStore: ObservableObject {
 
     private func loadAPIKey(for provider: LLMProvider) -> String {
         let key = keychainKey(for: provider)
-        if let value = try? KeychainService.shared.retrieve(key: key) {
-            return value
+        if let encryptedValue = try? KeychainService.shared.retrieve(key: key) {
+            if let decrypted = try? SecureEnclaveCryptoService.shared.decrypt(encryptedValue) {
+                return decrypted
+            }
         }
         
         // 迁移逻辑：如果新版分提供商 Key 不存在，尝试读取旧版全局 Key
         if let legacyValue = try? KeychainService.shared.retrieve(key: legacyKeychainAPIKey) {
-            // 只有当当前提供商是“默认”或者是“自定义”时才尝试迁移，或者简单地全部尝试迁移一次
-            try? KeychainService.shared.store(key: key, value: legacyValue)
-            // 可选：迁移后删除旧 Key（慎重，如果用户有多个提供商可能导致丢失）
-            // try? KeychainService.shared.delete(key: legacyKeychainAPIKey)
+            // 对迁移上来的明文进行物理级硬件加密，持久化回 Keychain
+            if let encrypted = try? SecureEnclaveCryptoService.shared.encrypt(legacyValue) {
+                try? KeychainService.shared.store(key: key, value: encrypted)
+            }
             return legacyValue
         }
         
@@ -274,6 +276,9 @@ final class LLMConfigStore: ObservableObject {
             try? KeychainService.shared.delete(key: key)
             return
         }
-        try? KeychainService.shared.store(key: key, value: apiKey)
+        // 引入 Secure Enclave 硬件安全芯片物理级锁定
+        if let encrypted = try? SecureEnclaveCryptoService.shared.encrypt(apiKey) {
+            try? KeychainService.shared.store(key: key, value: encrypted)
+        }
     }
 }

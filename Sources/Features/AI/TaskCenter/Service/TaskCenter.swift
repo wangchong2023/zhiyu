@@ -66,7 +66,7 @@ enum TaskStatus: Equatable {
 }
 
 /// 全球异步任务模型
-struct GlobalTask: Identifiable {
+struct GlobalTask: Identifiable, Equatable {
     let id = UUID()
     let type: TaskType
     let name: String                // 任务名称

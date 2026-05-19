@@ -11,6 +11,7 @@ import LocalAuthentication
 // MARK: - 生物识别
 
 /// macOS 平台的生物识别提供者
+@MainActor
 struct MacOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     

@@ -45,8 +45,8 @@ struct LLMSettingsView: View {
                 } header: {
                     Text(L10n.AI.LLM.status)
                 }
+                .appListRowBackground()
                 
-                // Karpathy Mode
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(L10n.AI.OnDevice.assistMode)
@@ -66,8 +66,8 @@ struct LLMSettingsView: View {
                 } header: {
                     Text(L10n.Settings.advancedMaintenance)
                 }
+                .appListRowBackground()
                 
-                // Provider
                 Section {
                     ForEach(LLMProvider.allCases) { provider in
                         Button(action: {
@@ -100,8 +100,8 @@ struct LLMSettingsView: View {
                 } header: {
                     Text(L10n.AI.LLM.Provider.title)
                 }
+                .appListRowBackground()
                 
-                // Configuration
                 Section {
                     #if !os(watchOS)
                     DisclosureGroup(isExpanded: $isConfigExpanded) {
@@ -114,6 +114,7 @@ struct LLMSettingsView: View {
                     configurationContent
                     #endif
                 }
+                .appListRowBackground()
                 
                 // Test Connection
                 Section {
@@ -183,11 +184,11 @@ struct LLMSettingsView: View {
                     Text(L10n.AI.LLM.infoString)
                         .padding(.top, 8)
                 }
+                .appListRowBackground()
             }
             #if !os(watchOS)
             .listStyle(.insetGrouped)
             #endif
-            .listRowBackground(Color.appCard.opacity(0.8))
             .scrollContentBackground(.hidden)
         }
         .toolbarBackground(.hidden, for: .navigationBar)

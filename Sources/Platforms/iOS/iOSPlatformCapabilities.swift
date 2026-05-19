@@ -12,6 +12,7 @@ import CoreML
 // MARK: - 生物识别
 
 /// iOS 平台的生物识别提供者
+@MainActor
 struct iOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     

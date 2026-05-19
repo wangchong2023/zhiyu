@@ -18,7 +18,7 @@ import Combine
 @Observable
 final class IngestStore {
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
-    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject private var llmService: LLMService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var ingestService: IngestService
     @ObservationIgnored @Inject private var pdfService: any PDFServiceProtocol

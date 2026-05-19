@@ -67,6 +67,7 @@ struct MonetizationInfo: Codable {
 }
 
 /// 插件执行上下文 (安全专家视角：权限隔离与沙盒控制)
+@MainActor
 protocol PluginContext {
     var hostVersion: String { get }
     func log(_ message: String)
@@ -81,6 +82,9 @@ protocol PluginContext {
     /// 在侧边栏注册快捷入口 (Ribbon Icon)
     func registerRibbonItem(icon: String, title: String, callback: @escaping @MainActor () -> Void)
     
+    /// 注册自定义页面处理器
+    func registerPageProcessor(_ processor: any KnowledgePageProcessor)
+
     // MARK: - 高级扩展点 (Advanced Expansion)
     
     /// 注册插件设置面板 (支持声明式 UI Schema)
@@ -144,6 +148,7 @@ struct PluginEventListener {
 }
 
 /// 知识库插件基础协议
+@MainActor
 protocol KnowledgePlugin: AnyObject {
     /// 插件元数据
     var manifest: PluginManifest { get }
@@ -158,6 +163,7 @@ protocol KnowledgePlugin: AnyObject {
 }
 
 /// 拦截钩子插件：允许插件干扰核心业务逻辑
+@MainActor
 protocol InterceptionPlugin: KnowledgePlugin {
     /// 在内容入库前执行（例如：执行正则清洗、敏感词过滤）
     func preProcess(content: String) throws -> String

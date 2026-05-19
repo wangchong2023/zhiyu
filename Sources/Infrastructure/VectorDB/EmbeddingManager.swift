@@ -44,7 +44,7 @@ public actor EmbeddingManager {
     }
 
     /// 绑定数据库热插拔通知监听
-    private func setupNotificationObserver() {
+    nonisolated private func setupNotificationObserver() {
         NotificationCenter.default.addObserver(
             forName: .databaseDidSwitch,
             object: nil,
@@ -173,6 +173,7 @@ public actor EmbeddingManager {
     /// 多路召回搜索 (Multi-Query + RRF 融合)
     func multiQuerySearch(query: String, topK: Int = AppConfig.AI.topKResults) async -> [(chunk: PageChunk, score: Float)] {
         // 1. 查询扩展
+        // 使用具体类 LLMService 进行检索优化调用，因其专有检索方法涉及 L1 层的 PageChunk 模型，无法提炼到 L0 层的 LLMServiceProtocol 中
         let llmService = ServiceContainer.shared.resolve(LLMService.self)
         let variations = await llmService.expandQuery(query)
         let allQueries = [query] + variations
@@ -198,6 +199,7 @@ public actor EmbeddingManager {
 
     /// HyDE (Hypothetical Document Embeddings) 搜索
     func hydeSearch(query: String, topK: Int = AppConfig.AI.topKResults) async -> [(chunk: PageChunk, score: Float)] {
+        // 使用具体类 LLMService 进行检索优化调用，因其专有检索方法涉及 L1 层的 PageChunk 模型，无法提炼到 L0 层的 LLMServiceProtocol 中
         let llmService = ServiceContainer.shared.resolve(LLMService.self)
 
         // 1. 生成假设性回答
@@ -215,6 +217,7 @@ public actor EmbeddingManager {
 
     /// Self-Reflection (Rerank) 搜索
     func selfReflectionSearch(query: String, candidates: [(chunk: PageChunk, score: Float)]) async -> [(chunk: PageChunk, score: Float)] {
+        // 使用具体类 LLMService 进行检索优化调用，因其专有检索方法涉及 L1 层的 PageChunk 模型，无法提炼到 L0 层的 LLMServiceProtocol 中
         let llmService = ServiceContainer.shared.resolve(LLMService.self)
 
         // 使用 LLM 进行语义重排序
@@ -266,28 +269,62 @@ public actor EmbeddingManager {
         return results.sorted { $0.1 > $1.1 }.prefix(topK).map { $0 }
     }
 
+    /// 使用 Apple Accelerate 框架以高性能多核并行方式计算余弦相似度。
+    ///
+    /// - 架构安全设计说明 (Unsafe Memory Safety):
+    ///   为了规避 Actor 物理隔离对高并发计算性能的阻塞限制，本函数特在 `Task.detached` 脱离闭包中，
+    ///   通过 `UnsafeMutablePointer` 直接在底层分配连续物理元组空间，并调度主线程之外的 `DispatchQueue.concurrentPerform`
+    ///   充分榨干 CPU 多核并发吞吐性能。
+    ///   为了确保 100% 内存安全与零泄漏，我们严格遵守以下 Swift 指针开发规约：
+    ///   1. 精准全初始化：多核并行闭包内部不直接采用 `=` 元组覆写（这会引发 Swift 试图 release 未初始化垃圾内存而闪退），
+    ///      而是统一使用 `(ptr + index).initialize(to:)` 算子对容量内的每一个物理槽位进行精准就地初始化。
+    ///   2. 原子析构：对于可能持有引用计数释放的对象泛型 `K`（如 `String` 分块主键），在完成数据提取后，
+    ///      显式调用 `deinitialize(count:)` 递减 ARC 并完成对象物理析构，再行调用 `deallocate()` 释放物理内存以根除泄漏。
+    ///
+    /// - Parameters:
+    ///   - queryVector: 检索词经大模型转换得到的 Float 向量。
+    ///   - keys: 参与比对的知识实体/分块标识主键集。
+    ///   - cache: 驻留内存的高密向量特征图缓存。
+    /// - Returns: 物理包含标识主键与余弦得分的元组数组。
     private func performParallelSearch<K: Sendable>(queryVector: [Float], keys: [K], cache: [K: [Float]]) async -> [(K, Float)] {
         let keysCount = keys.count
         guard keysCount > 0 else { return [] }
 
-        // 将计算逻辑移出 actor 以允许并发执行
+        // 将计算密集型逻辑移出 actor 的串行上下文，投递至高优先级多并发 Task 线程池中
         return await Task.detached(priority: .userInitiated) {
+            // 1. 底层分配连续容量大小为 keysCount 的未托管物理空间
             let rawResults = UnsafeMutablePointer<(K, Float)>.allocate(capacity: keysCount)
             let wrappedResults = EmbeddingPointerWrapper(ptr: rawResults)
 
+            // 2. 利用 CPU 多核性能执行超高性能余弦评分比对
             DispatchQueue.concurrentPerform(iterations: keysCount) { index in
                 let key = keys[index]
+                
+                // 计算余弦打分，若缓存意外遗失则以 0.0 兜底以确保初始化流的完整一致
+                let score: Float
                 if let vector = cache[key] {
-                    let score = Self.cosineSimilarity(vector, queryVector)
-                    wrappedResults.ptr[index] = (key, score)
+                    score = Self.cosineSimilarity(vector, queryVector)
+                } else {
+                    score = 0.0
                 }
+                
+                // 3. 内存安全写入：使用 initialize(to:) 强制就地初始化，绝对禁止直接使用 '=' 以防触发未定义内存 release 崩溃
+                (wrappedResults.ptr + index).initialize(to: (key, score))
             }
 
+            // 4. 将安全初始化完毕的未托管数据，提取并深拷贝到托管的 Swift Array 中以暴露给高层业务
             var list: [(K, Float)] = []
+            list.reserveCapacity(keysCount)
             for i in 0..<keysCount {
                 list.append(rawResults[i])
             }
+            
+            // 5. 内存安全反初始化与析构释放：递减 K（如 String）的引用计数，消灭内存泄漏
+            rawResults.deinitialize(count: keysCount)
+            
+            // 6. 物理回收物理堆指针，闭合指针完整安全生命周期
             rawResults.deallocate()
+            
             return list
         }.value
     }

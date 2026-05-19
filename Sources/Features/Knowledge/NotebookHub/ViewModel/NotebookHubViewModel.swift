@@ -122,13 +122,15 @@ public final class NotebookHubViewModel {
     }
     
     public func selectNotebook(_ notebook: Vault) {
-        // 1. 路由加固：重置导航状态，使用户进入后看到 SidebarView 菜单
-        Router.shared.sidebarSelection = nil
-        Router.shared.selectedTab = .knowledge
-        Router.shared.path = NavigationPath()
-        
-        // 2. 设置当前的笔记本 ID，触发外层 ContentView 的视图切换逻辑
-        vaultService.selectVault(notebook)
+        withAnimation(DesignSystem.Animation.Config.prominentSpring) {
+            // 1. 路由加固：重置导航状态，使用户进入后看到 SidebarView 菜单
+            Router.shared.sidebarSelection = nil
+            Router.shared.selectedTab = .knowledge
+            Router.shared.path = NavigationPath()
+            
+            // 2. 设置当前的笔记本 ID，触发外层 ContentView 的视图切换逻辑
+            vaultService.selectVault(notebook)
+        }
     }
     
     /// 创建新笔记本

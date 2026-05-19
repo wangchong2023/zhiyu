@@ -69,4 +69,38 @@ final class ZhiYuUITests: XCTestCase {
         }
         XCTAssertTrue(app.navigationBars.element.exists)
     }
+    
+    /// 测试金库切换与数据冷启动自动播种校验
+    func testVaultSwitchingAndSeedingFlow() throws {
+        // 1. 尝试寻找金库标识，如果存在则退出至工作台以进行切换测试
+        let vaultBadge = app.buttons.containing(NSPredicate(format: "label CONTAINS '笔记本'")).element(boundBy: 0)
+        if vaultBadge.waitForExistence(timeout: 2) {
+            vaultBadge.tap()
+            let backButton = app.buttons["返回工作台"]
+            if backButton.waitForExistence(timeout: 2) {
+                backButton.tap()
+            }
+        }
+        
+        // 2. 此时应当在主笔记本选择工作台 (NotebookHub)
+        let hubTitle = app.staticTexts["笔记本"]
+        XCTAssertTrue(hubTitle.waitForExistence(timeout: 5))
+        
+        // 3. 点击第一个可点击的金库卡片进入
+        let firstVaultCard = app.buttons.containing(NSPredicate(format: "label CONTAINS '的笔记本'")).element(boundBy: 0)
+        if firstVaultCard.exists {
+            firstVaultCard.tap()
+        } else {
+            // 如果不存在特定命名卡片，尝试点击网格内第一个普通的卡片按钮
+            let anyCard = app.buttons.element(boundBy: 0)
+            XCTAssertTrue(anyCard.exists)
+            anyCard.tap()
+        }
+        
+        // 4. 进入金库后，系统会自动触发冷启动自动数据播种 (Seeding)
+        // 校验欢迎文档 "欢迎来到智宇 👋" 是否存在且渲染，证明播种幂等安全执行且成功！
+        app.tabBars.buttons["Knowledge"].tap()
+        let welcomeDocument = app.staticTexts.containing(NSPredicate(format: "label CONTAINS '欢迎'")).element(boundBy: 0)
+        XCTAssertTrue(welcomeDocument.waitForExistence(timeout: 8))
+    }
 }

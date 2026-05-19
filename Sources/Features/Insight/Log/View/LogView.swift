@@ -37,8 +37,10 @@ struct LogViewContent: View {
         List {
             if store.logEntries.isEmpty {
                 emptyStateView
+                    .appListRowBackground()
             } else {
                 logListRows
+                    .appListRowBackground()
             }
         }
 #if os(iOS)

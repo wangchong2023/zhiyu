@@ -42,24 +42,28 @@ extension ContentView {
                 if appEnv.screenClass != .compact {
                     adaptiveSplitView(tintColor: tintColor)
                 } else {
+                    #if DEBUG
+                    if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
+                       ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                        legacyTabView(tintColor: tintColor)
+                    } else if #available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *) {
+                        modernTabView(tintColor: tintColor)
+                    } else {
+                        legacyTabView(tintColor: tintColor)
+                    }
+                    #else
                     if #available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *) {
                         modernTabView(tintColor: tintColor)
                     } else {
                         legacyTabView(tintColor: tintColor)
                     }
+                    #endif
                 }
             }
             .sheet(isPresented: $store.showCreateSheet) {
                 CreatePageView()
             }
-
-            if store.securityService.isLocked {
-                LockOverlayView()
-                    .transition(AnyTransition.opacity.combined(with: .scale(scale: 1.0 * DesignSystem.Metrics.lockOverlayScaleMultiplier)))
-                    .zIndex(DesignSystem.ZIndex.lockOverlay)
-            }
             
-            OnboardingOverlay(service: onboardingService)
             
             // 全局奖章奖励弹窗
             if let medal = medalService.newlyEarnedMedal {

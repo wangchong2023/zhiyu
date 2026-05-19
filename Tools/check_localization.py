@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-智宇 (ZhiYu) 本地化完整性静态分析工具
-功能：扫描所有 Swift 源码中的 L10n 调用，与分布式物理 .xcstrings 物理分表交叉比对，验证多语言翻译的完整性。
+智宇 (ZhiYu) 本地化完整性静态分析工具 (Decentralized Version)
+功能：
+1. 扫描所有 Swift 源码，验证 L10n.XXX.tr 调用的键值在物理表中是否真实存在。
+2. 拦截未封装的硬编码中文字符串（保障国际化全覆盖）。
+3. 拦截违规的 `Localized.tr` 隐式调用，强制要求向 L10n 命名空间收口，根除隐式 Fallback 造成的 MISSING 隐患。
 支持 Xcode Build Phases 集成，报错时引发编译失败。
 """
 
@@ -137,6 +140,8 @@ def parse_single_l10n_swift(file_path, struct_to_table):
 
     # 匹配显式的 Localized.tr / trf 并提取 (key, table)
     explicit_pat = re.compile(r'Localized\.tr(?:f)?\("([^"]+)"\,\s*table:\s*"([^"]+)"\)')
+    # 匹配没有 table 参数的全局 Localized.tr / trf 调用 (隐式表归为 Common)
+    implicit_localized_pat = re.compile(r'Localized\.tr(?:f)?\("([^"]+)"\)(?!\s*,\s*table:)')
     # 匹配隐式的本地 tr("key") 或 trf("key", ...) 调用
     tr_pat = re.compile(r'(?<!\.)\btr(?:f)?\("([^"]+)"')
     # 匹配跨结构体调用，如 Plugin.tr("...") 或 Dashboard.trf("...", args)
@@ -182,6 +187,10 @@ def parse_single_l10n_swift(file_path, struct_to_table):
         # 1. 显式调用
         for k, t in explicit_pat.findall(clean_line):
             keys_found.append((k, t, file_path, i))
+
+        # 1.5 没有 table 参数的隐式 Localized.tr / trf 调用 (隐式表归为 Common)
+        for k in implicit_localized_pat.findall(clean_line):
+            keys_found.append((k, "Common", file_path, i))
 
         # 2. 跨结构体调用
         for struct_name, k in cross_struct_pat.findall(clean_line):
@@ -299,6 +308,9 @@ def scan_other_swift_files(sources_dir, struct_to_table):
                         allowed_files = {"LLMModels.swift", "SourceView.swift", "SearchView.swift"}
                         if file not in allowed_files:
                             leaks_found.append((file_path, i, "Localized.tr" if "Localized.trf" not in clean_line else "Localized.trf"))
+                        elif "table:" not in clean_line:
+                            # 即使在白名单内，使用原生的 Localized.tr 进行动态变量反射时，也必须显式指明路由表，严禁隐式 fallback 到 Common！
+                            leaks_found.append((file_path, i, "Dynamic Localized.tr calls in allowed files MUST explicitly provide a 'table:' argument"))
                     
                     # 拦截未封装的硬编码中文字符串字面量泄漏 (强制作为 Error 拦截并阻断 Xcode 编译构建)
                     if detect_hardcoded_chinese(line, file):
