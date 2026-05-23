@@ -134,6 +134,14 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
         #endif
         
+        #if os(macOS)
+        container.register(MacAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+        #elseif os(watchOS)
+        container.register(WatchAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+        #else
+        container.register(iOSAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+        #endif
+        
         // 注册其他平台级服务
         container.register(DeepLinkService(), for: DeepLinkService.self)
         container.register(PerformanceService(), for: PerformanceService.self)

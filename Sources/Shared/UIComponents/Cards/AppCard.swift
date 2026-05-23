@@ -15,15 +15,15 @@ import SwiftUI
 /// 应用卡片背景的视图修饰符
 /// 负责注入一致的内边距、背景色及圆角样式。
 public struct AppCardModifier: ViewModifier {
-    public var cornerRadius: CGFloat = Spacing.cardRadius
-    public var padding: CGFloat = Spacing.Layout.cardContentPadding
+    public var cornerRadiusToken: DesignSystem.RadiusToken = .card
+    public var paddingToken: DesignSystem.SpacingToken = .standardPadding
     public var backgroundColor: Color = .appCard
 
     public func body(content: Content) -> some View {
         content
-            .padding(padding)
+            .appPadding(.all, paddingToken)
             .background(backgroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .appCornerRadius(cornerRadiusToken)
     }
 }
 
@@ -33,24 +33,47 @@ public struct AppCardModifier: ViewModifier {
 /// 提供符合设计系统的阴影、圆角及背景封装。
 public struct AppCard<Content: View>: View {
     public let content: Content
-    public var cornerRadius: CGFloat = Spacing.cardRadius
-    public var padding: CGFloat = Spacing.Layout.cardContentPadding
+    public var cornerRadiusToken: DesignSystem.RadiusToken = .card
+    public var paddingToken: DesignSystem.SpacingToken = .standardPadding
 
     public init(
-        cornerRadius: CGFloat = Spacing.cardRadius,
-        padding: CGFloat = Spacing.Layout.cardContentPadding,
+        cornerRadiusToken: DesignSystem.RadiusToken = .card,
+        paddingToken: DesignSystem.SpacingToken = .standardPadding,
         @ViewBuilder content: () -> Content
     ) {
-        self.cornerRadius = cornerRadius
-        self.padding = padding
+        self.cornerRadiusToken = cornerRadiusToken
+        self.paddingToken = paddingToken
+        self.content = content()
+    }
+
+    /// 向后兼容原有 CGFloat 参数的构造函数。
+    public init(
+        cornerRadius: CGFloat,
+        padding: CGFloat,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.cornerRadiusToken = cornerRadius == Spacing.microRadius ? .micro :
+                                 cornerRadius == Spacing.smallRadius ? .small :
+                                 cornerRadius == Spacing.mediumRadius ? .medium :
+                                 cornerRadius == Spacing.largeRadius ? .large :
+                                 cornerRadius == Spacing.chipRadius ? .chip : .card
+        
+        self.paddingToken = padding == Spacing.atomic ? .atomic :
+                            padding == Spacing.tiny ? .tiny :
+                            padding == Spacing.small ? .small :
+                            padding == Spacing.medium ? .medium :
+                            padding == Spacing.Layout.cardContentPadding ? .standardPadding :
+                            padding == Spacing.giant ? .giant :
+                            padding == Spacing.huge ? .huge : .standardPadding
+        
         self.content = content()
     }
 
     public var body: some View {
         content
-            .padding(padding)
+            .appPadding(.all, paddingToken)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .appCornerRadius(cornerRadiusToken)
     }
 }
 
@@ -154,11 +177,33 @@ public struct AppCardAccent: View {
 // MARK: - View Extension
 
 public extension View {
-    /// 应用标准卡片背景
+    /// 应用标准卡片背景，使用强类型设计系统令牌。
     func appCard(
-        cornerRadius: CGFloat = Spacing.cardRadius, 
+        cornerRadiusToken: DesignSystem.RadiusToken = .card, 
+        paddingToken: DesignSystem.SpacingToken = .standardPadding
+    ) -> some View {
+        modifier(AppCardModifier(cornerRadiusToken: cornerRadiusToken, paddingToken: paddingToken))
+    }
+    
+    /// 向后兼容原有 CGFloat 参数的卡片背景应用扩展。
+    func appCard(
+        cornerRadius: CGFloat, 
         padding: CGFloat = Spacing.Layout.cardContentPadding
     ) -> some View {
-        modifier(AppCardModifier(cornerRadius: cornerRadius, padding: padding))
+        let cornerToken: DesignSystem.RadiusToken = cornerRadius == Spacing.microRadius ? .micro :
+                                                    cornerRadius == Spacing.smallRadius ? .small :
+                                                    cornerRadius == Spacing.mediumRadius ? .medium :
+                                                    cornerRadius == Spacing.largeRadius ? .large :
+                                                    cornerRadius == Spacing.chipRadius ? .chip : .card
+        
+        let padToken: DesignSystem.SpacingToken = padding == Spacing.atomic ? .atomic :
+                                                  padding == Spacing.tiny ? .tiny :
+                                                  padding == Spacing.small ? .small :
+                                                  padding == Spacing.medium ? .medium :
+                                                  padding == Spacing.Layout.cardContentPadding ? .standardPadding :
+                                                  padding == Spacing.giant ? .giant :
+                                                  padding == Spacing.huge ? .huge : .standardPadding
+        
+        return modifier(AppCardModifier(cornerRadiusToken: cornerToken, paddingToken: padToken))
     }
 }

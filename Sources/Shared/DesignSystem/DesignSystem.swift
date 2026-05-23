@@ -14,6 +14,77 @@ import SwiftUI
 /// 统一管理应用内的间距、圆角、排版、颜色与动效规范。
 public enum DesignSystem {
     
+    // MARK: - 强类型间距与圆角令牌
+    
+    /// 强类型间距令牌，映射原子间距物理尺寸。
+    public enum SpacingToken: Sendable, Hashable {
+        /// 最小步进间距 (2px)
+        case atomic
+        /// 极小间距 (4px)
+        case tiny
+        /// 小型间距 (8px)
+        case small
+        /// 中型间距 (12px)
+        case medium
+        /// 标准页面内边距 (16px)
+        case standardPadding
+        /// 大型间距 (16px)
+        case large
+        /// 宽型间距 (20px)
+        case wide
+        /// 巨型间距 (24px)
+        case giant
+        /// 极大型间距 (32px)
+        case huge
+        
+        /// 获取间距的物理 CGFloat 像素值
+        public var value: CGFloat {
+            switch self {
+            case .atomic: return Spacing.atomic
+            case .tiny: return Spacing.tiny
+            case .small: return Spacing.small
+            case .medium: return Spacing.medium
+            case .standardPadding: return Spacing.standardPadding
+            case .large: return Spacing.large
+            case .wide: return Spacing.wide
+            case .giant: return Spacing.giant
+            case .huge: return Spacing.huge
+            }
+        }
+    }
+    
+    /// 强类型圆角令牌，映射原子圆角物理弧度。
+    public enum RadiusToken: Sendable, Hashable {
+        /// 微型圆角 (4px)
+        case micro
+        /// 小型圆角 (8px)
+        case small
+        /// 中型圆角 (10px)
+        case medium
+        /// 卡片通用圆角 (12px)
+        case card
+        /// 标准圆角 (12px)
+        case standard
+        /// 大型圆角 (16px)
+        case large
+        /// 胶囊型圆角 (20px)
+        case chip
+        
+        /// 获取圆角物理 CGFloat 弧度值
+        public var value: CGFloat {
+            switch self {
+            case .micro: return Spacing.microRadius
+            case .small: return Spacing.smallRadius
+            case .medium: return Spacing.mediumRadius
+            case .card: return Spacing.cardRadius
+            case .standard: return Spacing.standardRadius
+            case .large: return Spacing.largeRadius
+            case .chip: return Spacing.chipRadius
+            }
+        }
+    }
+
+    
     // MARK: - 1. 原子间距 (Spacing)
     public static let atomic: CGFloat = Spacing.atomic
     public static let tiny: CGFloat = Spacing.tiny

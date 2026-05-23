@@ -11,10 +11,6 @@
 import Foundation
 import Combine
 
-#if canImport(UIKit)
-import UIKit
-#endif
-
 // MARK: - Accessibility Service
 /// Provides accessibility enhancements, VoiceOver support, and dynamic type scaling.
 @MainActor
@@ -50,10 +46,7 @@ final class AccessibilityService: ObservableObject {
     /// 主动向 VoiceOver 系统发送语音公告，提升视障用户的即时状态感知能力
     /// - Parameter text: 公告文案
     public static func postAnnouncement(_ text: String) {
-        #if os(iOS)
-        UIAccessibility.post(notification: .announcement, argument: text)
-        #elseif targetEnvironment(macCatalyst)
-        UIAccessibility.post(notification: .announcement, argument: text)
-        #endif
+        @Inject var platformService: any AccessibilityServiceProtocol
+        platformService.postAnnouncement(text)
     }
 }

@@ -59,9 +59,9 @@ public struct StatCard: View {
                 .foregroundStyle(.appSecondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, Spacing.standardPadding)
+        .appPadding(.vertical, .standardPadding)
         .background(Color.appCard.opacity(DesignSystem.surfaceOpacity))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+        .appCornerRadius(.medium)
         .shadow(color: .black.opacity(DesignSystem.shadowOpacity * 1.5), radius: DesignSystem.shadowRadius - 2, x: 0, y: DesignSystem.shadowY)
     }
 }

@@ -55,6 +55,7 @@
 		09C9C601D91127B2DD15BCAF /* WatchPasteboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0150E9522185BBB1D8C57076 /* WatchPasteboardService.swift */; };
 		09CFD973F86FF1421D8E93FD /* MarkdownProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A3D67D9E1192A5BD67C55A /* MarkdownProcessor.swift */; };
 		09F334293AAEF46AB11C18E7 /* IngestQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C85EEA55FFA9B5BCF6647C9 /* IngestQueueTests.swift */; };
+		0A1542255664E3BE4EA706C0 /* iOSAccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023F1D06C89492472760B52B /* iOSAccessibilityService.swift */; };
 		0A2504BFF0F580C0B838E573 /* ColorSchemeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3390B07E682F94509D50197 /* ColorSchemeMode.swift */; };
 		0A7962DE2BCBF3D1AE543B0A /* SidebarRowComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1458265FD2BF40BF04B09949 /* SidebarRowComponents.swift */; };
 		0A8A8CC7EFB8B64D811F771F /* KnowledgeViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07B60E3297B627ADFA4130B /* KnowledgeViewProvider.swift */; };
@@ -135,6 +136,7 @@
 		1921A66FAD037D822197CC37 /* PluginSandboxGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE1CAB1B36AD355CF9F30A7 /* PluginSandboxGateway.swift */; };
 		19319D40F2251EBBCB222255 /* WatchWatchSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7E705C6BB832C7A1FAF1CA /* WatchWatchSyncService.swift */; };
 		195201BF626E1E7EE0D59186 /* AppTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E9ADD7E46AC4FA0DF2C503 /* AppTextEditor.swift */; };
+		198489A60609BF89779C5595 /* MacAccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5987A12F53D8FD23A3B2ED /* MacAccessibilityService.swift */; };
 		19E543B78F7AA33626D41DB0 /* marked.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 600F9630B189F8BAC640CD0E /* marked.min.js */; };
 		19ED632B8714CBF714E679C2 /* SynthesisDocRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD9728BB74F860B913921EE /* SynthesisDocRow.swift */; };
 		1A3BAF4BE9E18AD748C154BF /* AppWindowSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F8EFE9746306547E6C64BC /* AppWindowSceneDelegate.swift */; };
@@ -328,6 +330,7 @@
 		3DF8BAD2CA969A2F64BE02A0 /* SnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13FD257AEA923674A73611A /* SnapshotService.swift */; };
 		3E3A97DFBF899DE1BB3050AA /* JailbreakDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E74305A41F775DAA7A47743 /* JailbreakDetector.swift */; };
 		3E631A9FD4A5355453F2C93B /* LLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E9610F5707DC44AEFE3825 /* LLMService.swift */; };
+		3F21D5D73FC207FB4E957943 /* AccessibilityServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57198A7BEA34664A68216F8 /* AccessibilityServiceProtocol.swift */; };
 		3F39D60161C1CCCF69ADBD26 /* iOSExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAE46BF14924F7477958D16 /* iOSExportService.swift */; };
 		3F4D7661242ACD473F432D05 /* L10n+Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD33819F38C8033C6ABF5AD /* L10n+Reminder.swift */; };
 		3FB5AFD834D39AF6B4ED6EA5 /* AIWorkflowStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C4FFCDA2A7C6AB9464DDEAA /* AIWorkflowStore.swift */; };
@@ -367,6 +370,7 @@
 		43F779AD6B40EAE3DD10DF38 /* RAGEvaluationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4554E8C7264F2BB8EE52DE7 /* RAGEvaluationService.swift */; };
 		442F3735F1F0993CB36893A8 /* MedalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AFCFF5D8CE108CF9A5242F /* MedalComponents.swift */; };
 		4440C698F87D98C4303A1C25 /* PluginDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54838C3D3015CD9BDB37C08D /* PluginDetailView.swift */; };
+		444EC3CC2459DDB3E6FE5D20 /* WatchAccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B0C3628072DC9F68E62B9E /* WatchAccessibilityService.swift */; };
 		446033D38B25170160646293 /* TaskCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177B1A4B8E84CD6DD25475F3 /* TaskCenter.swift */; };
 		44945E92DC2B8C855906D2C9 /* LLMProviders.json in Resources */ = {isa = PBXBuildFile; fileRef = 185B78C17147A3E10192A046 /* LLMProviders.json */; };
 		44A4339F7A44E012821156DB /* CollaborationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA66A036B9775F16B55A4A0 /* CollaborationService.swift */; };
@@ -406,6 +410,7 @@
 		4C1762E8D3C478617D5436BF /* AppLoadingSkeleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EBAED7AFB5841E588130764 /* AppLoadingSkeleton.swift */; };
 		4CB5CDA1AE99F5C9C3D8C3C5 /* MacAppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD705F151924F0A583A6173C /* MacAppEnvironment.swift */; };
 		4CC4ED246F06A1B86E714746 /* L10n+Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE7BD6B9B3292B273AD9CAA7 /* L10n+Shortcuts.swift */; };
+		4CCA1C2AF200A20E628A09A1 /* AccessibilityServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57198A7BEA34664A68216F8 /* AccessibilityServiceProtocol.swift */; };
 		4CDC03FE1998E9B02C497CA3 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751F592B285200694823E27F /* AppConstants.swift */; };
 		4CEBB195DF40D7E12CB7F053 /* VaultStorageSecurityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF444B8E5FAB6622D14A7E37 /* VaultStorageSecurityService.swift */; };
 		4D0EBA0B98D43090DBDF09DC /* AppConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 29D2B623011C6C3BCE1A37B2 /* AppConfig.json */; };
@@ -446,6 +451,7 @@
 		535C48F200A77394DF8BADDE /* DummyActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9322DE5526945C03AB7770EB /* DummyActivityService.swift */; };
 		53B317D22C82AF137658E18B /* LockOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A34BC0A233A1E6627A7D10D /* LockOverlayView.swift */; };
 		53CB58AC066C803431F53FA7 /* Insight.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 00216FE00615D1FD7D8D6285 /* Insight.xcstrings */; };
+		53ECDD26CEE3E5D7E10A8052 /* AccessibilityServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57198A7BEA34664A68216F8 /* AccessibilityServiceProtocol.swift */; };
 		546095C3EFA8ECEA33EC1CE1 /* L10n+Ingest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7E2DDFDA6D16DAC4F9C54B /* L10n+Ingest.swift */; };
 		54A0F3EE9D45E11298B05553 /* LLMAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346C1A50A0999F130E8717B6 /* LLMAdapters.swift */; };
 		54C166DC1B171694EA2451FA /* iCloudSyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8911F96F9977F06B33CD3302 /* iCloudSyncView.swift */; };
@@ -480,6 +486,7 @@
 		5B970AABD524337738EF4D19 /* WatchOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF1EC4E8225C776BDB5697 /* WatchOCRService.swift */; };
 		5BBA888411DF791592C1A300 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 5D76EDDAB3391C2872023439 /* GRDB */; };
 		5BE3CB50C118C3B8A9FBC90F /* NavigateAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45017F436A19AC8F210F876 /* NavigateAction.swift */; };
+		5C1C9CE3C308D857840F8F01 /* iOSAccessibilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023F1D06C89492472760B52B /* iOSAccessibilityService.swift */; };
 		5C489774951A1480C57610E7 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8390567A95F898612D1932BB /* DatabaseManager.swift */; };
 		5C8E454A9BF558BFF19C73D4 /* PageRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4A3115A2CA7962E9E42A0D /* PageRowView.swift */; };
 		5D2CD603FDD87F8B26C26651 /* LLMContextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0492E89753819D4046036B /* LLMContextBuilder.swift */; };
@@ -1345,6 +1352,7 @@
 		01E9B84576565B6084281F85 /* ChatCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCoordinator.swift; sourceTree = "<group>"; };
 		0227844531C257F93B5878DA /* FeatureProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureProtocols.swift; sourceTree = "<group>"; };
 		0237F4DBBF188A05C25D0B9C /* OnboardingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingOverlay.swift; sourceTree = "<group>"; };
+		023F1D06C89492472760B52B /* iOSAccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSAccessibilityService.swift; sourceTree = "<group>"; };
 		02760DED2B74C5B9CD4390EE /* MacOSPlatformCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacOSPlatformCapabilities.swift; sourceTree = "<group>"; };
 		02A588F802A77CA36B558765 /* AIProcessingAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingAttributes.swift; sourceTree = "<group>"; };
 		0404AEB7CECA6F71AD4982C7 /* Vault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vault.swift; sourceTree = "<group>"; };
@@ -1568,6 +1576,7 @@
 		61792EB8F8FD8B06236A59C2 /* VoiceNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNoteView.swift; sourceTree = "<group>"; };
 		63E4735D1EE81F9FF6172755 /* ExportReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportReportView.swift; sourceTree = "<group>"; };
 		63FD160FB200B0ED44B841C8 /* L10n+Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Log.swift"; sourceTree = "<group>"; };
+		64B0C3628072DC9F68E62B9E /* WatchAccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchAccessibilityService.swift; sourceTree = "<group>"; };
 		6505AB6895A4F5F1DAF951A5 /* GraphFilterPillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphFilterPillsView.swift; sourceTree = "<group>"; };
 		6596B3855C4AA12B94C925AF /* QuickActionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionRow.swift; sourceTree = "<group>"; };
 		65983F53F7CB3063E77E4516 /* L10n+Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Common.swift"; sourceTree = "<group>"; };
@@ -1580,6 +1589,7 @@
 		69C578383EA6FA07ACEBDCB0 /* LLMAIServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMAIServicesTests.swift; sourceTree = "<group>"; };
 		69E4B085428A719FF280AFB9 /* LLMChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMChatService.swift; sourceTree = "<group>"; };
 		6A2D8702541226546E74E26F /* PromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptService.swift; sourceTree = "<group>"; };
+		6A5987A12F53D8FD23A3B2ED /* MacAccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAccessibilityService.swift; sourceTree = "<group>"; };
 		6ABD92C47788739350A46760 /* UnsupportedSearchIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedSearchIndexer.swift; sourceTree = "<group>"; };
 		6BF31C878018B2FF52586E9D /* SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityManager.swift; sourceTree = "<group>"; };
 		6C2AFD833E82F3975C05B31A /* OnboardingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingService.swift; sourceTree = "<group>"; };
@@ -1762,6 +1772,7 @@
 		C4511C699EAAC3B47CC6EBA4 /* TaskCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCenterView.swift; sourceTree = "<group>"; };
 		C52DB27515F908373C4C9B6F /* AppNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		C5465B5B5BD62749AFBC0CE1 /* RAGModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAGModels.swift; sourceTree = "<group>"; };
+		C57198A7BEA34664A68216F8 /* AccessibilityServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityServiceProtocol.swift; sourceTree = "<group>"; };
 		C648BB8FBB082DC46FB0E00C /* MediaStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStore.swift; sourceTree = "<group>"; };
 		C6B866AE4B2EE3EE5AC713EC /* SynthesisStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynthesisStore.swift; sourceTree = "<group>"; };
 		C755F375A0358C5401CE811E /* L10n+ICloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+ICloud.swift"; sourceTree = "<group>"; };
@@ -2404,6 +2415,7 @@
 		4129013DA9E028CB073989A5 /* watchOS */ = {
 			isa = PBXGroup;
 			children = (
+				64B0C3628072DC9F68E62B9E /* WatchAccessibilityService.swift */,
 				A44FA61861C849EFB165966E /* WatchModuleRegistrar.swift */,
 				BCCF1EC4E8225C776BDB5697 /* WatchOCRService.swift */,
 				0150E9522185BBB1D8C57076 /* WatchPasteboardService.swift */,
@@ -2714,6 +2726,7 @@
 		64DE39AFA926CD07FA888822 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				6A5987A12F53D8FD23A3B2ED /* MacAccessibilityService.swift */,
 				E92A3DD3844EF70EDC0F0AAD /* MacFileArchiver.swift */,
 				02760DED2B74C5B9CD4390EE /* MacOSPlatformCapabilities.swift */,
 				E9B86CFA19141866776ABB3C /* MacPasteboardService.swift */,
@@ -2877,6 +2890,7 @@
 			isa = PBXGroup;
 			children = (
 				46FD7818430DC9F1541321C5 /* ActivityService.swift */,
+				023F1D06C89492472760B52B /* iOSAccessibilityService.swift */,
 				4D756A7FB8A4929A983C9C73 /* iOSBackgroundTaskProvider.swift */,
 				6DAE46BF14924F7477958D16 /* iOSExportService.swift */,
 				60DD9A011EDDD34EF428C11C /* iOSFileArchiver.swift */,
@@ -3942,6 +3956,7 @@
 		F73B48AFFCD5F4982208CB3A /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				C57198A7BEA34664A68216F8 /* AccessibilityServiceProtocol.swift */,
 				5714EF992FFA9DF10881DDCA /* AIWorkflowCapabilities.swift */,
 				E4DD66E506EB42272441DD10 /* AppEnvironmentProtocol.swift */,
 				BEE7DA0E60E88EBFC1DAE8EB /* BackgroundTaskProtocol.swift */,
@@ -4625,6 +4640,7 @@
 				3FB5AFD834D39AF6B4ED6EA5 /* AIWorkflowStore.swift in Sources */,
 				7BB05CFAF44D185A9D10C51B /* AboutView.swift in Sources */,
 				0708E60DC333EC9DB0E0647D /* AccessibilityService.swift in Sources */,
+				53ECDD26CEE3E5D7E10A8052 /* AccessibilityServiceProtocol.swift in Sources */,
 				3C7654CA029AFF9EEFCE4CF6 /* ActivityRow.swift in Sources */,
 				5330C9F99FA16DE2AEEB9BCD /* ActivityService.swift in Sources */,
 				E7A69E52DE1292104582E3A9 /* AdaptiveSidebarView.swift in Sources */,
@@ -4835,6 +4851,7 @@
 				B63058EA2F0B35E3F60BFCA1 /* LogView.swift in Sources */,
 				E2F2AD9CC6C9C907AB0868ED /* Logger.swift in Sources */,
 				2A54E85902F35EEBEC57E34C /* MCSessionDelegateImpl.swift in Sources */,
+				198489A60609BF89779C5595 /* MacAccessibilityService.swift in Sources */,
 				B4FF6AB2ED24D4CF1EAF205C /* MacAppEnvironment.swift in Sources */,
 				763AC66732A2972F32929059 /* MacFileArchiver.swift in Sources */,
 				FF8A153EB44D859B6FA5FB5F /* MacHapticService.swift in Sources */,
@@ -5022,6 +5039,7 @@
 				531A840AFFB8CB4EB5F7F316 /* iCloudSyncCoordinator.swift in Sources */,
 				EDCE6DAD1D844407C2E2C470 /* iCloudSyncManager.swift in Sources */,
 				FEB816BA5C32C232959A22B0 /* iCloudSyncView.swift in Sources */,
+				0A1542255664E3BE4EA706C0 /* iOSAccessibilityService.swift in Sources */,
 				B469C4EB6B3BA4CE84DD762C /* iOSAppEnvironment.swift in Sources */,
 				94579632CE328290B0CF21B5 /* iOSBackgroundTaskProvider.swift in Sources */,
 				59C7DDFCB2E86122EAB642A4 /* iOSExportService.swift in Sources */,
@@ -5083,6 +5101,7 @@
 				011495CAF48BBF2976CD38D0 /* AIWorkflowStore.swift in Sources */,
 				414D0C4F2AEC4DFDDD8C51B0 /* AboutView.swift in Sources */,
 				8D9A13A2570497DE03C9965D /* AccessibilityService.swift in Sources */,
+				3F21D5D73FC207FB4E957943 /* AccessibilityServiceProtocol.swift in Sources */,
 				C24394681DF471F275214DC4 /* ActivityRow.swift in Sources */,
 				105F7472628E8F28B85AF60E /* ActivityService.swift in Sources */,
 				5E68E62E797CA489B9403094 /* AdaptiveSidebarView.swift in Sources */,
@@ -5477,6 +5496,7 @@
 				91C7B93338962B683ECE788F /* iCloudSyncCoordinator.swift in Sources */,
 				C3A458367ACBD3EA77C89C05 /* iCloudSyncManager.swift in Sources */,
 				54C166DC1B171694EA2451FA /* iCloudSyncView.swift in Sources */,
+				5C1C9CE3C308D857840F8F01 /* iOSAccessibilityService.swift in Sources */,
 				332C76D41C2E77790A212A0A /* iOSAppEnvironment.swift in Sources */,
 				4F2900505AF2F5E2114D602A /* iOSBackgroundTaskProvider.swift in Sources */,
 				3F39D60161C1CCCF69ADBD26 /* iOSExportService.swift in Sources */,
@@ -5504,6 +5524,7 @@
 				F10E062C9F1784371077BF11 /* AITaskProgress.swift in Sources */,
 				8BFA87A2880F3434474F77A2 /* AIWorkflowCapabilities.swift in Sources */,
 				388F46149860B95472B12FB1 /* AccessibilityService.swift in Sources */,
+				4CCA1C2AF200A20E628A09A1 /* AccessibilityServiceProtocol.swift in Sources */,
 				DDE267C8338C12A89F27EC65 /* AnimatedSection.swift in Sources */,
 				9504D057B8D13BEDB26975FF /* Animations.swift in Sources */,
 				E001348BC24B9D2D67AFB172 /* AppAccessibilityView.swift in Sources */,
@@ -5756,6 +5777,7 @@
 				9BC3A13C57B9BF725B7062F8 /* VectorRepository.swift in Sources */,
 				D961467076D5B0E98A4F1A07 /* View+Conditional.swift in Sources */,
 				FD0BDA25A900BC0D26E8BAB4 /* ViewProvider.swift in Sources */,
+				444EC3CC2459DDB3E6FE5D20 /* WatchAccessibilityService.swift in Sources */,
 				D92CE811DD798B6A3AA6B22D /* WatchHapticService.swift in Sources */,
 				A86ED5639A903796BF70A2C9 /* WatchModuleRegistrar.swift in Sources */,
 				5B970AABD524337738EF4D19 /* WatchOCRService.swift in Sources */,
