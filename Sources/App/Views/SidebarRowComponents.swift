@@ -1,10 +1,13 @@
-// SidebarRowComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件包含侧边栏相关的辅助组件和行视图，用于支持 SidebarView。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SidebarRowComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 Views 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Navigation Definitions
@@ -51,15 +54,60 @@ public enum SidebarSelection: Hashable {
     }
 }
 
+// MARK: - Navigation Row Wrapper
+
+/// 自适应侧边栏行包装器
+/// 用于协调不同屏幕尺寸与系统（iPhone vs iPad/Mac）的导航栏渲染路径：
+/// 1. 手机（Compact）模式：由于没有双栏，需要使用原生的 `NavigationLink(value:)` 将视图推入全局 `NavigationStack`。
+/// 2. 平板/Mac（Regular）模式：使用两栏或三栏布局，直接返回原始内容并标记 `.tag(value)`，通过外层的 `List(selection:)` 触发单选绑定来更新详情区，规避 `NavigationLink` 在无 Stack 列中寻路失败报错。
+struct SidebarRowWrapper<Content: View>: View {
+    /// 绑定的路由项值
+    let value: SidebarSelection
+    /// 行内的子视图内容
+    let content: () -> Content
+    
+    @Environment(Router.self) private var router
+    
+    /// 全局注入的平台设备环境，用于替代不准确的系统的 sizeClass 判定
+    private var appEnv: any AppEnvironmentProtocol {
+        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
+    }
+    
+    var body: some View {
+        #if os(watchOS)
+        content()
+        #else
+        // 注意：iPadOS 的 SwiftUI 会将 NavigationSplitView 侧边栏内部子视图的 horizontalSizeClass
+        // 强行覆写为 .compact，这导致大屏设备会被误判为 compact 并展示错误的 NavigationLink。
+        // 我们通过 appEnv.screenClass 来精确判定是否应以手机紧凑模式进行导航渲染。
+        if appEnv.screenClass == .compact {
+            NavigationLink(value: value) {
+                content()
+            }
+        } else {
+            // 在 iPadOS/macOS 大屏下，如果 List 在非编辑状态下，点击带有 .tag() 的普通列表行
+            // 不会自动触发 List(selection:) 绑定的更新。为了保证数据在点击时能够绝对触发状态流转，
+            // 采用 onTapGesture 手动为全局路由器赋予新的选中值，从根本上激活右侧的联动刷新。
+            content()
+                .tag(value)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    router.sidebarSelection = value
+                }
+        }
+        #endif
+    }
+}
+
 struct CapabilitiesSection: View {
     var body: some View {
         Section {
-            NavigationLink(value: AppRoute.dashboard) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.dashboard)) {
                 Label(L10n.Common.Sidebar.dashboard, systemImage: DesignSystem.Icons.dashboard)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
-            NavigationLink(value: AppRoute.weeklyReport) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.weeklyReport)) {
                 Label(L10n.Common.Sidebar.weeklyInsight, systemImage: DesignSystem.Icons.weeklyInsight)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
@@ -81,7 +129,7 @@ struct SourcesSection: View {
     var body: some View {
         if !sourceStore.activeSources.isEmpty {
             Section {
-                NavigationLink(value: SidebarSelection.tool(.sources)) {
+                SidebarRowWrapper(value: SidebarSelection.tool(.sources)) {
                     Label {
                         HStack {
                             Text(L10n.Plugin.Sidebar.currentSources)
@@ -89,7 +137,7 @@ struct SourcesSection: View {
                             Text("\(sourceStore.activeSources.count)")
                                 .font(.caption2.monospacedDigit())
                                 .foregroundStyle(.white)
-                                .padding(.horizontal, 6)
+                                .padding(.horizontal, DesignSystem.tightPadding)
                                 .background(Color.appAccent)
                                 .clipShape(Capsule())
                         }
@@ -112,7 +160,7 @@ struct UniverseSection: View {
     
     var body: some View {
         Section {
-            NavigationLink(value: AppRoute.pageList(filterType: nil)) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.pageList)) {
                 UniverseNavRow(
                     icon: DesignSystem.Icons.pageList,
                     colorName: "accent",
@@ -125,7 +173,7 @@ struct UniverseSection: View {
             ForEach(PageType.allCases) { type in
                 let count = store.pages.filter { $0.pageType == type }.count
                 if count > 0 {
-                    NavigationLink(value: AppRoute.pageList(filterType: type)) {
+                    SidebarRowWrapper(value: SidebarSelection.filteredIndex(type)) {
                         SidebarTypeRow(
                             type: type,
                             count: count
@@ -180,10 +228,10 @@ struct ToolsSection: View {
     
     var body: some View {
         Section {
-            NavigationLink(value: AppRoute.lint) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.lint)) {
                 HStack {
                     Label(L10n.Common.Sidebar.healthCheck, systemImage: DesignSystem.Icons.healthCheck)
-                        .foregroundStyle(.appText)
+                          .foregroundStyle(.appText)
                     Spacer()
                     if !appStore.lintIssues.isEmpty {
                         Text("\(appStore.lintIssues.count)")
@@ -197,12 +245,12 @@ struct ToolsSection: View {
                 }
                 .contentShape(Rectangle())
             }
-            NavigationLink(value: AppRoute.tagCloud) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.tagCloud)) {
                 Label(L10n.Common.Sidebar.tagManager, systemImage: DesignSystem.Icons.tag)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
-            NavigationLink(value: AppRoute.taskCenter) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.taskCenter)) {
                 HStack {
                     Label(L10n.AI.Task.centerTitle, systemImage: DesignSystem.Icons.refresh)
                         .foregroundStyle(.appText)
@@ -218,12 +266,12 @@ struct ToolsSection: View {
                 }
                 .contentShape(Rectangle())
             }
-            NavigationLink(value: AppRoute.pluginMarket) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.pluginMarket)) {
                 Label(L10n.Common.Sidebar.plugins, systemImage: DesignSystem.Icons.plugins)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
             }
-            NavigationLink(value: AppRoute.collab) {
+            SidebarRowWrapper(value: SidebarSelection.tool(.collab)) {
                 Label(L10n.Common.Sidebar.collaboration, systemImage: DesignSystem.Icons.collaborationPeers)
                     .foregroundStyle(.appText)
                     .contentShape(Rectangle())
@@ -259,7 +307,7 @@ struct UniverseNavRow: View {
         HStack(spacing: DesignSystem.medium) {
             // 彩色图标区域
             Image(systemName: icon)
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(iconColor)
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
                 .background(iconColor.opacity(0.12))
@@ -296,7 +344,7 @@ struct SidebarTypeRow: View {
         HStack(spacing: DesignSystem.medium) {
             // 彩色图标区域（匹配类型主色）
             Image(systemName: type.icon)
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
                 .background(Color.fromModelColorName(type.colorName).opacity(DesignSystem.softOpacity * 0.3)) // 0.12
@@ -329,7 +377,7 @@ struct SidebarPinnedRow: View {
     let onDelete: () -> Void
     
     var body: some View {
-        NavigationLink(value: SidebarSelection.page(page.id)) {
+        SidebarRowWrapper(value: SidebarSelection.page(page.id)) {
             PageSidebarRow(page: page, heroNamespace: heroNamespace)
         }
         .contextMenu {

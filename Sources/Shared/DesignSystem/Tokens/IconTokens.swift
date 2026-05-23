@@ -1,11 +1,13 @@
-// IconTokens.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 共享标准层：设计系统图标与视觉资产强类型令牌 (Icon Tokens)。
-// 本文件统一收拢全工程所有高频使用的 Emoji 图标、SFSymbols 图标及备选列表常量，
-// 旨在消灭散落在 UI 功能层和基础设施初始化中的硬编码魔鬼字串。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IconTokens.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Tokens 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 智宇全局图标与视觉资产令牌 (Icon Tokens)

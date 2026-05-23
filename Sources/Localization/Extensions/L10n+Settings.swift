@@ -1,9 +1,13 @@
-// 功能说明: [Shared]
 //
-// L10n+Settings.swift
-// 智宇 (ZhiYu) 多语言 Settings 垂直切片强类型扩展定义
+//  L10n+Settings.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 Settings 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {
@@ -46,6 +50,8 @@ extension L10n {
         public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: t) }
         public static var about: String { tr("aboutApp") }
         public static var version: String { tr("version") }
+        /// 选择设置大类的占位提示文本
+        public static var selectCategoryTip: String { tr("settings.selectCategoryTip") }
 
         public struct resetOnboarding {
             public static var title: String { Localized.tr("settings.resetOnboarding.title", table: t) }
@@ -91,6 +97,7 @@ extension L10n {
             public static var maintenance: String { Settings.tr("section.maintenance") }
             public static var about: String { Settings.tr("section.about") }
             public static var developer: String { Settings.tr("section.developer") }
+            public static var plugins: String { Settings.tr("section.plugins") }
             public static var tabData: String { Localized.tr("settings.developer.section.tabData", table: t) }
             public static var tabQuality: String { Localized.tr("settings.developer.section.tabQuality", table: t) }
         }

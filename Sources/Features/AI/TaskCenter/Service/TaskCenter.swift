@@ -1,12 +1,13 @@
-// TaskCenter.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：任务类型与管理中心
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 移除平台宏污染，隔离 ActivityService。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  TaskCenter.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Service 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Combine
 

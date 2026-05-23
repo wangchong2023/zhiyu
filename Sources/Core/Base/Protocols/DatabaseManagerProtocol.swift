@@ -1,0 +1,32 @@
+//
+//  DatabaseManagerProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 DatabaseManager 模块的抽象契约接口。
+//
+import Foundation
+
+/// 数据库热切换与连接生命周期隔离契约。
+///
+/// 遵循此协议的实例能够安全地调度并挂载不同的物理数据库，并提供物理释放通道连接、闭合文件锁的生命周期管理，
+/// 从而确保多金库隔离切换时不发生 `SQLITE_BUSY` 死锁。
+@MainActor
+public protocol VaultDatabaseSwitcher: Sendable {
+    /// 进行多数据库实例的安全切换与 WAL 锁重置。
+    ///
+    /// - Parameters:
+    ///   - vaultID: 切换目标笔记本的唯一识别码 UUID。
+    ///   - url: 目标笔记本数据库在沙盒中的物理绝对路径 URL。
+    /// - Throws: SQLite 实例化失败或专属 Schema 迁移失败的异常。
+    func switchDatabase(to vaultID: UUID, at url: URL) throws
+    
+    /// 彻底断开专属物理库写入池，清空文件锁。
+    ///
+    /// 此方法旨在同步释放专属物理库的所有活跃读取与写入句柄，强制关闭物理库的 WAL 缓存，
+    /// 以允许对数据库文件进行离线备份、擦除或移动等操作。
+    func releaseDatabaseConnection()
+}

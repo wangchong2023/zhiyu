@@ -1,52 +1,34 @@
-// IngestService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的自动化入库引擎，负责将多源异构数据转化为结构化的知识页面。
-// MARK: [SR-02] 混合检索 (RAG) 摄入管道编排与知识提取
-// MARK: [PR-02] 混合检索 (RAG) 链路耗时优化
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IngestService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：实现 Ingest 模块的核心业务逻辑服务。
+//
 import Foundation
 import Compression
 
-// MARK: - Document Format
-
-enum DocumentFormat {
-    case markdown
-    case plainText
-    case docx
-    case xlsx
-    case pdf
-    case unknown
-
-    static func detectFormat(from url: URL) -> DocumentFormat {
-        let pathExtension = url.pathExtension.lowercased()
-        switch pathExtension {
-        case "md", "markdown":
-            return .markdown
-        case "txt", "text":
-            return .plainText
-        case "docx":
-            return .docx
-        case "xlsx":
-            return .xlsx
-        case "pdf":
-            return .pdf
-        default:
-            return .unknown
-        }
-    }
-}
-
 // MARK: - Ingest Service (Knowledge Ingestion)
 actor IngestService {
+    @Inject private var docExtractor: any DocumentExtractionServiceProtocol
     let scraper = WebScraperProcessor()
 
-    /// 将原始内容摄入知识库：创建新页面并自动链接已知概念。
-    /// - Returns: The created page (with auto-linked content).
-    /// 将原始内容摄入知识库：创建新页面并自动链接已知概念。
-    /// - Returns: The created page (with auto-linked content).
+    /// 将原始内容摄入知识库：执行安全脱敏、进行 RAG 分块与向量索引、自动抽取并链接已知页面概念。
+    /// - Parameters:
+    ///   - title: 知识页面的标题
+    ///   - content: 待处理的原始文档内容
+    ///   - type: 创建的知识页面类型，默认为来源页面
+    ///   - sourceURL: 文档外链或网页地址 (可选)
+    ///   - rawSnippet: 原始文本的快照片段 (可选)
+    ///   - forceDeepScan: 是否强制拉起 AI 执行深度语义索引
+    ///   - llmService: 用于解析的 AI 大模型服务 (可选)
+    ///   - pageStore: 底层数据存储仓储
+    ///   - fileSize: 原始文件大小 (字节，可选)
+    ///   - sourceType: 文件物理类型后缀 (可选)
+    /// - Returns: 封装、链接完成并安全持久化后的知识页面对象
     func ingestRawContent(
         title: String,
         content: String,
@@ -129,7 +111,14 @@ actor IngestService {
         return page
     }
 
-    /// 从 URL 摄入内容
+    /// 从给定的网络 URL 地址中抓取并摄入网页内容
+    /// - Parameters:
+    ///   - urlString: 目标网页的 URL 地址字符串
+    ///   - forceDeepScan: 是否对网页内容执行强制 AI 深度分析，默认为真
+    ///   - llmService: 用于摄入的大语言模型服务 (可选)
+    ///   - pageStore: 数据持久化容器仓储
+    /// - Returns: 处理完毕后的 `KnowledgePage` 知识页面对象
+    /// - Throws: 网页爬取、解析失败或网络异常
     func ingestURL(
         urlString: String,
         forceDeepScan: Bool = true,
@@ -154,7 +143,11 @@ actor IngestService {
         )
     }
 
-    /// Extract existing page titles mentioned in the given content.
+    /// 从给定的文本内容中智能识别并匹配已有的页面标题，用以自动构建双链关联
+    /// - Parameters:
+    ///   - content: 待扫描匹配的文本内容
+    ///   - pages: 知识库中已存在的所有备选知识页面集合
+    /// - Returns: 识别到的现有知识标题字符串列表
     func extractConcepts(from content: String, pages: [KnowledgePage]) -> [String] {
         var found: [String] = []
         for page in pages {
@@ -178,13 +171,13 @@ actor IngestService {
         let format = DocumentFormat.detectFormat(from: url)
         let extractedTitle = title ?? url.deletingPathExtension().lastPathComponent
 
-        guard let processor = DocumentProcessorFactory.processor(for: format) else {
+        guard docExtractor.canExtract(format: format) else {
             print("Unsupported or unknown document format: \(url.pathExtension)")
             return nil
         }
 
         do {
-            let text = try await processor.extractText(from: url)
+            let text = try await docExtractor.extractText(from: url)
             if text.isEmpty { return nil }
             return await ingestRawContent(title: extractedTitle, content: text, type: type, forceDeepScan: true, pageStore: pageStore)
         } catch {
@@ -193,7 +186,12 @@ actor IngestService {
         }
     }
 
-    /// Batch import all supported documents from a folder. (Enhanced: Eco-Indexing)
+    /// 批量从指定文件夹目录中导入所有支持的文档实体（带低功耗绿色索引控制）
+    /// - Parameters:
+    ///   - url: 待扫描的文件夹本地物理路径
+    ///   - type: 导入后创建的页面类型，默认来源数据类型
+    ///   - pageStore: 数据持久化容器仓储
+    /// - Returns: 成功被批量摄入并创建出来的知识页面集合
     func ingestFolder(
         at url: URL,
         type: PageType = .source,

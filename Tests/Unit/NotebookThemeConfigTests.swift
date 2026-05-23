@@ -1,8 +1,13 @@
-// NotebookThemeConfigTests.swift
 //
-// 功能说明: 笔记本主题配置模型测试
+//  NotebookThemeConfigTests.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 NotebookThemeConfig 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

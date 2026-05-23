@@ -1,0 +1,7 @@
+/* 
+  Localizable.strings (Simplified Chinese)
+  智宇 (ZhiYu) 本地化简体中文占位描述文件
+  
+  核心职责：
+  作为物理占位资源，强制 Xcode 在编译任何 Target 时都将 "zh-Hans" 生成为物理支持的 .lproj 目录。
+*/

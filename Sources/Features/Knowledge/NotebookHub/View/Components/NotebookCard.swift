@@ -2,10 +2,12 @@
 //  NotebookCard.swift
 //  ZhiYu
 //
-//  Created by Wang Chong on 2026-05-18.
-//  Copyright © 2026 Wang Chong. All rights reserved.
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 笔记本网格卡片组件。
@@ -34,20 +36,20 @@ struct NotebookCard: View {
                         .frame(width: 44, height: 44)
                     
                     Text(notebook.icon ?? defaultIcon)
-                        .font(.system(size: 22))
+                        .font(.title2)
                 }
                 .padding(.top, DesignSystem.tiny)
                 .accessibilityHidden(true) // 屏蔽装饰性发光底座及 Emoji 的无谓直译，由外壳统合播报
                 
                 // 2. 金库名称标题
                 Text(notebook.name)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.title3.weight(.bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
                 // 3. 摘要描述文案，字数过多时优雅截断
                 Text(notebook.description ?? L10n.Vault.defaultDescription)
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -56,7 +58,7 @@ struct NotebookCard: View {
                 
                 // 4. 元数据底部说明（采用强类型相对时间表达，保持跨语言的国际化适配）
                 Text("\(L10n.Vault.lastEdited) \(notebook.updatedAt.formatted(.relative(presentation: .numeric)))")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary.opacity(0.6))
             }
             .padding(DesignSystem.medium)

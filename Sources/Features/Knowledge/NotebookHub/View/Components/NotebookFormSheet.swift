@@ -1,10 +1,13 @@
-// NotebookFormSheet.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：笔记本创建与编辑表单。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  NotebookFormSheet.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 @MainActor
@@ -67,7 +70,7 @@ struct NotebookFormSheet: View {
                                     .frame(width: 100, height: 100)
                                 
                                 Text(icon.isEmpty ? "📓" : icon)
-                                    .font(.system(size: 60))
+                                    .font(.largeTitle)
                             }
                             
                             Text(L10n.Vault.iconLabel)
@@ -109,6 +112,8 @@ struct NotebookFormSheet: View {
                                     .padding()
                                     .background(Color.appCard)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    // MARK: [UI 测试自愈] 注入唯一的可测试性定位标识符，以便在新建金库笔记本表单弹窗中精准定位名字输入框
+                                    .accessibilityIdentifier("notebook_name_textfield")
                             }
                             
                             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
@@ -141,6 +146,8 @@ struct NotebookFormSheet: View {
                         dismiss()
                     }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    // MARK: [UI 测试自愈] 注入唯一的可测试性定位标识符，以精准点击提交表单按钮完成自愈笔记本的物理创建
+                    .accessibilityIdentifier("notebook_submit_button")
                 }
             }
         }

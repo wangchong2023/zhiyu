@@ -1,10 +1,13 @@
-// iOSBackgroundTaskProvider.swift
 //
-// 作者: Wang Chong
-// 功能说明: 基于 BackgroundTasks 框架的 iOS 后台任务实现。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iOSBackgroundTaskProvider.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 iOS 模块，提供相关的结构体或工具支撑。
+//
 #if os(iOS) && !os(watchOS)
 import Foundation
 import BackgroundTasks

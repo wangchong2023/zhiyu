@@ -1,30 +1,42 @@
-// VaultSecurityTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 金库安全服务测试
-// 版本: 1.1
-// 修改记录:
-//   - 创建: 2026-05-03
-//   - 更新: 2026-05-16 补全 Mock 及核心流程测试
-// 日期: 2026-05-16
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  VaultSecurityTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 VaultSecurity 开展自动化单元测试验证。
+//
 import XCTest
 import LocalAuthentication
 @testable import ZhiYu
 
 /// Mock 生物识别提供者，用于控制测试环境下的认证结果
+@MainActor
 struct VaultSecurityMockBiometricAuthProvider: BiometricAuthProviderProtocol {
+    /// 模拟的生物识别是否可用
+    var isAvailable: Bool = true
+    /// 模拟的安全鉴权是否成功
+    var shouldAuthSucceed: Bool = true
+    /// 模拟硬件延迟时间
+    var evaluateDelay: TimeInterval = 0.01
+    
+    /// 鉴权策略，默认使用设备所有者生物识别鉴权
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     
-    var isAvailable: Bool = true
-    var shouldAuthSucceed: Bool = true
-    var evaluateDelay: TimeInterval = 0.01 // 模拟硬件延迟
-    
+    /// 检查生物识别是否可用
+    /// - Parameter context: 本地鉴权上下文
+    /// - Returns: 是否可用
     func canEvaluatePolicy(context: LAContext) -> Bool {
         return isAvailable
     }
     
+    /// 执行生物识别鉴权
+    /// - Parameters:
+    ///   - context: 本地鉴权上下文
+    ///   - reason: 鉴权原因
+    /// - Returns: 是否鉴权成功
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
         try? await Task.sleep(nanoseconds: UInt64(evaluateDelay * 1_000_000_000))
         return shouldAuthSucceed

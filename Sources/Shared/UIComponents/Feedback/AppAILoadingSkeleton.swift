@@ -1,10 +1,13 @@
-// AppAILoadingSkeleton.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 增强型 AI 骨架屏，针对本地大模型慢加载场景提供丰富的视觉与信息反馈
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppAILoadingSkeleton.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Feedback 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 增强型 AI 骨架屏
@@ -44,11 +47,11 @@ public struct AppAILoadingSkeleton: View {
                     .modifier(PulsingDot(delay: 0))
                 
                 Text(stageText)
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .font(.caption2.weight(.bold))
                     .foregroundStyle(stageColor)
             }
             .padding(.horizontal, DesignSystem.small)
-            .padding(.vertical, 4)
+            .padding(.vertical, DesignSystem.tiny)
             .background(stageColor.opacity(0.1))
             .clipShape(Capsule())
             

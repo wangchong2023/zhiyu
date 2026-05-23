@@ -1,11 +1,13 @@
-// GuideStepRow.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了引导步骤行组件，用于引导页面展示分步操作说明。
-// MARK: [PR-03] 统一引导步骤规范，优化新用户上手路径的视觉指引
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  GuideStepRow.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Lists 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 引导步骤行组件

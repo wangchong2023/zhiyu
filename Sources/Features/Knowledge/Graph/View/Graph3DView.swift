@@ -1,14 +1,13 @@
-// Graph3DView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：基于 SceneKit 的 3D 知识图谱可视化视图。
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-05 (添加 FPS 监控)
-// 日期: 2026-05-05
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Graph3DView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Graph3D 界面的 UI 视图层组件。
+//
 import SwiftUI
 import SceneKit
 
@@ -103,12 +102,12 @@ struct Graph3DView: View {
         VStack {
             Spacer()
             HStack {
-                HStack(spacing: 4) {
+                HStack(spacing: DesignSystem.tiny) {
                     Circle()
                         .fill(fps > 30 ? Color.green : (fps > 15 ? Color.orange : Color.red))
                         .frame(width: DesignSystem.tiny + 2, height: DesignSystem.tiny + 2)
                     Text("FPS: \(Int(fps))")
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.caption2)
                         .foregroundStyle(.appSecondary)
                 }
                 .padding(.horizontal, DesignSystem.tightPadding)
@@ -125,7 +124,7 @@ struct Graph3DView: View {
     }
 
     private var headerOverlay: some View {
-        VStack(alignment: isFullScreen ? .center : .leading, spacing: 4) {
+        VStack(alignment: isFullScreen ? .center : .leading, spacing: DesignSystem.tiny) {
             Text(L10n.Graph.ThreeD.tr("title"))
                 .font(.subheadline.bold())
                 .foregroundStyle(.appText)

@@ -1,14 +1,13 @@
-// NavigationView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：struct NavigationView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  NavigationView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：构建 Navigation 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 #if canImport(WebKit)
 import WebKit
@@ -76,10 +75,7 @@ struct DetailContentView: View {
     }
 
     private var appLandingView: some View {
-        ContentUnavailableView(
-            L10n.Common.Sidebar.title,
-            systemImage: "books.vertical.fill",
-            description: Text(L10n.Common.Sidebar.allPages)
-        )
+        // 当未选择任何侧边栏项时，默认展示仪表盘，避免大片留白
+        ViewFactory.makeView(for: .dashboard)
     }
 }

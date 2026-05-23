@@ -1,16 +1,13 @@
-// VaultService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的笔记本/金库 (Vault) 核心生命周期管理服务。
-// 核心职责：
-// 1. 提供笔记本/金库（Vault）的创建、修改、重命名及深度物理删除（磁盘擦除）API。
-// 2. 托管当前激活的 VaultID 偏好，并在冷启动时提供多语言本地化的演示金库。
-// 3. 驱动持久化层 DatabaseManager 实施热插拔多库连接切换（WAL），触发全局广播重定向。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-18: 补全 100% 结构化三斜杠 DocC 简体中文规范，说明多库 WAL 安全热切换及广播事件流程。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VaultService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：实现 Vault 模块的核心业务逻辑服务。
+//
 import Foundation
 import Observation
 import GRDB
@@ -29,6 +26,10 @@ public final class VaultService: VaultServiceProtocol {
     /// 使用 `@ObservationIgnored` 规避 `Observation` 宏对注入实例的过度包装冲突。
     @ObservationIgnored
     @Inject private var vaultRepository: any VaultRepository
+    
+    /// 注入数据库切换契约（databaseSwitcher），解耦业务层对数据库具体实现的强依赖。
+    @ObservationIgnored
+    @Inject private var databaseSwitcher: any VaultDatabaseSwitcher
     
     // MARK: - 状态发布属性
     
@@ -117,7 +118,7 @@ public final class VaultService: VaultServiceProtocol {
                     self.vaults = loadedVaults
                 }
             } catch {
-                print("❌ [VaultService] 异步载入笔记本元数据失败: \(error)")
+                print("❌ [VaultService] Failed to asynchronously load notebook metadata: \(error)")
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
                 self.vaults = [
                     Vault(
@@ -151,9 +152,9 @@ public final class VaultService: VaultServiceProtocol {
             self.selectedVaultID = id
             do {
                 let dbURL = getVaultDatabaseURL(for: id)
-                try DatabaseManager.shared.switchDatabase(to: id, at: dbURL)
+                try databaseSwitcher.switchDatabase(to: id, at: dbURL)
             } catch {
-                print("❌ [VaultService] 自动热联接最近使用的物理专属数据库失败: \(error)")
+                print("❌ [VaultService] Failed to auto-connect to the recently used physical database: \(error)")
             }
         }
     }
@@ -204,17 +205,17 @@ public final class VaultService: VaultServiceProtocol {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         
-        // 1. 热插拔重定向：要求 DatabaseManager 彻底挂载专属物理子库，同步刷新句柄
+        // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
         do {
             let dbURL = getVaultDatabaseURL(for: vault.id)
-            try DatabaseManager.shared.switchDatabase(to: vault.id, at: dbURL)
+            try databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
             
             // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序，交由后台 Task 物理写入
             Task {
                 try await vaultRepository.updateLastAccessed(id: vault.id)
             }
         } catch {
-            print("❌ [VaultService] 热插拔切换专属物理子库失败: \(error)")
+            print("❌ [VaultService] Failed to switch physical database: \(error)")
         }
     }
     
@@ -226,7 +227,7 @@ public final class VaultService: VaultServiceProtocol {
         }
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         // 物理释放专属连接以闭合通道锁
-        DatabaseManager.shared.dbWriter = nil
+        databaseSwitcher.releaseDatabaseConnection()
     }
     
     /// 创建全新的笔记本金库。
@@ -249,7 +250,7 @@ public final class VaultService: VaultServiceProtocol {
         do {
             try saveVaultToDatabase(newVault)
         } catch {
-            print("❌ [VaultService] 写入新建笔记本至数据库失败: \(error)")
+            print("❌ [VaultService] Failed to write new notebook to database: \(error)")
         }
     }
     
@@ -269,7 +270,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print("❌ [VaultService] 更新笔记本元数据写入数据库失败: \(error)")
+                print("❌ [VaultService] Failed to write updated notebook metadata to database: \(error)")
             }
         }
     }
@@ -286,7 +287,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print("❌ [VaultService] 重命名写入数据库失败: \(error)")
+                print("❌ [VaultService] Failed to write renamed notebook to database: \(error)")
             }
         }
     }
@@ -299,7 +300,7 @@ public final class VaultService: VaultServiceProtocol {
         if selectedVaultID == id {
             selectedVaultID = nil
             UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-            DatabaseManager.shared.dbWriter = nil
+            databaseSwitcher.releaseDatabaseConnection()
         }
         
         // 1. 从全局元数据配置数据库中完全抹除
@@ -307,7 +308,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try await vaultRepository.deleteVault(id: id)
             } catch {
-                print("❌ [VaultService] 从全局元数据数据库中删除笔记本记录失败: \(error)")
+                print("❌ [VaultService] Failed to delete notebook record from global metadata database: \(error)")
             }
         }
         
@@ -316,7 +317,7 @@ public final class VaultService: VaultServiceProtocol {
         let folderURL = dbURL.deletingLastPathComponent()
         if FileManager.default.fileExists(atPath: folderURL.path) {
             try? FileManager.default.removeItem(at: folderURL)
-            print("🗑️ [VaultService] 已物理擦除笔记本沙盒存储: \(id.uuidString)")
+            print("🗑️ [VaultService] Physically erased notebook sandbox storage: \(id.uuidString)")
         }
     }
 }

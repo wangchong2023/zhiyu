@@ -1,25 +1,53 @@
-// DocumentProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：定义文档处理通用协议与工厂，实现 IngestService 与具体格式解析器的解耦。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-07: 初始版本，引入工厂模式。
-//   - 2026-05-07: 完善 DOCX/XLSX 解析逻辑，对接 ZipUtility。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DocumentProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Document 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
-/// 文档处理器协议
+/// 基础设施层内部的文档处理通用协议
 protocol DocumentProcessor: Sendable {
     /// 提取文档中的文本内容
     func extractText(from url: URL) async throws -> String
 }
 
-/// 文档处理器工厂
-struct DocumentProcessorFactory {
-    /// 根据文档格式获取对应的处理器
-    static func processor(for format: DocumentFormat) -> (any DocumentProcessor)? {
+/// 物理文档文本提取统一实现服务 (DocumentExtractionService)
+/// 整合了 PDF, DOCX, XLSX 以及纯文本处理流程，通过抽象协议向业务功能层暴露能力。
+public final class DocumentExtractionService: DocumentExtractionServiceProtocol {
+    
+    /// 构造方法
+    public init() {}
+    
+    /// 判断是否支持指定的物理格式
+    /// - Parameter format: 目标文件格式
+    /// - Returns: 是否可解析
+    public func canExtract(format: DocumentFormat) -> Bool {
+        switch format {
+        case .pdf, .docx, .xlsx, .markdown, .plainText:
+            return true
+        case .unknown:
+            return false
+        }
+    }
+    
+    /// 抽取文件中的纯文本内容
+    /// - Parameter url: 文件物理路径
+    /// - Returns: 返回解析出的纯文本字符串
+    public func extractText(from url: URL) async throws -> String {
+        let format = DocumentFormat.detectFormat(from: url)
+        guard let processor = getProcessor(for: format) else {
+            throw ProcessorError.extractionFailed
+        }
+        return try await processor.extractText(from: url)
+    }
+    
+    /// 工厂方法：根据格式实例化对应的解析代理处理器
+    private func getProcessor(for format: DocumentFormat) -> (any DocumentProcessor)? {
         switch format {
         case .pdf:
             return PDFProcessorProxy()
@@ -35,9 +63,11 @@ struct DocumentProcessorFactory {
     }
 }
 
-// MARK: - 具体处理器代理 (适配现有实现)
+// MARK: - 具体处理器代理 (适配现有底层解析实现)
 
+/// PDF 格式处理器代理
 struct PDFProcessorProxy: DocumentProcessor {
+    /// 注入底层系统级 PDF 处理能力
     @Inject private var pdfService: any PDFServiceProtocol
 
     func extractText(from url: URL) async throws -> String {
@@ -48,10 +78,11 @@ struct PDFProcessorProxy: DocumentProcessor {
     }
 }
 
+/// DOCX 格式处理器代理
 struct DocxProcessorProxy: DocumentProcessor {
     func extractText(from url: URL) async throws -> String {
         guard let archive = ZipUtility.readZipArchive(at: url) else {
-            throw ProcessorError.extractionFailed
+            throw ProcessorError.invalidArchive
         }
 
         guard let documentXML = archive["word/document.xml"] else {
@@ -67,15 +98,16 @@ struct DocxProcessorProxy: DocumentProcessor {
     }
 }
 
+/// XLSX 表格格式处理器代理
 struct XlsxProcessorProxy: DocumentProcessor {
     func extractText(from url: URL) async throws -> String {
         guard let archive = ZipUtility.readZipArchive(at: url) else {
-            throw ProcessorError.extractionFailed
+            throw ProcessorError.invalidArchive
         }
 
         var sharedStrings: [String] = []
 
-        // Extract shared strings (common string values)
+        // 提取共享字符串池 (Excel 中多单元格共享同一字符以压缩大小)
         if let sharedStringsXML = archive["xl/sharedStrings.xml"] {
             let parser = XlsxSharedStringsParser(xmlData: sharedStringsXML)
             if parser.parse() {
@@ -85,12 +117,12 @@ struct XlsxProcessorProxy: DocumentProcessor {
 
         var allText: [String] = []
 
-        // Extract from each sheet
+        // 遍历提取每个子工作表 (Sheet) 中的文字
         for (path, data) in archive {
             if path.hasPrefix("xl/worksheets/sheet") && path.hasSuffix(".xml") {
                 let parser = ExcelProcessor(xmlData: data)
                 if parser.parse() {
-                    // Resolve shared string references
+                    // 解析共享字符串指针，映射回真实字符
                     for value in parser.values {
                         if value.hasPrefix("[") && value.hasSuffix("]"),
                            let index = Int(value.dropFirst().dropLast()),
@@ -111,13 +143,13 @@ struct XlsxProcessorProxy: DocumentProcessor {
     }
 }
 
+/// 纯文本与 Markdown 格式处理器代理
 struct TextProcessorProxy: DocumentProcessor {
     func extractText(from url: URL) async throws -> String {
-        return try String(contentsOf: url, encoding: .utf8)
+        do {
+            return try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            throw ProcessorError.extractionFailed
+        }
     }
-}
-
-enum ProcessorError: Error {
-    case extractionFailed
-    case notImplemented
 }

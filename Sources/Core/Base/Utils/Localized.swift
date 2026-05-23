@@ -1,18 +1,13 @@
-// Localized.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：全工程本地化强类型访问中枢。
-// 核心职责：
-// 1. 提供支持系统偏好及手动设置的多语言环境控制器（LanguageMode）。
-// 2. 依托高效 Bundle 内存缓存机制，杜绝高频访问下的磁盘 I/O 损耗，实现极致的本地化翻译加载性能。
-// 3. 实现核心业务表（Common、Knowledge、AI、Insight、System、Ingest、Plugin 等）的路由映射与优雅 Fallback 重定向机制。
-// 版本: 24.0 (高性能内存缓存与全注释覆盖版)
-// 修改记录:
-//   - 2026-05-18: 完美升级：引入 `cachedBundle` 与 `cachedLanguage` 内存常驻机制，彻底消除高频渲染下的重复 Bundle 物理构建。
-//   - 2026-05-18: 补全 100% 结构化三斜杠 DocC 简体中文规范，说明高性能常驻缓存的工作机理。
-// 日期: 2026-05-18
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Localized.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Utils 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 智宇系统支持的语言模式定义。

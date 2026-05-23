@@ -1,11 +1,13 @@
-// KnowledgeRepositoryTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 知识库仓库层测试，包含应用级加密验证 (@P0)
-// 版本: 1.0
-// 日期: 2026-05-16
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  KnowledgeRepositoryTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 KnowledgeRepository 开展自动化单元测试验证。
+//
 import XCTest
 import GRDB
 @testable import ZhiYu

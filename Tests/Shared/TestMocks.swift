@@ -1,18 +1,23 @@
-// TestMocks.swift
-// 
-// 作者: Wang Chong
-// 功能说明: 整合测试中常用的 Mock 类，解决重构后的命名冲突与重复定义问题。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 架构适配：对齐 Swift 6 Actor 与 DIP 协议结构 (@P0)。
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//
+//  TestMocks.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：为单元测试提供 TestMocks 仿真服务占位。
+//
 import Foundation
 import XCTest
 import Combine
 import GRDB
 import LocalAuthentication
+#if os(watchOS)
+@testable import ZhiYuWatch
+#else
 @testable import ZhiYu
+#endif
 
 // MARK: - Mock Logger
 final class MockLogger: LoggerProtocol, @unchecked Sendable {
@@ -33,9 +38,6 @@ final class MockLogger: LoggerProtocol, @unchecked Sendable {
 // MARK: - Mock LLM Service
 @MainActor
 final class MockLLMService: LLMService, @unchecked Sendable {
-    override var isProcessing: Bool { get { _isProcessing } set { _isProcessing = newValue } }
-    private var _isProcessing = false
-    
     override var isEnabled: Bool { get { _isEnabled } set { _isEnabled = newValue } }
     private var _isEnabled = true
     
@@ -70,11 +72,76 @@ final class MockLLMService: LLMService, @unchecked Sendable {
     override func generateHypotheticalDocument(query: String) async -> String { query }
 }
 
+// MARK: - Mock LLM 对话服务
+/// 单元测试专用的模拟对话推理服务类，实现 LLMChatServiceProtocol 协议，配合测试环境下的服务依赖注入。
+@MainActor
+final class MockLLMChatService: LLMChatServiceProtocol, @unchecked Sendable {
+    /// 模拟服务是否启用
+    var isEnabled = true
+    
+    /// 模拟核心单次对话推理方法
+    /// - Parameters:
+    ///   - query: 用户的提问输入
+    ///   - history: 历史对话消息数组
+    ///   - pages: 相关引用知识页面
+    /// - Returns: 模拟的助理回复消息
+    func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
+        return ChatMessageDTO(role: .assistant, content: "Mock Chat Content")
+    }
+    
+    /// 模拟流式对话推送方法
+    /// - Parameters:
+    ///   - query: 用户的提问输入
+    ///   - history: 历史对话消息数组
+    ///   - pages: 相关引用知识页面
+    /// - Returns: 包含模拟增量文本推送的异步流
+    func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
+        return AsyncThrowingStream { continuation in
+            continuation.yield("Mock Stream Content")
+            continuation.finish()
+        }
+    }
+    
+    /// 模拟通用文本内容生成接口
+    /// - Parameters:
+    ///   - prompt: 提示词
+    ///   - systemPrompt: 系统角色设定提示词
+    /// - Returns: 生成的模拟文本段落
+    func generate(prompt: String, systemPrompt: String) async throws -> String {
+        return "Mock Generated Content"
+    }
+}
+
+
 // MARK: - Mock Biometric Auth Provider
+
+/// 模拟的生物识别提供商，用于测试环境下的认证操作
+@MainActor
 final class MockBiometricAuthProvider: BiometricAuthProviderProtocol, @unchecked Sendable {
-    var authenticationPolicy: LAPolicy { .deviceOwnerAuthentication }
-    func canEvaluatePolicy(context: LAContext) -> Bool { false }
-    func evaluatePolicy(context: LAContext, reason: String) async -> Bool { false }
+    /// 鉴权策略，默认使用设备所有者生物识别鉴权
+    var authenticationPolicy: LAPolicy {
+        #if os(watchOS)
+        .deviceOwnerAuthentication
+        #else
+        .deviceOwnerAuthenticationWithBiometrics
+        #endif
+    }
+    
+    /// 检查生物识别是否可用，测试环境默认返回 false
+    /// - Parameter context: 本地鉴权上下文
+    /// - Returns: 是否可用
+    func canEvaluatePolicy(context: LAContext) -> Bool {
+        return false
+    }
+    
+    /// 执行生物识别鉴权，测试环境默认返回 false
+    /// - Parameters:
+    ///   - context: 本地鉴权上下文
+    ///   - reason: 鉴权原因
+    /// - Returns: 是否鉴权成功
+    func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
+        return false
+    }
 }
 
 // MARK: - XCTestCase Extension
@@ -97,7 +164,9 @@ extension XCTestCase {
         #endif
         
         ServiceContainer.shared.register(HapticFeedback.shared, for: HapticFeedback.self)
+        #if !os(watchOS)
         ServiceContainer.shared.register(Router.shared, for: Router.self)
+        #endif
         ServiceContainer.shared.register(DeepLinkService(), for: DeepLinkService.self)
         ServiceContainer.shared.register(PerformanceService(), for: PerformanceService.self)
         ServiceContainer.shared.register(AccessibilityService(), for: AccessibilityService.self)
@@ -116,12 +185,9 @@ extension XCTestCase {
         ServiceContainer.shared.register(MultipeerCollaborationProvider() as any CollaborationProviderProtocol, for: (any CollaborationProviderProtocol).self)
         #endif
         
-        // 注册平台特定的设备环境适配服务，保障协作及排版功能获取正常设备名称和能力集
         #if os(macOS)
         ServiceContainer.shared.register(MacAppEnvironment() as any AppEnvironmentProtocol, for: (any AppEnvironmentProtocol).self)
-        #elseif os(watchOS)
-        ServiceContainer.shared.register(WatchAppEnvironment() as any AppEnvironmentProtocol, for: (any AppEnvironmentProtocol).self)
-        #else
+        #elseif os(iOS)
         ServiceContainer.shared.register(iOSAppEnvironment() as any AppEnvironmentProtocol, for: (any AppEnvironmentProtocol).self)
         #endif
         
@@ -136,6 +202,10 @@ extension XCTestCase {
         
         ServiceContainer.shared.register(LLMConfigManager(), for: LLMConfigManager.self)
         ServiceContainer.shared.register(AIAnalyticsService(), for: AIAnalyticsService.self)
+        
+        // 注册测试环境下对话推理的 LLMChatServiceProtocol 实体，防范 @Inject 注入崩溃
+        let mockChatLLM = MockLLMChatService()
+        ServiceContainer.shared.register(mockChatLLM as any LLMChatServiceProtocol, for: (any LLMChatServiceProtocol).self)
         
         let llm = MockLLMService()
         ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
@@ -179,7 +249,9 @@ extension XCTestCase {
         // 注册系统维护服务，健全单测生命周期的全局重置与清理链路 (@DIP)
         ServiceContainer.shared.register(MaintenanceService(), for: MaintenanceService.self)
         ServiceContainer.shared.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)
+        #if !os(watchOS)
         ServiceContainer.shared.register(AISynthesisService.shared, for: AISynthesisService.self)
+        #endif
         ServiceContainer.shared.register(PromptService.shared, for: PromptService.self)
         
         let evaluationService = RAGEvaluationService(llmService: llm, governanceStore: governanceRepo)
@@ -195,12 +267,17 @@ extension XCTestCase {
         
         // 4. Data Sync Coordination (L1.5) & Sibling Stores - 必须在底层所有 Mock 物理仓储和 L1 基础设施就绪后注册，以防时序竞争崩溃
         ServiceContainer.shared.register(IngestStore(), for: IngestStore.self)
+        #if !os(watchOS)
         ServiceContainer.shared.register(SynthesisStore(), for: SynthesisStore.self)
+        #endif
         ServiceContainer.shared.register(DataCoordinator(), for: DataCoordinator.self)
         
         // 5. L2 Features & Sidebar Row Components Dependencies
         // 注册知识页面状态存储中心，防止插件卸载/加载等环节因获取不到 KnowledgeStore 导致测试崩溃 (@DIP)
         ServiceContainer.shared.register(KnowledgeStore(), for: KnowledgeStore.self)
+        
+        // 注册 RAG 编排器，供 UI 测试运行时解析，防止 DI Fatal Error (@DIP)
+        ServiceContainer.shared.register(RAGOrchestrator(), for: RAGOrchestrator.self)
     }
 }
 

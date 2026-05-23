@@ -1,12 +1,13 @@
-// PromptDefenseTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Tests] 单元测试层：本文件实现了对智能 Prompt 防御净化层 (PromptSanitizer) 的辅助攻击拦截验证。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-19: 适配最新的 PromptSanitizer.shared 强类型单例，移除冗余的历史静态签名方法测试，对齐国际化文本断言。
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  PromptDefenseTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 PromptDefense 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

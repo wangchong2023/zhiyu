@@ -1,12 +1,13 @@
-// EditorComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 编辑器辅助组件集，包含页面选择器、工具栏按钮及标签管理组件。
-// 核心原则：
-// 1. 去硬编码：所有布局数值必须引用 AppUI 模式。
-// 2. 视觉一致性：通过 Pattern-based 布局确保全工程交互体验统一。
-// 版本: 1.1 (工业级重构，消除魔鬼数字并修正逻辑错误)
-
+//  EditorComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Editors 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Knowledge Link Picker Sheet
@@ -106,9 +107,9 @@ struct EditorToolbarButton: View {
         Button(action: action) {
             VStack(spacing: DesignSystem.atomic) {
                 Image(systemName: icon)
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                 Text(title)
-                    .font(.system(size: 9))
+                    .font(.caption2)
             }
             .foregroundStyle(Color.appSecondary)
             .frame(width: 44, height: 36)

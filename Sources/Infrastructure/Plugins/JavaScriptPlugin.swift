@@ -1,3 +1,13 @@
+//
+//  JavaScriptPlugin.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Plugins 模块，提供相关的结构体或工具支撑。
+//
 #if canImport(JavaScriptCore)
 // JavaScriptPlugin.swift
 //

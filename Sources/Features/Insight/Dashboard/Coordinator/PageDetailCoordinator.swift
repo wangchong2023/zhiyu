@@ -1,12 +1,13 @@
-// PageDetailCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：页面详情功能协调器，负责 PageDetailView 的业务编排与 UI 交互状态。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 从 PageDetailViewModel 演进，承接 AI 任务的异步编排与 UI 反馈（Toast）。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageDetailCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：负责 PageDetail 业务流的导航路由与协作管理。
+//
 import SwiftUI
 import Observation
 

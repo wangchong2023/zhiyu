@@ -1,10 +1,13 @@
-// CloudChaosTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] iCloud 分布式存储极端场景（混沌）测试
-// 目标: P1 验证大文件并发、版本冲突、网络断网环境下的 100% 数据一致性
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CloudChaosTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 CloudChaos 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

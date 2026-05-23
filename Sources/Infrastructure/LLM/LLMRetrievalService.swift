@@ -1,11 +1,13 @@
-// LLMRetrievalService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 检索增强服务，处理查询改写、意图扩展及搜索结果重排 (Rerank)。
-// MARK: [SR-02] 混合检索 (RAG) 链路优化与语义重排
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMRetrievalService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 LLMRetrieval 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// LLM 检索增强服务
@@ -98,19 +100,12 @@ final class LLMRetrievalService: Sendable {
         let candidates = chunks.prefix(10)
         let context = candidates.enumerated().map { "[\($0)] \($1.content)" }.joined(separator: "\n\n")
 
-        let prompt = """
-        查询: \(query)
-
-        候选文本块:
-        \(context)
-
-        请根据相关性对上述块进行排序。仅返回排序后的索引数组，例如 [2, 0, 1]。
-        """
+        let prompt = L10n.AI.Prompt.rerankUserPrompt(query: query, context: context)
 
         let body: [String: Any] = [
             "model": model,
             "messages": [
-                ["role": "system", "content": "你是一个精准的 Rerank 引擎。仅返回 JSON 数组。"],
+                ["role": "system", "content": L10n.AI.Prompt.rerankSystem],
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.1
@@ -141,12 +136,14 @@ final class LLMRetrievalService: Sendable {
     // MARK: - 辅助文档生成
 
     /// 生成假设性回答文档 (HyDE 策略)
+    /// - Parameter query: 原始查询文本
+    /// - Returns: AI 生成的假设性答案，若失败则退化返回原始查询
     func generateHypotheticalDocument(query: String) async -> String {
-        let prompt = "请针对以下问题写一个简短但专业的假设性回答（不要包含前导词），这将用于向量检索优化：\n\n问题：\(query)"
+        let prompt = L10n.AI.Prompt.hydeUserPrompt(query: query)
         let body: [String: Any] = [
             "model": model,
             "messages": [
-                ["role": "system", "content": "你是一个知识库助手，擅长生成精准的学术或技术性回答。"],
+                ["role": "system", "content": L10n.AI.Prompt.hydeSystem],
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.7

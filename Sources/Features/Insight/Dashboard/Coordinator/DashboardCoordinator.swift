@@ -1,12 +1,13 @@
-// DashboardCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：仪表盘功能协调器，负责统计计算、数据聚合及 AI 洞察任务编排。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-15: 初始版本，从 KnowledgeDashboardView 剥离业务逻辑。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DashboardCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：负责 Dashboard 业务流的导航路由与协作管理。
+//
 import SwiftUI
 import Observation
 

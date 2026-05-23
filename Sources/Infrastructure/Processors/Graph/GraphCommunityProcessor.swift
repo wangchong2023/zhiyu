@@ -1,16 +1,13 @@
-// GraphCommunityProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了基于图拓扑结构的社区发现处理器（GraphCommunityProcessor），旨在挖掘知识网络中的深层聚合特征。
-// 该处理器通过以下核心技术识别知识簇：
-// 1. 模块化算法：采用 Louvain 或同类启发式算法，通过最大化模块化增量（Modularity Gain）来识别节点紧密关联的社区。
-// 2. 关系权重分析：综合考虑节点间的链接密度与交互频率，动态计算社区边界，实现自动化的知识分类。
-// 3. 结果层次化：支持多级社区划分，能够从宏观视角展示知识全景，亦能深入微观视角观察细分领域，为知识洞察提供数据支撑。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 迁移至 Utils/Processors/Graph 并规范化社区发现算法描述
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  GraphCommunityProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Graph 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 // MARK: - 社区发现

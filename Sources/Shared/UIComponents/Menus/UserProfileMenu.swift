@@ -1,15 +1,13 @@
-// UserProfileMenu.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件实现了全系统通用的用户个人资料菜单（UserProfileMenu）。
-// 该组件集成了：
-// 1. 账户管理：显示当前登录状态并支持登出。
-// 2. 安全控制：快捷锁定应用程序。
-// 3. 系统设置：跳转至全局设置页面。
-// 4. 交互引导：重新触发功能引导与新手教程。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  UserProfileMenu.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Menus 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 struct UserProfileMenu: View {
@@ -62,7 +60,7 @@ struct UserProfileMenu: View {
                 }) {
                     HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: DesignSystem.Icons.settings)
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundStyle(.appAccent)
                             .frame(width: 20, alignment: .center)
                         Text(L10n.Common.settings)
@@ -70,8 +68,8 @@ struct UserProfileMenu: View {
                             .foregroundStyle(.appText)
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.vertical, DesignSystem.medium)
                 }
                 
                 Divider()
@@ -87,7 +85,7 @@ struct UserProfileMenu: View {
                 }) {
                     HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: "chart.bar.fill")
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundStyle(.appAccent)
                             .frame(width: 20, alignment: .center)
                         Text(L10n.Common.usage)
@@ -95,8 +93,8 @@ struct UserProfileMenu: View {
                             .foregroundStyle(.appText)
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.vertical, DesignSystem.medium)
                 }
                 
                 Divider()
@@ -113,7 +111,7 @@ struct UserProfileMenu: View {
                 }) {
                     HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: DesignSystem.Icons.lock)
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundStyle(.appAccent)
                             .frame(width: 20, alignment: .center)
                         Text(L10n.Common.lock)
@@ -121,8 +119,8 @@ struct UserProfileMenu: View {
                             .foregroundStyle(.appText)
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.vertical, DesignSystem.medium)
                 }
                 
                 Divider()
@@ -136,7 +134,7 @@ struct UserProfileMenu: View {
                 }) {
                     HStack(spacing: Spacing.standardPadding) {
                         Image(systemName: DesignSystem.Icons.logout)
-                            .font(.system(size: 14))
+                            .font(.subheadline)
                             .foregroundStyle(.red)
                             .frame(width: 20, alignment: .center)
                         Text(L10n.Common.logout)
@@ -144,8 +142,8 @@ struct UserProfileMenu: View {
                             .foregroundStyle(.red)
                         Spacer()
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    .padding(.horizontal, DesignSystem.standardPadding)
+                    .padding(.vertical, DesignSystem.medium)
                 }
             }
             .frame(width: 155) // 精密控制气泡宽度为 155，在极其修长克制的同时，完美解除偏挤感，带来大气的呼吸空气感！

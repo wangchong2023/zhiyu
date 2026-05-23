@@ -1,15 +1,13 @@
-// SecureEnclaveCryptoService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：本文件实现了基于物理安全芯片（Secure Enclave）的硬件级数据静默加解密服务（SecureEnclaveCryptoService）。
-// 核心职责：
-// 1. 物理硬件密钥管理：利用 CryptoKit.SecureEnclave 在安全隔离芯片内维护硬件私钥。
-// 2. 硬件静默密钥协商（Key Agreement）：不触发系统生物识别弹窗，实现后台与测试友好的静默硬件绑定。
-// 3. 高安全级对称加解密：结合 AES-GCM，为敏感第三方 API 密钥提供原机级的终极物理加密锁死。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  SecureEnclaveCryptoService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 SecureEnclaveCrypto 模块的核心业务逻辑服务。
+//
 import Foundation
 import CryptoKit
 

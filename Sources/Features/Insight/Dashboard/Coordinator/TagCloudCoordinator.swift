@@ -1,12 +1,13 @@
-// TagCloudCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：标签云功能协调器，负责标签管理（增删改查）与 UI 状态编排。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 类型安全优化：修复标签集合转换与异步调用标签。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  TagCloudCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：负责 TagCloud 业务流的导航路由与协作管理。
+//
 import SwiftUI
 import Observation
 

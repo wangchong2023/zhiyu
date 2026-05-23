@@ -1,12 +1,13 @@
-// ActivityService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 灵动岛与实时活动管理服务 (iOS 专属)
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 适配 Mac Catalyst，禁用不支持的 ActivityKit 逻辑。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ActivityService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 Activity 模块的核心业务逻辑服务。
+//
 import Foundation
 #if os(iOS) && !targetEnvironment(macCatalyst)
 @preconcurrency import ActivityKit
@@ -31,7 +32,7 @@ final class ActivityService: LiveActivityProtocol {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         
         Task { @MainActor in
-            Logger.shared.debug("🏝️ [Dynamic Island] 准备为任务 \(id) 启动实时活动: \(name)")
+            Logger.shared.debug("🏝️ [Dynamic Island] Preparing to start Live Activity for task \(id): \(name)")
             
             let attributes = AIProcessingAttributes(taskName: name, startTime: Date())
             let contentState = AIProcessingAttributes.ContentState(progress: 0.05, status: target)
@@ -49,9 +50,9 @@ final class ActivityService: LiveActivityProtocol {
                     content: ActivityContent(state: contentState, staleDate: nil)
                 )
                 activeActivities[id] = activity
-                Logger.shared.debug("✅ [Dynamic Island] 任务 \(id) 实时活动已启动")
+                Logger.shared.debug("✅ [Dynamic Island] Live Activity started for task \(id)")
             } catch {
-                Logger.shared.error("❌ [Dynamic Island] 启动失败: \(error.localizedDescription)")
+                Logger.shared.error("❌ [Dynamic Island] Launch failed: \(error.localizedDescription)")
             }
         }
         #endif
@@ -79,7 +80,7 @@ final class ActivityService: LiveActivityProtocol {
         #if os(iOS) && !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[id] else { return }
         
-        Logger.shared.debug("🏝️ [Dynamic Island] 任务 \(id) 实时活动即将结束")
+        Logger.shared.debug("🏝️ [Dynamic Island] Live Activity for task \(id) is about to end")
         
         let content = ActivityContent(state: activity.content.state, staleDate: nil)
         await activity.end(content, dismissalPolicy: .immediate)

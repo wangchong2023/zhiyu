@@ -1,10 +1,13 @@
-// QuizPresentationModifier.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：测验 (Quiz) 展示模态修饰符，支持跨平台适配。
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  QuizPresentationModifier.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 View 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 测验展示修饰符

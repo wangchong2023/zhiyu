@@ -1,15 +1,13 @@
-// Router.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的全局路由管理器（Router），作为应用导航逻辑的核心大脑。
-// 该类基于 SwiftUI 的现代导航堆栈（NavigationPath）与观察者模式，提供了卓越的视图切换能力：
-// 1. 声明式路径管理：通过集中化的 AppRoute 枚举解耦了视图间的直接依赖，支持动态推栈、平级切换及“回到根路径”的操作。
-// 2. 状态机同步逻辑：智能维护侧边栏选中项（SidebarSelection）与主标签（AppTab）的一致性，确保在跨平台（iPadOS vs iOS）布局切换时导航状态的透明迁移。
-// 3. 空间历史追踪：内置了轻量级的导航历史（Breadcrumbs）记录机制，为用户提供最近访问页面的快速回溯能力。
-// 4. 外部调度接入：提供单例接口支持 Deep Link、搜索跳转及系统级指令对应用路由的直接编排。
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Router.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 App 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import Observation
 
@@ -168,6 +166,11 @@ final class Router {
     /// 当前侧边栏选中项
     var sidebarSelection: SidebarSelection? = nil {
         didSet {
+            // 每次侧边栏选中项发生变动（无论切换还是置空），均需将导航路径清空。
+            // 这是为了防止在 iPadOS/Mac Catalyst 上，因详情页导航栈（NavigationPath）历史残留
+            // 导致详情页面被之前的 push 页面盖住，从而表现为“点击菜单右侧无变化”的经典 Bug。
+            path = NavigationPath()
+            
             if let selection = sidebarSelection {
                 syncTab(for: selection)
                 
@@ -205,6 +208,9 @@ final class Router {
     var selectedTab: AppTab = AppTab(rawValue: UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.selectedTab) ?? "") ?? .knowledge {
         didSet {
             UserDefaults.standard.set(selectedTab.rawValue, forKey: AppConstants.Keys.Storage.selectedTab)
+            // 切换主 Tab 时自动清空全局的导航路径。
+            // 以避免在 iPad 侧边栏/分栏布局下，多个 Tab 共享全局 router.path 导致的导航页重叠干扰问题。
+            path = NavigationPath()
         }
     }
     

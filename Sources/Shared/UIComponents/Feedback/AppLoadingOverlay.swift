@@ -1,14 +1,13 @@
-// AppLoadingOverlay.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 全屏加载遮罩，统一各页面的 Loading 状态展示。
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 2026-05-07: 系统性重构，从 AppLoadingOverlay 重命名为 AppLoadingOverlay，术语统一为“全屏加载遮罩”
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppLoadingOverlay.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Feedback 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Loading Overlay
@@ -45,7 +44,7 @@ public struct AppLoadingOverlay: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(message ?? L10n.Common.loading)
 
-                VStack(spacing: 16) {
+                VStack(spacing: DesignSystem.standardPadding) {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .tint(foregroundColor)
@@ -80,7 +79,7 @@ struct LoadingButtonModifier: ViewModifier {
             .disabled(isLoading)
             .overlay {
                 if isLoading {
-                    HStack(spacing: 6) {
+                    HStack(spacing: DesignSystem.tightPadding) {
                         ProgressView()
                             .tint(.white)
                             .scaleEffect(0.8)
@@ -131,7 +130,7 @@ struct AppInlineProgress: View {
 
             Spacer()
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, DesignSystem.small)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(message)
     }

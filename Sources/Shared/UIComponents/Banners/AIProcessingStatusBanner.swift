@@ -1,11 +1,13 @@
-// AIProcessingStatusBanner.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 全局 AI 任务处理状态条。
-//           当系统正在进行后台 AI 分析、知识合成或治理扫描时，在页面顶部展示动态图标与状态描述。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIProcessingStatusBanner.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Banners 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 全局 AI 任务处理状态条
@@ -21,7 +23,7 @@ struct AIProcessingStatusBanner: View {
             return false
         }) {
             VStack(spacing: 0) {
-                HStack(spacing: 12) {
+                HStack(spacing: DesignSystem.medium) {
                     // 1. 动态 AI 思考图标
                     ZStack {
                         Circle()
@@ -29,19 +31,19 @@ struct AIProcessingStatusBanner: View {
                             .frame(width: 32, height: 32)
                         
                         Image(systemName: DesignSystem.Icons.sparkles)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.subheadline.weight(.bold))
                             .foregroundStyle(LinearGradient(colors: [.appAccent, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .rotationEffect(.degrees(rotationAngle))
                     }
                     
                     // 2. 任务状态文本
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                         Text(activeTask.name)
-                            .font(.system(size: 13, weight: .bold))
+                            .font(.footnote.weight(.bold))
                             .foregroundStyle(.appText)
                         
                         Text(taskCenter.latestStatus.isEmpty ? L10n.AI.Task.processing : taskCenter.latestStatus)
-                            .font(.system(size: 11))
+                            .font(.caption)
                             .foregroundStyle(.appSecondary)
                             .lineLimit(1)
                     }
@@ -51,7 +53,7 @@ struct AIProcessingStatusBanner: View {
                     // 3. 进度指示 (如果是执行中)
                     if case .running(let progress, _) = activeTask.status {
                         Text("\(Int(progress * 100))%")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(.appAccent)
                     }
                 }

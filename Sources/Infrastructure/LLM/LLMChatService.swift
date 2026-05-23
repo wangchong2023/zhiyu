@@ -1,11 +1,13 @@
-// LLMChatService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 对话专向服务，处理对话请求构建、多轮历史管理及流式解析。
-// MARK: [SR-02] 核心对话链路与 RAG 上下文集成
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMChatService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 LLMChat 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// LLM 对话服务

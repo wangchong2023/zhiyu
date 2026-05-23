@@ -1,11 +1,13 @@
-// VisionProSpatialView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：空间计算 (Vision Pro) 预览视图。
-// 为 iOS 提供模拟的三维视觉引导，展现空间计算设备带来的沉浸式知识交互体验。
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VisionProSpatialView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 VisionProSpatial 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct VisionProSpatialView: View {
@@ -18,11 +20,11 @@ struct VisionProSpatialView: View {
             themeManager.pageBackground()
                 .ignoresSafeArea()
             
-            VStack(spacing: 24) {
+            VStack(spacing: DesignSystem.giant) {
                 header(title: L10n.Common.Spatial.title, subtitle: L10n.Common.Spatial.subtitle)
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
                         Text(L10n.Common.Spatial.features)
                             .font(.headline)
                             .foregroundStyle(.appText)
@@ -35,9 +37,9 @@ struct VisionProSpatialView: View {
                     .appContainer(cornerRadius: DesignSystem.largeRadius, padding: true)
                     
                     // Device Requirement
-                    VStack(spacing: 8) {
+                    VStack(spacing: DesignSystem.small) {
                         Image(systemName: DesignSystem.Icons.visionpro)
-                            .font(.system(size: 40))
+                            .font(.largeTitle)
                             .foregroundStyle(.appAccent)
                         
                         Text(L10n.Common.Spatial.requirement)
@@ -60,16 +62,16 @@ struct VisionProSpatialView: View {
     }
     
     private func header(title: String, subtitle: String) -> some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignSystem.small) {
             Text(title)
-                .font(.system(size: 34, weight: .black, design: .rounded))
+                .font(.largeTitle.weight(.black))
                 .foregroundStyle(.appText)
             
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
         }
-        .padding(.top, 20)
+        .padding(.top, DesignSystem.wide)
     }
 }
 
@@ -79,7 +81,7 @@ struct SpatialFeatureRow: View {
     let desc: String
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignSystem.standardPadding) {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(.appAccent)
@@ -87,7 +89,7 @@ struct SpatialFeatureRow: View {
                 .background(Color.appAccent.opacity(0.1))
                 .clipShape(Circle())
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(title)
                     .font(.headline)
                     .foregroundStyle(.appText)
@@ -97,7 +99,7 @@ struct SpatialFeatureRow: View {
                     .lineLimit(2)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, DesignSystem.small)
     }
 }
 

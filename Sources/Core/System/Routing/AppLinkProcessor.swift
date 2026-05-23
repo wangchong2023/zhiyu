@@ -1,17 +1,13 @@
-// AppLinkProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：本文件实现了知识网络关系的核心解析引擎（AppLinkProcessor），专门用于识别与处理文档间的双向引用关系。
-// 该处理器是系统构建知识图谱（Knowledge Graph）的底层基石，其核心功能点如下：
-// 1. App-link 模式识别：通过高性能正则表达式精准提取 Markdown 文本中的 [[target]] 标记，支持对链接标题进行归一化处理。
-// 2. 关系完整性监控：提供对知识库内双向链接（Incoming/Outgoing Links）的全局分析，支持检测断路引用与孤立页面。
-// 3. 语义关联计算：为 KnowledgePage 模型提供解耦的链接提取服务，确保数据模型层（Model）与复杂的字符串解析逻辑分离。
-// 4. 冲突预警：在解析过程中识别潜在的命名冲突与循环引用，提升知识库的逻辑健壮性。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-05: 初始创建，将链接解析逻辑从 KnowledgePage 中解耦
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppLinkProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：属于 Routing 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 知识库链接处理器：负责处理 [[applinks]] 的解析与管理

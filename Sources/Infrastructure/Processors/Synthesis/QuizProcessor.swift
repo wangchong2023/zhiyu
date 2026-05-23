@@ -1,16 +1,13 @@
-// QuizProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件定义了专门用于处理交互式测验数据的处理器（QuizProcessor），负责将非结构化的 AI 响应转换为标准化学习素材。
-// 核心逻辑涵盖以下 3 个关键点：
-// 1. 结构化解析：支持对复杂 JSON 测验协议的解析，通过内部定义的容器（QuizModelShell）映射题目、选项、标准答案及解析说明。
-// 2. 转换渲染：提供将 JSON 结构无损转换为 Markdown 交互格式的功能，并巧妙利用 HTML Details 标签实现答案的隐藏与展示。
-// 3. 容错处理：具备强大的 JSON 清洗能力，能够自动剥离 AI 响应中可能包含的 Markdown 代码块声明及冗余的前后文。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-15: 使用 LLMUtils 统一清洗逻辑。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  QuizProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Synthesis 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 专门处理知识测验数据的解析、转换与清洗

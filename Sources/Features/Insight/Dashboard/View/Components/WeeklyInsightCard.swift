@@ -1,14 +1,13 @@
-// WeeklyInsightCard.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识周报卡片 (PM 视角：价值闭环)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  WeeklyInsightCard.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 知识周报卡片 (PM 视角：价值闭环)
@@ -51,7 +50,7 @@ struct WeeklyInsightCard: View {
             }
             
             if isGenerating {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     AppSkeleton(width: 200, height: 20)
                     AppSkeleton(width: 300, height: 16)
                     AppSkeleton(width: 260, height: 16)

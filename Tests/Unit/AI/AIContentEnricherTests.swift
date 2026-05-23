@@ -1,11 +1,13 @@
-// AIContentEnricherTests.swift
 //
-// 作者: Antigravity
-// 功能说明: [Tests] 单元测试与集成测试层：AI 富媒体内容增强处理器在 Actor 并发环境下的拆分与丰富化验证。
-// 版本: 1.0
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
+//  AIContentEnricherTests.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 AIContentEnricher 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

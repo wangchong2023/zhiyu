@@ -1,14 +1,13 @@
-// CommandPaletteView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：全局指令中枢 (Command Palette)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CommandPaletteView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 CommandPalette 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 全局指令中枢 (Command Palette)
@@ -29,8 +28,8 @@ struct CommandPaletteView: View {
                     .textFieldStyle(.plain)
                     .focused($isFocused)
                 Text(L10n.Common.Global.esc)
-                    .font(.system(size: 10, weight: .bold))
-                    .padding(4)
+                    .font(.caption2.weight(.bold))
+                    .padding(DesignSystem.tiny)
                     .background(Color.appBorder.opacity(0.3))
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             }
@@ -104,7 +103,7 @@ private struct CommandRow: View {
                 Spacer()
                 if let sc = shortcut {
                     Text(sc)
-                        .font(.system(size: 10, design: .monospaced))
+                        .font(.caption2)
                         .foregroundStyle(.appSecondary)
                 }
             }

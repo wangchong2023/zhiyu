@@ -1,12 +1,13 @@
-// 功能说明: [L2]
 //
 //  NotebookThemeBackgroundView.swift
 //  ZhiYu
 //
-//  Created by Gemini CLI on 2026-05-13.
-//  Copyright © 2026 ZhiYu. All rights reserved.
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 NotebookThemeBackground 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 笔记本主题背景视图

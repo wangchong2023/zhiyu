@@ -1,11 +1,13 @@
-// NotebookHubViewModel.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：笔记本工作台 (Notebook Hub) 的视图模型。
-// 负责处理笔记本列表的加载、创建、删除及排序逻辑。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  NotebookHubViewModel.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：管理 NotebookHub 视图的状态绑定与数据交互逻辑。
+//
 import Foundation
 import Observation
 import SwiftUI

@@ -1,13 +1,13 @@
-// ZhiYuE2ETests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 覆盖从创建→编辑→链接→健康检查→删除的完整页面生命周期
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  ZhiYuE2ETests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 ZhiYuE2E 开展自动化单元测试验证。
+//
 import XCTest
 import MultipeerConnectivity
 import GRDB
@@ -480,7 +480,7 @@ final class IngestPipelineTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        ServiceContainer.shared.reset()
+        setupFullMockEnvironment()
         ingestService = IngestService()
         ServiceContainer.shared.register(ingestService, for: IngestService.self)
     }

@@ -1,11 +1,13 @@
-// DummyActivityService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] [Platforms/Shared] 实时活动服务空实现。
-// 用于非 iOS 平台或 iOS 模拟器环境，确保 DI 容器一致性。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DummyActivityService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 DummyActivity 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// 实时活动服务的空实现 (No-op)

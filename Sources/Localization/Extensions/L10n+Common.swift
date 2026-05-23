@@ -1,11 +1,13 @@
 //
-// L10n+Common.swift
+//  L10n+Common.swift
+//  ZhiYu
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 共享标准层：智宇 (ZhiYu) 多语言 Common 垂直切片强类型扩展定义
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 Common 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {

@@ -1,12 +1,13 @@
-// AppStoreTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: ZhiYu 核心存储与状态管理测试
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 架构适配：补全异步调用 await (@P0)。
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  AppStoreTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 AppStore 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

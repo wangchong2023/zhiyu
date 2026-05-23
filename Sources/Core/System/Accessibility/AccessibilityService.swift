@@ -1,14 +1,13 @@
-// AccessibilityService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：Provides accessibility enhancements, VoiceOver support, and dynamic type scaling.
-// 版本: 1.1
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-07: 移除 SwiftUI 依赖，将视图扩展与缩放逻辑移至 AppAccessibilityView.swift
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AccessibilityService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 Accessibility 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 

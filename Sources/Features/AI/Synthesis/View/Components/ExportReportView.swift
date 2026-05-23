@@ -1,12 +1,13 @@
-// ExportReportView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：PDF 导出报告视图。采用精致的 A4 排版与品牌化呈现，确保护读性与专业感。
-// 核心原则：
-// 1. 去硬编码：所有布局数值必须引用 AppUI 模式。
-// 2. 视觉一致性：通过 Pattern-based 布局确保全工程报告输出体验统一。
-// 版本: 1.1 (工业级重构，消除魔鬼数字并适配新 UI 模式)
-
+//  ExportReportView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 ExportReport 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// PDF 报告预览与导出视图

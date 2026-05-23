@@ -1,15 +1,13 @@
-// JavaScriptPluginTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Tests] 单元测试层：本文件实现了针对 JavaScript 物理沙箱安全及网关通信（Task 9.3）的深度单元测试套件。
-// 核心测试点：
-// 1. testJavaScriptPluginWatchdogTimeout：验证死循环 JS 插件求值时，0.5s C 看门狗超时机制能否强制熔断并抛出 408 异常。
-// 2. testPluginSandboxGatewayFetchDLP：验证 DLP 网关是否安全拦截未授权域名，放行白名单域名。
-// 3. testPluginSandboxGatewayStorageDLP：验证持久化 Payload 大小（最大 5MB）及 Key 长度拦截。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  JavaScriptPluginTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 JavaScriptPlugin 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

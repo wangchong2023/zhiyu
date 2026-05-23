@@ -1,14 +1,13 @@
-// PromptWorkshopView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct PromptWorkshopView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PromptWorkshopView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PromptWorkshop 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct PromptWorkshopView: View {
@@ -38,7 +37,7 @@ struct PromptWorkshopView: View {
                 // ── 认知补全：功能简介 (可收缩) ──
                 Section {
                     #if os(watchOS)
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
                         Label(L10n.AI.Prompt.Workshop.Intro.title, systemImage: DesignSystem.Icons.promptWorkshop)
                             .font(.headline)
                             .foregroundStyle(.appAccent)
@@ -48,15 +47,15 @@ struct PromptWorkshopView: View {
                     }
                     #else
                     DisclosureGroup(isExpanded: $isIntroExpanded) {
-                        VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: DesignSystem.medium) {
                             Text(L10n.AI.Prompt.Workshop.Intro.desc)
                                 .font(.subheadline)
                                 .foregroundStyle(.appSecondary)
                                 .lineSpacing(4)
-                                .padding(.top, 4)
+                                .padding(.top, DesignSystem.tiny)
                         }
                     } label: {
-                        HStack(spacing: 12) {
+                        HStack(spacing: DesignSystem.medium) {
                             Image(systemName: DesignSystem.Icons.promptWorkshop)
                                 .font(.title3)
                                 .foregroundStyle(.appAccent)

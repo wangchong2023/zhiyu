@@ -1,17 +1,13 @@
-// SecurityManager.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：本文件实现了知识管理系统的安全治理与完整性校验服务（SecurityManager），旨在保障用户本地数据免受非授权篡改。
-// 核心职责：
-// 1. 数据指纹监控：利用 HMAC-SHA256 算法对数据库文件进行签名验证。
-// 2. 物理加密管理：集成 SQLCipher，提供数据库全盘加密所需的密钥生命周期管理。
-// 3. 内容级加密：提供基于 AES-GCM 的敏感文本加解密接口，支持应用级隐私防护。
-// 4. 钥匙串隔离：敏感安全令牌（盐值、DB 密钥）持久化于系统 Keychain。
-// 版本: 1.4
-// 修改记录:
-//   - 2026-05-16: 安全加固：集成 SQLCipher 密钥管理与 AES-GCM 内容加密 (@P0)。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  SecurityManager.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：属于 Security 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import CryptoKit
 import GRDB
@@ -120,7 +116,7 @@ final class SecurityManager: @unchecked Sendable {
         do {
             try await signatureRepository.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
         } catch {
-            print("❌ [SecurityManager] 保存文件 HMAC 指纹失败: \(error)")
+            print("❌ [SecurityManager] Failed to save file HMAC signature: \(error)")
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
             UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
         }

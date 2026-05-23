@@ -1,11 +1,13 @@
-// BusinessConstants.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：业务逻辑相关的常量与配置。
-// 包含 AI 策略、RAG 算法参数及图谱物理仿真常数。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  BusinessConstants.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 业务领域常量

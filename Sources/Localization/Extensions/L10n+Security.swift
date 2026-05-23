@@ -1,12 +1,13 @@
-// L10n+Security.swift
-// 智宇 (ZhiYu) 多语言 Security 强类型扩展定义
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 全局安全模块 L10n 国际化键映射（物理挂载于 System.xcstrings 字典中）
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  L10n+Security.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 Security 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {

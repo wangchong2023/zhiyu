@@ -1,13 +1,13 @@
-// AIGovernanceRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：[Infra] AI 治理存储实现：负责 Token 计费、调用日志及 RAG 质量评估记录。
-// 遵循 Domain 层定义的 GovernanceRepository 协议，采用 GRDB ORM 模式实现。
-// 版本: 1.9
-// 修改记录:
-//   - 2026-05-16: 接口对齐：全面适配 Domain 层的 GovernanceRepository 协议。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  AIGovernanceRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Repositories 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

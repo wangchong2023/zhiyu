@@ -1,10 +1,13 @@
-// WatchSpeechService.swift
 //
-// 作者: Wang Chong
-// 功能说明: SpeechServiceProtocol 的 watchOS 实现（当前作为存根，待集成 watchOS 录音能力）。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  WatchSpeechService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 WatchSpeech 模块的核心业务逻辑服务。
+//
 #if os(watchOS)
 import Foundation
 import Combine

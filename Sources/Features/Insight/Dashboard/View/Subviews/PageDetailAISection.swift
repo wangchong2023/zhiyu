@@ -1,12 +1,13 @@
-// PageDetailAISection.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识详情页 AI 实验室结果展示区。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 PageDetailView 剥离，实现组件化。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageDetailAISection.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Subviews 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 页面详情 AI 结果展示区

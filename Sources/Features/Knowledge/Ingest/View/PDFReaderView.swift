@@ -1,12 +1,13 @@
-// PDFReaderView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct PDFLibraryView
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 职责剥离：将 PDF 业务逻辑从 AppStore 迁移至 IngestStore。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PDFReaderView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PDFReader 界面的 UI 视图层组件。
+//
 import SwiftUI
 #if canImport(PDFKit)
 import PDFKit
@@ -295,15 +296,15 @@ struct PDFReaderView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.horizontal, DesignSystem.standardPadding)
+            .padding(.vertical, DesignSystem.small)
             .background(Color.appCard)
         }
     }
 
     // MARK: - Highlight Editor
     private var highlightEditor: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.Ingest.PDF.annotateSelected)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.appText)
@@ -313,7 +314,7 @@ struct PDFReaderView: View {
                 .foregroundStyle(.appSecondary)
                 .lineLimit(3)
 
-            HStack(spacing: 8) {
+            HStack(spacing: DesignSystem.small) {
                 ForEach(["yellow", "green", "blue", "pink", "purple"], id: \.self) { color in
                     Button(action: { highlightColor = color }) {
                         Circle()

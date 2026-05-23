@@ -1,11 +1,13 @@
-// LocalizationTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 验证本地化模块的完整性与 Key 的存在性
-// 版本: 1.0
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  LocalizationTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 Localization 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

@@ -1,10 +1,13 @@
-// PluginStatsSection.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 插件资源监控组件，展示 Watchdog 2.0 采集的性能排行
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PluginStatsSection.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 struct PluginStatsSection: View {
@@ -23,18 +26,18 @@ struct PluginStatsSection: View {
                     
                     ForEach(Array(sortedUsage.enumerated()), id: \.offset) { index, item in
                         let (id, usage) = item
-                        HStack(spacing: 12) {
+                        HStack(spacing: DesignSystem.medium) {
                             // 状态图标
                             statusIcon(for: usage.status)
                             
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(id)
-                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                                    .font(.footnote.weight(.bold))
                                     .foregroundStyle(.appText)
                                 
                                 let avgMs = (usage.totalExecutionTime / Double(max(1, usage.callCount))) * 1000
                                 Text(L10n.Plugin.Stats.callCountFormat(calls: usage.callCount, avgMs: avgMs))
-                                    .font(.system(size: 10))
+                                    .font(.caption2)
                                     .foregroundStyle(.appSecondary)
                             }
                             
@@ -42,7 +45,7 @@ struct PluginStatsSection: View {
                             
                             // 总耗时进度条 (模拟占用感)
                             Text(String(format: "%.2fs", usage.totalExecutionTime))
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(usage.status == .suspended ? .red : .appAccent)
                         }
                         .padding(.vertical, 10)
@@ -52,7 +55,7 @@ struct PluginStatsSection: View {
                         }
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, DesignSystem.medium)
             }
         }
     }
@@ -65,7 +68,7 @@ struct PluginStatsSection: View {
                 .frame(width: 28, height: 28)
             
             Image(systemName: statusImage(for: status))
-                .font(.system(size: 12, weight: .bold))
+                .font(.caption.weight(.bold))
                 .foregroundStyle(statusColor(for: status))
         }
     }

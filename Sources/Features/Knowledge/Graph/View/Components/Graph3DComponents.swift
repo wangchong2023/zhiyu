@@ -1,14 +1,13 @@
-// Graph3DComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：SceneKit 视图的可点击封装，支持节点点击检测
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Graph3DComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import SceneKit
 #if canImport(UIKit)
@@ -258,11 +257,11 @@ struct Graph3DControlsOverlay: View {
                     if showFilterPopup {
                         VStack(alignment: .leading, spacing: 0) {
                             Text(L10n.Graph.filter)
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.caption.weight(.bold))
                                 .foregroundStyle(.appSecondary)
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, DesignSystem.medium)
                                 .padding(.top, 10)
-                                .padding(.bottom, 6)
+                                .padding(.bottom, DesignSystem.tightPadding)
                             
                             Divider().background(Color.appBorder.opacity(0.3))
                             
@@ -271,16 +270,16 @@ struct Graph3DControlsOverlay: View {
                                     Button(action: { filterType = nil; showFilterPopup = false }) {
                                         HStack {
                                             Image(systemName: DesignSystem.Icons.gridOutline)
-                                                .font(.system(size: 12))
+                                                .font(.caption)
                                             Text(L10n.Graph.all)
-                                                .font(.system(size: 13))
+                                                .font(.footnote)
                                             Spacer()
                                             if filterType == nil {
                                                 Image(systemName: DesignSystem.Icons.check)
-                                                    .font(.system(size: 10, weight: .bold))
+                                                    .font(.caption2.weight(.bold))
                                             }
                                         }
-                                        .padding(.horizontal, 12)
+                                        .padding(.horizontal, DesignSystem.medium)
                                         .padding(.vertical, 10)
                                         .contentShape(Rectangle())
                                     }
@@ -291,16 +290,16 @@ struct Graph3DControlsOverlay: View {
                                         Button(action: { filterType = type; showFilterPopup = false }) {
                                             HStack {
                                                 Image(systemName: type.icon)
-                                                    .font(.system(size: 12))
+                                                    .font(.caption)
                                                 Text(type.displayName)
-                                                    .font(.system(size: 13))
+                                                    .font(.footnote)
                                                 Spacer()
                                                 if filterType == type {
                                                     Image(systemName: DesignSystem.Icons.check)
-                                                        .font(.system(size: 10, weight: .bold))
+                                                        .font(.caption2.weight(.bold))
                                                 }
                                             }
-                                            .padding(.horizontal, 12)
+                                            .padding(.horizontal, DesignSystem.medium)
                                             .padding(.vertical, 10)
                                             .contentShape(Rectangle())
                                         }
@@ -355,7 +354,7 @@ struct Graph3DNodeInfoBar: View {
                         .foregroundStyle(.white)
                 }
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(page.title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
@@ -370,8 +369,8 @@ struct Graph3DNodeInfoBar: View {
                 Text(L10n.Graph.ThreeD.tr("viewPage"))
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appAccent)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, DesignSystem.medium)
+                    .padding(.vertical, DesignSystem.tightPadding)
                     .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                     .clipShape(Capsule())
             }
@@ -381,6 +380,6 @@ struct Graph3DNodeInfoBar: View {
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
         .padding(.horizontal)
-        .padding(.bottom, 8)
+        .padding(.bottom, DesignSystem.small)
     }
 }

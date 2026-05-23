@@ -1,15 +1,13 @@
-// StandardSection.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的标准页面布局分段组件，用于构建具有统一样式的列表和分组。
-// 核心职责：
-// 1. 提供标准的 Section 布局，支持标题、脚注和内容区域。
-// 2. 封装玻璃拟态样式的容器修饰。
-// 3. 规范列表行 (List Row) 的内边距和分割线样式。
-// MARK: [PR-03] 统一布局模版与标准化容器组件，优化渲染性能
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  StandardSection.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Layouts 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 标准卡片容器组件

@@ -1,0 +1,151 @@
+//
+//  ZhiYuStoreTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 ZhiYuStore 开展自动化单元测试验证。
+//
+import XCTest
+import SwiftUI
+import GRDB
+@testable import ZhiYu
+
+// MARK: - 多轮对话会话缓存 (ChatHistoryStore) 单元测试
+@MainActor
+final class ChatHistoryStoreTests: XCTestCase {
+    
+    var store: ChatHistoryStore!
+    
+    override func setUp() async throws {
+        try await super.setUp()
+        setupFullMockEnvironment()
+        store = ChatHistoryStore()
+        store.messages.removeAll()
+        UserDefaults.standard.removeObject(forKey: "zhiyu_chat_history")
+    }
+    
+    override func tearDown() async throws {
+        UserDefaults.standard.removeObject(forKey: "zhiyu_chat_history")
+        store = nil
+        ServiceContainer.shared.reset()
+        try await super.tearDown()
+    }
+    
+    /// 验证向对话流单次追加消息的正确性
+    func testAppendMessage() {
+        let msg = ChatMessage(role: .user, content: "Hello")
+        store.append(msg)
+        XCTAssertEqual(store.messages.count, 1)
+        XCTAssertEqual(store.messages.first?.content, "Hello")
+    }
+    
+    /// 验证批量导入对话上下文的正确性
+    func testAppendBatch() {
+        let msgs = [
+            ChatMessage(role: .user, content: "Q1"),
+            ChatMessage(role: .assistant, content: "A1"),
+            ChatMessage(role: .user, content: "Q2")
+        ]
+        store.appendBatch(msgs)
+        XCTAssertEqual(store.messages.count, 3)
+    }
+    
+    /// 验证清空当前全部对话缓存的有效性
+    func testClearMessages() {
+        store.append(ChatMessage(role: .user, content: "temp"))
+        store.clear()
+        XCTAssertTrue(store.messages.isEmpty)
+    }
+    
+    /// 验证能倒序且精准拉取最近 N 条历史记录，确保送入大模型 Context 的 Token 裁剪正确
+    func testRecentReturnsLastN() {
+        for i in 1...10 {
+            store.append(ChatMessage(role: .user, content: "Msg \(i)"))
+        }
+        let recent = store.recent(3)
+        XCTAssertEqual(recent.count, 3)
+        XCTAssertEqual(recent.first?.content, "Msg 8") // 获取 8, 9, 10
+    }
+    
+    /// 验证聊天历史能在磁盘中（UserDefaults 编解码）完成强持久化与恢复的闭环
+    func testPersistAndLoadRoundTrip() throws {
+        let original = ChatMessage(role: .assistant, content: "Saved message", relatedPageIDs: [])
+        store.append(original)
+        
+        // 从沙盒偏好设置中提取，还原比对
+        guard let data = UserDefaults.standard.data(forKey: "zhiyu_chat_history"),
+              let decoded = try? JSONDecoder().decode([ChatMessage].self, from: data) else {
+            XCTFail("无法正确加载被持久化的消息"); return
+        }
+        XCTAssertFalse(decoded.isEmpty)
+        XCTAssertEqual(decoded.first?.content, "Saved message")
+    }
+}
+
+// MARK: - 大模型配置与敏感密钥管理 (LLMConfigStore) 单元测试
+@MainActor
+final class LLMConfigStoreTests: XCTestCase {
+    
+    var configStore: LLMConfigStore!
+    
+    override func setUp() async throws {
+        try await super.setUp()
+        setupFullMockEnvironment()
+        UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
+        try? KeychainService.shared.delete(key: "llm_api_key")
+        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        configStore = LLMConfigStore()
+    }
+    
+    override func tearDown() async throws {
+        UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
+        try? KeychainService.shared.delete(key: "llm_api_key")
+        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        configStore = nil
+        ServiceContainer.shared.reset()
+        try await super.tearDown()
+    }
+    
+    /// 验证 LLM 配置在初次运行下的缺省兜底值设置
+    func testDefaultValues() {
+        XCTAssertEqual(configStore.provider, .deepSeek)
+        XCTAssertEqual(configStore.apiKey, "")
+        XCTAssertEqual(configStore.isEnabled, false)
+        XCTAssertFalse(configStore.baseURL.isEmpty)
+        XCTAssertFalse(configStore.model.isEmpty)
+    }
+    
+    /// 验证修改的参数配置及 API 敏感 Token 能安全落盘并在新生命周期里重新载入
+    /// 注意：API Key 的持久化依赖 SecureEnclaveCryptoService 进行硬件级加密，
+    ///       Secure Enclave 在 iOS 模拟器上不可用，此测试仅在真机上验证。
+    func testSaveAndRestoreConfig() throws {
+        // Secure Enclave 在模拟器上不可用（无 T1/T2/Secure Enclave 芯片），跳过此测试
+        #if targetEnvironment(simulator)
+        throw XCTSkip("SecureEnclaveCryptoService 在 iOS 模拟器上不可用，跳过 API Key 持久化测试（需在真机上运行）。")
+        #else
+        configStore.apiKey = "test-key-12345"
+        configStore.provider = .deepSeek
+        configStore.model = "deepseek-chat"
+        configStore.isEnabled = true
+
+        // 初始化一个新的 Store 来测试持久性
+        let restored = LLMConfigStore()
+        XCTAssertEqual(restored.apiKey, "test-key-12345")
+        XCTAssertEqual(restored.provider, .deepSeek)
+        XCTAssertEqual(restored.model, "deepseek-chat")
+        XCTAssertTrue(restored.isEnabled)
+        #endif
+    }
+
+    
+    /// 验证所有 AI 服务提供商的模型图标与文案配置无误
+    func testAllProviderDefaults() {
+        for provider in LLMProvider.allCases {
+            XCTAssertFalse(provider.displayName.isEmpty)
+            XCTAssertFalse(provider.icon.isEmpty)
+        }
+    }
+}

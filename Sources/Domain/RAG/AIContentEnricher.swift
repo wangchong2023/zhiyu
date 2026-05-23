@@ -1,3 +1,13 @@
+//
+//  AIContentEnricher.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 RAG 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// AI 内容增强处理器

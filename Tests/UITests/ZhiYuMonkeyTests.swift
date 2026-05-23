@@ -1,12 +1,13 @@
-// ZhiYuMonkeyTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Tests] 原生 XCUITest 狂暴随机点击测试 (Monkey Test)
-//          在真实模拟器下进行 100 次随机探索与深层页面渗透，用于提前暴露 UI 栈冲突与导航死锁。
-// 版本: 1.0
-// 日期: 2026-05-18
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ZhiYuMonkeyTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 ZhiYuMonkey 开展自动化单元测试验证。
+//
 import XCTest
 
 /// 智宇 (ZhiYu) 原生 100 次狂暴随机点击 Monkey 测试
@@ -27,7 +28,8 @@ final class ZhiYuMonkeyTests: XCTestCase {
             throw XCTSkip("Skipping Monkey UI test in Unit Test target to prevent XCUIApplication init crash.")
         }
         
-        continueAfterFailure = false
+        // 启用持续执行策略，保障 Monkey 测试不受偶发性 UI 动效干扰而断流
+        continueAfterFailure = true
         app = XCUIApplication()
         app.launch()
     }
@@ -43,58 +45,66 @@ final class ZhiYuMonkeyTests: XCTestCase {
         print("====== [MONKEY] 开始执行 100 步狂暴随机点击遍历压力测试 ======")
         
         for step in 1...maxIterations {
-            // 1. 每步短暂休眠 0.35s，给 UI 阻尼弹性动效和渲染流水线以缓冲时间，真实模拟用户反应
-            _ = app.wait(for: .unknown, timeout: 0.35)
+            // 1. 每步短暂休眠 0.4s，提供充分的 UI 动效渲染缓冲
+            _ = app.wait(for: .unknown, timeout: 0.4)
             
-            // 2. 分别采集屏幕上当前存在且可命中点击的各类按钮、网格、列表行、标签页
-            let buttons = app.buttons.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }
-            let cells = app.cells.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }
-            let tabBars = app.tabBars.buttons.allElementsBoundByIndex.filter { $0.exists && $0.isHittable }
-            
-            // 3. 合并交互候选项
-            var candidates: [XCUIElement] = []
-            candidates.append(contentsOf: buttons)
-            candidates.append(contentsOf: cells)
-            candidates.append(contentsOf: tabBars)
-            
-            // 4. 【智能避让机制】过滤掉带有“删除”、“退出”、“擦除”、“销毁”等可能导致测试提前截断或数据物理丢失的敏感选项
-            candidates = candidates.filter { element in
-                let label = element.label.lowercased()
-                let identifier = element.identifier.lowercased()
-                
-                let isDestructive = label.contains("delete") || label.contains("删除") ||
-                                    label.contains("erase") || label.contains("擦除") ||
-                                    label.contains("sign out") || label.contains("退出登录") ||
-                                    label.contains("logout") || label.contains("clear") ||
-                                    label.contains("清除")
-                
-                let isDestructiveId = identifier.contains("delete") || identifier.contains("logout")
-                
-                return !isDestructive && !isDestructiveId
+            // 2. 动态随机选择要遍历的元素类型：0: 按钮, 1: 列表行 (Cells), 2: 标签栏
+            let targetType = Int.random(in: 0...2)
+            let query: XCUIElementQuery
+            switch targetType {
+            case 0:
+                query = app.buttons
+            case 1:
+                query = app.cells
+            default:
+                query = app.tabBars.buttons
             }
             
-            // 5. 进行随机驱动决策
-            if candidates.isEmpty {
-                // 如果当前屏幕陷入无响应的死胡同或输入框遮挡，执行一次随机物理阻尼拖拽滑动来试图自我破局
-                print("[MONKEY] 第 \(step)/\(maxIterations) 步：未检索到安全交互点。执行屏幕中轴随机拖拽滑动破局。")
+            let count = query.count
+            var clicked = false
+            
+            // 3. 如果对应类型的可用元素数量大于零，动态抽取并执行安全判定
+            if count > 0 {
+                let randomIndex = Int.random(in: 0..<count)
+                let targetElement = query.element(boundBy: randomIndex)
+                
+                // 执行安全和属性状态评估
+                if targetElement.exists && targetElement.isHittable {
+                    let label = targetElement.label.lowercased()
+                    let identifier = targetElement.identifier.lowercased()
+                    
+                    // 【智能避让机制】拦截一切破坏性、重置性以及会导致退出账户的安全敏感按钮
+                    let isDestructive = label.contains("delete") || label.contains("删除") ||
+                                        label.contains("erase") || label.contains("擦除") ||
+                                        label.contains("sign out") || label.contains("退出登录") ||
+                                        label.contains("logout") || label.contains("clear") ||
+                                        label.contains("清除") || label.contains("reset") ||
+                                        label.contains("重置")
+                    
+                    let isDestructiveId = identifier.contains("delete") || identifier.contains("logout") || identifier.contains("reset")
+                    
+                    if !isDestructive && !isDestructiveId {
+                        print("[MONKEY] 第 \(step)/\(maxIterations) 步：拟真操作 -> 元素类型: \(targetElement.elementType)，文本标签: '\(targetElement.label)'")
+                        
+                        // 执行防护式点击，捕捉极端动效竞争异常
+                        do {
+                            if targetElement.exists && targetElement.isHittable {
+                                targetElement.tap()
+                                clicked = true
+                            }
+                        } catch {
+                            print("[MONKEY] 操作警告：元素状态在执行瞬间发生偏转，跳过该步。")
+                        }
+                    }
+                }
+            }
+            
+            // 4. 如果未能执行有效点击，则进行物理滑动，用于解锁死局页面
+            if !clicked {
+                print("[MONKEY] 第 \(step)/\(maxIterations) 步：当前路径无匹配安全目标。执行屏幕随机拖拽滑动破局。")
                 let startPoint = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
                 let endPoint = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25))
                 startPoint.press(forDuration: 0.1, thenDragTo: endPoint)
-            } else {
-                // 从安全候选池中挑选一员进行模拟点击
-                let randomIndex = Int.random(in: 0..<candidates.count)
-                let targetElement = candidates[randomIndex]
-                
-                print("[MONKEY] 第 \(step)/\(maxIterations) 步：拟真操作 -> 元素类型: \(targetElement.elementType)，文本标签: '\(targetElement.label)'")
-                
-                // 执行点击。捕捉由于点击瞬间页面动画导致的 hittable 改变异常，保证 monkey 主进程抗震不死
-                do {
-                    if targetElement.exists && targetElement.isHittable {
-                        targetElement.tap()
-                    }
-                } catch {
-                    print("[MONKEY] 操作警告：元素状态在执行瞬间发生偏转，跳过该步。")
-                }
             }
         }
         

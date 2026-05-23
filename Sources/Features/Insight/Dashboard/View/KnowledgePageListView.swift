@@ -1,13 +1,13 @@
-// KnowledgePageListView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识库索引视图，支持按类型过滤、全量列表展示及核心统计。
-// 核心原则：
-// 1. 模式化布局：遵循 DesignSystem.List, DesignSystem.Sidebar 及 DesignSystem.Chip 规范。
-// 2. 治理标准化：使用 DesignSystem.Icons 统一图标，Color.app* 统一配色。
-// 修改记录:
-//   - 2026-05-07: 工业级 UI 治理重构，消除魔鬼数字与硬编码图标。
-
+//  KnowledgePageListView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 KnowledgePageList 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - Index View (entry point with NavigationStack)
@@ -23,8 +23,14 @@ struct KnowledgePageListView: View {
 @MainActor
 struct KnowledgePageListContent: View {
     @Environment(AppStore.self) var store
+    @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     var filterType: PageType? = nil
+    
+    /// 全局注入的平台设备环境
+    private var appEnv: any AppEnvironmentProtocol {
+        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
+    }
     
     @State private var showDeleteConfirmation = false
     @State private var pageToDelete: KnowledgePage?
@@ -115,17 +121,27 @@ struct KnowledgePageListContent: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    Router.shared.pop()
-                }) {
-                    Image(systemName: DesignSystem.Icons.back)
-                        .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
-                        .foregroundStyle(.appText)
-                        .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.Action.buttonHeight)
+            #if !os(watchOS)
+            ToolbarItem(placement: .topBarTrailing) {
+                if appEnv.screenClass != .compact {
+                    UserProfileMenu()
                 }
-                .buttonStyle(.plain)
+            }
+            #endif
+            
+            ToolbarItem(placement: .topBarLeading) {
+                if appEnv.screenClass == .compact || router.path.count > 0 {
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.selection)
+                        Router.shared.pop()
+                    }) {
+                        Image(systemName: DesignSystem.Icons.back)
+                            .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
+                            .foregroundStyle(.appText)
+                            .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.Action.buttonHeight)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
         .onChange(of: searchText) { _, newValue in
@@ -173,14 +189,14 @@ struct KnowledgePageListContent: View {
                     ForEach(0..<4) { _ in
                         HStack(spacing: DesignSystem.medium) {
                             AppSkeleton(width: DesignSystem.Sidebar.iconBoxSize, height: DesignSystem.Sidebar.iconBoxSize)
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                                 AppSkeleton(width: 140, height: DesignSystem.standardFontSize)
                                 AppSkeleton(width: 240, height: DesignSystem.microFontSize)
                             }
                             Spacer()
                         }
                     }
-                    .padding(.top, 20)
+                    .padding(.top, DesignSystem.wide)
                 }
             } else if hasSearchResults {
                 if filterType == nil || filterType == .entity {
@@ -251,7 +267,7 @@ struct KnowledgePageListContent: View {
         let entities = filteredPages(for: .entity)
         if !entities.isEmpty {
             Section {
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     ForEach(entities) { page in
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
@@ -276,7 +292,7 @@ struct KnowledgePageListContent: View {
         let concepts = filteredPages(for: .concept)
         if !concepts.isEmpty {
             Section {
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     ForEach(concepts) { page in
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
@@ -301,7 +317,7 @@ struct KnowledgePageListContent: View {
         let sources = filteredPages(for: .source)
         if !sources.isEmpty {
             Section {
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     ForEach(sources) { page in
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
@@ -326,7 +342,7 @@ struct KnowledgePageListContent: View {
         let comparisons = filteredPages(for: .comparison)
         if !comparisons.isEmpty {
             Section {
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     ForEach(comparisons) { page in
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
@@ -350,12 +366,12 @@ struct KnowledgePageListContent: View {
     private var searchBarSection: some View {
         HStack(spacing: DesignSystem.medium) {
             Image(systemName: DesignSystem.Icons.search)
-                .font(.system(size: 15, weight: .bold))
+                .font(.subheadline.weight(.bold))
                 .foregroundStyle(.appAccent)
             
             TextField(L10n.SearchPlaceholder, text: $searchText)
                 .textFieldStyle(.plain)
-                .font(.system(size: 15))
+                .font(.subheadline)
                 .foregroundStyle(.appText)
                 .accessibilityIdentifier("searchPlaceholder")
                 .submitLabel(.search)
@@ -398,16 +414,16 @@ struct KnowledgeStatItem: View {
     var body: some View {
         VStack(spacing: DesignSystem.tiny) {
             Text(label)
-                .font(.system(size: 11, weight: .bold))
+                .font(.caption.weight(.bold))
                 .foregroundStyle(.appSecondary)
                 .textCase(.uppercase)
             
             Text(value)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.title3.weight(.bold))
                 .foregroundStyle(color)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
+        .padding(.vertical, DesignSystem.medium)
         .background(Color.appCard.opacity(0.8))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)

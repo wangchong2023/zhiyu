@@ -1,11 +1,13 @@
-// LLMIngestService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 智能摄入服务，处理原始内容的结构化提取、摘要生成及标签建议。
-// MARK: [SR-02] 智能编译 (Smart Ingest) 链路与知识提取
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMIngestService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 LLMIngest 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// LLM 智能摄入服务

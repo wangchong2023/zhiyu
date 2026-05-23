@@ -1,17 +1,13 @@
-// ThemeManager.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件实现了知识管理系统的全局主题治理与视觉偏好配置服务（ThemeManager），负责跨平台的视觉风格协调与动态样式注入。
-// 该服务作为 UI 表现层的基座，通过以下核心功能点确保系统的美学一致性与个性化体验：
-// 1. 智适应色彩方案：支持深色（Dark）、浅色（Light）及跟随系统的主题模式切换，并内置了从旧版 isDarkMode 标志位的全量迁移逻辑。
-// 2. 动态品牌色系统：管理应用的核心强调色（Accent Color），支持在运行时实时更新并广播至所有底层组件。
-// 3. 反应式状态分发：基于 @AppStorage 与 ObservableObject 实现了偏好项的持久化与 UI 自动重绘，解耦了业务视图与样式配置。
-// 4. 跨平台语义映射：提供颜色名称与系统 Color 对象的安全转换接口，确保在不同操作系统环境下均能获得最佳的视觉对比度。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，完善主题迁移逻辑与色彩管理说明
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ThemeManager.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Themes 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Theme Manager

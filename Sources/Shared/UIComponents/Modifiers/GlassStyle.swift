@@ -1,16 +1,13 @@
-// GlassStyle.swift
-// [Shared]
 //
-// 作者: Wang Chong
-// 功能说明: 本文件实现了智宇 (ZhiYu) 设计系统中的玻璃拟态 (Glassmorphism) 视觉样式。
-// 核心职责：
-// 1. 提供通用的玻璃质感背景修饰符。
-// 2. 封装卡片 (Card) 和容器 (Container) 的阴影、描边及背景样式。
-// 3. 实现仪表盘专用的渐变指标卡片效果。
-// MARK: [PR-03] 基于 ultraThinMaterial 的玻璃拟态视觉重构，优化 GPU 渲染表现
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  GlassStyle.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Modifiers 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 统一的玻璃卡片视图修饰符

@@ -1,12 +1,13 @@
-// ZipUtility.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：提供轻量级的 ZIP 压缩包解析工具，专门用于解析 DOCX 和 XLSX 等基于 OpenXML 标准的文档格式。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-07: 从 IngestService 迁移并封装为独立的工具类。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ZipUtility.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Utils 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Compression
 

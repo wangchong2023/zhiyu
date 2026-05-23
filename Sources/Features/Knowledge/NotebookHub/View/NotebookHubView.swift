@@ -1,13 +1,13 @@
-// NotebookHubView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：笔记本工作台 (Notebook Hub) 的主视图。
-// 采用 2 列卡片式布局展现所有笔记本，提供沉浸式的笔记本管理体验。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 视图拆分：将 NotebookCard, NotebookListRow, NotebookFormSheet 拆分至独立组件。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  NotebookHubView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 NotebookHub 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 @MainActor
@@ -108,12 +108,12 @@ public struct NotebookHubView: View {
     private func searchBar(bindableViewModel: Bindable<NotebookHubViewModel>) -> some View {
         HStack {
             Image(systemName: DesignSystem.Icons.search)
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appAccent)
             
             TextField(L10n.Search.base, text: bindableViewModel.searchText)
                 .textFieldStyle(.plain)
-                .font(.system(size: 15))
+                .font(.subheadline)
             
             if !bindableViewModel.searchText.wrappedValue.isEmpty {
                 Button { bindableViewModel.searchText.wrappedValue = "" } label: {
@@ -173,7 +173,7 @@ public struct NotebookHubView: View {
             showLintSheet = true
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.weight(.bold))
                 .foregroundStyle(.appAccent)
         }
         .buttonStyle(.plain)

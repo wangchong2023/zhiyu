@@ -1,10 +1,13 @@
-// WatchOCRService.swift
 //
-// 作者: Wang Chong
-// 功能说明: OCRServiceProtocol 的 watchOS 实现 (存根)。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  WatchOCRService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 WatchOCR 模块的核心业务逻辑服务。
+//
 #if os(watchOS)
 import Foundation
 

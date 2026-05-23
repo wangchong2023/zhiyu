@@ -1,16 +1,13 @@
-// LLMClient.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 网络通信客户端，负责与兼容 OpenAI 协议的 API 进行 HTTPS 通信。
-// 核心职责：
-// 1. 提供非流式请求 (Standard JSON) 与流式请求 (SSE) 的底层实现。
-// 2. 封装 API 鉴权、超时处理及基础错误拦截。
-// 3. 实现 SSE 协议解析 (Server-Sent Events)。
-// MARK: [SR-01] 所有 API 请求必须经过 HTTPS 加密，严禁泄露未授权数据
-// MARK: [SR-02] 对接标准化 LLM 接口，支持多服务商切换
-// 版本: 1.3
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMClient.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 LLM 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 // MARK: - LLM 客户端协议

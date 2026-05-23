@@ -1,13 +1,13 @@
-// iCloudSyncComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：iCloud 同步状态行：图标 + 状态文字 + 上次同步时间
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iCloudSyncComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 #if ICLOUD_ENABLED
 import SwiftUI
 
@@ -42,7 +42,7 @@ struct SyncStatusRow: View {
                 .foregroundStyle(statusColor)
                 .font(.title3)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(syncService.syncStatus.label)
                     .font(.subheadline)
                     .foregroundStyle(.appText)
@@ -60,7 +60,7 @@ struct SyncStatusRow: View {
                 ProgressView()
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
     }
 }
 
@@ -125,7 +125,7 @@ struct SyncSettingsSection: View {
                     onAutoSyncChange(newValue)
                 }
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: DesignSystem.small) {
                 Text(L10n.ICloud.conflictPolicy)
                     .font(.subheadline)
                     .foregroundStyle(.appText)

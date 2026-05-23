@@ -1,12 +1,13 @@
-// SynthesisStore+UI.swift
 //
-// 作者: Wang Chong
-// 功能说明: SynthesisStore.SynthesisType 的 UI 表现层扩展。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-13: 初始创建，剥离 Color 依赖。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SynthesisStore+UI.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Styles 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 extension SynthesisStore.SynthesisType {

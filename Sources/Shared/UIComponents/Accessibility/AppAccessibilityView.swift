@@ -1,10 +1,13 @@
-// AppAccessibilityView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了无障碍增强视图扩展、环境键及动画修饰符，用于提升系统的包容性与交互体验。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppAccessibilityView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 AppAccessibility 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - View Extension for Accessibility

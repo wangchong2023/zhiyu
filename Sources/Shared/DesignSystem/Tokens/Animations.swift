@@ -1,12 +1,13 @@
 //
 //  Animations.swift
 //  ZhiYu
-//  [Shared]
 //
-//  Created by Wang Chong on 2026-05-18.
-//  Copyright © 2026 Wang Chong. All rights reserved.
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Tokens 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 智宇设计系统原子动效令牌 (Animation Tokens)

@@ -1,13 +1,13 @@
-// StoreCapabilities.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：定义存储层的细粒度能力协议，用于在不暴露具体存储实现的情况下提供高级功能（如向量化、搜索）。
-// 版本: 1.3
-// 修改记录:
-//   - 2026-05-16: 架构对齐：聚合存储能力，定义 AnyPageStoreCapabilities。
-//   - 2026-05-16: 接口对齐：补全协议，确保 AppStore 通过协议调用底层所有事务。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  StoreCapabilities.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

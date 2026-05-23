@@ -1,16 +1,13 @@
-// SplashComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了应用启动闪屏页（SplashView）所需的视觉原子组件，旨在为用户提供平滑且具备品牌感的第一交互体验。
-// 该组件包包含了以下核心视觉元素与动画逻辑：
-// 1. 品牌 Logo 渲染器：支持动态缩放与渐变效果的图标展示，集成了基于 AppUI 规范的标准圆角与阴影特效。
-// 2. 启动状态指示器：实现了优雅的骨架屏（Skeleton）占位与进度提示，确保在系统初始化期间提供良好的视觉占位反馈。
-// 3. 多端布局适配：内置了针对 iOS 与 macOS 不同屏幕尺寸的排版自适应策略，确保品牌形象在多平台显示的一致性。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，修复 AppUI 成员引用错误
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SplashComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Overlays 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Splash Background View

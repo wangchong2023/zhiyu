@@ -1,16 +1,13 @@
-// ZhiYuApp.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件是“知识灵动 (Knowledge Management)”应用程序的顶层入口点。
-// 它负责协调整个应用的生命周期，并执行以下核心任务：
-// 1. 基础设施注入：初始化 Logger, SQLiteStore, SecurityManager 等底层服务。
-// 2. 依赖注入管理：利用 ServiceContainer 实现跨模块解耦。
-// 3. UI 根容器：渲染 ContentView 并管理 SplashView 闪屏页面的切换逻辑。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 架构补全：补全环境对象注入并实现 Toast 全局覆盖。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ZhiYuApp.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 App 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 struct ZhiYuApp: App {

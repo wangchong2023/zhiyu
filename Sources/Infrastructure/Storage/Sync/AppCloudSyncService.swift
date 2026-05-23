@@ -1,18 +1,13 @@
-// AppCloudSyncService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了基于 CloudKit 的云端同步服务，负责知识金库跨设备的数据一致性。
-// 核心职责：
-// 1. 差异化同步：基于 LWW (Last-Writer-Wins) 策略解决数据冲突。
-// 2. 数据安全：确保所有同步操作符合隐私白名单规范。
-// 3. 容错恢复：实现“混沌恢复”能力，保障数据在异常网络下的最终一致性。
-// MARK: [SR-01] 原始文档同步必须严格遵循授权 white-list 机制
-// MARK: [RR-02] 系统必须支持“混沌恢复”能力，确保数据不丢失
-// 版本: 1.3
-// 修改记录:
-//   - 2026-05-18: 物理重构 100% 三斜杠 Markdown 中文注释，全面杜绝 Javadoc tag 并补充 LWW 行内算法图解
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppCloudSyncService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 AppCloudSync 模块的核心业务逻辑服务。
+//
 #if ICLOUD_ENABLED
 import Foundation
 import CloudKit

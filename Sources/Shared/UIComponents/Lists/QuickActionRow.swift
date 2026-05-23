@@ -1,11 +1,13 @@
-// QuickActionRow.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了快速操作行组件，用于在仪表盘或工具箱中提供直观的功能入口。
-// MARK: [PR-03] 统一快速操作项规范，增强交互反馈与视觉层级
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  QuickActionRow.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Lists 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 快速操作行组件

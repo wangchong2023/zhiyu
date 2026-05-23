@@ -1,17 +1,13 @@
-// SynthesisProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了结构化内容合成处理器（SynthesisProcessor），专门负责对多媒体和图表内容进行标准化转换与语法修复。
-// 该处理器的核心流水线包括：
-// 1. Mermaid 语法加固：自动识别并转换 Mermaid 图表中的非法字符（如半角括号、冒号），防止渲染引擎解析崩溃。
-// 2. 标题层级感应：精准识别 Markdown 顶层标题，为合成后的文档提供动态标题生成依据。
-// 3. 容错式代码补全：针对非标准的代码块输出，能够自动补全 Mermaid 声明头（如 mindmap, graph），确保内容的视觉呈现稳定性。
-// 4. 文本深度净化：移除冗余的 AI 生成标记，提取纯净的功能性代码段。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 迁移至 Utils/Processors/Synthesis 并整合多媒体格式化逻辑
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SynthesisProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Synthesis 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 针对知识合成（思维导图、演示文稿、知识测验、深度报告、信息图）的通用处理工具

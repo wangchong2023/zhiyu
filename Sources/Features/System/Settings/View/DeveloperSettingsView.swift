@@ -1,15 +1,13 @@
-// DeveloperSettingsView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：开发者设置页面，提供演示数据注入、压力测试、状态重置及性能调试工具。
-// 核心原则：
-// 1. 分门别类：将开发者工具按功能（数据、系统、性能）进行逻辑分组。
-// 2. 安全性：该页面仅在 DEBUG 模式下可见，涉及破坏性操作时需二次确认。
-// 修改记录:
-//   - 2026-05-08: 从 SettingsView 与 SystemStatsView 整合开发者工具，创建分级菜单。
-//   - 2026-05-18: 架构对齐：引入 KnowledgeStore 处理页面刷新。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DeveloperSettingsView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 DeveloperSettings 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct DeveloperSettingsView: View {
@@ -269,7 +267,7 @@ struct DeveloperSettingsView: View {
     }
 
     private func metricCard(title: String, value: Double, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
                 ZStack {
                     Circle()
@@ -282,9 +280,9 @@ struct DeveloperSettingsView: View {
                 Spacer()
             }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(title)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption.weight(.medium))
                     .foregroundColor(.appSecondary)
                     .lineLimit(1)
                 

@@ -1,14 +1,13 @@
-// SearchView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct SearchView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SearchView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Search 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct SearchView: View {
@@ -91,17 +90,17 @@ struct SearchView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Search Header (Bar + Filters)
-            VStack(spacing: 12) {
+            VStack(spacing: DesignSystem.medium) {
                 // Unified Search Bar
             // 1. 现代风格搜索区域 (对齐图 3)
             HStack {
                 Image(systemName: DesignSystem.Icons.search)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.callout.weight(.bold))
                     .foregroundStyle(.appAccent)
                 
                 TextField(L10n.SearchPlaceholder, text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 16))
+                    .font(.callout)
                     .accessibilityIdentifier("searchPlaceholder")
                     .submitLabel(.search)
                     .onSubmit {
@@ -134,7 +133,7 @@ struct SearchView: View {
                 
                 // Filters
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: DesignSystem.small) {
                         FilterPill(title: L10n.Search.all, accessibilityIdentifier: "filter-all", isSelected: filterType == nil) {
                             HapticFeedback.shared.trigger(.selection)
                             filterType = nil
@@ -207,7 +206,7 @@ struct SearchView: View {
                     .padding(.horizontal)
                 }
             }
-            .padding(.top, 12)
+            .padding(.top, DesignSystem.medium)
             .background(Color.appBackground.opacity(0.4))
             .background(.ultraThinMaterial)
             
@@ -218,7 +217,7 @@ struct SearchView: View {
                         ForEach(0..<6) { _ in
                             HStack(spacing: DesignSystem.medium) {
                                 AppSkeleton(width: DesignSystem.Sidebar.iconBoxSize, height: DesignSystem.Sidebar.iconBoxSize) // 44
-                                VStack(alignment: .leading, spacing: 4) {
+                                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                                     AppSkeleton(width: 140, height: DesignSystem.standardFontSize)
                                     AppSkeleton(width: 240, height: DesignSystem.microFontSize)
                                 }
@@ -364,7 +363,7 @@ struct PagePreviewSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                     HStack {
                         AppIconChip(icon: page.pageType.icon, text: page.pageType.displayName, color: Color.fromModelColorName(page.pageType.colorName), isSelected: true)
                         Spacer()
@@ -449,7 +448,7 @@ struct SearchDiagnosticSheet: View {
         NavigationStack {
             List {
                 Section(L10n.Search.Diag.rewrite) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: DesignSystem.small) {
                         LabeledContent(L10n.Search.Diag.originalQuery, value: info.query)
                         LabeledContent(L10n.Search.Diag.rewrittenQuery, value: info.rewrittenQuery)
                             .foregroundStyle(.purple)
@@ -459,7 +458,7 @@ struct SearchDiagnosticSheet: View {
                 
                 Section(L10n.Search.Diag.rrfDetail) {
                     ForEach(info.rrfTopResults) { res in
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                             Text(res.title)
                                 .font(.headline)
                             
@@ -472,7 +471,7 @@ struct SearchDiagnosticSheet: View {
                                     .foregroundStyle(.appSecondary)
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, DesignSystem.tiny)
                     }
                 }
             }

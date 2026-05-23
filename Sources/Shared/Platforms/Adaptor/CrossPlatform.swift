@@ -1,11 +1,13 @@
-// AppPasteboard.swift
-// [Shared]
 //
-// 作者: Wang Chong
-// 功能说明: 跨平台剪贴板包装器 (Facade 模式：作为具体平台实现的统一入口)
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CrossPlatform.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Adaptor 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 跨平台剪贴板包装器
@@ -33,6 +35,9 @@ public typealias AppImage = UIImage
 #elseif os(macOS)
 import AppKit
 public typealias AppImage = NSImage
+#elseif os(watchOS)
+import WatchKit
+public struct AppImage: Sendable {}
 #else
 public struct AppImage: Sendable {}
 #endif

@@ -1,21 +1,13 @@
-// AppStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的核心状态中心（AppStore），作为应用的数据聚合层与协调中心。
-// 它通过“外观模式 (Facade)”整合了底层存储、AI 工作流、链接检查及协作服务，为 UI 层提供统一的数据接口。
-// 核心职责包括：
-// 1. 状态生命周期管理：通过 @Observable 驱动全局 UI 的响应式刷新，管理 store 的冷热启动同步。
-// 2. 跨领域协同：协调 LLM 摄入、向量检索、双向链接更新及本地化设置。
-// 3. 事务性业务逻辑：封装页面创建、重命名、删除等具备副作用的操作，集成撤销/重做机制。
-// 4. 多平台适配桥接：作为全平台共享的代码入口，屏蔽底层各组件的依赖细节。
-// 版本: 1.8
-// 修改记录:
-//   - 2026-05-16: 架构升级：重构为 actor 化存储后的异步对齐。
-//   - 2026-05-16: 职责剥离：将 PDF/OCR 业务迁移至 IngestStore，标签/统计下沉至独立 Store。
-//   - 2026-05-16: 初始化优化：移除 @Observable 对子 Store 的 lazy 干扰，采用手动初始化。
-//   - 2026-05-16: DIP 重构：将 pageStore 依赖改为 any AnyPageStoreCapabilities 协议。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  AppStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 Store 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import Combine
 import Observation
@@ -124,7 +116,7 @@ public final class AppStore {
     // MARK: - 初始化
     
     public init() {
-        print("🏛️ [AppStore] 正在初始化核心引擎...")
+        print("🏛️ [AppStore] Initializing core engine...")
         
         // 1. 初始化子 Store
         self.searchStore = SearchStore()
@@ -174,7 +166,7 @@ public final class AppStore {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                print("🔄 [AppStore] 监测到专属物理库热切换成功...")
+                print("🔄 [AppStore] Detected exclusive physical database hot swap success...")
                 Task { [weak self] in
                     await self?.aiInsightStore.updateStatistics()
                 }

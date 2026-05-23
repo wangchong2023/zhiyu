@@ -1,11 +1,13 @@
-// PageLink.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：[Shared] 知识链接模型：定义页面间的双向引用关系。
-// 版本: 1.0
-// 日期: 2026-05-15
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageLink.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

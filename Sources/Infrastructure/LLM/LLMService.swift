@@ -1,18 +1,13 @@
-// LLMService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了知识管理系统的核心 AI 调度服务 (LLMService)，作为 AI 能力的统一入口与编排器。
-// 核心职责：
-// 1. 配置管理：同步并持久化 LLM 提供商、API Key 及模型参数。
-// 2. 任务编排：将具体的 AI 任务分发至专项子服务（对齐、摄入、重构、检索）。
-// 3. 监控与评估：记录调用时长、Token 消耗并触发 RAG 评估。
-// MARK: [SR-02] 混合检索 (RAG) 链路调度与 AI 能力枢纽
-// MARK: [PR-02] RAG 链路耗时优化目标 < 1.5s
-// 版本: 1.5
-// 修改记录:
-//   - 2026-05-18: 完美翻新为 100% 结构化中文三斜杠注释，对齐 Swift 6 Facade 面板设计规范
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 LLM 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 
@@ -76,14 +71,6 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
         get { configManager.autoRefactor }
         set { configManager.autoRefactor = newValue; objectWillChange.send() }
     }
-
-    // MARK: - 运行时状态发布器
-    
-    /// 标记当前是否正在与大模型进行网络交互与推理计算。
-    @Published var isProcessing = false
-    
-    /// 缓存当前流式交互中吐出的累积回复字符串（用以驱动打字机特效渲染）。
-    @Published var streamingContent = ""
 
     /// 判断大模型所需的密钥、地址及开关是否已配置就绪。
     var isReady: Bool { configManager.isReady }
@@ -179,10 +166,6 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     /// - Throws: `LLMError.notConfigured` 或大模型处理异常。
     func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
         guard isEnabled, let chatService else { throw LLMError.notConfigured }
-        
-        isProcessing = true
-        defer { isProcessing = false }
- 
         // 0. 启动前对用户原始 Query 执行高风险注入消毒过滤
         let sanitizedQuery = PromptSanitizer.shared.sanitize(query)
 
@@ -232,10 +215,8 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
                 let sanitizedQuery = PromptSanitizer.shared.sanitize(query)
 
                 let taskID = TaskCenter.shared.addTask(type: .ai, name: "AI Chat Stream", target: sanitizedQuery)
-                isProcessing = true
                 
                 defer {
-                    isProcessing = false
                     TaskCenter.shared.completeTask(id: taskID)
                 }
  
@@ -252,10 +233,9 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
                     let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
  
                     var fullResponse = ""
-                    // 3. 消费打字机流片段，不断投递至流管道，同步刷新 UI 打字状态
+                    // 3. 消费打字机流片段，不断投递至流管道
                     for try await chunk in chatService.streamChat(systemPrompt: systemPrompt, query: sanitizedQuery, history: history) {
                         fullResponse += chunk
-                        self.streamingContent = fullResponse
                         continuation.yield(chunk)
                     }
  

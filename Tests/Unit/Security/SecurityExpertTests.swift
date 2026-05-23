@@ -1,16 +1,13 @@
-// SecurityExpertTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Tests] 单元测试层：本文件实现了针对 Prompt 注入防御、DLP 数据泄露清洗以及 Secure Enclave 硬件辅助加密的专项安全单元测试套件（Task 9.1 & 9.2）。
-// 核心测试点：
-// 1. testPromptSanitizerOverridePrevention：验证 System Override 正则拦截恶意劫持语素。
-// 2. testPromptSanitizerDLPScrubbing：验证 DLP 动态网络图像外链清洗功能，彻底阻断以 Markdown 图片为介质的侧信道数据泄漏。
-// 3. testPromptSanitizerXMLSandboxing：验证 XML 被动语境包裹防线。
-// 4. testSecureEnclaveCryptoServiceEncryptionDecryption：验证静默芯片协商对称加密及 Xcode 模拟器软件 fallback 降级机制。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  SecurityExpertTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 SecurityExpert 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

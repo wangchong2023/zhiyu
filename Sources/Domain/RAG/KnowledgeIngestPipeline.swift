@@ -1,13 +1,13 @@
-// KnowledgeIngestPipeline.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：本文件实现了知识摄入管道（KnowledgeIngestPipeline），作为 RAG (Retrieval-Augmented Generation) 系统的核心编排层。
-// 该管道通过统一的接口将内容增强、文本分块与向量索引三个独立模块串联起来，实现了“数据 -> 知识 -> 索引”的自动化流水线。
-// MARK: [SR-02] 混合检索 (RAG) 摄入管道编排与知识提取
-// MARK: [PR-02] 混合检索 (RAG) 链路耗时优化
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgeIngestPipeline.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 RAG 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 知识摄入管道 - RAG 流程的统一入口
@@ -44,7 +44,7 @@ actor KnowledgeIngestPipeline {
             if let llm = llm {
                 group.addTask {
                     let summaryPrompt = PromptRegistry.Ingest.summary(content: String(enrichedContent.prefix(2000)))
-                    if let summary = try? await llm.generate(prompt: summaryPrompt, systemPrompt: "你是一个专业的知识管理助手。") {
+                    if let summary = try? await llm.generate(prompt: summaryPrompt, systemPrompt: L10n.AI.Prompt.ingestManagementAssistant) {
                         return [PageChunk(
                             id: "sum_\(pageID.uuidString)",
                             pageID: pageID,
@@ -138,7 +138,7 @@ actor KnowledgeIngestPipeline {
         // 3. 反向提问 (Reverse Q&A)
         if let llm = llm {
             let qaPrompt = PromptRegistry.Ingest.reverseQA(content: pChunk.text)
-            if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: "你是一个专业的知识发现助手。") {
+            if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: L10n.AI.Prompt.ingestDiscoveryAssistant) {
                 let questions = qaResponse.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
                 for (qIndex, question) in questions.prefix(3).enumerated() {
                     let qaRecord = PageChunk(

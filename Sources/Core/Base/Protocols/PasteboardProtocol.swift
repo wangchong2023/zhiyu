@@ -1,10 +1,13 @@
-// PasteboardProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：剪贴板抽象协议，定义跨平台文本交换标准。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PasteboardProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 Pasteboard 模块的抽象契约接口。
+//
 import Foundation
 
 /// 剪贴板服务协议

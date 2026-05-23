@@ -1,9 +1,13 @@
-// 功能说明: [Shared]
 //
-// L10n+AI.swift
-// 智宇 (ZhiYu) 多语言 AI 垂直切片强类型扩展定义
+//  L10n+AI.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 AI 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {
@@ -177,6 +181,61 @@ extension L10n {
             public static var resetConfirm: String { AI.tr("prompt.resetConfirm") }
             public static var resetWarning: String { AI.tr("prompt.resetWarning") }
             public static var resetToDefault: String { AI.tr("prompt.resetToDefault") }
+
+            // MARK: - L10n 净化后的 AI 提示词
+            
+            /// 搜索变体生成提示词
+            public static let queryExpansion = "你是一个搜索专家。请根据原始问题生成 3 个不同的搜索查询变体，以提高 RAG 系统的检索覆盖率。变体应涵盖：1. 语义改写 2. 核心关键词 3. 假设性提问。请仅返回一个包含 3 个字符串的 JSON 数组。"
+            
+            /// 中文回复指令
+            public static let replyInChinese = "\n\n请使用中文回复。"
+            
+            /// 摘要生成提示词前缀
+            public static let summaryPrefix = "请为以下内容生成一段 200 字以内的专业摘要，直接输出摘要内容："
+            
+            /// 反向提问生成提示词前缀
+            public static let reverseQAPrefix = "针对以下文本片段，生成 3 个用户可能会提出的核心问题。要求：问题必须专业、简练，每行一个问题。直接输出问题："
+            
+            /// 发现潜在链接提示词前缀 1
+            public static let discoverLinksPrefix1 = "以下是一篇笔记内容和现有的知识库标题列表。请分析内容，识别其中可以链接到现有标题的关键词。仅返回一个 JSON 数组。\n\n标题列表："
+            
+            /// 发现潜在链接提示词前缀 2
+            public static let discoverLinksPrefix2 = "\n\n内容："
+
+            /// Rerank 引擎系统提示词
+            public static let rerankSystem = "你是一个精准的 Rerank 引擎。仅返回 JSON 数组。"
+            
+            /// 生成 Rerank 用户提示词
+            /// - Parameters:
+            ///   - query: 原始查询问题
+            ///   - context: 候选文本上下文
+            /// - Returns: 格式化后的提示词字符串
+            public static func rerankUserPrompt(query: String, context: String) -> String {
+                return """
+                查询: \(query)
+
+                候选文本块:
+                \(context)
+
+                请根据相关性对上述块进行排序。仅返回排序后的索引数组，例如 [2, 0, 1]。
+                """
+            }
+
+            /// 假设性回答 (HyDE) 系统提示词
+            public static let hydeSystem = "你是一个知识库助手，擅长生成精准的学术或技术性回答。"
+            
+            /// 生成假设性回答用户提示词
+            /// - Parameter query: 原始查询问题
+            /// - Returns: 格式化后的提示词字符串
+            public static func hydeUserPrompt(query: String) -> String {
+                return "请针对以下问题写一个简短但专业的假设性回答（不要包含前导词），这将用于向量检索优化：\n\n问题：\(query)"
+            }
+
+            /// 知识导入管理助手角色描述
+            public static let ingestManagementAssistant = "你是一个专业的知识管理助手。"
+            
+            /// 知识导入发现助手角色描述
+            public static let ingestDiscoveryAssistant = "你是一个专业的知识发现助手。"
 
             public enum QueryRewrite {
                 public static var instruction: String { AI.tr("prompt.queryRewrite.instruction") }

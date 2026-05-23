@@ -1,17 +1,13 @@
-// LintView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的“健康检查”与“系统治理”中心（LintView），是确保知识库结构完整性与质量的核心视图。
-// 系统通过以下维度对知识库进行全自动监控与优化建议：
-// 1. 结构化监控：自动检测断开的链接（Broken Links）、孤儿页面（Orphan Pages）及循环引用，维护知识图谱的逻辑拓扑。
-// 2. 健康评分系统：基于页面规模、链接密度及错误率计算实时健康分，通过 Dashboard 直观展示知识库的整体质量水平。
-// 3. AI 治理建议：集成 LLM 对知识内容进行深度扫描，识别可合并的重复概念、建议拆分的冗余文档，并自动发现潜在的关联节点。
-// 4. 自动化修复流程：提供一键修复按钮与快捷跳转功能，支持通过 AI 智能补全缺失元数据，显著降低知识维护的人力成本。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 修复返回按钮交互 Bug，完成全工程文档与魔鬼数字规范化升级
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LintView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Lint 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - 治理中心入口
@@ -88,7 +84,7 @@ struct LintViewContent: View {
                 HapticFeedback.shared.trigger(.selection)
                 if selectedTab == 0 { runLint() } else { runAIScan() }
             }) {
-                HStack(spacing: 6) { // 减小间距，使视觉更紧凑
+                HStack(spacing: DesignSystem.tightPadding) { // 减小间距，使视觉更紧凑
                     ZStack {
                         ProgressView()
                             .controlSize(.small)
@@ -103,7 +99,7 @@ struct LintViewContent: View {
                 }
                 .font(.footnote.bold())
                 .foregroundStyle(buttonGradient)
-                .padding(.horizontal, 8) // 补偿 iOS 胶囊背景缺少内边距的问题
+                .padding(.horizontal, DesignSystem.small) // 补偿 iOS 胶囊背景缺少内边距的问题
             }
             .buttonStyle(.plain)
             .disabled(isRunning || aiStore.isScanningAI)
@@ -113,7 +109,7 @@ struct LintViewContent: View {
     // MARK: - 健康检查板块 (重构为 Dashboard模式)
     private var healthCheckSection: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: DesignSystem.giant) {
                 // 1. Dashboard Header
                 healthDashboardHeader
                     .padding(.top)
@@ -123,7 +119,7 @@ struct LintViewContent: View {
                 
                 // 3. Issue List (如果存在问题)
                 if !aiStore.lintIssues.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
                         Text(L10n.Lint.detailIssues)
                             .font(.headline)
                             .padding(.horizontal, DesignSystem.huge)
@@ -146,21 +142,21 @@ struct LintViewContent: View {
                     }
                 }
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, DesignSystem.wide)
         }
     }
     
     private var healthDashboardHeader: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: DesignSystem.wide) {
             ZStack {
                 // 上次检查时间展示在左上角
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                     Text(L10n.Lint.lastCheckTitle)
                         .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                         .foregroundStyle(.appText)
                         .padding(.leading, DesignSystem.tiny)
 
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                         if let date = aiStore.lastLintDate {
                             Text(formatDate(date))
                                 .font(.system(size: DesignSystem.microFontSize, design: .monospaced))
@@ -172,7 +168,7 @@ struct LintViewContent: View {
                         }
                     }
                     .appContainer(padding: false) // 使用统一容器，padding 设置为 false 以便内部精确控制
-                    .padding(8)
+                    .padding(DesignSystem.small)
                 }
                 .padding(.leading, DesignSystem.huge)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -209,7 +205,7 @@ struct LintViewContent: View {
                 }
                 
                 // 评分标准展示在右下角
-                VStack(alignment: .trailing, spacing: 4) {
+                VStack(alignment: .trailing, spacing: DesignSystem.tiny) {
                     let ranges = [
                         (L10n.Lint.healthExcellent, "90-100"),
                         (L10n.Lint.healthGood, "70-89"),
@@ -264,7 +260,7 @@ struct LintViewContent: View {
     }
     
     private func metricCard(title: String, value: String, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
                 ZStack {
                     Circle()
@@ -277,7 +273,7 @@ struct LintViewContent: View {
                 Spacer()
             }
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(title)
                     .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
                     .foregroundColor(.appSecondary)
@@ -343,7 +339,7 @@ struct LintViewContent: View {
     }
 
     private var emptyHealthView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: DesignSystem.standardPadding) {
             Spacer()
             Image(systemName: DesignSystem.Icons.seal)
                 .font(.system(size: DesignSystem.Domain.Lint.emptyIconSize))
@@ -358,7 +354,7 @@ struct LintViewContent: View {
     }
 
     private var emptyAIView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: DesignSystem.standardPadding) {
             Spacer()
             Image(systemName: DesignSystem.Icons.sparkles)
                 .font(.system(size: DesignSystem.Domain.Lint.emptyIconSize))
@@ -384,13 +380,13 @@ struct LintViewContent: View {
                             .foregroundStyle(color)
                         Spacer()
                     }
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, DesignSystem.tiny)
                     
                     VStack(spacing: 0) {
                         ForEach(issues) { issue in
                             LintIssueRow(issue: issue)
                                 .padding(.horizontal)
-                                .padding(.vertical, 8)
+                                .padding(.vertical, DesignSystem.small)
                             
                             if issue.id != issues.last?.id {
                                 Divider().padding(.leading, 40)
@@ -399,7 +395,7 @@ struct LintViewContent: View {
                     }
                     .appContainer(padding: true)
                 }
-                .padding(.bottom, 8)
+                .padding(.bottom, DesignSystem.small)
             }
         }
     }
@@ -446,12 +442,12 @@ struct RefactorSuggestionRow: View {
     @Environment(AppStore.self) var store
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack {
                 Label(suggestion.type.uppercased(), systemImage: iconName)
                     .font(.caption2.bold())
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
+                    .padding(.horizontal, DesignSystem.tightPadding)
+                    .padding(.vertical, DesignSystem.atomic)
                     .background(color.opacity(0.2))
                     .foregroundStyle(color)
                     .clipShape(Capsule())
@@ -472,11 +468,11 @@ struct RefactorSuggestionRow: View {
             
             Text(L10n.Lint.aiFixSuggestion(suggestion.suggestion))
                 .font(.caption2)
-                .padding(6)
+                .padding(DesignSystem.tightPadding)
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
     }
     
     private var iconName: String {
@@ -504,10 +500,10 @@ struct PotentialLinkRow: View {
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(link.sourceTitle)
                     .font(.subheadline.bold())
-                HStack(spacing: 4) {
+                HStack(spacing: DesignSystem.tiny) {
                     Image(systemName: DesignSystem.Icons.forward)
                         .font(.caption2)
                     Text("[[\(link.targetTitle)]]")
@@ -522,7 +518,7 @@ struct PotentialLinkRow: View {
                 Task { await store.applyPotentialLink(link) }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
     }
 }
 
@@ -538,8 +534,8 @@ struct LintIssueRow: View {
     @State private var isAnalyzing = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
+            HStack(spacing: DesignSystem.small) {
                 Image(systemName: issue.type.icon)
                     .foregroundStyle(Color.fromModelColorName(issue.severity.colorName))
                     .frame(width: 16, height: 16)
@@ -551,7 +547,7 @@ struct LintIssueRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if !issue.suggestion.isEmpty {
-                HStack(spacing: 4) {
+                HStack(spacing: DesignSystem.tiny) {
                     Image(systemName: DesignSystem.Icons.concept)
                         .font(.caption2)
                         .foregroundStyle(.yellow)
@@ -559,12 +555,12 @@ struct LintIssueRow: View {
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
-                .padding(.leading, 24)
+                .padding(.leading, DesignSystem.giant)
             }
 
             if let pageID = issue.pageID,
                store.pages.contains(where: { $0.id == pageID }) {
-                HStack(spacing: 12) {
+                HStack(spacing: DesignSystem.medium) {
                     Button(action: { router.navigateToPage(id: pageID) }) {
                         Text(L10n.Lint.goToPage)
                             .font(.caption2)
@@ -573,7 +569,7 @@ struct LintIssueRow: View {
                     
                     if store.llmService.isEnabled {
                         Button(action: fetchAISuggestion) {
-                            HStack(spacing: 4) {
+                            HStack(spacing: DesignSystem.tiny) {
                                 if isAnalyzing {
                                     ProgressView().scaleEffect(0.6)
                                 } else {
@@ -588,24 +584,24 @@ struct LintIssueRow: View {
                         .disabled(isAnalyzing)
                     }
                 }
-                .padding(.leading, 24)
+                .padding(.leading, DesignSystem.giant)
             }
             
             if let suggestion = aiSuggestion {
                 Text(suggestion)
                     .font(.caption)
-                    .padding(8)
+                    .padding(DesignSystem.small)
                     .background(Color.purple.opacity(0.1))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                             .stroke(Color.purple.opacity(0.2), lineWidth: 1)
                     )
-                    .padding(.leading, 24)
+                    .padding(.leading, DesignSystem.giant)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignSystem.tiny)
     }
     
     private func fetchAISuggestion() {

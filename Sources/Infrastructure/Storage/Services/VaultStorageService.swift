@@ -1,12 +1,13 @@
-// VaultStorageService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：扫描指定文件夹下的所有 Markdown 文件
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 移除平台宏，改用 SecurityScopedStorageProtocol 注入。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VaultStorageService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 VaultStorage 模块的核心业务逻辑服务。
+//
 import Foundation
 
 @MainActor

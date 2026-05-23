@@ -1,12 +1,13 @@
-// IngestView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识摄入（Ingest）功能主视图，协调多渠道导入流程。
-// 版本: 1.3
-// 修改记录:
-//   - 2026-05-15: 引入 IngestCoordinator 实现业务逻辑与 UI 状态的彻底解耦。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IngestView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Ingest 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 import UniformTypeIdentifiers
 
@@ -121,9 +122,9 @@ struct IngestView: View {
         Button(action: { HapticFeedback.shared.trigger(.selection); router.navigateToTool(.taskCenter) }) {
             HStack {
                 Image(systemName: DesignSystem.Icons.history).font(.subheadline.bold()).foregroundStyle(.appAccent)
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                     let runningCount = TaskCenter.shared.tasks.filter({ $0.type == .ingest && isRunning(status: $0.status) }).count
-                    Text(L10n.Ingest.activeTasks(runningCount)).font(.system(size: 11, weight: .bold)).foregroundStyle(.appText)
+                    Text(L10n.Ingest.activeTasks(runningCount)).font(.caption.weight(.bold)).foregroundStyle(.appText)
                     Text(L10n.Ingest.recentActivity).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
                 }
                 Spacer()
@@ -164,8 +165,8 @@ struct IngestView: View {
                             HStack(spacing: DesignSystem.small) {
                                 ForEach(PageType.allCases, id: \.self) { type in
                                     Button(action: { HapticFeedback.shared.trigger(.selection); withAnimation(.spring(response: 0.3)) { coordinator.newType = type } }) {
-                                        HStack(spacing: 6) { Image(systemName: type.icon); Text(type.displayName) }
-                                        .font(.subheadline.weight(coordinator.newType == type ? .bold : .medium)).padding(.horizontal, 12).padding(.vertical, 8)
+                                        HStack(spacing: DesignSystem.tightPadding) { Image(systemName: type.icon); Text(type.displayName) }
+                                        .font(.subheadline.weight(coordinator.newType == type ? .bold : .medium)).padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)
                                         .background(coordinator.newType == type ? Color.fromModelColorName(type.colorName).opacity(0.2) : Color.appCard.opacity(0.8))
                                         .foregroundStyle(coordinator.newType == type ? Color.fromModelColorName(type.colorName) : .appSecondary)
                                         .clipShape(Capsule())

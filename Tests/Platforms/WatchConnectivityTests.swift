@@ -1,13 +1,13 @@
-// WatchConnectivityTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 验证 WatchConnectivity 同步可靠性
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  WatchConnectivityTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 WatchConnectivity 开展自动化单元测试验证。
+//
 import XCTest
 import WatchConnectivity
 @testable import ZhiYu
@@ -18,8 +18,9 @@ final class WatchConnectivityTests: XCTestCase {
     
     var service: iOSWatchSyncService!
     
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         service = iOSWatchSyncService()
     }
     

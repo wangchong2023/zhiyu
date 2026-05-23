@@ -1,11 +1,13 @@
-// AIProcessingAttributes.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：灵动岛实时活动 (Live Activity) 数据模型协议定义。
-//           本文件定义了 App 与 Widget 扩展之间共享的属性结构，用于在灵动岛上展示长时 AI 任务的进度。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIProcessingAttributes.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 Activity 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 #if os(iOS) && !targetEnvironment(macCatalyst)
 import ActivityKit

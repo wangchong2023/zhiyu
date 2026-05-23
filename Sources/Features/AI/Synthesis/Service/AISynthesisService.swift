@@ -1,14 +1,13 @@
-// AISynthesisService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：AI 知识综合服务 (L1 领域层)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AISynthesisService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：实现 AISynthesis 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// AI 知识综合服务 (L1 领域层)

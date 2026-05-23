@@ -1,12 +1,13 @@
-// OnDeviceLLMService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：端侧本地大模型推理服务，使用 Core ML 与 Apple 硬件芯片进行高性能端侧 AI 检索与处理。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-19: 精准物理归位，引入完整的简体中文 DocC 级注释与 Swift 6 并发安全保证。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  OnDeviceLLMService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 OnDeviceLLM 模块的核心业务逻辑服务。
+//
 @preconcurrency import Foundation
 @preconcurrency import CoreML
 import Combine
@@ -15,7 +16,7 @@ import Combine
 /// 智宇端侧本地大模型推理服务中枢
 /// 负责扫描并加载 Bundle 内置、Documents 目录下载的 `.mlmodelc` 格式大语言模型，并结合 Neural Engine (端侧神经网络引擎) 进行高速文本合成及评估。
 @MainActor
-public final class OnDeviceLLMService: ObservableObject {
+public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     /// 指示本地 Core ML 推理是否在当前硬件与 iOS 版本上可用（要求 iOS 17.0+）
     @Published public var isAvailable: Bool = false
     

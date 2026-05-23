@@ -1,11 +1,13 @@
-// AuthService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的身份认证服务 (AuthService)。
-// 负责管理用户的登录状态、注册流程以及游客模式的切换。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AuthService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：实现 Auth 模块的核心业务逻辑服务。
+//
 import Foundation
 import Observation
 

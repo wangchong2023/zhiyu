@@ -1,10 +1,13 @@
-// ReminderServiceProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：提醒事项服务抽象协议，用于解耦 EventKit 平台依赖。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ReminderServiceProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 ReminderService 模块的抽象契约接口。
+//
 import Foundation
 
 /// 提醒事项服务协议

@@ -1,14 +1,13 @@
-// BackupView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct BackupView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  BackupView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Backup 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - Backup & Recovery View
@@ -155,17 +154,17 @@ struct BackupEntryRow: View {
     let onDelete: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignSystem.medium) {
             Image(systemName: DesignSystem.Icons.archive)
                 .font(.title3)
                 .foregroundStyle(.appAccent)
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(entry.displayName)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
                 
-                HStack(spacing: 12) {
+                HStack(spacing: DesignSystem.medium) {
                     Label("\(entry.pageCount) " + L10n.Backup.pages, systemImage: "doc.richtext.fill")
                     Label("\(entry.totalWords) " + L10n.Backup.words, systemImage: "textformat")
                     Label(entry.fileSize(in: backupDirectory), systemImage: "externaldrive")

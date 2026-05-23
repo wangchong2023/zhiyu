@@ -1,12 +1,13 @@
-// LLMConfigManager.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 配置管理器，负责 API Key、模型选择及服务端点管理。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 LLMService 剥离配置逻辑，实现职责解耦。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  LLMConfigManager.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 LLM 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 import Combine

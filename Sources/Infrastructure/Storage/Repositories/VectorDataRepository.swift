@@ -1,13 +1,13 @@
-// VectorDataRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：[Infra] 向量存储实现：负责 RAG 分块与向量检索数据的持久化。
-// 遵循 Domain 层定义的 VectorRepository 协议，采用 GRDB ORM 模式实现。
-// 版本: 1.3
-// 修改记录:
-//   - 2026-05-16: 架构对齐：遵循迁移至 L1.5 领域层的 VectorRepository 协议。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VectorDataRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Repositories 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

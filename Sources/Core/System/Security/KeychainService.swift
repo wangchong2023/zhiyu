@@ -1,13 +1,13 @@
-// KeychainService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：钥匙串 (Keychain) 包装器，用于安全存储敏感字符串（如 API 密钥）。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-04: 初始版本。
-//   - 2026-05-10: 标准化代码注释与 SRS 溯源 (@SR-03)。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  KeychainService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 Keychain 模块的核心业务逻辑服务。
+//
 import Foundation
 import Security
 

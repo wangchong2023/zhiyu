@@ -1,13 +1,13 @@
-// CollaborationService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的多端实时协作服务 (CollaborationService)。
-// 该服务作为协作逻辑的编排器，通过注入的 CollaborationProviderProtocol 实现跨平台的 P2P 数据同步。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-13: 彻底重构，实现 MultipeerConnectivity 的物理隔离与协议化。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CollaborationService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：实现 Collaboration 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 

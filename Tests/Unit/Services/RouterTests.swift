@@ -1,12 +1,13 @@
-// RouterTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 验证全局路由管理器（Router）的逻辑，对应 SRS-6.4 状态管理
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-13: 适配 AppRouter -> Router 重构，补全 SRS ID。
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  RouterTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 Router 开展自动化单元测试验证。
+//
 import XCTest
 import SwiftUI
 @testable import ZhiYu
@@ -16,17 +17,19 @@ final class RouterTests: XCTestCase {
     
     var router: Router!
     
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         // Router 是单例，测试前清空历史
         router = Router.shared
         router.clearHistory()
     }
     
-    override func tearDown() {
+    @MainActor
+    override func tearDown() async throws {
         router.clearHistory()
         router = nil
-        super.tearDown()
+        try await super.tearDown()
     }
     
     // MARK: - History Tests

@@ -1,11 +1,13 @@
-// RAGOrchestratorTests.swift
 //
-// 作者: Antigravity
-// 功能说明: [Tests] 单元测试与集成测试层：RAG 业务大编排器的完整决策链路及流式管道验证。
-// 版本: 1.0
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
+//  RAGOrchestratorTests.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 RAGOrchestrator 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 
@@ -28,7 +30,8 @@ final class RAGOrchestratorTests: XCTestCase {
     func testRAGOrchestratorChatSuccess() async throws {
         let orchestrator = RAGOrchestrator()
         
-        // 1. 设置 MockLLMService 产生定制回答
+        // 1. 设置 MockLLMService.generateHandler 产生定制回答
+        // RAGOrchestrator.chat() 内部调用 llmService.generate()  
         let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as! MockLLMService
         mockLLM.generateHandler = { prompt, systemPrompt in
             XCTAssertTrue(systemPrompt.contains("量子力学"))
@@ -67,7 +70,8 @@ final class RAGOrchestratorTests: XCTestCase {
     func testRAGOrchestratorChatStreamSuccess() async throws {
         let orchestrator = RAGOrchestrator()
         
-        // 1. 设置 MockLLMService 产生流式 Chunk
+        // 1. 设置 MockLLMService.chatStreamHandler 产生流式 Chunk
+        // RAGOrchestrator.chatStream() 内部调用 llmService.chatStream()
         let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as! MockLLMService
         mockLLM.chatStreamHandler = { query, history, pages in
             return AsyncThrowingStream { continuation in
@@ -111,7 +115,8 @@ final class RAGOrchestratorTests: XCTestCase {
     func testRAGOrchestratorChatStreamFailure() async throws {
         let orchestrator = RAGOrchestrator()
         
-        // 1. 设置 MockLLMService 流式抛出异常
+        // 1. 设置 MockLLMService.chatStreamHandler 流式抛出异常
+        // RAGOrchestrator.chatStream() 内部调用 llmService.chatStream()
         let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as! MockLLMService
         struct MockError: Error, LocalizedError {
             var errorDescription: String? { "Mock LLM Timeout Error" }

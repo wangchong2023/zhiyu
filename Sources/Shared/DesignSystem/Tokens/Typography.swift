@@ -1,10 +1,13 @@
-// Typography.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了智宇 (ZhiYu) 设计系统的排版规范、字号及系统图标令牌。
-// 遵循工业级 UI 规范，支持全平台一致的阅读体验。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Typography.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Tokens 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 智宇排版令牌 (Typography Tokens)

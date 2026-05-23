@@ -2,10 +2,12 @@
 //  NotebookListRow.swift
 //  ZhiYu
 //
-//  Created by Wang Chong on 2026-05-18.
-//  Copyright © 2026 Wang Chong. All rights reserved.
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 笔记本列表单行行组件。
@@ -62,7 +64,7 @@ struct NotebookListRow: View {
                         .foregroundStyle(.appAccent)
                     
                     Text(L10n.Vault.pageCountSuffix)
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.caption2.weight(.medium))
                         .foregroundStyle(.appSecondary.opacity(0.6))
                 }
             }

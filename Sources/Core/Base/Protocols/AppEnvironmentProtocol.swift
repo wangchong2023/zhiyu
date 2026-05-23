@@ -1,12 +1,13 @@
-// AppEnvironmentProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：设备环境与能力集抽象协议，用于统一多平台 UI 适配逻辑。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-13: 初始创建，旨在消除 View 层散落的平台判断逻辑。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppEnvironmentProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 AppEnvironment 模块的抽象契约接口。
+//
 import Foundation
 
 /// 屏幕布局类别

@@ -1,13 +1,13 @@
-// CreatePageView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct CreatePageView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CreatePageView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 CreatePage 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct CreatePageView: View {
@@ -29,17 +29,17 @@ struct CreatePageView: View {
                     
                     // Type picker
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: DesignSystem.small) {
                             ForEach(PageType.allCases) { pageType in
                                 Button(action: { type = pageType }) {
-                                    HStack(spacing: 6) {
+                                    HStack(spacing: DesignSystem.tightPadding) {
                                         Image(systemName: pageType.icon)
                                             .font(.caption)
                                         Text(pageType.displayName)
                                             .font(.caption)
                                     }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, DesignSystem.medium)
+                                    .padding(.vertical, DesignSystem.small)
                                     .background(type == pageType ? Color.fromModelColorName(pageType.colorName).opacity(0.25) : Color.appCard)
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                                     .foregroundStyle(type == pageType ? Color.fromModelColorName(pageType.colorName) : .appSecondary)

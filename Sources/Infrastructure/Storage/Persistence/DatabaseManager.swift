@@ -1,17 +1,13 @@
-// DatabaseManager.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：[Infra] 持久化层核心：负责数据库连接、多租户 (Vault) 隔离策略及架构迁移。
-// 核心职责：
-// 1. 全局配置库与专属物理库生命周期托管。
-// 2. 运行时 WAL 级物理多库热切换 (Multi-Vault Switching)。
-// 3. 全表审计标准化与 Schema 架构版本渐进式迁移 (DatabaseMigrator)。
-// 版本: 1.7 (Industrial Refactoring)
-// 修改记录:
-//   - 2026-05-18: 补全 100% 结构化三斜杠 DocC 简体中文规范，强化多库热切换生命周期与 WAL 安全断开机制的架构说明。
-// 日期: 2026-05-18
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DatabaseManager.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Persistence 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 
@@ -93,7 +89,7 @@ final class DatabaseManager: Sendable {
         self.globalWriter = globalPool
         
         try globalMigrator.migrate(globalPool)
-        print("🌍 [DatabaseManager] 全局主配置库初始化成功: \(url.lastPathComponent)")
+        print("🌍 [DatabaseManager] Global main configuration database initialized successfully: \(url.lastPathComponent)")
     }
     
     /// 初始化激活默认专属数据库（vault.sqlite3）连接。
@@ -168,7 +164,7 @@ final class DatabaseManager: Sendable {
     ///   - url: 目标笔记本数据库在沙盒中的物理绝对路径 URL。
     /// - Throws: 断开挂载异常、新库 GRDB Pool 实例化异常或架构版本不兼容升级失败。
     func switchDatabase(to vaultID: UUID, at url: URL) throws {
-        print("🔄 [DatabaseManager] 开始执行物理多库热切换 => 目标: \(url.lastPathComponent)")
+        print("🔄 [DatabaseManager] Starting physical multi-database hot swap => Target: \(url.lastPathComponent)")
         
         // 1. 【安全核心步骤】：显式重置为 nil 以强制触发旧专属库 DatabasePool 资源 ARC 同步析构
         // 彻底释放 WAL 模式下对 .sqlite3-wal 及 .sqlite3-shm 物理文件的读写独占锁，防止后续多库切换或物理移动擦除时发生 SQLITE_BUSY 死锁。
@@ -190,7 +186,7 @@ final class DatabaseManager: Sendable {
         
         // 4. 对新专属库自动运行最新版本的 Schema 架构迁移（FTS5、Pages、SRS等表级热挂载）
         try migrator.migrate(dbPool)
-        print("✅ [DatabaseManager] 专属物理库已成功切换重挂载 => \(url.lastPathComponent)")
+        print("✅ [DatabaseManager] Exclusive physical database successfully switched and remounted => \(url.lastPathComponent)")
         
         // 5. 广播系统全局通知，引导 EmbeddingManager 和 AppStore 精准完成内存向量/数据实体驱逐与载入，重置搜索索引状态
         NotificationCenter.default.post(
@@ -478,6 +474,21 @@ final class DatabaseManager: Sendable {
         globalDBURL = nil
     }
 }
+
+// MARK: - VaultDatabaseSwitcher 协议遵循
+
+extension DatabaseManager: VaultDatabaseSwitcher {
+    /// 物理断开专属物理数据库连接以闭合通道锁并安全刷新 WAL。
+    ///
+    /// 此方法显式将 `dbWriter` 置为 nil。通过 Swift ARC 机制，这会触发底层已挂载的
+    /// `DatabasePool` 及其全部活跃的 SQLite 读写连接句柄的同步析构与销毁。
+    /// 这一步骤是强物理释放 WAL 文件锁、规避 `SQLITE_BUSY` 死锁风险的关键环节。
+    public func releaseDatabaseConnection() {
+        // 核心步骤：显式重置专属物理库写入池，利用 Swift ARC 触发析构以释放 WAL 文件锁
+        self.dbWriter = nil
+    }
+}
+
 
 // MARK: - 核心通知扩展
 

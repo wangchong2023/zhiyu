@@ -1,12 +1,13 @@
-// AIAnalyticsService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：AI 分析与指标记录服务，负责 Token 消耗、时延统计及 RAG 质量评估触发。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 LLMService 剥离指标逻辑，实现性能监控解耦。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  AIAnalyticsService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 AIAnalytics 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// AI 指标分析服务 (L1-Infra)

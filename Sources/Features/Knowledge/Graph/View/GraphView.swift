@@ -1,11 +1,13 @@
-// GraphView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的核心可视化引擎——知识图谱视图（GraphView）。
-// MARK: [PR-03] UI 帧率 (FPS) 稳恒 60 FPS (图谱操作/滚动)
-// 版本: 1.5
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  GraphView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Graph 界面的 UI 视图层组件。
+//
 import SwiftUI
 import Observation
 
@@ -95,6 +97,12 @@ struct GraphContainerView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .onAppear { layoutGraph() }
         .onChange(of: store.pages.count) { _, _ in layoutGraph() }
+        .onChange(of: viewModel.graphSize) { oldSize, newSize in
+            // 当屏幕旋转、分屏或初始加载时，基于最新的画布几何边界自动重新计算视口，保持节点全局正中
+            if oldSize != newSize {
+                fitToScreen()
+            }
+        }
         .sheet(isPresented: $viewModel.showInsights) { insightsPanel }
         .fullScreenCover(isPresented: $viewModel.show3D) {
             NavigationStack {

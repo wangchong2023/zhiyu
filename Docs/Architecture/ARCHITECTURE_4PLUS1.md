@@ -191,7 +191,7 @@ graph TD
     
     BookmarkStore -- Scoped URL 权限恢复 --> Obsidian
     Obsidian -->|外链挂载只读/读写映射| VA_DB
-
+```
 
 ---
 

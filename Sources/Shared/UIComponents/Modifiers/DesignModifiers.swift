@@ -1,15 +1,13 @@
-// DesignModifiers.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 共享标准层：本文件定义了系统全局通用的高品质 UI 微交互与视觉美化样式修饰符（DesignModifiers）。
-// 核心职责：
-// 1. 弹性物理悬停微动效 (ScaleOnHover)：提供高级阻尼感的弹簧物理缩放。
-// 2. 高保真弥散软阴影 (PremiumAmbientShadow)：多层极低透明度扩散阴影，模拟高级毛玻璃环境光深度。
-// 3. 霓虹呼吸渐变外框 (GlowingNeonBorder)：提供平滑呼吸高亮外边框，用于激活或焦点提示。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  DesignModifiers.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Modifiers 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - 1. 弹性物理悬停修饰器

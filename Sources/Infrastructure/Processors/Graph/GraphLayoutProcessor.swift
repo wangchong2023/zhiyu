@@ -1,17 +1,13 @@
-// GraphLayoutProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了知识图谱的力导向布局处理器（GraphLayoutProcessor），通过高度优化的物理仿真算法为复杂的知识关联网络提供自适应的空间排布方案。
-// 处理器核心采用了基于模拟退火（Simulated Annealing）的迭代收敛机制，其核心功能点如下：
-// 1. 多维度动力学模型：整合了基于 Barnes-Hut 优化的节点斥力、胡克定律驱动的弹簧引力以及面向知识领域的社区向心力（Cluster Attraction）。
-// 2. 空间索引优化：引入了高效的网格剖分（Grid-based Partitioning）算法，将节点斥力计算的复杂度从 O(N^2) 有效降低至趋于线性，支撑大规模图谱。
-// 3. 动态画布自适应：能够根据节点规模自动计算虚拟画布的扩展系数，并结合 AppUI 规范实施精确的物理边界约束与碰撞检测。
-// 4. 仿真参数调优：支持对斥力系数、阻尼因子系数及迭代轮次进行细粒度配置，确保图谱在不同设备与缩放等级下的交互流畅度与美学分布。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，收敛物理仿真常数，彻底消除内部魔鬼数字
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  GraphLayoutProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Graph 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import CoreGraphics
 

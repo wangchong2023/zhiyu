@@ -1,11 +1,14 @@
-// MacFileArchiver.swift
 //
-// 作者: Wang Chong
-// 功能说明: FileArchiverProtocol 的 macOS 实现，调用系统 /usr/bin/zip。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
-#if os(macOS)
+//  MacFileArchiver.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 macOS 模块，提供相关的结构体或工具支撑。
+//
+#if os(macOS) && !targetEnvironment(macCatalyst)
 import Foundation
 
 /// macOS 原生归档实现

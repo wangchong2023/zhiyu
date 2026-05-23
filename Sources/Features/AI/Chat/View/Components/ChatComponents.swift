@@ -1,17 +1,13 @@
-// ChatComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件定义了 AI 助手界面的核心 UI 组件库（ChatComponents），负责构建对话气泡、流式交互效果及 Markdown 渲染逻辑。
-// 该组件库通过以下功能点提升了对话系统的视觉表现力与交互连贯性：
-// 1. 智能气泡系统：实现了支持用户、助手及系统角色的差异化气泡渲染（ChatBubbleView），具备自动时间戳标注与头像展示。
-// 2. 交互式内容渲染：集成 Markdown 引擎并支持 知识库链接 实时解析，点击链接可直接触发系统内的页面跳转。
-// 3. 动态状态反馈：定义了语义化的脉冲动画（PulsingDot），用于在 AI 思考阶段提供直观的视觉进度反馈。
-// 4. 引用关联展示：实现了可折叠的参考资料面板，自动根据页面类型进行归类展示，增强了 AI 响应的可信度。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 优化 PulsingDot 动画触发机制，完善符合架构规范的功能说明
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ChatComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Chat Bubble View
@@ -136,10 +132,10 @@ struct ChatBubbleView: View {
     
     /// Collapsible references panel showing cited knowledge pages grouped by type
     private var referencesPanel: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             // Header with expand/collapse toggle
             Button(action: { withAnimation { referencesExpanded.toggle() } }) {
-                HStack(spacing: 6) {
+                HStack(spacing: DesignSystem.tightPadding) {
                     Image(systemName: referencesExpanded ? "chevron.down" : "chevron.right")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
@@ -165,9 +161,9 @@ struct ChatBubbleView: View {
                 let grouped = Dictionary(grouping: message.relatedPageIDs.compactMap { id in pages.first { $0.id == id } }) { $0.pageType }
                 ForEach(PageType.allCases.filter { grouped[$0] != nil }, id: \.self) { type in
                     if let pagesOfType = grouped[type], !pagesOfType.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                             // Type header
-                            HStack(spacing: 4) {
+                            HStack(spacing: DesignSystem.tiny) {
                                 Image(systemName: type.icon)
                                     .font(.caption2)
                                 Text(type.displayName)
@@ -177,7 +173,7 @@ struct ChatBubbleView: View {
                             .padding(.top, DesignSystem.tiny)
                             
                             // Page chips
-                            FlowLayout(spacing: 6) {
+                            FlowLayout(spacing: DesignSystem.tightPadding) {
                                 ForEach(pagesOfType, id: \.id) { page in
                                     Button(action: { 
                                         selectedTab = .knowledge
@@ -239,7 +235,7 @@ struct ChatContentView: View {
     @Binding var selectedTab: AppTab
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             // 清理常见的 LLM 转义符错误 (确保 Markdown 渲染正常)
             let cleanedText = text.replacingOccurrences(of: "\\`", with: "`")
                 .replacingOccurrences(of: "\\*", with: "*")

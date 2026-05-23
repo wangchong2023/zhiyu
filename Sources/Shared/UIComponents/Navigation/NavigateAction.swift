@@ -1,14 +1,13 @@
-// NavigateAction.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了跨层级的导航动作封装，支持在不直接持有 NavigationPath 的情况下触发页面跳转。
-// 核心职责：
-// 1. 提供 NavigateAction 环境值。
-// 2. 封装对 WikiPage 实体的导航触发逻辑。
-// MARK: [PR-03] 统一导航交互抽象，解耦视图与路由状态
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  NavigateAction.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Navigation 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 跨视图层级触发导航的动作闭包

@@ -1,10 +1,13 @@
-// iOSSpotlightIndexer.swift
 //
-// 作者: Wang Chong
-// 功能说明: SearchIndexerProtocol 的 iOS/macOS 实现，基于 CoreSpotlight。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iOSSpotlightIndexer.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 iOS 模块，提供相关的结构体或工具支撑。
+//
 #if canImport(CoreSpotlight)
 import Foundation
 import CoreSpotlight
@@ -37,7 +40,7 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
         
         CSSearchableIndex.default().indexSearchableItems(searchableItems) { error in
             if let error = error {
-                Logger.shared.error("🔍 [Spotlight] 批量索引失败：\(error.localizedDescription)")
+                Logger.shared.error("🔍 [Spotlight] Batch indexing failed: \(error.localizedDescription)")
             }
         }
     }

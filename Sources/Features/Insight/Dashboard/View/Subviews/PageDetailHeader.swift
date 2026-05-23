@@ -1,13 +1,13 @@
-// PageDetailHeader.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：Page detail header displaying type/status/confidence badges, title, aliases, tags, and meta info.
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageDetailHeader.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Subviews 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Page Detail Header
@@ -22,7 +22,7 @@ struct PageDetailHeader: View {
     @ObservedObject private var taskCenter = TaskCenter.shared
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             breadcrumb
             typeStatusConfidenceRow
             titleView
@@ -37,7 +37,7 @@ struct PageDetailHeader: View {
                         .foregroundStyle(.appSecondary)
                     Spacer()
                 }
-                metaInfoView.padding(.top, 4)
+                metaInfoView.padding(.top, DesignSystem.tiny)
             }
             .padding(.horizontal, DesignSystem.medium)
             .padding(.vertical, DesignSystem.small)
@@ -46,7 +46,7 @@ struct PageDetailHeader: View {
             #else
             DisclosureGroup(
                 isExpanded: $isMetaExpanded,
-                content: { metaInfoView.padding(.top, 4) },
+                content: { metaInfoView.padding(.top, DesignSystem.tiny) },
                 label: {
                     HStack {
                         Label(L10n.Knowledge.Page.metaInfo, systemImage: DesignSystem.Icons.info)
@@ -70,7 +70,7 @@ struct PageDetailHeader: View {
     
     // MARK: - Breadcrumb
     private var breadcrumb: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: DesignSystem.tiny) {
             Image(systemName: DesignSystem.Icons.booksVerticalFill)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
@@ -83,15 +83,15 @@ struct PageDetailHeader: View {
             
             // AI Status Indicator
             if taskCenter.tasks.contains(where: { if case .running = $0.status { return true }; return false }) {
-                HStack(spacing: 4) {
+                HStack(spacing: DesignSystem.tiny) {
                     Image(systemName: DesignSystem.Icons.cpu)
                         .font(.system(size: DesignSystem.microFontSize))
                     Text(L10n.AI.Task.running)
                         .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                 }
                 .foregroundStyle(.appAccent)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
+                .padding(.horizontal, DesignSystem.tightPadding)
+                .padding(.vertical, DesignSystem.atomic)
                 .background(Color.appAccent.opacity(0.1))
                 .clipShape(Capsule())
                 .transition(.opacity.combined(with: .scale))
@@ -138,7 +138,7 @@ struct PageDetailHeader: View {
         
         if !combinedTags.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: DesignSystem.small) {
                     ForEach(combinedTags, id: \.self) { item in
                         let isAlias = page.aliases.contains(item)
                         HStack(spacing: DesignSystem.tiny) {
@@ -172,14 +172,14 @@ struct PageDetailHeader: View {
                         .foregroundStyle(isAlias ? .appSource : .appAccent)
                     }
                 }
-                .padding(.vertical, 2)
+                .padding(.vertical, DesignSystem.atomic)
             }
         }
     }
     
     // MARK: - Meta Info
     private var metaInfoView: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignSystem.standardPadding) {
             Label(L10n.Knowledge.Page.createdAtFormat(page.createdAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.sortDate)
             Label(L10n.Knowledge.Page.updatedAtFormat(page.updatedAt.formatted(.dateTime.year().month().day().locale(Localized.currentLocale))), systemImage: DesignSystem.Icons.clock)
             Label(L10n.Knowledge.Page.wordCount(page.wordCount), systemImage: DesignSystem.Icons.wordCount)
@@ -200,7 +200,7 @@ private struct TypeBadge: View {
     var heroNamespace: Namespace.ID?
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: DesignSystem.tiny) {
             if let ns = heroNamespace {
                 Image(systemName: page.displayIcon)
                     .font(.caption)
@@ -212,8 +212,8 @@ private struct TypeBadge: View {
             Text(page.pageType.displayName)
                 .font(.caption.weight(.medium))
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(Color.fromModelColorName(page.pageType.colorName).opacity(0.2))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
@@ -229,15 +229,15 @@ private struct StatusBadge: View {
     let page: KnowledgePage
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: DesignSystem.tiny) {
             Circle()
                 .fill(Color.fromModelColorName(page.status.colorName))
                 .frame(width: 6, height: 6)
             Text(page.status.displayName)
                 .font(.caption)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(Color.fromModelColorName(page.status.colorName).opacity(DesignSystem.Opacity.glass))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.status.colorName))
@@ -253,14 +253,14 @@ private struct ConfidenceBadge: View {
     let page: KnowledgePage
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: DesignSystem.tiny) {
             Image(systemName: DesignSystem.Icons.cellularbars)
                 .font(.caption2)
             Text(page.confidence.displayName)
                 .font(.caption)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(.horizontal, DesignSystem.small)
+        .padding(.vertical, DesignSystem.tiny)
         .background(Color.fromModelColorName(page.confidence.colorName).opacity(DesignSystem.Opacity.glass))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.confidence.colorName))

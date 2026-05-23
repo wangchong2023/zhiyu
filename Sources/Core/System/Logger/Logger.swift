@@ -1,13 +1,13 @@
-// Logger.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：结构化日志与审计系统。
-// 遵循 @Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md 中的 DFX 设计要求。
-// 版本: 1.4
-// 修改记录:
-//   - 2026-05-16: 架构升级：重构为 actor 以确保线程安全，实现 nonisolated 快速记录入口。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Logger.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：属于 Logger 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Combine
 

@@ -1,14 +1,13 @@
-// AppRows.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的行 (Row) 与列表项组件体系。
-// 核心职责：
-// 1. 提供统一样式的章节标题、带标签的数据行及带步骤的序号行。
-// 2. 封装图标容器 (IconBox) 及强调线 (AccentLine) 等视觉引导组件。
-// MARK: [PR-03] 统一列表行展示规范，提升长列表信息阅读的节奏感
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppRows.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Lists 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Section Header

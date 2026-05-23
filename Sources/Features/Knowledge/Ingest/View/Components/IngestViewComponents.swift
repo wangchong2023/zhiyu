@@ -1,16 +1,13 @@
-// IngestViewComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识导入模块（IngestView）所需的 UI 原子组件与业务行视图，旨在提供直观且高效的资料采集体验。
-// 该组件包通过以下核心功能点保障了外部资料向本地知识库转化的丝滑感：
-// 1. 多态导入行渲染：支持网页链接、PDF 预览及剪贴板内容的不同视觉呈现，并集成了基于 AppUI 的动态进度反馈。
-// 2. 智能标签预览：实现了资料预处理后的建议标签展示，利用微型圆角（Tiny Radius）与语义化色彩标识资料的类别与置信度。
-// 3. 队列交互增强：提供了滑动手势支持与状态实时同步逻辑，确保用户在处理大规模导入任务时具备清晰的操纵感。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，修复 AppUI 成员引用错误，统一间距常量
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IngestViewComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Ingest Hero Section

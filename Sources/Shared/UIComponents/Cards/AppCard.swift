@@ -1,14 +1,13 @@
-// AppCard.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的卡片组件体系，包括标准卡片、带边框卡片及玻璃拟态卡片。
-// 核心职责：
-// 1. 提供统一样式的容器，封装圆角、内边距和背景。
-// 2. 支持普通色块背景、玻璃拟态背景及强调色边框。
-// MARK: [PR-03] 统一卡片容器规范，优化视觉层级与渲染效率
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppCard.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Cards 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Card Modifier

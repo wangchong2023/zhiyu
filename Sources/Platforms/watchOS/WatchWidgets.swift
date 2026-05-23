@@ -1,13 +1,13 @@
-// WatchWidgets.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 定义表盘点击意图
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  WatchWidgets.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 watchOS 模块，提供相关的结构体或工具支撑。
+//
 import WidgetKit
 import SwiftUI
 import AppIntents
@@ -15,8 +15,8 @@ import AppIntents
 // MARK: - 手表端小组件
 /// 手表端专用捕获意图（与 ShortcutManager.CaptureIntent 分离，避免元数据冲突）
 struct WatchCaptureIntent: AppIntent {
-    static let title: LocalizedStringResource = .init("watch.widget.title", defaultValue: "快速记录", table: "Watch")
-    static let description = IntentDescription(.init("watch.widget.desc", defaultValue: "直接进入语音采集界面", table: "Watch"))
+    static let title: LocalizedStringResource = .init("watch.widget.title", defaultValue: "Quick Record", table: "Watch")
+    static let description = IntentDescription(.init("watch.widget.desc", defaultValue: "Directly enter the audio capture screen", table: "Watch"))
     static let persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
     
     func perform() async throws -> some IntentResult {
@@ -40,16 +40,36 @@ struct WatchCaptureWidget: Widget {
 }
 
 struct Provider: TimelineProvider {
+    /// 供系统调用的占位 entry 接口
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date())
+        makePlaceholder()
     }
 
+    /// 供系统调用的快照数据接口
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
+        makeSnapshot(completion: completion)
+    }
+
+    /// 供系统调用的时间线数据接口
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
+        makeTimeline(completion: completion)
+    }
+    
+    // MARK: - 单元测试可达逻辑
+    
+    /// 单元测试可直接调用的占位数据生成逻辑
+    func makePlaceholder() -> SimpleEntry {
+        SimpleEntry(date: Date())
+    }
+    
+    /// 单元测试可直接调用的快照数据生成逻辑
+    func makeSnapshot(completion: @escaping (SimpleEntry) -> ()) {
         let entry = SimpleEntry(date: Date())
         completion(entry)
     }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
+    
+    /// 单元测试可直接调用的时间线生成逻辑
+    func makeTimeline(completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         let timeline = Timeline(entries: [SimpleEntry(date: Date())], policy: .atEnd)
         completion(timeline)
     }

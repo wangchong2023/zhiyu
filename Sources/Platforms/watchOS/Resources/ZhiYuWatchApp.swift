@@ -1,19 +1,23 @@
-// AppWatchApp.swift
 //
-// 作者: Wang Chong
-// 功能说明: Apple Watch 应用程序入口
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  ZhiYuWatchApp.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 Resources 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// Apple Watch 应用程序入口
 @main
 struct AppWatchApp: App {
+    /// 构造函数，在 watchOS App 启动时进行基础模块注册，保障系统 @Inject 的安全解析边界
+    init() {
+        WatchModuleRegistrar.register(in: ServiceContainer.shared)
+    }
+
     var body: some Scene {
         WindowGroup {
             WatchKnowledgeStatsView()        }

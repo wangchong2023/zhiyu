@@ -1,0 +1,8 @@
+/* 
+  Localizable.strings (English)
+  智宇 (ZhiYu) 本地化英文占位描述文件
+  
+  核心职责：
+  作为物理占位资源，强制 Xcode 在编译任何 Target 时都将 "en" 生成为物理支持的 .lproj 目录，
+  从而打通操作系统的首选语言本地化自动匹配，消除系统英文模式退化为中文的 Bug。
+*/

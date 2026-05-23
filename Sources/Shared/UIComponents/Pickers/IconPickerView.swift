@@ -1,13 +1,13 @@
-// IconPickerView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] A reusable icon picker that presents categorized SF Symbols in a grid.
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IconPickerView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 IconPicker 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - Icon Picker View
@@ -50,12 +50,12 @@ struct IconPickerView: View {
         L10n.Editor.tr(key)
     }
 
-    private let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 6)
+    private let gridColumns = Array(repeating: GridItem(.flexible(), spacing: DesignSystem.medium), count: 6)
 
     // MARK: - Body
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: DesignSystem.wide) {
                 // Current selection preview
                 currentSelectionPreview
 
@@ -81,7 +81,7 @@ struct IconPickerView: View {
 
     // MARK: - Current Selection Preview
     private var currentSelectionPreview: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignSystem.medium) {
             Image(systemName: selectedIcon ?? "person.text.rectangle.fill")
                 .font(.title)
                 .foregroundStyle(.appAccent)
@@ -89,7 +89,7 @@ struct IconPickerView: View {
                 .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(selectedIcon != nil ? L10n.Editor.iconPicker.customSelected : L10n.Editor.iconPicker.useDefault)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
@@ -109,8 +109,8 @@ struct IconPickerView: View {
                 }) {
                     Text(L10n.Editor.iconPicker.reset)
                         .font(.caption.weight(.medium))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, DesignSystem.medium)
+                        .padding(.vertical, DesignSystem.tightPadding)
                         .background(Color.appCard)
                         .clipShape(Capsule())
                         .foregroundStyle(.appSecondary)
@@ -125,12 +125,12 @@ struct IconPickerView: View {
     // MARK: - Icon Category Section
     @ViewBuilder
     private func iconCategorySection(title: String, icons: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(title)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
 
-            LazyVGrid(columns: gridColumns, spacing: 12) {
+            LazyVGrid(columns: gridColumns, spacing: DesignSystem.medium) {
                 ForEach(icons, id: \.self) { icon in
                     Button(action: {
                         selectedIcon = icon

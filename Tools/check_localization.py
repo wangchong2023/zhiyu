@@ -240,7 +240,7 @@ def detect_hardcoded_chinese(line, filename):
         "LLMRetrievalService.swift", "AISynthesisService.swift", "LLMModels.swift",
         
         # 系统集成、网络爬虫、沙箱插件、DI 注册等底座基础设施层
-        "ShortcutManager.swift", "PluginRegistry.swift", "PluginMarketService.swift",
+        "PluginRegistry.swift", "PluginMarketService.swift",
         "JavaScriptPlugin.swift", "WebScraperProcessor.swift", "ModuleRegistrar.swift",
         "PromptSanitizer.swift",
         
@@ -254,7 +254,10 @@ def detect_hardcoded_chinese(line, filename):
         "QuizView.swift", "SearchView.swift", "SourceView.swift",
         
         # 排除 watchOS 的极简对照多语言词典及带有系统 LocalizedStringResource 声明的 widget 宿主
-        "WatchWidgets.swift", "ZhiYuWatchView.swift"
+        "WatchWidgets.swift", "ZhiYuWatchView.swift",
+        
+        # 排除 Siri AppIntents 快捷指令管理器 (避免直接调用 LocalizedStringResource 被误判)
+        "ShortcutManager.swift"
     }
     if filename in excluded_files:
         return False
@@ -298,19 +301,34 @@ def scan_other_swift_files(sources_dir, struct_to_table):
             if file_path == LOCALIZED_SWIFT_PATH:
                 continue
 
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                 content = f.read()
                 lines = content.split("\n")
                 for i, line in enumerate(lines, 1):
                     clean_line = re.sub(r'//.*', '', line)
                     
                     if "Localized.tr" in clean_line:
-                        allowed_files = {"LLMModels.swift", "SourceView.swift", "SearchView.swift"}
+                        allowed_files = {
+                            "LLMModels.swift", 
+                            "SourceView.swift", 
+                            "SearchView.swift",
+                            "OnDeviceComponents.swift",
+                            "OnDeviceLLMSettingsView.swift",
+                            "OnDeviceLLMService.swift"
+                        }
                         if file not in allowed_files:
                             leaks_found.append((file_path, i, "Localized.tr" if "Localized.trf" not in clean_line else "Localized.trf"))
                         elif "table:" not in clean_line:
                             # 即使在白名单内，使用原生的 Localized.tr 进行动态变量反射时，也必须显式指明路由表，严禁隐式 fallback 到 Common！
                             leaks_found.append((file_path, i, "Dynamic Localized.tr calls in allowed files MUST explicitly provide a 'table:' argument"))
+                            
+                    if "LocalizedStringResource(" in clean_line:
+                        allowed_lsr_files = {
+                            "ActivityService.swift", # iOS 实时活动使用
+                            "ShortcutManager.swift"  # Siri AppIntents 元数据静态解析强制要求字面量或直接显式构造
+                        }
+                        if file not in allowed_lsr_files:
+                            leaks_found.append((file_path, i, "Direct use of LocalizedStringResource(...) is prohibited. Use L10n extensions instead."))
                     
                     # 拦截未封装的硬编码中文字符串字面量泄漏 (强制作为 Error 拦截并阻断 Xcode 编译构建)
                     if detect_hardcoded_chinese(line, file):

@@ -1,12 +1,13 @@
-// OnboardingService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 系统集成层：新手引导流程管理
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-07: 移除 SwiftUI 依赖，将视图层解耦至 OnboardingOverlay.swift，使用 UserDefaults 替换 @AppStorage
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  OnboardingService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 Onboarding 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 

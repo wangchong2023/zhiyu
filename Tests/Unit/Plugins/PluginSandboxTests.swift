@@ -1,15 +1,15 @@
-// PluginSandboxTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 插件沙箱安全测试
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-03
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  PluginSandboxTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 PluginSandbox 开展自动化单元测试验证。
+//
 import XCTest
-@testable import ZhiYu
+@preconcurrency @testable import ZhiYu
 
 /// 插件沙箱安全测试
 /// 验证 PluginRegistry 的加载/卸载、权限拦截、崩溃隔离及流控降级。
@@ -60,9 +60,11 @@ final class PluginSandboxTests: XCTestCase {
     // MARK: - 拦截器注册
 
     func testInterceptionPluginIsRegisteredAsInterceptor() {
-        let plugin = MockInterceptionPlugin(id: "test.intercept", name: "拦截测试")
+        // 1. 初始化沙箱测试专属的拦截插件，注册拦截器
+        let plugin = MockSandboxInterceptionPlugin(id: "test.intercept", name: "拦截测试")
         registry.loadPlugin(plugin)
 
+        // 2. 应用前置拦截，验证是否成功触发前置处理器并修改内容
         let result = registry.applyPreProcess(to: "原始内容")
         XCTAssertEqual(result, "拦截后: 原始内容", "preProcess 应被调用并修改内容")
     }
@@ -70,13 +72,15 @@ final class PluginSandboxTests: XCTestCase {
     // MARK: - 权限拦截
 
     func testPreProcessRejectedWithoutWriteContentPermission() {
-        let plugin = MockInterceptionPlugin(
+        // 1. 模拟一个仅声明只读权限（不具备 writeContent 写入权限）的沙箱插件
+        let plugin = MockSandboxInterceptionPlugin(
             id: "test.noperm",
             name: "无权限插件",
             permissions: ["pages.read"] // 故意不给 writeContent
         )
         registry.loadPlugin(plugin)
 
+        // 2. 验证该无权修改的插件在安全拦截时，其预处理行为是否会被安全过滤器抛弃，返回原始内容
         let result = registry.applyPreProcess(to: "内容")
         XCTAssertEqual(result, "内容", "无 writeContent 权限的插件不应修改内容")
     }
@@ -94,13 +98,16 @@ final class PluginSandboxTests: XCTestCase {
     // MARK: - 流控降级
 
     func testThrottlingSkipsOverlyFrequentPlugin() {
-        let plugin = MockInterceptionPlugin(id: "test.throttle", name: "高频插件")
+        // 1. 注册高频沙箱拦截插件
+        let plugin = MockSandboxInterceptionPlugin(id: "test.throttle", name: "高频插件")
         registry.loadPlugin(plugin)
 
+        // 2. 模拟高频次调用（超过流控阈值），以验证沙箱的熔断隔离与流控降级策略
         for _ in 0..<51 {
             _ = registry.applyPreProcess(to: "内容")
         }
 
+        // 3. 即使高频降级被触发，系统也应保持稳定不会发生崩溃
         let result = registry.applyPreProcess(to: "最终内容")
         XCTAssertNotNil(result)
     }
@@ -217,10 +224,23 @@ private final class MockSlowPlugin: MockKnowledgePlugin, InterceptionPlugin {
     func postProcess(content: String) throws -> String { content }
 }
 
+/// 沙箱测试专属的模拟内容拦截插件 (MockSandboxInterceptionPlugin)
+/// 实现 InterceptionPlugin 协议，用于模拟高频拦截与内容预处理行为
 @MainActor
-private final class MockInterceptionPlugin: MockKnowledgePlugin, InterceptionPlugin {
-    func preProcess(content: String) throws -> String { "拦截后: \(content)" }
-    func postProcess(content: String) throws -> String { content }
+private final class MockSandboxInterceptionPlugin: MockKnowledgePlugin, InterceptionPlugin {
+    /// 预处理阶段拦截，并在内容前附加 "拦截后: " 标记以验证插件调用路径
+    /// - Parameter content: 原始文本内容
+    /// - Returns: 处理完成后的文本内容
+    func preProcess(content: String) throws -> String { 
+        return "拦截后: \(content)" 
+    }
+    
+    /// 后处理阶段拦截，此处仅透明返回，不作任何更改
+    /// - Parameter content: 预处理后的文本内容
+    /// - Returns: 最终文本内容
+    func postProcess(content: String) throws -> String { 
+        return content 
+    }
 }
 
 @MainActor

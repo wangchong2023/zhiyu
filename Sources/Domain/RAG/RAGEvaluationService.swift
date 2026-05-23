@@ -1,11 +1,13 @@
-// RAGEvaluationService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：RAG 质量评估中心。采用 LLM-as-a-Judge 模式，对回答的忠实度、相关度进行自动打分。
-// 版本: 1.0
-// 日期: 2026-05-06
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  RAGEvaluationService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：实现 RAGEvaluation 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// RAG 质量评估报告模型

@@ -1,13 +1,13 @@
-// DataCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：数据协调器，负责编排存储与 AI 服务之间的异步同步任务。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-07: 初始版本，从 SQLiteStore 剥离同步逻辑。
-//   - 2026-05-10: 标准化代码注释，增加 SRS 溯源标识。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  DataCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：负责 Data 业务流的导航路由与协作管理。
+//
 import Foundation
 import Observation
 

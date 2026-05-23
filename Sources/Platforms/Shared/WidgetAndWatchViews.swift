@@ -1,13 +1,13 @@
-// WidgetAndWatchViews.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] Lightweight view for Apple Watch showing key knowledge stats and recent pages
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  WidgetAndWatchViews.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 Shared 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import WidgetKit
 
@@ -19,6 +19,13 @@ struct WatchKnowledgeStatsView: View {
     @State private var totalPages = 0
     @State private var totalWords = 0
     @State private var recentTitles: [String] = []
+    
+    /// 允许传入 Mock 数据的构造器
+    public init(totalPages: Int = 0, totalWords: Int = 0, recentTitles: [String] = []) {
+        self._totalPages = State(initialValue: totalPages)
+        self._totalWords = State(initialValue: totalWords)
+        self._recentTitles = State(initialValue: recentTitles)
+    }
     
     var body: some View {
         ScrollView {
@@ -88,16 +95,10 @@ struct WatchKnowledgeStatsView: View {
     }
     
     private func loadData() {
-        Task {
-            let store = AppStore()
-            await store.loadFromDisk()
-            totalPages = store.totalPages
-            totalWords = store.totalWords
-            recentTitles = store.pages
-                .sorted { $0.updatedAt > $1.updatedAt }
-                .prefix(5)
-                .map { $0.title }
-        }
+        let defaults = UserDefaults.standard
+        totalPages = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
+        totalWords = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
+        recentTitles = defaults.stringArray(forKey: AppConstants.Keys.Storage.watchRecentTitles) ?? []
     }
     
     private func formatNumber(_ n: Int) -> String {

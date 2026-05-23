@@ -1,12 +1,13 @@
-// DashboardModels.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：仪表盘模块相关数据模型
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-15: 从 KnowledgeDashboardView 提取，支持架构解耦。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DashboardModels.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 知识密度信息，用于图表展示

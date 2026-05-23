@@ -1,12 +1,13 @@
-// VectorRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：向量存储仓库协议，定义了分块存储、向量持久化及清理逻辑。
-// 版本: 1.3
-// 修改记录:
-//   - 2026-05-16: 契约下沉：从 L1 迁移至 L1.5 领域层，实现依赖倒置。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VectorRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// [Domain] 向量与分块仓储协议

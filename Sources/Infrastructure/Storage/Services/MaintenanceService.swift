@@ -1,12 +1,13 @@
-// MaintenanceService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：系统维护服务，负责演示数据注入、数据重置、物理备份调度及日志清理。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 AppStore 剥离维护逻辑，实现职责单一化。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  MaintenanceService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 Maintenance 模块的核心业务逻辑服务。
+//
 import Foundation
 import Observation
 import GRDB

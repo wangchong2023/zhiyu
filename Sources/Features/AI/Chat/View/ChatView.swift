@@ -1,17 +1,13 @@
-// ChatView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的 AI 助手交互界面（ChatView），是用户与知识库进行语义化交互的核心入口。
-// 视图通过以下功能点构建了高效且沉浸式的对话体验：
-// 1. 语义化问答流：支持基于本地知识库的检索增强生成（RAG），通过流式渲染技术实时展示 AI 的思考与响应过程。
-// 2. 多维度指令引导：集成了“我的指令”快捷方式、AI 动态生成的启发式问题以及基础功能引导，降低用户的使用门槛。
-// 3. 灵活的消息管理：支持对话历史的导出（PDF/文本）、消息选择模式、上下文清除及 LLM 参数的实时配置。
-// 4. 高级交互反馈：内置了带光晕效果的品牌图标、动态思考动画（PulsingDot）及触感反馈，确保对话过程具有良好的操作感知。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-15: 引入 ChatCoordinator 实现业务逻辑与 UI 状态的彻底解耦，并将引导视图拆分为 ChatWelcomeView。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ChatView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Chat 界面的 UI 视图层组件。
+//
 import SwiftUI
 #if canImport(WebKit)
 import WebKit
@@ -138,7 +134,7 @@ struct ChatViewContent: View {
             }
         } label: {
             Image(systemName: DesignSystem.Icons.more)
-                .font(.system(size: 16, weight: .bold))
+                .font(.callout.weight(.bold))
                 .foregroundStyle(.appSecondary)
         }
         .buttonStyle(.plain)  // 消除 Toolbar 中 Menu 的 bordered 白色背景
@@ -210,7 +206,7 @@ struct ChatViewContent: View {
                 .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                if llmService.streamingContent.isEmpty {
+                if coordinator.streamingContent.isEmpty {
                     // 获取当前活跃任务的阶段
                     let stage: TaskStage = {
                         if let runningTask = TaskCenter.shared.tasks.first(where: { if case .running = $0.status { return true }; return false }) {
@@ -224,7 +220,7 @@ struct ChatViewContent: View {
                     AppAILoadingSkeleton(stage: stage)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 } else {
-                    MarkdownRendererView(content: llmService.streamingContent, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
+                    MarkdownRendererView(content: coordinator.streamingContent, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
                         .padding(DesignSystem.medium)
                         .background(Color.appCard)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))

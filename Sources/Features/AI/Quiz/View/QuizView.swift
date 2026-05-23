@@ -1,14 +1,13 @@
-// QuizView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识测评交互视图模型
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-05
-// 日期: 2026-05-05
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  QuizView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Quiz 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - 测评数据模型
@@ -58,11 +57,11 @@ struct QuizView: View {
                 VStack(spacing: Spacing.small) {
                     HStack {
                         Text(L10n.Quiz.questionFormat(currentIndex + 1, quiz.questions.count))
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .font(.footnote.weight(.bold))
                             .foregroundStyle(.appAccent)
                         Spacer()
                         Text(L10n.Quiz.scoreFormat(score))
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .font(.footnote.weight(.medium))
                             .foregroundStyle(.appSecondary)
                     }
                     
@@ -75,11 +74,11 @@ struct QuizView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: Spacing.wide) {
                         Text(quiz.questions[currentIndex].text)
-                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .font(.title3.weight(.semibold))
                             .foregroundStyle(.appText)
                             .lineSpacing(4)
                         
-                        VStack(spacing: 12) {
+                        VStack(spacing: DesignSystem.medium) {
                             ForEach(0..<quiz.questions[currentIndex].options.count, id: \.self) { index in
                                 OptionRow(
                                     label: optionLabel(for: index),
@@ -98,7 +97,7 @@ struct QuizView: View {
                         
                         if showResult {
                             let correctIdx = quiz.questions[currentIndex].answer
-                            VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: DesignSystem.medium) {
                                 HStack {
                                     Image(systemName: selectedOption == correctIdx ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(selectedOption == correctIdx ? .green : .red)
@@ -111,7 +110,7 @@ struct QuizView: View {
                                     .foregroundStyle(.green)
 
                                 Text(fixExplanationNumbering(quiz.questions[currentIndex].explanation, correctIndex: correctIdx))
-                                    .font(.system(size: 13))
+                                    .font(.footnote)
                                     .foregroundStyle(.appSecondary)
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -131,7 +130,7 @@ struct QuizView: View {
                 if showResult {
                     Button(action: nextQuestion) {
                         Text(currentIndex + 1 < quiz.questions.count ? L10n.Common.nextQuestion : L10n.Common.viewResults)
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(.headline.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(Spacing.standardPadding)
@@ -161,7 +160,7 @@ struct QuizView: View {
                     
                     Button(action: { dismiss() }) {
                         Text(L10n.Quiz.backToPage)
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .font(.headline.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(Spacing.standardPadding)

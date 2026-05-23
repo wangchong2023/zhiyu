@@ -1,4 +1,13 @@
-// 功能说明: [L2]
+//
+//  VaultInsightsPanel.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 笔记本数据洞察面板

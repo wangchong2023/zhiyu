@@ -1,10 +1,13 @@
-// PageSnapshotHistoryView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 展示页面的历史快照
-// 版本: 1.1
+//  PageHistoryView.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PageHistory 界面的 UI 视图层组件。
+//
 import SwiftUI
 import Foundation
 
@@ -40,7 +43,7 @@ struct PageHistoryView: View {
                                     .font(.caption2)
                                     .foregroundStyle(.appTertiary)
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, DesignSystem.tiny)
                         }
                     }
                 }
@@ -89,7 +92,7 @@ struct SnapshotDetailView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                         HStack {
                             Label(L10n.Knowledge.Page.History.version, systemImage: DesignSystem.Icons.clock)
                                 .font(.caption.weight(.bold))
@@ -110,7 +113,7 @@ struct SnapshotDetailView: View {
                     .padding()
                 }
                 
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     Button(action: onRollback) {
                         Text(L10n.Knowledge.Page.History.rollback)
                             .font(.headline)

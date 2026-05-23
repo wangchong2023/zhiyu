@@ -1,11 +1,13 @@
-// StatCard.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了统计指标卡片小组件，用于在仪表盘等页面展示核心业务数据。
-// MARK: [PR-03] 统一统计指标卡片规范，优化视觉展示与多端适配
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  StatCard.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Cards 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 统计指标卡片小组件

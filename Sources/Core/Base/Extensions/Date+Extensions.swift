@@ -1,11 +1,13 @@
-// Date+Extensions.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：Date 类型的实用扩展，支持语义化时间显示。
-// 核心原则：
-// 1. 本地化：优先使用系统 Locale。
-// 2. 语义化：根据时间跨度自动切换显示格式。
-
+//  Date+Extensions.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Extensions 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 extension Date {

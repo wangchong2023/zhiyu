@@ -1,13 +1,13 @@
-// CollaborationView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct CollaborationView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CollaborationView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Collaboration 界面的 UI 视图层组件。
+//
 import SwiftUI
 #if canImport(MultipeerConnectivity)
 import MultipeerConnectivity
@@ -40,7 +40,7 @@ struct CollaborationViewContent: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: DesignSystem.giant) {
                 headerSection
                 if collabService.isSimulator { simulatorWarning }
                 statusSection
@@ -98,12 +98,12 @@ struct CollaborationViewContent: View {
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
         }
-        .padding(.top, 8)
+        .padding(.top, DesignSystem.small)
     }
     
     // MARK: - Simulator Warning
     private var simulatorWarning: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignSystem.medium) {
             Image(systemName: DesignSystem.Icons.warning)
                 .foregroundStyle(.orange)
             
@@ -146,7 +146,7 @@ struct CollaborationViewContent: View {
     
     // MARK: - Actions
     private var actionSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: DesignSystem.medium) {
             usernameField
             hostButton
             joinButton
@@ -155,7 +155,7 @@ struct CollaborationViewContent: View {
     }
     
     private var usernameField: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             Text(L10n.Collaboration.username)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.appSecondary)
@@ -230,7 +230,7 @@ struct CollaborationViewContent: View {
     
     // MARK: - Discovered Rooms
     private var discoveredRoomsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Collaboration.nearbyRooms)
                 .font(.headline)
                 .foregroundStyle(.appText)
@@ -258,7 +258,7 @@ struct CollaborationViewContent: View {
     
     // MARK: - Session Info
     private var sessionSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack {
                 Image(systemName: DesignSystem.Icons.crown)
                     .foregroundStyle(.yellow)
@@ -296,7 +296,7 @@ struct CollaborationViewContent: View {
 
     // MARK: - Peers
     private var peersSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Collaboration.connectedUsers)
                 .font(.headline)
                 .foregroundStyle(.appText)
@@ -328,7 +328,7 @@ struct CollaborationViewContent: View {
     
     // MARK: - Recent Edits
     private var editsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Collaboration.recentEdits)
                 .font(.headline)
                 .foregroundStyle(.appText)

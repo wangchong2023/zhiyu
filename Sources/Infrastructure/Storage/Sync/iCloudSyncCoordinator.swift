@@ -1,13 +1,13 @@
-// iCloudSyncCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：负责 iCloud 同步的业务编排，将 View 层的同步逻辑提取到服务层。
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-04
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iCloudSyncCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：负责 iCloudSync 业务流的导航路由与协作管理。
+//
 #if ICLOUD_ENABLED
 import Foundation
 import Observation

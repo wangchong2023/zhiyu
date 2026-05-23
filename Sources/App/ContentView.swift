@@ -1,13 +1,13 @@
-// ContentView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的全局根视图（ContentView）。
-// 该视图现在作为一个纯粹的“导航调度中心”和生命周期协调者，具体的视图构建逻辑已拆分至 AppLayoutComponents.swift。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 表现层精益重构：将 550+ 行文件拆解为原子化组件，核心行数压降至 100 行以内。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ContentView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：构建 Content 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 应用程序根视图
@@ -67,9 +67,8 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $router.isShowingSettingsSheet) {
-            NavigationStack {
-                SettingsView()
-            }
+            SettingsView()
+                .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
         }
         .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
         .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)
@@ -83,7 +82,7 @@ struct ContentView: View {
         Color.black.opacity(DesignSystem.dimmedOpacity)
             .ignoresSafeArea()
             .onTapGesture {
-                withAnimation(.spring(response: DesignSystem.Animation.springResponse, dampingFraction: DesignSystem.Animation.springDamping)) {
+                withAnimation(DesignSystem.Animation.Config.prominentSpring) {
                     showSidebar = false
                 }
             }
@@ -108,4 +107,43 @@ struct ContentView: View {
     ContentView()
         .environment(AppStore())
         .environmentObject(ThemeManager())
+}
+
+// MARK: - View Extension for Compatibility
+
+extension View {
+    /// 兼容 iOS 18 弹窗尺寸适配修饰符
+    @ViewBuilder
+    func applyPresentationSizing() -> some View {
+        #if os(iOS)
+        if #available(iOS 18.0, *) {
+            self.presentationSizing(.form)
+        } else {
+            self
+                .frame(minWidth: 540, minHeight: 680)
+                .presentationDetents([.large])
+        }
+        #else
+        self.frame(minWidth: 540, minHeight: 680)
+        #endif
+    }
+    
+    /// 设置页面专用的自适应宽屏弹窗尺寸修饰符
+    /// - Parameter screenClass: 屏幕类型
+    @ViewBuilder
+    func applySettingsPresentationSizing(screenClass: ScreenClass) -> some View {
+        if screenClass == .compact {
+            // 手机/紧凑尺寸下，不做多余限制，让系统自动以标准半屏/全屏形式拉起
+            self
+        } else {
+            // iPad 与 Mac 大屏下，强行拓宽界面到 850+ 宽度，为双栏左右分栏提供完美的呈现空间
+            #if os(macOS)
+            self.frame(width: 900, height: 680)
+            #else
+            self
+                .frame(minWidth: 850, minHeight: 650)
+                .presentationDetents([.large])
+            #endif
+        }
+    }
 }

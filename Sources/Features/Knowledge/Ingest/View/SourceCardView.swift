@@ -1,10 +1,13 @@
-// SourceCardView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识来源展示卡片组件。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SourceCardView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 SourceCard 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct SourceCardView: View {
@@ -24,7 +27,7 @@ struct SourceCardView: View {
             HStack {
                 Text(page.createdAt.formatted(.relative(presentation: .named).locale(Localized.currentLocale))).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
                 Spacer()
-                Text(L10n.Knowledge.Page.wordCount(page.wordCount)).font(.system(size: 10, weight: .medium, design: .rounded)).foregroundStyle(.appSecondary)
+                Text(L10n.Knowledge.Page.wordCount(page.wordCount)).font(.caption2.weight(.medium)).foregroundStyle(.appSecondary)
             }
         }.padding(DesignSystem.medium).frame(width: DesignSystem.Metrics.sourceCardWidth, height: DesignSystem.Metrics.sourceCardHeight).appMetricCardStyle(color: Color.fromModelColorName(page.pageType.colorName), cornerRadius: DesignSystem.standardRadius)
     }

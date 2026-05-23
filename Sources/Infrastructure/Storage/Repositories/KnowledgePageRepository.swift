@@ -1,15 +1,13 @@
-// KnowledgePageRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了知识管理系统的核心存储仓库（KnowledgePageRepository）。
-// 核心职责：负责 KnowledgePage 及其关联链接（Graph）的物理持久化。
-// 遵循 Domain 层定义的 KnowledgeRepository 协议，采用 GRDB ORM 模式实现。
-// 版本: 1.11
-// 修改记录:
-//   - 2026-05-16: 安全加固：集成应用级 AES-GCM 内容加密 (@P0)。
-//   - 2026-05-16: 架构对齐：遵循迁移至 L1.5 领域层的 KnowledgeRepository 协议。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgePageRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Repositories 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 @preconcurrency import GRDB
 

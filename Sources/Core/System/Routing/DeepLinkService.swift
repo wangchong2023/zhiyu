@@ -1,13 +1,13 @@
-// DeepLinkService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：Handles deep links, universal links, and Spotlight indexing for Knowledge Base pages.
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DeepLinkService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 DeepLink 模块的核心业务逻辑服务。
+//
 import Foundation
 
 // MARK: - Deep Link Service
@@ -19,32 +19,45 @@ final class DeepLinkService: ObservableObject {
         case openPage(id: UUID)
         case openPageByTitle(String)
         case search(String)
+        case create // 桌面小组件快捷新建卡片动作
         case ingest
         case graph
         case chat
     }
     
     // MARK: - URL Scheme Handling
+    /// 处理应用特有的 URL Scheme 深度路由分发
+    /// - Parameter url: 传入的原始 URL 实例
+    /// - Returns: 是否为系统可识别且处理成功的路由动作
     func handleURL(_ url: URL) -> Bool {
+        // 关键过程：验证前置协议头是否符合 zhiyu 专属定义
         guard url.scheme == "zhiyu" else { return false }
         
         switch url.host {
         case "page":
+            // 物理页面 ID 快速跳转解析
             if let idString = url.queryParameters["id"],
                let id = UUID(uuidString: idString) {
                 pendingDeepLink = .openPage(id: id)
                 return true
             }
+            // 页面标题快速跳转解析
             if let title = url.queryParameters["title"] {
                 pendingDeepLink = .openPageByTitle(title)
                 return true
             }
             
+        case "create":
+            // 🟢 补全桌面小组件的新建笔记路由：直达新建卡片弹窗
+            pendingDeepLink = .create
+            return true
+            
         case "search":
-            if let query = url.queryParameters["q"] {
-                pendingDeepLink = .search(query)
-                return true
-            }
+            // 🟢 容错与防灾降级策略：若缺失 q 参数（例如从小组件点击 Search 按钮），
+            // 则将其安全降级解析为空搜索 q=""，拉起搜索面板而不丢弃路由。
+            let query = url.queryParameters["q"] ?? ""
+            pendingDeepLink = .search(query)
+            return true
             
         case "ingest":
             pendingDeepLink = .ingest

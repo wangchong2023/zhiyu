@@ -1,14 +1,13 @@
-// AppFeedback.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了智宇 (ZhiYu) 的反馈与加载状态组件体系。
-// 核心职责：
-// 1. 提供视觉反馈组件，如脉冲点 (Pulse)、闪烁加载 (Shimmer) 及骨架屏 (Skeleton)。
-// 2. 封装成功提示横幅及光晕效果。
-// MARK: [PR-03] 统一反馈动效规范，降低用户等待焦虑，提升系统交互的“呼吸感”
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppFeedback.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Feedback 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Pulse Dot

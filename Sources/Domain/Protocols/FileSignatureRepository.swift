@@ -1,10 +1,13 @@
-// FileSignatureRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域层：物理文件防篡改完整性指纹仓储协议，定义指纹入全局库的契约。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  FileSignatureRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// [Domain] 文件 HMAC 防篡改签名仓储协议，彻底解除安全管理器与 raw SQL 的直接耦合。

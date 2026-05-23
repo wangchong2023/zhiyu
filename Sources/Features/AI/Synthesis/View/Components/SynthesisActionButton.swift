@@ -1,10 +1,13 @@
-// SynthesisActionButton.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：合成操作启动按钮组件，负责单个合成任务（如思维导图生成）的触发逻辑、前置校验、生成进度展示及超限状态控制。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SynthesisActionButton.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 合成操作启动按钮组件

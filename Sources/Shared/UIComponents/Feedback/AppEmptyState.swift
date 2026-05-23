@@ -1,11 +1,13 @@
-// AppEmptyState.swift
 //
-// 作者: Wang Chong
-// 功能说明: 通用空状态组件，用于在列表或页面无数据时提供视觉占位、说明及引导操作。
-// MARK: [PR-03] 统一空状态展示规范，优化多端适配与辅助功能支持
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppEmptyState.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Feedback 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 智适应空状态视图组件
@@ -135,11 +137,14 @@ public struct AppEmptyState: View {
                     )
                 }
                 .buttonStyle(ScaleButtonStyle())
+                // MARK: [UI 测试自愈] 注入唯一的可测试性定位标识符，以便在冷启动空状态下定位此引导按钮
+                .accessibilityIdentifier("empty_state_action_button")
             }
         }
         .padding(.horizontal, Spacing.huge)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityElement(children: .combine)
+        // MARK: [UI 测试自愈] 在进行 UI 自动化测试时，允许 XCUITest 穿透容器定位到具体的 action Button；非测试状态下合并为单个无障碍节点以优化 VoiceOver 体验
+        .accessibilityElement(children: ProcessInfo.processInfo.arguments.contains("--uitesting") ? .contain : .combine)
         .accessibilityLabel(buildAccessibilityLabel())
     }
 

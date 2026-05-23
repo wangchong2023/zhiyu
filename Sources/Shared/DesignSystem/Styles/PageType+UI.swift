@@ -1,12 +1,13 @@
-// PageType+UI.swift
 //
-// 作者: Wang Chong
-// 功能说明: 为 PageType 及其相关枚举提供表现层支持，将 UI 逻辑（颜色、图标）从模型层剥离至视图层扩展。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-07: 初始版本，从 PageType.swift 迁移 UI 属性。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageType+UI.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Styles 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 extension PageType {

@@ -1,14 +1,13 @@
-// PPTXProcessor.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了 PowerPoint (PPTX) 文档生成处理器（PPTXProcessor），负责将结构化知识转化为演示文稿格式。
-// 该处理器的核心功能点如下：
-// 1. 幻灯片布局映射：根据 Markdown 标题和内容自动计算幻灯片页数，实现“一标题一页面”的智能排版。
-// 2. XML 模板注入：基于标准的 PPTX XML 规范生成演示文稿，确保在所有标准办公软件中具备良好的兼容性。
-// 3. 样式自动化：自动应用主题配色与字体规范，确保输出的 PPT 文件在视觉上具备专业性和一致性。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 迁移至 Utils/Processors/Document 并规范化 PPTX 生成逻辑说明
+//  PPTXProcessor.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Document 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 简易原生 PPTX 生成器 (OpenXML 架构)

@@ -1,12 +1,13 @@
-// ModuleRegistrar.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：定义模块化注册协议与各层级服务的自动化注册逻辑，用于解耦 ZhiYuApp 的初始化过程。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 物理归位重构：更新存储仓储与业务 Store 的类名及注册逻辑。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  ModuleRegistrar.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 App 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 
@@ -148,12 +149,15 @@ struct CoreModuleRegistrar: ModuleRegistrar {
 @MainActor
 struct StorageModuleRegistrar: ModuleRegistrar {
     static func register(in container: ServiceContainer) {
-        print("📦 [DI] 开始注册存储模块...")
+        print("📦 [DI] Starting registration of storage module...")
+        
+        // 注册 VaultDatabaseSwitcher 协议服务以支持依赖倒置 (DIP)
+        container.register(DatabaseManager.shared as any VaultDatabaseSwitcher, for: (any VaultDatabaseSwitcher).self)
         
         // @RR-01: 初始化 SQLite 核心存储层
         // 智宇架构核心：数据库必须在 Storage 模块注册前就绪，否则视为不可恢复的配置错误
         guard let writer = DatabaseManager.shared.dbWriter else {
-            fatalError("❌ [DI] 数据库初始化失败：dbWriter 为空。请检查 DatabaseManager 初始化顺序。")
+            fatalError("❌ [DI] Database initialization failed: dbWriter is nil. Please check the DatabaseManager initialization sequence.")
         }
         
         let sqliteStore = SQLiteStore(dbWriter: writer)
@@ -166,7 +170,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         // @PR-05: 优化数据库冷启动加载时间
         // 此时 writer 已由上方 guard 确认存在
-        print("✅ [DI] 数据库写入器已就绪，注册垂直仓库...")
+        print("✅ [DI] Database writer is ready, registering vertical repositories...")
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
         container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
@@ -191,6 +195,9 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
         container.register(embeddingManager, for: EmbeddingManager.self)
+        
+        // 注册文档文本提取基础设施服务，遵循依赖倒置契约 (@SRP)
+        container.register(DocumentExtractionService() as any DocumentExtractionServiceProtocol, for: (any DocumentExtractionServiceProtocol).self)
         
         // 异步加载向量缓存以确保启动性能
         Task {

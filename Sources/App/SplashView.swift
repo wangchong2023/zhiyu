@@ -1,13 +1,13 @@
-// SplashView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：启动画面：名言引导 + 程序化生成的书本 + 神经网络星空背景
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 规范化治理：使用 DesignSystem 令牌替换硬编码图标名称。
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SplashView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：构建 Splash 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - SplashView

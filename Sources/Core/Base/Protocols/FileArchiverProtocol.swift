@@ -1,10 +1,13 @@
-// FileArchiverProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：归档与压缩服务抽象协议，用于解耦特定平台的 ZIP 实现。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  FileArchiverProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 FileArchiver 模块的抽象契约接口。
+//
 import Foundation
 
 /// 文件归档协议
@@ -14,4 +17,12 @@ public protocol FileArchiverProtocol: Sendable {
     ///   - sourceDir: 待压缩的源目录
     ///   - destinationURL: 目标文件路径 (应以 .zip 或 .pptx 结尾)
     func zip(directory sourceDir: URL, to destinationURL: URL) async throws
+}
+
+/// 文件归档过程中抛出的强类型异常枚举
+public enum FileArchiverError: Error, Sendable {
+    /// 目标平台不支持压缩归档操作 (替代原 405 错误码)
+    case platformNotSupported
+    /// 压缩流写入异常或物理磁盘空间不足
+    case compressionFailed
 }

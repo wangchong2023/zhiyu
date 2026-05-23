@@ -1,10 +1,13 @@
-// AppLayoutComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件包含 ContentView 的视图构建组件，用于实现导航解耦。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppLayoutComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：属于 Views 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 extension ContentView {
@@ -40,7 +43,15 @@ extension ContentView {
         ZStack {
             Group {
                 if appEnv.screenClass != .compact {
+                    #if os(macOS)
                     adaptiveSplitView(tintColor: tintColor)
+                    #else
+                    if #available(iOS 18.0, *) {
+                        modernTabView(tintColor: tintColor)
+                    } else {
+                        legacyTabView(tintColor: tintColor)
+                    }
+                    #endif
                 } else {
                     #if DEBUG
                     if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
@@ -106,17 +117,22 @@ extension ContentView {
         #else
         @Bindable var store = store
         @Bindable var router = router
-        NavigationSplitView {
-            AdaptiveSidebarView(selectedTab: $router.selectedTab)
-        } content: {
-            switch router.selectedTab {
-            case .knowledge:
-                SidebarView(heroNamespace: heroNamespace, selection: $router.sidebarSelection)
-            default:
-                Color.appBackground
+        Group {
+            if router.selectedTab == .knowledge {
+                NavigationSplitView {
+                    AdaptiveSidebarView(selectedTab: $router.selectedTab)
+                } content: {
+                    SidebarView(heroNamespace: heroNamespace, selection: $router.sidebarSelection)
+                } detail: {
+                    AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, heroNamespace: heroNamespace)
+                }
+            } else {
+                NavigationSplitView {
+                    AdaptiveSidebarView(selectedTab: $router.selectedTab)
+                } detail: {
+                    AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, heroNamespace: heroNamespace)
+                }
             }
-        } detail: {
-            AdaptiveDetailView(selectedTab: $router.selectedTab, selection: $router.sidebarSelection, heroNamespace: heroNamespace)
         }
         .tint(tintColor)
         .sheet(isPresented: $store.showPerfDashboard) {
@@ -327,18 +343,44 @@ extension ContentView {
         }
     }
 
+    /// 消费当前挂起的深度路由链接，并触发全局 UI 的无转场或 Tab 页切换
     func consumeDeepLink() {
+        // 关键过程：从服务容器提取未消费的挂起链接，并在取出时自动清空挂起状态
         guard let link = deepLinkService.consumeDeepLink() else { return }
+        
         switch link {
-        case .openPage(let id): router.navigateToPage(id: id)
+        case .openPage(let id):
+            // 直达特定笔记详情页
+            router.navigateToPage(id: id)
+            
         case .openPageByTitle(let t):
+            // 根据标题异步查找对应笔记，成功后跳转
             Task {
                 if let p = await store.pageByTitle(t) {
                     await MainActor.run { router.navigateToPage(id: p.id) }
                 }
             }
-        case .search(let q): store.searchStore.searchText = q
-        default: break
+            
+        case .search(let q):
+            // 🟢 切换至搜索 Tab，并注入待搜索关键词
+            router.navigateToTool(.search)
+            store.searchStore.searchText = q
+            
+        case .create:
+            // 🟢 补全：拉起全局新建卡片 Sheet 弹窗，用户可随时输入
+            store.showCreateSheet = true
+            
+        case .ingest:
+            // 🟢 补全：快捷切换到“知识摄入中心” Tab
+            router.navigateToTool(.ingest)
+            
+        case .graph:
+            // 🟢 补全：快捷切换到“知识关系图谱” Tab
+            router.navigateToTool(.graph)
+            
+        case .chat:
+            // 🟢 补全：快捷切换到“AI 智能对话” Tab
+            router.navigateToTool(.chat)
         }
     }
 }

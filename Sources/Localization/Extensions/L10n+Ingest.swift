@@ -1,9 +1,13 @@
-// 功能说明: [Shared]
 //
-// L10n+Ingest.swift
-// 智宇 (ZhiYu) 多语言 Ingest 垂直切片强类型扩展定义
+//  L10n+Ingest.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 Ingest 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {

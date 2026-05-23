@@ -1,12 +1,13 @@
-// LogAction.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：操作日志动作类型 (标准化的动作分类，驱动 UI 表现与系统审计)
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-16: 架构对齐：物理下沉至 Core Base 层，解除反向依赖。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LogAction.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Constants 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 操作日志动作类型

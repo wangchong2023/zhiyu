@@ -1,11 +1,13 @@
-// AIPulseIndicator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：AI 脉搏指示器，提供 AI 处理状态的实时视觉反馈与触感反馈。
-// MARK: [PR-04] AI 思考指示器 (Pulse) 启动延迟 < 200ms
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIPulseIndicator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import Observation
 
@@ -15,8 +17,17 @@ struct AIPulseIndicator: View {
     @Environment(AppStore.self) var store
     @State private var isAnimating = false
     
+    private var isAIProcessing: Bool {
+        TaskCenter.shared.tasks.contains(where: { task in
+            if case .running = task.status {
+                return task.type == .ai || task.type == .synthesis
+            }
+            return false
+        })
+    }
+    
     private var isActive: Bool {
-        store.llmService.isProcessing || store.isScanningAI
+        isAIProcessing || store.isScanningAI
     }
     
     private var currentStage: TaskStage {
@@ -29,7 +40,7 @@ struct AIPulseIndicator: View {
     }
     
     private var pulseColor: Color {
-        if store.llmService.isProcessing {
+        if isAIProcessing {
             switch currentStage {
             case .embedding: return .cyan
             case .retrieval: return .blue
@@ -108,7 +119,7 @@ struct AIPulseIndicator: View {
     }
 
     private var currentStageTitle: String {
-        if !store.llmService.isProcessing && store.isScanningAI {
+        if !isAIProcessing && store.isScanningAI {
             return L10n.AI.Status.scanning
         }
         switch currentStage {

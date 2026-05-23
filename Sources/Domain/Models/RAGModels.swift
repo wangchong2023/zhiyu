@@ -1,12 +1,13 @@
-// RAGModels.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：[Infra] RAG 领域模型定义：包含分块（PageChunk）与向量（PageEmbedding）。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 补全父子块 (Parent-Child) 与索引偏移元数据支持。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  RAGModels.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

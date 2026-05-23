@@ -1,10 +1,13 @@
-// MacHapticService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：HapticFeedbackProtocol 的 macOS 原生实现。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  MacHapticService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：实现 MacHaptic 模块的核心业务逻辑服务。
+//
 #if os(macOS)
 import AppKit
 

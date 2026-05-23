@@ -1,14 +1,13 @@
-// MermaidWebView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] struct IdentifiableURL
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  MermaidWebView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 MermaidWeb 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 #if canImport(WebKit)
 import WebKit
@@ -89,7 +88,7 @@ struct MermaidWebView: View {
             action()
         }) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appText)
                 .frame(width: 40, height: 40)
                 .contentShape(Rectangle())

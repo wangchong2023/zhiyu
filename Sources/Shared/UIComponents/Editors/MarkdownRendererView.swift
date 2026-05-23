@@ -1,18 +1,13 @@
-// MarkdownRendererView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件实现了基于文本块解析的高级 Markdown 渲染组件（MarkdownRendererView），负责将抽象的 Markdown 语法树转化为原生 SwiftUI 视图流。
-// 该渲染引擎通过以下核心功能点确保了知识内容的高效展示与沉浸式阅读体验：
-// 1. 结构化块渲染：支持标题（H1-H6）、段落、列表、引用块、代码块及表格的差异化渲染，并自动适配系统的 AppUI 设计规范。
-// 2. 交互式内联解析：实现了 知识库链接 内部链接、标准超链接、加粗、斜体及行内代码的混合解析，支持点击跳转至关联页面。
-// 3. 多模态内容集成：深度集成了 Mermaid 绘图引擎与任务列表（Task List），支持在文档中直接嵌入动态图表与待办事项。
-// 4. 安全与性能优化：内置了基于隐私模式的模糊遮罩逻辑，并利用 Skeleton View 提供流式生成阶段的视觉占位反馈。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-05: 升级全工程文档规范，消除渲染器内部的魔鬼数字
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//  MarkdownRendererView.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 MarkdownRenderer 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 
 // MARK: - Markdown Renderer View
@@ -31,7 +26,12 @@ struct MarkdownRendererView: View {
 
     var body: some View {
         Group {
-            if content.isEmpty && store.llmService.isProcessing {
+            if content.isEmpty && TaskCenter.shared.tasks.contains(where: { task in
+                if case .running = task.status {
+                    return task.type == .ai || task.type == .synthesis
+                }
+                return false
+            }) {
                 renderSkeleton()
             } else {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
@@ -257,7 +257,7 @@ struct MarkdownRendererView: View {
                     ForEach(Array(headers.enumerated()), id: \.offset) { index, cell in
                         Group {
                             renderInlineContent(cell)
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.footnote.weight(.semibold))
                                 .foregroundStyle(.appAccent)
                                 .padding(.horizontal, DesignSystem.small)
                                 .padding(.vertical, DesignSystem.tightPadding)
@@ -279,7 +279,7 @@ struct MarkdownRendererView: View {
                         ForEach(Array(row.enumerated()), id: \.offset) { colIndex, cell in
                             Group {
                                 renderInlineContent(cell)
-                                    .font(.system(size: 13))
+                                    .font(.footnote)
                                     .foregroundStyle(.appText)
                                     .padding(.horizontal, DesignSystem.small)
                                     .padding(.vertical, DesignSystem.tightPadding)

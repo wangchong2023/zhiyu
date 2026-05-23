@@ -1,12 +1,13 @@
-// TagStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：标签领域状态中心，负责全库标签的聚合、重命名、批量删除及预设管理。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-16: 职责剥离：从 AppStore 提炼标签管理逻辑，实现 SRP 优化。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  TagStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 

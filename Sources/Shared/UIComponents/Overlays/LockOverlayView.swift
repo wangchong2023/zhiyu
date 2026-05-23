@@ -1,13 +1,13 @@
-// LockOverlayView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 锁定界面 (Security & Design 视角：提供高级感与安全感)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LockOverlayView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 LockOverlay 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 隐私锁屏覆盖视图
@@ -81,9 +81,9 @@ struct LockOverlayView: View {
                         .rotationEffect(.degrees(isAnimating ? -360 : 0))
                         .animation(.linear(duration: 25).repeatForever(autoreverses: false), value: isAnimating)
 
-                    VStack(spacing: 20) {
+                    VStack(spacing: DesignSystem.wide) {
                         Image(systemName: DesignSystem.Icons.lockShieldFill)
-                            .font(.system(size: 80, weight: .ultraLight))
+                            .font(.largeTitle.weight(.ultraLight))
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
@@ -97,7 +97,7 @@ struct LockOverlayView: View {
                 }
                 
                 // 3. Information & Copy
-                VStack(spacing: 12) {
+                VStack(spacing: DesignSystem.medium) {
                     Text(L10n.Common.Security.vaultLocked)
                         .font(.system(size: titleSize, weight: .bold, design: .rounded))
                         .foregroundStyle(.appText)
@@ -119,7 +119,7 @@ struct LockOverlayView: View {
                     #endif
                     Task { await store.securityService.unlock() }
                 }) {
-                    HStack(spacing: 16) {
+                    HStack(spacing: DesignSystem.standardPadding) {
                         Image(systemName: unlockIcon)
                             .font(.title2)
                         

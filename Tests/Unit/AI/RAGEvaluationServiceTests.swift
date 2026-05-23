@@ -1,11 +1,13 @@
-// RAGEvaluationServiceTests.swift
 //
-// 作者: Antigravity
-// 功能说明: [Tests] 单元测试与集成测试层：RAG 质量评估中心的打分、分类及 SQLite 治理落库断言验证。
-// 版本: 1.0
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
+//  RAGEvaluationServiceTests.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 RAGEvaluationService 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

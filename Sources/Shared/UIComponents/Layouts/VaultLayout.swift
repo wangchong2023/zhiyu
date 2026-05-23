@@ -1,9 +1,13 @@
-// VaultLayout.swift
 //
-// 作者: Wang Chong
-// 功能说明: 笔记本模块特有的布局模板，解决业务界面直接硬编码的布局技术债。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VaultLayout.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Layouts 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 笔记本网格容器布局

@@ -44,7 +44,18 @@ jobs:
         run: |
           bundle exec fastlane ci_test || fastlane ci_test
 
-      # 6. 拉起领域层 (Domain) 85% 代码覆盖率红线熔断拦截校验，低于红线则阻断 CI 流程！
+      # 6. SwiftLint 严格模式静态代码质量扫描（--strict 参数：将所有 warning 升级为 error，任何违规立即熔断）
+      - name: Run SwiftLint Strict Analysis
+        run: |
+          swiftlint lint --strict --reporter github-actions-logging
+
+      # 7. 拉起领域层 (Domain) 85% 代码覆盖率红线熔断拦截校验，低于红线则阻断 CI 流程！
       - name: Run Domain Layer 85% Code Coverage Enforcer
         run: |
           ./Tools/check_coverage.py
+
+      # 8. SPM 第三方依赖安全漏洞静态审计门禁，阻断已知供应链漏洞缺陷！
+      - name: Run SPM Dependency Vulnerability Scan
+        run: |
+          ./Tools/audit_spm_dependencies.py
+

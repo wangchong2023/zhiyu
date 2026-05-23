@@ -1,13 +1,13 @@
-// SystemStatsView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识管理系统的资源监控中心（SystemMonitorView）。
-// 作为系统的“仪表盘”，该视图为用户提供了关于 AI 资源消耗、存储分布及 RAG 质量评估的深度可观测性。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-15: 引入 SystemStatsCoordinator 实现业务逻辑解耦。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SystemStatsView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 SystemStats 界面的 UI 视图层组件。
+//
 import SwiftUI
 import Charts
 
@@ -95,7 +95,7 @@ struct SystemStatsView: View {
             // 1. API 请求卡片
             StandardSection(title: L10n.Dashboard.apiRequests + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: DesignSystem.small) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.requests })")
                             .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
@@ -113,7 +113,7 @@ struct SystemStatsView: View {
             // 2. Token 消耗卡片
             StandardSection(title: L10n.Dashboard.stats.tokensUsage + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
                 VStack(alignment: .leading, spacing: Spacing.tiny) {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: DesignSystem.small) {
                         Text("\(coordinator.dailyStats.reduce(0) { $0 + $1.tokens })")
                             .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
                             .foregroundStyle(.appText)
@@ -130,14 +130,14 @@ struct SystemStatsView: View {
             
             // 3. 响应时延卡片
             StandardSection(title: L10n.Dashboard.stats.latencyTitle + " (\(L10n.Dashboard.stats.rangeThirtyDays))") {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                     HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                             Text(L10n.Dashboard.stats.avgLatencyShort)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
                             
-                            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            HStack(alignment: .firstTextBaseline, spacing: DesignSystem.tiny) {
                                 Text("\(coordinator.avgLatency)")
                                     .font(.system(size: DesignSystem.displayFontSize, weight: .bold, design: .rounded))
                                     .foregroundColor(.appText)
@@ -226,7 +226,7 @@ struct SystemStatsView: View {
                             .foregroundStyle(category.color)
                             .frame(width: DesignSystem.giant)
                         
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                             Text(category.label)
                                 .foregroundStyle(.appText)
                             
@@ -239,8 +239,8 @@ struct SystemStatsView: View {
                         
                         Spacer()
                         
-                        VStack(alignment: .trailing, spacing: 2) {
-                            HStack(spacing: 4) {
+                        VStack(alignment: .trailing, spacing: DesignSystem.atomic) {
+                            HStack(spacing: DesignSystem.tiny) {
                                 Text(coordinator.formatBytes(category.value))
                                     .font(.subheadline.bold())
                                     .foregroundStyle(.appText)
@@ -274,7 +274,7 @@ struct SystemStatsView: View {
                                     .foregroundStyle(.appAccent)
                             }
                             
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(item.name)
                                     .font(.subheadline.bold())
                                     .foregroundStyle(.appText)
@@ -282,18 +282,18 @@ struct SystemStatsView: View {
                                 // 当前是否处于激活/选中使用中
                                 if item.id == VaultService.shared.selectedVaultID {
                                     Text(L10n.Dashboard.stats.activeVaultStatus)
-                                        .font(.system(size: 10))
+                                        .font(.caption2)
                                         .foregroundStyle(Color.green)
                                 } else {
                                     Text(L10n.Dashboard.stats.inactiveVaultStatus)
-                                        .font(.system(size: 10))
+                                        .font(.caption2)
                                         .foregroundStyle(.appSecondary)
                                 }
                             }
                             
                             Spacer()
                             
-                            VStack(alignment: .trailing, spacing: 2) {
+                            VStack(alignment: .trailing, spacing: DesignSystem.atomic) {
                                 Text(coordinator.formatBytes(item.size))
                                     .font(.subheadline.bold())
                                     .foregroundStyle(.appText)
@@ -313,7 +313,7 @@ struct SystemStatsView: View {
             
             // 3. 治理与维护
             StandardSection(title: L10n.Dashboard.maintenance) {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     Button(action: { Task { await coordinator.cleanupData() } }) {
                         HStack {
                             Label(L10n.Dashboard.cleanupAction, systemImage: "sparkles")
@@ -357,7 +357,7 @@ struct SystemStatsView: View {
             .chartLegend(.hidden)
             .frame(height: DesignSystem.Metrics.chartHeight - 40)
             
-            VStack(spacing: 4) {
+            VStack(spacing: DesignSystem.tiny) {
                 Text(coordinator.formatBytes(coordinator.totalStorage))
                     .font(.system(size: DesignSystem.titleFontSize + 2, weight: .bold, design: .rounded))
                     .foregroundStyle(.appAccent)
@@ -383,7 +383,7 @@ struct SystemStatsView: View {
                             .font(DesignSystem.caption2Font)
                             .foregroundStyle(.appText)
                             .lineLimit(1)
-                        HStack(spacing: 4) {
+                        HStack(spacing: DesignSystem.tiny) {
                             Text(coordinator.formatBytes(category.value))
                             let percent = coordinator.totalStorage > 0 ? Int(Double(category.value) / Double(coordinator.totalStorage) * 100) : 0
                             Text("(\(percent)%)")
@@ -399,13 +399,13 @@ struct SystemStatsView: View {
     // MARK: - 时延卡片辅助
     
     private func latencySubValue(label: String, value: String) -> some View {
-        VStack(alignment: .center, spacing: 4) {
+        VStack(alignment: .center, spacing: DesignSystem.tiny) {
             Text(label)
-                .font(.system(size: 10))
+                .font(.caption2)
                 .foregroundStyle(.appSecondary)
             
             Text(value)
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .font(.subheadline.weight(.bold))
                 .foregroundStyle(.appText)
         }
         .frame(maxWidth: .infinity)
@@ -414,7 +414,7 @@ struct SystemStatsView: View {
     private var divider: some View {
         Divider()
             .frame(height: 16)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, DesignSystem.tiny)
     }
 }
 
@@ -490,7 +490,7 @@ struct ChartView: View {
                 RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
                     .foregroundStyle(Color.appSecondary.opacity(0.5))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
-                    .annotation(position: .automatic, alignment: .center, spacing: 4) {
+                    .annotation(position: .automatic, alignment: .center, spacing: DesignSystem.tiny) {
                         if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
                             tooltipView(stat: stat)
                         }
@@ -540,7 +540,7 @@ struct ChartView: View {
                 RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
                     .foregroundStyle(Color.appSecondary.opacity(0.5))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
-                    .annotation(position: .automatic, alignment: .center, spacing: 4) {
+                    .annotation(position: .automatic, alignment: .center, spacing: DesignSystem.tiny) {
                         if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
                             tooltipView(stat: stat)
                         }
@@ -592,12 +592,12 @@ struct ChartView: View {
     }
     
     private func tooltipView(stat: DailyAIUsage) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             Text(stat.date, format: .dateTime.year().month().day())
                 .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
                 .foregroundStyle(.appText)
             
-            HStack(spacing: 4) {
+            HStack(spacing: DesignSystem.tiny) {
                 Text(type == .requests ? L10n.Dashboard.apiRequests : L10n.Dashboard.tokens)
                     .font(.system(size: DesignSystem.caption2FontSize))
                     .foregroundStyle(.appSecondary)

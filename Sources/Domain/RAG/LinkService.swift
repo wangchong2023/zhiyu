@@ -1,13 +1,13 @@
-// LinkService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：处理知识库页面间的链接解析、反向链接发现、混合搜索与标签聚合逻辑。
-// MARK: [SR-02] 混合检索 (RAG) 链路调度与语义链接优化
-// MARK: [PR-01] 全文搜索 (FTS5) 响应延迟 < 100ms
-// MARK: [PR-02] 混合检索 (RAG) 链路耗时 < 1.5s
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LinkService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：实现 Link 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// [L1] 领域层：处理链接解析、反向链接、搜索与标签聚合

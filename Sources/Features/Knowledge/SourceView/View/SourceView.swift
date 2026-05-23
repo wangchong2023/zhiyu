@@ -1,10 +1,13 @@
-// SourceView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：信源视图，对标 NotebookLM 的信源面板
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SourceView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Source 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct SourceView: View {
@@ -36,7 +39,7 @@ struct SourceView: View {
     
     private var header: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(Localized.tr("source.view.title", table: "Plugin"))
                     .font(.headline)
                     .foregroundStyle(.appText)
@@ -57,10 +60,10 @@ struct SourceView: View {
     }
     
     private var emptyState: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: DesignSystem.wide) {
             Spacer()
             Image(systemName: DesignSystem.Icons.quoteOpening)
-                .font(.system(size: 40))
+                .font(.largeTitle)
                 .foregroundStyle(.appSecondary.opacity(0.3))
             
             Text(Localized.tr("source.view.empty", table: "Plugin"))

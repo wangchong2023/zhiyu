@@ -1,14 +1,13 @@
-// BacklinksView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct BacklinksView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  BacklinksView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 Backlinks 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct BacklinksView: View {
@@ -60,7 +59,7 @@ struct BacklinksView: View {
                                     .background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass))
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                                 
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                     Text(linkedPage.title)
                                         .font(.subheadline)
                                         .foregroundStyle(.appText)
@@ -69,7 +68,7 @@ struct BacklinksView: View {
                                         .foregroundStyle(.appSecondary)
                                 }
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, DesignSystem.tiny)
                         }
                     }
                 } header: {
@@ -98,7 +97,7 @@ struct BacklinksView: View {
                                     .background(Color.fromModelColorName(linkingPage.pageType.colorName).opacity(DesignSystem.Opacity.glass))
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                                 
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                     Text(linkingPage.title)
                                         .font(.subheadline)
                                         .foregroundStyle(.appText)
@@ -107,7 +106,7 @@ struct BacklinksView: View {
                                         .foregroundStyle(.appSecondary)
                                 }
                             }
-                            .padding(.vertical, 4)
+                            .padding(.vertical, DesignSystem.tiny)
                         }
                     }
                 } header: {

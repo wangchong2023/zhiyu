@@ -1,10 +1,13 @@
-// OnboardingOverlay.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了新手引导蒙层视图，用于向新用户展示系统的核心能力与操作指引。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  OnboardingOverlay.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Overlays 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Onboarding Overlay

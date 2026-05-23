@@ -1,12 +1,13 @@
-// VectorIndexer.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了向量索引处理器，负责将分块后的文本转化为向量并执行持久化索引。
-// MARK: [SR-02] 向量数据库 (Vector DB) 存储与 RAG 链路闭环
-// MARK: [PR-02] 混合检索 (RAG) 链路耗时优化
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VectorIndexer.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 VectorDB 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 向量索引处理器

@@ -95,3 +95,48 @@ function preProcess(content) {
     return content;
 }
 ```
+
+---
+
+## 5. 完整的模板拓扑 (Template Topology)
+
+一个标准的智宇插件是一个目录，其内部包含 manifest.json、index.js 以及可选的 styles.css。它的标准文件布局拓扑结构如下：
+
+```text
+my-zhiyu-plugin/
+├── manifest.json      # 插件元数据与权限白名单声明
+├── index.js           # 插件 JS 逻辑主入口文件 (JavaScriptCore 载入)
+└── styles.css         # 插件自定义 CSS 样式表 (由主 App 自定义视图挂载渲染)
+```
+
+### 文件的协同关系
+1. **`manifest.json`**：主 App 启动时，首先解析 manifest，静态核验权限列表（如 `requestAIAccess`、`fetch` 等）和 `allowedDomains` 域名白名单。
+2. **`index.js`**：宿主应用为该插件创建独立的 JSVirtualMachine 和 JSContext，物理载入 `index.js`，并注入受限的宿主 `ZhiYu` 桥接对象。
+3. **`styles.css`**：如果插件注册了自定义 WebView 渲染视图，宿主会将 `styles.css` 以 `<style>` 标签形式动态注入到渲染 DOM 容器中。
+
+---
+
+## 6. 局域网调试与真机实时热重载 (Live Reload)
+
+为了给第三方开发者提供极致的 DX (Developer Experience)，智宇提供了一套局域网无线实时热重载工具集。
+
+### 6.1 本地测试服务器 (CLI Dev Server)
+在您的插件开发文件夹下，可以使用智宇开发者命令行工具启动热重载服务：
+
+```bash
+# 安装智宇插件 CLI 开发工具
+npm install -g @zhiyu/plugin-cli
+
+# 启动开发服务器，这会在局域网内开启 Websocket 监听服务 (默认 9091 端口)
+zhiyu-cli dev --port 9091
+```
+
+### 6.2 真机实时连接与热重载流
+1. 打开 iPhone/macOS 智宇主程序的 **“设置 -> 开发者选项 -> 插件无线调试”**。
+2. 输入局域网开发服务器地址（例如 `ws://192.168.1.100:9091`），点击 **连接**。
+3. **建立连接 (Handshake)**：主 App 将通过 Websocket 与本地 CLI 服务器握手，并下载当前开发中的插件元数据。
+4. **实时热重载 (Live Reload)**：
+   * 当您在本地编辑器中修改 `index.js` 或 `manifest.json` 并保存时，CLI 工具会感知文件系统变更，自动通过 Websocket 触发推送。
+   * 宿主主 App 收到更新后，会物理销毁旧的 `JSContext` 实例，瞬间重建全新的执行环境，并热重载最新的 JS 逻辑，**无需重新构建或重启主 App**。
+5. **Console 日志重定向**：
+   * 插件中调用的 `ZhiYu.log(msg)`，会通过 Websocket 管道被实时传输并打印在开发机的 CLI 控制台中，实现“腕上运行，机上调试”。

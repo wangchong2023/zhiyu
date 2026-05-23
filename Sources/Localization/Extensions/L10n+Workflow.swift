@@ -1,13 +1,13 @@
-// 功能说明: [Shared]
 //
-// L10n+Workflow.swift
-// 智宇 (ZhiYu) 多语言 Workflow 垂直切片强类型扩展定义
+//  L10n+Workflow.swift
+//  ZhiYu
 //
-// 作者: Wang Chong
-// 功能说明: 提供工作流服务的强类型多语言接口，映射至 "System" 表。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 本地化层
+//  核心职责：为 Workflow 模块提供本地化强类型字符串的访问扩展。
+//
 import Foundation
 
 extension L10n {

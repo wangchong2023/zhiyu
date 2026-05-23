@@ -1,12 +1,13 @@
-// SystemStatsCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：系统资源监控功能协调器，负责 AI 消耗分析、存储统计及数据库维护。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 适配垂直化仓储架构，迁移统计与清理逻辑至 Governance/Vector 仓库。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SystemStatsCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：负责 SystemStats 业务流的导航路由与协作管理。
+//
 import SwiftUI
 import Observation
 

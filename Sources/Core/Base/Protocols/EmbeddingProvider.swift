@@ -1,13 +1,13 @@
-// EmbeddingProvider.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：抽象 Embedding 能力协议
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  EmbeddingProvider.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 抽象 Embedding 能力协议

@@ -1,3 +1,13 @@
+//
+//  PageBackground.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Backgrounds 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: @PR-03: 工业级页面背景系统，优化了渐变渲染性能

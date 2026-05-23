@@ -1,14 +1,13 @@
-// AppButtons.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 的标准按钮体系，包括主要操作按钮、胶囊形按钮及交互缩放样式。
-// 核心职责：
-// 1. 提供统一样式的交互控件，封装渐变色、加载状态及触感反馈。
-// 2. 支持品牌色主操作按钮及辅助类轻量化按钮。
-// MARK: [PR-03] 统一按钮交互规范，优化点击热区与响应速度
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppButtons.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Buttons 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Primary Button

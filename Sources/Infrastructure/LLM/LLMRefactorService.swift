@@ -1,11 +1,13 @@
-// LLMRefactorService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：LLM 知识重构服务，处理潜在链接发现、内容自动折叠及知识库结构优化建议。
-// MARK: [SR-02] 知识库自动化重构与语义链接优化
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMRefactorService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 LLMRefactor 模块的核心业务逻辑服务。
+//
 import Foundation
 
 /// LLM 知识重构服务

@@ -1,12 +1,13 @@
-// OnDeviceComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：包含 OnDeviceTestView 推理测试沙盒视图与 OnDeviceModelRow 卡片行组件，为设备端模型提供完整且具备毛玻璃质感的 UI 工具集。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-19: 新增极致毛玻璃质感、完整的简体中文 DocC 级注释与 Swift 6 并发安全保证。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  OnDeviceComponents.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 @preconcurrency import SwiftUI
 
 // MARK: - On-Device Test View
@@ -38,7 +39,7 @@ public struct OnDeviceTestView: View {
 
     public var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack(spacing: DesignSystem.wide) {
                 promptInputSection
                 generateButton
                 progressIndicator
@@ -63,7 +64,7 @@ public struct OnDeviceTestView: View {
     
     // MARK: - 提示词输入区域
     private var promptInputSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(Localized.tr("ondevice.testPrompt", table: "AI"))
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.appSecondary)
@@ -122,7 +123,7 @@ public struct OnDeviceTestView: View {
     @ViewBuilder
     private var progressIndicator: some View {
         if isGenerating {
-            VStack(spacing: 6) {
+            VStack(spacing: DesignSystem.tightPadding) {
                 ProgressView(value: onDeviceService.generationProgress)
                     .tint(.appAccent)
                     .progressViewStyle(.linear)
@@ -139,7 +140,7 @@ public struct OnDeviceTestView: View {
     @ViewBuilder
     private var resultSection: some View {
         if !result.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: DesignSystem.small) {
                 HStack {
                     Label(
                         Localized.tr("ondevice.result", table: "AI"),
@@ -157,8 +158,8 @@ public struct OnDeviceTestView: View {
                         Label(L10n.Common.tr("copy"), systemImage: "doc.on.doc.fill")
                             .font(.caption2.weight(.medium))
                             .foregroundStyle(.appAccent)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
+                            .padding(.horizontal, DesignSystem.small)
+                            .padding(.vertical, DesignSystem.tiny)
                             .background(Color.appAccent.opacity(0.12))
                             .clipShape(Capsule())
                     }
@@ -242,12 +243,12 @@ public struct OnDeviceModelRow: View {
             }
             
             // 中间模型名称及来源描述
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(model.name)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 
-                HStack(spacing: 8) {
+                HStack(spacing: DesignSystem.small) {
                     if model.size > 0 {
                         Text(model.sizeLabel)
                             .font(.caption2.weight(.medium))
@@ -255,9 +256,9 @@ public struct OnDeviceModelRow: View {
                     }
                     
                     Text(modelTypeLabel)
-                        .font(.system(size: 9, weight: .bold))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, DesignSystem.tightPadding)
+                        .padding(.vertical, DesignSystem.atomic)
                         .background(isSelected ? Color.appAccent.opacity(0.18) : Color.appSecondary.opacity(0.1))
                         .foregroundStyle(isSelected ? .appAccent : .appSecondary)
                         .clipShape(Capsule())
@@ -278,8 +279,8 @@ public struct OnDeviceModelRow: View {
                     .frame(width: 20, height: 20)
             }
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
+        .padding(.vertical, DesignSystem.medium)
+        .padding(.horizontal, DesignSystem.standardPadding)
         .background(
             RoundedRectangle(cornerRadius: Spacing.cardRadius)
                 .fill(isSelected ? Color.appAccent.opacity(0.06) : Color.appCard.opacity(0.3))

@@ -1,10 +1,13 @@
-// DesignSystem.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 智宇 (ZhiYu) 设计系统核心入口。
-// 本文件整合了原子令牌 (Tokens)，为应用提供统一的视觉与交互规范。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  DesignSystem.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 DesignSystem 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 智宇设计系统 (ZhiYu Design System)

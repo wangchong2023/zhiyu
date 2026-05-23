@@ -1,17 +1,17 @@
-// ZhiYuServiceTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: ZhiYu服务Tests.swift
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  ZhiYuServiceTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 ZhiYuService 开展自动化单元测试验证。
+//
 import XCTest
 import SwiftUI
 @preconcurrency import GRDB
-@testable import ZhiYu
+@preconcurrency @testable import ZhiYu
 
 // MARK: - BackupService Tests
 @MainActor
@@ -113,8 +113,7 @@ final class BackupServiceTests: XCTestCase {
 
 // MARK: - CollaborationService Tests
 import MultipeerConnectivity
-@MainActor
-final class CollaborationServiceTests: XCTestCase {
+final class ZhiYuServiceCollaborationTests: XCTestCase {
 
     var collabService: CollaborationService!
     var store: AppStore!
@@ -122,32 +121,40 @@ final class CollaborationServiceTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         // 统一配置标准测试 Mock 环境，将协作提供商与环境适配等服务一并就绪，确保完全物理隔离且不崩溃
-        setupFullMockEnvironment()
-        
-        collabService = CollaborationService()
-        store = AppStore()
+        await MainActor.run {
+            setupFullMockEnvironment()
+            collabService = CollaborationService()
+            store = AppStore()
+        }
     }
 
     override func tearDown() async throws {
-        collabService.stop()
-        collabService = nil
-        store = nil
+        await MainActor.run {
+            collabService.stop()
+            collabService = nil
+            store = nil
+        }
         // 允许当前主线程/协程事件循环排水，确保所有未完成的异步任务运行完毕，规避重置 DI 导致的 Race Condition (@SRS-7.1)
-        try? await Task.sleep(nanoseconds: 50_000_000)
-        DatabaseManager.shared.reset()
-        ServiceContainer.shared.reset()
+        try await Task.sleep(nanoseconds: 50_000_000)
+        await MainActor.run {
+            DatabaseManager.shared.reset()
+            ServiceContainer.shared.reset()
+        }
         try await super.tearDown()
     }
 
+    @MainActor
     func testSetStoreAssignsStore() {
         // store is usually managed via AppStore instance or passed to views
         XCTAssertNotNil(AppStore())
     }
 
+    @MainActor
     func testDefaultRoleIsViewer() {
         XCTAssertEqual(collabService.role, .viewer)
     }
 
+    @MainActor
     func testDefaultUserNameIsSet() {
         // displayName was moved to internal or statusMessage, 
         // we test availability instead or check if setUserName works without crash
@@ -155,25 +162,30 @@ final class CollaborationServiceTests: XCTestCase {
         XCTAssertTrue(collabService.isAvailable || collabService.isSimulator)
     }
 
+    @MainActor
     func testSetUserNameUpdatesName() {
         collabService.setUserName("TestUser")
         // Just verify it doesn't crash as we can't easily read back private userName
         XCTAssertNotNil(collabService)
     }
 
+    @MainActor
     func testNoPeersWhenNotConnected() {
         XCTAssertTrue(collabService.connectedPeers.isEmpty)
     }
 
+    @MainActor
     func testRecentEditsEmptyInitially() {
         XCTAssertTrue(collabService.recentEdits.isEmpty)
     }
 
+    @MainActor
     func testRoleColors() {
         // roles no longer have color property directly, usually handled by UI theme
         XCTAssertEqual(CollabRole.owner.icon, "crown.fill")
     }
 
+    @MainActor
     func testDiscoveredRoomEquality() {
         let peer = MCPeerID(displayName: "p1")
         let room1 = DiscoveredRoom(id: "r1", platformPeer: peer, roomName: "Room", owner: "Host1")

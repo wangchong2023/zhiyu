@@ -1,13 +1,13 @@
-// AppConstants.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：物理常量与底层技术配置。
-// 旨在提供应用运行的最底层支撑，严禁包含任何业务逻辑或对高层模型的引用。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 规范化治理：收拢全局存储键名与物理常量。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppConstants.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：属于 Constants 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// [L0] 底层基座层：硬编码常量配置 (AppConstants)
@@ -127,6 +127,11 @@ public struct AppConstants {
             
             // ── 语音与录音 ──
             public static let voiceRecordings = "voice_recordings_list"
+            
+            // ── watchOS / Widget 同步缓存 ──
+            public static let watchTotalPages = "watch_totalPages"
+            public static let watchTotalWords = "watch_totalWords"
+            public static let watchRecentTitles = "watch_recentTitles"
             
             // ── 提示词资产 ──
             public static let promptMindmap = "prompt_mindmap"

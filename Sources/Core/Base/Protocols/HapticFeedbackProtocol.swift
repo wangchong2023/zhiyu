@@ -1,12 +1,13 @@
-// HapticFeedbackProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：触感反馈抽象协议，定义了跨平台的触感交互标准。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-13: 初始创建，作为 PAL (Platform Abstraction Layer) 标准的一部分。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  HapticFeedbackProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 HapticFeedback 模块的抽象契约接口。
+//
 import Foundation
 
 /// 触感模式枚举：定义了系统通用的交互语义

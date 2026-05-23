@@ -1,14 +1,13 @@
-// iCloudSyncView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct iCloudSyncView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iCloudSyncView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 iCloudSync 界面的 UI 视图层组件。
+//
 #if ICLOUD_ENABLED
 @preconcurrency import SwiftUI
 
@@ -55,7 +54,7 @@ struct iCloudSyncView: View {
 
             // MARK: - Info Section
             Section {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     SyncInfoRow(icon: "1.circle.fill", text: L10n.ICloud.info1)
                     SyncInfoRow(icon: "2.circle.fill", text: L10n.ICloud.info2)
                     SyncInfoRow(icon: "3.circle.fill", text: L10n.ICloud.info3)

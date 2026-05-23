@@ -1,13 +1,13 @@
-// AIWorkflowStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：AI 工作流存储，管理 AI 扫描状态、洞察及建议。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-04: 创建版本。
-//   - 2026-05-16: 职责解耦：物理可见性优化，支持 AppStore 聚合。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIWorkflowStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 import Combine

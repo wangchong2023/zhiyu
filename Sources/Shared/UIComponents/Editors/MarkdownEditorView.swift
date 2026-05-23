@@ -1,12 +1,13 @@
-// MarkdownEditorView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] [Shared/UIComponents] 核心编辑器组件：基于 SwiftUI TextEditor 的 Markdown 编辑器，集成了 OCR 文字识别、附件插入及实时语法高亮建议。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 职责解耦：OCR 业务逻辑迁移至 IngestStore。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  MarkdownEditorView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 MarkdownEditor 界面的 UI 视图层组件。
+//
 import SwiftUI
 import PhotosUI
 
@@ -22,8 +23,8 @@ struct MarkdownEditorView: View {
             if text.isEmpty {
                 Text(placeholder)
                     .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, DesignSystem.tiny)
+                    .padding(.vertical, DesignSystem.small)
             }
             
             TextEditor(text: $text)

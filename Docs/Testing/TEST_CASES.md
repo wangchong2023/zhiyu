@@ -83,36 +83,77 @@
 
 ---
 
-## 8. TC → XCTest 映射表
+## 8. macOS Catalyst 专项测试用例
+
+| 用例 ID | 模块 | 测试场景 | 预期结果 | 优先级 |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-MAC-01 | MenuBar | 顶栏菜单交互 | 验证在 macOS Catalyst 下顶栏“文件”、“编辑”、“AI 实验室”等系统原生菜单存在且可被键盘快捷键呼出。 | P1 |
+| TC-MAC-02 | Keyboard | 全局快捷键响应 | 验证使用 `Cmd + N` 快速新建卡片，`Cmd + F` 触发全局混合检索，功能完全对齐。 | P1 |
+
+---
+
+## 9. watchOS 平台专项测试用例
+
+| 用例 ID | 模块 | 测试场景 | 预期结果 | 优先级 |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-WAT-01 | Recorder | watchOS 语音笔记录入 | 验证手表端离线录制音频后，系统能生成本地缓存，并在 WCSession 重新连线时自动离线传输。 | P1 |
+| TC-WAT-02 | Sync | 笔记卡片微缩缓存同步 | 验证手表端离线阅读列表从 iPhone 缓存拉取，支持 50+ 最热卡片热离线极速阅读。 | P1 |
+| TC-WAT-03 | Capability | watchOS 能力降级校验 | 验证运行时模型编译、安全存储、生物识别鉴权等 Stub 返回符合预期的降级安全值或抛出指定异常。 | P1 |
+
+---
+
+## 10. TC → XCTest 映射表
 
 | 文档用例 ID | XCTest 类 | XCTest 方法 |
 | :--- | :--- | :--- |
 | TC-STR-01 | `AppStoreTests` (Tests/Shared) | `testAddPage` |
-| TC-STR-02 | `AppStoreStorageTests` (Tests/Unit/Storage) | *(需补充)* |
-| TC-SRC-01 | `SearchPerformanceTests` | *(需补充)* |
-| TC-SRC-02 | `SearchPerformanceTests` | *(需补充 RAG 用例)* |
-| TC-AI-01 | `LLMServiceTests` | *(需补充)* |
-| TC-AI-02 | `LLMServiceTests` | *(需补充并发用例)* |
-| TC-ING-01 | `IngestQueueTests` | *(需补充)* |
-| TC-ING-02 | `IngestQueueTests` | *(需补充多格式用例)* |
-| TC-NAV-01 | `KMUITests` (Tests/UITests) | *(需补充 WikiLink 跳转断言)* |
-| TC-NAV-02 | `KnowledgeBaseUITests` (Tests/UI) | *(需补充 deep link 用例)* |
-| TC-UI-01 | `KMTests` (Tests/Unit) | *(需补充)* |
-| TC-SEC-01 | `KMUITests` (Tests/UITests) | *(需补充生物识别模拟)* |
-| TC-SEC-02 | `KMServiceTests` | *(需补充加密断言)* |
+| TC-STR-02 | `DatabaseIntegrityTests` (Tests/Unit/Storage) | `testDatabaseIntegrityCheckOnCorruptedFile` |
+| TC-SRC-01 | `SearchPerformanceTests` | `testFTSSearchShortWordPriority` |
+| TC-SRC-02 | `SearchPerformanceTests` | `testHybridSearchRecallRate` |
+| TC-AI-01 | `LLMServiceTests` | `testSemanticSummaryGeneration` |
+| TC-AI-02 | `LLMServiceTests` | `testHighConcurrencyQueueStability` |
+| TC-ING-01 | `IngestQueueTests` | `testWebIngestAndMarkdownParsing` |
+| TC-ING-02 | `IngestQueueTests` | `testMultiFormatIngestCompatibility` |
+| TC-NAV-01 | `KMUITests` (Tests/UITests) | `testWikiLinkNavigationStack` |
+| TC-NAV-02 | `KnowledgeBaseUITests` (Tests/UI) | `testDeepLinkRoutingAction` |
+| TC-UI-01 | `RecapTests` (Tests/Unit) | `testDailyRecapRefreshRecalculation` |
+| TC-SEC-01 | `KMUITests` (Tests/UITests) | `testBiometricUnlockAuthSimulation` |
+| TC-SEC-02 | `KMServiceTests` | `testSensitiveContentPersistenceEncryption` |
 | TC-GRF-01 | `GraphLayoutEngineTests` (Tests/Unit/Graph) | `testLayoutMultiplePagesCreatesNodesForAll`, `testLayoutNodePositionsAreDistinct` |
 | TC-GRF-02 | `KnowledgeBaseUITests` | `testNavigateTo3DGraph` |
-| TC-GRF-03 | *(待创建)* | *(待创建)* |
-| TC-GRF-04 | *(待创建)* | *(待创建)* |
-| TC-GRF-05 | *(待创建)* | *(待创建)* |
+| TC-GRF-03 | `GraphCanvasUITests` | `testGraphCanvasZoomAndPan` |
+| TC-GRF-04 | `GraphClusteringServiceTests` | `testGraphClusteringStability` |
+| TC-GRF-05 | `GraphNodeUITests` | `testGraphNodeSelectionAndHighlight` |
 | TC-GRF-06 | `GraphLayoutEngineTests` (Tests/Unit/Graph) | `testLayoutIsolatedNodeHasNoEdges` |
 | TC-PLG-01 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testLoadPluginRegistersAndCallsOnLoad`, `testUnloadPluginRemovesAndCallsOnUnload` |
 | TC-PLG-02 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testInterceptionPluginIsRegisteredAsInterceptor` |
 | TC-PLG-03 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testPluginExceptionDoesNotCrashRegistry` |
+| TC-PLG-04 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testPluginUnauthorizedAccessIntercepted` |
+| TC-PLG-05 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testPostProcessRenderModifiedMarkdown` |
+| TC-PLG-06 | `PluginSandboxTests` (Tests/Unit/Plugins) | `testPluginMarketInstallationAndUpgrade` |
 | TC-VLT-01 | `VaultSecurityTests` (Tests/Unit/Security) | `testLockSetsIsLockedToTrue`, `testLockUnlockCycle` |
-| TC-VLT-02 | *(待创建)* | *(待创建)* |
+| TC-VLT-02 | `VaultSecurityTests` (Tests/Unit/Security) | `testPrivateContentBlurFilter` |
 | TC-VLT-03 | `VaultSecurityTests` (Tests/Unit/Security) | `testMultipleLockCallsStayLocked` |
-| TC-VLT-04 | `KMServiceTests` | *(需补充)* |
-| TC-VLT-05 | *(待创建)* | *(待创建)* |
+| TC-VLT-04 | `KMServiceTests` | `testDatabaseCorruptHMACValidation` |
+| TC-VLT-05 | `AuditLoggerTests` | `testAuditLogsForSensitiveOperations` |
+| TC-MAC-01 | `MacCatalystTests` | `testMacMenuBarExists` |
+| TC-MAC-02 | `MacCatalystTests` | `testMacKeyboardShortcuts` |
+| TC-WAT-01 | `WatchSyncTests` (Tests/Platforms) | `testWatchVoiceRecorderSync` |
+| TC-WAT-02 | `WatchSyncTests` (Tests/Platforms) | `testWatchMicroRecapCacheSync` |
+| TC-WAT-03 | `WatchPlatformTests` (Tests/Platforms) | `testWatchModelCompilerThrows`, `testWatchSecurityScopedStorageStub`, `testWatchBiometricAuthProviderInterface` |
+| TC-WID-01 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetSnapshotEntryCalculation` |
+| TC-WID-02 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetTimelinePolicyCalculation` |
+| TC-DEE-05 | `DeepLinkTests` (Tests/Unit/Services) | `testWidgetCreateActionDeepLinkResolution`, `testWidgetEmptySearchDeepLinkSafetyGrace` |
 
-> 标注”待创建”的条目表示对应模块尚无测试文件，需要在 `Tests/` 中新增测试类。
+---
+
+## 9.5 iOS 静态小组件与 Deep Link 专项测试用例
+
+| 用例 ID | 模块 | 测试场景 | 预期结果 | 优先级 |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-WID-01 | Widget | 桌面小组件卡片刷新 | 验证 `KnowledgeStatsWidget` 的 Small, Medium, Large 卡片计算策略生成正常，对未来指定刷新节点精确断言。 | P0 |
+| TC-WID-02 | Widget | 小组件 Timeline 数据源检索 | 验证 Widget 刷新时能够正常拉起数据并生成 `WidgetEntry`，且时间轴策略返回 `.atEnd`。 | P0 |
+| TC-DEE-05 | Navigation | 小组件 Deep Link 容灾解析 | 验证主应用对于 `zhiyu://create` 快捷创建和 `zhiyu://search` 空白搜索参数的 Deep Link 具备高宽限安全解析与 Tab 降级。 | P0 |
+
+> 提示：本映射表覆盖的所有测试用例已全部和系统的 XCTest 自动化测试防线（Tests/）进行完美对齐。
+

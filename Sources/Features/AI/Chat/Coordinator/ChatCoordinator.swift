@@ -1,12 +1,13 @@
-// ChatCoordinator.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：聊天功能协调器，负责 ChatView 的业务编排、消息流管理及 UI 交互状态。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 从 ChatViewModel 演进为 Coordinator，整合 UI 交互状态（导出、选择模式、错误处理）。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ChatCoordinator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：负责 Chat 业务流的导航路由与协作管理。
+//
 import SwiftUI
 import Observation
 import Combine

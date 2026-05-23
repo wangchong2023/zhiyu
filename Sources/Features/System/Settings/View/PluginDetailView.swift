@@ -1,13 +1,13 @@
-// PluginDetailView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct PluginDetailView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PluginDetailView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PluginDetail 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 struct PluginDetailView: View {
@@ -24,9 +24,9 @@ struct PluginDetailView: View {
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: DesignSystem.giant) {
                 // Header section
-                HStack(spacing: 20) {
+                HStack(spacing: DesignSystem.wide) {
                     Image(systemName: plugin.icon)
                         .font(.system(size: DesignSystem.Gallery.mainIconSize))
                         .foregroundStyle(.white)
@@ -35,7 +35,7 @@ struct PluginDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 22))
                         .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
                     
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: DesignSystem.small) {
                         Text(plugin.name).font(.title2.bold()).foregroundStyle(.appText)
                         Text(plugin.author).font(.subheadline).foregroundStyle(.appSecondary)
                         
@@ -85,7 +85,7 @@ struct PluginDetailView: View {
     }
     
     private var actionButtons: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignSystem.medium) {
             Button(action: {
                 if isInstalled {
                     PluginRegistry.shared.unloadPlugin(id: plugin.id)
@@ -96,7 +96,7 @@ struct PluginDetailView: View {
             }) {
                 HStack {
                     if isInstalling || marketService.downloadingPluginID == plugin.id {
-                        ProgressView().tint(.white).padding(.trailing, 8)
+                        ProgressView().tint(.white).padding(.trailing, DesignSystem.small)
                     }
                     Label(isInstalled ? L10n.Plugin.Action.uninstall : L10n.Plugin.Action.install, 
                           systemImage: isInstalled ? DesignSystem.Icons.delete : DesignSystem.Icons.pullFromCloud)
@@ -118,8 +118,8 @@ struct PluginDetailView: View {
     }
     
     private func statItem(label: String, value: String, icon: String, color: Color = .appSecondary) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+            HStack(spacing: DesignSystem.tiny) {
                 Image(systemName: icon).foregroundStyle(color)
                 Text(value).bold()
             }
@@ -129,12 +129,12 @@ struct PluginDetailView: View {
     }
     
     private var permissionsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Plugin.section.permissions)
                 .font(.headline)
             
             if let perms = plugin.requiredPermissions, !perms.isEmpty {
-                FlowLayout(spacing: 8) {
+                FlowLayout(spacing: DesignSystem.small) {
                     ForEach(perms, id: \.self) { perm in
                         PermissionTag(perm: perm)
                     }
@@ -146,7 +146,7 @@ struct PluginDetailView: View {
     }
     
     private var descriptionSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
             Text(L10n.Plugin.section.about)
                 .font(.headline)
             
@@ -166,10 +166,10 @@ struct PermissionConfirmationSheet: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack(spacing: 24) {
-            VStack(spacing: 12) {
+        VStack(spacing: DesignSystem.giant) {
+            VStack(spacing: DesignSystem.medium) {
                 Image(systemName: DesignSystem.Icons.lockShieldFill)
-                    .font(.system(size: 48))
+                    .font(.largeTitle)
                     .foregroundStyle(.appAccent)
                 
                 Text(L10n.Plugin.permission.title)
@@ -182,17 +182,17 @@ struct PermissionConfirmationSheet: View {
             }
             .padding(.top)
             
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                 Text(L10n.Plugin.section.permissions).font(.caption.bold()).foregroundStyle(.appSecondary)
                 
                 if let perms = plugin.requiredPermissions {
                     ForEach(perms, id: \.self) { perm in
-                        HStack(spacing: 12) {
+                        HStack(spacing: DesignSystem.medium) {
                             Image(systemName: permIcon(for: perm))
                                 .foregroundStyle(.appAccent)
                                 .frame(width: 24)
                             
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(permTitle(for: perm)).font(.subheadline.bold())
                                 Text(permDesc(for: perm)).font(.caption).foregroundStyle(.appSecondary)
                             }
@@ -206,7 +206,7 @@ struct PermissionConfirmationSheet: View {
             
             Spacer()
             
-            VStack(spacing: 12) {
+            VStack(spacing: DesignSystem.medium) {
                 Button(action: onConfirm) {
                     Text(L10n.Plugin.Action.confirmInstall)
                         .font(.headline)
@@ -223,7 +223,7 @@ struct PermissionConfirmationSheet: View {
                 .foregroundStyle(.appSecondary)
             }
         }
-        .padding(24)
+        .padding(DesignSystem.giant)
         .background(PageBackgroundView(accentColor: .appAccent))
     }
     
@@ -249,7 +249,7 @@ struct PermissionTag: View {
     let perm: String
     
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: DesignSystem.tiny) {
             Image(systemName: icon)
             Text(L10n.Plugin.permTitle(for: perm))
         }
@@ -284,7 +284,7 @@ struct PermissionTag: View {
 struct BulletPoint: View {
     let text: String
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: DesignSystem.small) {
             Text(DesignSystem.Icons.bullet).bold()
             Text(text).font(.subheadline).foregroundStyle(.appSecondary)
         }

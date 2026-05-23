@@ -1,14 +1,13 @@
-// AppInputs.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 本文件定义了智宇 (ZhiYu) 的标准输入控件体系，包括文本框、标签/令牌输入框及等宽编辑器。
-// 核心职责：
-// 1. 提供统一样式的输入组件，封装背景、圆角及交互反馈。
-// 2. 支持自动分词的标签输入逻辑及针对代码/Markdown 优化的等宽编辑器。
-// MARK: [PR-03] 统一输入控件规范，提升数据录入的流畅度与视觉一致性
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppInputs.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Inputs 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - App Text Field

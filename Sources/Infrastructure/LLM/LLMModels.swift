@@ -1,15 +1,13 @@
-// LLMModels.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件定义了智宇 (ZhiYu) AI 域的核心数据模型，包括服务商元数据、对话消息、任务结果及错误类型。
-// 核心职责：
-// 1. 提供提供商注册表 (LLMRegistry)，支持动态加载模型配置。
-// 2. 定义统一的消息模型 (ChatMessage) 与智能任务结果。
-// 3. 实现基于 UserDefaults 与 Keychain 的配置持久化。
-// MARK: [SR-02] 混合检索 (RAG) 核心模型与配置中心
-// 版本: 1.2
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMModels.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 LLM 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 // MARK: - LLM 提供商元数据

@@ -1,14 +1,13 @@
-// ZhiYuWatchView.swift
 //
-// 作者: Wang Chong
-// 功能说明: Apple Watch 简易视图，展示知识库关键统计和最近页面
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  ZhiYuWatchView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：构建 ZhiYuWatch 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - 手表端专用颜色
@@ -25,6 +24,17 @@ struct WatchKnowledgeStatsView: View {
     @State private var totalPages = 0
     @State private var totalWords = 0
     @State private var recentTitles: [String] = []
+    
+    /// 允许通过参数初始化状态的构造器，专为提升单元测试可测性而设计
+    /// - Parameters:
+    ///   - totalPages: 页面总数
+    ///   - totalWords: 总字数
+    ///   - recentTitles: 最近更新页面标题列表
+    init(totalPages: Int = 0, totalWords: Int = 0, recentTitles: [String] = []) {
+        self._totalPages = State(initialValue: totalPages)
+        self._totalWords = State(initialValue: totalWords)
+        self._recentTitles = State(initialValue: recentTitles)
+    }
     
     var body: some View {
         ScrollView {
@@ -72,15 +82,7 @@ struct WatchKnowledgeStatsView: View {
                         .foregroundStyle(Color.watchSecondary)
                     
                     ForEach(recentTitles.prefix(5), id: \.self) { title in
-                        HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
-                            Circle()
-                                .fill(Color.watchAccent)
-                                .frame(width: DesignSystem.tiny + DesignSystem.atomic / 2, height: DesignSystem.tiny + DesignSystem.atomic / 2)
-                            Text(title)
-                                .font(.caption2)
-                                .foregroundStyle(Color.watchText)
-                                .lineLimit(1)
-                        }
+                        WatchRecentUpdateRowView(title: title)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -93,14 +95,18 @@ struct WatchKnowledgeStatsView: View {
         }
     }
     
-    private func loadData() {
+    /// 从标准 UserDefaults 载入表盘所需的统计数据
+    func loadData() {
         let defaults = UserDefaults.standard
-        totalPages = defaults.integer(forKey: "watch_totalPages")
-        totalWords = defaults.integer(forKey: "watch_totalWords")
-        recentTitles = defaults.stringArray(forKey: "watch_recentTitles") ?? []
+        totalPages = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalPages)
+        totalWords = defaults.integer(forKey: AppConstants.Keys.Storage.watchTotalWords)
+        recentTitles = defaults.stringArray(forKey: AppConstants.Keys.Storage.watchRecentTitles) ?? []
     }
     
-    private func formatNumber(_ n: Int) -> String {
+    /// 将字数格式化为更易读的字符串形式
+    /// - Parameter n: 原始字数
+    /// - Returns: 格式化后的显示字符串（例如 "2.5万"、"1.5k"、"500"）
+    func formatNumber(_ n: Int) -> String {
         if n >= 10000 {
             return String(format: "%.1f" + L.tr("watch.tenThousand"), Double(n) / 10000.0)
         } else if n >= 1000 {
@@ -111,7 +117,7 @@ struct WatchKnowledgeStatsView: View {
 }
 
 // MARK: - 本地化助手 (手表端精简版)
-private enum L {
+enum L {
     static func tr(_ key: String) -> String {
         let table: [String: String] = [
             "watch.pages": "页面",
@@ -120,5 +126,23 @@ private enum L {
             "watch.tenThousand": "万",
         ]
         return table[key] ?? key
+    }
+}
+
+// MARK: - 手表端最近更新单行视图
+/// 手表端最近更新单行视图，将行视图抽离以提升 SwiftUI 渲染效率与可测性
+struct WatchRecentUpdateRowView: View {
+    let title: String
+    
+    var body: some View {
+        HStack(spacing: DesignSystem.tiny + DesignSystem.atomic) {
+            Circle()
+                .fill(Color.watchAccent)
+                .frame(width: DesignSystem.tiny + DesignSystem.atomic / 2, height: DesignSystem.tiny + DesignSystem.atomic / 2)
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(Color.watchText)
+                .lineLimit(1)
+        }
     }
 }

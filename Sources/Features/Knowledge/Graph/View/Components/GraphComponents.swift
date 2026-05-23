@@ -1,22 +1,13 @@
-// GraphComponents.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件定义了知识图谱中使用的各类 UI 组件，包括节点卡片、缩放控制栏、洞察面板以及统计单元等。
-// 组件设计遵循“原子化”原则，确保在 2D 与 3D 视图中保持视觉风格的一致性。
-// 核心组件：
-// 1. GraphSelectedNodeCard：当节点被选中时显示的悬浮卡片，展示页面摘要并提供详情入口。
-// 2. GraphZoomControls：图谱画布的交互控制栏，支持缩放、居中、刷新布局及 3D 模式切换。
-// 3. GraphInsightsPanel：基于布局分析的知识库洞察结果展示。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-02: 初始创建。
-//   - 2026-05-04: 引入 LOD (Level of Detail) 渲染优化。
-//   - 2026-05-05: 增加详细中文文档注释，规范函数头
-//   - 2026-05-07: 系统性重构，术语统一为“知识图谱/页面”，优化 GraphLegend 组件并修正模型字段引用。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
+//  GraphComponents.swift
+//  ZhiYu
 //
-
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Graph Node View
@@ -467,7 +458,7 @@ struct GraphInsightsPanel: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: DesignSystem.standardPadding) {
                     insightSection(
                         id: "surprising",
                         icon: DesignSystem.Icons.link,

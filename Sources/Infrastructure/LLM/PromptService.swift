@@ -1,14 +1,13 @@
-// PromptService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：统一 Prompt 资产管理中心
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-04
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PromptService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 Prompt 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 
@@ -48,7 +47,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
 
     @Published var rerankPrompt: String = L10n.AI.Prompt.rerank
 
-    @Published var queryExpansionPrompt: String = "你是一个搜索专家。请根据原始问题生成 3 个不同的搜索查询变体，以提高 RAG 系统的检索覆盖率。变体应涵盖：1. 语义改写 2. 核心关键词 3. 假设性提问。请仅返回一个包含 3 个字符串的 JSON 数组。"
+    @Published var queryExpansionPrompt: String = L10n.AI.Prompt.queryExpansion
 
     // MARK: - 知识维护相关
 
@@ -135,7 +134,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
     /// 根据当前界面语言生成的 AI 回复指令
     var languageInstruction: String {
         if Localized.isChinese {
-            return "\n\n请使用中文回复。"
+            return L10n.AI.Prompt.replyInChinese
         } else {
             return "\n\nPlease reply in English."
         }

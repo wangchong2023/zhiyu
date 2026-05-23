@@ -1,13 +1,13 @@
-// IngestQueue.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：离线处理队列，负责在大规模导入文档时，将向量化与 AI 编译任务压入后台队列，不阻塞前台 UI。
-// 该类作为逻辑编排层，通过注入的 BackgroundTaskProtocol 实现跨平台的后台调度能力。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-13: 彻底重构，实现 BackgroundTasks 框架的物理隔离与协议化。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  IngestQueue.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Service 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Combine
 
@@ -50,7 +50,7 @@ final class IngestQueue: ObservableObject {
 
             Task {
                 do {
-                    Logger.shared.debug("📦 [IngestQueue] 正在处理任务：\(title)")
+                    Logger.shared.debug("📦 [IngestQueue] Processing task: \(title)")
                     let result = try await llmService.smartIngest(title: title, rawContent: content, pages: pages)
                     let page = KnowledgePage(title: title, content: result.compiledContent, tags: result.suggestedTags)
 
@@ -59,7 +59,7 @@ final class IngestQueue: ObservableObject {
                         self.decrementCount()
                     }
                 } catch {
-                    Logger.shared.error("❌ [IngestQueue] 任务失败：\(title), Error: \(error)")
+                    Logger.shared.error("❌ [IngestQueue] Task failed: \(title), Error: \(error)")
                     await MainActor.run { self.decrementCount() }
                 }
             }

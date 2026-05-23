@@ -1,17 +1,13 @@
-// SynthesisStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件实现了知识合成数据管理仓储（SynthesisStore），负责管理通过 AI 生成的各类高级知识产出（文档、测验、图表）。
-// 核心职责：
-// 1. 持久化存储：将合成文档通过 UserDefaults 进行分类本地化存储，支持不同类型的并发管理。
-// 2. 任务状态机：维护各类合成任务的生命周期状态（空闲、生成中、已完成、错误）。
-// 3. 数据生命周期：提供文档的重命名、单项删除、批量清理及导出 PDF/PPTX 的能力。
-// 4. 驱动 UI：通过 Swift 6 Observation 机制实时驱动 SynthesisView 的视图更新。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 物理可见性优化，支持 AppStore 聚合。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SynthesisStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 import Combine

@@ -1,10 +1,13 @@
-// iOSExportService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] ExportServiceProtocol 的 iOS 实现，基于 WebKit。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iOSExportService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 iOSExport 模块的核心业务逻辑服务。
+//
 #if canImport(WebKit)
 import Foundation
 import WebKit
@@ -73,7 +76,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     func exportToPDF(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
-            if isExporting { throw NSError(domain: "iOSExport", code: 429, userInfo: [NSLocalizedDescriptionKey: "System busy, please try later."]) }
+            if isExporting { throw ExportError.systemBusy }
         }
         
         isExporting = true
@@ -84,7 +87,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
             }
         }
 
-        guard let webView = webView else { throw NSError(domain: "iOSExport", code: 500) }
+        guard let webView = webView else { throw ExportError.engineNotReady }
         
         let escapedMarkdown = markdown.replacingOccurrences(of: "\\", with: "\\\\")
                                       .replacingOccurrences(of: "`", with: "\\`")
@@ -113,7 +116,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
-            if isExporting { throw NSError(domain: "iOSExport", code: 429, userInfo: [NSLocalizedDescriptionKey: "System busy, please try later."]) }
+            if isExporting { throw ExportError.systemBusy }
         }
         
         isExporting = true
@@ -124,7 +127,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
             }
         }
 
-        guard let webView = webView else { throw NSError(domain: "iOSExport", code: 500) }
+        guard let webView = webView else { throw ExportError.engineNotReady }
         
         let escapedCode = mermaidCode.replacingOccurrences(of: "\\", with: "\\\\")
                                      .replacingOccurrences(of: "`", with: "\\`")
@@ -154,7 +157,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     }
 
     private func createPDF(fileName: String) async throws -> URL {
-        guard let webView = webView else { throw NSError(domain: "iOSExport", code: 500) }
+        guard let webView = webView else { throw ExportError.engineNotReady }
         
         return try await withCheckedThrowingContinuation { continuation in
             let config = WKPDFConfiguration()
@@ -180,12 +183,12 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
-            if isExporting { throw NSError(domain: "iOSExport", code: 429, userInfo: [NSLocalizedDescriptionKey: "System busy, please try later."]) }
+            if isExporting { throw ExportError.systemBusy }
         }
         isExporting = true
         defer { isExporting = false }
 
-        guard let webView = webView else { throw NSError(domain: "iOSExport", code: 500) }
+        guard let webView = webView else { throw ExportError.engineNotReady }
         
         let slides = parseMarkdownForSlides(markdown)
         let slidesJSON = try JSONEncoder().encode(slides)
@@ -227,7 +230,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
         
         guard let base64String = try await webView.evaluateJavaScript(js) as? String,
               let data = Data(base64Encoded: base64String) else {
-            throw NSError(domain: "PPTXExport", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to generate PPTX Base64"])
+            throw ExportError.internalError("Failed to generate PPTX Base64")
         }
         
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(fileName).pptx")

@@ -22,7 +22,7 @@ settings:
     TARGETED_DEVICE_FAMILY: "1,2,4"
     INFOPLIST_FILE: Sources/Info.plist
     DEVELOPMENT_TEAM: ""
-    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
     CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
     SWIFT_STRICT_CONCURRENCY: complete
     MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
@@ -46,6 +46,13 @@ targets:
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
         NSSupportsLiveActivities: YES
+    preBuildScripts:
+      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+        name: "[Gatekeeper] Domain Purity Check"
+        basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+        name: "[Gatekeeper] L10n Leak & Hardcode Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - target: ZhiYuWidgets
@@ -72,6 +79,13 @@ targets:
         TARGETED_DEVICE_FAMILY: "2"
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
+    preBuildScripts:
+      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+        name: "[Gatekeeper] Domain Purity Check"
+        basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+        name: "[Gatekeeper] L10n Leak & Hardcode Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
 
@@ -124,7 +138,17 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon-Watch
         SDKROOT: watchos
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
-        GENERATE_INFOPLIST_FILE: "NO"
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_KEY_WKWatchKitApp: YES
+        INFOPLIST_KEY_WKApplication: YES
+        INFOPLIST_KEY_WKWatchOnly: YES
+    preBuildScripts:
+      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+        name: "[Gatekeeper] Domain Purity Check"
+        basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+        name: "[Gatekeeper] L10n Leak & Hardcode Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
 
@@ -154,6 +178,15 @@ targets:
         excludes:
           - "UITests/**"
           - "UI/**"
+          - "Platforms/Watch*.swift"
+      - path: Sources
+        includes:
+          - "Platforms/watchOS/WatchWatchSyncService.swift"
+          - "Platforms/watchOS/WatchOCRService.swift"
+          - "Platforms/watchOS/WatchPDFService.swift"
+          - "Platforms/watchOS/WatchPasteboardService.swift"
+          - "Platforms/watchOS/WatchSpeechService.swift"
+          - "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift"
     dependencies:
       - target: ZhiYu
       - package: SnapshotTesting
@@ -166,6 +199,38 @@ targets:
       - path: Tests/UI
     dependencies:
       - target: ZhiYu
+      - package: SnapshotTesting
+
+  ZhiYuWatchTests:
+    type: bundle.unit-test
+    platform: watchOS
+    sources:
+      - path: Tests
+        includes:
+          - "Platforms/WatchPlatformTests.swift"
+          - "Platforms/WatchSyncTests.swift"
+          - "Platforms/WatchViewTests.swift"
+          - "Shared/TestMocks.swift"
+    dependencies:
+      - target: ZhiYuWatch
+
+  ZhiYuMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Tests
+        includes:
+          - "Platforms/MacPlatformTests.swift"
+      - path: Sources
+        includes:
+          - "Platforms/macOS/MacFileArchiver.swift"
+          - "Platforms/macOS/MacOSPlatformCapabilities.swift"
+          - "Platforms/macOS/MacPasteboardService.swift"
+          - "Core/Base/Protocols/PasteboardProtocol.swift"
+          - "Core/Base/Protocols/FileArchiverProtocol.swift"
+          - "Core/Base/Protocols/PlatformCapabilities.swift"
+          - "Core/Base/Constants/AppConstants.swift"
 
 schemes:
   ZhiYu:
@@ -178,17 +243,28 @@ schemes:
         - ZhiYuUITests
     run:
       executable: ZhiYu
-
+  
   ZhiYuMac:
     build:
       targets:
         ZhiYuMac: all
     run:
       executable: ZhiYuMac
-
+  
+  ZhiYuMacTests:
+    build:
+      targets:
+        ZhiYuMacTests: all
+    test:
+      targets:
+        - ZhiYuMacTests
+  
   ZhiYuWatch:
     build:
       targets:
         ZhiYuWatch: all
+    test:
+      targets:
+        - ZhiYuWatchTests
     run:
       executable: ZhiYuWatch

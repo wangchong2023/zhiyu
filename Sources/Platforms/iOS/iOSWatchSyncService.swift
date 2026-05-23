@@ -1,10 +1,13 @@
-// iOSWatchSyncService.swift
 //
-// 作者: Wang Chong
-// 功能说明: WatchSyncProtocol 的 iOS 实现。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  iOSWatchSyncService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：实现 iOSWatchSync 模块的核心业务逻辑服务。
+//
 #if os(iOS) && !os(watchOS)
 import Foundation
 import WatchConnectivity
@@ -25,28 +28,28 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     func sendContent(_ text: String) {
         let session = WCSession.default
         guard session.activationState == .activated else {
-            Logger.shared.warning("⌚ [WatchSync] 发送失败: WCSession 未激活 (当前状态: \(session.activationState.rawValue))")
+            Logger.shared.warning("⌚ [WatchSync] Send failed: WCSession not active (current state: \(session.activationState.rawValue))")
             return
         }
         guard session.isPaired else {
-            Logger.shared.warning("⌚ [WatchSync] 发送失败: Apple Watch 未配对")
+            Logger.shared.warning("⌚ [WatchSync] Send failed: Apple Watch not paired")
             return
         }
         guard session.isWatchAppInstalled else {
-            Logger.shared.warning("⌚ [WatchSync] 发送失败: 手表端 App 未安装")
+            Logger.shared.warning("⌚ [WatchSync] Send failed: Watch App not installed")
             return
         }
         
         let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
         session.transferUserInfo(userInfo)
-        Logger.shared.info("⌚ [WatchSync] 已通过 UserInfo 发送内容至手表 (长度: \(text.count))")
+        Logger.shared.info("⌚ [WatchSync] Content sent to Watch via UserInfo (length: \(text.count))")
     }
     
     // MARK: - WCSessionDelegate
     
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
-            Logger.shared.error("⌚ [WatchSync] iOS 激活异常: \(error.localizedDescription)")
+            Logger.shared.error("⌚ [WatchSync] iOS activation anomaly: \(error.localizedDescription)")
         }
     }
     

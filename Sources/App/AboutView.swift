@@ -1,13 +1,13 @@
-// AboutView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：关于页面：展示应用版本信息、版权声明及核心理念
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-12
-// 日期: 2026-05-12
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AboutView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：构建 About 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 关于页面
@@ -30,7 +30,7 @@ struct AboutView: View {
                             .foregroundStyle(.white)
                     }
                     
-                    VStack(spacing: 4) {
+                    VStack(spacing: DesignSystem.tiny) {
                         Text(L10n.Common.appName)
                             .font(.title2.bold())
                     }

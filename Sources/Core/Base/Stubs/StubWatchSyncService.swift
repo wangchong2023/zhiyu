@@ -1,10 +1,13 @@
-// StubWatchSyncService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：WatchSyncProtocol 的空实现，用于不支持该框架的平台 (如 macOS)。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  StubWatchSyncService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：实现 StubWatchSync 模块的核心业务逻辑服务。
+//
 import Foundation
 import Combine
 

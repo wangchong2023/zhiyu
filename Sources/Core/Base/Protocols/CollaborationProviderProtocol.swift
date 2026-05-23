@@ -1,12 +1,13 @@
-// CollaborationProviderProtocol.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0] 底层基座层：协作提供商抽象协议，定义跨平台 P2P 协作能力。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-13: 初始创建，旨在剥离 MultipeerConnectivity。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CollaborationProviderProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：定义 CollaborationProvider 模块的抽象契约接口。
+//
 import Foundation
 import Combine
 

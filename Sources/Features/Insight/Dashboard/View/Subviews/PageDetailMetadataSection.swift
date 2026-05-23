@@ -1,12 +1,13 @@
-// PageDetailMetadataSection.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识详情页底部元数据展示区（溯源与双向链接）。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 PageDetailView 剥离，包含溯源、推荐与反链。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageDetailMetadataSection.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Subviews 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 页面详情元数据展示区
@@ -41,11 +42,11 @@ struct PageDetailMetadataSection: View {
                         }
                     }
                     
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                         Text(sourceURL).font(.caption2).foregroundStyle(.appSecondary).lineLimit(1).truncationMode(.middle)
                         
                         if let snippet = page.rawTextSnippet, !snippet.isEmpty {
-                            Text(snippet).font(.system(size: 11, design: .monospaced)).foregroundStyle(.appSecondary).padding(DesignSystem.small).frame(maxWidth: .infinity, alignment: .leading).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius)).lineLimit(3)
+                            Text(snippet).font(.caption).foregroundStyle(.appSecondary).padding(DesignSystem.small).frame(maxWidth: .infinity, alignment: .leading).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius)).lineLimit(3)
                         }
                     }
                     .appContainer(padding: true)
@@ -67,7 +68,7 @@ struct PageDetailMetadataSection: View {
                         
                         VStack(alignment: .leading, spacing: 0) {
                             Text(L10n.Knowledge.Page.AI.insights).font(.headline).foregroundStyle(.appText)
-                            Text(L10n.Knowledge.Page.AI.insightsDesc).font(.system(size: 9)).foregroundStyle(.appSecondary)
+                            Text(L10n.Knowledge.Page.AI.insightsDesc).font(.caption2).foregroundStyle(.appSecondary)
                         }
                     }
                     .padding(.bottom, DesignSystem.tiny)
@@ -90,7 +91,7 @@ struct PageDetailMetadataSection: View {
         NavigationLink(value: AppRoute.pageDetail(id: recPage.id)) {
             HStack {
                 Image(systemName: recPage.displayIcon).foregroundStyle(Color.fromModelColorName(recPage.pageType.colorName))
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                     Text(recPage.title).font(.subheadline.weight(.medium))
                     let summaryText = String(recPage.content.prefix(60)) + "..."
                     Text(summaryText).font(.caption2).foregroundStyle(.appSecondary)

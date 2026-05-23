@@ -1,11 +1,13 @@
-// CreateNotebookButton.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：新建笔记本按钮组件。
-// 支持网格 (Card) 和列表 (ListRow) 两种展示模式。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  CreateNotebookButton.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 @MainActor
@@ -69,12 +71,12 @@ struct CreateNotebookButton: View {
                         .frame(width: 56, height: 56)
                     
                     Image(systemName: DesignSystem.Icons.plus)
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.title.weight(.bold))
                         .foregroundStyle(.appAccent)
                 }
                 
                 Text(L10n.Vault.new)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.callout.weight(.bold))
                     .foregroundStyle(.appText)
                 
                 Spacer()

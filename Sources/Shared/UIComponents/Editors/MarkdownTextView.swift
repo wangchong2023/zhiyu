@@ -1,14 +1,13 @@
-// MarkdownTextView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] 用 class 封装光标状态，避免 struct @Binding 在闭包中的捕获问题。
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 更新: 2026-05-03
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  MarkdownTextView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 MarkdownText 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 #if canImport(UIKit)
 import UIKit
@@ -194,7 +193,7 @@ struct MarkdownEditorToolbar: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 4) {
+            HStack(spacing: DesignSystem.tiny) {
                 EditorToolbarButton(title: "H1", icon: "textformat.size.larger") {
                     onInsert("# ", nil)
                 }
@@ -247,8 +246,8 @@ struct MarkdownEditorToolbar: View {
                     onOCR()
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.tightPadding)
         }
         .background(Color.appCard)
     }

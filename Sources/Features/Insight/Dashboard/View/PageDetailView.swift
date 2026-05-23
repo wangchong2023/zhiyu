@@ -1,15 +1,13 @@
-// PageDetailView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识详情页视图，支持 Markdown 编辑、AI 洞察及关联分析。
-// 核心原则：
-// 1. 单一布局源：完全遵循 AppUI 的 Layout 和 Metrics 系统。
-// 2. 图标标准化：使用 DesignSystem.Icons 统一管理所有 SF Symbols。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-15: 切换至 PageDetailCoordinator 驱动，并将业务状态编排（AI 任务、Toast）移出 L1 层。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PageDetailView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PageDetail 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 /// 页面详情视图

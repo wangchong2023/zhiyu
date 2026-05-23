@@ -1,11 +1,13 @@
-// SQLiteVaultRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：基于 SQLite (GRDB) 的笔记本元数据存储仓储实现。
-// 贯彻 Clean Code 原则，使用 GRDB 类型安全 ORM 接口，完全杜绝硬写 SQL 字符串！
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SQLiteVaultRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Repositories 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import GRDB
 

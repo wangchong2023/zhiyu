@@ -1,11 +1,13 @@
-// AIProcessingActivityWidget.swift
 //
-// 作者: Wang Chong
-// 功能说明: 灵动岛 (Dynamic Island) 与实时活动 UI 渲染实现。
-//           本文件定义了实时活动在锁定屏幕及灵动岛（紧凑、最小、展开模式）下的视觉布局。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIProcessingActivityWidget.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 Widgets 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import WidgetKit
 import ActivityKit

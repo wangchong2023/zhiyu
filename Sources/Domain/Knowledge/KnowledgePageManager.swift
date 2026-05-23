@@ -1,12 +1,13 @@
-// KnowledgePageManager.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：知识页面管理服务，负责页面 CRUD 操作的事务性编排、双向链接维护及撤销/重做调度。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 AppStore 剥离核心业务逻辑，实现 Facade 瘦身。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgePageManager.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Knowledge 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 import Combine

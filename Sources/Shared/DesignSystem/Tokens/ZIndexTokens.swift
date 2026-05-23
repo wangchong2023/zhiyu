@@ -1,10 +1,13 @@
-// ZIndex.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了智宇 (ZhiYu) 设计系统的全局层级令牌。
-// 统一管理弹窗、覆盖层及抽屉等视图的 Z-Index 顺序。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ZIndexTokens.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Tokens 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import CoreGraphics
 

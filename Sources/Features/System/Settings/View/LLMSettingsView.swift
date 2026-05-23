@@ -1,13 +1,13 @@
-// LLMSettingsView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：struct LLMSettingsView
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMSettingsView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 LLMSettings 界面的 UI 视图层组件。
+//
 @preconcurrency import SwiftUI
 
 // MARK: - LLM Settings View
@@ -48,7 +48,7 @@ struct LLMSettingsView: View {
                 .appListRowBackground()
                 
                 Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: DesignSystem.small) {
                         Text(L10n.AI.OnDevice.assistMode)
                             .font(.headline)
                             .foregroundStyle(.appText)
@@ -135,7 +135,7 @@ struct LLMSettingsView: View {
                     .opacity(config.apiKey.isEmpty || config.baseURL.isEmpty ? 0.6 : 1.0)
                     
                     if let result = testResult {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: DesignSystem.small) {
                             switch result {
                             case .success(let latency):
                                 HStack {
@@ -153,7 +153,7 @@ struct LLMSettingsView: View {
                                 HStack(alignment: .top) {
                                     Image(systemName: DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(.red)
-                                    VStack(alignment: .leading, spacing: 4) {
+                                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                                         Text(L10n.AI.OnDevice.errorFormat("\(code)"))
                                             .font(.subheadline.bold())
                                         Text(message)
@@ -174,15 +174,15 @@ struct LLMSettingsView: View {
                 } header: {
                     Text(L10n.AI.LLM.validation)
                 } footer: {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                         InfoRow(icon: "lock.shield", text: L10n.AI.LLM.info.localKey)
                         InfoRow(icon: "doc.text", text: L10n.AI.LLM.info.contextSent)
                         InfoRow(icon: "network", text: L10n.AI.LLM.info.openAICompatible)
                         InfoRow(icon: "arrow.down.doc", text: L10n.AI.LLM.info.smartIngest)
                     }
-                    .padding(.top, 8)
+                    .padding(.top, DesignSystem.small)
                     Text(L10n.AI.LLM.infoString)
-                        .padding(.top, 8)
+                        .padding(.top, DesignSystem.small)
                 }
                 .appListRowBackground()
             }
@@ -201,9 +201,9 @@ struct LLMSettingsView: View {
     /// 配置内容视图（API Key / Base URL / Model 输入）
     private var configurationContent: some View {
         @Bindable var config = config
-        return VStack(spacing: 20) {
+        return VStack(spacing: DesignSystem.wide) {
             // API Key
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                 Text(L10n.AI.LLM.apiKey)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
@@ -233,7 +233,7 @@ struct LLMSettingsView: View {
                 )
             }
             // Base URL
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                 Text(L10n.AI.LLM.apiAddress)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
@@ -254,7 +254,7 @@ struct LLMSettingsView: View {
                     #endif
             }
             // Model
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                 Text(L10n.AI.LLM.model)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appSecondary)
@@ -275,7 +275,7 @@ struct LLMSettingsView: View {
             }
             // Model suggestions
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: DesignSystem.small) {
                     ForEach(suggestedModels, id: \.self) { model in
                         Button(action: { config.model = model }) {
                             Text(model)

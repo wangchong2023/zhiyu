@@ -1,13 +1,13 @@
-// IngestQueueTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 边界与异常测试 (Expert QA Item #4)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-// 日期: 2026-05-04
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  IngestQueueTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 IngestQueue 开展自动化单元测试验证。
+//
 import XCTest
 import Combine
 @testable import ZhiYu

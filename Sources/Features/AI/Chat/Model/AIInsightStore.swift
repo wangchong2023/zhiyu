@@ -1,13 +1,13 @@
-// AIInsightStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：AI 洞察存储，管理全库级别的统计与分析结论。
-// 版本: 1.1
-// 修改记录:
-//   - 2026-05-15: 从 AIWorkflowStore 拆分。
-//   - 2026-05-16: 功能增强：补全统计指标计算与知识增长曲线逻辑。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AIInsightStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Observation
 import Combine

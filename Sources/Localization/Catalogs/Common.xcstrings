@@ -1542,6 +1542,23 @@
         }
       }
     },
+    "copy" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制"
+          }
+        }
+      }
+    },
     "copyPageLink" : {
       "extractionState" : "manual",
       "localizations" : {

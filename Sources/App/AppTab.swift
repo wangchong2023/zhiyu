@@ -1,15 +1,13 @@
-// AppTab.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件定义了应用程序的主 Tab (AppTab)，作为全局导航架构的核心分类。
-// 这些分类直接映射到 iOS 底部的 TabBar 以及 iPad/Mac 模式下的适配侧边栏。
+//  AppTab.swift
+//  ZhiYu
 //
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 架构对齐：物理归位于应用层。
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  系统层级：[L3] 应用层
+//  核心职责：属于 App 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 应用程序顶层主 Tab 定义

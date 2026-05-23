@@ -1,4 +1,13 @@
-// 功能说明: [Shared]
+//
+//  FloatingContextCapsule.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Navigation 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 方案 D 核心组件：悬浮上下文胶囊
@@ -18,7 +27,7 @@ struct FloatingContextCapsule: View {
                 NotificationCenter.default.post(name: NSNotification.Name("toggleDisplayMode"), object: nil)
             } label: {
                 Image(systemName: DesignSystem.Icons.line3Horizontal)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.title3.weight(.medium))
                     .frame(width: 44, height: 44)
             }
             
@@ -94,7 +103,7 @@ struct FloatingContextCapsule: View {
                     .lineLimit(1)
                 
                 Image(systemName: DesignSystem.Icons.down)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.caption.weight(.bold))
                     .foregroundStyle(.white.opacity(0.6))
             }
             .padding(.trailing, DesignSystem.medium)
@@ -109,7 +118,7 @@ struct FloatingContextCapsule: View {
                 .font(.custom("Avenir Next", size: 18).weight(.bold))
             
             Image(systemName: DesignSystem.Icons.down)
-                .font(.system(size: 12, weight: .bold))
+                .font(.caption.weight(.bold))
                 .foregroundStyle(.white.opacity(0.6))
         }
         .padding(.trailing, DesignSystem.medium)

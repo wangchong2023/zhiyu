@@ -1,10 +1,13 @@
-// ModelColorView.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了 Color 转换扩展，用于将模型层定义的颜色名称（String）转换为视图层可用的 SwiftUI.Color。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  ModelColorView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 ModelColor 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 extension Color {

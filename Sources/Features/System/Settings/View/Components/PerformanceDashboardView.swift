@@ -1,10 +1,13 @@
-// PerformanceDashboardView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：本文件定义了性能监控看板视图，用于展示系统资源占用与操作耗时等核心指标。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PerformanceDashboardView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 PerformanceDashboard 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - Performance Dashboard View
@@ -18,7 +21,7 @@ struct PerformanceDashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: DesignSystem.wide) {
                     // Memory
                     MetricCardView(
                         title: L10n.Common.Perf.memory,
@@ -28,7 +31,7 @@ struct PerformanceDashboardView: View {
                     )
                     
                     // Page Stats
-                    HStack(spacing: 12) {
+                    HStack(spacing: DesignSystem.medium) {
                         MetricCardView(
                             title: L10n.Common.Perf.pages,
                             value: "\(service.metrics.pageCount)",
@@ -44,7 +47,7 @@ struct PerformanceDashboardView: View {
                     }
                     
                     // Graph Stats
-                    HStack(spacing: 12) {
+                    HStack(spacing: DesignSystem.medium) {
                         MetricCardView(
                             title: L10n.Common.Perf.nodes,
                             value: "\(service.metrics.graphNodeCount)",
@@ -60,7 +63,7 @@ struct PerformanceDashboardView: View {
                     }
                     
                     // Timing
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
                         Text(L10n.Common.Perf.timing)
                             .font(.headline)
                             .foregroundStyle(.appText)
@@ -121,12 +124,12 @@ struct MetricCardView: View {
     let color: Color
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: DesignSystem.small) {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(color)
             Text(value)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.title3.weight(.bold))
                 .foregroundStyle(.appText)
             Text(title)
                 .font(.caption)
@@ -152,7 +155,7 @@ struct TimingRowView: View {
     }
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DesignSystem.medium) {
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(.appText)

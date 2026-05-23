@@ -1,12 +1,13 @@
-// ZhiYuDomainTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5/L0] 智宇核心领域模型与服务的单元测试套件，全面染色领域层并实行 85% 覆盖率高熔断标准。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-19: 遵从垂直化架构测试规范，将 ZhiYuNewFeaturesTests 精准重命名为 ZhiYuDomainTests 并扩充了 KnowledgePageManager 深度单测。
-// 版权: Copyright © 2026 Wang Chong. All rights reserved.
-
+//  ZhiYuDomainTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 ZhiYuDomain 开展自动化单元测试验证。
+//
 import XCTest
 import GRDB
 @testable import ZhiYu

@@ -1,11 +1,13 @@
-// LLMAIServicesTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: 针对拆分后的 LLM 专项服务（检索、摄入、对话、重构）进行单元测试。
-// MARK: [SR-02] AI 服务单元测试闭环
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  LLMAIServicesTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 LLMAIServices 开展自动化单元测试验证。
+//
 import XCTest
 @testable import ZhiYu
 

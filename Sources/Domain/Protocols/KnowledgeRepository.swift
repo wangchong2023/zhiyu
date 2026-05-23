@@ -1,13 +1,13 @@
-// KnowledgeRepository.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1.5] 领域中心层：知识库仓库协议。
-// 遵循 Repository Pattern 屏蔽底层存储细节 (SQL/GRDB)。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 契约下沉：从 L1 迁移至 L1.5 领域层，实现依赖倒置。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgeRepository.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Combine
 

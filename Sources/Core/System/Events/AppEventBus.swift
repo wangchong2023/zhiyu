@@ -1,14 +1,13 @@
-// AppEventBus.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L0.5] 系统集成层：系统级事件总线 (Architect 视角：解耦服务间通信)
-// 版本: 1.0
-// 修改记录:
-//   - 创建: 2026-05-02
-//   - 2026-05-07: 系统性重构，从 WikiEventBus 重命名为 AppEventBus，术语统一为“应用事件总线”
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AppEventBus.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0.5] 系统集成层
+//  核心职责：属于 Events 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import Combine
 

@@ -1,18 +1,13 @@
-// VaultStorageSecurityService.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了金库安全服务（VaultStorageSecurityService），利用本地生物识别（FaceID/TouchID）保护用户隐私。
-// 核心机制：
-// 1. 硬件鉴权：通过 LocalAuthentication 框架与系统安全隔区（Secure Enclave）交互。
-// 2. 状态锁定：提供全局 isLocked 状态，用于在 UI 层屏蔽敏感内容。
-// 3. 容错逻辑：在硬件不支持生物识别的环境下（如旧款设备或未配置），提供降级处理。
-// MARK: [SR-03] 金库级锁定集成系统 LocalAuthentication 框架
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-05: 增加详细中文文档注释，规范函数头
-// 日期: 2026-05-04
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  VaultStorageSecurityService.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：实现 VaultStorageSecurity 模块的核心业务逻辑服务。
+//
 import Foundation
 import LocalAuthentication
 import Observation

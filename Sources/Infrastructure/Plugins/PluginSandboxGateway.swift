@@ -1,15 +1,13 @@
-// PluginSandboxGateway.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L1] 基础设施层：本文件实现了 JavaScript 插件运行时的安全沙盒通信网关（PluginSandboxGateway）。
-// 核心职责：
-// 1. DLP 网络通信审计：拦截并匹配 allowedDomains 域名白名单，防范非法数据外传。
-// 2. 载荷大小过滤：限制网络请求体及本地持久化存储（saveData）的 Payload 最大为 5MB，确保物理内存资源安全。
-// 3. 通信参数清洗：净化输入参数，消除越界字符。
-// 版本: 1.0
-// 日期: 2026-05-19
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  PluginSandboxGateway.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Plugins 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 插件沙盒双向通信安全网关 (PluginSandboxGateway)

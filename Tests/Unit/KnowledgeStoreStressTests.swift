@@ -1,10 +1,13 @@
-// KnowledgeStoreStressTests.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Test] 知识库压力测试，验证 KnowledgeStore 在高并发刷新下的线程安全性与数据一致性。
-// 版本: 1.0
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgeStoreStressTests.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 测试层
+//  核心职责：针对 KnowledgeStoreStress 开展自动化单元测试验证。
+//
 import XCTest
 import Combine
 @testable import ZhiYu

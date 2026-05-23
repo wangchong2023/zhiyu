@@ -1,10 +1,13 @@
-// KeyboardShortcutsView.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了键盘快捷键的视图修饰符，用于在应用中全局响应键盘操作。
-// 日期: 2026-05-07
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  KeyboardShortcutsView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：构建 KeyboardShortcuts 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 // MARK: - Keyboard Shortcuts View Modifier

@@ -1,14 +1,13 @@
-// AnimatedSection.swift
 //
-// 作者: Wang Chong
-// 功能说明: 本文件定义了带动画的条件展开区块，用于构建具有流畅过渡效果的 UI 结构。
-// 核心职责：
-// 1. 提供基于布尔状态的视图展开/收起容器。
-// 2. 封装标准的位移与透明度组合转场效果。
-// MARK: [PR-03] 统一动态布局过渡规范，提升界面的流畅性与交互质感
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  AnimatedSection.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Layouts 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 /// 带动画的展开/收起区块容器

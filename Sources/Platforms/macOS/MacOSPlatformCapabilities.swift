@@ -1,10 +1,13 @@
-// MacOSPlatformCapabilities.swift
 //
-// 作者: Wang Chong
-// 功能说明: [Shared] macOS 平台能力实现，包含安全书签持久化。
-// 版本: 1.0
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  MacOSPlatformCapabilities.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 macOS 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 import LocalAuthentication
 
@@ -15,11 +18,19 @@ import LocalAuthentication
 struct MacOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     
+    /// 检查当前系统是否支持指定的生物识别安全策略。
+    /// - Parameter context: 用于验证的本地安全上下文。
+    /// - Returns: 如果设备支持并配置了该验证策略，则返回 true，否则返回 false。
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
     }
     
+    /// 异步执行生物识别策略，验证设备所有者身份。
+    /// - Parameters:
+    ///   - context: 验证的本地安全上下文。
+    ///   - reason: 呈献给用户的安全验证理由文案。
+    ///   - Returns: 验证成功返回 true，失败或被用户取消返回 false。
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
         return await withCheckedContinuation { continuation in
             context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
@@ -33,15 +44,20 @@ struct MacOSBiometricAuthProvider: BiometricAuthProviderProtocol {
 
 /// macOS 安全存储：实现真正的 Security-Scoped Bookmarks 持久化
 struct MacOSSecurityScopedStorage: SecurityScopedStorageProtocol {
+    /// 为指定安全路径（如外部金库目录）创建并持久化安全作用域书签数据。
+    /// - Parameter url: 待存储的物理路径 URL。
     func storeBookmark(for url: URL) {
         do {
             let data = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
             UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.vaultBookmarkPrefix + url.lastPathComponent)
         } catch {
-            print("❌ [macOS] 无法创建书签: \(error.localizedDescription)")
+            print("❌ [macOS] Failed to create bookmark: \(error.localizedDescription)")
         }
     }
     
+    /// 解析持久化的书签数据，恢复具有安全访问权限的沙盒 URL。
+    /// - Parameter data: 被存储的二进制书签数据。
+    /// - Returns: 恢复出的安全沙盒 URL。若数据损坏或失效则返回 nil。
     func restoreURL(from data: Data) -> URL? {
         var isStale = false
         do {
@@ -49,7 +65,7 @@ struct MacOSSecurityScopedStorage: SecurityScopedStorageProtocol {
             if isStale { return nil }
             return url
         } catch {
-            print("❌ [macOS] 无法解析书签: \(error.localizedDescription)")
+            print("❌ [macOS] Failed to resolve bookmark: \(error.localizedDescription)")
             return nil
         }
     }

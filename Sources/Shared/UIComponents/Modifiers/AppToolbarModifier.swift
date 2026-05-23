@@ -1,3 +1,13 @@
+//
+//  AppToolbarModifier.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 共享标准层
+//  核心职责：属于 Modifiers 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 
 // MARK: - Root Tab Toolbar
@@ -53,6 +63,11 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
         self.trailingItems = trailing()
     }
     
+    /// 全局注入的平台设备环境
+    private var appEnv: any AppEnvironmentProtocol {
+        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
+    }
+    
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
@@ -60,14 +75,14 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                 #if os(watchOS)
                 ToolbarItem(placement: .topBarLeading) {
                     Text(title)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.headline.weight(.bold))
                         .foregroundStyle(.appText)
                 }
                 #else
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 0) {
                         Text(title)
-                            .font(.system(size: 17, weight: .bold))
+                            .font(.headline.weight(.bold))
                             .foregroundStyle(.appText)
                         
                         if showVaultBadge {
@@ -80,7 +95,15 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    trailingItems
+                    HStack(spacing: DesignSystem.medium) {
+                        trailingItems
+                        
+                        #if !os(watchOS)
+                        if appEnv.screenClass != .compact {
+                            UserProfileMenu()
+                        }
+                        #endif
+                    }
                 }
             }
     }

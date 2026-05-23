@@ -1,13 +1,13 @@
-// KnowledgeStore.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识页面状态存储中心，负责页面状态的响应式管理、CRUD 事件处理及跨服务同步。
-// 它通过 @Observable 驱动 UI 更新，将页面管理逻辑从 AppStore 解耦。
-// 版本: 1.0
-// 修改记录:
-//   - 2026-05-18: 从 AppStore 剥离页面管理状态，实现 Phase 2 架构瘦身。
-// 版权: © 2026 Wang Chong。保留所有权利。
-
+//  KnowledgeStore.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//
 import SwiftUI
 import Combine
 import Observation

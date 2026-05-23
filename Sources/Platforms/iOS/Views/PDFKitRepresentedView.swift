@@ -1,10 +1,13 @@
-// PDFKitRepresentedView.swift
 //
-// 作者: Wang Chong
-// 功能说明: 将 PDFKit 包装为 SwiftUI 视图。
-// 版本: 1.1
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  PDFKitRepresentedView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：构建 PDFKitRepresented 界面的 UI 视图层组件。
+//
 #if canImport(PDFKit)
 import SwiftUI
 import PDFKit

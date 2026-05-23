@@ -1,14 +1,13 @@
-// KnowledgeDashboardView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L2] 业务功能层：知识库数据仪表盘，展示知识密度、活跃话题及核心指标。
-// 核心原则：
-// 1. 模式化布局：完全依赖 AppUI 提供的布局模式（Grid, Metrics, Gallery）。
-// 2. 无魔鬼数字：所有间距、尺寸、图标均来源于 AppUI。
-// 修改记录:
-//   - 2026-05-07: 移除本地 Layout 枚举，对接 AppUI 模式化系统。
-//   - 2026-05-07: 消除硬编码图标字符串，使用 DesignSystem.Icons。
-
+//  KnowledgeDashboardView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：构建 KnowledgeDashboard 界面的 UI 视图层组件。
+//
 import SwiftUI
 import Charts
 struct KnowledgeDashboardView: View {
@@ -251,7 +250,7 @@ struct KnowledgeDashboardView: View {
                 .disabled(coordinator.isGeneratingInsights)
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
                 if coordinator.isGeneratingInsights {
                     HStack {
                         Spacer()
@@ -263,7 +262,7 @@ struct KnowledgeDashboardView: View {
                             .italic()
                         Spacer()
                     }
-                    .padding(.vertical, 20)
+                    .padding(.vertical, DesignSystem.wide)
                 } else if let recap = coordinator.dailyRecap {
                     Button(action: {
                         HapticFeedback.shared.trigger(.selection)

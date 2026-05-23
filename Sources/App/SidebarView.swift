@@ -1,12 +1,13 @@
-// SidebarView.swift
 //
-// 作者: Wang Chong
-// 功能说明: [L3] 应用调度层：本文件实现了知识管理系统的核心导航分发中心（SidebarView）。
-// 版本: 1.2
-// 修改记录:
-//   - 2026-05-16: 表现层精益重构：将 400+ 行文件拆解为原子化组件，核心行数压降至 100 行以内。
-// 版权: 版权所有 © 2026 Wang Chong。保留所有权利。
-
+//  SidebarView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/23.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 应用层
+//  核心职责：构建 Sidebar 界面的 UI 视图层组件。
+//
 import SwiftUI
 
 @MainActor
@@ -19,6 +20,11 @@ struct SidebarView: View {
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
+    /// 全局注入的平台设备环境
+    private var appEnv: any AppEnvironmentProtocol {
+        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
+    }
     
     // MARK: - Properties
     var heroNamespace: Namespace.ID
@@ -33,7 +39,9 @@ struct SidebarView: View {
         @Bindable var router = router
         
         Group {
-            if horizontalSizeClass == .compact {
+            // 注意：iPadOS 的 SwiftUI 会将 NavigationSplitView 侧边栏内部子视图的 horizontalSizeClass
+            // 强行覆写为 .compact，因此无法用系统的 sizeClass 区分设备屏幕。采用全局设备 screenClass 进行高信度分支判定。
+            if appEnv.screenClass == .compact {
                 List {
                     CapabilitiesSection()
                     SourcesSection()
@@ -81,7 +89,51 @@ struct SidebarView: View {
                 pageToDelete = nil
             }
         }
-        .appTabToolbar(title: L10n.Common.Sidebar.title)
+        .sidebarToolbar(title: L10n.Common.Sidebar.title, appEnv: appEnv)
         .id(router.languageForceUpdate)
+    }
+}
+
+// MARK: - Sidebar Custom Adaptive Toolbar
+extension View {
+    /// 自适应侧边栏专用工具栏
+    /// - Parameters:
+    ///   - title: 工具栏标题
+    ///   - appEnv: 平台设备环境
+    @MainActor
+    func sidebarToolbar(title: String, appEnv: any AppEnvironmentProtocol) -> some View {
+        self.modifier(SidebarToolbarModifier(title: title, appEnv: appEnv))
+    }
+}
+
+/// 侧边栏工具栏修饰符 (大屏和小屏专属自适应)
+struct SidebarToolbarModifier: ViewModifier {
+    let title: String
+    let appEnv: any AppEnvironmentProtocol
+    
+    func body(content: Content) -> some View {
+        if appEnv.screenClass == .compact {
+            // 在手机 (Compact) 下：作为主标签页根视图，采用带有右上角头像的标准 appTabToolbar
+            content.appTabToolbar(title: title)
+        } else {
+            // 在 iPad/Mac (Regular/Expansive) 下：应用户需求，在侧边栏右上角也添加个人资料及设置菜单入口
+            content
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    #if os(watchOS)
+                    ToolbarItem(placement: .automatic) {
+                        VaultBadge()
+                    }
+                    #else
+                    ToolbarItem(placement: .principal) {
+                        VaultBadge()
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        UserProfileMenu()
+                    }
+                    #endif
+                }
+        }
     }
 }
