@@ -26,6 +26,10 @@ final class iOSPDFService: PDFServiceProtocol {
 
     // MARK: - File Management
 
+    /// 保存PDF
+    /// /// - Parameter data: data
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 可选值
     func savePDF(data: Data, fileName: String) async -> URL? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
@@ -36,6 +40,9 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    /// 删除PDF
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 是否成功
     func deletePDF(fileName: String) async -> Bool {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
@@ -46,6 +53,8 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    /// allPDFFilenames
+    /// /// - Returns: 列表
     func allPDFFilenames() async -> [String] {
         do {
             let files = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
@@ -58,6 +67,9 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    /// 获取PDFURL
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 可选值
     func getPDFURL(fileName: String) -> URL? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
@@ -65,19 +77,38 @@ final class iOSPDFService: PDFServiceProtocol {
 
     // MARK: - Text Extraction
 
+    /// 提取Text
+    /// /// - Returns: 可选值
     func extractText(from url: URL) async -> String? {
         guard let document = PDFDocument(url: url) else { return nil }
         return await extractText(from: url, pageRange: 0..<document.pageCount)
     }
 
+    /// 提取Text
+    /// /// - Parameter pageRange: pageRange
+    /// /// - Returns: 可选值
     func extractText(from url: URL, pageRange: Range<Int>) async -> String? {
         guard let document = PDFDocument(url: url) else { return nil }
+        
+        // 1. 获取大纲层次结构并建立页面到大纲标题的映射
+        var pageOutlines: [Int: [String]] = [:]
+        if let outlineRoot = document.outlineRoot {
+            buildOutlineMap(outline: outlineRoot, document: document, map: &pageOutlines)
+        }
+        
         var text = ""
         let start = max(0, pageRange.lowerBound)
         let end = min(document.pageCount, pageRange.upperBound)
         
         for i in start..<end {
             if let page = document.page(at: i) {
+                // 2. 在提取当前页面文本前，织入当前页关联的大纲层级标题
+                if let outlines = pageOutlines[i], !outlines.isEmpty {
+                    for title in outlines {
+                        text += "\n# \(title)\n"
+                    }
+                }
+                
                 text += page.string ?? ""
                 text += String(format: L10n.Ingest.PDF.pageSeparator, i + 1)
             }
@@ -85,8 +116,27 @@ final class iOSPDFService: PDFServiceProtocol {
         return text
     }
 
+    /// 递归遍历大纲节点，建立物理页面索引到大纲标题的映射表
+    private func buildOutlineMap(outline: PDFOutline, document: PDFDocument, map: inout [Int: [String]]) {
+        if let label = outline.label, let destination = outline.destination, let page = destination.page {
+            let pageIndex = document.index(for: page)
+            if pageIndex != NSNotFound {
+                map[pageIndex, default: []].append(label)
+            }
+        }
+        
+        // 遍历所有子节点
+        for i in 0..<outline.numberOfChildren {
+            if let child = outline.child(at: i) {
+                buildOutlineMap(outline: child, document: document, map: &map)
+            }
+        }
+    }
+
     // MARK: - Metadata Persistence
 
+    /// 保存DocumentsInfo
+    /// /// - Parameter docs: docs
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         if let data = try? JSONEncoder().encode(docs) {
@@ -94,6 +144,8 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    /// 加载DocumentsInfo
+    /// /// - Returns: 列表
     func loadDocumentsInfo() async -> [PDFDocumentInfo] {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         guard let data = try? Data(contentsOf: url),

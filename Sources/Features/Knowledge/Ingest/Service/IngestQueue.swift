@@ -76,6 +76,7 @@ final class IngestQueue: ObservableObject {
         }
     }
 
+    /// 调度App刷新
     func scheduleAppRefresh() {
         guard pendingCount > 0 else { return }
         taskProvider.schedule()

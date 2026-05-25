@@ -13,6 +13,10 @@ import Foundation
 extension L10n {
     public struct Auth {
         public static let t = "System"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var login: String { tr("login") }
         public static var register: String { tr("register") }
@@ -26,5 +30,20 @@ extension L10n {
         public static var thirdParty: String { tr("thirdParty") }
         public static var guestMode: String { tr("guestMode") }
         public static var authFailed: String { tr("auth.failed") }
+        
+        /// 微信登录开发中提示文案
+        public static var wechatDeveloping: String { tr("auth.wechatDeveloping") }
+        
+        /// Google 登录开发中提示文案
+        public static var googleDeveloping: String { tr("auth.googleDeveloping") }
+        
+        /// Apple 登录测试用户默认昵称
+        public static var appleTestUser: String { tr("auth.appleTestUser") }
+        
+        /// 默认普通用户昵称
+        public static var defaultUser: String { tr("auth.defaultUser") }
+        
+        /// 无法提取 Apple ID identityToken 的错误提示
+        public static var appleTokenExtractFailed: String { tr("auth.appleTokenExtractFailed") }
     }
 }

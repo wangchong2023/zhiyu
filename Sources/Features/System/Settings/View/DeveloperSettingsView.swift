@@ -183,6 +183,24 @@ struct DeveloperSettingsView: View {
                 }
                 .appListRowBackground()
 
+                // MARK: - 性能监控面板入口
+                Section {
+                    Button {
+                        store.showPerfDashboard = true
+                    } label: {
+                        HStack {
+                            Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text(L10n.Common.Perf.title)
+                }
+                .appListRowBackground()
+
                 // MARK: - RAG 质量评估 (RAG Quality Evaluation)
                 Section {
                     qualityGrid

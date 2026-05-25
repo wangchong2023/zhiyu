@@ -13,6 +13,9 @@ import WatchKit
 
 /// watchOS 触感反馈实现：使用 WKInterfaceDevice.current().play()
 final class WatchHapticService: HapticFeedbackProtocol {
+
+    /// trigger
+    /// /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         let device = WKInterfaceDevice.current()
         switch pattern {

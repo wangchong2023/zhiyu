@@ -13,9 +13,20 @@ import Foundation
 extension L10n {
     public enum Plugin {
         public static let t = "Plugin"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
+        /// permTitle
+        /// /// - Returns: 字符串
         public static func permTitle(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
@@ -31,6 +42,8 @@ extension L10n {
             }
         }
 
+        /// permDesc
+        /// /// - Returns: 字符串
         public static func permDesc(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
@@ -64,6 +77,10 @@ extension L10n {
         public static var noPluginsHint: String { tr("plugin.noPluginsHint") }
         public static var noResults: String { tr("plugin.noResults") }
         public static var noResultsHint: String { tr("plugin.noResultsHint") }
+
+        /// permissionMessage
+        /// /// - Parameter name: name
+        /// /// - Returns: 字符串
         public static func permissionMessage(_ name: String) -> String { trf("plugin.permission.message", name) }
 
         public enum Sidebar {
@@ -104,6 +121,11 @@ extension L10n {
             public static var rating: String { Plugin.tr("plugin.stat.rating") }
             public static var resourceUsage: String { Plugin.tr("plugin.stats.resourceUsage") }
             public static var noUsage: String { Plugin.tr("plugin.stats.noUsage") }
+
+            /// call计数格式化
+            /// /// - Parameter calls: calls
+            /// /// - Parameter avgMs: avgMs
+            /// /// - Returns: 字符串
             public static func callCountFormat(calls: Int, avgMs: Double) -> String {
                 Plugin.trf("plugin.stats.callCountFormat", calls, avgMs)
             }
@@ -125,6 +147,10 @@ extension L10n {
 
         public enum permission {
             public static var title: String { Plugin.tr("plugin.permission.title") }
+
+            /// message
+            /// /// - Parameter name: name
+            /// /// - Returns: 字符串
             public static func message(_ name: String) -> String { Plugin.trf("plugin.permission.message", name) }
         }
 
@@ -132,11 +158,31 @@ extension L10n {
         public enum Error {
             public static var sandboxBlocked: String { Plugin.tr("plugin.error.sandboxBlocked") }
             public static var dlpScriptBlocked: String { Plugin.tr("plugin.error.dlpScriptBlocked") }
+
+            /// dlp拉取Blocked
+            /// /// - Parameter host: host
+            /// /// - Returns: 字符串
             public static func dlpFetchBlocked(_ host: String) -> String { Plugin.trf("plugin.error.dlpFetchBlocked", host) }
+
+            /// pre处理Exception
+            /// /// - Parameter reason: reason
+            /// /// - Returns: 字符串
             public static func preProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.preProcessException", reason) }
             public static var payloadTooLarge: String { Plugin.tr("plugin.error.payloadTooLarge") }
+
+            /// post处理Exception
+            /// /// - Parameter reason: reason
+            /// /// - Returns: 字符串
             public static func postProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.postProcessException", reason) }
+
+            /// invalidURL
+            /// /// - Parameter url: url
+            /// /// - Returns: 字符串
             public static func invalidURL(_ url: String) -> String { Plugin.trf("plugin.error.invalidURL", url) }
+
+            /// keyLengthExceeded
+            /// /// - Parameter limit: limit
+            /// /// - Returns: 字符串
             public static func keyLengthExceeded(_ limit: Int) -> String { Plugin.trf("plugin.error.keyLengthExceeded", limit) }
         }
     }

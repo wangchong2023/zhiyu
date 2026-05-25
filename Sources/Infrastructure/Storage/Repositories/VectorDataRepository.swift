@@ -21,6 +21,10 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
 
     // MARK: - 向量映射 (Embeddings)
 
+    /// 保存Embedding
+    /// /// - Parameter id: id
+    /// /// - Parameter vector: vector
+    /// /// - Parameter modelName: modelName
     func saveEmbedding(id: UUID, vector: [Float], modelName: String) async throws {
         _ = try await dbWriter.write { db in
             var entry = PageEmbedding(id: id, vector: vector, modelName: modelName)
@@ -28,6 +32,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取AllEmbeddings
+    /// /// - Returns: 列表
     func fetchAllEmbeddings() async throws -> [UUID: [Float]] {
         try await dbWriter.read { db in
             let records = try PageEmbedding.fetchAll(db)
@@ -41,6 +47,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
 
     // MARK: - 语义分块 (Chunks)
 
+    /// 拉取Chunks
+    /// /// - Returns: 列表
     func fetchChunks(for pageID: UUID) async throws -> [PageChunk] {
         try await dbWriter.read { db in
             try PageChunk
@@ -49,6 +57,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取AllChunksWithEmbeddings
+    /// /// - Returns: 列表
     func fetchAllChunksWithEmbeddings() async throws -> [PageChunk] {
         try await dbWriter.read { db in
             try PageChunk
@@ -57,6 +67,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
         }
     }
 
+    /// 保存Chunks
+    /// /// - Parameter chunks: chunks
     func saveChunks(_ chunks: [PageChunk], for pageID: UUID) async throws {
         _ = try await dbWriter.write { db in
             // 物理删除旧分块，确保索引最新
@@ -73,6 +85,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
         }
     }
 
+    /// 删除Chunks
     func deleteChunks(for pageID: UUID) async throws {
         _ = try await dbWriter.write { db in
             try PageChunk
@@ -81,6 +94,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
         }
     }
 
+    /// cleanupOrphanedChunks
+    /// /// - Returns: 数值
     func cleanupOrphanedChunks() async throws -> Int {
         try await dbWriter.write { db in
             // 使用 Query Interface 的 subquery 方式替代原始 SQL

@@ -13,7 +13,16 @@ import Foundation
 extension L10n {
     public struct Dashboard {
         public static let t = "Insight"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String {
             let localized = Localized.trf(key, table: t, arguments: args)
             if localized == key {

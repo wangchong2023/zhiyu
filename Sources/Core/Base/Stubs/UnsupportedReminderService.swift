@@ -12,10 +12,16 @@ import Foundation
 
 /// 不支持提醒事项的平台实现
 final class UnsupportedReminderService: ReminderServiceProtocol, Sendable {
+
+    /// 请求Access
+    /// /// - Returns: 是否成功
     func requestAccess() async -> Bool {
         return false
     }
     
+    /// 创建Reminder
+    /// /// - Parameter title: title
+    /// /// - Parameter notes: notes
     func createReminder(title: String, notes: String) async throws {
         // Do nothing or throw error
     }

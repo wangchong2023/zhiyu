@@ -40,6 +40,9 @@ extension UTType {
 struct PageDragDropModifier: ViewModifier {
     let page: KnowledgePage
 
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .draggable(page.id.uuidString) {
@@ -61,6 +64,9 @@ struct PageDragDropModifier: ViewModifier {
 extension View {
     /// Apply drag and drop support for a page
     @ViewBuilder
+
+    /// pageDragDrop
+    /// /// - Parameter page: page
     func pageDragDrop(page: KnowledgePage) -> some View {
         #if os(watchOS)
         self
@@ -75,10 +81,16 @@ extension View {
 struct PagesListDropDelegate: DropDelegate {
     let onDrop: (UUID) -> Void
 
+    /// 执行Drop
+    /// /// - Parameter info: info
+    /// /// - Returns: 是否成功
     func performDrop(info: DropInfo) -> Bool {
         return true
     }
 
+    /// 校验Drop
+    /// /// - Parameter info: info
+    /// /// - Returns: 是否成功
     func validateDrop(info: DropInfo) -> Bool {
         return true
     }
@@ -91,10 +103,16 @@ struct PagesListDropDelegate: DropDelegate {
 struct FileDropDelegate: DropDelegate {
     let onFileDrop: (URL) -> Void
 
+    /// 执行Drop
+    /// /// - Parameter info: info
+    /// /// - Returns: 是否成功
     func performDrop(info: DropInfo) -> Bool {
         return true
     }
 
+    /// 校验Drop
+    /// /// - Parameter info: info
+    /// /// - Returns: 是否成功
     func validateDrop(info: DropInfo) -> Bool {
         return info.hasItemsConforming(to: [.fileURL])
     }

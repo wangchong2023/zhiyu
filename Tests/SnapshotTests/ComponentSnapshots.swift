@@ -18,6 +18,12 @@ import GRDB
 @MainActor
 final class ComponentSnapshots: XCTestCase {
     
+    /// 依据环境变量判断是否启用快照录制模式，用于支持 CI/CD 脚本自动更新基准图片
+    private var isRecordModeEnabled: Bool {
+        ProcessInfo.processInfo.environment["RECORD_MODE"] == "1" ||
+        ProcessInfo.processInfo.arguments.contains("-environmentRecordMode")
+    }
+    
     /// 测试 AI 脉搏指示器的视觉一致性
     func testAIPulseIndicator() {
         // 配置 Mock 环境
@@ -35,12 +41,12 @@ final class ComponentSnapshots: XCTestCase {
     
     private func setupMockEnvironment() {
         setupFullMockEnvironment()
-        isRecording = false
+        isRecording = isRecordModeEnabled
     }
     
     /// 测试图谱节点的视觉一致性
     func testGraphNodeView() {
-        isRecording = false
+        isRecording = isRecordModeEnabled
         let node = GraphNode(
             id: UUID(),
             title: "测试节点",
@@ -219,7 +225,7 @@ final class ComponentSnapshots: XCTestCase {
     
     /// 测试空间导航面包屑组件的视觉一致性与代码覆盖率提升
     func testBreadcrumbView() {
-        isRecording = false
+        isRecording = isRecordModeEnabled
         let history = [
             KnowledgePage(title: "首页节点", pageType: .concept, content: ""),
             KnowledgePage(title: "二级知识节点", pageType: .concept, content: ""),

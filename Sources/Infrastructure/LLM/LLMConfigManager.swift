@@ -70,6 +70,9 @@ public final class LLMConfigManager {
             .store(in: &cancellables)
     }
     
+    /// set刷新Handler
+    /// /// - Parameter handler: handler
+    /// /// - Returns: 返回值
     public func setRefreshHandler(_ handler: @escaping @MainActor () -> Void) {
         self.onRefresh = handler
     }

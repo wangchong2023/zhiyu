@@ -37,6 +37,8 @@ final class PencilManager: NSObject {
     #endif
     
 #if os(iOS)
+
+    /// 注册
     func register(to view: UIView) {
         let interaction = UIPencilInteraction()
         interaction.delegate = self
@@ -47,6 +49,9 @@ final class PencilManager: NSObject {
 
 #if os(iOS)
 extension PencilManager: UIPencilInteractionDelegate {
+
+    /// pencilInteractionDidTap
+    /// /// - Parameter interaction: interaction
     func pencilInteractionDidTap(_ interaction: UIPencilInteraction) {
         // 响应双击
         Logger.shared.debug("✏️ Apple Pencil 双击触发")

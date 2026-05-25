@@ -11,6 +11,9 @@
 import SwiftUI
 
 struct InsightViewProvider: ViewProvider {
+
+    /// 创建View
+    /// /// - Returns: 可选值
     func makeView(for route: AnyHashable) -> AnyView? {
         guard let route = route as? AppRoute, route.domain == .insight else { return nil }
         

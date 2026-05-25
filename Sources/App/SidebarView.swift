@@ -101,6 +101,10 @@ extension View {
     ///   - title: 工具栏标题
     ///   - appEnv: 平台设备环境
     @MainActor
+
+    /// sidebarToolbar
+    /// /// - Parameter title: title
+    /// /// - Parameter appEnv: appEnv
     func sidebarToolbar(title: String, appEnv: any AppEnvironmentProtocol) -> some View {
         self.modifier(SidebarToolbarModifier(title: title, appEnv: appEnv))
     }
@@ -111,6 +115,9 @@ struct SidebarToolbarModifier: ViewModifier {
     let title: String
     let appEnv: any AppEnvironmentProtocol
     
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     func body(content: Content) -> some View {
         if appEnv.screenClass == .compact {
             // 在手机 (Compact) 下：作为主标签页根视图，采用带有右上角头像的标准 appTabToolbar

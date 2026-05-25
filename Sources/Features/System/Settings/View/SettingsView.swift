@@ -121,6 +121,7 @@ struct SettingsView: View {
                 .navigationSplitViewStyle(.balanced)
             }
         }
+        .environment(\.locale, router.currentLocale)
     }
     
     /// 构建小屏下的紧凑设置列表
@@ -232,9 +233,6 @@ struct SettingsView: View {
     @ViewBuilder
     private func doneButton(router: Router) -> some View {
         Button(L10n.Common.done) {
-            if languageChanged {
-                router.triggerLanguageRefresh()
-            }
             router.isShowingSettingsSheet = false
             dismiss()
         }
@@ -261,6 +259,7 @@ struct SettingsView: View {
             .onChange(of: selectedLanguage) { _, newValue in
                 Localized.languageMode = newValue
                 languageChanged = true
+                router.triggerLanguageRefresh()
             }
         } header: {
             Text(L10n.Settings.Section.appearance)

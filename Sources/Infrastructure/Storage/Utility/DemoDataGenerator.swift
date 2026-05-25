@@ -27,7 +27,16 @@ struct DemoDataGenerator {
         print("🧪 [Demo] Starting demo data generation...")
         
         try await store.performBatchWrite { db in
-            // 1. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
+            // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
+            // 按照依赖关系的反向顺序进行物理清理
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.links)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageTags)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.tags)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.srsMetadata)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageEmbeddings)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageChunks)")
+            
+            // 2. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
             try KnowledgePage.deleteAll(db)
             try TokenUsage.deleteAll(db)
             try LLMCallLog.deleteAll(db)
@@ -91,7 +100,16 @@ struct DemoDataGenerator {
         print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
         
         try await store.performBatchWrite { db in
-            // 1. 在同一个事务中清理旧数据
+            // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
+            // 按照依赖关系的反向顺序进行物理清理
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.links)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageTags)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.tags)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.srsMetadata)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageEmbeddings)")
+            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageChunks)")
+            
+            // 2. 在同一个事务中清理旧数据
             try KnowledgePage.deleteAll(db)
             
             // 预生成标题列表，用于建立随机链接

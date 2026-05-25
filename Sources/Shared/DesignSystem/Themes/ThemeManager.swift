@@ -56,6 +56,8 @@ class ThemeManager: ObservableObject {
         }
     }
 
+    /// setAccentColor
+    /// /// - Parameter color: color
     func setAccentColor(_ color: String) {
         UserDefaults.standard.set(color, forKey: AppConstants.Keys.Storage.accentColor)
         objectWillChange.send()
@@ -89,6 +91,8 @@ class ThemeManager: ObservableObject {
 
     /// 提供统一的背景渲染入口
     @MainActor
+
+    /// pageBackground
     func pageBackground() -> some View {
         PageBackgroundView(accentColor: accentColor)
     }

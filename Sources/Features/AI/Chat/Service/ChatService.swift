@@ -18,23 +18,34 @@ final class ChatService: ChatServiceProtocol, @unchecked Sendable {
     
     init() {}
     
+    /// 加载History
+    /// /// - Returns: 列表
     func loadHistory() -> [ChatMessage] {
         return historyStore.messages
     }
     
+    /// 清除History
     func clearHistory() {
         historyStore.clear()
     }
     
+    /// 保存UserMessage
+    /// /// - Parameter content: content
     func saveUserMessage(_ content: String) {
         historyStore.append(ChatMessage(role: .user, content: content))
     }
     
+    /// 保存AssistantMessage
+    /// /// - Parameter content: content
     func saveAssistantMessage(_ content: String) {
         historyStore.append(ChatMessage(role: .assistant, content: content))
         historyStore.persistToDisk()
     }
     
+    /// streamChat
+    /// /// - Parameter query: query
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 返回值
     func streamChat(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
         let llmService = ServiceContainer.shared.resolve((any LLMServiceProtocol).self)
         let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)

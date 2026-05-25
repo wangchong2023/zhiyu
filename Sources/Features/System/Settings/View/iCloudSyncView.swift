@@ -138,6 +138,9 @@ struct iCloudSyncView: View {
         .onChange(of: coordinator.conflictResolution) { _, newValue in
             settingsStore.iCloudConflictResolution = newValue.rawValue
         }
+        .sheet(item: $coordinator.activeConflict) { conflictInfo in
+            ConflictDiffView(conflictInfo: conflictInfo, store: store)
+        }
         .onDisappear {
             coordinator.onDisappear()
         }

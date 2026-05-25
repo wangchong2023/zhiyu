@@ -70,8 +70,16 @@ struct MonetizationInfo: Codable {
 @MainActor
 protocol PluginContext {
     var hostVersion: String { get }
+
+    /// 记录日志
+    /// /// - Parameter message: message
     func log(_ message: String)
+
+    /// 请求AIAccess
+    /// /// - Parameter prompt: prompt
     func requestAIAccess(prompt: String) async -> String?
+
+    /// queryPages
     func queryPages(matching query: String) async -> [KnowledgePage]
     
     // MARK: - 扩展点注册 (Obsidian-like)
@@ -175,6 +183,14 @@ protocol InterceptionPlugin: KnowledgePlugin {
 /// 分析服务协议：用于系统埋点与行为观测
 @MainActor
 protocol AnalyticsServiceProtocol: AnyObject {
+
+    /// 追踪Event
+    /// /// - Parameter name: name
+    /// /// - Parameter properties: properties
     func trackEvent(_ name: String, properties: [String: Any]?)
+
+    /// 追踪Error
+    /// /// - Parameter error: error
+    /// /// - Parameter details: details
     func trackError(_ error: Error, details: String?)
 }

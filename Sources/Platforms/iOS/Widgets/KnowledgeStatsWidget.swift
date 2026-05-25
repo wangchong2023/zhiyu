@@ -27,14 +27,22 @@ struct KnowledgeStatsEntry: TimelineEntry {
 struct KnowledgeStatsProvider: TimelineProvider {
     typealias Entry = KnowledgeStatsEntry
 
+    /// placeholder
+    /// /// - Returns: 返回值
     func placeholder(in context: Context) -> KnowledgeStatsEntry {
         fetchWidgetEntry(date: Date())
     }
 
+    /// 获取Snapshot
+    /// /// - Parameter completion: completion
+    /// /// - Returns: 返回值
     func getSnapshot(in context: Context, completion: @escaping (KnowledgeStatsEntry) -> Void) {
         completion(fetchWidgetEntry(date: Date()))
     }
 
+    /// 获取Timeline
+    /// /// - Parameter completion: completion
+    /// /// - Returns: 返回值
     func getTimeline(in context: Context, completion: @escaping (Timeline<KnowledgeStatsEntry>) -> Void) {
         let timeline = calculateTimeline(date: Date())
         completion(timeline)

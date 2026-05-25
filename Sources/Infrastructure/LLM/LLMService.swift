@@ -27,6 +27,12 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     
     /// AI 指标分析服务，用以审计 Token 吞吐和响应耗时。
     @ObservationIgnored @Inject private var analytics: AIAnalyticsService
+    
+    // MARK: - 注入拆分后的底层子服务 (DIP 解耦)
+    
+    @ObservationIgnored @Inject private var chatRunner: any LLMChatServiceProtocol
+    @ObservationIgnored @Inject private var ingestProcessor: any LLMKnowledgeServiceProtocol
+    @ObservationIgnored @Inject private var queryReranker: any LLMRetrievalServiceProtocol
 
     // MARK: - UI 状态属性 (透传转发至 configManager)
     
@@ -75,287 +81,115 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     /// 判断大模型所需的密钥、地址及开关是否已配置就绪。
     var isReady: Bool { configManager.isReady }
 
-    // MARK: - 内部组件
-    
-    /// 专门负责进行上下文组装与 Prompt 模板拼装的构建器。
-    private let contextBuilder: LLMContextBuilder
-    
-    /// 专项对话服务。
-    private var chatService: LLMChatService?
-    /// 智能摄入拆分服务。
-    private var ingestService: LLMIngestService?
-    /// 文档重构与潜在链接推荐服务。
-    private var refactorService: LLMRefactorService?
-    /// 高性能 RAG 检索重排服务。
-    private var retrievalService: LLMRetrievalService?
-
-    private var cancellables = Set<AnyCancellable>()
-
     // MARK: - 初始化
     
     /// 内部单例初始化构造方法。
     init() {
-        self.contextBuilder = LLMContextBuilder()
-        
-        // 1. 初始化各专项子服务
-        updateSubServices()
-        
-        // 2. 注册配置中心动态变更通知，随时热重载底层子客户端
+        // 在完成 DI 解析后，绑定刷新 Handler
         configManager.setRefreshHandler { [weak self] in
-            self?.updateSubServices()
             self?.objectWillChange.send()
         }
     }
 
-    /// 热重载并同步实例化各底层的专项 AI 子客户端。
-    private func updateSubServices() {
-        let client = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
-        self.chatService = LLMChatService(client: client, model: configManager.model)
-        self.ingestService = LLMIngestService(client: client, model: configManager.model, contextBuilder: contextBuilder)
-        self.refactorService = LLMRefactorService(client: client, model: configManager.model)
-        self.retrievalService = LLMRetrievalService(client: client, model: configManager.model, contextBuilder: contextBuilder)
-    }
+    // MARK: - LLMServiceProtocol 统一门面契约实现 (100% 委派转发)
 
-    // MARK: - LLMServiceProtocol 统一门面契约实现
-
-    /// 通用一问一答文本推理生成接口。
-    /// - Parameters:
-    ///   - prompt: 投喂给模型的具体用户提示词。
-    ///   - systemPrompt: 设定模型人设的全局系统提示词。
-    /// - Returns: 模型推理生成后的最终纯文本答案。
-    /// - Throws: `LLMError.notConfigured`（未配置就绪）或底层网络/协议异常。
+    /// 生成
+    /// /// - Parameter prompt: prompt
+    /// /// - Parameter systemPrompt: systemPrompt
+    /// /// - Returns: 字符串
     func generate(prompt: String, systemPrompt: String) async throws -> String {
-        guard isEnabled, !apiKey.isEmpty else { throw LLMError.notConfigured }
-        let client = LLMClient(baseURL: baseURL, apiKey: apiKey)
-        let sanitizedPrompt = PromptSanitizer.shared.sanitize(prompt)
-        let body: [String: Any] = [
-            "model": model,
-            "messages": [
-                ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": sanitizedPrompt]
-            ],
-            "temperature": AppConfig.AI.defaultTemperature
-        ]
-
-        let startTime = Date()
-        let response = try await client.sendRequest(body: body)
-        let latency = Int(Date().timeIntervalSince(startTime) * 1000)
-
-        // 审计调用时长与 Token 开销
-        analytics.recordUsage(model: model, response: response, latency: latency)
-
-        guard let content = LLMUtils.extractContent(from: response) else {
-            throw LLMError.invalidResponse
-        }
-        return content
+        try await chatRunner.generate(prompt: prompt, systemPrompt: systemPrompt)
     }
 
-    /// 执行核心 RAG（检索增强生成）闭环的问答交互。
-    /// - Parameters:
-    ///   - query: 用户输入的原始搜索问句。
-    ///   - history: 当前会话的往期历史消息列表。
-    ///   - pages: 供上下文检索召回的备选页面集。
-    /// - Returns: 模型推理并附带深度引用溯源的回复 DTO 实体。
-    /// - Throws: `LLMError.notConfigured` 或大模型处理异常。
-    /// 执行核心 RAG（检索增强生成）闭环的问答交互。
-    /// - Parameters:
-    ///   - query: 用户输入的原始搜索问句。
-    ///   - history: 当前会话的往期历史消息列表。
-    ///   - pages: 供上下文检索召回的备选页面集。
-    /// - Returns: 模型推理并附带深度引用溯源的回复 DTO 实体。
-    /// - Throws: `LLMError.notConfigured` 或大模型处理异常。
+    /// chat
+    /// /// - Parameter query: query
+    /// /// - Parameter history: history
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 返回值
     func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
-        guard isEnabled, let chatService else { throw LLMError.notConfigured }
-        // 0. 启动前对用户原始 Query 执行高风险注入消毒过滤
-        let sanitizedQuery = PromptSanitizer.shared.sanitize(query)
-
-        // 1. 注册并在 UI 层启动任务中心异步进度条
-        let taskID = TaskCenter.shared.addTask(type: .ai, name: "AI Chat", target: sanitizedQuery)
-        TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.2, stage: .embedding))
-        
-        // 2. 检索向量库及 FTS5 混合语义，构建保护双链的语义上下文
-        let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
-        SourceStore.shared.updateSources(sources)
-        
-        // 3. 执行语义重排，精简检索召回的冗余分块，防范 LLM 陷入“迷失在中间（Lost in the Middle）”困境
-        TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.5, stage: .retrieval))
-        let rankedPages = (try? await rerank(query: sanitizedQuery, candidates: pages)) ?? pages
-        
-        // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
-        let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
-        let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
-  
-        // 4. 调用大模型，记录耗时指标并触发 RAG 自评估
-        TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.8, stage: .synthesis))
-        let startTime = Date()
-        let response = try await chatService.chat(systemPrompt: systemPrompt, query: sanitizedQuery, history: history)
-        let latency = Int(Date().timeIntervalSince(startTime) * 1000)
- 
-        analytics.recordRAGMetrics(query: sanitizedQuery, response: response, context: context, systemPrompt: systemPrompt, modelName: model, latency: latency)
-        
-        TaskCenter.shared.completeTask(id: taskID)
-        return ChatMessageDTO(role: .assistant, content: response)
+        try await chatRunner.chat(query: query, history: history, pages: pages)
     }
  
-    /// 执行基于 AsyncStream 的高性能流式打字机问答。
-    /// - Parameters:
-    ///   - query: 用户输入的原始搜索问句。
-    ///   - history: 往期会话的历史上下文列表。
-    ///   - pages: 供检索的备选文档集。
-    /// - Returns: 可迭代的流式异步文本片段流。
+    /// chatStream
+    /// /// - Parameter query: query
+    /// /// - Parameter history: history
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 返回值
     func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
-            Task { @MainActor in
-                guard isEnabled, let chatService else {
-                    continuation.finish(throwing: LLMError.notConfigured)
-                    return
-                }
- 
-                // 0. 对输入问句执行高风险注入拦截
-                let sanitizedQuery = PromptSanitizer.shared.sanitize(query)
-
-                let taskID = TaskCenter.shared.addTask(type: .ai, name: "AI Chat Stream", target: sanitizedQuery)
-                
-                defer {
-                    TaskCenter.shared.completeTask(id: taskID)
-                }
- 
-                do {
-                    // 1. 构建向量及倒排混合上下文，更新引用引用源
-                    let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
-                    SourceStore.shared.updateSources(sources)
-                    
-                    // 2. 排序候选文档，动态拼装系统人设
-                    let rankedPages = (try? await rerank(query: sanitizedQuery, candidates: pages)) ?? pages
-                    
-                    // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
-                    let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
-                    let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
- 
-                    var fullResponse = ""
-                    // 3. 消费打字机流片段，不断投递至流管道
-                    for try await chunk in chatService.streamChat(systemPrompt: systemPrompt, query: sanitizedQuery, history: history) {
-                        fullResponse += chunk
-                        continuation.yield(chunk)
-                    }
- 
-                    // 4. 异步归档 RAG 精准度元数据以做治理评估
-                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullResponse, context: context, systemPrompt: systemPrompt, modelName: model, latency: 0)
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
+        chatRunner.chatStream(query: query, history: history, pages: pages)
     }
 
-    /// 智能内容摄入与自动语义拆分服务。
-    ///
-    /// - Parameters:
-    ///   - title: 输入文档的建议标题。
-    ///   - rawContent: 输入文档的无结构原始长文本。
-    ///   - pages: 当前知识金库的已有上下文，用以识别重合话题。
-    /// - Returns: 包含自动提炼的双链链接、格式建议和核心标签的结构化 DTO 实体。
-    /// - Throws: `LLMError.notConfigured`（如果大模型服务未启用或缺少客户端配置）。
+    /// smart导入摄取
+    /// /// - Parameter title: title
+    /// /// - Parameter rawContent: rawContent
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 返回值
     func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
-        guard let ingestService else { throw LLMError.notConfigured }
-        return try await ingestService.smartIngest(title: title, rawContent: rawContent, pages: pages)
+        try await ingestProcessor.smartIngest(title: title, rawContent: rawContent, pages: pages)
     }
 
-    /// 智能推荐：基于当前文档的内容，深度挖掘并自动发现可能漏标的双向逻辑链（`[[潜在链接]]`）。
-    ///
-    /// - Parameters:
-    ///   - content: 待扫描的当前页面 Markdown 文本。
-    ///   - existingTitles: 系统中已经存在的全部百科标题候选池。
-    /// - Returns: 推荐自动生成的关联页面标题列表。
-    /// - Throws: `LLMError.notConfigured` 或底层大模型服务网络故障抛出的异常。
+    /// discoverPotentialLinks
+    /// /// - Parameter content: content
+    /// /// - Parameter existingTitles: existingTitles
+    /// /// - Returns: 列表
     func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] {
-        guard let refactorService else { return [] }
-        return try await refactorService.discoverPotentialLinks(content: content, existingTitles: existingTitles)
+        try await ingestProcessor.discoverPotentialLinks(content: content, existingTitles: existingTitles)
     }
 
-    /// 智能重构：对两个存在内容交叉重合的页面执行增量折叠，生成优雅的 HTML 折叠 `<details>` 块。
-    ///
-    /// - Parameters:
-    ///   - existingContent: 目标页面的现有 Markdown 正文。
-    ///   - newContent: 新追加的内容数据。
-    ///   - title: 页面标题。
-    /// - Returns: 重构合并完成后的全新 Markdown 富文本字符串。
-    /// - Throws: 底层大模型子模块连接超时或调用鉴权失败抛出的强类型异常。
+    /// foldContent
+    /// /// - Parameter existingContent: existingContent
+    /// /// - Parameter newContent: newContent
+    /// /// - Parameter title: title
+    /// /// - Returns: 字符串
     func foldContent(existingContent: String, newContent: String, title: String) async throws -> String {
-        guard let refactorService else { return existingContent + "\n\n" + newContent }
-        return try await refactorService.foldContent(existingContent: existingContent, newContent: newContent, title: title)
+        try await ingestProcessor.foldContent(existingContent: existingContent, newContent: newContent, title: title)
     }
 
-    /// 后台诊断：扫描整个笔记本中所有页面，给出高内聚低耦合的重构与合并建议。
-    ///
-    /// - Parameter pages: 全库参与诊断的备选页面集合。
-    /// - Returns: 提炼出的重构治理建议 DTO 数组。
-    /// - Throws: `LLMError.notConfigured` 或与大模型交互失败抛出的异常。
+    /// analyzeForRefactoring
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 列表
     func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO] {
-        guard let refactorService else { return [] }
-        return try await refactorService.analyzeForRefactoring(pages: pages)
+        try await ingestProcessor.analyzeForRefactoring(pages: pages)
     }
 
-    /// RAG 召回链路优化：查询改写（Query Rewriting）。
-    /// 将用户口语化表达转化为面向检索的精准语义搜索短语。
-    ///
-    /// - Parameter query: 用户的原始口语化搜索词。
-    /// - Returns: 重构优化后的面向向量/关键词混合检索友好的短语。
+    /// rewriteQuery
+    /// /// - Parameter query: query
+    /// /// - Returns: 字符串
     func rewriteQuery(_ query: String) async -> String {
-        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return query }
-        return await retrievalService.rewriteQuery(query)
+        await queryReranker.rewriteQuery(query)
     }
 
-    /// RAG 召回链路优化：意图扩展（Query Expansion）。
-    /// 扩充与用户问题强相关的同义意图数组。
-    ///
-    /// - Parameter query: 用户的原始问句。
-    /// - Returns: 扩展后的同义意图检索短语词数组。
+    /// expandQuery
+    /// /// - Parameter query: query
+    /// /// - Returns: 列表
     func expandQuery(_ query: String) async -> [String] {
-        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return [query] }
-        return await retrievalService.expandQuery(query)
+        await queryReranker.expandQuery(query)
     }
 
-    /// RAG 排序链路优化：文档级的语义重排（Document Reranking）。
-    /// 计算候选页面与 query 的深度语义相关度得分，对页面集进行精细重排序。
-    ///
-    /// - Parameters:
-    ///   - query: 用户输入的检索词。
-    ///   - candidates: RAG 召回链路检索出的候选文档数组。
-    /// - Returns: 经过语义重排计算后的精细排序文档序列。
-    /// - Throws: `LLMError` 或底层模型重排接口调用崩溃导致的系统异常。
+    /// rerank
+    /// /// - Parameter query: query
+    /// /// - Parameter candidates: candidates
+    /// /// - Returns: 列表
     func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] {
-        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return candidates }
-        return try await retrievalService.rerank(query: query, candidates: candidates)
+        try await queryReranker.rerank(query: query, candidates: candidates)
     }
 
-    /// RAG 排序链路优化：细粒度分块级的重排（Chunk Reranking）。
-    /// 精准提取与搜索词最直接相关的文本分块片段。
-    ///
-    /// - Parameters:
-    ///   - query: 用户的检索词。
-    ///   - chunks: 向量库或倒排检索初筛出的大量文本分块。
-    /// - Returns: 经过语义重排计算挑选出的排名前置核心文本分块。
+    /// rerankChunks
+    /// /// - Parameter query: query
+    /// /// - Parameter chunks: chunks
+    /// /// - Returns: 列表
     func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk] {
-        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return chunks }
-        return await retrievalService.rerankChunks(query: query, chunks: chunks)
+        await queryReranker.rerankChunks(query: query, chunks: chunks)
     }
 
-    /// RAG 上下文增强：假设性文档生成 (HyDE)。
-    /// 模拟生成包含回答线索的假设性文档，以此大幅提升向量匹配精准度。
-    ///
-    /// - Parameter query: 用户检索词。
-    /// - Returns: 大模型模拟生成的假设性文档正文文本。
+    /// 生成HypotheticalDocument
+    /// /// - Parameter query: query
+    /// /// - Returns: 字符串
     func generateHypotheticalDocument(query: String) async -> String {
-        guard isEnabled, !apiKey.isEmpty, let retrievalService else { return query }
-        return await retrievalService.generateHypotheticalDocument(query: query)
+        await queryReranker.generateHypotheticalDocument(query: query)
     }
 
     /// AI 模块连通性与响应测速测试。
-    ///
-    /// - Returns: 强类型验证结果，附带可用性和延迟毫秒数。
-    /// - Throws: 网络请求或鉴权失败引发的各类异常。
     func validateAPIKey() async throws -> ValidationResult {
         let start = Date()
         do {
@@ -365,43 +199,6 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
         } catch {
             let latency = Int(Date().timeIntervalSince(start) * 1000)
             return ValidationResult(isSuccess: false, latencyMS: latency, errorCode: "ERR", errorMessage: error.localizedDescription)
-        }
-    }
-
-    // MARK: - 指标度量与合规记录
-
-    /// 从响应荷载中解析计算 Token 消耗并异步记录至合规治理仓中。
-    private func recordUsageIfPossible(response: [String: Any], latency: Int = 0) {
-        // 单测环境下禁用后台异步指标写入，以防重置 DI 容器导致的崩溃
-        guard NSClassFromString("XCTestCase") == nil else { return }
-        
-        guard let usage = response["usage"] as? [String: Any],
-              let prompt = usage["prompt_tokens"] as? Int,
-              let completion = usage["completion_tokens"] as? Int,
-              let modelUsed = response["model"] as? String else { return }
-
-        Task.detached(priority: .background) {
-            let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
-            _ = try? await governance.logCall(model: modelUsed, promptTokens: prompt, completionTokens: completion, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
-            _ = try? await governance.logTokenUsage(model: modelUsed, promptTokens: prompt, completionTokens: completion)
-        }
-    }
-
-    /// 异步且不在 UI 主线程挂载的归档 RAG 精准度元数据及自评估。
-    private func asyncMetrics(query: String, response: String, context: String, systemPrompt: String, latency: Int) {
-        // 单测环境下禁用后台异步指标写入，以防重置 DI 容器导致的崩溃
-        guard NSClassFromString("XCTestCase") == nil else { return }
-        
-        let modelName = self.model
-        Task.detached(priority: .background) {
-            let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
-            let promptTokens = (systemPrompt.count + query.count) / BusinessConstants.AI.charactersPerToken
-            let completionTokens = response.count / BusinessConstants.AI.charactersPerToken
-            _ = try? await governance.logCall(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
-            _ = try? await governance.logTokenUsage(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens)
-
-            let evalService = ServiceContainer.shared.resolve(RAGEvaluationService.self)
-            _ = await evalService.evaluate(query: query, answer: response, context: context)
         }
     }
 }
@@ -421,5 +218,6 @@ extension LLMService {
         let errorMessage: String?
     }
 }
+
 
 

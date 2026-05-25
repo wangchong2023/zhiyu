@@ -23,6 +23,7 @@
 | TC-AI-02 | LLMService | 发送风险与并发 | 高频点击多个 AI 功能，系统应能正确排队或取消旧任务，不崩溃且 UI 不卡顿。 | P0 |
 | TC-ING-01 | IngestSvc | 网页抓取与 Markdown | 输入标准 URL，系统应能提取正文并转换为干净的 Markdown 格式。 | P1 |
 | TC-ING-02 | IngestSvc | 多格式兼容性 | 导入包含代码块和表格的文档，渲染器应能保持结构完整。 | P1 |
+| TC-ING-03 | IngestSvc | 级联式多源抓取及付费墙绕过 | 抓取具备防爬限制或付费墙的科学与新闻网页，自动通过 6 级回退策略抓取到干净正文，耗时 < 5.0s。 | P1 |
 
 ---
 
@@ -33,6 +34,7 @@
 | TC-NAV-01 | Navigation | [[WikiLink]] 跳转 | 在正文点击维基链接，应准确跳转到对应详情页并进入导航栈。 | P0 |
 | TC-NAV-02 | Navigation | 深度链接捕获 | 通过 `wikilink://` 协议打开 App，应自动跳转至指定页面。 | P1 |
 | TC-UI-01 | Dashboard | 每日闪念更新 | 知识库内容更新后，点击刷新，Daily Recap 应基于最新内容重新生成。 | P2 |
+| TC-DEE-06 | Navigation | 外置 CLI 触发与 Intent 调度 | 外部 AI 代理通过 Shortcuts/App Intent 发送写入指令时，系统能自动限流（10Hz 阈值内），并静默在后台完成向量化及数据持久化，保持主应用正常响应。 | P1 |
 
 ---
 
@@ -80,6 +82,7 @@
 | TC-VLT-03 | VaultService | 后台自动锁定 | App 切换至后台后，金库在设定时间内自动锁定。 | P1 |
 | TC-VLT-04 | SecurityMgr | 文件完整性校验 | 外部篡改数据库文件后，HMAC-SHA256 校验失败并提示用户。 | P1 |
 | TC-VLT-05 | Audit | 敏感操作审计 | 删除金库、修改安全设置等操作被完整记录，日志不可被插件篡改。 | P2 |
+| TC-VLT-06 | SecurityMgr | WAL指纹与重签校验 | 验证数据库关闭释放 WAL 连接时重写防篡改指纹，以及在 DEBUG 宏下指纹校验不符时能自动重签名对齐，在 Release 包下严格阻断。 | P1 |
 
 ---
 
@@ -144,6 +147,9 @@
 | TC-WID-01 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetSnapshotEntryCalculation` |
 | TC-WID-02 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetTimelinePolicyCalculation` |
 | TC-DEE-05 | `DeepLinkTests` (Tests/Unit/Services) | `testWidgetCreateActionDeepLinkResolution`, `testWidgetEmptySearchDeepLinkSafetyGrace` |
+| TC-VLT-06 | `VaultSecurityTests` (Tests/Unit/Security) | `testWALFingerprintSyncAndDebugReSigning` (Pending) |
+| TC-ING-03 | `IngestQueueTests` (Tests/Unit/RAG) | `testCascadeGrabAndPaywallBypass` (Pending) |
+| TC-DEE-06 | `DeepLinkTests` (Tests/Unit/Services) | `testAgentIntentsIntegrationAndRateLimit` (Pending) |
 
 ---
 

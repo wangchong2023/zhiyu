@@ -32,6 +32,8 @@ final class MCSessionDelegateImpl: NSObject, MCSessionDelegate {
         self.onStatusChange = onStatusChange
     }
 
+    /// session回调
+    /// /// - Parameter session: session
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange newState: MCSessionState) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -48,16 +50,24 @@ final class MCSessionDelegateImpl: NSObject, MCSessionDelegate {
         }
     }
 
+    /// session回调
+    /// /// - Parameter session: session
     func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
         DispatchQueue.main.async { [weak self] in
             self?.onDataReceived(data, peerID)
         }
     }
 
+    /// session回调
+    /// /// - Parameter session: session
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {}
 
+    /// session回调
+    /// /// - Parameter session: session
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {}
 
+    /// session回调
+    /// /// - Parameter session: session
     func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {}
 }
 
@@ -74,10 +84,15 @@ final class MCAdvertiserDelegateImpl: NSObject, MCNearbyServiceAdvertiserDelegat
         self.onError = onError
     }
 
+    /// advertiser回调
+    /// /// - Parameter advertiser: advertiser
+    /// /// - Parameter invitationHandler: invitationHandler
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         onInvitation(peerID, context, invitationHandler)
     }
 
+    /// advertiser
+    /// /// - Parameter advertiser: advertiser
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
         DispatchQueue.main.async { [weak self] in
             self?.onError(error)
@@ -101,18 +116,24 @@ final class MCBrowserDelegateImpl: NSObject, MCNearbyServiceBrowserDelegate {
         self.onError = onError
     }
 
+    /// browser
+    /// /// - Parameter browser: browser
     func browser(_ browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String: String]?) {
         DispatchQueue.main.async { [weak self] in
             self?.onRoomFound(peerID, info)
         }
     }
 
+    /// browser
+    /// /// - Parameter browser: browser
     func browser(_ browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
         DispatchQueue.main.async { [weak self] in
             self?.onRoomLost(peerID)
         }
     }
 
+    /// browser
+    /// /// - Parameter browser: browser
     func browser(_ browser: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
         DispatchQueue.main.async { [weak self] in
             self?.onError(error)

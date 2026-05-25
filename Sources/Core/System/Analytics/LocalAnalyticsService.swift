@@ -22,6 +22,9 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
         self.logURL = docs.appendingPathComponent("analytics_log.json")
     }
     
+    /// 追踪Event
+    /// /// - Parameter name: name
+    /// /// - Parameter properties: properties
     func trackEvent(_ name: String, properties: [String: Any]? = nil) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
         
@@ -59,6 +62,9 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
         }
     }
     
+    /// 追踪Error
+    /// /// - Parameter error: error
+    /// /// - Parameter details: details
     func trackError(_ error: Error, details: String? = nil) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
         print("❌ [Analytics] \(timestamp) | Error: \(error.localizedDescription) | Details: \(details ?? "")")

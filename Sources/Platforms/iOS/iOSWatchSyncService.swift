@@ -25,6 +25,8 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
         }
     }
     
+    /// 发送Content
+    /// /// - Parameter text: text
     func sendContent(_ text: String) {
         let session = WCSession.default
         guard session.activationState == .activated else {
@@ -47,17 +49,27 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     
     // MARK: - WCSessionDelegate
     
+    /// session回调
+    /// /// - Parameter session: session
+    /// /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
             Logger.shared.error("⌚ [WatchSync] iOS activation anomaly: \(error.localizedDescription)")
         }
     }
     
+    /// sessionDidBecomeInactive回调
+    /// /// - Parameter session: session
     nonisolated func sessionDidBecomeInactive(_ session: WCSession) {}
+
+    /// sessionDid停用回调
+    /// /// - Parameter session: session
     nonisolated func sessionDidDeactivate(_ session: WCSession) {
         session.activate()
     }
     
+    /// session回调
+    /// /// - Parameter session: session
     nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         if let content = userInfo["content"] as? String {
             Task { @MainActor in

@@ -61,6 +61,10 @@ final class ToastManager: ObservableObject {
     
     private init() {}
     
+    /// 展示
+    /// /// - Parameter type: type
+    /// /// - Parameter message: message
+    /// /// - Parameter duration: duration
     func show(type: AppToastType, message: String, duration: Double = 3.0) {
         withAnimation(.spring(response: DesignSystem.Animation.standardDuration * 1.6, dampingFraction: DesignSystem.Animation.standardDamping)) { // 0.4, 0.8
             currentToast = AppToast(type: type, message: message, duration: duration)
@@ -76,6 +80,7 @@ final class ToastManager: ObservableObject {
         }
     }
     
+    /// 关闭
     func dismiss() {
         withAnimation(.spring(response: DesignSystem.Animation.standardDuration * 1.6, dampingFraction: DesignSystem.Animation.standardDamping)) { // 0.4, 0.8
             currentToast = nil
@@ -141,6 +146,9 @@ struct AppToastView: View {
 struct AppToastModifier: ViewModifier {
     @StateObject private var manager = ToastManager.shared
     
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     func body(content: Content) -> some View {
         ZStack(alignment: .top) {
             content
@@ -157,6 +165,8 @@ struct AppToastModifier: ViewModifier {
 }
 
 extension View {
+
+    /// appToast
     func appToast() -> some View {
         modifier(AppToastModifier())
     }

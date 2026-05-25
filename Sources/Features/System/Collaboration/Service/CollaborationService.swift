@@ -15,7 +15,13 @@ import Combine
 @MainActor
 protocol CollaborationDelegate: AnyObject {
     var pages: [KnowledgePage] { get }
+
+    /// 应用Remote更新
+    /// /// - Parameter page: page
     func applyRemoteUpdate(_ page: KnowledgePage) async
+
+    /// 插入RemotePage
+    /// /// - Parameter page: page
     func insertRemotePage(_ page: KnowledgePage) async
 }
 
@@ -63,6 +69,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         provider.delegate = self
     }
 
+    /// setDelegate
+    /// /// - Parameter delegate: delegate
     func setDelegate(_ delegate: CollaborationDelegate) {
         self.delegate = delegate
     }
@@ -79,6 +87,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     }
 
     // MARK: - API
+    /// 启动Hosting
+    /// /// - Parameter roomName: roomName
     func startHosting(roomName: String) {
         guard isAvailable else { return }
         self.roomName = roomName
@@ -90,6 +100,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         isJoined = true
     }
 
+    /// 启动Browsing
     func startBrowsing() {
         guard isAvailable else { return }
         connectionError = nil
@@ -97,6 +108,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         provider.startBrowsing(userName: userName)
     }
 
+    /// 加入Room
+    /// /// - Parameter room: room
     func joinRoom(_ room: DiscoveredRoom) {
         guard isAvailable else { return }
         self.role = .editor
@@ -104,6 +117,7 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         provider.joinRoom(room)
     }
 
+    /// 停止
     func stop() {
         provider.stop()
         isHosting = false
@@ -116,6 +130,11 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
     }
 
     // MARK: - Data Transmission
+    /// broadcastEdit
+    /// /// - Parameter pageID: pageID
+    /// /// - Parameter field: field
+    /// /// - Parameter oldValue: oldValue
+    /// /// - Parameter newValue: newValue
     func broadcastEdit(pageID: UUID, field: String, oldValue: String, newValue: String) {
         guard isJoined, role != .viewer else { return }
 
@@ -134,6 +153,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         }
     }
 
+    /// broadcastPage
+    /// /// - Parameter page: page
     func broadcastPage(_ page: KnowledgePage) {
         guard isJoined, role != .viewer else { return }
 
@@ -155,6 +176,8 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
         }
     }
 
+    /// setUserName
+    /// /// - Parameter name: name
     func setUserName(_ name: String) {
         UserDefaults.standard.set(name, forKey: AppConstants.Keys.Storage.userName)
     }
@@ -169,20 +192,29 @@ final class CollaborationService: NSObject, ObservableObject, @unchecked Sendabl
 
 // MARK: - CollaborationProviderDelegate
 extension CollaborationService: CollaborationProviderDelegate {
+
+    /// providerDid更新Status
+    /// /// - Parameter message: message
     func providerDidUpdateStatus(_ message: String) {
         self.statusMessage = message
     }
     
+    /// providerDidDiscoverRoom
+    /// /// - Parameter room: room
     func providerDidDiscoverRoom(_ room: DiscoveredRoom) {
         if !discoveredRooms.contains(where: { $0.id == room.id }) {
             discoveredRooms.append(room)
         }
     }
     
+    /// providerDidLoseRoom
+    /// /// - Parameter id: id
     func providerDidLoseRoom(id: String) {
         discoveredRooms.removeAll { $0.id == id }
     }
     
+    /// providerDid连接Peer
+    /// /// - Parameter user: user
     func providerDidConnectPeer(_ user: CollabUser) {
         isConnecting = false
         if !connectedPeers.contains(where: { $0.id == user.id }) {
@@ -191,6 +223,8 @@ extension CollaborationService: CollaborationProviderDelegate {
         isJoined = true
     }
     
+    /// providerDid断开Peer
+    /// /// - Parameter id: id
     func providerDidDisconnectPeer(id: String) {
         connectedPeers.removeAll { $0.id == id }
         if connectedPeers.isEmpty && !isHosting {
@@ -198,6 +232,8 @@ extension CollaborationService: CollaborationProviderDelegate {
         }
     }
     
+    /// providerDid接收Data
+    /// /// - Parameter data: data
     func providerDidReceiveData(_ data: Data, from userID: String) {
         // Try to decode as CollabEdit
         if let edit = try? JSONDecoder().decode(CollabEdit.self, from: data) {
@@ -214,6 +250,8 @@ extension CollaborationService: CollaborationProviderDelegate {
         }
     }
     
+    /// providerDidEncounterError
+    /// /// - Parameter error: error
     func providerDidEncounterError(_ error: String) {
         self.connectionError = error
         self.isConnecting = false

@@ -113,6 +113,8 @@ final class TagCloudCoordinator {
         haptic.trigger(.success)
     }
     
+    /// 切换Selection
+    /// /// - Parameter tag: tag
     func toggleSelection(_ tag: String) {
         if selectedTagsForBulk.contains(tag) {
             selectedTagsForBulk.remove(tag)

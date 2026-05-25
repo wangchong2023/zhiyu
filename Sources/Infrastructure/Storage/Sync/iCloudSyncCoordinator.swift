@@ -32,6 +32,9 @@ final class iCloudSyncCoordinator {
     var autoSyncErrorMessage = ""
     var conflictResolution: ConflictResolution = .merge
     var autoSync = false
+    
+    /// 触发手动冲突合并 Sheet 的状态属性
+    var activeConflict: ConflictInfo?
 
     private var autoSyncTimer: Timer?
     private static let autoSyncInterval: TimeInterval = 300
@@ -45,6 +48,7 @@ final class iCloudSyncCoordinator {
 
     // MARK: - Lifecycle
 
+    /// 视图出现回调
     func onAppear() {
         if let raw = settingsStore?.iCloudConflictResolution,
            let resolved = ConflictResolution(rawValue: raw) {
@@ -54,12 +58,14 @@ final class iCloudSyncCoordinator {
         startAutoSyncIfNeeded()
     }
 
+    /// 视图消失回调
     func onDisappear() {
         cancelAutoSync()
     }
 
     // MARK: - Auto Sync
 
+    /// 启动Auto同步IfNeeded
     func startAutoSyncIfNeeded() {
         autoSyncTimer?.invalidate()
         guard autoSync, syncService.iCloudAvailable else { return }
@@ -77,6 +83,7 @@ final class iCloudSyncCoordinator {
         }
     }
 
+    /// 取消Auto同步
     func cancelAutoSync() {
         autoSyncTimer?.invalidate()
         autoSyncTimer = nil
@@ -106,6 +113,7 @@ final class iCloudSyncCoordinator {
 
     // MARK: - Sync Actions
 
+    /// 推送ToCloud
     func pushToCloud() {
         guard let store else { return }
         isSyncing = true
@@ -121,6 +129,7 @@ final class iCloudSyncCoordinator {
         }
     }
 
+    /// 拉取FromCloud
     func pullFromCloud() {
         guard store != nil else { return }
         isSyncing = true
@@ -139,11 +148,24 @@ final class iCloudSyncCoordinator {
         }
     }
 
+    /// bidirectional同步
     func bidirectionalSync() {
         guard let store else { return }
         isSyncing = true
-        syncService.onConflictDetected = { [weak self] _, _, _, _ in
-            self?.conflictResolution ?? .merge
+        
+        // 挂载异步冲突判定回调，用于唤醒手动合并 Sheet
+        syncService.onConflictDetected = { [weak self] localPages, localLogs, remotePages, remoteLogs in
+            guard let self else { return .merge }
+            // 利用 withCheckedContinuation 将当前 iCloud 同步工作线程挂起，等待 UI 主线程决议
+            return await withCheckedContinuation { continuation in
+                self.activeConflict = ConflictInfo(
+                    localPages: localPages,
+                    localLogs: localLogs,
+                    remotePages: remotePages,
+                    remoteLogs: remoteLogs,
+                    continuation: continuation
+                )
+            }
         }
 
         Task { [weak self] in
@@ -162,6 +184,7 @@ final class iCloudSyncCoordinator {
         }
     }
 
+    /// 清除CloudData
     func clearCloudData() {
         isSyncing = true
         Task { [weak self] in
@@ -180,6 +203,7 @@ final class iCloudSyncCoordinator {
 
     // MARK: - Data Management
 
+    /// 替换LocalData
     func replaceLocalData(with pages: [KnowledgePage]) {
         guard let store else { return }
         try? store.clearAllData()
@@ -188,5 +212,89 @@ final class iCloudSyncCoordinator {
         }
         store.saveToDisk()
     }
+
+    /// 对以 .json 结尾的非数据库偏好配置文件进行自动冲突解决。
+    /// 解析两端的修改时间戳（updatedAt），自动采用 LWW (Last-Write-Wins) 进行覆盖，免去手动 Diff 的打扰。
+    @discardableResult
+
+    /// 解析ConflictedMetadata
+    /// /// - Parameter local: local
+    /// /// - Parameter remote: remote
+    /// /// - Returns: 是否成功
+    func resolveConflictedMetadata(local: URL, remote: URL) -> Bool {
+        guard local.pathExtension == "json" && remote.pathExtension == "json" else {
+            return false
+        }
+        
+        do {
+            let localData = try Data(contentsOf: local)
+            let remoteData = try Data(contentsOf: remote)
+            
+            // 解析 local 的 updatedAt
+            let decoder = JSONDecoder()
+            // 兼容 ISO8601 或自定义的日期解析
+            decoder.dateDecodingStrategy = .custom { decoder in
+                let container = try decoder.singleValueContainer()
+                let dateStr = try container.decode(String.self)
+                // 尝试多种常见的日期格式
+                let formatters = [
+                    ISO8601DateFormatter(),
+                    {
+                        let f = DateFormatter()
+                        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                        f.locale = Locale(identifier: "en_US_POSIX")
+                        return f
+                    }()
+                ]
+                for formatter in formatters {
+                    if let date = formatter.date(from: dateStr) {
+                        return date
+                    }
+                }
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date string: \(dateStr)")
+            }
+            
+            struct ConfigMetadata: Codable {
+                var updatedAt: Date?
+            }
+            
+            let localMeta = try? decoder.decode(ConfigMetadata.self, from: localData)
+            let remoteMeta = try? decoder.decode(ConfigMetadata.self, from: remoteData)
+            
+            let localDate = localMeta?.updatedAt ?? (try? local.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+            let remoteDate = remoteMeta?.updatedAt ?? (try? remote.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+            
+            if remoteDate > localDate {
+                // Remote 比较新，覆盖本地
+                if FileManager.default.fileExists(atPath: local.path) {
+                    try FileManager.default.removeItem(at: local)
+                }
+                try FileManager.default.copyItem(at: remote, to: local)
+                print("♻️ [iCloudSyncCoordinator] LWW Conflict resolved: Remote config is newer, replaced local.")
+            } else {
+                // Local 比较新，覆盖云端
+                if FileManager.default.fileExists(atPath: remote.path) {
+                    try FileManager.default.removeItem(at: remote)
+                }
+                try FileManager.default.copyItem(at: local, to: remote)
+                print("♻️ [iCloudSyncCoordinator] LWW Conflict resolved: Local config is newer, replaced remote.")
+            }
+            return true
+        } catch {
+            print("❌ [iCloudSyncCoordinator] Failed to resolve json config conflict via LWW: \(error.localizedDescription)")
+            return false
+        }
+    }
+}
+
+// MARK: - iCloud 同步冲突详细信息
+/// 封装物理同步冲突时两端数据，包含用于恢复同步流的 checked continuation 句柄
+struct ConflictInfo: Identifiable {
+    let id = UUID()
+    let localPages: [KnowledgePage]
+    let localLogs: [LogEntry]
+    let remotePages: [KnowledgePage]
+    let remoteLogs: [LogEntry]
+    let continuation: CheckedContinuation<ConflictResolution, Never>
 }
 #endif // ICLOUD_ENABLED

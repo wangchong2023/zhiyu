@@ -56,6 +56,8 @@ enum QuizProcessor {
                 let container = try decoder.singleValueContainer()
                 if let i = try? container.decode(Int.self) { self = .int(i) } else if let s = try? container.decode(String.self) { self = .string(s) } else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Not int or string") }
             }
+
+            /// 编码
             func encode(to encoder: Encoder) throws {}
             var stringValue: String {
                 switch self {

@@ -33,6 +33,9 @@ public struct GlassCardModifier: ViewModifier {
     
     // MARK: - Body
     
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     public func body(content: Content) -> some View {
         content
             .background(.ultraThinMaterial.opacity(opacity))
@@ -155,6 +158,9 @@ public struct AppListRowBackgroundModifier: ViewModifier {
     
     // MARK: - 视图转换
     
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     public func body(content: Content) -> some View {
         content
             .listRowBackground(AppListRowBackground())

@@ -13,6 +13,10 @@ import Foundation
 extension L10n {
     public struct Chat {
         public static let t = "AI"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 获取活跃会话个数文案
@@ -72,5 +76,8 @@ extension L10n {
         public struct ai {
             public static var thinking: String { Chat.tr("chat.ai.thinking") }
         }
+
+        /// 重新生成最后一次回复
+        public static var regenerate: String { "重新生成" }
     }
 }

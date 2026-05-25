@@ -53,8 +53,12 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     public var pages: [KnowledgePage] { _pages }
     
+    /// reloadFromDisk
     public func reloadFromDisk() async {
         _pages = (try? await knowledgeRepository.fetchAll()) ?? []
+        if let url = await DatabaseManager.shared.dbURL {
+            await SecurityManager.shared.updateSignature(for: url)
+        }
     }
 
     /// 全量获取页面列表
@@ -64,6 +68,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
 
     // MARK: - 页面操作
 
+    /// 创建Page
     public func createPage(
         title: String,
         pageType: PageType,
@@ -91,33 +96,53 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         return page
     }
     
+    /// 更新Page
+    /// /// - Parameter page: page
     public func updatePage(_ page: KnowledgePage) async throws {
         try await knowledgeRepository.save(page)
         await reloadFromDisk()
     }
     
+    /// 删除Page
+    /// /// - Parameter page: page
     public func deletePage(_ page: KnowledgePage) async throws {
         try await knowledgeRepository.delete(id: page.id)
         await reloadFromDisk()
     }
 
+    /// 同步RemotePage
+    /// /// - Parameter page: page
     public func syncRemotePage(_ page: KnowledgePage) async {
         _ = try? await knowledgeRepository.save(page)
         await reloadFromDisk()
     }
 
+    /// 重置Database
     public func resetDatabase() async throws {
         // 核心步骤：直接使用绑定的局部 dbWriter 进行数据清空，不再强耦合 MainActor 全局单例
         try await dbWriter.erase()
         _pages = []
+        
+        // 🚨 极其重要：因为 erase() 会把全部表及 grdb_migrations 抹除，
+        // 必须立刻重新运行数据库迁移器来建立空表、触发器与 FTS 索引，从而保全数据库重置后的后续读写可用性
+        try await DatabaseManager.shared.migrate(dbWriter)
+        
+        if let url = await DatabaseManager.shared.dbURL {
+            await SecurityManager.shared.updateSignature(for: url)
+        }
     }
 
     // MARK: - 搜索与关联
 
+    /// 搜索Pages
+    /// /// - Parameter query: query
+    /// /// - Returns: 列表
     public func searchPages(query: String) async -> [KnowledgePage] {
         return (try? await knowledgeRepository.search(query: query)) ?? []
     }
 
+    /// 拉取BacklinksByID
+    /// /// - Returns: 列表
     public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
         let backlinkIDs = (try? await knowledgeRepository.fetchBacklinks(for: id)) ?? []
         return _pages.filter { backlinkIDs.contains($0.id) }
@@ -125,11 +150,15 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     // MARK: - 标签管理
     
+    /// 重命名Tag
+    /// /// - Parameter oldTag: oldTag
     public func renameTag(_ oldTag: String, to newTag: String) async {
         _ = try? await knowledgeRepository.renameTag(old: oldTag, to: newTag)
         await reloadFromDisk()
     }
     
+    /// 删除Tag
+    /// /// - Parameter tag: tag
     public func deleteTag(_ tag: String) async {
         _ = try? await knowledgeRepository.deleteTag(tag)
         await reloadFromDisk()
@@ -211,6 +240,8 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         }
     }
 
+    /// 替换AllPages
+    /// /// - Parameter newPages: newPages
     public func replaceAllPages(_ newPages: [KnowledgePage]) async {
         try? await performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
@@ -223,6 +254,8 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
 // MARK: - 类型抹除适配 (AnyPageStore)
 
 extension SQLiteStore {
+
+    /// any创建Page
     public func anyCreatePage(
         title: String,
         pageType: PageType,
@@ -248,14 +281,27 @@ extension SQLiteStore {
         )) ?? KnowledgePage(title: title, pageType: pageType)
     }
 
+    /// any更新Page
+    /// /// - Parameter page: page
+    /// /// - Parameter forceDeepScan: forceDeep扫描
     public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         _ = try? await updatePage(page)
     }
     
+    /// any删除Page
+    /// /// - Parameter page: page
     public func anyDeletePage(_ page: KnowledgePage) async {
         _ = try? await deletePage(page)
     }
 
+    /// 添加记录日志
+    /// /// - Parameter action: action
+    /// /// - Parameter target: target
+    /// /// - Parameter details: details
+    /// /// - Parameter duration: duration
+    /// /// - Parameter startTime: 启动Time
+    /// /// - Parameter endTime: 结束Time
+    /// /// - Parameter module: module
     public nonisolated func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?) {
         // 存储引擎层不直接记录日志，由上层协调
     }

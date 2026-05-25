@@ -46,12 +46,17 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     
     // MARK: - WCSessionDelegate
     
+    /// session回调
+    /// /// - Parameter session: session
+    /// /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         if let error = error {
             Logger.shared.error("⌚ [WatchSync] watchOS activation anomaly: \(error.localizedDescription)")
         }
     }
     
+    /// session回调
+    /// /// - Parameter session: session
     nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         if let content = userInfo["content"] as? String {
             Task { @MainActor in

@@ -24,14 +24,24 @@ enum AppConfig {
         return json
     }()
     
+    /// 获取Network
+    /// /// - Parameter key: key
+    /// /// - Returns: 字符串
     private static func getNetwork(_ key: String) -> String {
         (configData["network"] as? [String: String])?[key] ?? ""
     }
     
+    /// 获取Performance
+    /// /// - Parameter key: key
+    /// /// - Parameter default: default
+    /// /// - Returns: 返回值
     private static func getPerformance<T>(_ key: String, default: T) -> T {
         (configData["performance"] as? [String: Any])?[key] as? T ?? `default`
     }
     
+    /// 获取Storage
+    /// /// - Parameter key: key
+    /// /// - Returns: 字符串
     private static func getStorage(_ key: String) -> String {
         (configData["storage"] as? [String: String])?[key] ?? ""
     }

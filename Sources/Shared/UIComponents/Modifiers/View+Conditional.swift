@@ -13,6 +13,9 @@ import SwiftUI
 extension View {
     /// 对视图应用变换逻辑 (用于链式调用中的条件分支或复杂组装)
     @ViewBuilder
+
+    /// 应用
+    /// /// - Returns: 返回值
     func apply<Content: View>(@ViewBuilder _ transform: (Self) -> Content) -> Content {
         transform(self)
     }

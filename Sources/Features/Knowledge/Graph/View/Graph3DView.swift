@@ -85,6 +85,13 @@ struct Graph3DView: View {
             }
         }
         .onAppear { 
+            // 节点数超出 2000 个时智能降级至 2D 拓扑
+            if store.pages.count > 2000 {
+                isFullScreen = false
+                ToastManager.shared.show(type: .info, message: L10n.Graph.nodesLimitDegradeHint)
+                return
+            }
+            
             selectedNodeID = nil
             infoPage = nil
             showNodeInfo = false

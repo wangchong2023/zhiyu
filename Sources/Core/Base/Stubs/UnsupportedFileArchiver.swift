@@ -14,6 +14,7 @@ import Foundation
 public final class UnsupportedFileArchiver: FileArchiverProtocol, @unchecked Sendable {
     public init() {}
     
+    /// zip
     public func zip(directory sourceDir: URL, to destinationURL: URL) async throws {
         throw FileArchiverError.platformNotSupported
     }

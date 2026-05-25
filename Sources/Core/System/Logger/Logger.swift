@@ -15,6 +15,8 @@ import Combine
 
 /// 日志记录协议，定义日志输出与持久化的核心行为
 public protocol LoggerProtocol: Sendable {
+
+    /// 添加记录日志
     func addLog(
         action: LogAction,
         target: String,
@@ -27,9 +29,33 @@ public protocol LoggerProtocol: Sendable {
         failureReason: String?
     )
     
+    /// 调试
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     func debug(_ message: String, file: String, function: String, line: Int)
+
+    /// info
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     func info(_ message: String, file: String, function: String, line: Int)
+
+    /// warning
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     func warning(_ message: String, file: String, function: String, line: Int)
+
+    /// error
+    /// /// - Parameter message: message
+    /// /// - Parameter error: error
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     func error(_ message: String, error: Error?, file: String, function: String, line: Int)
     
     /// 执行并记录一个耗时操作 (@SRS-7.2)
@@ -37,7 +63,11 @@ public protocol LoggerProtocol: Sendable {
     
     /// 暴露日志流供 UI 订阅
     func saveToDisk() async
+
+    /// 加载FromDisk
     func loadFromDisk() async
+
+    /// 清除AllLogs
     func clearAllLogs() async
     
     /// 获取内存中缓存的所有日志条目
@@ -47,6 +77,8 @@ public protocol LoggerProtocol: Sendable {
 }
 
 extension LoggerProtocol {
+
+    /// 添加记录日志
     public func addLog(
         action: LogAction,
         target: String,
@@ -61,18 +93,39 @@ extension LoggerProtocol {
         addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module, status: status, failureReason: failureReason)
     }
 
+    /// 调试
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         debug(message, file: file, function: function, line: line)
     }
     
+    /// info
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         info(message, file: file, function: function, line: line)
     }
     
+    /// warning
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         warning(message, file: file, function: function, line: line)
     }
     
+    /// error
+    /// /// - Parameter message: message
+    /// /// - Parameter error: error
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public func error(_ message: String, error: Error? = nil, file: String = #file, function: String = #function, line: Int = #line) {
         self.error(message, error: error, file: file, function: function, line: line)
     }
@@ -124,6 +177,11 @@ public actor Logger: LoggerProtocol {
 
     // MARK: - Standard Logging (nonisolated entry points)
     
+    /// 调试
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public nonisolated func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG
         let fileName = (file as NSString).lastPathComponent
@@ -131,16 +189,32 @@ public actor Logger: LoggerProtocol {
         #endif
     }
     
+    /// info
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public nonisolated func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         print("ℹ️ [INFO] [\(fileName):\(line)] \(function) -> \(message)")
     }
     
+    /// warning
+    /// /// - Parameter message: message
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public nonisolated func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         print("⚠️ [WARNING] [\(fileName):\(line)] \(function) -> \(message)")
     }
     
+    /// error
+    /// /// - Parameter message: message
+    /// /// - Parameter error: error
+    /// /// - Parameter file: file
+    /// /// - Parameter function: function
+    /// /// - Parameter line: line
     public nonisolated func error(_ message: String, error: Error? = nil, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         let errDesc = error.map { " (Error: \($0.localizedDescription))" } ?? ""
@@ -151,6 +225,7 @@ public actor Logger: LoggerProtocol {
 
     // MARK: - Structured Logging
     
+    /// 添加记录日志
     public nonisolated func addLog(
         action: LogAction,
         target: String,
@@ -211,6 +286,8 @@ public actor Logger: LoggerProtocol {
         await saveToDisk()
     }
 
+    /// 记录日志ToConsole
+    /// /// - Parameter entry: entry
     private nonisolated func logToConsole(_ entry: LogEntry) {
         let durationStr = entry.duration.map { " (耗时: \($0.formattedAdaptive))" } ?? ""
         let statusEmoji: String
@@ -224,6 +301,7 @@ public actor Logger: LoggerProtocol {
         print("\(statusEmoji) [LOG] [\(entry.module ?? "System")] \(entry.action.rawValue) -> \(entry.target): \(entry.details)\(durationStr)")
     }
 
+    /// 记录日志Timed
     public nonisolated func logTimed<T>(
         action: LogAction,
         target: String,
@@ -246,6 +324,7 @@ public actor Logger: LoggerProtocol {
         }
     }
 
+    /// 保存ToDisk
     public func saveToDisk() async {
         let entries = self._logEntries
         let url = self.logsFileURL
@@ -262,6 +341,7 @@ public actor Logger: LoggerProtocol {
         }
     }
 
+    /// 加载FromDisk
     public func loadFromDisk() async {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -274,12 +354,15 @@ public actor Logger: LoggerProtocol {
         }
     }
 
+    /// 清除AllLogs
     public func clearAllLogs() async {
         _logEntries.removeAll()
         entriesSubject.send([])
         await saveToDisk()
     }
     
+    /// 获取记录日志Entries
+    /// /// - Returns: 列表
     public func getLogEntries() async -> [LogEntry] {
         return _logEntries
     }

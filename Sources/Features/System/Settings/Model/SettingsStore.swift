@@ -88,6 +88,7 @@ public final class SettingsStore {
         set { UserDefaults.standard.set(newValue, forKey: AppConstants.Keys.Storage.userName) }
     }
 
+    /// 重置
     public func reset() {
         isPrivacyModeEnabled = true
         isBiometricEnabled = true

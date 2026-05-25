@@ -13,7 +13,16 @@ import Foundation
 extension L10n {
     public enum Search {
         public static let t = "Common"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public static var base: String { Search.tr("search") }
@@ -22,7 +31,14 @@ extension L10n {
         public static var noResults: String { Search.tr("search.noResults") }
         public static var noResultsHint: String { Search.tr("search.noResultsHint") }
 
+        /// results计数
+        /// /// - Parameter count: 计数
+        /// /// - Returns: 字符串
         public static func resultsCount(_ count: Int) -> String { Search.trf("search.resultsCount", count) }
+
+        /// pages计数
+        /// /// - Parameter count: 计数
+        /// /// - Returns: 字符串
         public static func pagesCount(_ count: Int) -> String { Search.trf("search.pagesCount", count) }
 
         public static var Diagnostics: String { diagnostics }

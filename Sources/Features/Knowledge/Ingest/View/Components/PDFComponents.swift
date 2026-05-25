@@ -302,6 +302,9 @@ struct PDFDocumentRow: View {
 struct PDFPreviewWrapper: UIViewRepresentable {
     let url: URL
     
+    /// 创建UIView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
         pdfView.document = PDFKit.PDFDocument(url: url)
@@ -309,6 +312,9 @@ struct PDFPreviewWrapper: UIViewRepresentable {
         return pdfView
     }
     
+    /// 更新UIView
+    /// /// - Parameter uiView: uiView
+    /// /// - Parameter context: context
     func updateUIView(_ uiView: PDFView, context: Context) {
         if uiView.document?.documentURL != url {
             uiView.document = PDFKit.PDFDocument(url: url)
@@ -319,6 +325,10 @@ struct PDFPreviewWrapper: UIViewRepresentable {
 
 // MARK: - Highlight Color Extension
 extension Color {
+
+    /// pdf高亮
+    /// /// - Parameter name: name
+    /// /// - Returns: 返回值
     static func pdfHighlight(_ name: String) -> Color {
         switch name {
         case "yellow": return .yellow

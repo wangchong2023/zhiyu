@@ -16,6 +16,8 @@ import EventKit
 final class iOSReminderService: ReminderServiceProtocol, @unchecked Sendable {
     private let eventStore = EKEventStore()
     
+    /// 请求Access
+    /// /// - Returns: 是否成功
     func requestAccess() async -> Bool {
         do {
             if #available(iOS 17.0, macOS 14.0, *) {
@@ -28,6 +30,9 @@ final class iOSReminderService: ReminderServiceProtocol, @unchecked Sendable {
         }
     }
     
+    /// 创建Reminder
+    /// /// - Parameter title: title
+    /// /// - Parameter notes: notes
     func createReminder(title: String, notes: String) async throws {
         let reminder = EKReminder(eventStore: eventStore)
         reminder.title = title

@@ -20,6 +20,9 @@ struct QuizPresentationModifier: ViewModifier {
         self._activeQuiz = activeQuiz
     }
 
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     public func body(content: Content) -> some View {
         if horizontalSizeClass == .regular {
             content

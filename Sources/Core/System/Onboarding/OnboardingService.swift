@@ -65,11 +65,13 @@ import Combine
         }
     }
     
+    /// 重置
     func reset() {
         hasCompletedOnboarding = false
         currentStep = .graph
     }
     
+    /// nextStep
     func nextStep() {
         guard let current = currentStep else {
             currentStep = .graph
@@ -83,11 +85,13 @@ import Combine
         }
     }
     
+    /// finish
     func finish() {
         hasCompletedOnboarding = true
         currentStep = nil
     }
     
+    /// completeOnboarding
     func completeOnboarding() {
         finish()
     }

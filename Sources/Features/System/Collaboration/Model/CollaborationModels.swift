@@ -62,10 +62,12 @@ struct DiscoveredRoom: Identifiable, Hashable {
     let roomName: String
     let owner: String
 
+    /// 判等比较
     static func == (lhs: DiscoveredRoom, rhs: DiscoveredRoom) -> Bool {
         lhs.id == rhs.id
     }
 
+    /// 计算哈希值
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

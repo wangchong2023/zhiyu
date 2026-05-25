@@ -13,6 +13,9 @@ import UIKit
 
 /// iOS 触感反馈实现：使用 UINotificationFeedbackGenerator 和 UIImpactFeedbackGenerator
 final class iOSHapticService: HapticFeedbackProtocol {
+
+    /// trigger
+    /// /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         #if !targetEnvironment(simulator)
         switch pattern {

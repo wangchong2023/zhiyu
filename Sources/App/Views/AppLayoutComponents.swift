@@ -15,6 +15,9 @@ extension ContentView {
     // MARK: - Main Containers
     
     @ViewBuilder
+
+    /// mainContainer
+    /// /// - Parameter tintColor: 着色Color
     func mainContainer(tintColor: Color) -> some View {
         if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
             Group {
@@ -37,6 +40,9 @@ extension ContentView {
     }
     
     @ViewBuilder
+
+    /// mainContent
+    /// /// - Parameter tintColor: 着色Color
     func mainContent(tintColor: Color) -> some View {
         @Bindable var store = store
         @Bindable var router = router
@@ -75,6 +81,10 @@ extension ContentView {
                 CreatePageView()
             }
             
+            // 统一挂载性能监控 Sheet，避免分散在互斥视图分支导致状态丢失
+            .sheet(isPresented: $store.showPerfDashboard) {
+                PerformanceDashboardView(service: store.performanceService)
+            }
             
             // 全局奖章奖励弹窗
             if let medal = medalService.newlyEarnedMedal {
@@ -111,6 +121,9 @@ extension ContentView {
     // MARK: - iPad/Mac Adaptive SplitView
     
     @ViewBuilder
+
+    /// adaptive拆分View
+    /// /// - Parameter tintColor: 着色Color
     func adaptiveSplitView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -135,9 +148,6 @@ extension ContentView {
             }
         }
         .tint(tintColor)
-        .sheet(isPresented: $store.showPerfDashboard) {
-            PerformanceDashboardView(service: store.performanceService)
-        }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
                 .presentationDetents([.height(DesignSystem.Metrics.commandPaletteHeight)])
@@ -155,6 +165,9 @@ extension ContentView {
     
     @available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *)
     @ViewBuilder
+
+    /// modernTabView
+    /// /// - Parameter tintColor: 着色Color
     func modernTabView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -184,9 +197,6 @@ extension ContentView {
                 consumeDeepLink()
             }
         }
-        .sheet(isPresented: $store.showPerfDashboard) {
-            PerformanceDashboardView(service: store.performanceService)
-        }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()
                 .presentationDetents([.height(DesignSystem.Metrics.commandPaletteHeight)])
@@ -203,6 +213,9 @@ extension ContentView {
     }
     
     @ViewBuilder
+
+    /// legacyTabView
+    /// /// - Parameter tintColor: 着色Color
     func legacyTabView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -251,9 +264,6 @@ extension ContentView {
             if deepLinkService.handleURL(url) {
                 consumeDeepLink()
             }
-        }
-        .sheet(isPresented: $store.showPerfDashboard) {
-            PerformanceDashboardView(service: store.performanceService)
         }
         .sheet(isPresented: $showCommandPalette) {
             CommandPaletteView()

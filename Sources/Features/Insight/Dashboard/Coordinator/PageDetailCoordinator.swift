@@ -40,10 +40,12 @@ final class PageDetailCoordinator {
 
     // ── 核心业务 ──
 
+    /// 删除Page
     func deletePage() async {
         await store.deletePage(page)
     }
 
+    /// 切换置顶
     func togglePin() async {
         var updated = page
         updated.isPinned.toggle()
@@ -53,6 +55,7 @@ final class PageDetailCoordinator {
 
     // ── AI 任务编排 ──
 
+    /// 生成Summary
     func generateSummary() {
         Task {
             ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
@@ -66,6 +69,7 @@ final class PageDetailCoordinator {
         }
     }
 
+    /// 提取Actions
     func extractActions() {
         Task {
             ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
@@ -79,6 +83,7 @@ final class PageDetailCoordinator {
         }
     }
 
+    /// expandContent
     func expandContent() {
         Task {
             ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
@@ -92,6 +97,8 @@ final class PageDetailCoordinator {
         }
     }
 
+    /// 执行Synthesis
+    /// /// - Parameter type: type
     func performSynthesis(type: SynthesisStore.SynthesisType) {
         Task {
             ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)
@@ -105,6 +112,7 @@ final class PageDetailCoordinator {
         }
     }
     
+    /// 查找RelatedLinks
     func findRelatedLinks() {
         Task {
             await aiStore.runAIScan()

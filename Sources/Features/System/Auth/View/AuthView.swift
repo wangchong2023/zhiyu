@@ -219,9 +219,15 @@ struct AuthView: View {
             }
             
             HStack(spacing: Spacing.medium) {
-                ThirdPartyIconButton(icon: "message.fill", color: .green)
-                ThirdPartyIconButton(icon: "person.2.fill", color: .blue)
-                ThirdPartyIconButton(icon: "apple.logo", color: .primary)
+                ThirdPartyIconButton(icon: "message.fill", color: .green) {
+                    ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
+                }
+                ThirdPartyIconButton(icon: "person.2.fill", color: .blue) {
+                    ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
+                }
+                ThirdPartyIconButton(icon: "apple.logo", color: .primary) {
+                    handleAppleLogin()
+                }
             }
         }
     }
@@ -255,6 +261,25 @@ struct AuthView: View {
             } else {
                 success = await authService.login(identity: identity, password: password)
             }
+            
+            if !success {
+                errorMessage = L10n.Auth.authFailed
+                HapticFeedback.shared.trigger(.error)
+            } else {
+                HapticFeedback.shared.trigger(.success)
+            }
+            
+            isLoading = false
+        }
+    }
+    
+    /// 触发第三方 Apple ID 授权登录逻辑，并驱动统一会话中台校验
+    private func handleAppleLogin() {
+        Task {
+            isLoading = true
+            errorMessage = nil
+            
+            let success = await authService.login(using: AppleAuthStrategy())
             
             if !success {
                 errorMessage = L10n.Auth.authFailed
@@ -328,9 +353,10 @@ struct ThirdPartyButton: View {
 struct ThirdPartyIconButton: View {
     let icon: String
     let color: Color
+    let action: () -> Void
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .fill(Color.appCard)

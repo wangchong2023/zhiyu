@@ -15,10 +15,15 @@ import UniformTypeIdentifiers
 
 /// iOS/macOS Spotlight 索引实现
 final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
+
+    /// 索引Page
+    /// /// - Parameter page: page
     func indexPage(_ page: KnowledgePage) {
         indexPages([page])
     }
     
+    /// 索引Pages
+    /// /// - Parameter pages: pages
     func indexPages(_ pages: [KnowledgePage]) {
         var searchableItems: [CSSearchableItem] = []
         
@@ -45,14 +50,18 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
         }
     }
     
+    /// 移除索引
     func removeIndex(for pageID: UUID) {
         CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [pageID.uuidString]) { _ in }
     }
     
+    /// 取消索引All
     func deindexAll() {
         CSSearchableIndex.default().deleteAllSearchableItems() { _ in }
     }
     
+    /// reindexAll
+    /// /// - Parameter pages: pages
     func reindexAll(pages: [KnowledgePage]) {
         CSSearchableIndex.default().deleteAllSearchableItems { [weak self] _ in
             guard let self = self else { return }

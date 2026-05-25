@@ -19,11 +19,18 @@ import CoreML
 struct iOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     
+    /// can评估Policy
+    /// /// - Parameter context: context
+    /// /// - Returns: 是否成功
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
     }
     
+    /// 评估Policy
+    /// /// - Parameter context: context
+    /// /// - Parameter reason: reason
+    /// /// - Returns: 是否成功
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
         return await withCheckedContinuation { continuation in
             context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
@@ -39,6 +46,8 @@ struct iOSBiometricAuthProvider: BiometricAuthProviderProtocol {
 struct CoreMLModelCompiler: MLModelCompilerProtocol {
     var supportsCompilation: Bool { true }
     
+    /// 编译Model
+    /// /// - Returns: 链接
     func compileModel(at url: URL) async throws -> URL {
         return try await MLModel.compileModel(at: url)
     }
@@ -48,10 +57,14 @@ struct CoreMLModelCompiler: MLModelCompilerProtocol {
 
 /// iOS 的通用安全存储（主要由 UIDocumentPicker 自动处理上下文）
 struct iOSSecurityScopedStorage: SecurityScopedStorageProtocol {
+
+    /// 存储添加书签
     func storeBookmark(for url: URL) {
         // iOS 侧通常由外部选择器直接返回权限，此处作为扩展预留
     }
     
+    /// 恢复URL
+    /// /// - Returns: 可选值
     func restoreURL(from data: Data) -> URL? {
         return nil
     }

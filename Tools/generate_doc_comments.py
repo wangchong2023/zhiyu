@@ -88,6 +88,7 @@ def scan_missing_comments(workspace_dir):
     return report, total_funcs, missing_funcs
 
 def main():
+    import sys
     workspace = "/Users/constantine/Documents/work/code/projects/ZhiYu"
     report, total, missing = scan_missing_comments(workspace)
     
@@ -108,6 +109,14 @@ def main():
             
     print(f"✅ 扫描完毕。总非私有函数数: {total}，缺失文档注释: {missing}。")
     print(f"📋 详细清单报告已输出至: build/missing_docs_report.txt")
+    
+    if "--check" in sys.argv:
+        if missing > 0:
+            print(f"❌ 错误: 发现 {missing} 个非私有函数缺少 `///` 文档注释！")
+            sys.exit(1)
+        else:
+            print("✅ 完美! 全量非私有函数文档注释均合规。")
+            sys.exit(0)
 
 if __name__ == "__main__":
     main()

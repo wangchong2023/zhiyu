@@ -69,6 +69,11 @@ final class IngestStore {
 
     /// 物理保存 PDF 文件并返回其物理路径
     @discardableResult
+
+    /// 保存PDFDocument
+    /// /// - Parameter data: data
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 可选值
     public func savePDFDocument(data: Data, fileName: String) async -> URL? {
         await pdfService.savePDF(data: data, fileName: fileName)
     }
@@ -83,6 +88,10 @@ final class IngestStore {
 
     /// 根据文件名物理删除 PDF 文件
     @discardableResult
+
+    /// 删除PDFDocument
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 是否成功
     public func deletePDFDocument(fileName: String) async -> Bool {
         await pdfService.deletePDF(fileName: fileName)
     }
@@ -139,6 +148,8 @@ final class IngestStore {
 
     /// 执行综合摄入逻辑
     @discardableResult
+
+    /// 执行导入摄取
     func performIngest(
         title: String,
         content: String,

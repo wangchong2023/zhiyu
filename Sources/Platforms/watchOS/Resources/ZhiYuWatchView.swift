@@ -118,6 +118,10 @@ struct WatchKnowledgeStatsView: View {
 
 // MARK: - 本地化助手 (手表端精简版)
 enum L {
+
+    /// 本地化翻译
+    /// /// - Parameter key: key
+    /// /// - Returns: 返回值
     static func tr(_ key: String) -> String {
         let table: [String: String] = [
             "watch.pages": "页面",

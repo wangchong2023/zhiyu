@@ -39,6 +39,8 @@ final class MarkdownTextViewCoordinator: NSObject, UITextViewDelegate {
         super.init()
     }
 
+    /// textViewDidChangeSelection
+    /// /// - Parameter textView: textView
     func textViewDidChangeSelection(_ textView: UITextView) {
         DispatchQueue.main.async {
             self.cursorState.cursorPosition = textView.selectedRange.location
@@ -46,6 +48,8 @@ final class MarkdownTextViewCoordinator: NSObject, UITextViewDelegate {
         }
     }
 
+    /// textViewDidChange
+    /// /// - Parameter textView: textView
     func textViewDidChange(_ textView: UITextView) {
         DispatchQueue.main.async {
             self.onTextChange?(textView.text ?? "")
@@ -72,6 +76,9 @@ struct MarkdownTextViewRepresentable: UIViewRepresentable {
     @Binding var selectedRange: NSRange
     let cursorState: CursorState
 
+    /// 创建UIView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeUIView(context: Context) -> UITextView {
         let tv = UITextView()
         tv.text = text
@@ -92,6 +99,9 @@ struct MarkdownTextViewRepresentable: UIViewRepresentable {
         return tv
     }
 
+    /// 更新UIView
+    /// /// - Parameter uiView: uiView
+    /// /// - Parameter context: context
     func updateUIView(_ uiView: UITextView, context: Context) {
         // 仅在文本实际不同时更新（避免光标被 updateUIView 重置）
         if uiView.text != text {
@@ -111,6 +121,8 @@ struct MarkdownTextViewRepresentable: UIViewRepresentable {
         }
     }
 
+    /// 创建Coordinator
+    /// /// - Returns: 返回值
     func makeCoordinator() -> MarkdownTextViewCoordinator {
         let coordinator = MarkdownTextViewCoordinator(cursorState: cursorState)
         let executor = EditorActionExecutor(coordinator: coordinator)
@@ -173,8 +185,18 @@ final class EditorActionExecutor {
 @MainActor
 final class EditorActionExecutor {
     init() {}
+
+    /// 插入AtCursor
+    /// /// - Parameter prefix: prefix
+    /// /// - Parameter suffix: suffix
     func insertAtCursor(prefix: String, suffix: String?) {}
+
+    /// 包装AtCursor
+    /// /// - Parameter wrapper: wrapper
     func wrapAtCursor(wrapper: String) {}
+
+    /// 插入MultilineAtCursor
+    /// /// - Parameter text: text
     func insertMultilineAtCursor(text: String) {}
 }
 #endif

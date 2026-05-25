@@ -22,7 +22,7 @@ public protocol VaultDatabaseSwitcher: Sendable {
     ///   - vaultID: 切换目标笔记本的唯一识别码 UUID。
     ///   - url: 目标笔记本数据库在沙盒中的物理绝对路径 URL。
     /// - Throws: SQLite 实例化失败或专属 Schema 迁移失败的异常。
-    func switchDatabase(to vaultID: UUID, at url: URL) throws
+    func switchDatabase(to vaultID: UUID, at url: URL) async throws
     
     /// 彻底断开专属物理库写入池，清空文件锁。
     ///

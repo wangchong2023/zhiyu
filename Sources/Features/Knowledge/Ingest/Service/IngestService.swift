@@ -42,6 +42,9 @@ actor IngestService {
         sourceType: String? = nil
     ) async -> KnowledgePage {
         let startTime = Date()
+        await MainActor.run {
+            DatabaseManager.shared.incrementActiveTransactions()
+        }
         let pageID = UUID()
 
         // 1. 安全脱敏：拦截恶意指令注入 (@P0: Security)
@@ -108,6 +111,9 @@ actor IngestService {
             module: "IngestService"
         )
 
+        await MainActor.run {
+            DatabaseManager.shared.decrementActiveTransactions()
+        }
         return page
     }
 

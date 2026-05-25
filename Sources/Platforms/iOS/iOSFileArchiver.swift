@@ -12,6 +12,8 @@ import Foundation
 
 /// iOS/watchOS 归档实现 (目前暂不支持)
 final class iOSFileArchiver: FileArchiverProtocol, Sendable {
+
+    /// zip
     func zip(directory sourceDir: URL, to destinationURL: URL) async throws {
         throw FileArchiverError.platformNotSupported
     }

@@ -23,6 +23,8 @@ protocol ModuleRegistrar {
 /// 核心基础设施注册器：负责日志、平台适配、基础 UI 路由等底层服务
 @MainActor
 struct CoreModuleRegistrar: ModuleRegistrar {
+
+    /// 注册
     static func register(in container: ServiceContainer) {
         // @SRS-7.1: 初始化全局日志系统
         let logger = Logger.shared
@@ -120,7 +122,7 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
         #endif
         
-        #if os(macOS)
+        #if os(macOS) && !targetEnvironment(macCatalyst)
         container.register(MacFileArchiver(), for: (any FileArchiverProtocol).self)
         #elseif os(watchOS)
         container.register(UnsupportedFileArchiver(), for: (any FileArchiverProtocol).self)
@@ -134,7 +136,7 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
         #endif
         
-        #if os(macOS)
+        #if os(macOS) && !targetEnvironment(macCatalyst)
         container.register(MacAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
         #elseif os(watchOS)
         container.register(WatchAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
@@ -156,6 +158,8 @@ struct CoreModuleRegistrar: ModuleRegistrar {
 /// 存储模块注册器：负责数据库管理、备份、加密及向量索引初始化 (@SR-02, @RR-01)
 @MainActor
 struct StorageModuleRegistrar: ModuleRegistrar {
+
+    /// 注册
     static func register(in container: ServiceContainer) {
         print("📦 [DI] Starting registration of storage module...")
         
@@ -204,6 +208,9 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
         container.register(embeddingManager, for: EmbeddingManager.self)
         
+        // 注册 VectorIndexableStore 协议（L0 层向量检索能力），让 L2 可通过 DIP 访问
+        container.register(sqliteStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
+        
         // 注册文档文本提取基础设施服务，遵循依赖倒置契约 (@SRP)
         container.register(DocumentExtractionService() as any DocumentExtractionServiceProtocol, for: (any DocumentExtractionServiceProtocol).self)
         
@@ -218,6 +225,8 @@ struct StorageModuleRegistrar: ModuleRegistrar {
 /// 领域模块注册器：负责业务逻辑、AI 合成、插件系统及任务调度 (@PR-02, @SR-04)
 @MainActor
 struct DomainModuleRegistrar: ModuleRegistrar {
+
+    /// 注册
     static func register(in container: ServiceContainer) {
         print("🚀 [DI] 开始注册领域能力模块...")
         // 0. 认证与库服务 (@SR-03: 集成 LocalAuthentication)
@@ -260,6 +269,10 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(AIAnalyticsService(), for: AIAnalyticsService.self)
         container.register(RAGOrchestrator(), for: RAGOrchestrator.self)
         
+        container.register(ChatRunner(), for: (any LLMChatServiceProtocol).self)
+        container.register(IngestProcessor(), for: (any LLMKnowledgeServiceProtocol).self)
+        container.register(QueryReranker(), for: (any LLMRetrievalServiceProtocol).self)
+        
         let llm = LLMService.shared
         container.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         container.register(llm, for: LLMService.self)
@@ -292,6 +305,8 @@ struct DomainModuleRegistrar: ModuleRegistrar {
 /// 应用层注册器：负责路由、全局环境等顶层服务注册
 @MainActor
 struct AppModuleRegistrar: ModuleRegistrar {
+
+    /// 注册
     static func register(in container: ServiceContainer) {
         print("📱 [DI] 开始注册应用模块...")
         container.register(Router.shared, for: Router.self)

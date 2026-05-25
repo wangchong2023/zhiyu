@@ -96,6 +96,8 @@ public final class AIInsightStore {
 
     // MARK: - 周报业务
 
+    /// 生成WeeklyInsight
+    /// /// - Parameter forceRefresh: force刷新
     func generateWeeklyInsight(forceRefresh: Bool = false) async {
         let pages = await pageStore.pages
         do {
@@ -106,6 +108,8 @@ public final class AIInsightStore {
         }
     }
 
+    /// 生成DailyRecap
+    /// /// - Parameter forceRefresh: force刷新
     func generateDailyRecap(forceRefresh: Bool = false) async {
         isGeneratingDailyRecap = true
         defer { isGeneratingDailyRecap = false }

@@ -38,6 +38,9 @@ final class ChatCoordinator {
     @ObservationIgnored @Inject private var llmService: LLMService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var perf: PerformanceService
+    
+    /// 当前流式请求的后台 Task，用于支持显式取消
+    @ObservationIgnored private var currentStreamTask: Task<Void, Never>?
 
     init() {
         self.chatHistory = ServiceContainer.shared.resolve((any ChatServiceProtocol).self).loadHistory()
@@ -45,6 +48,8 @@ final class ChatCoordinator {
 
     // ── 业务动作 ──
 
+    /// 加载InsightfulQuestions
+    /// /// - Parameter pages: pages
     func loadInsightfulQuestions(pages: [KnowledgePage]) async {
         guard !pages.isEmpty && llmService.isEnabled && insightfulQuestions.isEmpty else { return }
         
@@ -57,6 +62,9 @@ final class ChatCoordinator {
         isGeneratingAIQuestions = false
     }
 
+    /// 发送Message
+    /// /// - Parameter query: query
+    /// /// - Parameter pages: pages
     func sendMessage(query: String? = nil, pages: [KnowledgePage]) async {
         let text = (query ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
@@ -76,41 +84,78 @@ final class ChatCoordinator {
         self.isProcessing = true
         self.streamingContent = ""
         
-        do {
-            _ = try await perf.measureAsync("chatStreamDelay") {
-                let stream = chatService.streamChat(query: text, pages: pages)
-                for try await chunk in stream {
-                    if !self.isProcessing { break }
-                    self.streamingContent += chunk
+        // 2. 启动流式请求 Task，保存引用以支持显式取消
+        currentStreamTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                _ = try await self.perf.measureAsync("chatStreamDelay") {
+                    let stream = self.chatService.streamChat(query: text, pages: pages)
+                    for try await chunk in stream {
+                        // 检查 Task 是否已被取消（比 isProcessing 标志更可靠）
+                        guard !Task.isCancelled else { break }
+                        self.streamingContent += chunk
+                    }
+                }
+                
+                // 只有在未被取消的情况下才保存结果
+                if !Task.isCancelled {
+                    self.chatService.saveAssistantMessage(self.streamingContent)
+                    self.chatHistory.append(ChatMessage(role: .assistant, content: self.streamingContent))
+                }
+            } catch {
+                if !Task.isCancelled {
+                    if case LLMError.notConfigured = error {
+                        // UI banner handles this, no need for alert
+                    } else {
+                        self.errorMessage = error.localizedDescription
+                        self.showError = true
+                        self.logger.error("❌ [ChatCoordinator] 对话发生错误", error: error)
+                    }
                 }
             }
             
-            if self.isProcessing {
-                chatService.saveAssistantMessage(self.streamingContent)
-                self.chatHistory.append(ChatMessage(role: .assistant, content: self.streamingContent))
-            }
+            // 无论成功或取消，都清理状态
             self.isProcessing = false
-        } catch {
-            self.isProcessing = false
-            if case LLMError.notConfigured = error {
-                // UI banner handles this, no need for alert
-            } else {
-                errorMessage = error.localizedDescription
-                showError = true
-                logger.error("❌ [ChatCoordinator] 对话发生错误", error: error)
-            }
+            self.streamingContent = ""
+            self.currentStreamTask = nil
         }
+        
+        // 等待流式 Task 完成
+        await currentStreamTask?.value
     }
 
+    /// 取消Current请求
     func cancelCurrentRequest() {
+        // 显式取消底层 Task，确保 AsyncThrowingStream 被终止
+        currentStreamTask?.cancel()
+        currentStreamTask = nil
         isProcessing = false
+        // 清理残留的半截内容
+        streamingContent = ""
     }
 
+    /// 重新生成最后一次助手消息
+    func regenerateLastMessage(pages: [KnowledgePage]) async {
+        // 1. 寻找最后一次用户提问
+        guard let lastUserMsgIndex = chatHistory.lastIndex(where: { $0.role == .user }) else { return }
+        let lastUserQuery = chatHistory[lastUserMsgIndex].content
+        
+        // 2. 驱逐该提问后面的所有消息 (如已生成了一半的 AI 消息)
+        if lastUserMsgIndex + 1 < chatHistory.count {
+            chatHistory.removeSubrange((lastUserMsgIndex + 1)...)
+        }
+        
+        // 3. 重新执行流式提问发送
+        await sendMessage(query: lastUserQuery, pages: pages)
+    }
+
+    /// 清除ChatHistory
     func clearChatHistory() {
         chatService.clearHistory()
         chatHistory.removeAll()
     }
 
+    /// 导出Chat
     func exportChat() async {
         let history = isSelectionMode && !selectedMessageIDs.isEmpty ?
             chatHistory.filter { selectedMessageIDs.contains($0.id) } :
@@ -134,6 +179,7 @@ final class ChatCoordinator {
         isExporting = false
     }
 
+    /// 切换SelectionMode
     func toggleSelectionMode() {
         withAnimation {
             isSelectionMode.toggle()
@@ -143,6 +189,8 @@ final class ChatCoordinator {
         }
     }
 
+    /// 切换MessageSelection
+    /// /// - Parameter id: id
     func toggleMessageSelection(_ id: UUID) {
         if selectedMessageIDs.contains(id) {
             selectedMessageIDs.remove(id)

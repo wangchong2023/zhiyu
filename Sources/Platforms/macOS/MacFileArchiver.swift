@@ -13,6 +13,8 @@ import Foundation
 
 /// macOS 原生归档实现
 final class MacFileArchiver: FileArchiverProtocol, @unchecked Sendable {
+
+    /// zip
     func zip(directory sourceDir: URL, to destinationURL: URL) async throws {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/zip")

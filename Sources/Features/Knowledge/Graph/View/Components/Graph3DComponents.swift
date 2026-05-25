@@ -27,28 +27,46 @@ struct TappableSceneView: View {
 #elseif canImport(UIKit)
 @MainActor
 /// SceneKit 场景包装器组件
-/// 负责在 SwiftUI 中嵌入 3D 渲染引擎，并实现基于点击位置的 3D 节点命中测试（Hit Test）
+/// 负责在 SwiftUI 中嵌入 3D 渲染引擎，并实现基于点击位置的 3D 节点命中测试（Hit Test）以及附加 0.005 阻尼的自定义相机拖拽/缩放手势。
 struct TappableSceneView: UIViewRepresentable {
     let scene: SCNScene?
     let onNodeTap: (UUID?) -> Void
 
+    /// 创建UIView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeUIView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = scene
-        scnView.allowsCameraControl = true
+        // 关键：关闭系统默认的自带相机操作，以接管高清晰阻尼平滑计算
+        scnView.allowsCameraControl = false
         scnView.autoenablesDefaultLighting = true
         scnView.backgroundColor = .clear
         
         // 关键：如果场景中有指定的相机节点，则将其设为观察点
         if let scene = scene, let cameraNode = scene.rootNode.childNode(withName: "mainCamera", recursively: true) {
             scnView.pointOfView = cameraNode
+            context.coordinator.syncCameraState(from: cameraNode)
         }
         
+        // 1. 点击手势检测节点命中
         let tapGesture = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        // 2. 拖拽手势：绕 Y 轴/X 轴进行平滑旋转
+        let panGesture = UIPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
+        scnView.addGestureRecognizer(panGesture)
+        
+        // 3. 捏合手势：调整 position.z 实现变焦
+        let pinchGesture = UIPinchGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePinch(_:)))
+        scnView.addGestureRecognizer(pinchGesture)
+        
         return scnView
     }
 
+    /// 更新UIView
+    /// /// - Parameter uiView: uiView
+    /// /// - Parameter context: context
     func updateUIView(_ uiView: SCNView, context: Context) {
         uiView.scene = scene
         // 持续同步观察点，确保外部控制（缩放/重置）能生效
@@ -56,15 +74,36 @@ struct TappableSceneView: UIViewRepresentable {
             if uiView.pointOfView != cameraNode {
                 uiView.pointOfView = cameraNode
             }
+            // 每次同步同步内部坐标系
+            context.coordinator.syncCameraState(from: cameraNode)
         }
     }
 
+    /// 创建Coordinator
+    /// /// - Returns: 返回值
     func makeCoordinator() -> Coordinator { Coordinator(onNodeTap: onNodeTap) }
 
     @MainActor class Coordinator: NSObject {
         let onNodeTap: (UUID?) -> Void
-        init(onNodeTap: @escaping (UUID?) -> Void) { self.onNodeTap = onNodeTap }
+        
+        // ── 临时手势积分状态 ──
+        var currentAngleX: Float = 0
+        var currentAngleY: Float = 0
+        var cameraZ: Float = 60.0
+        
+        init(onNodeTap: @escaping (UUID?) -> Void) {
+            self.onNodeTap = onNodeTap
+        }
+        
+        /// 同步当前物理相机的几何空间参数
+        func syncCameraState(from cameraNode: SCNNode) {
+            currentAngleX = cameraNode.eulerAngles.x
+            currentAngleY = cameraNode.eulerAngles.y
+            cameraZ = cameraNode.position.z
+        }
 
+        /// 处理Tap
+        /// /// - Parameter gesture: gesture
         @objc func handleTap(_ gesture: UITapGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   scnView.scene != nil else { return }
@@ -80,40 +119,126 @@ struct TappableSceneView: UIViewRepresentable {
             }
             onNodeTap(nil)
         }
+        
+        /// 处理Pan
+        /// /// - Parameter gesture: gesture
+        @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+            guard let scnView = gesture.view as? SCNView,
+                  let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
+            
+            let translation = gesture.translation(in: scnView)
+            // 0.005 极其平滑的阻尼系数，防止大节点量手势过于敏感瞬间飞出画布
+            let dampening: Float = 0.005
+            
+            if gesture.state == .changed {
+                let deltaY = Float(translation.x) * dampening
+                let deltaX = Float(translation.y) * dampening
+                
+                // 将位移积分转换为相机的 Euler 空间旋转
+                cameraNode.eulerAngles.y = currentAngleY - deltaY
+                cameraNode.eulerAngles.x = currentAngleX - deltaX
+            } else if gesture.state == .ended {
+                currentAngleY = cameraNode.eulerAngles.y
+                currentAngleX = cameraNode.eulerAngles.x
+            }
+        }
+        
+        /// 处理Pinch
+        /// /// - Parameter gesture: gesture
+        @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+            guard let scnView = gesture.view as? SCNView,
+                  let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
+            
+            if gesture.state == .changed {
+                let factor = Float(gesture.scale)
+                let newZ = cameraZ / factor
+                // 约束限制防极端穿透飞出
+                cameraNode.position.z = max(5.0, min(newZ, 300.0))
+            } else if gesture.state == .ended {
+                cameraZ = cameraNode.position.z
+            }
+        }
     }
 }
 #elseif canImport(AppKit)
+/// SceneKit 场景包装器组件 (macOS)
+/// 负责在 macOS SwiftUI 中嵌入 3D 渲染引擎，实现节点命中测试，以及附加 0.005 阻尼的自定义相机拖拽/缩放手势。
 struct TappableSceneView: NSViewRepresentable {
     let scene: SCNScene?
     let onNodeTap: (UUID?) -> Void
 
+    /// 创建NSView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeNSView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = scene
-        scnView.allowsCameraControl = true
+        // 关键：关闭系统默认的相机操作，以接管高清晰阻尼平滑计算
+        scnView.allowsCameraControl = false
         scnView.autoenablesDefaultLighting = true
         scnView.backgroundColor = .clear
+        
+        // 关键：如果场景中有指定的相机节点，则将其设为观察点
+        if let scene = scene, let cameraNode = scene.rootNode.childNode(withName: "mainCamera", recursively: true) {
+            scnView.pointOfView = cameraNode
+            context.coordinator.syncCameraState(from: cameraNode)
+        }
+        
+        // 1. 点击手势检测节点命中
         let tapGesture = NSClickGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        // 2. 拖拽手势 (旋转相机)
+        let panGesture = NSPanGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePan(_:)))
+        scnView.addGestureRecognizer(panGesture)
+        
+        // 3. 捏合/缩放手势 (变焦)
+        let magnifyGesture = NSMagnificationGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleMagnify(_:)))
+        scnView.addGestureRecognizer(magnifyGesture)
+        
         return scnView
     }
 
+    /// 更新NSView
+    /// /// - Parameter nsView: nsView
+    /// /// - Parameter context: context
     func updateNSView(_ nsView: SCNView, context: Context) {
         nsView.scene = scene
-        // 持续同步观察点
+        // 持续同步观察点，确保外部控制（缩放/重置）能生效
         if let scene = scene, let cameraNode = scene.rootNode.childNode(withName: "mainCamera", recursively: true) {
             if nsView.pointOfView != cameraNode {
                 nsView.pointOfView = cameraNode
             }
+            // 同步内部参数与实际相机参数一致
+            context.coordinator.syncCameraState(from: cameraNode)
         }
     }
 
+    /// 创建Coordinator
+    /// /// - Returns: 返回值
     func makeCoordinator() -> Coordinator { Coordinator(onNodeTap: onNodeTap) }
 
     class Coordinator: NSObject {
         let onNodeTap: (UUID?) -> Void
-        init(onNodeTap: @escaping (UUID?) -> Void) { self.onNodeTap = onNodeTap }
+        
+        // ── 临时手势积分状态 ──
+        var currentAngleX: Float = 0
+        var currentAngleY: Float = 0
+        var cameraZ: Float = 60.0
+        
+        init(onNodeTap: @escaping (UUID?) -> Void) {
+            self.onNodeTap = onNodeTap
+        }
+        
+        /// 同步当前物理相机的几何空间参数
+        func syncCameraState(from cameraNode: SCNNode) {
+            currentAngleX = cameraNode.eulerAngles.x
+            currentAngleY = cameraNode.eulerAngles.y
+            cameraZ = cameraNode.position.z
+        }
 
+        /// 处理Tap
+        /// /// - Parameter gesture: gesture
         @objc func handleTap(_ gesture: NSClickGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   scnView.scene != nil else { return }
@@ -128,6 +253,45 @@ struct TappableSceneView: NSViewRepresentable {
                 }
             }
             onNodeTap(nil)
+        }
+        
+        /// 处理Pan
+        /// /// - Parameter gesture: gesture
+        @objc func handlePan(_ gesture: NSPanGestureRecognizer) {
+            guard let scnView = gesture.view as? SCNView,
+                  let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
+            
+            let translation = gesture.translation(in: scnView)
+            // 0.005 极其平滑的阻尼系数，防止大节点量手势过于敏感瞬间飞出画布
+            let dampening: Float = 0.005
+            
+            if gesture.state == .changed {
+                let deltaY = Float(translation.x) * dampening
+                let deltaX = Float(translation.y) * dampening
+                
+                // 将位移积分转换为相机的 Euler 空间旋转
+                cameraNode.eulerAngles.y = currentAngleY - deltaY
+                cameraNode.eulerAngles.x = currentAngleX - deltaX
+            } else if gesture.state == .ended {
+                currentAngleY = cameraNode.eulerAngles.y
+                currentAngleX = cameraNode.eulerAngles.x
+            }
+        }
+        
+        /// 处理Magnify
+        /// /// - Parameter gesture: gesture
+        @objc func handleMagnify(_ gesture: NSMagnificationGestureRecognizer) {
+            guard let scnView = gesture.view as? SCNView,
+                  let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
+            
+            if gesture.state == .changed {
+                let factor = Float(1.0 + gesture.magnification)
+                let newZ = cameraZ / factor
+                // 约束限制防极端穿透飞出
+                cameraNode.position.z = max(5.0, min(newZ, 300.0))
+            } else if gesture.state == .ended {
+                cameraZ = cameraNode.position.z
+            }
         }
     }
 }

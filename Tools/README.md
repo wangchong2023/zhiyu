@@ -79,9 +79,53 @@ python3 Tools/check_coverage.py
 
 ---
 
-## 5. 注意事项
+## 5. 自动化测试运行中枢 (`run_tests.sh`)
 
-- **Python 环境**：建议使用 Python 3.8+。
+自动定位可用模拟器设备，物理执行智宇全量单元与集成测试。
+
+### 自动化测试核心功能
+
+- **智能定位模拟器**：自动解析 `simctl` 列表，智能提取无冲突的 iPhone 17 Pro 模拟器 UDID，规避宿主因多版本系统重名导致的 `destination` 冲突问题。
+- **状态感知起机**：优先选择已处于 `Booted` 状态的设备，节省耗时；若未运行，则选取最高 OS 版本的匹配模拟器。
+- **物理缓存清理**：自动卸载历史 App 容器，清理 Xcode 编译 DerivedData 缓存，消除脏脏数据干扰。
+
+### 自动化测试使用方法
+
+```bash
+# 赋予执行权限
+chmod +x Tools/run_tests.sh
+# 运行脚本
+./Tools/run_tests.sh
+```
+
+---
+
+## 6. 自动化快照录制与基准覆盖工具 (`update_snapshots.sh`)
+
+在录制模式下自动运行快照测试，生成并覆盖基准快照图像。
+
+### 快照录制核心功能
+
+- **环境变量与启动参数注入**：自动向测试进程传递 `RECORD_MODE=1` 环境变量与 `-environmentRecordMode` 命令行标志。
+- **测试类定向收窄**：使用 `-only-testing:ZhiYuTests/ComponentSnapshots` 机制，精准、高效运行且更新快照测试基准。
+- **自动开机挂载**：确保 iPhone 17 Pro 模拟器开机就绪，若关机则执行静默后台拉起。
+
+### 快照录制使用方法
+
+```bash
+# 赋予执行权限
+chmod +x Tools/update_snapshots.sh
+# 运行脚本
+./Tools/update_snapshots.sh
+```
+
+---
+
+## 7. 注意事项
+
+- **Python 环境**：建议使用 Python 3.8+，本地运行环境指向 `./env/venv/bin/python3`。
 - **权限说明**：在 macOS 上操作模拟器容器路径可能需要全盘访问权限（通常 Terminal 会自动请求）。
 - **覆盖率提取依赖**：`check_coverage.py` 强依赖 Xcode 命令行工具中内置的 `xccov` 组件。
 - **同步建议**：建议在修改数据库架构（Schema）后，同步更新 `seed_data.py` 中的 `INSERT` 语句。
+- **权限授予**：运行 `.sh` 脚本前请确保执行了 `chmod +x`。
+

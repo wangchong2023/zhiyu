@@ -479,6 +479,8 @@ private var emptyView: some View {
 private struct DashedLine: Shape {
     let isVertical: Bool
     
+    /// path
+    /// /// - Returns: 返回值
     func path(in rect: CGRect) -> Path {
         var path = Path()
         if isVertical {

@@ -22,12 +22,17 @@ final class ExcelProcessor: NSObject, XMLParserDelegate {
         self.xmlData = xmlData
     }
 
+    /// 解析
+    /// /// - Returns: 是否成功
     func parse() -> Bool {
         let parser = XMLParser(data: xmlData)
         parser.delegate = self
         return parser.parse()
     }
 
+    /// parser
+    /// /// - Parameter parser: parser
+    /// /// - Parameter namespaceURI: namespaceURI
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "c" {
             currentCellType = attributeDict["t"]
@@ -39,12 +44,17 @@ final class ExcelProcessor: NSObject, XMLParserDelegate {
         }
     }
 
+    /// parser
+    /// /// - Parameter parser: parser
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if inValueElement {
             currentText += string
         }
     }
 
+    /// parser
+    /// /// - Parameter parser: parser
+    /// /// - Parameter namespaceURI: namespaceURI
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "v" {
             inValueElement = false

@@ -65,6 +65,10 @@ final class PerformanceService: ObservableObject {
         }
     }
 
+    /// 测量
+    /// /// - Parameter label: label
+    /// /// - Parameter operation: operation
+    /// /// - Returns: 返回值
     func measure<T>(_ label: String, operation: () -> T) -> T {
         let start = CFAbsoluteTimeGetCurrent()
         let result = operation()
@@ -107,6 +111,7 @@ final class PerformanceService: ObservableObject {
     }
     
     // MARK: - Memory
+    /// 更新MemoryUsage
     func updateMemoryUsage() {
         // Use task_info via Mach API
         var info = mach_task_basic_info()
@@ -122,6 +127,8 @@ final class PerformanceService: ObservableObject {
     }
     
     // MARK: - Page Metrics
+    /// 更新PageMetrics
+    /// /// - Parameter pages: pages
     func updatePageMetrics(pages: [KnowledgePage]) {
         metrics.pageCount = pages.count
         metrics.totalWords = pages.reduce(0) { $0 + $1.wordCount }
@@ -129,6 +136,9 @@ final class PerformanceService: ObservableObject {
     }
     
     // MARK: - Graph Metrics
+    /// 更新GraphMetrics
+    /// /// - Parameter nodes: nodes
+    /// /// - Parameter edges: edges
     func updateGraphMetrics(nodes: Int, edges: Int) {
         metrics.graphNodeCount = nodes
         metrics.graphEdgeCount = edges

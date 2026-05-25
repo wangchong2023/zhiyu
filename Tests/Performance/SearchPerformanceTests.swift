@@ -135,8 +135,8 @@ final class SearchPerformanceTests: XCTestCase {
         let db2URL = tempDirectory.appendingPathComponent("vault2.sqlite3")
         
         // 预创建两个物理库并各自跑完架构初始化迁移
-        try DatabaseManager.shared.switchDatabase(to: vault1ID, at: db1URL)
-        try DatabaseManager.shared.switchDatabase(to: vault2ID, at: db2URL)
+        try await DatabaseManager.shared.switchDatabase(to: vault1ID, at: db1URL)
+        try await DatabaseManager.shared.switchDatabase(to: vault2ID, at: db2URL)
         
         var totalDuration: TimeInterval = 0
         let iterations = 10
@@ -144,8 +144,8 @@ final class SearchPerformanceTests: XCTestCase {
         for _ in 0..<iterations {
             let start = CFAbsoluteTimeGetCurrent()
             do {
-                try DatabaseManager.shared.switchDatabase(to: vault1ID, at: db1URL)
-                try DatabaseManager.shared.switchDatabase(to: vault2ID, at: db2URL)
+                try await DatabaseManager.shared.switchDatabase(to: vault1ID, at: db1URL)
+                try await DatabaseManager.shared.switchDatabase(to: vault2ID, at: db2URL)
             } catch {
                 XCTFail("Vault 物理库在压测过程中切换失败: \(error)")
             }

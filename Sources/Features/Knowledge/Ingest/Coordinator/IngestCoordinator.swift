@@ -47,6 +47,7 @@ final class IngestCoordinator {
 
     // ── 业务动作 ──
 
+    /// 执行导入摄取
     func performIngest() {
         isIngesting = true
         let title = newTitle, content = newContent, type = newType, icon = newCustomIcon, smart = useSmartIngest
@@ -86,6 +87,8 @@ final class IngestCoordinator {
         }
     }
 
+    /// 处理File导入
+    /// /// - Parameter result: result
     func handleFileImport(_ result: Result<[URL], Error>) {
         if case .success(let urls) = result {
             for url in urls {
@@ -111,6 +114,7 @@ final class IngestCoordinator {
         }
     }
 
+    /// 处理URL导入
     func handleURLImport() {
         guard let url = URL(string: newURL) else {
             errorMessage = L10n.Ingest.invalidURL
@@ -134,6 +138,7 @@ final class IngestCoordinator {
         }
     }
 
+    /// 执行Clipboard导入
     func performClipboardImport() {
         if let content = AppPasteboard.string, !content.isEmpty {
             self.newTitle = String(content.prefix(20))
@@ -143,6 +148,7 @@ final class IngestCoordinator {
         }
     }
 
+    /// 重置Form
     func resetForm() {
         newTitle = ""
         newContent = ""

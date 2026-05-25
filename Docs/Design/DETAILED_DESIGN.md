@@ -272,5 +272,60 @@ stateDiagram-v2
     RouteToEmptySearch --> TabActivation : 强行跳转激活 .search Tab
     
     TabActivation --> [*] : UI 平滑无抖动渲染
+
+---
+
+## 12. 遗留问题与后续微调 (Pending Issues & Fine-tuning)
+
+随着近期统一认证、iCloud 冲突解决、LLM 服务解耦、沙箱升级和竞品对比功能的演进，系统架构在以下几项设计细节上仍待进一步的补充或进行文档/时序图对齐：
+
+### 12.1 插件沙箱池化隔离与熔断机制补充
+*   **物理实现状态**：🟢 **已完成物理重构**。已新建 [PluginEnginePool](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Infrastructure/Plugins/Sandbox/PluginEnginePool.swift) 对宿主 JSContext 实现最大并发为 4 的隔离保护，并向 `JavaScriptPlugin` 注入了 0.5s Watchdog 物理 CPU 熔断器及 DLP API 审计拦截网关。
+*   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 3 章中，补充此套并发池化机制与 CPU 熔断的并发安全时序图。
+
+### 12.2 金库防篡改指纹在调试阶段的自动签名对齐
+*   **物理实现状态**：🟢 **已完成物理重构**。已在 [DatabaseManager](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Infrastructure/Storage/Persistence/DatabaseManager.swift) 中实现：在数据库关闭释放 WAL 连接时，自动同步重写 HMAC 防篡改指纹签名；同时，在 `DEBUG` 编译宏下，若指纹由于沙盒目录漂移等非篡改因素校验不符，系统会打印调试警告并自动进行重签名对齐，在 Release 包下依然严格保留 403 阻断并降级至只读模式。
+*   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 6 章中，补充 WAL 离线同步期间 HMAC 动态签名的详细算法流程。
+
+### 12.3 信号量同步阻塞消除时序 (异步 `switchDatabase`/`setup`)
+*   **物理实现状态**：🔴 **待重构**。目前在 `DatabaseManager.swift` 的 `setup()` 与主线程切换数据库时，使用了信号量 `semaphore.wait(timeout:)` 强行将异步线程的操作转为同步以保障连接池切换。该设计在低配或单核设备上容易与 GCD 线程池产生优先级反转从而引发主线程死锁。
+*   **后续设计设计**：需彻底移除信号量，将 `switchDatabase` 与 `setup` 方法签名重构为 `async throws`。SwiftUI 视图层通过 `.task(id: activeVaultID)` 挂载异步环境，在挂载期间呈现 Pulse 脉冲等待指示器，完全过渡到非阻塞式结构化并发。
+
+### 12.4 DI 容器的 Actor 隔离与并发安全
+*   **物理实现状态**：🔴 **待重构**。当前 `ServiceContainer` 为常规的非隔离单例。在 macOS 多窗口（Multi-window）以及 App Extension（桌面小组件）高频调用的并发场景下，写入或读取依赖项有可能发生 ABA 竞态覆写风险。
+*   **后续设计设计**：计划将 `ServiceContainer` 转换为 Swift 6 全局 Actor，或者在解析（`resolve`）和注册（`register`）函数内部增加细粒度的自旋锁（`os_unfair_lock`）防护。
+
+### 12.5 领域层契约完全穿透
+*   **物理实现状态**：🔴 **待重构**。业务功能层 L2 的 `KnowledgeStore` 与 `AIWorkflowStore` 中，依然存在通过 `@Inject` 越权调用具体 `SQLiteStore` (L1 Infra) 内部事务的行为。
+*   **后续设计设计**：在 L1.5 领域层（`Domain`）中定义好各 Repository 的行为契约，L2 服务层只能依赖这些抽象接口，任何与底层的交互必须由领域大脑调度，隔离持久化细节。
+
+### 12.6 级联式多源网页捕获引擎 (CaptureCascadeEngine)
+*   **物理实现状态**：🔴 **未来演进**。
+*   **软件时序设计**：集成在 `Sources/Infrastructure/Network/`。
+```mermaid
+sequenceDiagram
+    participant User as 用户分享链接
+    participant Mgr as IngestManager
+    participant Eng as CaptureCascadeEngine
+    participant Local as 本地 OCR 提取 (端侧 Vision)
+
+    User->>Mgr: 触发 Ingest(URL)
+    Mgr->>Eng: executeCascadeGrab()
+    alt 1. 直连与UA伪装抓取
+        Eng->>Eng: 请求成功且无防爬
+    else 2. Reader API 中转
+        Eng->>Eng: 触发中转服务抓取网页正文
+    else 3. Headless 浏览器渲染 (Puppeteer/Playwright-like)
+        Eng->>Eng: 本地或云端 Headless 执行完整 JS 渲染后抓取
+    else 4. 视觉截屏与本地 OCR
+        Eng->>Local: Headless 获取截屏大图
+        Local-->>Eng: 利用端侧 Vision 提取出正文 Markdown
+    end
+    Eng-->>Mgr: 返回清洗后的纯净 Markdown
 ```
+
+### 12.7 外置 AI 代理 CLI/SDK 自动化总线设计
+*   **物理实现状态**：🔴 **未来演进**。
+*   **时序与通信设计**：智宇在 `AppIntents` 控制层声明可供 Siri 或 Shortcuts 呼叫的 Intent。第三方代理工具（例如 Cursor 或者是自定义 shell 脚本）通过调用系统的 `Shortcuts` CLI（如 `shortcuts run "智宇自动化摄入" -i input_file.md`）向 AppGroup 共享目录写入缓存包，智宇后台守护程序捕获变更后，在 App Intent 线程沙箱内拉起 `DatabaseManager` 完成增量 FTS5 写入与向量余弦检索。
+
 

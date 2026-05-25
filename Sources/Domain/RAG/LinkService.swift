@@ -54,11 +54,18 @@ actor LinkService {
      * @param {[KnowledgePage]} pages 搜索范围
      * @return {KnowledgePage?} 匹配到的页面
      */
+
+    /// pageByID
+    /// /// - Parameter id: id
+    /// /// - Returns: 可选值
     func pageByID(_ id: UUID, in pages: [KnowledgePage]) -> KnowledgePage? {
         pages.first { $0.id == id }
     }
 
     // MARK: - Search
+    /// 搜索
+    /// /// - Parameter query: query
+    /// /// - Returns: 列表
     func search(query: String, in pages: [KnowledgePage]) -> [KnowledgePage] {
         guard !query.isEmpty else { return pages }
         let q = query.lowercased()
@@ -196,6 +203,9 @@ actor LinkService {
      * @param {[KnowledgePage]} pages 页面全集
      * @return {[(tag: String, count: Int)]} 标签元组数组
      */
+
+    /// allTags
+    /// /// - Returns: 列表
     func allTags(in pages: [KnowledgePage]) -> [(tag: String, count: Int)] {
         var tagCount: [String: Int] = [:]
         for page in pages {
@@ -219,6 +229,10 @@ actor LinkService {
      * @param {[KnowledgePage]} allPages 页面全集
      * @return {[KnowledgePage]} 返回所有受影响且已更新内容的页面列表
      */
+
+    /// 准备重命名
+    /// /// - Parameter page: page
+    /// /// - Returns: 列表
     func prepareRename(page: KnowledgePage, to newTitle: String, in allPages: [KnowledgePage]) -> [KnowledgePage] {
         let oldTitle = page.title
         var modifiedPages: [KnowledgePage] = []

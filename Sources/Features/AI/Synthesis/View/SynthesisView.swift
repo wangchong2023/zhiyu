@@ -490,6 +490,8 @@ struct SynthesisView: View {
 
 // MARK: - 辅助扩展：解耦 View Presentations
 extension View {
+
+    /// synthesisViewPresentations
     func synthesisViewPresentations(
         showOutput: Binding<Bool>,
         pdfURL: Binding<IdentifiableURL?>,
@@ -551,18 +553,27 @@ extension View {
 }
 
 extension View {
+
+    /// alertNoPages
+    /// /// - Parameter isPresented: isPresented
     func alertNoPages(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.AI.Synthesis.Error.noPages, isPresented: isPresented) {
             Button(L10n.Common.ok, role: .cancel) { }
         }
     }
     
+    /// alertLimitReached
+    /// /// - Parameter isPresented: isPresented
     func alertLimitReached(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.AI.Synthesis.Error.limitReached, isPresented: isPresented) {
             Button(L10n.Common.done, role: .cancel) { }
         }
     }
     
+    /// alert重命名Doc
+    /// /// - Parameter isPresented: isPresented
+    /// /// - Parameter name: name
+    /// /// - Parameter doc: doc
     func alertRenameDoc(isPresented: Binding<Bool>, name: Binding<String>, doc: SynthesisStore.SynthesisDocument?) -> some View {
         self.alert(L10n.Tag.Action.rename, isPresented: isPresented) {
             TextField(L10n.Tag.Management.inputName, text: name)
@@ -576,6 +587,8 @@ extension View {
         }
     }
     
+    /// alertLLMNotConfigured
+    /// /// - Parameter isPresented: isPresented
     func alertLLMNotConfigured(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.Chat.configureFirst, isPresented: isPresented) {
             Button(L10n.Common.confirm, role: .cancel) { }
@@ -584,6 +597,10 @@ extension View {
         }
     }
     
+    /// confirmBatch删除
+    /// /// - Parameter isPresented: isPresented
+    /// /// - Parameter action: action
+    /// /// - Returns: 视图
     func confirmBatchDelete(isPresented: Binding<Bool>, action: @escaping () -> Void) -> some View {
         self.confirmationDialog(L10n.AI.Synthesis.batchDeleteConfirm, isPresented: isPresented, titleVisibility: .automatic) {
             Button(L10n.Common.delete, role: .destructive) { action() }
@@ -591,6 +608,9 @@ extension View {
         }
     }
     
+    /// alert删除Doc
+    /// /// - Parameter isPresented: isPresented
+    /// /// - Parameter doc: doc
     func alertDeleteDoc(isPresented: Binding<Bool>, doc: SynthesisStore.SynthesisDocument?) -> some View {
         self.alert(L10n.Common.deleteConfirm, isPresented: isPresented) {
             Button(L10n.Common.delete, role: .destructive) {

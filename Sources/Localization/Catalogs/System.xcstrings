@@ -2058,6 +2058,91 @@
         }
       }
     },
+    "auth.wechatDeveloping": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WeChat Login is under development..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "微信登录功能正在研发中..."
+          }
+        }
+      }
+    },
+    "auth.googleDeveloping": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google Login is under development..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google登录功能正在研发中..."
+          }
+        }
+      }
+    },
+    "auth.appleTestUser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Test User"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple测试用户"
+          }
+        }
+      }
+    },
+    "auth.defaultUser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户"
+          }
+        }
+      }
+    },
+    "auth.appleTokenExtractFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unable to extract identityToken from Apple ID credential."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法从 Apple ID 凭证中提取安全 identityToken"
+          }
+        }
+      }
+    },
     "metric.bridges": {
       "extractionState": "manual",
       "localizations": {
@@ -4637,7 +4722,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "系统主题"
+            "value": "系统外观"
           }
         }
       }
@@ -5794,6 +5879,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "查看统计"
+          }
+        }
+      }
+    },
+    "security.database.corrupted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security connection failed. Reverted to transient read-only memory mode. New changes will be discarded on relaunch! Please check credentials or re-verify."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全连接失败。已自动降级为只读瞬态内存模式，重启后新增数据将丢失！请检查设备安全凭证并尝试重新验证。"
+          }
+        }
+      }
+    },
+    "security.database.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-verify"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新验证"
           }
         }
       }

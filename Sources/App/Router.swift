@@ -223,6 +223,12 @@ final class Router {
     /// 强制 UI 刷新标识（主要用于多语言切换）
     var languageForceUpdate: Bool = false
     
+    /// 获取当前生效的 Locale，绑定语言刷新以实现响应式更新
+    var currentLocale: Locale {
+        _ = languageForceUpdate
+        return Localized.currentLocale
+    }
+    
     /// 是否正在显示设置面板
     var isShowingSettingsSheet: Bool = false
     

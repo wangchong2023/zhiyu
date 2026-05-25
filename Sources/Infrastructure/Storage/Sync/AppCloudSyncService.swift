@@ -100,7 +100,7 @@ class iCloudSyncService: ObservableObject {
     
     /// 当同步链路中检测到云端有更新的数据，发生同步冲突时的双向问询回调。
     /// 调用方通过返回 `ConflictResolution` 决策来驱使 LWW 冲突解决器。
-    var onConflictDetected: (([KnowledgePage], [LogEntry], [KnowledgePage], [LogEntry]) -> ConflictResolution)?
+    var onConflictDetected: (([KnowledgePage], [LogEntry], [KnowledgePage], [LogEntry]) async -> ConflictResolution)?
 
     @Inject private var appEnv: any AppEnvironmentProtocol
 
@@ -478,7 +478,7 @@ class iCloudSyncService: ObservableObject {
         remoteLogs: [LogEntry]
     ) async -> ConflictResolution {
         if let onConflict = onConflictDetected {
-            return onConflict(localPages, localLogs, remotePages, remoteLogs)
+            return await onConflict(localPages, localLogs, remotePages, remoteLogs)
         }
         return .merge
     }

@@ -13,7 +13,16 @@ import Foundation
 extension L10n {
     public enum AI {
         public static let t = "AI"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public enum Status {
@@ -29,6 +38,11 @@ extension L10n {
             public static var thinking: String { AI.tr("ai.status.thinking") }
             public static var visualizing: String { AI.tr("ai.status.visualizing") }
 
+            /// indexing
+            /// /// - Parameter current: current
+            /// /// - Parameter total: total
+            /// /// - Parameter filename: filename
+            /// /// - Returns: 字符串
             public static func indexing(_ current: Int, _ total: Int, _ filename: String) -> String {
                 AI.trf("ai.status.indexing", current, total, filename)
             }
@@ -45,6 +59,10 @@ extension L10n {
             public static var connectionSuccess: String { AI.tr("llm.connectionSuccess") }
             public static var validation: String { AI.tr("llm.validation") }
             public static var validationFailed: String { AI.tr("llm.validationFailed") }
+
+            /// latency
+            /// /// - Parameter value: value
+            /// /// - Returns: 字符串
             public static func latency(_ value: String) -> String { AI.trf("llm.latency", value) }
             public static var configuration: String { AI.tr("llm.configuration") }
             public static var enableAssistant: String { AI.tr("llm.enableAssistant") }
@@ -147,6 +165,10 @@ extension L10n {
             public static var appleIntelligence: String { AI.tr("ondevice.appleIntelligence") }
             public static var enableAutoScan: String { AI.tr("ondevice.enableAutoScan") }
             public static var autoRefactor: String { AI.tr("ondevice.autoRefactor") }
+
+            /// error格式化
+            /// /// - Parameter code: code
+            /// /// - Returns: 字符串
             public static func errorFormat(_ code: String) -> String { AI.trf("ondevice.errorFormat", code) }
 
             public enum Error {
@@ -157,6 +179,12 @@ extension L10n {
 
         public enum Eval {
             public static var systemPrompt: String { AI.tr("llm.eval.systemPrompt") }
+
+            /// judgePrompt
+            /// /// - Parameter context: context
+            /// /// - Parameter query: query
+            /// /// - Parameter answer: answer
+            /// /// - Returns: 字符串
             public static func judgePrompt(_ context: String, _ query: String, _ answer: String) -> String {
                 AI.trf("llm.eval.judgePrompt", context, query, answer)
             }
@@ -342,7 +370,16 @@ extension L10n {
 
         public enum Task {
             public static let t = "AI"
+
+            /// 本地化翻译
+            /// /// - Parameter key: key
+            /// /// - Returns: 返回值
             public static func tr(_ key: String) -> String { Localized.tr("aitask." + key, table: t) }
+
+            /// 本地化格式化翻译
+            /// /// - Parameter key: key
+            /// /// - Parameter args: args
+            /// /// - Returns: 返回值
             public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("aitask." + key, table: t, args) }
             
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
@@ -352,15 +389,32 @@ extension L10n {
             public static var emptyTitle: String { Status.emptyTitle }
             public static var emptyDesc: String { Status.emptyDesc }
             
+            /// starting
+            /// /// - Parameter name: name
+            /// /// - Parameter target: target
+            /// /// - Returns: 字符串
             public static func starting(_ name: String, _ target: String) -> String {
                 Localized.trf("aitask.status.startingFormat", table: t, name, target)
             }
+
+            /// running
+            /// /// - Parameter name: name
+            /// /// - Parameter target: target
+            /// /// - Returns: 字符串
             public static func running(_ name: String, _ target: String) -> String {
                 Localized.trf("aitask.status.runningFormat", table: t, name, target)
             }
+
+            /// completed
+            /// /// - Parameter name: name
+            /// /// - Returns: 字符串
             public static func completed(_ name: String) -> String {
                 Localized.trf("aitask.status.completedFormat", table: t, name)
             }
+
+            /// failed
+            /// /// - Parameter name: name
+            /// /// - Returns: 字符串
             public static func failed(_ name: String) -> String {
                 Localized.trf("aitask.status.failedFormat", table: t, name)
             }

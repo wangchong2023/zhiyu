@@ -14,6 +14,9 @@ extension L10n {
     public struct Graph {
         public static let t = "Insight"
 
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String {
             Localized.tr("graph." + key, table: t)
         }
@@ -48,6 +51,11 @@ extension L10n {
         public static var insightSurprising: String { Localized.tr("graph.insightSurprising", table: t) }
         public static var insightSurprisingDesc: String { Localized.tr("graph.insightSurprisingDesc", table: t) }
         public static var title: String { Localized.tr("graph.title", table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("graph." + key, table: t, args) }
         public static var insightOrphans: String { Localized.tr("graph.insightOrphans", table: t) }
         public static var insightOrphansDesc: String { Localized.tr("graph.insightOrphansDesc", table: t) }
@@ -55,6 +63,7 @@ extension L10n {
         public static var insightSparseDesc: String { Localized.tr("graph.insightSparseDesc", table: t) }
         public static var insightBridges: String { Localized.tr("graph.insightBridges", table: t) }
         public static var insightBridgesDesc: String { Localized.tr("graph.insightBridgesDesc", table: t) }
+        public static var nodesLimitDegradeHint: String { Localized.tr("graph.nodesLimitDegradeHint", table: t) }
 
         public static let accessibility = Accessibility()
         
@@ -106,6 +115,10 @@ extension L10n {
 
         public struct ThreeD {
             public static let t = "Insight"
+
+            /// 本地化翻译
+            /// /// - Parameter key: key
+            /// /// - Returns: 返回值
             public static func tr(_ key: String) -> String {
                 Localized.tr("graph3d." + key, table: t)
             }

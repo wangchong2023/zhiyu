@@ -30,6 +30,9 @@ extension Date {
      * @param {String} format 日期格式字符串 (推荐使用 AppFormat 中的定义)
      * @return {String} 格式化后的字符串
      */
+
+    /// formatted
+    /// /// - Returns: 字符串
     func formatted(as format: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format

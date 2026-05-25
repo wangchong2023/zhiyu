@@ -176,9 +176,17 @@ public enum DesignSystem {
         public static let tray = Typography.Icons.tray
         public static let clock = Typography.Icons.clock
         public static let stop = Typography.Icons.stop
+        public static let stopFill = "stop.fill"
         public static let stopRequest = "stop.circle.fill"
         public static let send = Typography.Icons.send
         public static let sendRequest = "paperplane.fill"
+        
+        // ── 物理补充：通用状态与导航 SF Symbols ──
+        public static let exclamationShieldFill = "exclamationmark.shield.fill"
+        public static let arrowClockwise = "arrow.clockwise"
+        public static let chevronUp = "chevron.up"
+        public static let chevronDown = "chevron.down"
+        public static let chevronRight = "chevron.right"
         public static let apple = Typography.Icons.apple
         public static let message = Typography.Icons.message
         public static let sidebarToggle = Typography.Icons.sidebarLeft

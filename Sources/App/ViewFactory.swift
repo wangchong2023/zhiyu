@@ -23,6 +23,8 @@ struct ViewFactory {
     }
     
     @ViewBuilder
+
+    /// 创建View
     static func makeView(for route: AppRoute) -> some View {
         if let view = providers[route.domain]?.makeView(for: route) {
             view

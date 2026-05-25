@@ -25,6 +25,9 @@ final class AccessibilityService: ObservableObject {
     }
     
     // MARK: - VoiceOver Helpers
+    /// pageAnnouncement
+    /// /// - Parameter page: page
+    /// /// - Returns: 字符串
     static func pageAnnouncement(_ page: KnowledgePage) -> String {
         var parts: [String] = []
         parts.append(page.title)
@@ -38,6 +41,10 @@ final class AccessibilityService: ObservableObject {
         return parts.joined(separator: ", ")
     }
     
+    /// graphNodeAnnouncement
+    /// /// - Parameter node: node
+    /// /// - Parameter linkCount: 链接计数
+    /// /// - Returns: 字符串
     static func graphNodeAnnouncement(_ node: GraphNode, linkCount: Int) -> String {
         "\(node.title), \(node.pageType.displayName), \(linkCount) " + L10n.Accessibility.links
     }

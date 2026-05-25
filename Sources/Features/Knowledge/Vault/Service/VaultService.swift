@@ -150,11 +150,13 @@ public final class VaultService: VaultServiceProtocol {
            let id = UUID(uuidString: idString),
            vaults.contains(where: { $0.id == id }) {
             self.selectedVaultID = id
-            do {
-                let dbURL = getVaultDatabaseURL(for: id)
-                try databaseSwitcher.switchDatabase(to: id, at: dbURL)
-            } catch {
-                print("❌ [VaultService] Failed to auto-connect to the recently used physical database: \(error)")
+            Task {
+                do {
+                    let dbURL = getVaultDatabaseURL(for: id)
+                    try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
+                } catch {
+                    print("❌ [VaultService] Failed to auto-connect to the recently used physical database: \(error)")
+                }
             }
         }
     }
@@ -206,16 +208,16 @@ public final class VaultService: VaultServiceProtocol {
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
-        do {
-            let dbURL = getVaultDatabaseURL(for: vault.id)
-            try databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
-            
-            // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序，交由后台 Task 物理写入
-            Task {
-                try await vaultRepository.updateLastAccessed(id: vault.id)
+        Task {
+            do {
+                let dbURL = getVaultDatabaseURL(for: vault.id)
+                try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
+                
+                // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序
+                try? await vaultRepository.updateLastAccessed(id: vault.id)
+            } catch {
+                print("❌ [VaultService] Failed to switch physical database: \(error)")
             }
-        } catch {
-            print("❌ [VaultService] Failed to switch physical database: \(error)")
         }
     }
     

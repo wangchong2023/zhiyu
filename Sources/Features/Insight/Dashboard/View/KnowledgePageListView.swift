@@ -441,6 +441,9 @@ struct KnowledgeStatItem: View {
 
 // MARK: - App Press Button Style
 struct AppPressButtonStyle: ButtonStyle {
+
+    /// 创建Body
+    /// /// - Parameter configuration: configuration
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? DesignSystem.Action.pressScale : 1.0)

@@ -155,34 +155,56 @@ struct ChatViewContent: View {
     }
     
     private var chatMessageList: some View {
-        ScrollView {
-            LazyVStack(spacing: DesignSystem.medium) {
-                if coordinator.chatHistory.isEmpty && !coordinator.isProcessing {
-                    ChatWelcomeView()
-                        .environment(coordinator)
-                } else {
-                    if coordinator.isProcessing {
-                        streamingBubble.id("processing")
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: DesignSystem.medium) {
+                    if coordinator.chatHistory.isEmpty && !coordinator.isProcessing {
+                        ChatWelcomeView()
+                            .environment(coordinator)
+                    } else {
+                        if coordinator.isProcessing {
+                            streamingBubble.id("processing")
+                        }
+                        ForEach(coordinator.chatHistory.reversed()) { message in
+                            messageRow(for: message)
+                        }
                     }
-                    ForEach(coordinator.chatHistory.reversed()) { message in
-                        messageRow(for: message)
+                }
+                .padding(.horizontal, DesignSystem.tiny)
+                .padding(.bottom, DesignSystem.standardPadding)
+            }
+            .scrollIndicators(.hidden)
+            .onChange(of: coordinator.streamingContent) { _, _ in
+                // 在流式文本输入增长时，平滑滚动至焦点气泡，利用 easeOut 阻尼有效消除视图震颤
+                withAnimation(.easeOut(duration: 0.25)) {
+                    proxy.scrollTo("processing", anchor: .bottom)
+                }
+            }
+            .onChange(of: coordinator.isProcessing) { _, isProcessing in
+                if isProcessing {
+                    // 开始生成时，将视图焦点以弹性动画推至处理气泡
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        proxy.scrollTo("processing", anchor: .bottom)
                     }
                 }
             }
-            .padding(.horizontal, DesignSystem.tiny)
-            .padding(.bottom, DesignSystem.standardPadding)
         }
-        .scrollIndicators(.hidden)
     }
     
     @ViewBuilder
     private func messageRow(for message: ChatMessage) -> some View {
+        let isLastAssistant = message.role == .assistant && coordinator.chatHistory.last?.id == message.id && !coordinator.isProcessing
         ChatBubbleView(
             message: message, 
             pages: store.pages, 
             selectedTab: $selectedTab,
             isSelectionMode: coordinator.isSelectionMode,
-            isSelected: coordinator.selectedMessageIDs.contains(message.id)
+            isSelected: coordinator.selectedMessageIDs.contains(message.id),
+            onRegenerate: isLastAssistant ? {
+                Task {
+                    await coordinator.regenerateLastMessage(pages: store.pages)
+                }
+            } : nil
         )
         .id(message.id)
         .overlay {
@@ -225,6 +247,28 @@ struct ChatViewContent: View {
                         .background(Color.appCard)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
                 }
+                
+                // 一键中断(Stop)生成按钮
+                Button(action: {
+                    // 主动调用协调器取消当前的流式大模型请求
+                    coordinator.cancelCurrentRequest()
+                    // 触发系统的选择触觉反馈，提升交互感知
+                    HapticFeedback.shared.trigger(.selection)
+                }) {
+                    HStack(spacing: DesignSystem.atomic) {
+                        Image(systemName: DesignSystem.Icons.stopFill)
+                            .font(.system(size: 11, weight: .bold))
+                        Text(L10n.Common.cancel)
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .padding(.horizontal, DesignSystem.tiny * 1.5)
+                    .padding(.vertical, DesignSystem.tiny * 0.6)
+                    .foregroundStyle(.red)
+                    .background(Color.red.opacity(DesignSystem.Opacity.glass))
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, DesignSystem.tiny)
             }
             Spacer(minLength: DesignSystem.largeIconSize * 0.8)
         }

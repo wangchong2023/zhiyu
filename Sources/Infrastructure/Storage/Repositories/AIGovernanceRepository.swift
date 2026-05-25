@@ -21,6 +21,10 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
 
     // MARK: - Token 计费 (Usage)
 
+    /// 记录日志TokenUsage
+    /// /// - Parameter model: model
+    /// /// - Parameter promptTokens: promptTokens
+    /// /// - Parameter completionTokens: completionTokens
     func logTokenUsage(model: String, promptTokens: Int, completionTokens: Int) async throws {
         try await dbWriter.write { db in
             var usage = TokenUsage(model: model, promptTokens: promptTokens, completionTokens: completionTokens)
@@ -28,6 +32,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取TokenStats
+    /// /// - Parameter days: days
+    /// /// - Returns: 返回值
     func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int) {
         try await dbWriter.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
@@ -51,6 +58,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取DailyAIStats
+    /// /// - Parameter days: days
+    /// /// - Returns: 列表
     func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)] {
         try await dbWriter.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
@@ -76,6 +86,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取MonthlyTokenStats
+    /// /// - Returns: 列表
     func fetchMonthlyTokenStats() async throws -> [(month: String, total: Int)] {
         try await dbWriter.read { db in
             let monthExpr = SQL("strftime('%Y-%m', \(TokenUsage.Columns.createdAt))")
@@ -98,6 +110,12 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
 
     // MARK: - 调用日志 (Logs)
 
+    /// 记录日志Call
+    /// /// - Parameter model: model
+    /// /// - Parameter promptTokens: promptTokens
+    /// /// - Parameter completionTokens: completionTokens
+    /// /// - Parameter latencyMS: latencyMS
+    /// /// - Parameter status: status
     func logCall(model: String, promptTokens: Int, completionTokens: Int, latencyMS: Int, status: String) async throws {
         try await dbWriter.write { db in
             var log = LLMCallLog(
@@ -111,6 +129,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取RecentLogs
+    /// /// - Parameter limit: limit
+    /// /// - Returns: 列表
     func fetchRecentLogs(limit: Int) async throws -> [LLMCallLog] {
         try await dbWriter.read { db in
             try LLMCallLog
@@ -122,6 +143,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
 
     // MARK: - RAG 评估 (Evaluations)
 
+    /// 保存RAGEvaluation
+    /// /// - Parameter evaluation: evaluation
     func saveRAGEvaluation(_ evaluation: RAGEvaluation) async throws {
         try await dbWriter.write { db in
             var mutableEvaluation = evaluation
@@ -129,6 +152,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取RAGEvaluations
+    /// /// - Parameter limit: limit
+    /// /// - Returns: 列表
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation] {
         try await dbWriter.read { db in
             try RAGEvaluation
@@ -138,6 +164,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
+    /// 计算AverageRAGScores
+    /// /// - Parameter days: days
+    /// /// - Returns: 返回值
     func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
         try await dbWriter.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()

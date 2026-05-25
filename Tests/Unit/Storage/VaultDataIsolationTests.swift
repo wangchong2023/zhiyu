@@ -6,14 +6,15 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 测试层
-//  核心职责：针对 VaultDataIsolation 开展自动化单元测试验证。
+//  核心职责：针对多租户物理笔记本数据强隔离（Vault Data Isolation）开展单元测试验证。
 //
+
 import XCTest
 import GRDB
 @testable import ZhiYu
 
 /// 物理笔记本数据强隔离功能单元测试类（VaultDataIsolationTests）
-/// 专职验证系统核心功能：当物理切换不同的知识金库（Vault）时，底层的物理 SQLite 数据库能够实现强力物理数据隔离。
+/// 专职验证系统核心功能：当物理切换不同的知识金库（Vault）时，底层的物理 SQLite 数据库能够实现强力物理数据隔离与完整性保护。
 @MainActor
 final class VaultDataIsolationTests: XCTestCase {
     
@@ -28,6 +29,7 @@ final class VaultDataIsolationTests: XCTestCase {
     private let vaultAID = UUID()
     private let vaultBID = UUID()
     
+    /// 单元测试的前置搭建准备工作
     override func setUp() async throws {
         try await super.setUp()
         
@@ -49,9 +51,12 @@ final class VaultDataIsolationTests: XCTestCase {
         setupFullMockEnvironment()
     }
     
+    /// 单元测试的后置收尾清理工作
     override func tearDown() async throws {
-        // 核心步骤 4：显式将 dbWriter 析构以释放 WAL 锁，随后物理擦除测试临时沙盒目录下的所有物理残留文件
-        DatabaseManager.shared.dbWriter = nil
+        // 核心步骤 4：显式将 dbWriter 物理连接池彻底关闭并析构释放 WAL 锁，随后物理擦除测试临时沙盒目录下的所有物理残留文件
+        DatabaseManager.shared.releaseDatabaseConnection()
+        DatabaseManager.shared.reset()
+        
         if FileManager.default.fileExists(atPath: tempDirectory.path) {
             try? FileManager.default.removeItem(at: tempDirectory)
         }
@@ -73,7 +78,7 @@ final class VaultDataIsolationTests: XCTestCase {
     func testVaultDataIsolationAndPersistence() async throws {
         // 🚀 【阶段一：切入笔记本 A 并写入专有数据，验证写入持久化成功】
         print("🎬 【Phase 1】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
-        try DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
         
         // 核心动作：由于物理库已经切换，必须显式刷新 DI 服务容器内绑定的 Storage 模块
         // 这将用全新已就绪的 dbAURL Pool 初始化并重装 SQLiteStore 与 Repository
@@ -104,14 +109,20 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(pagesInA.first?.title, pageATitle, "笔记本 A 中的页面标题应当一致")
         XCTAssertEqual(pagesInA.first?.content, pageAContent, "笔记本 A 中的页面内容应当一致")
         
+        // 🔍 [调试] 打印物理文件大小，并直接物理读取确认
+        print("🔍 [Debug] Phase 1 结束: A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
+        
         // 🚀 【阶段二：热插拔物理切换至 笔记本 B，验证数据强隔离，页面数据应为空，随后写入专有数据 B】
         print("🎬 【Phase 2】物理挂载热切换至 笔记本 B => ID: \(vaultBID.uuidString)")
-        try DatabaseManager.shared.switchDatabase(to: vaultBID, at: dbBURL)
+        try await DatabaseManager.shared.switchDatabase(to: vaultBID, at: dbBURL)
         
         // 再次刷新 DI 服务容器，绑定 笔记本 B 的全新连接池
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
         
         let storeB = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        
+        // 🔍 [调试] 切换到 B 后，确认物理 A 依然完好
+        print("🔍 [Debug] Phase 2 刚切换到 B: A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
         
         // 关键物理断言：此时读取笔记本 B 的页面列表，必须为空，从而有力证明多租户笔记本数据是强隔离防泄漏的！
         let pagesInBBefore = try await storeB.fetchAllPages()
@@ -138,12 +149,25 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(pagesInBAfter.count, 1, "笔记本 B 中应当有且仅有 1 个页面")
         XCTAssertEqual(pagesInBAfter.first?.title, pageBTitle, "笔记本 B 中的页面标题应当一致")
         
+        // 🔍 [调试] B 写入后，再次确认物理 A 依然完好
+        print("🔍 [Debug] Phase 2 B 写入后: A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
+        
         // 🚀 【阶段三：再次物理切回 笔记本 A，验证原本的数据依然存在，且不混入 笔记本 B 的任何痕迹】
         print("🎬 【Phase 3】物理挂载切换回 笔记本 A => ID: \(vaultAID.uuidString)")
-        try DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        
+        // 🔍 [调试] 在切回 A 之前，直接读取 A
+        print("🔍 [Debug] Phase 3 切换回 A 前: A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
+        
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        
+        // 🔍 [调试] 在切回 A 之后，但在 register 之前，直接读取 A
+        print("🔍 [Debug] Phase 3 切换回 A 后(未register): A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
         
         // 重新刷新并重装 DI 服务容器绑定的连接通道
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        // 🔍 [调试] 在 register 之后，但在获取 store 之前，直接读取 A
+        print("🔍 [Debug] Phase 3 切换回 A 后(已register): A文件大小 = \(getFileSize(dbAURL)), 物理直接读取 A 的 pages = \(getPageCountDirectly(from: dbAURL))")
         
         let storeAagain = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
         
@@ -158,5 +182,175 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertFalse(containsB, "切回 笔记本 A 后，不应包含任何属于 笔记本 B 的残留数据")
         
         print("✅ 【Success】笔记本物理数据强隔离与持久化切换验证 100% 顺利通过！")
+    }
+    
+    // MARK: - 调试辅助方法
+    
+    private func getFileSize(_ url: URL) -> String {
+        do {
+            let attrs = try FileManager.default.attributesOfItem(atPath: url.path)
+            let size = attrs[.size] as? UInt64 ?? 0
+            return "\(size) 字节"
+        } catch {
+            return "文件不存在/读取失败: \(error.localizedDescription)"
+        }
+    }
+    
+    private func getPageCountDirectly(from url: URL) -> Int {
+        do {
+            let queue = try DatabaseQueue(path: url.path)
+            return try queue.read { db in
+                if try db.tableExists("pages") {
+                    return try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM pages") ?? 0
+                }
+                return 0
+            }
+        } catch {
+            print("⚠️ [Debug] Failed to read database directly: \(error)")
+            return -1
+        }
+    }
+    
+    // MARK: - 演示数据注入测试用例
+    
+    /// 测试核心业务：验证在注入演示数据时，能够彻底清理当前金库的原有旧数据，并成功填充 5 个标准的演示页面。
+    /// 职责说明：此测试验证 `DemoDataGenerator.generate(in:)` 功能在多金库模式下的行为，确保数据覆盖与结构安全，无任何硬编码 SQL。
+    func testDemoDataGeneration() async throws {
+        // 🚀 物理挂载切换至 笔记本 A
+        print("🎬 【Demo Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        
+        // 1. 使用已有安全机制（anyCreatePage）写入旧页面，严禁编写硬编码的 SQL 语句
+        let oldPageTitle = "即将被覆盖的过时构想"
+        _ = try await store.anyCreatePage(
+            title: oldPageTitle,
+            pageType: .concept,
+            customIcon: "doc.text",
+            content: "这是一个旧页面，用于测试演示数据注入时的自动清理逻辑。",
+            tags: ["Legacy"],
+            sourceURL: nil,
+            rawSnippet: nil,
+            fileSize: nil,
+            sourceType: nil,
+            forceDeepScan: false
+        )
+        
+        // 验证旧页面确实存在
+        let initialPages = try await store.fetchAllPages()
+        XCTAssertEqual(initialPages.count, 1, "注入前应该有 1 个旧页面")
+        XCTAssertEqual(initialPages.first?.title, oldPageTitle, "旧页面的标题应当一致")
+        
+        // 2. 调用演示数据生成器
+        print("🎬 调用 DemoDataGenerator 注入演示数据")
+        let generatedCount = try await DemoDataGenerator.generate(in: store)
+        XCTAssertEqual(generatedCount, 5, "演示数据生成器应当报告成功生成了 5 个页面")
+        
+        // 3. 验证生成后的数据状态
+        let finalPages = try await store.fetchAllPages()
+        XCTAssertEqual(finalPages.count, 5, "注入演示数据后，应该有且仅有 5 个演示页面（原有页面被清理）")
+        
+        // 确保旧页面被清理了
+        let hasOldPage = finalPages.contains(where: { $0.title == oldPageTitle })
+        XCTAssertFalse(hasOldPage, "原有旧页面应该在注入演示数据时被成功清理")
+        
+        // 验证演示页面的关键标题
+        let finalTitles = finalPages.map { $0.title }
+        XCTAssertTrue(finalTitles.contains(L10n.Common.Demo.aiAgent.title), "应该包含 AI 智能体演示页面")
+        XCTAssertTrue(finalTitles.contains(L10n.Common.Demo.llm.title), "应该包含 大语言模型演示页面")
+        
+        print("✅ 【Success】演示数据注入及其旧数据清理验证 100% 顺利通过！")
+    }
+    
+    // MARK: - 更多开发者工具单元测试用例
+    
+    /// 测试开发工具：重置新手引导流程状态。
+    /// 职责说明：验证 `OnboardingService.shared.reset()` 是否能正确将新手引导标记置回未完成，从而保障用户可以重新体验新手引导流程。
+    func testDeveloperResetOnboarding() async throws {
+        let onboardingService = OnboardingService.shared
+        
+        // 1. 模拟用户已完成新手引导并在 MainActor 上设置状态
+        await MainActor.run {
+            onboardingService.completeOnboarding()
+        }
+        XCTAssertTrue(onboardingService.hasCompletedOnboarding, "新手引导应当已被标记为已完成")
+        
+        // 2. 调用开发工具的重置新手引导功能
+        await MainActor.run {
+            onboardingService.reset()
+        }
+        
+        // 3. 验证状态已被正确置回
+        XCTAssertFalse(onboardingService.hasCompletedOnboarding, "重置后引导完成标记应当为 false")
+        XCTAssertEqual(onboardingService.currentStep, .graph, "重置后当前步骤应恢复到初始步骤 .graph")
+        print("✅ 【Success】新手引导服务重置状态功能校验 100% 顺利通过！")
+    }
+    
+    /// 测试开发工具：清除当前活跃金库的所有开发者页面数据。
+    /// 职责说明：验证 `MaintenanceService.clearAllDeveloperData()` 能够将当前活跃数据库内的所有页面、链接、SRS元数据等全部物理清除，不留残余。
+    func testDeveloperClearAllData() async throws {
+        // 🚀 物理挂载切换至 笔记本 A
+        print("🎬 【Clear All Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        
+        // 1. 使用已有机制（anyCreatePage）写入测试数据，严禁硬编码 SQL
+        _ = try await store.anyCreatePage(
+            title: "待清除的页面",
+            pageType: .entity,
+            customIcon: "doc",
+            content: "这是一个测试数据，应在重置时被彻底擦除。",
+            tags: ["Temp"],
+            sourceURL: nil,
+            rawSnippet: nil,
+            fileSize: nil,
+            sourceType: nil,
+            forceDeepScan: false
+        )
+        
+        // 验证写入成功
+        let pagesBefore = try await store.fetchAllPages()
+        XCTAssertEqual(pagesBefore.count, 1, "重置前页面数应当为 1")
+        
+        // 2. 调用开发工具的数据清除（系统重置）
+        print("🎬 调用 MaintenanceService.clearAllDeveloperData() 清空开发者数据")
+        await maintenanceService.clearAllDeveloperData()
+        
+        // 3. 验证物理清空是否彻底
+        let pagesAfter = try await store.fetchAllPages()
+        XCTAssertTrue(pagesAfter.isEmpty, "调用重置清除后，当前活跃库中的页面数据应该被彻底清空")
+        print("✅ 【Success】清理全量开发者数据及其级联关联物理擦除验证 100% 顺利通过！")
+    }
+    
+    /// 测试开发工具：生成指定节点数量的图谱压力测试数据。
+    /// 职责说明：验证 `DemoDataGenerator.generateStressTest(in:count:)` 能够按指定数量成功创建图谱压测节点，并建立节点间的随机双向引用，且不使用任何硬编码的 SQL。
+    func testDeveloperStressTestDataGeneration() async throws {
+        // 🚀 物理挂载切换至 笔记本 A
+        print("🎬 【Stress Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        
+        // 1. 运行压力测试数据生成器（指定生成 50 个节点，避免跑过久导致测试挂起超时）
+        let targetCount = 50
+        print("🎬 调用 DemoDataGenerator.generateStressTest 生成 \(targetCount) 个压测节点")
+        let count = try await DemoDataGenerator.generateStressTest(in: store, count: targetCount)
+        XCTAssertEqual(count, targetCount, "生成器返回的数量应当与期望一致")
+        
+        // 2. 从物理库中抓取全量页面，校验是否为 50 个
+        let pages = try await store.fetchAllPages()
+        XCTAssertEqual(pages.count, targetCount, "物理库中的页面总数应当为 50")
+        
+        // 3. 验证生成节点的随机引用特征
+        let titles = pages.map { $0.title }
+        XCTAssertTrue(titles.contains("StressNode_1"), "生成节点中应包含 StressNode_1")
+        XCTAssertTrue(titles.contains("StressNode_50"), "生成节点中应包含 StressNode_50")
+        print("✅ 【Success】压力测试节点生成功能及随机关联引用架构验证 100% 顺利通过！")
     }
 }

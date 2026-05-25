@@ -23,12 +23,17 @@ public final class SourceStore: @unchecked Sendable {
     
     /// 更新当前信源集合
     @MainActor
+
+    /// 更新Sources
+    /// /// - Parameter sources: sources
     public func updateSources(_ sources: [KnowledgeSource]) {
         self.activeSources = sources.sorted { $0.score > $1.score }
     }
     
     /// 清理信源
     @MainActor
+
+    /// 清除
     public func clear() {
         self.activeSources = []
     }

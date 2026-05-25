@@ -31,6 +31,9 @@ final class LLMContextBuilder: Sendable {
     private static let contextPreviewLength = BusinessConstants.RAG.contextPreviewLength
 
     // MARK: - System Prompt
+    /// 构建SystemPrompt
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 字符串
     func buildSystemPrompt(pages: [any KnowledgePageRepresentable]) -> String {
         var prompt = """
         \(L10n.AI.LLM.Prompt.role)
@@ -149,6 +152,11 @@ final class LLMContextBuilder: Sendable {
     }
 
     // MARK: - Ingest Prompt Builder
+    /// 构建导入摄取Prompt
+    /// /// - Parameter title: title
+    /// /// - Parameter rawContent: rawContent
+    /// /// - Parameter pages: pages
+    /// /// - Returns: 字符串
     func buildIngestPrompt(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) -> String {
         let existingTitles = pages.map(\.title).joined(separator: ", ")
 
@@ -189,6 +197,9 @@ final class LLMContextBuilder: Sendable {
     }
 
     // MARK: - Query Rewrite Builder
+    /// 构建RewritePrompt
+    /// /// - Parameter query: query
+    /// /// - Returns: 字符串
     func buildRewritePrompt(query: String) -> String {
         """
         \(L10n.AI.Prompt.QueryRewrite.instruction)
@@ -215,16 +226,21 @@ final class ChatHistoryStore: ObservableObject {
         load()
     }
 
+    /// 追加
+    /// /// - Parameter message: message
     func append(_ message: ChatMessageDTO) {
         messages.append(message)
         persistToDisk()
     }
 
+    /// 追加Batch
+    /// /// - Parameter newMessages: newMessages
     func appendBatch(_ newMessages: [ChatMessageDTO]) {
         messages.append(contentsOf: newMessages)
         persistToDisk()
     }
 
+    /// 清除
     func clear() {
         messages.removeAll()
         persistToDisk()

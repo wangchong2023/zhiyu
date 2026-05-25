@@ -19,6 +19,9 @@ public struct AppCardModifier: ViewModifier {
     public var paddingToken: DesignSystem.SpacingToken = .standardPadding
     public var backgroundColor: Color = .appCard
 
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     public func body(content: Content) -> some View {
         content
             .appPadding(.all, paddingToken)

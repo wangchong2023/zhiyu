@@ -45,6 +45,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         loadRecordings()
     }
 
+    /// 检查Permission
     func checkPermission() {
 #if canImport(Speech)
         SFSpeechRecognizer.requestAuthorization { status in
@@ -97,6 +98,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         }
     }
 
+    /// 启动Recording
     func startRecording() {
         guard hasPermission else {
             statusMessage = L10n.Voice.Speech.Status.denied
@@ -189,6 +191,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 #endif
     }
 
+    /// 停止Recording
     func stopRecording() {
         audioEngine?.inputNode.removeTap(onBus: 0)
         audioEngine?.stop()
@@ -202,6 +205,9 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         statusMessage = transcribedText.isEmpty ? L10n.Voice.Speech.Status.ready : L10n.Voice.Speech.Status.complete
     }
 
+    /// transcribeFile
+    /// /// - Parameter url: url
+    /// /// - Returns: 字符串
     func transcribeFile(url: URL) async throws -> String {
         isTranscribing = true
         defer { isTranscribing = false }
@@ -221,6 +227,9 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 #endif
     }
 
+    /// 保存Recording
+    /// /// - Parameter title: title
+    /// /// - Returns: 返回值
     func saveRecording(title: String) -> VoiceRecording {
         let recording = VoiceRecording(id: UUID(), title: title, text: transcribedText, language: selectedLanguage, duration: 0, createdAt: Date())
         recordings.insert(recording, at: 0)
@@ -228,11 +237,14 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         return recording
     }
 
+    /// 删除Recording
+    /// /// - Parameter recording: recording
     func deleteRecording(_ recording: VoiceRecording) {
         recordings.removeAll { $0.id == recording.id }
         saveRecordingsToDisk()
     }
 
+    /// 清除Transcription
     func clearTranscription() {
         transcribedText = ""
         statusMessage = L10n.Voice.Speech.Status.ready

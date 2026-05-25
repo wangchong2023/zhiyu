@@ -310,6 +310,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     }
 
     // MARK: - 强行取消生成
+    /// 取消Generation
     public func cancelGeneration() {
         isGenerating = false
         generatedText = ""
@@ -317,6 +318,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     }
 
     // MARK: - 卸载内存模型
+    /// unloadModel
     public func unloadModel() {
         currentModel = nil
         isModelLoaded = false
@@ -363,6 +365,8 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     }
 
     // MARK: - 模型文件物理清除
+    /// 删除Model
+    /// /// - Parameter model: model
     public func deleteModel(_ model: OnDeviceModel) throws {
         if let url = model.url {
             try FileManager.default.removeItem(at: url)

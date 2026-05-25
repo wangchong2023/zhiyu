@@ -13,6 +13,10 @@ import Foundation
 extension L10n {
     public struct Lint {
         public static let t = "System"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { Localized.tr("lint.title", table: t) }
         public static var refactorSection: String { tr("refactorSection") }
@@ -33,6 +37,10 @@ extension L10n {
         public static var stubSuggestion: String { Localized.tr("lint.stubSuggestion", table: t) }
         public static var outdated: String { tr("outdated.message") }
         public static var outdatedSuggestion: String { Localized.tr("lint.outdatedSuggestion", table: t) }
+
+        /// duplicateTitleMessage
+        /// /// - Parameter title: title
+        /// /// - Returns: 字符串
         public static func duplicateTitleMessage(_ title: String) -> String { Localized.trf("duplicateTitle.message", table: t, title) }
         public static var duplicateTitleSuggestion: String { tr("duplicateTitle.suggestion") }
         public static var aiSuggestions: String { tr("aiSuggestions") }
@@ -56,12 +64,30 @@ extension L10n {
         public static var runAIScan: String { tr("runAIScan") }
         public static var goToPage: String { tr("goToPage") }
 
+        /// errors
+        /// /// - Parameter n: n
+        /// /// - Returns: 字符串
         public static func errors(_ n: Int) -> String { Localized.trf("errorsCount", table: t, n) }
+
+        /// warnings
+        /// /// - Parameter n: n
+        /// /// - Returns: 字符串
         public static func warnings(_ n: Int) -> String { Localized.trf("warningsCount", table: t, n) }
+
+        /// tips
+        /// /// - Parameter n: n
+        /// /// - Returns: 字符串
         public static func tips(_ n: Int) -> String { Localized.trf("tipsCount", table: t, n) }
 
+        /// aiFixSuggestion
+        /// /// - Parameter s: s
+        /// /// - Returns: 字符串
         public static func aiFixSuggestion(_ s: String) -> String { Localized.trf("aiFixSuggestion", table: t, s) }
         public static var aiFixSuggestionShort: String { tr("aiFixSuggestionShort") }
+
+        /// aiSuggestionError
+        /// /// - Parameter s: s
+        /// /// - Returns: 字符串
         public static func aiSuggestionError(_ s: String) -> String { Localized.trf("aiSuggestionError", table: t, s) }
     }
 }

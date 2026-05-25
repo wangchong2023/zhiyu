@@ -103,6 +103,7 @@ public struct PageEmbedding: Identifiable, Codable, FetchableRecord, MutablePers
     }
     
     // GRDB 序列化支持
+    /// 编码
     public func encode(to container: inout PersistenceContainer) throws {
         container[Columns.id] = id
         container[Columns.modelName] = modelName

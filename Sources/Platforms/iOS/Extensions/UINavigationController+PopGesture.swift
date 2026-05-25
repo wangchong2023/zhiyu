@@ -13,6 +13,8 @@ import UIKit
 // MARK: - 全局手势支持
 /// 解决 SwiftUI 中隐藏标准返回按钮导致侧滑返回失灵的问题
 extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+
+    /// 视图加载完成
     override open func viewDidLoad() {
         super.viewDidLoad()
         // 将手势代理设为自身，以便在任何情况下都能拦截手势判断

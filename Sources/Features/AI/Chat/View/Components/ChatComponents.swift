@@ -23,6 +23,7 @@ struct ChatBubbleView: View {
     
     var isSelectionMode: Bool = false
     var isSelected: Bool = false
+    var onRegenerate: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: Spacing.medium) { // 12
@@ -124,6 +125,29 @@ struct ChatBubbleView: View {
                     .frame(maxWidth: AppScreen.bubbleMaxWidth, alignment: .leading)
                     .padding(.top, DesignSystem.tiny)
             }
+            
+            // 一键重新生成 (Regenerate)
+            if let onRegenerate = onRegenerate {
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    onRegenerate()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: DesignSystem.Icons.arrowClockwise)
+                            .font(.caption2)
+                        Text(L10n.Chat.regenerate)
+                            .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
+                    }
+                    .padding(.horizontal, DesignSystem.small)
+                    .padding(.vertical, DesignSystem.tiny)
+                    .background(Color.appAccent.opacity(0.1))
+                    .foregroundStyle(.appAccent)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, DesignSystem.tiny)
+                .padding(.leading, Spacing.tiny)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, Spacing.standardPadding)
@@ -136,7 +160,7 @@ struct ChatBubbleView: View {
             // Header with expand/collapse toggle
             Button(action: { withAnimation { referencesExpanded.toggle() } }) {
                 HStack(spacing: DesignSystem.tightPadding) {
-                    Image(systemName: referencesExpanded ? "chevron.down" : "chevron.right")
+                    Image(systemName: referencesExpanded ? DesignSystem.Icons.chevronDown : DesignSystem.Icons.chevronRight)
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
                     Text(referencesExpanded ? L10n.Chat.referencesExpanded : L10n.Chat.referencesCollapsed)
@@ -322,6 +346,9 @@ struct PulsingDot: ViewModifier {
     let delay: Double
     @State private var isAnimating = false
     
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .scaleEffect(isAnimating ? 1.0 : 0.6)

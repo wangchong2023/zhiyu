@@ -210,6 +210,7 @@ extension XCTestCase {
         let llm = MockLLMService()
         ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
         ServiceContainer.shared.register(llm, for: LLMService.self)
+        ServiceContainer.shared.register(QueryReranker(), for: (any LLMRetrievalServiceProtocol).self)
 
         // 注册 Mock 环境下的 EmbeddingManager 和仓库，加固向量同步功能
         let vectorRepo = VectorDataRepository(dbWriter: dbQueue)

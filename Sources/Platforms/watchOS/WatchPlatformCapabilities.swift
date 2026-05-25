@@ -18,11 +18,18 @@ import LocalAuthentication
 struct WatchBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthentication }
     
+    /// can评估Policy
+    /// /// - Parameter context: context
+    /// /// - Returns: 是否成功
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
     }
     
+    /// 评估Policy
+    /// /// - Parameter context: context
+    /// /// - Parameter reason: reason
+    /// /// - Returns: 是否成功
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
         return await withCheckedContinuation { continuation in
             context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
@@ -38,6 +45,8 @@ struct WatchBiometricAuthProvider: BiometricAuthProviderProtocol {
 struct WatchModelCompiler: MLModelCompilerProtocol {
     var supportsCompilation: Bool { false }
     
+    /// 编译Model
+    /// /// - Returns: 链接
     func compileModel(at url: URL) async throws -> URL {
         throw NSError(domain: "WatchModelCompiler", code: -1, userInfo: [NSLocalizedDescriptionKey: "watchOS does not support model compilation at runtime."])
     }
@@ -47,6 +56,11 @@ struct WatchModelCompiler: MLModelCompilerProtocol {
 
 /// watchOS 无需或不支持书签持久化
 struct WatchSecurityScopedStorage: SecurityScopedStorageProtocol {
+
+    /// 存储添加书签
     func storeBookmark(for url: URL) {}
+
+    /// 恢复URL
+    /// /// - Returns: 可选值
     func restoreURL(from data: Data) -> URL? { nil }
 }

@@ -136,6 +136,9 @@ struct MermaidWKWebView: UIViewRepresentable {
     let mermaidCode: String
     @Binding var webView: WKWebView?
     
+    /// 创建UIView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.isOpaque = false
@@ -149,6 +152,9 @@ struct MermaidWKWebView: UIViewRepresentable {
         return webView
     }
     
+    /// 更新UIView
+    /// /// - Parameter uiView: uiView
+    /// /// - Parameter context: context
     func updateUIView(_ uiView: WKWebView, context: Context) {
         uiView.loadHTMLString(generateHTML(), baseURL: nil)
     }
@@ -207,9 +213,17 @@ struct MermaidWKWebView: UIViewRepresentable {
 
 struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
+
+    /// 创建UIViewController
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeUIViewController(context: Context) -> UIActivityViewController {
         UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     }
+
+    /// 更新UIViewController
+    /// /// - Parameter uiViewController: uiViewController
+    /// /// - Parameter context: context
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
@@ -218,6 +232,9 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
     let mermaidCode: String
     @Binding var webView: WKWebView?
     
+    /// 创建NSView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.setValue(false, forKey: "drawsBackground")
@@ -227,6 +244,9 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
         return webView
     }
     
+    /// 更新NSView
+    /// /// - Parameter nsView: nsView
+    /// /// - Parameter context: context
     func updateNSView(_ nsView: WKWebView, context: Context) {
         nsView.loadHTMLString(generateHTML(), baseURL: nil)
     }

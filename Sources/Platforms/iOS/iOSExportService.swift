@@ -73,6 +73,10 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
         return "// JS Library \(name) not found in Bundle"
     }
     
+    /// 导出ToPDF
+    /// /// - Parameter markdown: markdown
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 链接
     func exportToPDF(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -113,6 +117,10 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
         return try await createPDF(fileName: fileName)
     }
 
+    /// 导出MindmapToPDF
+    /// /// - Parameter mermaidCode: mermaidCode
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 链接
     func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -180,6 +188,10 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
         }
     }
     
+    /// 导出ToPPTX
+    /// /// - Parameter markdown: markdown
+    /// /// - Parameter fileName: fileName
+    /// /// - Returns: 链接
     func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -262,6 +274,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
 }
 
 extension iOSExportService: WKNavigationDelegate {
+
+    /// webView回调
+    /// /// - Parameter webView: webView
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         print("Export WebView failed to load: \(error)")
     }

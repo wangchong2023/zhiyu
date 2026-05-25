@@ -14,7 +14,15 @@ extension L10n {
     public enum Security {
         public static let t = "System"
         
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
         
         // MARK: - Prompt 防御与消毒词条
@@ -37,6 +45,26 @@ extension L10n {
         /// XML 沙箱包裹参考上下文时的引导词模板（支持 %1$@ 包裹的参考资料）
         public static func sandboxInstructions(with content: String) -> String {
             trf("security.sandbox.instructions", content)
+        }
+
+        /// 金库完整性校验失败的提示
+        public static var integrityVerificationFailed: String {
+            "金库数据被外部非法篡改，完整性哈希校验失败！"
+        }
+        
+        /// 目标金库完整性校验失败的提示
+        public static var targetIntegrityVerificationFailed: String {
+            "目标金库数据被外部非法篡改，完整性哈希校验失败！"
+        }
+        
+        /// 数据库连接安全验证失败，自动降级为只读瞬态内存模式提示
+        public static var databaseCorrupted: String {
+            tr("security.database.corrupted")
+        }
+        
+        /// 重试重新验证按钮文本
+        public static var retryConnection: String {
+            tr("security.database.retry")
         }
     }
 }

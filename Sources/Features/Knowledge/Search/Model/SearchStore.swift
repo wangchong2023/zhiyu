@@ -77,6 +77,7 @@ public final class SearchStore {
         }
     }
 
+    /// 清除All
     func clearAll() {
         searchTask?.cancel()
         searchText = ""

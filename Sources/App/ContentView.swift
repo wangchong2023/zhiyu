@@ -31,6 +31,7 @@ struct ContentView: View {
     @Inject internal var appEnv: any AppEnvironmentProtocol
     
     @State internal var showSidebar = false 
+    @State private var dbState: DatabaseState = DatabaseManager.shared.state
 
     // MARK: - Body
     var body: some View {
@@ -50,6 +51,16 @@ struct ContentView: View {
                         showSidebar.toggle()
                     }
                 }
+            
+            // 数据库损坏或降级警告横幅
+            VStack {
+                if case .corrupted(let errorMsg) = dbState {
+                    DatabaseCorruptedBanner(errorMessage: errorMsg)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .zIndex(DesignSystem.ZIndex.lockOverlay - 1)
+                }
+                Spacer()
+            }
             
             // iPhone 侧边栏抽屉层 (Compact Size Class Only)
             if showSidebar && appEnv.screenClass == .compact {
@@ -73,6 +84,12 @@ struct ContentView: View {
         .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
         .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)
         .environmentObject(MedalService.shared)
+        .environment(\.locale, router.currentLocale)
+        .onReceive(NotificationCenter.default.publisher(for: .databaseStateDidChange)) { _ in
+            withAnimation(.spring()) {
+                dbState = DatabaseManager.shared.state
+            }
+        }
     }
     
     // MARK: - Sub-layers
@@ -114,6 +131,8 @@ struct ContentView: View {
 extension View {
     /// 兼容 iOS 18 弹窗尺寸适配修饰符
     @ViewBuilder
+
+    /// 应用PresentationSizing
     func applyPresentationSizing() -> some View {
         #if os(iOS)
         if #available(iOS 18.0, *) {
@@ -131,6 +150,9 @@ extension View {
     /// 设置页面专用的自适应宽屏弹窗尺寸修饰符
     /// - Parameter screenClass: 屏幕类型
     @ViewBuilder
+
+    /// 应用SettingsPresentationSizing
+    /// /// - Parameter screenClass: screenClass
     func applySettingsPresentationSizing(screenClass: ScreenClass) -> some View {
         if screenClass == .compact {
             // 手机/紧凑尺寸下，不做多余限制，让系统自动以标准半屏/全屏形式拉起
@@ -144,6 +166,113 @@ extension View {
                 .frame(minWidth: 850, minHeight: 650)
                 .presentationDetents([.large])
             #endif
+        }
+    }
+}
+
+// MARK: - 数据库异常 Banner 视图
+
+/// 数据库损坏/降级只读内存模式的警告 Banner 组件
+struct DatabaseCorruptedBanner: View {
+    /// 异常错误信息
+    let errorMessage: String
+    
+    /// 状态控制：是否正在重新验证中
+    @State private var isRetrying = false
+    /// 状态控制：是否展示详细的报错堆栈
+    @State private var showDetail = false
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                // 安全警告图标
+                Image(systemName: DesignSystem.Icons.exclamationShieldFill)
+                    .font(.title3)
+                    .foregroundColor(.orange)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    // 主警告文案 (从强类型本地化 L10n 中拉取)
+                    Text(L10n.Security.databaseCorrupted)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    
+                    // 可选折叠的物理错误堆栈详情
+                    if showDetail {
+                        Text(errorMessage)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .padding(.top, 2)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+                
+                Spacer()
+                
+                // 动作按钮组
+                HStack(spacing: 12) {
+                    // 折叠切换按钮
+                    Button(action: {
+                        withAnimation {
+                            showDetail.toggle()
+                        }
+                    }) {
+                        Image(systemName: showDetail ? DesignSystem.Icons.chevronUp : DesignSystem.Icons.chevronDown)
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                    }
+                    
+                    // 重新验证物理库连接按钮
+                    Button(action: {
+                        triggerReverification()
+                    }) {
+                        if isRetrying {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Text(L10n.Security.retryConnection)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Capsule().fill(Color.orange))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .disabled(isRetrying)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+    }
+    
+    /// 触发重新挂载与完整性校验逻辑
+    private func triggerReverification() {
+        isRetrying = true
+        Task {
+            do {
+                let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+                let dbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
+                
+                // 重新执行 setup 挂载物理沙盒
+                try DatabaseManager.shared.setup(at: dbURL)
+                print("✅ [DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database.")
+            } catch {
+                print("❌ [DatabaseCorruptedBanner] Reverification failed: \(error)")
+            }
+            isRetrying = false
         }
     }
 }

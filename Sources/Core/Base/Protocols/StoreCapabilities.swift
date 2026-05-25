@@ -103,6 +103,8 @@ public protocol AnyPageStore: Sendable {
     ///   - forceDeepScan: 是否强制对内容进行深度向量化扫描和双向发现。
     /// - Returns: 返回创建完成的页面对象。
     @discardableResult
+
+    /// any创建Page
     func anyCreatePage(
         title: String,
         pageType: PageType,

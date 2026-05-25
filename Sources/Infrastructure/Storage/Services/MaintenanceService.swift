@@ -28,6 +28,9 @@ public final class MaintenanceService {
 
     /// 生成演示数据
     @discardableResult
+
+    /// 生成DemoData
+    /// /// - Returns: 数值
     public func generateDemoData() async -> Int {
         do {
             let count = try await DemoDataGenerator.generate(in: pageStore)

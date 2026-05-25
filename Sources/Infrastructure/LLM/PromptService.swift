@@ -76,6 +76,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
 
     @Published var userShortcuts: [ShortcutItem] = []
 
+    /// 更新Localizables
     func updateLocalizables() {
         userShortcuts = [
             ShortcutItem(text: L10n.AI.Prompt.Shortcut.deepReview),
@@ -100,11 +101,13 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         if defaults.string(forKey: "prompt_expansion") == nil { expansionPrompt = L10n.AI.Prompt.Default.expansion }
     }
 
+    /// reload
     func reload() {
         load()
         updateLocalizables()
     }
 
+    /// 保存
     func save() {
         let defaults = UserDefaults.standard
         defaults.set(mindmapPrompt, forKey: "prompt_mindmap")
@@ -115,6 +118,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         print("Prompt configurations saved to UserDefaults.")
     }
 
+    /// 重置
     func reset() {
         let defaults = UserDefaults.standard
         defaults.removeObject(forKey: "prompt_mindmap")

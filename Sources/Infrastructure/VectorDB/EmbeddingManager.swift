@@ -137,7 +137,13 @@ public actor EmbeddingManager {
         var processedChunks: [PageChunk] = []
         for chunk in chunks {
             var updatedChunk = chunk
-            let floatVector = getVector(for: chunk.content)
+            let textToEmbed: String
+            if let path = chunk.anchorPath, !path.isEmpty && path != "Root" {
+                textToEmbed = "[Context: \(path)]\n\(chunk.content)"
+            } else {
+                textToEmbed = chunk.content
+            }
+            let floatVector = getVector(for: textToEmbed)
             updatedChunk.embedding = Data(bytes: floatVector, count: floatVector.count * MemoryLayout<Float>.size)
             processedChunks.append(updatedChunk)
         }

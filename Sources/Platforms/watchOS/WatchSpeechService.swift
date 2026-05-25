@@ -31,14 +31,32 @@ final class WatchSpeechService: NSObject, SpeechServiceProtocol {
         super.init()
     }
     
+    /// 检查Permission
     func checkPermission() {}
+
+    /// 启动Recording
     func startRecording() {}
+
+    /// 停止Recording
     func stopRecording() {}
+
+    /// transcribeFile
+    /// /// - Parameter url: url
+    /// /// - Returns: 字符串
     func transcribeFile(url: URL) async throws -> String { return "" }
+
+    /// 保存Recording
+    /// /// - Parameter title: title
+    /// /// - Returns: 返回值
     func saveRecording(title: String) -> VoiceRecording {
         return VoiceRecording(id: UUID(), title: "", text: "", language: "", duration: 0, createdAt: Date())
     }
+
+    /// 删除Recording
+    /// /// - Parameter recording: recording
     func deleteRecording(_ recording: VoiceRecording) {}
+
+    /// 清除Transcription
     func clearTranscription() {}
 }
 #endif

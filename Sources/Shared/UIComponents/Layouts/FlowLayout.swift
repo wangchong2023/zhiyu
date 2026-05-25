@@ -26,11 +26,20 @@ public struct FlowLayout: Layout {
 
     // MARK: - Layout Implementation
     
+    /// sizeThatFits
+    /// /// - Parameter proposal: proposal
+    /// /// - Parameter subviews: subviews
+    /// /// - Parameter cache: 缓存
+    /// /// - Returns: 返回值
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let result = arrangeSubviews(proposal: proposal, subviews: subviews)
         return result.size
     }
 
+    /// placeSubviews
+    /// /// - Parameter proposal: proposal
+    /// /// - Parameter subviews: subviews
+    /// /// - Parameter cache: 缓存
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let result = arrangeSubviews(proposal: proposal, subviews: subviews)
         for (index, position) in result.positions.enumerated() {

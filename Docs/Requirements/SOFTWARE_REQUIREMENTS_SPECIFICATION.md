@@ -148,5 +148,26 @@ iCloud 多端同步采用 **Lamport Last-Writer-Wins (LWW)** 策略：
 - **反“魔鬼数字/字符串”**: 杜绝将魔法值散落在逻辑代码中。颜色、间距等 UI 布局属性存放到 `Shared/DesignSystem/Tokens/` 目录下；专用布局模板存放于 `Shared/UIComponents/Layouts/` 目录下；业务常量存放于 `AppConstants.swift`。
 - **UI 布局定制**: 重构时必须保持既有布局效果不变。全局公共标准存放在 DesignSystem 中，特定业务界面的布局定制模板应存放到 `Shared/UIComponents/Layouts/` 目录下。
 
+## 9. 遗留技术规格与未来演进需求 (Legacy Technical Specifications & Backlogs)
+
+基于近期系统的并发安全审计及竞品增强演进，定义以下后续版本需强制满足的技术规格指标：
+
+### 9.1 并发与架构加固规格
+- **SR-05 (线程安全隔离)**：`ServiceContainer` 全局依赖注入容器在多端并发（特别是 macOS 多窗口及 App Extension 小组件同时读取）时，必须 Actor 化或以自旋锁/读写锁进行物理隔离保护，防止发生竞态覆盖。
+- **SR-06 (并发非阻塞规范)**：`DatabaseManager` 在执行 `switchDatabase` 或 `setup` 初始化连接池时，绝对禁止使用 `semaphore.wait()` 等同步阻塞主线程机制，必须彻底转换为 Swift Structured Concurrency 的 `async throws` / `await` 异步控制。
+- **SR-07 (DIP 契约规范)**：业务功能层（Features L2）的 `KnowledgeStore` 严禁隐式注入或直接拉起基础设施层（Infra L1）的具体 SQLite 连接及行为，必须全部转换为对领域层（Domain L1.5）定义的 `Repository` 协议契约进行操作。
+
+### 9.2 安全硬化规格
+- **SR-08 (Keychain 降级强制物理隔离)**：通过宏定义 `#if DEBUG` 限定 Keychain 在模拟器无签名时的降级写 UserDefaults 行为。在 Release、Ad-Hoc 或是 TestFlight 打包编译时，Keychain 写入失败必须强行抛出 Crash 阻断，绝对禁止降级明文存储数据库密钥。
+- **SR-09 (JSC 沙箱安全防御)**：插件执行的 `JSContext` 虚拟机中必须拦截并封禁 `eval`、`Function` 等具有动态生成代码能力的 JS 接口，对传入插件沙箱的 Swift 实体对象仅暴露只读值类型复制，杜绝引用传递造成的内存篡改。
+- **SR-10 (数据库池确定性释放)**：在销毁或热切换 `DatabasePool` 连接池之前，必须显式调用底层的 `close()` 关闭句柄、中断所有活跃事务并强制将 WAL 写入主数据库，以防止在多金库切换时出现 `vnode unlinked while in use` 的 SQLite 驱动警告。
+
+### 9.3 自动化与抓取演进规格
+- **SR-11 (多源级联防爬与音频转写规格)**：
+  - 级联防爬引擎（CaptureCascadeEngine）处理包含防爬和付费墙的新闻或科学站点时，提取的 Markdown 正文解析延迟不得超过 5.0s。
+  - watchOS 离线麦克风音频采集必须以系统 `AVAudioRecorder` 物理落盘为 AAC-LC、单声道、16KHz 采样率格式，传输至 iOS 宿主后，后台 Whisper 处理吞吐率需满足 $1.5\times$ 播放速度。
+- **SR-12 (外置 Agent 自动化总线规格)**：
+  - 外置 AI 代理（如 Cursor/Claude Code）通过 App Intent 或者是 Local Socket 发起命令批量写入时，系统总线层必须实装限流（Throttling）保护，高频请求阈值限制为 $10\text{Hz}$，超出必须丢弃或拒绝连接以保护主进程资源。
+
 ---
 *本规范受架构 4+1 视图约束，是系统验收的最高技术依据。*

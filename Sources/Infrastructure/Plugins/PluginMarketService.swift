@@ -62,6 +62,7 @@ final class PluginMarketService: ObservableObject {
         #endif
     }
 
+    /// 拉取Plugins
     func fetchPlugins() async {
         await MainActor.run {
             isLoading = true

@@ -19,5 +19,7 @@ public protocol ViewProvider: Sendable {
     /// - Parameter route: 目标路由，使用 AnyHashable 保持平台无关性
     /// - Returns: 抹除类型后的视图，如果不属于该提供者范畴则返回 nil
     @MainActor
+
+    /// 创建View
     func makeView(for route: AnyHashable) -> AnyView?
 }

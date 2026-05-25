@@ -13,6 +13,9 @@ import AppKit
 
 /// macOS 触感反馈实现：使用 NSHapticFeedbackManager
 final class MacHapticService: HapticFeedbackProtocol {
+
+    /// trigger
+    /// /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         let performer = NSHapticFeedbackManager.defaultPerformer
         switch pattern {

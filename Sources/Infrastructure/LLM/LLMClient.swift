@@ -14,7 +14,13 @@ import Foundation
 
 /// LLM 客户端抽象，支持 Mock 替换
 protocol LLMClientProtocol: Sendable {
+
+    /// 发送请求
+    /// /// - Parameter body: body
     func sendRequest(body: [String: Any]) async throws -> [String: Any]
+
+    /// 发送Streaming请求
+    /// /// - Parameter body: body
     func sendStreamingRequest(body: [String: Any]) async throws -> URLSession.AsyncBytes
 }
 
@@ -170,6 +176,10 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
 /// 负责从流式响应中解析服务器发送事件 (SSE)。
 final class SSEParser {
+
+    /// 解析
+    /// /// - Parameter bytes: bytes
+    /// /// - Returns: 返回值
     static func parse(bytes: URLSession.AsyncBytes) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             Task {

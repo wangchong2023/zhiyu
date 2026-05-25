@@ -50,12 +50,10 @@
 - **代码偏好**: 使用编译宏(#if)禁用代码而非注释符号
 
 ## 当前关注迭代
-1. Graph 视图按钮布局修复（图标颜色一致性+触控区域）
-2. Ingest 模块 LazyVGrid 响应式布局（2列自适应）
-3. iCloud 功能集成与真机测试
-4. 测试覆盖率提升
-5. KMStore.ToolItem 缺失 'healthCheck' 成员编译错误
-6. iPad 性能监控卡片无法弹出 sheet 的根因排查
+1. **P0 已全部修复** (2026-05-24): Watch/Widget闪退(已验证) / L1-L2循环依赖(已验证) / 信号量死锁 / ServiceContainer竞态 / ChatCoordinator状态污染 / Keychain签名降级 / iPad Sheet弹出
+2. **P1 架构治理**: 领域契约穿透重构 / Repository 协议迁移 / AppStore 瘦身 / 常量中心化(1188处魔法值)
+3. **P1 安全硬化**: JSC 沙箱限制 / GRDB 连接池关闭
+4. **P2 体验优化**: iCloud 真机测试 / Notebook Hub 封面自定义 / 测试覆盖率提升
 
 ## 认证与导航系统（2026-05-13 更新）
 - **Notebook Hub**: 已实施笔记本工作台，支持 2 列卡片布局。
@@ -77,8 +75,13 @@
 - **验证**: 全量单元测试通过 (359 tests)，iOS 模拟器构建成功。
 
 ## 待处理
-- Notebook Hub 页面视觉优化（支持笔记本封面自定义）
-- iCloud 集成真机测试
-- Graph 视图按钮布局修复
-- 自动化单元测试覆盖率提升
-- iPad 性能监控 sheet 弹出修复：showPerfDashboard 缺少触发入口 + AppStore 观察转发断裂
+- **遗留问题完整清单**: `Docs/Testing/REMAINING_ISSUES.md` (2026-05-24 生成)
+- **P0 全部修复** (2026-05-24): P0-1~P0-7 均已修复并验证（iOS+macOS BUILD SUCCEEDED）
+- P1（11项）: 架构违规(DIP穿透/Repository位置/AppStore过载/LiveActivity宏/JSC沙箱/GRDB关闭) + 规范化(魔法值/图标/视图拆分/路由/注释)
+- P2（13项）: 性能(标签查询/死代码/压测/Graph布局/Ingest布局) + 体验(BYOK/游客升级/冷启动/降级UI/Hub封面/iCloud) + 文档(时序图/HMAC流程)
+
+## macOS 编译错误修复 (2026-05-24)
+- **根因**: `MacOSPlatformCapabilities.swift` 中 `MacOSSecurityScopedStorage` 缺少 `#if os(macOS)` 条件编译保护，iOS Simulator 下 `.withSecurityScope` 不可用
+- **关联问题**: `ModuleRegistrar.swift` 中 `MacFileArchiver`/`MacAccessibilityService` 的注册条件 `#if os(macOS)` 与定义条件 `#if os(macOS) && !targetEnvironment(macCatalyst)` 不一致，Catalyst 下引用不存在的类型
+- **修复**: 添加条件编译保护 + 统一注册条件，Catalyst fallback 到 iOS 实现
+- **验证**: ZhiYuMac (Simulator/Catalyst) + ZhiYu (iOS) 三个目标均 BUILD SUCCEEDED

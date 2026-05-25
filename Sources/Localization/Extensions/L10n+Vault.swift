@@ -13,7 +13,16 @@ import Foundation
 extension L10n {
     public struct Vault {
         public static let t = "Knowledge"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public static var homeTitle: String { tr("vault.homeTitle") }
@@ -53,11 +62,23 @@ extension L10n {
         public struct Page {
             public static var knowledge: String { Localized.tr("page.knowledge", table: "Knowledge") }
             public static var deletePage: String { Localized.tr("page.deletePage", table: "Knowledge") }
+
+            /// 删除PageTitle
+            /// /// - Parameter name: name
+            /// /// - Returns: 字符串
             public static func deletePageTitle(_ name: String) -> String { Localized.trf("page.deletePageTitle", table: "Knowledge", name) }
         }
 
         public struct Backlinks {
+
+            /// 计数
+            /// /// - Parameter n: n
+            /// /// - Returns: 字符串
             public static func count(_ n: Int) -> String { Localized.trf("page.backlinksCount", table: "Knowledge", n) }
+
+            /// outgoing
+            /// /// - Parameter n: n
+            /// /// - Returns: 字符串
             public static func outgoing(_ n: Int) -> String { Localized.trf("page.outLinksCount", table: "Knowledge", n) }
         }
     }

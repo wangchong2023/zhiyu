@@ -125,6 +125,7 @@ public final class SynthesisStore {
             .store(in: &cancellables)
     }
 
+    /// 加载SynthesisResults
     public func loadSynthesisResults() {
         for type in SynthesisType.allCases {
             let key = AppConstants.Keys.Storage.Legacy.synthesisDocsPrefix + type.rawValue
@@ -135,6 +136,9 @@ public final class SynthesisStore {
         }
     }
 
+    /// 保存SynthesisResult
+    /// /// - Parameter type: type
+    /// /// - Parameter content: content
     public func saveSynthesisResult(type: SynthesisType, content: String) {
         let cleanedContent = Self.cleanMarkdown(content)
         let title = extractTitle(from: cleanedContent, type: type)
@@ -149,6 +153,10 @@ public final class SynthesisStore {
         persistResults(for: type)
     }
 
+    /// 执行Synthesis
+    /// /// - Parameter type: type
+    /// /// - Parameter combinedContent: combinedContent
+    /// /// - Returns: 字符串
     public func performSynthesis(type: SynthesisType, combinedContent: String) async throws -> String {
         guard synthesisStates[type] != SynthesisStatus.generating else { 
             throw NSError(domain: "SynthesisStore", code: -1, userInfo: [NSLocalizedDescriptionKey: "Task already in progress"])
@@ -195,6 +203,10 @@ public final class SynthesisStore {
         }
     }
 
+    /// 重命名SynthesisDoc
+    /// /// - Parameter type: type
+    /// /// - Parameter docID: docID
+    /// /// - Parameter newName: newName
     public func renameSynthesisDoc(type: SynthesisType, docID: UUID, newName: String) {
         guard var docs = _synthesisResults[type],
               let idx = docs.firstIndex(where: { $0.id == docID }) else { return }
@@ -204,6 +216,9 @@ public final class SynthesisStore {
         persistResults(for: type)
     }
 
+    /// 删除SynthesisDoc
+    /// /// - Parameter type: type
+    /// /// - Parameter docID: docID
     public func deleteSynthesisDoc(type: SynthesisType, docID: UUID) {
         guard var docs = _synthesisResults[type] else { return }
         docs.removeAll { $0.id == docID }
@@ -211,6 +226,8 @@ public final class SynthesisStore {
         persistResults(for: type)
     }
 
+    /// batch删除SynthesisDocs
+    /// /// - Parameter ids: ids
     public func batchDeleteSynthesisDocs(ids: Set<UUID>) {
         for type in SynthesisType.allCases {
             guard var docs = _synthesisResults[type], !docs.isEmpty else { continue }
@@ -223,6 +240,9 @@ public final class SynthesisStore {
         }
     }
 
+    /// 导出SynthesisDocument
+    /// /// - Parameter doc: doc
+    /// /// - Returns: 链接
     public func exportSynthesisDocument(_ doc: SynthesisDocument) async throws -> URL {
         let fileName = doc.name.replacingOccurrences(of: "/", with: "-")
                                .replacingOccurrences(of: ":", with: "-")
@@ -246,6 +266,7 @@ public final class SynthesisStore {
         return url
     }
 
+    /// 清除All
     public func clearAll() {
         synthesisResults.removeAll()
         for type in SynthesisType.allCases {
@@ -254,6 +275,9 @@ public final class SynthesisStore {
         }
     }
 
+    /// 清理Markdown
+    /// /// - Parameter text: text
+    /// /// - Returns: 字符串
     static func cleanMarkdown(_ text: String) -> String {
         var cleaned = text
         let pattern = #"\\([\#\(\)\[\]\{\}\_\~\+\-\*\.\!\|])"#

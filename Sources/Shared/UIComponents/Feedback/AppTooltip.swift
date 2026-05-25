@@ -114,6 +114,9 @@ public struct AppTooltip: View {
 /// 基础三角形形状
 /// 负责绘制气泡提示组件的指向箭头，支持 2D 路径闭合
 struct Triangle: Shape {
+
+    /// path
+    /// /// - Returns: 返回值
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))

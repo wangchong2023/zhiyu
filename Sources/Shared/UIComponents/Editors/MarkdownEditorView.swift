@@ -69,6 +69,9 @@ struct OCRPickerModifier: ViewModifier {
     @State private var selectedItem: PhotosPickerItem?
     #endif
 
+    /// 视图主体
+    /// /// - Parameter content: content
+    /// /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             #if !os(watchOS)

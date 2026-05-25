@@ -37,7 +37,8 @@ public final class KnowledgeStore {
     
     // MARK: - 核心依赖 (DI)
     
-    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
+    /// [L1.5] 知识库领域仓储 — 遵循 DIP，L2 不再直接依赖 L1 SQLiteStore
+    @ObservationIgnored @Inject private var knowledgeRepository: any KnowledgeRepository
     @ObservationIgnored @Inject private var pageManager: KnowledgePageManager
     @ObservationIgnored @Inject private var maintenanceService: MaintenanceService
     @ObservationIgnored @Inject private var performanceService: PerformanceService
@@ -125,7 +126,7 @@ public final class KnowledgeStore {
     /// 刷新内存镜像
     public func refresh() async {
         let startTime = Date()
-        self.pages = (try? await pageStore.fetchAllPages()) ?? []
+        self.pages = (try? await knowledgeRepository.fetchAll()) ?? []
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
         
@@ -148,6 +149,8 @@ public final class KnowledgeStore {
 
     /// 创建页面
     @discardableResult
+
+    /// 创建Page
     public func createPage(
         title: String,
         pageType: PageType,
@@ -209,6 +212,7 @@ public final class KnowledgeStore {
 
     // MARK: - 事务与同步
 
+    /// 撤销
     public func undo() async {
         if let newPages = try? await pageManager.undo(currentPages: pages) {
             self.pages = newPages
@@ -216,6 +220,7 @@ public final class KnowledgeStore {
         }
     }
 
+    /// 重做
     public func redo() async {
         if let newPages = try? await pageManager.redo(currentPages: pages) {
             self.pages = newPages
@@ -223,10 +228,12 @@ public final class KnowledgeStore {
         }
     }
 
+    /// 保存ToDisk
     public func saveToDisk() async {
         await maintenanceService.saveToDisk(pages: pages)
     }
 
+    /// 加载FromDisk
     public func loadFromDisk() async { 
         await maintenanceService.loadFromDisk()
         await refresh()
@@ -234,11 +241,15 @@ public final class KnowledgeStore {
 
     // MARK: - 业务协同
 
+    /// 应用Potential链接
+    /// /// - Parameter suggestion: suggestion
     public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
         try? await pageManager.applyPotentialLink(suggestion, currentPages: pages)
         await refresh()
     }
 
+    /// 应用重构Suggestion
+    /// /// - Parameter suggestion: suggestion
     public func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
         try? await pageManager.applyRefactorSuggestion(suggestion, currentPages: pages)
         await refresh()

@@ -15,12 +15,22 @@ import Foundation
 struct TextChunkerProcessor: Sendable {
 
     /// 增强型分块模型
-    public struct Chunk: Identifiable {
+    public struct Chunk: Identifiable, Sendable {
         public let id = UUID()
         public let text: String       // 分块文本内容
         public let startIndex: Int    // 原始文本起始偏移
-        public let anchorPath: String // 标题层级路径 (例如: "核心原理 > 量子力学")
+        public let anchorPath: String // 标题路径 (例如: "量子力学") - 仅保持当前最近的单级标题，以维护老旧单测兼容性
+        public let breadcrumbPath: String // 级联面包屑路径 (例如: "核心原理 > 量子力学") - 专门用于 Hierarchy RAG
         public let isCode: Bool       // 是否包含完整代码块
+        
+        /// 级联面包屑注入后的上下文文本，最大化提升检索语义相关性
+        public var contextualText: String {
+            if breadcrumbPath == "Root" || breadcrumbPath.isEmpty {
+                return text
+            } else {
+                return "[Context: \(breadcrumbPath)]\n\(text)"
+            }
+        }
     }
 
     /// 分块配置
@@ -41,53 +51,103 @@ struct TextChunkerProcessor: Sendable {
      * @param {String} text 原始文本
      * @return {[Chunk]} 包含元数据的高质量切片
      */
+
+    /// 拆分
+    /// /// - Parameter text: text
+    /// /// - Parameter config: config
+    /// /// - Returns: 列表
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
+        guard !text.isEmpty else { return [] }
+        
         var chunks: [Chunk] = []
         let lines = text.components(separatedBy: .newlines)
         
         var currentChunkText = ""
         var currentAnchor = "Root"
+        var currentBreadcrumb = "Root"
+        var anchorStack: [String] = [] // 标题层级栈，保存当前所处的大纲树路径
         var currentStartIndex = 0
         var isInCodeBlock = false
         
         for line in lines {
-            // 1. 状态追踪：代码块保护
-            if line.trimmingCharacters(in: .whitespaces).hasPrefix("```") {
-                isInCodeBlock.toggle()
+            let isCodeFlag = line.trimmingCharacters(in: .whitespaces).hasPrefix("```")
+            var shouldTurnOffCodeBlock = false
+            
+            // 1. 状态追踪：代码块保护前置判定
+            if isCodeFlag {
+                if isInCodeBlock {
+                    shouldTurnOffCodeBlock = true
+                } else {
+                    isInCodeBlock = true
+                }
             }
             
-            // 2. 标题路径追踪 (Anchor Tracking)
+            // 2. 标题路径追踪 (Anchor Tracking)与天然物理切分
             if !isInCodeBlock && line.hasPrefix("#") {
-                currentAnchor = line.replacingOccurrences(of: "#", with: "").trimmingCharacters(in: .whitespaces)
+                let trimmedPrev = currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmedPrev.isEmpty {
+                    chunks.append(Chunk(
+                        text: trimmedPrev,
+                        startIndex: currentStartIndex,
+                        anchorPath: currentAnchor,
+                        breadcrumbPath: currentBreadcrumb,
+                        isCode: currentChunkText.contains("```")
+                    ))
+                    currentStartIndex += currentChunkText.count
+                    currentChunkText = ""
+                }
+                
+                // 解析当前的标题级别（计算 # 的个数）
+                let headerLevel = line.prefix(while: { $0 == "#" }).count
+                let headerText = line.dropFirst(headerLevel).trimmingCharacters(in: .whitespaces)
+                
+                if headerLevel > 0 {
+                    let keepCount = headerLevel - 1
+                    if anchorStack.count > keepCount {
+                        anchorStack = Array(anchorStack.prefix(keepCount))
+                    }
+                    anchorStack.append(headerText)
+                    currentBreadcrumb = anchorStack.joined(separator: " > ")
+                    currentAnchor = headerText
+                } else {
+                    currentBreadcrumb = headerText
+                    currentAnchor = headerText
+                }
             }
             
             let lineWithNewline = line + "\n"
             
             // 3. 贪婪聚合与重叠判定
             if (currentChunkText.count + lineWithNewline.count) > config.chunkSize && !isInCodeBlock {
-                // 当前块已满，执行封装
                 chunks.append(Chunk(
                     text: currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines),
                     startIndex: currentStartIndex,
                     anchorPath: currentAnchor,
+                    breadcrumbPath: currentBreadcrumb,
                     isCode: currentChunkText.contains("```")
                 ))
                 
-                // 计算重叠：保留当前块的末尾作为下一个块的开头
                 let overlapIndex = currentChunkText.index(currentChunkText.endIndex, offsetBy: -config.chunkOverlap, default: currentChunkText.startIndex)
                 currentChunkText = String(currentChunkText[overlapIndex...]) + lineWithNewline
                 currentStartIndex += (currentChunkText.count - config.chunkOverlap)
             } else {
                 currentChunkText += lineWithNewline
             }
+            
+            // 4. 代码块保护后置判定
+            if shouldTurnOffCodeBlock {
+                isInCodeBlock = false
+            }
         }
         
         // 补全最后一个块
-        if !currentChunkText.isEmpty {
+        let trimmedLast = currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedLast.isEmpty {
             chunks.append(Chunk(
-                text: currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines),
+                text: trimmedLast,
                 startIndex: currentStartIndex,
                 anchorPath: currentAnchor,
+                breadcrumbPath: currentBreadcrumb,
                 isCode: currentChunkText.contains("```")
             ))
         }
@@ -97,6 +157,10 @@ struct TextChunkerProcessor: Sendable {
 }
 
 private extension String {
+
+    /// 索引
+    /// /// - Parameter index: 索引
+    /// /// - Returns: 返回值
     func index(_ index: String.Index, offsetBy offset: Int, default defaultIndex: String.Index) -> String.Index {
         return self.index(index, offsetBy: offset, limitedBy: self.startIndex) ?? defaultIndex
     }

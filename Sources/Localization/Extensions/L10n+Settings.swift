@@ -13,7 +13,16 @@ import Foundation
 extension L10n {
     public struct Settings {
         public static let t = "System"
+
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+
+        /// 本地化格式化翻译
+        /// /// - Parameter key: key
+        /// /// - Parameter args: args
+        /// /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         /// 获取插件权限提示文案
@@ -32,10 +41,10 @@ extension L10n {
         public static func iCloudLastSyncFormat(_ date: String) -> String { Settings.trf("icloud.lastSyncFormat", date) }
 
         public static var title: String { tr("settings") }
-        public static var systemTheme: String { tr("systemTheme") }
+        public static var systemTheme: String { tr("settings.systemTheme") }
         public static var languageEnglish: String { tr("language.english") }
         public static var languageChinese: String { tr("language.chinese") }
-        public static var systemLanguage: String { tr("language.system") }
+        public static var systemLanguage: String { tr("settings.systemLanguage") }
         public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
         public static var promptLab: String { tr("promptLab") }
@@ -84,7 +93,15 @@ extension L10n {
                 public static var run: String { Localized.tr("settings.developer.stressTest.run", table: t) }
                 public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
                 public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
+
+                /// success
+                /// /// - Parameter n: n
+                /// /// - Returns: 字符串
                 public static func success(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.success", table: t, n) }
+
+                /// confirmAction
+                /// /// - Parameter n: n
+                /// /// - Returns: 字符串
                 public static func confirmAction(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.confirmAction", table: t, n) }
             }
         }
@@ -103,6 +120,10 @@ extension L10n {
         }
 
         public struct InjectDemo {
+
+            /// successMessage
+            /// /// - Parameter n: n
+            /// /// - Returns: 字符串
             public static func successMessage(_ n: Int) -> String { Localized.trf("settings.injectDemo.successMessage", table: t, n) }
             public static var errorMessage: String { Localized.tr("settings.injectDemo.errorMessage", table: t) }
         }

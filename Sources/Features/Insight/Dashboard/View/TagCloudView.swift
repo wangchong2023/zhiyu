@@ -390,6 +390,10 @@ struct TagCloudViewContent: View {
 // 简单的模糊背景视图 (macOS only)
 #if os(macOS)
 struct BlurView: NSViewRepresentable {
+
+    /// 创建NSView
+    /// /// - Parameter context: context
+    /// /// - Returns: 返回值
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.blendingMode = .withinWindow
@@ -397,6 +401,10 @@ struct BlurView: NSViewRepresentable {
         view.state = .active
         return view
     }
+
+    /// 更新NSView
+    /// /// - Parameter nsView: nsView
+    /// /// - Parameter context: context
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 #else

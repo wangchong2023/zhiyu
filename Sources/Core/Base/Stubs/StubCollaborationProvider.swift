@@ -13,19 +13,29 @@ import Foundation
 final class StubCollaborationProvider: CollaborationProviderProtocol {
     weak var delegate: CollaborationProviderDelegate?
     
+    /// 启动Hosting
+    /// /// - Parameter roomName: roomName
+    /// /// - Parameter userName: userName
     func startHosting(roomName: String, userName: String) {
         delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.simulatorNotSupported)
     }
     
+    /// 启动Browsing
+    /// /// - Parameter userName: userName
     func startBrowsing(userName: String) {
         delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.simulatorNotSupported)
     }
     
+    /// 加入Room
+    /// /// - Parameter room: room
     func joinRoom(_ room: DiscoveredRoom) {}
     
+    /// 停止
     func stop() {
         delegate?.providerDidUpdateStatus(L10n.Collaboration.Status.disconnected)
     }
     
+    /// broadcast
+    /// /// - Parameter data: data
     func broadcast(data: Data) {}
 }

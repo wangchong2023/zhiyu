@@ -19,8 +19,11 @@ final class SecurityManager: @unchecked Sendable {
 
     // MARK: - 依赖注入
     
-    /// 注入文件指纹签名仓储，贯彻 DIP 依赖倒置原则
-    @Inject private var signatureRepository: any FileSignatureRepository
+    /// 注入文件指纹签名仓储，贯彻 DIP 依赖倒置原则。
+    /// 采用可选解析防止在冷启动尚未注册时发生崩溃，此时会安全降级到 UserDefaults。
+    private var signatureRepository: (any FileSignatureRepository)? {
+        ServiceContainer.shared.resolveOptional((any FileSignatureRepository).self)
+    }
 
     // MARK: - 存储键名
     private let saltKey = AppConstants.Keys.Storage.securitySalt
@@ -49,19 +52,46 @@ final class SecurityManager: @unchecked Sendable {
             return cached
         }
         
+        // 1. 优先从 Keychain 读取
         if let existing = try? KeychainService.shared.retrieve(key: dbPassphraseKey) {
             cachedPassphrase = existing
             return existing
         }
         
+        #if DEBUG
+        // 2. 在 DEBUG 模式下，Keychain 读不到，尝试从 UserDefaults 兜底读取 (用于模拟器未签名环境)
+        if let fallback = UserDefaults.standard.string(forKey: dbPassphraseKey) {
+            cachedPassphrase = fallback
+            return fallback
+        }
+        #endif
+        
+        // 3. 生成新密码
         let newPassphrase = UUID().uuidString + "-" + Data(UUID().uuidString.utf8).base64EncodedString()
-        try? KeychainService.shared.store(key: dbPassphraseKey, value: newPassphrase)
-        cachedPassphrase = newPassphrase
-        return newPassphrase
+        
+        // 4. 优先存入 Keychain
+        do {
+            try KeychainService.shared.store(key: dbPassphraseKey, value: newPassphrase)
+            cachedPassphrase = newPassphrase
+            return newPassphrase
+        } catch {
+            #if DEBUG
+            // 仅在 DEBUG 下允许写入 UserDefaults 兜底
+            UserDefaults.standard.set(newPassphrase, forKey: dbPassphraseKey)
+            cachedPassphrase = newPassphrase
+            return newPassphrase
+            #else
+            // 生产环境下 Keychain 故障属于灾难性安全错误，拒绝明文存储，直接崩溃以防密文泄露
+            fatalError("❌ Critical security error: Failed to secure Database Passphrase in Keychain.")
+            #endif
+        }
     }
 
     // MARK: - 内容级加密 (AES-GCM)
 
+    /// 加密
+    /// /// - Parameter text: text
+    /// /// - Returns: 字符串
     func encrypt(_ text: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let data = text.data(using: .utf8) else { throw SecurityError.encodingFailed }
@@ -69,6 +99,9 @@ final class SecurityManager: @unchecked Sendable {
         return sealedBox.combined?.base64EncodedString() ?? ""
     }
 
+    /// 解密
+    /// /// - Parameter base64Combined: base64Combined
+    /// /// - Returns: 字符串
     func decrypt(_ base64Combined: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let combinedData = Data(base64Encoded: base64Combined) else { throw SecurityError.decodingFailed }
@@ -81,9 +114,17 @@ final class SecurityManager: @unchecked Sendable {
     // MARK: - 完整性校验 (HMAC)
 
     private func getSalt() async -> String {
+        // 1. 优先从 Keychain 获取
         if let existing = try? KeychainService.shared.retrieve(key: saltKey) {
             return existing
         }
+        
+        #if DEBUG
+        // 2. 在 DEBUG 模式下，Keychain 获取失败，尝试从 UserDefaults 兜底获取
+        if let fallback = UserDefaults.standard.string(forKey: saltKey) {
+            return fallback
+        }
+        #endif
         
         let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
         let newSalt = UUID().uuidString + "-" + UUID().uuidString
@@ -91,15 +132,30 @@ final class SecurityManager: @unchecked Sendable {
         var hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
         
         if !hasSignatures {
-            let count = (try? await signatureRepository.fetchSignatureCount()) ?? 0
+            let count = (try? await signatureRepository?.fetchSignatureCount()) ?? 0
             hasSignatures = count > 0
         }
         
         let saltToStore = hasSignatures ? legacySalt : newSalt
-        try? KeychainService.shared.store(key: saltKey, value: saltToStore)
-        return saltToStore
+        
+        // 3. 优先存入 Keychain
+        do {
+            try KeychainService.shared.store(key: saltKey, value: saltToStore)
+            return saltToStore
+        } catch {
+            #if DEBUG
+            // 仅在 DEBUG 下允许写入 UserDefaults 兜底
+            UserDefaults.standard.set(saltToStore, forKey: saltKey)
+            return saltToStore
+            #else
+            // 生产环境下 Keychain 故障属于灾难性安全错误，直接致命崩溃
+            fatalError("❌ Critical security error: Failed to secure HMAC Salt in Keychain.")
+            #endif
+        }
     }
 
+    /// 计算HMAC
+    /// /// - Returns: 字符串
     func calculateHMAC(for fileURL: URL) async throws -> String {
         let fileData = try Data(contentsOf: fileURL, options: .mappedIfSafe)
         let currentSalt = await getSalt()
@@ -111,20 +167,44 @@ final class SecurityManager: @unchecked Sendable {
         return Data(signature).base64EncodedString()
     }
     
+    /// 保存Signature
+    /// /// - Parameter signature: signature
     func saveSignature(_ signature: String, forFilePath filePath: String) async {
         let currentSalt = await getSalt()
         do {
-            try await signatureRepository.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
+            guard let repo = signatureRepository else {
+                throw NSError(domain: "SecurityManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "FileSignatureRepository is not registered yet"])
+            }
+            try await repo.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
         } catch {
-            print("❌ [SecurityManager] Failed to save file HMAC signature: \(error)")
+            #if DEBUG
+            // 仅在 DEBUG 下允许降级到 UserDefaults，用于模拟器未签名环境
+            print("⚠️ [SecurityManager] DEBUG: HMAC 签名持久化降级到 UserDefaults: \(error)")
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
             UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
+            #else
+            // 生产环境：签名持久化失败属于严重安全错误，不允许明文降级
+            Logger.shared.addLog(
+                action: .error,
+                target: "SecurityManager",
+                details: "Critical: Failed to persist HMAC signature securely: \(error.localizedDescription)",
+                module: "Security"
+            )
+            #endif
         }
     }
     
+    /// 验证Integrity
+    /// /// - Returns: 是否成功
     func verifyIntegrity(for fileURL: URL) async -> Bool {
         let filePath = fileURL.path
-        let storedSig = try? await signatureRepository.fetchSignature(forFilePath: filePath)
+        
+        let storedSig: String?
+        if let repo = signatureRepository {
+            storedSig = try? await repo.fetchSignature(forFilePath: filePath)
+        } else {
+            storedSig = nil
+        }
         
         var finalStoredSig = storedSig
         if finalStoredSig == nil {
@@ -142,6 +222,7 @@ final class SecurityManager: @unchecked Sendable {
         }
     }
     
+    /// 更新Signature
     func updateSignature(for fileURL: URL) async {
         do {
             let sig = try await calculateHMAC(for: fileURL)

@@ -20,6 +20,36 @@ final class DatabaseManager: Sendable {
     /// 全局唯一的线程安全单例实例。
     static let shared = DatabaseManager()
     
+    /// 数据库中枢当前的运行状态。
+    private(set) var state: DatabaseState = .uninitialized {
+        didSet {
+            NotificationCenter.default.post(name: .databaseStateDidChange, object: nil)
+        }
+    }
+    
+    /// 并发活跃写入事务计数器，用于 Vault 热切换时的优雅连接排空（Draining）
+    private let transactionLock = NSLock()
+    private var _activeTransactionsCount: Int = 0
+    
+    /// 获取当前活跃的事务数
+    var activeTransactionsCount: Int {
+        transactionLock.withLock { _activeTransactionsCount }
+    }
+    
+    /// 递增活跃写入事务数
+    func incrementActiveTransactions() {
+        transactionLock.withLock { _activeTransactionsCount += 1 }
+    }
+    
+    /// 递减活跃写入事务数
+    func decrementActiveTransactions() {
+        transactionLock.withLock {
+            if _activeTransactionsCount > 0 {
+                _activeTransactionsCount -= 1
+            }
+        }
+    }
+    
     /// 专属笔记本数据库写入连接池（dbWriter）。
     /// 支持多线程并发读写与 WAL 安全锁隔离，是当前已激活 Vault 的核心数据通道。
     var dbWriter: DatabaseWriter?
@@ -97,78 +127,146 @@ final class DatabaseManager: Sendable {
     /// - Parameter url: 指向专属数据库的物理文件 URL 路径。
     /// - Throws: 目录授权、SQLite 实例化或专属 Schema 迁移失败。
     func setup(at url: URL) throws {
-        // 1. 自动计算并在专属库同级目录下建立独立的 global.sqlite3 全局库
-        let globalURL = url.deletingLastPathComponent().appendingPathComponent(AppConstants.Storage.globalDatabaseName)
-        try setupGlobal(at: globalURL)
-        
-        // 2. 建立默认专属物理库连接
-        self.dbURL = url
-        let path = url.path
-        let folderURL = url.deletingLastPathComponent()
-        if !FileManager.default.fileExists(atPath: folderURL.path) {
-            try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        do {
+            // 1. 自动计算并在专属库同级目录下建立独立的 global.sqlite3 全局库
+            let globalURL = url.deletingLastPathComponent().appendingPathComponent(AppConstants.Storage.globalDatabaseName)
+            try setupGlobal(at: globalURL)
+            
+            // 2. 连接专属物理库前，异步触发哈希签名防篡改校验 (HMAC-SHA256)
+            //    不在 setup() 中同步阻塞等待校验结果，避免 @MainActor + semaphore.wait() 死锁。
+            //    校验失败将通过 NotificationCenter 广播通知，由上层 UI 处理。
+            if FileManager.default.fileExists(atPath: url.path) {
+                scheduleIntegrityVerification(for: url)
+            }
+            
+            // 3. 建立默认专属物理库连接
+            self.dbURL = url
+            let path = url.path
+            let folderURL = url.deletingLastPathComponent()
+            if !FileManager.default.fileExists(atPath: folderURL.path) {
+                try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            }
+            
+            let config = createDatabaseConfiguration()
+            let dbPool = try DatabasePool(path: path, configuration: config)
+            self.dbWriter = dbPool
+            
+            // 4. 执行专属库架构迁移
+            try migrator.migrate(dbPool)
+            
+            // 5. 挂载成功后，异步刷新一次物理 HMAC 签名，对齐状态
+            scheduleSignatureUpdate(for: url)
+            
+            self.state = .ready
+        } catch {
+            print("❌ [DatabaseManager] Database setup failed, degrading to in-memory: \(error.localizedDescription)")
+            self.state = .corrupted(error.localizedDescription)
+            degradeToInMemory(error: error)
+            throw error
         }
-        
-        let config = createDatabaseConfiguration()
-        
-        let dbPool = try DatabasePool(path: path, configuration: config)
-        self.dbWriter = dbPool
-        
-        // 3. 执行专属库架构迁移
-        try migrator.migrate(dbPool)
+    }
+    
+    // MARK: - 异步 HMAC 签名校验与更新（替代 semaphore.wait 同步阻塞）
+    
+    /// 异步触发完整性校验，校验失败时广播通知
+    private func scheduleIntegrityVerification(for url: URL) {
+        Task.detached { [weak self] in
+            guard self != nil else { return }
+            let isVerified = await SecurityManager.shared.verifyIntegrity(for: url)
+            if !isVerified {
+                #if DEBUG
+                print("⚠️ [DatabaseManager] DEBUG: 异步校验发现签名不一致，正在就地进行重新签名对齐...")
+                await SecurityManager.shared.updateSignature(for: url)
+                #else
+                await MainActor.run {
+                    NotificationCenter.default.post(
+                        name: .databaseIntegrityCheckFailed,
+                        object: nil,
+                        userInfo: ["url": url]
+                    )
+                }
+                #endif
+            }
+        }
+    }
+    
+    /// 异步刷新物理 HMAC 签名
+    private func scheduleSignatureUpdate(for url: URL) {
+        Task.detached {
+            await SecurityManager.shared.updateSignature(for: url)
+        }
+    }
+    
+    /// 发生严重故障时，高可用降级至纯内存模式，阻止 DI 崩溃并允许应用启动。
+    private func degradeToInMemory(error: Error) {
+        do {
+            print("⚠️ [DatabaseManager] Safety warning: Fallback to transient in-memory database configuration due to: \(error.localizedDescription)")
+            
+            // 1. 物理重置以清理潜在冲突
+            self.dbURL = nil
+            self.globalDBURL = nil
+            
+            // 2. 挂载内存型专属数据库并运行 Schema 架构迁移
+            let memoryQueue = try DatabaseQueue()
+            self.dbWriter = memoryQueue
+            try migrator.migrate(memoryQueue)
+            
+            // 3. 挂载内存型全局配置库并运行全局 Schema 架构迁移
+            let memoryGlobalQueue = try DatabaseQueue()
+            self.globalWriter = memoryGlobalQueue
+            try globalMigrator.migrate(memoryGlobalQueue)
+            
+            print("✅ [DatabaseManager] Fallback in-memory database successfully initialized.")
+        } catch {
+            // 如果连内存数据库都无法初始化（极端资源限制），则进行最终崩溃
+            fatalError("❌ Fatal recovery failure: In-memory fallback database could not be initialized: \(error.localizedDescription)")
+        }
     }
     
     /// 物理热切换当前激活的专属笔记本数据库（Multi-Vault Switching）。
-    ///
-    /// - 架构防死锁与 WAL 连接池生命周期深度设计规范 (WAL Exclusive Lock Release & Anti-Deadlock Specification):
-    ///   在多租户 (Multi-Vault) 热插拔架构中，由于 SQLite 启用了高性能的 WAL (Write-Ahead Logging) 模式，
-    ///   操作系统会在沙盒中生成并映射 `.sqlite3`、`.sqlite3-wal` 及 `.sqlite3-shm` 三个物理文件。
-    ///   
-    ///   ```
-    ///   ┌────────────────────────────────────────────────────────┐
-    ///   │           SQLite WAL 并发独占锁释放与重构生命周期           │
-    ///   └────────────────────────────────────────────────────────┘
-    ///         [旧数据库激活]
-    ///               │
-    ///               ▼
-    ///         1. 显式 dbWriter = nil  ──► 触发 ARC 同步析构，注销所有 Reader / Writer 句柄
-    ///               │                      物理闭合并刷新 .sqlite3-wal 缓存，彻底释放 Shared/Exclusive 锁
-    ///               ▼
-    ///         2. 重定向 dbURL = url   ──► 指向新物理笔记本路径
-    ///               │
-    ///               ▼
-    ///         3. 重建 DatabasePool   ──► 动态开辟全新隔离的连接池通道
-    ///               │
-    ///               ▼
-    ///         4. 跑 Schema 架构迁移  ──► 自动化建立新专属库元数据与虚拟表
-    ///               │
-    ///               ▼
-    ///         5. 广播 databaseDidSwitch 通知 ──► 各子服务（Embedding/Search）执行内存缓存强力驱逐
-    ///   ```
-    ///   
-    ///   [死锁场景剖析 (Deadlock Risk)]：
-    ///   如果之前的 `DatabasePool` 连接句柄没有被 100% 销毁，它的多个读取连接与写入连接可能仍隐式保持着 SQLite 的
-    ///   Shared 或 Reserved/Exclusive 锁状态。若此时立即去加载、删除、移动或者在其他线程重入读写这个数据库文件，
-    ///   将瞬间触发 SQLite 的 `SQLITE_BUSY` (数据库锁对撞)，甚至导致系统主线程永久性锁死死锁。
-    ///
-    ///   [金牌防死锁架构解决路径]：
-    ///   1. **步骤一 (物理断联释放锁)**：显式执行 `self.dbWriter = nil`。根据 Swift ARC 机制，这会触发旧 `DatabasePool` 实例
-    ///      及其底层所有活跃 SQLite 句柄的**同步析构与强物理销毁**。这一步是释放 SQLite WAL 锁、将缓冲区刷新至磁盘、
-    ///      并强行解开文件独占锁的黄金法门。
-    ///   2. **步骤二 (物理重定向)**：确立全新的 `self.dbURL = url`。
-    ///   3. **步骤三 (串行重建与安全隔离)**：在此基础上重新配置并唤醒目标物理库的并发 Pool，以隔离态重新跑 Schema 迁移，
-    ///      物理切断新旧库之间的任何锁传染通路。
-    ///
-    /// - Parameters:
-    ///   - vaultID: 切换目标笔记本的唯一识别码 UUID。
-    ///   - url: 目标笔记本数据库在沙盒中的物理绝对路径 URL。
-    /// - Throws: 断开挂载异常、新库 GRDB Pool 实例化异常或架构版本不兼容升级失败。
-    func switchDatabase(to vaultID: UUID, at url: URL) throws {
+    /// - Important: 此方法为 `async throws`，替换了原 `semaphore.wait()` 同步阻塞实现，
+    ///   消除了 @MainActor + 主线程信号量等待导致的死锁隐患。
+    func switchDatabase(to vaultID: UUID, at url: URL) async throws {
         print("🔄 [DatabaseManager] Starting physical multi-database hot swap => Target: \(url.lastPathComponent)")
         
-        // 1. 【安全核心步骤】：显式重置为 nil 以强制触发旧专属库 DatabasePool 资源 ARC 同步析构
-        // 彻底释放 WAL 模式下对 .sqlite3-wal 及 .sqlite3-shm 物理文件的读写独占锁，防止后续多库切换或物理移动擦除时发生 SQLITE_BUSY 死锁。
+        // 0. 切换前对目标专属库进行完整性哈希签名防篡改校验
+        if FileManager.default.fileExists(atPath: url.path) {
+            let isVerified = await SecurityManager.shared.verifyIntegrity(for: url)
+            
+            if !isVerified {
+                #if DEBUG
+                print("⚠️ [DatabaseManager] DEBUG: 物理多金库热切换时目标库哈希指纹校验失败，正在就地进行重新签名对齐...")
+                await SecurityManager.shared.updateSignature(for: url)
+                #else
+                throw NSError(domain: "DatabaseManager", code: 403, userInfo: [NSLocalizedDescriptionKey: L10n.Security.targetIntegrityVerificationFailed])
+                #endif
+            }
+        }
+        
+        // 1. 【安全核心步骤】：优雅连接排空，异步等待后台写事务结束
+        let maxWaitTime: Duration = .milliseconds(1500)
+        let interval: Duration = .milliseconds(50)
+        var waitedTime: Duration = .zero
+        while activeTransactionsCount > 0 && waitedTime < maxWaitTime {
+            try? await Task.sleep(for: interval)
+            waitedTime += interval
+        }
+        if activeTransactionsCount > 0 {
+            print("⚠️ [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close.")
+        } else {
+            print("✅ [DatabaseManager] switchDatabase: All active transactions drained successfully.")
+        }
+        
+        let oldURL = self.dbURL
+        closeWriter(self.dbWriter)
         self.dbWriter = nil
+        
+        // 旧数据库连接关闭后，WAL 已安全写回，异步更新物理防篡改 HMAC 签名
+        if let oldURL = oldURL, FileManager.default.fileExists(atPath: oldURL.path) {
+            await SecurityManager.shared.updateSignature(for: oldURL)
+            print("💾 [DatabaseManager] Closed database connection and updated signature for: \(oldURL.lastPathComponent)")
+        }
+        
         self.dbURL = url
         
         // 2. 确保目标文件夹在沙盒中物理存在
@@ -177,18 +275,19 @@ final class DatabaseManager: Sendable {
             try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
         }
         
-        // 3. 重新配置并开辟新库的并发池连接，确保外键约束正常挂载
-        // 3. 重新配置并开辟新库的并发池连接，应用高性能调优 PRAGMA
+        // 3. 重新配置并开辟新库的并发池连接
         let config = createDatabaseConfiguration()
-        
         let dbPool = try DatabasePool(path: url.path, configuration: config)
         self.dbWriter = dbPool
         
-        // 4. 对新专属库自动运行最新版本的 Schema 架构迁移（FTS5、Pages、SRS等表级热挂载）
+        // 4. 对新专属库自动运行 Schema 迁移
         try migrator.migrate(dbPool)
         print("✅ [DatabaseManager] Exclusive physical database successfully switched and remounted => \(url.lastPathComponent)")
         
-        // 5. 广播系统全局通知，引导 EmbeddingManager 和 AppStore 精准完成内存向量/数据实体驱逐与载入，重置搜索索引状态
+        // 5. 切换成功，异步刷新物理完整性指纹
+        await SecurityManager.shared.updateSignature(for: url)
+        
+        // 6. 广播通知
         NotificationCenter.default.post(
             name: .databaseDidSwitch,
             object: nil,
@@ -232,9 +331,11 @@ final class DatabaseManager: Sendable {
     private var migrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
         
-        // 若在 DEBUG 研发模式下发生不兼容变动，允许就地抹除以加速迭代
+        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
         #if DEBUG
-        migrator.eraseDatabaseOnSchemaChange = true
+        if !isInTesting {
+            migrator.eraseDatabaseOnSchemaChange = true
+        }
         #endif
 
         // V1: 初始工业化架构 - 全表审计标准化
@@ -422,8 +523,11 @@ final class DatabaseManager: Sendable {
     private var globalMigrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
         
+        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
         #if DEBUG
-        migrator.eraseDatabaseOnSchemaChange = true
+        if !isInTesting {
+            migrator.eraseDatabaseOnSchemaChange = true
+        }
         #endif
         
         migrator.registerMigration("v1_global_schema") { db in
@@ -468,10 +572,32 @@ final class DatabaseManager: Sendable {
 
     /// 重置并释放所有已挂载的数据库 Pool 连接资源（在物理移动、抹除文件或退出登录前必须强制调用）。
     func reset() {
+        closeWriter(dbWriter)
+        closeWriter(globalWriter)
         dbWriter = nil
         globalWriter = nil
         dbURL = nil
         globalDBURL = nil
+    }
+    
+    /// 强制对指定的数据库连接执行 Schema 架构迁移以重新构建物理表。
+    /// - Parameter writer: 目标数据库连接写入器 (DatabaseWriter)。
+    /// - Throws: 数据库迁移执行异常。
+    func migrate(_ writer: any DatabaseWriter) throws {
+        try migrator.migrate(writer)
+    }
+    
+    /// 确定性物理关闭 DatabasePool 数据库连接池，强刷写 WAL 并释放文件描述符，防范 vnode 资源残留泄露 (@P1-6)
+    private func closeWriter(_ writer: DatabaseWriter?) {
+        guard let writer = writer else { return }
+        if let dbPool = writer as? DatabasePool {
+            do {
+                try dbPool.close()
+                print("🔒 [DatabaseManager] DatabasePool connection closed successfully.")
+            } catch {
+                print("⚠️ [DatabaseManager] Failed to close DatabasePool connection: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
@@ -484,7 +610,8 @@ extension DatabaseManager: VaultDatabaseSwitcher {
     /// `DatabasePool` 及其全部活跃的 SQLite 读写连接句柄的同步析构与销毁。
     /// 这一步骤是强物理释放 WAL 文件锁、规避 `SQLITE_BUSY` 死锁风险的关键环节。
     public func releaseDatabaseConnection() {
-        // 核心步骤：显式重置专属物理库写入池，利用 Swift ARC 触发析构以释放 WAL 文件锁
+        // 核心步骤：确定性物理关闭 Exclusive Pool 以闭合并写回 WAL 文件锁，防范句柄碎片挂起
+        closeWriter(self.dbWriter)
         self.dbWriter = nil
     }
 }
@@ -495,6 +622,8 @@ extension DatabaseManager: VaultDatabaseSwitcher {
 extension Notification.Name {
     /// 专属数据库多库热切换成功完成时的全局广播通知。
     static let databaseDidSwitch = Notification.Name("databaseDidSwitch")
+    /// 数据库物理文件 HMAC 完整性校验失败时的全局广播通知。
+    static let databaseIntegrityCheckFailed = Notification.Name("databaseIntegrityCheckFailed")
 }
 
 // MARK: - 物理隔离层强类型异常
@@ -502,4 +631,26 @@ extension Notification.Name {
 enum DatabaseError: Error {
     /// 数据库连接池配置或建立失败。
     case initializationFailed
+}
+
+/// 数据库中枢当前的运行状态。
+enum DatabaseState: Sendable, Equatable {
+    case uninitialized
+    case ready
+    case corrupted(String)
+    
+    /// 判等比较
+    static func == (lhs: DatabaseState, rhs: DatabaseState) -> Bool {
+        switch (lhs, rhs) {
+        case (.uninitialized, .uninitialized): return true
+        case (.ready, .ready): return true
+        case (.corrupted(let e1), .corrupted(let e2)): return e1 == e2
+        default: return false
+        }
+    }
+}
+
+extension Notification.Name {
+    /// 数据库运行状态发生改变的全局广播通知。
+    static let databaseStateDidChange = Notification.Name("databaseStateDidChange")
 }

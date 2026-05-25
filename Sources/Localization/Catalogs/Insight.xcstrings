@@ -4182,6 +4182,23 @@
           }
         }
       }
+    },
+    "graph.nodesLimitDegradeHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The number of nodes exceeds 2000. It has been automatically degraded to the high-performance 2D topology view to prevent lag."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "节点总数已超出 2000，已自动保持在高性能 2D 拓扑视图中，以防画面卡顿。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

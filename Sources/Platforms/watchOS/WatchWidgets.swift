@@ -19,6 +19,8 @@ struct WatchCaptureIntent: AppIntent {
     static let description = IntentDescription(.init("watch.widget.desc", defaultValue: "Directly enter the audio capture screen", table: "Watch"))
     static let persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
     
+    /// 执行
+    /// /// - Returns: 返回值
     func perform() async throws -> some IntentResult {
         // 点击表盘时由系统拉起 App 并进入采集界面
         return .result()

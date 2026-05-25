@@ -144,6 +144,8 @@ struct AdaptiveDetailView: View {
     /// - Parameter route: 路由目的地类型 AppRoute
     /// - Returns: 目标内容视图
     @ViewBuilder
+
+    /// 创建DestinationView
     func makeDestinationView(for route: AppRoute) -> some View {
         ViewFactory.makeView(for: route)
     }
@@ -152,6 +154,8 @@ struct AdaptiveDetailView: View {
     /// - Parameter page: 知识库页面数据模型
     /// - Returns: 页面详情视图
     @ViewBuilder
+
+    /// 创建PageDetailView
     func makePageDetailView(for page: KnowledgePage) -> some View {
         PageDetailView(page: page)
     }

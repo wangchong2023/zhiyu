@@ -66,7 +66,10 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
     @ObservationIgnored @Inject private var llmService: LLMService
-    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
+    /// [L1.5] 知识库领域仓储 — 遵循 DIP，L2 不再直接依赖 L1 SQLiteStore
+    @ObservationIgnored @Inject private var knowledgeRepository: any KnowledgeRepository
+    /// [L0] 向量检索能力 — 通过 L0 协议注入，避免直接耦合 L1 EmbeddingManager
+    @ObservationIgnored @Inject private var vectorStore: any VectorIndexableStore
     @ObservationIgnored @Inject private var lintService: LintService
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var linkService: LinkService
@@ -77,14 +80,17 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
     // ── 扫描与健康检查逻辑 ──
 
+    /// 运行Lint
     public func runLint() async {
         let taskID = TaskCenter.shared.addTask(type: .healthCheck, name: L10n.Common.Sidebar.healthCheck, target: "System")
-        let issues = await lintService.runLint(pages: await pageStore.pages, linkService: linkService)
+        let pages = (try? await knowledgeRepository.fetchAll()) ?? []
+        let issues = await lintService.runLint(pages: pages, linkService: linkService)
         lintIssues = issues
         lastLintDate = Date()
         TaskCenter.shared.updateTask(taskID, status: .completed)
     }
 
+    /// 运行AI扫描
     public func runAIScan() async {
         guard llmService.isEnabled else {
             logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
@@ -95,11 +101,12 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
         let taskID = TaskCenter.shared.addTask(type: .ai, name: L10n.AI.Task.tr("scanTaskName"), target: "System")
 
         do {
-            let samplePages = Array(await pageStore.pages.prefix(10))
+            let allPages = (try? await knowledgeRepository.fetchAll()) ?? []
+            let samplePages = Array(allPages.prefix(10))
             let suggestions = try await llmService.analyzeForRefactoring(pages: samplePages)
 
-            let activePages = await pageStore.pages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
-            let existingTitles = await pageStore.pages.map { $0.title }
+            let activePages = allPages.sorted(by: { $0.updatedAt > $1.updatedAt }).prefix(5)
+            let existingTitles = allPages.map { $0.title }
 
             var tempLinks: [PotentialLinkSuggestion] = []
             var seenLinks = Set<String>()
@@ -125,17 +132,20 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
         }
     }
 
+    /// 拉取FixSuggestion
+    /// /// - Returns: 字符串
     public func fetchFixSuggestion(for issue: LintIssue) async throws -> String {
         HapticFeedback.shared.trigger(.selection)
-        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: await pageStore.pages)
+        let pages = (try? await knowledgeRepository.fetchAll()) ?? []
+        return try await AISynthesisService.shared.suggestFix(issue: issue, pages: pages)
     }
 
     /// 查找与当前页面语义相似的页面（基于向量嵌入）
     public func findSimilarPages(for page: KnowledgePage, limit: Int = 3) async -> [KnowledgePage] {
-        let results = await pageStore.embeddingManager.search(query: page.title, topK: limit + 1)
+        let results = await vectorStore.embeddingManager.search(query: page.title, topK: limit + 1)
         
         var similarPages: [KnowledgePage] = []
-        let allPages = await pageStore.pages
+        let allPages = (try? await knowledgeRepository.fetchAll()) ?? []
         for res in results {
             if res.id == page.id { continue }
             if let p = allPages.first(where: { $0.id == res.id }) {
@@ -207,6 +217,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
         }
     }
 
+    /// 清除All
     public func clearAll() {
         refactorSuggestions = []
         potentialLinks = []
@@ -222,10 +233,14 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     }
 
     // ── 建议清理方法 ──
+    /// 移除Potential链接
+    /// /// - Parameter id: id
     public func removePotentialLink(id: UUID) {
         potentialLinks.removeAll { $0.id == id }
     }
 
+    /// 移除重构Suggestion
+    /// /// - Parameter id: id
     public func removeRefactorSuggestion(id: String) {
         refactorSuggestions.removeAll { $0.id == id }
     }

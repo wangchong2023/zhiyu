@@ -82,6 +82,8 @@ public final class KnowledgePageManager {
 
     /// 创建页面
     @discardableResult
+
+    /// 创建Page
     public func createPage(
         title: String,
         pageType: PageType,
@@ -172,6 +174,9 @@ public final class KnowledgePageManager {
 
     // MARK: - 撤销 / 重做
 
+    /// 撤销
+    /// /// - Parameter currentPages: currentPages
+    /// /// - Returns: 列表
     public func undo(currentPages: [KnowledgePage]) async throws -> [KnowledgePage]? {
         if let prev = undoService.undo(currentPages: currentPages) {
             await pageStore.replaceAllPages(prev)
@@ -180,6 +185,9 @@ public final class KnowledgePageManager {
         return nil
     }
 
+    /// 重做
+    /// /// - Parameter currentPages: currentPages
+    /// /// - Returns: 列表
     public func redo(currentPages: [KnowledgePage]) async throws -> [KnowledgePage]? {
         if let next = undoService.redo(currentPages: currentPages) {
             await pageStore.replaceAllPages(next)
@@ -223,14 +231,20 @@ public final class KnowledgePageManager {
 
     // MARK: - 标签管理转发
 
+    /// 重命名Tag
+    /// /// - Parameter oldTag: oldTag
     public func renameTag(_ oldTag: String, to newTag: String) async {
         await tagStore.renameTag(old: oldTag, to: newTag)
     }
 
+    /// 删除Tag
+    /// /// - Parameter tag: tag
     public func deleteTag(_ tag: String) async {
         await tagStore.deleteTag(tag)
     }
 
+    /// bulk删除Tags
+    /// /// - Parameter tags: tags
     public func bulkDeleteTags(_ tags: [String]) async {
         await tagStore.bulkDeleteTags(tags)
     }
