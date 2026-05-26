@@ -82,44 +82,43 @@ struct SettingsView: View {
         @Bindable var router = router
         
         Group {
-            if appEnv.platformEnv.screenClass == .compact {
-                // 紧凑屏下：采用原汁原味的 NavigationStack 包裹纵向单列表形式
-                NavigationStack {
-                    ZStack {
-                        themeManager.pageBackground()
-                            .ignoresSafeArea()
-                        
-                        compactList
-                    }
-                    .navigationTitle(L10n.Settings.title)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            doneButton(router: router)
-                        }
-                    }
-                }
-            } else {
-                // 宽屏/大屏下：采用左右分栏 (Master-Detail) 极佳体验布局
-                NavigationSplitView {
-                    ZStack {
-                        themeManager.pageBackground()
-                            .ignoresSafeArea()
-                        
-                        sidebarColumn
-                    }
-                    .navigationTitle(L10n.Settings.title)
-                } detail: {
-                    ZStack {
-                        themeManager.pageBackground()
-                            .ignoresSafeArea()
-                        
-                        NavigationStack {
-                            detailColumn(for: selectedSection, router: router)
-                        }
+            #if targetEnvironment(macCatalyst)
+            // macOS Catalyst 下采用自定义的左右固定分栏 (HStack) 布局，符合 Mac 平台多窗口及大屏偏好设置的操作习惯
+            HStack(spacing: 0) {
+                sidebarColumn
+                    .frame(width: 240) // 精准限制左侧分类栏宽度为 240
+                
+                Divider()
+                    .background(Color.appBorder.opacity(0.3))
+                
+                ZStack {
+                    themeManager.pageBackground()
+                        .ignoresSafeArea()
+                    
+                    NavigationStack {
+                        detailColumn(for: selectedSection, router: router)
                     }
                 }
-                .navigationSplitViewStyle(.balanced)
+                .frame(maxWidth: .infinity)
             }
+            #else
+            // iOS、iPadOS 端一律采用平铺的单列表结构。在 iPad 居中 Sheet 弹窗（600x550 物理像素）中能够独享完整宽度，
+            // 规避分栏拥挤，且常用设置项一键直达，免除“左选分类、右改配置”的二级菜单操作，极大简化交互复杂度
+            NavigationStack {
+                ZStack {
+                    themeManager.pageBackground()
+                        .ignoresSafeArea()
+                    
+                    compactList
+                }
+                .navigationTitle(L10n.Settings.title)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        doneButton(router: router)
+                    }
+                }
+            }
+            #endif
         }
         .environment(\.locale, router.currentLocale)
     }
@@ -152,23 +151,39 @@ struct SettingsView: View {
         .scrollContentBackground(.hidden)
     }
     
-    /// 构建大屏左侧分类侧边栏
+    /// 构建大屏左侧分类侧边栏（气泡圆角卡片样式，具备呼吸感与选中高亮）
     private var sidebarColumn: some View {
-        List(SettingsSection.allCases, selection: $selectedSection) { section in
-            HStack(spacing: DesignSystem.medium) {
-                Image(systemName: section.iconName)
-                    .font(.subheadline)
-                    .foregroundStyle(.appAccent)
-                    .frame(width: 24, alignment: .center)
-                Text(section.displayName)
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(.appText)
+        ScrollView {
+            VStack(spacing: 6) {
+                ForEach(SettingsSection.allCases) { section in
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.selection)
+                        selectedSection = section
+                    }) {
+                        HStack(spacing: DesignSystem.medium) {
+                            Image(systemName: section.iconName)
+                                .font(.subheadline)
+                                .foregroundStyle(selectedSection == section ? .white : .appAccent)
+                                .frame(width: 24, alignment: .center)
+                            Text(section.displayName)
+                                .font(.body.weight(.medium))
+                                .foregroundStyle(selectedSection == section ? .white : .appText)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(selectedSection == section ? Color.appAccent : Color.clear)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
-            .tag(section)
-            .appListRowBackground()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 16)
         }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
+        .background(Color.appCard.opacity(0.4)) // 侧边栏微暗色半透明质感
     }
     
     /// 根据当前选中的分类，渲染右侧具体详情面板

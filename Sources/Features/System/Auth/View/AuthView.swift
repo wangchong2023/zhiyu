@@ -22,6 +22,7 @@ struct AuthView: View {
     @State private var code: String = ""
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
+    @State private var isAgreementChecked: Bool = false
     
     var body: some View {
         ZStack {
@@ -34,29 +35,29 @@ struct AuthView: View {
                     // 1. Logo & 标语 (品牌展示板块)
                     heroHeader
                     
-                    // 2. 表单与操作交互板块 (组群内聚)
-                    VStack(spacing: Spacing.standardPadding) { // 组群内部间距调整为更舒适的 16px
-                        // 模式切换 (登录/注册)
-                        modePicker
+                    // 2. 一键登录交互板块
+                    VStack(spacing: Spacing.large) {
+                        // 手机号掩码显示
+                        Text("180****6625")
+                            .font(.system(size: DesignSystem.titleFontSize * 1.2, weight: .bold, design: .rounded))
+                            .foregroundStyle(.appText)
+                            .padding(.top, Spacing.medium)
                         
-                        // 表单区域 (输入框 + 主操作按钮)
-                        VStack(spacing: Spacing.medium) {
-                            if isRegisterMode {
-                                registerForm
-                            } else {
-                                loginForm
-                            }
-                            
-                            actionButton
-                        }
-                        .padding(Spacing.standardPadding)
-                        .appContainer(cornerRadius: Spacing.largeRadius)
+                        // 一键登录按钮
+                        actionButton
+                        
+                        // 协议勾选
+                        agreementSection
+                        
+                        Spacer().frame(height: Spacing.large)
+                        
+                        // 更多登录方式
+                        thirdPartySection
                     }
+                    .padding(Spacing.wide)
+                    .appContainer(cornerRadius: Spacing.largeRadius)
                     
-                    // 3. 第三方登录
-                    thirdPartySection
-                    
-                    // 4. 游客模式
+                    // 3. 游客模式
                     guestButton
                 }
                 .padding(.horizontal, Spacing.wide)
@@ -194,39 +195,72 @@ struct AuthView: View {
                     ProgressView()
                         .tint(.white)
                 } else {
-                    Text(isRegisterMode ? L10n.Auth.register : L10n.Auth.login)
-                        .font(.headline)
+                    Text(L10n.Auth.oneClickLogin)
+                        .font(.headline.weight(.semibold))
                         .foregroundStyle(.white)
                 }
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignSystem.Domain.Auth.actionButtonVerticalPadding)
             .background(Color.appAccent)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
-            .shadow(color: .appAccent.opacity(0.3), radius: 10, y: 5)
+            .clipShape(Capsule())
+            .shadow(color: Color.appAccent.opacity(0.3), radius: 10, y: 5)
         }
         .disabled(isLoading)
     }
     
-    private var thirdPartySection: some View {
-        VStack(spacing: Spacing.medium) {
-            HStack {
-                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
-                Text(L10n.Auth.thirdParty)
+    private var agreementSection: some View {
+        HStack(alignment: .top, spacing: Spacing.tightPadding) {
+            Button(action: {
+                withAnimation { isAgreementChecked.toggle() }
+            }) {
+                Image(systemName: isAgreementChecked ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isAgreementChecked ? Color.appAccent : Color.appSecondary)
+                    .font(.system(size: 16))
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(L10n.Auth.agreementText)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
+                    .lineSpacing(2)
+                
+                if !isAgreementChecked {
+                    Text(L10n.Auth.pleaseCheckAgreement)
+                        .font(.caption2)
+                        .foregroundStyle(Color.appAccent)
+                }
+            }
+        }
+        .padding(.horizontal, Spacing.small)
+    }
+    
+    private var thirdPartySection: some View {
+        VStack(spacing: Spacing.large) {
+            HStack {
+                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
+                Text(L10n.Auth.moreLoginMethods)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                    .padding(.horizontal, Spacing.small)
                 Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
             }
             
-            HStack(spacing: Spacing.medium) {
-                ThirdPartyIconButton(icon: "message.fill", color: .green) {
+            HStack(spacing: Spacing.large) { // 加大间距以容纳5个图标
+                ThirdPartyIconButton(icon: "WechatLogo", isSystem: false, color: .green) { // 微信登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
                 }
-                ThirdPartyIconButton(icon: "person.2.fill", color: .blue) {
+                ThirdPartyIconButton(icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
+                    handleAppleLogin()
+                }
+                ThirdPartyIconButton(icon: "GoogleLogo", isSystem: false, color: .blue) { // Google登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
                 }
-                ThirdPartyIconButton(icon: "apple.logo", color: .primary) {
-                    handleAppleLogin()
+                ThirdPartyIconButton(icon: "GithubLogo", isSystem: false, color: .primary) { // Github登录
+                    ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
+                }
+                ThirdPartyIconButton(icon: "iphone.gen1", isSystem: true, color: .appAccent) { // 手机短信登录
+                    ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
                 }
             }
         }
@@ -251,16 +285,18 @@ struct AuthView: View {
     // MARK: - 逻辑
     
     private func handleAuth() {
+        if !isAgreementChecked {
+            ToastManager.shared.show(type: .error, message: L10n.Auth.agreementRequired)
+            HapticFeedback.shared.trigger(.error)
+            return
+        }
+        
         Task {
             isLoading = true
             errorMessage = nil
             
-            let success: Bool
-            if isRegisterMode {
-                success = await authService.register(phone: phone, code: code, password: password)
-            } else {
-                success = await authService.login(identity: identity, password: password)
-            }
+            // 模拟一键登录逻辑，这里简单处理为直接登录成功
+            let success = await authService.login(identity: "180XXXX6625", password: "one_click_login_mock")
             
             if !success {
                 errorMessage = L10n.Auth.authFailed
@@ -352,8 +388,16 @@ struct ThirdPartyButton: View {
 }
 struct ThirdPartyIconButton: View {
     let icon: String
+    let isSystem: Bool
     let color: Color
     let action: () -> Void
+    
+    init(icon: String, isSystem: Bool = true, color: Color, action: @escaping () -> Void) {
+        self.icon = icon
+        self.isSystem = isSystem
+        self.color = color
+        self.action = action
+    }
     
     var body: some View {
         Button(action: action) {
@@ -363,13 +407,29 @@ struct ThirdPartyIconButton: View {
                     .frame(width: DesignSystem.Domain.Auth.thirdPartyIconContainerSize, height: DesignSystem.Domain.Auth.thirdPartyIconContainerSize)
                     .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
                 
-                Image(systemName: icon)
-                    .font(.system(size: DesignSystem.Domain.Auth.thirdPartyIconFontSize))
-                    .foregroundStyle(color)
+                if isSystem {
+                    Image(systemName: icon)
+                        .font(.system(size: DesignSystem.Domain.Auth.thirdPartyIconFontSize))
+                        .foregroundStyle(color)
+                } else {
+                    if icon == "GithubLogo" {
+                        Image(icon)
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: DesignSystem.Domain.Auth.thirdPartyIconFontSize, height: DesignSystem.Domain.Auth.thirdPartyIconFontSize)
+                            .foregroundStyle(color)
+                    } else {
+                        Image(icon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: DesignSystem.Domain.Auth.thirdPartyIconFontSize, height: DesignSystem.Domain.Auth.thirdPartyIconFontSize)
+                    }
+                }
             }
             .overlay(
                 Circle()
-                    .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 增强图标边框
+                    .stroke(color.opacity(0.5), lineWidth: 1) // 根据颜色设置边框，与参考图一致
             )
         }
         .buttonStyle(.plain)

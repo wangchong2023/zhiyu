@@ -61,6 +61,9 @@ final class VaultSecurityTests: XCTestCase {
         // 重置依赖注入环境
         ServiceContainer.shared.reset()
         
+        // 注册 LoggerProtocol，防止冷启动或附加模块（如 KnowledgeStore）解析时崩溃
+        ServiceContainer.shared.register(MockLogger() as any LoggerProtocol, for: (any LoggerProtocol).self)
+        
         // 注册 HapticFeedbackProtocol
         ServiceContainer.shared.register(MockHapticFeedback() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
         

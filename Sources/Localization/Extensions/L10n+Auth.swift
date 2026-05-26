@@ -45,5 +45,14 @@ extension L10n {
         
         /// 无法提取 Apple ID identityToken 的错误提示
         public static var appleTokenExtractFailed: String { tr("auth.appleTokenExtractFailed") }
+        
+        // MARK: - 一键登录相关
+        public static var oneClickLogin: String { tr("auth.oneClickLogin") }
+        public static var agreementText: String { tr("auth.agreementText") }
+        public static var pleaseCheckAgreement: String { tr("auth.pleaseCheckAgreement") }
+        public static var moreLoginMethods: String { tr("auth.moreLoginMethods") }
+        public static var smsDeveloping: String { tr("auth.smsDeveloping") }
+        public static var githubDeveloping: String { tr("auth.githubDeveloping") }
+        public static var agreementRequired: String { tr("auth.agreementRequired") }
     }
 }

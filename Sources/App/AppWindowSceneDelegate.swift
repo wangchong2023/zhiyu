@@ -36,6 +36,13 @@ class AppWindowSceneDelegate: NSObject, UIWindowSceneDelegate {
         window.rootViewController = UIHostingController(rootView: AnyView(contentView))
         self.window = window
         window.makeKeyAndVisible()
+
+        #if targetEnvironment(macCatalyst)
+        if let titlebar = windowScene.titlebar {
+            titlebar.titleVisibility = .hidden
+            titlebar.toolbar = nil
+        }
+        #endif
     }
 
     /// sceneDid断开

@@ -20,6 +20,8 @@ struct ContentView: View {
     @Environment(Router.self) var router
     @Environment(AuthService.self) var authService
     @Environment(VaultService.self) var vaultService
+    @Environment(AppEnvironment.self) var appEnvironment
+    @Environment(SettingsStore.self) var settingsStore
     
     @StateObject internal var tooltipManager = TooltipManager.shared
     @State internal var showCommandPalette = false
@@ -79,6 +81,12 @@ struct ContentView: View {
         }
         .sheet(isPresented: $router.isShowingSettingsSheet) {
             SettingsView()
+                .environment(store)
+                .environment(router)
+                .environment(appEnvironment)
+                .environment(settingsStore)
+                .environmentObject(onboardingService)
+                .environmentObject(themeManager)
                 .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
         }
         .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
@@ -89,6 +97,16 @@ struct ContentView: View {
             withAnimation(.spring()) {
                 dbState = DatabaseManager.shared.state
             }
+        }
+        .onAppear {
+            #if targetEnvironment(macCatalyst)
+            for scene in UIApplication.shared.connectedScenes {
+                if let windowScene = scene as? UIWindowScene {
+                    windowScene.titlebar?.titleVisibility = .hidden
+                    windowScene.titlebar?.toolbar = nil
+                }
+            }
+            #endif
         }
     }
     
@@ -158,13 +176,23 @@ extension View {
             // 手机/紧凑尺寸下，不做多余限制，让系统自动以标准半屏/全屏形式拉起
             self
         } else {
-            // iPad 与 Mac 大屏下，强行拓宽界面到 850+ 宽度，为双栏左右分栏提供完美的呈现空间
-            #if os(macOS)
+            // iPad 与 Mac 大屏下，差异化控制尺寸，为双栏左右分栏提供完美的自适应呈现空间
+            #if targetEnvironment(macCatalyst)
+            // Mac Catalyst 运行模式下，指定适合 macOS 系统的固定宽屏尺寸
             self.frame(width: 900, height: 680)
             #else
-            self
-                .frame(minWidth: 850, minHeight: 650)
-                .presentationDetents([.large])
+            // iPad 设备运行模式下：防止强设 minWidth 导致系统默认的 sheet 内容发生截断。
+            if #available(iOS 18.0, *) {
+                // iOS 18+ 利用 .page 级别的大宽度撑开 sheet，使其直接展开为双栏，消除多一级菜单的体验
+                self
+                    .presentationSizing(.page)
+                    .presentationDetents([.large])
+            } else {
+                // iOS 17 及以下低版本：为了防止内容被截断，不设大宽度 minWidth，让 NavigationSplitView 在窄屏下优雅自适应为单栏折叠
+                self
+                    .frame(minHeight: 650)
+                    .presentationDetents([.large])
+            }
             #endif
         }
     }

@@ -15,6 +15,7 @@ struct UserProfileMenu: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @EnvironmentObject var onboardingService: OnboardingService
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State private var showAbout = false
     @State private var showWatchMenu = false
@@ -38,122 +39,57 @@ struct UserProfileMenu: View {
                 }
             }
         }
-        .sheet(isPresented: $showSettings) { settingsStack }
         .sheet(isPresented: $showAbout) { aboutStack }
         #else
-        Button(action: {
-            HapticFeedback.shared.trigger(.selection)
-            showWatchMenu = true // 借用作为非 watchOS 下控制 popover 的状态变量
-        }) {
+        // iOS, iPadOS, macOS (Catalyst) 等非 watch 平台统一使用原生 Menu，提供 0 延迟的即时响应体感
+        Menu {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                // 预留 80 毫秒微小延时让系统下拉菜单启动收起动画，规避与 Sheet 弹出转场重叠冲突，实现极速秒开
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    router.isShowingSettingsSheet = true
+                }
+            }) {
+                Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
+            }
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                // 同步采用异步微延迟，彻底规避原生动画引擎冲突
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    showStats = true
+                }
+            }) {
+                Label(L10n.Common.usage, systemImage: "chart.bar.fill")
+            }
+            
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                store.securityService.lock()
+                store.requestRelayout()
+            }) {
+                Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
+            }
+            
+            Divider()
+            
+            Button(role: .destructive, action: {
+                HapticFeedback.shared.trigger(.selection)
+                authService.logout()
+            }) {
+                Label(L10n.Common.logout, systemImage: DesignSystem.Icons.logout)
+            }
+        } label: {
             profileLabel
         }
-        .buttonStyle(.plain)  // 消除 SwiftUI 在 Toolbar 中给 Menu 自动添加的 bordered 白色背景
-        .popover(isPresented: $showWatchMenu, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) {
-            VStack(alignment: .leading, spacing: 0) {
-                // 1. 系统设置
-                Button(action: {
-                    showWatchMenu = false
-                    HapticFeedback.shared.trigger(.selection)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        router.isShowingSettingsSheet = true
-                    }
-                }) {
-                    HStack(spacing: Spacing.standardPadding) {
-                        Image(systemName: DesignSystem.Icons.settings)
-                            .font(.subheadline)
-                            .foregroundStyle(.appAccent)
-                            .frame(width: 20, alignment: .center)
-                        Text(L10n.Common.settings)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.appText)
-                        Spacer()
-                    }
-                    .padding(.horizontal, DesignSystem.standardPadding)
-                    .padding(.vertical, DesignSystem.medium)
-                }
-                
-                Divider()
-                    .background(Color.appCard.opacity(0.3))
-                
-                // 2. 用量诊断
-                Button(action: {
-                    showWatchMenu = false
-                    HapticFeedback.shared.trigger(.selection)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        showStats = true
-                    }
-                }) {
-                    HStack(spacing: Spacing.standardPadding) {
-                        Image(systemName: "chart.bar.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(.appAccent)
-                            .frame(width: 20, alignment: .center)
-                        Text(L10n.Common.usage)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.appText)
-                        Spacer()
-                    }
-                    .padding(.horizontal, DesignSystem.standardPadding)
-                    .padding(.vertical, DesignSystem.medium)
-                }
-                
-                Divider()
-                    .background(Color.appCard.opacity(0.3))
-                
-                // 3. 快速锁定
-                Button(action: {
-                    showWatchMenu = false
-                    HapticFeedback.shared.trigger(.selection)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        store.securityService.lock()
-                        store.requestRelayout() // 强制触发 UI 状态评估
-                    }
-                }) {
-                    HStack(spacing: Spacing.standardPadding) {
-                        Image(systemName: DesignSystem.Icons.lock)
-                            .font(.subheadline)
-                            .foregroundStyle(.appAccent)
-                            .frame(width: 20, alignment: .center)
-                        Text(L10n.Common.lock)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.appText)
-                        Spacer()
-                    }
-                    .padding(.horizontal, DesignSystem.standardPadding)
-                    .padding(.vertical, DesignSystem.medium)
-                }
-                
-                Divider()
-                    .background(Color.appCard.opacity(0.3))
-                
-                // 4. 退出登录
-                Button(action: {
-                    showWatchMenu = false
-                    HapticFeedback.shared.trigger(.selection)
-                    authService.logout()
-                }) {
-                    HStack(spacing: Spacing.standardPadding) {
-                        Image(systemName: DesignSystem.Icons.logout)
-                            .font(.subheadline)
-                            .foregroundStyle(.red)
-                            .frame(width: 20, alignment: .center)
-                        Text(L10n.Common.logout)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.red)
-                        Spacer()
-                    }
-                    .padding(.horizontal, DesignSystem.standardPadding)
-                    .padding(.vertical, DesignSystem.medium)
-                }
-            }
-            .frame(width: 155) // 精密控制气泡宽度为 155，在极其修长克制的同时，完美解除偏挤感，带来大气的呼吸空气感！
-            .presentationCompactAdaptation(.popover) // 强制在 iOS iPhone/macOS Catalyst 平台全部以 Popover 指向气泡形式渲染，拒绝降级拉伸！
-        }
-        .sheet(isPresented: $showAbout) { aboutStack }
+        .buttonStyle(.plain) // 消除系统在 Toolbar 选项中默认添加的 bordered 灰色背景
+        .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
         .sheet(isPresented: $showStats) {
             NavigationStack {
                 SystemStatsView()
             }
+            .environment(store)
+            .environmentObject(themeManager)
         }
         #endif
     }

@@ -136,9 +136,6 @@ struct SidebarToolbarModifier: ViewModifier {
                     ToolbarItem(placement: .principal) {
                         VaultBadge()
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        UserProfileMenu()
-                    }
                     #endif
                 }
         }

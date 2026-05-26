@@ -61,7 +61,9 @@ struct NotebookCard: View {
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary.opacity(0.6))
             }
-            .padding(DesignSystem.medium)
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.top, DesignSystem.medium)
+            .padding(.bottom, DesignSystem.standardPadding) // 增加底部内边距，使上次编辑文字位置上移，提升呼吸感与均衡度
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 180)
             .background(Color.appCard)
@@ -89,6 +91,7 @@ struct NotebookCard: View {
         }
         // 绑定 Task 2 微动效交互的核心成果，使用户物理压下卡片时得到即时的 Spring 回弹与下沉反馈
         .buttonStyle(AppCardButtonStyle())
+        .accessibilityIdentifier("NotebookCard_Item") // 添加 UI 自动化测试精确定位标识，防止测试误触新建按钮
         // MARK: - A11y 无障碍适配
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(notebook.name)，\(L10n.Accessibility.notebookCardLabel)")
