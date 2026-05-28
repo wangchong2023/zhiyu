@@ -150,6 +150,7 @@ final class ComponentSnapshots: XCTestCase {
         
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
     }
+
     
     /// 测试响应式侧边栏组件的视觉一致性与代码覆盖率提升
     func testAdaptiveSidebarView() {

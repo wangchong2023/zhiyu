@@ -82,7 +82,7 @@
 | TC-VLT-03 | VaultService | 后台自动锁定 | App 切换至后台后，金库在设定时间内自动锁定。 | P1 |
 | TC-VLT-04 | SecurityMgr | 文件完整性校验 | 外部篡改数据库文件后，HMAC-SHA256 校验失败并提示用户。 | P1 |
 | TC-VLT-05 | Audit | 敏感操作审计 | 删除金库、修改安全设置等操作被完整记录，日志不可被插件篡改。 | P2 |
-| TC-VLT-06 | SecurityMgr | WAL指纹与重签校验 | 验证数据库关闭释放 WAL 连接时重写防篡改指纹，以及在 DEBUG 宏下指纹校验不符时能自动重签名对齐，在 Release 包下严格阻断。 | P1 |
+| TC-VLT-06 | SecurityMgr | 物理多Vault并发热切换 | 验证在多线程高并发读写WAL事务以及桌面小组件/后台同步竞争下，金库物理热插拔切换不会发生死锁与读写冲突。 | P1 |
 
 ---
 
@@ -117,11 +117,11 @@
 | TC-AI-02 | `LLMServiceTests` | `testHighConcurrencyQueueStability` |
 | TC-ING-01 | `IngestQueueTests` | `testWebIngestAndMarkdownParsing` |
 | TC-ING-02 | `IngestQueueTests` | `testMultiFormatIngestCompatibility` |
-| TC-NAV-01 | `KMUITests` (Tests/UITests) | `testWikiLinkNavigationStack` |
+| TC-NAV-01 | `ZhiYuUITests` (Tests/UITests) | `testWikiLinkNavigationStack` |
 | TC-NAV-02 | `KnowledgeBaseUITests` (Tests/UI) | `testDeepLinkRoutingAction` |
 | TC-UI-01 | `RecapTests` (Tests/Unit) | `testDailyRecapRefreshRecalculation` |
-| TC-SEC-01 | `KMUITests` (Tests/UITests) | `testBiometricUnlockAuthSimulation` |
-| TC-SEC-02 | `KMServiceTests` | `testSensitiveContentPersistenceEncryption` |
+| TC-SEC-01 | `ZhiYuUITests` (Tests/UITests) | `testBiometricUnlockAuthSimulation` |
+| TC-SEC-02 | `KnowledgeRepositoryTests` (Tests/Unit/Storage) | `testPrivatePageContentIsEncryptedInDB` |
 | TC-GRF-01 | `GraphLayoutEngineTests` (Tests/Unit/Graph) | `testLayoutMultiplePagesCreatesNodesForAll`, `testLayoutNodePositionsAreDistinct` |
 | TC-GRF-02 | `KnowledgeBaseUITests` | `testNavigateTo3DGraph` |
 | TC-GRF-03 | `GraphCanvasUITests` | `testGraphCanvasZoomAndPan` |
@@ -137,7 +137,7 @@
 | TC-VLT-01 | `VaultSecurityTests` (Tests/Unit/Security) | `testLockSetsIsLockedToTrue`, `testLockUnlockCycle` |
 | TC-VLT-02 | `VaultSecurityTests` (Tests/Unit/Security) | `testPrivateContentBlurFilter` |
 | TC-VLT-03 | `VaultSecurityTests` (Tests/Unit/Security) | `testMultipleLockCallsStayLocked` |
-| TC-VLT-04 | `KMServiceTests` | `testDatabaseCorruptHMACValidation` |
+| TC-VLT-04 | `SecurityIntegrityTests` (Tests/Unit/Security) | `testHMACCalculationAndVerification`, `testHMACIntegrityCheck` |
 | TC-VLT-05 | `AuditLoggerTests` | `testAuditLogsForSensitiveOperations` |
 | TC-MAC-01 | `MacCatalystTests` | `testMacMenuBarExists` |
 | TC-MAC-02 | `MacCatalystTests` | `testMacKeyboardShortcuts` |
@@ -147,7 +147,7 @@
 | TC-WID-01 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetSnapshotEntryCalculation` |
 | TC-WID-02 | `KnowledgeStatsWidgetTests` (Tests/Unit/System) | `testWidgetTimelinePolicyCalculation` |
 | TC-DEE-05 | `DeepLinkTests` (Tests/Unit/Services) | `testWidgetCreateActionDeepLinkResolution`, `testWidgetEmptySearchDeepLinkSafetyGrace` |
-| TC-VLT-06 | `VaultSecurityTests` (Tests/Unit/Security) | `testWALFingerprintSyncAndDebugReSigning` (Pending) |
+| TC-VLT-06 | `MultiVaultSwitchTests` (Tests/Integration) | `testConcurrentVaultSwitchAndDeadlockAvoidance`, `testVaultSwitchNotificationBroadcast` |
 | TC-ING-03 | `IngestQueueTests` (Tests/Unit/RAG) | `testCascadeGrabAndPaywallBypass` (Pending) |
 | TC-DEE-06 | `DeepLinkTests` (Tests/Unit/Services) | `testAgentIntentsIntegrationAndRateLimit` (Pending) |
 
@@ -159,7 +159,6 @@
 | :--- | :--- | :--- | :--- | :--- |
 | TC-WID-01 | Widget | 桌面小组件卡片刷新 | 验证 `KnowledgeStatsWidget` 的 Small, Medium, Large 卡片计算策略生成正常，对未来指定刷新节点精确断言。 | P0 |
 | TC-WID-02 | Widget | 小组件 Timeline 数据源检索 | 验证 Widget 刷新时能够正常拉起数据并生成 `WidgetEntry`，且时间轴策略返回 `.atEnd`。 | P0 |
-| TC-DEE-05 | Navigation | 小组件 Deep Link 容灾解析 | 验证主应用对于 `zhiyu://create` 快捷创建和 `zhiyu://search` 空白搜索参数的 Deep Link 具备高宽限安全解析与 Tab 降级。 | P0 |
+| TC-DEE-05 | Navigation | 小组件 Deep Link 容灾解析 | 验证主应用对于 `zhiyu://create` 快捷创建 and `zhiyu://search` 空白搜索参数的 Deep Link 具备高宽限安全解析与 Tab 降级。 | P0 |
 
 > 提示：本映射表覆盖的所有测试用例已全部和系统的 XCTest 自动化测试防线（Tests/）进行完美对齐。
-

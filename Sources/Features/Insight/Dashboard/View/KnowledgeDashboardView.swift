@@ -298,6 +298,7 @@ struct KnowledgeDashboardView: View {
                         }
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("DailyRecapCard")
                 } else {
                     Text(L10n.Dashboard.insightsEmpty)
                         .font(.subheadline)

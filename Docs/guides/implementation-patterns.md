@@ -80,4 +80,4 @@ AI 输出 JSON（匹配 `QuizModel` 结构，`answer` 为 0 起始索引，0=A/1
 - 100% SwiftUI（除 `LaunchScreen.storyboard` 外无 UIKit storyboard）
 - 使用 Swift 5.9 `@Observable` 宏（非 `@ObservableObject` / `@Published`）
 - `NavigationSplitView` 自适应布局：iPhone 上为 TabView，iPad 上为三列布局
-- 通过 `KMMac` target 支持 Mac Catalyst，带有键盘快捷键（`CommandGroup`、`.keyboardShortcut`）
+- 通过 `ZhiYuMac` target 支持 Mac Catalyst，带有键盘快捷键（`CommandGroup`、`.keyboardShortcut`）

@@ -13,10 +13,20 @@ import GRDB
 
 /// [Infra] 向量存储实现
 final class VectorDataRepository: VectorRepository, @unchecked Sendable {
-    private let dbWriter: any DatabaseWriter
+    private var dbWriter: any DatabaseWriter {
+        get async {
+            await MainActor.run {
+                // 动态获取当前活跃的数据库写入器以用于向量存储和分块。若尚未挂载，则降级创建内存队列。
+                if let writer = DatabaseManager.shared.dbWriter {
+                    return writer
+                }
+                return try! DatabaseQueue()
+            }
+        }
+    }
 
     init(dbWriter: any DatabaseWriter) {
-        self.dbWriter = dbWriter
+        // 保留原构造函数，但内部实际上不持有静态 dbWriter，使用动态计算属性以支持多笔记本金库无缝热切换并消除 closed 连接挂起隐慢
     }
 
     // MARK: - 向量映射 (Embeddings)
@@ -26,7 +36,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// /// - Parameter vector: vector
     /// /// - Parameter modelName: modelName
     func saveEmbedding(id: UUID, vector: [Float], modelName: String) async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             var entry = PageEmbedding(id: id, vector: vector, modelName: modelName)
             try entry.save(db)
         }
@@ -35,7 +46,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// 拉取AllEmbeddings
     /// /// - Returns: 列表
     func fetchAllEmbeddings() async throws -> [UUID: [Float]] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let records = try PageEmbedding.fetchAll(db)
             var dict: [UUID: [Float]] = [:]
             for record in records {
@@ -50,7 +62,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// 拉取Chunks
     /// /// - Returns: 列表
     func fetchChunks(for pageID: UUID) async throws -> [PageChunk] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             try PageChunk
                 .filter(PageChunk.Columns.pageID == pageID)
                 .fetchAll(db)
@@ -60,7 +73,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// 拉取AllChunksWithEmbeddings
     /// /// - Returns: 列表
     func fetchAllChunksWithEmbeddings() async throws -> [PageChunk] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             try PageChunk
                 .filter(PageChunk.Columns.embedding != nil)
                 .fetchAll(db)
@@ -70,7 +84,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// 保存Chunks
     /// /// - Parameter chunks: chunks
     func saveChunks(_ chunks: [PageChunk], for pageID: UUID) async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             // 物理删除旧分块，确保索引最新
             try PageChunk
                 .filter(PageChunk.Columns.pageID == pageID)
@@ -87,7 +102,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
 
     /// 删除Chunks
     func deleteChunks(for pageID: UUID) async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             try PageChunk
                 .filter(PageChunk.Columns.pageID == pageID)
                 .deleteAll(db)
@@ -97,7 +113,8 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     /// cleanupOrphanedChunks
     /// /// - Returns: 数值
     func cleanupOrphanedChunks() async throws -> Int {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        return try await writer.write { db in
             // 使用 Query Interface 的 subquery 方式替代原始 SQL
             let pages = KnowledgePage.select(KnowledgePage.Columns.id)
             let deletedCount = try PageChunk

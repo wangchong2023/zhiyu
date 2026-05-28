@@ -77,6 +77,18 @@ extension L10n {
             public static var thinking: String { Chat.tr("chat.ai.thinking") }
         }
 
+        /// AI 增强型骨架屏状态本地化定义
+        public struct skeleton {
+            /// 正在思考
+            public static var thinking: String { Chat.tr("ai.status.skeleton.thinking") }
+            /// 正在初始化神经网络权重
+            public static var embedding: String { Chat.tr("ai.status.skeleton.embedding") }
+            /// 正在扫描本地知识库
+            public static var retrieval: String { Chat.tr("ai.status.skeleton.retrieval") }
+            /// 正在合成核心概念
+            public static var synthesis: String { Chat.tr("ai.status.skeleton.synthesis") }
+        }
+
         /// 重新生成最后一次回复
         public static var regenerate: String { "重新生成" }
     }

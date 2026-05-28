@@ -107,6 +107,21 @@ struct AppLauncher {
             TestApp.main()
         } else {
             // 正常应用运行环境下：启动完整的业务 App，拉起核心 AppEnvironment 环境
+            
+            // 物理自愈：如果检测到启动参数包含 "-ResetUserDefaults"（通常在 UI 自动化大回归跑测时传递）
+            // 将重置并清空所有带有 "seeded_vault_" 前缀的本地金库冷启动播种标记，确保 Seeding 流程 100% 触发自愈
+            if CommandLine.arguments.contains("-ResetUserDefaults") {
+                let defaults = UserDefaults.standard
+                let keys = defaults.dictionaryRepresentation().keys
+                for key in keys {
+                    if key.hasPrefix("seeded_vault_") {
+                        defaults.removeObject(forKey: key)
+                    }
+                }
+                defaults.synchronize()
+                print("🧹 [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
+            }
+            
             ZhiYuApp.main()
         }
     }

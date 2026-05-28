@@ -85,7 +85,7 @@ def main():
     
     # 5. 精准提取领域层 (Domain)
     domain_files = []
-    exclude_suffixes = ["Models.swift", "Schema.swift", "Status.swift", "FTS.swift"]
+    exclude_suffixes = ["Schema.swift", "Status.swift"]
     for f in all_files:
         path = f.get("path", "")
         # 匹配 L1.5 物理归位层级

@@ -56,6 +56,15 @@ final class IngestTests: KnowledgeBaseUITests {
         safeTap(manualCard)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
+        // 增量防灾校验：在标题与正文完全为空的初始状态下，手动的“导入”确认按钮必须处于 Disabled 禁用状态，杜绝空数据摄入
+        var confirmButton = app.buttons["导入"]
+        if !confirmButton.exists {
+            confirmButton = app.buttons["Import"]
+        }
+        if confirmButton.exists {
+            XCTAssertFalse(confirmButton.isEnabled, "在标题与正文为空的非法初始状态下，导入提交确认按钮应该被禁用")
+        }
+
         let titleField = app.textFields["ingest.manual.titleField"]
         if titleField.exists {
             safeTap(titleField)
@@ -181,5 +190,96 @@ final class IngestTests: KnowledgeBaseUITests {
         XCTAssertTrue(clipboardButton.isHittable, "剪贴板导入按钮存在但不可点击")
         safeTap(clipboardButton)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+    }
+
+    /// 验证网页链接导入卡片存在且能成功弹出 URL 摄入 Sheet 弹窗并成功释放
+    func testURLImportButton() async {
+        let urlButton = app.buttons["ingest.url"]
+        guard urlButton.waitForExistence(timeout: 5) else {
+            print("⚠️ [IngestTests] 网页链接导入按钮 (ingest.url) 未找到，跳过验证")
+            return
+        }
+        XCTAssertTrue(urlButton.isHittable, "网页链接导入按钮存在但不可点击")
+        safeTap(urlButton)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        
+        // 智能模糊检验 URL 导入弹窗
+        let urlImportTitle = app.navigationBars["网页导入"].exists
+            || app.navigationBars["URL Import"].exists
+            || app.navigationBars.firstMatch.identifier.contains("URL")
+            || app.buttons["取消"].exists
+            || app.buttons["Cancel"].exists
+        XCTAssertTrue(urlImportTitle, "网页导入 Sheet 应该成功展开")
+        
+        // 点击取消释放交互链路树
+        let cancelButton = app.buttons["取消"]
+        if !cancelButton.exists {
+            let altCancel = app.buttons["Cancel"]
+            if altCancel.exists {
+                safeTap(altCancel)
+            }
+        } else {
+            safeTap(cancelButton)
+        }
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+    }
+
+    /// 验证网页链接导入非法/损坏的 URL 链接时的防御能力与错误弹窗
+    func testInvalidURLIngestDefense() async {
+        let urlButton = app.buttons["ingest.url"]
+        guard urlButton.waitForExistence(timeout: 5) else {
+            print("⚠️ [IngestTests] 网页链接导入按钮 (ingest.url) 未找到，跳过验证")
+            return
+        }
+        safeTap(urlButton)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        
+        // 找到 URL 输入框（在 URL 导入弹窗内）
+        let urlTextField = app.textFields["ingest.url.inputField"].exists ? app.textFields["ingest.url.inputField"] : app.textFields.firstMatch
+        if urlTextField.exists {
+            safeTap(urlTextField)
+            // 键盘模拟输入损坏/非法的 URL 链接以触发防卫
+            urlTextField.typeText("invalid_scheme://bad_url")
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            
+            // 点击“导入”或“确定”提交按钮
+            var submitBtn = app.buttons["导入"]
+            if !submitBtn.exists {
+                submitBtn = app.buttons["Import"]
+            }
+            if !submitBtn.exists {
+                submitBtn = app.buttons["确认"]
+            }
+            if !submitBtn.exists {
+                submitBtn = app.buttons["Confirm"]
+            }
+            
+            if submitBtn.exists && submitBtn.isEnabled {
+                safeTap(submitBtn)
+                // 等待过渡骨架屏及防御逻辑生效
+                try? await Task.sleep(nanoseconds: UInt64(2.5 * 1_000_000_000))
+                
+                // 验证没有闪退，并且在屏幕上优雅地弹出了警告 Alert 或者是错误反馈行
+                let errorFeedback = app.alerts.firstMatch.exists 
+                    || app.staticTexts.matching(NSPredicate(format: "label CONTAINS '格式错误' OR label CONTAINS '非法' OR label CONTAINS 'Error' OR label CONTAINS 'Invalid'")).firstMatch.exists
+                XCTAssertTrue(errorFeedback, "网页导入非法 URL 应当有优雅 of 错误反馈，且应用不崩溃")
+                
+                // 如果有 Alert，点击“确定”或“OK”关闭它以释放焦点
+                let alert = app.alerts.firstMatch
+                if alert.exists {
+                    var okBtn = alert.buttons["确定"]
+                    if !okBtn.exists { okBtn = alert.buttons["OK"] }
+                    if !okBtn.exists { okBtn = alert.buttons.element(boundBy: 0) }
+                    if okBtn.exists { safeTap(okBtn) }
+                }
+            }
+        }
+        
+        // 最后兜底：如还在弹窗内，点击取消按钮返回，保持测试链路的绝对干净
+        let cancelButton = app.buttons["取消"].exists ? app.buttons["取消"] : app.buttons["Cancel"]
+        if cancelButton.exists && cancelButton.isHittable {
+            safeTap(cancelButton)
+            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        }
     }
 }

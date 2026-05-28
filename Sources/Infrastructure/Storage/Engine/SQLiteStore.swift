@@ -20,7 +20,17 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     private var _pages: [KnowledgePage] = []
     
     // ── 物理写入器 ──
-    private let dbWriter: any DatabaseWriter
+    private var dbWriter: any DatabaseWriter {
+        get async {
+            await MainActor.run {
+                // 动态获取全局活跃的数据库写入器，确保 SQLite 事务和存储引擎在 Vault 切换后可以立即在新连接上工作。若尚未初始化，则降级为内存数据库。
+                if let writer = DatabaseManager.shared.dbWriter {
+                    return writer
+                }
+                return try! DatabaseQueue()
+            }
+        }
+    }
     
     // ── 仓库依赖 (DI) ──
     private let knowledgeRepository: any KnowledgeRepository
@@ -33,7 +43,6 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // MARK: - 初始化
     
     public init(dbWriter: any DatabaseWriter) {
-        self.dbWriter = dbWriter
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbWriter)
         let vectorRepo = VectorDataRepository(dbWriter: dbWriter)
         let governanceRepo = AIGovernanceRepository(dbWriter: dbWriter)
@@ -119,13 +128,14 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
 
     /// 重置Database
     public func resetDatabase() async throws {
+        let writer = await dbWriter
         // 核心步骤：直接使用绑定的局部 dbWriter 进行数据清空，不再强耦合 MainActor 全局单例
-        try await dbWriter.erase()
+        try await writer.erase()
         _pages = []
         
         // 🚨 极其重要：因为 erase() 会把全部表及 grdb_migrations 抹除，
         // 必须立刻重新运行数据库迁移器来建立空表、触发器与 FTS 索引，从而保全数据库重置后的后续读写可用性
-        try await DatabaseManager.shared.migrate(dbWriter)
+        try await DatabaseManager.shared.migrate(writer)
         
         if let url = await DatabaseManager.shared.dbURL {
             await SecurityManager.shared.updateSignature(for: url)
@@ -221,8 +231,9 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     /// 执行批量数据库写入操作 (在隔离环境内)
     public func performBatchWrite(_ block: @escaping @Sendable (Database) throws -> Void) async throws {
+        let writer = await dbWriter
         // 核心步骤：直接使用局部的 dbWriter 执行写入，实现 100% 线程安全的隔离事务
-        try await dbWriter.write { db in try block(db) }
+        try await writer.write { db in try block(db) }
     }
     
     /// 填充默认引导内容

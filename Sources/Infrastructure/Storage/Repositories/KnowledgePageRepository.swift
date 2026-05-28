@@ -15,17 +15,28 @@ import Foundation
 
 /// 知识库 页面存储：封装基于 GRDB 的高性能 CRUD 操作。
 final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
-    private let dbWriter: any DatabaseWriter
+    private var dbWriter: any DatabaseWriter {
+        get async {
+            await MainActor.run {
+                // 动态获取当前活跃的数据库写入器以支持多 Vault 热插拔切换。如果尚未创建（如测试初始化中），则降级创建内存数据库队列，防止崩溃。
+                if let writer = DatabaseManager.shared.dbWriter {
+                    return writer
+                }
+                return try! DatabaseQueue()
+            }
+        }
+    }
 
     init(dbWriter: any DatabaseWriter) {
-        self.dbWriter = dbWriter
+        // 保留原构造函数，但内部实际上不持有静态 dbWriter，使用动态计算属性以支持多笔记本金库无缝热切换并消除 closed 连接挂起隐慢
     }
 
     // MARK: - 页面操作 (CRUD)
 
     /// 保存单个页面
     func save(_ page: KnowledgePage) async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             try self.save(page, in: db)
         }
     }
@@ -76,7 +87,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// 删除
     /// /// - Parameter id: id
     func delete(id: UUID) async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             try KnowledgePage.filter(KnowledgePage.Columns.id == id).deleteAll(db)
         }
     }
@@ -86,7 +98,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// 拉取All
     /// /// - Returns: 列表
     func fetchAll() async throws -> [KnowledgePage] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let rawPages = try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc).fetchAll(db)
             return rawPages.map { self.decryptIfPrivate($0) }
         }
@@ -96,7 +109,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// /// - Parameter id: id
     /// /// - Returns: 可选值
     func fetch(id: UUID) async throws -> KnowledgePage? {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let page = try KnowledgePage.filter(KnowledgePage.Columns.id == id).fetchOne(db)
             return page.map { self.decryptIfPrivate($0) }
         }
@@ -106,7 +120,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// /// - Parameter title: title
     /// /// - Returns: 可选值
     func fetch(title: String) async throws -> KnowledgePage? {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let page = try KnowledgePage.filter(KnowledgePage.Columns.title == title).fetchOne(db)
             return page.map { self.decryptIfPrivate($0) }
         }
@@ -116,7 +131,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// /// - Parameter limit: limit
     /// /// - Returns: 列表
     func fetchRecentlyUpdated(limit: Int) async throws -> [KnowledgePage] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let rawPages = try KnowledgePage.order(KnowledgePage.Columns.updatedAt.desc)
                 .limit(limit)
                 .fetchAll(db)
@@ -124,21 +140,37 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
         }
     }
 
-    /// 搜索
-    /// /// - Parameter query: query
-    /// /// - Returns: 列表
+    /// 搜索 —— 双阶段检索策略：FTS5 优先（精排）→ CJK LIKE 后备（模糊）
+    ///
+    /// FTS5 (unicode61 分词器) 对 ASCII/拉丁词序列效果极佳，但对连续 CJK 字符流无法做子词分割。
+    /// 当 FTS5 匹配无法建立模式（中文查询词不含空格分隔符时）或返回空集合时，
+    /// 自动降级到 LIKE 模糊匹配，覆盖中文标题与正文的「包含」检索场景。
+    ///
+    /// - Parameter query: 搜索关键词，支持中英文及中英混合
+    /// - Returns: 按相关度排序的页面列表
     func search(query: String) async throws -> [KnowledgePage] {
-        try await dbWriter.read { db in
-            guard let pattern = FTS5Pattern(matchingAnyTokenIn: query) else {
-                return []
+        let writer = await dbWriter
+        return try await writer.read { db in
+            // 阶段一：FTS5 全文搜索（对英文及带空格的中文分词友好）
+            // 注意：加密后的私密内容无法通过 FTS5 全文搜索，但标题仍可被搜索到
+            if let pattern = FTS5Pattern(matchingAnyTokenIn: query) {
+                let ftsResults = try KnowledgePage
+                    .joining(required: KnowledgePage.contentSnapshot.filter(Column("pages_fts").match(pattern)))
+                    .order(sql: "rank")
+                    .fetchAll(db)
+                if !ftsResults.isEmpty {
+                    return ftsResults.map { self.decryptIfPrivate($0) }
+                }
             }
             
-            // 注意：加密后的私密内容无法通过 FTS5 全文搜索，但标题仍可搜到
-            // 核心改进：匹配 pages_fts 虚拟表全字段（包括 title, content, tags, aliases），支持标题和内容的混合检索
-            let rawPages = try KnowledgePage
-                .joining(required: KnowledgePage.contentSnapshot.filter(Column("pages_fts").match(pattern)))
-                .order(sql: "rank")
-                .fetchAll(db)
+            // 阶段二：CJK LIKE 后备检索
+            // 当 FTS5 分词器无法切分连续 CJK 字符流时（如「神经网络」嵌入长句中），
+            // 自动降级到 LIKE 模糊匹配，保证中文内容的可检索性
+            let likePattern = "%\(query)%"
+            let rawPages = try KnowledgePage.filter(
+                KnowledgePage.Columns.title.like(likePattern) ||
+                KnowledgePage.Columns.content.like(likePattern)
+            ).order(KnowledgePage.Columns.updatedAt.desc).fetchAll(db)
             return rawPages.map { self.decryptIfPrivate($0) }
         }
     }
@@ -148,7 +180,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// 拉取Backlinks
     /// /// - Returns: 列表
     func fetchBacklinks(for targetID: UUID) async throws -> [UUID] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let links = try PageLink.filter(PageLink.Columns.targetID == targetID).fetchAll(db)
             return links.map { $0.sourceID }
         }
@@ -168,7 +201,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
 
     /// 重命名Tag
     func renameTag(old oldTag: String, to newTag: String) async throws {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        try await writer.write { db in
             let pagesToUpdate = try KnowledgePage.filter(KnowledgePage.Columns.tags.like("%\"\(oldTag)\"%")).fetchAll(db)
             for p in pagesToUpdate {
                 var updatedTags = p.tags
@@ -185,7 +219,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// 删除Tag
     /// /// - Parameter tag: tag
     func deleteTag(_ tag: String) async throws {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        try await writer.write { db in
             let pagesToUpdate = try KnowledgePage.filter(KnowledgePage.Columns.tags.like("%\"\(tag)\"%")).fetchAll(db)
             for p in pagesToUpdate {
                 var updatedTags = p.tags
@@ -201,7 +236,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
 
     /// 删除All
     func deleteAll() async throws {
-        _ = try await dbWriter.write { db in
+        let writer = await dbWriter
+        _ = try await writer.write { db in
             try KnowledgePage.deleteAll(db)
             try PageLink.deleteAll(db)
         }
@@ -212,7 +248,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     /// 计数
     /// /// - Returns: 数值
     func count() async throws -> Int {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             try KnowledgePage.fetchCount(db)
         }
     }

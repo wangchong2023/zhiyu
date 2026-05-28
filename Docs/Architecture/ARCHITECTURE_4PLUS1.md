@@ -106,13 +106,13 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as UI (Editor)
-    participant KM as AppStore
+    participant AS as AppStore
     participant PR as PluginRegistry
     participant WD as Watchdog
     participant DB as SQLiteStore
 
-    User->>KM: 发起 updatePage(content)
-    KM->>PR: 调用 applyPreProcess(content)
+    User->>AS: 发起 updatePage(content)
+    AS->>PR: 调用 applyPreProcess(content)
     PR->>WD: 启动 500ms 竞速计时
     loop 插件 Hook 遍历
         PR->>PR: 执行插件脚本
@@ -122,9 +122,9 @@ sequenceDiagram
             PR->>PR: 销毁 JSContext 物理内存
         end
     end
-    PR-->>KM: 返回过滤后的 Content (或原文)
-    KM->>DB: 执行物理更新
-    KM-->>User: 触发 UI 刷新
+    PR-->>AS: 返回过滤后的 Content (或原文)
+    AS->>DB: 执行物理更新
+    AS-->>User: 触发 UI 刷新
 ```
 
 ---
@@ -457,3 +457,71 @@ KnowledgePage 详情页可从多个 Tab 进入：
 - `selectedTab: AppTab = .knowledge`
 - `sidebarSelection: SidebarSelection? = .tool(.pageList)`
 - 启动落地页：**KnowledgePageListView（页面列表）**
+
+---
+
+## 12. 架构演进演化与安全防范 (Architectural Evolution & Hardening)
+
+基于工业级稳健性与高阶安全设计，系统定义了以下三大关键演进方向，以彻底消除在实际并发运行和插件生态扩展中暴露的架构隐患。
+
+### 12.1 跨插件沙箱物理隔离与全局状态擦除 (State Sanitization in Plugin Pool)
+
+#### 1. 隐患背景
+`PluginEnginePool` 通过复用 `JSContext` 连接池将大并发脚本执行的内存与延迟开销控制在物理极小值。然而，若插件 A 在全局上下文（`globalThis`）中写入敏感数据，或对内置原型链（如 `Array.prototype`）进行污染性篡改，这些全局状态将直接顺延污染下一个借用该连接的插件 B，引发**跨插件状态泄露**与**内存累积泄露**。
+
+#### 2. 防御设计
+系统在借出（`borrowContext`）与归还（`returnContext`）两个生命周期节点上强加“物理回滚机制”。在 `JSContext` 实例化时截取干净的内置键拓扑，在复用前通过程序化 JS 擦除所有非 intrinsic 及非 ZhiYu 主机暴露的自定义属性：
+
+```javascript
+// JSContext 首次初始化时固化内置原生 Keys
+const _intrinsicKeys = Object.getOwnPropertyNames(globalThis);
+
+// 复用连接前执行的 Sanitization 物理擦除闭包
+(function(intrinsics) {
+    const currentKeys = Object.getOwnPropertyNames(globalThis);
+    for (const key of currentKeys) {
+        if (!intrinsics.includes(key)) {
+            try { delete globalThis[key]; } catch(e) {}
+        }
+    }
+})(_intrinsicKeys);
+```
+
+---
+
+### 12.2 物理多库切换与后台 Ingest 任务的协作式熔断机制 (Ingest Co-op Cancellation)
+
+#### 1. 隐患背景
+当用户热切换笔记本金库（`switchDatabase`）时，底层连接池被销毁并热拔插挂载新专属库文件。若此时后台有大文件 Ingest 管道（`KnowledgeIngestPipeline`）仍在并发推进，且其子异步 Task 未能感知到切换事件，将导致属于“旧金库”的数据在几秒后继续被错误强写入“新金库”中，打破多库物理硬隔离的安全底线。
+
+#### 2. 协作取消机制
+在 `DatabaseManager` 执行 `switchDatabase` 连接断开前，系统触发**协作取消链路**：
+1. 物理连接关闭前，向总线广播 `.databaseWillSwitch` 事件；
+2. 后台所有活跃的 Ingest 管道任务响应此信号，并在下一个写入原子操作前强行检查并发状态：
+   ```swift
+   guard !Task.isCancelled else {
+       throw IngestError.taskCancelledDueToDatabaseSwitch
+   }
+   ```
+3. 确保在物理新库挂载时，上一代笔记本的活跃后台写入任务已被 100% 安全排空与熔断。
+
+---
+
+### 12.3 弹性混合 RAG 代理之隐私脱敏机制 (RAG Sensitive Masking)
+
+#### 1. 隐患背景
+在混合 RAG 查询与 AI 实验室的深度总结场景下，若直连云端大模型，本库私密内容（`#private`）中的实体词、机密键或人名可能会被明文传送至第三方服务器，造成企业/个人数据泄漏风险。
+
+#### 2. 双向伪装拓扑
+系统将在 L1.5 `ContextBuilder` 层实装“双向伪装过滤机制”：
+
+```
+[原始私密 Context] ──► 1. 本地 CJK NER 识别敏感词 ──► 2. 映射哈希占位符 (A_ENTITY)
+                                                                 │
+                                                                 ▼
+[还原后的明文 Answer] ◄── 4. 内存字典反向解密 ◄── 3. 云端大模型生成 (带哈希占位)
+```
+
+1. **词干哈希化**：在本地利用系统原生 `NaturalLanguage` 框架快速标识敏感词，并在本地内存中生成双向字典：`[OriginalEntity: HashPlaceholder]`；
+2. **脱敏传输**：将脱敏后带占位符的文本发送至 OpenAI/DeepSeek 进行长上下文推理；
+3. **安全解码**：在本地获取 AI 回答的文本后，利用本地内存字典进行反向替换，做到“**隐私 100% 物理留存本地，逻辑大模型算力 100% 弹性云复用**”。

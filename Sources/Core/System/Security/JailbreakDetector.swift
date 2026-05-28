@@ -75,7 +75,8 @@ public final class JailbreakDetector: Sendable {
     private func checkCydiaScheme() -> Bool {
         // 平台限制：非 iOS 等需要 UI 调用的地方使用桥接或简易检测
         #if os(iOS)
-        if let url = URL(string: "cydia://package/com.example.test") {
+        // 仅校验 Cydia URL 是否可被成功构造，不绑定变量以消除警告
+        if URL(string: "cydia://package/com.example.test") != nil {
             // 使用非 UI 的其他探测方式或直接安全忽略，此处做简化
             return false
         }

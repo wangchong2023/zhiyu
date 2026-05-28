@@ -188,6 +188,74 @@
         }
       }
     },
+    "ai.status.skeleton.thinking": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI IS THINKING..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 正在思考..."
+          }
+        }
+      }
+    },
+    "ai.status.skeleton.embedding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "INITIALIZING NEURAL WEIGHTS..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在初始化神经网络权重..."
+          }
+        }
+      }
+    },
+    "ai.status.skeleton.retrieval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SCANNING LOCAL KNOWLEDGE..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在扫描本地知识库..."
+          }
+        }
+      }
+    },
+    "ai.status.skeleton.synthesis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SYNTHESIZING CONCEPTS..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在合成核心概念..."
+          }
+        }
+      }
+    },
     "ai.status.visualizing": {
       "extractionState": "manual",
       "localizations": {

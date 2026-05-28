@@ -1,4 +1,4 @@
-# 智宇 (KM) 产品需求文档 (PRD)
+# 智宇 (ZhiYu) 产品需求文档 (PRD)
 
 ## 1. 产品愿景
 打造一个"懂你"的跨端知识操作系统，通过 AI 深度感知与插件化生态，解决知识"存而不用"的痛点。以 **语义分块 → 混合 FTS5+向量存储 → AI 合成实验室（深度引用）** 为核心技术飞轮，成为个人与团队的"第二大脑基础设施"。
@@ -186,4 +186,4 @@ journey
    *   针对需要超大上下文的科研综述，在本地对实体词、人名等敏感段进行完全脱敏哈希转换后发送给云端中转服务器，接收回答后再在本地反向解密还原，兼顾云端大模型算力与本地隐私。
 
 ---
-*本文档描述产品级需求，详细技术规格见 [SOFTWARE_REQUIREMENTS_SPECIFICATION.md](SOFTWARE_REQUIREMENTS_SPECIFICATION.md)，完整特性清单见 [FEATURE_LIST.md](FEATURE_LIST.md)，测试指引见 [TEST_GUIDE.md](TEST_GUIDE.md)。*
+*本文档描述产品级需求，详细技术规格见 [SOFTWARE_REQUIREMENTS_SPECIFICATION.md](SOFTWARE_REQUIREMENTS_SPECIFICATION.md)，完整特性清单见 [FEATURE_LIST.md](FEATURE_LIST.md)，测试指引见 [TEST_GUIDE.md](../Testing/TEST_GUIDE.md)。*

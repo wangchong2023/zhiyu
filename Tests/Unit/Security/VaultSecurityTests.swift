@@ -58,13 +58,10 @@ final class VaultSecurityTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        // 重置依赖注入环境
-        ServiceContainer.shared.reset()
+        // 1. 调用全局 Mock 环境注册一整套基础依赖，规避由于依赖不全导致的套娃式 DI 崩溃
+        setupFullMockEnvironment()
         
-        // 注册 LoggerProtocol，防止冷启动或附加模块（如 KnowledgeStore）解析时崩溃
-        ServiceContainer.shared.register(MockLogger() as any LoggerProtocol, for: (any LoggerProtocol).self)
-        
-        // 注册 HapticFeedbackProtocol
+        // 2. 覆盖注册 VaultSecurityTests 专属的特化 Mock 服务
         ServiceContainer.shared.register(MockHapticFeedback() as any HapticFeedbackProtocol, for: (any HapticFeedbackProtocol).self)
         
         mockProvider = VaultSecurityMockBiometricAuthProvider()

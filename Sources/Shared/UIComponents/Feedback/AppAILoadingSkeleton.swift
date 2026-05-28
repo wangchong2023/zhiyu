@@ -28,12 +28,13 @@ public struct AppAILoadingSkeleton: View {
         }
     }
     
+    /// 当前 AI 任务执行阶段的本地化提示文案
     private var stageText: String {
         switch stage {
-        case .embedding: return "INITIALIZING NEURAL WEIGHTS..."
-        case .retrieval: return "SCANNING LOCAL KNOWLEDGE..."
-        case .synthesis: return "SYNTHESIZING CONCEPTS..."
-        default: return "AI IS THINKING..."
+        case .embedding: return L10n.Chat.skeleton.embedding
+        case .retrieval: return L10n.Chat.skeleton.retrieval
+        case .synthesis: return L10n.Chat.skeleton.synthesis
+        default: return L10n.Chat.skeleton.thinking
         }
     }
     

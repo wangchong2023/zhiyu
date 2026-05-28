@@ -13,10 +13,20 @@ import GRDB
 
 /// [Infra] AI 治理存储实现
 final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
-    private let dbWriter: any DatabaseWriter
+    private var dbWriter: any DatabaseWriter {
+        get async {
+            await MainActor.run {
+                // 动态获取当前活跃的数据库写入器以记录 AI 治理数据。若处于测试冷启动中，则降级创建内存数据库队列。
+                if let writer = DatabaseManager.shared.dbWriter {
+                    return writer
+                }
+                return try! DatabaseQueue()
+            }
+        }
+    }
 
     init(dbWriter: any DatabaseWriter) {
-        self.dbWriter = dbWriter
+        // 保留原构造函数，但内部实际上不持有静态 dbWriter，使用动态计算属性以支持多笔记本金库无缝热切换并消除 closed 连接挂起隐慢
     }
 
     // MARK: - Token 计费 (Usage)
@@ -26,7 +36,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter promptTokens: promptTokens
     /// /// - Parameter completionTokens: completionTokens
     func logTokenUsage(model: String, promptTokens: Int, completionTokens: Int) async throws {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        try await writer.write { db in
             var usage = TokenUsage(model: model, promptTokens: promptTokens, completionTokens: completionTokens)
             try usage.insert(db)
         }
@@ -36,7 +47,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter days: days
     /// /// - Returns: 返回值
     func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int) {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
             
             let request = TokenUsage
@@ -62,7 +74,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter days: days
     /// /// - Returns: 列表
     func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
             
             let dayExpr = SQL("strftime('%Y-%m-%d', \(TokenUsage.Columns.createdAt))")
@@ -89,7 +102,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// 拉取MonthlyTokenStats
     /// /// - Returns: 列表
     func fetchMonthlyTokenStats() async throws -> [(month: String, total: Int)] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let monthExpr = SQL("strftime('%Y-%m', \(TokenUsage.Columns.createdAt))")
             let request = TokenUsage
                 .select(
@@ -117,7 +131,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter latencyMS: latencyMS
     /// /// - Parameter status: status
     func logCall(model: String, promptTokens: Int, completionTokens: Int, latencyMS: Int, status: String) async throws {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        try await writer.write { db in
             var log = LLMCallLog(
                 model: model,
                 promptTokens: promptTokens,
@@ -133,7 +148,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter limit: limit
     /// /// - Returns: 列表
     func fetchRecentLogs(limit: Int) async throws -> [LLMCallLog] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             try LLMCallLog
                 .order(LLMCallLog.Columns.createdAt.desc)
                 .limit(limit)
@@ -146,7 +162,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// 保存RAGEvaluation
     /// /// - Parameter evaluation: evaluation
     func saveRAGEvaluation(_ evaluation: RAGEvaluation) async throws {
-        try await dbWriter.write { db in
+        let writer = await dbWriter
+        try await writer.write { db in
             var mutableEvaluation = evaluation
             try mutableEvaluation.insert(db)
         }
@@ -156,7 +173,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter limit: limit
     /// /// - Returns: 列表
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation] {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             try RAGEvaluation
                 .order(RAGEvaluation.Columns.createdAt.desc)
                 .limit(limit)
@@ -168,7 +186,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     /// /// - Parameter days: days
     /// /// - Returns: 返回值
     func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
-        try await dbWriter.read { db in
+        let writer = await dbWriter
+        return try await writer.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
             
             let request = RAGEvaluation

@@ -272,6 +272,7 @@ struct KnowledgePageListContent: View {
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
                         }
+                        .accessibilityIdentifier("PageRow_Item")
                         .buttonStyle(AppPressButtonStyle())
                     }
                 }
@@ -297,6 +298,7 @@ struct KnowledgePageListContent: View {
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
                         }
+                        .accessibilityIdentifier("PageRow_Item")
                         .buttonStyle(AppPressButtonStyle())
                     }
                 }
@@ -322,6 +324,7 @@ struct KnowledgePageListContent: View {
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
                         }
+                        .accessibilityIdentifier("PageRow_Item")
                         .buttonStyle(AppPressButtonStyle())
                     }
                 }
@@ -347,6 +350,7 @@ struct KnowledgePageListContent: View {
                         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                             PageRowView(page: page)
                         }
+                        .accessibilityIdentifier("PageRow_Item")
                         .buttonStyle(AppPressButtonStyle())
                     }
                 }

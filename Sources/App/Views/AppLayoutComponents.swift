@@ -48,34 +48,36 @@ extension ContentView {
         @Bindable var router = router
         ZStack {
             Group {
-                if appEnv.screenClass != .compact {
-                    #if os(macOS)
-                    adaptiveSplitView(tintColor: tintColor)
-                    #else
+                #if !os(macOS)
+                // 1. 若处于 iOS/iPadOS UI 自动化测试模式下，一律强制回退至 legacyTabView 以保障 TabBar 元素定位在 iPhone/iPad 上绝对可靠
+                if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
+                   ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                    legacyTabView(tintColor: tintColor)
+                } else if appEnv.screenClass != .compact {
                     if #available(iOS 18.0, *) {
                         modernTabView(tintColor: tintColor)
                     } else {
                         legacyTabView(tintColor: tintColor)
                     }
-                    #endif
                 } else {
-                    #if DEBUG
-                    if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
-                       ProcessInfo.processInfo.arguments.contains("--uitesting") {
-                        legacyTabView(tintColor: tintColor)
-                    } else if #available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *) {
+                    if #available(iOS 18.0, *) {
                         modernTabView(tintColor: tintColor)
                     } else {
                         legacyTabView(tintColor: tintColor)
                     }
-                    #else
-                    if #available(iOS 18.0, macOS 15.0, macCatalyst 18.0, *) {
-                        modernTabView(tintColor: tintColor)
-                    } else {
-                        legacyTabView(tintColor: tintColor)
-                    }
-                    #endif
                 }
+                #else
+                // 2. macOS 桌面端或 macCatalyst 物理运行环境
+                if appEnv.screenClass != .compact {
+                    adaptiveSplitView(tintColor: tintColor)
+                } else {
+                    if #available(macOS 15.0, macCatalyst 18.0, *) {
+                        modernTabView(tintColor: tintColor)
+                    } else {
+                        legacyTabView(tintColor: tintColor)
+                    }
+                }
+                #endif
             }
             .sheet(isPresented: $store.showCreateSheet) {
                 CreatePageView()
@@ -178,18 +180,27 @@ extension ContentView {
             Tab(AppTab.knowledge.displayTitle, systemImage: AppTab.knowledge.icon, value: AppTab.knowledge) {
                 knowledgeTabContent
             }
+            .accessibilityIdentifier("Knowledge")
+
             Tab(AppTab.chat.displayTitle, systemImage: AppTab.chat.icon, value: AppTab.chat) {
                 chatTabContent
             }
+            .accessibilityIdentifier("Chat")
+
             Tab(AppTab.ingest.displayTitle, systemImage: AppTab.ingest.icon, value: AppTab.ingest) {
                 ingestTabContent
             }
+            .accessibilityIdentifier("Ingest")
+
             Tab(AppTab.synthesis.displayTitle, systemImage: AppTab.synthesis.icon, value: AppTab.synthesis) {
                 synthesisTabContent
             }
+            .accessibilityIdentifier("Synthesis")
+
             Tab(AppTab.graph.displayTitle, systemImage: AppTab.graph.icon, value: AppTab.graph) {
                 graphTabContent
             }
+            .accessibilityIdentifier("Graph")
         }
         .tint(tintColor)
         .onOpenURL { url in

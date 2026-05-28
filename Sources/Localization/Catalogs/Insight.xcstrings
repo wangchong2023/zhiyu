@@ -4199,6 +4199,40 @@
           }
         }
       }
+    },
+    "dashboard.insight.mock.insight": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is an AI-generated insight summary in a test environment, showcasing the activity level and main concept distribution of the current knowledge base."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一个测试环境下的 AI 智能洞察摘要，展示了当前知识库的活跃度和主要概念分布。"
+          }
+        }
+      }
+    },
+    "dashboard.insight.mock.suggestedConnection": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It is suggested to establish bidirectional links between this page, tag management, and task center."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建议将此页面与标签管理和任务中心建立双向关联。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

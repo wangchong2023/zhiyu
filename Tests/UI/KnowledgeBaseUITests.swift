@@ -40,7 +40,7 @@ class KnowledgeBaseUITests: XCTestCase {
 
         continueAfterFailure = true
         app = XCUIApplication()
-        app.launchArguments = ["--uitesting", "--reset-state"]
+        app.launchArguments = ["--uitesting", "--reset-state", "-ResetUserDefaults"]
         app.launchEnvironment = ["UITesting": "true"]
         app.launch()
 

@@ -59,6 +59,11 @@ extension L10n {
                 public static func promptRecent(_ focus: String, _ title: String, _ snippet: String) -> String { Dashboard.trf("insight.daily.prompt.recent", focus, title, snippet) }
             }
 
+            public struct mock {
+                public static var insight: String { Localized.tr("dashboard.insight.mock.insight", table: t) }
+                public static var suggestedConnection: String { Localized.tr("dashboard.insight.mock.suggestedConnection", table: t) }
+            }
+
             public struct recap {
                 public static var tip: String { Localized.tr("dashboard.insight.recap.tip", table: t) }
             }

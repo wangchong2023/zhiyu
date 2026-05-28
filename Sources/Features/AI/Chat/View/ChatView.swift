@@ -174,6 +174,8 @@ struct ChatViewContent: View {
                 .padding(.bottom, DesignSystem.standardPadding)
             }
             .scrollIndicators(.hidden)
+            // 绑定测试标识符，便于自动化 UI 冒烟测试快速抓取
+            .accessibilityIdentifier("ChatMessage_List")
             .onChange(of: coordinator.streamingContent) { _, _ in
                 // 在流式文本输入增长时，平滑滚动至焦点气泡，利用 easeOut 阻尼有效消除视图震颤
                 withAnimation(.easeOut(duration: 0.25)) {
@@ -290,6 +292,8 @@ struct ChatViewContent: View {
                     .font(.subheadline).focused($isInputFocused)
                     .foregroundStyle(coordinator.isProcessing ? .appSecondary : .appText).textFieldStyle(.plain)
                     .disabled(coordinator.isProcessing).submitLabel(.send)
+                    // 绑定测试标识符，便于自动化 UI 冒烟测试智能装填问答 Prompt
+                    .accessibilityIdentifier("ChatInput_TextField")
                     .onSubmit { if canSend { Task { await coordinator.sendMessage(pages: store.pages) } } }
                 
                 Button { 
@@ -301,6 +305,8 @@ struct ChatViewContent: View {
                         .symbolEffect(.bounce, value: coordinator.isProcessing)
                         .frame(width: DesignSystem.Action.inputBarHeight, height: DesignSystem.Action.inputBarHeight)
                 }
+                // 绑定测试标识符，便于自动化 UI 冒烟测试一键触发或物理取消 RAG 对话流
+                .accessibilityIdentifier("ChatSend_Button")
                 .disabled(!canSend && !coordinator.isProcessing)
             }
             .padding(.horizontal, DesignSystem.standardPadding).padding(.vertical, DesignSystem.tightPadding)

@@ -9,20 +9,23 @@
 - [产品需求文档](Docs/Requirements/PRODUCT_REQUIREMENTS.md)
 - [软件需求规格说明书](Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 - [全量特性清单](Docs/Requirements/FEATURE_LIST.md)
-- [测试指引](Docs/Requirements/TEST_GUIDE.md)
-- [进化路线图](Docs/Requirements/ROADMAP.md)
+- [插件市场 PRD](Docs/Requirements/PLUGIN_MARKET_PRD.md)
+- [进化路线图](Docs/ROADMAP.md)
 - [本地化规范](Docs/Requirements/LOCALIZATION.md)
 
 ### 架构与设计
 - [架构 4+1 视图](Docs/Architecture/ARCHITECTURE_4PLUS1.md)
+- [统一认证架构](Docs/Architecture/AUTH_ARCHITECTURE.md)
 - [L0-L3 分层定义](Docs/Architecture/LAYERING_L0_L3.md)
 - [详细设计文档](Docs/Design/DETAILED_DESIGN.md)
-- [可视化设计系统](Docs/Design/VISUAL_SYSTEM.md)
 - [安全设计](Docs/Design/SECURITY_DESIGN.md)
+- [插件市场 HLD](Docs/Design/PLUGIN_MARKET_HLD.md)
 - [插件 SDK](Docs/Design/PLUGIN_SDK.md)
+- [可视化设计系统](Docs/Design/VISUAL_SYSTEM.md)
 
 ### 测试与质量
 - [系统测试计划](Docs/Testing/SYSTEM_TEST_PLAN.md)
+- [功能测试指引](Docs/Testing/TEST_GUIDE.md)
 - [性能基准报告](Docs/Testing/PERFORMANCE_BENCHMARK.md)
 - [测试用例库](Docs/Testing/TEST_CASES.md)
 - [CI/CD 工作流](Docs/CI_CD_WORKFLOW.md)
@@ -103,7 +106,7 @@ graph TD
 
 
 ### 3. 外部库挂载
-点击侧边栏 **“挂载外部库”**，授权访问物理文件夹。Knowledge Management 将作为这些 Markdown 文件的“AI 增强层”。
+点击侧边栏 **“挂载外部库”**，授权访问物理文件夹。智宇 (ZhiYu) 将作为这些 Markdown 文件的“AI 增强层”。
 
 ---
 

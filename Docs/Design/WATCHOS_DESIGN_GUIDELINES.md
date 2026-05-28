@@ -1,6 +1,6 @@
 # 智宇 (ZhiYu) watchOS 微端设计系统规范
 
-> **适用范围**：KMWatch（watchOS 10.0+）独立微端 UI 设计与开发规范。
+> **适用范围**：ZhiYuWatch（watchOS 10.0+）独立微端 UI 设计与开发规范。
 > **平台**：Apple Watch Series 4 (40mm) — Ultra 2 (49mm)，覆盖全尺寸谱系。
 > **设计哲学**：**极简、即时、可及**——用户在抬腕的 2 秒内完成最核心的操作。
 
@@ -211,5 +211,5 @@ struct WatchSyncPayload: Codable {
 
 ---
 
-*本文档于 2026-05-21 P1 阶段新建，于 2026-05-22 增加了测试与断言规范，用于指导 KMWatch（watchOS）微端的 UI 设计、功能实现与测试覆盖。*
+*本文档于 2026-05-21 P1 阶段新建，于 2026-05-22 增加了测试与断言规范，用于指导 ZhiYuWatch（watchOS）微端的 UI 设计、功能实现与测试覆盖。*
 *相关文档：`Docs/Design/UI_COMPONENTS.md`、`Docs/Design/VISUAL_SYSTEM.md`、`Sources/Platforms/watchOS/`。*
