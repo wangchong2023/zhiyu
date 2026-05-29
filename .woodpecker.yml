@@ -60,7 +60,7 @@ steps:
     image: bash
     commands:
       - echo "===> Counting test cases..."
-      - grep -rc "^[[:space:]]*func test" Tests/ --include="*.swift" | awk -F: '{sum += $2} END {print sum}' > build/.test_count
+      - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
       - echo "===> Test count: $(cat build/.test_count)"
 
   run-tests:
