@@ -62,6 +62,23 @@ public final class CarrierAuthStrategy: AuthStrategy {
 
     /// 调起运营商授权页，获取 carrierToken
     public func acquireCredentials() async throws -> AuthCredential {
+        #if DEBUG
+        if !Self.isInitialized {
+            // SDK 未初始化时安全降级为 Mock 凭证，保障本地开发/测试环境流程不中断
+            let fallbackToken = "mock_carrier_token_\\(UUID().uuidString)"
+            return AuthCredential(
+                identityType: identityType,
+                identifier: "",
+                credential: "",
+                extraInfo: [
+                    "carrierToken": fallbackToken,
+                    "appKey": "mock_zhiyu_app_key",
+                    "privacyConsent": "true"
+                ]
+            )
+        }
+        #endif
+
         guard Self.isInitialized else {
             throw AuthError.carrierSDKNotInitialized
         }

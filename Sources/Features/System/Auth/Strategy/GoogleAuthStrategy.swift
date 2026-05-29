@@ -82,7 +82,21 @@ public final class GoogleAuthStrategy: AuthStrategy {
             ]
         )
         #else
+        #if DEBUG
+        let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
+        return AuthCredential(
+            identityType: identityType,
+            identifier: "mock_google_user_id",
+            credential: "",
+            extraInfo: [
+                "idToken": mockIDToken,
+                "email": "mock_google_user@gmail.com",
+                "nickname": "Google Mock User"
+            ]
+        )
+        #else
         throw NSError(domain: "GoogleAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "Google SDK 未配置"])
+        #endif
         #endif
     }
 }
