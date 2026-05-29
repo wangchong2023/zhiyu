@@ -24,31 +24,32 @@ protocol RouterProtocol: AnyObject, Observable {
     var path: NavigationPath { get set }
     #endif
 
+    /// 强制 UI 刷新标识（主要用于多语言切换）
+    var languageForceUpdate: Bool { get }
+
+    /// 是否正在显示设置面板
+    var isShowingSettingsSheet: Bool { get set }
+
+    /// 用于在跳转至 AI 对话时自动发送的预设提示词
+    var pendingInitialChatPrompt: String? { get set }
+
+    #if !os(watchOS)
     /// 侧边栏当前选中项
     var sidebarSelection: SidebarSelection? { get set }
 
-    
-    /// 强制 UI 刷新标识（主要用于多语言切换）
-    var languageForceUpdate: Bool { get }
-    
     /// 当前选中的主 Tab
     var selectedTab: AppTab { get set }
-    
-    /// 是否正在显示设置面板
-    var isShowingSettingsSheet: Bool { get set }
-    
-    /// 用于在跳转至 AI 对话时自动发送的预设提示词
-    var pendingInitialChatPrompt: String? { get set }
 
     /// 统一跳转入口
     /// - Parameter route: 目标路由
     func navigate(to route: AppRoute)
-    
-    /// 便捷跳转：指定页面
-    func navigateToPage(id: UUID)
 
     /// 便捷跳转：指定工具
     func navigateToTool(_ tool: ToolItem)
+    #endif
+
+    /// 便捷跳转：指定页面
+    func navigateToPage(id: UUID)
     
     /// 返回上一级
     func pop()

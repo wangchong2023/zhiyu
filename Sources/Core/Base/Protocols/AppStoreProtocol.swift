@@ -16,16 +16,13 @@ import Observation
 /// 用于解耦 Features 层对 AppStore 的直接依赖。
 @MainActor
 protocol AppStoreProtocol: AnyObject, Observable {
-    // ── UI 状态 ──
-    var pendingCoachMark: CoachMarkType? { get set }
-    
     // ── 指标与数据 ──
     var pages: [KnowledgePage] { get }
     var totalPages: Int { get }
     var totalWords: Int { get }
     var isScanning: Bool { get }
     var showCreateSheet: Bool { get set }
-    
+
     var brokenLinkCount: Int { get }
     var orphanPageCount: Int { get }
     var totalConnectionCount: Int { get }
@@ -33,8 +30,14 @@ protocol AppStoreProtocol: AnyObject, Observable {
     var sourceCount: Int { get }
     var entityCount: Int { get }
     var conceptCount: Int { get }
-    var growthSeries: [KnowledgeGrowthPoint] { get }
     var lintIssues: [LintIssue] { get }
+
+    #if !os(watchOS)
+    // ── UI 状态 ──
+    var pendingCoachMark: CoachMarkType? { get set }
+
+    var growthSeries: [KnowledgeGrowthPoint] { get }
+    #endif
     
     var isPrivacyModeEnabled: Bool { get }
     var showPerfDashboard: Bool { get set }
