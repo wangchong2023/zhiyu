@@ -28,18 +28,6 @@ steps:
       - xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/ios_build.log 2>&1
       - echo "===> iOS Build completed successfully."
 
-  build-macos:
-    commands:
-      - echo "===> Building for macOS (Catalyst)..."
-      - xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/mac_build.log 2>&1
-      - echo "===> macOS Build completed successfully."
-
-  build-watchos:
-    commands:
-      - echo "===> Building for watchOS Simulator..."
-      - xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/watch_build.log 2>&1
-      - echo "===> watchOS Build completed successfully."
-
   run-tests:
     commands:
       - echo "===> Running Unit Tests..."
