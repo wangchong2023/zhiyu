@@ -49,9 +49,7 @@ public final class AuthService: AuthServiceProtocol {
 
     private var isMockBackend: Bool {
         #if DEBUG
-        // forceMockBackend 由单元测试直接设置；或通过 --reset-auth-state 启动参数（AuthUITests）激活
         return Self.forceMockBackend
-            || ProcessInfo.processInfo.arguments.contains("--reset-auth-state")
         #else
         return false
         #endif
@@ -83,7 +81,7 @@ public final class AuthService: AuthServiceProtocol {
                 totpRequired: false
             )
             // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return handleSuccessfulLogin(response: response, identity: identity)
+            return await handleSuccessfulLogin(response: response, identity: identity)
         }
         #endif
         let req = LoginRequest.password(username: identity, password: password)
@@ -95,9 +93,9 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return handleSuccessfulLogin(response: response, identity: identity)
+            return await handleSuccessfulLogin(response: response, identity: identity)
         } catch {
-            print("❌ [AuthService] 密码登录失败: \(error.localizedDescription)")
+            Logger.shared.error("[AuthService] 密码登录失败", error: error)
             return false
         }
     }
@@ -120,7 +118,7 @@ public final class AuthService: AuthServiceProtocol {
             )
             return true
         } catch {
-            print("❌ [AuthService] 发送验证码失败: \(error.localizedDescription)")
+            Logger.shared.error("[AuthService] 发送验证码失败", error: error)
             return false
         }
     }
@@ -143,9 +141,9 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return handleSuccessfulLogin(response: response, identity: phone)
+            return await handleSuccessfulLogin(response: response, identity: phone)
         } catch {
-            print("❌ [AuthService] 验证码登录失败: \(error.localizedDescription)")
+            Logger.shared.error("[AuthService] 验证码登录失败", error: error)
             return false
         }
     }
@@ -199,7 +197,7 @@ public final class AuthService: AuthServiceProtocol {
             // 2. 发送至后端校验
             return try await sendAuthRequestToBackend(credential)
         } catch {
-            print("❌ [AuthService] 统一认证失败: \(error.localizedDescription)")
+            Logger.shared.error("[AuthService] 统一认证失败", error: error)
             return false
         }
     }
@@ -215,7 +213,7 @@ public final class AuthService: AuthServiceProtocol {
                 totpRequired: false
             )
             // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return handleSuccessfulLogin(response: response, identity: name)
+            return await handleSuccessfulLogin(response: response, identity: name)
         }
         #endif
         
@@ -243,7 +241,7 @@ public final class AuthService: AuthServiceProtocol {
                 privacyConsent: cred.extraInfo?["privacyConsent"] == "true"
             )
         default:
-            print("❌ 不支持的第三方登录策略: \(cred.identityType)")
+            Logger.shared.error("不支持的第三方登录策略: \(cred.identityType)")
             return false
         }
         
@@ -267,9 +265,9 @@ public final class AuthService: AuthServiceProtocol {
             }
             
             let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-            return handleSuccessfulLogin(response: response, identity: name)
+            return await handleSuccessfulLogin(response: response, identity: name)
         } catch {
-            print("❌ sendAuthRequestToBackend 失败: \(error)")
+            Logger.shared.error("sendAuthRequestToBackend 失败", error: error)
             throw error
         }
     }
@@ -285,10 +283,10 @@ public final class AuthService: AuthServiceProtocol {
                 try KeychainService.shared.store(key: "refresh_token", value: refresh)
             }
         } catch {
-            print("❌ [AuthService] 存储 Token 失败: \(error.localizedDescription)")
+            Logger.shared.error("[AuthService] 存储 Token 失败", error: error)
             #if DEBUG
             if isMockBackend {
-                print("⚠️ [AuthService] Mock 模式下忽略 Keychain 写入失败，强行通过登录")
+                Logger.shared.warning("[AuthService] Mock 模式下忽略 Keychain 写入失败，强行通过登录")
             } else {
                 return false
             }
