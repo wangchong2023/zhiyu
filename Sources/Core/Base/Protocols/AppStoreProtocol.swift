@@ -42,14 +42,21 @@ protocol AppStoreProtocol: AnyObject, Observable {
     var llmService: any LLMServiceProtocol { get }
     
     // ── 核心逻辑 ──
+    /// 刷新全部知识页面数据
     func refresh() async
+    /// 按标题查找知识页面
     func pageByTitle(_ title: String) async -> KnowledgePage?
+    /// 删除指定知识页面
     func deletePage(_ page: KnowledgePage) async
+    /// 清除全部开发者调试数据
     func clearAllDeveloperData()
+    /// 播种默认示例内容
     func seedDefaultContent() async
-    
+
     // ── 建议应用 ──
+    /// 应用重构建议
     func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async
+    /// 应用潜在链接建议
     func applyPotentialLink(_ link: PotentialLinkSuggestion) async
 }
 

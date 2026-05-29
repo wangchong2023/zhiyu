@@ -18,6 +18,7 @@ public final class WeChatAuthStrategy: AuthStrategy {
     
     public init() {}
     
+    /// 获取微信认证凭证（iOS 模拟实现）
     public func acquireCredentials() async throws -> AuthCredential {
         let mockCode = "mock_wechat_code_\(UUID().uuidString)"
         return AuthCredential(
@@ -36,6 +37,7 @@ public final class WeChatAuthStrategy: AuthStrategy {
     public var identityType: String { "wechat" }
     public init() {}
 
+    /// 获取微信认证凭证（watchOS 不支持，直接抛错）
     public func acquireCredentials() async throws -> AuthCredential {
         throw NSError(domain: "WeChatAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "WeChat SDK not configured"])
     }

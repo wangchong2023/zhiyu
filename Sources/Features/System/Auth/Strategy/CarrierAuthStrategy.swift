@@ -52,6 +52,7 @@ public final class CarrierAuthStrategy: AuthStrategy {
 
     // MARK: - 初始化
 
+    /// 初始化运营商 SDK（当前为 Mock 实现）
     public static func initializeSDK(with schemeCode: String) {
         // Mock implementation
         isInitialized = true
@@ -86,6 +87,7 @@ public final class CarrierAuthStrategy: AuthStrategy {
 public final class CarrierAuthStrategy: AuthStrategy {
     public var identityType: String { "carrier" }
     public init() {}
+    /// 获取运营商凭证（watchOS 不支持，直接抛错）
     public func acquireCredentials() async throws -> AuthCredential {
         throw NSError(domain: "CarrierAuthStrategy", code: -99,
                       userInfo: [NSLocalizedDescriptionKey: "WatchOS not supported"])
