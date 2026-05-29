@@ -148,6 +148,8 @@ struct AuthView: View {
                 Text(L10n.Auth.moreLoginMethods)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
                     .padding(.horizontal, Spacing.small)
                 Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
             }
