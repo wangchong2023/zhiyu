@@ -9,10 +9,10 @@
 //  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
 //
 import Foundation
-import GRDB
+
 
 // MARK: - Page Type
-public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValueConvertible, Sendable {
+public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
     case entity = "entity"
     case concept = "concept"
     case source = "source"
@@ -46,7 +46,7 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, DatabaseValue
 }
 
 // MARK: - Page Status
-public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
+public enum PageStatus: String, Codable, CaseIterable, Sendable {
     case active = "active"
     case stub = "stub"
     case needsUpdate = "needs-update"
@@ -72,7 +72,7 @@ public enum PageStatus: String, Codable, CaseIterable, DatabaseValueConvertible,
 }
 
 // MARK: - Confidence Level
-public enum Confidence: String, Codable, CaseIterable, DatabaseValueConvertible, Sendable {
+public enum Confidence: String, Codable, CaseIterable, Sendable {
     case high = "high"
     case medium = "medium"
     case low = "low"

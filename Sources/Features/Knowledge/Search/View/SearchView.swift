@@ -389,9 +389,7 @@ struct PagePreviewSheet: View {
             }
             .background(themeManager.pageBackground())
             .navigationTitle(L10n.Common.preview)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.close) { dismiss() }
@@ -476,9 +474,7 @@ struct SearchDiagnosticSheet: View {
                 }
             }
             .navigationTitle(L10n.Search.Diag.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.close) { dismiss() }

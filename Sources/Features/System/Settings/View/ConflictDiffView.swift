@@ -57,9 +57,7 @@ struct ConflictDiffView: View {
                 }
             }
             .navigationTitle(L10n.ICloud.Conflict.manualMergeTitle)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.cancel) {

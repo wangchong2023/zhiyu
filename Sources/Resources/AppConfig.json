@@ -1,5 +1,6 @@
 {
   "network": {
+    "backend_base_url": "http://10.211.55.4:30080",
     "plugin_market_production": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json",
     "plugin_market_debug": "http://localhost:8000/community.json",
     "jina_reader_base": "https://r.jina.ai/",

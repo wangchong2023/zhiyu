@@ -48,9 +48,7 @@ struct LogViewContent: View {
         .scrollContentBackground(.hidden)
         .background(themeManager.pageBackground())
         .navigationTitle(L10n.Settings.operationLog)
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(role: .destructive) {

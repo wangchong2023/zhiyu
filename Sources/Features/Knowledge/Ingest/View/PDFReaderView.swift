@@ -218,9 +218,7 @@ struct PDFReaderView: View {
                 }
             }
             .navigationTitle(documentInfo.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .automatic) {
                     Button(action: { showHighlightPanel.toggle() }) {

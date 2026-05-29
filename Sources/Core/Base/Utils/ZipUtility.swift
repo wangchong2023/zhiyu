@@ -97,24 +97,26 @@ enum ZipUtility {
     /// /// - Returns: 可选值
     private static func decompressDeflate(data: Data) -> Data? {
         let destinationBufferSize = data.count * 10
-        var destinationBuffer = [UInt8](repeating: 0, count: destinationBufferSize)
+        var destinationData = Data(count: destinationBufferSize)
 
-        let result = data.withUnsafeBytes { (sourceBuffer: UnsafeRawBufferPointer) -> Int? in
-            guard let sourcePointer = sourceBuffer.baseAddress else { return nil }
+        let result = destinationData.withUnsafeMutableBytes { destBuffer in
+            data.withUnsafeBytes { sourceBuffer -> Int? in
+                guard let sourcePointer = sourceBuffer.baseAddress,
+                      let destPointer = destBuffer.baseAddress else { return nil }
 
-            return sourcePointer.withMemoryRebound(to: UInt8.self, capacity: data.count) { sourcePtr in
-                compression_decode_buffer(
-                    &destinationBuffer,
+                let size = compression_decode_buffer(
+                    destPointer.bindMemory(to: UInt8.self, capacity: destinationBufferSize),
                     destinationBufferSize,
-                    sourcePtr,
+                    sourcePointer.bindMemory(to: UInt8.self, capacity: data.count),
                     data.count,
                     nil,
                     COMPRESSION_ZLIB
                 )
+                return size > 0 ? size : nil
             }
         }
 
-        guard let size = result, size > 0 else { return nil }
-        return Data(destinationBuffer.prefix(size))
+        guard let size = result else { return nil }
+        return destinationData.prefix(size)
     }
 }

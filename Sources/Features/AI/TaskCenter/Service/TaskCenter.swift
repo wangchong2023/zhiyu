@@ -12,7 +12,7 @@ import Foundation
 import Combine
 
 /// 任务类型
-enum TaskType: String, CaseIterable {
+public enum TaskType: String, CaseIterable, Sendable {
     case ai             // 通用 AI 任务
     case ingest         // 导入任务
     case aiScan         // AI 扫描
@@ -40,7 +40,7 @@ enum TaskType: String, CaseIterable {
 }
 
 /// RAG / AI 执行阶段 (用于多维视觉反馈)
-public enum TaskStage: String, Equatable {
+public enum TaskStage: String, Equatable, Sendable {
     case pending       = "pending"      // 准备阶段
     case embedding     = "embedding"    // 向量化/特征提取 (Teal)
     case retrieval     = "retrieval"    // 数据库检索/BM25 (Blue)
@@ -49,14 +49,14 @@ public enum TaskStage: String, Equatable {
 }
 
 /// 任务执行状态
-enum TaskStatus: Equatable {
+public enum TaskStatus: Equatable, Sendable {
     case pending                                      // 等待中
     case running(progress: Double, stage: TaskStage)  // 执行中（带进度与具体阶段）
     case completed                                    // 已完成
     case failed(error: String)                        // 执行失败（带错误信息）
 
     /// 判等比较
-    static func == (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
+    public static func == (lhs: TaskStatus, rhs: TaskStatus) -> Bool {
         switch (lhs, rhs) {
         case (.pending, .pending): return true
         case (.completed, .completed): return true

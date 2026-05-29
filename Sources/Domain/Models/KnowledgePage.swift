@@ -9,11 +9,11 @@
 //  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
 //
 import Foundation
-import GRDB
+
 
 // MARK: - Knowledge Page
 /// 知识管理系统核心数据模型
-public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, PersistableRecord, Sendable, KnowledgePageRepresentable {
+public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, KnowledgePageRepresentable {
     public static let databaseTableName: String = AppConstants.Storage.Tables.pages
     
     public enum CodingKeys: String, CodingKey {
@@ -140,31 +140,7 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, P
         self.updatedAt = updatedAt
     }
     
-    // MARK: - Database Schema (Type-Safe Industrial Standard)
-    /// 定义数据库列名，遵循 ColumnExpression 协议。
-    /// 业界方案：利用枚举 rawValue 映射列名，实现编译期静态检查。
-    enum Columns: String, ColumnExpression {
-        case id
-        case title
-        case pageType = "page_type"
-        case content
-        case aliases
-        case tags
-        case status
-        case confidence
-        case sources
-        case relatedPageIDs = "related_page_ids"
-        case isPinned = "is_pinned"
-        case contentHash = "content_hash"
-        case customIcon = "custom_icon"
-        case sourceURL = "source_url"
-        case rawTextSnippet = "raw_snippet"
-        case fileSize = "file_size"
-        case sourceType = "source_type"
-        case lamportTimestamp = "lamport_timestamp"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-    }
+
     
     /// 执行 LWW (Last Write Wins) 冲突合并
     /// - Parameter remote: 远程或同步过来的版本
@@ -247,44 +223,6 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, FetchableRecord, P
             }
         }
         return Array(allTags)
-    }
-}
-
-// MARK: - GRDB 数组持久化支持
-// 工业级做法：通过 JSON 序列化存储数组类型。
-extension Array: @retroactive DatabaseValueConvertible where Element: Codable {
-    public var databaseValue: DatabaseValue {
-        guard let data = try? JSONEncoder().encode(self),
-              let string = String(data: data, encoding: .utf8) else {
-            return .null
-        }
-        return string.databaseValue
-    }
-    
-    /// fromDatabaseValue
-    /// /// - Parameter dbValue: dbValue
-    /// /// - Returns: 列表
-    public static func fromDatabaseValue(_ dbValue: DatabaseValue) -> [Element]? {
-        guard let string = String.fromDatabaseValue(dbValue),
-              let data = string.data(using: .utf8) else {
-            return nil
-        }
-        return try? JSONDecoder().decode(Self.self, from: data)
-    }
-}
-
-// 必须显式声明父协议遵循
-extension Array: @retroactive SQLExpressible where Element: Codable { }
-extension Array: @retroactive StatementBinding where Element: Codable { }
-
-extension Array: @retroactive StatementColumnConvertible where Element: Codable {
-    public init?(sqliteStatement: SQLiteStatement, index: Int32) {
-        let dbValue = DatabaseValue(sqliteStatement: sqliteStatement, index: CInt(index))
-        if let array = Self.fromDatabaseValue(dbValue) {
-            self = array
-        } else {
-            return nil
-        }
     }
 }
 

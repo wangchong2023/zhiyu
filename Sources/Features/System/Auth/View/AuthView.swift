@@ -15,11 +15,6 @@ struct AuthView: View {
     @Environment(AuthService.self) var authService
     @EnvironmentObject var themeManager: ThemeManager
     
-    @State private var isRegisterMode: Bool = false
-    @State private var identity: String = ""
-    @State private var password: String = ""
-    @State private var phone: String = ""
-    @State private var code: String = ""
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
     @State private var isAgreementChecked: Bool = false
@@ -43,7 +38,7 @@ struct AuthView: View {
                             .foregroundStyle(.appText)
                             .padding(.top, Spacing.medium)
                         
-                        // 一键登录按钮
+                        // 登录动作按钮
                         actionButton
                         
                         // 协议勾选
@@ -64,7 +59,6 @@ struct AuthView: View {
                 .padding(.vertical, Spacing.wide)
             }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isRegisterMode)
     }
     
     // MARK: - 子视图
@@ -98,96 +92,6 @@ struct AuthView: View {
         .padding(.top, Spacing.wide)
     }
     
-    private var modePicker: some View {
-        ZStack(alignment: isRegisterMode ? .trailing : .leading) {
-            Capsule()
-                .fill(Color.appAccent)
-                .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
-                .shadow(color: .appAccent.opacity(0.3), radius: 8, y: 4)
-            
-            HStack(spacing: 0) {
-                Button(action: { 
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isRegisterMode = false 
-                    }
-                }) {
-                    Text(L10n.Auth.login)
-                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                        .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
-                        .foregroundStyle(!isRegisterMode ? .white : .appSecondary)
-                }
-                
-                Button(action: { 
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isRegisterMode = true 
-                    }
-                }) {
-                    Text(L10n.Auth.register)
-                        .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
-                        .frame(width: DesignSystem.Domain.Auth.modePickerWidth, height: DesignSystem.Domain.Auth.modePickerHeight)
-                        .foregroundStyle(isRegisterMode ? .white : .appSecondary)
-                }
-            }
-        }
-        .padding(Spacing.tightPadding)
-        .background(Color.appCard.opacity(0.8))
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)) // 增强边框对比度
-        .padding(.vertical, Spacing.standardPadding)
-    }
-    
-    private var loginForm: some View {
-        VStack(spacing: Spacing.medium) {
-            AuthTextField(
-                icon: "person.fill",
-                placeholder: L10n.Auth.identityPlaceholder, // 手机号/邮箱/微信
-                text: $identity
-            )
-            
-            AuthTextField(
-                icon: "lock.fill",
-                placeholder: L10n.Auth.passwordPlaceholder,
-                text: $password,
-                isSecure: true
-            )
-        }
-    }
-    
-    private var registerForm: some View {
-        VStack(spacing: Spacing.medium) {
-            AuthTextField(
-                icon: "iphone",
-                placeholder: L10n.Auth.phonePlaceholder,
-                text: $phone
-            )
-            
-            HStack(spacing: Spacing.small) {
-                AuthTextField(
-                    icon: "shield.fill",
-                    placeholder: L10n.Auth.codePlaceholder,
-                    text: $code
-                )
-                
-                Button(action: {}) {
-                    Text(L10n.Auth.getCode)
-                        .font(.caption.bold())
-                        .foregroundStyle(.appAccent)
-                        .padding(.horizontal, DesignSystem.Domain.Auth.getCodeButtonHorizontalPadding)
-                        .padding(.vertical, DesignSystem.Domain.Auth.getCodeButtonVerticalPadding)
-                        .background(Color.appAccent.opacity(0.1))
-                        .clipShape(Capsule())
-                }
-            }
-            
-            AuthTextField(
-                icon: "lock.fill",
-                placeholder: L10n.Auth.setPasswordPlaceholder,
-                text: $password,
-                isSecure: true
-            )
-        }
-    }
-    
     private var actionButton: some View {
         Button(action: handleAuth) {
             Group {
@@ -207,6 +111,7 @@ struct AuthView: View {
             .shadow(color: Color.appAccent.opacity(0.3), radius: 10, y: 5)
         }
         .disabled(isLoading)
+        .accessibilityIdentifier("oneClickLoginButton")
     }
     
     private var agreementSection: some View {
@@ -218,6 +123,7 @@ struct AuthView: View {
                     .foregroundStyle(isAgreementChecked ? Color.appAccent : Color.appSecondary)
                     .font(.system(size: 16))
             }
+            .accessibilityIdentifier("agreementCheckbox")
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(L10n.Auth.agreementText)
@@ -247,19 +153,19 @@ struct AuthView: View {
             }
             
             HStack(spacing: Spacing.large) { // 加大间距以容纳5个图标
-                ThirdPartyIconButton(icon: "WechatLogo", isSystem: false, color: .green) { // 微信登录
+                ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) { // 微信登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
                 }
-                ThirdPartyIconButton(icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
+                ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
                     handleAppleLogin()
                 }
-                ThirdPartyIconButton(icon: "GoogleLogo", isSystem: false, color: .blue) { // Google登录
+                ThirdPartyIconButton(id: "auth.thirdparty.google", icon: "GoogleLogo", isSystem: false, color: .blue) { // Google登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
                 }
-                ThirdPartyIconButton(icon: "GithubLogo", isSystem: false, color: .primary) { // Github登录
+                ThirdPartyIconButton(id: "auth.thirdparty.github", icon: "GithubLogo", isSystem: false, color: .primary) { // Github登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
                 }
-                ThirdPartyIconButton(icon: "iphone.gen1", isSystem: true, color: .appAccent) { // 手机短信登录
+                ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) { // 手机短信登录
                     ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
                 }
             }
@@ -280,6 +186,7 @@ struct AuthView: View {
                 )
         }
         .padding(.top, DesignSystem.Domain.Auth.guestButtonTopPadding)
+        .accessibilityIdentifier("guestButton")
     }
     
     // MARK: - 逻辑
@@ -295,8 +202,8 @@ struct AuthView: View {
             isLoading = true
             errorMessage = nil
             
-            // 模拟一键登录逻辑，这里简单处理为直接登录成功
-            let success = await authService.login(identity: "180XXXX6625", password: "one_click_login_mock")
+            // 使用一键登录策略统一处理登录/注册
+            let success = await authService.login(using: CarrierAuthStrategy())
             
             if !success {
                 errorMessage = L10n.Auth.authFailed
@@ -387,12 +294,14 @@ struct ThirdPartyButton: View {
     }
 }
 struct ThirdPartyIconButton: View {
+    let id: String
     let icon: String
     let isSystem: Bool
     let color: Color
     let action: () -> Void
     
-    init(icon: String, isSystem: Bool = true, color: Color, action: @escaping () -> Void) {
+    init(id: String, icon: String, isSystem: Bool = true, color: Color, action: @escaping () -> Void) {
+        self.id = id
         self.icon = icon
         self.isSystem = isSystem
         self.color = color
@@ -433,5 +342,6 @@ struct ThirdPartyIconButton: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(id)
     }
 }

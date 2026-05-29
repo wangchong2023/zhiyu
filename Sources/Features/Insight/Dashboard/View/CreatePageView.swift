@@ -95,9 +95,7 @@ struct CreatePageView: View {
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Creation.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.cancel) {

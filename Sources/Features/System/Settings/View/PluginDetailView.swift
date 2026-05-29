@@ -79,9 +79,7 @@ struct PluginDetailView: View {
                 }
             }
         }
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
     }
     
     private var actionButtons: some View {

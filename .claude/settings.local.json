@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:help.aliyun.com)",
+      "Bash(unzip -l \"numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic.zip\")",
+      "Bash(unzip -o \"numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic.zip\" \"numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic/SDK/xcframeworks/ATAuthSDK_D.xcframework/ios-arm64/ATAuthSDK_D.framework/Headers/*\" -d extract_tmp)",
+      "Bash(mv extract_tmp/numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic/SDK/xcframeworks/ATAuthSDK_D.xcframework .)",
+      "Bash(rm -rf ATAuthSDK_D.xcframework extract_tmp)",
+      "Bash(unzip -o \"numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic.zip\" \"numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic/SDK/xcframeworks/ATAuthSDK_D.xcframework/*\" -d _tmp)",
+      "Bash(cp -R _tmp/numberAuthSDK_APP_iOS_v2.14.18_operator_ui_log_dynamic/SDK/xcframeworks/ATAuthSDK_D.xcframework .)",
+      "Bash(rm -rf _tmp)",
+      "Bash(xcodegen generate *)",
+      "Bash(xcodebuild build *)",
+      "Bash(grep -rn \"https\\\\?://\\\\|http://\\\\|[0-9]\\\\{1,3\\\\}\\\\.[0-9]\\\\{1,3\\\\}\\\\.[0-9]\\\\{1,3\\\\}\\\\.[0-9]\\\\{1,3\\\\}\" /Users/constantine/Documents/work/code/projects/ZhiYu/Sources --include=\"*.swift\")",
+      "Bash(xxd)",
+      "Bash(python3 *)",
+      "Bash(xcodebuild test *)",
+      "Bash(echo \"Exit: $?\")",
+      "Skill(land-and-deploy)"
+    ]
+  }
+}

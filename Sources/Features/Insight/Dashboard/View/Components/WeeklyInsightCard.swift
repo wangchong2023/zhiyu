@@ -252,8 +252,6 @@ struct WeeklyReportView: View {
         }
         .background(PageBackgroundView(accentColor: .purple))
         .navigationTitle(L10n.Common.Sidebar.weeklyInsight)
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
     }
 }

@@ -58,9 +58,7 @@ struct CollaborationViewContent: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.Collaboration.title)
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showHostingSheet) {
             HostingSetupSheet(collabService: collabService, roomName: $roomName)
         }

@@ -1,0 +1,6 @@
+steps:
+  test:
+    image: alpine
+    commands:
+      - echo "Pipeline triggered successfully!"
+      - echo "ZhiYu CI pipeline is running..."

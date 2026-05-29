@@ -644,9 +644,7 @@ struct URLImportSheet: View {
                 .background(Color.appCard)
             }
             .navigationTitle(L10n.Ingest.urlImport)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.cancel) {

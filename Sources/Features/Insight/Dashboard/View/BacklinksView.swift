@@ -122,9 +122,7 @@ struct BacklinksView: View {
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(page.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .task {
                 await fetchData()
             }

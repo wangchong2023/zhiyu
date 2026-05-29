@@ -33,9 +33,7 @@ struct SaveVoiceNoteSheet: View {
             }
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Voice.Speech.saveTitle)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         }
     }
     

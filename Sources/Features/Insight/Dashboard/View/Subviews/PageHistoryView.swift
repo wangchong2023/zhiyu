@@ -51,9 +51,7 @@ struct PageHistoryView: View {
             .scrollContentBackground(.hidden)
             .background(Color.appBackground)
             .navigationTitle(L10n.Knowledge.Page.History.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.done) { dismiss() }
@@ -135,9 +133,7 @@ struct SnapshotDetailView: View {
                 .background(Color.appBackground)
             }
             .navigationTitle(L10n.Knowledge.Page.History.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         }
     }
 }

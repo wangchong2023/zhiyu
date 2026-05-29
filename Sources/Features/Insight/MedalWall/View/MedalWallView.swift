@@ -43,9 +43,7 @@ struct MedalWallView: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.Insight.Medal.Wall.title)
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.large)
-        #endif
+        .appNavigationBarTitleDisplayMode(.large)
     }
     
     private func medalSection(title: String, category: MedalService.Medal.Category) -> some View {

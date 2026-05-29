@@ -79,6 +79,7 @@ struct UserProfileMenu: View {
             }) {
                 Label(L10n.Common.logout, systemImage: DesignSystem.Icons.logout)
             }
+            .accessibilityIdentifier("logoutButton")
         } label: {
             profileLabel
         }
@@ -109,6 +110,7 @@ struct UserProfileMenu: View {
         .foregroundStyle(.appAccent)
         .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
         .contentShape(Circle())
+        .accessibilityIdentifier("userProfileMenuButton")
     }
     
     private var aboutStack: some View {

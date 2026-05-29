@@ -48,7 +48,9 @@ public struct NotebookHubView: View {
                 .padding(.bottom, DesignSystem.huge)
             }
             .scrollIndicators(.hidden)
+            .accessibilityIdentifier("NotebookHubView")
         }
+
         .navigationTitle(L10n.Vault.homeTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)

@@ -101,9 +101,7 @@ public struct OnDeviceLLMSettingsView: View {
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .navigationTitle(L10n.Settings.onDeviceLLM)
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showTestSheet) {
             OnDeviceTestView(onDeviceService: onDeviceService)
         }

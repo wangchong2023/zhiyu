@@ -9,11 +9,10 @@
 //  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
 //
 import Foundation
-import GRDB
+
 
 /// 全文搜索索引模型 (FTS5)
-public struct KnowledgePageFTS: Codable, FetchableRecord, PersistableRecord, Sendable {
-    public static let databaseTableName: String = AppConstants.Storage.Tables.pagesFTS
+public struct KnowledgePageFTS: Codable, Sendable {
     
     public var id: String
     public var title: String

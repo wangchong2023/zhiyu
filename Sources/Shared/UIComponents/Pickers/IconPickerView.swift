@@ -68,9 +68,7 @@ struct IconPickerView: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.Editor.iconPicker.selectIcon)
-#if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button(L10n.Common.ok) { dismiss() }

@@ -13,6 +13,14 @@ import Foundation
 /// [L0] 底层基座层：硬编码常量配置 (AppConstants)
 public struct AppConstants {
     
+    // MARK: - Network
+    public struct Network {
+        public static let jwtTokenKey = "jwt_token_key"
+        public static let requestTimeout: TimeInterval = 30.0
+        public static let contentTypeJSON = "application/json"
+        public static let headerContentType = "Content-Type"
+    }
+    
     // MARK: - 存储与基础配置
     public struct Storage {
         /// 数据库文件名 (向下兼容)

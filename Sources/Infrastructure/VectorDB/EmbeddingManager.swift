@@ -84,9 +84,9 @@ public actor EmbeddingManager {
     private func loadChunksIntoCache(_ chunks: [PageChunk]) {
         for chunk in chunks {
             if let data = chunk.embedding {
-                let count = data.count / MemoryLayout<Float>.size
-                let vector = data.withUnsafeBytes { pointer in
-                    Array(UnsafeBufferPointer(start: pointer.baseAddress?.assumingMemoryBound(to: Float.self), count: count))
+                let _ = data.count / MemoryLayout<Float>.size // 消除未使用警告
+                let vector: [Float] = data.withUnsafeBytes { pointer in
+                    pointer.bindMemory(to: Float.self).map { $0 }
                 }
                 chunkVectorCache[chunk.id] = vector
                 chunkMetadata[chunk.id] = chunk

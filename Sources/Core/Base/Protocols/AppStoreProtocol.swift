@@ -1,0 +1,64 @@
+//
+//  AppStoreProtocol.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/29.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L0] 底层基座层
+//  核心职责：Protocols。定义智宇核心状态中心的抽象契约。
+//
+
+import Foundation
+import Observation
+
+/// 智宇核心状态中心协议 (L3-Facade 抽象接口)
+/// 用于解耦 Features 层对 AppStore 的直接依赖。
+@MainActor
+protocol AppStoreProtocol: AnyObject, Observable {
+    // ── UI 状态 ──
+    var pendingCoachMark: CoachMarkType? { get set }
+    
+    // ── 指标与数据 ──
+    var pages: [KnowledgePage] { get }
+    var totalPages: Int { get }
+    var totalWords: Int { get }
+    var isScanning: Bool { get }
+    var showCreateSheet: Bool { get set }
+    
+    var brokenLinkCount: Int { get }
+    var orphanPageCount: Int { get }
+    var totalConnectionCount: Int { get }
+    var tags: [String] { get }
+    var sourceCount: Int { get }
+    var entityCount: Int { get }
+    var conceptCount: Int { get }
+    var growthSeries: [KnowledgeGrowthPoint] { get }
+    var lintIssues: [LintIssue] { get }
+    
+    var isPrivacyModeEnabled: Bool { get }
+    var showPerfDashboard: Bool { get set }
+    
+    var llmService: any LLMServiceProtocol { get }
+    
+    // ── 核心逻辑 ──
+    func refresh() async
+    func pageByTitle(_ title: String) async -> KnowledgePage?
+    func deletePage(_ page: KnowledgePage) async
+    func clearAllDeveloperData()
+    func seedDefaultContent() async
+    
+    // ── 建议应用 ──
+    func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async
+    func applyPotentialLink(_ link: PotentialLinkSuggestion) async
+}
+
+// MARK: - SwiftUI Support
+
+#if canImport(SwiftUI)
+import SwiftUI
+
+extension EnvironmentValues {
+    @Entry var appStore: any AppStoreProtocol = ServiceContainer.shared.resolve((any AppStoreProtocol).self)
+}
+#endif

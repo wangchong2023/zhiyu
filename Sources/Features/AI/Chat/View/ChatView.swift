@@ -316,9 +316,7 @@ struct ChatViewContent: View {
                     ChatWelcomeView(isSheet: true)
                         .environment(coordinator)
                         .navigationTitle(L10n.Chat.explorationAndPrompts)
-#if os(iOS)
-                        .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
                         .toolbar { ToolbarItem(placement: .automatic) { Button(L10n.Common.close) { coordinator.showPrompts = false } } }
                 }
                 .presentationDetents([.medium, .large])

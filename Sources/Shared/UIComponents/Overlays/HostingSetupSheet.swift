@@ -32,9 +32,7 @@ struct HostingSetupSheet: View {
             }
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Collaboration.hostSession)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         }
     }
     

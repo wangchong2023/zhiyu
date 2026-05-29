@@ -9,11 +9,10 @@
 //  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
 //
 import Foundation
-import GRDB
+
 
 /// 知识图谱链接模型
-public struct PageLink: Codable, Hashable, FetchableRecord, PersistableRecord, Sendable {
-    public static let databaseTableName: String = AppConstants.Storage.Tables.links
+public struct PageLink: Codable, Hashable, Sendable {
     
     public var sourceID: UUID
     public var targetID: UUID
@@ -27,13 +26,7 @@ public struct PageLink: Codable, Hashable, FetchableRecord, PersistableRecord, S
         case createdAt = "created_at"
     }
     
-    public enum Columns {
-        static let sourceID = Column("source_id")
-        static let targetID = Column("target_id")
-        static let context = Column("context")
-        static let createdAt = Column("created_at")
-    }
-    
+
     public init(sourceID: UUID, targetID: UUID, context: String? = nil, createdAt: Date = Date()) {
         self.sourceID = sourceID
         self.targetID = targetID

@@ -52,6 +52,7 @@ enum AppConfig {
     static var jinaReaderURL: String { getNetwork("jina_reader_base") }
     static var ollamaDefaultURL: String { getNetwork("ollama_base") }
     static var deepseekDefaultURL: String { getNetwork("deepseek_base") }
+    static var backendBaseURL: String { getNetwork("backend_base_url") }
     
     // MARK: - 性能参数
     static var searchDebounceMS: Int { getPerformance("search_debounce_ms", default: 300) }

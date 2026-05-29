@@ -49,9 +49,7 @@ public struct OnDeviceTestView: View {
             .padding()
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(Localized.tr("ondevice.test", table: "AI"))
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.tr("cancel")) {

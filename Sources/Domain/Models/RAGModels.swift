@@ -12,7 +12,7 @@ import Foundation
 import GRDB
 
 /// 知识分块模型：用于 RAG 检索的原子单位
-public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+public struct PageChunk: Identifiable, Codable, Sendable {
     public static let databaseTableName: String = AppConstants.Storage.Tables.pageChunks
     
     public var id: String        // 格式: pageID_index 或特定前缀
@@ -41,19 +41,7 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
         case updatedAt = "updated_at"
     }
 
-    public enum Columns {
-        static let id = Column("id")
-        static let pageID = Column("page_id")
-        static let parentID = Column("parent_id")
-        static let chunkType = Column("chunk_type")
-        static let content = Column("content")
-        static let anchorPath = Column("anchor_path")
-        static let index = Column("chunk_index")
-        static let startIndex = Column("start_index")
-        static let embedding = Column("embedding")
-        static let createdAt = Column("created_at")
-        static let updatedAt = Column("updated_at")
-    }
+
     
     public init(
         id: String,
@@ -83,18 +71,14 @@ public struct PageChunk: Identifiable, Codable, FetchableRecord, MutablePersista
 }
 
 /// 页面级向量映射模型
-public struct PageEmbedding: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+public struct PageEmbedding: Identifiable, Codable, Sendable {
     public static let databaseTableName: String = AppConstants.Storage.Tables.pageEmbeddings
     
     public var id: UUID          // 对应 KnowledgePage.id
     public var vector: [Float]
     public var modelName: String
     
-    public enum Columns {
-        static let id = Column("id")
-        static let vector = Column("vector_blob")
-        static let modelName = Column("model_name")
-    }
+
     
     public init(id: UUID, vector: [Float], modelName: String) {
         self.id = id
@@ -102,21 +86,5 @@ public struct PageEmbedding: Identifiable, Codable, FetchableRecord, MutablePers
         self.modelName = modelName
     }
     
-    // GRDB 序列化支持
-    /// 编码
-    public func encode(to container: inout PersistenceContainer) throws {
-        container[Columns.id] = id
-        container[Columns.modelName] = modelName
-        let data = vector.withUnsafeBufferPointer { Data(buffer: $0) }
-        container[Columns.vector] = data
-    }
-    
-    public init(row: Row) throws {
-        id = row[Columns.id]
-        modelName = row[Columns.modelName]
-        let data: Data = row[Columns.vector]
-        vector = data.withUnsafeBytes { pointer in
-            Array(UnsafeBufferPointer(start: pointer.baseAddress?.assumingMemoryBound(to: Float.self), count: data.count / MemoryLayout<Float>.size))
-        }
-    }
+
 }

@@ -50,9 +50,7 @@ struct PluginCenterView: View {
                 .background(PageBackgroundView(accentColor: .appAccent))
                 .id(router.languageForceUpdate)
                 .navigationTitle(L10n.Plugin.centerTitle)
-#if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
 #if !os(watchOS)
                 .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
                     // 处理文件选择结果

@@ -96,9 +96,7 @@ struct BackupView: View {
             .scrollContentBackground(.hidden)
             .background(themeManager.pageBackground())
             .navigationTitle(L10n.Backup.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .confirmationDialog(
                 L10n.Backup.restoreTitle,
                 isPresented: $showRestoreConfirmation,

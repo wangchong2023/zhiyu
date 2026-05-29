@@ -44,9 +44,7 @@ struct PDFIngestSheet: View {
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Ingest.PDF.ingestToKnowledge)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Ingest.PDF.ingest) {

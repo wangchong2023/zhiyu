@@ -34,9 +34,7 @@ struct PageLinkPickerSheet: View {
             }
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Editor.insertPageLink)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
         }
     }
     

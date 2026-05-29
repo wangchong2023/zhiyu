@@ -142,4 +142,15 @@ public extension View {
     ) -> some View {
         self.modifier(GlowingNeonBorderModifier(isGlowing: isGlowing, cornerRadius: cornerRadius, gradientColors: gradientColors))
     }
+    
+    /// 跨平台的 NavigationBarTitleDisplayMode 修饰符
+    /// 自动在不支持的平台（如 macOS/watchOS 的部分视图）进行降级屏蔽
+    @ViewBuilder
+    func appNavigationBarTitleDisplayMode(_ mode: NavigationBarItem.TitleDisplayMode) -> some View {
+        #if os(iOS)
+        self.navigationBarTitleDisplayMode(mode)
+        #else
+        self
+        #endif
+    }
 }

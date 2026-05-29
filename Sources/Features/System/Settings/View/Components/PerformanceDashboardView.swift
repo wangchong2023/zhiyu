@@ -87,9 +87,7 @@ struct PerformanceDashboardView: View {
             }
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Common.Perf.title)
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-#endif
+.appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
