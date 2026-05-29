@@ -2266,7 +2266,6 @@
 				5AAEB8D54DB4D302782FFFAB /* WelcomeView.swift */,
 				7AF67C697CB0DFC51EACE446 /* ZhiYuApp.swift */,
 				2115F83065C0AEC56C9DE707 /* Environment */,
-				E228D64D6E3EB2EF6D51204D /* Shortcuts */,
 				60FE8F60E22F98A08F513ED1 /* Store */,
 				05C4830A6ADFCD298FFCBE8A /* Views */,
 			);
@@ -2840,13 +2839,6 @@
 				A9BB683D5A423E05A9DAF036 /* SourceRow.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		545D47E12F6F34725FE7D9F9 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		561983D8F9F02A6F351541BC /* Menus */ = {
@@ -3855,7 +3847,6 @@
 		D1C5E34CA5E6EEA3B2954E24 /* Lint */ = {
 			isa = PBXGroup;
 			children = (
-				545D47E12F6F34725FE7D9F9 /* Model */,
 				B77463AE188FEFEE2F874E4E /* Service */,
 				905FEECB761B2426E755527D /* View */,
 			);
@@ -4056,13 +4047,6 @@
 				33A031B40982A6DD320F4B1B /* User.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		E228D64D6E3EB2EF6D51204D /* Shortcuts */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Shortcuts;
 			sourceTree = "<group>";
 		};
 		E255065075C343B351131616 /* View */ = {
