@@ -42,14 +42,12 @@ struct iOSPlatformRegistrar: PlatformRegistrar {
         // 4. 实时活动与系统集成
         #if !targetEnvironment(macCatalyst)
         container.register(ActivityService.shared as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
-        container.register(iOSFileArchiver(), for: (any FileArchiverProtocol).self)
-        container.register(iOSAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
         #else
         container.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
-        container.register(MacFileArchiver(), for: (any FileArchiverProtocol).self)
-        container.register(MacAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
         #endif
-        
+        container.register(iOSFileArchiver(), for: (any FileArchiverProtocol).self)
+        container.register(iOSAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+
         container.register(iOSAppEnvironment(), for: (any AppEnvironmentProtocol).self)
         container.register(iOSHapticService(), for: (any HapticFeedbackProtocol).self)
         container.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
