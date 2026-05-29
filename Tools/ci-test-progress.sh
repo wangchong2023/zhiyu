@@ -32,7 +32,7 @@ build_progress() {
     local executed=$((passed + failed))
     local elapsed=$(($(date +%s) - start_time))
     local line="[测试进度] 已执行 ${executed}"
-    if ((total > 0)); then
+    if ((total > 0 && total >= executed)); then
         local pct=$((executed * 100 / total))
         line+="/${total} (${pct}%)"
     fi
@@ -74,7 +74,7 @@ done
 # 最终汇总
 elapsed=$(($(date +%s) - start_time))
 final_line="[测试完成] 共执行 $((passed + failed)) 个用例"
-if ((total > 0)); then
+if ((total > 0 && total >= (passed + failed))); then
     final_line+=" / ${total}"
 fi
 final_line+=" | ✓ ${passed} 通过 | ✗ ${failed} 失败 | 耗时 ${elapsed}s"
