@@ -1,6 +1,6 @@
 labels:
   platform: darwin/arm64
-  type: exec
+  backend: local
 
 steps:
   setup:
