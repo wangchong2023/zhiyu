@@ -2,6 +2,15 @@ labels:
   platform: darwin/arm64
   backend: local
 
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    commands:
+      - echo "machine localhost login $CI_NETRC_USERNAME password $CI_NETRC_PASSWORD" > ~/.netrc
+      - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's/gitea:3000/localhost:3000/g')
+      - git clone $CLONE_URL .
+      - git checkout $CI_COMMIT_SHA
+
 steps:
   setup:
     image: bash
