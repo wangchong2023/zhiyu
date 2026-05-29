@@ -45,19 +45,19 @@ steps:
     image: bash
     commands:
       - echo "===> Building for macOS (Catalyst)..."
-      - xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/mac_build.log 2>&1
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
       - echo "===> macOS Build completed successfully."
 
   build-watchos:
     image: bash
     commands:
       - echo "===> Building for watchOS Simulator..."
-      - xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO > build/watch_build.log 2>&1
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "===> watchOS Build completed successfully."
 
   run-tests:
     image: bash
     commands:
       - echo "===> Running Unit Tests..."
-      - xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' > build/test_results.log 2>&1
+      - set -o pipefail && xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' 2>&1 | tee build/test_results.log
       - echo "===> All Tests passed successfully."
