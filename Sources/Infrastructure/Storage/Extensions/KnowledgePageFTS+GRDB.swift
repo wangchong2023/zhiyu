@@ -10,4 +10,6 @@ import GRDB
 import Foundation
 
 // MARK: - GRDB 协议遵循
-extension KnowledgePageFTS: FetchableRecord, PersistableRecord {}
+extension KnowledgePageFTS: FetchableRecord, PersistableRecord {
+    public static let databaseTableName = AppConstants.Storage.Tables.pagesFTS
+}

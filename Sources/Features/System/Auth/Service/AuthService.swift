@@ -47,7 +47,13 @@ public final class AuthService: AuthServiceProtocol {
     public static var forceMockBackend = false
     #endif
 
-    private var isMockBackend: Bool { return false }
+    private var isMockBackend: Bool {
+        #if DEBUG
+        return Self.forceMockBackend
+        #else
+        return false
+        #endif
+    }
 
     // MARK: - 核心操作
     

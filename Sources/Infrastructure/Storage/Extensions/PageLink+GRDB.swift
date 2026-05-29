@@ -12,6 +12,11 @@ import Foundation
 // MARK: - GRDB 协议遵循
 extension PageLink: FetchableRecord, PersistableRecord {}
 
+// MARK: - Database Table Name
+extension PageLink {
+    public static let databaseTableName = AppConstants.Storage.Tables.links
+}
+
 // MARK: - Database Schema
 extension PageLink {
     enum Columns {
