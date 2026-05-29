@@ -47,7 +47,15 @@ public final class AuthService: AuthServiceProtocol {
     public static var forceMockBackend = false
     #endif
 
-    private var isMockBackend: Bool { return false }
+    private var isMockBackend: Bool {
+        #if DEBUG
+        // forceMockBackend 由单元测试直接设置；或通过 --reset-auth-state 启动参数（AuthUITests）激活
+        return Self.forceMockBackend
+            || ProcessInfo.processInfo.arguments.contains("--reset-auth-state")
+        #else
+        return false
+        #endif
+    }
 
     // MARK: - 核心操作
     
@@ -74,7 +82,8 @@ public final class AuthService: AuthServiceProtocol {
                 isNewUser: false,
                 totpRequired: false
             )
-            return await handleSuccessfulLogin(response: response, identity: identity)
+            // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
+            return handleSuccessfulLogin(response: response, identity: identity)
         }
         #endif
         let req = LoginRequest.password(username: identity, password: password)
@@ -86,7 +95,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return await handleSuccessfulLogin(response: response, identity: identity)
+            return handleSuccessfulLogin(response: response, identity: identity)
         } catch {
             print("❌ [AuthService] 密码登录失败: \(error.localizedDescription)")
             return false
@@ -134,7 +143,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return await handleSuccessfulLogin(response: response, identity: phone)
+            return handleSuccessfulLogin(response: response, identity: phone)
         } catch {
             print("❌ [AuthService] 验证码登录失败: \(error.localizedDescription)")
             return false
@@ -205,7 +214,8 @@ public final class AuthService: AuthServiceProtocol {
                 isNewUser: false,
                 totpRequired: false
             )
-            return await handleSuccessfulLogin(response: response, identity: name)
+            // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
+            return handleSuccessfulLogin(response: response, identity: name)
         }
         #endif
         
@@ -257,7 +267,7 @@ public final class AuthService: AuthServiceProtocol {
             }
             
             let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-            return await handleSuccessfulLogin(response: response, identity: name)
+            return handleSuccessfulLogin(response: response, identity: name)
         } catch {
             print("❌ sendAuthRequestToBackend 失败: \(error)")
             throw error

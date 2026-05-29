@@ -12,7 +12,7 @@
 import Foundation
 
 /// 后端全局统一 JSON 响应封装
-public struct ApiResponse<T: Codable>: Codable {
+public struct ApiResponse<T: Codable>: Codable, @unchecked Sendable {
     /// 业务状态码。0 表示操作成功；非 0 表示业务异常
     public let code: Int
     /// 友好可读的错误说明或状态描述
@@ -31,7 +31,7 @@ public struct ApiResponse<T: Codable>: Codable {
 }
 
 /// 当接口响应中 data 为 null 时的占位类型
-public struct EmptyData: Codable {}
+public struct EmptyData: Codable, Sendable {}
 
 /// 后端网络通信自定义错误
 public enum NetworkError: Error, LocalizedError {
