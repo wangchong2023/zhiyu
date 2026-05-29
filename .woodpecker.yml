@@ -61,7 +61,6 @@ steps:
     commands:
       - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-      - echo "===> Test count: $(cat build/.test_count)"
 
   run-tests:
     image: bash
