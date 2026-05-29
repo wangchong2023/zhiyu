@@ -2,6 +2,15 @@ labels:
   platform: darwin/arm64
   backend: local
 
+clone:
+  git:
+    image: bash
+    commands:
+      # 替换 Gitea 内部主机名为 localhost，以适配 Mac 宿主机网络
+      - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's/gitea:3000/localhost:3000/g')
+      - git clone $CLONE_URL .
+      - git checkout $CI_COMMIT_SHA
+
 steps:
   setup:
     image: bash
