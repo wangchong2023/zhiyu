@@ -768,7 +768,6 @@
 		809954CB0E1F4ACB69095934 /* L10n+Insight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DCDD5BE706A85CC9913D62D /* L10n+Insight.swift */; };
 		809D65AE3D59ADCC5620CBF8 /* BackgroundTaskProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE7DA0E60E88EBFC1DAE8EB /* BackgroundTaskProtocol.swift */; };
 		80EC14C249C5DB32B0E60F33 /* AppTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52064BC9DACDD2ED3974F17F /* AppTooltip.swift */; };
-		80ED38CD39770E1F0D3597BA /* AIRainbowGlowBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6BFBEAE50EB990EAF4941 /* AIRainbowGlowBadge.swift */; };
 		8102BA88D32E6ED767D9315A /* PageLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C00BEF4D3E7453F17B36249 /* PageLink.swift */; };
 		810BCECB56CB40A024D73A51 /* AIProcessingStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC345027753A279DD6195ECA /* AIProcessingStatusBanner.swift */; };
 		81559829B76E21BA255C5AFC /* TagCapsule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92CA7A5551787D4E8EE19059 /* TagCapsule.swift */; };
@@ -1067,7 +1066,6 @@
 		B28CCD66ABBC7D6008A71A00 /* L10n+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5D0C26BAFBCF248AB65993 /* L10n+Network.swift */; };
 		B2AB52DF3223BB31A4257738 /* IngestLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCDE6E6A9BBAE9B91346FFA /* IngestLLMService.swift */; };
 		B2C3A5CC7E675E8734B55DA8 /* WidgetAndWatchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F725B13874E680780DF3596 /* WidgetAndWatchViews.swift */; };
-		B2FD0122CAE1C1ECCD634B84 /* AIRainbowGlowBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6BFBEAE50EB990EAF4941 /* AIRainbowGlowBadge.swift */; };
 		B31A15558648D7EC81925743 /* RouterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5613BA4FD8D0E4BA0304675E /* RouterProtocol.swift */; };
 		B3717F8DF262595C04CC03D8 /* L10n+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BCDC80FE5EBCD4A93222C9 /* L10n+Settings.swift */; };
 		B384A9C337CF001A8845ED25 /* ExportServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47C93598DBAB847B90B61179 /* ExportServiceProtocol.swift */; };
@@ -1430,7 +1428,6 @@
 		F51E715307C41559A25E8399 /* L10n+Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC6F6B06158CB0DFB59E4D6 /* L10n+Plugin.swift */; };
 		F52917FBEFCEB960D6591475 /* PromptWorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B202E4B415EE717EC3CDED /* PromptWorkshopView.swift */; };
 		F535511C093DA923F6C9F133 /* UnsupportedExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F7BDC6B3729E72821050B6 /* UnsupportedExportService.swift */; };
-		F5376011AC4385237A69BC36 /* AIRainbowGlowBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6BFBEAE50EB990EAF4941 /* AIRainbowGlowBadge.swift */; };
 		F584F5893E9658CE42EC68EE /* Graph3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9D22D2826B36FA2EB5547D /* Graph3DView.swift */; };
 		F5941861D4B5FC98B48150A6 /* AppStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AA88212168C8C6969DCEE /* AppStoreTests.swift */; };
 		F5B27EC81D8B0C5CAE12B86C /* LLMProviders.json in Resources */ = {isa = PBXBuildFile; fileRef = 185B78C17147A3E10192A046 /* LLMProviders.json */; };
@@ -1770,7 +1767,6 @@
 		556E86773BE20DEF3DAAC4AB /* KnowledgePage+GRDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KnowledgePage+GRDB.swift"; sourceTree = "<group>"; };
 		559E9F429E77C0A17F61EF36 /* PDFComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFComponents.swift; sourceTree = "<group>"; };
 		55A1995F8F53A28910294605 /* SchemaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaService.swift; sourceTree = "<group>"; };
-		55D6BFBEAE50EB990EAF4941 /* AIRainbowGlowBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRainbowGlowBadge.swift; sourceTree = "<group>"; };
 		5613BA4FD8D0E4BA0304675E /* RouterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterProtocol.swift; sourceTree = "<group>"; };
 		565B786D87DFEA81DCA58A5B /* VisionProSpatialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionProSpatialView.swift; sourceTree = "<group>"; };
 		5714EF992FFA9DF10881DDCA /* AIWorkflowCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIWorkflowCapabilities.swift; sourceTree = "<group>"; };
@@ -3511,7 +3507,6 @@
 		9240E7EAF07BE9B1CBC985EF /* Badges */ = {
 			isa = PBXGroup;
 			children = (
-				55D6BFBEAE50EB990EAF4941 /* AIRainbowGlowBadge.swift */,
 				912726C762F31F918625A562 /* VaultBadge.swift */,
 			);
 			path = Badges;
@@ -5072,7 +5067,6 @@
 				182CAED6F68A586641F4F7AA /* AIProcessingAttributes.swift in Sources */,
 				18143A7BF406AA184D46194C /* AIProcessingStatusBanner.swift in Sources */,
 				AF7B55035F7DDA5F6B38DC51 /* AIPulseIndicator.swift in Sources */,
-				F5376011AC4385237A69BC36 /* AIRainbowGlowBadge.swift in Sources */,
 				8939AEDC1CA32BEE73CF25F7 /* AISynthesisService.swift in Sources */,
 				B7B810E8F7A8B1A1DE3221B9 /* AITaskProgress.swift in Sources */,
 				13CC166915059080E810BEAE /* AIViewProvider.swift in Sources */,
@@ -5598,7 +5592,6 @@
 				E7BFD1B85B8DE0C8F8CE268E /* AIProcessingAttributes.swift in Sources */,
 				DE70CB0DF7A09F0E15B6C377 /* AIProcessingStatusBanner.swift in Sources */,
 				67A3C9A8482C8331DC358655 /* AIPulseIndicator.swift in Sources */,
-				B2FD0122CAE1C1ECCD634B84 /* AIRainbowGlowBadge.swift in Sources */,
 				52B1BA2805C383DC11ACBDFB /* AISynthesisService.swift in Sources */,
 				C9A8758D17B3EA3084E9E2DE /* AITaskProgress.swift in Sources */,
 				0141F23AD57CBF361AA795B2 /* AIViewProvider.swift in Sources */,
@@ -6089,7 +6082,6 @@
 				98BB8A0B649232E815EF5266 /* AIContentEnricher.swift in Sources */,
 				3AF0E0F7578EFAF4AE2D8A42 /* AIGovernanceRepository.swift in Sources */,
 				810BCECB56CB40A024D73A51 /* AIProcessingStatusBanner.swift in Sources */,
-				80ED38CD39770E1F0D3597BA /* AIRainbowGlowBadge.swift in Sources */,
 				F10E062C9F1784371077BF11 /* AITaskProgress.swift in Sources */,
 				8BFA87A2880F3434474F77A2 /* AIWorkflowCapabilities.swift in Sources */,
 				388F46149860B95472B12FB1 /* AccessibilityService.swift in Sources */,

@@ -125,6 +125,7 @@ targets:
           - "Shared/UIComponents/Overlays/**"
           - "Shared/UIComponents/Pickers/**"
           - "Shared/UIComponents/Editors/**"
+          - "Shared/UIComponents/Badges/AIRainbowGlowBadge.swift"
           - "Shared/UIComponents/Interaction/KeyboardShortcutsView.swift"
           - "Shared/UIComponents/Modifiers/AppToolbarModifier.swift"
           - "Shared/UIComponents/Feedback/AppAILoadingSkeleton.swift"
