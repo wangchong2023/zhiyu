@@ -1,45 +1,64 @@
 #!/bin/bash
-# ci-test-progress.sh — 解析 xcodebuild 测试原始输出，stderr 输出进度，stdout 透传
+# ci-test-progress.sh — 解析 xcodebuild 测试原始输出，stderr 输出实时进度，stdout 透传
 # 用法: xcodebuild test ... 2>&1 | Tools/ci-test-progress.sh | xcbeautify
-# 进度信息写入 stderr，原始行透传至 stdout 供 xcbeautify 格式化
+# 进度写入 stderr（Woodpecker 会捕获），原始行透传 stdout 供 xcbeautify
+#
+# 首次运行时从 xcodebuild "Executed N tests" 提取总数缓存到 build/.test_count，
+# 后续运行自动读取缓存的预计总数，展示百分比进度。
 
 set -o pipefail
-declare -i passed=0 failed=0
-declare start_time
+declare -i passed=0 failed=0 total=0
+declare start_time last_progress=0
 start_time=$(date +%s)
-declare last_progress=0
 
-# 进度刷新间隔(秒)，避免刷屏
-readonly REFRESH_INTERVAL=1
+readonly CACHE_FILE="build/.test_count"
+readonly REFRESH_INTERVAL=2     # 进度刷新间隔(秒)
+
+# 尝试读取缓存的总数（仅用于百分比展示，不做强依赖）
+if [[ -f "$CACHE_FILE" ]]; then
+    total=$(cat "$CACHE_FILE" 2>/dev/null) || total=0
+fi
+
+build_progress() {
+    local executed=$((passed + failed))
+    local elapsed=$(($(date +%s) - start_time))
+    local line="[测试进度] 已执行 ${executed}"
+    if ((total > 0)); then
+        local pct=$((executed * 100 / total))
+        line+="/${total} (${pct}%)"
+    fi
+    line+=" | ✓ ${passed} 通过 | ✗ ${failed} 失败 | 已运行 ${elapsed}s"
+    printf "\r\033[K%s\n" "$line" >&2
+}
 
 while IFS= read -r line; do
-    # 匹配 "Test Case ... passed" (xcodebuild 原始输出，格式稳定)
     if echo "$line" | grep -q "Test Case.*passed"; then
         ((passed++))
-    fi
-    # 匹配 "Test Case ... failed"
-    if echo "$line" | grep -q "Test Case.*failed"; then
+    elif echo "$line" | grep -q "Test Case.*failed"; then
         ((failed++))
+    fi
+
+    # 捕获 xcodebuild 最终汇总行 "Executed N tests" 并缓存总数
+    if echo "$line" | grep -qE "^[[:space:]]*Executed [0-9]+ tests"; then
+        new_total=$(echo "$line" | grep -oE '[0-9]+' | head -1)
+        if [[ -n "$new_total" && "$new_total" -gt 0 ]]; then
+            echo "$new_total" > "$CACHE_FILE" 2>/dev/null || true
+        fi
     fi
 
     executed=$((passed + failed))
     now=$(date +%s)
 
-    # 按间隔输出进度到 stderr
     if ((executed > 0 && now - last_progress >= REFRESH_INTERVAL)); then
-        elapsed=$((now - start_time))
-        printf "\r\033[K[进度] 已执行 %d 个用例 | ✓ %d 通过 | ✗ %d 失败 | 耗时 %ds\n" \
-            "$executed" "$passed" "$failed" "$elapsed" >&2
+        build_progress
         last_progress=$now
     fi
 
-    # 原始行透传到 stdout 供 xcbeautify
+    # 透传到 stdout 供 xcbeautify 格式化
     echo "$line"
 done
 
-# 最终汇总到 stderr
+# 最终汇总
 elapsed=$(($(date +%s) - start_time))
-printf "\r\033[K[完成] 共执行 %d 个用例 | ✓ %d 通过 | ✗ %d 失败 | 耗时 %ds\n" \
-    "$executed" "$passed" "$failed" "$elapsed" >&2
-
-# 退出码由 pipefail 保证（xcodebuild 失败则管道失败），此处始终返回 0
+printf "\r\033[K[测试完成] 共执行 %d 个用例 | ✓ %d 通过 | ✗ %d 失败 | 耗时 %ds\n" \
+    "$((passed + failed))" "$passed" "$failed" "$elapsed" >&2
