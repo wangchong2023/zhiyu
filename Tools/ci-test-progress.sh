@@ -21,7 +21,7 @@ fi
 
 # 若缓存为空，从源码估算测试用例总数作为初始值
 if ((total <= 0)); then
-    estimated=$(grep -rc "func test" Tests/ --include="*.swift" 2>/dev/null \
+    estimated=$(grep -rc "^[[:space:]]*func test" Tests/ --include="*.swift" 2>/dev/null \
         | awk -F: '{sum += $2} END {print sum}')
     if [[ -n "$estimated" && "$estimated" -gt 0 ]]; then
         total=$estimated

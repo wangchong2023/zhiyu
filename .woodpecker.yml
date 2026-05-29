@@ -56,6 +56,13 @@ steps:
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "===> watchOS Build completed successfully."
 
+  count-tests:
+    image: bash
+    commands:
+      - echo "===> Counting test cases..."
+      - grep -rc "^[[:space:]]*func test" Tests/ --include="*.swift" | awk -F: '{sum += $2} END {print sum}' > build/.test_count
+      - echo "===> Test count: $(cat build/.test_count)"
+
   run-tests:
     image: bash
     commands:
