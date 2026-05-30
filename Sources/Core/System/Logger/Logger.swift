@@ -328,16 +328,14 @@ public actor Logger: LoggerProtocol {
     public func saveToDisk() async {
         let entries = self._logEntries
         let url = self.logsFileURL
-        
-        Task.detached(priority: .background) {
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = .iso8601
-            do {
-                let data = try encoder.encode(entries)
-                try data.write(to: url, options: .atomicWrite)
-            } catch {
-                print("❌ [Logger] Failed to save logs: \(error.localizedDescription)")
-            }
+
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        do {
+            let data = try encoder.encode(entries)
+            try data.write(to: url, options: .atomicWrite)
+        } catch {
+            print("❌ [Logger] Failed to save logs: \(error.localizedDescription)")
         }
     }
 

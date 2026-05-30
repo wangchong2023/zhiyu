@@ -232,9 +232,9 @@ final class LoggerTests: XCTestCase {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         _ = try? FileManager.default.removeItem(at: docs!.appendingPathComponent("zhiyu_logs.json"))
         logService = nil
-        try await super.setUp()
+        try await super.tearDown()
     }
-    
+
     /// 验证新增的审计日志条目在异步流中能被安全地落盘与查询
     func testAddLogEntry() async {
         logService.addLog(action: .create, target: "TestPage")
