@@ -1,5 +1,4 @@
 labels:
-  platform: darwin/arm64
   backend: local
 
 skip_clone: true
