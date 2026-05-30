@@ -46,21 +46,25 @@ final class AppEnvironment {
             
             // 新的 App Group 共享路径（若不可用，回退到沙盒路径）
             let dbURL: URL
+            let baseGlobalURL: URL
+
             if let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
                 dbURL = groupURL.appendingPathComponent(AppConstants.Storage.databaseName)
+                baseGlobalURL = groupURL
             } else {
                 Logger.shared.warning("[AppEnvironment] App Group 不可用，回退至沙盒路径")
                 dbURL = oldDbURL
+                baseGlobalURL = appSupport
             }
-            
+
             // 数据无缝热迁移（如果旧库存在且新库不存在）
             if fileManager.fileExists(atPath: oldDbURL.path) && !fileManager.fileExists(atPath: dbURL.path) {
                 Logger.shared.info("📦 [AppEnvironment] 正在进行数据库 App Group 热迁移...")
                 try fileManager.moveItem(at: oldDbURL, to: dbURL)
-                
+
                 // 迁移关联文件 (如 global.sqlite3)
                 let oldGlobal = appSupport.appendingPathComponent(AppConstants.Storage.globalDatabaseName)
-                let newGlobal = groupURL.appendingPathComponent(AppConstants.Storage.globalDatabaseName)
+                let newGlobal = baseGlobalURL.appendingPathComponent(AppConstants.Storage.globalDatabaseName)
                 if fileManager.fileExists(atPath: oldGlobal.path) && !fileManager.fileExists(atPath: newGlobal.path) {
                     try? fileManager.moveItem(at: oldGlobal, to: newGlobal)
                 }
