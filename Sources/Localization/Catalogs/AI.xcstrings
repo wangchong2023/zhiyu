@@ -1021,23 +1021,7 @@
         }
       }
     },
-    "chat.aiThinking": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 正在思考..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 正在思考..."
-          }
-        }
-      }
-    },
+
     "chat.clearHistory": {
       "extractionState": "manual",
       "localizations": {

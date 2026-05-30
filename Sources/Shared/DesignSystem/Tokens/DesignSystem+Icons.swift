@@ -278,5 +278,21 @@ extension DesignSystem {
         public static let textBubble = "text.bubble.fill"
         /// 柱状图统计
         public static let chartBarFill = "chart.bar.fill"
+        
+        // ── 设置中心专属分类 SF Symbol 图标收口 ──
+        /// 外观设置图标
+        public static let settingsAppearance = "paintbrush.fill"
+        /// AI 核心设置图标
+        public static let settingsAI = "network"
+        /// 安全隐私设置图标
+        public static let settingsSecurity = "eye.slash.fill"
+        /// 数据备份与管理图标
+        public static let settingsData = "archivebox.fill"
+        /// 插件市场与管理图标
+        public static let settingsPlugins = "puzzlepiece.fill"
+        /// 开发者诊断工具图标
+        public static let settingsDeveloper = "hammer.fill"
+        /// 关于软件说明图标
+        public static let settingsAbout = "info.circle"
     }
 }

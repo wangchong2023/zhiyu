@@ -892,6 +892,7 @@
 		93D38CE6AC4A273480D0DAF1 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76B953CC50C3072AC188E14 /* Date+Extensions.swift */; };
 		93E0D99E17386008941DE7B1 /* KnowledgeIngestPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85475C1E8A636EFD9557FF67 /* KnowledgeIngestPipeline.swift */; };
 		93F542414296FE0E9895E16D /* QuizProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC454C33881B0524198C9E3 /* QuizProcessor.swift */; };
+		93F74FBD1B266046BE45C586 /* KnowledgeStorePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ED39B4D50358FEEEEF49C1 /* KnowledgeStorePerformanceTests.swift */; };
 		94002E7921C8EFFDFC026B59 /* WatchSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F83D8833FCE5D36D8A961F8 /* WatchSpeechService.swift */; };
 		941D2490FB81D37D6514B004 /* TaskCenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6031265C0856B48123DFBC /* TaskCenterProtocol.swift */; };
 		9430DBBF2852883D1C95884B /* VisionProSpatialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 565B786D87DFEA81DCA58A5B /* VisionProSpatialView.swift */; };
@@ -2106,6 +2107,7 @@
 		D3D8ED3DB3CB4D36CDA829FF /* ZhiYuWatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZhiYuWatchView.swift; sourceTree = "<group>"; };
 		D4B588D58D4F1EF8DFD02352 /* L10n+Vault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Vault.swift"; sourceTree = "<group>"; };
 		D5B94B0DC023E4C992D7ECDF /* DesignSystem+List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem+List.swift"; sourceTree = "<group>"; };
+		D6ED39B4D50358FEEEEF49C1 /* KnowledgeStorePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeStorePerformanceTests.swift; sourceTree = "<group>"; };
 		D74C74F977184237AF6792ED /* WatchPlatformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchPlatformTests.swift; sourceTree = "<group>"; };
 		D82CDD4D531FB99AB3426037 /* DemoDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDataGenerator.swift; sourceTree = "<group>"; };
 		D84175488FDEAC7541758F67 /* ModelColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelColorView.swift; sourceTree = "<group>"; };
@@ -4132,6 +4134,7 @@
 			children = (
 				D1DF5754F21B3ECE982899EF /* iPadEnvironmentTests.swift */,
 				5412BF635F614C5A35F1266F /* iPadRouterTests.swift */,
+				D6ED39B4D50358FEEEEF49C1 /* KnowledgeStorePerformanceTests.swift */,
 				487CA8C60C980FA0D30F24C8 /* KnowledgeStoreStressTests.swift */,
 				2C6FC3FE9C943D5135368A87 /* LocalizationTests.swift */,
 				48D700D9C3BD9404A9658CBF /* NotebookThemeConfigTests.swift */,
@@ -5043,6 +5046,7 @@
 				433BC92384308247189BB8A9 /* KnowledgeRepositoryTests.swift in Sources */,
 				F46BE5F65A01BA516F6E6EB1 /* KnowledgeStatsWidget.swift in Sources */,
 				404A26F36FB1CB2C89106D4E /* KnowledgeStatsWidgetTests.swift in Sources */,
+				93F74FBD1B266046BE45C586 /* KnowledgeStorePerformanceTests.swift in Sources */,
 				1A737ABD1FD6294C84629FD5 /* KnowledgeStoreStressTests.swift in Sources */,
 				8F0A4326D98C356A10CE7E07 /* LLMAIServicesTests.swift in Sources */,
 				CCA95BD4B93CA1E0DC356C2F /* LLMServiceTests.swift in Sources */,
@@ -6718,6 +6722,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_GENERATE_LOCALIZATION_SYMBOL_KEYS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.9;
@@ -6909,6 +6914,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_GENERATE_LOCALIZATION_SYMBOL_KEYS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.9;
