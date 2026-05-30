@@ -31,18 +31,45 @@ final class AppEnvironment {
     let llmConfig: LLMConfigManager
     
     private init() {
-        print("🎬 [AppEnvironment] 开始执行初始化...")
+        Logger.shared.info("🎬 [AppEnvironment] 开始执行初始化...")
         
         // 0. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         // 注意：在实际多库模式下，此处应由 VaultService 驱动，但为了保证系统稳定性与 DI 完整性，
-        // 我们在此处初始化默认存储路径。
+        // 我们在此处初始化默认存储路径，迁移至 App Group 共享容器。
         do {
-            let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            let dbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
+            let fileManager = FileManager.default
+            let appGroupIdentifier = "group.com.zhiyu.app"
+            
+            // 旧的沙盒独立路径
+            let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            let oldDbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
+            
+            // 新的 App Group 共享路径（若不可用，回退到沙盒路径）
+            let dbURL: URL
+            if let groupURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
+                dbURL = groupURL.appendingPathComponent(AppConstants.Storage.databaseName)
+            } else {
+                Logger.shared.warning("[AppEnvironment] App Group 不可用，回退至沙盒路径")
+                dbURL = oldDbURL
+            }
+            
+            // 数据无缝热迁移（如果旧库存在且新库不存在）
+            if fileManager.fileExists(atPath: oldDbURL.path) && !fileManager.fileExists(atPath: dbURL.path) {
+                Logger.shared.info("📦 [AppEnvironment] 正在进行数据库 App Group 热迁移...")
+                try fileManager.moveItem(at: oldDbURL, to: dbURL)
+                
+                // 迁移关联文件 (如 global.sqlite3)
+                let oldGlobal = appSupport.appendingPathComponent(AppConstants.Storage.globalDatabaseName)
+                let newGlobal = groupURL.appendingPathComponent(AppConstants.Storage.globalDatabaseName)
+                if fileManager.fileExists(atPath: oldGlobal.path) && !fileManager.fileExists(atPath: newGlobal.path) {
+                    try? fileManager.moveItem(at: oldGlobal, to: newGlobal)
+                }
+            }
+            
             try DatabaseManager.shared.setup(at: dbURL)
-            print("📦 [AppEnvironment] 核心数据库已就绪: \(dbURL.lastPathComponent)")
+            Logger.shared.info("📦 [AppEnvironment] 核心数据库已就绪 (App Group): \(dbURL.lastPathComponent)")
         } catch {
-            print("❌ [AppEnvironment] 数据库初始化严重失败: \(error)")
+            Logger.shared.error("[AppEnvironment] 数据库初始化严重失败", error: error)
             // 生产环境下可考虑弹出警报，开发环境下此处失败将导致后续 register 报错并 panic
         }
         
@@ -87,7 +114,7 @@ final class AppEnvironment {
             ServiceContainer.shared.resolve(DataCoordinator.self).sync()
         }
         
-        print("🚀 [AppEnvironment] 初始化完成 at \(Date())")
+        Logger.shared.info("🚀 [AppEnvironment] 初始化完成 at \(Date())")
     }
     
     /// 获取平台环境信息
