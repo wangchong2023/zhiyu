@@ -91,7 +91,8 @@ public actor NetworkClient {
         // 3. 执行网络请求
         let (data, response) = try await session.data(for: request)
         
-        guard let httpResponse = response as? HTTPURLResponse else {
+        // HTTP 层校验：确保是标准 HTTP 响应（业务层通过 apiResponse.code 判断成功与否）
+        guard response is HTTPURLResponse else {
             throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
         }
         

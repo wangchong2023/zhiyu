@@ -26,6 +26,8 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: NO
     CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
     SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_GENERATE_LOCALIZATION_SYMBOL_KEYS: NO
+    EAGER_COMPILATION_ENABLED: NO
     MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
 
 targets:
@@ -125,6 +127,7 @@ targets:
           - "Shared/UIComponents/Overlays/**"
           - "Shared/UIComponents/Pickers/**"
           - "Shared/UIComponents/Editors/**"
+          - "Shared/UIComponents/Badges/AIRainbowGlowBadge.swift"
           - "Shared/UIComponents/Interaction/KeyboardShortcutsView.swift"
           - "Shared/UIComponents/Modifiers/AppToolbarModifier.swift"
           - "Shared/UIComponents/Feedback/AppAILoadingSkeleton.swift"
@@ -174,7 +177,9 @@ targets:
         SDKROOT: iphoneos
         SKIP_INSTALL: "YES"
         TARGETED_DEVICE_FAMILY: "1"
-    dependencies: []
+    dependencies:
+      - package: GRDB
+      - target: ZhiYu
 
   ZhiYuTests:
     type: bundle.unit-test

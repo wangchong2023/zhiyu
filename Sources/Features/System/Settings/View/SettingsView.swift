@@ -55,19 +55,19 @@ struct SettingsView: View {
         var iconName: String {
             switch self {
             case .appearance:
-                return "paintbrush.fill"
+                return DesignSystem.Icons.settingsAppearance
             case .ai:
-                return "network"
+                return DesignSystem.Icons.settingsAI
             case .security:
-                return "eye.slash.fill"
+                return DesignSystem.Icons.settingsSecurity
             case .data:
-                return "archivebox.fill"
+                return DesignSystem.Icons.settingsData
             case .plugins:
-                return "puzzlepiece.fill"
+                return DesignSystem.Icons.settingsPlugins
             case .developer:
-                return "hammer.fill"
+                return DesignSystem.Icons.settingsDeveloper
             case .about:
-                return "info.circle"
+                return DesignSystem.Icons.settingsAbout
             }
         }
     }
@@ -193,34 +193,44 @@ struct SettingsView: View {
     @ViewBuilder
     private func detailColumn(for section: SettingsSection?, router: Router) -> some View {
         if let section = section {
-            List {
-                switch section {
-                case .appearance:
-                    appearanceSection
-                        .appListRowBackground()
-                case .ai:
-                    aiSection
-                        .appListRowBackground()
-                case .security:
-                    securitySection(store: store)
-                        .appListRowBackground()
-                case .data:
-                    dataManagementSection
-                        .appListRowBackground()
-                case .plugins:
-                    PluginExtensionsSection()
-                        .appListRowBackground()
-                case .developer:
-                    developerSection
-                        .appListRowBackground()
-                case .about:
-                    aboutSection
-                        .appListRowBackground()
+            Group {
+                if section == .about {
+                    // 对于“关于”大类，在 Mac 大屏偏好设置中直接渲染 AboutView 内容
+                    // 彻底消除“点击关于 -> 出现关于列表项 -> 再点击进入详情”的冗余下层菜单交互
+                    AboutView()
+                } else {
+                    List {
+                        switch section {
+                        case .appearance:
+                            appearanceSection
+                                .appListRowBackground()
+                        case .ai:
+                            aiSection
+                                .appListRowBackground()
+                        case .security:
+                            securitySection(store: store)
+                                .appListRowBackground()
+                        case .data:
+                            dataManagementSection
+                                .appListRowBackground()
+                        case .plugins:
+                            PluginExtensionsSection()
+                                .appListRowBackground()
+                        case .developer:
+                            developerSection
+                                .appListRowBackground()
+                        case .about:
+                            EmptyView()
+                        }
+                    }
+                    .listStyle(.insetGrouped)
+                    .scrollContentBackground(.hidden)
                 }
             }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
             .navigationTitle(section.displayName)
+            // macOS 偏好设置采用小字居中 (inline) 标题样式，完美契合 macOS 视觉规范
+            // 同时彻底解决由于 NavigationStack 宽度被约束而导致的 Large Title 偏左贴近侧边栏分割线的排版缺陷
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     doneButton(router: router)

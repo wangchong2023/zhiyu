@@ -72,6 +72,21 @@ final class JavaScriptPlugin: InterceptionPlugin {
         // 2. 注入桥接好的 API
         setupAPI(in: ctx)
         
+        // 2.5 注入安全硬化脚本：禁用 eval 和 Function 构造器，防止沙箱逃逸 (@SR-04)
+        let hardeningScript = """
+        (function() {
+            const forbidden = function() { throw new Error("Security Error: 'eval' and 'Function' are disabled in ZhiYu sandbox."); };
+            try {
+                eval = forbidden;
+                Function = forbidden;
+                Object.freeze(forbidden);
+            } catch (e) {
+                console.error("Failed to apply sandbox hardening.");
+            }
+        })();
+        """
+        ctx.evaluateScript(hardeningScript)
+        
         // 3. 加载脚本
         ctx.evaluateScript(self.scriptContent)
         

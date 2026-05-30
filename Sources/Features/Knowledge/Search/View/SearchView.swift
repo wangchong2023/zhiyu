@@ -354,53 +354,6 @@ struct SearchView: View {
     }
 }
 
-// MARK: - Quick Preview Sheet
-struct PagePreviewSheet: View {
-    let page: KnowledgePage
-    @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var themeManager: ThemeManager
-    
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
-                    HStack {
-                        AppIconChip(icon: page.pageType.icon, text: page.pageType.displayName, color: Color.fromModelColorName(page.pageType.colorName), isSelected: true)
-                        Spacer()
-                Text(page.updatedAt.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: Localized.currentLocale)))
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
-                    }
-                    
-                    Text(page.title)
-                        .font(.title2.bold())
-                        .foregroundStyle(.appText)
-                    
-                    Divider()
-                    
-                    Text(page.content)
-                        .font(.subheadline)
-                        .foregroundStyle(.appText)
-                        .lineLimit(20)
-                    
-                    Spacer(minLength: 40)
-                }
-                .padding()
-            }
-            .background(themeManager.pageBackground())
-            .navigationTitle(L10n.Common.preview)
-.appNavigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.close) { dismiss() }
-                        .buttonStyle(.plain)
-                }
-            }
-        }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-    }
-}
 
 // MARK: - Filter Pill
 struct FilterPill: View {
@@ -437,53 +390,6 @@ struct FilterPill: View {
     }
 }
 
-// MARK: - Search Diagnostic Sheet
-struct SearchDiagnosticSheet: View {
-    let info: SearchDiagnosticInfo
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        NavigationStack {
-            List {
-                Section(L10n.Search.Diag.rewrite) {
-                    VStack(alignment: .leading, spacing: DesignSystem.small) {
-                        LabeledContent(L10n.Search.Diag.originalQuery, value: info.query)
-                        LabeledContent(L10n.Search.Diag.rewrittenQuery, value: info.rewrittenQuery)
-                            .foregroundStyle(.purple)
-                    }
-                    .font(.subheadline)
-                }
-                
-                Section(L10n.Search.Diag.rrfDetail) {
-                    ForEach(info.rrfTopResults) { res in
-                        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                            Text(res.title)
-                                .font(.headline)
-                            
-                            HStack {
-                                SearchBadgeView(label: "\(L10n.Search.Diag.ftsRank): \(res.ftsRank > 0 ? "\(res.ftsRank)" : L10n.Search.Diag.miss)", color: res.ftsRank > 0 ? .blue : .gray)
-                                SearchBadgeView(label: "\(L10n.Search.Diag.vectorRank): \(res.vectorRank > 0 ? "\(res.vectorRank)" : L10n.Search.Diag.miss)", color: res.vectorRank > 0 ? .green : .gray)
-                                Spacer()
-                                Text(String(format: L10n.Search.Diag.scoreFormat, res.finalScore))
-                                    .font(.caption2.monospaced())
-                                    .foregroundStyle(.appSecondary)
-                            }
-                        }
-                        .padding(.vertical, DesignSystem.tiny)
-                    }
-                }
-            }
-            .navigationTitle(L10n.Search.Diag.title)
-.appNavigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.close) { dismiss() }
-                        .buttonStyle(.plain)
-                }
-            }
-        }
-    }
-}
 
 struct SearchBadgeView: View {
     let label: String

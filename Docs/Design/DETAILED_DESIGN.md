@@ -63,6 +63,36 @@
 - **AES-GCM 加密**: 存储文件（`.json`）在写入磁盘前均通过 AES-256-GCM 进行全盘加密，密钥派生自系统 Keychain。
 - **双向绑定**: 插件的声明式 UI 组件与加密存储实现了自动双向绑定，开发者无需编写 IO 代码即可实现配置记忆。
 
+### 3.4 JS 沙箱安全硬化 (JS Sandbox Hardening)
+
+为了防止恶意插件通过动态执行代码绕过智宇的 API 访问白名单，系统在执行插件脚本前会强制注入硬化逻辑：
+
+```mermaid
+sequenceDiagram
+    participant P as JavaScriptPlugin
+    participant Pool as PluginEnginePool
+    participant CTX as JSContext (Sandbox)
+    
+    P->>Pool: borrowContext() 租借上下文
+    Pool-->>CTX: 返回干净的 JSContext 实例
+    
+    Note over P, CTX: 核心硬化阶段 (@SR-04)
+    P->>CTX: evaluateScript(HardeningScript)
+    Note right of CTX: 物理禁用 eval 和 Function 构造器
+    Note right of CTX: 锁定 Object.freeze 禁止篡改
+    
+    P->>CTX: setupAPI(in:) 装配宿主接口
+    P->>CTX: evaluateScript(PluginScript) 加载三方插件脚本
+    
+    P->>CTX: 调用 onLoad() / preProcess()
+    CTX-->>P: 返回受限执行结果
+    
+    P->>Pool: returnContext(ctx) 归还并重置
+```
+
+- **物理禁用**: 显式将 `eval` 和 `Function` 赋值为抛出错误的闭包，防止插件利用字符串模板动态生成不受监管的代码。
+- **环境锁定**: 利用 `Object.freeze` 冻结禁用逻辑，防止插件通过原型链操作等方式反向破解沙箱限制。
+
 ## 4. 多平台适配与能力隔离 (Platform Adaptation)
 
 ### 4.1 跨平台协议抽象
@@ -115,8 +145,31 @@
 - **模糊背景挂起机制**:
   - 系统全局监听 `UIApplication.willResignActiveNotification`。当检测到 App 将被切入后台或进入任务切换器 (App Switcher) 时，`PrivacyCoverManager` 立即在最顶层 `UIWindow` 上覆盖一层搭载 `UIBlurEffect` 的私密毛玻璃视图 (`PrivacyBlurOverlayView`)，防止敏感笔记与资产内容在系统截屏中泄露。
 - **事务静默与内存物理擦除**:
-  - 挂起瞬间，系统触发 `VaultSecureCoordinator.suspendActiveTransactions()`，静默所有正在运行的 FTS5 和向量写入事务，防止挂起状态下的写写冲突与文件损坏。
+  - 挂起瞬间，系统触发 `VaultSecureCoordinator.suspendActiveTransactions()`，静默所有正在运行合作的 FTS5 和向量写入事务，防止挂起状态下的写写冲突与文件损坏。
   - 内存中持有的临时明文密码或分块内存切片，使用 `memset_s` 进行显式物理置零物理擦除，防范冷启动内存转储 (Cold Boot Dump) 攻击。
+
+### 6.3 HMAC 离线完整性校验 (Offline Integrity Verification)
+
+为了防止用户在离线状态下，其知识库文件（`.sqlite` 或附件）被外部程序恶意篡改，智宇引入了基于硬件 Salt 的 HMAC-SHA256 签名体系：
+
+```mermaid
+graph TD
+    A[数据文件变更] --> B{是否处于 Debug?}
+    B -- 是 --> C[计算 HMAC + 随机 Salt]
+    C --> D[保存至 UserDefaults 调试区]
+    
+    B -- 否 --> E[从 Keychain 读取硬件 Salt]
+    E --> F[计算 HMAC-SHA256 签名]
+    F --> G[持久化至 global.sqlite 签名库]
+    
+    H[冷启动加载文件] --> I[重新计算当前 HMAC]
+    I --> J{比对持久化签名}
+    J -- 匹配 --> K[正常打开金库]
+    J -- 冲突 --> L[标记为不可信/触发二次验证]
+```
+
+- **硬件盐值 (Hardware Salt)**: 签名密钥派生自存储在 Keychain 中的随机 UUID，该 UUID 在首次初始化金库时生成，并受 Secure Enclave 保护，不可导出。
+- **物理隔离**: 生产环境下，签名持久化失败将视为严重安全故障，系统将中断加载逻辑而非静默降级，确保“未经验证的数据绝不加载”。
 
 ## 7. iCloud 云端协同与冲突解决策略 (iCloud Sync & Conflict Resolution)
 

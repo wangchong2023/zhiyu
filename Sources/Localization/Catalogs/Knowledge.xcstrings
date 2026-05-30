@@ -2194,23 +2194,7 @@
         }
       }
     },
-    "pageType": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Page Type"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面类型"
-          }
-        }
-      }
-    },
+
     "quickTemplates": {
       "extractionState": "stale",
       "localizations": {

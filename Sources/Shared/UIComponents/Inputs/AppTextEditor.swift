@@ -65,7 +65,7 @@ public struct AppTextEditor: View {
                         }
                     }
             }
-            .padding(4)
+            .padding(DesignSystem.SpacingToken.tiny.value)
             .background(Color.primary.opacity(0.03))
             .cornerRadius(8)
             .overlay(

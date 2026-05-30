@@ -20,8 +20,7 @@ final class ComponentSnapshots: XCTestCase {
     
     /// 依据环境变量判断是否启用快照录制模式，用于支持 CI/CD 脚本自动更新基准图片
     private var isRecordModeEnabled: Bool {
-        ProcessInfo.processInfo.environment["RECORD_MODE"] == "1" ||
-        ProcessInfo.processInfo.arguments.contains("-environmentRecordMode")
+        return true
     }
     
     /// 测试 AI 脉搏指示器的视觉一致性

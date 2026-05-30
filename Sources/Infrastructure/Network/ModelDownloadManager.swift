@@ -336,7 +336,7 @@ fileprivate final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloa
         task: URLSessionTask,
         didCompleteWithError error: Error?
     ) {
-        guard let modelId = task.taskDescription else { return }
+        guard let taskDescription = task.taskDescription else { return }
         
         if let error = error {
             let nsError = error as NSError
@@ -346,7 +346,7 @@ fileprivate final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloa
             }
             
             Task {
-                await manager.handleDownloadError(for: modelId, error: error)
+                await manager.handleDownloadError(for: taskDescription, error: error)
             }
         }
     }

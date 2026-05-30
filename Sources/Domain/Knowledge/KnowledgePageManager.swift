@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：属于 Knowledge 模块，提供相关的结构体或工具支撑。
+//  核心职责：处理知识页面的核心 CRUD、插件处理器挂载及生命周期副作用 (事件总线、打快照)，隔离底层持久化细节。
 //
 import Foundation
 import Observation
@@ -80,10 +80,9 @@ public final class KnowledgePageManager {
         await linkService.pageByTitle(title, in: pages)
     }
 
-    /// 创建页面
+    /// 执行创建页面的原子操作，将变更应用到持久层并更新快照。
     @discardableResult
-
-    /// 创建Page
+    /// 创建知识页面
     public func createPage(
         title: String,
         pageType: PageType,
@@ -174,9 +173,9 @@ public final class KnowledgePageManager {
 
     // MARK: - 撤销 / 重做
 
-    /// 撤销
-    /// /// - Parameter currentPages: currentPages
-    /// /// - Returns: 列表
+    /// 执行撤销：将页面状态回退到上一次的快照栈帧
+    /// - Parameter currentPages: 当前内存状态快照
+    /// - Returns: 回滚后的新快照集合
     public func undo(currentPages: [KnowledgePage]) async throws -> [KnowledgePage]? {
         if let prev = undoService.undo(currentPages: currentPages) {
             await pageStore.replaceAllPages(prev)
@@ -185,9 +184,9 @@ public final class KnowledgePageManager {
         return nil
     }
 
-    /// 重做
-    /// /// - Parameter currentPages: currentPages
-    /// /// - Returns: 列表
+    /// 执行重做：恢复上一次被撤销的快照变更
+    /// - Parameter currentPages: 当前内存状态快照
+    /// - Returns: 重做后的新快照集合
     public func redo(currentPages: [KnowledgePage]) async throws -> [KnowledgePage]? {
         if let next = undoService.redo(currentPages: currentPages) {
             await pageStore.replaceAllPages(next)
@@ -231,20 +230,22 @@ public final class KnowledgePageManager {
 
     // MARK: - 标签管理转发
 
-    /// 重命名Tag
-    /// /// - Parameter oldTag: oldTag
+    /// 修改现有全局标签的文本名称（级联更新所有引用页）
+    /// - Parameters:
+    ///   - oldTag: 旧标签名称
+    ///   - newTag: 新标签名称
     public func renameTag(_ oldTag: String, to newTag: String) async {
         await tagStore.renameTag(old: oldTag, to: newTag)
     }
 
-    /// 删除Tag
-    /// /// - Parameter tag: tag
+    /// 彻底抹除特定的全局标签（从所有页面和字典表中清除）
+    /// - Parameter tag: 需要删除的标签名
     public func deleteTag(_ tag: String) async {
         await tagStore.deleteTag(tag)
     }
 
-    /// bulk删除Tags
-    /// /// - Parameter tags: tags
+    /// 批量抹除多个全局标签
+    /// - Parameter tags: 需要删除的标签名称数组
     public func bulkDeleteTags(_ tags: [String]) async {
         await tagStore.bulkDeleteTags(tags)
     }

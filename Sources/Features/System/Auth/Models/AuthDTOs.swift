@@ -134,14 +134,16 @@ public struct CarrierAuthRequest: Encodable {
 
 // MARK: - 登录统一响应
 
-public struct TokenDTO: Codable {
+/// Token 数据传输对象
+public struct TokenDTO: Codable, Sendable {
     public let accessToken: String
     public let refreshToken: String?
     public let accessExpireAt: Int
     public let refreshExpireAt: Int?
 }
 
-public struct UserDTO: Codable {
+/// 用户数据传输对象
+public struct UserDTO: Codable, Sendable {
     public let id: String
     public let name: String
     public let phone: String?
@@ -149,7 +151,8 @@ public struct UserDTO: Codable {
     public let avatar: String?
 }
 
-public struct LoginResponse: Codable {
+/// 登录统一响应封装
+public struct LoginResponse: Codable, Sendable {
     public let user: UserDTO
     public let tokens: TokenDTO
     public let isNewUser: Bool?

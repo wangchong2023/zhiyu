@@ -94,6 +94,9 @@ final class AuthServiceTests: XCTestCase {
     // MARK: - 密码/验证码登录网络失败测试
 
     func testPasswordLoginFailsWithoutNetwork() async {
+        #if DEBUG
+        AuthService.forceMockBackend = false
+        #endif
         let success = await AuthService.shared.login(identity: "testuser", password: "testpass")
         XCTAssertFalse(success, "无后端服务时密码登录应返回 false")
     }

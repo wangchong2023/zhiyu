@@ -2,10 +2,12 @@
 //  PluginEventBus.swift
 //  ZhiYu
 //
-//  系统层级：[L1.5] 领域层
-//  核心职责：Protocols。提供跨层依赖倒置的领域协议契约。
+//  Created by Antigravity on 2026/05/30.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 插件事件总线协议 (L1.5-Domain)
@@ -13,8 +15,9 @@ import Foundation
 @MainActor
 public protocol PluginEventBus: Sendable {
 
-    /// emitEvent
-    /// /// - Parameter event: event
-    /// /// - Parameter data: data
+    /// 发射一个领域相关的总线事件，所有挂载监听的插件回调都会被触发
+    /// - Parameters:
+    ///   - event: 通用事件字面量名称
+    ///   - data: 与事件关联的非结构化动态数据负载
     func emitEvent(_ event: String, data: Any?)
 }

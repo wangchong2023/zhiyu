@@ -1,0 +1,857 @@
+{
+  "summary": {
+    "files_scanned": 503,
+    "total_loc": 65912,
+    "avg_loc_per_file": 131,
+    "total_funcs": 1445,
+    "avg_complexity": 2,
+    "magic_strings_total": 1045,
+    "comment_missing_files": 0,
+    "purity_violations": 0
+  },
+  "hotspots": [
+    {
+      "file": "Platforms/Shared/WidgetAndWatchViews.swift",
+      "type": "Function Size",
+      "symbol": "formatNumber",
+      "value": 86,
+      "message": "函数行数 (86) 超过阈值 (60)"
+    },
+    {
+      "file": "Platforms/iOS/iOSExportService.swift",
+      "type": "Function Size",
+      "symbol": "exportToPPTX",
+      "value": 63,
+      "message": "函数行数 (63) 超过阈值 (60)"
+    },
+    {
+      "file": "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift",
+      "type": "Function Size",
+      "symbol": "calculateTimeline",
+      "value": 210,
+      "message": "函数行数 (210) 超过阈值 (60)"
+    },
+    {
+      "file": "Core/System/Logger/Logger.swift",
+      "type": "Function Size",
+      "symbol": "error",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Core/System/Workflow/WorkflowService.swift",
+      "type": "Function Size",
+      "symbol": "syncToReminders",
+      "value": 74,
+      "message": "函数行数 (74) 超过阈值 (60)"
+    },
+    {
+      "file": "Core/Base/ServiceContainer.swift",
+      "type": "Function Size",
+      "symbol": "reset",
+      "value": 87,
+      "message": "函数行数 (87) 超过阈值 (60)"
+    },
+    {
+      "file": "Core/Base/Constants/AppConfig.swift",
+      "type": "Function Size",
+      "symbol": "getStorage",
+      "value": 61,
+      "message": "函数行数 (61) 超过阈值 (60)"
+    },
+    {
+      "file": "Core/Base/Utils/ZipUtility.swift",
+      "type": "Function Size",
+      "symbol": "readZipArchive",
+      "value": 64,
+      "message": "函数行数 (64) 超过阈值 (60)"
+    },
+    {
+      "file": "App/ModuleRegistrar.swift",
+      "type": "Complexity",
+      "symbol": "register",
+      "value": 32,
+      "message": "函数圈复杂度 (32) 超过阈值 (15)"
+    },
+    {
+      "file": "App/ModuleRegistrar.swift",
+      "type": "Function Size",
+      "symbol": "register",
+      "value": 135,
+      "message": "函数行数 (135) 超过阈值 (60)"
+    },
+    {
+      "file": "App/ModuleRegistrar.swift",
+      "type": "Function Size",
+      "symbol": "register",
+      "value": 67,
+      "message": "函数行数 (67) 超过阈值 (60)"
+    },
+    {
+      "file": "App/ModuleRegistrar.swift",
+      "type": "Function Size",
+      "symbol": "register",
+      "value": 80,
+      "message": "函数行数 (80) 超过阈值 (60)"
+    },
+    {
+      "file": "App/ViewFactory.swift",
+      "type": "Function Size",
+      "symbol": "makeView",
+      "value": 67,
+      "message": "函数行数 (67) 超过阈值 (60)"
+    },
+    {
+      "file": "App/ContentView.swift",
+      "type": "Function Size",
+      "symbol": "applySettingsPresentationSizing",
+      "value": 116,
+      "message": "函数行数 (116) 超过阈值 (60)"
+    },
+    {
+      "file": "App/Views/SidebarRowComponents.swift",
+      "type": "Complexity",
+      "symbol": "asRoute",
+      "value": 28,
+      "message": "函数圈复杂度 (28) 超过阈值 (15)"
+    },
+    {
+      "file": "App/Views/SidebarRowComponents.swift",
+      "type": "Function Size",
+      "symbol": "asRoute",
+      "value": 392,
+      "message": "函数行数 (392) 超过阈值 (60)"
+    },
+    {
+      "file": "App/Views/AppLayoutComponents.swift",
+      "type": "Function Size",
+      "symbol": "mainContent",
+      "value": 83,
+      "message": "函数行数 (83) 超过阈值 (60)"
+    },
+    {
+      "file": "App/Views/AppLayoutComponents.swift",
+      "type": "Function Size",
+      "symbol": "legacyTabView",
+      "value": 138,
+      "message": "函数行数 (138) 超过阈值 (60)"
+    },
+    {
+      "file": "App/Store/AppStore.swift",
+      "type": "File Size",
+      "value": 537,
+      "message": "文件行数 (537) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Insight/Lint/View/LintView.swift",
+      "type": "File Size",
+      "value": 630,
+      "message": "文件行数 (630) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Insight/Lint/View/LintView.swift",
+      "type": "Function Size",
+      "symbol": "metricCard",
+      "value": 111,
+      "message": "函数行数 (111) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Lint/View/LintView.swift",
+      "type": "Function Size",
+      "symbol": "formatDate",
+      "value": 174,
+      "message": "函数行数 (174) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/View/TagCloudView.swift",
+      "type": "Function Size",
+      "symbol": "tagCapsule",
+      "value": 134,
+      "message": "函数行数 (134) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/View/BacklinksView.swift",
+      "type": "Function Size",
+      "symbol": "fetchData",
+      "value": 110,
+      "message": "函数行数 (110) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/View/KnowledgePageListView.swift",
+      "type": "Complexity",
+      "symbol": "triggerSearch",
+      "value": 29,
+      "message": "函数圈复杂度 (29) 超过阈值 (15)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/View/KnowledgePageListView.swift",
+      "type": "Function Size",
+      "symbol": "triggerSearch",
+      "value": 382,
+      "message": "函数行数 (382) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/View/Components/WeeklyInsightCard.swift",
+      "type": "Function Size",
+      "symbol": "generateInsight",
+      "value": 85,
+      "message": "函数行数 (85) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Insight/Dashboard/Service/KnowledgeInsightService.swift",
+      "type": "Function Size",
+      "symbol": "generateDailyRecap",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/Coordinator/SystemStatsCoordinator.swift",
+      "type": "Function Size",
+      "symbol": "loadStats",
+      "value": 128,
+      "message": "函数行数 (128) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/SettingsView.swift",
+      "type": "Function Size",
+      "symbol": "doneButton",
+      "value": 92,
+      "message": "函数行数 (92) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/BackupView.swift",
+      "type": "Function Size",
+      "symbol": "restoreFromBackup",
+      "value": 63,
+      "message": "函数行数 (63) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/ConflictDiffView.swift",
+      "type": "Function Size",
+      "symbol": "conflictingDetailPanel",
+      "value": 90,
+      "message": "函数行数 (90) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/PluginDetailView.swift",
+      "type": "Function Size",
+      "symbol": "statItem",
+      "value": 110,
+      "message": "函数行数 (110) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/SystemStatsView.swift",
+      "type": "File Size",
+      "value": 628,
+      "message": "文件行数 (628) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/System/Settings/View/SystemStatsView.swift",
+      "type": "Function Size",
+      "symbol": "latencySubValue",
+      "value": 184,
+      "message": "函数行数 (184) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Settings/View/Components/OnDeviceComponents.swift",
+      "type": "Function Size",
+      "symbol": "generate",
+      "value": 147,
+      "message": "函数行数 (147) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Auth/Models/AuthDTOs.swift",
+      "type": "Function Size",
+      "symbol": "sms",
+      "value": 125,
+      "message": "函数行数 (125) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Auth/View/AuthView.swift",
+      "type": "Function Size",
+      "symbol": "handleAppleLogin",
+      "value": 128,
+      "message": "函数行数 (128) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Auth/Service/AuthService.swift",
+      "type": "Complexity",
+      "symbol": "sendAuthRequestToBackend",
+      "value": 20,
+      "message": "函数圈复杂度 (20) 超过阈值 (15)"
+    },
+    {
+      "file": "Features/System/Auth/Service/AuthService.swift",
+      "type": "Function Size",
+      "symbol": "sendAuthRequestToBackend",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Auth/Strategy/AppleAuthStrategy.swift",
+      "type": "Function Size",
+      "symbol": "acquireCredentials",
+      "value": 71,
+      "message": "函数行数 (71) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/Auth/Strategy/GitHubAuthStrategy.swift",
+      "type": "Function Size",
+      "symbol": "acquireCredentials",
+      "value": 65,
+      "message": "函数行数 (65) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/ModelManager/View/ModelStoreView.swift",
+      "type": "Function Size",
+      "symbol": "modelCard",
+      "value": 102,
+      "message": "函数行数 (102) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/System/ModelManager/View/ModelStoreView.swift",
+      "type": "Function Size",
+      "symbol": "actionButton",
+      "value": 86,
+      "message": "函数行数 (86) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/Model/IngestStore.swift",
+      "type": "Function Size",
+      "symbol": "finalizeSmartIngest",
+      "value": 84,
+      "message": "函数行数 (84) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/PDFReaderView.swift",
+      "type": "Function Size",
+      "symbol": "ingestPDF",
+      "value": 229,
+      "message": "函数行数 (229) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/Components/IngestViewComponents.swift",
+      "type": "File Size",
+      "value": 658,
+      "message": "文件行数 (658) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/Components/IngestViewComponents.swift",
+      "type": "Complexity",
+      "symbol": "entryCardContent",
+      "value": 19,
+      "message": "函数圈复杂度 (19) 超过阈值 (15)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/Components/IngestViewComponents.swift",
+      "type": "Function Size",
+      "symbol": "entryCardContent",
+      "value": 426,
+      "message": "函数行数 (426) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/Components/IngestViewComponents.swift",
+      "type": "Function Size",
+      "symbol": "importMethodCard",
+      "value": 86,
+      "message": "函数行数 (86) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/View/Components/PDFComponents.swift",
+      "type": "Function Size",
+      "symbol": "ingestContent",
+      "value": 112,
+      "message": "函数行数 (112) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Ingest/Service/IngestService.swift",
+      "type": "Function Size",
+      "symbol": "extractConcepts",
+      "value": 112,
+      "message": "函数行数 (112) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/NotebookHub/View/NotebookHubView.swift",
+      "type": "Function Size",
+      "symbol": "searchBar",
+      "value": 109,
+      "message": "函数行数 (109) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/GraphView.swift",
+      "type": "Function Size",
+      "symbol": "handleNodeTap",
+      "value": 76,
+      "message": "函数行数 (76) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/Graph3DView.swift",
+      "type": "File Size",
+      "value": 545,
+      "message": "文件行数 (545) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/Components/Graph3DComponents.swift",
+      "type": "File Size",
+      "value": 549,
+      "message": "文件行数 (549) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/Components/Graph3DComponents.swift",
+      "type": "Function Size",
+      "symbol": "handleMagnify",
+      "value": 267,
+      "message": "函数行数 (267) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/Components/GraphComponents.swift",
+      "type": "File Size",
+      "value": 592,
+      "message": "文件行数 (592) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/View/Components/GraphComponents.swift",
+      "type": "Function Size",
+      "symbol": "insightSection",
+      "value": 80,
+      "message": "函数行数 (80) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Graph/Service/GraphInsightDetection.swift",
+      "type": "Function Size",
+      "symbol": "orphanNodes",
+      "value": 100,
+      "message": "函数行数 (100) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Search/View/SearchView.swift",
+      "type": "Function Size",
+      "symbol": "runAdvancedSearch",
+      "value": 176,
+      "message": "函数行数 (176) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/Knowledge/Vault/Service/VaultService.swift",
+      "type": "Function Size",
+      "symbol": "loadVaults",
+      "value": 84,
+      "message": "函数行数 (84) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/Chat/View/ChatView.swift",
+      "type": "Function Size",
+      "symbol": "messageRow",
+      "value": 134,
+      "message": "函数行数 (134) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/Quiz/View/QuizView.swift",
+      "type": "Function Size",
+      "symbol": "nextQuestion",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/Synthesis/View/SynthesisView.swift",
+      "type": "File Size",
+      "value": 626,
+      "message": "文件行数 (626) 超过阈值 (500)"
+    },
+    {
+      "file": "Features/AI/Synthesis/View/SynthesisView.swift",
+      "type": "Function Size",
+      "symbol": "batchDelete",
+      "value": 62,
+      "message": "函数行数 (62) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/Synthesis/View/SynthesisView.swift",
+      "type": "Function Size",
+      "symbol": "extractMermaidCode",
+      "value": 84,
+      "message": "函数行数 (84) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/TaskCenter/View/TaskCenterView.swift",
+      "type": "Function Size",
+      "symbol": "summaryCard",
+      "value": 100,
+      "message": "函数行数 (100) 超过阈值 (60)"
+    },
+    {
+      "file": "Features/AI/TaskCenter/View/TaskCenterView.swift",
+      "type": "Complexity",
+      "symbol": "guideRow",
+      "value": 18,
+      "message": "函数圈复杂度 (18) 超过阈值 (15)"
+    },
+    {
+      "file": "Features/AI/TaskCenter/View/TaskCenterView.swift",
+      "type": "Function Size",
+      "symbol": "guideRow",
+      "value": 132,
+      "message": "函数行数 (132) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Cards/AppCard.swift",
+      "type": "Function Size",
+      "symbol": "body",
+      "value": 188,
+      "message": "函数行数 (188) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Editors/MarkdownRendererView.swift",
+      "type": "Complexity",
+      "symbol": "buildAttributedString",
+      "value": 18,
+      "message": "函数圈复杂度 (18) 超过阈值 (15)"
+    },
+    {
+      "file": "Shared/UIComponents/Editors/MarkdownRendererView.swift",
+      "type": "Function Size",
+      "symbol": "buildAttributedString",
+      "value": 62,
+      "message": "函数行数 (62) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Editors/MarkdownTextView.swift",
+      "type": "Function Size",
+      "symbol": "insertMultilineAtCursor",
+      "value": 77,
+      "message": "函数行数 (77) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Navigation/AdaptiveSidebarView.swift",
+      "type": "Function Size",
+      "symbol": "sidebarRow",
+      "value": 65,
+      "message": "函数行数 (65) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Feedback/AppFeedback.swift",
+      "type": "Function Size",
+      "symbol": "body",
+      "value": 118,
+      "message": "函数行数 (118) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Feedback/AppToast.swift",
+      "type": "Function Size",
+      "symbol": "dismiss",
+      "value": 68,
+      "message": "函数行数 (68) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Feedback/AppLoadingOverlay.swift",
+      "type": "Function Size",
+      "symbol": "body",
+      "value": 61,
+      "message": "函数行数 (61) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Backgrounds/PageBackground.swift",
+      "type": "Function Size",
+      "symbol": "legacyCanvasBackground",
+      "value": 76,
+      "message": "函数行数 (76) 超过阈值 (60)"
+    },
+    {
+      "file": "Shared/UIComponents/Common/ModelColorView.swift",
+      "type": "Complexity",
+      "symbol": "fromModelColorName",
+      "value": 17,
+      "message": "函数圈复杂度 (17) 超过阈值 (15)"
+    },
+    {
+      "file": "Shared/UIComponents/Pickers/IconPickerView.swift",
+      "type": "Function Size",
+      "symbol": "categoryDisplayName",
+      "value": 76,
+      "message": "函数行数 (76) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/LLM/LLMModels.swift",
+      "type": "Complexity",
+      "symbol": "metadata",
+      "value": 30,
+      "message": "函数圈复杂度 (30) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/LLM/LLMModels.swift",
+      "type": "Function Size",
+      "symbol": "metadata",
+      "value": 125,
+      "message": "函数行数 (125) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/LLM/OnDeviceLLMService.swift",
+      "type": "Complexity",
+      "symbol": "deleteModel",
+      "value": 19,
+      "message": "函数圈复杂度 (19) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/LLM/OnDeviceLLMService.swift",
+      "type": "Function Size",
+      "symbol": "deleteModel",
+      "value": 65,
+      "message": "函数行数 (65) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/LLM/LLMContextBuilder.swift",
+      "type": "Function Size",
+      "symbol": "buildRelevantContext",
+      "value": 67,
+      "message": "函数行数 (67) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Plugins/JavaScriptPlugin.swift",
+      "type": "Complexity",
+      "symbol": "setupAPI",
+      "value": 18,
+      "message": "函数圈复杂度 (18) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/Plugins/JavaScriptPlugin.swift",
+      "type": "Function Size",
+      "symbol": "setupAPI",
+      "value": 133,
+      "message": "函数行数 (133) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Plugins/PluginRegistry.swift",
+      "type": "Function Size",
+      "symbol": "applyPreProcess",
+      "value": 72,
+      "message": "函数行数 (72) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/VectorDB/EmbeddingManager.swift",
+      "type": "Function Size",
+      "symbol": "searchChunks",
+      "value": 69,
+      "message": "函数行数 (69) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Persistence/DatabaseManager.swift",
+      "type": "File Size",
+      "value": 656,
+      "message": "文件行数 (656) 超过阈值 (500)"
+    },
+    {
+      "file": "Infrastructure/Storage/Persistence/DatabaseManager.swift",
+      "type": "Function Size",
+      "symbol": "switchDatabase",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Persistence/DatabaseManager.swift",
+      "type": "Function Size",
+      "symbol": "createDatabaseConfiguration",
+      "value": 272,
+      "message": "函数行数 (272) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Sync/AppCloudSyncService.swift",
+      "type": "File Size",
+      "value": 568,
+      "message": "文件行数 (568) 超过阈值 (500)"
+    },
+    {
+      "file": "Infrastructure/Storage/Sync/AppCloudSyncService.swift",
+      "type": "Function Size",
+      "symbol": "pullFromCloud",
+      "value": 91,
+      "message": "函数行数 (91) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Sync/AppCloudSyncService.swift",
+      "type": "Function Size",
+      "symbol": "fetchRemoteData",
+      "value": 87,
+      "message": "函数行数 (87) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Sync/iCloudSyncCoordinator.swift",
+      "type": "Function Size",
+      "symbol": "resolveConflictedMetadata",
+      "value": 77,
+      "message": "函数行数 (77) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Engine/SQLiteStore.swift",
+      "type": "Complexity",
+      "symbol": "getStorageStats",
+      "value": 20,
+      "message": "函数圈复杂度 (20) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/Storage/Services/AppBackupService.swift",
+      "type": "Function Size",
+      "symbol": "createBackup",
+      "value": 66,
+      "message": "函数行数 (66) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Storage/Utility/DemoDataGenerator.swift",
+      "type": "Function Size",
+      "symbol": "generate",
+      "value": 73,
+      "message": "函数行数 (73) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Network/WebScraperProcessor.swift",
+      "type": "Function Size",
+      "symbol": "fetchMarkdown",
+      "value": 81,
+      "message": "函数行数 (81) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Graph/GraphLayoutProcessor.swift",
+      "type": "Function Size",
+      "symbol": "computeAttractionForces",
+      "value": 84,
+      "message": "函数行数 (84) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Graph/GraphCommunityProcessor.swift",
+      "type": "Complexity",
+      "symbol": "initializeCommunities",
+      "value": 36,
+      "message": "函数圈复杂度 (36) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/Processors/Graph/GraphCommunityProcessor.swift",
+      "type": "Function Size",
+      "symbol": "initializeCommunities",
+      "value": 195,
+      "message": "函数行数 (195) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/MarkdownProcessor.swift",
+      "type": "File Size",
+      "value": 627,
+      "message": "文件行数 (627) 超过阈值 (500)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/MarkdownProcessor.swift",
+      "type": "Function Size",
+      "symbol": "parse",
+      "value": 86,
+      "message": "函数行数 (86) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/MarkdownProcessor.swift",
+      "type": "Complexity",
+      "symbol": "parseBulletList",
+      "value": 19,
+      "message": "函数圈复杂度 (19) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/MarkdownProcessor.swift",
+      "type": "Function Size",
+      "symbol": "parseBulletList",
+      "value": 68,
+      "message": "函数行数 (68) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/MarkdownProcessor.swift",
+      "type": "Function Size",
+      "symbol": "parseFormattingSegments",
+      "value": 70,
+      "message": "函数行数 (70) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Document/TextChunkerProcessor.swift",
+      "type": "Function Size",
+      "symbol": "split",
+      "value": 105,
+      "message": "函数行数 (105) 超过阈值 (60)"
+    },
+    {
+      "file": "Infrastructure/Processors/Synthesis/SynthesisProcessor.swift",
+      "type": "Complexity",
+      "symbol": "sanitizeMermaidSyntax",
+      "value": 19,
+      "message": "函数圈复杂度 (19) 超过阈值 (15)"
+    },
+    {
+      "file": "Infrastructure/Processors/Synthesis/SynthesisProcessor.swift",
+      "type": "Function Size",
+      "symbol": "sanitizeMermaidSyntax",
+      "value": 66,
+      "message": "函数行数 (66) 超过阈值 (60)"
+    },
+    {
+      "file": "Domain/Models/KnowledgePage.swift",
+      "type": "Complexity",
+      "symbol": "merge",
+      "value": 16,
+      "message": "函数圈复杂度 (16) 超过阈值 (15)"
+    },
+    {
+      "file": "Domain/Models/KnowledgePage.swift",
+      "type": "Function Size",
+      "symbol": "merge",
+      "value": 64,
+      "message": "函数行数 (64) 超过阈值 (60)"
+    },
+    {
+      "file": "Domain/RAG/LinkService.swift",
+      "type": "Function Size",
+      "symbol": "hybridSearchWithDiagnostics",
+      "value": 74,
+      "message": "函数行数 (74) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+AI.swift",
+      "type": "Function Size",
+      "symbol": "latency",
+      "value": 106,
+      "message": "函数行数 (106) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+AI.swift",
+      "type": "Function Size",
+      "symbol": "hydeUserPrompt",
+      "value": 119,
+      "message": "函数行数 (119) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+Dashboard.swift",
+      "type": "Function Size",
+      "symbol": "comparisonCount",
+      "value": 62,
+      "message": "函数行数 (62) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+Ingest.swift",
+      "type": "Function Size",
+      "symbol": "pdfHighlightCountFormat",
+      "value": 129,
+      "message": "函数行数 (129) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+Graph.swift",
+      "type": "Function Size",
+      "symbol": "trf",
+      "value": 63,
+      "message": "函数行数 (63) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+Common.swift",
+      "type": "Function Size",
+      "symbol": "trf",
+      "value": 138,
+      "message": "函数行数 (138) 超过阈值 (60)"
+    },
+    {
+      "file": "Localization/Extensions/L10n+Common.swift",
+      "type": "Function Size",
+      "symbol": "tr",
+      "value": 138,
+      "message": "函数行数 (138) 超过阈值 (60)"
+    }
+  ]
+}

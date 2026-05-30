@@ -1,0 +1,47 @@
+//
+//  WatchPlatformRegistrar.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/05/30.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：属于 watchOS 模块，提供相关的结构体或工具支撑。
+//
+#if os(watchOS)
+import Foundation
+
+/// watchOS 平台专用服务注册器
+@MainActor
+struct WatchPlatformRegistrar: PlatformRegistrar {
+    
+    /// 注册 watchOS 特有能力
+    static func registerServices(in container: ServiceContainer) {
+        // 1. 基础任务与粘贴板
+        container.register(StubBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
+        container.register(WatchPasteboardService(), for: (any PasteboardProtocol).self)
+        
+        // 2. 协作与存储
+        container.register(StubCollaborationProvider(), for: (any CollaborationProviderProtocol).self)
+        container.register(WatchPDFService(), for: (any PDFServiceProtocol).self)
+        container.register(WatchSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
+        
+        // 3. AI 与生物识别
+        container.register(WatchModelCompiler(), for: MLModelCompilerProtocol.self)
+        container.register(WatchBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
+        container.register(WatchOCRService(), for: (any OCRServiceProtocol).self)
+        container.register(WatchSpeechService(), for: (any SpeechServiceProtocol).self)
+        
+        // 4. 系统集成
+        container.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
+        container.register(WatchHapticService(), for: (any HapticFeedbackProtocol).self)
+        container.register(WatchWatchSyncService(), for: (any WatchSyncProtocol).self)
+        
+        container.register(UnsupportedFileArchiver(), for: (any FileArchiverProtocol).self)
+        container.register(UnsupportedReminderService(), for: (any ReminderServiceProtocol).self)
+        container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
+        container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
+        container.register(WatchAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+    }
+}
+#endif

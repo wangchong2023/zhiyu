@@ -37,6 +37,7 @@ extension L10n {
             public static var knowledge: String { Knowledge.tr("page.knowledge") }
             public static var empty: String { Knowledge.tr("page.empty") }
             public static var emptyHint: String { Knowledge.tr("page.emptyHint") }
+            public static var content: String { Knowledge.tr("page.content") }
             public static var status: String { Knowledge.tr("page.status") }
             public static var metaInfo: String { Knowledge.tr("page.metaInfo") }
             public static var expandStub: String { Knowledge.tr("page.expandStub") }

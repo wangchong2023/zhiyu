@@ -2,10 +2,12 @@
 //  RAGModels+GRDB.swift
 //  ZhiYu
 //
-//  系统层级：[L1] 基础设施层
-//  核心职责：Storage。为 Domain 模型提供 GRDB 持久化协议扩展。
+//  Created by Antigravity on 2026/05/30.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L1] 基础设施层
+//  核心职责：属于 Extensions 模块，提供相关的结构体或工具支撑。
+//
 import GRDB
 import Foundation
 
