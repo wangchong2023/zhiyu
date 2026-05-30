@@ -106,6 +106,7 @@ public enum DesignSystem {
     public static var fastAnimation: SwiftUI.Animation { Animations.Interaction.fastAnimation }
     
     // MARK: - 21. 组件兼容性别名 (Component Aliases)
+    #if !WIDGET && !os(watchOS)
     public typealias AppSection<Content: View> = StandardSection<Content>
     public typealias Card<Content: View> = AppCard<Content>
     public typealias BorderedCard<Content: View> = AppBorderedCard<Content>
@@ -133,7 +134,6 @@ public enum DesignSystem {
     public typealias EmptyState = AppEmptyState
     public typealias LoadingOverlay = AppLoadingOverlay
     public typealias Toast = AppToast
-    #if !os(watchOS)
     public typealias Tooltip = AppTooltip
     #endif
 }

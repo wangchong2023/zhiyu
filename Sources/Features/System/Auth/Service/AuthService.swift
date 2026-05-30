@@ -81,7 +81,7 @@ public final class AuthService: AuthServiceProtocol {
                 totpRequired: false
             )
             // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return await handleSuccessfulLogin(response: response, identity: identity)
+            return handleSuccessfulLogin(response: response, identity: identity)
         }
         #endif
         let req = LoginRequest.password(username: identity, password: password)
@@ -93,7 +93,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return await handleSuccessfulLogin(response: response, identity: identity)
+            return handleSuccessfulLogin(response: response, identity: identity)
         } catch {
             Logger.shared.error("[AuthService] 密码登录失败", error: error)
             return false
@@ -141,7 +141,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return await handleSuccessfulLogin(response: response, identity: phone)
+            return handleSuccessfulLogin(response: response, identity: phone)
         } catch {
             Logger.shared.error("[AuthService] 验证码登录失败", error: error)
             return false
@@ -213,7 +213,7 @@ public final class AuthService: AuthServiceProtocol {
                 totpRequired: false
             )
             // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return await handleSuccessfulLogin(response: response, identity: name)
+            return handleSuccessfulLogin(response: response, identity: name)
         }
         #endif
         
@@ -265,7 +265,7 @@ public final class AuthService: AuthServiceProtocol {
             }
             
             let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-            return await handleSuccessfulLogin(response: response, identity: name)
+            return handleSuccessfulLogin(response: response, identity: name)
         } catch {
             Logger.shared.error("sendAuthRequestToBackend 失败", error: error)
             throw error
