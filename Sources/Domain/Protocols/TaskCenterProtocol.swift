@@ -2,10 +2,12 @@
 //  TaskCenterProtocol.swift
 //  ZhiYu
 //
-//  系统层级：[L1.5] 领域层
-//  核心职责：Protocols。提供跨层依赖倒置的领域协议契约，消除基础设施/应用层类型对领域层的反向污染。
+//  Created by Antigravity on 2026/05/30.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L1.5] 领域层
+//  核心职责：定义 TaskCenter 模块的抽象契约接口。
+//
 import Foundation
 
 /// 任务中心协议 (L1.5-Domain)
@@ -13,23 +15,27 @@ import Foundation
 @MainActor
 public protocol TaskCenterProtocol: Sendable {
 
-    /// 添加Task
-    /// /// - Parameter type: type
-    /// /// - Parameter name: name
-    /// /// - Parameter target: target
+    /// 派发并追踪一个新的异步任务
+    /// - Parameters:
+    ///   - type: 任务分类
+    ///   - name: 面向用户展示的任务名称
+    ///   - target: 任务处理的目标实体或操作对象
+    /// - Returns: 分配的全局唯一任务追踪 ID
     func addTask(type: TaskType, name: String, target: String) -> UUID
 
-    /// 更新Task
-    /// /// - Parameter id: id
-    /// /// - Parameter status: status
+    /// 上报或更新特定任务的生命周期状态及百分比进度
+    /// - Parameters:
+    ///   - id: 任务追踪 ID
+    ///   - status: 最新的执行状态
     func updateTask(_ id: UUID, status: TaskStatus)
 
-    /// completeTask
-    /// /// - Parameter id: id
+    /// 标记特定任务为已完成（这通常会触发 UI 层将任务状态流转为 success 并逐步清理）
+    /// - Parameter id: 任务追踪 ID
     func completeTask(id: UUID)
 
-    /// failTask
-    /// /// - Parameter id: id
-    /// /// - Parameter error: error
+    /// 标记特定任务为已失败并记录异常原因
+    /// - Parameters:
+    ///   - id: 任务追踪 ID
+    ///   - error: 本地化的报错详细描述
     func failTask(id: UUID, error: String)
 }

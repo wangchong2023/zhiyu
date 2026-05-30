@@ -2,10 +2,12 @@
 //  SyncCoordinatorDelegate.swift
 //  ZhiYu
 //
-//  系统层级：[L1.5] 领域层
-//  核心职责：Protocols。提供跨层依赖倒置的领域协议契约。
+//  Created by Antigravity on 2026/05/30.
+//  Copyright © 2026 WangChong. All rights reserved.
 //
-
+//  系统层级：[L1.5] 领域层
+//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//
 import Foundation
 
 /// 同步协调代理协议 (L1.5-Domain)
