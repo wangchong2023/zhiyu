@@ -344,9 +344,7 @@ extension AppStore: CollaborationDelegate {
 
     /// 导入摄取Folder
     func ingestFolder(at url: URL) async {
-        // 转发至领域层 KnowledgePageManager 执行物理和向量导入流程
-        await pageManager.ingestFolder(at: url, pageStore: self)
-        await knowledgeStore.refresh()
+        await knowledgeStore.ingestFolder(at: url)
     }
 
     // MARK: - 标签管理 (转发至 TagStore)

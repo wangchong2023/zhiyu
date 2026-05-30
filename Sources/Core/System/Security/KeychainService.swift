@@ -41,6 +41,7 @@ final class KeychainService: Sendable {
         ]
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
+            Logger.shared.error("❌ [KeychainService] 存储数据失败 (\(key)): \(status)")
             throw KeychainError.storeFailed(status)
         }
     }

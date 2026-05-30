@@ -255,6 +255,17 @@ public final class KnowledgeStore {
         await refresh()
     }
 
+    /// 导入摄取Folder
+    public func ingestFolder(at url: URL) async {
+        // 转发至领域层 KnowledgePageManager 执行物理和向量导入流程
+        // 注意：此处仍需传递 pageStore (通常是 AppStore 或 self) 以满足协议
+        // 为保持解耦，我们传递 ServiceContainer 中的 AnyPageStore 实例
+        if let store = ServiceContainer.shared.resolveOptional(AppStore.self) {
+            await pageManager.ingestFolder(at: url, pageStore: store)
+        }
+        await refresh()
+    }
+
     private func clearAllData() {
         Task {
             await maintenanceService.clearAllDeveloperData()

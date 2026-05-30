@@ -42,11 +42,23 @@ struct DemoDataGenerator {
             try LLMCallLog.deleteAll(db)
             
             let pagesToCreate: [(String, PageType, String, [String])] = [
-                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content, ["AI", "Agent", L10n.Common.Sidebar.system]),
-                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content, ["AI", "Planning", L10n.Common.Sidebar.tools]),
-                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content, ["AI", "Memory", "RAG"]),
-                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content, ["AI", "ToolUse", "API"]),
-                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content, ["AI", "LLM", L10n.Common.Sidebar.capabilities])
+                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "\n\n\(L10n.Common.Demo.relatedConcepts)：[[\(L10n.Common.Demo.memoryMgmt.title)]], [[\(L10n.Common.Demo.toolchain.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
+                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "\n\n\(L10n.Common.Demo.dependsOn)：[[\(L10n.Common.Demo.llm.title)]], [[\(L10n.Common.Demo.toolInterface.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
+                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "\n\n\(L10n.Common.Demo.core)：[[\(L10n.Common.Demo.vectorDB.title)]], [[\(L10n.Common.Demo.chunking.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
+                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content + "\n\n\(L10n.Common.Demo.integratesWith)：[[\(L10n.Common.Demo.gateway.title)]], [[\(L10n.Common.Demo.secureEnv.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.toolUse]),
+                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content + "\n\n\(L10n.Common.Demo.foundation)：[[\(L10n.Common.Demo.transformer.title)]], [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.llm]),
+                (L10n.Common.Demo.memoryMgmt.title, .concept, L10n.Common.Demo.memoryMgmt.content + " [[\(L10n.Common.Demo.vectorDB.title)]]", [L10n.Common.Tags.architecture]),
+                (L10n.Common.Demo.toolchain.title, .concept, L10n.Common.Demo.toolchain.content + " [[\(L10n.Common.Demo.secureEnv.title)]]", [L10n.Common.Tags.tools]),
+                (L10n.Common.Demo.chunking.title, .concept, L10n.Common.Demo.chunking.content + " [[\(L10n.Common.Demo.memory.title)]]", [L10n.Common.Tags.nlp]),
+                (L10n.Common.Demo.vectorDB.title, .concept, L10n.Common.Demo.vectorDB.content + " [[\(L10n.Common.Demo.chunking.title)]]", [L10n.Common.Tags.storage]),
+                (L10n.Common.Demo.secureEnv.title, .concept, L10n.Common.Demo.secureEnv.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", [L10n.Common.Tags.security]),
+                (L10n.Common.Demo.transformer.title, .concept, L10n.Common.Demo.transformer.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.theory]),
+                (L10n.Common.Demo.embedding.title, .concept, L10n.Common.Demo.embedding.content, [L10n.Common.Tags.theory]),
+                (L10n.Common.Demo.gateway.title, .concept, L10n.Common.Demo.gateway.content, [L10n.Common.Tags.network]),
+                (L10n.Common.Demo.toolInterface.title, .concept, L10n.Common.Demo.toolInterface.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", [L10n.Common.Tags.protocol]),
+                (L10n.Common.Demo.consistency.title, .concept, L10n.Common.Demo.consistency.content, [L10n.Common.Tags.quality]),
+                (L10n.Common.Demo.topology.title, .concept, L10n.Common.Demo.topology.content, [L10n.Common.Tags.visual]),
+                (L10n.Common.Demo.hybridSearch.title, .concept, L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.performance])
             ]
             
             for (title, type, content, tags) in pagesToCreate {

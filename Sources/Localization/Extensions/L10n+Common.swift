@@ -285,6 +285,94 @@ extension L10n {
                 public static var title: String { Common.tr("demo.llm.title") }
                 public static var content: String { Common.tr("demo.llm.content") }
             }
+            
+            public enum memoryMgmt {
+                public static var title: String { Common.tr("demo.memoryMgmt.title") }
+                public static var content: String { Common.tr("demo.memoryMgmt.content") }
+            }
+            
+            public enum toolchain {
+                public static var title: String { Common.tr("demo.toolchain.title") }
+                public static var content: String { Common.tr("demo.toolchain.content") }
+            }
+            
+            public enum chunking {
+                public static var title: String { Common.tr("demo.chunking.title") }
+                public static var content: String { Common.tr("demo.chunking.content") }
+            }
+            
+            public enum vectorDB {
+                public static var title: String { Common.tr("demo.vectorDB.title") }
+                public static var content: String { Common.tr("demo.vectorDB.content") }
+            }
+            
+            public enum secureEnv {
+                public static var title: String { Common.tr("demo.secureEnv.title") }
+                public static var content: String { Common.tr("demo.secureEnv.content") }
+            }
+            
+            public enum transformer {
+                public static var title: String { Common.tr("demo.transformer.title") }
+                public static var content: String { Common.tr("demo.transformer.content") }
+            }
+            
+            public enum embedding {
+                public static var title: String { Common.tr("demo.embedding.title") }
+                public static var content: String { Common.tr("demo.embedding.content") }
+            }
+            
+            public enum gateway {
+                public static var title: String { Common.tr("demo.gateway.title") }
+                public static var content: String { Common.tr("demo.gateway.content") }
+            }
+            
+            public enum toolInterface {
+                public static var title: String { Common.tr("demo.toolInterface.title") }
+                public static var content: String { Common.tr("demo.toolInterface.content") }
+            }
+            
+            public enum consistency {
+                public static var title: String { Common.tr("demo.consistency.title") }
+                public static var content: String { Common.tr("demo.consistency.content") }
+            }
+            
+            public enum topology {
+                public static var title: String { Common.tr("demo.topology.title") }
+                public static var content: String { Common.tr("demo.topology.content") }
+            }
+            
+            public enum hybridSearch {
+                public static var title: String { Common.tr("demo.hybridSearch.title") }
+                public static var content: String { Common.tr("demo.hybridSearch.content") }
+            }
+            
+            // MARK: - 连接词 (用于国际化拼接)
+            public static var relatedConcepts: String { Common.tr("demo.relatedConcepts") }
+            public static var dependsOn: String { Common.tr("demo.dependsOn") }
+            public static var core: String { Common.tr("demo.core") }
+            public static var integratesWith: String { Common.tr("demo.integratesWith") }
+            public static var foundation: String { Common.tr("demo.foundation") }
+        }
+
+        public enum Tags {
+            public static var ai: String { Common.tr("tags.ai") }
+            public static var agent: String { Common.tr("tags.agent") }
+            public static var planning: String { Common.tr("tags.planning") }
+            public static var memory: String { Common.tr("tags.memory") }
+            public static var rag: String { Common.tr("tags.rag") }
+            public static var toolUse: String { Common.tr("tags.toolUse") }
+            public static var llm: String { Common.tr("tags.llm") }
+            public static var architecture: String { Common.tr("tags.architecture") }
+            public static var tools: String { Common.tr("tags.tools") }
+            public static var nlp: String { Common.tr("tags.nlp") }
+            public static var storage: String { Common.tr("tags.storage") }
+            public static var security: String { Common.tr("tags.security") }
+            public static var theory: String { Common.tr("tags.theory") }
+            public static var network: String { Common.tr("tags.network") }
+            public static var protocol: String { Common.tr("tags.protocol") }
+            public static var quality: String { Common.tr("tags.quality") }
+            public static var visual: String { Common.tr("tags.visual") }
+            public static var performance: String { Common.tr("tags.performance") }
         }
 
         public enum Misc {
