@@ -68,7 +68,7 @@ public struct NotebookCoverView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
-                Text(String(format: L10n.Shared.pageCountFormat, pageCount))
+                Text(L10n.Shared.pageCountFormat(pageCount))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.8))
             }

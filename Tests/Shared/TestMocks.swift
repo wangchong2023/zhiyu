@@ -78,6 +78,12 @@ final class MockLLMService: LLMService, @unchecked Sendable {
 final class MockLLMChatService: LLMChatServiceProtocol, @unchecked Sendable {
     /// 模拟服务是否启用
     var isEnabled = true
+    var provider: LLMProvider = .deepSeek
+    var apiKey: String = "mock_key"
+    var baseURL: String = "https://api.deepseek.com/v1"
+    var model: String = "gpt-4o"
+    var autoScan: Bool = true
+    var autoRefactor: Bool = true
     
     /// 模拟核心单次对话推理方法
     /// - Parameters:
@@ -111,6 +117,43 @@ final class MockLLMChatService: LLMChatServiceProtocol, @unchecked Sendable {
         return "Mock Generated Content"
     }
 }
+
+#if !os(watchOS)
+// MARK: - Mock On-Device LLM Service
+@MainActor
+final class MockOnDeviceLLMService: OnDeviceLLMServiceProtocol, @unchecked Sendable {
+    @Published var isAvailable: Bool = true
+    @Published var isModelLoaded: Bool = true
+    @Published var isGenerating: Bool = false
+    @Published var loadedModelName: String = "MockLocalModel"
+    @Published var availableModels: [OnDeviceModel] = []
+    @Published var selectedModelID: String = "mock_local_model"
+    @Published var generationProgress: Double = 1.0
+    @Published var generatedText: String = ""
+    @Published var inferenceSpeed: Double = 15.0
+    
+    init() {}
+
+    func discoverModels() {}
+    func loadModel() async throws {
+        isModelLoaded = true
+    }
+    func generate(prompt: String, maxTokens: Int) async throws -> String {
+        return "Mock Local Generated Content"
+    }
+    func chatOnDevice(query: String, pages: [KnowledgePage]) async throws -> String {
+        return "Mock Local Chat Content"
+    }
+    func cancelGeneration() {
+        isGenerating = false
+    }
+    func unloadModel() {
+        isModelLoaded = false
+    }
+    func importModel(from url: URL) async throws {}
+    func deleteModel(_ model: OnDeviceModel) throws {}
+}
+#endif
 
 
 // MARK: - Mock Biometric Auth Provider
@@ -198,6 +241,7 @@ extension XCTestCase {
         
         let sqliteStore = SQLiteStore(dbWriter: dbQueue)
         ServiceContainer.shared.register(sqliteStore as any AnyPageStoreCapabilities, for: (any AnyPageStoreCapabilities).self)
+        ServiceContainer.shared.register(sqliteStore as any AnyPageStore, for: (any AnyPageStore).self)
         ServiceContainer.shared.register(sqliteStore, for: SQLiteStore.self)
         
         ServiceContainer.shared.register(LLMConfigManager(), for: LLMConfigManager.self)
@@ -209,13 +253,22 @@ extension XCTestCase {
         
         let llm = MockLLMService()
         ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
-        ServiceContainer.shared.register(llm, for: LLMService.self)
+        ServiceContainer.shared.register(llm as LLMService, for: LLMService.self)
+        // 注意：原先 AnyLLMService 已在之前的重构中移除，现全局已切为 protocols。
+        
+        #if !os(watchOS)
+        let mockOnDevice = MockOnDeviceLLMService()
+        ServiceContainer.shared.register(mockOnDevice as any OnDeviceLLMServiceProtocol, for: (any OnDeviceLLMServiceProtocol).self)
+        #endif
+        
         ServiceContainer.shared.register(QueryReranker(), for: (any LLMRetrievalServiceProtocol).self)
 
         // 注册 Mock 环境下的 EmbeddingManager 和仓库，加固向量同步功能
-        let vectorRepo = VectorDataRepository(dbWriter: dbQueue)
+        let vectorRepo = MockVectorRepository()
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
+        ServiceContainer.shared.register(embeddingManager as any EmbeddingProvider, for: (any EmbeddingProvider).self)
         ServiceContainer.shared.register(embeddingManager, for: EmbeddingManager.self)
+
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
@@ -229,6 +282,10 @@ extension XCTestCase {
             
             let fileSigRepo = SQLiteFileSignatureRepository(dbWriter: globalWriter)
             ServiceContainer.shared.register(fileSigRepo as any FileSignatureRepository, for: (any FileSignatureRepository).self)
+            
+            // 注册插件数据库仓库服务，支持 PluginRegistry 的运行与加载操作
+            let pluginRepo = SQLitePluginRepository(dbWriter: globalWriter)
+            ServiceContainer.shared.register(pluginRepo as any PluginRepository, for: (any PluginRepository).self)
         }
 
         ServiceContainer.shared.register(BackupService(), for: BackupService.self)

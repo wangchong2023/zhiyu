@@ -761,7 +761,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.clear"
+            "value": "icloud.clear [译]"
           }
         }
       }
@@ -1203,7 +1203,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.pull"
+            "value": "icloud.pull [译]"
           }
         }
       }
@@ -1288,7 +1288,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.push"
+            "value": "icloud.push [译]"
           }
         }
       }
@@ -1441,7 +1441,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.sync"
+            "value": "icloud.sync [译]"
           }
         }
       }
@@ -1849,7 +1849,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "# Role: 知识工程专家\n\n# Task: \n分析以下 Markdown 内容，识别其中的表格 (|---|) 和图片 (![]())。\n\n# Requirements:\n1. 对于每个表格，基于其行列数据生成一段 150 字以内的“数据洞察摘要”。\n2. 对于每个核心图片，基于标题或上下文推测其视觉语义。\n3. 将这些分析结果以 `> [Semantic Insight]: ...` 的格式插入到原图表下方。\n4. 保持原文逻辑不变，仅返回增强后的完整 Markdown 内容。"
+            "value": "# Role: 知识工程专家\n\n# Task: \n分析以下 Markdown 内容，识别其中的表格 (|---|) 和图片 (![]())。\n\n# Requirements:\n1. 对于每个表格，基于其行列数据生成一段 150 字以内的“数据洞察摘要”。\n2. 对于每个核心图片，基于标题或上下文推测其视觉语义。\n3. 将这些分析结果以 `> [Semantic Insight]: ...` 的格式插入到原图表下方。\n4. 保持原文逻辑不变，仅返回增强后的完整 Markdown 内容。 [译]"
           }
         }
       }
@@ -1883,7 +1883,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.fileTooLarge"
+            "value": "ingest.error.fileTooLarge [译]"
           }
         }
       }
@@ -1900,7 +1900,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.storageFull"
+            "value": "ingest.error.storageFull [译]"
           }
         }
       }
@@ -1917,7 +1917,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "URL 抓取失败: %@"
+            "value": "URL 抓取失败: %@ [译]"
           }
         }
       }
@@ -2648,7 +2648,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "正在抓取并 RAG 索引: %@"
+            "value": "正在抓取并 RAG 索引: %@ [译]"
           }
         }
       }
@@ -2665,7 +2665,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "正在抓取 URL: %@"
+            "value": "正在抓取 URL: %@ [译]"
           }
         }
       }
@@ -4264,6 +4264,295 @@
           "stringUnit": {
             "state": "translated",
             "value": "语音笔记"
+          }
+        }
+      }
+    },
+    "conflict.manualMerge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.manualMerge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.manualMerge"
+          }
+        }
+      }
+    },
+    "conflict.finishMerge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.finishMerge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.finishMerge"
+          }
+        }
+      }
+    },
+    "conflict.noContentConflict": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noContentConflict"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noContentConflict"
+          }
+        }
+      }
+    },
+    "conflict.autoResolveDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.autoResolveDesc"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.autoResolveDesc"
+          }
+        }
+      }
+    },
+    "conflict.doAutoResolve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.doAutoResolve"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.doAutoResolve"
+          }
+        }
+      }
+    },
+    "conflict.listTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.listTitle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.listTitle"
+          }
+        }
+      }
+    },
+    "conflict.localTime": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localTime"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localTime"
+          }
+        }
+      }
+    },
+    "conflict.cloudTime": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudTime"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudTime"
+          }
+        }
+      }
+    },
+    "conflict.smartOverrideMode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.smartOverrideMode"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.smartOverrideMode"
+          }
+        }
+      }
+    },
+    "conflict.keepLocalAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepLocalAll"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepLocalAll"
+          }
+        }
+      }
+    },
+    "conflict.keepCloudAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepCloudAll"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepCloudAll"
+          }
+        }
+      }
+    },
+    "conflict.localVersionTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localVersionTag"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localVersionTag"
+          }
+        }
+      }
+    },
+    "conflict.cloudVersionTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudVersionTag"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudVersionTag"
+          }
+        }
+      }
+    },
+    "conflict.editorTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.editorTag"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.editorTag"
+          }
+        }
+      }
+    },
+    "conflict.takeLocalAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeLocalAction"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeLocalAction"
+          }
+        }
+      }
+    },
+    "conflict.takeCloudAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeCloudAction"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeCloudAction"
+          }
+        }
+      }
+    },
+    "conflict.noTimeInfo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noTimeInfo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noTimeInfo"
           }
         }
       }

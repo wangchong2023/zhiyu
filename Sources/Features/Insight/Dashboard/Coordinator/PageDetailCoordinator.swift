@@ -98,7 +98,7 @@ final class PageDetailCoordinator {
     }
 
     /// 执行Synthesis
-    /// /// - Parameter type: type
+    /// - Parameter type: type
     func performSynthesis(type: SynthesisStore.SynthesisType) {
         Task {
             ToastManager.shared.show(type: .processing, message: L10n.Common.aiThinking, duration: 0)

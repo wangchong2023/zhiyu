@@ -18,7 +18,7 @@ import Combine
 @Observable
 final class IngestStore {
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
-    @ObservationIgnored @Inject private var llmService: LLMService
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var ingestService: IngestService
     @ObservationIgnored @Inject private var pdfService: any PDFServiceProtocol
@@ -71,9 +71,9 @@ final class IngestStore {
     @discardableResult
 
     /// 保存PDFDocument
-    /// /// - Parameter data: data
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter data: data
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     public func savePDFDocument(data: Data, fileName: String) async -> URL? {
         await pdfService.savePDF(data: data, fileName: fileName)
     }
@@ -90,8 +90,8 @@ final class IngestStore {
     @discardableResult
 
     /// 删除PDFDocument
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 是否成功
+    /// - Parameter fileName: fileName
+    /// - Returns: 是否成功
     public func deletePDFDocument(fileName: String) async -> Bool {
         await pdfService.deletePDF(fileName: fileName)
     }

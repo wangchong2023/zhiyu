@@ -14,23 +14,23 @@ import Foundation
 final class DummyActivityService: LiveActivityProtocol, Sendable {
 
     /// 启动Activity
-    /// /// - Parameter id: id
-    /// /// - Parameter name: name
-    /// /// - Parameter target: target
+    /// - Parameter id: id
+    /// - Parameter name: name
+    /// - Parameter target: target
     func startActivity(id: UUID, name: String, target: String) {
         // 非支持平台不执行任何操作
     }
     
     /// 更新Progress
-    /// /// - Parameter id: id
-    /// /// - Parameter progress: progress
-    /// /// - Parameter message: message
+    /// - Parameter id: id
+    /// - Parameter progress: progress
+    /// - Parameter message: message
     func updateProgress(id: UUID, progress: Double, message: String) async {
         // 非支持平台不执行任何操作
     }
     
     /// 结束Activity
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func endActivity(id: UUID) async {
         // 非支持平台不执行任何操作
     }

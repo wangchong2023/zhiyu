@@ -40,20 +40,20 @@ final class BackupService: ObservableObject {
         }
 
         /// fileSize
-        /// /// - Returns: 字符串
+        /// - Returns: 字符串
         func fileSize(in directory: URL) -> String {
             let url = directory.appendingPathComponent(fileName)
             if let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
                let size = attrs[.size] as? UInt64 {
                 return ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)
             }
-            return "—"
+            return "-"
         }
     }
 
     // MARK: - Directory Helper
     /// default备份Directory
-    /// /// - Returns: 链接
+    /// - Returns: 链接
     static func defaultBackupDirectory() -> URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         return docs.appendingPathComponent("AppBackups", isDirectory: true)
@@ -74,7 +74,7 @@ final class BackupService: ObservableObject {
 
     // MARK: - Create Backup
     /// 创建备份
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func createBackup(pages: [KnowledgePage]) {
         guard isAutoBackupEnabled else { return }
 
@@ -117,7 +117,7 @@ final class BackupService: ObservableObject {
             Logger.shared.addLog(
                 action: .ingest,
                 target: fileName,
-                details: "自动备份成功: \(pages.count) 页",
+                details: "AppBackup_Success1",
                 duration: endTime.timeIntervalSince(startTime),
                 startTime: startTime,
                 endTime: endTime,
@@ -139,8 +139,8 @@ final class BackupService: ObservableObject {
 
     // MARK: - Restore Backup
     /// 恢复备份
-    /// /// - Parameter entry: entry
-    /// /// - Returns: 列表
+    /// - Parameter entry: entry
+    /// - Returns: 列表
     func restoreBackup(_ entry: BackupEntry) -> [KnowledgePage]? {
         let startTime = Date()
         let url = backupDirectory.appendingPathComponent(entry.fileName)
@@ -154,7 +154,7 @@ final class BackupService: ObservableObject {
             Logger.shared.addLog(
                 action: .ingest,
                 target: entry.fileName,
-                details: "恢复备份成功: \(pages.count) 页",
+                details: "AppBackup_Success2",
                 duration: endTime.timeIntervalSince(startTime),
                 startTime: startTime,
                 endTime: endTime,
@@ -178,7 +178,7 @@ final class BackupService: ObservableObject {
 
     // MARK: - Delete Backup
     /// 删除备份
-    /// /// - Parameter entry: entry
+    /// - Parameter entry: entry
     func deleteBackup(_ entry: BackupEntry) {
         let url = backupDirectory.appendingPathComponent(entry.fileName)
         try? FileManager.default.removeItem(at: url)

@@ -80,8 +80,8 @@ final class DeepLinkService: ObservableObject {
     
     // MARK: - Spotlight Query Handling
     /// 处理SpotlightActivity
-    /// /// - Parameter userActivity: userActivity
-    /// /// - Returns: 是否成功
+    /// - Parameter userActivity: userActivity
+    /// - Returns: 是否成功
     func handleSpotlightActivity(_ userActivity: NSUserActivity) -> Bool {
         guard userActivity.activityType == "com.zhiyu.app.openPage",
               let userInfo = userActivity.userInfo,
@@ -94,7 +94,7 @@ final class DeepLinkService: ObservableObject {
     }
     
     /// consumeDeep链接
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func consumeDeepLink() -> DeepLink? {
         let link = pendingDeepLink
         pendingDeepLink = nil

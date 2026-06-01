@@ -126,7 +126,7 @@ public struct AIRainbowGlowBadge: View {
                 Image(systemName: "cpu")
                     .foregroundStyle(.appAccent)
                     .font(.headline)
-                Text("AI 运行控制中枢")
+                Text(L10n.Common.unknown)
                     .font(.headline)
                     .foregroundStyle(.appText)
                 Spacer()
@@ -144,7 +144,7 @@ public struct AIRainbowGlowBadge: View {
             
             // 1. 当前大模型运行状态
             VStack(alignment: .leading, spacing: 6) {
-                Text("当前活跃大模型底座")
+                Text(L10n.Common.unknown)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
                 
@@ -159,7 +159,7 @@ public struct AIRainbowGlowBadge: View {
                             .bold()
                             .foregroundStyle(.appText)
                         
-                        Text(modelManager.isModelLocalReady(for: modelManager.activeModelId) ? "端侧大模型安全就绪 🛡️" : "端侧权重未就绪，流转至云端 ☁️")
+                        Text(modelManager.isModelLocalReady(for: modelManager.activeModelId) ? L10n.Common.unknown : L10n.Common.unknown)
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
@@ -176,10 +176,10 @@ public struct AIRainbowGlowBadge: View {
                 set: { modelManager.isCloudEscalationEnabled = $0 }
             )) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("云端深度考据提权")
+                    Text(L10n.Common.unknown)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appText)
-                    Text("在合成实验室中智能加速，自动分流复杂推理")
+                    Text(L10n.Common.unknown)
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
                 }
@@ -192,7 +192,7 @@ public struct AIRainbowGlowBadge: View {
             HStack {
                 Image(systemName: "shield.checkered")
                     .foregroundStyle(.green)
-                Text("苹果芯片自适应护栏已激活")
+                Text(L10n.Common.unknown)
                     .font(.caption)
                     .foregroundStyle(.appText)
                 Spacer()
@@ -216,7 +216,7 @@ public struct AIRainbowGlowBadge: View {
                 HStack {
                     Spacer()
                     Image(systemName: "cart.badge.plus")
-                    Text("前往 AI 模型商店")
+                    Text(L10n.Common.unknown)
                     Spacer()
                 }
                 .font(.subheadline.bold())

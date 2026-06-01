@@ -73,7 +73,7 @@ struct FloatingContextCapsule: View {
         #if os(watchOS)
         HStack(spacing: DesignSystem.small) {
             Text(vault.name)
-                .font(.custom("Avenir Next", size: 18).weight(.bold))
+                .font(.custom("AvenirNext", size: 18).weight(.bold))
                 .lineLimit(1)
         }
         .padding(.trailing, DesignSystem.medium)
@@ -99,7 +99,7 @@ struct FloatingContextCapsule: View {
         } label: {
             HStack(spacing: DesignSystem.small) {
                 Text(vault.name)
-                    .font(.custom("Avenir Next", size: 18).weight(.bold))
+                    .font(.custom("AvenirNext", size: 18).weight(.bold))
                     .lineLimit(1)
                 
                 Image(systemName: DesignSystem.Icons.down)
@@ -114,8 +114,8 @@ struct FloatingContextCapsule: View {
     
     private var hubIndicator: some View {
         HStack(spacing: DesignSystem.small) {
-            Text("My Knowledge") // 完美对齐图 1
-                .font(.custom("Avenir Next", size: 18).weight(.bold))
+            Text(L10n.Common.unknown) // 完美对齐图 1
+                .font(.custom("AvenirNext", size: 18).weight(.bold))
             
             Image(systemName: DesignSystem.Icons.down)
                 .font(.caption.weight(.bold))

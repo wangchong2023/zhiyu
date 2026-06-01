@@ -18,7 +18,7 @@ final class IngestCoordinator {
     // ── 基础设施依赖 ──
     @ObservationIgnored @Inject var store: AppStore
     @ObservationIgnored @Inject var ingestStore: IngestStore
-    @ObservationIgnored @Inject var llmService: LLMService
+    @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
 
     // ── UI 控制状态 ──
     var isIngesting = false
@@ -88,7 +88,7 @@ final class IngestCoordinator {
     }
 
     /// 处理File导入
-    /// /// - Parameter result: result
+    /// - Parameter result: result
     func handleFileImport(_ result: Result<[URL], Error>) {
         if case .success(let urls) = result {
             for url in urls {

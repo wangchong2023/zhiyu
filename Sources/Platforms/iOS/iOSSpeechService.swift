@@ -206,8 +206,8 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     }
 
     /// transcribeFile
-    /// /// - Parameter url: url
-    /// /// - Returns: 字符串
+    /// - Parameter url: url
+    /// - Returns: 字符串
     func transcribeFile(url: URL) async throws -> String {
         isTranscribing = true
         defer { isTranscribing = false }
@@ -228,8 +228,8 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     }
 
     /// 保存Recording
-    /// /// - Parameter title: title
-    /// /// - Returns: 返回值
+    /// - Parameter title: title
+    /// - Returns: 返回值
     func saveRecording(title: String) -> VoiceRecording {
         let recording = VoiceRecording(id: UUID(), title: title, text: transcribedText, language: selectedLanguage, duration: 0, createdAt: Date())
         recordings.insert(recording, at: 0)
@@ -238,7 +238,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     }
 
     /// 删除Recording
-    /// /// - Parameter recording: recording
+    /// - Parameter recording: recording
     func deleteRecording(_ recording: VoiceRecording) {
         recordings.removeAll { $0.id == recording.id }
         saveRecordingsToDisk()

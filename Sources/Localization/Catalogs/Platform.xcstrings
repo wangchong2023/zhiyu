@@ -255,6 +255,40 @@
           }
         }
       }
+    },
+    "platform.unsupported.pdf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "platform.unsupported.pdf"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "platform.unsupported.pdf [译]"
+          }
+        }
+      }
+    },
+    "platform.unsupported.mermaid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "platform.unsupported.mermaid"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "platform.unsupported.mermaid [译]"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -56,6 +56,9 @@ targets:
       - script: "./env/venv/bin/python3 Tools/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+        name: "[Gatekeeper] Storage Constants Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - target: ZhiYuWidgets
@@ -93,6 +96,9 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "./env/venv/bin/python3 Tools/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
+        basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+        name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -158,6 +164,9 @@ targets:
       - script: "./env/venv/bin/python3 Tools/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+        name: "[Gatekeeper] Storage Constants Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
 
@@ -167,9 +176,11 @@ targets:
     sources:
       - path: Sources/Platforms/iOS/Widgets
       - path: Sources/Platforms/iOS/Activity/AIProcessingAttributes.swift
+      - path: Sources/Core/Base/Constants/AppConstants.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.widgets
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: WIDGET
         INFOPLIST_FILE: Sources/Platforms/iOS/Widgets/Info.plist
         GENERATE_INFOPLIST_FILE: "NO"
         NSSupportsLiveActivities: YES
@@ -179,7 +190,6 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
     dependencies:
       - package: GRDB
-      - target: ZhiYu
 
   ZhiYuTests:
     type: bundle.unit-test
@@ -198,6 +208,7 @@ targets:
           - "Platforms/watchOS/WatchPasteboardService.swift"
           - "Platforms/watchOS/WatchSpeechService.swift"
           - "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift"
+          - "Core/Base/Constants/AppConstants.swift"
     dependencies:
       - target: ZhiYu
       - package: SnapshotTesting

@@ -1,0 +1,476 @@
+❌ [L10n Audit] Source Code Violations:
+
+📂 Sources/App/AppEnvironment.swift
+  L55: ⚠️ [Hardcoded English sentence detected.] "[AppEnvironment] App Group ,"
+  L62: ⚠️ [Hardcoded English sentence detected.] "[AppEnvironment] Database App Group ..."
+  L74: ⚠️ [Hardcoded English sentence detected.] "[AppEnvironment] Database (App Group): \(dbURL.lastPathComponent)"
+  L76: ⚠️ [Hardcoded English sentence detected.] "[AppEnvironment] Critical database initialization failure"
+  L121: ⚠️ [Hardcoded English sentence detected.] "[AppEnvironment] Completed at \(Date())"
+
+📂 Sources/App/ContentView.swift
+  L299: ⚠️ [Hardcoded English sentence detected.] "[DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database."
+  L301: ⚠️ [Hardcoded English sentence detected.] "[DatabaseCorruptedBanner] Reverification failed: \(error)"
+
+📂 Sources/App/ModuleRegistrar.swift
+  L168: ⚠️ [Hardcoded English sentence detected.] "[DI] Starting registration of storage module..."
+  L176: ⚠️ [Hardcoded English sentence detected.] "[Error] [DI] Database initialization failed: dbWriter is nil. Please check the DatabaseManager initialization sequence."
+  L189: ⚠️ [Hardcoded English sentence detected.] "[DI] Database writer is ready, registering vertical repositories..."
+  L235: ⚠️ [Hardcoded English sentence detected.] "[DI] Starting registration of domain capabilities module..."
+  L287: ⚠️ [Hardcoded English sentence detected.] "[DI] Initializing RAGEvaluationService..."
+  L296: ⚠️ [Hardcoded English sentence detected.] "[DI] Error: GovernanceRepository not registered! RAGEvaluationService initialization failed."
+  L304: ⚠️ [Hardcoded English sentence detected.] "[DI] Domain capabilities module registration completed."
+  L315: ⚠️ [Hardcoded English sentence detected.] "[DI] Starting registration of application module..."
+
+📂 Sources/App/Store/AppStore.swift
+  L120: ⚠️ [Hardcoded English sentence detected.] "[AppStore] Initializing core engine..."
+  L170: ⚠️ [Hardcoded English sentence detected.] "[AppStore] Detected exclusive physical database hot swap success..."
+
+📂 Sources/App/ZhiYuApp.swift
+  L55: ⚠️ [Hardcoded English sentence detected.] "[Splash] Starting dismiss animation..."
+  L122: ⚠️ [Hardcoded English sentence detected.] "[AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys."
+
+📂 Sources/Core/Base/Extensions/Date+App.swift
+  L19: ⚠️ [Hardcoded English sentence detected.] "yyyy-MM-dd HH:mm"
+  L21: ⚠️ [Hardcoded English sentence detected.] "yyyy/M/d HH:mm"
+
+📂 Sources/Core/Base/ServiceContainer.swift
+  L46: ⚠️ [Hardcoded English sentence detected.] "DI: Registered [\(key)] with instance \(String(describing: service))"
+  L72: ⚠️ [Hardcoded English sentence detected.] "DI Error: Service [\(key)] not registered. Expected type: \(type). Current keys: \(registeredKeys.joined(separator: "
+
+📂 Sources/Core/Base/Stubs/UnsupportedExportService.swift
+  L21: ⚠️ [Hardcoded English sentence detected.] "Export is not supported on this platform."
+  L29: ⚠️ [Hardcoded English sentence detected.] "Export is not supported on this platform."
+  L37: ⚠️ [Hardcoded English sentence detected.] "Export is not supported on this platform."
+
+📂 Sources/Core/Base/Utils/Localized.swift
+  L199: ⚠️ [Hardcoded English sentence detected.] "[L10n Error] Missing Key: \(key)@\(resolvedTable)"
+  L201: ⚠️ [Hardcoded English sentence detected.] "[L10n Error] Missing Key: \(key)@\(resolvedTable)"
+
+📂 Sources/Core/System/Analytics/LocalAnalyticsService.swift
+  L30: ⚠️ [Hardcoded English sentence detected.] "Analytics event tracked: \(name), properties: \(properties?.description ?? "
+  L67: ⚠️ [Hardcoded English sentence detected.] "Analytics error: \(details ?? "
+
+📂 Sources/Core/System/Logger/Logger.swift
+  L221: ⚠️ [Hardcoded English sentence detected.] "[ERROR] [\(fileName):\(line)] \(function) -> \(message)\(errDesc)"
+  L338: ⚠️ [Hardcoded English sentence detected.] "[Logger] Failed to save logs: \(error.localizedDescription)"
+  L374: ⚠️ [Hardcoded English sentence detected.] "%.0f s"
+
+📂 Sources/Core/System/Security/KeychainService.swift
+  L44: ⚠️ [Hardcoded English sentence detected.] "[KeychainService] failed (\(key)): \(status)"
+  L102: ⚠️ [Hardcoded English sentence detected.] "Failed to encode value for Keychain storage"
+  L104: ⚠️ [Hardcoded English sentence detected.] "Keychain store failed: \(status)"
+  L106: ⚠️ [Hardcoded English sentence detected.] "Keychain retrieve failed: \(status)"
+  L108: ⚠️ [Hardcoded English sentence detected.] "Keychain delete failed: \(status)"
+  L110: ⚠️ [Hardcoded English sentence detected.] "Keychain returned unexpected data format"
+
+📂 Sources/Core/System/Security/SecureEnclaveCryptoService.swift
+  L113: ⚠️ [Hardcoded English sentence detected.] "Failed to load existing Secure Enclave Key, recreating..."
+
+📂 Sources/Core/System/Security/SecurityManager.swift
+  L85: ⚠️ [Hardcoded English sentence detected.] "[Error] Critical security error: Failed to secure Database Passphrase in Keychain."
+  L152: ⚠️ [Hardcoded English sentence detected.] "[Error] Critical security error: Failed to secure HMAC Salt in Keychain."
+  L176: ⚠️ [Hardcoded English sentence detected.] "FileSignatureRepository is not registered yet"
+  L182: ⚠️ [Hardcoded English sentence detected.] "SecurityManager DEBUG: HMAC signature persistence downgraded to UserDefaults: \(error)"
+  L190: ⚠️ [Hardcoded English sentence detected.] "Critical: Failed to persist HMAC signature securely: \(error.localizedDescription)"
+  L231: ⚠️ [Hardcoded English sentence detected.] "Failed to update signature: \(error.localizedDescription)"
+  L244: ⚠️ [Hardcoded English sentence detected.] "Failed to derive key from salt: invalid encoding"
+  L245: ⚠️ [Hardcoded English sentence detected.] "Data encoding failed"
+  L246: ⚠️ [Hardcoded English sentence detected.] "Data decoding failed"
+
+📂 Sources/Core/System/Workflow/WorkflowService.swift
+  L71: ⚠️ [Hardcoded English sentence detected.] "[Workflow] Extracted to-do items: \(tasks.count) items"
+  L74: ⚠️ [Hardcoded English sentence detected.] "[Workflow] Failed to parse to-do items from text"
+  L92: ⚠️ [Hardcoded English sentence detected.] "[Workflow] Successfully synchronized \(tasks.count) items to Reminders"
+  L98: ⚠️ [Hardcoded English sentence detected.] "[Workflow] Sync failed: \(error.localizedDescription)"
+
+📂 Sources/Core/Utils/RetryTask.swift
+  L45: ⚠️ [Hardcoded English sentence detected.] "[RetryTask] Task failed and reached max retries (\(maxRetries) )"
+  L56: ⚠️ [Hardcoded English sentence detected.] "[RetryTask] Task failed: \(error.localizedDescription). About to perform retry \(retries)/\(maxRetries) retry, waiting \(String(format:"
+
+📂 Sources/Domain/Knowledge/KnowledgePageManager.swift
+  L47: ⚠️ [Hardcoded English sentence detected.] "Plugged page processor: \(processor.name) (Plugin: \(pluginID ?? "
+  L68: ⚠️ [Hardcoded English sentence detected.] "Processor \(item.processor.name) execution failed"
+  L170: ⚠️ [Hardcoded English sentence detected.] "Renamed from \(oldTitle)"
+  L214: ⚠️ [Hardcoded English sentence detected.] "Applied potential link to [[\(suggestion.targetTitle)]]"
+
+📂 Sources/Domain/RAG/AIContentEnricher.swift
+  L142: ⚠️ [Hardcoded English sentence detected.] "You are aprofessional . Please analyze Markdown and provideData Insight."
+  L144: ⚠️ [Hardcoded English sentence detected.] "> [Data Insight]:"
+  L160: ⚠️ [Hardcoded English sentence detected.] "You are a expert. based on infer documents role."
+
+📂 Sources/Domain/RAG/RAGEvaluationService.swift
+  L75: ⚠️ [Hardcoded English sentence detected.] "Evaluation failed"
+
+📂 Sources/Domain/Services/PromptTemplateEngine.swift
+  L93: ⚠️ [Hardcoded English sentence detected.] "Failed to fetch remote skill \(skill.skillId) (v\(skill.version)), downgraded to local preset: \(error.localizedDescription)"
+
+📂 Sources/Features/AI/Chat/Coordinator/ChatCoordinator.swift
+  L112: ⚠️ [Hardcoded English sentence detected.] "[ChatCoordinator] Error"
+
+📂 Sources/Features/AI/Chat/Model/AIWorkflowStore.swift
+  L96: ⚠️ [Hardcoded English sentence detected.] "LLM service disabled"
+  L232: ⚠️ [Hardcoded English sentence detected.] "AI Workflow data cleared."
+
+📂 Sources/Features/AI/Quiz/View/QuizView.swift
+  L198: ⚠️ [Hardcoded English sentence detected.] "(Correct Answer|Answer| | |Answer |Answer |Correct Answer|Answer|Correct Option|Option|The answer is)[ : :\s]*(\d+)"
+
+📂 Sources/Features/AI/Synthesis/Model/SynthesisStore.swift
+  L162: ⚠️ [Hardcoded English sentence detected.] "Task already in progress"
+
+📂 Sources/Features/AI/Synthesis/Service/AISynthesisService.swift
+  L101: ⚠️ [Hardcoded English sentence detected.] "graph TD"
+  L115: ⚠️ [Hardcoded English sentence detected.] "\n\nContent to be expanded: \n\(content)"
+
+📂 Sources/Features/AI/Synthesis/View/Components/SynthesisDocRow.swift
+  L129: ⚠️ [Hardcoded English sentence detected.] "yyyy-MM-dd HH:mm"
+  L136: ⚠️ [Hardcoded English sentence detected.] "%.1f KB"
+  L137: ⚠️ [Hardcoded English sentence detected.] "%.1f MB"
+
+📂 Sources/Features/Knowledge/Ingest/Model/IngestStore.swift
+  L217: ⚠️ [Hardcoded English sentence detected.] "[IngestStore] Importing file: \(url.lastPathComponent)"
+  L240: ⚠️ [Hardcoded English sentence detected.] "Permission denied"
+
+📂 Sources/Features/Knowledge/Ingest/Service/IngestQueue.swift
+  L53: ⚠️ [Hardcoded English sentence detected.] "[IngestQueue] Processing task: \(title)"
+  L62: ⚠️ [Hardcoded English sentence detected.] "[IngestQueue] Task failed: \(title), Error: \(error)"
+
+📂 Sources/Features/Knowledge/Ingest/Service/IngestService.swift
+  L181: ⚠️ [Hardcoded English sentence detected.] "Unsupported or unknown document format: \(url.pathExtension)"
+  L190: ⚠️ [Hardcoded English sentence detected.] "Failed to extract text from document \(url.path)"
+  L212: ⚠️ [Hardcoded English sentence detected.] "Failed to enumerate folder: \(url.path)"
+
+📂 Sources/Features/Knowledge/System/Model/KnowledgeStore.swift
+  L86: ⚠️ [Hardcoded English sentence detected.] "[KnowledgeStore] DetectedDatabaseswitch, clearing memory and reloading..."
+  L99: ⚠️ [Hardcoded English sentence detected.] "[KnowledgeStore] Detected newNotebook \(vaultID.uuidString), auto injectingcold start demo data..."
+
+📂 Sources/Features/Knowledge/System/Model/TagStore.swift
+  L52: ⚠️ [Hardcoded English sentence detected.] "Renamed tag to \(new)"
+  L58: ⚠️ [Hardcoded English sentence detected.] "Tag removed from all pages"
+  L66: ⚠️ [Hardcoded English sentence detected.] "Multiple Tags"
+  L71: ⚠️ [Hardcoded English sentence detected.] "New tag registered"
+
+📂 Sources/Features/Knowledge/Vault/Service/VaultService.swift
+  L121: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to asynchronously load notebook metadata: \(error)"
+  L158: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to auto-connect to the recently used physical database: \(error)"
+  L219: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to switch physical database: \(error)"
+  L255: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to write new notebook to database: \(error)"
+  L275: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to write updated notebook metadata to database: \(error)"
+  L292: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to write renamed notebook to database: \(error)"
+  L313: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Failed to delete notebook record from global metadata database: \(error)"
+  L322: ⚠️ [Hardcoded English sentence detected.] "[VaultService] Physically erased notebook sandbox storage: \(id.uuidString)"
+
+📂 Sources/Features/System/Auth/Service/AuthService.swift
+  L98: ⚠️ [Hardcoded English sentence detected.] "[AuthService] Password loginfailed"
+  L121: ⚠️ [Hardcoded English sentence detected.] "[AuthService] SendVerification codefailed"
+  L146: ⚠️ [Hardcoded English sentence detected.] "[AuthService] Verification code failed"
+  L189: ⚠️ [Hardcoded English sentence detected.] "Mock User"
+  L200: ⚠️ [Hardcoded English sentence detected.] "[AuthService] Auth failed"
+  L208: ⚠️ [Hardcoded English sentence detected.] "ZhiYu User"
+  L244: ⚠️ [Hardcoded English sentence detected.] "Unsupportedthird-party auth strategy: \(cred.identityType)"
+  L267: ⚠️ [Hardcoded English sentence detected.] "ZhiYu User"
+  L270: ⚠️ [Hardcoded English sentence detected.] "sendAuthRequestToBackend failed"
+  L286: ⚠️ [Hardcoded English sentence detected.] "[AuthService] Storing Token failed"
+  L289: ⚠️ [Hardcoded English sentence detected.] "[AuthService] Mock Ignoring Keychain Write failed, Forcing bypass"
+
+📂 Sources/Features/System/Auth/Strategy/CarrierAuthStrategy.swift
+  L29: ⚠️ [Hardcoded English sentence detected.] "Carrier SDK Not Initialized"
+  L30: ⚠️ [Hardcoded English sentence detected.] "Carrier Failed"
+  L31: ⚠️ [Hardcoded English sentence detected.] "User Cancelled"
+  L32: ⚠️ [Hardcoded English sentence detected.] "No SIM Card"
+  L33: ⚠️ [Hardcoded English sentence detected.] "No Network"
+  L110: ⚠️ [Hardcoded English sentence detected.] "WatchOS not supported"
+
+📂 Sources/Features/System/Auth/Strategy/GitHubAuthStrategy.swift
+  L45: ⚠️ [Hardcoded English sentence detected.] "GitHub Mock User"
+  L57: ⚠️ [Hardcoded English sentence detected.] "GitHub URL Error"
+  L71: ⚠️ [Hardcoded English sentence detected.] "GitHub Callback Error"
+
+📂 Sources/Features/System/Auth/Strategy/GoogleAuthStrategy.swift
+  L53: ⚠️ [Hardcoded English sentence detected.] "Google Mock User"
+  L94: ⚠️ [Hardcoded English sentence detected.] "Google Mock User"
+  L98: ⚠️ [Hardcoded English sentence detected.] "Google SDK not configured"
+
+📂 Sources/Features/System/Auth/Strategy/WeChatAuthStrategy.swift
+  L28: ⚠️ [Hardcoded English sentence detected.] "WeChat Mock User"
+  L42: ⚠️ [Hardcoded English sentence detected.] "WeChat SDK not configured"
+
+📂 Sources/Features/System/ModelManager/GlobalModelManager.swift
+  L111: ⚠️ [Hardcoded English sentence detected.] "Failed to load remote model manifests: \(error.localizedDescription)"
+  L134: ⚠️ [Hardcoded English sentence detected.] "Not Downloaded"
+  L150: ⚠️ [Hardcoded English sentence detected.] "Intercepted model download (\(modelId)) due to insufficient device memory."
+
+📂 Sources/Features/System/ModelManager/View/ModelStoreView.swift
+  L192: ⚠️ [Hardcoded English sentence detected.] "Not Downloaded"
+  L326: ⚠️ [Hardcoded English sentence detected.] "Not Downloaded"
+  L462: ⚠️ [Hardcoded English sentence detected.] "%.2f GB"
+  L464: ⚠️ [Hardcoded English sentence detected.] "%.1f MB"
+
+📂 Sources/Features/System/Settings/Coordinator/SystemStatsCoordinator.swift
+  L194: ⚠️ [Hardcoded English sentence detected.] "[SystemStats] Data cleanupfailed"
+
+📂 Sources/Features/System/Settings/View/Components/PerformanceDashboardView.swift
+  L28: ⚠️ [Hardcoded English sentence detected.] "%.1f MB"
+
+📂 Sources/Features/System/Settings/View/Components/PluginSettingsGenerator.swift
+  L64: ⚠️ [Hardcoded English sentence detected.] "[Error] [PluginUI] Schema Parsing failed"
+
+📂 Sources/Features/System/Settings/View/DeveloperSettingsView.swift
+  L271: ⚠️ [Hardcoded English sentence detected.] "Failed to load developer stats"
+
+📂 Sources/Features/System/Settings/View/OnDeviceLLMSettingsView.swift
+  L35: 🚨 [Hardcoded non-ASCII string detected.] "我的模型"
+  L36: 🚨 [Hardcoded non-ASCII string detected.] "模型商店"
+  L221: 🚨 [Hardcoded non-ASCII string detected.] "前往模型商店下载"
+
+📂 Sources/Features/System/Settings/View/OnDevicePerformanceConfigView.swift
+  L32: 🚨 [Hardcoded non-ASCII string detected.] "开启后，推理速度提升并显著降低 CPU 发热。"
+  L43: 🚨 [Hardcoded English sentence in UI/Logic context.] "%.1f GB"
+  L50: 🚨 [Hardcoded non-ASCII string detected.] "防止本地推理占用过多内存导致应用被系统强杀。"
+  L68: 🚨 [Hardcoded non-ASCII string detected.] "限制处理上下文以安全维持本地运行的内存水位。"
+  L78: 🚨 [Hardcoded non-ASCII string detected.] "系统自动监听设备温度，过热时降低并发以防手机发烫。"
+
+📂 Sources/Infrastructure/LLM/LLMAdapters.swift
+  L87: ⚠️ [Hardcoded English sentence detected.] "Ollama Result"
+
+📂 Sources/Infrastructure/LLM/LLMRetrievalService.swift
+  L47: ⚠️ [Hardcoded English sentence detected.] "\n\nOriginal Query: \(query)"
+  L51: ⚠️ [Hardcoded English sentence detected.] "Return JSON array of strings only."
+
+📂 Sources/Infrastructure/LLM/OnDeviceLLMService.swift
+  L242: ⚠️ [Hardcoded English sentence detected.] "Model not loaded"
+
+📂 Sources/Infrastructure/LLM/PromptService.swift
+  L118: ⚠️ [Hardcoded English sentence detected.] "Prompt configurations saved to UserDefaults."
+  L135: ⚠️ [Hardcoded English sentence detected.] "Prompt configurations reset to default."
+
+📂 Sources/Infrastructure/Network/ModelDownloadManager.swift
+  L101: ⚠️ [Hardcoded English sentence detected.] "Failed to generate resume data for pausing."
+  L112: ⚠️ [Hardcoded English sentence detected.] "No resume data available."
+  L138: ⚠️ [Hardcoded English sentence detected.] "Download cancelled by user."
+  L188: ⚠️ [Hardcoded English sentence detected.] "File verification failed. SHA256 mismatch."
+  L207: ⚠️ [Hardcoded English sentence detected.] "Sandbox storage allocation failed: \(error.localizedDescription)"
+  L336: ⚠️ [Hardcoded English sentence detected.] "Temporary copy generation failed: \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Network/RemoteConfigService.swift
+  L38: ⚠️ [Hardcoded English sentence detected.] "Fetch remote models allowlist failed."
+  L46: ⚠️ [Hardcoded English sentence detected.] "Remote models payload is empty."
+  L64: ⚠️ [Hardcoded English sentence detected.] "Fetch remote skills list failed."
+  L71: ⚠️ [Hardcoded English sentence detected.] "Remote skills payload is empty."
+
+📂 Sources/Infrastructure/Performance/PerformanceBenchmarker.swift
+  L21: ⚠️ [Hardcoded English sentence detected.] "[Benchmark] StartingStress test:  \(count) documents..."
+  L36: ⚠️ [Hardcoded English sentence detected.] "\(i) Stress testdocuments. Content, SQLite FTS5 . \(UUID().uuidString)"
+  L46: ⚠️ [Hardcoded English sentence detected.] "[Benchmark] Stress testCompleted"
+  L47: ⚠️ [Hardcoded English sentence detected.] "Total time: \(String(format:"
+  L48: ⚠️ [Hardcoded English sentence detected.] "Average speed: \(String(format:"
+  L55: ⚠️ [Hardcoded English sentence detected.] "Stress Test"
+  L61: ⚠️ [Hardcoded English sentence detected.] "[Search] [Benchmark] Search performance: \"\(query)\""
+  L63: ⚠️ [Hardcoded English sentence detected.] "Results count: \(results.count)"
+  L66: ⚠️ [Hardcoded English sentence detected.] "[Warning] Search latency exceeded 800ms threshold."
+
+📂 Sources/Infrastructure/Plugins/JavaScriptPlugin.swift
+  L78: ⚠️ [Hardcoded English sentence detected.] "Security Error: 'eval' and 'Function' are disabled in ZhiYu sandbox."
+  L84: ⚠️ [Hardcoded English sentence detected.] "Failed to apply sandbox hardening."
+  L178: ⚠️ [Hardcoded English sentence detected.] "[Error] [DLP ] saveDataError: \(error.localizedDescription)"
+  L208: ⚠️ [Hardcoded English sentence detected.] "[Error] [FetchError] \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Plugins/PluginEnginePool.swift
+  L57: ⚠️ [Hardcoded English sentence detected.] "Failed to initialize JSContext"
+  L72: ⚠️ [Hardcoded English sentence detected.] "Dynamic code execution via Function constructor is strictly prohibited in ZhiYu sandbox."
+
+📂 Sources/Infrastructure/Plugins/PluginMarketService.swift
+  L98: ⚠️ [Hardcoded English sentence detected.] "[Error] [PluginMarket] PluginDownload : \(plugin.name)"
+  L143: ⚠️ [Hardcoded English sentence detected.] "[Error] [PluginMarket] DownloadPluginfailed: \(plugin.name)"
+
+📂 Sources/Infrastructure/Plugins/PluginRegistry.swift
+  L109: ⚠️ [Hardcoded English sentence detected.] "[Watchdog 2.0] Plugin \(id) Physically isolatedforcing memory recovery."
+  L173: ⚠️ [Hardcoded English sentence detected.] "[Security] Plugin \(plugin.manifest.id) is blacklisted, loading rejected."
+  L179: ⚠️ [Hardcoded English sentence detected.] "[Adapter] Detected 1.x Plugin \(plugin.manifest.name), enabled v1_Compatibility_Shim."
+  L217: ⚠️ [Hardcoded English sentence detected.] "[Guard] [Security interception] Plugin \(manifest.id) Attempting to call LLM, manifest 'llm' permission."
+  L227: ⚠️ [Hardcoded English sentence detected.] "[Guard] [Security interception] Plugin \(manifest.id) Page, 'pages.read' permission."
+  L295: ⚠️ [Hardcoded English sentence detected.] "Listening for event: \(event)"
+  L356: ⚠️ [Hardcoded English sentence detected.] "[Throttling] Plugin \(pluginID) called too frequently, automatically downgraded."
+  L371: ⚠️ [Hardcoded English sentence detected.] "[Guard] [Security interception] Plugin \(intercepter.manifest.name) attempting to modifyContent, writeContent permission."
+  L387: ⚠️ [Hardcoded English sentence detected.] "[Stop] [Watchdog] Plugin \(intercepter.manifest.name) execution timed out (\(String(format:"
+  L387: ⚠️ [Hardcoded English sentence detected.] ", duration))s), has been physically suspended."
+  L402: ⚠️ [Hardcoded English sentence detected.] "[Guard] [ ] Plugin \(intercepter.manifest.name) execution anomaly, automatically skipped."
+  L436: ⚠️ [Hardcoded English sentence detected.] "Local Developer"
+  L439: ⚠️ [Hardcoded English sentence detected.] "Locally loaded script plugin."
+  L450: ⚠️ [Hardcoded English sentence detected.] "[Error] [PluginRegistry] Plugin failed"
+
+📂 Sources/Infrastructure/Plugins/PluginSandboxError.swift
+  L44: ⚠️ [Hardcoded English sentence detected.] "Plugin execution timed out."
+  L50: ⚠️ [Hardcoded English sentence detected.] "Failed to load plugin: invalid digital signature or compromised script."
+
+📂 Sources/Infrastructure/Processors/Document/PPTXProcessor.swift
+  L105: ⚠️ [Hardcoded English sentence detected.] "<p:sldId id=\"\(255 + i)\" r:id=\"rId\(i + 1)\"/>"
+
+📂 Sources/Infrastructure/Processors/Network/WebScraperProcessor.swift
+  L51: ⚠️ [Hardcoded English sentence detected.] "No body"
+  L52: ⚠️ [Hardcoded English sentence detected.] "Scraper HTTP Error \(httpResponse.statusCode): \(body)"
+  L63: ⚠️ [Hardcoded English sentence detected.] "Untitled Web Page"
+  L69: ⚠️ [Hardcoded English sentence detected.] "Successfully scraped webpage. Length: \(content.count)"
+  L82: ⚠️ [Hardcoded English sentence detected.] "Scraper Error: \(error)"
+  L94: ⚠️ [Hardcoded English sentence detected.] "Network Error: \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Processors/Synthesis/QuizProcessor.swift
+  L57: ⚠️ [Hardcoded English sentence detected.] "Not int or string"
+
+📂 Sources/Infrastructure/Processors/Synthesis/SynthesisProcessor.swift
+  L50: ⚠️ [Hardcoded English sentence detected.] "graph TD"
+  L50: ⚠️ [Hardcoded English sentence detected.] "graph LR"
+  L50: ⚠️ [Hardcoded English sentence detected.] "graph TB"
+  L50: ⚠️ [Hardcoded English sentence detected.] "graph BT"
+  L65: ⚠️ [Hardcoded English sentence detected.] "graph TD"
+
+📂 Sources/Infrastructure/Storage/Persistence/DatabaseManager.swift
+  L91: ⚠️ [Hardcoded English sentence detected.] "SELECT name FROM sqlite_master WHERE type='table'"
+  L94: ⚠️ [Hardcoded English sentence detected.] "SELECT name FROM sqlite_master WHERE type='table'"
+  L96: ⚠️ [Hardcoded English sentence detected.] "DatabaseManager setup for testing completed. Vault Tables: \(tables), Global Tables: \(globalTables)"
+  L120: ⚠️ [Hardcoded English sentence detected.] "Global main configuration database initialized successfully: \(url.lastPathComponent)"
+  L160: ⚠️ [Hardcoded English sentence detected.] "Database setup failed, degrading to in-memory: \(error.localizedDescription)"
+  L176: ⚠️ [Hardcoded English sentence detected.] "Database integrity check failed in DEBUG, re-signing: \(url.lastPathComponent)"
+  L201: ⚠️ [Hardcoded English sentence detected.] "Safety warning: Fallback to transient in-memory database configuration due to: \(error.localizedDescription)"
+  L217: ⚠️ [Hardcoded English sentence detected.] "Fallback in-memory database successfully initialized."
+  L220: ⚠️ [Hardcoded English sentence detected.] "Fatal recovery failure: In-memory fallback database could not be initialized: \(error.localizedDescription)"
+  L221: ⚠️ [Hardcoded English sentence detected.] "Fatal recovery failure: In-memory fallback database could not be initialized: \(error.localizedDescription)"
+  L229: ⚠️ [Hardcoded English sentence detected.] "Starting physical multi-database hot swap => Target: \(url.lastPathComponent)"
+  L237: ⚠️ [Hardcoded English sentence detected.] "Target database integrity check failed in DEBUG during hot swap, re-signing: \(url.lastPathComponent)"
+  L254: ⚠️ [Hardcoded English sentence detected.] "switchDatabase warning: Transactions draining timed out. Forcing connection close."
+  L256: ⚠️ [Hardcoded English sentence detected.] "switchDatabase: All active transactions drained successfully."
+  L266: ⚠️ [Hardcoded English sentence detected.] "Closed database connection and updated signature for: \(oldURL.lastPathComponent)"
+  L284: ⚠️ [Hardcoded English sentence detected.] "Exclusive physical database successfully switched and remounted => \(url.lastPathComponent)"
+  L311: ⚠️ [Hardcoded English sentence detected.] "PRAGMA foreign_keys = ON"
+  L313: ⚠️ [Hardcoded English sentence detected.] "PRAGMA synchronous = NORMAL"
+  L315: ⚠️ [Hardcoded English sentence detected.] "PRAGMA temp_store = MEMORY"
+  L317: ⚠️ [Hardcoded English sentence detected.] "PRAGMA cache_size = -10000"
+  L319: ⚠️ [Hardcoded English sentence detected.] "PRAGMA mmap_size = 268435456"
+  L321: ⚠️ [Hardcoded English sentence detected.] "PRAGMA busy_timeout = 5000"
+  L355: ⚠️ [Hardcoded English sentence detected.] "DatabasePool connection closed successfully."
+  L357: ⚠️ [Hardcoded English sentence detected.] "Failed to close DatabasePool connection: \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Storage/Repositories/KnowledgePageRepository.swift
+  L68: ⚠️ [Hardcoded English sentence detected.] "Failed to encrypt private page content"
+  L283: ⚠️ [Hardcoded English sentence detected.] "Failed to decrypt private page: \(page.title)"
+
+📂 Sources/Infrastructure/Storage/Services/AppBackupService.swift
+  L120: ⚠️ [Hardcoded English sentence detected.] "Auto backupsuccessfully: \(pages.count)"
+  L157: ⚠️ [Hardcoded English sentence detected.] "Restore backupsuccessfully: \(pages.count)"
+
+📂 Sources/Infrastructure/Storage/Services/MaintenanceService.swift
+  L39: ⚠️ [Hardcoded English sentence detected.] "Failed to generate demo data: \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Storage/Services/VaultStorageService.swift
+  L63: ⚠️ [Hardcoded English sentence detected.] "Failed to process external file \(url): \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Storage/Sync/DataCoordinator.swift
+  L41: ⚠️ [Hardcoded English sentence detected.] "Starting background synchronization..."
+  L55: ⚠️ [Hardcoded English sentence detected.] "Synchronization task completed."
+
+📂 Sources/Infrastructure/Storage/Sync/iCloudSyncCoordinator.swift
+  L244: ⚠️ [Hardcoded English sentence detected.] "yyyy-MM-dd HH:mm:ss"
+  L254: ⚠️ [Hardcoded English sentence detected.] "Cannot decode date string: \(dateStr)"
+  L273: ⚠️ [Hardcoded English sentence detected.] "[iCloudSyncCoordinator] LWW Conflict resolved: Remote config is newer, replaced local."
+  L280: ⚠️ [Hardcoded English sentence detected.] "[iCloudSyncCoordinator] LWW Conflict resolved: Local config is newer, replaced remote."
+  L284: ⚠️ [Hardcoded English sentence detected.] "[iCloudSyncCoordinator] Failed to resolve json config conflict via LWW: \(error.localizedDescription)"
+
+📂 Sources/Infrastructure/Storage/Utility/DemoDataGenerator.swift
+  L27: ⚠️ [Hardcoded English sentence detected.] "[Demo] Starting demo data generation..."
+  L102: ⚠️ [Hardcoded English sentence detected.] "[Demo] Generation finished. Total: \(count)"
+  L112: ⚠️ [Hardcoded English sentence detected.] "[StressTest] Starting stress test data generation (\(targetCount) nodes)..."
+  L137: ⚠️ [Hardcoded English sentence detected.] "This is a stress test node #\(i+1).\n\n"
+  L148: ⚠️ [Hardcoded English sentence detected.] "Linking to: [[\(titles[idx])]]\n"
+
+📂 Sources/Platforms/Shared/WidgetAndWatchViews.swift
+  L181: ⚠️ [Hardcoded English sentence detected.] "Widget Medium"
+
+📂 Sources/Platforms/iOS/ActivityService.swift
+  L35: ⚠️ [Hardcoded English sentence detected.] "[Dynamic Island] Preparing to start Live Activity for task \(id): \(name)"
+  L53: ⚠️ [Hardcoded English sentence detected.] "[Dynamic Island] Live Activity started for task \(id)"
+  L55: ⚠️ [Hardcoded English sentence detected.] "[Dynamic Island] Launch failed: \(error.localizedDescription)"
+  L83: ⚠️ [Hardcoded English sentence detected.] "[Dynamic Island] Live Activity for task \(id) is about to end"
+
+📂 Sources/Platforms/iOS/Widgets/KnowledgeStatsWidget.swift
+  L57: ⚠️ [Hardcoded English sentence detected.] "ZhiYu Knowledge"
+  L64: ⚠️ [Hardcoded English sentence detected.] "AI Chat: Intelligent Interaction"
+  L337: ⚠️ [Hardcoded English sentence detected.] "ZhiYu Vault"
+  L338: ⚠️ [Hardcoded English sentence detected.] "View your knowledge universe metrics and launch quick actions from the Home Screen."
+
+📂 Sources/Platforms/iOS/iOSExportService.swift
+  L245: ⚠️ [Hardcoded English sentence detected.] "Failed to generate PPTX Base64"
+  L281: ⚠️ [Hardcoded English sentence detected.] "Export WebView failed to load"
+
+📂 Sources/Platforms/iOS/iOSSpotlightIndexer.swift
+  L48: ⚠️ [Hardcoded English sentence detected.] "[Spotlight] Batch indexing failed: \(error.localizedDescription)"
+
+📂 Sources/Platforms/iOS/iOSWatchSyncService.swift
+  L33: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] Send failed: WCSession not active (current state: \(session.activationState.rawValue))"
+  L37: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] Send failed: Apple Watch not paired"
+  L41: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] Send failed: Watch App not installed"
+  L47: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] Content sent to Watch via UserInfo (length: \(text.count))"
+  L57: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] iOS activation anomaly: \(error.localizedDescription)"
+
+📂 Sources/Platforms/macOS/MacFileArchiver.swift
+  L28: ⚠️ [Hardcoded English sentence detected.] "Zip process failed"
+
+📂 Sources/Platforms/macOS/MacOSPlatformCapabilities.swift
+  L55: ⚠️ [Hardcoded English sentence detected.] "Failed to create bookmark"
+  L69: ⚠️ [Hardcoded English sentence detected.] "Failed to resolve bookmark"
+
+📂 Sources/Platforms/watchOS/StubIngestService.swift
+  L28: ⚠️ [Hardcoded English sentence detected.] "[watchOS Stub] IngestFolder Attempting to call (watchOS Physically isolatedprocess): \(url.lastPathComponent), type: \(type.displayName)"
+
+📂 Sources/Platforms/watchOS/WatchPlatformCapabilities.swift
+  L51: ⚠️ [Hardcoded English sentence detected.] "watchOS does not support model compilation at runtime."
+
+📂 Sources/Platforms/watchOS/WatchWatchSyncService.swift
+  L54: ⚠️ [Hardcoded English sentence detected.] "[WatchSync] watchOS activation anomaly: \(error.localizedDescription)"
+
+📂 Sources/Platforms/watchOS/WatchWidgets.swift
+  L19: ⚠️ [Hardcoded English sentence detected.] "Directly enter the audio capture screen"
+
+📂 Sources/Shared/UIComponents/Navigation/FloatingContextCapsule.swift
+  L76: ⚠️ [Hardcoded English sentence detected.] "Avenir Next"
+  L102: ⚠️ [Hardcoded English sentence detected.] "Avenir Next"
+  L118: ⚠️ [Hardcoded English sentence detected.] "Avenir Next"
+
+❌ [L10n Audit] .xcstrings Catalog Issues:
+
+📂 InfoPlist.xcstrings
+  Key: "NSFaceIDUsageDescription" - ⚠️ [WARNING] zh-Hans state is "needs_review"
+  Key: "NSHumanReadableCopyright" - ⚠️ [WARNING] zh-Hans state is "needs_review"
+
+📂 Common.xcstrings
+  Key: "%@ - %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$@ - %2$@"
+  Key: "%@ (%@%@)" - ⚠️ [WARNING] Identical zh/en detected: "%1$@ (%2$@%3$@)"
+  Key: "%@ / %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$@ / %2$@"
+  Key: "%@ %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$@ %2$@"
+  Key: "%@ %@ %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$@ %2$@ %3$@"
+  Key: "%@: %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$@: %2$@"
+  Key: "%lld / %lld" - ⚠️ [WARNING] Identical zh/en detected: "%1$lld / %2$lld"
+  Key: "%lld %@" - ⚠️ [WARNING] Identical zh/en detected: "%1$lld %2$@"
+  Key: "< 50" - ⚠️ [WARNING] Identical zh/en detected: "< 50"
+  Key: "AI" - ⚠️ [WARNING] Identical zh/en detected: "AI"
+  Key: "demo.welcome.tag3" - ⚠️ [WARNING] Identical zh/en detected: "AI"
+  Key: "log.status.failure" - ⚠️ [WARNING] Identical zh/en detected: "log.status.failure"
+  Key: "log.status.processing" - ⚠️ [WARNING] Identical zh/en detected: "log.status.processing"
+  Key: "log.status.success" - ⚠️ [WARNING] Identical zh/en detected: "log.status.success"
+  Key: "sk-..." - ⚠️ [WARNING] Identical zh/en detected: "sk-..."
+
+📂 System.xcstrings
+  Key: "settings.language.english" - ⚠️ [WARNING] Identical zh/en detected: "English"
+
+📂 AI.xcstrings
+  Key: "llm.provider.anthropic" - ⚠️ [WARNING] Identical zh/en detected: "Anthropic"
+  Key: "llm.provider.deepseek" - ⚠️ [WARNING] Identical zh/en detected: "DeepSeek"
+  Key: "llm.provider.deepSeek" - ⚠️ [WARNING] Identical zh/en detected: "DeepSeek"
+  Key: "llm.provider.minimax" - ⚠️ [WARNING] Identical zh/en detected: "MiniMax"
+  Key: "llm.provider.ollama" - ⚠️ [WARNING] Identical zh/en detected: "Ollama"
+  Key: "llm.provider.openai" - ⚠️ [WARNING] Identical zh/en detected: "OpenAI"
+
+📂 Insight.xcstrings
+  Key: "dashboard.stats.ms" - ⚠️ [WARNING] Identical zh/en detected: "ms"
+  Key: "dashboard.stats.tokens" - ⚠️ [WARNING] Identical zh/en detected: "Tokens"
+  Key: "dashboard.stats.unitMs" - ⚠️ [WARNING] Identical zh/en detected: "ms"
+
+[L10n Audit] CRITICAL VIOLATIONS. Build blocked.

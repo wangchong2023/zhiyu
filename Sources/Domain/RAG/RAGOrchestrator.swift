@@ -16,7 +16,7 @@ import Observation
 @MainActor
 public final class RAGOrchestrator {
     
-    @ObservationIgnored @Inject private var llmService: LLMService
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var analytics: AIAnalyticsService
     @ObservationIgnored @Inject private var perf: PerformanceService
     

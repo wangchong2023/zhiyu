@@ -62,31 +62,108 @@ public struct AppConstants {
             public static let tags = "tags"
             public static let pageTags = "page_tags"
             public static let srsMetadata = "srs_metadata"
+            public static let pluginRecords = "plugin_records"
+            public static let pluginRecordsFTS = "plugin_records_fts"
         }
 
         // MARK: - 通用列名 (物理)
         /// 定义数据库中高频使用的物理列名称，解除对模型的依赖。
         public struct Columns {
+            // 通用
             public static let id = "id"
             public static let title = "title"
-            public static let pageType = "page_type"
+            public static let name = "name"
             public static let content = "content"
-            public static let tags = "tags"
             public static let created = "created_at"
             public static let updated = "updated_at"
+            public static let tags = "tags"
+            
+            // pages 表
+            public static let pageType = "page_type"
+            public static let aliases = "aliases"
+            public static let status = "status"
+            public static let confidence = "confidence"
+            public static let sources = "sources"
+            public static let relatedPageIds = "related_page_ids"
+            public static let isPinned = "is_pinned"
+            public static let contentHash = "content_hash"
+            public static let customIcon = "custom_icon"
+            public static let sourceUrl = "source_url"
+            public static let rawSnippet = "raw_snippet"
             public static let fileSize = "file_size"
             public static let sourceType = "source_type"
             public static let lamportTimestamp = "lamport_timestamp"
 
-            // MARK: - 链接表列
+            // links 表
             public static let sourceId = "source_id"
             public static let targetId = "target_id"
+            public static let context = "context"
 
-            // MARK: - RAG 评估列
+            // page_chunks 表
+            public static let pageId = "page_id"
+            public static let parentId = "parent_id"
+            public static let chunkType = "chunk_type"
+            public static let anchorPath = "anchor_path"
+            public static let chunkIndex = "chunk_index"
+            public static let embedding = "embedding"
+            public static let startIndex = "start_index"
+
+            // page_embeddings 表
+            public static let vectorBlob = "vector_blob"
+            public static let modelName = "model_name"
+
+            // token_usage & llm_call_logs 表
+            public static let model = "model"
+            public static let promptTokens = "prompt_tokens"
+            public static let completionTokens = "completion_tokens"
+            public static let totalTokens = "total_tokens"
+            public static let latencyMs = "latency_ms"
+
+            // rag_evaluations 表
+            public static let query = "query"
+            public static let answer = "answer"
             public static let faithfulness = "faithfulness_score"
             public static let relevance = "relevance_score"
             public static let precision = "context_precision"
+            public static let evaluatorModel = "evaluator_model"
+            
+            // page_tags 表
+            public static let tagId = "tag_id"
+            
+            // srs_metadata 表
+            public static let easeFactor = "ease_factor"
+            public static let repetitions = "repetitions"
+            public static let reviewInterval = "review_interval"
+            public static let nextReviewAt = "next_review_at"
+            
+            // global_vaults 表
+            public static let path = "path"
+            public static let icon = "icon"
+            public static let lastAccessedAt = "last_accessed_at"
+            
+            // file_signatures 表
+            public static let filePath = "file_path"
+            public static let signature = "signature"
+            public static let salt = "salt"
+            
+            // global_settings 表
+            public static let key = "key"
+            public static let value = "value"
+            
+            // audit_logs 表
+            public static let action = "action"
+            public static let details = "details"
         }
+    }
+
+    // MARK: - 演示数据与模拟器配置
+    public struct Demo {
+        public static let defaultPageCount = 17
+        public static let mockPageCount = 42
+        public static let mockLinkCount = 108
+        public static let mockTagCount = 16
+        public static let mockRecentPagesCount = 3
+        public static let widgetRefreshIntervalMinutes: Double = 30.0
     }
 
     // MARK: - 性能与监控

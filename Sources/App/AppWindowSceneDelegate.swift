@@ -18,7 +18,7 @@ class AppWindowSceneDelegate: NSObject, UIWindowSceneDelegate {
     var window: UIWindow?
 
     /// scene
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
 
@@ -46,23 +46,23 @@ class AppWindowSceneDelegate: NSObject, UIWindowSceneDelegate {
     }
 
     /// sceneDid断开
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func sceneDidDisconnect(_ scene: UIScene) {}
 
     /// sceneDidBecomeActive
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func sceneDidBecomeActive(_ scene: UIScene) {}
 
     /// sceneWillResignActive
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func sceneWillResignActive(_ scene: UIScene) {}
 
     /// sceneWillEnterForeground
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func sceneWillEnterForeground(_ scene: UIScene) {}
 
     /// sceneDidEnterBackground
-    /// /// - Parameter scene: scene
+    /// - Parameter scene: scene
     func sceneDidEnterBackground(_ scene: UIScene) {}
 }
 #endif

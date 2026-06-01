@@ -941,7 +941,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发现知识孤岛：\"%@\""
+            "value": "发现知识孤岛：\"%@\" [译]"
           }
         },
         "en": {
@@ -1492,7 +1492,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发现知识孤岛：\"%@\""
+            "value": "发现知识孤岛：\"%@\" [译]"
           }
         }
       }
@@ -1509,7 +1509,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。"
+            "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。 [译]"
           }
         }
       }
@@ -4042,7 +4042,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "English"
+            "value": "English [译]"
           }
         }
       }
@@ -4535,7 +4535,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "数据导入"
+            "value": "数据导入 [译]"
           }
         }
       }
@@ -5300,7 +5300,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.concepts"
+            "value": "welcome.stat.concepts [译]"
           }
         }
       }
@@ -5317,7 +5317,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.entities"
+            "value": "welcome.stat.entities [译]"
           }
         }
       }
@@ -5334,7 +5334,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.sources"
+            "value": "welcome.stat.sources [译]"
           }
         }
       }
@@ -5351,7 +5351,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.totalPages"
+            "value": "welcome.stat.totalPages [译]"
           }
         }
       }
@@ -6032,6 +6032,193 @@
           "stringUnit": {
             "state": "translated",
             "value": "Please read and check the agreement first"
+          }
+        }
+      }
+    },
+    "hashMismatchDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash Mismatch Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hashMismatchDesc"
+          }
+        }
+      }
+    },
+    "targetHashMismatchDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target Hash Mismatch Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "targetHashMismatchDesc"
+          }
+        }
+      }
+    },
+    "settings.ondevice.npu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.npu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.npu"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descNpu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descNpu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descNpu"
+          }
+        }
+      }
+    },
+    "settings.ondevice.ram": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.ram"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.ram"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descRam": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descRam"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descRam"
+          }
+        }
+      }
+    },
+    "settings.ondevice.context": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.context"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.context"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descContext": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descContext"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descContext"
+          }
+        }
+      }
+    },
+    "settings.ondevice.overheat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.overheat"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.overheat"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descOverheat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descOverheat"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descOverheat"
+          }
+        }
+      }
+    },
+    "settings.ondevice.perfConfig": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.perfConfig"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.perfConfig"
           }
         }
       }

@@ -33,8 +33,8 @@ struct TappableSceneView: UIViewRepresentable {
     let onNodeTap: (UUID?) -> Void
 
     /// 创建UIView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeUIView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = scene
@@ -65,8 +65,8 @@ struct TappableSceneView: UIViewRepresentable {
     }
 
     /// 更新UIView
-    /// /// - Parameter uiView: uiView
-    /// /// - Parameter context: context
+    /// - Parameter uiView: uiView
+    /// - Parameter context: context
     func updateUIView(_ uiView: SCNView, context: Context) {
         uiView.scene = scene
         // 持续同步观察点，确保外部控制（缩放/重置）能生效
@@ -80,7 +80,7 @@ struct TappableSceneView: UIViewRepresentable {
     }
 
     /// 创建Coordinator
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func makeCoordinator() -> Coordinator { Coordinator(onNodeTap: onNodeTap) }
 
     @MainActor class Coordinator: NSObject {
@@ -103,7 +103,7 @@ struct TappableSceneView: UIViewRepresentable {
         }
 
         /// 处理Tap
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handleTap(_ gesture: UITapGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   scnView.scene != nil else { return }
@@ -121,7 +121,7 @@ struct TappableSceneView: UIViewRepresentable {
         }
         
         /// 处理Pan
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
@@ -144,7 +144,7 @@ struct TappableSceneView: UIViewRepresentable {
         }
         
         /// 处理Pinch
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
@@ -168,8 +168,8 @@ struct TappableSceneView: NSViewRepresentable {
     let onNodeTap: (UUID?) -> Void
 
     /// 创建NSView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeNSView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = scene
@@ -200,8 +200,8 @@ struct TappableSceneView: NSViewRepresentable {
     }
 
     /// 更新NSView
-    /// /// - Parameter nsView: nsView
-    /// /// - Parameter context: context
+    /// - Parameter nsView: nsView
+    /// - Parameter context: context
     func updateNSView(_ nsView: SCNView, context: Context) {
         nsView.scene = scene
         // 持续同步观察点，确保外部控制（缩放/重置）能生效
@@ -215,7 +215,7 @@ struct TappableSceneView: NSViewRepresentable {
     }
 
     /// 创建Coordinator
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func makeCoordinator() -> Coordinator { Coordinator(onNodeTap: onNodeTap) }
 
     class Coordinator: NSObject {
@@ -238,7 +238,7 @@ struct TappableSceneView: NSViewRepresentable {
         }
 
         /// 处理Tap
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handleTap(_ gesture: NSClickGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   scnView.scene != nil else { return }
@@ -256,7 +256,7 @@ struct TappableSceneView: NSViewRepresentable {
         }
         
         /// 处理Pan
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handlePan(_ gesture: NSPanGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }
@@ -279,7 +279,7 @@ struct TappableSceneView: NSViewRepresentable {
         }
         
         /// 处理Magnify
-        /// /// - Parameter gesture: gesture
+        /// - Parameter gesture: gesture
         @objc func handleMagnify(_ gesture: NSMagnificationGestureRecognizer) {
             guard let scnView = gesture.view as? SCNView,
                   let cameraNode = scnView.scene?.rootNode.childNode(withName: "mainCamera", recursively: true) else { return }

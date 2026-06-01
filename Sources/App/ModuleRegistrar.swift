@@ -204,9 +204,11 @@ struct StorageModuleRegistrar: ModuleRegistrar {
             let fileSigRepo = SQLiteFileSignatureRepository(dbWriter: globalWriter)
             container.register(fileSigRepo as any FileSignatureRepository, for: (any FileSignatureRepository).self)
         }
-        
+        // 4. 向量与 AI 检索层
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
+        container.register(embeddingManager as any EmbeddingProvider, for: (any EmbeddingProvider).self)
         container.register(embeddingManager, for: EmbeddingManager.self)
+
         
         // 注册 VectorIndexableStore 协议（L0 层向量检索能力），让 L2 可通过 DIP 访问
         container.register(sqliteStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)

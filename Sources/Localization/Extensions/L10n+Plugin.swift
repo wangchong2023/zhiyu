@@ -15,18 +15,18 @@ extension L10n {
         public static let t = "Plugin"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         /// permTitle
-        /// /// - Returns: 字符串
+        /// - Returns: 字符串
         public static func permTitle(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
@@ -43,25 +43,25 @@ extension L10n {
         }
 
         /// permDesc
-        /// /// - Returns: 字符串
+        /// - Returns: 字符串
         public static func permDesc(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
                 let key = "plugin.perm.content.desc"
                 let localized = Localized.tr(key, table: t)
-                return localized == key ? "允许插件修改您的知识库内容" : localized
+                return localized == key ? Plugin.tr("permission.modifyKnowledgeDesc") : localized
             case "network":
                 let key = "plugin.perm.network.desc"
                 let localized = Localized.tr(key, table: t)
-                return localized == key ? "允许插件访问外部网络服务" : localized
+                return localized == key ? Plugin.tr("permission.networkAccessDesc") : localized
             case "sandbox":
                 let key = "plugin.perm.sandbox.desc"
                 let localized = Localized.tr(key, table: t)
-                return localized == key ? "在安全沙盒内运行，限制文件系统访问" : localized
+                return localized == key ? Plugin.tr("permission.sandboxDesc") : localized
             default:
                 let key = "plugin.perm." + perm + ".desc"
                 let localized = Localized.tr(key, table: t)
-                return localized == key ? "要求获取 \(perm) 权限" : localized
+                return localized == key ? Plugin.trf("permission.requestPermission", perm) : localized
             }
         }
 
@@ -79,8 +79,8 @@ extension L10n {
         public static var noResultsHint: String { tr("plugin.noResultsHint") }
 
         /// permissionMessage
-        /// /// - Parameter name: name
-        /// /// - Returns: 字符串
+        /// - Parameter name: name
+        /// - Returns: 字符串
         public static func permissionMessage(_ name: String) -> String { trf("plugin.permission.message", name) }
 
         public enum Sidebar {
@@ -123,9 +123,9 @@ extension L10n {
             public static var noUsage: String { Plugin.tr("plugin.stats.noUsage") }
 
             /// call计数格式化
-            /// /// - Parameter calls: calls
-            /// /// - Parameter avgMs: avgMs
-            /// /// - Returns: 字符串
+            /// - Parameter calls: calls
+            /// - Parameter avgMs: avgMs
+            /// - Returns: 字符串
             public static func callCountFormat(calls: Int, avgMs: Double) -> String {
                 Plugin.trf("plugin.stats.callCountFormat", calls, avgMs)
             }
@@ -149,8 +149,8 @@ extension L10n {
             public static var title: String { Plugin.tr("plugin.permission.title") }
 
             /// message
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func message(_ name: String) -> String { Plugin.trf("plugin.permission.message", name) }
         }
 
@@ -160,29 +160,29 @@ extension L10n {
             public static var dlpScriptBlocked: String { Plugin.tr("plugin.error.dlpScriptBlocked") }
 
             /// dlp拉取Blocked
-            /// /// - Parameter host: host
-            /// /// - Returns: 字符串
+            /// - Parameter host: host
+            /// - Returns: 字符串
             public static func dlpFetchBlocked(_ host: String) -> String { Plugin.trf("plugin.error.dlpFetchBlocked", host) }
 
             /// pre处理Exception
-            /// /// - Parameter reason: reason
-            /// /// - Returns: 字符串
+            /// - Parameter reason: reason
+            /// - Returns: 字符串
             public static func preProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.preProcessException", reason) }
             public static var payloadTooLarge: String { Plugin.tr("plugin.error.payloadTooLarge") }
 
             /// post处理Exception
-            /// /// - Parameter reason: reason
-            /// /// - Returns: 字符串
+            /// - Parameter reason: reason
+            /// - Returns: 字符串
             public static func postProcessException(_ reason: String) -> String { Plugin.trf("plugin.error.postProcessException", reason) }
 
             /// invalidURL
-            /// /// - Parameter url: url
-            /// /// - Returns: 字符串
+            /// - Parameter url: url
+            /// - Returns: 字符串
             public static func invalidURL(_ url: String) -> String { Plugin.trf("plugin.error.invalidURL", url) }
 
             /// keyLengthExceeded
-            /// /// - Parameter limit: limit
-            /// /// - Returns: 字符串
+            /// - Parameter limit: limit
+            /// - Returns: 字符串
             public static func keyLengthExceeded(_ limit: Int) -> String { Plugin.trf("plugin.error.keyLengthExceeded", limit) }
         }
     }

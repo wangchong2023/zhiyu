@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "System"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String {
             return Localized.trf(key, table: t, arguments: args)
         }
@@ -40,8 +40,8 @@ extension L10n {
             public static var logMessage: String { tr("shortcuts.capture.logMessage") }
 
             /// pageTitle
-            /// /// - Parameter summary: summary
-            /// /// - Returns: 字符串
+            /// - Parameter summary: summary
+            /// - Returns: 字符串
             public static func pageTitle(_ summary: String) -> String { trf("shortcuts.capture.pageTitle", summary) }
             public static var success: String { tr("shortcuts.capture.success") }
         }
@@ -59,8 +59,8 @@ extension L10n {
             public static var logMessage: String { tr("shortcuts.search.logMessage") }
 
             /// success
-            /// /// - Parameter query: query
-            /// /// - Returns: 字符串
+            /// - Parameter query: query
+            /// - Returns: 字符串
             public static func success(_ query: String) -> String { trf("shortcuts.search.success", query) }
         }
         
@@ -72,8 +72,8 @@ extension L10n {
             public static var descriptionResource: LocalizedStringResource { .init("shortcuts.stats.description", table: "System") }
             
             /// success
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func success(_ count: Int) -> String { trf("shortcuts.stats.success", count) }
         }
         

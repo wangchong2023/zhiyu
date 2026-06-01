@@ -166,7 +166,7 @@ final class PluginRegistry: ObservableObject {
     }
 
     /// 加载Plugin
-    /// /// - Parameter plugin: plugin
+    /// - Parameter plugin: plugin
     func loadPlugin(_ plugin: KnowledgePlugin) {
         // 安全检查：如果该插件已被持久化封禁，禁止加载
         guard !suspendedPluginIDs.contains(plugin.manifest.id) else {
@@ -203,14 +203,14 @@ final class PluginRegistry: ObservableObject {
         var hostVersion: String { "2.0.0" } // nonisolated copy, avoids @MainActor crossing
 
         /// 记录日志
-        /// /// - Parameter message: message
+        /// - Parameter message: message
         func log(_ message: String) {
             Logger.shared.debug("🔌 [Plugin:\(manifest.id)] \(message)")
         }
 
         /// 请求AIAccess
-        /// /// - Parameter prompt: prompt
-        /// /// - Returns: 可选值
+        /// - Parameter prompt: prompt
+        /// - Returns: 可选值
         func requestAIAccess(prompt: String) async -> String? {
             // 安全检查：检查 manifest 是否声明了 'llm' 权限
             guard manifest.permissions.contains("llm") else {
@@ -221,7 +221,7 @@ final class PluginRegistry: ObservableObject {
         }
 
         /// queryPages
-        /// /// - Returns: 列表
+        /// - Returns: 列表
         func queryPages(matching query: String) async -> [KnowledgePage] {
             guard manifest.permissions.contains("pages.read") else {
                 Logger.shared.error("🛡️ [安全拦截] 插件 \(manifest.id) 尝试查询页面，但未声明 'pages.read' 权限。", error: nil)
@@ -232,10 +232,10 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 注册Command
-        /// /// - Parameter id: id
-        /// /// - Parameter name: name
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter id: id
+        /// - Parameter name: name
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerCommand(id: String, name: String, callback: @escaping @MainActor () -> Void) {
             let command = PluginCommand(id: id, pluginID: manifest.id, name: name, action: callback)
             PluginRegistry.shared.commands.append(command)
@@ -243,10 +243,10 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 注册RibbonItem
-        /// /// - Parameter icon: icon
-        /// /// - Parameter title: title
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter icon: icon
+        /// - Parameter title: title
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerRibbonItem(icon: String, title: String, callback: @escaping @MainActor () -> Void) {
             let item = PluginRibbonItem(pluginID: manifest.id, icon: icon, title: title, action: callback)
             PluginRegistry.shared.ribbonItems.append(item)
@@ -254,7 +254,7 @@ final class PluginRegistry: ObservableObject {
         }
 
         /// 注册PageProcessor
-        /// /// - Parameter processor: processor
+        /// - Parameter processor: processor
         func registerPageProcessor(_ processor: any KnowledgePageProcessor) {
             // 通过 ServiceContainer 获取 KnowledgeStore 并注册，关联当前插件 ID
             let store = ServiceContainer.shared.resolve(KnowledgeStore.self)
@@ -263,10 +263,10 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 注册SettingTab
-        /// /// - Parameter name: name
-        /// /// - Parameter schema: schema
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter name: name
+        /// - Parameter schema: schema
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerSettingTab(name: String, schema: String?, callback: @escaping @MainActor (String?) -> Void) {
             let tab = PluginSettingTab(pluginID: manifest.id, name: name, schema: schema, action: callback)
             PluginRegistry.shared.settingTabs.append(tab)
@@ -274,11 +274,11 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 注册View
-        /// /// - Parameter id: id
-        /// /// - Parameter title: title
-        /// /// - Parameter icon: icon
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter id: id
+        /// - Parameter title: title
+        /// - Parameter icon: icon
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerView(id: String, title: String, icon: String, callback: @escaping @MainActor () -> Void) {
             let view = PluginCustomView(id: id, pluginID: manifest.id, title: title, icon: icon, action: callback)
             PluginRegistry.shared.customViews.append(view)
@@ -286,9 +286,9 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 添加EventListener
-        /// /// - Parameter event: event
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter event: event
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func addEventListener(event: String, callback: @escaping @MainActor (Any?) -> Void) {
             let listener = PluginEventListener(pluginID: manifest.id, event: event, callback: callback)
             PluginRegistry.shared.eventListeners.append(listener)
@@ -296,22 +296,22 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 保存Data
-        /// /// - Parameter key: key
-        /// /// - Parameter value: value
+        /// - Parameter key: key
+        /// - Parameter value: value
         func saveData(key: String, value: String) {
             PluginRegistry.shared.savePluginData(pluginID: manifest.id, key: key, value: value)
         }
         
         /// 加载Data
-        /// /// - Parameter key: key
-        /// /// - Returns: 可选值
+        /// - Parameter key: key
+        /// - Returns: 可选值
         func loadData(key: String) -> String? {
             return PluginRegistry.shared.loadPluginData(pluginID: manifest.id, key: key)
         }
     }
 
     /// unloadPlugin
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func unloadPlugin(id: String) {
         if let index = plugins.firstIndex(where: { $0.manifest.id == id }) {
             plugins[index].onUnload()

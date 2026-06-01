@@ -366,7 +366,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
 
     // MARK: - 模型文件物理清除
     /// 删除Model
-    /// /// - Parameter model: model
+    /// - Parameter model: model
     public func deleteModel(_ model: OnDeviceModel) throws {
         if let url = model.url {
             try FileManager.default.removeItem(at: url)

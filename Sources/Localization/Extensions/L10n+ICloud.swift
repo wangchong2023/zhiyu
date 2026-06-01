@@ -15,9 +15,10 @@ extension L10n {
         public static let t = "Ingest"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
+        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public static var pushToCloud: String { tr("icloud.push") }
         public static var pullFromCloud: String { tr("icloud.pull") }
@@ -49,35 +50,35 @@ extension L10n {
         }
 
         public enum Conflict {
-            public static var manualMergeTitle: String { "同步冲突手动合并" }
-            public static var completeMerge: String { "完成合并" }
-            public static var noPhysicalConflict: String { "没有检测到文档内容的物理冲突" }
-            public static var metaConflictAutoSolved: String { "日志或元数据冲突将自动通过智能融合算法解决。" }
-            public static var runSmartMerge: String { "执行智能融合" }
+            public static var manualMergeTitle: String { ICloud.tr("conflict.manualMerge") }
+            public static var completeMerge: String { ICloud.tr("conflict.finishMerge") }
+            public static var noPhysicalConflict: String { ICloud.tr("conflict.noContentConflict") }
+            public static var metaConflictAutoSolved: String { ICloud.tr("conflict.autoResolveDesc") }
+            public static var runSmartMerge: String { ICloud.tr("conflict.doAutoResolve") }
 
             /// docList计数
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
-            public static func docListCount(_ count: Int) -> String { "冲突文档列表 (\(count))" }
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
+            public static func docListCount(_ count: Int) -> String { ICloud.trf("conflict.listTitle", count) }
 
             /// localVersionTime
-            /// /// - Parameter timeStr: timeStr
-            /// /// - Returns: 字符串
-            public static func localVersionTime(_ timeStr: String) -> String { "本地版本时间：\(timeStr)" }
+            /// - Parameter timeStr: timeStr
+            /// - Returns: 字符串
+            public static func localVersionTime(_ timeStr: String) -> String { ICloud.trf("conflict.localTime", timeStr) }
 
             /// remoteVersionTime
-            /// /// - Parameter timeStr: timeStr
-            /// /// - Returns: 字符串
-            public static func remoteVersionTime(_ timeStr: String) -> String { "云端版本时间：\(timeStr)" }
-            public static var smartOverwriteMode: String { "智能覆盖模式" }
-            public static var allChooseLocal: String { "全部选用本地" }
-            public static var allChooseRemote: String { "全部选用云端" }
-            public static var localVersionHeader: String { "💻 本地版本 (Local)" }
-            public static var remoteVersionHeader: String { "☁️ 云端版本 (iCloud)" }
-            public static var mergedResultEditorHeader: String { "📝 最终合并结果编辑器 (Markdown)" }
-            public static var chooseLocalContent: String { "取本地内容" }
-            public static var chooseRemoteContent: String { "取云端内容" }
-            public static var noTimeInfo: String { "无时间信息" }
+            /// - Parameter timeStr: timeStr
+            /// - Returns: 字符串
+            public static func remoteVersionTime(_ timeStr: String) -> String { ICloud.trf("conflict.cloudTime", timeStr) }
+            public static var smartOverwriteMode: String { ICloud.tr("conflict.smartOverrideMode") }
+            public static var allChooseLocal: String { ICloud.tr("conflict.keepLocalAll") }
+            public static var allChooseRemote: String { ICloud.tr("conflict.keepCloudAll") }
+            public static var localVersionHeader: String { ICloud.tr("conflict.localVersionTag") }
+            public static var remoteVersionHeader: String { ICloud.tr("conflict.cloudVersionTag") }
+            public static var mergedResultEditorHeader: String { ICloud.tr("conflict.editorTag") }
+            public static var chooseLocalContent: String { ICloud.tr("conflict.takeLocalAction") }
+            public static var chooseRemoteContent: String { ICloud.tr("conflict.takeCloudAction") }
+            public static var noTimeInfo: String { ICloud.tr("conflict.noTimeInfo") }
         }
     }
 }

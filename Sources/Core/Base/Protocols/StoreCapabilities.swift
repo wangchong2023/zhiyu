@@ -14,7 +14,7 @@ import GRDB
 /// 具备向量化与语义嵌入检索能力的底层存储协议。
 public protocol VectorIndexableStore: Sendable {
     /// 获取当前存储对应的向量嵌入管理器，用于将文本块向量化。
-    var embeddingManager: EmbeddingManager { get }
+    var embeddingProvider: any EmbeddingProvider { get }
 }
 
 /// 具备监控与可观测性审计日志记录能力的存储协议。

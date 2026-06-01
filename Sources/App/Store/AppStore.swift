@@ -93,7 +93,7 @@ public final class AppStore {
     @ObservationIgnored @Inject var maintenanceService: MaintenanceService
     @ObservationIgnored @Inject var logger: any LoggerProtocol
     @ObservationIgnored @Inject var performanceService: PerformanceService
-    @ObservationIgnored @Inject var llmService: LLMService
+    @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject var settingsStore: SettingsStore
     @ObservationIgnored @Inject var linkService: LinkService
     @ObservationIgnored @Inject var backupService: BackupService
@@ -190,8 +190,8 @@ public final class AppStore {
     // ── 核心业务逻辑 ──
 
     /// pageByTitle
-    /// /// - Parameter title: title
-    /// /// - Returns: 可选值
+    /// - Parameter title: title
+    /// - Returns: 可选值
     public func pageByTitle(_ title: String) async -> KnowledgePage? {
         await knowledgeStore.pageByTitle(title)
     }
@@ -225,24 +225,24 @@ public final class AppStore {
     }
 
     /// 获取Backlinks
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func getBacklinks(for id: UUID) async -> [KnowledgePage] { await pageStore.fetchBacklinksByID(for: id) }
 
     /// 更新Page
-    /// /// - Parameter page: page
-    /// /// - Parameter forceDeepScan: forceDeep扫描
+    /// - Parameter page: page
+    /// - Parameter forceDeepScan: forceDeep扫描
     public func updatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         await knowledgeStore.updatePage(page)
     }
 
     /// 保存Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func savePage(_ page: KnowledgePage) async {
         await knowledgeStore.savePage(page)
     }
 
     /// 删除Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func deletePage(_ page: KnowledgePage) async {
         await knowledgeStore.deletePage(page)
     }
@@ -273,13 +273,13 @@ public final class AppStore {
     }
 
     /// 添加记录日志
-    /// /// - Parameter action: action
-    /// /// - Parameter target: target
-    /// /// - Parameter details: details
-    /// /// - Parameter duration: duration
-    /// /// - Parameter startTime: 启动Time
-    /// /// - Parameter endTime: 结束Time
-    /// /// - Parameter module: module
+    /// - Parameter action: action
+    /// - Parameter target: target
+    /// - Parameter details: details
+    /// - Parameter duration: duration
+    /// - Parameter startTime: 启动Time
+    /// - Parameter endTime: 结束Time
+    /// - Parameter module: module
     public nonisolated func addLog(action: LogAction, target: String, details: String, duration: TimeInterval? = nil, startTime: Date? = nil, endTime: Date? = nil, module: String? = "AppStore") {
         Logger.shared.addLog(action: action, target: target, details: details, duration: duration, startTime: startTime, endTime: endTime, module: module)
     }
@@ -293,7 +293,7 @@ extension AppStore: CollaborationDelegate {
     @discardableResult
 
     /// 生成DemoData
-    /// /// - Returns: 数值
+    /// - Returns: 数值
     func generateDemoData() async -> Int {
         let count = await maintenanceService.generateDemoData()
         if count > 0 { await refresh() }
@@ -301,32 +301,32 @@ extension AppStore: CollaborationDelegate {
     }
 
     /// 应用Potential链接
-    /// /// - Parameter suggestion: suggestion
+    /// - Parameter suggestion: suggestion
     public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
         await knowledgeStore.applyPotentialLink(suggestion)
     }
 
     /// 应用重构Suggestion
-    /// /// - Parameter suggestion: suggestion
+    /// - Parameter suggestion: suggestion
     func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
         await knowledgeStore.applyRefactorSuggestion(suggestion)
     }
 
     /// 应用Remote更新
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func applyRemoteUpdate(_ page: KnowledgePage) async {
         await knowledgeStore.updatePage(page)
     }
 
     /// 插入RemotePage
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func insertRemotePage(_ page: KnowledgePage) async {
         await pageStore.syncRemotePage(page)
         await refresh()
     }
 
     /// 重命名Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     func renamePage(_ page: KnowledgePage, to newTitle: String) async {
         await knowledgeStore.renamePage(page, to: newTitle)
     }
@@ -350,34 +350,34 @@ extension AppStore: CollaborationDelegate {
     // MARK: - 标签管理 (转发至 TagStore)
 
     /// 获取AllTags
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func getAllTags() -> [String: Int] {
         tagStore.getAllTags(from: pages)
     }
 
     /// 重命名Tag
-    /// /// - Parameter oldTag: oldTag
+    /// - Parameter oldTag: oldTag
     public func renameTag(_ oldTag: String, to newTag: String) async {
         await tagStore.renameTag(old: oldTag, to: newTag)
         await knowledgeStore.refresh()
     }
 
     /// 删除Tag
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     public func deleteTag(_ tag: String) async {
         await tagStore.deleteTag(tag)
         await knowledgeStore.refresh()
     }
 
     /// bulk删除Tags
-    /// /// - Parameter tags: tags
+    /// - Parameter tags: tags
     public func bulkDeleteTags(_ tags: [String]) async {
         await tagStore.bulkDeleteTags(tags)
         await knowledgeStore.refresh()
     }
 
     /// 添加NewTag
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     public func addNewTag(_ tag: String) {
         tagStore.addNewTag(tag)
     }
@@ -389,7 +389,7 @@ extension AppStore: AnyPageStore {
     public var logEntries: [LogEntry] { [] }
 
     /// 拉取AllPages
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func fetchAllPages() async throws -> [KnowledgePage] {
         await knowledgeStore.refresh()
         return knowledgeStore.pages
@@ -401,7 +401,7 @@ extension AppStore: AnyPageStore {
     }
 
     /// 替换AllPages
-    /// /// - Parameter newPages: newPages
+    /// - Parameter newPages: newPages
     public func replaceAllPages(_ newPages: [KnowledgePage]) async {
         await knowledgeStore.saveToDisk() // 这里原逻辑可能有误，通常是覆盖磁盘
         // 修正为：
@@ -416,8 +416,8 @@ extension AppStore: AnyPageStore {
     }
 
     /// 执行BatchWrite
-    /// /// - Parameter block: 阻塞
-    /// /// - Returns: 返回值
+    /// - Parameter block: 阻塞
+    /// - Returns: 返回值
     public func performBatchWrite(_ block: @escaping @Sendable (Database) throws -> Void) async throws {
         try await pageStore.performBatchWrite(block)
         await knowledgeStore.refresh()
@@ -475,53 +475,53 @@ extension AppStore: AnyPageStore {
     }
 
     /// 更新Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func updatePage(_ page: KnowledgePage) async throws {
         await knowledgeStore.updatePage(page)
     }
 
     /// any更新Page
-    /// /// - Parameter page: page
-    /// /// - Parameter forceDeepScan: forceDeep扫描
+    /// - Parameter page: page
+    /// - Parameter forceDeepScan: forceDeep扫描
     public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         await knowledgeStore.updatePage(page)
     }
 
     /// any删除Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func anyDeletePage(_ page: KnowledgePage) async {
         await knowledgeStore.deletePage(page)
     }
 
     /// 同步RemotePage
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func syncRemotePage(_ page: KnowledgePage) async {
         await pageStore.syncRemotePage(page)
         await knowledgeStore.refresh()
     }
 
     /// 拉取BacklinksByID
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
         await pageStore.fetchBacklinksByID(for: id)
     }
 
     /// 搜索Pages
-    /// /// - Parameter query: query
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Returns: 列表
     public func searchPages(query: String) async -> [KnowledgePage] {
         await pageStore.searchPages(query: query)
     }
 
     /// seedDefaultContent
-    /// /// - Parameter logger: logger
-    /// /// - Returns: 返回值
+    /// - Parameter logger: logger
+    /// - Returns: 返回值
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
         await knowledgeStore.seedDefaultContent()
     }
 
     /// 获取StorageStats
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         await pageStore.getStorageStats()
     }

@@ -162,28 +162,9 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, Knowledg
         AppLinkProcessor.extractOutgoingLinks(from: content)
     }
     
-    /// 计算字数 (支持中英混排)
-    /// 逻辑：中文按字符计费；英文按单词计数。
+    /// 计算页面物理总字数
     public var wordCount: Int {
-        var count = 0
-        var inEnglishWord = false
-        
-        for char in content {
-            if char.isCJKCharacter {
-                if inEnglishWord {
-                    count += 1
-                    inEnglishWord = false
-                }
-                count += 1
-            } else if char.isLetter || char.isNumber {
-                inEnglishWord = true
-            } else if inEnglishWord {
-                count += 1
-                inEnglishWord = false
-            }
-        }
-        if inEnglishWord { count += 1 }
-        return count
+        PageContentUtility.calculateWordCount(content)
     }
     
     /// 是否为存根页面 (内容过少)
@@ -210,19 +191,7 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, Knowledg
 
     /// 获取所有标签（包括元数据标签和内容中的 #标签）
     public func getAllTags() -> [String] {
-        var allTags = Set(tags)
-        // 简单提取内容中的 #标签 (如 #tag1 #tag2)
-        let pattern = "#([\\w\\u4e00-\\u9fa5]+)"
-        if let regex = try? NSRegularExpression(pattern: pattern) {
-            let nsText = content as NSString
-            let matches = regex.matches(in: content, range: NSRange(location: 0, length: nsText.length))
-            for match in matches {
-                if match.numberOfRanges > 1 {
-                    allTags.insert(nsText.substring(with: match.range(at: 1)))
-                }
-            }
-        }
-        return Array(allTags)
+        PageContentUtility.extractAllTags(content: content, existingTags: tags)
     }
 }
 

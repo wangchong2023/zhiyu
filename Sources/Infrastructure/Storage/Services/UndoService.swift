@@ -24,7 +24,7 @@ final class UndoService: ObservableObject {
 
     // MARK: - Snapshot Management
     /// 推送Snapshot
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func pushSnapshot(_ pages: [KnowledgePage]) {
         undoStack.append(pages.map { $0 })
         if undoStack.count > maxStackSize {
@@ -36,8 +36,8 @@ final class UndoService: ObservableObject {
     }
 
     /// 撤销
-    /// /// - Parameter currentPages: currentPages
-    /// /// - Returns: 列表
+    /// - Parameter currentPages: currentPages
+    /// - Returns: 列表
     func undo(currentPages: [KnowledgePage]) -> [KnowledgePage]? {
         guard !undoStack.isEmpty else { return nil }
         // Save current state to redo stack
@@ -48,8 +48,8 @@ final class UndoService: ObservableObject {
     }
 
     /// 重做
-    /// /// - Parameter currentPages: currentPages
-    /// /// - Returns: 列表
+    /// - Parameter currentPages: currentPages
+    /// - Returns: 列表
     func redo(currentPages: [KnowledgePage]) -> [KnowledgePage]? {
         guard !redoStack.isEmpty else { return nil }
         // Save current state to undo stack

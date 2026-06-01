@@ -13,7 +13,7 @@ import SwiftUI
 struct SystemViewProvider: ViewProvider {
 
     /// 创建View
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func makeView(for route: AnyHashable) -> AnyView? {
         guard let route = route as? AppRoute, route.domain == .system else { return nil }
         

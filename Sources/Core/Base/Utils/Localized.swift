@@ -127,36 +127,36 @@ internal struct Localized {
     private static func resolveTableName(for key: String, defaultTable table: String) -> String {
         // 1. 全量核心领域路由表映射 (Core Domain Mapping)
         let domainMap: [String: String] = [
-            "Localizable": "Common",
-            "Accessibility": "Common",
-            "Search": "Common",
+            L10nTable.localizable: L10nTable.common,
+            L10nTable.accessibility: L10nTable.common,
+            L10nTable.search: L10nTable.common,
             
-            "Editor": "Knowledge",
-            "Creation": "Knowledge",
-            "Vault": "Knowledge",
-            "Quiz": "Knowledge",
-            "KnowledgeBase": "Knowledge",
+            L10nTable.editor: L10nTable.knowledge,
+            L10nTable.creation: L10nTable.knowledge,
+            L10nTable.vault: L10nTable.knowledge,
+            L10nTable.quiz: L10nTable.knowledge,
+            L10nTable.knowledgeBase: L10nTable.knowledge,
             
-            "Chat": "AI",
-            "Voice": "AI",
-            "AITasks": "AI",
+            L10nTable.chat: L10nTable.ai,
+            L10nTable.voice: L10nTable.ai,
+            L10nTable.aiTasks: L10nTable.ai,
             
-            "Graph": "Insight",
-            "Dashboard": "Insight",
+            L10nTable.graph: L10nTable.insight,
+            L10nTable.dashboard: L10nTable.insight,
             
-            "Auth": "System",
-            "Settings": "System",
-            "Lint": "System",
-            "Onboarding": "System",
-            "Coachmark": "System",
+            L10nTable.auth: L10nTable.system,
+            L10nTable.settings: L10nTable.system,
+            L10nTable.lint: L10nTable.system,
+            L10nTable.onboarding: L10nTable.system,
+            L10nTable.coachmark: L10nTable.system,
             
-            "Sync": "Ingest",
-            "Transfer": "Ingest",
+            L10nTable.sync: L10nTable.ingest,
+            L10nTable.transfer: L10nTable.ingest,
             
-            "Collaboration": "Plugin",
+            L10nTable.collaboration: L10nTable.plugin,
             
-            "Watch": "Platform",
-            "Widget": "Platform"
+            L10nTable.watch: L10nTable.platform,
+            L10nTable.widget: L10nTable.platform
         ]
         
         return domainMap[table] ?? table
@@ -225,6 +225,43 @@ internal struct Localized {
     static func trf(_ key: String, table: String, _ args: CVarArg...) -> String {
         return trf(key, table: table, arguments: args)
     }
+}
+
+/// 智宇本地化资源表名常量定义
+private enum L10nTable {
+    static let common = "Common"
+    static let knowledge = "Knowledge"
+    static let ai = "AI"
+    static let insight = "Insight"
+    static let system = "System"
+    static let ingest = "Ingest"
+    static let plugin = "Plugin"
+    static let platform = "Platform"
+    
+    // 来源表映射
+    static let localizable = "Localizable"
+    static let accessibility = "Accessibility"
+    static let search = "Search"
+    static let editor = "Editor"
+    static let creation = "Creation"
+    static let vault = "Vault"
+    static let quiz = "Quiz"
+    static let knowledgeBase = "KnowledgeBase"
+    static let chat = "Chat"
+    static let voice = "Voice"
+    static let aiTasks = "AITasks"
+    static let graph = "Graph"
+    static let dashboard = "Dashboard"
+    static let auth = "Auth"
+    static let settings = "Settings"
+    static let lint = "Lint"
+    static let onboarding = "Onboarding"
+    static let coachmark = "Coachmark"
+    static let sync = "Sync"
+    static let transfer = "Transfer"
+    static let collaboration = "Collaboration"
+    static let watch = "Watch"
+    static let widget = "Widget"
 }
 
 /// 智宇全局本地化强类型访问中枢的静态命名空间。

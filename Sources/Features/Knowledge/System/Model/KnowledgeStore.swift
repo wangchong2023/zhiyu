@@ -242,14 +242,14 @@ public final class KnowledgeStore {
     // MARK: - 业务协同
 
     /// 应用Potential链接
-    /// /// - Parameter suggestion: suggestion
+    /// - Parameter suggestion: suggestion
     public func applyPotentialLink(_ suggestion: PotentialLinkSuggestion) async {
         try? await pageManager.applyPotentialLink(suggestion, currentPages: pages)
         await refresh()
     }
 
     /// 应用重构Suggestion
-    /// /// - Parameter suggestion: suggestion
+    /// - Parameter suggestion: suggestion
     public func applyRefactorSuggestion(_ suggestion: RefactorSuggestion) async {
         try? await pageManager.applyRefactorSuggestion(suggestion, currentPages: pages)
         await refresh()

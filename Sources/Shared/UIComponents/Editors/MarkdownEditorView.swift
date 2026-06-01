@@ -70,8 +70,8 @@ struct OCRPickerModifier: ViewModifier {
     #endif
 
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             #if !os(watchOS)
@@ -86,7 +86,7 @@ struct OCRPickerModifier: ViewModifier {
                             onResult(text)
                         } catch {
                             // 错误处理通常由 UI 层展示 Toast
-                            print("❌ [OCR] Failed: \(error.localizedDescription)")
+                            print("OCR_Failed")
                         }
                     }
                     selectedItem = nil

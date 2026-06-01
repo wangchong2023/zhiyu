@@ -57,7 +57,7 @@ struct VaultBadge: View {
                 .imageScale(.small)
                 .foregroundStyle(.primary)
             
-            Text(L10n.Vault.label + "：")
+            Text(L10n.Vault.label + ":")
                 .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
                 .foregroundStyle(.primary)
             

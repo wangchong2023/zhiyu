@@ -727,7 +727,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已完成: %@"
+            "value": "已完成: %@ [译]"
           }
         }
       }
@@ -761,7 +761,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "任务失败: %@"
+            "value": "任务失败: %@ [译]"
           }
         }
       }
@@ -812,7 +812,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "正在执行: %1$@ - %2$@"
+            "value": "正在执行: %1$@ - %2$@ [译]"
           }
         }
       }
@@ -829,7 +829,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "正在启动: %1$@ (%2$@)"
+            "value": "正在启动: %1$@ (%2$@) [译]"
           }
         }
       }
@@ -1016,12 +1016,11 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 正在后台运行中..."
+            "value": "AI 正在后台运行中... [译]"
           }
         }
       }
     },
-
     "chat.clearHistory": {
       "extractionState": "manual",
       "localizations": {
@@ -1442,7 +1441,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI"
+            "value": "AI [译]"
           }
         }
       }
@@ -2054,7 +2053,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.error"
+            "value": "llm.error [译]"
           }
         }
       }
@@ -2224,7 +2223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.error"
+            "value": "llm.eval.status.error [译]"
           }
         }
       }
@@ -2241,7 +2240,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.fail"
+            "value": "llm.eval.status.fail [译]"
           }
         }
       }
@@ -2258,7 +2257,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.pass"
+            "value": "llm.eval.status.pass [译]"
           }
         }
       }
@@ -2275,7 +2274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.warning"
+            "value": "llm.eval.status.warning [译]"
           }
         }
       }
@@ -2717,7 +2716,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.chunkType"
+            "value": "llm.prompt.chunkType [译]"
           }
         }
       }
@@ -2989,7 +2988,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.relevanceScore"
+            "value": "llm.prompt.relevanceScore [译]"
           }
         }
       }
@@ -3210,7 +3209,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Anthropic"
+            "value": "Anthropic [译]"
           }
         }
       }
@@ -3244,7 +3243,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "DeepSeek"
+            "value": "DeepSeek [译]"
           }
         }
       }
@@ -3261,7 +3260,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "DeepSeek"
+            "value": "DeepSeek [译]"
           }
         }
       }
@@ -3295,7 +3294,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "MiniMax"
+            "value": "MiniMax [译]"
           }
         }
       }
@@ -3312,7 +3311,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ollama"
+            "value": "Ollama [译]"
           }
         }
       }
@@ -3329,7 +3328,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "OpenAI"
+            "value": "OpenAI [译]"
           }
         }
       }
@@ -3533,7 +3532,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apple Intelligence"
+            "value": "Apple Intelligence [译]"
           }
         }
       }
@@ -4468,7 +4467,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。"
+            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。 [译]"
           }
         }
       }
@@ -4706,7 +4705,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "针对知识库健康检查问题提供修复建议。\n仅以简洁的中文给出 2-3 行操作步骤，不要废话。"
+            "value": "针对知识库健康检查问题提供修复建议。\n仅以简洁的中文给出 2-3 行操作步骤，不要废话。 [译]"
           }
         }
       }
@@ -4723,7 +4722,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一位知识维护专家。请将以下“新资料”增量式地融合（Fold）进“现有页面内容”中。\n\n要求：\n1. 保持页面结构的完整性。\n2. 逻辑去重，增量插入。\n3. 保持双向链接 [[PageLinks]]。\n4. 直接返回最终的 Markdown。"
+            "value": "你是一位知识维护专家。请将以下“新资料”增量式地融合（Fold）进“现有页面内容”中。\n\n要求：\n1. 保持页面结构的完整性。\n2. 逻辑去重，增量插入。\n3. 保持双向链接 [[PageLinks]]。\n4. 直接返回最终的 Markdown。 [译]"
           }
         }
       }
@@ -4808,7 +4807,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一位专业的知识库架构师。\n任务：分析给定的文本，识别其中提到的、但尚未标记为 [[链接]] 的现有页面标题。\n\n要求：\n1. 仅返回文本中明确提到或高度相关的标题。\n2. 以 JSON 数组格式返回，例如: [\"标题1\", \"标题2\"]\n3. 不要返回任何解释。"
+            "value": "你是一位专业的知识库架构师。\n任务：分析给定的文本，识别其中提到的、但尚未标记为 [[链接]] 的现有页面标题。\n\n要求：\n1. 仅返回文本中明确提到或高度相关的标题。\n2. 以 JSON 数组格式返回，例如: [\"标题1\", \"标题2\"]\n3. 不要返回任何解释。 [译]"
           }
         }
       }
@@ -4825,7 +4824,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一位知识检索专家。请分析以下查询并改写为一组检索关键词。\n要求：\n1. 扩充同义词和专业术语。\n2. 仅输出关键词，逗号分隔。"
+            "value": "你是一位知识检索专家。请分析以下查询并改写为一组检索关键词。\n要求：\n1. 扩充同义词和专业术语。\n2. 仅输出关键词，逗号分隔。 [译]"
           }
         }
       }
@@ -5063,7 +5062,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.quiz.title"
+            "value": "prompt.quiz.title [译]"
           }
         }
       }
@@ -5080,7 +5079,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一位知识管理专家。分析页面数据，寻找优化结构的机会（合并相似、拆分过大、重命名）。\n以 JSON 数组格式返回，对象包含: type, target, reason, suggestion。"
+            "value": "你是一位知识管理专家。分析页面数据，寻找优化结构的机会（合并相似、拆分过大、重命名）。\n以 JSON 数组格式返回，对象包含: type, target, reason, suggestion。 [译]"
           }
         }
       }
@@ -5114,7 +5113,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "# Role: 信息检索专家\n# Task: 根据相关性对以下文档排序。\n\n# Requirements:\n仅返回 JSON 数组格式的排序索引，如: [1, 0, 2]。不要解释。\n格式: {\"ranked_ids\": [...]}"
+            "value": "# Role: 信息检索专家\n# Task: 根据相关性对以下文档排序。\n\n# Requirements:\n仅返回 JSON 数组格式的排序索引，如: [1, 0, 2]。不要解释。\n格式: {\"ranked_ids\": [...]} [译]"
           }
         }
       }
@@ -5148,7 +5147,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "确认重置"
+            "value": "确认重置 [译]"
           }
         }
       }
@@ -5165,7 +5164,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "重置为默认指令"
+            "value": "重置为默认指令 [译]"
           }
         }
       }
@@ -5182,7 +5181,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这将抹除你所有的自定义 Prompt，并恢复为系统预设。"
+            "value": "这将抹除你所有的自定义 Prompt，并恢复为系统预设。 [译]"
           }
         }
       }
@@ -6236,7 +6235,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.error"
+            "value": "synthesis.error [译]"
           }
         }
       }
@@ -6287,7 +6286,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.generate"
+            "value": "synthesis.generate [译]"
           }
         }
       }
@@ -6321,7 +6320,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "正在生成 %d 个"
+            "value": "正在生成 %d 个 [译]"
           }
         }
       }
@@ -6440,7 +6439,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "该分类下暂无文档"
+            "value": "该分类下暂无文档 [译]"
           }
         }
       }
@@ -6542,7 +6541,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "共 %d 个文档"
+            "value": "共 %d 个文档 [译]"
           }
         }
       }
@@ -6645,6 +6644,295 @@
           "stringUnit": {
             "state": "translated",
             "value": "进度百分之%lld，当前处于：%@阶段"
+          }
+        }
+      }
+    },
+    "aitask.status.ready": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask.status.ready"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask.status.ready [译]"
+          }
+        }
+      }
+    },
+    "aitask.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask. [译]"
+          }
+        }
+      }
+    },
+    "prompt.replyInChinese": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.replyInChinese"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.replyInChinese"
+          }
+        }
+      }
+    },
+    "prompt.summaryPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.summaryPrefix"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.summaryPrefix"
+          }
+        }
+      }
+    },
+    "prompt.discoverLinksPrefix2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix2"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix2"
+          }
+        }
+      }
+    },
+    "prompt.reverseQAPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.reverseQAPrefix"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.reverseQAPrefix"
+          }
+        }
+      }
+    },
+    "prompt.ingestDiscoveryAssistant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestDiscoveryAssistant"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestDiscoveryAssistant"
+          }
+        }
+      }
+    },
+    "prompt.queryExpansion": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.queryExpansion"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.queryExpansion"
+          }
+        }
+      }
+    },
+    "prompt.discoverLinksPrefix1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix1"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix1"
+          }
+        }
+      }
+    },
+    "prompt.hydeUserPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeUserPrompt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeUserPrompt"
+          }
+        }
+      }
+    },
+    "prompt.hydeSystem": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeSystem"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeSystem"
+          }
+        }
+      }
+    },
+    "prompt.rerankUserPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankUserPrompt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankUserPrompt"
+          }
+        }
+      }
+    },
+    "prompt.rerankSystem": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankSystem"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankSystem"
+          }
+        }
+      }
+    },
+    "prompt.ingestManagementAssistant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestManagementAssistant"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestManagementAssistant"
+          }
+        }
+      }
+    },
+    "pageTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pageTitle"
+          }
+        }
+      }
+    },
+    "ondevice.errorFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ondevice.errorFormat"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ondevice.errorFormat"
+          }
+        }
+      }
+    },
+    "sidebar.synthesis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.synthesis"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.synthesis"
           }
         }
       }

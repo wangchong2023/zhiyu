@@ -27,7 +27,7 @@ actor KnowledgeIngestPipeline {
         content: String,
         pageID: UUID,
         llm: (any LLMServiceProtocol)?,
-        embeddingManager: EmbeddingManager
+        embeddingProvider: any EmbeddingProvider
     ) async -> String {
         // 阶段 1: 语义增强 (AI Content Enrichment)
         let enrichedContent: String
@@ -81,7 +81,7 @@ actor KnowledgeIngestPipeline {
         }
 
         // 阶段 5: 向量索引 (Vector Indexing)
-        let indexer = VectorIndexer(embeddingManager: embeddingManager)
+        let indexer = VectorIndexer(embeddingProvider: embeddingProvider)
         await indexer.index(pageID: pageID, chunks: allEnrichedChunks)
 
         return enrichedContent

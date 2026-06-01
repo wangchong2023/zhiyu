@@ -19,8 +19,8 @@ struct PDFKitRepresentedView: UIViewRepresentable {
     var onTextSelected: (String) -> Void
 
     /// 创建UIView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
         pdfView.document = document
@@ -40,14 +40,14 @@ struct PDFKitRepresentedView: UIViewRepresentable {
     }
 
     /// 更新UIView
-    /// /// - Parameter pdfView: pdfView
-    /// /// - Parameter context: context
+    /// - Parameter pdfView: pdfView
+    /// - Parameter context: context
     func updateUIView(_ pdfView: PDFView, context: Context) {
         context.coordinator.parent = self
     }
 
     /// 创建Coordinator
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
@@ -60,7 +60,7 @@ struct PDFKitRepresentedView: UIViewRepresentable {
         }
 
         /// pageChanged
-        /// /// - Parameter notification: notification
+        /// - Parameter notification: notification
         @objc func pageChanged(_ notification: Notification) {
             guard let pdfView = notification.object as? PDFView,
                   let page = pdfView.currentPage,

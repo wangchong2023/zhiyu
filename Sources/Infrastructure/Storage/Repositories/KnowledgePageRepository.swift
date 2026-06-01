@@ -45,8 +45,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     @discardableResult
 
     /// 保存
-    /// /// - Parameter page: page
-    /// /// - Returns: 唯一标识
+    /// - Parameter page: page
+    /// - Returns: 唯一标识
     func save(_ page: KnowledgePage, in db: Database) throws -> UUID {
         let savedID = try upsert(page, in: db)
         try saveLinks(sourceID: savedID, targetTitles: page.outgoingLinks, in: db)
@@ -85,7 +85,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     }
 
     /// 删除
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func delete(id: UUID) async throws {
         let writer = await dbWriter
         _ = try await writer.write { db in
@@ -96,7 +96,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     // MARK: - 查询 (Queries)
 
     /// 拉取All
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchAll() async throws -> [KnowledgePage] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -106,8 +106,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     }
 
     /// 拉取
-    /// /// - Parameter id: id
-    /// /// - Returns: 可选值
+    /// - Parameter id: id
+    /// - Returns: 可选值
     func fetch(id: UUID) async throws -> KnowledgePage? {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -117,8 +117,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     }
 
     /// 拉取
-    /// /// - Parameter title: title
-    /// /// - Returns: 可选值
+    /// - Parameter title: title
+    /// - Returns: 可选值
     func fetch(title: String) async throws -> KnowledgePage? {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -128,8 +128,8 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     }
 
     /// 拉取RecentlyUpdated
-    /// /// - Parameter limit: limit
-    /// /// - Returns: 列表
+    /// - Parameter limit: limit
+    /// - Returns: 列表
     func fetchRecentlyUpdated(limit: Int) async throws -> [KnowledgePage] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -178,7 +178,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     // MARK: - 反向链接 (Links)
 
     /// 拉取Backlinks
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchBacklinks(for targetID: UUID) async throws -> [UUID] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -217,7 +217,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     }
 
     /// 删除Tag
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     func deleteTag(_ tag: String) async throws {
         let writer = await dbWriter
         try await writer.write { db in
@@ -246,7 +246,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     // MARK: - 统计 (Stats)
 
     /// 计数
-    /// /// - Returns: 数值
+    /// - Returns: 数值
     func count() async throws -> Int {
         let writer = await dbWriter
         return try await writer.read { db in

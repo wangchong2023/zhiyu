@@ -48,11 +48,11 @@ public struct OnDeviceTestView: View {
             }
             .padding()
             .background(PageBackgroundView(accentColor: .appAccent))
-            .navigationTitle(Localized.tr("ondevice.test", table: "AI"))
+            .navigationTitle(L10n.AI.OnDevice.test)
 .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.tr("cancel")) {
+                    Button(L10n.Common.cancel) {
                         dismiss()
                     }
                 }
@@ -63,7 +63,7 @@ public struct OnDeviceTestView: View {
     // MARK: - 提示词输入区域
     private var promptInputSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
-            Text(Localized.tr("ondevice.testPrompt", table: "AI"))
+            Text(L10n.AI.OnDevice.testPrompt)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.appSecondary)
                 .tracking(1)
@@ -98,7 +98,7 @@ public struct OnDeviceTestView: View {
                 } else {
                     Image(systemName: "sparkles")
                 }
-                Text(isGenerating ? Localized.tr("ondevice.generating", table: "AI") : Localized.tr("ondevice.generate", table: "AI"))
+                Text(isGenerating ? L10n.AI.OnDevice.generating : L10n.AI.OnDevice.generate)
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(.white)
@@ -141,7 +141,7 @@ public struct OnDeviceTestView: View {
             VStack(alignment: .leading, spacing: DesignSystem.small) {
                 HStack {
                     Label(
-                        Localized.tr("ondevice.result", table: "AI"),
+                        L10n.AI.OnDevice.result,
                         systemImage: "doc.text.magnifyingglass"
                     )
                     .font(.caption.weight(.semibold))
@@ -153,7 +153,7 @@ public struct OnDeviceTestView: View {
                         AppPasteboard.string = result
                         feedbackGenerator.notificationOccurred(.success)
                     }) {
-                        Label(L10n.Common.tr("copy"), systemImage: "doc.on.doc.fill")
+                        Label(L10n.Common.copy, systemImage: "doc.on.doc.fill")
                             .font(.caption2.weight(.medium))
                             .foregroundStyle(.appAccent)
                             .padding(.horizontal, DesignSystem.small)
@@ -199,7 +199,7 @@ public struct OnDeviceTestView: View {
                 }
             } catch {
                 withAnimation(.spring()) {
-                    result = "\(L10n.Common.tr("error")): \(error.localizedDescription)"
+                    result = "\(L10n.Common.error): \(error.localizedDescription)"
                 }
             }
             isGenerating = false
@@ -299,11 +299,11 @@ public struct OnDeviceModelRow: View {
     private var modelTypeLabel: String {
         switch model.type {
         case .bundled:
-            return Localized.tr("ondevice.system", table: "AI")
+            return L10n.AI.OnDevice.system
         case .downloaded:
-            return Localized.tr("ondevice.local", table: "AI")
+            return L10n.AI.OnDevice.local
         case .system:
-            return Localized.tr("ondevice.appleIntelligence", table: "AI")
+            return L10n.AI.OnDevice.appleIntelligence
         }
     }
 }

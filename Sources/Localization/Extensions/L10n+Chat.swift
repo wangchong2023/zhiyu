@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "AI"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 获取活跃会话个数文案
@@ -90,6 +90,6 @@ extension L10n {
         }
 
         /// 重新生成最后一次回复
-        public static var regenerate: String { "重新生成" }
+        public static var regenerate: String { Chat.tr("action.regenerate") }
     }
 }

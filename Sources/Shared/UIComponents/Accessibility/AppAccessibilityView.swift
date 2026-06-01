@@ -65,8 +65,8 @@ struct ConditionalAnimationModifier: ViewModifier {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         // 使用一个始终变化的 value (UUID) 来确保动画能被触发
         content.animation(reduceMotion ? .none : animation, value: UUID())

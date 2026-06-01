@@ -30,29 +30,29 @@ public extension L10n {
         public static var errorTokenExpired: String { tr("errorTokenExpired") }
         
         /// errorUnauthorized
-        /// /// - Parameter msg: msg
-        /// /// - Returns: 字符串
+        /// - Parameter msg: msg
+        /// - Returns: 字符串
         public static func errorUnauthorized(_ msg: String) -> String { trf("errorUnauthorized", msg) }
 
         /// errorServer
-        /// /// - Parameter code: code
-        /// /// - Parameter msg: msg
-        /// /// - Returns: 字符串
+        /// - Parameter code: code
+        /// - Parameter msg: msg
+        /// - Returns: 字符串
         public static func errorServer(_ code: Int, _ msg: String) -> String { trf("errorServer", code, msg) }
 
         /// error解码Failed
-        /// /// - Parameter msg: msg
-        /// /// - Returns: 字符串
+        /// - Parameter msg: msg
+        /// - Returns: 字符串
         public static func errorDecodeFailed(_ msg: String) -> String { trf("errorDecodeFailed", msg) }
 
         /// errorHTTP
-        /// /// - Parameter code: code
-        /// /// - Returns: 字符串
+        /// - Parameter code: code
+        /// - Returns: 字符串
         public static func errorHTTP(_ code: Int) -> String { trf("errorHTTP", code) }
 
         /// errorUnexpected
-        /// /// - Parameter msg: msg
-        /// /// - Returns: 字符串
+        /// - Parameter msg: msg
+        /// - Returns: 字符串
         public static func errorUnexpected(_ msg: String) -> String { trf("errorUnexpected", msg) }
     }
 }

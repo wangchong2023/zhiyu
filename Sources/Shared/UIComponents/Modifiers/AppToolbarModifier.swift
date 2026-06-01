@@ -22,8 +22,8 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
     }
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .navigationTitle(title)
@@ -72,8 +72,8 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
     }
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
@@ -122,7 +122,7 @@ extension View {
     }
     
     /// appTabToolbar
-    /// /// - Parameter title: title
+    /// - Parameter title: title
     func appTabToolbar(title: String) -> some View {
         self.modifier(AppTabToolbarModifier(title: title, trailing: { EmptyView() }))
     }
@@ -133,8 +133,8 @@ extension View {
     }
     
     /// appSubPageToolbar
-    /// /// - Parameter title: title
-    /// /// - Parameter showVaultBadge: 展示VaultBadge
+    /// - Parameter title: title
+    /// - Parameter showVaultBadge: 展示VaultBadge
     func appSubPageToolbar(title: String, showVaultBadge: Bool = false) -> some View {
         self.modifier(AppSubPageToolbarModifier(title: title, showVaultBadge: showVaultBadge, trailing: { EmptyView() }))
     }

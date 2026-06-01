@@ -738,7 +738,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "PageLink"
+            "value": "Knowledge Link"
           }
         },
         "zh-Hans": {
@@ -1033,7 +1033,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "提取行动项"
+            "value": "提取行动项 [译]"
           }
         }
       }
@@ -1084,7 +1084,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 实验室产出"
+            "value": "AI 实验室产出 [译]"
           }
         }
       }
@@ -1101,7 +1101,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "思维导图 (Mermaid)"
+            "value": "思维导图 (Mermaid) [译]"
           }
         }
       }
@@ -1118,7 +1118,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "知识测验 (Quiz)"
+            "value": "知识测验 (Quiz) [译]"
           }
         }
       }
@@ -1135,7 +1135,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "深度报告 (Report)"
+            "value": "深度报告 (Report) [译]"
           }
         }
       }
@@ -1152,7 +1152,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "演示大纲 (Slides)"
+            "value": "演示大纲 (Slides) [译]"
           }
         }
       }
@@ -1169,7 +1169,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智能总结"
+            "value": "智能总结 [译]"
           }
         }
       }
@@ -1526,7 +1526,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "扩展存根"
+            "value": "扩展存根 [译]"
           }
         }
       }
@@ -1543,7 +1543,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "寻找相关链接"
+            "value": "寻找相关链接 [译]"
           }
         }
       }
@@ -1645,7 +1645,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "物理快照"
+            "value": "物理快照 [译]"
           }
         }
       }
@@ -1662,7 +1662,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "回滚到此版本"
+            "value": "回滚到此版本 [译]"
           }
         }
       }
@@ -1679,7 +1679,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "快照版本"
+            "value": "快照版本 [译]"
           }
         }
       }
@@ -1883,7 +1883,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "基于内容深度关联"
+            "value": "基于内容深度关联 [译]"
           }
         }
       }
@@ -1917,7 +1917,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "暂无手动关联页面"
+            "value": "暂无手动关联页面 [译]"
           }
         }
       }
@@ -1934,7 +1934,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "快照预览"
+            "value": "快照预览 [译]"
           }
         }
       }
@@ -1951,7 +1951,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "访问原始链接"
+            "value": "访问原始链接 [译]"
           }
         }
       }
@@ -2194,7 +2194,6 @@
         }
       }
     },
-
     "quickTemplates": {
       "extractionState": "stale",
       "localizations": {
@@ -3415,6 +3414,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "欢迎回来"
+          }
+        }
+      }
+    },
+    "page.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "page.content"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "page.content [译]"
           }
         }
       }

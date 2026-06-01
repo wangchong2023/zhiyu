@@ -37,6 +37,16 @@ public enum TaskType: String, CaseIterable, Sendable {
         case .synthesis: return "purple"
         }
     }
+    
+    var localizedName: String {
+        switch self {
+        case .ai: return L10n.AI.Task.tr("type.ai")
+        case .ingest: return L10n.AI.Task.typeIngest
+        case .aiScan: return L10n.AI.Task.typeAIScan
+        case .healthCheck: return L10n.AI.Task.typeHealthCheck
+        case .synthesis: return L10n.AI.Task.typeSynthesis
+        }
+    }
 }
 
 /// RAG / AI 执行阶段 (用于多维视觉反馈)
@@ -107,7 +117,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// 更新LatestStatus
-    /// /// - Parameter text: text
+    /// - Parameter text: text
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
         // 实时同步到当前“最活跃”的灵动岛（如果平台支持）
@@ -130,7 +140,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// metrics
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func metrics(for type: TaskType) -> TaskMetrics {
         let relevant = tasks.filter { $0.type == type }
         let completed = relevant.filter { $0.status == .completed }.count
@@ -155,10 +165,10 @@ class TaskCenter: ObservableObject {
     }
 
     /// 添加Task
-    /// /// - Parameter type: type
-    /// /// - Parameter name: name
-    /// /// - Parameter target: target
-    /// /// - Returns: 唯一标识
+    /// - Parameter type: type
+    /// - Parameter name: name
+    /// - Parameter target: target
+    /// - Returns: 唯一标识
     func addTask(type: TaskType = .ai, name: String, target: String) -> UUID {
         let task = GlobalTask(type: type, name: name, target: target, status: .pending)
         self.tasks.insert(task, at: 0)
@@ -170,9 +180,9 @@ class TaskCenter: ObservableObject {
     }
 
     /// 更新Task
-    /// /// - Parameter id: id
-    /// /// - Parameter status: status
-    /// /// - Parameter associatedPageID: associatedPageID
+    /// - Parameter id: id
+    /// - Parameter status: status
+    /// - Parameter associatedPageID: associatedPageID
     func updateTask(_ id: UUID, status: TaskStatus, associatedPageID: UUID? = nil) {
         if let index = self.tasks.firstIndex(where: { $0.id == id }) {
             self.tasks[index].status = status
@@ -212,21 +222,21 @@ class TaskCenter: ObservableObject {
     }
 
     /// completeTask
-    /// /// - Parameter id: id
-    /// /// - Parameter associatedPageID: associatedPageID
+    /// - Parameter id: id
+    /// - Parameter associatedPageID: associatedPageID
     func completeTask(id: UUID, associatedPageID: UUID? = nil) {
         updateTask(id, status: .completed, associatedPageID: associatedPageID)
     }
 
     /// failTask
-    /// /// - Parameter id: id
-    /// /// - Parameter error: error
+    /// - Parameter id: id
+    /// - Parameter error: error
     func failTask(id: UUID, error: String) {
         updateTask(id, status: .failed(error: error))
     }
 
     /// markAsRead
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func markAsRead(_ id: UUID) {
         DispatchQueue.main.async {
             if let index = self.tasks.firstIndex(where: { $0.id == id }) {
@@ -243,7 +253,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// 移除Task
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func removeTask(_ id: UUID) {
         DispatchQueue.main.async {
             self.tasks.removeAll(where: { $0.id == id })

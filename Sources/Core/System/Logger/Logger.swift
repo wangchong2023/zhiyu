@@ -30,32 +30,32 @@ public protocol LoggerProtocol: Sendable {
     )
     
     /// 调试
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     func debug(_ message: String, file: String, function: String, line: Int)
 
     /// info
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     func info(_ message: String, file: String, function: String, line: Int)
 
     /// warning
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     func warning(_ message: String, file: String, function: String, line: Int)
 
     /// error
-    /// /// - Parameter message: message
-    /// /// - Parameter error: error
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter error: error
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     func error(_ message: String, error: Error?, file: String, function: String, line: Int)
     
     /// 执行并记录一个耗时操作 (@SRS-7.2)
@@ -94,38 +94,38 @@ extension LoggerProtocol {
     }
 
     /// 调试
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         debug(message, file: file, function: function, line: line)
     }
     
     /// info
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         info(message, file: file, function: function, line: line)
     }
     
     /// warning
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         warning(message, file: file, function: function, line: line)
     }
     
     /// error
-    /// /// - Parameter message: message
-    /// /// - Parameter error: error
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter error: error
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public func error(_ message: String, error: Error? = nil, file: String = #file, function: String = #function, line: Int = #line) {
         self.error(message, error: error, file: file, function: function, line: line)
     }
@@ -178,10 +178,10 @@ public actor Logger: LoggerProtocol {
     // MARK: - Standard Logging (nonisolated entry points)
     
     /// 调试
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public nonisolated func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         #if DEBUG
         let fileName = (file as NSString).lastPathComponent
@@ -190,31 +190,31 @@ public actor Logger: LoggerProtocol {
     }
     
     /// info
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public nonisolated func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         print("ℹ️ [INFO] [\(fileName):\(line)] \(function) -> \(message)")
     }
     
     /// warning
-    /// /// - Parameter message: message
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public nonisolated func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         print("⚠️ [WARNING] [\(fileName):\(line)] \(function) -> \(message)")
     }
     
     /// error
-    /// /// - Parameter message: message
-    /// /// - Parameter error: error
-    /// /// - Parameter file: file
-    /// /// - Parameter function: function
-    /// /// - Parameter line: line
+    /// - Parameter message: message
+    /// - Parameter error: error
+    /// - Parameter file: file
+    /// - Parameter function: function
+    /// - Parameter line: line
     public nonisolated func error(_ message: String, error: Error? = nil, file: String = #file, function: String = #function, line: Int = #line) {
         let fileName = (file as NSString).lastPathComponent
         let errDesc = error.map { " (Error: \($0.localizedDescription))" } ?? ""
@@ -287,7 +287,7 @@ public actor Logger: LoggerProtocol {
     }
 
     /// 记录日志ToConsole
-    /// /// - Parameter entry: entry
+    /// - Parameter entry: entry
     private nonisolated func logToConsole(_ entry: LogEntry) {
         let durationStr = entry.duration.map { " (耗时: \($0.formattedAdaptive))" } ?? ""
         let statusEmoji: String
@@ -348,7 +348,10 @@ public actor Logger: LoggerProtocol {
             self._logEntries = try decoder.decode([LogEntry].self, from: data)
             self.entriesSubject.send(_logEntries)
         } catch {
-            // 迁移逻辑或首次运行逻辑
+            // 首次运行或文件损坏时，静默初始化为空列表
+            #if DEBUG
+            print("ℹ️ [Logger] No existing logs found or load failed (Expected on first run): \(error.localizedDescription)")
+            #endif
         }
     }
 
@@ -360,7 +363,7 @@ public actor Logger: LoggerProtocol {
     }
     
     /// 获取记录日志Entries
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func getLogEntries() async -> [LogEntry] {
         return _logEntries
     }

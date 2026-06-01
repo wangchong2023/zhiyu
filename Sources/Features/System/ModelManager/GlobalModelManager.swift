@@ -153,9 +153,9 @@ public final class GlobalModelManager {
         
         // 2. 启动后台物理下载与指纹注册（在异步任务中执行，以支持 actor 隔离调用）
         Task {
-            // registerChecksum 是同步方法，无需 await
+            // registerChecksum 是 actor-isolated，必须 await
             if let manager = downloadManager as? ModelDownloadManager {
-                manager.registerChecksum(for: modelId, checksum: manifest.sha256Checksum)
+                await manager.registerChecksum(for: modelId, checksum: manifest.sha256Checksum)
             }
             do {
                 try await downloadManager.startDownload(modelId: modelId, remoteURL: url)

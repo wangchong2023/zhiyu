@@ -18,14 +18,14 @@ struct RelatedPageDropDelegate: DropDelegate {
     @Binding var page: KnowledgePage
 
     /// 执行Drop
-    /// /// - Parameter info: info
-    /// /// - Returns: 是否成功
+    /// - Parameter info: info
+    /// - Returns: 是否成功
     func performDrop(info: DropInfo) -> Bool {
         return true
     }
 
     /// dropEntered
-    /// /// - Parameter info: info
+    /// - Parameter info: info
     func dropEntered(info: DropInfo) {
         guard let fromItem = info.itemProviders(for: [.text]).first else { return }
         

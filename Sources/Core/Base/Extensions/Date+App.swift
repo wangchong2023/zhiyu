@@ -32,7 +32,7 @@ extension Date {
      */
 
     /// formatted
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func formatted(as format: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format

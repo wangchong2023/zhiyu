@@ -40,6 +40,8 @@ extension PageEmbedding {
         static let id = Column("id")
         static let vector = Column("vector_blob")
         static let modelName = Column("model_name")
+        static let createdAt = Column("created_at")
+        static let updatedAt = Column("updated_at")
     }
 
     /// GRDB 编码

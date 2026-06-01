@@ -170,7 +170,7 @@ extension View {
     @ViewBuilder
 
     /// 应用SettingsPresentationSizing
-    /// /// - Parameter screenClass: screenClass
+    /// - Parameter screenClass: screenClass
     func applySettingsPresentationSizing(screenClass: ScreenClass) -> some View {
         if screenClass == .compact {
             // 手机/紧凑尺寸下，不做多余限制，让系统自动以标准半屏/全屏形式拉起

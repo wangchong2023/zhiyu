@@ -55,12 +55,12 @@ actor IngestService {
         if forceDeepScan || llmService != nil {
             // 核心重构：利用协议能力，避免显式类型转换
             if let vectorStore = pageStore as? any VectorIndexableStore {
-                let manager = await MainActor.run { vectorStore.embeddingManager }
+                let provider = await MainActor.run { vectorStore.embeddingProvider }
                 processedContent = await KnowledgeIngestPipeline.shared.process(
                     content: sanitizedRawContent,
                     pageID: pageID,
                     llm: llmService,
-                    embeddingManager: manager
+                    embeddingProvider: provider
                 )
             } else {
                 // fallback: 如果 Store 不支持向量，则仅保留内容

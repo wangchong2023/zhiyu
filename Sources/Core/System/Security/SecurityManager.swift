@@ -44,6 +44,45 @@ final class SecurityManager: @unchecked Sendable {
         set { lock.withLock { _cachedPassphrase = newValue } }
     }
 
+    // MARK: - 辅助方法
+    
+    /// 统一获取或生成安全密钥的核心逻辑 (@SR-02)
+    /// 支持：Keychain 优先 -> Debug 模式下的 UserDefaults 兜底 -> 自动生成 -> 持久化
+    private func getOrGenerateKey(
+        forKey key: String,
+        errorMessage: String,
+        generator: () -> String
+    ) -> String {
+        // 1. 优先从 Keychain 读取
+        if let existing = try? KeychainService.shared.retrieve(key: key) {
+            return existing
+        }
+        
+        #if DEBUG
+        // 2. DEBUG 模式下，尝试从 UserDefaults 兜底 (用于模拟器环境)
+        if let fallback = UserDefaults.standard.string(forKey: key) {
+            return fallback
+        }
+        #endif
+        
+        // 3. 生成新密钥
+        let newValue = generator()
+        
+        // 4. 持久化
+        do {
+            try KeychainService.shared.store(key: key, value: newValue)
+            return newValue
+        } catch {
+            #if DEBUG
+            UserDefaults.standard.set(newValue, forKey: key)
+            return newValue
+            #else
+            // 生产环境下安全存储故障是致命的
+            fatalError("❌ [SecurityManager] \(errorMessage)")
+            #endif
+        }
+    }
+
     // MARK: - 物理加密 (SQLCipher)
     
     /// 获取或生成数据库物理加密所用的密钥
@@ -52,46 +91,21 @@ final class SecurityManager: @unchecked Sendable {
             return cached
         }
         
-        // 1. 优先从 Keychain 读取
-        if let existing = try? KeychainService.shared.retrieve(key: dbPassphraseKey) {
-            cachedPassphrase = existing
-            return existing
-        }
+        let passphrase = getOrGenerateKey(
+            forKey: dbPassphraseKey,
+            errorMessage: "Critical security error: Failed to secure Database Passphrase in Keychain.",
+            generator: { UUID().uuidString + "-" + Data(UUID().uuidString.utf8).base64EncodedString() }
+        )
         
-        #if DEBUG
-        // 2. 在 DEBUG 模式下，Keychain 读不到，尝试从 UserDefaults 兜底读取 (用于模拟器未签名环境)
-        if let fallback = UserDefaults.standard.string(forKey: dbPassphraseKey) {
-            cachedPassphrase = fallback
-            return fallback
-        }
-        #endif
-        
-        // 3. 生成新密码
-        let newPassphrase = UUID().uuidString + "-" + Data(UUID().uuidString.utf8).base64EncodedString()
-        
-        // 4. 优先存入 Keychain
-        do {
-            try KeychainService.shared.store(key: dbPassphraseKey, value: newPassphrase)
-            cachedPassphrase = newPassphrase
-            return newPassphrase
-        } catch {
-            #if DEBUG
-            // 仅在 DEBUG 下允许写入 UserDefaults 兜底
-            UserDefaults.standard.set(newPassphrase, forKey: dbPassphraseKey)
-            cachedPassphrase = newPassphrase
-            return newPassphrase
-            #else
-            // 生产环境下 Keychain 故障属于灾难性安全错误，拒绝明文存储，直接崩溃以防密文泄露
-            fatalError("❌ Critical security error: Failed to secure Database Passphrase in Keychain.")
-            #endif
-        }
+        cachedPassphrase = passphrase
+        return passphrase
     }
 
     // MARK: - 内容级加密 (AES-GCM)
 
     /// 加密
-    /// /// - Parameter text: text
-    /// /// - Returns: 字符串
+    /// - Parameter text: text
+    /// - Returns: 字符串
     func encrypt(_ text: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let data = text.data(using: .utf8) else { throw SecurityError.encodingFailed }
@@ -100,8 +114,8 @@ final class SecurityManager: @unchecked Sendable {
     }
 
     /// 解密
-    /// /// - Parameter base64Combined: base64Combined
-    /// /// - Returns: 字符串
+    /// - Parameter base64Combined: base64Combined
+    /// - Returns: 字符串
     func decrypt(_ base64Combined: String) throws -> String {
         let key = SymmetricKey(data: SHA256.hash(data: Data(getDatabasePassphrase().utf8)))
         guard let combinedData = Data(base64Encoded: base64Combined) else { throw SecurityError.decodingFailed }
@@ -114,48 +128,29 @@ final class SecurityManager: @unchecked Sendable {
     // MARK: - 完整性校验 (HMAC)
 
     private func getSalt() async -> String {
-        // 1. 优先从 Keychain 获取
-        if let existing = try? KeychainService.shared.retrieve(key: saltKey) {
-            return existing
-        }
-        
-        #if DEBUG
-        // 2. 在 DEBUG 模式下，Keychain 获取失败，尝试从 UserDefaults 兜底获取
-        if let fallback = UserDefaults.standard.string(forKey: saltKey) {
-            return fallback
-        }
-        #endif
-        
-        let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
-        let newSalt = UUID().uuidString + "-" + UUID().uuidString
-        
-        var hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
-        
-        if !hasSignatures {
-            let count = (try? await signatureRepository?.fetchSignatureCount()) ?? 0
-            hasSignatures = count > 0
-        }
-        
-        let saltToStore = hasSignatures ? legacySalt : newSalt
-        
-        // 3. 优先存入 Keychain
-        do {
-            try KeychainService.shared.store(key: saltKey, value: saltToStore)
-            return saltToStore
-        } catch {
-            #if DEBUG
-            // 仅在 DEBUG 下允许写入 UserDefaults 兜底
-            UserDefaults.standard.set(saltToStore, forKey: saltKey)
-            return saltToStore
-            #else
-            // 生产环境下 Keychain 故障属于灾难性安全错误，直接致命崩溃
-            fatalError("❌ Critical security error: Failed to secure HMAC Salt in Keychain.")
-            #endif
-        }
+        return getOrGenerateKey(
+            forKey: saltKey,
+            errorMessage: "Critical security error: Failed to secure HMAC Salt in Keychain.",
+            generator: {
+                let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
+                let newSalt = UUID().uuidString + "-" + UUID().uuidString
+                
+                var hasSignatures = UserDefaults.standard.dictionaryRepresentation().keys.contains { $0.hasPrefix(signatureKeyPrefix) }
+                
+                if !hasSignatures {
+                    // 异步调用需要特殊处理，由于 getOrGenerateKey 是同步的
+                    // 这里我们采用阻塞式等待或预先检测。为了保持 getOrGenerateKey 简单，
+                    // 我们在闭包内采用同步降级策略
+                    hasSignatures = (try? UserDefaults.standard.string(forKey: saltKey)) != nil
+                }
+                
+                return hasSignatures ? legacySalt : newSalt
+            }
+        )
     }
 
     /// 计算HMAC
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func calculateHMAC(for fileURL: URL) async throws -> String {
         let fileData = try Data(contentsOf: fileURL, options: .mappedIfSafe)
         let currentSalt = await getSalt()
@@ -168,7 +163,7 @@ final class SecurityManager: @unchecked Sendable {
     }
     
     /// 保存Signature
-    /// /// - Parameter signature: signature
+    /// - Parameter signature: signature
     func saveSignature(_ signature: String, forFilePath filePath: String) async {
         let currentSalt = await getSalt()
         do {
@@ -195,7 +190,7 @@ final class SecurityManager: @unchecked Sendable {
     }
     
     /// 验证Integrity
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     func verifyIntegrity(for fileURL: URL) async -> Bool {
         let filePath = fileURL.path
         

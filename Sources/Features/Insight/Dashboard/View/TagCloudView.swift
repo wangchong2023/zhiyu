@@ -392,8 +392,8 @@ struct TagCloudViewContent: View {
 struct BlurView: NSViewRepresentable {
 
     /// 创建NSView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
         view.blendingMode = .withinWindow
@@ -403,8 +403,8 @@ struct BlurView: NSViewRepresentable {
     }
 
     /// 更新NSView
-    /// /// - Parameter nsView: nsView
-    /// /// - Parameter context: context
+    /// - Parameter nsView: nsView
+    /// - Parameter context: context
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 #else

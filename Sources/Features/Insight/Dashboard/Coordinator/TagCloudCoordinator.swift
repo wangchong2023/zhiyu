@@ -114,7 +114,7 @@ final class TagCloudCoordinator {
     }
     
     /// 切换Selection
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     func toggleSelection(_ tag: String) {
         if selectedTagsForBulk.contains(tag) {
             selectedTagsForBulk.remove(tag)

@@ -159,7 +159,7 @@ public struct ScaleButtonStyle: ButtonStyle {
     public init() {}
     
     /// 创建Body
-    /// /// - Parameter configuration: configuration
+    /// - Parameter configuration: configuration
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? Animations.Interaction.pressScale : 1.0)

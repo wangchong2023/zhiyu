@@ -15,6 +15,6 @@ final class StubWatchSyncService: NSObject, WatchSyncProtocol {
     @Published var lastReceivedText: String = ""
 
     /// 发送Content
-    /// /// - Parameter text: text
+    /// - Parameter text: text
     func sendContent(_ text: String) {}
 }

@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Platform"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var capture: String { tr("watch.capture") }
         public static var recents: String { Localized.tr("watch.recents", table: t) }

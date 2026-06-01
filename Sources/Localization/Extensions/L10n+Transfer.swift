@@ -16,20 +16,21 @@ extension L10n {
         public struct Export {
 
             /// 本地化格式化翻译
-            /// /// - Parameter key: key
-            /// /// - Parameter args: args
-            /// /// - Returns: 返回值
+            /// - Parameter key: key
+            /// - Parameter args: args
+            /// - Returns: 返回值
+            public static func tr(_ key: String) -> String { Localized.tr(key, table: Transfer.t) }
             public static func trf(_ key: String, _ args: CVarArg...) -> String {
                 Localized.trf(key, table: Transfer.t, arguments: args)
             }
             
             /// 导出引擎正忙本地化文案
-            public static let errorSystemBusy = "导出引擎正忙，请稍后重试。"
+            public static let errorSystemBusy = Export.tr("error.busy")
             /// 导出引擎未就绪本地化文案
-            public static let errorEngineNotReady = "导出引擎未初始化就绪。"
+            public static let errorEngineNotReady = Export.tr("error.notReady")
             /// 导出引擎发生内部异常本地化文案
             public static func errorInternal(_ msg: String) -> String {
-                return "导出过程发生内部错误: \(msg)"
+                return Export.trf("error.internalError", msg)
             }
         }
     }

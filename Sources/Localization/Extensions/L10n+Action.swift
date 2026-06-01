@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Common"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var createPage: String { tr("action.createPage") }
         public static var createPageSubtitle: String { tr("action.createPageSubtitle") }

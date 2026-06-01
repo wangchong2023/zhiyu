@@ -28,21 +28,21 @@ struct KnowledgeStatsProvider: TimelineProvider {
     typealias Entry = KnowledgeStatsEntry
 
     /// placeholder
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func placeholder(in context: Context) -> KnowledgeStatsEntry {
         fetchWidgetEntry(date: Date())
     }
 
     /// 获取Snapshot
-    /// /// - Parameter completion: completion
-    /// /// - Returns: 返回值
+    /// - Parameter completion: completion
+    /// - Returns: 返回值
     func getSnapshot(in context: Context, completion: @escaping (KnowledgeStatsEntry) -> Void) {
         completion(fetchWidgetEntry(date: Date()))
     }
 
     /// 获取Timeline
-    /// /// - Parameter completion: completion
-    /// /// - Returns: 返回值
+    /// - Parameter completion: completion
+    /// - Returns: 返回值
     func getTimeline(in context: Context, completion: @escaping (Timeline<KnowledgeStatsEntry>) -> Void) {
         let timeline = calculateTimeline(date: Date())
         completion(timeline)
@@ -54,27 +54,28 @@ struct KnowledgeStatsProvider: TimelineProvider {
     func fetchWidgetEntry(date: Date) -> KnowledgeStatsEntry {
         return KnowledgeStatsEntry(
             date: date,
-            vaultName: "ZhiYu Knowledge",
-            pageCount: 42,
-            linkCount: 108,
-            tagCount: 16,
+            vaultName: "Demo Vault",
+            pageCount: AppConstants.Demo.mockPageCount,
+            linkCount: AppConstants.Demo.mockLinkCount,
+            tagCount: AppConstants.Demo.mockTagCount,
             lastUpdatedPages: [
                 ("Planning (Concept)", "concept", "accent"),
                 ("Memory (Concept)", "concept", "accent"),
-                ("AI Chat: Intelligent Interaction", "entity", "purple")
+                ("Demo Vault", "entity", "purple")
             ]
         )
     }
 
     /// 核心时间线刷新策略计算方法，解耦系统级 Context 依赖，便于在单元测试中直接施加断言
     /// - Parameter date: 触发时间线的起始基准日期
-    /// - Returns: 符合能耗限制的时间线配置
+    /// - Returns: 计算好的 Timeline
     func calculateTimeline(date: Date) -> Timeline<KnowledgeStatsEntry> {
         // 核心安全策略：每 30 分钟刷新一次小组件，限制能耗开销
-        let nextUpdate = date.addingTimeInterval(30 * 60)
+        let nextUpdate = date.addingTimeInterval(AppConstants.Demo.widgetRefreshIntervalMinutes * 60)
         let entry = fetchWidgetEntry(date: date)
         return Timeline(entries: [entry], policy: .after(nextUpdate))
     }
+
 }
 
 // MARK: - Widget View
@@ -144,7 +145,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                     .fontWeight(.black)
                     .foregroundStyle(.white)
                 
-                Text("All Pages")
+                Text("Demo Vault")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
             }
@@ -173,7 +174,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                 }
                 
                 HStack(spacing: 16) {
-                    mainStatItem(label: "All Pages", value: "\(entry.pageCount)", color: .purple)
+                    mainStatItem(label: "Demo Vault", value: "\(entry.pageCount)", color: .purple)
                     mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
                 }
                 
@@ -190,7 +191,7 @@ struct KnowledgeStatsWidgetEntryView: View {
 
             // 右侧：Deep Link 快捷操作区
             VStack(spacing: 8) {
-                actionButton(label: "New Card", icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
+                actionButton(label: "Demo Vault", icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
                 actionButton(label: "AI Chat", icon: "sparkles", color: .blue, url: "zhiyu://chat")
                 actionButton(label: "Search", icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
             }
@@ -215,7 +216,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                     }
                     
                     HStack(spacing: 24) {
-                        mainStatItem(label: "All Pages", value: "\(entry.pageCount)", color: .purple)
+                        mainStatItem(label: "Demo Vault", value: "\(entry.pageCount)", color: .purple)
                         mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
                         mainStatItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
                     }
@@ -241,7 +242,7 @@ struct KnowledgeStatsWidgetEntryView: View {
             
             // 下半部：最近更新的知识页卡片列表
             VStack(alignment: .leading, spacing: 10) {
-                Text("Recent Updates")
+                Text("Demo Vault")
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 2)
@@ -334,8 +335,8 @@ struct KnowledgeStatsWidget: Widget {
         StaticConfiguration(kind: kind, provider: KnowledgeStatsProvider()) { entry in
             KnowledgeStatsWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("ZhiYu Vault")
-        .description("View your knowledge universe metrics and launch quick actions from the Home Screen.")
+        .configurationDisplayName("Demo Vault")
+        .description("Demo Vault")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

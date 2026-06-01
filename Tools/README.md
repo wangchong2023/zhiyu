@@ -121,11 +121,30 @@ chmod +x Tools/update_snapshots.sh
 
 ---
 
-## 7. 注意事项
+## 7. 存储字段守卫工具 (`check_storage_constants.py`)
+
+用于在编译前（Xcode Build Phases）自动校验整个 `Sources/` 目录下是否包含硬编码的物理数据库表名或列字段名。
+
+### 守卫工具核心功能
+
+- **硬编码物理字段拦截**：检测代码中直接写物理字段名（如 `t.column("created_at")` 或 `t.primaryKey(["id"])`）的情况，强制报错。
+- **强制使用 Model 字段**：要求必须通过数据库 Model 实体提供的编译期静态常量（如 `KnowledgePage.Columns.createdAt`）来操作数据库表。
+- **硬编码 SQL 检测**：识别在 SQL 执行/查询语句中包含未插值的裸物理表名。
+
+### 守卫工具使用方法
+
+```bash
+python3 Tools/check_storage_constants.py
+```
+
+---
+
+## 8. 注意事项
 
 - **Python 环境**：建议使用 Python 3.8+，本地运行环境指向 `./env/venv/bin/python3`。
 - **权限说明**：在 macOS 上操作模拟器容器路径可能需要全盘访问权限（通常 Terminal 会自动请求）。
-- **覆盖率提取依赖**：`check_coverage.py` 强依赖 Xcode 命令行工具中内置的 `xccov` 组件。
+- **覆盖率提取依赖**：`check_coverage.py` 强依赖 Xcode 命令行工具中内置 of `xccov` 组件。
 - **同步建议**：建议在修改数据库架构（Schema）后，同步更新 `seed_data.py` 中的 `INSERT` 语句。
 - **权限授予**：运行 `.sh` 脚本前请确保执行了 `chmod +x`。
+
 

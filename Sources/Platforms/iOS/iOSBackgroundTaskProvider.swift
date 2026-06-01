@@ -16,8 +16,8 @@ final class iOSBackgroundTaskProvider: BackgroundTaskProtocol {
     private let taskIdentifier = "com.zhimind.ingest.process"
     
     /// 注册
-    /// /// - Parameter handler: handler
-    /// /// - Returns: 返回值
+    /// - Parameter handler: handler
+    /// - Returns: 返回值
     func register(handler: @escaping @Sendable @MainActor () -> Void) {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: nil) { task in
             Task { @MainActor in

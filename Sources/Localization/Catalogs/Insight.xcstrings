@@ -47,7 +47,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.apiRequests"
+            "value": "dashboard.apiRequests [译]"
           }
         }
       }
@@ -64,7 +64,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.cleanup.action"
+            "value": "dashboard.cleanup.action [译]"
           }
         }
       }
@@ -421,7 +421,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.index.title"
+            "value": "dashboard.index.title [译]"
           }
         }
       }
@@ -1458,7 +1458,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ms"
+            "value": "ms [译]"
           }
         }
       }
@@ -2002,7 +2002,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tokens"
+            "value": "Tokens [译]"
           }
         }
       }
@@ -2104,7 +2104,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ms"
+            "value": "ms [译]"
           }
         }
       }
@@ -2155,7 +2155,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.database"
+            "value": "dashboard.system.database [译]"
           }
         }
       }
@@ -2172,7 +2172,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.logs"
+            "value": "dashboard.system.logs [译]"
           }
         }
       }
@@ -2189,7 +2189,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.status"
+            "value": "dashboard.system.status [译]"
           }
         }
       }
@@ -2223,7 +2223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.tokens"
+            "value": "dashboard.tokens [译]"
           }
         }
       }
@@ -2274,7 +2274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.totalStorage"
+            "value": "dashboard.totalStorage [译]"
           }
         }
       }
@@ -2291,7 +2291,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.updateSuccess"
+            "value": "dashboard.updateSuccess [译]"
           }
         }
       }
@@ -2903,7 +2903,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "点击生成个人智库周报"
+            "value": "点击生成个人智库周报 [译]"
           }
         }
       }
@@ -3906,7 +3906,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "核心领域"
+            "value": "核心领域 [译]"
           }
         }
       }

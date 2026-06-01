@@ -20,7 +20,7 @@ final class ComponentSnapshots: XCTestCase {
     
     /// 依据环境变量判断是否启用快照录制模式，用于支持 CI/CD 脚本自动更新基准图片
     private var isRecordModeEnabled: Bool {
-        return true
+        return ProcessInfo.processInfo.environment["RECORD_SNAPSHOTS"] == "1"
     }
     
     /// 测试 AI 脉搏指示器的视觉一致性
@@ -45,7 +45,7 @@ final class ComponentSnapshots: XCTestCase {
     
     /// 测试图谱节点的视觉一致性
     func testGraphNodeView() {
-        isRecording = isRecordModeEnabled
+        setupMockEnvironment()
         let node = GraphNode(
             id: UUID(),
             title: "测试节点",
@@ -85,9 +85,8 @@ final class ComponentSnapshots: XCTestCase {
         let themeManager = ThemeManager.shared
         let onboardingService = OnboardingService.shared
         
-        // 显式声明 llm 类型为基类 LLMService，消除 SwiftUI 在快照测试中由于 EnvironmentObject 强类型检索
-        // (精确匹配注入的 Type.self) 而发生的多态向下转型失败、从而触发 Crash 的缺陷。
-        let llm: LLMService = MockLLMService()
+        // 注入单例 LLMService，支持解耦后的 ChatView 正常解析
+        let llm = LLMService.shared
         var selectedTab = AppTab.chat
         
         let view = ChatView(selectedTab: Binding(get: { selectedTab }, set: { selectedTab = $0 }))
@@ -225,7 +224,7 @@ final class ComponentSnapshots: XCTestCase {
     
     /// 测试空间导航面包屑组件的视觉一致性与代码覆盖率提升
     func testBreadcrumbView() {
-        isRecording = isRecordModeEnabled
+        setupMockEnvironment()
         let history = [
             KnowledgePage(title: "首页节点", pageType: .concept, content: ""),
             KnowledgePage(title: "二级知识节点", pageType: .concept, content: ""),

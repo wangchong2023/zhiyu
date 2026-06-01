@@ -46,8 +46,8 @@ final class KnowledgeRepositoryTests: XCTestCase {
         
         // 2. 验证物理数据库中存储的是加密后的密文
         try await dbQueue.read { db in
-            let row = try Row.fetchOne(db, sql: "SELECT content FROM pages WHERE title = ?", arguments: ["Secret"])
-            let dbContent = row?["content"] as? String
+            let row = try Table(AppConstants.Storage.Tables.pages).filter(Column(AppConstants.Storage.Columns.title) == "Secret").fetchOne(db)
+            let dbContent = row?[AppConstants.Storage.Columns.content] as? String
             
             XCTAssertNotNil(dbContent)
             XCTAssertNotEqual(dbContent, plainContent, "数据库中的物理内容不应是明文")
@@ -63,8 +63,8 @@ final class KnowledgeRepositoryTests: XCTestCase {
         try await repository.save(page)
         
         try await dbQueue.read { db in
-            let row = try Row.fetchOne(db, sql: "SELECT content FROM pages WHERE title = ?", arguments: ["Public"])
-            let dbContent = row?["content"] as? String
+            let row = try Table("pages").filter(Column("title") == "Public").fetchOne(db)
+            let dbContent = row?[AppConstants.Storage.Columns.content] as? String
             XCTAssertEqual(dbContent, plainContent, "普通页面在数据库中应以明文存储")
         }
     }

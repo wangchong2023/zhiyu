@@ -68,9 +68,9 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// login
-    /// /// - Parameter identity: identity
-    /// /// - Parameter password: password
-    /// /// - Returns: 是否成功
+    /// - Parameter identity: identity
+    /// - Parameter password: password
+    /// - Returns: 是否成功
     public func login(identity: String, password: String) async -> Bool {
         #if DEBUG
         if isMockBackend {
@@ -104,9 +104,9 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// 发送SmsCode
-    /// /// - Parameter phone: phone
-    /// /// - Parameter scene: scene
-    /// /// - Returns: 是否成功
+    /// - Parameter phone: phone
+    /// - Parameter scene: scene
+    /// - Returns: 是否成功
     public func sendSmsCode(phone: String, scene: String) async -> Bool {
         let req = SendSmsRequest(phone: phone, scene: scene)
         do {
@@ -127,10 +127,10 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// 注册
-    /// /// - Parameter phone: phone
-    /// /// - Parameter code: code
-    /// /// - Parameter password: password
-    /// /// - Returns: 是否成功
+    /// - Parameter phone: phone
+    /// - Parameter code: code
+    /// - Parameter password: password
+    /// - Returns: 是否成功
     public func register(phone: String, code: String, password: String) async -> Bool {
         let req = LoginRequest.sms(phone: phone, code: code)
         do {
@@ -180,7 +180,7 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// login
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     public func login(using strategy: any AuthStrategy) async -> Bool {
         do {
             #if DEBUG

@@ -159,10 +159,10 @@ public struct AppEmptyState: View {
     }
 
     private func buildAccessibilityLabel() -> String {
-        var label = "\(title)。"
-        if let description = description { label += " \(description)。" }
-        if let hint = hint { label += " 提示：\(hint)" }
-        if action != nil { label += " 建议执行：\(action!.label)。" }
+        var label = "\(title)."
+        if let description = description { label += " \(description)." }
+        if let hint = hint { label += " Hint: \(hint)" }
+        if action != nil { label += " Action: \(action!.label)." }
         return label
     }
 }

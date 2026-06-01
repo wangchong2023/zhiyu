@@ -32,7 +32,7 @@ final class ActivityService: LiveActivityProtocol {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         
         Task { @MainActor in
-            Logger.shared.debug("🏝️ [Dynamic Island] Preparing to start Live Activity for task \(id): \(name)")
+            Logger.shared.debug("DynamicIsland_Preparing")
             
             let attributes = AIProcessingAttributes(taskName: name, startTime: Date())
             let contentState = AIProcessingAttributes.ContentState(progress: 0.05, status: target)
@@ -50,9 +50,9 @@ final class ActivityService: LiveActivityProtocol {
                     content: ActivityContent(state: contentState, staleDate: nil)
                 )
                 activeActivities[id] = activity
-                Logger.shared.debug("✅ [Dynamic Island] Live Activity started for task \(id)")
+                Logger.shared.debug("DynamicIsland_Started")
             } catch {
-                Logger.shared.error("❌ [Dynamic Island] Launch failed: \(error.localizedDescription)")
+                Logger.shared.error("DynamicIsland_Failed")
             }
         }
         #endif
@@ -80,7 +80,7 @@ final class ActivityService: LiveActivityProtocol {
         #if os(iOS) && !targetEnvironment(macCatalyst)
         guard let activity = activeActivities[id] else { return }
         
-        Logger.shared.debug("🏝️ [Dynamic Island] Live Activity for task \(id) is about to end")
+        Logger.shared.debug("DynamicIsland_Ending")
         
         let content = ActivityContent(state: activity.content.state, staleDate: nil)
         await activity.end(content, dismissalPolicy: .immediate)

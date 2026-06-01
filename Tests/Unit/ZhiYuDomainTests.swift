@@ -196,11 +196,11 @@ final class ZhiYuDomainTests: XCTestCase {
     // MARK: - PromptRegistry Tests
     func testPromptRegistryTemplates() {
         let summaryPrompt = PromptRegistry.Ingest.summary(content: "Test Content")
-        XCTAssertTrue(summaryPrompt.contains("摘要"))
+        XCTAssertTrue(summaryPrompt.contains(L10n.AI.Prompt.summaryPrefix))
         XCTAssertTrue(summaryPrompt.contains("Test Content"))
         
         let qaPrompt = PromptRegistry.Ingest.reverseQA(content: "Test QA Content")
-        XCTAssertTrue(qaPrompt.contains("问题"))
+        XCTAssertTrue(qaPrompt.contains(L10n.AI.Prompt.reverseQAPrefix))
         XCTAssertTrue(qaPrompt.contains("Test QA Content"))
         
         let discoverPrompt = PromptRegistry.Structure.discoverLinks(content: "Content", existingTitles: ["Title1", "Title2"])

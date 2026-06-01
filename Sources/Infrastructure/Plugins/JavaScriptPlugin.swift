@@ -13,21 +13,6 @@
 import Foundation
 import JavaScriptCore
 
-#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-/// JS 看门狗超时熔断回调类型，返回 0/1 (Int32)
-typealias JSShouldTerminateCallback = @convention(c) (JSContextGroupRef?, UnsafeMutableRawPointer?) -> Int32
-
-@_silgen_name("JSContextGroupSetExecutionTimeLimit")
-
-/// JSContext分组SetExecutionTimeLimit
-func JSContextGroupSetExecutionTimeLimit(
-    _ group: JSContextGroupRef?,
-    _ limit: Double,
-    _ callback: JSShouldTerminateCallback?,
-    _ context: UnsafeMutableRawPointer?
-)
-#endif
-
 /// 基于 JS 脚本的动态插件，已接入 PluginEnginePool 缓存连接池
 final class JavaScriptPlugin: InterceptionPlugin {
     let manifest: PluginManifest
@@ -71,6 +56,9 @@ final class JavaScriptPlugin: InterceptionPlugin {
         
         // 2. 注入桥接好的 API
         setupAPI(in: ctx)
+
+        // 2.2 核心安全加固：配置运行时看门狗护栏 (@SR-04)
+        PluginSandboxGateway.configureWatchdog(for: ctx)
         
         // 2.5 注入安全硬化脚本：禁用 eval 和 Function 构造器，防止沙箱逃逸 (@SR-04)
         let hardeningScript = """
@@ -227,7 +215,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
     }
     
     /// on加载
-    /// /// - Parameter context: context
+    /// - Parameter context: context
     func onLoad(context: PluginContext) {
         self.pluginContext = context
         
@@ -264,8 +252,8 @@ final class JavaScriptPlugin: InterceptionPlugin {
     private let maxResponseSize = 5 * 1024 * 1024 // 5MB 限制
     
     /// pre处理
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func preProcess(content: String) throws -> String {
         return try executeInContext { ctx in
             if let preProcessFunc = ctx.objectForKeyedSubscript("preProcess"), !preProcessFunc.isUndefined {
@@ -299,8 +287,8 @@ final class JavaScriptPlugin: InterceptionPlugin {
     }
     
     /// post处理
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func postProcess(content: String) throws -> String {
         return try executeInContext { ctx in
             if let postProcessFunc = ctx.objectForKeyedSubscript("postProcess"), !postProcessFunc.isUndefined {

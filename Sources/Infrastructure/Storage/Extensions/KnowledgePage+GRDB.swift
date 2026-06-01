@@ -60,8 +60,8 @@ extension Array: @retroactive DatabaseValueConvertible where Element: GRDBJSONCo
     }
 
     /// fromDatabaseValue
-    /// /// - Parameter dbValue: dbValue
-    /// /// - Returns: 列表
+    /// - Parameter dbValue: dbValue
+    /// - Returns: 列表
     public static func fromDatabaseValue(_ dbValue: DatabaseValue) -> [Element]? {
         guard let string = String.fromDatabaseValue(dbValue),
               let data = string.data(using: .utf8) else {

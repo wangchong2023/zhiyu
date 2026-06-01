@@ -19,7 +19,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     private init() {
         // 在 actor 中手动解析依赖，避免使用 @Inject 导致的属性隔离问题
-        self.llm = ServiceContainer.shared.resolve(LLMService.self)
+        self.llm = ServiceContainer.shared.resolve((any LLMServiceProtocol).self)
     }
 
     // 由于 ServiceContainer.register 需要在主线程或确保安全，我们在外层注册
@@ -29,8 +29,8 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     }
 
     /// 摘要
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func summarize(content: String) async throws -> String {
         let prompt = PromptService.shared.summaryPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
@@ -52,8 +52,8 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     }
 
     /// 提取Actions
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func extractActions(content: String) async throws -> String {
         let prompt = PromptService.shared.actionPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
@@ -61,8 +61,8 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     }
 
     /// 生成Presentation
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func generatePresentation(content: String) async throws -> String {
         let prompt = PromptService.shared.slidesPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a presentation expert. Use Markdown. Use '# ' for Title slide, '## ' for new slides. Use bullet points.")
@@ -115,8 +115,8 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     }
 
     /// 生成Report
-    /// /// - Parameter content: content
-    /// /// - Returns: 字符串
+    /// - Parameter content: content
+    /// - Returns: 字符串
     func generateReport(content: String) async throws -> String {
         let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a report writer. First line MUST be '# <title>' summarizing the report topic. Use Markdown headings for sections.")

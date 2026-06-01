@@ -218,9 +218,9 @@ final class iCloudSyncCoordinator {
     @discardableResult
 
     /// 解析ConflictedMetadata
-    /// /// - Parameter local: local
-    /// /// - Parameter remote: remote
-    /// /// - Returns: 是否成功
+    /// - Parameter local: local
+    /// - Parameter remote: remote
+    /// - Returns: 是否成功
     func resolveConflictedMetadata(local: URL, remote: URL) -> Bool {
         guard local.pathExtension == "json" && remote.pathExtension == "json" else {
             return false
@@ -241,7 +241,7 @@ final class iCloudSyncCoordinator {
                     ISO8601DateFormatter(),
                     {
                         let f = DateFormatter()
-                        f.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                        f.dateFormat = ""
                         f.locale = Locale(identifier: "en_US_POSIX")
                         return f
                     }()
@@ -251,7 +251,7 @@ final class iCloudSyncCoordinator {
                         return date
                     }
                 }
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date string: \(dateStr)")
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "")
             }
             
             struct ConfigMetadata: Codable {
@@ -270,18 +270,18 @@ final class iCloudSyncCoordinator {
                     try FileManager.default.removeItem(at: local)
                 }
                 try FileManager.default.copyItem(at: remote, to: local)
-                print("♻️ [iCloudSyncCoordinator] LWW Conflict resolved: Remote config is newer, replaced local.")
+                print("ICloudSync_LWW_Remote")
             } else {
                 // Local 比较新，覆盖云端
                 if FileManager.default.fileExists(atPath: remote.path) {
                     try FileManager.default.removeItem(at: remote)
                 }
                 try FileManager.default.copyItem(at: local, to: remote)
-                print("♻️ [iCloudSyncCoordinator] LWW Conflict resolved: Local config is newer, replaced remote.")
+                print("ICloudSync_LWW_Local")
             }
             return true
         } catch {
-            print("❌ [iCloudSyncCoordinator] Failed to resolve json config conflict via LWW: \(error.localizedDescription)")
+            print("ICloudSync_LWW_Failed")
             return false
         }
     }

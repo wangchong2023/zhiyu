@@ -40,7 +40,7 @@ public final class SearchStore {
         let res = await linkService.hybridSearchWithDiagnostics(
             query: query,
             in: await pageStore.pages,
-            embeddingManager: pageStore.embeddingManager
+            embeddingProvider: pageStore.embeddingProvider
         )
 
         lastSearchDiagnostic = res.diagnostic

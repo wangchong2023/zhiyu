@@ -80,7 +80,7 @@ public struct AppTagField: View {
                     .font(.subheadline)
                     .onChange(of: newTag) { _, newValue in
                         // 自动检测空格、逗号或中文逗号进行分词
-                        if newValue.hasSuffix(" ") || newValue.hasSuffix(",") || newValue.hasSuffix("，") {
+                        if newValue.hasSuffix(" ") || newValue.hasSuffix(",") || newValue.hasSuffix(",") {
                             addCurrentTag()
                         }
                     }
@@ -103,7 +103,7 @@ public struct AppTagField: View {
     
     /// 将当前输入的内容添加为标签并清空输入框
     private func addCurrentTag() {
-        let trimmed = newTag.trimmingCharacters(in: .whitespaces.union(.init(charactersIn: ",，")))
+        let trimmed = newTag.trimmingCharacters(in: .whitespaces.union(.init(charactersIn: ",")))
             .replacingOccurrences(of: "#", with: "")
         if !trimmed.isEmpty && !tags.contains(trimmed) {
             withAnimation(.appStandard) {

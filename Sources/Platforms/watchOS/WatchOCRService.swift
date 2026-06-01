@@ -15,7 +15,7 @@ import Foundation
 final class WatchOCRService: OCRServiceProtocol {
 
     /// 识别Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func recognizeText(from image: AppImage) async throws -> String {
         return ""
     }

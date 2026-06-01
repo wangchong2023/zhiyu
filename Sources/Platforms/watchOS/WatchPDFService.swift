@@ -15,40 +15,40 @@ import Foundation
 final class WatchPDFService: PDFServiceProtocol {
 
     /// 保存PDF
-    /// /// - Parameter data: data
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter data: data
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     func savePDF(data: Data, fileName: String) async -> URL? { return nil }
 
     /// 删除PDF
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 是否成功
+    /// - Parameter fileName: fileName
+    /// - Returns: 是否成功
     func deletePDF(fileName: String) async -> Bool { return false }
 
     /// allPDFFilenames
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func allPDFFilenames() async -> [String] { return [] }
 
     /// 获取PDFURL
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     func getPDFURL(fileName: String) -> URL? { return nil }
 
     /// 提取Text
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func extractText(from url: URL) async -> String? { return nil }
 
     /// 提取Text
-    /// /// - Parameter pageRange: pageRange
-    /// /// - Returns: 可选值
+    /// - Parameter pageRange: pageRange
+    /// - Returns: 可选值
     func extractText(from url: URL, pageRange: Range<Int>) async -> String? { return nil }
 
     /// 保存DocumentsInfo
-    /// /// - Parameter docs: docs
+    /// - Parameter docs: docs
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {}
 
     /// 加载DocumentsInfo
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func loadDocumentsInfo() async -> [PDFDocumentInfo] { return [] }
 }
 #endif

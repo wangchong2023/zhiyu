@@ -53,9 +53,9 @@ struct TextChunkerProcessor: Sendable {
      */
 
     /// 拆分
-    /// /// - Parameter text: text
-    /// /// - Parameter config: config
-    /// /// - Returns: 列表
+    /// - Parameter text: text
+    /// - Parameter config: config
+    /// - Returns: 列表
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
         guard !text.isEmpty else { return [] }
         
@@ -159,8 +159,8 @@ struct TextChunkerProcessor: Sendable {
 private extension String {
 
     /// 索引
-    /// /// - Parameter index: 索引
-    /// /// - Returns: 返回值
+    /// - Parameter index: 索引
+    /// - Returns: 返回值
     func index(_ index: String.Index, offsetBy offset: Int, default defaultIndex: String.Index) -> String.Index {
         return self.index(index, offsetBy: offset, limitedBy: self.startIndex) ?? defaultIndex
     }

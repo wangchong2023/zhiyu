@@ -30,13 +30,13 @@ public final class MaintenanceService {
     @discardableResult
 
     /// 生成DemoData
-    /// /// - Returns: 数值
+    /// - Returns: 数值
     public func generateDemoData() async -> Int {
         do {
             let count = try await DemoDataGenerator.generate(in: pageStore)
             return count
         } catch {
-            logger.addLog(action: .error, target: "Demo", details: "Failed to generate demo data: \(error.localizedDescription)", module: "Maintenance")
+            logger.addLog(action: .error, target: "Demo", details: "Maintenance_Failed1", module: "Maintenance")
             return 0
         }
     }

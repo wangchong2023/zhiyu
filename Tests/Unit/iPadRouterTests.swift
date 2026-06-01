@@ -92,9 +92,11 @@ final class iPadRouterTests: XCTestCase {
         ///          2. 重复访问最新页面自动触发去重；
         ///          3. 超限后，最老的历史页面应被安全丢弃。
         
-        // 1. 连续创建并浏览 6 个 Mock 笔记
+        let maxCount = DesignSystem.Metrics.maxBreadcrumbCount
+
+        // 1. 连续创建并浏览超出上限的 Mock 笔记
         var mockPages: [KnowledgePage] = []
-        for i in 1...6 {
+        for i in 1...(maxCount + 1) {
             let page = KnowledgePage(
                 id: UUID(),
                 title: "Mock笔记-\(i)",
@@ -109,13 +111,13 @@ final class iPadRouterTests: XCTestCase {
         }
         
         // 2. 验证大屏面包屑上限拦截
-        XCTAssertEqual(router.navigationHistory.count, 5, "大屏面包屑导航历史数量必须被拦截在上限 5 个以内")
+        XCTAssertEqual(router.navigationHistory.count, maxCount, "大屏面包屑导航历史数量必须被拦截在上限 \(maxCount) 个以内")
         XCTAssertEqual(router.navigationHistory.first?.title, "Mock笔记-2", "超限后，最先被添加的『Mock笔记-1』应该已经被剔除")
-        XCTAssertEqual(router.navigationHistory.last?.title, "Mock笔记-6", "大屏面包屑末尾应该精确呈现最新浏览的『Mock笔记-6』")
+        XCTAssertEqual(router.navigationHistory.last?.title, "Mock笔记-\(maxCount + 1)", "大屏面包屑末尾应该精确呈现最新浏览的『Mock笔记-\(maxCount + 1)』")
         
         // 3. 验证大屏浏览相同笔记时的重复去重机制
-        router.addToHistory(mockPages[5]) // 再次加入 Mock笔记-6
-        XCTAssertEqual(router.navigationHistory.count, 5, "浏览当前已处于栈顶的笔记时不应产生历史冗余")
+        router.addToHistory(mockPages[maxCount]) // 再次加入最新的笔记
+        XCTAssertEqual(router.navigationHistory.count, maxCount, "浏览当前已处于栈顶的笔记时不应产生历史冗余")
     }
     
     func testRouterDeepLinkNavigateAndStackPop() async {

@@ -47,7 +47,7 @@ public final class AIInsightStore {
     public var growthSeries: [AppStore.KnowledgeGrowthPoint] = []
 
     @ObservationIgnored @Inject private var insightService: KnowledgeInsightService
-    @ObservationIgnored @Inject private var llmService: LLMService
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
 
@@ -97,7 +97,7 @@ public final class AIInsightStore {
     // MARK: - 周报业务
 
     /// 生成WeeklyInsight
-    /// /// - Parameter forceRefresh: force刷新
+    /// - Parameter forceRefresh: force刷新
     func generateWeeklyInsight(forceRefresh: Bool = false) async {
         let pages = await pageStore.pages
         do {
@@ -109,7 +109,7 @@ public final class AIInsightStore {
     }
 
     /// 生成DailyRecap
-    /// /// - Parameter forceRefresh: force刷新
+    /// - Parameter forceRefresh: force刷新
     func generateDailyRecap(forceRefresh: Bool = false) async {
         isGeneratingDailyRecap = true
         defer { isGeneratingDailyRecap = false }

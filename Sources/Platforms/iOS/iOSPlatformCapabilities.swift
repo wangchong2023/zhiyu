@@ -20,17 +20,17 @@ struct iOSBiometricAuthProvider: BiometricAuthProviderProtocol {
     var authenticationPolicy: LAPolicy { .deviceOwnerAuthenticationWithBiometrics }
     
     /// can评估Policy
-    /// /// - Parameter context: context
-    /// /// - Returns: 是否成功
+    /// - Parameter context: context
+    /// - Returns: 是否成功
     func canEvaluatePolicy(context: LAContext) -> Bool {
         var error: NSError?
         return context.canEvaluatePolicy(authenticationPolicy, error: &error)
     }
     
     /// 评估Policy
-    /// /// - Parameter context: context
-    /// /// - Parameter reason: reason
-    /// /// - Returns: 是否成功
+    /// - Parameter context: context
+    /// - Parameter reason: reason
+    /// - Returns: 是否成功
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool {
         return await withCheckedContinuation { continuation in
             context.evaluatePolicy(authenticationPolicy, localizedReason: reason) { success, _ in
@@ -47,7 +47,7 @@ struct CoreMLModelCompiler: MLModelCompilerProtocol {
     var supportsCompilation: Bool { true }
     
     /// 编译Model
-    /// /// - Returns: 链接
+    /// - Returns: 链接
     func compileModel(at url: URL) async throws -> URL {
         return try await MLModel.compileModel(at: url)
     }
@@ -64,7 +64,7 @@ struct iOSSecurityScopedStorage: SecurityScopedStorageProtocol {
     }
     
     /// 恢复URL
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func restoreURL(from data: Data) -> URL? {
         return nil
     }

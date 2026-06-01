@@ -73,7 +73,7 @@ struct MermaidWebView: View {
             Image(systemName: DesignSystem.Icons.chartBarDoc)
                 .font(.largeTitle)
             Text(L10n.AI.Synthesis.Mindmap.renderError)
-            Text("Mermaid diagrams are not supported on this platform.")
+            Text(L10n.Common.demo)
                 .font(.caption)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -137,8 +137,8 @@ struct MermaidWKWebView: UIViewRepresentable {
     @Binding var webView: WKWebView?
     
     /// 创建UIView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.isOpaque = false
@@ -153,8 +153,8 @@ struct MermaidWKWebView: UIViewRepresentable {
     }
     
     /// 更新UIView
-    /// /// - Parameter uiView: uiView
-    /// /// - Parameter context: context
+    /// - Parameter uiView: uiView
+    /// - Parameter context: context
     func updateUIView(_ uiView: WKWebView, context: Context) {
         uiView.loadHTMLString(generateHTML(), baseURL: nil)
     }
@@ -215,15 +215,15 @@ struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
 
     /// 创建UIViewController
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeUIViewController(context: Context) -> UIActivityViewController {
         UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     }
 
     /// 更新UIViewController
-    /// /// - Parameter uiViewController: uiViewController
-    /// /// - Parameter context: context
+    /// - Parameter uiViewController: uiViewController
+    /// - Parameter context: context
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
@@ -233,8 +233,8 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
     @Binding var webView: WKWebView?
     
     /// 创建NSView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.setValue(false, forKey: "drawsBackground")
@@ -245,8 +245,8 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
     }
     
     /// 更新NSView
-    /// /// - Parameter nsView: nsView
-    /// /// - Parameter context: context
+    /// - Parameter nsView: nsView
+    /// - Parameter context: context
     func updateNSView(_ nsView: WKWebView, context: Context) {
         nsView.loadHTMLString(generateHTML(), baseURL: nil)
     }

@@ -29,7 +29,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
     public override init() {}
     
     /// acquireCredentials
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     public func acquireCredentials() async throws -> AuthCredential {
         return try await withCheckedThrowingContinuation { continuation in
             let state = UUID().uuidString
@@ -94,7 +94,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
 extension GitHubAuthStrategy: ASWebAuthenticationPresentationContextProviding {
 
     /// presentationAnchor
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         let activeScene = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }

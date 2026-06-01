@@ -200,8 +200,8 @@ final class VaultDataIsolationTests: XCTestCase {
         do {
             let queue = try DatabaseQueue(path: url.path)
             return try queue.read { db in
-                if try db.tableExists("pages") {
-                    return try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM pages") ?? 0
+                if try db.tableExists(AppConstants.Storage.Tables.pages) {
+                    return try Table(AppConstants.Storage.Tables.pages).fetchCount(db)
                 }
                 return 0
             }
@@ -246,12 +246,11 @@ final class VaultDataIsolationTests: XCTestCase {
         // 2. 调用演示数据生成器
         print("🎬 调用 DemoDataGenerator 注入演示数据")
         let generatedCount = try await DemoDataGenerator.generate(in: store)
-        XCTAssertEqual(generatedCount, 5, "演示数据生成器应当报告成功生成了 5 个页面")
-        
+        XCTAssertEqual(generatedCount, AppConstants.Demo.defaultPageCount, "演示数据生成器应当报告成功生成了 \(AppConstants.Demo.defaultPageCount) 个页面")
+
         // 3. 验证生成后的数据状态
         let finalPages = try await store.fetchAllPages()
-        XCTAssertEqual(finalPages.count, 5, "注入演示数据后，应该有且仅有 5 个演示页面（原有页面被清理）")
-        
+        XCTAssertEqual(finalPages.count, AppConstants.Demo.defaultPageCount, "注入演示数据后，应该有且仅有 \(AppConstants.Demo.defaultPageCount) 个演示页面（原有页面被清理）")
         // 确保旧页面被清理了
         let hasOldPage = finalPages.contains(where: { $0.title == oldPageTitle })
         XCTAssertFalse(hasOldPage, "原有旧页面应该在注入演示数据时被成功清理")

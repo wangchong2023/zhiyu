@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "Knowledge"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public static var title: String { tr("quiz.title") }
@@ -34,16 +34,16 @@ extension L10n {
         public static var explanation: String { tr("quiz.explanation") }
 
         /// question格式化
-        /// /// - Parameter current: current
-        /// /// - Parameter total: total
-        /// /// - Returns: 字符串
+        /// - Parameter current: current
+        /// - Parameter total: total
+        /// - Returns: 字符串
         public static func questionFormat(_ current: Int, _ total: Int) -> String {
             trf("quiz.questionFormat", current, total)
         }
 
         /// score格式化
-        /// /// - Parameter score: score
-        /// /// - Returns: 字符串
+        /// - Parameter score: score
+        /// - Returns: 字符串
         public static func scoreFormat(_ score: Int) -> String {
             trf("quiz.scoreFormat", score)
         }

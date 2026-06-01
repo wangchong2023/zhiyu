@@ -32,8 +32,8 @@ final class LLMContextBuilder: Sendable {
 
     // MARK: - System Prompt
     /// 构建SystemPrompt
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 字符串
+    /// - Parameter pages: pages
+    /// - Returns: 字符串
     func buildSystemPrompt(pages: [any KnowledgePageRepresentable]) -> String {
         var prompt = """
         \(L10n.AI.LLM.Prompt.role)
@@ -91,10 +91,10 @@ final class LLMContextBuilder: Sendable {
     /// 使用多路召回 (Multi-Query) 和向量搜索获取高度相关的知识片段。
     /// - Returns: (格式化后的 Prompt 字符串, 提取出的信源数据对象列表)
     func buildRelevantContext(query: String) async -> (context: String, sources: [KnowledgeSource]) {
-        let embeddingManager = ServiceContainer.shared.resolve(EmbeddingManager.self)
+        let embeddingProvider = ServiceContainer.shared.resolve((any EmbeddingProvider).self)
 
         // 1. 执行多路召回
-        let searchResults = await embeddingManager.multiQuerySearch(query: query, topK: AppConfig.AI.topKResults)
+        let searchResults = await embeddingProvider.multiQuerySearch(query: query, topK: AppConfig.AI.topKResults)
 
         guard !searchResults.isEmpty else {
             return ("\(L10n.AI.LLM.Prompt.relevantPages)\n\(L10n.Common.Global.noData)\n", [])
@@ -153,10 +153,10 @@ final class LLMContextBuilder: Sendable {
 
     // MARK: - Ingest Prompt Builder
     /// 构建导入摄取Prompt
-    /// /// - Parameter title: title
-    /// /// - Parameter rawContent: rawContent
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 字符串
+    /// - Parameter title: title
+    /// - Parameter rawContent: rawContent
+    /// - Parameter pages: pages
+    /// - Returns: 字符串
     func buildIngestPrompt(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) -> String {
         let existingTitles = pages.map(\.title).joined(separator: ", ")
 
@@ -198,8 +198,8 @@ final class LLMContextBuilder: Sendable {
 
     // MARK: - Query Rewrite Builder
     /// 构建RewritePrompt
-    /// /// - Parameter query: query
-    /// /// - Returns: 字符串
+    /// - Parameter query: query
+    /// - Returns: 字符串
     func buildRewritePrompt(query: String) -> String {
         """
         \(L10n.AI.Prompt.QueryRewrite.instruction)
@@ -227,14 +227,14 @@ final class ChatHistoryStore: ObservableObject {
     }
 
     /// 追加
-    /// /// - Parameter message: message
+    /// - Parameter message: message
     func append(_ message: ChatMessageDTO) {
         messages.append(message)
         persistToDisk()
     }
 
     /// 追加Batch
-    /// /// - Parameter newMessages: newMessages
+    /// - Parameter newMessages: newMessages
     func appendBatch(_ newMessages: [ChatMessageDTO]) {
         messages.append(contentsOf: newMessages)
         persistToDisk()

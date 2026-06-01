@@ -68,15 +68,15 @@ class TooltipManager: ObservableObject {
     }
 
     /// markShown
-    /// /// - Parameter tooltip: tooltip
+    /// - Parameter tooltip: tooltip
     func markShown(_ tooltip: TooltipType) {
         shownTooltips.insert(tooltip.rawValue)
         defaults.set(Array(shownTooltips), forKey: shownKey)
     }
 
     /// isShown
-    /// /// - Parameter tooltip: tooltip
-    /// /// - Returns: 是否成功
+    /// - Parameter tooltip: tooltip
+    /// - Returns: 是否成功
     func isShown(_ tooltip: TooltipType) -> Bool {
         shownTooltips.contains(tooltip.rawValue)
     }

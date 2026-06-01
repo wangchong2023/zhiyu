@@ -94,11 +94,11 @@ final class PluginWatchdogTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         registry = PluginRegistry.shared
-        registry.reset() // 重置为初始空白状态
+        await registry.reset() // 重置为初始空白状态
     }
     
     override func tearDown() async throws {
-        registry.reset()
+        await registry.reset()
         registry = nil
         try await super.tearDown()
     }

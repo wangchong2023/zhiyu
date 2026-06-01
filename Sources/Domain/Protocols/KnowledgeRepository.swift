@@ -19,30 +19,30 @@ public protocol KnowledgeRepository: Sendable {
     func fetchAll() async throws -> [KnowledgePage]
 
     /// 拉取
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func fetch(id: UUID) async throws -> KnowledgePage?
 
     /// 保存
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     func save(_ page: KnowledgePage) async throws
 
     /// 删除
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func delete(id: UUID) async throws
 
     /// 搜索
-    /// /// - Parameter query: query
+    /// - Parameter query: query
     func search(query: String) async throws -> [KnowledgePage]
 
     /// 拉取Backlinks
     func fetchBacklinks(for id: UUID) async throws -> [UUID]
 
     /// 重命名Tag
-    /// /// - Parameter old: old
+    /// - Parameter old: old
     func renameTag(old: String, to new: String) async throws
 
     /// 删除Tag
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     func deleteTag(_ tag: String) async throws
 
     /// 计数

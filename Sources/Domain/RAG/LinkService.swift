@@ -56,16 +56,16 @@ actor LinkService {
      */
 
     /// pageByID
-    /// /// - Parameter id: id
-    /// /// - Returns: 可选值
+    /// - Parameter id: id
+    /// - Returns: 可选值
     func pageByID(_ id: UUID, in pages: [KnowledgePage]) -> KnowledgePage? {
         pages.first { $0.id == id }
     }
 
     // MARK: - Search
     /// 搜索
-    /// /// - Parameter query: query
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Returns: 列表
     func search(query: String, in pages: [KnowledgePage]) -> [KnowledgePage] {
         guard !query.isEmpty else { return pages }
         let q = query.lowercased()
@@ -103,9 +103,9 @@ actor LinkService {
     }
 
     /// 混合检索（带诊断信息版）
-    func hybridSearchWithDiagnostics(query: String, in pages: [KnowledgePage], embeddingManager: EmbeddingManager) async -> SearchResult {
+    func hybridSearchWithDiagnostics(query: String, in pages: [KnowledgePage], embeddingProvider: any EmbeddingProvider) async -> SearchResult {
         let keywordResults = search(query: query, in: pages)
-        let semanticScored = await embeddingManager.search(query: query)
+        let semanticScored = await embeddingProvider.search(query: query, topK: 50)
 
         // 动态门槛：对于短查询，语义门槛要极高，否则噪音太大
         let similarityThreshold: Float = query.count < BusinessConstants.RAG.shortQueryThreshold 
@@ -205,7 +205,7 @@ actor LinkService {
      */
 
     /// allTags
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func allTags(in pages: [KnowledgePage]) -> [(tag: String, count: Int)] {
         var tagCount: [String: Int] = [:]
         for page in pages {
@@ -231,8 +231,8 @@ actor LinkService {
      */
 
     /// 准备重命名
-    /// /// - Parameter page: page
-    /// /// - Returns: 列表
+    /// - Parameter page: page
+    /// - Returns: 列表
     func prepareRename(page: KnowledgePage, to newTitle: String, in allPages: [KnowledgePage]) -> [KnowledgePage] {
         let oldTitle = page.title
         var modifiedPages: [KnowledgePage] = []

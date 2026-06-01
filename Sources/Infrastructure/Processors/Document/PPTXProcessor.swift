@@ -21,9 +21,9 @@ final class PPTXProcessor {
     }
 
     /// 生成
-    /// /// - Parameter markdown: markdown
-    /// /// - Parameter title: title
-    /// /// - Returns: 链接
+    /// - Parameter markdown: markdown
+    /// - Parameter title: title
+    /// - Returns: 链接
     func generate(markdown: String, title: String) async throws -> URL {
         let slides = parseMarkdown(markdown)
         let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
