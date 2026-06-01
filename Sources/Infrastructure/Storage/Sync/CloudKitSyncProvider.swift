@@ -27,6 +27,8 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         self.database = container.privateCloudDatabase
     }
     
+    /// 检查Availability
+    /// /// - Returns: 是否成功
     public func checkAvailability() async -> Bool {
         do {
             let status = try await container.accountStatus()
@@ -36,6 +38,9 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         }
     }
     
+    /// 推送
+    /// /// - Parameter pages: pages
+    /// /// - Parameter logs: logs
     public func push(pages: [KnowledgePage], logs: [LogEntry]) async throws {
         try await ensureZoneExists()
         
@@ -59,6 +64,8 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         _ = try await database.save(record)
     }
     
+    /// 拉取
+    /// /// - Returns: 返回值
     public func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
         try await ensureZoneExists()
         
@@ -77,6 +84,7 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         return (pages, logs, lastModified)
     }
     
+    /// 配置静默推送，注册 CloudKit 的数据库变更订阅，以便系统后台唤醒更新。
     public func subscribeToChanges() async throws {
         let subscription = CKDatabaseSubscription(subscriptionID: "knowledge-management_all_changes")
         let notificationInfo = CKSubscription.NotificationInfo()
@@ -100,3 +108,6 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
 
 extension CloudKitSyncProvider: @unchecked Sendable {}
 #endif
+ion CloudKitSyncProvider: @unchecked Sendable {}
+#endif
+f

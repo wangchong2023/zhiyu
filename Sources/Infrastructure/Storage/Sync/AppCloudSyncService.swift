@@ -53,6 +53,7 @@ public final class iCloudSyncService: ObservableObject {
 
     // MARK: - iCloud 状态监控
     
+    /// checkiCloudStatus
     public func checkiCloudStatus() {
         Task {
             self.iCloudAvailable = await provider.checkAvailability()
@@ -61,6 +62,9 @@ public final class iCloudSyncService: ObservableObject {
 
     // MARK: - 核心同步 API (委托模式)
     
+    /// 推送ToCloud
+    /// /// - Parameter pages: pages
+    /// /// - Parameter logEntries: 记录日志Entries
     public func pushToCloud(pages: [KnowledgePage], logEntries: [LogEntry]) async throws {
         self.syncStatus = .syncing
         do {
@@ -73,6 +77,8 @@ public final class iCloudSyncService: ObservableObject {
         }
     }
 
+    /// 从云端强制拉取最新数据。
+    /// - Returns: 包含云端页面和日志的元组。
     public func pullFromCloud() async throws -> ([KnowledgePage], [LogEntry]) {
         self.syncStatus = .syncing
         do {
@@ -86,6 +92,10 @@ public final class iCloudSyncService: ObservableObject {
         }
     }
 
+    /// 同步
+    /// /// - Parameter localPages: localPages
+    /// /// - Parameter localLogs: localLogs
+    /// /// - Returns: 返回值
     public func sync(localPages: [KnowledgePage], localLogs: [LogEntry]) async throws -> ([KnowledgePage], [LogEntry]) {
         self.syncStatus = .syncing
         
@@ -137,10 +147,13 @@ public final class iCloudSyncService: ObservableObject {
         }
     }
 
+    /// 订阅ToRemoteChanges
     public func subscribeToRemoteChanges() async throws {
         try await provider.subscribeToChanges()
     }
 
+    /// 在后台主动抓取并拉取云端的更新。
+    /// - Returns: 云端最新的数据集元组。
     public func fetchRemoteChanges() async throws -> ([KnowledgePage], [LogEntry]) {
         return try await pullFromCloud()
     }
@@ -148,5 +161,16 @@ public final class iCloudSyncService: ObservableObject {
 
 @MainActor
 extension iCloudSyncService: @unchecked Sendable {}
+#endif // ICLOUD_ENABLED
+
+cked Sendable {}
+#endif // ICLOUD_ENABLED
+
+LED
+
+e: @unchecked Sendable {}
+#endif // ICLOUD_ENABLED
+
+cked Sendable {}
 #endif // ICLOUD_ENABLED
 

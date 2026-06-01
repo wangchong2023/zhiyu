@@ -21,6 +21,8 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
 
     // MARK: - CRUD
 
+    /// 拉取AllInstalled
+    /// /// - Returns: 列表
     func fetchAllInstalled() async throws -> [PluginRecord] {
         try await dbWriter.read { db in
             try PluginRecord
@@ -29,6 +31,9 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
         }
     }
 
+    /// 拉取
+    /// /// - Parameter id: id
+    /// /// - Returns: 可选值
     func fetch(id: String) async throws -> PluginRecord? {
         try await dbWriter.read { db in
             try PluginRecord
@@ -37,6 +42,9 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
         }
     }
 
+    /// 保存或更新插件记录。
+    /// 如果记录不存在则插入，存在则更新（UPSERT 语义）。
+    /// - Parameter record: 待保存的插件记录。
     func save(_ record: PluginRecord) async throws {
         try await dbWriter.write { db in
             // upsert：存在则更新，不存在则插入
@@ -65,6 +73,8 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
         }
     }
 
+    /// 删除
+    /// /// - Parameter id: id
     func delete(id: String) async throws {
         try await dbWriter.write { db in
             try PluginRecord
@@ -80,6 +90,9 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
 
     // MARK: - 搜索
 
+    /// 搜索
+    /// /// - Parameter query: query
+    /// /// - Returns: 列表
     func search(query: String) async throws -> [PluginRecord] {
         try await dbWriter.read { db in
             // FTS5 全文搜索
@@ -111,6 +124,7 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
 
     // MARK: - 统计更新
 
+    /// 更新插件的运行时统计信息（如加载时间、执行时间等）。
     func updateStats(id: String, loadDuration: Double?, unloadDuration: Double?,
                      totalExecutionTime: Double?, callCount: Int?, status: String?) async throws {
         try await dbWriter.write { db in
@@ -132,6 +146,7 @@ final class SQLitePluginRepository: PluginRepository, @unchecked Sendable {
         }
     }
 
+    /// 清空所有插件记录及其相关的全文索引。
     func deleteAll() async throws {
         try await dbWriter.write { db in
             try PluginRecord.deleteAll(db)
