@@ -429,8 +429,7 @@ stateDiagram-v2
 *   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 6 章中，补充 WAL 离线同步期间 HMAC 动态签名的详细算法流程。
 
 ### 12.3 信号量同步阻塞消除时序 (异步 `switchDatabase`/`setup`)
-*   **物理实现状态**：🔴 **待重构**。目前在 `DatabaseManager.swift` 的 `setup()` 与主线程切换数据库时，使用了信号量 `semaphore.wait(timeout:)` 强行将异步线程的操作转为同步以保障连接池切换。该设计在低配或单核设备上容易与 GCD 线程池产生优先级反转从而引发主线程死锁。
-*   **后续设计设计**：需彻底移除信号量，将 `switchDatabase` 与 `setup` 方法签名重构为 `async throws`。SwiftUI 视图层通过 `.task(id: activeVaultID)` 挂载异步环境，在挂载期间呈现 Pulse 脉冲等待指示器，完全过渡到非阻塞式结构化并发。
+*   **物理实现状态**：🟢 **已完成物理重构**。`DatabaseManager.swift` 中已彻底移除所有 `semaphore.wait()` 机制。通过 Swift Structured Concurrency，`switchDatabase` 与热切换均已重构为纯 `async throws`。使用 `Task.sleep` 优雅异步排空活跃连接池事务，完全消除了主线程死锁隐患。
 
 ### 12.4 DI 容器的 Actor 隔离与并发安全
 *   **物理实现状态**：🟢 **已完成物理重构**。`ServiceContainer` 已引入 `os_unfair_lock` 自旋锁防护，确保在解析（`resolve`）和注册（`register`）时的线程安全性，有效规避 ABA 竞态覆写风险。

@@ -33,9 +33,8 @@
 - **L2 业务功能层**: 垂直切片边界清晰，通过 DI 容器实现松耦合。
 
 ## 5. 剩余技术债务 (Technical Debt)
-1. **信号量异步化**: `DatabaseManager` 中仍存在 `semaphore.wait` 同步阻塞风险，需全面迁移至 `async/await`。
-2. **watchOS 功能补齐**: 手表端目前的语音处理与简报功能仍为存根状态。
-3. **L10n 闭环**: `.xcstrings` 目录中仍缺少部分 `settings.ondevice.*` 键值映射。
+1. **watchOS 功能补齐**: 手表端目前的语音处理与简报功能仍为存根状态。
+2. **L10n 闭环**: `.xcstrings` 目录中仍缺少部分 `settings.ondevice.*` 键值映射。
 
 ## 6. 验证结论
 **结论**: 智宇 (ZhiYu) 工程目前已达到 **准生产级 (Production-Ready)** 质量。代码库架构稳健、逻辑清晰、安全加固到位，具备极高的长期可维护性。
