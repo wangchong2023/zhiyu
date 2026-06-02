@@ -20,6 +20,14 @@ struct AppWatchApp: App {
 
     var body: some Scene {
         WindowGroup {
-            WatchKnowledgeStatsView()        }
+            TabView {
+                WatchDictationView()
+                    .environmentObject(ServiceContainer.shared.resolve(WatchSyncProtocol.self))
+                WatchKnowledgeStatsView()
+                WatchBriefingView()
+                    .environmentObject(ServiceContainer.shared.resolve(WatchSyncProtocol.self))
+            }
+            .tabViewStyle(.verticalPage)
+        }
     }
 }

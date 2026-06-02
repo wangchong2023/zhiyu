@@ -13,8 +13,17 @@ import Combine
 
 final class StubWatchSyncService: NSObject, WatchSyncProtocol {
     @Published var lastReceivedText: String = ""
+    @Published var latestBriefing: String? = nil
+    @Published var isBriefingLoading: Bool = false
 
     /// 发送Content
     /// - Parameter text: text
     func sendContent(_ text: String) {}
+    
+    /// 请求DailyBriefing
+    func requestDailyBriefing() {}
+
+    /// 处理BriefingResponse
+    /// /// - Parameter text: text
+    func handleBriefingResponse(_ text: String) {}
 }

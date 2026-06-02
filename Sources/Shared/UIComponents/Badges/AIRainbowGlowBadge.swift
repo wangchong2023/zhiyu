@@ -113,7 +113,7 @@ public struct AIRainbowGlowBadge: View {
                     .foregroundStyle(mainColor)
             }
         }
-        .padding(6)
+        .padding(DesignSystem.atomic * 1.5)
         .contentShape(Circle())
     }
     
@@ -200,7 +200,7 @@ public struct AIRainbowGlowBadge: View {
                     .font(.caption.monospaced())
                     .foregroundStyle(.appSecondary)
             }
-            .padding(8)
+            .padding(DesignSystem.tiny)
             .background(Color.green.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 6))
             

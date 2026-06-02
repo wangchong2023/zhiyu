@@ -97,7 +97,7 @@ public struct AppErrorView: View {
                 .padding(.top, 8)
             }
         }
-        .padding(32)
+        .padding(DesignSystem.loosePadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.clear)
     }

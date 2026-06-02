@@ -14,6 +14,9 @@ extension L10n {
     public enum Platform {
         public static let t = "Platform"
 
+        /// 本地化翻译
+        /// /// - Parameter key: key
+        /// /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         public enum Unsupported {

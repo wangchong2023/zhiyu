@@ -20,6 +20,11 @@ extension L10n {
             /// - Parameter args: args
             /// - Returns: 返回值
             public static func tr(_ key: String) -> String { Localized.tr(key, table: Transfer.t) }
+
+            /// 本地化格式化翻译
+            /// /// - Parameter key: key
+            /// /// - Parameter args: args
+            /// /// - Returns: 返回值
             public static func trf(_ key: String, _ args: CVarArg...) -> String {
                 Localized.trf(key, table: Transfer.t, arguments: args)
             }
