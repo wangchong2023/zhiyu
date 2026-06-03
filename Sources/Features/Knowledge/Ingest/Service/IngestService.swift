@@ -53,15 +53,19 @@ actor IngestService {
         // --- RAG 摄入管道集成 ---
         let processedContent: String
         if forceDeepScan || llmService != nil {
-            // 核心重构：利用协议能力，避免显式类型转换
             if let vectorStore = pageStore as? any VectorIndexableStore {
                 let provider = await MainActor.run { vectorStore.embeddingProvider }
-                processedContent = await KnowledgeIngestPipeline.shared.process(
-                    content: sanitizedRawContent,
-                    pageID: pageID,
-                    llm: llmService,
-                    embeddingProvider: provider
-                )
+                do {
+                    processedContent = try await KnowledgeIngestPipeline.shared.process(
+                        content: sanitizedRawContent,
+                        pageID: pageID,
+                        llm: llmService,
+                        embeddingProvider: provider
+                    )
+                } catch {
+                    Logger.shared.debug(" [IngestService]" + " RAG pipeline" + " aborted or" + " cancelled: \(error)")
+                    processedContent = sanitizedRawContent
+                }
             } else {
                 // fallback: 如果 Store 不支持向量，则仅保留内容
                 processedContent = sanitizedRawContent
@@ -178,7 +182,7 @@ actor IngestService {
         let extractedTitle = title ?? url.deletingPathExtension().lastPathComponent
 
         guard docExtractor.canExtract(format: format) else {
-            print("Unsupported or unknown document format: \(url.pathExtension)")
+            print("Unsupported or" + " unknown document" + " format: \(url.pathExtension)")
             return nil
         }
 
@@ -187,7 +191,7 @@ actor IngestService {
             if text.isEmpty { return nil }
             return await ingestRawContent(title: extractedTitle, content: text, type: type, forceDeepScan: true, pageStore: pageStore)
         } catch {
-            print("Failed to extract text from document \(url.path): \(error)")
+            print("Failed to" + " extract text" + " from document" + " \(url.path):" + " \(error)")
             return nil
         }
     }
@@ -209,7 +213,7 @@ actor IngestService {
             includingPropertiesForKeys: [.isRegularFileKey],
             options: [.skipsHiddenFiles]
         ) else {
-            print("Failed to enumerate folder: \(url.path)")
+            print("Failed to" + " enumerate folder:" + " \(url.path)")
             return []
         }
 
@@ -255,7 +259,7 @@ actor IngestService {
                 // 更新任务中心与灵动岛
                 let progress = Double(currentIndex) / Double(totalCount)
                 let status = L10n.AI.Status.indexing(currentIndex, totalCount, filename)
-                await TaskCenter.shared.updateTask(taskID, status: .running(progress: progress, stage: .general))
+                await TaskCenter.shared.updateTask(taskID, status: .running(progress: progress, stage: .extraction))
                 await TaskCenter.shared.updateLatestStatus(status)
             }
             

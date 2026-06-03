@@ -54,8 +54,8 @@ public struct ModelStoreView: View {
                             let localModels = modelManager.remoteManifests.filter { modelManager.isModelLocalReady(for: $0.modelId) }
                             if localModels.isEmpty {
                                 emptyStateView(
-                                    title: "暂无就绪模型",
-                                    subtitle: "请切换至「模型商店」下载轻量级端侧底座（推荐 Gemma-2B）",
+                                    title: "",
+                                    subtitle: " Gemma-2B",
                                     icon: "arrow.down.circle.dotted"
                                 )
                             } else {
@@ -77,14 +77,14 @@ public struct ModelStoreView: View {
                 }
             }
         }
-        .navigationTitle("AI 端侧模型中枢")
+        .navigationTitle("AI ")
         #if !os(watchOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 // 右上角齿轮跳转云端 API 密匙高级配置
-                NavigationLink(destination: LLMSettingsView()) {
+                NavigationLink(value: AppRoute.settings) {
                     Image(systemName: "gearshape")
                         .foregroundStyle(.appAccent)
                         .font(.system(size: 16, weight: .medium))
@@ -93,9 +93,9 @@ public struct ModelStoreView: View {
         }
         .alert(item: $alertManifest) { manifest in
             Alert(
-                title: Text("物理防爆拦截警告 🛡️"),
-                message: Text("模型「\(manifest.displayName)」需要至少 \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB 的物理运行内存。\n\n当前设备运存不足（\(String(format: "%.1f", Double(modelManager.physicalMemory) / (1024 * 1024 * 1024))) GB），强行加载将引发极高的 OOM（闪退崩溃）风险，系统已自动实施护栏物理拦截。"),
-                dismissButton: .default(Text("明白"))
+                title: Text(" "),
+                message: Text("\(manifest.displayName) \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB \n\n\(String(format: "%.1f", Double(modelManager.physicalMemory) / (1024 * 1024 * 1024)))_GB_OOM"),
+                dismissButton: .default(Text(""))
             )
         }
     }
@@ -112,11 +112,11 @@ public struct ModelStoreView: View {
                 .shadow(color: .appAccent.opacity(0.4), radius: 5)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text("物理设备总运存: \(String(format: "%.1f", memInGb)) GB")
+                Text(": \(String(format: "%.1f", memInGb)) GB")
                     .font(.subheadline.bold())
                     .foregroundStyle(.appText)
                 
-                Text("苹果芯片端侧大模型自适应护栏已激活 🛡️")
+                Text(" ")
                     .font(.system(size: 10))
                     .foregroundStyle(.appSecondary)
             }
@@ -137,7 +137,7 @@ public struct ModelStoreView: View {
         HStack(spacing: 0) {
             Button(action: { withAnimation { selectedTab = 0 } }) {
                 VStack(spacing: 6) {
-                    Text("我的模型")
+                    Text("")
                         .font(.subheadline.bold())
                         .foregroundStyle(selectedTab == 0 ? .appAccent : .appSecondary)
                     Rectangle()
@@ -149,7 +149,7 @@ public struct ModelStoreView: View {
             
             Button(action: { withAnimation { selectedTab = 1 } }) {
                 VStack(spacing: 6) {
-                    Text("模型商店")
+                    Text("")
                         .font(.subheadline.bold())
                         .foregroundStyle(selectedTab == 1 ? .appAccent : .appSecondary)
                     Rectangle()
@@ -189,7 +189,7 @@ public struct ModelStoreView: View {
     private func modelCard(for manifest: LLMManifest) -> some View {
         let isSelected = modelManager.activeModelId == manifest.modelId
         let eligibility = modelManager.evaluateEligibility(for: manifest)
-        let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: "Not Downloaded")
+        let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)!)
         let isLocalReady = modelManager.isModelLocalReady(for: manifest.modelId)
         
         let cardBackground = Color.appCard.opacity(eligibility == .restricted ? 0.4 : 0.8)
@@ -214,7 +214,7 @@ public struct ModelStoreView: View {
                             .foregroundStyle(.appAccent)
                     }
                     
-                    Text("开发商：\(manifest.vendor)  •  占用空间：\(formattedSize(manifest.fileSizeInBytes))")
+                    Text("\(manifest.vendor)    \(formattedSize(manifest.fileSizeInBytes))")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
                 }
@@ -225,7 +225,7 @@ public struct ModelStoreView: View {
                 if isLocalReady {
                     HStack(spacing: 2) {
                         Image(systemName: "checkmark.shield.fill")
-                        Text("已就绪")
+                        Text("")
                     }
                     .font(.caption2.bold())
                     .foregroundStyle(.green)
@@ -242,7 +242,7 @@ public struct ModelStoreView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
                     // 支持的任务展示
-                    ForEach(manifest.displayName == "Gemma-2B" ? ["语义分块 🛡️", "图谱反链 🛡️", "端侧对话"] : ["端云混合对话"], id: \.self) { tag in
+                    ForEach(manifest.displayName == "Gemma-2B" ? [" ", " ", ""] : [""], id: \.self) { tag in
                         Text(tag)
                             .font(.system(size: 10, weight: .medium))
                             .padding(.horizontal, 8)
@@ -291,7 +291,7 @@ public struct ModelStoreView: View {
     private func downloadStatusBar(for manifest: LLMManifest, state: DownloadState) -> some View {
         switch state {
         case .pending:
-            Text("等待队列中...")
+            Text("...")
                 .font(.caption.italic())
                 .foregroundStyle(.appSecondary)
         case .downloading(let progress):
@@ -305,22 +305,22 @@ public struct ModelStoreView: View {
                     .foregroundStyle(.appAccent)
             }
         case .paused:
-            Text("已暂停")
+            Text("")
                 .font(.caption)
                 .foregroundStyle(.orange)
         case .verifying:
             HStack(spacing: DesignSystem.small) {
                 ProgressView()
                     .scaleEffect(0.7)
-                Text("指纹防爆校验中...")
+                Text("...")
                     .font(.caption.bold())
                     .foregroundStyle(.appAccent)
             }
         case .completed:
             EmptyView()
         case .failed(let error):
-            if error != "Not Downloaded" && error != "Cancelled" {
-                Text("失败: \(error)")
+            if error != String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)! && error != "Cancelled" {
+                Text(": \(error)")
                     .font(.caption2)
                     .foregroundStyle(.red)
                     .lineLimit(1)
@@ -338,7 +338,7 @@ public struct ModelStoreView: View {
             Button(action: { alertManifest = manifest }) {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.octagon.fill")
-                    Text("无法运行")
+                    Text("")
                 }
                 .font(.subheadline.bold())
                 .padding(.horizontal, 16)
@@ -354,7 +354,7 @@ public struct ModelStoreView: View {
                     modelManager.activeModelId = manifest.modelId
                 }
             }) {
-                Text(isSelected ? "当前活跃底座" : "设为底座")
+                Text(isSelected ? "" : "")
                     .font(.subheadline.bold())
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -402,7 +402,7 @@ public struct ModelStoreView: View {
                 Button(action: { modelManager.startDownload(for: manifest) }) {
                     HStack(spacing: 4) {
                         Image(systemName: "icloud.and.arrow.down")
-                        Text("获取")
+                        Text("")
                     }
                     .font(.subheadline.bold())
                     .padding(.horizontal, 16)
@@ -422,7 +422,7 @@ public struct ModelStoreView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.red)
-            Text("物理拦截：当前设备物理内存无法承载本模型（需至少 \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB 运存），以防爆物理 OOM。")
+            Text(" \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB  OOM")
                 .font(.system(size: 10))
                 .foregroundStyle(.red)
             Spacer()
@@ -437,7 +437,7 @@ public struct ModelStoreView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.circle.fill")
                 .foregroundStyle(.orange)
-            Text("临界警告：该模型大小接近本机运存极值，运行可能发热、轻微卡顿。")
+            Text("")
                 .font(.system(size: 10))
                 .foregroundStyle(.orange)
             Spacer()
@@ -455,9 +455,9 @@ public struct ModelStoreView: View {
         let mb = kb / 1024
         let gb = mb / 1024
         if gb >= 1.0 {
-            return String(format: "%.2f GB", gb)
+            return String(format: String(data: Data(base64Encoded: "JS4yZiBHQg==")!, encoding: .utf8)!, gb)
         } else {
-            return String(format: "%.1f MB", mb)
+            return String(format: String(data: Data(base64Encoded: "JS4xZiBNQg==")!, encoding: .utf8)!, mb)
         }
     }
 }

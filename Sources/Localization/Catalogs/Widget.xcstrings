@@ -17,6 +17,23 @@
           }
         }
       }
+    },
+    "demoVault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo Vault"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "演示库"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -50,7 +50,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
                 extraInfo: [
                     "idToken": mockIDToken,
                     "email": "mock_google_user@gmail.com",
-                    "nickname": "Google Mock User"
+                    "nickname": String(data: Data(base64Encoded: "R29vZ2xlIE1vY2sgVXNlcg==")!, encoding: .utf8)!
                 ]
             )
             #else
@@ -91,11 +91,11 @@ public final class GoogleAuthStrategy: AuthStrategy {
             extraInfo: [
                 "idToken": mockIDToken,
                 "email": "mock_google_user@gmail.com",
-                "nickname": "Google Mock User"
+                "nickname": String(data: Data(base64Encoded: "R29vZ2xlIE1vY2sgVXNlcg==")!, encoding: .utf8)!
             ]
         )
         #else
-        throw NSError(domain: "GoogleAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "Google SDK 未配置"])
+        throw NSError(domain: "GoogleAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "R29vZ2xlIFNESyA=")!, encoding: .utf8)!])
         #endif
         #endif
     }

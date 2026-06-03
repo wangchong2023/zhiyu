@@ -136,9 +136,9 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
                     else:
                         issues.append((file, key, f"Identical zh/en detected: \"{en_val}\"", "WARNING"))
             
-            # 4. 自动生成占位符检测：zh-Hans 值为 "{en} (zh)" 格式
-            elif re.search(r'\(zh\)$', zh_val.strip()):
-                issues.append((file, key, f"Auto-generated placeholder detected (zh ends with '(zh)'): \"{zh_val}\"", "ERROR"))
+            # 4. 自动生成占位符检测：zh-Hans 值为 "{en} (zh)" 格式或含有 "[译]" 后缀（常见于未翻译项的占位修补）
+            elif re.search(r'(\(zh\)|\[译\])$', zh_val.strip()):
+                issues.append((file, key, f"Auto-generated placeholder detected (zh ends with '(zh)' or '[译]'): \"{zh_val}\"", "ERROR"))
 
             # 5. 翻译状态异常
             elif zh_state and zh_state != 'translated':

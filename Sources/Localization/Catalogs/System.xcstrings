@@ -137,6 +137,23 @@
         }
       }
     },
+    "settings.about.copyright": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copyright (c) 2026 Wang Chong. All rights reserved."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "版权所有 (c) 2026 Wang Chong。保留所有权利。"
+          }
+        }
+      }
+    },
     "aiDisabledHint": {
       "extractionState": "manual",
       "localizations": {
@@ -941,7 +958,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发现知识孤岛：\"%@\" [译]"
+            "value": "发现知识孤岛：\"%@\""
           }
         },
         "en": {
@@ -1492,7 +1509,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发现知识孤岛：\"%@\" [译]"
+            "value": "发现知识孤岛：\"%@\""
           }
         }
       }
@@ -1509,7 +1526,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。 [译]"
+            "value": "建议将此页面链接到现有知识网络，或从中引用相关内容。"
           }
         }
       }
@@ -4042,7 +4059,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "English [译]"
+            "value": "English"
           }
         }
       }
@@ -4535,7 +4552,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "数据导入 [译]"
+            "value": "数据导入"
           }
         }
       }
@@ -5300,7 +5317,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.concepts [译]"
+            "value": "个概念"
           }
         }
       }
@@ -5317,7 +5334,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.entities [译]"
+            "value": "个实体"
           }
         }
       }
@@ -5334,7 +5351,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.sources [译]"
+            "value": "个来源"
           }
         }
       }
@@ -5351,7 +5368,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.totalPages [译]"
+            "value": "总页面数"
           }
         }
       }
@@ -5917,6 +5934,40 @@
         }
       }
     },
+    "security.keychain.databasePassphraseError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Critical security error: Failed to secure Database Passphrase in Keychain."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "严重安全错误：无法在钥匙串中安全保存数据库口令。"
+          }
+        }
+      }
+    },
+    "security.keychain.hmacSaltError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Critical security error: Failed to secure HMAC Salt in Keychain."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "严重安全错误：无法在钥匙串中安全保存 HMAC 盐值。"
+          }
+        }
+      }
+    },
     "auth.oneClickLogin": {
       "extractionState": "manual",
       "localizations": {
@@ -6048,7 +6099,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "hashMismatchDesc"
+            "value": "文件哈希值不匹配错误"
           }
         }
       }
@@ -6065,7 +6116,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "targetHashMismatchDesc"
+            "value": "目标文件哈希值不匹配错误"
           }
         }
       }
@@ -6076,7 +6127,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.npu"
+            "value": "settings.ondevice.npu "
           }
         },
         "zh-Hans": {
@@ -6093,7 +6144,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descNpu"
+            "value": "settings.ondevice.descNpu "
           }
         },
         "zh-Hans": {
@@ -6110,7 +6161,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.ram"
+            "value": "settings.ondevice.ram "
           }
         },
         "zh-Hans": {
@@ -6127,7 +6178,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descRam"
+            "value": "settings.ondevice.descRam "
           }
         },
         "zh-Hans": {
@@ -6144,7 +6195,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.context"
+            "value": "settings.ondevice.context "
           }
         },
         "zh-Hans": {
@@ -6161,7 +6212,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descContext"
+            "value": "settings.ondevice.descContext "
           }
         },
         "zh-Hans": {
@@ -6178,7 +6229,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.overheat"
+            "value": "settings.ondevice.overheat "
           }
         },
         "zh-Hans": {
@@ -6195,7 +6246,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descOverheat"
+            "value": "settings.ondevice.descOverheat "
           }
         },
         "zh-Hans": {
@@ -6212,7 +6263,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.perfConfig"
+            "value": "settings.ondevice.perfConfig "
           }
         },
         "zh-Hans": {

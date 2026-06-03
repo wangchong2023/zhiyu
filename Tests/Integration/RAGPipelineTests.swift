@@ -58,7 +58,7 @@ final class RAGPipelineTests: XCTestCase {
         await embeddingManager.syncEmbeddings(pages: currentPages)
         await store.refresh()
         
-        let allEmbeddings = await embeddingManager.allEmbeddings
+        let allEmbeddings = await embeddingManager.getAllEmbeddings()
         let embedding = allEmbeddings[pageID]
         XCTAssertNotNil(embedding, "向量化任务应在导入后完成")
         
@@ -66,7 +66,7 @@ final class RAGPipelineTests: XCTestCase {
         let searchResult = await store.linkService.hybridSearchWithDiagnostics(
             query: "什么是智宇",
             in: store.pages,
-            embeddingManager: embeddingManager
+            embeddingProvider: embeddingManager
         )
         let searchResults = searchResult.results
         XCTAssertTrue(searchResults.contains(where: { $0.id == pageID }), "混合检索应能根据关键词召回导入的内容")

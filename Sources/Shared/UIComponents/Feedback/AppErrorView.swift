@@ -25,7 +25,7 @@ public struct AppErrorView: View {
     /// 初始化通用错误反馈视图
     /// - Parameters:
     ///   - iconName: 图标名称，默认为 "exclamationmark.triangle.fill"
-    ///   - title: 错误标题，默认为 "出错了"
+    ///   - title: 错误标题，默认为 ""
     ///   - message: 详细错误原因
     ///   - retryAction: 重试操作闭包，若为 nil 则不显示重试按钮
     public init(

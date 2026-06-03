@@ -41,7 +41,7 @@ struct CommandPaletteView: View {
             // 结果列表
             List {
                 Section(L10n.Action.cmd.quickActions) {
-                    CommandRow(icon: DesignSystem.Icons.sparkles, title: L10n.Action.cmd.deepExplore, shortcut: "↵") {
+                    CommandRow(icon: DesignSystem.Icons.sparkles, title: L10n.Action.cmd.deepExplore, shortcut: "") {
                         // 触发逻辑
                         dismiss()
                     }

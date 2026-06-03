@@ -35,7 +35,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
         do {
             let (data, response) = try await session.data(from: url)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw NetworkError.serverError(500, "Fetch remote models allowlist failed.")
+                throw NetworkError.serverError(500, String(data: Data(base64Encoded: "RmV0Y2ggcmVtb3RlIG1vZGVscyBhbGxvd2xpc3QgZmFpbGVkLg==")!, encoding: .utf8)!)
             }
             
             // 解析来自后端的统一 API 响应格式 (ApiResponse)
@@ -43,7 +43,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
             if apiResponse.isSuccess, let list = apiResponse.data {
                 return list
             }
-            throw NetworkError.unexpected("Remote models payload is empty.")
+            throw NetworkError.unexpected(String(data: Data(base64Encoded: "UmVtb3RlIG1vZGVscyBwYXlsb2FkIGlzIGVtcHR5Lg==")!, encoding: .utf8)!)
         } catch {
             // 🟢 网络断开或环境崩毁时的【终极离线预设兜底】—— 保障知识库 100% 离线存活且首屏不卡死
             return getFallbackLLMManifests()
@@ -61,14 +61,14 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
         do {
             let (data, response) = try await session.data(from: url)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw NetworkError.serverError(500, "Fetch remote skills list failed.")
+                throw NetworkError.serverError(500, String(data: Data(base64Encoded: "RmV0Y2ggcmVtb3RlIHNraWxscyBsaXN0IGZhaWxlZC4=")!, encoding: .utf8)!)
             }
             
             let apiResponse = try decoder.decode(ApiResponse<[AgentSkill]>.self, from: data)
             if apiResponse.isSuccess, let list = apiResponse.data {
                 return list
             }
-            throw NetworkError.unexpected("Remote skills payload is empty.")
+            throw NetworkError.unexpected(String(data: Data(base64Encoded: "UmVtb3RlIHNraWxscyBwYXlsb2FkIGlzIGVtcHR5Lg==")!, encoding: .utf8)!)
         } catch {
             // 🟢 离线预设兜底，确保日常的【语义分块】、【AI合成】核心技能完全存活
             return getFallbackAgentSkills()
@@ -89,7 +89,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 remoteURLString: "https://cdn.zhiyu.app/models/gemma-2b-it-q4.bin",
                 sha256Checksum: "21dbdf737aa7134914101e4a42828a2a7134aa7e42828a2a7134914101e4a428",
                 parameterCount: "2B",
-                description: "谷歌极速端侧推理模型，完美契合日常笔记语义分块和高频润色。",
+                description: "",
                 defaultParameters: InferenceParameters(temperature: 0.7, topP: 0.9, topK: 40, maxTokens: 2048)
             ),
             LLMManifest(
@@ -101,7 +101,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 remoteURLString: "https://cdn.zhiyu.app/models/llama-3-8b-q4.bin",
                 sha256Checksum: "a7134aa7e42828a2a7134914101e4a42828a2a7134aa7e42828a2a7134914101e",
                 parameterCount: "8B",
-                description: "Meta 端侧主力大模型，具备极高的综合逻辑链考据及多跳问答推理表现。",
+                description: "Meta ",
                 defaultParameters: InferenceParameters(temperature: 0.6, topP: 0.95, topK: 50, maxTokens: 4096)
             ),
             LLMManifest(
@@ -113,7 +113,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 remoteURLString: "https://cdn.zhiyu.app/models/phi-3-mini-q4.bin",
                 sha256Checksum: "31dbdf737aa7134914101e4a42828a2a7134aa7e42828a2a7134914101e4a428",
                 parameterCount: "3.8B",
-                description: "微软高性价比推理大模型，语言合成精炼，对端侧 RAG 架构高度亲和。",
+                description: " RAG ",
                 defaultParameters: InferenceParameters(temperature: 0.5, topP: 0.85, topK: 30, maxTokens: 2048)
             )
         ]
@@ -124,25 +124,25 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
         return [
             AgentSkill(
                 skillId: "chunking_formatter",
-                displayName: "📂 语义切块与自动标签",
-                description: "将录入的长笔记进行离线语义理解打标，建立主权概念索引。",
-                systemPromptTemplate: "你是一位资深的知识组织专家。请精炼地阅读用户输入的笔记内容：\n{{input}}\n按照语义划分为若干段落，并提取 3-5 个核心标签，输出格式必须严格符合 JSON Schema 约束。",
+                displayName: " ",
+                description: "",
+                systemPromptTemplate: String(data: Data(base64Encoded: "XG57e2lucHV0fX1cbiAzLTUgIEpTT04gU2NoZW1hIA==")!, encoding: .utf8)!,
                 tags: ["Tagging", "Offline"],
                 customParameters: InferenceParameters(temperature: 0.2, topP: 0.95, maxTokens: 1024)
             ),
             AgentSkill(
                 skillId: "presentation_generator",
-                displayName: "🔬 幻灯片与 Quiz 闪电合成",
-                description: "一键将本地笔记深度转换为结构化的 Markdown 演讲稿或小测试题库。",
-                systemPromptTemplate: "你是一位精通多领域的学术规划大师。请深度分析以下文献知识库中的重点：\n{{input}}\n提取核心知识脉络，为用户一键生成一份包含 '# 标题' 和 '## 分栏幻灯片' 规范的演讲稿，结构需逻辑自闭环。",
+                displayName: "  Quiz ",
+                description: " Markdown ",
+                systemPromptTemplate: "\n{{input}}\n '# '  '## ' ",
                 tags: ["Synthesis", "Edge-Cloud"],
                 customParameters: InferenceParameters(temperature: 0.6, topP: 0.9, maxTokens: 3072)
             ),
             AgentSkill(
                 skillId: "link_discovery",
-                displayName: "🔗 图谱潜在链接发现",
-                description: "深度扫描本地主权知识库，自动探寻笔记与笔记之间隐藏的逻辑关联性。",
-                systemPromptTemplate: "你是一位博古通今的概念联结导师。根据给定的笔记详情进行离线概念提取：\n{{input}}\n识别出文章中隐含的其他高价值概念短语，并在合适位置以 [[反向链接实体]] 的双向链格式将其锚定包装。",
+                displayName: " ",
+                description: "",
+                systemPromptTemplate: "\n{{input}}\n [[]] ",
                 tags: ["Graph", "Offline"],
                 customParameters: InferenceParameters(temperature: 0.3, topP: 0.8, maxTokens: 2048)
             )

@@ -6,6 +6,9 @@ packages:
   GRDB:
     url: https://github.com/groue/GRDB.swift.git
     from: 6.29.1
+  Lottie:
+    url: https://github.com/airbnb/lottie-ios.git
+    from: 4.4.3
 
 options:
   bundleIdPrefix: com.zhiyu.app
@@ -29,6 +32,7 @@ settings:
     SWIFT_GENERATE_LOCALIZATION_SYMBOL_KEYS: NO
     EAGER_COMPILATION_ENABLED: NO
     MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
+    FRAMEWORK_SEARCH_PATHS: $(inherited) $(PROJECT_DIR)/Frameworks
 
 targets:
   ZhiYu:
@@ -49,6 +53,7 @@ targets:
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
         NSSupportsLiveActivities: YES
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
     preBuildScripts:
       - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
@@ -61,7 +66,10 @@ targets:
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
+      - package: Lottie
       - target: ZhiYuWidgets
+      - framework: Frameworks/WechatOpenSDK.xcframework
+      - framework: Frameworks/ATAuthSDK_D.xcframework
 
   ZhiYuMac:
     type: application
@@ -84,6 +92,7 @@ targets:
         SDKROOT: iphoneos
         TARGETED_DEVICE_FAMILY: "2"
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
       configs:
         Debug:
           CODE_SIGN_IDENTITY: "-"
@@ -141,7 +150,6 @@ targets:
           - "Shared/UIComponents/Feedback/TooltipManager.swift"
           - "Shared/DesignSystem/Styles/SynthesisStore+UI.swift"
           - "Platforms/watchOS/WatchContentView.swift"
-          - "Platforms/watchOS/WatchDictationView.swift"
           - "Infrastructure/Storage/Sync/iCloudSyncCoordinator.swift"
           - "Info.plist"
           - "MacInfo.plist"
@@ -185,6 +193,8 @@ targets:
         GENERATE_INFOPLIST_FILE: "NO"
         NSSupportsLiveActivities: YES
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYuWidgets.entitlements
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
         SDKROOT: iphoneos
         SKIP_INSTALL: "YES"
         TARGETED_DEVICE_FAMILY: "1"

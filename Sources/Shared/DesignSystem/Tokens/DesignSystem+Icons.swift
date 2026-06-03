@@ -35,6 +35,10 @@ extension DesignSystem {
         public static let delete = Typography.Icons.delete
         public static let pin = Typography.Icons.pin
         public static let pinFill = "pin.fill"
+        public static let folderBadgePlus = "folder.badge.plus"
+        public static let folderFill = "folder.fill"
+        
+        // ── 通用状态图标 ──
         public static let unpin = Typography.Icons.unpin
         public static let history = Typography.Icons.history
         public static let refresh = Typography.Icons.refresh

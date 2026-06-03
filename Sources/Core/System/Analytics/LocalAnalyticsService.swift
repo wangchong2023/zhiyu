@@ -29,7 +29,7 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
         let timestamp = Date().formatted(date: .omitted, time: .standard)
         
         // 1. 控制台实时反馈
-        print("📊 [Analytics] \(timestamp) | \(name) | \(properties?.description ?? "")")
+        print(" [Analytics] \(timestamp) | \(name) | \(properties?.description ?? "")")
         
         let event: [String: Any] = [
             "name": name,
@@ -67,6 +67,6 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
     /// - Parameter details: details
     func trackError(_ error: Error, details: String? = nil) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
-        print("❌ [Analytics] \(timestamp) | Error: \(error.localizedDescription) | Details: \(details ?? "")")
+        print(" [Analytics] \(timestamp) | Error: \(error.localizedDescription) | Details: \(details ?? "")")
     }
 }

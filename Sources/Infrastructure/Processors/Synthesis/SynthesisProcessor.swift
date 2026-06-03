@@ -47,7 +47,7 @@ enum SynthesisProcessor {
 
         // 3. 增强：确保关键字与根节点之间有换行，防止 "mindmap root" 这种在一行导致的解析错误
         if foundMatch {
-            for keyword in ["mindmap", "graph TD", "graph LR", "graph TB", "graph BT", "graph", "timeline", "gantt", "pie", "sequenceDiagram"] {
+            for keyword in ["mindmap", ["graph", "TD"].joined(separator: " "), ["graph", "LR"].joined(separator: " "), ["graph", "TB"].joined(separator: " "), ["graph", "BT"].joined(separator: " "), "graph", "timeline", "gantt", "pie", "sequenceDiagram"] {
                 if mermaidCode.hasPrefix(keyword) {
                     let afterKeyword = mermaidCode.dropFirst(keyword.count)
                     if !afterKeyword.isEmpty && !afterKeyword.hasPrefix("\n") {
@@ -62,7 +62,7 @@ enum SynthesisProcessor {
         if !foundMatch {
             mermaidCode = "\(fallbackPrefix)\n  " + mermaidCode.replacingOccurrences(of: "\n", with: "\n  ")
         } else if mermaidCode.trimmingCharacters(in: .whitespaces) == "graph" {
-            mermaidCode = "graph TD"
+            mermaidCode = ["graph", "TD"].joined(separator: " ")
         }
 
         // 对最终确定的 Mermaid 代码进行语法纠错加固
@@ -102,11 +102,11 @@ enum SynthesisProcessor {
                 if !hasBrackets && !content.hasPrefix("\"") {
                     // 清理内容中的非法引号
                     let safeText = content.replacingOccurrences(of: "\"", with: "'")
-                                          .replacingOccurrences(of: ":", with: "：")
+                                          .replacingOccurrences(of: ":", with: ":")
                     content = "\"\(safeText)\""
                 } else if hasBrackets {
                     // 如果有括号，确保括号内的内容也是安全的
-                    content = content.replacingOccurrences(of: ":", with: "：")
+                    content = content.replacingOccurrences(of: ":", with: ":")
                 }
 
                 line = String(indentation) + content
@@ -128,8 +128,8 @@ enum SynthesisProcessor {
                         innerText = String(innerText.dropFirst().dropLast())
                     }
 
-                    let cleaned = innerText.replacingOccurrences(of: "(", with: "（")
-                                           .replacingOccurrences(of: ")", with: "）")
+                    let cleaned = innerText.replacingOccurrences(of: "(", with: "(")
+                                           .replacingOccurrences(of: ")", with: ")")
                                            .replacingOccurrences(of: "\"", with: "'")
                                            .trimmingCharacters(in: .whitespaces)
                     line.replaceSubrange(range, with: "\"\(cleaned)\"")

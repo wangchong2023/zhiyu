@@ -26,6 +26,7 @@ struct UserProfileMenu: View {
         Button(action: { showWatchMenu = true }) {
             profileLabel
         }
+        .accessibilityIdentifier("userProfileMenuButton")
         .sheet(isPresented: $showWatchMenu) {
             List {
                 Button(action: { showSettings = true; showWatchMenu = false }) {
@@ -84,6 +85,7 @@ struct UserProfileMenu: View {
             profileLabel
         }
         .buttonStyle(.plain) // 消除系统在 Toolbar 选项中默认添加的 bordered 灰色背景
+        .accessibilityIdentifier("userProfileMenuButton")
         .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
         .sheet(isPresented: $showStats) {
             NavigationStack {
@@ -110,7 +112,6 @@ struct UserProfileMenu: View {
         .foregroundStyle(.appAccent)
         .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
         .contentShape(Circle())
-        .accessibilityIdentifier("userProfileMenuButton")
     }
     
     private var aboutStack: some View {

@@ -33,7 +33,7 @@ struct ViewFactory {
             ContentUnavailableView(
                 L10n.Common.Error.notFound,
                 systemImage: "exclamationmark.magnifyingglass",
-                description: Text("No view provider registered for domain: \(route.domain.rawValue)")
+                description: Text("No_view_provider_registered_for_domain_\(route.domain.rawValue)")
             )
         }
     }

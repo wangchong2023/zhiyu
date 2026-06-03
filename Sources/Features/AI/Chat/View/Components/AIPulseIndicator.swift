@@ -15,8 +15,6 @@ import Observation
 /// 负责增强用户对 AI 处理状态（如思考、全库扫描）的感知，提供动态波纹动画及实时状态文本展示
 struct AIPulseIndicator: View {
     @Environment(AppStore.self) var store
-    @State private var isAnimating = false
-    
     private var isAIProcessing: Bool {
         TaskCenter.shared.tasks.contains(where: { task in
             if case .running = task.status {
@@ -53,36 +51,27 @@ struct AIPulseIndicator: View {
         return .appSecondary.opacity(DesignSystem.disabledOpacity) // 0.3
     }
 
-    private var animationDuration: Double {
+    private var waveformSpeed: Double {
         switch currentStage {
-        case .embedding: return 0.6  // 快速频率，表示计算密集
-        case .retrieval: return 1.0  // 中速频率，表示检索等待
-        case .synthesis: return 2.0  // 慢速呼吸，表示模型吐字
-        default: return 1.5
+        case .embedding: return 2.2  // 计算密集，极快速度
+        case .retrieval: return 1.4  // 检索等待，中速波纹
+        case .synthesis: return 0.6  // 慢速优雅吐字
+        default: return 1.0
         }
     }
     
     var body: some View {
         HStack(spacing: DesignSystem.small) { // 8
             ZStack {
-                Circle()
-                    .fill(pulseColor)
-                    .frame(width: DesignSystem.smallIconSize / 2, height: DesignSystem.smallIconSize / 2) // 8
-                
                 if isActive {
+                    // 全新 Siri-like 霓虹正弦波形动效 (SR-12)
+                    SiriWaveformView(speedMultiplier: waveformSpeed, amplitudeMultiplier: 0.7)
+                        .frame(width: 48, height: 16)
+                } else {
                     Circle()
-                        .stroke(pulseColor, lineWidth: DesignSystem.borderWidth * 2) // 2
-                        .frame(width: DesignSystem.smallIconSize, height: DesignSystem.smallIconSize) // 16
-                        .scaleEffect(isAnimating ? 1.5 : 1.0)
-                        .opacity(isAnimating ? 0 : DesignSystem.Opacity.prominent) // 0.8
+                        .fill(pulseColor)
+                        .frame(width: DesignSystem.smallIconSize / 2, height: DesignSystem.smallIconSize / 2) // 8
                 }
-            }
-            .onAppear {
-                startAnimation()
-            }
-            .onChange(of: currentStage) {
-                // 阶段改变时重置动画频率
-                startAnimation()
             }
             
             if isActive {
@@ -127,13 +116,6 @@ struct AIPulseIndicator: View {
         case .retrieval: return "RETRIEVING..."
         case .synthesis: return L10n.AI.Status.thinking
         default: return L10n.AI.Status.thinking
-        }
-    }
-
-    private func startAnimation() {
-        isAnimating = false
-        withAnimation(.easeInOut(duration: animationDuration).repeatForever(autoreverses: false)) {
-            isAnimating = true
         }
     }
     

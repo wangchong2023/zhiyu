@@ -77,7 +77,7 @@ struct SynthesisView: View {
                         case (.running, .completed):
                             AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFinishedAnnouncement(newTask.name))
                         case (.running, .failed(let error)):
-                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "，" + error)
+                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "" + error)
                         default:
                             break
                         }
@@ -424,11 +424,11 @@ struct SynthesisView: View {
     /// - Parameter task: 异步后台任务
     /// - Returns: 结合了进度与执行阶段描述的文本
     private func buildTaskAccessibilityLabel(_ task: GlobalTask) -> String {
-        let base = "\(task.name)，\(L10n.AI.Task.Accessibility.taskInProgress)"
+        let base = "\(task.name)\(L10n.AI.Task.Accessibility.taskInProgress)"
         if case .running(let progress, let stage) = task.status {
             let percentage = Int(progress * 100)
             let stageName = localizedStageName(stage)
-            return base + "，" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
+            return base + "" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
         }
         return base
     }

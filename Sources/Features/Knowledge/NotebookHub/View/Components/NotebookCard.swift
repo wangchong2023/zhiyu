@@ -94,9 +94,9 @@ struct NotebookCard: View {
         .accessibilityIdentifier("NotebookCard_Item") // 添加 UI 自动化测试精确定位标识，防止测试误触新建按钮
         // MARK: - A11y 无障碍适配
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(notebook.name)，\(L10n.Accessibility.notebookCardLabel)")
+        .accessibilityLabel("\(notebook.name)\(L10n.Accessibility.notebookCardLabel)")
         .accessibilityValue(notebook.description ?? L10n.Vault.defaultDescription)
-        .accessibilityHint("\(L10n.Vault.lastEdited) \(notebook.updatedAt.formatted(.relative(presentation: .numeric)))。\(L10n.Accessibility.notebookCardHint)")
+        .accessibilityHint("\(L10n.Vault.lastEdited) \(notebook.updatedAt.formatted(.relative(presentation: .numeric)))\(L10n.Accessibility.notebookCardHint)")
     }
     
     /// 根据笔记本名称的哈希值自动计算底座主色调，确保不同笔记本具有差异化的视觉令牌颜色

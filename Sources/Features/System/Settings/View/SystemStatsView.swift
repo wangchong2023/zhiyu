@@ -49,8 +49,8 @@ struct SystemStatsView: View {
                         }
                     }
                     #if !os(watchOS)
-                    .pickerStyle(.segmented)
-                    #endif
+                .pickerStyle(.segmented)
+                #endif
                     .padding(.horizontal, Spacing.medium)
                     .padding(.vertical, Spacing.medium)
                     
@@ -201,12 +201,10 @@ struct SystemStatsView: View {
                         .frame(height: DesignSystem.Metrics.chartHeight - 20)
                     } else {
                         HStack(spacing: Spacing.medium) {
-                            #if os(watchOS)
                             chartContainer
-                            #else
-                            chartContainer
-                                .frame(maxWidth: .infinity)
-                            #endif
+                                #if !os(watchOS)
+        .frame(maxWidth: .infinity, alignment: .center)
+        #endif
                             
                             legendContainer
                                 .frame(maxWidth: .infinity)

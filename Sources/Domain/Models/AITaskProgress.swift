@@ -12,7 +12,7 @@ import Foundation
 
 /// AI 任务进度元数据
 public struct AITaskMetadata: Codable, Hashable, Sendable {
-    /// 任务名称 (例如: "AI 治理扫描", "知识库导入")
+    /// 任务名称 (例如: "AI ", "")
     public let taskName: String
     /// 任务启动时间
     public let startTime: Date

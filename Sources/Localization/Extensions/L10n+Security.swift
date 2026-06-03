@@ -66,5 +66,15 @@ extension L10n {
         public static var retryConnection: String {
             tr("security.database.retry")
         }
+        
+        /// Keychain 数据库口令保存失败时的错误消息
+        public static var keychainDatabasePassphraseError: String {
+            tr("security.keychain.databasePassphraseError")
+        }
+        
+        /// Keychain HMAC 盐值保存失败时的错误消息
+        public static var keychainHMACSaltError: String {
+            tr("security.keychain.hmacSaltError")
+        }
     }
 }

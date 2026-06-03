@@ -347,7 +347,7 @@ struct TagCloudViewContent: View {
                 List {
                     Section {
                         ForEach(coordinator.filteredPages) { page in
-                            NavigationLink(destination: PageDetailView(page: page)) {
+                            NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
                                 PageRowView(page: page, compact: true)
                                     .padding(.vertical, DesignSystem.tiny)
                             }

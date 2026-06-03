@@ -32,51 +32,44 @@ public final class AppSyncOrchestrator: CloudSyncOrchestrator {
     public func performSync(localPages: [KnowledgePage], localLogs: [LogEntry]) async throws -> (pages: [KnowledgePage], logs: [LogEntry]) {
         self.syncStatus = .syncing
         
+        // 1. 检查可用性
+        let isAvailable = await provider.checkAvailability()
+        guard isAvailable else {
+            self.syncStatus = .error(L10n.ICloud.Status.notAvailable)
+            return (localPages, localLogs)
+        }
+        
+        // 2. 拉取云端（容错：云端不存在则视为本地主权）
+        let remote: (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
         do {
-            // 1. 检查可用性
-            let isAvailable = await provider.checkAvailability()
-            guard isAvailable else {
-                self.syncStatus = .error(L10n.ICloud.notAvailable)
-                return (localPages, localLogs)
-            }
-            
-            // 2. 拉取云端
-            let remote: (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
-            do {
-                remote = try await provider.pull()
-            } catch {
-                // 如果云端不存在，则视为本地主权
-                try await provider.push(pages: localPages, logs: localLogs)
-                self.syncStatus = .synced
-                self.lastSyncDate = Date()
-                return (localPages, localLogs)
-            }
-            
-            // 3. 冲突比对与合并
-            // 评估时序：如果云端有更新，执行合并；否则保持本地最新。
-            let hasRemoteNewer = lastSyncDate.map { remote.lastModified > $0 } ?? true
-            
-            let finalPages: [KnowledgePage]
-            let finalLogs: [LogEntry]
-            
-            if hasRemoteNewer {
-                finalPages = resolver.mergePages(local: localPages, remote: remote.pages)
-                finalLogs = resolver.mergeLogs(local: localLogs, remote: remote.logs)
-            } else {
-                finalPages = localPages
-                finalLogs = localLogs
-            }
-            
-            // 4. 推送黄金数据集
-            try await provider.push(pages: finalPages, logs: finalLogs)
-            
+            remote = try await provider.pull()
+        } catch {
+            try await provider.push(pages: localPages, logs: localLogs)
             self.syncStatus = .synced
             self.lastSyncDate = Date()
-            
-            return (finalPages, finalLogs)
-        } catch {
-            self.syncStatus = .error(error.localizedDescription)
-            throw error
+            return (localPages, localLogs)
         }
+        
+        // 3. 冲突比对与合并
+        let hasRemoteNewer = lastSyncDate.map { remote.lastModified > $0 } ?? true
+        
+        let finalPages: [KnowledgePage]
+        let finalLogs: [LogEntry]
+        
+        if hasRemoteNewer {
+            finalPages = resolver.mergePages(local: localPages, remote: remote.pages)
+            finalLogs = resolver.mergeLogs(local: localLogs, remote: remote.logs)
+        } else {
+            finalPages = localPages
+            finalLogs = localLogs
+        }
+        
+        // 4. 推送黄金数据集
+        try await provider.push(pages: finalPages, logs: finalLogs)
+        
+        self.syncStatus = .synced
+        self.lastSyncDate = Date()
+        
+        return (finalPages, finalLogs)
     }
 }

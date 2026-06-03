@@ -727,7 +727,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.action.confirmInstall [译]"
+            "value": "确认安装插件"
           }
         }
       }
@@ -795,7 +795,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.commands.title [译]"
+            "value": "插件指令"
           }
         }
       }
@@ -1050,7 +1050,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.perm.none [译]"
+            "value": "无特殊权限"
           }
         }
       }
@@ -1084,7 +1084,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.title [译]"
+            "value": "插件授权申请"
           }
         }
       }
@@ -1237,7 +1237,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.section.pluginSettings [译]"
+            "value": "插件设置"
           }
         }
       }
@@ -1271,7 +1271,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.section.ribbon [译]"
+            "value": "快捷功能区"
           }
         }
       }
@@ -1690,7 +1690,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.sandboxDesc"
+            "value": "permission.sandboxDesc "
           }
         },
         "zh-Hans": {
@@ -1707,7 +1707,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.networkAccessDesc"
+            "value": "permission.networkAccessDesc "
           }
         },
         "zh-Hans": {
@@ -1724,7 +1724,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.modifyKnowledgeDesc"
+            "value": "permission.modifyKnowledgeDesc "
           }
         },
         "zh-Hans": {
@@ -1741,7 +1741,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.requestPermission"
+            "value": "permission.requestPermission "
           }
         },
         "zh-Hans": {
@@ -1758,7 +1758,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.message"
+            "value": "plugin.permission.message "
           }
         },
         "zh-Hans": {

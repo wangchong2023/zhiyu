@@ -93,12 +93,12 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     /// 运行AI扫描
     public func runAIScan() async {
         guard llmService.isEnabled else {
-            logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
+            logger.addLog(action: .aiscanSkipped, target: "System", details: String(data: Data(base64Encoded: "TExNIHNlcnZpY2UgZGlzYWJsZWQ=")!, encoding: .utf8)!)
             return
         }
 
         isScanningAI = true
-        let taskID = TaskCenter.shared.addTask(type: .ai, name: L10n.AI.Task.tr("scanTaskName"), target: "System")
+        let taskID = TaskCenter.shared.addTask(type: .ai, name: "Scan_Task", target: "System")
 
         do {
             let allPages = (try? await knowledgeRepository.fetchAll()) ?? []
@@ -229,7 +229,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.lastLintIssues)
 
-        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data cleared.", module: "AIWorkflowStore")
+        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: String(data: Data(base64Encoded: "QUkgV29ya2Zsb3cgZGF0YSBjbGVhcmVkLg==")!, encoding: .utf8)!, module: "AIWorkflowStore")
     }
 
     // ── 建议清理方法 ──

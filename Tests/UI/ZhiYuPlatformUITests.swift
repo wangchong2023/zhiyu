@@ -81,6 +81,9 @@ class ZhiYuPlatformUITests: XCTestCase {
     override func tearDown() async throws {
         // 防御性设计：测试退出时强行校准模拟器方向为竖屏，彻底根治此前因测试意外熔断导致模拟器被锁定在横屏的顽疾
         XCUIDevice.shared.orientation = .portrait
+        // 优雅关闭：先返回主屏幕触发应用进入后台生命周期，让底层资源有机会安全清理
+        XCUIDevice.shared.press(.home)
+        try? await Task.sleep(nanoseconds: 500_000_000)
         app?.terminate()
         try await super.tearDown()
     }

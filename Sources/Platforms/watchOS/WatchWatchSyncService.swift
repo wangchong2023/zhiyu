@@ -29,6 +29,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         if WCSession.isSupported() {
             WCSession.default.delegate = self
             WCSession.default.activate()
+            triggerPendingTransfers()
         }
     }
     
@@ -44,6 +45,89 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         guard activationState == .activated else { return }
         let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
         session.transferUserInfo(userInfo)
+    }
+    
+    /// 分片传输大音频数据，支持断点续传自愈 (TC-WAT-03)
+    func sendAudioData(_ data: Data, filename: String) {
+        let transferId = UUID().uuidString
+        let chunks = AudioSplitter.split(data: data)
+        let total = chunks.count
+        
+        var pendingTransfers = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]] ?? [:]
+        
+        var chunkDicts: [[String: Any]] = []
+        for (index, chunk) in chunks.enumerated() {
+            let chunkInfo: [String: Any] = [
+                "transferId": transferId,
+                "index": index,
+                "total": total,
+                "filename": filename,
+                "data": chunk,
+                "sent": false
+            ]
+            chunkDicts.append(chunkInfo)
+        }
+        
+        pendingTransfers[transferId] = [
+            "filename": filename,
+            "total": total,
+            "chunks": chunkDicts
+        ]
+        UserDefaults.standard.set(pendingTransfers, forKey: "watch_pending_audio_transfers")
+        
+        triggerPendingTransfers()
+    }
+    
+    /// 触发并尝试发送所有挂起的音频分片自愈任务
+    func triggerPendingTransfers() {
+        let session = WCSession.default
+        #if DEBUG
+        let activationState = mockActivationState ?? session.activationState
+        #else
+        let activationState = session.activationState
+        #endif
+        guard activationState == .activated else { return }
+        
+        guard var pendingTransfers = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]] else { return }
+        
+        var hasUpdates = false
+        for (transferId, transferInfo) in pendingTransfers {
+            guard var chunks = transferInfo["chunks"] as? [[String: Any]] else { continue }
+            
+            for (i, var chunk) in chunks.enumerated() {
+                let sent = chunk["sent"] as? Bool ?? false
+                if !sent {
+                    let payload: [String: Any] = [
+                        "type": "audio_chunk",
+                        "transferId": transferId,
+                        "index": chunk["index"] as? Int ?? 0,
+                        "total": chunk["total"] as? Int ?? 0,
+                        "filename": chunk["filename"] as? String ?? "",
+                        "data": chunk["data"] as? Data ?? Data(),
+                        "date": Date()
+                    ]
+                    session.transferUserInfo(payload)
+                    chunk["sent"] = true
+                    chunks[i] = chunk
+                    hasUpdates = true
+                }
+            }
+            
+            var updatedInfo = transferInfo
+            updatedInfo["chunks"] = chunks
+            
+            let allSent = chunks.allSatisfy { $0["sent"] as? Bool ?? false }
+            if allSent {
+                pendingTransfers.removeValue(forKey: transferId)
+            } else {
+                pendingTransfers[transferId] = updatedInfo
+            }
+            hasUpdates = true
+        }
+        
+        if hasUpdates {
+            UserDefaults.standard.set(pendingTransfers, forKey: "watch_pending_audio_transfers")
+        }
     }
     
     /// 向 iOS 端请求生成语音简报
@@ -79,26 +163,29 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     /// - Parameter session: session
     /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if let error = error {
+        if let _ = error {
             Logger.shared.error("WatchSync_Anomaly2")
+        } else if activationState == .activated {
+            let delegate = session.delegate as? WatchWatchSyncService
+            Task { @MainActor [weak delegate] in
+                delegate?.triggerPendingTransfers()
+            }
         }
     }
     
     /// session回调
     /// - Parameter session: session
     nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
-        if let type = userInfo["type"] as? String {
-            Task { @MainActor in
-                if type == "briefing_response", let content = userInfo["content"] as? String {
-                    self.handleBriefingResponse(content)
-                } else if type == "new_page", let content = userInfo["content"] as? String {
-                    self.lastReceivedText = content
-                    NotificationCenter.default.post(name: .didReceiveWatchContent, object: content)
-                }
-            }
-        } else if let content = userInfo["content"] as? String {
-            // 兼容旧逻辑
-            Task { @MainActor in
+        let type = userInfo["type"] as? String
+        let contentStr = userInfo["content"] as? String
+        
+        Task { @MainActor in
+            if type == "briefing_response", let content = contentStr {
+                self.handleBriefingResponse(content)
+            } else if type == "new_page", let content = contentStr {
+                self.lastReceivedText = content
+                NotificationCenter.default.post(name: .didReceiveWatchContent, object: content)
+            } else if let content = contentStr {
                 self.lastReceivedText = content
                 NotificationCenter.default.post(name: .didReceiveWatchContent, object: content)
             }

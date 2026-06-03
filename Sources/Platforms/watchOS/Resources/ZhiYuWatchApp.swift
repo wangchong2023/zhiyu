@@ -22,10 +22,8 @@ struct AppWatchApp: App {
         WindowGroup {
             TabView {
                 WatchDictationView()
-                    .environmentObject(ServiceContainer.shared.resolve(WatchSyncProtocol.self))
                 WatchKnowledgeStatsView()
                 WatchBriefingView()
-                    .environmentObject(ServiceContainer.shared.resolve(WatchSyncProtocol.self))
             }
             .tabViewStyle(.verticalPage)
         }

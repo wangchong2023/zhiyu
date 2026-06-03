@@ -54,7 +54,7 @@ enum QuizProcessor {
             case string(String)
             init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
-                if let i = try? container.decode(Int.self) { self = .int(i) } else if let s = try? container.decode(String.self) { self = .string(s) } else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Not int or string") }
+                if let i = try? container.decode(Int.self) { self = .int(i) } else if let s = try? container.decode(String.self) { self = .string(s) } else { throw DecodingError.dataCorruptedError(in: container, debugDescription: "Not_int_or_string") }
             }
 
             /// 编码
@@ -77,10 +77,10 @@ enum QuizProcessor {
             }
             md += "\n<details>\n<summary>\(L10n.Quiz.showAnswer)</summary>\n\n"
             if let ans = q.answer {
-                md += "**\(L10n.Quiz.correctAnswer)：** \(ans.stringValue)\n\n"
+                md += "**\(L10n.Quiz.correctAnswer):** \(ans.stringValue)\n\n"
             }
             if let exp = q.explanation {
-                md += "**\(L10n.Quiz.explanation)：** \(exp)\n"
+                md += "**\(L10n.Quiz.explanation):** \(exp)\n"
             }
             md += "\n</details>\n\n"
         }

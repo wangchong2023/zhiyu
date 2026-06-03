@@ -133,6 +133,7 @@ extension L10n {
             public static var developerName: String { Localized.tr("settings.about.developerName", table: t) }
             public static var website: String { Localized.tr("settings.about.website", table: t) }
             public static var version: String { Localized.tr("settings.about.version", table: t) }
+            public static var copyright: String { Localized.tr("settings.about.copyright", table: t) }
         }
 
         public struct theme {

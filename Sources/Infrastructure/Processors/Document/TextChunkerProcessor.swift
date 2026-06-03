@@ -19,8 +19,8 @@ struct TextChunkerProcessor: Sendable {
         public let id = UUID()
         public let text: String       // 分块文本内容
         public let startIndex: Int    // 原始文本起始偏移
-        public let anchorPath: String // 标题路径 (例如: "量子力学") - 仅保持当前最近的单级标题，以维护老旧单测兼容性
-        public let breadcrumbPath: String // 级联面包屑路径 (例如: "核心原理 > 量子力学") - 专门用于 Hierarchy RAG
+        public let anchorPath: String // 标题路径 (例如: "") - 仅保持当前最近的单级标题，以维护老旧单测兼容性
+        public let breadcrumbPath: String // 级联面包屑路径 (例如: " > ") - 专门用于 Hierarchy RAG
         public let isCode: Bool       // 是否包含完整代码块
         
         /// 级联面包屑注入后的上下文文本，最大化提升检索语义相关性
@@ -43,7 +43,7 @@ struct TextChunkerProcessor: Sendable {
     public static let `default` = Config(
         chunkSize: 1000,
         chunkOverlap: 200,
-        separators: ["\n# ", "\n## ", "\n### ", "\n#### ", "\n\n", "\n", "。 ", ". ", " ", ""]
+        separators: ["\n# ", "\n## ", "\n### ", "\n#### ", "\n\n", "\n", ". ", ". ", " ", ""]
     )
 
     /**

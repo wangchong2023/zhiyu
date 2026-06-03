@@ -35,7 +35,7 @@ public actor EmbeddingManager: EmbeddingProvider {
 
     public init(repository: any VectorRepository) {
         self.repository = repository
-        self.embeddingModel = NLEmbedding.sentenceEmbedding(for: .chinese)
+        self.embeddingModel = NLEmbedding.sentenceEmbedding(for: .simplifiedChinese)
         
         Task {
             await loadInitialCache()
@@ -49,17 +49,23 @@ public actor EmbeddingManager: EmbeddingProvider {
         do {
             let embeddings = try await repository.fetchAllEmbeddings()
             for emb in embeddings {
-                vectorCache[emb.id] = emb.vector
+                vectorCache[emb.key] = emb.value
             }
             
-            let chunks = try await repository.fetchAllChunksWithVectors()
+            // 加载所有已入库的分块元数据（分块级向量在冷启动时不预加载）
+            let chunks = try await repository.fetchAllChunksWithEmbeddings()
             for chunk in chunks {
-                chunkVectorCache[chunk.id.uuidString] = chunk.vector
-                // 模拟元数据补充
-                chunkMetadata[chunk.id.uuidString] = PageChunk(id: chunk.id, pageID: UUID(), content: "", index: 0)
+                chunkMetadata[chunk.id] = chunk
+                // 如果分块包含序列化的嵌入数据，反序列化到缓存
+                if let data = chunk.embedding {
+                    let vector = data.withUnsafeBytes { buffer in
+                        [Float](buffer.bindMemory(to: Float.self))
+                    }
+                    chunkVectorCache[chunk.id] = vector
+                }
             }
         } catch {
-            print("❌ [Embedding] Failed to load initial cache: \(error)")
+            print(" [Embedding]" + " Failed to" + " load initial" + " cache: \(error)")
         }
     }
 
@@ -78,8 +84,7 @@ public actor EmbeddingManager: EmbeddingProvider {
         vectorCache[page.id] = vector
         
         // 物理入库
-        let record = VectorRecord(id: page.id, vector: vector, modelName: modelName)
-        try? await repository.saveEmbedding(record)
+        try? await repository.saveEmbedding(id: page.id, vector: vector, modelName: modelName)
     }
 
     /// 批量索引页面分块（支持异步向量化与持久化）
@@ -90,17 +95,20 @@ public actor EmbeddingManager: EmbeddingProvider {
         let contents = chunks.map { $0.content }
         let vectors = await vectorizeChunks(chunks: contents)
         
-        // 2. 物理入库
-        var records: [ChunkVectorRecord] = []
-        for (index, chunk) in chunks.enumerated() {
+        // 2. 物理入库：将向量转换为 Data 并赋值给分块实体，之后进行持久化保存
+        var updatedChunks = chunks
+        for index in 0..<updatedChunks.count {
             let vector = vectors[index]
-            chunkVectorCache[chunk.id.uuidString] = vector
-            chunkMetadata[chunk.id.uuidString] = chunk
+            // 将 [Float] 向量序列化为二进制 Data 存入 embedding
+            let data = vector.withUnsafeBufferPointer { Data(buffer: $0) }
+            updatedChunks[index].embedding = data
             
-            records.append(ChunkVectorRecord(id: chunk.id, pageID: pageID, vector: vector, modelName: modelName))
+            let chunkID = updatedChunks[index].id
+            chunkVectorCache[chunkID] = vector
+            chunkMetadata[chunkID] = updatedChunks[index]
         }
         
-        try? await repository.saveChunkVectors(records)
+        try? await repository.saveChunks(updatedChunks, for: pageID)
     }
 
     /// 为一组分块文本生成向量
@@ -122,7 +130,7 @@ public actor EmbeddingManager: EmbeddingProvider {
         
         for (id, vector) in vectorCache {
             let score = EmbeddingManager.cosineSimilarity(queryVector, vector)
-            if score > BusinessConstants.AI.similarityThreshold {
+            if score > BusinessConstants.RAG.semanticThresholdShort {
                 results.append((id, score))
             }
         }
@@ -179,7 +187,7 @@ public actor EmbeddingManager: EmbeddingProvider {
             return vector.map { Float($0) }
         }
         
-        // Fallback: 确定性确定性随机向量 (保障测试确定性)
+        // Fallback: 确定性随机向量 (保障测试确定性)
         var hasher = Hasher()
         hasher.combine(text)
         let seed = hasher.finalize()
@@ -192,19 +200,6 @@ public actor EmbeddingManager: EmbeddingProvider {
 
     /// 计算两个向量的余弦相似度
     public static func cosineSimilarity(_ v1: [Float], _ v2: [Float]) -> Float {
-        guard v1.count == v2.count, v1.count > 0 else { return 0 }
-        var dotProduct: Float = 0
-        var v1SumSq: Float = 0
-        var v2SumSq: Float = 0
-        
-        for i in 0..<v1.count {
-            dotProduct += v1[i] * v2[i]
-            v1SumSq += v1[i] * v1[i]
-            v2SumSq += v2[i] * v2[i]
-        }
-        
-        let denominator = sqrt(v1SumSq) * sqrt(v2SumSq)
-        guard denominator > 0 else { return 0 }
-        return dotProduct / denominator
+        return VectorMath.cosineSimilarity(v1, v2)
     }
 }

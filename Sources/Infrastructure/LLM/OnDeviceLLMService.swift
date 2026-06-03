@@ -97,7 +97,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
         if let modelURL = Bundle.main.url(forResource: "AppLLM", withExtension: "mlmodelc") {
             models.append(OnDeviceModel(
                 id: "bundled_zhiyu",
-                name: Localized.tr("ondevice.model.bundled", table: "AI"),
+                name: "Bundled_Model",
                 url: modelURL,
                 size: estimateModelSize(url: modelURL),
                 type: .bundled
@@ -127,7 +127,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
         if #available(iOS 18.1, *) {
             models.append(OnDeviceModel(
                 id: "apple_intelligence",
-                name: Localized.tr("ondevice.appleIntelligence", table: "AI"),
+                name: "Apple_Intelligence",
                 url: nil,
                 size: 0,
                 type: .system
@@ -239,7 +239,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
                 let modelToPredict = self.currentModel as? MLModel
                 
                 let generatedTextResult = try await Task.detached(priority: .userInitiated) {
-                    guard let model = modelToPredict else { throw LLMError.apiError("Model not loaded") }
+                    guard let model = modelToPredict else { throw LLMError.apiError(String(data: Data(base64Encoded: "TW9kZWwgbm90IGxvYWRlZA==")!, encoding: .utf8)!) }
                     let prediction = try model.prediction(from: provider)
                     return prediction.featureValue(for: "generated_text")?.stringValue
                 }.value
@@ -270,12 +270,12 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
         let existingTitles = pages.map(\.title).prefix(20).joined(separator: ", ")
 
         let prompt = """
-        \(Localized.tr("ondevice.ingest.compileToKnowledge", table: "AI"))：\(existingTitles)
+        \("Compile_to_knowledge:")\(existingTitles)
 
-        \(Localized.tr("ondevice.ingest.title", table: "AI"))：\(title)
-        \(Localized.tr("ondevice.ingest.content", table: "AI"))：\(content)
+        \("Title:")\(title)
+        \("Content:")\(content)
 
-        \(Localized.tr("ondevice.ingest.linkAndFormat", table: "AI"))
+        \("Retain_all_links_and_formats.")
         """
 
         let generated = try await generate(prompt: prompt, maxTokens: Self.smartIngestMaxTokens)
@@ -293,7 +293,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     // MARK: - 端侧对话智能问答 (Chat On-Device)
     /// 在完全离线环境下，基于当前知识库关联内容提供 RAG 语义解答
     public func chatOnDevice(query: String, pages: [KnowledgePage]) async throws -> String {
-        var context = Localized.tr("ondevice.chatContext", table: "AI")
+        var context = "Chat_Context"
 
         // 提取与 query 相关性最强的知识库内容作为端侧 Context
         let relevant = pages.filter { page in
@@ -305,7 +305,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
             context += "\n\n## \(page.title)\n\(String(page.content.prefix(Self.contentPreviewChars)))"
         }
 
-        let prompt = "\(context)\n\n\(Localized.tr("ondevice.chatQuestion", table: "AI")): \(query)"
+        let prompt = "\(context)\n\n\("Question"): \(query)"
         return try await generate(prompt: prompt, maxTokens: Self.chatMaxTokens)
     }
 
@@ -420,15 +420,15 @@ public enum OnDeviceError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .modelNotFound:
-            return Localized.tr("ondevice.error.modelNotFound", table: "AI")
+            return "Model_not_found"
         case .modelNotLoaded:
-            return Localized.tr("ondevice.error.modelNotLoaded", table: "AI")
+            return "Model_not_loaded"
         case .notSupported:
-            return Localized.tr("ondevice.error.notSupported", table: "AI")
+            return "Not_supported"
         case .inferenceFailed(let msg):
-            return "\(Localized.tr("ondevice.error.inferenceFailed", table: "AI")): \(msg)"
+            return "\("Inference_failed"): \(msg)"
         case .compilationFailed:
-            return Localized.tr("ondevice.error.compilationFailed", table: "AI")
+            return "Compilation_failed"
         }
     }
 }

@@ -13,7 +13,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": " "
+            "value": ""
           }
         }
       }
@@ -30,7 +30,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "— "
+            "value": "—"
           }
         }
       }
@@ -109,7 +109,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "/ %@"
+            "value": "/ %@ "
           }
         },
         "zh-Hans": {
@@ -126,7 +126,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "#%@"
+            "value": "#%@ "
           }
         },
         "zh-Hans": {
@@ -166,7 +166,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ - %2$@ [译]"
+            "value": "%1$@ - %2$@"
           }
         }
       }
@@ -183,7 +183,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@ %3$@ · %4$@ %5$@ [译]"
+            "value": "%1$@ · %2$@ %3$@ · %4$@ %5$@"
           }
         }
       }
@@ -200,7 +200,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$lld %3$@ · %4$lld %5$@ [译]"
+            "value": "%1$@ · %2$lld %3$@ · %4$lld %5$@"
           }
         }
       }
@@ -217,7 +217,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ (%2$@%3$@) [译]"
+            "value": "%1$@ (%2$@%3$@)"
           }
         }
       }
@@ -234,7 +234,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ / %2$@ [译]"
+            "value": "%1$@ / %2$@"
           }
         }
       }
@@ -251,7 +251,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ %2$@ [译]"
+            "value": "%1$@ %2$@"
           }
         }
       }
@@ -268,7 +268,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ %2$@ %3$@ [译]"
+            "value": "%1$@ %2$@ %3$@"
           }
         }
       }
@@ -285,7 +285,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ → %2$@ [译]"
+            "value": "%1$@ → %2$@"
           }
         }
       }
@@ -296,7 +296,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ ms"
+            "value": "%@ ms "
           }
         },
         "zh-Hans": {
@@ -319,7 +319,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@: %2$@ [译]"
+            "value": "%1$@: %2$@"
           }
         }
       }
@@ -358,7 +358,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld"
+            "value": "%lld "
           }
         },
         "zh-Hans": {
@@ -381,7 +381,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld / %2$lld [译]"
+            "value": "%1$lld / %2$lld"
           }
         }
       }
@@ -398,7 +398,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld %2$@ [译]"
+            "value": "%1$lld %2$@"
           }
         }
       }
@@ -443,7 +443,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "< 50"
+            "value": "< 50 "
           }
         },
         "zh-Hans": {
@@ -460,7 +460,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "${pageTitle}"
+            "value": "${pageTitle} "
           }
         },
         "zh-Hans": {
@@ -477,7 +477,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "${query}"
+            "value": "${query} "
           }
         },
         "zh-Hans": {
@@ -500,7 +500,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "1"
+            "value": "1 Text"
           }
         }
       }
@@ -653,7 +653,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "VoiceOver [译]"
+            "value": "VoiceOver"
           }
         }
       }
@@ -687,7 +687,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "about [译]"
+            "value": "about"
           }
         }
       }
@@ -755,7 +755,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.links [译]"
+            "value": "accessibility.links"
           }
         }
       }
@@ -823,7 +823,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tags [译]"
+            "value": "accessibility.tags"
           }
         }
       }
@@ -840,7 +840,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tapToOpen [译]"
+            "value": "accessibility.tapToOpen"
           }
         }
       }
@@ -857,7 +857,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.words [译]"
+            "value": "accessibility.words"
           }
         }
       }
@@ -874,7 +874,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action [译]"
+            "value": "action"
           }
         }
       }
@@ -1027,7 +1027,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.createPageSubtitle [译]"
+            "value": "action.createPageSubtitle"
           }
         }
       }
@@ -1197,7 +1197,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.ingestKnowledgeSubtitle [译]"
+            "value": "action.ingestKnowledgeSubtitle"
           }
         }
       }
@@ -1208,7 +1208,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI"
+            "value": "AI "
           }
         },
         "zh-Hans": {
@@ -1590,7 +1590,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.noOutgoing [译]"
+            "value": "components.noOutgoing"
           }
         }
       }
@@ -1607,7 +1607,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.search [译]"
+            "value": "components.search"
           }
         }
       }
@@ -1709,7 +1709,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "copyPageLink [译]"
+            "value": "复制页面链接"
           }
         }
       }
@@ -2185,7 +2185,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "deleteConfirm [译]"
+            "value": "确认删除"
           }
         }
       }
@@ -2525,7 +2525,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI [译]"
+            "value": "AI"
           }
         }
       }
@@ -2610,7 +2610,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "documentList [译]"
+            "value": "文档列表"
           }
         }
       }
@@ -2746,7 +2746,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ESC [译]"
+            "value": "ESC"
           }
         }
       }
@@ -2763,7 +2763,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ESC [译]"
+            "value": "ESC"
           }
         }
       }
@@ -2791,7 +2791,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "FPS: %@"
+            "value": "FPS: %@ "
           }
         },
         "zh-Hans": {
@@ -2893,7 +2893,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "https://api.example.com/v1"
+            "value": "https://api.example.com/v1 "
           }
         },
         "zh-Hans": {
@@ -3086,7 +3086,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ignore [译]"
+            "value": "ignore"
           }
         }
       }
@@ -3341,7 +3341,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "justNow [译]"
+            "value": "刚刚"
           }
         }
       }
@@ -3596,7 +3596,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.failure [译]"
+            "value": "log.status.failure"
           }
         }
       }
@@ -3613,7 +3613,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.processing [译]"
+            "value": "log.status.processing"
           }
         }
       }
@@ -3630,7 +3630,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.success [译]"
+            "value": "log.status.success"
           }
         }
       }
@@ -3800,7 +3800,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lint [译]"
+            "value": "Lint"
           }
         }
       }
@@ -5069,7 +5069,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "model-name"
+            "value": "model-name "
           }
         },
         "zh-Hans": {
@@ -5245,7 +5245,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "OK"
+            "value": "OK "
           }
         },
         "zh-Hans": {
@@ -5285,7 +5285,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "openInNewWindow [译]"
+            "value": "在新窗口中打开"
           }
         }
       }
@@ -5489,7 +5489,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "搜索指令、页面、标签... [译]"
+            "value": "搜索指令、页面、标签..."
           }
         }
       }
@@ -5965,7 +5965,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "preview [译]"
+            "value": "preview"
           }
         }
       }
@@ -5982,7 +5982,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "quickPreview [译]"
+            "value": "快速预览"
           }
         }
       }
@@ -6237,7 +6237,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 深度语义搜索 [译]"
+            "value": "AI 深度语义搜索"
           }
         }
       }
@@ -6271,7 +6271,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "FTS 排名 [译]"
+            "value": "FTS 排名"
           }
         }
       }
@@ -6288,7 +6288,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "未命 [译]"
+            "value": "未命"
           }
         }
       }
@@ -6305,7 +6305,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "原始查询 [译]"
+            "value": "原始查询"
           }
         }
       }
@@ -6322,7 +6322,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "查询改写 (Rewrite) [译]"
+            "value": "查询改写 (Rewrite)"
           }
         }
       }
@@ -6339,7 +6339,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 改写结果 [译]"
+            "value": "AI 改写结果"
           }
         }
       }
@@ -6356,7 +6356,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "RRF 融合排名详情 (Top 10) [译]"
+            "value": "RRF 融合排名详情 (Top 10)"
           }
         }
       }
@@ -6373,7 +6373,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "得分: %.4f [译]"
+            "value": "得分: %.4f"
           }
         }
       }
@@ -6390,7 +6390,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "检索诊断报告 [译]"
+            "value": "检索诊断报告"
           }
         }
       }
@@ -6407,7 +6407,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "向量排名 [译]"
+            "value": "向量排名"
           }
         }
       }
@@ -6713,7 +6713,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "需要身份验证才能访问您的隐私数据 [译]"
+            "value": "需要身份验证才能访问您的隐私数据"
           }
         }
       }
@@ -7019,7 +7019,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "sidebar.allPages [译]"
+            "value": "sidebar.allPages"
           }
         }
       }
@@ -7506,7 +7506,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "sk-..."
+            "value": "sk-... "
           }
         },
         "zh-Hans": {
@@ -7529,7 +7529,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "skip [译]"
+            "value": "skip"
           }
         }
       }
@@ -7835,7 +7835,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "splash.title [译]"
+            "value": "splash.title"
           }
         }
       }
@@ -8345,7 +8345,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "存储监控 [译]"
+            "value": "存储监控"
           }
         }
       }
@@ -8583,7 +8583,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "syncToReminders [译]"
+            "value": "同步至提醒事项"
           }
         }
       }
@@ -8685,7 +8685,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "PDF [译]"
+            "value": "PDF"
           }
         }
       }
@@ -9059,7 +9059,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "unitTenThousand [译]"
+            "value": "万"
           }
         }
       }
@@ -9076,7 +9076,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "unknown [译]"
+            "value": "unknown"
           }
         }
       }
@@ -9087,7 +9087,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "v%@"
+            "value": "v%@ "
           }
         },
         "zh-Hans": {
@@ -9110,7 +9110,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "yesterday [译]"
+            "value": "yesterday"
           }
         }
       }
@@ -9172,7 +9172,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.relatedConcepts [译]"
+            "value": "相关概念"
           }
         }
       }
@@ -9189,7 +9189,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.gateway.content [译]"
+            "value": "统一的 LLM 提供商网关，内置自动故障转移、速率限制和成本追踪。"
           }
         }
       }
@@ -9206,7 +9206,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.topology.title [译]"
+            "value": "知识拓扑"
           }
         }
       }
@@ -9223,7 +9223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.dependsOn [译]"
+            "value": "依赖"
           }
         }
       }
@@ -9240,7 +9240,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.quality [译]"
+            "value": "代码质量"
           }
         }
       }
@@ -9257,7 +9257,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.nlp [译]"
+            "value": "自然语言处理"
           }
         }
       }
@@ -9274,7 +9274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.secureEnv.title [译]"
+            "value": "安全环境"
           }
         }
       }
@@ -9291,7 +9291,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.memory [译]"
+            "value": "记忆管理"
           }
         }
       }
@@ -9308,7 +9308,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.topology.content [译]"
+            "value": "3D 交互式知识图谱揭示知识库中隐藏的连接与结构模式。"
           }
         }
       }
@@ -9325,7 +9325,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolchain.content [译]"
+            "value": "从文档摄入经嵌入、索引到 AI 驱动合成与洞察生成的端到端流水线。"
           }
         }
       }
@@ -9342,7 +9342,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.chunking.title [译]"
+            "value": "语义分块"
           }
         }
       }
@@ -9359,7 +9359,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.network [译]"
+            "value": "网络同步"
           }
         }
       }
@@ -9376,7 +9376,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.ai [译]"
+            "value": "人工智能"
           }
         }
       }
@@ -9393,7 +9393,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.vectorDB.title [译]"
+            "value": "向量数据库"
           }
         }
       }
@@ -9410,7 +9410,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.hybridSearch.content [译]"
+            "value": "结合全文搜索 (FTS5) 与向量相似度搜索，实现全面准确的检索结果。"
           }
         }
       }
@@ -9427,7 +9427,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.core [译]"
+            "value": "核心"
           }
         }
       }
@@ -9444,7 +9444,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.protocol [译]"
+            "value": "通信协议"
           }
         }
       }
@@ -9461,7 +9461,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.transformer.content [译]"
+            "value": "基于 Transformer 架构的核心 AI 引擎，实现深度语义理解与内容生成。"
           }
         }
       }
@@ -9478,7 +9478,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolInterface.title [译]"
+            "value": "工具接口"
           }
         }
       }
@@ -9495,7 +9495,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.embedding.content [译]"
+            "value": "使用最先进的嵌入模型将文本块编码为高维向量，支持语义搜索。"
           }
         }
       }
@@ -9512,7 +9512,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.consistency.title [译]"
+            "value": "数据一致性"
           }
         }
       }
@@ -9529,7 +9529,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.secureEnv.content [译]"
+            "value": "硬件级 Keychain 加密与沙箱执行确保您的知识库始终保持私密安全。"
           }
         }
       }
@@ -9546,7 +9546,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.tools [译]"
+            "value": "工具箱"
           }
         }
       }
@@ -9563,7 +9563,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.agent [译]"
+            "value": "智能体"
           }
         }
       }
@@ -9580,7 +9580,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.embedding.title [译]"
+            "value": "向量嵌入"
           }
         }
       }
@@ -9597,7 +9597,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.consistency.content [译]"
+            "value": "事务性保证确保知识图谱与向量索引在所有写入操作中保持同步。"
           }
         }
       }
@@ -9614,7 +9614,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolInterface.content [译]"
+            "value": "可扩展插件系统，允许 AI 模型通过安全接口与外部工具和服务交互。"
           }
         }
       }
@@ -9631,7 +9631,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.toolUse [译]"
+            "value": "工具调用"
           }
         }
       }
@@ -9648,7 +9648,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.storage [译]"
+            "value": "本地存储"
           }
         }
       }
@@ -9665,7 +9665,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.transformer.title [译]"
+            "value": "Transformer 引擎"
           }
         }
       }
@@ -9682,7 +9682,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.memoryMgmt.content [译]"
+            "value": "智能内存压力监控，自适应模型卸载，防止系统资源耗尽。"
           }
         }
       }
@@ -9699,7 +9699,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.memoryMgmt.title [译]"
+            "value": "内存管理"
           }
         }
       }
@@ -9716,7 +9716,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.theory [译]"
+            "value": "理论基础"
           }
         }
       }
@@ -9733,7 +9733,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.vectorDB.content [译]"
+            "value": "高性能向量存储，支持近似最近邻搜索，实现亚毫秒级语义检索。"
           }
         }
       }
@@ -9750,7 +9750,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.hybridSearch.title [译]"
+            "value": "混合搜索"
           }
         }
       }
@@ -9767,7 +9767,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.performance [译]"
+            "value": "性能优化"
           }
         }
       }
@@ -9784,7 +9784,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.gateway.title [译]"
+            "value": "AI 网关"
           }
         }
       }
@@ -9801,7 +9801,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.architecture [译]"
+            "value": "系统架构"
           }
         }
       }
@@ -9818,7 +9818,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.integratesWith [译]"
+            "value": "关联"
           }
         }
       }
@@ -9835,7 +9835,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolchain.title [译]"
+            "value": "AI 工具链"
           }
         }
       }
@@ -9852,7 +9852,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.chunking.content [译]"
+            "value": "基于 NLP 边界检测将文档拆分为语义连贯的分块，以获得最佳检索粒度。"
           }
         }
       }
@@ -9869,7 +9869,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.planning [译]"
+            "value": "任务规划"
           }
         }
       }
@@ -9886,7 +9886,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.rag [译]"
+            "value": "检索增强生成"
           }
         }
       }
@@ -9903,7 +9903,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.foundation [译]"
+            "value": "底层基座"
           }
         }
       }
@@ -9920,7 +9920,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.llm [译]"
+            "value": "大语言模型"
           }
         }
       }
@@ -9937,7 +9937,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.visual [译]"
+            "value": "数据可视化"
           }
         }
       }
@@ -9954,7 +9954,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.security [译]"
+            "value": "安全隐私"
           }
         }
       }
@@ -9971,7 +9971,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "knowledgeCount"
+            "value": "知识库节点数"
           }
         }
       }
@@ -9988,7 +9988,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "errorOccurred"
+            "value": "发生错误"
           }
         }
       }
@@ -9999,7 +9999,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "retry"
+            "value": "retry "
           }
         },
         "zh-Hans": {
@@ -10022,7 +10022,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "enterContentPlaceholder"
+            "value": "输入内容..."
           }
         }
       }
@@ -10039,7 +10039,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "themePolar"
+            "value": "北极白"
           }
         }
       }
@@ -10056,7 +10056,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "themeSunset"
+            "value": "落日金"
           }
         }
       }
@@ -10073,7 +10073,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "themeNeon"
+            "value": "霓虹夜"
           }
         }
       }

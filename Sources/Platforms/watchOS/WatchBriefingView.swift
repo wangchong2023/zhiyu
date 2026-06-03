@@ -16,7 +16,7 @@ import AVFoundation
 @MainActor
 struct WatchBriefingView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var watchSync: any WatchSyncProtocol
+    @Inject private var watchSync: any WatchSyncProtocol
     
     @State private var isPlaying = false
     @State private var synthesizer = AVSpeechSynthesizer()
@@ -25,7 +25,7 @@ struct WatchBriefingView: View {
     var body: some View {
         VStack(spacing: 12) {
             if watchSync.isBriefingLoading {
-                ProgressView("正在合成简报...")
+                ProgressView(L10n.Watch.briefingSynthesizing)
                     .foregroundStyle(.purple)
             } else if let briefing = watchSync.latestBriefing {
                 ScrollView {
@@ -70,16 +70,16 @@ struct WatchBriefingView: View {
                     Image(systemName: "headphones")
                         .font(.largeTitle)
                         .foregroundStyle(.purple)
-                    Text("获取今日知识简报")
+                    Text(L10n.Watch.briefingGetToday)
                         .font(.headline)
-                    Button("立即生成") {
+                    Button(L10n.Watch.briefingGenerateNow) {
                         watchSync.requestDailyBriefing()
                     }
                     .tint(.purple)
                 }
             }
         }
-        .navigationTitle("语音简报")
+        .navigationTitle(L10n.Watch.briefingAudioBriefing)
         .onAppear {
             setupAudioSession()
             synthesizer.delegate = delegate
@@ -97,7 +97,7 @@ struct WatchBriefingView: View {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("Audio session setup failed: \(error)")
+            print("AVAudioSession_Setup_Error: \(error)")
         }
     }
     
@@ -110,7 +110,7 @@ struct WatchBriefingView: View {
     }
 }
 
-class SpeechDelegate: NSObject, AVSpeechSynthesizerDelegate {
+final class SpeechDelegate: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sendable {
     var onFinish: (() -> Void)?
     
     /// speechSynthesizer回调

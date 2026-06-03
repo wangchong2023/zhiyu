@@ -62,8 +62,8 @@ struct SaveVoiceNoteSheet: View {
                 }
             }
             #if !os(watchOS)
-            .pickerStyle(.segmented)
-            #endif
+                .pickerStyle(.segmented)
+                #endif
         }
     }
     

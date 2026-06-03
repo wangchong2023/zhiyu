@@ -142,7 +142,7 @@ public struct AppEmptyState: View {
             }
         }
         .padding(.horizontal, Spacing.huge)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
         // MARK: [UI 测试自愈] 在进行 UI 自动化测试时，允许 XCUITest 穿透容器定位到具体的 action Button；非测试状态下合并为单个无障碍节点以优化 VoiceOver 体验
         .accessibilityElement(children: ProcessInfo.processInfo.arguments.contains("--uitesting") ? .contain : .combine)
         .accessibilityLabel(buildAccessibilityLabel())

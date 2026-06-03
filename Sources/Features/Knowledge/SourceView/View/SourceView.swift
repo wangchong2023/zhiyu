@@ -40,10 +40,10 @@ struct SourceView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                Text(Localized.tr("source.view.title", table: "Plugin"))
+                Text("Source_View")
                     .font(.headline)
                     .foregroundStyle(.appText)
-                Text(Localized.tr("source.view.subtitle", table: "Plugin"))
+                Text("Original_Source_Content")
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
@@ -66,7 +66,7 @@ struct SourceView: View {
                 .font(.largeTitle)
                 .foregroundStyle(.appSecondary.opacity(0.3))
             
-            Text(Localized.tr("source.view.empty", table: "Plugin"))
+            Text("No_Source_Found")
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)

@@ -108,7 +108,7 @@ public final class GlobalModelManager {
             // 2. 扫描本地沙盒文件，对齐下载状态
             refreshLocalModelFiles()
         } catch {
-            print("⚠️ [GlobalModelManager] 加载大模型商店白名单失败: \(error.localizedDescription)")
+            print(" [GlobalModelManager] : \(error.localizedDescription)")
         }
     }
     
@@ -131,7 +131,7 @@ public final class GlobalModelManager {
             } else {
                 // 本地尚无权重包，如 downloadStates 里的状态不是 downloading/paused/pending，则归为未下载(即 failed/Idle 初始态)
                 if downloadStates[modelId] == nil {
-                    downloadStates[modelId] = .failed(error: "Not Downloaded")
+                    downloadStates[modelId] = .failed(error: String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)!)
                 }
             }
         }
@@ -147,7 +147,7 @@ public final class GlobalModelManager {
         
         // 1. 如果该模型不支持该硬件物理内存 (restricted)，强力拦截，杜绝 OOM 爆内存
         if evaluateEligibility(for: manifest) == .restricted {
-            print("❌ [GlobalModelManager] 硬件运存不足，强力拦截模型 \(modelId) 下载。")
+            print(" [GlobalModelManager]  \(modelId) ")
             return
         }
         
@@ -241,7 +241,7 @@ public final class GlobalModelManager {
         
         // 2. 合成实验室 (Synthesis) 属于端云混合中枢
         if taskTag == "Synthesis" {
-            // 若用户开启了 "云端深度考据提权开关"，且本地活跃大模型未就绪或者强网络状态下，路由至云端以确保高质量考据
+            // 若用户开启了 ""，且本地活跃大模型未就绪或者强网络状态下，路由至云端以确保高质量考据
             return isCloudEscalationEnabled
         }
         

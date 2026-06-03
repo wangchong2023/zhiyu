@@ -311,6 +311,11 @@ public enum Spacing {
         public static let maxRecentItems: Int = 10
         /// 缺省页图标不透明度
         public static let emptyStateIconOpacity: CGFloat = 0.3
+        
+        /// macOS/Catalyst 最小窗口宽度 (800px)
+        public static let minWindowWidth: CGFloat = 800
+        /// macOS/Catalyst 最小窗口高度 (600px)
+        public static let minWindowHeight: CGFloat = 600
     }
     
     /// 任务管理中心规范

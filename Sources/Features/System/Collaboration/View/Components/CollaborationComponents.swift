@@ -118,7 +118,7 @@ struct RecentEditRow: View {
                 Text(edit.userID.components(separatedBy: "|").first ?? edit.userID)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appText)
-                Text("\(edit.field) → \(String(edit.newValue.prefix(DesignSystem.Metrics.maxCollabEditPreviewLength)))") // 50
+                Text("\(edit.field)  \(String(edit.newValue.prefix(DesignSystem.Metrics.maxCollabEditPreviewLength)))") // 50
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                     .lineLimit(1)

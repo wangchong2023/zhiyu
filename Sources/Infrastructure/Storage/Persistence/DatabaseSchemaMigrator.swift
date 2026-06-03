@@ -174,7 +174,7 @@ extension DatabaseManager {
             }
 
             // 3. 历史存量数据平滑迁移：从 pages.tags JSON 字符串中解离出独立 Tag 实物
-            let rows = try Row.fetchAll(db, sql: "SELECT \(KnowledgePage.Columns.id.rawValue), \(KnowledgePage.Columns.tags.rawValue) FROM \(KnowledgePage.databaseTableName)")
+            let rows = try Row.fetchAll(db, sql: "SELECT \(KnowledgePage.Columns.id.rawValue)," + " \(KnowledgePage.Columns.tags.rawValue)" + " FROM \(KnowledgePage.databaseTableName)")
             for row in rows {
                 let pageID: Data = row[KnowledgePage.Columns.id.rawValue]
                 let tagsJSON: String? = row[KnowledgePage.Columns.tags.rawValue]
@@ -182,9 +182,9 @@ extension DatabaseManager {
                    let tags = try? JSONDecoder().decode([String].self, from: data) {
                      for tagName in tags {
                          // 建立基础标签记录 (如存在则忽略)
-                         try db.execute(sql: "INSERT OR IGNORE INTO \(TagRecord.databaseTableName) (\(TagRecord.CodingKeys.id.rawValue), \(TagRecord.CodingKeys.name.rawValue), \(TagRecord.CodingKeys.createdAt.rawValue)) VALUES (?, ?, ?)", arguments: [tagName, tagName, Date()])
+                         try db.execute(sql: "INSERT OR" + " IGNORE INTO" + " \(TagRecord.databaseTableName)" + " (\(TagRecord.CodingKeys.id.rawValue)," + " \(TagRecord.CodingKeys.name.rawValue)," + " \(TagRecord.CodingKeys.createdAt.rawValue))" + " VALUES (?," + " ?, ?)", arguments: [tagName, tagName, Date()])
                          // 绑定多对多关联
-                         try db.execute(sql: "INSERT OR IGNORE INTO \(PageTagRecord.databaseTableName) (\(PageTagRecord.CodingKeys.pageID.rawValue), \(PageTagRecord.CodingKeys.tagID.rawValue)) VALUES (?, ?)", arguments: [pageID, tagName])
+                         try db.execute(sql: "INSERT OR" + " IGNORE INTO" + " \(PageTagRecord.databaseTableName)" + " (\(PageTagRecord.CodingKeys.pageID.rawValue)," + " \(PageTagRecord.CodingKeys.tagID.rawValue))" + " VALUES (?," + " ?)", arguments: [pageID, tagName])
                      }
                 }
             }

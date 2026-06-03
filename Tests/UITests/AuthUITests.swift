@@ -30,7 +30,7 @@ final class AuthUITests: XCTestCase {
         app = XCUIApplication()
         // --reset-auth-state: 强制从登录页开始，不走自动游客路径
         // --skip-onboarding: 跳过新手引导以免遮挡登录按钮
-        app.launchArguments = ["--reset-auth-state", "--skip-onboarding"]
+        app.launchArguments = ["--reset-auth-state", "--skip-onboarding", "--uitesting", "-UITest_MockData"]
         app.launch()
     }
 
@@ -355,9 +355,13 @@ final class AuthUITests: XCTestCase {
 
         // 点击并立即检查 isEnabled（mock-backend 响应极快，可能已完成，作宽松信息型验证）
         loginButton.tap()
-        let isDisabledDuringLoad = !loginButton.isEnabled
-        if isDisabledDuringLoad {
-            XCTAssertFalse(loginButton.isEnabled, "一键登录按钮在 loading 期间应被禁用")
+        
+        // 物理自愈：由于内存 Mock 登录在毫秒级内即可跳转，此处需判定如果按钮已被销毁则无需校验，避免因视图切换触发 snapshot 缺失报错
+        if loginButton.exists {
+            let isDisabledDuringLoad = !loginButton.isEnabled
+            if isDisabledDuringLoad {
+                XCTAssertFalse(loginButton.isEnabled, "一键登录按钮在 loading 期间应被禁用")
+            }
         }
         takeScreenshot(name: "TC11_01_Login_Loading_State")
     }

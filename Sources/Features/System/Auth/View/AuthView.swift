@@ -156,19 +156,35 @@ struct AuthView: View {
             
             HStack(spacing: Spacing.large) { // 加大间距以容纳5个图标
                 ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) { // 微信登录
-                    ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
+                    if authService.isMockMode {
+                        handleThirdPartyLogin(using: WeChatAuthStrategy())
+                    } else {
+                        ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
+                    }
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
-                    handleAppleLogin()
+                    handleThirdPartyLogin(using: AppleAuthStrategy())
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.google", icon: "GoogleLogo", isSystem: false, color: .blue) { // Google登录
-                    ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
+                    if authService.isMockMode {
+                        handleThirdPartyLogin(using: GoogleAuthStrategy())
+                    } else {
+                        ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
+                    }
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.github", icon: "GithubLogo", isSystem: false, color: .primary) { // Github登录
-                    ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
+                    if authService.isMockMode {
+                        handleThirdPartyLogin(using: GitHubAuthStrategy())
+                    } else {
+                        ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
+                    }
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) { // 手机短信登录
-                    ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
+                    if authService.isMockMode {
+                        handleThirdPartyLogin(using: CarrierAuthStrategy())
+                    } else {
+                        ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
+                    }
                 }
             }
         }
@@ -218,13 +234,20 @@ struct AuthView: View {
         }
     }
     
-    /// 触发第三方 Apple ID 授权登录逻辑，并驱动统一会话中台校验
-    private func handleAppleLogin() {
+    /// 触发第三方账号授权登录逻辑
+    /// - Parameter strategy: 登录策略
+    private func handleThirdPartyLogin(using strategy: any AuthStrategy) {
+        if !isAgreementChecked {
+            ToastManager.shared.show(type: .error, message: L10n.Auth.agreementRequired)
+            HapticFeedback.shared.trigger(.error)
+            return
+        }
+        
         Task {
             isLoading = true
             errorMessage = nil
             
-            let success = await authService.login(using: AppleAuthStrategy())
+            let success = await authService.login(using: strategy)
             
             if !success {
                 errorMessage = L10n.Auth.authFailed

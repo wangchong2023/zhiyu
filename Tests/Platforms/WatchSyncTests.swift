@@ -186,6 +186,59 @@ final class WatchSyncTests: XCTestCase {
         mockUserDefaults.removeObject(forKey: "watch_offline_read_cache")
     }
 
+    // MARK: - 3. 音频物理分片与重组测试
+    /// 验证音频物理分片切割与重组 (TC-WAT-03)
+    func testAudioSplitterSplitAndMerge() {
+        let originalSize = 1024 * 1024 // 1MB
+        var randomBytes = Data(count: originalSize)
+        _ = randomBytes.withUnsafeMutableBytes {
+            SecRandomCopyBytes(kSecRandomDefault, originalSize, $0.baseAddress!)
+        }
+        
+        let chunks = AudioSplitter.split(data: randomBytes, chunkSize: 256 * 1024)
+        XCTAssertEqual(chunks.count, 4, "1MB 数据按 256KB 分片应正好分成 4 片")
+        XCTAssertEqual(chunks[0].count, 256 * 1024)
+        
+        let merged = AudioSplitter.merge(chunks: chunks)
+        XCTAssertEqual(merged, randomBytes, "合并后的数据应与原始数据完全一致")
+    }
+    
+    #if os(iOS) && !os(watchOS)
+    /// 验证 iOS 接收端对于音频分片的组装拼接与自愈，即使分片乱序到达 (TC-WAT-03)
+    func testiOSAudioChunkAssemblyAndSelfHealing() {
+        let service = iOSWatchSyncService()
+        let transferId = UUID().uuidString
+        let filename = "test_voice.m4a"
+        
+        let chunk1 = Data([1, 2, 3])
+        let chunk2 = Data([4, 5, 6])
+        let chunk3 = Data([7, 8, 9])
+        
+        // 模拟接收第二个分片 (乱序到达)
+        service.handleReceivedAudioChunk(transferId: transferId, index: 1, total: 3, filename: filename, data: chunk2)
+        XCTAssertEqual(service.lastReceivedText, "", "分片未集齐前不应触发合并")
+        
+        // 模拟接收第一个分片
+        service.handleReceivedAudioChunk(transferId: transferId, index: 0, total: 3, filename: filename, data: chunk1)
+        XCTAssertEqual(service.lastReceivedText, "")
+        
+        // 模拟接收第三个分片 (集齐)
+        let expectation = expectation(description: "等待音频合并通知")
+        let observer = NotificationCenter.default.addObserver(forName: .didReceiveWatchAudio, object: nil, queue: .main) { notification in
+            let data = notification.object as? Data
+            XCTAssertEqual(data, Data([1, 2, 3, 4, 5, 6, 7, 8, 9]), "合并后的音频数据内容应完全正确")
+            XCTAssertEqual(notification.userInfo?["filename"] as? String, filename)
+            expectation.fulfill()
+        }
+        
+        service.handleReceivedAudioChunk(transferId: transferId, index: 2, total: 3, filename: filename, data: chunk3)
+        
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(service.lastReceivedText, "audio:test_voice.m4a:9", "lastReceivedText 应该被正确赋值")
+        NotificationCenter.default.removeObserver(observer)
+    }
+    #endif
+
     /// 验证规范中的 WatchSyncPayload 能够与 WCSession 的 [String: Any] 字典载荷进行无损互转，保证向下兼容
     func testPayloadCodableCompatibility() throws {
         let originalPayload = TestWatchSyncPayload(
@@ -271,6 +324,41 @@ final class WatchSyncTests: XCTestCase {
         XCTAssertEqual(service.lastReceivedText, expectedContent, "接收文本应正确更新")
         
         NotificationCenter.default.removeObserver(observer)
+    }
+    
+    /// 验证 watchOS 端音频录音文件分片与断点续传的离线缓存与重连机制 (TC-WAT-03)
+    func testWatchAudioOfflineTransferAndSelfHealing() {
+        let service = WatchWatchSyncService()
+        let originalSize = 100 * 1024 // 100KB
+        var randomBytes = Data(count: originalSize)
+        
+        UserDefaults.standard.removeObject(forKey: "watch_pending_audio_transfers")
+        
+        // 尝试发送，由于离线（mockActivationState 默认为 nil 且未激活），分片应缓存于本地
+        service.sendAudioData(randomBytes, filename: "offline_voice.m4a")
+        
+        let pending = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]]
+        XCTAssertNotNil(pending, "离线时发送音频，分片应缓存于本地")
+        XCTAssertEqual(pending?.count, 1)
+        
+        if let transfer = pending?.values.first,
+           let chunks = transfer["chunks"] as? [[String: Any]] {
+            XCTAssertEqual(chunks.count, 1, "100KB 音频分片应为 1 个")
+            XCTAssertEqual(chunks[0]["sent"] as? Bool, false, "离线缓存中分片的已发送状态应为 false")
+        } else {
+            XCTFail("缓存数据结构解析失败")
+        }
+        
+        // 模拟重连激活 (激活插桩改为 .activated)
+        service.mockActivationState = .activated
+        service.triggerPendingTransfers()
+        
+        // 验证发送完毕后，本地离线队列应被清零
+        let pendingAfterActive = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]]
+        XCTAssertTrue(pendingAfterActive == nil || pendingAfterActive!.isEmpty, "重传成功后，本地离线队列应被清空")
+        
+        service.mockActivationState = nil
+        UserDefaults.standard.removeObject(forKey: "watch_pending_audio_transfers")
     }
     #endif
 }

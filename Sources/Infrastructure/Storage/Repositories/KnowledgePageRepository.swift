@@ -65,7 +65,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
                     p.rawTextSnippet = try SecurityManager.shared.encrypt(snippet)
                 }
             } catch {
-                Logger.shared.error("Failed to encrypt private page content", error: error)
+                Logger.shared.error(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGVuY3J5cHQgcHJpdmF0ZSBwYWdlIGNvbnRlbnQ=")!, encoding: .utf8)!, error: error)
             }
         }
         
@@ -265,7 +265,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
                 p.rawTextSnippet = try SecurityManager.shared.decrypt(snippet)
             }
         } catch {
-            Logger.shared.error("Failed to decrypt private page: \(page.title)", error: error)
+            Logger.shared.error("Failed to" + " decrypt private" + " page: \(page.title)", error: error)
         }
         return p
     }

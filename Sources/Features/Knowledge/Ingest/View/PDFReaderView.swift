@@ -183,8 +183,8 @@ private struct PDFDocumentListView: View {
             }
         }
 #if os(iOS)
-        .listStyle(.insetGrouped)
-#endif
+                .listStyle(.insetGrouped)
+                #endif
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
     }
@@ -330,8 +330,8 @@ struct PDFReaderView: View {
             TextField(L10n.Ingest.PDF.addNote, text: $highlightNote)
                 .font(.caption)
 #if os(iOS) || os(macOS)
-                .textFieldStyle(.roundedBorder)
-#endif
+        .textFieldStyle(.roundedBorder)
+        #endif
 
             Button(action: saveHighlight) {
                 Text(L10n.Ingest.PDF.saveAnnotation)

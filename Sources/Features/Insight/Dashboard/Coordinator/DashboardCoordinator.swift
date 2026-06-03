@@ -81,7 +81,7 @@ final class DashboardCoordinator {
         self.totalLinks = links
         self.densityData = density
         
-        logger.debug("📊 [Dashboard] 统计计算完成: \(links) 链接, \(density.count) 密度节点")
+        logger.debug(" [Dashboard] : \(links) , \(density.count) ")
     }
 
     /// 聚合标签分布

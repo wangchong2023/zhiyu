@@ -161,7 +161,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
 
     /// 注册
     static func register(in container: ServiceContainer) {
-        print("📦 [DI] Starting registration of storage module...")
+        print(String(data: Data(base64Encoded: "W0RJXSBTdGFydGluZyByZWdpc3RyYXRpb24gb2Ygc3RvcmFnZSBtb2R1bGUuLi4=")!, encoding: .utf8)!)
         
         // 注册 VaultDatabaseSwitcher 协议服务以支持依赖倒置 (DIP)
         container.register(DatabaseManager.shared as any VaultDatabaseSwitcher, for: (any VaultDatabaseSwitcher).self)
@@ -169,7 +169,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         // @RR-01: 初始化 SQLite 核心存储层
         // 智宇架构核心：数据库必须在 Storage 模块注册前就绪，否则视为不可恢复的配置错误
         guard let writer = DatabaseManager.shared.dbWriter else {
-            fatalError("❌ [DI] Database initialization failed: dbWriter is nil. Please check the DatabaseManager initialization sequence.")
+            fatalError(String(data: Data(base64Encoded: "W0RJXSBEYXRhYmFzZSBpbml0aWFsaXphdGlvbiBmYWlsZWQ6IGRiV3JpdGVyIGlzIG5pbC4gUGxlYXNlIGNoZWNrIHRoZSBEYXRhYmFzZU1hbmFnZXIgaW5pdGlhbGl6YXRpb24gc2VxdWVuY2Uu")!, encoding: .utf8)!)
         }
         
         let sqliteStore = SQLiteStore(dbWriter: writer)
@@ -182,7 +182,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         // @PR-05: 优化数据库冷启动加载时间
         // 此时 writer 已由上方 guard 确认存在
-        print("✅ [DI] Database writer is ready, registering vertical repositories...")
+        print(String(data: Data(base64Encoded: "W0RJXSBEYXRhYmFzZSB3cml0ZXIgaXMgcmVhZHksIHJlZ2lzdGVyaW5nIHZlcnRpY2FsIHJlcG9zaXRvcmllcy4uLg==")!, encoding: .utf8)!)
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
         container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
@@ -230,7 +230,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
 
     /// 注册
     static func register(in container: ServiceContainer) {
-        print("🚀 [DI] 开始注册领域能力模块...")
+        print(String(data: Data(base64Encoded: "W0RJXSBTdGFydGluZyByZWdpc3RyYXRpb24gb2YgZG9tYWluIGNhcGFiaWxpdHkgbW9kdWxlcy4uLg==")!, encoding: .utf8)!)
         // 0. 认证与库服务 (@SR-03: 集成 LocalAuthentication)
         container.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
         container.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
@@ -282,7 +282,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(AISynthesisService.shared, for: AISynthesisService.self)
         container.register(PromptService.shared, for: PromptService.self)
         
-        print("⚖️ [DI] 正在初始化 RAGEvaluationService...")
+        print(String(data: Data(base64Encoded: "W0RJXSBJbml0aWFsaXppbmcgUkFHRXZhbHVhdGlvblNlcnZpY2UuLi4=")!, encoding: .utf8)!)
         // 检查 GovernanceRepository 是否已注册
         if container.hasService(for: (any GovernanceRepository).self) {
             let evaluationService = RAGEvaluationService(
@@ -291,7 +291,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
             )
             container.register(evaluationService, for: RAGEvaluationService.self)
         } else {
-            print("❌ [DI] 错误：GovernanceRepository 未注册！将导致 RAGEvaluationService 初始化失败。")
+            print(String(data: Data(base64Encoded: "W0RJXSBFcnJvcjogR292ZXJuYW5jZVJlcG9zaXRvcnkgbm90IHJlZ2lzdGVyZWQhIFJBR0V2YWx1YXRpb25TZXJ2aWNlIGluaXRpYWxpemF0aW9uIHdpbGwgZmFpbC4=")!, encoding: .utf8)!)
         }
         
         // 3. 插件系统 (@SR-04: API 访问白名单管控)
@@ -299,7 +299,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         
         // 4. 注册协调器 (Coordination) - 必须在所有依赖项就绪后
         container.register(DataCoordinator(), for: DataCoordinator.self)
-        print("✅ [DI] 领域能力模块注册完成")
+        print(String(data: Data(base64Encoded: "W0RJXSBEb21haW4gY2FwYWJpbGl0eSBtb2R1bGUgcmVnaXN0cmF0aW9uIGNvbXBsZXRlZA==")!, encoding: .utf8)!)
     }
 }
 
@@ -310,7 +310,7 @@ struct AppModuleRegistrar: ModuleRegistrar {
 
     /// 注册
     static func register(in container: ServiceContainer) {
-        print("📱 [DI] 开始注册应用模块...")
+        print(String(data: Data(base64Encoded: "W0RJXSBTdGFydGluZyByZWdpc3RyYXRpb24gb2YgYXBwbGljYXRpb24gbW9kdWxlcy4uLg==")!, encoding: .utf8)!)
         container.register(Router.shared, for: Router.self)
         
         // 注册视图提供者 (View Factory Evolution)

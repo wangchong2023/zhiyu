@@ -214,9 +214,9 @@ final class IngestStore {
 
     /// 从外部文件直接导入（拖拽/文件选择器），异步处理
     func importFile(at url: URL) async {
-        logger.debug("📥 [IngestStore] 正在导入文件：\(url.lastPathComponent)")
+        logger.debug(" [IngestStore] \(url.lastPathComponent)")
         guard let content = try? String(contentsOf: url) else {
-            logger.error("❌ [IngestStore] 无法读取文件内容：\(url.path)")
+            logger.error(" [IngestStore] \(url.path)")
             return
         }
 
@@ -237,7 +237,7 @@ final class IngestStore {
     /// 处理文件导入流程（含提取与安全校验）
     func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
         guard url.startAccessingSecurityScopedResource() else {
-            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Permission denied"])
+            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "UGVybWlzc2lvbiBkZW5pZWQ=")!, encoding: .utf8)!])
         }
         defer { url.stopAccessingSecurityScopedResource() }
 

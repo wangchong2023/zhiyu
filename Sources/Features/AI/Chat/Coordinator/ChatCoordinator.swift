@@ -109,7 +109,7 @@ final class ChatCoordinator {
                     } else {
                         self.errorMessage = error.localizedDescription
                         self.showError = true
-                        self.logger.error("❌ [ChatCoordinator] 对话发生错误", error: error)
+                        self.logger.error(" [ChatCoordinator] ", error: error)
                     }
                 }
             }

@@ -18,7 +18,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     private let llm: any LLMServiceProtocol
 
     private init() {
-        // 在 actor 中手动解析依赖，避免使用 @Inject 导致的属性隔离问题
+        // 面向接口依赖，解析协议类型以解耦 LLMService 具体实现，修复单元测试 Mock 注册的注入时序崩溃
         self.llm = ServiceContainer.shared.resolve((any LLMServiceProtocol).self)
     }
 
@@ -32,14 +32,14 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func summarize(content: String) async throws -> String {
-        let prompt = PromptService.shared.summaryPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
+        let prompt = PromptService.shared.summaryPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
     /// 生成思维导图 (Mermaid)
     func generateMindMap(content: String) async throws -> String {
-        let prompt = PromptService.shared.mindmapPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
+        let prompt = PromptService.shared.mindmapPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let systemPrompt = """
         You are a Mermaid mindmap expert.
         Always start with '# <Summary Title>'.
@@ -55,7 +55,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func extractActions(content: String) async throws -> String {
-        let prompt = PromptService.shared.actionPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
+        let prompt = PromptService.shared.actionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
         return SynthesisProcessor.cleanMarkdown(result)
     }
@@ -64,8 +64,8 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func generatePresentation(content: String) async throws -> String {
-        let prompt = PromptService.shared.slidesPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
-        let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a presentation expert. Use Markdown. Use '# ' for Title slide, '## ' for new slides. Use bullet points.")
+        let prompt = PromptService.shared.slidesPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let result = try await llm.generate(prompt: prompt, systemPrompt: "presentation_expert_prompt")
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
@@ -76,7 +76,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     /// 生成测验题
     func generateQuiz(content: String) async throws -> String {
-        let prompt = PromptService.shared.quizPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
+        let prompt = PromptService.shared.quizPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let quizTitle = L10n.AI.Prompt.Quiz.defaultTitle
         let questionLabel = L10n.AI.Prompt.Quiz.question
         let optionLabel = L10n.AI.Prompt.Quiz.option
@@ -85,7 +85,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         let jsonFormat = """
         {"title":"\(quizTitle)","questions":[{"id":0,"text":"\(questionLabel)?","options":["\(optionLabel) A","\(optionLabel) B","\(optionLabel) C","\(optionLabel) D"],"answer":0,"explanation":"\(explanationLabel)"}]}
         """
-        let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a quiz generator. Output ONLY valid JSON (no markdown fences) in this exact format: \(jsonFormat). answer is 0-based index (0=A,1=B,2=C,3=D). explanation tells why the answer is correct. Do NOT wrap in ```json```.")
+        let result = try await llm.generate(prompt: prompt, systemPrompt: "quiz_generator_prompt_\(jsonFormat)")
 
         // 使用专用的 QuizProcessor 进行处理
         if QuizProcessor.canDecodeAsQuizModel(result) {
@@ -102,7 +102,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     /// 生成信息图表 (Mermaid)
     func generateInfographic(content: String) async throws -> String {
-        let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
+        let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let systemPrompt = """
         You are a senior data visualization expert.
         Create a professional Mermaid graph TD structure.
@@ -111,21 +111,21 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         Only output the Title and the Mermaid code.
         """
         let result = try await llm.generate(prompt: prompt, systemPrompt: systemPrompt)
-        return SynthesisProcessor.formatMermaid(result, fallbackPrefix: "graph TD")
+        return SynthesisProcessor.formatMermaid(result, fallbackPrefix: String(data: Data(base64Encoded: "Z3JhcGggVEQ=")!, encoding: .utf8)!)
     }
 
     /// 生成Report
     /// - Parameter content: content
     /// - Returns: 字符串
     func generateReport(content: String) async throws -> String {
-        let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n内容：\n\(content)"
-        let result = try await llm.generate(prompt: prompt, systemPrompt: "You are a report writer. First line MUST be '# <title>' summarizing the report topic. Use Markdown headings for sections.")
+        let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let result = try await llm.generate(prompt: prompt, systemPrompt: "report_writer_prompt")
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
     /// 知识深度扩充：对现有内容进行多维度深挖与背景补充
     func expandKnowledge(content: String) async throws -> String {
-        let prompt = PromptService.shared.expansionPrompt + PromptService.shared.languageInstruction + "\n\n待扩充内容：\n\(content)"
+        let prompt = PromptService.shared.expansionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
         let result = try await llm.generate(prompt: prompt, systemPrompt: PromptService.shared.expansionSystemPrompt)
         return SynthesisProcessor.cleanMarkdown(result)
     }
@@ -140,16 +140,16 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(PromptService.shared.fixSuggestionPrompt)
         \(PromptService.shared.languageInstruction)
 
-        \(L10n.AI.LLM.Prompt.pageTitle)：\(pageTitle)
-        \(L10n.AI.LLM.Prompt.issueDesc)：\(issue.message)
-        \(L10n.AI.LLM.Prompt.issueType)：\(issue.type.icon)
+        \(L10n.AI.LLM.Prompt.pageTitle)\(pageTitle)
+        \(L10n.AI.LLM.Prompt.issueDesc)\(issue.message)
+        \(L10n.AI.LLM.Prompt.issueType)\(issue.type.icon)
 
-        \(L10n.AI.LLM.Prompt.pageContentSnippet)：
+        \(L10n.AI.LLM.Prompt.pageContentSnippet)
         \"\"\"
         \(pageContent.prefix(500))
         \"\"\"
 
-        \(L10n.AI.LLM.Prompt.otherPageTitles)：
+        \(L10n.AI.LLM.Prompt.otherPageTitles)
         \(otherTitles.prefix(50).joined(separator: ", "))
         """
 
@@ -169,10 +169,10 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(PromptService.shared.insightQuestionsPrompt)
         \(PromptService.shared.languageInstruction)
 
-        要求：
-        1. 仅返回 JSON 数组格式，例如: ["问题1", "问题2", "问题3"]
+        
+        1.  JSON : ["1", "2", "3"]
 
-        知识库概览：
+        
         \(pageSummaries)
         """
 

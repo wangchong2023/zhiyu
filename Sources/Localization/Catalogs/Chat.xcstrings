@@ -92,7 +92,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.regenerate"
+            "value": "action.regenerate "
           }
         },
         "zh-Hans": {
@@ -109,7 +109,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.ai"
+            "value": "chat.group.ai "
           }
         },
         "zh-Hans": {
@@ -126,7 +126,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.base"
+            "value": "chat.group.base "
           }
         },
         "zh-Hans": {
@@ -143,7 +143,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.user"
+            "value": "chat.group.user "
           }
         },
         "zh-Hans": {
@@ -160,7 +160,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.deepExplorePrompt"
+            "value": "chat.deepExplorePrompt "
           }
         },
         "zh-Hans": {
@@ -177,7 +177,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.ai.thinking"
+            "value": "chat.ai.thinking "
           }
         },
         "zh-Hans": {
@@ -194,7 +194,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.thinking"
+            "value": "ai.status.skeleton.thinking "
           }
         },
         "zh-Hans": {
@@ -211,7 +211,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.embedding"
+            "value": "ai.status.skeleton.embedding "
           }
         },
         "zh-Hans": {
@@ -228,7 +228,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.retrieval"
+            "value": "ai.status.skeleton.retrieval "
           }
         },
         "zh-Hans": {
@@ -245,7 +245,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.synthesis"
+            "value": "ai.status.skeleton.synthesis "
           }
         },
         "zh-Hans": {

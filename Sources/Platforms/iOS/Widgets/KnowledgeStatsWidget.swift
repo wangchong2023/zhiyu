@@ -54,14 +54,14 @@ struct KnowledgeStatsProvider: TimelineProvider {
     func fetchWidgetEntry(date: Date) -> KnowledgeStatsEntry {
         return KnowledgeStatsEntry(
             date: date,
-            vaultName: "Demo Vault",
+            vaultName: AppConstants.Demo.vaultName,
             pageCount: AppConstants.Demo.mockPageCount,
             linkCount: AppConstants.Demo.mockLinkCount,
             tagCount: AppConstants.Demo.mockTagCount,
             lastUpdatedPages: [
                 ("Planning (Concept)", "concept", "accent"),
                 ("Memory (Concept)", "concept", "accent"),
-                ("Demo Vault", "entity", "purple")
+                (AppConstants.Demo.vaultName, "entity", "purple")
             ]
         )
     }
@@ -145,7 +145,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                     .fontWeight(.black)
                     .foregroundStyle(.white)
                 
-                Text("Demo Vault")
+                Text(AppConstants.Demo.vaultName)
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
             }
@@ -174,7 +174,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                 }
                 
                 HStack(spacing: 16) {
-                    mainStatItem(label: "Demo Vault", value: "\(entry.pageCount)", color: .purple)
+                    mainStatItem(label: AppConstants.Demo.vaultName, value: "\(entry.pageCount)", color: .purple)
                     mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
                 }
                 
@@ -191,7 +191,7 @@ struct KnowledgeStatsWidgetEntryView: View {
 
             // 右侧：Deep Link 快捷操作区
             VStack(spacing: 8) {
-                actionButton(label: "Demo Vault", icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
+                actionButton(label: AppConstants.Demo.vaultName, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
                 actionButton(label: "AI Chat", icon: "sparkles", color: .blue, url: "zhiyu://chat")
                 actionButton(label: "Search", icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
             }
@@ -216,7 +216,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                     }
                     
                     HStack(spacing: 24) {
-                        mainStatItem(label: "Demo Vault", value: "\(entry.pageCount)", color: .purple)
+                        mainStatItem(label: AppConstants.Demo.vaultName, value: "\(entry.pageCount)", color: .purple)
                         mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
                         mainStatItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
                     }
@@ -242,7 +242,7 @@ struct KnowledgeStatsWidgetEntryView: View {
             
             // 下半部：最近更新的知识页卡片列表
             VStack(alignment: .leading, spacing: 10) {
-                Text("Demo Vault")
+                Text(AppConstants.Demo.vaultName)
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 2)
@@ -335,8 +335,8 @@ struct KnowledgeStatsWidget: Widget {
         StaticConfiguration(kind: kind, provider: KnowledgeStatsProvider()) { entry in
             KnowledgeStatsWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Demo Vault")
-        .description("Demo Vault")
+        .configurationDisplayName(AppConstants.Demo.vaultName)
+        .description(AppConstants.Demo.vaultName)
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

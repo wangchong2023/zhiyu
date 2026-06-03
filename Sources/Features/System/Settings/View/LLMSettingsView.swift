@@ -310,7 +310,7 @@ struct LLMSettingsView: View {
                     if res.isSuccess {
                         testResult = .success(latency: res.latencyMS)
                     } else {
-                        testResult = .failure(code: res.errorCode ?? "ERR", message: res.errorMessage ?? "Unknown Error", latency: res.latencyMS)
+                        testResult = .failure(code: res.errorCode ?? "ERR", message: res.errorMessage ?? "Unknown_Error", latency: res.latencyMS)
                     }
                 }
             } catch {

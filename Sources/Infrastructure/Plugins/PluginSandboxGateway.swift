@@ -9,7 +9,9 @@
 //  核心职责：属于 Plugins 模块，提供相关的结构体或工具支撑。
 //
 import Foundation
+#if os(iOS) || os(macOS) || os(tvOS)
 import JavaScriptCore
+#endif
 
 #if os(iOS) || os(macOS) || os(tvOS)
 /// JS 看门狗超时熔断回调类型，返回 0/1 (Int32)
@@ -117,19 +119,19 @@ struct PluginSandboxGateway {
     }
 
     // MARK: - 运行时监控 (Watchdog)
-
+#if os(iOS) || os(macOS) || os(tvOS)
     /// 为 JSContext 配置看门狗护栏，实施 CPU 时间熔断 (@SR-04)
     /// - Parameter context: 目标 JSContext 实例
     static func configureWatchdog(for context: JSContext) {
-        #if os(iOS) || os(macOS) || os(tvOS)
         let group = JSContextGetGroup(context.jsGlobalContextRef)
         
         // 核心加固：设置 CPU 执行时间限制，防止恶意死循环插件卡死宿主主线程
         // 注意：此 API 属于 JavaScriptCore 内部私有实现，通过 @_silgen_name 桥接使用
+        // 使用顶层 C 兼容函数指针，规避 Swift 6 @convention(c) 的捕获限制
         JSContextGroupSetExecutionTimeLimit(group, executionTimeLimit, { _, _ in
-            Logger.shared.error("🚨 [Security] Plugin execution exceeded time limit (\(executionTimeLimit)s). Force terminating.")
-            return 1 // 触发终止
+            // 顶层 C 函数回调：不捕获任何上下文，仅返回终止码
+            return 1
         }, nil)
-        #endif
     }
+#endif
 }

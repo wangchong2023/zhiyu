@@ -138,7 +138,18 @@ public struct NotebookHubView: View {
 
     private var notebookGridSection: some View {
         Group {
-            if viewModel.displayMode == .grid {
+            if viewModel.notebooks.isEmpty {
+                AppEmptyState.withAction(
+                    icon: DesignSystem.Icons.folderBadgePlus,
+                    title: L10n.Vault.homeTitle,
+                    description: nil,
+                    actionLabel: L10n.Vault.create,
+                    actionRole: .primary
+                ) {
+                    viewModel.isShowingCreateSheet = true
+                }
+                .padding(.top, DesignSystem.huge * 2)
+            } else if viewModel.displayMode == .grid {
                 let columns = appEnv.screenClass == .expansive 
                     ? [GridItem(.adaptive(minimum: 250), spacing: DesignSystem.standardPadding)]
                     : [GridItem(.flexible(), spacing: DesignSystem.standardPadding), GridItem(.flexible(), spacing: DesignSystem.standardPadding)]

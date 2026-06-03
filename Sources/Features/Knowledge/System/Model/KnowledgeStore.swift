@@ -52,7 +52,7 @@ public final class KnowledgeStore {
     // MARK: - 初始化
     
     public init() {
-        print("📂 [KnowledgeStore] 正在初始化页面引擎...")
+        print(" [KnowledgeStore] ...")
         setupSubscriptions()
     }
 
@@ -83,7 +83,7 @@ public final class KnowledgeStore {
             .receive(on: RunLoop.main)
             .sink { [weak self] notification in
                 guard let self = self else { return }
-                print("🔄 [KnowledgeStore] 监测到数据库切换，正在清空内存并重载...")
+                print(" [KnowledgeStore] ...")
                 self.pages = []
                 self.totalPages = 0
                 self.totalWords = 0
@@ -96,7 +96,7 @@ public final class KnowledgeStore {
                     if let vaultID = notification.userInfo?["vaultID"] as? UUID {
                         let seedKey = "seeded_vault_\(vaultID.uuidString)"
                         if !UserDefaults.standard.bool(forKey: seedKey) {
-                            print("🌱 [KnowledgeStore] 识别到新笔记本 \(vaultID.uuidString)，自动注入冷启动演示数据...")
+                            print(" [KnowledgeStore]  \(vaultID.uuidString)...")
                             await self.seedDefaultContent()
                             UserDefaults.standard.set(true, forKey: seedKey)
                         }
@@ -260,9 +260,11 @@ public final class KnowledgeStore {
         // 转发至领域层 KnowledgePageManager 执行物理和向量导入流程
         // 注意：此处仍需传递 pageStore (通常是 AppStore 或 self) 以满足协议
         // 为保持解耦，我们传递 ServiceContainer 中的 AnyPageStore 实例
+        #if !os(watchOS)
         if let store = ServiceContainer.shared.resolveOptional(AppStore.self) {
             await pageManager.ingestFolder(at: url, pageStore: store)
         }
+        #endif
         await refresh()
     }
 

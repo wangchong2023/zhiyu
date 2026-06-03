@@ -58,7 +58,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.internalError"
+            "value": "error.internalError "
           }
         },
         "zh-Hans": {
@@ -75,7 +75,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.notReady"
+            "value": "error.notReady "
           }
         },
         "zh-Hans": {
@@ -92,7 +92,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.busy"
+            "value": "error.busy "
           }
         },
         "zh-Hans": {

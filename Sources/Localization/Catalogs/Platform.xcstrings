@@ -268,7 +268,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "platform.unsupported.pdf [译]"
+            "value": "当前平台不支持 PDF 解析"
           }
         }
       }
@@ -285,7 +285,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "platform.unsupported.mermaid [译]"
+            "value": "当前平台不支持 Mermaid 渲染"
           }
         }
       }

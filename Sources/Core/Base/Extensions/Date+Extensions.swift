@@ -11,7 +11,7 @@
 import Foundation
 
 extension Date {
-    /// 返回语义化的相对时间字符串 (例如: "刚刚", "5 分钟前", "2 小时前")
+    /// 返回语义化的相对时间字符串 (例如: "", "5 ", "2 ")
     public func timeAgoDisplay() -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full

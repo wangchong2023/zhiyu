@@ -138,13 +138,13 @@ struct CreatePageView: View {
         """
         # \(title)
         
-        【\(L10n.Creation.template.entity.overview)】
+        \(L10n.Creation.template.entity.overview)
         \(L10n.Creation.template.entity.overviewPlaceholder)
         
-        【\(L10n.Creation.template.entity.contributions)】
+        \(L10n.Creation.template.entity.contributions)
         \(L10n.Creation.template.entity.contributionsPlaceholder)
         
-        【\(L10n.Creation.template.entity.related)】
+        \(L10n.Creation.template.entity.related)
         \(L10n.Creation.template.entity.relatedPlaceholder)
         
         """
@@ -158,13 +158,13 @@ struct CreatePageView: View {
         content = """
         # \(title)
 
-        【\(L10n.Creation.template.concept.definition)】
+        \(L10n.Creation.template.concept.definition)
         \(L10n.Creation.template.concept.definitionPlaceholder)
 
-        【\(L10n.Creation.template.concept.analysis)】
+        \(L10n.Creation.template.concept.analysis)
         \(L10n.Creation.template.concept.analysisPlaceholder)
 
-        【\(L10n.Creation.template.concept.links)】
+        \(L10n.Creation.template.concept.links)
         \(L10n.Creation.template.concept.linksPlaceholder)
 
         """
@@ -174,10 +174,10 @@ struct CreatePageView: View {
         content = """
         # \(title) \(L10n.Creation.template.comparison.suffix)
 
-        【\(L10n.Creation.template.comparison.dimensions)】
+        \(L10n.Creation.template.comparison.dimensions)
         \(L10n.Creation.template.comparison.dimensionsPlaceholder)
 
-        【\(L10n.Creation.template.comparison.conclusion)】
+        \(L10n.Creation.template.comparison.conclusion)
         \(L10n.Creation.template.comparison.conclusionPlaceholder)
 
         """

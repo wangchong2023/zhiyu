@@ -47,7 +47,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.apiRequests [译]"
+            "value": "API 请求量"
           }
         }
       }
@@ -64,7 +64,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.cleanup.action [译]"
+            "value": "清理系统数据"
           }
         }
       }
@@ -421,7 +421,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.index.title [译]"
+            "value": "仪表盘与监控"
           }
         }
       }
@@ -1458,7 +1458,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ms [译]"
+            "value": "ms"
           }
         }
       }
@@ -2002,7 +2002,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tokens [译]"
+            "value": "Tokens"
           }
         }
       }
@@ -2104,7 +2104,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ms [译]"
+            "value": "ms"
           }
         }
       }
@@ -2155,7 +2155,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.database [译]"
+            "value": "系统数据库"
           }
         }
       }
@@ -2172,7 +2172,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.logs [译]"
+            "value": "系统日志"
           }
         }
       }
@@ -2189,7 +2189,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.status [译]"
+            "value": "系统状态"
           }
         }
       }
@@ -2223,7 +2223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.tokens [译]"
+            "value": "Token 统计"
           }
         }
       }
@@ -2274,7 +2274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.totalStorage [译]"
+            "value": "存储空间总计"
           }
         }
       }
@@ -2291,7 +2291,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.updateSuccess [译]"
+            "value": "更新成功"
           }
         }
       }
@@ -2903,7 +2903,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "点击生成个人智库周报 [译]"
+            "value": "点击生成个人智库周报"
           }
         }
       }
@@ -3906,7 +3906,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "核心领域 [译]"
+            "value": "核心领域"
           }
         }
       }

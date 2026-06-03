@@ -209,7 +209,7 @@ struct KnowledgeDashboardView: View {
                                     .foregroundStyle(.appSecondary)
                             }
                             
-                            Text("｜")
+                            Text("")
                                 .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
                                 .foregroundStyle(.appAccent.opacity(0.4))
                             

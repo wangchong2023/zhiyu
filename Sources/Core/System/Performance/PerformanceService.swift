@@ -149,7 +149,7 @@ final class PerformanceService: ObservableObject {
     var summary: String {
         """
         \(L10n.Common.Perf.summary.title)
-        ━━━━━━━━━━━━━━━━━━━
+        
         \(L10n.Common.Perf.summary.pages): \(metrics.pageCount) (\(metrics.totalWords) \(L10n.Common.Perf.summary.words))
         \(L10n.Common.Perf.summary.graph): \(metrics.graphNodeCount) \(L10n.Common.Perf.summary.nodes), \(metrics.graphEdgeCount) \(L10n.Common.Perf.summary.edges)
         \(L10n.Common.Perf.summary.memory): \(String(format: "%.1f", metrics.memoryUsageMB)) MB

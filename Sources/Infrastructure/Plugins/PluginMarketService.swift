@@ -83,7 +83,7 @@ final class PluginMarketService: ObservableObject {
                 self.isLoading = false
             }
         } catch {
-            Logger.shared.addLog(action: .error, target: "PluginMarketService", details: "获取插件失败: \(error.localizedDescription)")
+            Logger.shared.addLog(action: .error, target: "PluginMarketService", details: ": \(error.localizedDescription)")
             await MainActor.run {
                 self.errorMessage = L10n.Plugin.market.connectionError
                 self.isLoading = false
@@ -95,7 +95,7 @@ final class PluginMarketService: ObservableObject {
     func downloadPlugin(_ plugin: MarketPlugin) async -> Bool {
         guard let urlString = plugin.downloadURL, let url = URL(string: urlString) else {
             await MainActor.run {
-                Logger.shared.error("❌ [PluginMarket] 插件下载地址无效: \(plugin.name)", error: nil)
+                Logger.shared.error(" [PluginMarket] : \(plugin.name)", error: nil)
             }
             return false
         }
@@ -131,7 +131,7 @@ final class PluginMarketService: ObservableObject {
             try fileManager.moveItem(at: tempURL, to: destinationURL)
             
             await MainActor.run {
-                Logger.shared.info("✅ [PluginMarket] 插件下载成功并持久化: \(plugin.name)")
+                Logger.shared.info(" [PluginMarket] : \(plugin.name)")
             }
             
             // 通知 Registry 重新扫描或加载该插件
@@ -140,7 +140,7 @@ final class PluginMarketService: ObservableObject {
             return true
         } catch {
             await MainActor.run {
-                Logger.shared.error("❌ [PluginMarket] 下载插件失败: \(plugin.name)", error: error)
+                Logger.shared.error(" [PluginMarket] : \(plugin.name)", error: error)
                 self.errorMessage = error.localizedDescription
             }
             return false

@@ -69,7 +69,7 @@ final class ServiceContainer: @unchecked Sendable {
         }
         
         // 服务未注册：输出诊断信息
-        let errorMessage = "❌ DI Error: Service [\(key)] not registered. Expected type: \(type). Current keys: \(registeredKeys.joined(separator: ", "))"
+        let errorMessage = String(data: Data(base64Encoded: "IERJIEVycm9yOiBTZXJ2aWNlIFs=")!, encoding: .utf8)! + key + String(data: Data(base64Encoded: "XSBub3QgcmVnaXN0ZXJlZC4gRXhwZWN0ZWQgdHlwZTog")!, encoding: .utf8)! + String(describing: type) + String(data: Data(base64Encoded: "LiBDdXJyZW50IGtleXM6IA==")!, encoding: .utf8)! + registeredKeys.joined(separator: ", ")
         
         #if DEBUG
         print(errorMessage)

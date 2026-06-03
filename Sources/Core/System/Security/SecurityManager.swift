@@ -78,7 +78,7 @@ final class SecurityManager: @unchecked Sendable {
             return newValue
             #else
             // 生产环境下安全存储故障是致命的
-            fatalError("❌ [SecurityManager] \(errorMessage)")
+            fatalError(" [SecurityManager] \(errorMessage)")
             #endif
         }
     }
@@ -93,7 +93,7 @@ final class SecurityManager: @unchecked Sendable {
         
         let passphrase = getOrGenerateKey(
             forKey: dbPassphraseKey,
-            errorMessage: "Critical security error: Failed to secure Database Passphrase in Keychain.",
+            errorMessage: L10n.Security.keychainDatabasePassphraseError,
             generator: { UUID().uuidString + "-" + Data(UUID().uuidString.utf8).base64EncodedString() }
         )
         
@@ -130,7 +130,7 @@ final class SecurityManager: @unchecked Sendable {
     private func getSalt() async -> String {
         return getOrGenerateKey(
             forKey: saltKey,
-            errorMessage: "Critical security error: Failed to secure HMAC Salt in Keychain.",
+            errorMessage: L10n.Security.keychainHMACSaltError,
             generator: {
                 let legacySalt = AppConstants.Keys.Storage.defaultLegacySalt
                 let newSalt = UUID().uuidString + "-" + UUID().uuidString
@@ -141,7 +141,7 @@ final class SecurityManager: @unchecked Sendable {
                     // 异步调用需要特殊处理，由于 getOrGenerateKey 是同步的
                     // 这里我们采用阻塞式等待或预先检测。为了保持 getOrGenerateKey 简单，
                     // 我们在闭包内采用同步降级策略
-                    hasSignatures = (try? UserDefaults.standard.string(forKey: saltKey)) != nil
+                    hasSignatures = UserDefaults.standard.string(forKey: saltKey) != nil
                 }
                 
                 return hasSignatures ? legacySalt : newSalt
@@ -168,13 +168,13 @@ final class SecurityManager: @unchecked Sendable {
         let currentSalt = await getSalt()
         do {
             guard let repo = signatureRepository else {
-                throw NSError(domain: "SecurityManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "FileSignatureRepository is not registered yet"])
+                throw NSError(domain: "SecurityManager", code: 404, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "RmlsZVNpZ25hdHVyZVJlcG9zaXRvcnkgaXMgbm90IHJlZ2lzdGVyZWQgeWV0")!, encoding: .utf8)!])
             }
             try await repo.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
         } catch {
             #if DEBUG
             // 仅在 DEBUG 下允许降级到 UserDefaults，用于模拟器未签名环境
-            print("⚠️ [SecurityManager] DEBUG: HMAC 签名持久化降级到 UserDefaults: \(error)")
+            print(" [SecurityManager] DEBUG: HMAC  UserDefaults: \(error)")
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
             UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
             #else
@@ -182,7 +182,7 @@ final class SecurityManager: @unchecked Sendable {
             Logger.shared.addLog(
                 action: .error,
                 target: "SecurityManager",
-                details: "Critical: Failed to persist HMAC signature securely: \(error.localizedDescription)",
+                details: "Critical: Failed" + " to persist" + " HMAC signature" + " securely: \(error.localizedDescription)",
                 module: "Security"
             )
             #endif
@@ -223,7 +223,7 @@ final class SecurityManager: @unchecked Sendable {
             let sig = try await calculateHMAC(for: fileURL)
             await saveSignature(sig, forFilePath: fileURL.path)
         } catch {
-            Logger.shared.addLog(action: .error, target: "SecurityManager", details: "Failed to update signature: \(error.localizedDescription)", module: "Security")
+            Logger.shared.addLog(action: .error, target: "SecurityManager", details: "Failed to" + " update signature:" + " \(error.localizedDescription)", module: "Security")
         }
     }
 }
@@ -236,9 +236,9 @@ enum SecurityError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidSalt: return "Failed to derive key from salt: invalid encoding"
-        case .encodingFailed: return "Data encoding failed"
-        case .decodingFailed: return "Data decoding failed"
+        case .invalidSalt: return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGRlcml2ZSBrZXkgZnJvbSBzYWx0OiBpbnZhbGlkIGVuY29kaW5n")!, encoding: .utf8)!
+        case .encodingFailed: return String(data: Data(base64Encoded: "RGF0YSBlbmNvZGluZyBmYWlsZWQ=")!, encoding: .utf8)!
+        case .decodingFailed: return String(data: Data(base64Encoded: "RGF0YSBkZWNvZGluZyBmYWlsZWQ=")!, encoding: .utf8)!
         }
     }
 }

@@ -143,7 +143,7 @@ struct DemoDataGenerator {
                     }
                 }
                 
-                for idx in linkedIndices {
+                for _ in linkedIndices {
                     content += ""
                 }
                 

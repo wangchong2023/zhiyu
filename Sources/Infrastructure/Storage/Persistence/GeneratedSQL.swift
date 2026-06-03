@@ -18,13 +18,13 @@ struct GeneratedSQL {
 --  ZhiYu
 --
 --  Created by Antigravity on 2026/05/30.
---  Copyright © 2026 WangChong. All rights reserved.
+--  Copyright  2026 WangChong. All rights reserved.
 --
---  系统层级：[L1] 基础设施层
---  核心职责：提供专属笔记本数据库初始化时所需要的完整表结构 DDL 及触发器。
+--  [L1] 
+--   DDL 
 --
 
--- 1. 核心知识页面主表
+-- 1. 
 CREATE TABLE IF NOT EXISTS pages (
     id BLOB PRIMARY KEY,
     title TEXT NOT NULL UNIQUE,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 CREATE INDEX IF NOT EXISTS idx_pages_page_type ON pages(page_type);
 
--- 2. 知识图谱双向链接映射表
+-- 2. 
 CREATE TABLE IF NOT EXISTS links (
     source_id BLOB NOT NULL,
     target_id BLOB NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS links (
 );
 CREATE INDEX IF NOT EXISTS idx_links_target_id ON links(target_id);
 
--- 3. 语义块切片表
+-- 3. 
 CREATE TABLE IF NOT EXISTS page_chunks (
     id TEXT PRIMARY KEY,
     page_id BLOB NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS page_chunks (
     FOREIGN KEY (parent_id) REFERENCES page_chunks(id) ON DELETE CASCADE
 );
 
--- 4. 页面层级高维稠密向量映射表
+-- 4. 
 CREATE TABLE IF NOT EXISTS page_embeddings (
     id BLOB PRIMARY KEY,
     vector_blob BLOB NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS page_embeddings (
     FOREIGN KEY (id) REFERENCES pages(id) ON DELETE CASCADE
 );
 
--- 5. 合规治理与 AI 资源开销审计表
+-- 5.  AI 
 CREATE TABLE IF NOT EXISTS token_usage (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     model TEXT NOT NULL,
@@ -119,14 +119,14 @@ CREATE TABLE IF NOT EXISTS rag_evaluations (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. 范式化标签字典表
+-- 6. 
 CREATE TABLE IF NOT EXISTS tags (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 7. 页面-标签多对多关联关联表
+-- 7. -
 CREATE TABLE IF NOT EXISTS page_tags (
     page_id BLOB NOT NULL,
     tag_id TEXT NOT NULL,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS page_tags (
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 );
 
--- 8. 间隔重复记忆调度表 (SRS)
+-- 8.  (SRS)
 CREATE TABLE IF NOT EXISTS srs_metadata (
     page_id BLOB PRIMARY KEY,
     ease_factor REAL NOT NULL DEFAULT 2.50,
@@ -148,14 +148,14 @@ CREATE TABLE IF NOT EXISTS srs_metadata (
 );
 CREATE INDEX IF NOT EXISTS idx_srs_next_review ON srs_metadata(next_review_at);
 
--- 9. 触发器：修改 pages 时同步更新物理更新时间
+-- 9.  pages 
 CREATE TRIGGER IF NOT EXISTS trigger_update_pages_timestamp
 AFTER UPDATE ON pages
 BEGIN
     UPDATE pages SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
 
--- 10. 配置 FTS5 全文搜索虚拟表与联动触发器
+-- 10.  FTS5 
 CREATE VIRTUAL TABLE IF NOT EXISTS pages_fts USING fts5(
     id UNINDEXED, title, content, tags, aliases,
     content='pages'
@@ -187,13 +187,13 @@ END;
 --  ZhiYu
 --
 --  Created by Antigravity on 2026/05/30.
---  Copyright © 2026 WangChong. All rights reserved.
+--  Copyright  2026 WangChong. All rights reserved.
 --
---  系统层级：[L1] 基础设施层
---  核心职责：提供全局配置数据库初始化时所需要的完整表结构 DDL。
+--  [L1] 
+--   DDL
 --
 
--- 1. 笔记本元数据主表：托管所有多笔记本卡片信息
+-- 1. 
 CREATE TABLE IF NOT EXISTS global_vaults (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS global_vaults (
     last_accessed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. 物理文件防篡改 HMAC 完整性指纹表：取代原 UserDefaults 强寄生
+-- 2.  HMAC  UserDefaults 
 CREATE TABLE IF NOT EXISTS file_signatures (
     file_path TEXT PRIMARY KEY,
     signature TEXT NOT NULL,
@@ -213,14 +213,14 @@ CREATE TABLE IF NOT EXISTS file_signatures (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. 全局设置表：系统级全局偏好持久化
+-- 3. 
 CREATE TABLE IF NOT EXISTS global_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. 全局安全及 Token 损耗审计日志表
+-- 4.  Token 
 CREATE TABLE IF NOT EXISTS audit_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     action TEXT NOT NULL,
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 5. 插件元数据与状态表
+-- 5. 
 CREATE TABLE IF NOT EXISTS plugin_records (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -246,7 +246,7 @@ CREATE TABLE IF NOT EXISTS plugin_records (
     manifest_json TEXT NOT NULL DEFAULT ''
 );
 
--- 6. 插件 FTS5 全文搜索虚拟表（独立内容表，非 external content）
+-- 6.  FTS5  external content
 CREATE VIRTUAL TABLE IF NOT EXISTS plugin_records_fts USING fts5(
     id UNINDEXED, name, author, description
 );

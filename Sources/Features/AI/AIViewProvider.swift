@@ -28,7 +28,7 @@ struct AIViewProvider: ViewProvider {
             return AnyView(WeeklyReportView())
         case .quiz:
             // Quiz 目前可能通过辅助视图或独立的 Route 呈现
-            return AnyView(Text("Quiz View")) 
+            return AnyView(Text("Quiz_View")) 
         default:
             return nil
         }

@@ -128,7 +128,7 @@ struct ChatViewContent: View {
             }
             
             Section {
-                NavigationLink(destination: LLMSettingsView()) {
+                NavigationLink(value: AppRoute.settings) {
                     Label(L10n.Chat.llmSettings, systemImage: DesignSystem.Icons.settings)
                 }
             }
@@ -142,7 +142,7 @@ struct ChatViewContent: View {
     }
     
     private var notConfiguredBanner: some View {
-        NavigationLink(destination: LLMSettingsView()) {
+        NavigationLink(value: AppRoute.settings) {
             HStack(spacing: DesignSystem.small + DesignSystem.atomic) {
                 Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
                 Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)

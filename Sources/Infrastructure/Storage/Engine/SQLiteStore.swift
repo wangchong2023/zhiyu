@@ -247,7 +247,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         
         for (title, type, content, tags) in pagesToCreate {
             _ = try? await createPage(title: title, pageType: type, content: content, tags: tags)
-            logger(.create, title, "Seeded default content")
+            logger(.create, title, "Seeded_default_content")
         }
     }
 

@@ -500,7 +500,7 @@ struct Graph3DControlsOverlay: View {
 }
 
 // MARK: - Graph3D Node Info Bar
-/// 3D 图谱节点信息栏：显示选中节点的类型、标题和"查看页面"按钮
+/// 3D 图谱节点信息栏：显示选中节点的类型、标题和""按钮
 /// 3D 节点详情浮栏组件
 /// 负责在选中 3D 节点时提供轻量级的信息摘要及进入详情页的快速入口
 struct Graph3DNodeInfoBar: View {
@@ -530,7 +530,7 @@ struct Graph3DNodeInfoBar: View {
             Spacer()
 
             Button(action: onViewPage) {
-                Text(L10n.Graph.ThreeD.tr("viewPage"))
+                Text("View_Page")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.appAccent)
                     .padding(.horizontal, DesignSystem.medium)

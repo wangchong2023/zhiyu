@@ -55,7 +55,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     }
     
     /// 处理BriefingResponse
-    /// /// - Parameter text: text
+    /// - Parameter text: text
     func handleBriefingResponse(_ text: String) {
         // iOS 宿主端不处理响应
     }
@@ -69,31 +69,25 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
                     return
                 }
                 
-                // 1. 获取最近 24 小时的活跃页面
-                let pages = await appStore.pages
-                let recentPages = pages.filter { $0.updatedAt > Date().addingTimeInterval(-24 * 60 * 60) }.prefix(5)
+                let twentyFourHoursAgo = Date().addingTimeInterval(-86400)
+                let recentPages = await appStore.pageStore.pages.filter { $0.updatedAt > twentyFourHoursAgo }
                 
                 guard !recentPages.isEmpty else {
-                    sendBriefingToWatch(content: "今天没有新的知识录入，去放松一下吧。")
+                    sendBriefingToWatch(content: L10n.Watch.briefingNoNewContent)
                     return
                 }
                 
                 // 2. 聚合并使用 LLM 生成简报
                 let combinedContent = recentPages.map { "- \($0.title): \($0.content.prefix(100))" }.joined(separator: "\n")
-                let prompt = """
-                根据以下最近录入的笔记，生成一段简短、口语化、适合用语音播报的每日知识简报。
-                要求：去除所有 Markdown 标记，使用自然语言的转折词，像一位知识管家在对我说话。
-                内容：
-                \(combinedContent)
-                """
-                let briefing = try await llmService.generate(prompt: prompt, systemPrompt: "你是一个专业的知识管理语音播报员。")
+                let prompt = L10n.Watch.briefingPromptTemplate(combinedContent)
+                let briefing = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Watch.briefingSystemPrompt)
                 
                 // 3. 推送回手表
                 sendBriefingToWatch(content: briefing)
                 
             } catch {
-                Logger.shared.error("Briefing Generation Failed: \(error)")
-                sendBriefingToWatch(content: "生成简报失败，请检查网络或模型设置。")
+                Logger.shared.error("Briefing_Generation_Failed: \(error)")
+                sendBriefingToWatch(content: L10n.Watch.briefingFailed)
             }
         }
     }
@@ -107,13 +101,48 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
         session.transferUserInfo(userInfo)
     }
     
+    /// 处理接收到的音频分片并组装，支持乱序到达和自愈拼接 (TC-WAT-03)
+    @MainActor
+
+    /// 处理ReceivedAudio分块
+    /// /// - Parameter transferId: transferId
+    /// /// - Parameter index: 索引
+    /// /// - Parameter total: total
+    /// /// - Parameter filename: filename
+    /// /// - Parameter data: data
+    func handleReceivedAudioChunk(transferId: String, index: Int, total: Int, filename: String, data: Data) {
+        var assembly = UserDefaults.standard.dictionary(forKey: "ios_audio_assembly_\(transferId)") as? [String: Data] ?? [:]
+        assembly["\(index)"] = data
+        
+        if assembly.count == total {
+            var chunks: [Data] = []
+            for i in 0..<total {
+                if let chunk = assembly["\(i)"] {
+                    chunks.append(chunk)
+                } else {
+                    Logger.shared.warning("Audio_chunk_missing_at_index: \(i)")
+                    return
+                }
+            }
+            let mergedData = AudioSplitter.merge(chunks: chunks)
+            
+            UserDefaults.standard.removeObject(forKey: "ios_audio_assembly_\(transferId)")
+            
+            self.lastReceivedText = "audio:\(filename):\(mergedData.count)"
+            NotificationCenter.default.post(name: .didReceiveWatchAudio, object: mergedData, userInfo: ["filename": filename])
+            Logger.shared.info("Audio_transfer_completed_and_merged_successfully: \(filename)")
+        } else {
+            UserDefaults.standard.set(assembly, forKey: "ios_audio_assembly_\(transferId)")
+        }
+    }
+    
     // MARK: - WCSessionDelegate
     
     /// session回调
     /// - Parameter session: session
     /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if let error = error {
+        if error != nil {
             Logger.shared.error("WatchSync_Anomaly")
         }
     }
@@ -140,6 +169,15 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
                 Task { @MainActor in
                     self.lastReceivedText = content
                     NotificationCenter.default.post(name: .didReceiveWatchContent, object: content)
+                }
+            } else if type == "audio_chunk",
+                      let transferId = userInfo["transferId"] as? String,
+                      let index = userInfo["index"] as? Int,
+                      let total = userInfo["total"] as? Int,
+                      let filename = userInfo["filename"] as? String,
+                      let chunkData = userInfo["data"] as? Data {
+                Task { @MainActor in
+                    self.handleReceivedAudioChunk(transferId: transferId, index: index, total: total, filename: filename, data: chunkData)
                 }
             }
         } else if let content = userInfo["content"] as? String {

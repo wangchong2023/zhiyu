@@ -28,10 +28,10 @@ public final class LLMRefactorService: Sendable {
         let prompt = """
         \(PromptService.shared.potentialLinksPrompt)
 
-        现有页面标题列表：
+        
         \(existingTitles.joined(separator: ", "))
 
-        待分析文本：
+        
         \"\"\"
         \(content)
         \"\"\"
@@ -56,10 +56,10 @@ public final class LLMRefactorService: Sendable {
         let prompt = """
         \(PromptService.shared.foldingPrompt)
 
-        现有页面内容：
+        
         \(existingContent)
 
-        新资料内容：
+        
         \(newContent)
         """
 
@@ -83,7 +83,7 @@ public final class LLMRefactorService: Sendable {
         let prompt = """
         \(PromptService.shared.refactorPrompt)
 
-        页面简述列表：
+        
         \(pageData)
         """
 

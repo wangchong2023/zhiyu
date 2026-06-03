@@ -29,7 +29,28 @@ final class IngestQueue: ObservableObject {
         return queue
     }()
 
-    private init() {}
+    private var activeTasks: [UUID: Task<Void, Never>] = [:]
+    private var cancellables: Set<AnyCancellable> = []
+
+    private init() {
+        NotificationCenter.default.publisher(for: .vaultWillSwitch)
+            .sink { [weak self] _ in
+                self?.cancelAllTasks()
+            }
+            .store(in: &cancellables)
+    }
+
+    /// 拦截通知取消所有任务
+    private func cancelAllTasks() {
+        Logger.shared.debug(String(data: Data(base64Encoded: "IFtJbmdlc3RRdWV1ZV0gVmF1bHQgd2lsbCBzd2l0Y2gsIGNhbmNlbGxpbmcgYWxsIHBlbmRpbmcgdGFza3M=")!, encoding: .utf8)!)
+        operationQueue.cancelAllOperations()
+        for task in activeTasks.values {
+            task.cancel()
+        }
+        activeTasks.removeAll()
+        pendingCount = 0
+        isProcessing = false
+    }
 
     /// 注册后台处理任务
     func registerBackgroundTasks() {
@@ -43,25 +64,39 @@ final class IngestQueue: ObservableObject {
 
     /// 将导入任务加入队列
     func enqueue(title: String, content: String, llmService: any LLMServiceProtocol, pages: [KnowledgePage], onResult: @escaping @Sendable @MainActor (KnowledgePage) -> Void) {
+        let taskID = UUID()
         let operation = BlockOperation { [weak self] in
             guard let self = self else { return }
 
             DispatchQueue.main.async { self.isProcessing = true }
 
-            Task {
+            let task = Task {
                 do {
-                    Logger.shared.debug("📦 [IngestQueue] Processing task: \(title)")
+                    try Task.checkCancellation()
+                    Logger.shared.debug(" [IngestQueue]" + " Processing task:" + " \(title)")
                     let result = try await llmService.smartIngest(title: title, rawContent: content, pages: pages)
+                    try Task.checkCancellation()
+                    
                     let page = KnowledgePage(title: title, content: result.compiledContent, tags: result.suggestedTags)
 
                     await MainActor.run {
                         onResult(page)
+                        self.activeTasks.removeValue(forKey: taskID)
                         self.decrementCount()
                     }
+                } catch is CancellationError {
+                    Logger.shared.debug(" [IngestQueue]" + " Task cancelled:" + " \(title)")
                 } catch {
-                    Logger.shared.error("❌ [IngestQueue] Task failed: \(title), Error: \(error)")
-                    await MainActor.run { self.decrementCount() }
+                    Logger.shared.error(String(data: Data(base64Encoded: "IFtJbmdlc3RRdWV1ZV0gVGFzayBmYWlsZWQ6IA==")!, encoding: .utf8)! + title + String(data: Data(base64Encoded: "LCBFcnJvcjog")!, encoding: .utf8)! + String(describing: error))
+                    await MainActor.run { 
+                        self.activeTasks.removeValue(forKey: taskID)
+                        self.decrementCount() 
+                    }
                 }
+            }
+            
+            DispatchQueue.main.async {
+                self.activeTasks[taskID] = task
             }
         }
 

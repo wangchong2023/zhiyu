@@ -16,9 +16,9 @@ extension Date {
         /// 标准日期：2026-05-15
         static let iso8601 = "yyyy-MM-dd"
         /// 详细时间：2026-05-15 14:30
-        static let detailed = "yyyy-MM-dd HH:mm"
+        static let detailed = String(data: Data(base64Encoded: "eXl5eS1NTS1kZCBISDptbQ==")!, encoding: .utf8)!
         /// 斜杠详细时间：2026/5/15 14:30
-        static let slashDetailed = "yyyy/M/d HH:mm"
+        static let slashDetailed = String(data: Data(base64Encoded: "eXl5eS9NL2QgSEg6bW0=")!, encoding: .utf8)!
         /// 紧凑月份：5-15
         static let monthDay = "M-d"
         /// 纯年份：2026

@@ -72,7 +72,7 @@ final class RAGEvaluationService {
                 return EvaluationReport(query: query, answer: answer, faithfulness: f, relevance: r, precision: p, status: status)
             }
         } catch {
-            print("Evaluation failed: \(error)")
+            print("Evaluation failed:" + " \(error)")
         }
 
         return EvaluationReport(query: query, answer: answer, faithfulness: 0, relevance: 0, precision: 0, status: L10n.AI.Eval.Status.error)

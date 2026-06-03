@@ -55,6 +55,7 @@ extension L10n {
         public static var preview: String { tr("preview") }
         public static var quickPreview: String { tr("quickPreview") }
         public static var copyPageLink: String { tr("copyPageLink") }
+        public static var copy: String { tr("misc.copy") }
         public static var syncToReminders: String { tr("syncToReminders") }
         public static var `import`: String { tr("misc.import") }
         public static var create: String { Localized.tr("misc.create", table: t) }

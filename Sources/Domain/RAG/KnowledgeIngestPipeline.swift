@@ -28,66 +28,113 @@ actor KnowledgeIngestPipeline {
         pageID: UUID,
         llm: (any LLMServiceProtocol)?,
         embeddingProvider: any EmbeddingProvider
-    ) async -> String {
-        // 阶段 1: 语义增强 (AI Content Enrichment)
-        let enrichedContent: String
-        if let llm = llm {
-            enrichedContent = await enricher.enrich(content, llm: llm)
-        } else {
-            enrichedContent = content
-        }
+    ) async throws -> String {
+        
+        // 0. 提取阶段
+        await updateProgress(stage: .extraction, progress: 0.05, log: L10n.Ingest.Status.starting)
 
-        // 使用并发任务组处理后续阶段
-        let allEnrichedChunks = await withTaskGroup(of: [PageChunk].self) { group in
+        // 1. 语义增强阶段
+        let enrichedContent = try await performEnrichment(content: content, llm: llm)
+        
+        // 2. 切分及反向提问等任务 (并发)
+        let allEnrichedChunks = try await performConcurrentProcessing(content: enrichedContent, pageID: pageID, llm: llm)
+        
+        // 3. 向量索引阶段
+        try await performEmbedding(chunks: allEnrichedChunks, pageID: pageID, embeddingProvider: embeddingProvider)
+        
+        return enrichedContent
+    }
 
-            // 任务 A: 全局摘要索引 (Summary Indexing)
+    // MARK: - Pipeline Steps
+
+    private func performEnrichment(content: String, llm: (any LLMServiceProtocol)?) async throws -> String {
+        guard let llm = llm else { return content }
+        
+        try Task.checkCancellation()
+        await updateProgress(stage: .enrichment, progress: 0.15, log: L10n.Ingest.Status.aiEnriching)
+        return await enricher.enrich(content, llm: llm)
+    }
+
+    private func performConcurrentProcessing(content: String, pageID: UUID, llm: (any LLMServiceProtocol)?) async throws -> [PageChunk] {
+        try Task.checkCancellation()
+        
+        return await withTaskGroup(of: [PageChunk].self) { group in
+            
+            // 摘要任务
             if let llm = llm {
                 group.addTask {
-                    let summaryPrompt = PromptRegistry.Ingest.summary(content: String(enrichedContent.prefix(2000)))
-                    if let summary = try? await llm.generate(prompt: summaryPrompt, systemPrompt: L10n.AI.Prompt.ingestManagementAssistant) {
-                        return [PageChunk(
-                            id: "sum_\(pageID.uuidString)",
-                            pageID: pageID,
-                            parentID: nil,
-                            chunkType: "summary",
-                            content: summary,
-                            index: 0,
-                            startIndex: 0,
-                            embedding: nil,
-                            createdAt: Date(),
-                            updatedAt: Date()
-                        )]
-                    }
-                    return []
+                    return await self.generateSummaryChunk(content: content, pageID: pageID, llm: llm)
                 }
             }
-
-            // 阶段 3: 层级分块与反向提问 (并行处理每个父块)
+            
+            // 分块与 Q&A
+            await self.updateProgress(stage: .chunking, progress: 0.40, log: L10n.Ingest.Status.chunking)
+            
             let parentConfig = TextChunkerProcessor.Config(chunkSize: 1000, chunkOverlap: 200, separators: TextChunkerProcessor.default.separators)
-            let parentChunks = self.chunker.split(text: enrichedContent, config: parentConfig)
-
+            let parentChunks = self.chunker.split(text: content, config: parentConfig)
+            
             for (pIndex, pChunk) in parentChunks.enumerated() {
                 group.addTask {
-                    await self.processParentChunk(pChunk, pIndex: pIndex, pageID: pageID, llm: llm)
+                    do {
+                        try Task.checkCancellation()
+                        await TaskCenter.shared.addIngestSubLog(L10n.Ingest.Status.processingChunk)
+                        return try await self.processParentChunk(pChunk, pIndex: pIndex, pageID: pageID, llm: llm)
+                    } catch {
+                        return []
+                    }
                 }
             }
-
-            // 合并所有结果
+            
             var finalChunks: [PageChunk] = []
             for await batch in group {
                 finalChunks.append(contentsOf: batch)
             }
             return finalChunks
         }
+    }
 
-        // 阶段 5: 向量索引 (Vector Indexing)
+    private func generateSummaryChunk(content: String, pageID: UUID, llm: any LLMServiceProtocol) async -> [PageChunk] {
+        do {
+            try Task.checkCancellation()
+            await TaskCenter.shared.addIngestSubLog(L10n.Ingest.Status.generatingSummary)
+            let summaryPrompt = PromptRegistry.Ingest.summary(content: String(content.prefix(2000)))
+            if let summary = try? await llm.generate(prompt: summaryPrompt, systemPrompt: L10n.AI.Prompt.ingestManagementAssistant) {
+                try Task.checkCancellation()
+                return [PageChunk(
+                    id: "sum_\(pageID.uuidString)",
+                    pageID: pageID,
+                    parentID: nil,
+                    chunkType: "summary",
+                    content: summary,
+                    index: 0,
+                    startIndex: 0,
+                    embedding: nil,
+                    createdAt: Date(),
+                    updatedAt: Date()
+                )]
+            }
+        } catch {}
+        return []
+    }
+
+    private func performEmbedding(chunks: [PageChunk], pageID: UUID, embeddingProvider: any EmbeddingProvider) async throws {
+        try Task.checkCancellation()
+        await updateProgress(stage: .embedding, progress: 0.75, log: L10n.Ingest.Status.vectorizing)
+        
         let indexer = VectorIndexer(embeddingProvider: embeddingProvider)
-        await indexer.index(pageID: pageID, chunks: allEnrichedChunks)
-
-        return enrichedContent
+        await indexer.index(pageID: pageID, chunks: chunks)
+        
+        await updateProgress(stage: .embedding, progress: 1.0, log: L10n.Ingest.Status.completed)
     }
 
     // MARK: - Private Helpers
+
+    private func updateProgress(stage: TaskStage, progress: Double, log: String) async {
+        if let task = await TaskCenter.shared.tasks.first(where: { $0.type == .ingest }) {
+            await TaskCenter.shared.updateTask(task.id, status: .running(progress: progress, stage: stage))
+        }
+        await TaskCenter.shared.addIngestSubLog(log)
+    }
 
     /// 处理单个父分块，生成子分块与反向 Q&A 块
     private func processParentChunk(
@@ -95,7 +142,7 @@ actor KnowledgeIngestPipeline {
         pIndex: Int, 
         pageID: UUID, 
         llm: (any LLMServiceProtocol)?
-    ) async -> [PageChunk] {
+    ) async throws -> [PageChunk] {
         var chunkBatch: [PageChunk] = []
         let parentChunkID = "p_\(pageID.uuidString)_\(pIndex)"
         let childConfig = TextChunkerProcessor.Config(chunkSize: 300, chunkOverlap: 50, separators: TextChunkerProcessor.default.separators)
@@ -107,7 +154,7 @@ actor KnowledgeIngestPipeline {
             parentID: nil,
             chunkType: "regular",
             content: pChunk.text,
-            anchorPath: pChunk.anchorPath, // 注入语义路径
+            anchorPath: pChunk.anchorPath,
             index: pIndex,
             startIndex: pChunk.startIndex,
             embedding: nil,
@@ -125,7 +172,7 @@ actor KnowledgeIngestPipeline {
                 parentID: parentChunkID,
                 chunkType: "child",
                 content: cChunk.text,
-                anchorPath: pChunk.anchorPath, // 子块继承父块的语义路径
+                anchorPath: pChunk.anchorPath,
                 index: cIndex,
                 startIndex: cChunk.startIndex,
                 embedding: nil,
@@ -136,9 +183,9 @@ actor KnowledgeIngestPipeline {
         }
 
         // 3. 反向提问 (Reverse Q&A)
-        if let llm = llm {
+        if let llm = llm, !Task.isCancelled {
             let qaPrompt = PromptRegistry.Ingest.reverseQA(content: pChunk.text)
-            if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: L10n.AI.Prompt.ingestDiscoveryAssistant) {
+            if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: L10n.AI.Prompt.ingestDiscoveryAssistant), !Task.isCancelled {
                 let questions = qaResponse.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
                 for (qIndex, question) in questions.prefix(3).enumerated() {
                     let qaRecord = PageChunk(

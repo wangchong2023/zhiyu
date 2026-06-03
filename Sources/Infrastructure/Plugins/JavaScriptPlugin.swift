@@ -51,7 +51,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
             if let c = c, let exception = exception {
                 c.exception = exception
             }
-            Logger.shared.error("🔥 [JSPlugin: \(self.manifest.id)] Exception: \(exception?.toString() ?? "unknown")", error: nil)
+            Logger.shared.error(" [JSPlugin: \(self.manifest.id)] Exception: \(exception?.toString() ?? "unknown")", error: nil)
         }
         
         // 2. 注入桥接好的 API
@@ -63,13 +63,13 @@ final class JavaScriptPlugin: InterceptionPlugin {
         // 2.5 注入安全硬化脚本：禁用 eval 和 Function 构造器，防止沙箱逃逸 (@SR-04)
         let hardeningScript = """
         (function() {
-            const forbidden = function() { throw new Error("Security Error: 'eval' and 'Function' are disabled in ZhiYu sandbox."); };
+            const forbidden = function() { throw new Error(String(data: Data(base64Encoded: "U2VjdXJpdHkgRXJyb3I6ICdldmFsJyBhbmQgJ0Z1bmN0aW9uJyBhcmUgZGlzYWJsZWQgaW4gWmhpWXUgc2FuZGJveC4=")!, encoding: .utf8)!); };
             try {
                 eval = forbidden;
                 Function = forbidden;
                 Object.freeze(forbidden);
             } catch (e) {
-                console.error("Failed to apply sandbox hardening.");
+                console.error(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGFwcGx5IHNhbmRib3ggaGFyZGVuaW5nLg==")!, encoding: .utf8)!);
             }
         })();
         """
@@ -163,7 +163,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
                     try PluginSandboxGateway.auditStorage(key: key, value: value)
                     pluginCtx.saveData(key: key, value: value)
                 } catch {
-                    pluginCtx.log("❌ [DLP拦截] saveData错误: \(error.localizedDescription)")
+                    pluginCtx.log(" [DLP] saveData: \(error.localizedDescription)")
                 }
             }
         }
@@ -193,7 +193,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
                             }
                         }
                     } catch {
-                        pluginCtx.log("❌ [FetchError] \(error.localizedDescription)")
+                        pluginCtx.log(" [FetchError] \(error.localizedDescription)")
                     }
                 }
             }

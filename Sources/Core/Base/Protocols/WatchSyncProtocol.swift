@@ -26,6 +26,9 @@ public protocol WatchSyncProtocol: ObservableObject, Sendable {
     /// 向配对设备发送内容
     func sendContent(_ text: String)
     
+    /// 发送音频数据，支持分片传输与断点续传 (TC-WAT-03)
+    func sendAudioData(_ data: Data, filename: String)
+    
     /// [Watch 端] 请求 iOS 端合成每日语音简报
     func requestDailyBriefing()
     
@@ -33,9 +36,19 @@ public protocol WatchSyncProtocol: ObservableObject, Sendable {
     func handleBriefingResponse(_ text: String)
 }
 
+extension WatchSyncProtocol {
+
+    /// 发送AudioData
+    /// /// - Parameter data: data
+    /// /// - Parameter filename: filename
+    public func sendAudioData(_ data: Data, filename: String) {}
+}
+
 extension Notification.Name {
     /// 收到来自手表的同步内容通知
     public static let didReceiveWatchContent = Notification.Name("didReceiveWatchContent")
+    /// 收到来自手表的音频数据通知
+    public static let didReceiveWatchAudio = Notification.Name("didReceiveWatchAudio")
     /// 收到来自 iOS 端的简报通知
     public static let didReceiveBriefing = Notification.Name("didReceiveBriefing")
     /// 请求简报的通知 (仅限 iOS 端监听)

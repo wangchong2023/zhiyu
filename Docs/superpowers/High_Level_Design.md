@@ -72,3 +72,20 @@ ZhiYu 的核心不仅是笔记编辑，而是一个完整的 **Retrieval-Augment
 
 - 插件机制 (`PluginRegistry`) 允许未来加入自定义的宏 (Macros) 与 JavaScript 工具。
 - `LLMServiceProtocol` 的剥离允许随时接入本地大模型 (如 MLX, CoreML) 替换云端模型，真正实现离线 AI 原生能力。
+
+## 5. 代码质量与持续重构约束 (Quality & Refactoring Guardrails)
+
+基于最新的全局工程诊断，智宇架构在演进中必须遵守以下强制性工程约束：
+
+1. **圈复杂度与长函数治理 (Cyclomatic Complexity)**
+   - 核心领域模型与处理管道（如 RAG 管道、WebScraper 处理器）的圈复杂度必须控制在 `10` 以内。
+   - 超过安全阈值的庞大流程（例如巨型 `if/else` 嵌套）必须采用 **状态机模式 (State Pattern)** 或 **责任链模式 (Chain of Responsibility)** 进行解耦降级。
+   - 函数体长度限制：核心业务函数建议保持在 `50` 行以内，View 构建逻辑不得过度深层嵌套，必须抽取 `SubView`。
+
+2. **跨平台解耦与宏滥用限制 (Macro Abuses Prevention)**
+   - **严禁**在业务功能层 (Feature) 和领域层 (Domain) 中随意使用 `#if os(macOS)` 或 `#if os(iOS)` 等平台特异性宏指令。
+   - 必须通过抽象通用协议 (如 `SystemCapabilities`) 提取跨平台环境接口，并在 `Sources/Platforms` 或 `Shared` 层进行具体实现与多态注入。
+
+3. **硬编码与魔鬼字符串消除 (Magic Strings)**
+   - 所有 UI 展示的文案（包括错误提示、模块名称等）必须通过 `check_localization.py` 门禁审核，统一使用 `L10n` 与 `.xcstrings` 管理。
+   - 业务逻辑、日志与通知中的内部魔法标识需统一收拢至 `AppConstants` 结构体，禁止在函数体内部物理硬编码。

@@ -30,7 +30,7 @@ public struct AIProcessingAttributes: ActivityAttributes, Hashable, Sendable {
     }
 
     /// 静态数据：在活动开启时确定且不再变化的内容
-    /// 任务显示名称 (例如: "AI 治理扫描", "知识库导入")
+    /// 任务显示名称 (例如: "AI ", "")
     public var taskName: String
     /// 任务启动时间
     public var startTime: Date

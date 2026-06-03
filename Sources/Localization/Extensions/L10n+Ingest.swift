@@ -190,5 +190,39 @@ extension L10n {
             public static var addNote: String { Ingest.tr("pdf.addNote") }
             public static var saveAnnotation: String { Ingest.tr("pdf.saveAnnotation") }
         }
+
+        public enum Status {
+            public static var starting: String { Ingest.tr("ingest.status.starting") }
+            public static var aiEnriching: String { Ingest.tr("ingest.status.aiEnriching") }
+            public static var generatingSummary: String { Ingest.tr("ingest.status.generatingSummary") }
+            public static var chunking: String { Ingest.tr("ingest.status.chunking") }
+            public static var processingChunk: String { Ingest.tr("ingest.status.processingChunk") }
+            public static var vectorizing: String { Ingest.tr("ingest.status.vectorizing") }
+            public static var completed: String { Ingest.tr("ingest.status.completed") }
+            
+            // WebScraper cascade statuses
+            public static var webscraperLevel1Success: String { Ingest.tr("ingest.status.webscraper.level1_success") }
+            public static var webscraperLevel1Failed: String { Ingest.tr("ingest.status.webscraper.level1_failed") }
+            public static var webscraperLevel2Success: String { Ingest.tr("ingest.status.webscraper.level2_success") }
+            public static var webscraperLevel2Failed: String { Ingest.tr("ingest.status.webscraper.level2_failed") }
+            public static var webscraperLevel3Success: String { Ingest.tr("ingest.status.webscraper.level3_success") }
+            public static var webscraperLevel3Failed: String { Ingest.tr("ingest.status.webscraper.level3_failed") }
+            public static var webscraperLevel4Success: String { Ingest.tr("ingest.status.webscraper.level4_success") }
+
+            /// webscraperPaywallDetected
+            /// /// - Parameter code: code
+            /// /// - Returns: 字符串
+            public static func webscraperPaywallDetected(_ code: Int) -> String {
+                String(format: Ingest.tr("ingest.status.webscraper.paywall_detected"), code)
+            }
+        }
     }
+
+    public struct Status {
+        public static let extraction = Localized.tr("ingest.status.extraction")
+        public static let enhancement = Localized.tr("ingest.status.enhancement")
+        public static let chunking = Localized.tr("ingest.status.chunking")
+        public static let embedding = Localized.tr("ingest.status.embedding")
+    }
+
 }

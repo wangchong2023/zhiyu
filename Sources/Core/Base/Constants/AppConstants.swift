@@ -159,9 +159,10 @@ public struct AppConstants {
     // MARK: - 演示数据与模拟器配置
     public struct Demo {
         public static let defaultPageCount = 17
-        public static let mockPageCount = 42
-        public static let mockLinkCount = 108
-        public static let mockTagCount = 16
+        public static let mockPageCount = 1258
+        public static let mockLinkCount = 89
+        public static let mockTagCount = 32
+        public static let vaultName = String(data: Data(base64Encoded: "RGVtbyBWYXVsdA==")!, encoding: .utf8)!
         public static let mockRecentPagesCount = 3
         public static let widgetRefreshIntervalMinutes: Double = 30.0
     }

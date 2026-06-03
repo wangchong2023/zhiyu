@@ -40,10 +40,9 @@ public final class iCloudSyncService: ObservableObject {
 
     @Inject private var appEnv: any AppEnvironmentProtocol
 
-    public init() {
-        let ckProvider = CloudKitSyncProvider()
-        self.provider = ckProvider
-        self.resolver = LWWSyncConflictResolver()
+    public init(provider: any CloudStorageProvider = CloudKitSyncProvider(), resolver: any SyncConflictResolver = LWWSyncConflictResolver()) {
+        self.provider = provider
+        self.resolver = resolver
         
         // 初始可用性检查
         Task {

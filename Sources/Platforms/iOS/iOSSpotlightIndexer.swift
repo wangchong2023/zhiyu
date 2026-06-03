@@ -44,7 +44,7 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
         }
         
         CSSearchableIndex.default().indexSearchableItems(searchableItems) { error in
-            if let error = error {
+            if error != nil {
                 Logger.shared.error("Spotlight_Error")
             }
         }

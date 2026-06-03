@@ -19,7 +19,7 @@ extension ContentView {
     /// mainContainer
     /// - Parameter tintColor: 着色Color
     func mainContainer(tintColor: Color) -> some View {
-        if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
+        if authSession.isLoggedIn || authSession.isGuest {
             Group {
                 if vaultService.selectedVaultID != nil {
                     mainContent(tintColor: tintColor)
@@ -307,7 +307,7 @@ extension ContentView {
                         ViewFactory.makeView(for: selection.asRoute())
                     }
                     .navigationDestination(for: KnowledgePage.self) { page in
-                        PageDetailView(page: page)
+                        ViewFactory.makeView(for: .pageDetail(id: page.id))
                     }
             }
         } else {

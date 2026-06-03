@@ -15,8 +15,8 @@ import AppIntents
 // MARK: - 手表端小组件
 /// 手表端专用捕获意图（与 ShortcutManager.CaptureIntent 分离，避免元数据冲突）
 struct WatchCaptureIntent: AppIntent {
-    static let title: LocalizedStringResource = .init("watch.widget.title", defaultValue: L10n.Common.demo, table: "Watch")
-    static let description = IntentDescription(.init("watch.widget.desc", defaultValue: L10n.Common.demo, table: "Watch"))
+    static let title: LocalizedStringResource = .init("watch.widget.title", table: "Watch")
+    static let description = IntentDescription(.init("watch.widget.desc", table: "Watch"))
     static let persistentIdentifier: String = "com.zhiyu.watch.captureIntent"
     
     /// 执行
@@ -35,8 +35,8 @@ struct WatchCaptureWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             WatchWidgetView(entry: entry)
         }
-        .configurationDisplayName(L10n.Watch.widgetDisplayName)
-        .description(L10n.Watch.widgetDisplayDesc)
+        .configurationDisplayName(L10n.Watch.widgetCapture)
+        .description(L10n.Watch.widgetDescription)
         .supportedFamilies([.accessoryCircular, .accessoryCorner, .accessoryInline])
     }
 }

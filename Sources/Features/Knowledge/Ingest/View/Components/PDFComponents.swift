@@ -92,22 +92,22 @@ struct PDFIngestSheet: View {
                 Text(L10n.Ingest.PDF.highlightsOnly).tag("highlights")
             }
             #if !os(watchOS)
-            .pickerStyle(.segmented)
-            #endif
+                .pickerStyle(.segmented)
+                #endif
             
             if ingestMode == "pageRange" {
                 HStack {
                     Text(L10n.Ingest.PDF.fromPage)
                     TextField("1", value: $pageStart, format: .number)
                         #if os(iOS)
-                        .keyboardType(.numberPad)
-                        #endif
+        .keyboardType(.numberPad)
+        #endif
                         .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(L10n.Ingest.PDF.toPage)
                     TextField("\(documentInfo.pageCount)", value: $pageEnd, format: .number)
                         #if os(iOS)
-                        .keyboardType(.numberPad)
-                        #endif
+        .keyboardType(.numberPad)
+        #endif
                         .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(L10n.Ingest.PDF.page)
                 }

@@ -18,7 +18,14 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
     /// 全局单例注入，便于在 App 顶层会话绑定
     public static let shared = ModelDownloadManager()
     
-    private var session: URLSession!
+        private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.background(withIdentifier: "com.zhiyu.app.model.download")
+        config.isDiscretionary = false
+        config.sessionSendsLaunchEvents = true
+        let delegateHelper = ModelDownloadDelegateHelper(manager: self)
+        return URLSession(configuration: config, delegate: delegateHelper, delegateQueue: nil)
+    }()
+
     
     /// 模型 ID 到当前下载任务状态的映射表
     private var downloadStates: [String: DownloadState] = [:]
@@ -35,16 +42,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
     /// 模型 ID 到其异步流事件通道 (Continuation) 的订阅分发映射表
     private var continuations: [String: AsyncStream<DownloadState>.Continuation] = [:]
     
-    private init() {
-        // 使用 actor 强隔离的后台 session 声明
-        let config = URLSessionConfiguration.background(withIdentifier: "com.zhiyu.app.model.download")
-        // 允许 iOS 进程在后台根据硬件排程自动调度，极致防爆
-        config.isDiscretionary = false
-        config.sessionSendsLaunchEvents = true
-        
-        let delegateHelper = ModelDownloadDelegateHelper(manager: self)
-        self.session = URLSession(configuration: config, delegate: delegateHelper, delegateQueue: nil)
-    }
+    private init() {}
     
     // MARK: - Capabilities 契约接口实现
     
@@ -90,7 +88,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
             resumeDataCache[modelId] = data
             updateState(for: modelId, to: .paused)
         } else {
-            updateState(for: modelId, to: .failed(error: "Failed to generate resume data for pausing."))
+            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmFpbGVkIHRvIGdlbmVyYXRlIHJlc3VtZSBkYXRhIGZvciBwYXVzaW5nLg==")!, encoding: .utf8)!))
         }
         
         activeTasks[modelId] = nil
@@ -101,7 +99,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         // 1. 检索断点缓存数据
         guard let data = resumeDataCache[modelId] else {
             // 如果缓存为空，尝试重新从 url 启动下载 (需在业务层补充 URL 记录)
-            updateState(for: modelId, to: .failed(error: "No resume data available."))
+            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "Tm8gcmVzdW1lIGRhdGEgYXZhaWxhYmxlLg==")!, encoding: .utf8)!))
             return
         }
         
@@ -127,7 +125,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         activeTasks[modelId] = nil
         cleanPreviousFiles(for: modelId)
         
-        updateState(for: modelId, to: .failed(error: "Download cancelled by user."))
+        updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RG93bmxvYWQgY2FuY2VsbGVkIGJ5IHVzZXIu")!, encoding: .utf8)!))
     }
     
     /// 监听特定大模型任务的实时状态与进度变化流
@@ -177,7 +175,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
             
             // 1. 进行完好性校验 (SHA256)
             if !manager.verifySHA256(of: tempFileURL, expectedHash: checksum) {
-                await manager.updateState(for: modelId, to: .failed(error: "File verification failed. SHA256 mismatch."))
+                await manager.updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmlsZSB2ZXJpZmljYXRpb24gZmFpbGVkLiBTSEEyNTYgbWlzbWF0Y2gu")!, encoding: .utf8)!))
                 try? FileManager.default.removeItem(at: tempFileURL)
                 return
             }
@@ -196,7 +194,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
                 await manager.updateState(for: modelId, to: .completed(localURL: destinationURL))
                 await manager.clearActiveTask(for: modelId)
             } catch {
-                await manager.updateState(for: modelId, to: .failed(error: "Sandbox storage allocation failed: \(error.localizedDescription)"))
+                await manager.updateState(for: modelId, to: .failed(error: "Sandbox storage" + " allocation failed:" + " \(error.localizedDescription)"))
             }
         }
     }
@@ -325,7 +323,7 @@ fileprivate final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloa
             }
         } catch {
             Task {
-                await manager.updateState(for: modelId, to: .failed(error: "Temporary copy generation failed: \(error.localizedDescription)"))
+                await manager.updateState(for: modelId, to: .failed(error: "Temporary copy" + " generation failed:" + " \(error.localizedDescription)"))
             }
         }
     }

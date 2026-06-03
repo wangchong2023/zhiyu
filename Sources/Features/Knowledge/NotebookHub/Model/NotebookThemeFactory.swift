@@ -15,15 +15,15 @@ import SwiftUI
 public struct NotebookThemeFactory {
     /// 语义配色字典：将标题关键字映射到特定的色系
     private static let semanticPalettes: [String: [String]] = [
-        "科学": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"], // 科技蓝绿
-        "物理": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"],
-        "数学": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"],
-        "艺术": ["#FF9A9E", "#FECFEF", "#A18CD1", "#FBC2EB"], // 艺术粉紫
-        "文学": ["#FF9A9E", "#FECFEF", "#A18CD1", "#FBC2EB"],
-        "历史": ["#F6D365", "#FDA085", "#D4A373", "#7F4F24"], // 复古暖色
-        "自然": ["#84FAB0", "#8FD3F4", "#2D6A4F", "#00B4D8"], // 自然苍翠
-        "代码": ["#000000", "#333333", "#00FF41", "#008F11"], // 极客黑绿
-        "编程": ["#000000", "#333333", "#00FF41", "#008F11"]
+        "tech": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"], // 科技蓝绿
+        "ai": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"],
+        "code": ["#4A90E2", "#50E3C2", "#B8E986", "#1F3B4D"],
+        "art": ["#FF9A9E", "#FECFEF", "#A18CD1", "#FBC2EB"], // 艺术粉紫
+        "design": ["#FF9A9E", "#FECFEF", "#A18CD1", "#FBC2EB"],
+        "retro": ["#F6D365", "#FDA085", "#D4A373", "#7F4F24"], // 复古暖色
+        "nature": ["#84FAB0", "#8FD3F4", "#2D6A4F", "#00B4D8"], // 自然苍翠
+        "geek": ["#000000", "#333333", "#00FF41", "#008F11"], // 极客黑绿
+        "hacker": ["#000000", "#333333", "#00FF41", "#008F11"]
     ]
     
     private static let defaultPalettes: [[String]] = [

@@ -68,6 +68,176 @@
           }
         }
       }
+    },
+    "watch.briefing.synthesizing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synthesizing briefing..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在合成简报..."
+          }
+        }
+      }
+    },
+    "watch.briefing.getToday": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Today's Knowledge Briefing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取今日知识简报"
+          }
+        }
+      }
+    },
+    "watch.briefing.generateNow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate Now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即生成"
+          }
+        }
+      }
+    },
+    "watch.briefing.audioBriefing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio Briefing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音简报"
+          }
+        }
+      }
+    },
+    "watch.widget.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ZhiYu Capture"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智宇采集"
+          }
+        }
+      }
+    },
+    "watch.widget.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capture content to ZhiYu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将内容采集至智宇"
+          }
+        }
+      }
+    },
+    "watch.briefing.noNewContent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No new knowledge recorded today. Time to relax!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今天没有新的知识录入，去放松一下吧。"
+          }
+        }
+      }
+    },
+    "watch.briefing.promptTemplate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Based on the recently entered notes, generate a short, colloquial, and voice-broadcast-friendly daily knowledge briefing. Requirements: Remove all Markdown marks, use natural language transitions, and sound like a knowledge steward talking to me. Content:\n%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据以下最近录入的笔记，生成一段简短、口语化、适合用语音播报的每日知识简报。\n要求：去除所有 Markdown 标记，使用自然语言的转折词，像一位知识管家在对我说话。\n内容：\n%@"
+          }
+        }
+      }
+    },
+    "watch.briefing.systemPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a professional knowledge management voice announcer."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个专业的知识管理语音播报员。"
+          }
+        }
+      }
+    },
+    "watch.briefing.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to generate briefing. Please check your network or model settings."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生成简报失败，请检查网络或模型设置。"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
