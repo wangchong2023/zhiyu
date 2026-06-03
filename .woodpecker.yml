@@ -34,6 +34,13 @@ steps:
       - echo "===> Generating Xcode Project via XcodeGen..."
       - xcodegen generate
 
+  check-test-compile:
+    image: bash
+    commands:
+      - echo "===> Pre-checking Test Suites Compilation..."
+      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
+      - echo "===> Test Suites compiled successfully."
+
   build-ios:
     image: bash
     commands:
@@ -54,6 +61,12 @@ steps:
       - echo "===> Building for watchOS Simulator..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "===> watchOS Build completed successfully."
+
+  count-tests:
+    image: bash
+    commands:
+      - echo "===> Counting test cases..."
+      - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
 
   run-tests:
     image: bash

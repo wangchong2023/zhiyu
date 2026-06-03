@@ -13,10 +13,10 @@ import Foundation
 /// 向量索引处理器
 final class VectorIndexer {
 
-    private let embeddingManager: EmbeddingManager
+    private let embeddingProvider: any EmbeddingProvider
 
-    init(embeddingManager: EmbeddingManager) {
-        self.embeddingManager = embeddingManager
+    init(embeddingProvider: any EmbeddingProvider) {
+        self.embeddingProvider = embeddingProvider
     }
 
     /// 执行多维向量索引
@@ -25,6 +25,7 @@ final class VectorIndexer {
     ///   - chunks: 待处理的 PageChunk 列表
     func index(pageID: UUID, chunks: [PageChunk]) async {
         guard !chunks.isEmpty else { return }
-        await embeddingManager.indexChunks(pageID: pageID, chunks: chunks)
+        await embeddingProvider.indexChunks(pageID: pageID, chunks: chunks)
     }
 }
+

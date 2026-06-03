@@ -21,8 +21,8 @@ struct ScaleOnHoverModifier: ViewModifier {
     @State private var isHovered = false
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         #if os(watchOS)
         content
@@ -49,8 +49,8 @@ struct PremiumAmbientShadowModifier: ViewModifier {
     let radius: CGFloat
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             // 第一层：大范围微弱漫反射阴影，确立环境光底色
@@ -74,8 +74,8 @@ struct GlowingNeonBorderModifier: ViewModifier {
     let gradientColors: [Color]
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .overlay(

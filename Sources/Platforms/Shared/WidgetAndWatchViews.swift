@@ -178,12 +178,12 @@ struct AppWidgetPreview: View {
     }
 }
 
-#Preview("Widget Medium") {
+#Preview(L10n.Common.unknown) {
     AppWidgetPreview(
         totalPages: 9,
         totalWords: 4500,
         activeCount: 7,
         stubCount: 2,
-        recentTitles: ["LLM 知识库", "nanoGPT", L10n.Widget.knowledgeCompile]
+        recentTitles: [L10n.Common.unknown, "nanoGPT", L10n.Widget.knowledgeCompile]
     )
 }

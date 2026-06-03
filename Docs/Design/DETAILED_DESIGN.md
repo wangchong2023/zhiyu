@@ -10,7 +10,7 @@
 
 1. **Parser (解析器)**: 抽取纯文本，支持 Markdown, PDF, OCR 图像识别。
 2. **Chunker (分块器)**: 基于语义长度（Semantic Splitting）将长文划分为分块。
-3. **Embedding (向量化)**: 异步调用 LLM 生成向量，由 `EmbeddingManager` 同步至向量数据库。
+3. **Embedding (向量化)**: 异步调用 LLM 生成向量，由 `EmbeddingProvider` (位于 `Core/Base/Protocols`) 定义契约，基础设施层 `EmbeddingManager` 实现同步至向量数据库。
 4. **Linker (关联器)**: 自动发现页面间的 Wiki-Link，构建知识图谱 (Graph)。
 
 ### 1.2 检索策略 (Retrieval Strategy)
@@ -93,6 +93,51 @@ sequenceDiagram
 - **物理禁用**: 显式将 `eval` 和 `Function` 赋值为抛出错误的闭包，防止插件利用字符串模板动态生成不受监管的代码。
 - **环境锁定**: 利用 `Object.freeze` 冻结禁用逻辑，防止插件通过原型链操作等方式反向破解沙箱限制。
 
+### 3.5 插件沙箱并发池化与 Watchdog 熔断时序 (Concurrency Pooling & Watchdog)
+
+为了防止僵尸插件拖慢宿主 App 并保障高性能的多任务并行，`PluginEnginePool` 对 JSContext 进行了高水准的池化隔离保护（默认 Max 并发为 4）。以下展示了租借、重置硬化、执行、Watchdog 0.5s 限时竞速与物理黑名单封禁的并发安全时序：
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as 主应用线程 / JavaScriptPlugin
+    participant Pool as PluginEnginePool (Max=4)
+    participant Lock as ConcurrentLock (并发锁)
+    participant CTX as JSContext (物理沙箱)
+    participant WD as WatchdogTimer (0.5s)
+
+    App->>Pool: borrowContext() 租借沙箱上下文
+    Pool->>Lock: acquire() 获取并发独占锁
+    Lock-->>Pool: lock acquired
+    
+    alt 池中有空闲可用 JSContext
+        Pool->>Pool: 从空闲队列 (idleQueue) 弹出实例
+    else 池已满且无空闲 (并发 > 4)
+        Pool->>Pool: 阻塞等待 / 触发降级 LIFO 强行回收
+    end
+    
+    Pool->>CTX: reset() 状态重置与硬化 (物理禁用 eval/Function)
+    Pool-->>App: 返回已就绪的 JSContext
+    
+    par 并发执行与 Watchdog 竞速
+        App->>CTX: executeScript(PluginScript) 执行三方插件代码
+    and
+        App->>WD: start(0.5s) 启动硬熔断定时器
+    end
+
+    alt 执行在 0.5s 内正常完成
+        CTX-->>App: 返回受限执行结果
+        App->>WD: cancel() 取消定时器
+        App->>Pool: returnContext(ctx) 归还上下文
+        Pool->>Pool: 执行深度垃圾回收后压回空闲队列
+    else 执行超时 (> 0.5s 熔断)
+        WD->>App: 触发 Timeout 信号 / 抛出 SandboxError
+        App->>Pool: terminate(ctx) 强行注销上下文
+        Pool->>CTX: 物理销毁并释放 JSContext 内存
+        Pool->>Pool: 标记插件 ID 并写入 UserDefaults 黑名单限制重启加载
+    end
+```
+
 ## 4. 多平台适配与能力隔离 (Platform Adaptation)
 
 ### 4.1 跨平台协议抽象
@@ -171,19 +216,62 @@ graph TD
 - **硬件盐值 (Hardware Salt)**: 签名密钥派生自存储在 Keychain 中的随机 UUID，该 UUID 在首次初始化金库时生成，并受 Secure Enclave 保护，不可导出。
 - **物理隔离**: 生产环境下，签名持久化失败将视为严重安全故障，系统将中断加载逻辑而非静默降级，确保“未经验证的数据绝不加载”。
 
+### 6.4 离线 WAL 释放期 HMAC 计算与冷启动自愈时序
+
+为了确保离线环境下数据库内容不被非法外部应用物理篡改，系统建立了一套基于硬件 Salt 与 HMAC-SHA256 的全生命周期防篡改方案。以下详细展示了在关闭数据库释放 WAL 连接时的指纹重写、冷启动时的完整性校验、以及在 Debug 与 Release 模式下的差异化自愈隔离表现：
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as 主应用/DatabaseManager
+    participant SQLCipher as SQLite / SQLCipher (WAL)
+    participant Sec as Secure Enclave / Keychain (UUID Salt)
+
+    Note over App, SQLCipher: 阶段一：金库释放与 HMAC 指纹动态更新
+    App->>SQLCipher: close() 关闭数据库连接并释放 WAL 共享连接
+    App->>SQLCipher: select count(*), group_concat(id) from pages... (读取核心内容特征摘要)
+    SQLCipher-->>App: 返回特征指纹载荷
+    App->>Sec: 读取受硬件 Secure Enclave 保护的 Hardware Salt (Keychain)
+    Sec-->>App: 返回唯一硬件盐值 (UUID)
+    App->>App: 基于盐值使用 HMAC-SHA256 计算新数据指纹 (Hash)
+    App->>SQLCipher: update local_signatures set signature = Hash (写入 DB 签名库)
+    App->>SQLCipher: checkpoint & physical close (确保 WAL 日志完全合入并安全落盘)
+
+    Note over App, SQLCipher: 阶段二：冷启动挂载与防篡改指纹强校验
+    App->>SQLCipher: open() 挂载并打开加密金库
+    App->>SQLCipher: read local_signatures (提取已保存的 HMAC Hash)
+    SQLCipher-->>App: 返回保存的 HMAC Hash
+    App->>App: 重新读取当前数据，以硬件盐值计算实时 HMAC-SHA256
+    
+    alt 实时 HMAC == 保存的 HMAC (数据指纹匹配，未被物理修改)
+        App-->>App: 正常加载金库 (Read-Write 读写模式)
+    else HMAC 校验不匹配 (指纹冲突/发生篡改/沙盒目录漂移)
+        alt 处于 #if DEBUG (开发环境高容错自愈)
+            App->>App: 在主控制台输出本地调试警告 (Console Log)
+            App->>App: 自动重签名对齐 (重新将当前 HMAC 写入 DB)
+            App-->>App: 放行并允许正常打开进行开发调试
+        else 处于 RELEASE (生产环境高等级防御)
+            App->>App: 阻断加载进程，抛出 SignatureMismatchException
+            App->>App: 降级为 403 Read-Only 只读模式，强行拉起生物认证二次校验
+        end
+    end
+```
+
 ## 7. iCloud 云端协同与冲突解决策略 (iCloud Sync & Conflict Resolution)
 
-### 7.1 CloudKit Core Data Sync 与 GRDB 自定义同步网关
+智宇在 Phase 2 执行了深度重构，将云同步职责进行了物理拆分，严格遵循 SRP (单一职责原则)：
 
-对于知识管理而言，多端同步与跨平台的数据一致性至关重要：
+### 7.1 三层解耦同步架构
 
-- **GRDB 变更捕获机制 (Change Capture)**:
-  - 数据库中所有核心业务表（`pages`、`chunks`、`links`）均搭载 `sync_status`（枚举值：`synced`、`pending_upload`、`pending_download`）和自增版本号 `version`。
-  - 本地挂载基于 GRDB `TransactionObserver` 的 `DatabaseSyncObserver`，实时捕获本地事务提交。检测到变更后，将受影响的实体 ID 与变更类型（`UPSERT`、`DELETE`）追加至本地 `SyncQueue` 事务管道中。
-- **CKRecord 增量封包网关**:
-  - `CloudKitSyncService` 从 `SyncQueue` 批量抽取待同步实体，动态将其映射为 CloudKit 的 `CKRecord`。
-  - 富文本、PDF 和 OCR 原始大附件以 `CKAsset` 形式关联上传，利用 CloudKit 的底层文件切片技术节约蜂窝流量。
-  - 同步采用 `CKModifyRecordsOperation` 批量写入，支持差分流压缩传输。
+- **CloudStorageProvider (物理驱动层)**:
+  - 位于 `Sources/Infrastructure/Storage/Sync/CloudKitSyncProvider.swift`。
+  - 负责与 Apple CloudKit 服务的原始网络吞吐、CKRecord 封包及分区（Zone）管理。
+- **SyncConflictResolver (算法裁决层)**:
+  - 位于 `Sources/Domain/Knowledge/LWWSyncConflictResolver.swift`。
+  - 实现了基于物理时钟的 **Last-Writer-Wins (LWW)** 合并算法，不包含任何网络 IO。
+- **iCloudSyncService (业务调度层)**:
+  - 位于 `Sources/Infrastructure/Storage/Sync/AppCloudSyncService.swift`。
+  - 作为 Orchestrator 编排上述两者，并向 UI 层发布 `@Published` 状态。
 
 ### 7.2 双向合并与 Last-Write-Wins (LWW) 冲突仲裁机制
 
@@ -341,16 +429,13 @@ stateDiagram-v2
 *   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 6 章中，补充 WAL 离线同步期间 HMAC 动态签名的详细算法流程。
 
 ### 12.3 信号量同步阻塞消除时序 (异步 `switchDatabase`/`setup`)
-*   **物理实现状态**：🔴 **待重构**。目前在 `DatabaseManager.swift` 的 `setup()` 与主线程切换数据库时，使用了信号量 `semaphore.wait(timeout:)` 强行将异步线程的操作转为同步以保障连接池切换。该设计在低配或单核设备上容易与 GCD 线程池产生优先级反转从而引发主线程死锁。
-*   **后续设计设计**：需彻底移除信号量，将 `switchDatabase` 与 `setup` 方法签名重构为 `async throws`。SwiftUI 视图层通过 `.task(id: activeVaultID)` 挂载异步环境，在挂载期间呈现 Pulse 脉冲等待指示器，完全过渡到非阻塞式结构化并发。
+*   **物理实现状态**：🟢 **已完成物理重构**。`DatabaseManager.swift` 中已彻底移除所有 `semaphore.wait()` 机制。通过 Swift Structured Concurrency，`switchDatabase` 与热切换均已重构为纯 `async throws`。使用 `Task.sleep` 优雅异步排空活跃连接池事务，完全消除了主线程死锁隐患。
 
 ### 12.4 DI 容器的 Actor 隔离与并发安全
-*   **物理实现状态**：🔴 **待重构**。当前 `ServiceContainer` 为常规的非隔离单例。在 macOS 多窗口（Multi-window）以及 App Extension（桌面小组件）高频调用的并发场景下，写入或读取依赖项有可能发生 ABA 竞态覆写风险。
-*   **后续设计设计**：计划将 `ServiceContainer` 转换为 Swift 6 全局 Actor，或者在解析（`resolve`）和注册（`register`）函数内部增加细粒度的自旋锁（`os_unfair_lock`）防护。
+*   **物理实现状态**：🟢 **已完成物理重构**。`ServiceContainer` 已引入 `os_unfair_lock` 自旋锁防护，确保在解析（`resolve`）和注册（`register`）时的线程安全性，有效规避 ABA 竞态覆写风险。
 
 ### 12.5 领域层契约完全穿透
-*   **物理实现状态**：🔴 **待重构**。业务功能层 L2 的 `KnowledgeStore` 与 `AIWorkflowStore` 中，依然存在通过 `@Inject` 越权调用具体 `SQLiteStore` (L1 Infra) 内部事务的行为。
-*   **后续设计设计**：在 L1.5 领域层（`Domain`）中定义好各 Repository 的行为契约，L2 服务层只能依赖这些抽象接口，任何与底层的交互必须由领域大脑调度，隔离持久化细节。
+*   **物理实现状态**：🟢 **已完成物理重构**。通过 Phase 1 & 2 的 DIP 专项治理，`VectorIndexableStore` 及其调用者已全量切回 `any EmbeddingProvider` 协议，领域层已彻底切断对 L1 `EmbeddingManager` 具体类的物理依赖。
 
 ### 12.6 级联式多源网页捕获引擎 (CaptureCascadeEngine)
 *   **物理实现状态**：🔴 **未来演进**。
@@ -380,5 +465,8 @@ sequenceDiagram
 ### 12.7 外置 AI 代理 CLI/SDK 自动化总线设计
 *   **物理实现状态**：🔴 **未来演进**。
 *   **时序与通信设计**：智宇在 `AppIntents` 控制层声明可供 Siri 或 Shortcuts 呼叫的 Intent。第三方代理工具（例如 Cursor 或者是自定义 shell 脚本）通过调用系统的 `Shortcuts` CLI（如 `shortcuts run "智宇自动化摄入" -i input_file.md`）向 AppGroup 共享目录写入缓存包，智宇后台守护程序捕获变更后，在 App Intent 线程沙箱内拉起 `DatabaseManager` 完成增量 FTS5 写入与向量余弦检索。
+
+
+检索。
 
 

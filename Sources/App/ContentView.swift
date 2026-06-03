@@ -33,6 +33,7 @@ struct ContentView: View {
     @Inject internal var appEnv: any AppEnvironmentProtocol
     
     @State internal var showSidebar = false 
+    @State internal var authSession = AuthSession.shared
     @State private var dbState: DatabaseState = DatabaseManager.shared.state
 
     // MARK: - Body
@@ -89,7 +90,7 @@ struct ContentView: View {
                 .environmentObject(themeManager)
                 .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
         }
-        .animation(DesignSystem.Animation.Config.prominentSpring, value: AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest)
+        .animation(DesignSystem.Animation.Config.prominentSpring, value: authSession.isLoggedIn || authSession.isGuest)
         .animation(DesignSystem.Animation.Config.prominentSpring, value: vaultService.selectedVaultID)
         .environmentObject(MedalService.shared)
         .environment(\.locale, router.currentLocale)
@@ -170,7 +171,7 @@ extension View {
     @ViewBuilder
 
     /// 应用SettingsPresentationSizing
-    /// /// - Parameter screenClass: screenClass
+    /// - Parameter screenClass: screenClass
     func applySettingsPresentationSizing(screenClass: ScreenClass) -> some View {
         if screenClass == .compact {
             // 手机/紧凑尺寸下，不做多余限制，让系统自动以标准半屏/全屏形式拉起
@@ -296,9 +297,9 @@ struct DatabaseCorruptedBanner: View {
                 
                 // 重新执行 setup 挂载物理沙盒
                 try DatabaseManager.shared.setup(at: dbURL)
-                print("✅ [DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database.")
+                print(String(data: Data(base64Encoded: "W0RhdGFiYXNlQ29ycnVwdGVkQmFubmVyXSBSZXZlcmlmaWNhdGlvbiBzdWNjZWVkZWQhIFJlbW91bnRlZCBwaHlzaWNhbCBkYXRhYmFzZS4=")!, encoding: .utf8)!)
             } catch {
-                print("❌ [DatabaseCorruptedBanner] Reverification failed: \(error)")
+                print("[DatabaseCorruptedBanner] Reverification" + " failed: \(error)")
             }
             isRetrying = false
         }

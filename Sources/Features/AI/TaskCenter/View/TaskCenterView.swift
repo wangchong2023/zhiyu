@@ -37,7 +37,7 @@ struct TaskCenterView: View {
                         statusDashboard
                             .padding(.vertical, DesignSystem.tightPadding)
                     } header: {
-                        Text(L10n.AI.Task.tr("categories"))
+                        Text(L10n.AI.Task.categories)
                             .font(.subheadline.bold())
                             .foregroundStyle(.appText)
                     }
@@ -50,7 +50,7 @@ struct TaskCenterView: View {
                             #if os(watchOS)
                             Section {
                                 if tasks.isEmpty {
-                                    Text(L10n.AI.Task.tr("noHistory"))
+                                    Text(L10n.AI.Task.noHistory)
                                         .font(.caption)
                                         .foregroundStyle(.appSecondary)
                                         .padding(.vertical, DesignSystem.tightPadding)
@@ -84,9 +84,9 @@ struct TaskCenterView: View {
                                     }
                                     
                                     VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                                        Text(L10n.AI.Task.tr("type.\(type.rawValue)"))
+                                        Text(type.localizedName)
                                             .font(.subheadline.bold())
-                                        Text(L10n.AI.Task.trf("history.count", metrics.total))
+                                        Text(L10n.AI.Task.historyCount(metrics.total))
                                             .font(.caption2)
                                             .foregroundStyle(.appSecondary)
                                     }
@@ -112,7 +112,7 @@ struct TaskCenterView: View {
                             #else
                             DisclosureGroup {
                                 if tasks.isEmpty {
-                                    Text(L10n.AI.Task.tr("noHistory"))
+                                    Text(L10n.AI.Task.noHistory)
                                         .font(.caption)
                                         .foregroundStyle(.appSecondary)
                                         .padding(.vertical, DesignSystem.tightPadding)
@@ -146,9 +146,9 @@ struct TaskCenterView: View {
                                     }
                                     
                                     VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                                        Text(L10n.AI.Task.tr("type.\(type.rawValue)"))
+                                        Text(type.localizedName)
                                             .font(.subheadline.bold())
-                                        Text(L10n.AI.Task.trf("history.count", metrics.total))
+                                        Text(L10n.AI.Task.historyCount(metrics.total))
                                             .font(.caption2)
                                             .foregroundStyle(.appSecondary)
                                     }
@@ -174,7 +174,7 @@ struct TaskCenterView: View {
                             #endif
                         }
                     } header: {
-                        Text(L10n.AI.Task.tr("list.title"))
+                        Text(L10n.AI.Task.listTitle)
                             .font(.subheadline.bold())
                             .foregroundStyle(.appText)
                             .textCase(nil)
@@ -192,7 +192,7 @@ struct TaskCenterView: View {
             taskCenter.markAllAsRead()
         }
         .confirmationDialog(
-            L10n.AI.Task.tr("clearConfirmTitle"),
+            L10n.AI.Task.clearConfirmTitle,
             isPresented: $showClearConfirm,
             titleVisibility: .visible
         ) {
@@ -202,7 +202,7 @@ struct TaskCenterView: View {
             }
             Button(L10n.Common.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.AI.Task.tr("clearConfirmMessage"))
+            Text(L10n.AI.Task.clearConfirmMessage)
         }
     }
     
@@ -243,7 +243,7 @@ struct TaskCenterView: View {
             }
             
             VStack(spacing: DesignSystem.atomic) {
-                Text(L10n.AI.Task.tr("type.\(type.rawValue)"))
+                Text(type.localizedName)
                     .font(.system(size: DesignSystem.microFontSize + DesignSystem.atomic, weight: .bold)) // 11
                     .foregroundStyle(.appSecondary)
                 
@@ -301,15 +301,15 @@ struct TaskCenterView: View {
             }
             
             VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
-                Text(L10n.AI.Task.tr("howToTrigger"))
+                Text(L10n.AI.Task.howToTrigger)
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.appSecondary)
                     .padding(.bottom, DesignSystem.tiny)
                 
-                guideRow(icon: "stethoscope", color: .red, title: L10n.AI.Task.tr("guide.health"), desc: L10n.AI.Task.tr("guide.health.desc"))
-                guideRow(icon: "bolt.shield.fill", color: .orange, title: L10n.AI.Task.tr("guide.aiscan"), desc: L10n.AI.Task.tr("guide.aiscan.desc"))
-                guideRow(icon: "tray.and.arrow.down.fill", color: .blue, title: L10n.AI.Task.tr("guide.ingest"), desc: L10n.AI.Task.tr("guide.ingest.desc"))
-                guideRow(icon: "wand.and.stars", color: .purple, title: L10n.AI.Task.tr("guide.synthesis"), desc: L10n.AI.Task.tr("guide.synthesis.desc"))
+                guideRow(icon: "stethoscope", color: .red, title: L10n.AI.Task.guideHealth, desc: L10n.AI.Task.guideHealthDesc)
+                guideRow(icon: "bolt.shield.fill", color: .orange, title: L10n.AI.Task.guideAIScan, desc: L10n.AI.Task.guideAIScanDesc)
+                guideRow(icon: "tray.and.arrow.down.fill", color: .blue, title: L10n.AI.Task.guideIngest, desc: L10n.AI.Task.guideIngestDesc)
+                guideRow(icon: "wand.and.stars", color: .purple, title: L10n.AI.Task.guideSynthesis, desc: L10n.AI.Task.guideSynthesisDesc)
             }
             .padding()
             .background(Color.appCard)
@@ -417,7 +417,7 @@ private struct TaskRow: View {
     private var statusText: some View {
         switch task.status {
         case .pending:
-            Text(L10n.AI.Task.tr("status.pending"))
+            Text(L10n.AI.Task.statusPending)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
         case .running(let progress, _):
@@ -430,11 +430,11 @@ private struct TaskRow: View {
                     .foregroundStyle(.appAccent)
             }
         case .completed:
-            Text(L10n.AI.Task.tr("status.completed"))
+            Text(L10n.AI.Task.statusCompleted)
                 .font(.caption2)
                 .foregroundStyle(.green)
         case .failed:
-            Text(L10n.AI.Task.tr("status.failed"))
+            Text(L10n.AI.Task.statusFailed)
                 .font(.caption2.bold())
                 .foregroundStyle(.red)
         }

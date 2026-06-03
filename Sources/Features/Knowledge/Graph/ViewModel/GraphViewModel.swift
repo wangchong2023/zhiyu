@@ -45,14 +45,14 @@ final class GraphViewModel {
     private var simulationTask: Task<Void, Never>?
 
     /// 获取FilteredNodes
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func getFilteredNodes() -> [GraphNode] {
         guard let filter = filterType else { return nodes }
         return nodes.filter { $0.pageType == filter }
     }
 
     /// 获取FilteredEdges
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func getFilteredEdges(for filteredNodes: [GraphNode]) -> [GraphEdge] {
         guard filterType != nil else { return edges }
         let filteredIDs = Set(filteredNodes.map { $0.id })

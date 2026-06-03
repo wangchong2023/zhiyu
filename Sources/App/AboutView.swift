@@ -58,7 +58,7 @@ struct AboutView: View {
                 Spacer()
                 
                 // Copyright
-                Text("Copyright © 2026 Wang Chong.\nAll rights reserved.")
+                Text(L10n.Settings.About.copyright)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)

@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Insight"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String {
             Localized.tr("graph." + key, table: t)
         }
@@ -53,9 +53,9 @@ extension L10n {
         public static var title: String { Localized.tr("graph.title", table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("graph." + key, table: t, args) }
         public static var insightOrphans: String { Localized.tr("graph.insightOrphans", table: t) }
         public static var insightOrphansDesc: String { Localized.tr("graph.insightOrphansDesc", table: t) }
@@ -117,8 +117,8 @@ extension L10n {
             public static let t = "Insight"
 
             /// 本地化翻译
-            /// /// - Parameter key: key
-            /// /// - Returns: 返回值
+            /// - Parameter key: key
+            /// - Returns: 返回值
             public static func tr(_ key: String) -> String {
                 Localized.tr("graph3d." + key, table: t)
             }

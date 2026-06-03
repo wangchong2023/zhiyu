@@ -157,6 +157,6 @@ struct AdaptiveDetailView: View {
 
     /// 创建PageDetailView
     func makePageDetailView(for page: KnowledgePage) -> some View {
-        PageDetailView(page: page)
+        ViewFactory.makeView(for: .pageDetail(id: page.id))
     }
 }

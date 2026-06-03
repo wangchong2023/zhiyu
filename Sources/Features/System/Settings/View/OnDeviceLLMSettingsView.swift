@@ -65,31 +65,31 @@ public struct OnDeviceLLMSettingsView: View {
                 .appListRowBackground()
                 
                 // 1. 可用性与硬件检测区域
-                Section(header: Text(Localized.tr("ondevice.available", table: "AI"))) {
+                Section(header: Text(L10n.AI.OnDevice.available)) {
                     availabilitySection
                 }
                 .appListRowBackground()
                 
                 // 2. 本地可用模型选型列表
-                Section(header: Text(Localized.tr("ondevice.models", table: "AI"))) {
+                Section(header: Text(L10n.AI.OnDevice.models)) {
                     modelSelectionSection
                 }
                 .appListRowBackground()
                 
                 // 3. 模型生命周期装载/卸载与文件导入
-                Section(header: Text(Localized.tr("ondevice.loadModel", table: "AI"))) {
+                Section(header: Text(L10n.AI.OnDevice.loadModel)) {
                     modelManagementSection
                 }
                 .appListRowBackground()
                 
                 // 4. 离线基准性能测试 Playground
-                Section(header: Text(Localized.tr("ondevice.test", table: "AI"))) {
+                Section(header: Text(L10n.AI.OnDevice.test)) {
                     testSection
                 }
                 .appListRowBackground()
                 
                 // 5. 离线隐私与安全声明
-                Section(header: Text(Localized.tr("ondevice.info", table: "AI"))) {
+                Section(header: Text(L10n.AI.OnDevice.info)) {
                     infoSection
                 }
                 .appListRowBackground()
@@ -105,8 +105,8 @@ public struct OnDeviceLLMSettingsView: View {
         .sheet(isPresented: $showTestSheet) {
             OnDeviceTestView(onDeviceService: onDeviceService)
         }
-        .alert(Localized.tr("ondevice.error.inferenceFailed", table: "AI"), isPresented: $showError) {
-            Button(L10n.Common.tr("ok"), role: .cancel) {}
+        .alert(L10n.AI.OnDevice.Error.inferenceFailed, isPresented: $showError) {
+            Button(L10n.Common.ok, role: .cancel) {}
         } message: {
             Text(errorMessage)
         }
@@ -130,7 +130,7 @@ public struct OnDeviceLLMSettingsView: View {
                 )
                 .shadow(color: Color.appAccent.opacity(0.3), radius: 8, y: 4)
             
-            Text(Localized.tr("ondevice.subtitle", table: "AI"))
+            Text(L10n.AI.OnDevice.subtitle)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)
@@ -149,22 +149,22 @@ public struct OnDeviceLLMSettingsView: View {
                 .foregroundStyle(onDeviceService.isAvailable ? .green : .red)
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                Text(onDeviceService.isAvailable ? Localized.tr("ondevice.available", table: "AI") : Localized.tr("ondevice.unavailable", table: "AI"))
+                Text(onDeviceService.isAvailable ? L10n.AI.OnDevice.available : L10n.AI.OnDevice.unavailable)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 
                 if onDeviceService.isAvailable {
                     if #available(iOS 18.2, *) {
-                        Text(Localized.tr("ondevice.supportsFoundation", table: "AI"))
+                        Text(L10n.AI.OnDevice.supportsFoundation)
                             .font(.caption)
                             .foregroundStyle(.green)
                     } else {
-                        Text(Localized.tr("ondevice.supportsCoreML", table: "AI"))
+                        Text(L10n.AI.OnDevice.supportsCoreML)
                             .font(.caption)
                             .foregroundStyle(.blue)
                     }
                 } else {
-                    Text(Localized.tr("ondevice.requiresIOS17", table: "AI"))
+                    Text(L10n.AI.OnDevice.requiresIOS17)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
@@ -182,7 +182,7 @@ public struct OnDeviceLLMSettingsView: View {
                     Image(systemName: "square.dashed")
                         .font(.title3)
                         .foregroundStyle(.appSecondary)
-                    Text(Localized.tr("ondevice.noModels", table: "AI"))
+                    Text(L10n.AI.OnDevice.noModels)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }
@@ -214,7 +214,7 @@ public struct OnDeviceLLMSettingsView: View {
                         .font(.title3)
                     
                     VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                        Text(Localized.tr("ondevice.modelLoaded", table: "AI"))
+                        Text(L10n.AI.OnDevice.modelLoaded)
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.appText)
                         Text(onDeviceService.loadedModelName)
@@ -227,7 +227,7 @@ public struct OnDeviceLLMSettingsView: View {
                         onDeviceService.unloadModel()
                         feedbackGenerator.notificationOccurred(.warning)
                     }) {
-                        Text(Localized.tr("ondevice.unload", table: "AI"))
+                        Text(L10n.AI.OnDevice.unload)
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.red)
                             .padding(.horizontal, 10)
@@ -248,7 +248,7 @@ public struct OnDeviceLLMSettingsView: View {
                         } else {
                             Image(systemName: "arrow.down.circle.fill")
                         }
-                        Text(Localized.tr("ondevice.loadModel", table: "AI"))
+                        Text(L10n.AI.OnDevice.loadModel)
                     }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
@@ -264,7 +264,7 @@ public struct OnDeviceLLMSettingsView: View {
             Button(action: { showImportPicker = true }) {
                 HStack(spacing: DesignSystem.small) {
                     Image(systemName: DesignSystem.Icons.importIcon)
-                    Text(Localized.tr("ondevice.importModel", table: "AI"))
+                    Text(L10n.AI.OnDevice.importModel)
                 }
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appAccent)
@@ -316,7 +316,7 @@ public struct OnDeviceLLMSettingsView: View {
             }) {
                 HStack(spacing: DesignSystem.small) {
                     Image(systemName: "text.bubble.fill")
-                    Text(Localized.tr("ondevice.testGeneration", table: "AI"))
+                    Text(L10n.AI.OnDevice.testGeneration)
                 }
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.white)
@@ -330,7 +330,7 @@ public struct OnDeviceLLMSettingsView: View {
             if onDeviceService.inferenceSpeed > 0 {
                 HStack {
                     Label(
-                        Localized.tr("ondevice.inferenceSpeed", table: "AI"),
+                        L10n.AI.OnDevice.inferenceSpeed,
                         systemImage: "gauge.with.needle.fill"
                     )
                     .font(.caption)
@@ -353,22 +353,22 @@ public struct OnDeviceLLMSettingsView: View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             OnDeviceInfoRow(
                 icon: "lock.shield.fill",
-                text: Localized.tr("ondevice.info.privacy", table: "AI")
+                text: L10n.AI.OnDevice.Info.privacy
             )
             
             OnDeviceInfoRow(
                 icon: "wifi.slash",
-                text: Localized.tr("ondevice.info.offline", table: "AI")
+                text: L10n.AI.OnDevice.Info.offline
             )
             
             OnDeviceInfoRow(
                 icon: "bolt.fill",
-                text: Localized.tr("ondevice.info.ne", table: "AI")
+                text: L10n.AI.OnDevice.Info.ne
             )
             
             OnDeviceInfoRow(
                 icon: "memorychip.fill",
-                text: Localized.tr("ondevice.info.memory", table: "AI")
+                text: L10n.AI.OnDevice.Info.memory
             )
         }
         .padding(.vertical, DesignSystem.tightPadding)

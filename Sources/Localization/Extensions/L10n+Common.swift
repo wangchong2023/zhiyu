@@ -17,14 +17,14 @@ extension L10n {
         public static let t = "Common"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         // MARK: - App Metadata
@@ -55,6 +55,7 @@ extension L10n {
         public static var preview: String { tr("preview") }
         public static var quickPreview: String { tr("quickPreview") }
         public static var copyPageLink: String { tr("copyPageLink") }
+        public static var copy: String { tr("misc.copy") }
         public static var syncToReminders: String { tr("syncToReminders") }
         public static var `import`: String { tr("misc.import") }
         public static var create: String { Localized.tr("misc.create", table: t) }
@@ -161,8 +162,8 @@ extension L10n {
         public enum Empty {
 
             /// 本地化翻译
-            /// /// - Parameter key: key
-            /// /// - Returns: 返回值
+            /// - Parameter key: key
+            /// - Returns: 返回值
             public static func tr(_ key: String) -> String { Common.tr(key) }
             public static var noData: String { Common.tr("common.noData") }
         }
@@ -369,7 +370,7 @@ extension L10n {
             public static var security: String { Common.tr("tags.security") }
             public static var theory: String { Common.tr("tags.theory") }
             public static var network: String { Common.tr("tags.network") }
-            public static var protocol: String { Common.tr("tags.protocol") }
+            public static var `protocol`: String { Common.tr("tags.protocol") }
             public static var quality: String { Common.tr("tags.quality") }
             public static var visual: String { Common.tr("tags.visual") }
             public static var performance: String { Common.tr("tags.performance") }

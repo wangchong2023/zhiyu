@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "System"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         /// 获取插件权限提示文案
@@ -95,13 +95,13 @@ extension L10n {
                 public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
 
                 /// success
-                /// /// - Parameter n: n
-                /// /// - Returns: 字符串
+                /// - Parameter n: n
+                /// - Returns: 字符串
                 public static func success(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.success", table: t, n) }
 
                 /// confirmAction
-                /// /// - Parameter n: n
-                /// /// - Returns: 字符串
+                /// - Parameter n: n
+                /// - Returns: 字符串
                 public static func confirmAction(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.confirmAction", table: t, n) }
             }
         }
@@ -122,8 +122,8 @@ extension L10n {
         public struct InjectDemo {
 
             /// successMessage
-            /// /// - Parameter n: n
-            /// /// - Returns: 字符串
+            /// - Parameter n: n
+            /// - Returns: 字符串
             public static func successMessage(_ n: Int) -> String { Localized.trf("settings.injectDemo.successMessage", table: t, n) }
             public static var errorMessage: String { Localized.tr("settings.injectDemo.errorMessage", table: t) }
         }
@@ -133,12 +133,25 @@ extension L10n {
             public static var developerName: String { Localized.tr("settings.about.developerName", table: t) }
             public static var website: String { Localized.tr("settings.about.website", table: t) }
             public static var version: String { Localized.tr("settings.about.version", table: t) }
+            public static var copyright: String { Localized.tr("settings.about.copyright", table: t) }
         }
 
         public struct theme {
             public static var dark: String { Localized.tr("settings.theme.dark", table: t) }
             public static var light: String { Localized.tr("settings.theme.light", table: t) }
             public static var system: String { Localized.tr("settings.theme.system", table: t) }
+        }
+
+        public struct OnDevice {
+            public static var npuAcceleration: String { Localized.tr("settings.ondevice.npu", table: t) }
+            public static var descNpu: String { Localized.tr("settings.ondevice.descNpu", table: t) }
+            public static var ramAllocation: String { Localized.tr("settings.ondevice.ram", table: t) }
+            public static var descRam: String { Localized.tr("settings.ondevice.descRam", table: t) }
+            public static var maxContext: String { Localized.tr("settings.ondevice.context", table: t) }
+            public static var descContext: String { Localized.tr("settings.ondevice.descContext", table: t) }
+            public static var overheatProtection: String { Localized.tr("settings.ondevice.overheat", table: t) }
+            public static var descOverheat: String { Localized.tr("settings.ondevice.descOverheat", table: t) }
+            public static var performanceConfig: String { Localized.tr("settings.ondevice.perfConfig", table: t) }
         }
     }
 }

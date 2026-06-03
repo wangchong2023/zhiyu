@@ -34,7 +34,7 @@ struct NavigationView: View {
                         ViewFactory.makeView(for: route)
                     }
                     .navigationDestination(for: KnowledgePage.self) { page in
-                        PageDetailView(page: page)
+                        ViewFactory.makeView(for: .pageDetail(id: page.id))
                     }
             }
         }

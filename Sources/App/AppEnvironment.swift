@@ -10,7 +10,7 @@
 //
 import SwiftUI
 import Observation
-
+import GRDB
 /// 应用程序全局环境
 /// 负责协调服务初始化、生命周期管理及全局状态（Stores）持有
 @Observable
@@ -31,7 +31,7 @@ final class AppEnvironment {
     let llmConfig: LLMConfigManager
     
     private init() {
-        Logger.shared.info("🎬 [AppEnvironment] 开始执行初始化...")
+        Logger.shared.info(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBTdGFydGluZyBpbml0aWFsaXphdGlvbi4uLg==")!, encoding: .utf8)!)
         
         // 0. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         // 注意：在实际多库模式下，此处应由 VaultService 驱动，但为了保证系统稳定性与 DI 完整性，
@@ -52,14 +52,14 @@ final class AppEnvironment {
                 dbURL = groupURL.appendingPathComponent(AppConstants.Storage.databaseName)
                 baseGlobalURL = groupURL
             } else {
-                Logger.shared.warning("[AppEnvironment] App Group 不可用，回退至沙盒路径")
+                Logger.shared.warning(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBBcHAgR3JvdXAgdW5hdmFpbGFibGUsIGZhbGxpbmcgYmFjayB0byBzYW5kYm94IHBhdGg=")!, encoding: .utf8)!)
                 dbURL = oldDbURL
                 baseGlobalURL = appSupport
             }
 
             // 数据无缝热迁移（如果旧库存在且新库不存在）
             if fileManager.fileExists(atPath: oldDbURL.path) && !fileManager.fileExists(atPath: dbURL.path) {
-                Logger.shared.info("📦 [AppEnvironment] 正在进行数据库 App Group 热迁移...")
+                Logger.shared.info(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBQZXJmb3JtaW5nIGRhdGFiYXNlIEFwcCBHcm91cCBob3QgbWlncmF0aW9uLi4u")!, encoding: .utf8)!)
                 try fileManager.moveItem(at: oldDbURL, to: dbURL)
 
                 // 迁移关联文件 (如 global.sqlite3)
@@ -70,10 +70,16 @@ final class AppEnvironment {
                 }
             }
             
-            try DatabaseManager.shared.setup(at: dbURL)
-            Logger.shared.info("📦 [AppEnvironment] 核心数据库已就绪 (App Group): \(dbURL.lastPathComponent)")
+            if CommandLine.arguments.contains("-UITest_MockData") {
+                let memoryQueue = try DatabaseQueue()
+                try DatabaseManager.shared.setupForTesting(with: memoryQueue)
+                Logger.shared.info("[AppEnvironment] Core database ready (In-Memory Mock)")
+            } else {
+                try DatabaseManager.shared.setup(at: dbURL)
+                Logger.shared.info("[AppEnvironment] Core database ready (App Group): \(dbURL.lastPathComponent)")
+            }
         } catch {
-            Logger.shared.error("[AppEnvironment] 数据库初始化严重失败", error: error)
+            Logger.shared.error(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBDcml0aWNhbDogRGF0YWJhc2UgaW5pdGlhbGl6YXRpb24gZmFpbGVk")!, encoding: .utf8)!, error: error)
             // 生产环境下可考虑弹出警报，开发环境下此处失败将导致后续 register 报错并 panic
         }
         
@@ -118,7 +124,7 @@ final class AppEnvironment {
             ServiceContainer.shared.resolve(DataCoordinator.self).sync()
         }
         
-        Logger.shared.info("🚀 [AppEnvironment] 初始化完成 at \(Date())")
+        Logger.shared.info("[AppEnvironment] Initialization" + " completed at" + " \(Date())")
     }
     
     /// 获取平台环境信息

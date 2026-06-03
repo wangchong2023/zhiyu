@@ -20,8 +20,8 @@ public struct AppCardModifier: ViewModifier {
     public var backgroundColor: Color = .appCard
 
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     public func body(content: Content) -> some View {
         content
             .appPadding(.all, paddingToken)

@@ -17,13 +17,13 @@ import UniformTypeIdentifiers
 final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
 
     /// 索引Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     func indexPage(_ page: KnowledgePage) {
         indexPages([page])
     }
     
     /// 索引Pages
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func indexPages(_ pages: [KnowledgePage]) {
         var searchableItems: [CSSearchableItem] = []
         
@@ -44,8 +44,8 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
         }
         
         CSSearchableIndex.default().indexSearchableItems(searchableItems) { error in
-            if let error = error {
-                Logger.shared.error("🔍 [Spotlight] Batch indexing failed: \(error.localizedDescription)")
+            if error != nil {
+                Logger.shared.error("Spotlight_Error")
             }
         }
     }
@@ -61,7 +61,7 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
     }
     
     /// reindexAll
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func reindexAll(pages: [KnowledgePage]) {
         CSSearchableIndex.default().deleteAllSearchableItems { [weak self] _ in
             guard let self = self else { return }

@@ -215,23 +215,11 @@ struct KnowledgePageListContent: View {
                     comparisonSection
                 }
             } else {
-                VStack(spacing: DesignSystem.standardPadding) {
-                    Spacer(minLength: 60)
-                    Image(systemName: DesignSystem.Icons.weeklyInsight)
-                        .font(.system(size: DesignSystem.Metrics.heroValueSize * 1.5))
-                        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.625))
-                    
-                    Text(L10n.Search.noResults)
-                        .font(.headline)
-                        .foregroundStyle(.appSecondary)
-                    
-                    Text(L10n.Search.noResultsHint)
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary.opacity(DesignSystem.secondaryOpacity * 0.875))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, DesignSystem.huge)
-                    Spacer()
-                }
+                AppEmptyState.simple(
+                    icon: DesignSystem.Icons.weeklyInsight,
+                    title: L10n.Search.noResults,
+                    description: L10n.Search.noResultsHint
+                )
                 .padding(.top, 40)
             }
         }
@@ -447,7 +435,7 @@ struct KnowledgeStatItem: View {
 struct AppPressButtonStyle: ButtonStyle {
 
     /// 创建Body
-    /// /// - Parameter configuration: configuration
+    /// - Parameter configuration: configuration
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? DesignSystem.Action.pressScale : 1.0)

@@ -23,13 +23,13 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
     }
     
     /// 追踪Event
-    /// /// - Parameter name: name
-    /// /// - Parameter properties: properties
+    /// - Parameter name: name
+    /// - Parameter properties: properties
     func trackEvent(_ name: String, properties: [String: Any]? = nil) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
         
         // 1. 控制台实时反馈
-        print("📊 [Analytics] \(timestamp) | \(name) | \(properties?.description ?? "")")
+        print(" [Analytics] \(timestamp) | \(name) | \(properties?.description ?? "")")
         
         let event: [String: Any] = [
             "name": name,
@@ -63,10 +63,10 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
     }
     
     /// 追踪Error
-    /// /// - Parameter error: error
-    /// /// - Parameter details: details
+    /// - Parameter error: error
+    /// - Parameter details: details
     func trackError(_ error: Error, details: String? = nil) {
         let timestamp = Date().formatted(date: .omitted, time: .standard)
-        print("❌ [Analytics] \(timestamp) | Error: \(error.localizedDescription) | Details: \(details ?? "")")
+        print(" [Analytics] \(timestamp) | Error: \(error.localizedDescription) | Details: \(details ?? "")")
     }
 }

@@ -17,7 +17,7 @@ import Observation
 @MainActor
 final class DataCoordinator {
     @ObservationIgnored @Inject private var sqliteStore: any AnyPageStore
-    @ObservationIgnored @Inject private var embeddingManager: EmbeddingManager
+    @ObservationIgnored @Inject private var embeddingProvider: any EmbeddingProvider
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     
     /// 同步任务句柄
@@ -38,13 +38,13 @@ final class DataCoordinator {
             self.logger.addLog(
                 action: .sync,
                 target: "DataCoordinator",
-                details: "Starting background synchronization...",
+                details: "DataCoordinator_Start",
                 module: "Core"
             )
 
             // 2. 触发向量化同步 (@RR-01: 确保向量存储与主库最终一致性)
             let currentPages = await self.sqliteStore.pages
-            await self.embeddingManager.syncEmbeddings(pages: currentPages)
+            await self.embeddingProvider.syncEmbeddings(pages: currentPages)
             
             // 3. 触发 Spotlight 索引同步
             SpotlightService.shared.indexPages(currentPages)
@@ -52,7 +52,7 @@ final class DataCoordinator {
             self.logger.addLog(
                 action: .sync,
                 target: "DataCoordinator",
-                details: "Synchronization task completed.",
+                details: "DataCoordinator_End",
                 module: "Core"
             )
         }

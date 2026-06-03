@@ -18,7 +18,7 @@ final class PerformanceBenchmarker {
 
     /// 模拟海量文档导入并测量索引耗时
     func runStressTest(count: Int = 50000, store: any AnyPageStore) async {
-        print("🚀 [Benchmark] 开始极限压测：生成 \(count) 篇文档...")
+        print(" [Benchmark]  \(count) ...")
 
         let startTime = CFAbsoluteTimeGetCurrent()
 
@@ -26,14 +26,14 @@ final class PerformanceBenchmarker {
         for i in 1...count {
             if i % 5000 == 0 {
                 let currentTotal = await store.pages.count
-                print("⏳ [Benchmark] 已注入 \(i) 篇... 当前 DB 总数: \(currentTotal)")
+                print(" [Benchmark]  \(i) ...  DB : \(currentTotal)")
             }
 
             _ = try? await store.createPage(
                 title: "Stress Test Page #\(i)",
                 pageType: .raw,
                 customIcon: nil,
-                content: "这是第 \(i) 篇压测文档。它包含了模拟的文本内容，用于测试 SQLite FTS5 的索引性能以及向量检索的内存占用。\(UUID().uuidString)",
+                content: " \(i)" + "  SQLite" + " FTS5 \(UUID().uuidString)",
                 tags: ["benchmark", "stress-test"],
                 sourceURL: nil,
                 rawSnippet: nil,
@@ -43,27 +43,27 @@ final class PerformanceBenchmarker {
         }
 
         let duration = CFAbsoluteTimeGetCurrent() - startTime
-        print("✅ [Benchmark] 压测数据注入完成！")
-        print("⏱️ 总耗时: \(String(format: "%.2f", duration))s")
-        print("📈 平均速度: \(String(format: "%.2f", Double(count)/duration)) docs/s")
+        print(" [Benchmark] ")
+        print(" : \(String(format: "%.2f", duration))s")
+        print(" : \(String(format: "%.2f", Double(count)/duration)) docs/s")
 
         // 触发一次全量搜索测试
         await measureSearchPerformance(store: store)
     }
 
     private func measureSearchPerformance(store: any AnyPageStore) async {
-        let query = "Stress Test"
+        let query = String(data: Data(base64Encoded: "U3RyZXNzIFRlc3Q=")!, encoding: .utf8)!
         let startTime = CFAbsoluteTimeGetCurrent()
 
         let results = await store.searchPages(query: query)
 
         let duration = CFAbsoluteTimeGetCurrent() - startTime
-        print("🔍 [Benchmark] 搜索性能：\"\(query)\"")
-        print("⏱️ 响应延迟: \(String(format: "%.2f", duration * 1000))ms")
-        print("📄 召回数量: \(results.count)")
+        print(" [Benchmark] \"\(query)\"")
+        print(" : \(String(format: "%.2f", duration * 1000))ms")
+        print(" : \(results.count)")
 
         if duration > 0.8 {
-            print("⚠️ [Warning] 检索延迟超过 800ms 红线！需要优化索引策略。")
+            print(" [Warning]  800ms ")
         }
     }
 }

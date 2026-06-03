@@ -37,11 +37,24 @@ public enum TaskType: String, CaseIterable, Sendable {
         case .synthesis: return "purple"
         }
     }
+    
+    var localizedName: String {
+        switch self {
+        case .ai: return "AI"
+        case .ingest: return L10n.AI.Task.typeIngest
+        case .aiScan: return L10n.AI.Task.typeAIScan
+        case .healthCheck: return L10n.AI.Task.typeHealthCheck
+        case .synthesis: return L10n.AI.Task.typeSynthesis
+        }
+    }
 }
 
 /// RAG / AI 执行阶段 (用于多维视觉反馈)
 public enum TaskStage: String, Equatable, Sendable {
     case pending       = "pending"      // 准备阶段
+    case extraction    = "extraction"   // 文本提取/预处理 (Gray)
+    case enrichment    = "enrichment"   // AI语义增强 (Indigo)
+    case chunking      = "chunking"     // 语义分块 (Cyan)
     case embedding     = "embedding"    // 向量化/特征提取 (Teal)
     case retrieval     = "retrieval"    // 数据库检索/BM25 (Blue)
     case synthesis     = "synthesis"    // 大模型合成生成 (Purple)
@@ -77,6 +90,7 @@ struct GlobalTask: Identifiable, Equatable {
     let startTime = Date()          // 启动时间
     var isRead: Bool = false        // 用户是否已读
     var associatedPageID: UUID? // 关联页面
+    var subLogs: [String] = []      // 细粒度子状态日志 (消除信息真空)
 }
 
 /// 全局任务管理中心 (单例)
@@ -107,7 +121,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// 更新LatestStatus
-    /// /// - Parameter text: text
+    /// - Parameter text: text
     func updateLatestStatus(_ text: String) {
         self.latestStatus = text
         // 实时同步到当前“最活跃”的灵动岛（如果平台支持）
@@ -130,7 +144,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// metrics
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func metrics(for type: TaskType) -> TaskMetrics {
         let relevant = tasks.filter { $0.type == type }
         let completed = relevant.filter { $0.status == .completed }.count
@@ -155,10 +169,10 @@ class TaskCenter: ObservableObject {
     }
 
     /// 添加Task
-    /// /// - Parameter type: type
-    /// /// - Parameter name: name
-    /// /// - Parameter target: target
-    /// /// - Returns: 唯一标识
+    /// - Parameter type: type
+    /// - Parameter name: name
+    /// - Parameter target: target
+    /// - Returns: 唯一标识
     func addTask(type: TaskType = .ai, name: String, target: String) -> UUID {
         let task = GlobalTask(type: type, name: name, target: target, status: .pending)
         self.tasks.insert(task, at: 0)
@@ -170,9 +184,9 @@ class TaskCenter: ObservableObject {
     }
 
     /// 更新Task
-    /// /// - Parameter id: id
-    /// /// - Parameter status: status
-    /// /// - Parameter associatedPageID: associatedPageID
+    /// - Parameter id: id
+    /// - Parameter status: status
+    /// - Parameter associatedPageID: associatedPageID
     func updateTask(_ id: UUID, status: TaskStatus, associatedPageID: UUID? = nil) {
         if let index = self.tasks.firstIndex(where: { $0.id == id }) {
             self.tasks[index].status = status
@@ -212,21 +226,43 @@ class TaskCenter: ObservableObject {
     }
 
     /// completeTask
-    /// /// - Parameter id: id
-    /// /// - Parameter associatedPageID: associatedPageID
+    /// - Parameter id: id
+    /// - Parameter associatedPageID: associatedPageID
     func completeTask(id: UUID, associatedPageID: UUID? = nil) {
         updateTask(id, status: .completed, associatedPageID: associatedPageID)
     }
 
     /// failTask
-    /// /// - Parameter id: id
-    /// /// - Parameter error: error
+    /// - Parameter id: id
+    /// - Parameter error: error
     func failTask(id: UUID, error: String) {
         updateTask(id, status: .failed(error: error))
     }
 
+    /// 向指定任务追加一条细粒度子状态日志
+    /// - Parameter id: 任务ID
+    /// - Parameter log: 详细状态描述文本
+    func addSubLog(id: UUID, log: String) {
+        if let index = self.tasks.firstIndex(where: { $0.id == id }) {
+            self.tasks[index].subLogs.append(log)
+            if self.tasks[index].subLogs.count > 50 {
+                self.tasks[index].subLogs.removeFirst()
+            }
+            self.objectWillChange.send()
+            self.latestStatus = "\(self.tasks[index].name): \(log)"
+        }
+    }
+
+    /// 向当前活跃的 Ingest 任务中快捷追加子状态日志
+    /// - Parameter log: 状态描述文本
+    func addIngestSubLog(_ log: String) {
+        if let task = self.tasks.first(where: { $0.type == .ingest }) {
+            self.addSubLog(id: task.id, log: log)
+        }
+    }
+
     /// markAsRead
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func markAsRead(_ id: UUID) {
         DispatchQueue.main.async {
             if let index = self.tasks.firstIndex(where: { $0.id == id }) {
@@ -243,7 +279,7 @@ class TaskCenter: ObservableObject {
     }
 
     /// 移除Task
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func removeTask(_ id: UUID) {
         DispatchQueue.main.async {
             self.tasks.removeAll(where: { $0.id == id })

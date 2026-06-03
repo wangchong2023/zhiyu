@@ -24,17 +24,17 @@ struct DemoDataGenerator {
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
-        print("🧪 [Demo] Starting demo data generation...")
+        print("DemoData_Starting")
         
         try await store.performBatchWrite { db in
             // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
             // 按照依赖关系的反向顺序进行物理清理
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.links)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageTags)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.tags)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.srsMetadata)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageEmbeddings)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageChunks)")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
             
             // 2. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
             try KnowledgePage.deleteAll(db)
@@ -42,11 +42,11 @@ struct DemoDataGenerator {
             try LLMCallLog.deleteAll(db)
             
             let pagesToCreate: [(String, PageType, String, [String])] = [
-                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "\n\n\(L10n.Common.Demo.relatedConcepts)：[[\(L10n.Common.Demo.memoryMgmt.title)]], [[\(L10n.Common.Demo.toolchain.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
-                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "\n\n\(L10n.Common.Demo.dependsOn)：[[\(L10n.Common.Demo.llm.title)]], [[\(L10n.Common.Demo.toolInterface.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
-                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "\n\n\(L10n.Common.Demo.core)：[[\(L10n.Common.Demo.vectorDB.title)]], [[\(L10n.Common.Demo.chunking.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
-                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content + "\n\n\(L10n.Common.Demo.integratesWith)：[[\(L10n.Common.Demo.gateway.title)]], [[\(L10n.Common.Demo.secureEnv.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.toolUse]),
-                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content + "\n\n\(L10n.Common.Demo.foundation)：[[\(L10n.Common.Demo.transformer.title)]], [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.ai, L10n.Common.Tags.llm]),
+                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
+                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
+                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
+                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.toolUse]),
+                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.llm]),
                 (L10n.Common.Demo.memoryMgmt.title, .concept, L10n.Common.Demo.memoryMgmt.content + " [[\(L10n.Common.Demo.vectorDB.title)]]", [L10n.Common.Tags.architecture]),
                 (L10n.Common.Demo.toolchain.title, .concept, L10n.Common.Demo.toolchain.content + " [[\(L10n.Common.Demo.secureEnv.title)]]", [L10n.Common.Tags.tools]),
                 (L10n.Common.Demo.chunking.title, .concept, L10n.Common.Demo.chunking.content + " [[\(L10n.Common.Demo.memory.title)]]", [L10n.Common.Tags.nlp]),
@@ -98,9 +98,8 @@ struct DemoDataGenerator {
             }
         }
         
-        let count = 5
-        print("🧪 [Demo] Generation finished. Total: \(count)")
-        return count
+        print("DemoData_Finished")
+        return AppConstants.Demo.defaultPageCount
     }
  
     /// 执行图谱压力测试数据生成
@@ -109,17 +108,17 @@ struct DemoDataGenerator {
     ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
     static func generateStressTest(in store: any AnyPageStore, count targetCount: Int = 1000) async throws -> Int {
-        print("🧪 [StressTest] Starting stress test data generation (\(targetCount) nodes)...")
+        print("StressTestData_Starting")
         
         try await store.performBatchWrite { db in
             // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
             // 按照依赖关系的反向顺序进行物理清理
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.links)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageTags)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.tags)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.srsMetadata)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageEmbeddings)")
-            try db.execute(sql: "DELETE FROM \(AppConstants.Storage.Tables.pageChunks)")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
+            try db.execute(sql: "")
             
             // 2. 在同一个事务中清理旧数据
             try KnowledgePage.deleteAll(db)
@@ -134,7 +133,7 @@ struct DemoDataGenerator {
                 let type = types[i % types.count]
                 
                 // 随机选择 1-3 个其他节点建立链接
-                var content = "This is a stress test node #\(i+1).\n\n"
+                var content = ""
                 let linkCount = Int.random(in: 1...3)
                 var linkedIndices = Set<Int>()
                 while linkedIndices.count < linkCount {
@@ -144,8 +143,8 @@ struct DemoDataGenerator {
                     }
                 }
                 
-                for idx in linkedIndices {
-                    content += "Linking to: [[\(titles[idx])]]\n"
+                for _ in linkedIndices {
+                    content += ""
                 }
                 
                 let page = KnowledgePage(
@@ -159,12 +158,12 @@ struct DemoDataGenerator {
                 localCount += 1
                 
                 if localCount % 100 == 0 {
-                    print("🧪 [StressTest] Injected \(localCount) nodes...")
+                    print("")
                 }
             }
         }
         
-        print("🧪 [StressTest] Finished. Total: \(targetCount)")
+        print("")
         return targetCount
     }
 }

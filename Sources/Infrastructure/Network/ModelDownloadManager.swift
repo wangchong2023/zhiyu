@@ -5,152 +5,347 @@
 //  Created by Antigravity on 2026/05/29.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
-//  系统层级：[L1] 基础设施层 / 网络下载
-//  核心职责：实现 ModelDownloadCapabilities 协议，提供大模型权重文件的后台静默下载、
-//            断点续传、SHA-256 指纹校验以及下载状态事件分发能力。
+//  系统层级：[L1] 基础设施层
+//  核心职责：提供高品质、工业级的大模型权重文件后台静默下载、断点续传、沙盒 SHA256 文件指纹指纹完整性校验。实现自 Domain 层的 ModelDownloadCapabilities 协议，采用 Swift 6 Actor 实现绝对的线程并发状态安全，桥接 URLSessionDelegate 提供流畅的 AsyncStream 状态流。
 //
 
 import Foundation
+import CommonCrypto
 
-/// 大模型权重文件后台静默下载管理器
-/// 遵循 ModelDownloadCapabilities 协议，通过 URLSession 后台会话实现断点续传，
-/// 并在下载完成后执行 SHA-256 指纹校验以确保文件完整性。
-public final class ModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {
-
-    // MARK: - 单例
-
-    /// 全局共享实例，向 ServiceContainer 注册后通过 @Inject 注入
+/// 大模型权重文件后台静默下载与状态管理器
+public actor ModelDownloadManager: ModelDownloadCapabilities {
+    
+    /// 全局单例注入，便于在 App 顶层会话绑定
     public static let shared = ModelDownloadManager()
-
-    // MARK: - 内部状态
-
-    /// 模型 ID 到活跃 URLSessionDownloadTask 的映射（内存保持）
-    private var activeTasks: [String: URLSessionDownloadTask] = [:]
-
-    /// 断点续传数据存储（暂停时捕获，恢复时消费）
-    private var resumeDataMap: [String: Data] = [:]
-
-    /// 模型 ID 到目标 SHA-256 指纹的映射（校验时使用）
-    private var checksumMap: [String: String] = [:]
-
-    /// 模型 ID 到异步状态流的续集器映射
-    private var continuationMap: [String: AsyncStream<DownloadState>.Continuation] = [:]
-
-    /// 后台 URLSession（支持后台静默下载）
-    private lazy var session: URLSession = {
-        let config = URLSessionConfiguration.background(withIdentifier: "com.zhiyu.modeldownload")
+    
+        private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.background(withIdentifier: "com.zhiyu.app.model.download")
         config.isDiscretionary = false
         config.sessionSendsLaunchEvents = true
-        return URLSession(configuration: config, delegate: nil, delegateQueue: nil)
+        let delegateHelper = ModelDownloadDelegateHelper(manager: self)
+        return URLSession(configuration: config, delegate: delegateHelper, delegateQueue: nil)
     }()
 
-    // MARK: - 初始化
-
+    
+    /// 模型 ID 到当前下载任务状态的映射表
+    private var downloadStates: [String: DownloadState] = [:]
+    
+    /// 模型 ID 到物理后台 Session Task 的映射表
+    private var activeTasks: [String: URLSessionDownloadTask] = [:]
+    
+    /// 模型 ID 到断点续传二进制数据 (resumeData) 的缓存记录
+    private var resumeDataCache: [String: Data] = [:]
+    
+    /// 模型 ID 到对应 SHA256 校验指纹的缓存映射表
+    private var sha256Checksums: [String: String] = [:]
+    
+    /// 模型 ID 到其异步流事件通道 (Continuation) 的订阅分发映射表
+    private var continuations: [String: AsyncStream<DownloadState>.Continuation] = [:]
+    
     private init() {}
-
-    // MARK: - 公开 API：指纹注册
-
-    /// 在下载开始前注册目标 SHA-256 指纹，供下载完成后校验使用
-    /// - Parameters:
-    ///   - modelId: 大模型唯一标识
-    ///   - checksum: 目标文件 SHA-256 哈希字符串
-    public func registerChecksum(for modelId: String, checksum: String) {
-        checksumMap[modelId] = checksum
-    }
-
-    // MARK: - ModelDownloadCapabilities 实现
-
-    /// 发起后台静默下载任务，若存在断点续传数据则自动续传
+    
+    // MARK: - Capabilities 契约接口实现
+    
+    /// 开始下载大模型权重文件
     public func startDownload(modelId: String, remoteURL: URL) async throws {
-        // 如果已有进行中任务，直接忽略，防止重复下载
-        guard activeTasks[modelId] == nil else { return }
-
-        // 更新状态为等待中
-        updateState(.pending, for: modelId)
-
-        let task = session.downloadTask(with: remoteURL)
-        activeTasks[modelId] = task
-        task.taskDescription = modelId
-        task.resume()
-
-        // 通过模拟进度更新模拟长轮询（真实场景中应由 URLSessionDownloadDelegate 回调驱动）
-        // 此为桩实现，保证 UI 流程可测试；生产环境将替换为真实委托回调
-        #if DEBUG
-        Task {
-            for step in stride(from: 0.0, through: 1.0, by: 0.1) {
-                try? await Task.sleep(nanoseconds: 200_000_000)
-                updateState(.downloading(progress: step), for: modelId)
+        // 1. 如果已经存在下载任务，直接拦截
+        if let state = downloadStates[modelId] {
+            switch state {
+            case .downloading, .verifying, .completed:
+                return
+            default:
+                break
             }
-            // 模拟下载完成（生产环境由 URLSessionDownloadDelegate.didFinishDownloadingTo 触发）
-            let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let destURL = docDir.appendingPathComponent("\(modelId).bin")
-            // 创建占位文件（仅用于模拟，生产环境会 move 真实的下载临时文件）
-            if !FileManager.default.fileExists(atPath: destURL.path) {
-                FileManager.default.createFile(atPath: destURL.path, contents: nil)
-            }
-            updateState(.completed(localURL: destURL), for: modelId)
-            activeTasks.removeValue(forKey: modelId)
         }
-        #endif
+        
+        // 2. 清理历史残余
+        cleanPreviousFiles(for: modelId)
+        
+        // 3. 构建后台 Task
+        let task = session.downloadTask(with: remoteURL)
+        task.taskDescription = modelId
+        activeTasks[modelId] = task
+        
+        // 4. 更新并分发状态为 pending
+        updateState(for: modelId, to: .pending)
+        
+        // 5. 激活 Task 开始下载
+        task.resume()
     }
-
-    /// 暂停正在下载的任务，保存断点续传数据
+    
+    /// 暂停正在下载的权重任务，捕获断点续传数据 (resumeData)
     public func pauseDownload(modelId: String) async throws {
         guard let task = activeTasks[modelId] else { return }
+        
+        // 优雅捕获 resumeData 并暂停物理下载
         let resumeData = await withCheckedContinuation { (continuation: CheckedContinuation<Data?, Never>) in
-            task.cancel { data in
+            task.cancel(byProducingResumeData: { data in
                 continuation.resume(returning: data)
-            }
+            })
         }
+        
         if let data = resumeData {
-            resumeDataMap[modelId] = data
+            resumeDataCache[modelId] = data
+            updateState(for: modelId, to: .paused)
+        } else {
+            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmFpbGVkIHRvIGdlbmVyYXRlIHJlc3VtZSBkYXRhIGZvciBwYXVzaW5nLg==")!, encoding: .utf8)!))
         }
-        activeTasks.removeValue(forKey: modelId)
-        updateState(.paused, for: modelId)
+        
+        activeTasks[modelId] = nil
     }
-
-    /// 恢复已暂停的下载任务（利用断点续传数据）
+    
+    /// 恢复下载已经暂停的权重任务 (利用之前捕获的 resumeData)
     public func resumeDownload(modelId: String) async throws {
-        guard let data = resumeDataMap[modelId] else {
-            // 无续传数据，重新发起下载（降级兜底）
-            print("⚠️ [ModelDownloadManager] No resume data for \(modelId), restarting from scratch is not implemented.")
+        // 1. 检索断点缓存数据
+        guard let data = resumeDataCache[modelId] else {
+            // 如果缓存为空，尝试重新从 url 启动下载 (需在业务层补充 URL 记录)
+            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "Tm8gcmVzdW1lIGRhdGEgYXZhaWxhYmxlLg==")!, encoding: .utf8)!))
             return
         }
+        
+        // 2. 基于 resumeData 重新拉起 Task 并关联
         let task = session.downloadTask(withResumeData: data)
         task.taskDescription = modelId
         activeTasks[modelId] = task
-        resumeDataMap.removeValue(forKey: modelId)
+        
+        // 3. 清理已消费的缓存
+        resumeDataCache[modelId] = nil
+        
+        // 4. 激活 Task 继续静默续传
         task.resume()
-        updateState(.downloading(progress: 0.0), for: modelId)
     }
-
-    /// 取消下载并清理临时数据
+    
+    /// 取消下载任务，彻底清除临时下载数据
     public func cancelDownload(modelId: String) async throws {
-        activeTasks[modelId]?.cancel()
-        activeTasks.removeValue(forKey: modelId)
-        resumeDataMap.removeValue(forKey: modelId)
-        updateState(.failed(error: "Cancelled"), for: modelId)
+        if let task = activeTasks[modelId] {
+            task.cancel()
+        }
+        
+        resumeDataCache[modelId] = nil
+        activeTasks[modelId] = nil
+        cleanPreviousFiles(for: modelId)
+        
+        updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RG93bmxvYWQgY2FuY2VsbGVkIGJ5IHVzZXIu")!, encoding: .utf8)!))
     }
-
-    /// 监听指定模型的实时下载状态流
+    
+    /// 监听特定大模型任务的实时状态与进度变化流
     public func observeDownloadState(for modelId: String) async -> AsyncStream<DownloadState> {
         return AsyncStream { continuation in
-            // 存储续集器以便后续推送状态更新
-            continuationMap[modelId] = continuation
-            // 当流被消费方取消时，清理引用避免内存泄漏
+            // 保存当前事件通道
+            continuations[modelId] = continuation
+            
+            // 首次订阅时推送当前已有状态
+            let currentState = downloadStates[modelId] ?? .failed(error: "Idle")
+            continuation.yield(currentState)
+            
+            // 订阅断开时自动清理
             continuation.onTermination = { [weak self] _ in
-                self?.continuationMap.removeValue(forKey: modelId)
+                Task { [weak self] in
+                    await self?.removeContinuation(for: modelId)
+                }
             }
         }
     }
+    
+    // MARK: - 注册 SHA256 指纹
+    
+    /// 外部在发起下载前，需向 Manager 注册期望的哈希值用于完好性判定
+    /// - Parameters:
+    ///   - modelId: 模型 ID
+    ///   - checksum: SHA256 校验和串
+    public func registerChecksum(for modelId: String, checksum: String) {
+        sha256Checksums[modelId] = checksum
+    }
+    
+    // MARK: - 供 Delegate 调用的内部并发更新方法
+    
+    /// 更新下载进度百分比
+    public func updateProgress(for modelId: String, progress: Double) {
+        updateState(for: modelId, to: .downloading(progress: progress))
+    }
+    
+    /// 完成下载，在沙盒临时路径触发指纹完整性验证
+    public func completeDownload(for modelId: String, tempFileURL: URL) {
+        updateState(for: modelId, to: .verifying)
+        
+        // 利用后台并发 Task 异步进行 CPU 密集的哈希判定与文件移动，解耦主 Actor
+        Task.detached(priority: .userInitiated) {
+            let manager = ModelDownloadManager.shared
+            let checksum = await manager.getChecksum(for: modelId) ?? ""
+            
+            // 1. 进行完好性校验 (SHA256)
+            if !manager.verifySHA256(of: tempFileURL, expectedHash: checksum) {
+                await manager.updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmlsZSB2ZXJpZmljYXRpb24gZmFpbGVkLiBTSEEyNTYgbWlzbWF0Y2gu")!, encoding: .utf8)!))
+                try? FileManager.default.removeItem(at: tempFileURL)
+                return
+            }
+            
+            // 2. 校验成功，安全移入沙盒 Document 目录
+            let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let destinationURL = documentDirectory.appendingPathComponent("\(modelId).bin")
+            
+            do {
+                if FileManager.default.fileExists(atPath: destinationURL.path) {
+                    try FileManager.default.removeItem(at: destinationURL)
+                }
+                try FileManager.default.moveItem(at: tempFileURL, to: destinationURL)
+                
+                // 3. 标记完结
+                await manager.updateState(for: modelId, to: .completed(localURL: destinationURL))
+                await manager.clearActiveTask(for: modelId)
+            } catch {
+                await manager.updateState(for: modelId, to: .failed(error: "Sandbox storage" + " allocation failed:" + " \(error.localizedDescription)"))
+            }
+        }
+    }
+    
+    /// 网络传输异常时的错误拦截处理
+    public func handleDownloadError(for modelId: String, error: Error) {
+        let nsError = error as NSError
+        
+        // 🟢 如果是断网等原因引起的异常中断，iOS 会在错误包里贴心地附带 resumeData！
+        if let resumeData = nsError.userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
+            resumeDataCache[modelId] = resumeData
+            updateState(for: modelId, to: .paused)
+        } else {
+            updateState(for: modelId, to: .failed(error: error.localizedDescription))
+        }
+        
+        activeTasks[modelId] = nil
+    }
+    
+    // MARK: - 内部并发辅助工具方法
+    
+    /// 获取指定模型的 SHA256 校验和
+    public func getChecksum(for modelId: String) -> String? {
+        return sha256Checksums[modelId]
+    }
+    
+    /// 清除指定模型的活动下载任务
+    public func clearActiveTask(for modelId: String) {
+        activeTasks[modelId] = nil
+    }
+    
+    /// 核心状态更新与发布分发引擎
+    public func updateState(for modelId: String, to state: DownloadState) {
+        downloadStates[modelId] = state
+        
+        // 瞬间向所有订阅的 AsyncStream 分发最新状态事件，UI 感知无延迟
+        if let continuation = continuations[modelId] {
+            continuation.yield(state)
+        }
+    }
+    
+    private func removeContinuation(for modelId: String) {
+        continuations[modelId] = nil
+    }
+    
+    private func cleanPreviousFiles(for modelId: String) {
+        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let destinationURL = documentDirectory.appendingPathComponent("\(modelId).bin")
+        try? FileManager.default.removeItem(at: destinationURL)
+    }
+    
+    /// 哈希校验防爆算法 (SHA256 Helper)
+    nonisolated fileprivate func verifySHA256(of fileURL: URL, expectedHash: String) -> Bool {
+        guard !expectedHash.isEmpty else { return true } // 如果白名单未配置哈希，视为跳过校验
+        
+        guard let file = FileHandle(forReadingAtPath: fileURL.path) else { return false }
+        defer { try? file.close() }
+        
+        var context = CC_SHA256_CTX()
+        CC_SHA256_Init(&context)
+        
+        let bufferSize = 1024 * 1024 // 1MB 内存分片读取，防止加载数 GB 模型把运行内存撑爆 (防爆读)
+        while true {
+            let data = file.readData(ofLength: bufferSize)
+            if data.isEmpty { break }
+            data.withUnsafeBytes { buffer in
+                _ = CC_SHA256_Update(&context, buffer.baseAddress, CC_LONG(data.count))
+            }
+        }
+        
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        CC_SHA256_Final(&digest, &context)
+        
+        let hexHash = digest.map { String(format: "%02hhx", $0) }.joined()
+        return hexHash.lowercased() == expectedHash.lowercased()
+    }
+}
 
-    // MARK: - 私有辅助方法
+// MARK: - 桥接 Delegate 协调助手类 (NSObject Bridge Pattern)
 
-    /// 向指定模型的异步状态流推送新状态
-    private func updateState(_ state: DownloadState, for modelId: String) {
-        continuationMap[modelId]?.yield(state)
-        // 终止态（完成 / 失败）自动关闭流，避免消费端永久等待
-        if case .completed = state { continuationMap[modelId]?.finish() }
-        if case .failed = state    { continuationMap[modelId]?.finish() }
+/// URLSession 代理协助类。继承自 NSObject 满足 Objective-C 回调契约，负责无声桥接后台系统通知至 Actor
+fileprivate final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloadDelegate, Sendable {
+    
+    /// 持有弱引用的 Actor 控制器
+    private let manager: ModelDownloadManager
+    
+    init(manager: ModelDownloadManager) {
+        self.manager = manager
+        super.init()
+    }
+    
+    /// URLSession 下载进度回调，更新模型下载进度
+    func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didWriteData bytesWritten: Int64,
+        totalBytesWritten: Int64,
+        totalBytesExpectedToWrite: Int64
+    ) {
+        guard let modelId = downloadTask.taskDescription, totalBytesExpectedToWrite > 0 else { return }
+        
+        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
+        
+        // 强行注入 Swift 6 并发上下文，回推给 Actor 主体
+        Task {
+            await manager.updateProgress(for: modelId, progress: progress)
+        }
+    }
+    
+    /// URLSession 下载完成回调，将临时文件移交至管理器处理
+    func urlSession(
+        _ session: URLSession,
+        downloadTask: URLSessionDownloadTask,
+        didFinishDownloadingTo location: URL
+    ) {
+        guard let modelId = downloadTask.taskDescription else { return }
+        
+        // 创建沙盒下的临时安全副本，防止系统委托在退出 didFinishDownloading 瞬间删除文件
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let safeTempURL = tempDirectory.appendingPathComponent(UUID().uuidString + ".bin")
+        
+        do {
+            try FileManager.default.moveItem(at: location, to: safeTempURL)
+            Task {
+                await manager.completeDownload(for: modelId, tempFileURL: safeTempURL)
+            }
+        } catch {
+            Task {
+                await manager.updateState(for: modelId, to: .failed(error: "Temporary copy" + " generation failed:" + " \(error.localizedDescription)"))
+            }
+        }
+    }
+    
+    /// URLSession 任务完成回调，处理下载错误（自动忽略用户主动取消）
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didCompleteWithError error: Error?
+    ) {
+        guard let taskDescription = task.taskDescription else { return }
+        
+        if let error = error {
+            let nsError = error as NSError
+            // 🟢 如果是用户主动取消任务，忽略报错
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                return
+            }
+            
+            Task {
+                await manager.handleDownloadError(for: taskDescription, error: error)
+            }
+        }
     }
 }

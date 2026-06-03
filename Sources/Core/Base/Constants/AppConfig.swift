@@ -24,70 +24,102 @@ enum AppConfig {
         return json
     }()
     
+    // MARK: - 内部键名定义
+    private enum ConfigKey {
+        enum Network: String {
+            case pluginMarketProduction = "plugin_market_production"
+            case pluginMarketDebug = "plugin_market_debug"
+            case jinaReaderBase = "jina_reader_base"
+            case ollamaBase = "ollama_base"
+            case deepseekBase = "deepseek_base"
+            case backendBaseURL = "backend_base_url"
+        }
+        
+        enum Performance: String {
+            case searchDebounce = "search_debounce_ms"
+            case rerankTopLimit = "rerank_top_limit"
+            case maxLogEntries = "max_log_entries"
+            case aiTemperature = "ai_temperature"
+            case similarityThreshold = "similarity_threshold"
+            case topKResults = "top_k_results"
+            case rerankThreshold = "rerank_threshold"
+            case maxContextLength = "max_context_length"
+            case previewTextLength = "preview_text_length"
+            case evaluatorModel = "evaluator_model"
+            case defaultModel = "default_model"
+        }
+        
+        enum Storage: String {
+            case logsFilename = "logs_filename"
+            case pagesFilename = "pages_filename"
+            case sqliteFilename = "sqlite_filename"
+        }
+    }
+
     /// 获取Network
-    /// /// - Parameter key: key
-    /// /// - Returns: 字符串
-    private static func getNetwork(_ key: String) -> String {
-        (configData["network"] as? [String: String])?[key] ?? ""
+    /// - Parameter key: key
+    /// - Returns: 字符串
+    private static func getNetwork(_ key: ConfigKey.Network) -> String {
+        (configData["network"] as? [String: String])?[key.rawValue] ?? ""
     }
     
     /// 获取Performance
-    /// /// - Parameter key: key
-    /// /// - Parameter default: default
-    /// /// - Returns: 返回值
-    private static func getPerformance<T>(_ key: String, default: T) -> T {
-        (configData["performance"] as? [String: Any])?[key] as? T ?? `default`
+    /// - Parameter key: key
+    /// - Parameter default: default
+    /// - Returns: 返回值
+    private static func getPerformance<T>(_ key: ConfigKey.Performance, default: T) -> T {
+        (configData["performance"] as? [String: Any])?[key.rawValue] as? T ?? `default`
     }
     
     /// 获取Storage
-    /// /// - Parameter key: key
-    /// /// - Returns: 字符串
-    private static func getStorage(_ key: String) -> String {
-        (configData["storage"] as? [String: String])?[key] ?? ""
+    /// - Parameter key: key
+    /// - Returns: 字符串
+    private static func getStorage(_ key: ConfigKey.Storage) -> String {
+        (configData["storage"] as? [String: String])?[key.rawValue] ?? ""
     }
 
     // MARK: - 网络与服务器
-    static var productionURL: String { getNetwork("plugin_market_production") }
-    static var mockServerURL: String { getNetwork("plugin_market_debug") }
-    static var jinaReaderURL: String { getNetwork("jina_reader_base") }
-    static var ollamaDefaultURL: String { getNetwork("ollama_base") }
-    static var deepseekDefaultURL: String { getNetwork("deepseek_base") }
-    static var backendBaseURL: String { getNetwork("backend_base_url") }
+    static var productionURL: String { getNetwork(.pluginMarketProduction) }
+    static var mockServerURL: String { getNetwork(.pluginMarketDebug) }
+    static var jinaReaderURL: String { getNetwork(.jinaReaderBase) }
+    static var ollamaDefaultURL: String { getNetwork(.ollamaBase) }
+    static var deepseekDefaultURL: String { getNetwork(.deepseekBase) }
+    static var backendBaseURL: String { getNetwork(.backendBaseURL) }
     
     // MARK: - 性能参数
-    static var searchDebounceMS: Int { getPerformance("search_debounce_ms", default: 300) }
-    static var rerankTopLimit: Int { getPerformance("rerank_top_limit", default: 10) }
-    static var maxLogEntries: Int { getPerformance("max_log_entries", default: 500) }
+    static var searchDebounceMS: Int { getPerformance(.searchDebounce, default: 300) }
+    static var rerankTopLimit: Int { getPerformance(.rerankTopLimit, default: 10) }
+    static var maxLogEntries: Int { getPerformance(.maxLogEntries, default: 500) }
     static let historyLimit: Int = 8
     
     // MARK: - 存储
-    static var logsFileName: String { getStorage("logs_filename") }
-    static var pagesFileName: String { getStorage("pages_filename") }
-    static var sqliteFileName: String { getStorage("sqlite_filename") }
+    static var logsFileName: String { getStorage(.logsFilename) }
+    static var pagesFileName: String { getStorage(.pagesFilename) }
+    static var sqliteFileName: String { getStorage(.sqliteFilename) }
 
     // MARK: - AI 检索相关阈值 (业务调优参数)
     struct AI {
         /// 默认模型 Temperature
-        static var defaultTemperature: Double { getPerformance("ai_temperature", default: 0.3) }
+        static var defaultTemperature: Double { getPerformance(.aiTemperature, default: 0.3) }
         /// 向量相似度初始召回阈值
-        static var similarityThreshold: Float { getPerformance("similarity_threshold", default: 0.35) }
+        static var similarityThreshold: Float { getPerformance(.similarityThreshold, default: 0.35) }
         /// 多路召回结果数 (Top K)
-        static var topKResults: Int { getPerformance("top_k_results", default: 20) }
+        static var topKResults: Int { getPerformance(.topKResults, default: 20) }
         /// Rerank 之后的接受阈值
-        static var rerankScoreThreshold: Double { getPerformance("rerank_threshold", default: 0.7) }
+        static var rerankScoreThreshold: Double { getPerformance(.rerankThreshold, default: 0.7) }
         /// 最大上下文 Token 长度 (估算)
-        static var maxContextLength: Int { getPerformance("max_context_length", default: 3000) }
+        static var maxContextLength: Int { getPerformance(.maxContextLength, default: 3000) }
         /// 页面内容预览截断长度
-        static var previewTextLength: Int { getPerformance("preview_text_length", default: 1000) }
+        static var previewTextLength: Int { getPerformance(.previewTextLength, default: 1000) }
         
         static let summaryMaxLength = 200
         static let rewriteTemperature = 0.3
         
         /// 评估模型 (用于 LLM-as-a-Judge)
-        static var evaluatorModel: String { getPerformance("evaluator_model", default: AppModel.gpt4o.rawValue) }
+        static var evaluatorModel: String { getPerformance(.evaluatorModel, default: AppModel.gpt4o.rawValue) }
         
         /// 默认大模型名称
-        static var defaultModel: String { getPerformance("default_model", default: "deepseek-v4-pro") }
+        static var defaultModel: String { getPerformance(.defaultModel, default: "deepseek-v4-pro") }
     }
     
     // MARK: - UI 交互与动画

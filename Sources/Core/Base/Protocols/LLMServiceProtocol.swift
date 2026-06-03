@@ -139,5 +139,23 @@ protocol LLMRetrievalServiceProtocol: AnyObject, Sendable {
 
 /// 继承了对话、知识管理与检索重构子协议的 LLM 综合服务协议，保持向后兼容。
 @MainActor
-protocol LLMServiceProtocol: ObservableObject, LLMChatServiceProtocol, LLMKnowledgeServiceProtocol, LLMRetrievalServiceProtocol {}
+protocol LLMServiceProtocol: ObservableObject, LLMChatServiceProtocol, LLMKnowledgeServiceProtocol, LLMRetrievalServiceProtocol {
+    /// 当前所选的模型服务提供商。
+    var provider: LLMProvider { get set }
+    
+    /// 安全的访问密钥 API Key。
+    var apiKey: String { get set }
+    
+    /// API 调用的基础网关地址。
+    var baseURL: String { get set }
+    
+    /// 大语言模型的具体代号规格。
+    var model: String { get set }
+    
+    /// 是否开启后台自动化知识扫描与标签提取。
+    var autoScan: Bool { get set }
+    
+    /// 是否使能后台智能重构分析与自动化双链链接发现。
+    var autoRefactor: Bool { get set }
+}
 

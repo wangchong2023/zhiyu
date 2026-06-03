@@ -121,11 +121,46 @@ chmod +x Tools/update_snapshots.sh
 
 ---
 
-## 7. 注意事项
+## 7. 存储字段守卫工具 (`check_storage_constants.py`)
+
+用于在编译前（Xcode Build Phases）自动校验整个 `Sources/` 目录下是否包含硬编码的物理数据库表名或列字段名。
+
+### 守卫工具核心功能
+
+- **硬编码物理字段拦截**：检测代码中直接写物理字段名（如 `t.column("created_at")` 或 `t.primaryKey(["id"])`）的情况，强制报错。
+- **强制使用 Model 字段**：要求必须通过数据库 Model 实体提供的编译期静态常量（如 `KnowledgePage.Columns.createdAt`）来操作数据库表。
+- **硬编码 SQL 检测**：识别在 SQL 执行/查询语句中包含未插值的裸物理表名。
+
+### 守卫工具使用方法
+
+```bash
+python3 Tools/check_storage_constants.py
+```
+
+---
+
+## 8. 临时与实验性归档脚本 (`Tools/Temp/`)
+
+本目录主要用于临时性调试、迁移工具或已合并至主流程逻辑的归档 Python 脚本。开发者可在此找到历史重构印记，但生产编译与 CI 流程严禁依赖此目录。
+
+### 目前已归档脚本列表：
+
+- `auto_fix_all_missing.py`：自动修复本地化中缺失的键值对。
+- `find_missing_keys.py` / `fix_missing_keys.py`：提取并批量填充 String Catalog 中缺失的中文及多国语言翻译。
+- `fix_one.py`：单个翻译项点对点局部修复脚本。
+- `fix_version.py`：版本信息自动升级及 Plist 变量补齐工具。
+- `fix_views.py`：修复视图中不合规的硬编码字符串及格式校验。
+- `patch_check.py`：代码层物理补丁校验门禁脚本。
+- `update_strings.py` / `update_strings_2.py`：增量拉取代码中新增文字并自动合并进 `.xcstrings` 文件的历史工具。
+
+---
+
+## 9. 注意事项
 
 - **Python 环境**：建议使用 Python 3.8+，本地运行环境指向 `./env/venv/bin/python3`。
 - **权限说明**：在 macOS 上操作模拟器容器路径可能需要全盘访问权限（通常 Terminal 会自动请求）。
-- **覆盖率提取依赖**：`check_coverage.py` 强依赖 Xcode 命令行工具中内置的 `xccov` 组件。
+- **覆盖率提取依赖**：`check_coverage.py` 强依赖 Xcode 命令行工具中内置 of `xccov` 组件。
 - **同步建议**：建议在修改数据库架构（Schema）后，同步更新 `seed_data.py` 中的 `INSERT` 语句。
 - **权限授予**：运行 `.sh` 脚本前请确保执行了 `chmod +x`。
+
 

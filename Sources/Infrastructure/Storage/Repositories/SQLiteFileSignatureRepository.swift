@@ -21,11 +21,22 @@ struct FileSignatureRecord: Codable, FetchableRecord, MutablePersistableRecord, 
     var salt: String
     var updatedAt: Date
     
-    enum CodingKeys: String, CodingKey, ColumnExpression {
+    enum CodingKeys: String, CodingKey {
         case filePath = "file_path"
         case signature
         case salt
         case updatedAt = "updated_at"
+    }
+}
+
+// MARK: - Database Columns
+extension FileSignatureRecord {
+    enum Columns {
+        static let filePath = Column("file_path")
+        static let signature = Column("signature")
+        static let salt = Column("salt")
+        static let createdAt = Column("created_at")
+        static let updatedAt = Column("updated_at")
     }
 }
 

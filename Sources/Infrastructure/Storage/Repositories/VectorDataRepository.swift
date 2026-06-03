@@ -32,9 +32,9 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     // MARK: - 向量映射 (Embeddings)
 
     /// 保存Embedding
-    /// /// - Parameter id: id
-    /// /// - Parameter vector: vector
-    /// /// - Parameter modelName: modelName
+    /// - Parameter id: id
+    /// - Parameter vector: vector
+    /// - Parameter modelName: modelName
     func saveEmbedding(id: UUID, vector: [Float], modelName: String) async throws {
         let writer = await dbWriter
         _ = try await writer.write { db in
@@ -44,7 +44,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     }
 
     /// 拉取AllEmbeddings
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchAllEmbeddings() async throws -> [UUID: [Float]] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -60,7 +60,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     // MARK: - 语义分块 (Chunks)
 
     /// 拉取Chunks
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchChunks(for pageID: UUID) async throws -> [PageChunk] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -71,7 +71,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     }
 
     /// 拉取AllChunksWithEmbeddings
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchAllChunksWithEmbeddings() async throws -> [PageChunk] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -82,7 +82,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     }
 
     /// 保存Chunks
-    /// /// - Parameter chunks: chunks
+    /// - Parameter chunks: chunks
     func saveChunks(_ chunks: [PageChunk], for pageID: UUID) async throws {
         let writer = await dbWriter
         _ = try await writer.write { db in
@@ -111,7 +111,7 @@ final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     }
 
     /// cleanupOrphanedChunks
-    /// /// - Returns: 数值
+    /// - Returns: 数值
     func cleanupOrphanedChunks() async throws -> Int {
         let writer = await dbWriter
         return try await writer.write { db in

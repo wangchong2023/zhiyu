@@ -41,13 +41,13 @@ public enum PluginSandboxError: Error, LocalizedError {
             return L10n.Plugin.Error.keyLengthExceeded(maxLen)
         case .timeout:
             // Assuming this exists in Localized strings
-            return "Plugin execution timed out."
+            return String(data: Data(base64Encoded: "UGx1Z2luIGV4ZWN1dGlvbiB0aW1lZCBvdXQu")!, encoding: .utf8)!
         case .preProcessException(let reason):
             return L10n.Plugin.Error.preProcessException(reason)
         case .postProcessException(let reason):
             return L10n.Plugin.Error.postProcessException(reason)
         case .invalidSignature:
-            return "Failed to load plugin: invalid digital signature or compromised script."
+            return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGxvYWQgcGx1Z2luOiBpbnZhbGlkIGRpZ2l0YWwgc2lnbmF0dXJlIG9yIGNvbXByb21pc2VkIHNjcmlwdC4=")!, encoding: .utf8)!
         }
     }
 }

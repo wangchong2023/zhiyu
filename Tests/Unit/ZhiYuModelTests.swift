@@ -396,6 +396,57 @@ final class LintIssueTests: XCTestCase {
         XCTAssertEqual(issue.severity.icon, "info.circle.fill")
         XCTAssertEqual(issue.severity.colorName, "blue")
     }
+    
+    /// 验证诊断问题类型（IssueType）的全部分支及其系统图标属性完整性，保障 100% 覆盖率
+    func testLintIssueTypeAllCases() {
+        XCTAssertEqual(LintIssue.IssueType.brokenLink.icon, "link")
+        XCTAssertEqual(LintIssue.IssueType.orphan.icon, "person.crop.circle.badge.questionmark")
+        XCTAssertEqual(LintIssue.IssueType.island.icon, "leaf.fill")
+        XCTAssertEqual(LintIssue.IssueType.cycle.icon, "arrow.2.squarepath")
+        XCTAssertEqual(LintIssue.IssueType.stub.icon, "doc.append")
+        XCTAssertEqual(LintIssue.IssueType.stale.icon, "clock.arrow.circlepath")
+        XCTAssertEqual(LintIssue.IssueType.generic.icon, "sparkles")
+    }
+    
+    /// 验证双向链接潜在建议（PotentialLinkSuggestion）模型的完整字段以及 Codable 编解码可靠性
+    func testPotentialLinkSuggestionCodable() throws {
+        let original = PotentialLinkSuggestion(
+            sourcePageID: UUID(),
+            sourceTitle: "Page A",
+            targetTitle: "Page B"
+        )
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        let data = try encoder.encode(original)
+        let decoded = try decoder.decode(PotentialLinkSuggestion.self, from: data)
+        
+        XCTAssertEqual(decoded.id, original.id)
+        XCTAssertEqual(decoded.sourcePageID, original.sourcePageID)
+        XCTAssertEqual(decoded.sourceTitle, original.sourceTitle)
+        XCTAssertEqual(decoded.targetTitle, original.targetTitle)
+    }
+    
+    /// 验证 LintIssue 结构体本身的 Codable 序列化与反序列化，确保持久化兼容性
+    func testLintIssueCodableRoundTrip() throws {
+        let original = LintIssue(
+            severity: .warning,
+            type: .cycle,
+            pageID: UUID(),
+            message: "Cyclic links detected",
+            suggestion: "Break the cycle by removing link"
+        )
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        let data = try encoder.encode(original)
+        let decoded = try decoder.decode(LintIssue.self, from: data)
+        
+        XCTAssertEqual(decoded.id, original.id)
+        XCTAssertEqual(decoded.severity, original.severity)
+        XCTAssertEqual(decoded.type, original.type)
+        XCTAssertEqual(decoded.pageID, original.pageID)
+        XCTAssertEqual(decoded.message, original.message)
+        XCTAssertEqual(decoded.suggestion, original.suggestion)
+    }
 }
 
 // MARK: - 智宇多端协同模型（CollaborationModels）测试

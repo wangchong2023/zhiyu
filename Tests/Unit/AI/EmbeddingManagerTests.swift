@@ -103,14 +103,14 @@ final class EmbeddingManagerTests: XCTestCase {
         let page = KnowledgePage(id: pageID, title: "测试向量重载", content: "这里是一段用来向量化的页面文本。")
         
         // 同步前缓存应当为空
-        var allEmbeddings = await manager.allEmbeddings
+        var allEmbeddings = await manager.getAllEmbeddings()
         XCTAssertNil(allEmbeddings[pageID])
         
         // 触发向量同步
         await manager.syncEmbeddings(pages: [page])
         
         // 同步后内存缓存应该存在该向量，且数据库里成功持久化
-        allEmbeddings = await manager.allEmbeddings
+        allEmbeddings = await manager.getAllEmbeddings()
         XCTAssertNotNil(allEmbeddings[pageID])
         let dbEmbeddings = try await mockRepository.fetchAllEmbeddings()
         XCTAssertNotNil(dbEmbeddings[pageID])
@@ -119,7 +119,7 @@ final class EmbeddingManagerTests: XCTestCase {
         await manager.clearCacheAndReload()
         
         // 重载后，向量应该能从 Mock 数据库完美恢复至内存缓存
-        allEmbeddings = await manager.allEmbeddings
+        allEmbeddings = await manager.getAllEmbeddings()
         XCTAssertNotNil(allEmbeddings[pageID])
     }
     

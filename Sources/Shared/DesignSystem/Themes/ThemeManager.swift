@@ -57,7 +57,7 @@ class ThemeManager: ObservableObject {
     }
 
     /// setAccentColor
-    /// /// - Parameter color: color
+    /// - Parameter color: color
     func setAccentColor(_ color: String) {
         UserDefaults.standard.set(color, forKey: AppConstants.Keys.Storage.accentColor)
         objectWillChange.send()

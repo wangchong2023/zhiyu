@@ -35,7 +35,7 @@ final class ChatCoordinator {
 
     @ObservationIgnored @Inject private var aiSynthesis: (any AISynthesisServiceProtocol)
     @ObservationIgnored @Inject private var chatService: (any ChatServiceProtocol)
-    @ObservationIgnored @Inject private var llmService: LLMService
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var perf: PerformanceService
     
@@ -49,7 +49,7 @@ final class ChatCoordinator {
     // ── 业务动作 ──
 
     /// 加载InsightfulQuestions
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func loadInsightfulQuestions(pages: [KnowledgePage]) async {
         guard !pages.isEmpty && llmService.isEnabled && insightfulQuestions.isEmpty else { return }
         
@@ -63,8 +63,8 @@ final class ChatCoordinator {
     }
 
     /// 发送Message
-    /// /// - Parameter query: query
-    /// /// - Parameter pages: pages
+    /// - Parameter query: query
+    /// - Parameter pages: pages
     func sendMessage(query: String? = nil, pages: [KnowledgePage]) async {
         let text = (query ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
@@ -109,7 +109,7 @@ final class ChatCoordinator {
                     } else {
                         self.errorMessage = error.localizedDescription
                         self.showError = true
-                        self.logger.error("❌ [ChatCoordinator] 对话发生错误", error: error)
+                        self.logger.error(" [ChatCoordinator] ", error: error)
                     }
                 }
             }
@@ -190,7 +190,7 @@ final class ChatCoordinator {
     }
 
     /// 切换MessageSelection
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func toggleMessageSelection(_ id: UUID) {
         if selectedMessageIDs.contains(id) {
             selectedMessageIDs.remove(id)

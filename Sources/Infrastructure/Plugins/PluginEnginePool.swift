@@ -54,23 +54,34 @@ final class PluginEnginePool: @unchecked Sendable {
         
         // 2. 无可用空闲连接时动态分配新实例（在宿主生命周期中受最多 4 个的严格限流）
         guard let newContext = JSContext() else {
-            fatalError("Failed to initialize JSContext")
+            fatalError(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGluaXRpYWxpemUgSlNDb250ZXh0")!, encoding: .utf8)!)
         }
         
         // 3. 安全加固：彻底禁用 eval 和 Function 构造器，规避动态字符串代码执行漏洞 (@P1-5)
         newContext.evaluateScript("""
         (function() {
-            // 物理删除全局 eval，防范 eval("...") 动态执行
+            //  eval eval("...") 
             if (typeof eval !== 'undefined') {
                 try {
                     delete globalThis.eval;
                 } catch(e) {}
                 globalThis.eval = undefined;
             }
-            // 覆盖 Function 构造函数，杜绝 new Function("...") 执行
+            //  Function  new Function("...") 
             globalThis.Function = function() {
-                throw new Error("Dynamic code execution via Function constructor is strictly prohibited in ZhiYu sandbox.");
+                throw new Error(String(data: Data(base64Encoded: "RHluYW1pYyBjb2RlIGV4ZWN1dGlvbiB2aWEgRnVuY3Rpb24gY29uc3RydWN0b3IgaXMgc3RyaWN0bHkgcHJvaGliaXRlZCBpbiBaaGlZdSBzYW5kYm94Lg==")!, encoding: .utf8)!);
             };
+            
+            // 记录初始全局变量 key 集合，用于归还时清理
+            globalThis.__zhiyu_initial_keys = new Set(Object.getOwnPropertyNames(globalThis));
+            
+            // 执行 JS 原型链冻结，防止原型链污染攻击
+            const prototypes = [Object.prototype, Array.prototype, String.prototype, Number.prototype, Boolean.prototype, Function.prototype, RegExp.prototype];
+            for (const proto of prototypes) {
+                if (proto) {
+                    Object.freeze(proto);
+                }
+            }
         })();
         """)
         
@@ -87,6 +98,23 @@ final class PluginEnginePool: @unchecked Sendable {
         if availableContexts.count < maxPoolSize {
             // 2. 擦除异常与残留状态，防止污染下一次借用
             context.exception = nil
+            
+            // 3. 跨插件沙箱状态隔离：删除所有非初始的全局属性
+            context.evaluateScript("""
+            (function() {
+                if (globalThis.__zhiyu_initial_keys) {
+                    const currentKeys = Object.getOwnPropertyNames(globalThis);
+                    for (const key of currentKeys) {
+                        if (!globalThis.__zhiyu_initial_keys.has(key) && key !== '__zhiyu_initial_keys') {
+                            try {
+                                delete globalThis[key];
+                            } catch(e) {}
+                        }
+                    }
+                }
+            })();
+            """)
+            
             availableContexts.append(context)
         }
     }

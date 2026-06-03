@@ -116,7 +116,7 @@ public struct AppTooltip: View {
 struct Triangle: Shape {
 
     /// path
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: rect.midX, y: rect.minY))

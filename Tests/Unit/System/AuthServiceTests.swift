@@ -21,17 +21,10 @@ final class AuthServiceTests: XCTestCase {
         try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
         try? KeychainService.shared.delete(key: "refresh_token")
 
-        #if DEBUG
-        AuthService.forceMockBackend = true
-        #endif
     }
 
     override func tearDownWithError() throws {
         AuthSession.shared.logout()
-
-        #if DEBUG
-        AuthService.forceMockBackend = false
-        #endif
     }
 
     // MARK: - 登出测试
@@ -73,6 +66,8 @@ final class AuthServiceTests: XCTestCase {
 
     func testLoginWithCarrierStrategyInDebug() async {
         #if DEBUG
+        AuthService.forceMockBackend = true
+        defer { AuthService.forceMockBackend = false }
         let success = await AuthService.shared.login(using: CarrierAuthStrategy())
         XCTAssertTrue(success, "DEBUG 模式下 Carrier Mock 登录应成功")
         #endif
@@ -80,6 +75,8 @@ final class AuthServiceTests: XCTestCase {
 
     func testLoginWithGitHubStrategyInDebug() async {
         #if DEBUG
+        AuthService.forceMockBackend = true
+        defer { AuthService.forceMockBackend = false }
         let success = await AuthService.shared.login(using: GitHubAuthStrategy())
         XCTAssertTrue(success, "DEBUG 模式下 GitHub Mock 登录应成功")
         #endif
@@ -87,6 +84,8 @@ final class AuthServiceTests: XCTestCase {
 
     func testLoginWithWeChatStrategyInDebug() async {
         #if DEBUG
+        AuthService.forceMockBackend = true
+        defer { AuthService.forceMockBackend = false }
         let success = await AuthService.shared.login(using: WeChatAuthStrategy())
         XCTAssertTrue(success, "DEBUG 模式下 WeChat Mock 登录应成功")
         #endif

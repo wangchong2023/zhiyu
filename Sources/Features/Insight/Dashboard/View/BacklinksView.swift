@@ -117,8 +117,8 @@ struct BacklinksView: View {
                 }
             }
 #if os(iOS)
-            .listStyle(.insetGrouped)
-#endif
+                .listStyle(.insetGrouped)
+                #endif
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(page.title)

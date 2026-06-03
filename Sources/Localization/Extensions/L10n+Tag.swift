@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "Knowledge"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public static var title: String { tr("tag.title") }
@@ -39,18 +39,18 @@ extension L10n {
             public static var noTagsHint: String { Tag.tr("tag.noTagsHint") }
 
             /// 重命名Message
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func renameMessage(_ name: String) -> String { Tag.trf("tag.renameMessage", name) }
 
             /// 删除Message
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func deleteMessage(_ name: String) -> String { Tag.trf("tag.deleteMessage", name) }
 
             /// tagPages
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func tagPages(_ count: Int) -> String { Tag.trf("tag.tagPages", count) }
         }
 
@@ -62,13 +62,13 @@ extension L10n {
             public static var selectToManage: String { Tag.tr("tags.selectToManage") }
 
             /// bulk删除Warning
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func bulkDeleteWarning(_ count: Int) -> String { Tag.trf("tags.bulkDeleteWarning", count) }
 
             /// selected计数
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func selectedCount(_ count: Int) -> String { Tag.trf("tags.selectedCount", count) }
         }
 

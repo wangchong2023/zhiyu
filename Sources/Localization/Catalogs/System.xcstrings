@@ -137,6 +137,23 @@
         }
       }
     },
+    "settings.about.copyright": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copyright (c) 2026 Wang Chong. All rights reserved."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "版权所有 (c) 2026 Wang Chong。保留所有权利。"
+          }
+        }
+      }
+    },
     "aiDisabledHint": {
       "extractionState": "manual",
       "localizations": {
@@ -5300,7 +5317,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.concepts"
+            "value": "个概念"
           }
         }
       }
@@ -5317,7 +5334,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.entities"
+            "value": "个实体"
           }
         }
       }
@@ -5334,7 +5351,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.sources"
+            "value": "个来源"
           }
         }
       }
@@ -5351,7 +5368,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.totalPages"
+            "value": "总页面数"
           }
         }
       }
@@ -5917,6 +5934,40 @@
         }
       }
     },
+    "security.keychain.databasePassphraseError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Critical security error: Failed to secure Database Passphrase in Keychain."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "严重安全错误：无法在钥匙串中安全保存数据库口令。"
+          }
+        }
+      }
+    },
+    "security.keychain.hmacSaltError": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Critical security error: Failed to secure HMAC Salt in Keychain."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "严重安全错误：无法在钥匙串中安全保存 HMAC 盐值。"
+          }
+        }
+      }
+    },
     "auth.oneClickLogin": {
       "extractionState": "manual",
       "localizations": {
@@ -6032,6 +6083,193 @@
           "stringUnit": {
             "state": "translated",
             "value": "Please read and check the agreement first"
+          }
+        }
+      }
+    },
+    "hashMismatchDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hash Mismatch Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件哈希值不匹配错误"
+          }
+        }
+      }
+    },
+    "targetHashMismatchDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target Hash Mismatch Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标文件哈希值不匹配错误"
+          }
+        }
+      }
+    },
+    "settings.ondevice.npu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.npu "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.npu"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descNpu": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descNpu "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descNpu"
+          }
+        }
+      }
+    },
+    "settings.ondevice.ram": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.ram "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.ram"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descRam": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descRam "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descRam"
+          }
+        }
+      }
+    },
+    "settings.ondevice.context": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.context "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.context"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descContext": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descContext "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descContext"
+          }
+        }
+      }
+    },
+    "settings.ondevice.overheat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.overheat "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.overheat"
+          }
+        }
+      }
+    },
+    "settings.ondevice.descOverheat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descOverheat "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.descOverheat"
+          }
+        }
+      }
+    },
+    "settings.ondevice.perfConfig": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.perfConfig "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "settings.ondevice.perfConfig"
           }
         }
       }

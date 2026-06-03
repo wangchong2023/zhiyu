@@ -13,7 +13,7 @@ import SwiftUI
 struct SystemViewProvider: ViewProvider {
 
     /// 创建View
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func makeView(for route: AnyHashable) -> AnyView? {
         guard let route = route as? AppRoute, route.domain == .system else { return nil }
         
@@ -23,7 +23,7 @@ struct SystemViewProvider: ViewProvider {
         case .about:
             return AnyView(AboutView().navigationTitle(L10n.Common.about))
         case .help:
-            return AnyView(Text("Help Coming Soon").navigationTitle(L10n.Common.help))
+            return AnyView(Text("Help_Coming_Soon").navigationTitle(L10n.Common.help))
         case .collab:
             return AnyView(CollaborationView())
         case .pluginMarket:

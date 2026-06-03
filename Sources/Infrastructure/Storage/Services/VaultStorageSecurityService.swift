@@ -59,7 +59,7 @@ final class VaultStorageSecurityService {
      */
 
     /// unlock
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     func unlock() async -> Bool {
         let success = await authenticateWithBiometrics()
         if success {
@@ -77,7 +77,7 @@ final class VaultStorageSecurityService {
      */
 
     /// 认证WithBiometrics
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     func authenticateWithBiometrics() async -> Bool {
         let context = LAContext()
         self.activeContext = context // 保持引用

@@ -211,8 +211,8 @@ struct OCRSaveForm: View {
                 }
             }
             #if !os(watchOS)
-            .pickerStyle(.segmented)
-            #endif
+                .pickerStyle(.segmented)
+                #endif
 
             // Icon picker row
             HStack {

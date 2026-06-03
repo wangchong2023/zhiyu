@@ -41,10 +41,10 @@ final class KnowledgeStatsWidgetTests: XCTestCase {
         let entry = provider.fetchWidgetEntry(date: Date())
         
         // 关键过程：验证拟真的静态 Mock 数据与系统预期指标的对齐情况
-        XCTAssertEqual(entry.vaultName, "ZhiYu Knowledge", "Mock vault name should be ZhiYu Knowledge")
-        XCTAssertEqual(entry.pageCount, 42)
-        XCTAssertEqual(entry.linkCount, 108)
-        XCTAssertEqual(entry.tagCount, 16)
+        XCTAssertEqual(entry.vaultName, "Demo Vault", "Mock vault name should be Demo Vault")
+        XCTAssertEqual(entry.pageCount, AppConstants.Demo.mockPageCount)
+        XCTAssertEqual(entry.linkCount, AppConstants.Demo.mockLinkCount)
+        XCTAssertEqual(entry.tagCount, AppConstants.Demo.mockTagCount)
         XCTAssertEqual(entry.lastUpdatedPages.count, 3)
     }
 
@@ -59,7 +59,7 @@ final class KnowledgeStatsWidgetTests: XCTestCase {
         // 🟢 经典避坑指南：WidgetKit 的 TimelineReloadPolicy 实际上是 struct 而非 enum，
         // 它的 .after(Date) 是静态工厂方法。因此我们通过 Equatable 来优雅断言 policy 的对齐情况，
         // 从而完美避开模式匹配编译限制。
-        let expectedPolicy = TimelineReloadPolicy.after(testDate.addingTimeInterval(30 * 60))
-        XCTAssertEqual(timeline.policy, expectedPolicy, "Timeline reload policy should match exactly 30 minutes later")
+        let expectedPolicy = TimelineReloadPolicy.after(testDate.addingTimeInterval(AppConstants.Demo.widgetRefreshIntervalMinutes * 60))
+        XCTAssertEqual(timeline.policy, expectedPolicy, "Timeline reload policy should match exactly \(AppConstants.Demo.widgetRefreshIntervalMinutes) minutes later")
     }
 }

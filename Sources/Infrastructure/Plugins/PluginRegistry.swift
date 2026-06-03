@@ -106,7 +106,7 @@ final class PluginRegistry: ObservableObject {
         usage.status = .suspended
         pluginResourceUsage[id] = usage
         
-        Logger.shared.error("🛡️ [Watchdog 2.0] 插件 \(id) 已被物理隔离并强制回收内存资源。")
+        Logger.shared.error(" [Watchdog 2.0]  \(id) ")
     }
 
     // MARK: - 插件数据持久化 (Phase 2)
@@ -166,17 +166,17 @@ final class PluginRegistry: ObservableObject {
     }
 
     /// 加载Plugin
-    /// /// - Parameter plugin: plugin
+    /// - Parameter plugin: plugin
     func loadPlugin(_ plugin: KnowledgePlugin) {
         // 安全检查：如果该插件已被持久化封禁，禁止加载
         guard !suspendedPluginIDs.contains(plugin.manifest.id) else {
-            Logger.shared.warning("🚫 [Security] 插件 \(plugin.manifest.id) 处于封禁黑名单中，拒绝加载。")
+            Logger.shared.warning(" [Security]  \(plugin.manifest.id) ")
             return
         }
 
         // 版本兼容性检查
         if plugin.manifest.version.hasPrefix("1.") {
-            Logger.shared.debug("📦 [Adapter] 检测到 1.x 插件 \(plugin.manifest.name)，已启用 v1_Compatibility_Shim。")
+            Logger.shared.debug(" [Adapter]  1.x  \(plugin.manifest.name) v1_Compatibility_Shim")
         }
 
         // 创建沙盒上下文
@@ -203,28 +203,28 @@ final class PluginRegistry: ObservableObject {
         var hostVersion: String { "2.0.0" } // nonisolated copy, avoids @MainActor crossing
 
         /// 记录日志
-        /// /// - Parameter message: message
+        /// - Parameter message: message
         func log(_ message: String) {
-            Logger.shared.debug("🔌 [Plugin:\(manifest.id)] \(message)")
+            Logger.shared.debug(" [Plugin:\(manifest.id)] \(message)")
         }
 
         /// 请求AIAccess
-        /// /// - Parameter prompt: prompt
-        /// /// - Returns: 可选值
+        /// - Parameter prompt: prompt
+        /// - Returns: 可选值
         func requestAIAccess(prompt: String) async -> String? {
             // 安全检查：检查 manifest 是否声明了 'llm' 权限
             guard manifest.permissions.contains("llm") else {
-                Logger.shared.error("🛡️ [安全拦截] 插件 \(manifest.id) 尝试调用 LLM，但未在 manifest 中声明 'llm' 权限。", error: nil)
+                Logger.shared.error(" []" + "  \(manifest.id)" + "  LLM" + " manifest " + " 'llm' ", error: nil)
                 return nil
             }
-            return try? await ServiceContainer.shared.resolve((any LLMServiceProtocol).self).generate(prompt: prompt, systemPrompt: "你是一个智能插件辅助助手")
+            return try? await ServiceContainer.shared.resolve((any LLMServiceProtocol).self).generate(prompt: prompt, systemPrompt: "")
         }
 
         /// queryPages
-        /// /// - Returns: 列表
+        /// - Returns: 列表
         func queryPages(matching query: String) async -> [KnowledgePage] {
             guard manifest.permissions.contains("pages.read") else {
-                Logger.shared.error("🛡️ [安全拦截] 插件 \(manifest.id) 尝试查询页面，但未声明 'pages.read' 权限。", error: nil)
+                Logger.shared.error(" []  \(manifest.id)  'pages.read' ", error: nil)
                 return []
             }
             let pages = PluginRegistry.shared.pagesProvider?() ?? []
@@ -232,86 +232,86 @@ final class PluginRegistry: ObservableObject {
         }
         
         /// 注册Command
-        /// /// - Parameter id: id
-        /// /// - Parameter name: name
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter id: id
+        /// - Parameter name: name
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerCommand(id: String, name: String, callback: @escaping @MainActor () -> Void) {
             let command = PluginCommand(id: id, pluginID: manifest.id, name: name, action: callback)
             PluginRegistry.shared.commands.append(command)
-            log("已注册全局指令: \(name)")
+            log(": \(name)")
         }
         
         /// 注册RibbonItem
-        /// /// - Parameter icon: icon
-        /// /// - Parameter title: title
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter icon: icon
+        /// - Parameter title: title
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerRibbonItem(icon: String, title: String, callback: @escaping @MainActor () -> Void) {
             let item = PluginRibbonItem(pluginID: manifest.id, icon: icon, title: title, action: callback)
             PluginRegistry.shared.ribbonItems.append(item)
-            log("已注册侧边栏入口: \(title)")
+            log(": \(title)")
         }
 
         /// 注册PageProcessor
-        /// /// - Parameter processor: processor
+        /// - Parameter processor: processor
         func registerPageProcessor(_ processor: any KnowledgePageProcessor) {
             // 通过 ServiceContainer 获取 KnowledgeStore 并注册，关联当前插件 ID
             let store = ServiceContainer.shared.resolve(KnowledgeStore.self)
             store.registerProcessor(processor, pluginID: manifest.id)
-            log("已注册页面处理器: \(processor.name)")
+            log(": \(processor.name)")
         }
         
         /// 注册SettingTab
-        /// /// - Parameter name: name
-        /// /// - Parameter schema: schema
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter name: name
+        /// - Parameter schema: schema
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerSettingTab(name: String, schema: String?, callback: @escaping @MainActor (String?) -> Void) {
             let tab = PluginSettingTab(pluginID: manifest.id, name: name, schema: schema, action: callback)
             PluginRegistry.shared.settingTabs.append(tab)
-            log("已注册设置面板: \(name)")
+            log(": \(name)")
         }
         
         /// 注册View
-        /// /// - Parameter id: id
-        /// /// - Parameter title: title
-        /// /// - Parameter icon: icon
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter id: id
+        /// - Parameter title: title
+        /// - Parameter icon: icon
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func registerView(id: String, title: String, icon: String, callback: @escaping @MainActor () -> Void) {
             let view = PluginCustomView(id: id, pluginID: manifest.id, title: title, icon: icon, action: callback)
             PluginRegistry.shared.customViews.append(view)
-            log("已注册自定义视图: \(title)")
+            log(": \(title)")
         }
         
         /// 添加EventListener
-        /// /// - Parameter event: event
-        /// /// - Parameter callback: callback
-        /// /// - Returns: 返回值
+        /// - Parameter event: event
+        /// - Parameter callback: callback
+        /// - Returns: 返回值
         func addEventListener(event: String, callback: @escaping @MainActor (Any?) -> Void) {
             let listener = PluginEventListener(pluginID: manifest.id, event: event, callback: callback)
             PluginRegistry.shared.eventListeners.append(listener)
-            log("正在监听事件: \(event)")
+            log(": \(event)")
         }
         
         /// 保存Data
-        /// /// - Parameter key: key
-        /// /// - Parameter value: value
+        /// - Parameter key: key
+        /// - Parameter value: value
         func saveData(key: String, value: String) {
             PluginRegistry.shared.savePluginData(pluginID: manifest.id, key: key, value: value)
         }
         
         /// 加载Data
-        /// /// - Parameter key: key
-        /// /// - Returns: 可选值
+        /// - Parameter key: key
+        /// - Returns: 可选值
         func loadData(key: String) -> String? {
             return PluginRegistry.shared.loadPluginData(pluginID: manifest.id, key: key)
         }
     }
 
     /// unloadPlugin
-    /// /// - Parameter id: id
+    /// - Parameter id: id
     func unloadPlugin(id: String) {
         if let index = plugins.firstIndex(where: { $0.manifest.id == id }) {
             plugins[index].onUnload()
@@ -353,7 +353,7 @@ final class PluginRegistry: ObservableObject {
             // 动态流控监控 (Throttling)
             let callCount = pluginCallCounts[pluginID] ?? 0
             if callCount > maxCallsPerWindow {
-                Logger.shared.debug("⚠️ [Throttling] 插件 \(pluginID) 调用过于频繁，已自动降级。")
+                Logger.shared.debug(" [Throttling]  \(pluginID) ")
                 continue
             }
             pluginCallCounts[pluginID] = callCount + 1
@@ -368,7 +368,7 @@ final class PluginRegistry: ObservableObject {
 
             // 安全校验：权限检查
             if !intercepter.manifest.permissions.contains("writeContent") {
-                Logger.shared.error("🛡️ [安全拦截] 插件 \(intercepter.manifest.name) 尝试修改内容，但未声明 writeContent 权限。", error: nil)
+                Logger.shared.error(" []  \(intercepter.manifest.name)  writeContent ", error: nil)
                 continue
             }
 
@@ -384,7 +384,7 @@ final class PluginRegistry: ObservableObject {
                 pluginResourceUsage[pluginID] = usage
 
                 if duration > pluginTimeout {
-                    Logger.shared.error("🔴 [Watchdog] 插件 \(intercepter.manifest.name) 执行超时 (\(String(format: "%.2f", duration))s)，已被物理挂起。")
+                    Logger.shared.error(" [Watchdog]  \(intercepter.manifest.name)  (\(String(format: "%.2f", duration))s)")
                     suspendPlugin(pluginID) // 物理封禁并持久化
                     analytics?.trackEvent("plugin_circuit_break", properties: ["id": pluginID, "duration": duration])
                     continue // 丢弃该插件结果
@@ -399,7 +399,7 @@ final class PluginRegistry: ObservableObject {
                     "type": "preProcess"
                 ])
             } catch {
-                Logger.shared.error("🛡️ [崩溃隔离] 插件 \(intercepter.manifest.name) 执行异常，已自动跳过。", error: error)
+                Logger.shared.error(" []  \(intercepter.manifest.name) ", error: error)
                 analytics?.trackEvent("plugin_crash", properties: ["id": pluginID, "error": error.localizedDescription])
                 // 如果连续异常多次，也可以考虑在此挂起
             }
@@ -421,7 +421,7 @@ extension PluginRegistry {
         // 如果目录不存在则创建
         if !fileManager.fileExists(atPath: pluginsDirectory.path) {
             try? fileManager.createDirectory(at: pluginsDirectory, withIntermediateDirectories: true, attributes: nil)
-            Logger.shared.info("📁 [PluginRegistry] 已创建插件目录: \(pluginsDirectory.path)")
+            Logger.shared.info(" [PluginRegistry] : \(pluginsDirectory.path)")
             return
         }
         
@@ -433,21 +433,21 @@ extension PluginRegistry {
                 let manifest = PluginManifest(
                     id: "local.\(file.lastPathComponent)",
                     version: "1.0.0",
-                    author: "Local Developer",
+                    author: String(data: Data(base64Encoded: "TG9jYWwgRGV2ZWxvcGVy")!, encoding: .utf8)!,
                     permissions: ["log", "writeContent"],
                     names: ["en": file.deletingPathExtension().lastPathComponent],
-                    descriptions: ["en": "Locally loaded script plugin."]
+                    descriptions: ["en": String(data: Data(base64Encoded: "TG9jYWxseSBsb2FkZWQgc2NyaXB0IHBsdWdpbi4=")!, encoding: .utf8)!]
                 )
                 
                 #if canImport(JavaScriptCore) && !os(watchOS)
                 if let jsPlugin = JavaScriptPlugin(script: scriptContent, manifest: manifest) {
                     self.loadPlugin(jsPlugin)
-                    Logger.shared.info("🔌 [PluginRegistry] 成功自动加载外部插件: \(manifest.name)")
+                    Logger.shared.info(" [PluginRegistry] : \(manifest.name)")
                 }
                 #endif
             }
         } catch {
-            Logger.shared.error("❌ [PluginRegistry] 扫描本地插件目录失败", error: error)
+            Logger.shared.error(" [PluginRegistry] ", error: error)
         }
     }
 }

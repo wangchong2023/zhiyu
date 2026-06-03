@@ -27,8 +27,8 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
     private var browserDelegate: MCBrowserDelegateImpl?
     
     /// 启动Hosting
-    /// /// - Parameter roomName: roomName
-    /// /// - Parameter userName: userName
+    /// - Parameter roomName: roomName
+    /// - Parameter userName: userName
     func startHosting(roomName: String, userName: String) {
         let peerID = MCPeerID(displayName: "\(userName)|\(UUID().uuidString.prefix(8))")
         self.myPeerID = peerID
@@ -54,7 +54,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
     }
     
     /// 启动Browsing
-    /// /// - Parameter userName: userName
+    /// - Parameter userName: userName
     func startBrowsing(userName: String) {
         let peerID = MCPeerID(displayName: "\(userName)|\(UUID().uuidString.prefix(8))")
         self.myPeerID = peerID
@@ -86,7 +86,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
     }
     
     /// 加入Room
-    /// /// - Parameter room: room
+    /// - Parameter room: room
     func joinRoom(_ room: DiscoveredRoom) {
         guard let session = session, let browser = browser, let targetPeer = room.platformPeer as? MCPeerID else { return }
         browser.invitePeer(targetPeer, to: session, withContext: nil, timeout: 30)
@@ -105,7 +105,7 @@ final class MultipeerCollaborationProvider: NSObject, CollaborationProviderProto
     }
     
     /// broadcast
-    /// /// - Parameter data: data
+    /// - Parameter data: data
     func broadcast(data: Data) {
         guard let session = session, !session.connectedPeers.isEmpty else { return }
         try? session.send(data, toPeers: session.connectedPeers, with: .reliable)

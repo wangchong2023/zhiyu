@@ -87,7 +87,7 @@ extension GraphLayoutProcessor {
                   let tc = tgt.communityID,
                   sc != tc else { continue }
 
-            // 类型不同的跨社区连接更"意外"
+            // 类型不同的跨社区连接更""
             if src.pageType != tgt.pageType {
                 surprising.insert(edge.source)
                 surprising.insert(edge.target)

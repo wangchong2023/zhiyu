@@ -20,6 +20,7 @@ final class DeepLinkTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         service = DeepLinkService()
+        IntentRateLimiter.shared.reset()
     }
     
     override func tearDown() async throws {
@@ -117,7 +118,7 @@ final class DeepLinkTests: XCTestCase {
         // 验证消费挂起的 DeepLink 是否与 Spotlight 的 ID 完全对齐
         let link = service.consumeDeepLink()
         guard case .openPage(let parsedID) = link else {
-            XCTFail("Spotlight 路由无法被正确识别和提取"); return
+            XCTFail("Spotlight 路由无法被正确识别 and 提取"); return
         }
         XCTAssertEqual(parsedID, testUUID)
         
@@ -146,5 +147,51 @@ final class DeepLinkTests: XCTestCase {
             XCTFail("无法安全解析小组件 zhiyu://search 宽限空搜索动作"); return
         }
         XCTAssertTrue(query.isEmpty, "宽限降级后的搜索词应安全设置为空字符串")
+    }
+    
+    // MARK: - 6. 意图总线高并发限流熔断测试 (TC-DEE-06)
+    /// 验证 10Hz 滑动窗口限流器对于外部高频调用/恶意高并发写入的熔断保护机制
+    func testHandleURL_RateLimiterBypassAndBlock() async throws {
+        // 重置限流器状态
+        IntentRateLimiter.shared.reset()
+        
+        let testURL = try XCTUnwrap(URL(string: "zhiyu://chat"))
+        
+        // 1. 连续触发 10 次 handleURL（应当全部允许）
+        for i in 1...10 {
+            XCTAssertTrue(service.handleURL(testURL), "第 \(i) 次调用不应被限流")
+            _ = service.consumeDeepLink()
+        }
+        
+        // 2. 第 11 次调用，应当触发限流直接熔断拒绝
+        XCTAssertFalse(service.handleURL(testURL), "第 11 次调用应当被限流熔断")
+        XCTAssertNil(service.consumeDeepLink())
+        
+        // 3. 高并发测试：启动并发 Task 并发请求，验证限流器的绝对可靠性 (TC-DEE-06)
+        IntentRateLimiter.shared.reset()
+        
+        let concurrencyCount = 20
+        var results: [Bool] = []
+        let lock = NSLock()
+        
+        await withTaskGroup(of: Bool.self) { group in
+            for _ in 0..<concurrencyCount {
+                group.addTask {
+                    return IntentRateLimiter.shared.request()
+                }
+            }
+            for await res in group {
+                lock.lock()
+                results.append(res)
+                lock.unlock()
+            }
+        }
+        
+        // 验证允许的次数恰好等于 10，其余 10 次均被拒绝
+        let allowedCount = results.filter { $0 == true }.count
+        let blockedCount = results.filter { $0 == false }.count
+        
+        XCTAssertEqual(allowedCount, 10, "并发环境下应当仅允许 10 次请求")
+        XCTAssertEqual(blockedCount, 10, "并发环境下应当拦截并拒绝 10 次请求")
     }
 }

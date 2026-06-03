@@ -57,11 +57,16 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         guard configManager.isEnabled, !configManager.apiKey.isEmpty else { throw LLMError.notConfigured }
         let client = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
         let sanitizedPrompt = PromptSanitizer.shared.sanitize(prompt)
+        
+        // 🔒 端侧 NER 脱敏 (SR-12)
+        let (anonSystemPrompt, mapping1) = contextBuilder.anonymize(systemPrompt)
+        let (anonPrompt, mapping) = contextBuilder.anonymize(sanitizedPrompt, existingMapping: mapping1)
+        
         let body: [String: Any] = [
             "model": configManager.model,
             "messages": [
-                ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": sanitizedPrompt]
+                ["role": "system", "content": anonSystemPrompt],
+                ["role": "user", "content": anonPrompt]
             ],
             "temperature": AppConfig.AI.defaultTemperature
         ]
@@ -76,7 +81,9 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         guard let content = LLMUtils.extractContent(from: response) else {
             throw LLMError.invalidResponse
         }
-        return content
+        
+        // 🔓 端侧还原 (SR-12)
+        return contextBuilder.deanonymize(content, mapping: mapping)
     }
     
     /// 执行核心 RAG (检索增强生成) 问答
@@ -103,16 +110,31 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
         let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
   
+        // 🔒 端侧 NER 脱敏 (SR-12)
+        let (anonSystemPrompt, mapping1) = contextBuilder.anonymize(systemPrompt)
+        let (anonQuery, mapping2) = contextBuilder.anonymize(sanitizedQuery, existingMapping: mapping1)
+        
+        var anonHistory: [ChatMessageDTO] = []
+        var currentMapping = mapping2
+        for msg in history {
+            let (anonContent, nextMapping) = contextBuilder.anonymize(msg.content, existingMapping: currentMapping)
+            currentMapping = nextMapping
+            anonHistory.append(ChatMessageDTO(role: msg.role, content: anonContent))
+        }
+        
         // 4. 调用大模型，记录耗时指标并触发 RAG 自评估
         TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.8, stage: .synthesis))
         let startTime = Date()
-        let response = try await chatService.chat(systemPrompt: systemPrompt, query: sanitizedQuery, history: history)
+        let response = try await chatService.chat(systemPrompt: anonSystemPrompt, query: anonQuery, history: anonHistory)
         let latency = Int(Date().timeIntervalSince(startTime) * 1000)
  
-        analytics.recordRAGMetrics(query: sanitizedQuery, response: response, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: latency)
+        // 🔓 端侧还原 (SR-12)
+        let deanonymizedResponse = contextBuilder.deanonymize(response, mapping: currentMapping)
+        
+        analytics.recordRAGMetrics(query: sanitizedQuery, response: deanonymizedResponse, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: latency)
         
         TaskCenter.shared.completeTask(id: taskID)
-        return ChatMessageDTO(role: .assistant, content: response)
+        return ChatMessageDTO(role: .assistant, content: deanonymizedResponse)
     }
     
     /// 执行基于 AsyncStream 的高性能流式打字机问答
@@ -144,20 +166,111 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                     let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
                     let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
  
+                    // 🔒 端侧 NER 脱敏 (SR-12)
+                    let (anonSystemPrompt, mapping1) = contextBuilder.anonymize(systemPrompt)
+                    let (anonQuery, mapping2) = contextBuilder.anonymize(sanitizedQuery, existingMapping: mapping1)
+                    
+                    var anonHistory: [ChatMessageDTO] = []
+                    var currentMapping = mapping2
+                    for msg in history {
+                        let (anonContent, nextMapping) = contextBuilder.anonymize(msg.content, existingMapping: currentMapping)
+                        currentMapping = nextMapping
+                        anonHistory.append(ChatMessageDTO(role: msg.role, content: anonContent))
+                    }
+
                     var fullResponse = ""
+                    // 初始化流式解码器
+                    var deanonymizer = StreamDeanonymizer(mapping: currentMapping)
+                    
                     // 3. 消费打字机流片段
-                    for try await chunk in chatService.streamChat(systemPrompt: systemPrompt, query: sanitizedQuery, history: history) {
+                    for try await chunk in chatService.streamChat(systemPrompt: anonSystemPrompt, query: anonQuery, history: anonHistory) {
                         fullResponse += chunk
-                        continuation.yield(chunk)
+                        
+                        // 🔓 流式端侧解密还原 (SR-12)
+                        let processedChunk = deanonymizer.process(chunk: chunk)
+                        if !processedChunk.isEmpty {
+                            continuation.yield(processedChunk)
+                        }
+                    }
+                    
+                    let finalChunk = deanonymizer.finalize()
+                    if !finalChunk.isEmpty {
+                        continuation.yield(finalChunk)
                     }
  
-                    // 4. 异步归档 RAG 精准度元数据以做治理评估
-                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullResponse, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: 0)
+                    // 4. 异步归档 RAG 精准度元数据以做治理评估，保存完整的原文以作归档
+                    let fullDeanonymizedResponse = contextBuilder.deanonymize(fullResponse, mapping: currentMapping)
+                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullDeanonymizedResponse, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: 0)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
             }
         }
+    }
+}
+
+// MARK: - Stream Deanonymizer
+
+/// 专属流式端侧解密还原器，负责在拼装出完整 [ENTITY_X] 占位符后，实时还原并输出 (SR-12)
+struct StreamDeanonymizer: Sendable {
+    private var buffer = ""
+    private let mapping: [String: String]
+    
+    init(mapping: [String: String]) {
+        self.mapping = mapping
+    }
+    
+    /// 处理
+    /// /// - Parameter chunk: 分块
+    /// /// - Returns: 字符串
+    mutating func process(chunk: String) -> String {
+        var output = ""
+        let text = buffer + chunk
+        buffer = ""
+        
+        var currentIndex = text.startIndex
+        while currentIndex < text.endIndex {
+            // 查找潜在占位符的起始标识 '['
+            if let openBracketRange = text[currentIndex...].range(of: "[") {
+                // 先把 '[' 之前的常规文本直接输出
+                output += text[currentIndex..<openBracketRange.lowerBound]
+                
+                // 查找对应的结束标识 ']'
+                if let closeBracketRange = text[openBracketRange.upperBound...].range(of: "]") {
+                    let placeholder = String(text[openBracketRange.lowerBound..<closeBracketRange.upperBound])
+                    if let original = mapping[placeholder] {
+                        output += original
+                    } else {
+                        // 如果映射中没有，说明是非敏感占位符，直接输出
+                        output += placeholder
+                    }
+                    currentIndex = closeBracketRange.upperBound
+                } else {
+                    // 没找到 ']'，说明可能占位符被分包切断了，剩下的缓存入 buffer
+                    let remaining = String(text[openBracketRange.lowerBound...])
+                    if remaining.count > 25 {
+                        // 如果长度过长（如超过 25 字符），说明这不是一个合法的实体占位符，输出前段
+                        output += String(remaining.prefix(remaining.count - 10))
+                        buffer = String(remaining.suffix(10))
+                    } else {
+                        buffer = remaining
+                    }
+                    break
+                }
+            } else {
+                // 没有包含任何 '['，直接整体输出
+                output += text[currentIndex...]
+                break
+            }
+        }
+        return output
+    }
+    
+    /// finalize
+    /// /// - Returns: 字符串
+    mutating func finalize() -> String {
+        let remaining = buffer
+        return remaining
     }
 }

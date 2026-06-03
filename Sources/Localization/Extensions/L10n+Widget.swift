@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Platform"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { Localized.tr("widget.title", table: t) }
         public static var pages: String { Localized.tr("widget.pages", table: t) }
@@ -28,8 +28,8 @@ extension L10n {
         public static var knowledgeCompile: String { Localized.tr("widget.knowledgeCompile", table: t) }
 
         /// pages
-        /// /// - Parameter n: n
-        /// /// - Returns: 字符串
+        /// - Parameter n: n
+        /// - Returns: 字符串
         public static func pages(_ n: Int) -> String { Localized.trf("pagesCount", table: t, n) }
     }
 }

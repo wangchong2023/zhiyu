@@ -72,11 +72,11 @@ protocol PluginContext {
     var hostVersion: String { get }
 
     /// 记录日志
-    /// /// - Parameter message: message
+    /// - Parameter message: message
     func log(_ message: String)
 
     /// 请求AIAccess
-    /// /// - Parameter prompt: prompt
+    /// - Parameter prompt: prompt
     func requestAIAccess(prompt: String) async -> String?
 
     /// queryPages
@@ -185,12 +185,12 @@ protocol InterceptionPlugin: KnowledgePlugin {
 protocol AnalyticsServiceProtocol: AnyObject {
 
     /// 追踪Event
-    /// /// - Parameter name: name
-    /// /// - Parameter properties: properties
+    /// - Parameter name: name
+    /// - Parameter properties: properties
     func trackEvent(_ name: String, properties: [String: Any]?)
 
     /// 追踪Error
-    /// /// - Parameter error: error
-    /// /// - Parameter details: details
+    /// - Parameter error: error
+    /// - Parameter details: details
     func trackError(_ error: Error, details: String?)
 }

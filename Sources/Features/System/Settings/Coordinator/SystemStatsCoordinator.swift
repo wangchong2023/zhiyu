@@ -191,7 +191,7 @@ final class SystemStatsCoordinator {
             haptic.trigger(.success)
             await loadStats() // 刷新统计
         } catch {
-            logger.error("❌ [SystemStats] 数据清理失败", error: error)
+            logger.error("[SystemStats] Data_cleanup_failed", error: error)
         }
         isCleaning = false
     }

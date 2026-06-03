@@ -17,4 +17,5 @@ extension Notification.Name {
     static let toggleDisplayMode = Notification.Name("toggleDisplayMode")
     static let importFromClipboard = Notification.Name("importFromClipboard")
     static let languageChanged = Notification.Name("languageChanged")
+    static let vaultWillSwitch = Notification.Name("vaultWillSwitch")
 }

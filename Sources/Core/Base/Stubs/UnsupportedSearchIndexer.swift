@@ -14,11 +14,11 @@ import Foundation
 final class UnsupportedSearchIndexer: SearchIndexerProtocol, Sendable {
 
     /// 索引Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     func indexPage(_ page: KnowledgePage) {}
 
     /// 索引Pages
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func indexPages(_ pages: [KnowledgePage]) {}
 
     /// 移除索引
@@ -28,6 +28,6 @@ final class UnsupportedSearchIndexer: SearchIndexerProtocol, Sendable {
     func deindexAll() {}
 
     /// reindexAll
-    /// /// - Parameter pages: pages
+    /// - Parameter pages: pages
     func reindexAll(pages: [KnowledgePage]) {}
 }

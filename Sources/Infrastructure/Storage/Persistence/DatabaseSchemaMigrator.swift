@@ -1,0 +1,261 @@
+//
+//  DatabaseSchemaMigrator.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/01.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：提供专属笔记本与全局共享库的架构升级与迁移逻辑（抽取自 DatabaseManager，改用 Model 类型安全常量）。
+//
+
+import Foundation
+import GRDB
+
+extension DatabaseManager {
+    
+    // MARK: - 专属笔记本库迁移方案 (DatabaseMigrator)
+    
+    /// 专属笔记本数据库对应的渐进式架构迁移器。
+    var migrator: DatabaseMigrator {
+        var migrator = DatabaseMigrator()
+        
+        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
+        #if DEBUG
+        if !isInTesting {
+            migrator.eraseDatabaseOnSchemaChange = true
+        }
+        #endif
+
+        // V1: 初始工业化架构 - 全表审计标准化
+        migrator.registerMigration("v1_initial_schema") { db in
+            // 1. 核心知识页面主表
+            try db.create(table: KnowledgePage.databaseTableName) { t in
+                t.column(KnowledgePage.Columns.id.rawValue, .blob).primaryKey()
+                t.column(KnowledgePage.Columns.title.rawValue, .text).notNull().unique()
+                t.column(KnowledgePage.Columns.pageType.rawValue, .text).notNull().indexed()
+                t.column(KnowledgePage.Columns.content.rawValue, .text).notNull()
+                t.column(KnowledgePage.Columns.aliases.rawValue, .text) // JSON 字符串数组
+                t.column(KnowledgePage.Columns.tags.rawValue, .text)    // JSON 字符串数组
+                t.column(KnowledgePage.Columns.status.rawValue, .text).notNull().defaults(to: "active")
+                t.column(KnowledgePage.Columns.confidence.rawValue, .text).notNull().defaults(to: "medium")
+                t.column(KnowledgePage.Columns.sources.rawValue, .text) // JSON 引用数据
+                t.column(KnowledgePage.Columns.relatedPageIDs.rawValue, .text) // JSON 关联的 UUID 数组
+                t.column(KnowledgePage.Columns.isPinned.rawValue, .boolean).notNull().defaults(to: false)
+                t.column(KnowledgePage.Columns.contentHash.rawValue, .text)
+                t.column(KnowledgePage.Columns.customIcon.rawValue, .text)
+                t.column(KnowledgePage.Columns.sourceURL.rawValue, .text)
+                t.column(KnowledgePage.Columns.rawTextSnippet.rawValue, .text)
+                t.column(KnowledgePage.Columns.fileSize.rawValue, .integer)
+                t.column(KnowledgePage.Columns.sourceType.rawValue, .text)
+                t.column(KnowledgePage.Columns.lamportTimestamp.rawValue, .integer).notNull().defaults(to: 0)
+                t.column(KnowledgePage.Columns.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(KnowledgePage.Columns.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 2. 知识图谱双向链接映射表 (物理 ID 级强关联)
+            try db.create(table: PageLink.databaseTableName) { t in
+                t.column(PageLink.Columns.sourceID.name, .blob).notNull().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade)
+                t.column(PageLink.Columns.targetID.name, .blob).notNull().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade).indexed()
+                t.column(PageLink.Columns.context.name, .text)
+                t.column(PageLink.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+                t.primaryKey([PageLink.Columns.sourceID.name, PageLink.Columns.targetID.name])
+            }
+
+            // 3. 语义块切片表 (RAG 核心承载)
+            try db.create(table: PageChunk.databaseTableName) { t in
+                t.column(PageChunk.Columns.id.name, .text).primaryKey()
+                t.column(PageChunk.Columns.pageID.name, .blob).notNull().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade)
+                t.column(PageChunk.Columns.parentID.name, .text).references(PageChunk.databaseTableName, column: PageChunk.Columns.id.name, onDelete: .cascade)
+                t.column(PageChunk.Columns.chunkType.name, .text).notNull()
+                t.column(PageChunk.Columns.content.name, .text).notNull()
+                t.column(PageChunk.Columns.anchorPath.name, .text) // 页面内具体语义锚点 Markdown Header 路径
+                t.column(PageChunk.Columns.index.name, .integer).notNull()
+                t.column(PageChunk.Columns.embedding.name, .blob)
+                t.column(PageChunk.Columns.startIndex.name, .integer)
+                t.column(PageChunk.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+                t.column(PageChunk.Columns.updatedAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 4. 页面层级高维稠密向量映射表
+            try db.create(table: PageEmbedding.databaseTableName) { t in
+                t.column(PageEmbedding.Columns.id.name, .blob).primaryKey().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade)
+                t.column(PageEmbedding.Columns.vector.name, .blob).notNull()
+                t.column(PageEmbedding.Columns.modelName.name, .text).notNull()
+                t.column(PageEmbedding.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+                t.column(PageEmbedding.Columns.updatedAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 5. 合规治理与 AI 资源开销审计表
+            try db.create(table: TokenUsage.databaseTableName) { t in
+                t.autoIncrementedPrimaryKey(TokenUsage.Columns.id.name)
+                t.column(TokenUsage.Columns.model.name, .text).notNull()
+                t.column(TokenUsage.Columns.promptTokens.name, .integer).notNull()
+                t.column(TokenUsage.Columns.completionTokens.name, .integer).notNull()
+                t.column(TokenUsage.Columns.totalTokens.name, .integer).notNull()
+                t.column(TokenUsage.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: LLMCallLog.databaseTableName) { t in
+                t.autoIncrementedPrimaryKey(LLMCallLog.Columns.id.name)
+                t.column(LLMCallLog.Columns.model.name, .text).notNull()
+                t.column(LLMCallLog.Columns.promptTokens.name, .integer).notNull()
+                t.column(LLMCallLog.Columns.completionTokens.name, .integer).notNull()
+                t.column(LLMCallLog.Columns.latencyMS.name, .integer).notNull()
+                t.column(LLMCallLog.Columns.status.name, .text).notNull()
+                t.column(LLMCallLog.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            try db.create(table: RAGEvaluation.databaseTableName) { t in
+                t.autoIncrementedPrimaryKey(RAGEvaluation.Columns.id.name)
+                t.column(RAGEvaluation.Columns.query.name, .text).notNull()
+                t.column(RAGEvaluation.Columns.answer.name, .text).notNull()
+                t.column(RAGEvaluation.Columns.faithfulness.name, .double).notNull()
+                t.column(RAGEvaluation.Columns.relevance.name, .double).notNull()
+                t.column(RAGEvaluation.Columns.precision.name, .double).notNull()
+                t.column(RAGEvaluation.Columns.evaluatorModel.name, .text).notNull()
+                t.column(RAGEvaluation.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 6. 自动化物理审计时间戳更新触发器
+            try db.execute(sql: """
+                CREATE TRIGGER trigger_update_pages_timestamp
+                AFTER UPDATE ON \(KnowledgePage.databaseTableName)
+                BEGIN
+                    UPDATE \(KnowledgePage.databaseTableName) SET \(KnowledgePage.Columns.updatedAt.rawValue) = CURRENT_TIMESTAMP WHERE \(KnowledgePage.Columns.id.rawValue) = OLD.\(KnowledgePage.Columns.id.rawValue);
+                END;
+            """)
+        }
+
+        // V2: SQLite 内嵌混合倒排高性能检索 (FTS5 搜索引擎)
+        migrator.registerMigration("v2_fts_initial") { db in
+            try db.execute(sql: """
+                CREATE VIRTUAL TABLE \(KnowledgePageFTS.databaseTableName) USING fts5(
+                    \(KnowledgePageFTS.Columns.id.name) UNINDEXED, \(KnowledgePageFTS.Columns.title.name), \(KnowledgePageFTS.Columns.content.name), \(KnowledgePageFTS.Columns.tags.name), \(KnowledgePageFTS.Columns.aliases.name),
+                    content='\(KnowledgePage.databaseTableName)'
+                )
+            """)
+            try db.execute(sql: """
+                CREATE TRIGGER pages_ai AFTER INSERT ON \(KnowledgePage.databaseTableName) BEGIN
+                    INSERT INTO \(KnowledgePageFTS.databaseTableName)(\(KnowledgePageFTS.Columns.id.name), \(KnowledgePageFTS.Columns.title.name), \(KnowledgePageFTS.Columns.content.name), \(KnowledgePageFTS.Columns.tags.name), \(KnowledgePageFTS.Columns.aliases.name))
+                    VALUES (new.\(KnowledgePage.Columns.id.rawValue), new.\(KnowledgePage.Columns.title.rawValue), new.\(KnowledgePage.Columns.content.rawValue), new.\(KnowledgePage.Columns.tags.rawValue), new.\(KnowledgePage.Columns.aliases.rawValue));
+                END;
+            """)
+            try db.execute(sql: """
+                CREATE TRIGGER pages_ad AFTER DELETE ON \(KnowledgePage.databaseTableName) BEGIN
+                    INSERT INTO \(KnowledgePageFTS.databaseTableName)(\(KnowledgePageFTS.databaseTableName), \(KnowledgePageFTS.Columns.id.name), \(KnowledgePageFTS.Columns.title.name), \(KnowledgePageFTS.Columns.content.name), \(KnowledgePageFTS.Columns.tags.name), \(KnowledgePageFTS.Columns.aliases.name))
+                    VALUES ('delete', old.\(KnowledgePage.Columns.id.rawValue), old.\(KnowledgePage.Columns.title.rawValue), old.\(KnowledgePage.Columns.content.rawValue), old.\(KnowledgePage.Columns.tags.rawValue), old.\(KnowledgePage.Columns.aliases.rawValue));
+                END;
+            """)
+            try db.execute(sql: """
+                CREATE TRIGGER pages_au AFTER UPDATE ON \(KnowledgePage.databaseTableName) BEGIN
+                    INSERT INTO \(KnowledgePageFTS.databaseTableName)(\(KnowledgePageFTS.databaseTableName), \(KnowledgePageFTS.Columns.id.name), \(KnowledgePageFTS.Columns.title.name), \(KnowledgePageFTS.Columns.content.name), \(KnowledgePageFTS.Columns.tags.name), \(KnowledgePageFTS.Columns.aliases.name))
+                    VALUES ('delete', old.\(KnowledgePage.Columns.id.rawValue), old.\(KnowledgePage.Columns.title.rawValue), old.\(KnowledgePage.Columns.content.rawValue), old.\(KnowledgePage.Columns.tags.rawValue), old.\(KnowledgePage.Columns.aliases.rawValue));
+                    INSERT INTO \(KnowledgePageFTS.databaseTableName)(\(KnowledgePageFTS.Columns.id.name), \(KnowledgePageFTS.Columns.title.name), \(KnowledgePageFTS.Columns.content.name), \(KnowledgePageFTS.Columns.tags.name), \(KnowledgePageFTS.Columns.aliases.name))
+                    VALUES (new.\(KnowledgePage.Columns.id.rawValue), new.\(KnowledgePage.Columns.title.rawValue), new.\(KnowledgePage.Columns.content.rawValue), new.\(KnowledgePage.Columns.tags.rawValue), new.\(KnowledgePage.Columns.aliases.rawValue));
+                END;
+            """)
+        }
+
+        // V3: 标签存储范式化与检索性能提速 (Tags DIP 范式)
+        migrator.registerMigration("v3_tag_normalization") { db in
+            // 1. 创建标签字典表
+            try db.create(table: TagRecord.databaseTableName) { t in
+                t.column(TagRecord.CodingKeys.id.rawValue, .text).primaryKey() // 使用标签文本作为主键 ID
+                t.column(TagRecord.CodingKeys.name.rawValue, .text).notNull().unique()
+                t.column(TagRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 2. 创建页面-标签多对多关联关联表
+            try db.create(table: PageTagRecord.databaseTableName) { t in
+                t.column(PageTagRecord.CodingKeys.pageID.rawValue, .blob).notNull().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade)
+                t.column(PageTagRecord.CodingKeys.tagID.rawValue, .text).notNull().references(TagRecord.databaseTableName, column: TagRecord.CodingKeys.id.rawValue, onDelete: .cascade)
+                t.primaryKey([PageTagRecord.CodingKeys.pageID.rawValue, PageTagRecord.CodingKeys.tagID.rawValue])
+            }
+
+            // 3. 历史存量数据平滑迁移：从 pages.tags JSON 字符串中解离出独立 Tag 实物
+            let rows = try Row.fetchAll(db, sql: "SELECT \(KnowledgePage.Columns.id.rawValue)," + " \(KnowledgePage.Columns.tags.rawValue)" + " FROM \(KnowledgePage.databaseTableName)")
+            for row in rows {
+                let pageID: Data = row[KnowledgePage.Columns.id.rawValue]
+                let tagsJSON: String? = row[KnowledgePage.Columns.tags.rawValue]
+                if let data = tagsJSON?.data(using: .utf8),
+                   let tags = try? JSONDecoder().decode([String].self, from: data) {
+                     for tagName in tags {
+                         // 建立基础标签记录 (如存在则忽略)
+                         try db.execute(sql: "INSERT OR" + " IGNORE INTO" + " \(TagRecord.databaseTableName)" + " (\(TagRecord.CodingKeys.id.rawValue)," + " \(TagRecord.CodingKeys.name.rawValue)," + " \(TagRecord.CodingKeys.createdAt.rawValue))" + " VALUES (?," + " ?, ?)", arguments: [tagName, tagName, Date()])
+                         // 绑定多对多关联
+                         try db.execute(sql: "INSERT OR" + " IGNORE INTO" + " \(PageTagRecord.databaseTableName)" + " (\(PageTagRecord.CodingKeys.pageID.rawValue)," + " \(PageTagRecord.CodingKeys.tagID.rawValue))" + " VALUES (?," + " ?)", arguments: [pageID, tagName])
+                     }
+                }
+            }
+        }
+
+        // V4: 增加 SRS 间隔重复算法元数据表 (@P1: 促进卡片知识内化吸收)
+        migrator.registerMigration("v4_srs_metadata") { db in
+            try db.create(table: SRSMetadataRecord.databaseTableName) { t in
+                t.column(SRSMetadataRecord.CodingKeys.pageID.rawValue, .blob).primaryKey().references(KnowledgePage.databaseTableName, column: KnowledgePage.Columns.id.rawValue, onDelete: .cascade)
+                t.column(SRSMetadataRecord.CodingKeys.easeFactor.rawValue, .double).notNull().defaults(to: AppConstants.Storage.defaultEaseFactor)
+                t.column(SRSMetadataRecord.CodingKeys.repetitions.rawValue, .integer).notNull().defaults(to: 0)
+                t.column(SRSMetadataRecord.CodingKeys.reviewInterval.rawValue, .integer).notNull().defaults(to: 0)
+                t.column(SRSMetadataRecord.CodingKeys.nextReviewAt.rawValue, .datetime).notNull().indexed()
+                t.column(SRSMetadataRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(SRSMetadataRecord.CodingKeys.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+        }
+
+        return migrator
+    }
+
+    // MARK: - 全局数据库迁移方案 (DatabaseMigrator)
+    
+    /// 全局数据库对应的架构迁移器。
+    var globalMigrator: DatabaseMigrator {
+        var migrator = DatabaseMigrator()
+        
+        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
+        #if DEBUG
+        if !isInTesting {
+            migrator.eraseDatabaseOnSchemaChange = true
+        }
+        #endif
+        
+        migrator.registerMigration("v1_global_schema") { db in
+            // 1. 笔记本元数据主表：托管所有多笔记本卡片信息
+            try db.create(table: VaultRecord.databaseTableName) { t in
+                t.column(VaultRecord.CodingKeys.id.rawValue, .text).primaryKey() // 使用 UUID 字符串
+                t.column(VaultRecord.CodingKeys.name.rawValue, .text).notNull()
+                t.column(VaultRecord.CodingKeys.path.rawValue, .text).notNull()
+                t.column(VaultRecord.CodingKeys.icon.rawValue, .text)
+                t.column(VaultRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(VaultRecord.CodingKeys.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(VaultRecord.CodingKeys.lastAccessedAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+            
+            // 2. 物理文件防篡改 HMAC 完整性指纹表：取代原 UserDefaults 强寄生
+            try db.create(table: FileSignatureRecord.databaseTableName) { t in
+                t.column(FileSignatureRecord.Columns.filePath.name, .text).primaryKey()
+                t.column(FileSignatureRecord.Columns.signature.name, .text).notNull()
+                t.column(FileSignatureRecord.Columns.salt.name, .text).notNull()
+                t.column(FileSignatureRecord.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+                t.column(FileSignatureRecord.Columns.updatedAt.name, .datetime).notNull().defaults(to: Date())
+            }
+            
+            // 3. 全局设置表：系统级全局偏好持久化
+            try db.create(table: GlobalSettingRecord.databaseTableName) { t in
+                t.column(GlobalSettingRecord.CodingKeys.key.rawValue, .text).primaryKey()
+                t.column(GlobalSettingRecord.CodingKeys.value.rawValue, .text).notNull()
+                t.column(GlobalSettingRecord.CodingKeys.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+            
+            // 4. 全局安全及 Token 损耗审计日志表
+            try db.create(table: AuditLogRecord.databaseTableName) { t in
+                t.autoIncrementedPrimaryKey(AuditLogRecord.CodingKeys.id.rawValue)
+                t.column(AuditLogRecord.CodingKeys.action.rawValue, .text).notNull()
+                t.column(AuditLogRecord.CodingKeys.details.rawValue, .text)
+                t.column(AuditLogRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+            }
+        }
+        
+        return migrator
+    }
+}

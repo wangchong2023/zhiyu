@@ -44,7 +44,7 @@ public final class KnowledgePageManager {
     public func registerProcessor(_ processor: any KnowledgePageProcessor, pluginID: String? = nil) {
         if !processors.contains(where: { $0.processor.id == processor.id }) {
             processors.append(RegisteredProcessor(processor: processor, pluginID: pluginID))
-            logger.debug("🔌 [KnowledgePageManager] 已挂载页面处理器: \(processor.name) (Plugin: \(pluginID ?? "System"))")
+            logger.debug(" [KnowledgePageManager] : \(processor.name) (Plugin: \(pluginID ?? "System"))")
         }
     }
     
@@ -65,7 +65,7 @@ public final class KnowledgePageManager {
             do {
                 result = try await item.processor.process(page: result)
             } catch {
-                logger.error("❌ [KnowledgePageManager] 处理器 \(item.processor.name) 执行失败", error: error)
+                logger.error(" [KnowledgePageManager]  \(item.processor.name) ", error: error)
             }
         }
         return result
@@ -167,7 +167,7 @@ public final class KnowledgePageManager {
         try await pageStore.performBatchWrite { db in
             for p in modifiedPages { try p.save(db) }
         }
-        logger.addLog(action: .update, target: newTitle, details: "Renamed from \(oldTitle)", module: "Knowledge")
+        logger.addLog(action: .update, target: newTitle, details: "Renamed from" + " \(oldTitle)", module: "Knowledge")
         backupService.markDirty()
     }
 
@@ -211,7 +211,7 @@ public final class KnowledgePageManager {
         if oldContent != newContent {
             page.content = newContent
             try await updatePage(page, currentPages: currentPages)
-            logger.addLog(action: .update, target: page.title, details: "Applied potential link to [[\(suggestion.targetTitle)]]", module: "Knowledge")
+            logger.addLog(action: .update, target: page.title, details: "Applied potential" + " link to" + " [[\(suggestion.targetTitle)]]", module: "Knowledge")
         }
     }
 

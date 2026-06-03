@@ -42,10 +42,8 @@ public struct AppAILoadingSkeleton: View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             // 1. 顶部状态标签
             HStack(spacing: DesignSystem.small) {
-                Circle()
-                    .fill(stageColor)
-                    .frame(width: 6, height: 6)
-                    .modifier(PulsingDot(delay: 0))
+                AppLottieView(name: "ai_thinking")
+                    .frame(width: 24, height: 24)
                 
                 Text(stageText)
                     .font(.caption2.weight(.bold))
@@ -70,7 +68,6 @@ public struct AppAILoadingSkeleton: View {
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
                 .stroke(stageColor.opacity(0.1), lineWidth: 1)
         )
-        .accessibilityHidden(true)
     }
     
     private func skeletonRow(widthRatio: CGFloat) -> some View {

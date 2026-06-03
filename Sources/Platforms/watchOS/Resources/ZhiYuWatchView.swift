@@ -105,7 +105,7 @@ struct WatchKnowledgeStatsView: View {
     
     /// 将字数格式化为更易读的字符串形式
     /// - Parameter n: 原始字数
-    /// - Returns: 格式化后的显示字符串（例如 "2.5万"、"1.5k"、"500"）
+    /// - Returns: 格式化后的显示字符串（例如 "2.5"、"1.5k"、"500"）
     func formatNumber(_ n: Int) -> String {
         if n >= 10000 {
             return String(format: "%.1f" + L.tr("watch.tenThousand"), Double(n) / 10000.0)
@@ -120,14 +120,14 @@ struct WatchKnowledgeStatsView: View {
 enum L {
 
     /// 本地化翻译
-    /// /// - Parameter key: key
-    /// /// - Returns: 返回值
+    /// - Parameter key: key
+    /// - Returns: 返回值
     static func tr(_ key: String) -> String {
         let table: [String: String] = [
-            "watch.pages": "页面",
-            "watch.words": "字",
-            "watch.recentUpdates": "最近更新",
-            "watch.tenThousand": "万",
+            "watch.pages": "",
+            "watch.words": "",
+            "watch.recentUpdates": "",
+            "watch.tenThousand": "",
         ]
         return table[key] ?? key
     }

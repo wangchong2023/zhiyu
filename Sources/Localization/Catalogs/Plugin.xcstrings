@@ -727,7 +727,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.action.confirmInstall"
+            "value": "确认安装插件"
           }
         }
       }
@@ -795,7 +795,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.commands.title"
+            "value": "插件指令"
           }
         }
       }
@@ -1050,7 +1050,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.perm.none"
+            "value": "无特殊权限"
           }
         }
       }
@@ -1084,7 +1084,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.title"
+            "value": "插件授权申请"
           }
         }
       }
@@ -1237,7 +1237,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.section.pluginSettings"
+            "value": "插件设置"
           }
         }
       }
@@ -1271,7 +1271,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.section.ribbon"
+            "value": "快捷功能区"
           }
         }
       }
@@ -1663,6 +1663,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "存储键名超过最大长度限制 (%d 字符)"
+          }
+        }
+      }
+    },
+    "plugin.section.description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "功能描述"
+          }
+        }
+      }
+    },
+    "permission.sandboxDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.sandboxDesc "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.sandboxDesc"
+          }
+        }
+      }
+    },
+    "permission.networkAccessDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.networkAccessDesc "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.networkAccessDesc"
+          }
+        }
+      }
+    },
+    "permission.modifyKnowledgeDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.modifyKnowledgeDesc "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.modifyKnowledgeDesc"
+          }
+        }
+      }
+    },
+    "permission.requestPermission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.requestPermission "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "permission.requestPermission"
+          }
+        }
+      }
+    },
+    "plugin.permission.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plugin.permission.message "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plugin.permission.message"
           }
         }
       }

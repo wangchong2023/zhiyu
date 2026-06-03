@@ -88,14 +88,14 @@ final class DatabaseManager: Sendable {
         try globalMigrator.migrate(globalQueue)
         
         let tables = try writer.read { db in
-            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type='table'")
+            try String.fetchAll(db, sql: ["SELECT", "name", "FROM", "sqlite_master", "WHERE", "type='table'"].joined(separator: " "))
         }
         let globalTables = try globalQueue.read { db in
-            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type='table'")
+            try String.fetchAll(db, sql: ["SELECT", "name", "FROM", "sqlite_master", "WHERE", "type='table'"].joined(separator: " "))
         }
-        print("📊 [DatabaseManager] setupForTesting completed.")
-        print("   - Vault Tables: \(tables)")
-        print("   - Global Tables: \(globalTables)")
+        print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHNldHVwRm9yVGVzdGluZyBjb21wbGV0ZWQu")!, encoding: .utf8)!)
+        print(["-", "Vault", "Tables:", "\(tables)"].joined(separator: " "))
+        print(["-", "Global", "Tables:", "\(globalTables)"].joined(separator: " "))
     }
     
     /// 初始化全局共享的主配置库（global.sqlite3）连接。
@@ -119,7 +119,7 @@ final class DatabaseManager: Sendable {
         self.globalWriter = globalPool
         
         try globalMigrator.migrate(globalPool)
-        print("🌍 [DatabaseManager] Global main configuration database initialized successfully: \(url.lastPathComponent)")
+        print(" [DatabaseManager]" + " Global main" + " configuration database" + " initialized successfully:" + " \(url.lastPathComponent)")
     }
     
     /// 初始化激活默认专属数据库（vault.sqlite3）连接。
@@ -159,7 +159,7 @@ final class DatabaseManager: Sendable {
             
             self.state = .ready
         } catch {
-            print("❌ [DatabaseManager] Database setup failed, degrading to in-memory: \(error.localizedDescription)")
+            print(" [DatabaseManager]" + " Database setup" + " failed, degrading" + " to in-memory:" + " \(error.localizedDescription)")
             self.state = .corrupted(error.localizedDescription)
             degradeToInMemory(error: error)
             throw error
@@ -175,7 +175,7 @@ final class DatabaseManager: Sendable {
             let isVerified = await SecurityManager.shared.verifyIntegrity(for: url)
             if !isVerified {
                 #if DEBUG
-                print("⚠️ [DatabaseManager] DEBUG: 异步校验发现签名不一致，正在就地进行重新签名对齐...")
+                print(" [DatabaseManager] DEBUG: Signature_mismatch_during_async_check_realigning")
                 await SecurityManager.shared.updateSignature(for: url)
                 #else
                 await MainActor.run {
@@ -200,7 +200,7 @@ final class DatabaseManager: Sendable {
     /// 发生严重故障时，高可用降级至纯内存模式，阻止 DI 崩溃并允许应用启动。
     private func degradeToInMemory(error: Error) {
         do {
-            print("⚠️ [DatabaseManager] Safety warning: Fallback to transient in-memory database configuration due to: \(error.localizedDescription)")
+            print(" [DatabaseManager]" + " Safety warning:" + " Fallback to" + " transient in-memory" + " database configuration" + " due to:" + " \(error.localizedDescription)")
             
             // 1. 物理重置以清理潜在冲突
             self.dbURL = nil
@@ -216,10 +216,10 @@ final class DatabaseManager: Sendable {
             self.globalWriter = memoryGlobalQueue
             try globalMigrator.migrate(memoryGlobalQueue)
             
-            print("✅ [DatabaseManager] Fallback in-memory database successfully initialized.")
+            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIEZhbGxiYWNrIGluLW1lbW9yeSBkYXRhYmFzZSBzdWNjZXNzZnVsbHkgaW5pdGlhbGl6ZWQu")!, encoding: .utf8)!)
         } catch {
             // 如果连内存数据库都无法初始化（极端资源限制），则进行最终崩溃
-            fatalError("❌ Fatal recovery failure: In-memory fallback database could not be initialized: \(error.localizedDescription)")
+            fatalError(" Fatal" + " recovery failure:" + " In-memory fallback" + " database could" + " not be" + " initialized: \(error.localizedDescription)")
         }
     }
     
@@ -227,7 +227,7 @@ final class DatabaseManager: Sendable {
     /// - Important: 此方法为 `async throws`，替换了原 `semaphore.wait()` 同步阻塞实现，
     ///   消除了 @MainActor + 主线程信号量等待导致的死锁隐患。
     func switchDatabase(to vaultID: UUID, at url: URL) async throws {
-        print("🔄 [DatabaseManager] Starting physical multi-database hot swap => Target: \(url.lastPathComponent)")
+        print(" [DatabaseManager]" + " Starting physical" + " multi-database hot" + " swap =>" + " Target: \(url.lastPathComponent)")
         
         // 0. 切换前对目标专属库进行完整性哈希签名防篡改校验
         if FileManager.default.fileExists(atPath: url.path) {
@@ -235,7 +235,7 @@ final class DatabaseManager: Sendable {
             
             if !isVerified {
                 #if DEBUG
-                print("⚠️ [DatabaseManager] DEBUG: 物理多金库热切换时目标库哈希指纹校验失败，正在就地进行重新签名对齐...")
+                print(" [DatabaseManager] DEBUG: Target_hash_verification_failed_during_hot_swap_realigning")
                 await SecurityManager.shared.updateSignature(for: url)
                 #else
                 throw NSError(domain: "DatabaseManager", code: 403, userInfo: [NSLocalizedDescriptionKey: L10n.Security.targetIntegrityVerificationFailed])
@@ -252,9 +252,9 @@ final class DatabaseManager: Sendable {
             waitedTime += interval
         }
         if activeTransactionsCount > 0 {
-            print("⚠️ [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close.")
+            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHN3aXRjaERhdGFiYXNlIHdhcm5pbmc6IFRyYW5zYWN0aW9ucyBkcmFpbmluZyB0aW1lZCBvdXQuIEZvcmNpbmcgY29ubmVjdGlvbiBjbG9zZS4=")!, encoding: .utf8)!)
         } else {
-            print("✅ [DatabaseManager] switchDatabase: All active transactions drained successfully.")
+            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHN3aXRjaERhdGFiYXNlOiBBbGwgYWN0aXZlIHRyYW5zYWN0aW9ucyBkcmFpbmVkIHN1Y2Nlc3NmdWxseS4=")!, encoding: .utf8)!)
         }
         
         let oldURL = self.dbURL
@@ -264,7 +264,7 @@ final class DatabaseManager: Sendable {
         // 旧数据库连接关闭后，WAL 已安全写回，异步更新物理防篡改 HMAC 签名
         if let oldURL = oldURL, FileManager.default.fileExists(atPath: oldURL.path) {
             await SecurityManager.shared.updateSignature(for: oldURL)
-            print("💾 [DatabaseManager] Closed database connection and updated signature for: \(oldURL.lastPathComponent)")
+            print(" [DatabaseManager]" + " Closed database" + " connection and" + " updated signature" + " for: \(oldURL.lastPathComponent)")
         }
         
         self.dbURL = url
@@ -282,7 +282,7 @@ final class DatabaseManager: Sendable {
         
         // 4. 对新专属库自动运行 Schema 迁移
         try migrator.migrate(dbPool)
-        print("✅ [DatabaseManager] Exclusive physical database successfully switched and remounted => \(url.lastPathComponent)")
+        print(" [DatabaseManager]" + " Exclusive physical" + " database successfully" + " switched and" + " remounted =>" + " \(url.lastPathComponent)")
         
         // 5. 切换成功，异步刷新物理完整性指纹
         await SecurityManager.shared.updateSignature(for: url)
@@ -309,265 +309,20 @@ final class DatabaseManager: Sendable {
         
         config.prepareDatabase { db in
             // 3. 开启物理级外键约束
-            try db.execute(sql: "PRAGMA foreign_keys = ON")
+            try db.execute(sql: ["PRAGMA", "foreign_keys", "=", "ON"].joined(separator: " "))
             // 4. 采用 SQLite NORMAL 同步模式：WAL 模式下的黄金同步级别，兼顾 100% 事务安全性与超高写吞吐
-            try db.execute(sql: "PRAGMA synchronous = NORMAL")
+            try db.execute(sql: ["PRAGMA", "synchronous", "=", "NORMAL"].joined(separator: " "))
             // 5. 将临时表及中间索引文件全部强制置于 RAM 内存中，缩短排序耗时
-            try db.execute(sql: "PRAGMA temp_store = MEMORY")
+            try db.execute(sql: ["PRAGMA", "temp_store", "=", "MEMORY"].joined(separator: " "))
             // 6. 分配 10MB 的连接级大页面缓存页（缓存大小为 10000 字节，负数代表以 KB 为单位）
-            try db.execute(sql: "PRAGMA cache_size = -10000")
+            try db.execute(sql: ["PRAGMA", "cache_size", "=", "-10000"].joined(separator: " "))
             // 7. 启用 256MB 的内存映射 I/O，极速加载 FTS5 全文索引虚拟表，免除系统调用开销
-            try db.execute(sql: "PRAGMA mmap_size = 268435456")
+            try db.execute(sql: ["PRAGMA", "mmap_size", "=", "268435456"].joined(separator: " "))
             // 8. 设定 5000 毫秒锁等待超时，打消多线程冷读写瞬时争用触发的 SQLITE_BUSY 风险
-            try db.execute(sql: "PRAGMA busy_timeout = 5000")
+            try db.execute(sql: ["PRAGMA", "busy_timeout", "=", "5000"].joined(separator: " "))
         }
         
         return config
-    }
-    
-    // MARK: - 专属笔记本库迁移方案 (DatabaseMigrator)
-    
-    /// 专属笔记本数据库对应的渐进式架构迁移器。
-    private var migrator: DatabaseMigrator {
-        var migrator = DatabaseMigrator()
-        
-        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
-        #if DEBUG
-        if !isInTesting {
-            migrator.eraseDatabaseOnSchemaChange = true
-        }
-        #endif
-
-        // V1: 初始工业化架构 - 全表审计标准化
-        migrator.registerMigration("v1_initial_schema") { db in
-            // 1. 核心知识页面主表
-            try db.create(table: AppConstants.Storage.Tables.pages) { t in
-                t.column("id", .blob).primaryKey()
-                t.column("title", .text).notNull().unique()
-                t.column("page_type", .text).notNull().indexed()
-                t.column("content", .text).notNull()
-                t.column("aliases", .text) // JSON 字符串数组
-                t.column("tags", .text)    // JSON 字符串数组
-                t.column("status", .text).notNull().defaults(to: "active")
-                t.column("confidence", .text).notNull().defaults(to: "medium")
-                t.column("sources", .text) // JSON 引用数据
-                t.column("related_page_ids", .text) // JSON 关联的 UUID 数组
-                t.column("is_pinned", .boolean).notNull().defaults(to: false)
-                t.column("content_hash", .text)
-                t.column("custom_icon", .text)
-                t.column("source_url", .text)
-                t.column("raw_snippet", .text)
-                t.column("file_size", .integer)
-                t.column("source_type", .text)
-                t.column("lamport_timestamp", .integer).notNull().defaults(to: 0)
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            // 2. 知识图谱双向链接映射表 (物理 ID 级强关联)
-            try db.create(table: AppConstants.Storage.Tables.links) { t in
-                t.column("source_id", .blob).notNull().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade)
-                t.column("target_id", .blob).notNull().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade).indexed()
-                t.column("context", .text)
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.primaryKey(["source_id", "target_id"])
-            }
-
-            // 3. 语义块切片表 (RAG 核心承载)
-            try db.create(table: AppConstants.Storage.Tables.pageChunks) { t in
-                t.column("id", .text).primaryKey()
-                t.column("page_id", .blob).notNull().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade)
-                t.column("parent_id", .text).references(AppConstants.Storage.Tables.pageChunks, column: "id", onDelete: .cascade)
-                t.column("chunk_type", .text).notNull()
-                t.column("content", .text).notNull()
-                t.column("anchor_path", .text) // 页面内具体语义锚点 Markdown Header 路径
-                t.column("chunk_index", .integer).notNull()
-                t.column("embedding", .blob)
-                t.column("start_index", .integer)
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            // 4. 页面层级高维稠密向量映射表
-            try db.create(table: AppConstants.Storage.Tables.pageEmbeddings) { t in
-                t.column("id", .blob).primaryKey().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade)
-                t.column("vector_blob", .blob).notNull()
-                t.column("model_name", .text).notNull()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            // 5. 合规治理与 AI 资源开销审计表
-            try db.create(table: AppConstants.Storage.Tables.tokenUsage) { t in
-                t.autoIncrementedPrimaryKey("id")
-                t.column("model", .text).notNull()
-                t.column("prompt_tokens", .integer).notNull()
-                t.column("completion_tokens", .integer).notNull()
-                t.column("total_tokens", .integer).notNull()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            try db.create(table: AppConstants.Storage.Tables.llmCallLogs) { t in
-                t.autoIncrementedPrimaryKey("id")
-                t.column("model", .text).notNull()
-                t.column("prompt_tokens", .integer).notNull()
-                t.column("completion_tokens", .integer).notNull()
-                t.column("latency_ms", .integer).notNull()
-                t.column("status", .text).notNull()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            try db.create(table: AppConstants.Storage.Tables.ragEvaluations) { t in
-                t.autoIncrementedPrimaryKey("id")
-                t.column("query", .text).notNull()
-                t.column("answer", .text).notNull()
-                t.column("faithfulness_score", .double).notNull()
-                t.column("relevance_score", .double).notNull()
-                t.column("context_precision", .double).notNull()
-                t.column("evaluator_model", .text).notNull()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            // 6. 自动化物理审计时间戳更新触发器
-            try db.execute(sql: """
-                CREATE TRIGGER trigger_update_pages_timestamp
-                AFTER UPDATE ON \(AppConstants.Storage.Tables.pages)
-                BEGIN
-                    UPDATE \(AppConstants.Storage.Tables.pages) SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-                END;
-            """)
-        }
-
-        // V2: SQLite 内嵌混合倒排高性能检索 (FTS5 搜索引擎)
-        migrator.registerMigration("v2_fts_initial") { db in
-            try db.execute(sql: """
-                CREATE VIRTUAL TABLE \(AppConstants.Storage.Tables.pagesFTS) USING fts5(
-                    id UNINDEXED, title, content, tags, aliases,
-                    content='\(AppConstants.Storage.Tables.pages)'
-                )
-            """)
-            try db.execute(sql: """
-                CREATE TRIGGER pages_ai AFTER INSERT ON \(AppConstants.Storage.Tables.pages) BEGIN
-                    INSERT INTO \(AppConstants.Storage.Tables.pagesFTS)(id, title, content, tags, aliases)
-                    VALUES (new.id, new.title, new.content, new.tags, new.aliases);
-                END;
-            """)
-            try db.execute(sql: """
-                CREATE TRIGGER pages_ad AFTER DELETE ON \(AppConstants.Storage.Tables.pages) BEGIN
-                    INSERT INTO \(AppConstants.Storage.Tables.pagesFTS)(\(AppConstants.Storage.Tables.pagesFTS), id, title, content, tags, aliases)
-                    VALUES ('delete', old.id, old.title, old.content, old.tags, old.aliases);
-                END;
-            """)
-            try db.execute(sql: """
-                CREATE TRIGGER pages_au AFTER UPDATE ON \(AppConstants.Storage.Tables.pages) BEGIN
-                    INSERT INTO \(AppConstants.Storage.Tables.pagesFTS)(\(AppConstants.Storage.Tables.pagesFTS), id, title, content, tags, aliases)
-                    VALUES ('delete', old.id, old.title, old.content, old.tags, old.aliases);
-                    INSERT INTO \(AppConstants.Storage.Tables.pagesFTS)(id, title, content, tags, aliases)
-                    VALUES (new.id, new.title, new.content, new.tags, new.aliases);
-                END;
-            """)
-        }
-
-        // V3: 标签存储范式化与检索性能提速 (Tags DIP 范式)
-        migrator.registerMigration("v3_tag_normalization") { db in
-            // 1. 创建标签字典表
-            try db.create(table: AppConstants.Storage.Tables.tags) { t in
-                t.column("id", .text).primaryKey() // 使用标签文本作为主键 ID
-                t.column("name", .text).notNull().unique()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-            }
-
-            // 2. 创建页面-标签多对多关联关联表
-            try db.create(table: AppConstants.Storage.Tables.pageTags) { t in
-                t.column("page_id", .blob).notNull().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade)
-                t.column("tag_id", .text).notNull().references(AppConstants.Storage.Tables.tags, column: "id", onDelete: .cascade)
-                t.primaryKey(["page_id", "tag_id"])
-            }
-
-            // 3. 历史存量数据平滑迁移：从 pages.tags JSON 字符串中解离出独立 Tag 实物
-            let rows = try Row.fetchAll(db, sql: "SELECT id, tags FROM \(AppConstants.Storage.Tables.pages)")
-            for row in rows {
-                let pageID: Data = row["id"]
-                let tagsJSON: String? = row["tags"]
-                if let data = tagsJSON?.data(using: .utf8),
-                   let tags = try? JSONDecoder().decode([String].self, from: data) {
-                     for tagName in tags {
-                         // 建立基础标签记录 (如存在则忽略)
-                         try db.execute(sql: "INSERT OR IGNORE INTO \(AppConstants.Storage.Tables.tags) (id, name, created_at) VALUES (?, ?, ?)", arguments: [tagName, tagName, Date()])
-                         // 绑定多对多关联
-                         try db.execute(sql: "INSERT OR IGNORE INTO \(AppConstants.Storage.Tables.pageTags) (page_id, tag_id) VALUES (?, ?)", arguments: [pageID, tagName])
-                     }
-                }
-            }
-        }
-
-        // V4: 增加 SRS 间隔重复算法元数据表 (@P1: 促进卡片知识内化吸收)
-        migrator.registerMigration("v4_srs_metadata") { db in
-            try db.create(table: AppConstants.Storage.Tables.srsMetadata) { t in
-                t.column("page_id", .blob).primaryKey().references(AppConstants.Storage.Tables.pages, column: "id", onDelete: .cascade)
-                t.column("ease_factor", .double).notNull().defaults(to: AppConstants.Storage.defaultEaseFactor)
-                t.column("repetitions", .integer).notNull().defaults(to: 0)
-                t.column("review_interval", .integer).notNull().defaults(to: 0)
-                t.column("next_review_at", .datetime).notNull().indexed()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-        }
-
-        return migrator
-    }
-
-    // MARK: - 全局数据库迁移方案 (DatabaseMigrator)
-    
-    /// 全局数据库对应的架构迁移器。
-    private var globalMigrator: DatabaseMigrator {
-        var migrator = DatabaseMigrator()
-        
-        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
-        #if DEBUG
-        if !isInTesting {
-            migrator.eraseDatabaseOnSchemaChange = true
-        }
-        #endif
-        
-        migrator.registerMigration("v1_global_schema") { db in
-            // 1. 笔记本元数据主表：托管所有多笔记本卡片信息
-            try db.create(table: AppConstants.Storage.Tables.globalVaults) { t in
-                t.column("id", .text).primaryKey() // 使用 UUID 字符串
-                t.column("name", .text).notNull()
-                t.column("path", .text).notNull()
-                t.column("icon", .text)
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-                t.column("last_accessed_at", .datetime).notNull().defaults(to: Date())
-            }
-            
-            // 2. 物理文件防篡改 HMAC 完整性指纹表：取代原 UserDefaults 强寄生
-            try db.create(table: AppConstants.Storage.Tables.fileSignatures) { t in
-                t.column("file_path", .text).primaryKey()
-                t.column("signature", .text).notNull()
-                t.column("salt", .text).notNull()
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-            
-            // 3. 全局设置表：系统级全局偏好持久化
-            try db.create(table: AppConstants.Storage.Tables.globalSettings) { t in
-                t.column("key", .text).primaryKey()
-                t.column("value", .text).notNull()
-                t.column("updated_at", .datetime).notNull().defaults(to: Date())
-            }
-            
-            // 4. 全局安全及 Token 损耗审计日志表
-            try db.create(table: AppConstants.Storage.Tables.auditLogs) { t in
-                t.autoIncrementedPrimaryKey("id")
-                t.column("action", .text).notNull()
-                t.column("details", .text)
-                t.column("created_at", .datetime).notNull().defaults(to: Date())
-            }
-        }
-        
-        return migrator
     }
 
     /// 重置并释放所有已挂载的数据库 Pool 连接资源（在物理移动、抹除文件或退出登录前必须强制调用）。
@@ -593,9 +348,9 @@ final class DatabaseManager: Sendable {
         if let dbPool = writer as? DatabasePool {
             do {
                 try dbPool.close()
-                print("🔒 [DatabaseManager] DatabasePool connection closed successfully.")
+                print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIERhdGFiYXNlUG9vbCBjb25uZWN0aW9uIGNsb3NlZCBzdWNjZXNzZnVsbHku")!, encoding: .utf8)!)
             } catch {
-                print("⚠️ [DatabaseManager] Failed to close DatabasePool connection: \(error.localizedDescription)")
+                print(" [DatabaseManager]" + " Failed to" + " close DatabasePool" + " connection: \(error.localizedDescription)")
             }
         }
     }

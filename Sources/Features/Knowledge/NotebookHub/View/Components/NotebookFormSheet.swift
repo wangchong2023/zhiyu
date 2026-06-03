@@ -69,7 +69,7 @@ struct NotebookFormSheet: View {
                                     .fill(Color.appAccent.opacity(0.1))
                                     .frame(width: 100, height: 100)
                                 
-                                Text(icon.isEmpty ? "📓" : icon)
+                                Text(icon.isEmpty ? "" : icon)
                                     .font(.largeTitle)
                             }
                             

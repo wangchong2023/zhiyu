@@ -29,6 +29,7 @@ struct IngestView: View {
             ScrollView {
                 VStack(spacing: DesignSystem.standardPadding + DesignSystem.small) {
                     if !coordinator.isLLMConfigured { llmWarningSection }
+                    ingestProgressPanel
                     actionsSection
                     importSourcesSection
                     if !TaskCenter.shared.tasks.filter({ $0.type == .ingest }).isEmpty { taskCenterLinkSection }
@@ -63,8 +64,60 @@ struct IngestView: View {
         .background(PageBackgroundView(accentColor: .appSource))
     }
 
+    /// 动态渲染的玻璃态 Ingest 细粒度子状态反馈面板
+    private var ingestProgressPanel: some View {
+        let runningIngestTasks = TaskCenter.shared.tasks.filter { $0.type == .ingest && isRunning(status: $0.status) }
+        guard let activeTask = runningIngestTasks.first else { return AnyView(EmptyView()) }
+        
+        let (progress, currentStage) = {
+            if case .running(let p, let s) = activeTask.status { return (p, s) }
+            return (0.0, TaskStage.pending)
+        }()
+        
+        return AnyView(
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                HStack {
+                    Image(systemName: "wand.and.stars")
+                        .font(.title3)
+                        .foregroundStyle(Color.appAccent)
+                    
+                    VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                        Text(L10n.Ingest.smartIngest)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(.appText)
+                        Text(activeTask.target)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                            .lineLimit(1)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(Int(progress * 100))%")
+                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold, design: .monospaced))
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.tiny)
+                        .background(Color.appAccent.opacity(0.15))
+                        .foregroundStyle(Color.appAccent)
+                        .clipShape(Capsule())
+                }
+                
+                Divider()
+                
+                IngestTimelineView(currentStage: currentStage, subLogs: activeTask.subLogs)
+                    .padding(.top, DesignSystem.tiny)
+            }
+            .appContainer(padding: true)
+            .background(
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 1)
+            )
+            .shadow(color: Color.appAccent.opacity(0.1), radius: 10, x: 0, y: 5)
+        )
+    }
+
     private var llmWarningSection: some View {
-        NavigationLink(destination: LLMSettingsView()) {
+        NavigationLink(value: AppRoute.settings) {
             HStack(spacing: DesignSystem.medium) {
                 Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
                 Text(L10n.Ingest.llmRequired).font(.subheadline).foregroundStyle(.appText)
@@ -98,7 +151,7 @@ struct IngestView: View {
             HStack {
                 AppSectionHeader(title: L10n.Ingest.sources, icon: DesignSystem.Icons.trayFill)
                 Spacer()
-                if !sources.isEmpty { Text(L10n.Common.trf("history.count", sources.count)).font(.caption2).foregroundStyle(.appSecondary) }
+                if !sources.isEmpty { Text("\(sources.count)_items").font(.caption2).foregroundStyle(.appSecondary) }
             }
             .padding(.horizontal, DesignSystem.tiny)
             if sources.isEmpty {

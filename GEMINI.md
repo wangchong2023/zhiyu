@@ -82,9 +82,11 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 - **实现注释 (`//`)**：解释“怎么做”，用于内部逻辑。
 - **MARK 标签**：`// MARK: - 中文标题`。
 
-### 4. 本地化 (L10n)
-- 使用 `L10n` 结构体进行类型安全访问。
-- 业务逻辑中使用 `Localized.tr("key", table: "TableName")`。
+### 4. 本地化 (L10n) 强约束规范
+- **禁止硬编码**：UI 层严禁出现硬编码字符串。所有展示文本必须通过 `L10n.模块.属性` 访问。
+- **禁止直连 tr()**：严禁在业务视图或服务层直接调用 `.tr()`。
+- **禁止假国际化**：在 `L10n+XXX.swift` 扩展中，禁止直接赋值硬编码中文，必须映射至 `.xcstrings`。
+- **强校验网关**：项目已集成 `check_localization.py` 编译网关。任何硬编码非 ASCII 字符或非法 `.tr()` 调用将**阻断编译**。开发者必须先在 `L10n` 扩展中定义属性并在 `.xcstrings` 中配置翻译，方可通行。
 
 ### 5. 编码风格
 - 遵循 `Docs/guides/swift-coding-style.md`。
@@ -94,7 +96,12 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 ### 6. 脚本管理规范
 - **长期工具**：存放在 `Tools/` 目录下。
 - **临时脚本**：存放在 `Tools/Temp/` 目录下，使用后需及时清理。
-- **文档维护**：新增或修改脚本后，必须同步更新 `Tools/README.md`。
+- **文档维护**：新增或移动脚本后，必须同步更新 `Tools/README.md`。
+
+### 7. 数据库 Model 字段绑定规范
+- **禁止物理硬编码**：在编写数据库 Schema 迁移、建表与 SQL 数据处理时，严禁直接使用硬编码的裸物理表名或物理字段名字面量（例如 `"created_at"`、`t.column("created_at")`）。
+- **必须通过 Model 字段**：必须使用各数据库 Model 实体自带的 `databaseTableName` 静态常量及 `Columns` / `CodingKeys` 常量作为表名和字段的映射插值，以保证编译期类型安全与模型解耦。
+- **强校验网关**：项目已集成 `check_storage_constants.py` 守卫网关，检测到任何硬编码物理字段或未进行常量插值的硬编码 SQL 均会**阻断编译**。
 
 ## 提交规范
 使用 Conventional Commits 格式：

@@ -738,7 +738,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "PageLink"
+            "value": "Knowledge Link"
           }
         },
         "zh-Hans": {
@@ -2194,7 +2194,6 @@
         }
       }
     },
-
     "quickTemplates": {
       "extractionState": "stale",
       "localizations": {
@@ -3415,6 +3414,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "欢迎回来"
+          }
+        }
+      }
+    },
+    "page.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "page.content"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面内容"
           }
         }
       }

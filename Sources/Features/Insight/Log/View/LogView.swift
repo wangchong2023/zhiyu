@@ -43,8 +43,8 @@ struct LogViewContent: View {
             }
         }
 #if os(iOS)
-        .listStyle(.insetGrouped)
-#endif
+                .listStyle(.insetGrouped)
+                #endif
         .scrollContentBackground(.hidden)
         .background(themeManager.pageBackground())
         .navigationTitle(L10n.Settings.operationLog)

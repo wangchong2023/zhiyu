@@ -118,7 +118,7 @@ public final class VaultService: VaultServiceProtocol {
                     self.vaults = loadedVaults
                 }
             } catch {
-                print("❌ [VaultService] Failed to asynchronously load notebook metadata: \(error)")
+                print(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)")
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
                 self.vaults = [
                     Vault(
@@ -155,7 +155,7 @@ public final class VaultService: VaultServiceProtocol {
                     let dbURL = getVaultDatabaseURL(for: id)
                     try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
                 } catch {
-                    print("❌ [VaultService] Failed to auto-connect to the recently used physical database: \(error)")
+                    print(" [VaultService]" + " Failed to" + " auto-connect to" + " the recently" + " used physical" + " database: \(error)")
                 }
             }
         }
@@ -207,6 +207,8 @@ public final class VaultService: VaultServiceProtocol {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         
+        NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
+        
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
         Task {
             do {
@@ -216,7 +218,7 @@ public final class VaultService: VaultServiceProtocol {
                 // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序
                 try? await vaultRepository.updateLastAccessed(id: vault.id)
             } catch {
-                print("❌ [VaultService] Failed to switch physical database: \(error)")
+                print(" [VaultService]" + " Failed to" + " switch physical" + " database: \(error)")
             }
         }
     }
@@ -224,6 +226,8 @@ public final class VaultService: VaultServiceProtocol {
     /// 退出当前选中的笔记本金库。
     /// 返回主选择页，在 UserDefaults 中移除偏好项，并安全降级释放当前物理库的连接句柄，防止空转泄露。
     public func exitVault() {
+        NotificationCenter.default.post(name: .vaultWillSwitch, object: nil)
+        
         withAnimation(DesignSystem.Animation.Config.prominentSpring) {
             self.selectedVaultID = nil
         }
@@ -252,7 +256,7 @@ public final class VaultService: VaultServiceProtocol {
         do {
             try saveVaultToDatabase(newVault)
         } catch {
-            print("❌ [VaultService] Failed to write new notebook to database: \(error)")
+            print(" [VaultService]" + " Failed to" + " write new" + " notebook to" + " database: \(error)")
         }
     }
     
@@ -272,7 +276,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print("❌ [VaultService] Failed to write updated notebook metadata to database: \(error)")
+                print(" [VaultService]" + " Failed to" + " write updated" + " notebook metadata" + " to database:" + " \(error)")
             }
         }
     }
@@ -289,7 +293,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print("❌ [VaultService] Failed to write renamed notebook to database: \(error)")
+                print(" [VaultService]" + " Failed to" + " write renamed" + " notebook to" + " database: \(error)")
             }
         }
     }
@@ -310,7 +314,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try await vaultRepository.deleteVault(id: id)
             } catch {
-                print("❌ [VaultService] Failed to delete notebook record from global metadata database: \(error)")
+                print(" [VaultService]" + " Failed to" + " delete notebook" + " record from" + " global metadata" + " database: \(error)")
             }
         }
         
@@ -319,7 +323,7 @@ public final class VaultService: VaultServiceProtocol {
         let folderURL = dbURL.deletingLastPathComponent()
         if FileManager.default.fileExists(atPath: folderURL.path) {
             try? FileManager.default.removeItem(at: folderURL)
-            print("🗑️ [VaultService] Physically erased notebook sandbox storage: \(id.uuidString)")
+            print(" [VaultService]" + " Physically erased" + " notebook sandbox" + " storage: \(id.uuidString)")
         }
     }
 }

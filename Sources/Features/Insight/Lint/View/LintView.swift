@@ -330,9 +330,9 @@ struct LintViewContent: View {
                         }
                     }
                 }
-#if os(iOS)
+                #if os(iOS)
                 .listStyle(.insetGrouped)
-#endif
+                #endif
                 .scrollContentBackground(.hidden)
             }
         }

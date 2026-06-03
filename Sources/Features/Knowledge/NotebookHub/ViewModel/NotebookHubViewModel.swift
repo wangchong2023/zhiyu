@@ -124,7 +124,7 @@ public final class NotebookHubViewModel {
     }
     
     /// 选择Notebook
-    /// /// - Parameter notebook: notebook
+    /// - Parameter notebook: notebook
     public func selectNotebook(_ notebook: Vault) {
         withAnimation(DesignSystem.Animation.Config.prominentSpring) {
             // 1. 路由加固：重置导航状态，使用户进入后看到 SidebarView 菜单

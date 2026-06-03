@@ -761,7 +761,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.clear"
+            "value": "清除 iCloud 数据"
           }
         }
       }
@@ -1203,7 +1203,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.pull"
+            "value": "从 iCloud 拉取"
           }
         }
       }
@@ -1288,7 +1288,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.push"
+            "value": "推送至 iCloud"
           }
         }
       }
@@ -1441,7 +1441,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.sync"
+            "value": "与 iCloud 同步"
           }
         }
       }
@@ -1883,7 +1883,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.fileTooLarge"
+            "value": "文件大小超出限制"
           }
         }
       }
@@ -1900,7 +1900,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.storageFull"
+            "value": "存储空间不足"
           }
         }
       }
@@ -4264,6 +4264,534 @@
           "stringUnit": {
             "state": "translated",
             "value": "语音笔记"
+          }
+        }
+      }
+    },
+    "conflict.manualMerge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.manualMerge "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.manualMerge"
+          }
+        }
+      }
+    },
+    "conflict.finishMerge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.finishMerge "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.finishMerge"
+          }
+        }
+      }
+    },
+    "conflict.noContentConflict": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noContentConflict "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noContentConflict"
+          }
+        }
+      }
+    },
+    "conflict.autoResolveDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.autoResolveDesc "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.autoResolveDesc"
+          }
+        }
+      }
+    },
+    "conflict.doAutoResolve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.doAutoResolve "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.doAutoResolve"
+          }
+        }
+      }
+    },
+    "conflict.listTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.listTitle "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.listTitle"
+          }
+        }
+      }
+    },
+    "conflict.localTime": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localTime "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localTime"
+          }
+        }
+      }
+    },
+    "conflict.cloudTime": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudTime "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudTime"
+          }
+        }
+      }
+    },
+    "conflict.smartOverrideMode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.smartOverrideMode "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.smartOverrideMode"
+          }
+        }
+      }
+    },
+    "conflict.keepLocalAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepLocalAll "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepLocalAll"
+          }
+        }
+      }
+    },
+    "conflict.keepCloudAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepCloudAll "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.keepCloudAll"
+          }
+        }
+      }
+    },
+    "conflict.localVersionTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localVersionTag "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.localVersionTag"
+          }
+        }
+      }
+    },
+    "conflict.cloudVersionTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudVersionTag "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.cloudVersionTag"
+          }
+        }
+      }
+    },
+    "conflict.editorTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.editorTag "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.editorTag"
+          }
+        }
+      }
+    },
+    "conflict.takeLocalAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeLocalAction "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeLocalAction"
+          }
+        }
+      }
+    },
+    "conflict.takeCloudAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeCloudAction "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.takeCloudAction"
+          }
+        }
+      }
+    },
+    "conflict.noTimeInfo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noTimeInfo "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "conflict.noTimeInfo"
+          }
+        }
+      }
+    },
+    "pdf.extractingPage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extracting page %lld / %lld..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在提取第 %lld / %lld 页文本..."
+          }
+        }
+      }
+    },
+    "ingest.status.starting": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始智能解析..."
+          }
+        }
+      }
+    },
+    "ingest.status.aiEnriching": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 正在理解与增强语义..."
+          }
+        }
+      }
+    },
+    "ingest.status.generatingSummary": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提炼全局结构化摘要中..."
+          }
+        }
+      }
+    },
+    "ingest.status.chunking": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Structured Chunking"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结构化分块"
+          }
+        }
+      }
+    },
+    "ingest.status.processingChunk": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "处理段落分块..."
+          }
+        }
+      }
+    },
+    "ingest.status.vectorizing": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计算并存储向量嵌入索引 (Vector Indexing)..."
+          }
+        }
+      }
+    },
+    "ingest.status.completed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识处理与沉淀完成"
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level1_success": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 1: Jina 高级解析成功"
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level1_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 1 失败，正在降级使用原生直连..."
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level2_success": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 2: Googlebot 伪装抓取成功"
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level2_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 2 失败或遇到限制，正在寻找历史快照..."
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level3_success": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 3: 成功从网页存档提取数据"
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level3_failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 3 失败，正在使用深度 DOM 提取器作为最终方案..."
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.level4_success": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 4: 本地深度解析兜底成功"
+          }
+        }
+      }
+    },
+    "ingest.status.webscraper.paywall_detected": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检测到付费墙或访问限制 (HTTP %d)，正在绕过..."
+          }
+        }
+      }
+    },
+    "ingest.status.extraction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Document Extraction"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文档解析"
+          }
+        }
+      }
+    },
+    "ingest.status.enhancement": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Semantic Enhancement"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI语义增强"
+          }
+        }
+      }
+    },
+    "ingest.status.embedding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vectorization"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向量化入库"
           }
         }
       }

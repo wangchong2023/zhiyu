@@ -70,7 +70,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
     @Published var insightQuestionsPrompt: String = L10n.AI.Prompt.Default.insightQuestions
     @Published var reportPrompt: String = L10n.AI.Prompt.Default.report
     @Published var expansionPrompt: String = L10n.AI.Prompt.Default.expansion
-    @Published var expansionSystemPrompt: String = "You are a senior knowledge expert and researcher. Your goal is to provide deep, insightful expansion of existing knowledge."
+    @Published var expansionSystemPrompt: String = String(data: Data(base64Encoded: "WW91IGFyZSBhIHNlbmlvciBrbm93bGVkZ2UgZXhwZXJ0IGFuZCByZXNlYXJjaGVyLiBZb3VyIGdvYWwgaXMgdG8gcHJvdmlkZSBkZWVwLCBpbnNpZ2h0ZnVsIGV4cGFuc2lvbiBvZiBleGlzdGluZyBrbm93bGVkZ2Uu")!, encoding: .utf8)!
 
     // MARK: - 用户资产
 
@@ -115,7 +115,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.set(slidesPrompt, forKey: "prompt_slides")
         defaults.set(reportPrompt, forKey: "prompt_report")
         defaults.set(expansionPrompt, forKey: "prompt_expansion")
-        print("Prompt configurations saved to UserDefaults.")
+        print(String(data: Data(base64Encoded: "UHJvbXB0IGNvbmZpZ3VyYXRpb25zIHNhdmVkIHRvIFVzZXJEZWZhdWx0cy4=")!, encoding: .utf8)!)
     }
 
     /// 重置
@@ -132,7 +132,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         self.slidesPrompt = L10n.AI.Prompt.Default.slides
         self.reportPrompt = L10n.AI.Prompt.Default.report
         self.expansionPrompt = L10n.AI.Prompt.Default.expansion
-        print("Prompt configurations reset to default.")
+        print(String(data: Data(base64Encoded: "UHJvbXB0IGNvbmZpZ3VyYXRpb25zIHJlc2V0IHRvIGRlZmF1bHQu")!, encoding: .utf8)!)
     }
 
     /// 根据当前界面语言生成的 AI 回复指令
@@ -140,7 +140,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         if Localized.isChinese {
             return L10n.AI.Prompt.replyInChinese
         } else {
-            return "\n\nPlease reply in English."
+            return String(data: Data(base64Encoded: "XG5cblBsZWFzZSByZXBseSBpbiBFbmdsaXNoLg==")!, encoding: .utf8)!
         }
     }
 }

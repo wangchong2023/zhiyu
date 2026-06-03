@@ -15,7 +15,7 @@ import WatchKit
 final class WatchHapticService: HapticFeedbackProtocol {
 
     /// trigger
-    /// /// - Parameter pattern: pattern
+    /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         let device = WKInterfaceDevice.current()
         switch pattern {

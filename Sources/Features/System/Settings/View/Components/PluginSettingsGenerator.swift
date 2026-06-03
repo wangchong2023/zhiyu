@@ -61,7 +61,7 @@ struct PluginCustomSettingsView: View {
             let decoded = try JSONDecoder().decode([PluginUISchemaItem].self, from: data)
             self.schemaItems = decoded
         } catch {
-            Logger.shared.error("❌ [PluginUI] Schema 解析失败", error: error)
+            Logger.shared.error("[PluginUI] Schema_parsing_failed", error: error)
         }
     }
     

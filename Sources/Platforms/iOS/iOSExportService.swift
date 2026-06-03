@@ -74,9 +74,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     }
     
     /// 导出ToPDF
-    /// /// - Parameter markdown: markdown
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter markdown: markdown
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportToPDF(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -118,9 +118,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     }
 
     /// 导出MindmapToPDF
-    /// /// - Parameter mermaidCode: mermaidCode
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter mermaidCode: mermaidCode
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -189,9 +189,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     }
     
     /// 导出ToPPTX
-    /// /// - Parameter markdown: markdown
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter markdown: markdown
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
         if isExporting {
             try? await Task.sleep(for: .milliseconds(500))
@@ -232,7 +232,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
                     });
                 }
                 
-                slide.addText('\(L10n.Transfer.Export.trf("generatedBy", L10n.Common.appName))', { x: 0.5, y: 5.0, fontSize: 10, color: 'B2BEC3' });
+                ""
             });
             
             const base64 = await pptx.write('base64');
@@ -242,7 +242,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
         
         guard let base64String = try await webView.evaluateJavaScript(js) as? String,
               let data = Data(base64Encoded: base64String) else {
-            throw ExportError.internalError("Failed to generate PPTX Base64")
+            throw ExportError.internalError("PPTX_Failed")
         }
         
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(fileName).pptx")
@@ -258,9 +258,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
         var slides: [SlideData] = []
         let parts = markdown.components(separatedBy: "\n## ")
-        for (index, part) in parts.enumerated() {
+        for (_, part) in parts.enumerated() {
             let lines = part.components(separatedBy: .newlines)
-            let title = lines.first?.replacingOccurrences(of: "# ", with: "").trimmingCharacters(in: .whitespaces) ?? L10n.Transfer.Export.trf("defaultSlideTitle", index + 1)
+            let title = lines.first?.replacingOccurrences(of: "# ", with: "").trimmingCharacters(in: .whitespaces) ?? ""
             let bullets = lines.dropFirst().filter { 
                 let trimmed = $0.trimmingCharacters(in: .whitespaces)
                 return trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ") 
@@ -276,9 +276,9 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
 extension iOSExportService: WKNavigationDelegate {
 
     /// webView回调
-    /// /// - Parameter webView: webView
+    /// - Parameter webView: webView
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("Export WebView failed to load: \(error)")
+        print("Export_Failed")
     }
 }
 #endif

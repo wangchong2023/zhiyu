@@ -25,7 +25,7 @@ public final class StubIngestService: IngestServiceProtocol {
     ///   - pageStore: 数据持久层
     /// - Returns: 空页面列表
     public func ingestFolder(at url: URL, type: PageType, pageStore: any AnyPageStore) async -> [KnowledgePage] {
-        Logger.shared.info("ℹ️ [watchOS Stub] IngestFolder 尝试调用 (watchOS 物理隔离导入流程): \(url.lastPathComponent), 预设类型: \(type.displayName)")
+        Logger.shared.info("watchOS_Stub")
         return []
     }
 }

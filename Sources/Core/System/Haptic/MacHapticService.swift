@@ -15,7 +15,7 @@ import AppKit
 final class MacHapticService: HapticFeedbackProtocol {
 
     /// trigger
-    /// /// - Parameter pattern: pattern
+    /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         let performer = NSHapticFeedbackManager.defaultPerformer
         switch pattern {

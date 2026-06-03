@@ -25,7 +25,7 @@ final class MacFileArchiver: FileArchiverProtocol, @unchecked Sendable {
         process.waitUntilExit()
         
         if process.terminationStatus != 0 {
-            throw NSError(domain: "MacFileArchiver", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Zip process failed"])
+            throw NSError(domain: "MacFileArchiver", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: "Zip_Failed"])
         }
     }
 }

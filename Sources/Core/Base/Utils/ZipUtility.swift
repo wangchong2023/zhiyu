@@ -77,8 +77,8 @@ enum ZipUtility {
     }
 
     /// 查找NextLocalFileHeader
-    /// /// - Parameter start: 启动
-    /// /// - Returns: 可选值
+    /// - Parameter start: 启动
+    /// - Returns: 可选值
     private static func findNextLocalFileHeader(in buffer: UnsafeRawBufferPointer, start: Int) -> Int? {
         let count = buffer.count
         var i = start + 4
@@ -93,8 +93,8 @@ enum ZipUtility {
     }
 
     /// 解压Deflate
-    /// /// - Parameter data: data
-    /// /// - Returns: 可选值
+    /// - Parameter data: data
+    /// - Returns: 可选值
     private static func decompressDeflate(data: Data) -> Data? {
         let destinationBufferSize = data.count * 10
         var destinationData = Data(count: destinationBufferSize)

@@ -17,9 +17,9 @@ extension ContentView {
     @ViewBuilder
 
     /// mainContainer
-    /// /// - Parameter tintColor: 着色Color
+    /// - Parameter tintColor: 着色Color
     func mainContainer(tintColor: Color) -> some View {
-        if AuthSession.shared.isLoggedIn || AuthSession.shared.isGuest {
+        if authSession.isLoggedIn || authSession.isGuest {
             Group {
                 if vaultService.selectedVaultID != nil {
                     mainContent(tintColor: tintColor)
@@ -42,7 +42,7 @@ extension ContentView {
     @ViewBuilder
 
     /// mainContent
-    /// /// - Parameter tintColor: 着色Color
+    /// - Parameter tintColor: 着色Color
     func mainContent(tintColor: Color) -> some View {
         @Bindable var store = store
         @Bindable var router = router
@@ -125,7 +125,7 @@ extension ContentView {
     @ViewBuilder
 
     /// adaptive拆分View
-    /// /// - Parameter tintColor: 着色Color
+    /// - Parameter tintColor: 着色Color
     func adaptiveSplitView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -169,7 +169,7 @@ extension ContentView {
     @ViewBuilder
 
     /// modernTabView
-    /// /// - Parameter tintColor: 着色Color
+    /// - Parameter tintColor: 着色Color
     func modernTabView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -226,7 +226,7 @@ extension ContentView {
     @ViewBuilder
 
     /// legacyTabView
-    /// /// - Parameter tintColor: 着色Color
+    /// - Parameter tintColor: 着色Color
     func legacyTabView(tintColor: Color) -> some View {
         #if os(watchOS)
         Text("Not used on watchOS")
@@ -307,7 +307,7 @@ extension ContentView {
                         ViewFactory.makeView(for: selection.asRoute())
                     }
                     .navigationDestination(for: KnowledgePage.self) { page in
-                        PageDetailView(page: page)
+                        ViewFactory.makeView(for: .pageDetail(id: page.id))
                     }
             }
         } else {

@@ -12,9 +12,19 @@ import GRDB
 import Foundation
 
 // MARK: - GRDB 协议遵循
-extension KnowledgePageFTS: FetchableRecord, PersistableRecord {}
-
-// MARK: - Database Table Name
-extension KnowledgePageFTS {
+extension KnowledgePageFTS: FetchableRecord, PersistableRecord {
     public static let databaseTableName = AppConstants.Storage.Tables.pagesFTS
 }
+
+// MARK: - Database Schema
+extension KnowledgePageFTS {
+    /// 物理字段映射，提供编译期静态检查
+    public enum Columns {
+        public static let id = Column("id")
+        public static let title = Column("title")
+        public static let content = Column("content")
+        public static let tags = Column("tags")
+        public static let aliases = Column("aliases")
+    }
+}
+

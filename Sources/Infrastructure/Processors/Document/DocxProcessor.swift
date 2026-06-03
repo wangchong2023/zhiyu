@@ -22,7 +22,7 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
     }
 
     /// 解析
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     func parse() -> Bool {
         let parser = XMLParser(data: xmlData)
         parser.delegate = self
@@ -30,8 +30,8 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
     }
 
     /// parser
-    /// /// - Parameter parser: parser
-    /// /// - Parameter namespaceURI: namespaceURI
+    /// - Parameter parser: parser
+    /// - Parameter namespaceURI: namespaceURI
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
         if elementName == "w:t" {
             inTextElement = true
@@ -40,7 +40,7 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
     }
 
     /// parser
-    /// /// - Parameter parser: parser
+    /// - Parameter parser: parser
     func parser(_ parser: XMLParser, foundCharacters string: String) {
         if inTextElement {
             currentText += string
@@ -48,8 +48,8 @@ final class DocxProcessor: NSObject, XMLParserDelegate {
     }
 
     /// parser
-    /// /// - Parameter parser: parser
-    /// /// - Parameter namespaceURI: namespaceURI
+    /// - Parameter parser: parser
+    /// - Parameter namespaceURI: namespaceURI
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "w:t" {
             if !currentText.isEmpty {

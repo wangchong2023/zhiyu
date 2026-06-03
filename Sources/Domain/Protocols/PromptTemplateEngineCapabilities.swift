@@ -16,7 +16,7 @@ public protocol PromptTemplateEngineCapabilities: Sendable {
     
     /// 解析并插值替换系统提示词模板中的变量
     /// - Parameters:
-    ///   - template: 提示词模板内容（如："翻译以下内容：{{input}}"）
+    ///   - template: 提示词模板内容（如："{{input}}"）
     ///   - variables: 参数字典（如：["input": "Hello"]）
     /// - Returns: 完成插值替换后的最终提示词文本
     func parse(template: String, with variables: [String: String]) -> String

@@ -47,7 +47,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.apiRequests"
+            "value": "API 请求量"
           }
         }
       }
@@ -64,7 +64,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.cleanup.action"
+            "value": "清理系统数据"
           }
         }
       }
@@ -421,7 +421,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.index.title"
+            "value": "仪表盘与监控"
           }
         }
       }
@@ -2155,7 +2155,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.database"
+            "value": "系统数据库"
           }
         }
       }
@@ -2172,7 +2172,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.logs"
+            "value": "系统日志"
           }
         }
       }
@@ -2189,7 +2189,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.status"
+            "value": "系统状态"
           }
         }
       }
@@ -2223,7 +2223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.tokens"
+            "value": "Token 统计"
           }
         }
       }
@@ -2274,7 +2274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.totalStorage"
+            "value": "存储空间总计"
           }
         }
       }
@@ -2291,7 +2291,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.updateSuccess"
+            "value": "更新成功"
           }
         }
       }

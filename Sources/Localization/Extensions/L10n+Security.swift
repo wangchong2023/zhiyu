@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "System"
         
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
         
         // MARK: - Prompt 防御与消毒词条
@@ -49,12 +49,12 @@ extension L10n {
 
         /// 金库完整性校验失败的提示
         public static var integrityVerificationFailed: String {
-            "金库数据被外部非法篡改，完整性哈希校验失败！"
+            Security.tr("hashMismatchDesc")
         }
         
         /// 目标金库完整性校验失败的提示
         public static var targetIntegrityVerificationFailed: String {
-            "目标金库数据被外部非法篡改，完整性哈希校验失败！"
+            Security.tr("targetHashMismatchDesc")
         }
         
         /// 数据库连接安全验证失败，自动降级为只读瞬态内存模式提示
@@ -65,6 +65,16 @@ extension L10n {
         /// 重试重新验证按钮文本
         public static var retryConnection: String {
             tr("security.database.retry")
+        }
+        
+        /// Keychain 数据库口令保存失败时的错误消息
+        public static var keychainDatabasePassphraseError: String {
+            tr("security.keychain.databasePassphraseError")
+        }
+        
+        /// Keychain HMAC 盐值保存失败时的错误消息
+        public static var keychainHMACSaltError: String {
+            tr("security.keychain.hmacSaltError")
         }
     }
 }

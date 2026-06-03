@@ -63,7 +63,7 @@ struct SplashView: View {
                     
                     // 署名 (仅保留装饰线)
                     HStack(spacing: 0) {
-                        Text("— ")
+                        Text(" ")
                             .foregroundStyle(.white.opacity(DesignSystem.secondaryOpacity))
                         Text(L10n.Common.Splash.author)
                             .foregroundStyle(
@@ -115,6 +115,12 @@ struct SplashView: View {
     
     // MARK: - 动画序列
     private func startAnimations() {
+        #if DEBUG
+        if CommandLine.arguments.contains("--uitesting") {
+            onDismiss()
+            return
+        }
+        #endif
         // 背景动画启动
         starTwinkle = true
         nodeGlow = true

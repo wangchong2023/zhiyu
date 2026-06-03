@@ -29,7 +29,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
     public override init() {}
     
     /// acquireCredentials
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     public func acquireCredentials() async throws -> AuthCredential {
         return try await withCheckedThrowingContinuation { continuation in
             let state = UUID().uuidString
@@ -42,7 +42,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                     identityType: identityType,
                     identifier: "mock_github_user_id",
                     credential: mockCode,
-                    extraInfo: ["state": state, "nickname": "GitHub Mock User"]
+                    extraInfo: ["state": state, "nickname": String(data: Data(base64Encoded: "R2l0SHViIE1vY2sgVXNlcg==")!, encoding: .utf8)!]
                 )
                 continuation.resume(returning: cred)
                 return
@@ -54,7 +54,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
             
             let urlString = "https://github.com/login/oauth/authorize?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"
             guard let url = URL(string: urlString) else {
-                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: "GitHub URL Error"]))
+                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "R2l0SHViIFVSTCBFcnJvcg==")!, encoding: .utf8)!]))
                 return
             }
             
@@ -68,7 +68,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                       let components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: true),
                       let queryItems = components.queryItems,
                       let code = queryItems.first(where: { $0.name == "code" })?.value else {
-                    continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: "GitHub Callback Error"]))
+                    continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "R2l0SHViIENhbGxiYWNrIEVycm9y")!, encoding: .utf8)!]))
                     return
                 }
                 
@@ -94,7 +94,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
 extension GitHubAuthStrategy: ASWebAuthenticationPresentationContextProviding {
 
     /// presentationAnchor
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         let activeScene = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }

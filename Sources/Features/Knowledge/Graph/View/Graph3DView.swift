@@ -23,7 +23,6 @@ struct Graph3DView: View {
     @State private var filterType: PageType? = nil
     @State private var showNodeInfo = false
     @State private var infoPage: KnowledgePage?
-    @State private var showPageDetail = false
     @State private var cameraNode: SCNNode?
     @Binding var selectedNodeID: UUID?
     @Binding var isFullScreen: Bool
@@ -75,15 +74,12 @@ struct Graph3DView: View {
         .toolbar(isFullScreen ? .hidden : .visible, for: .tabBar)
         #endif
         .preferredColorScheme(isFullScreen ? .dark : nil)
-#if os(iOS)
+        #if os(iOS)
         .navigationBarBackButtonHidden(isFullScreen)
+        #endif
+        #if os(iOS)
         .toolbar(isFullScreen ? .hidden : .visible, for: .navigationBar)
-#endif
-        .navigationDestination(isPresented: $showPageDetail) {
-            if let page = infoPage {
-                PageDetailView(page: page)
-            }
-        }
+        #endif
         .onAppear { 
             // 节点数超出 2000 个时智能降级至 2D 拓扑
             if store.pages.count > 2000 {
@@ -132,12 +128,12 @@ struct Graph3DView: View {
 
     private var headerOverlay: some View {
         VStack(alignment: isFullScreen ? .center : .leading, spacing: DesignSystem.tiny) {
-            Text(L10n.Graph.ThreeD.tr("title"))
+            Text("3D_Graph")
                 .font(.subheadline.bold())
                 .foregroundStyle(.appText)
             
             if isFullScreen {
-                Text(L10n.Graph.ThreeD.tr("desc"))
+                Text("Graph_Desc")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(isFullScreen ? .center : .leading)
@@ -167,7 +163,7 @@ struct Graph3DView: View {
 
     private func nodeInfoBar(page: KnowledgePage) -> some View {
         Graph3DNodeInfoBar(page: page) {
-            showPageDetail = true
+            Router.shared.navigate(to: .pageDetail(id: page.id))
         }
     }
     

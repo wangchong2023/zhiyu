@@ -84,13 +84,15 @@ stateDiagram-v2
 ## 4. 插件分发与热插拔机制 (Distribution & Hot Swapping)
 
 ### 4.1 插件打包标准
-插件包以扩展名为 `.zyplugin` 的独立压缩 ZIP 包形式分发，其内部物理目录拓扑规范如下：
+插件统一以 `.zyplugin` 压缩包（ZIP 格式）分发，适用于本地安装与商店下载。内部物理目录拓扑规范如下：
 ```
 plugin_root/
 ├── manifest.json       # 静态配置信息（版本、作者、声明权限、依赖最低宿主版本）
 ├── index.js           # 经过混淆与打包的单体 JavaScript 逻辑（ES6 标准）
 └── assets/            # 静态资源（图标、配图、多语言字符串 catalog）
 ```
+
+本地安装时将 `.zyplugin` 文件放入 `Documents/Plugins/` 目录，App 启动时自动扫描、解压并加载。商店分发同样使用此格式，由 `PluginMarketService` 下载后委派 `PluginRegistry` 解压加载。
 
 ### 4.2 热插拔加载时序
 宿主支持无感热插拔加载插件，无需重启应用即可实现功能的无缝替换：

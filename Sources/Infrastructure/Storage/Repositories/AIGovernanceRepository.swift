@@ -32,9 +32,9 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     // MARK: - Token 计费 (Usage)
 
     /// 记录日志TokenUsage
-    /// /// - Parameter model: model
-    /// /// - Parameter promptTokens: promptTokens
-    /// /// - Parameter completionTokens: completionTokens
+    /// - Parameter model: model
+    /// - Parameter promptTokens: promptTokens
+    /// - Parameter completionTokens: completionTokens
     func logTokenUsage(model: String, promptTokens: Int, completionTokens: Int) async throws {
         let writer = await dbWriter
         try await writer.write { db in
@@ -44,8 +44,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 拉取TokenStats
-    /// /// - Parameter days: days
-    /// /// - Returns: 返回值
+    /// - Parameter days: days
+    /// - Returns: 返回值
     func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int) {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -71,8 +71,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 拉取DailyAIStats
-    /// /// - Parameter days: days
-    /// /// - Returns: 列表
+    /// - Parameter days: days
+    /// - Returns: 列表
     func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -100,7 +100,7 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 拉取MonthlyTokenStats
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func fetchMonthlyTokenStats() async throws -> [(month: String, total: Int)] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -125,11 +125,11 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     // MARK: - 调用日志 (Logs)
 
     /// 记录日志Call
-    /// /// - Parameter model: model
-    /// /// - Parameter promptTokens: promptTokens
-    /// /// - Parameter completionTokens: completionTokens
-    /// /// - Parameter latencyMS: latencyMS
-    /// /// - Parameter status: status
+    /// - Parameter model: model
+    /// - Parameter promptTokens: promptTokens
+    /// - Parameter completionTokens: completionTokens
+    /// - Parameter latencyMS: latencyMS
+    /// - Parameter status: status
     func logCall(model: String, promptTokens: Int, completionTokens: Int, latencyMS: Int, status: String) async throws {
         let writer = await dbWriter
         try await writer.write { db in
@@ -145,8 +145,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 拉取RecentLogs
-    /// /// - Parameter limit: limit
-    /// /// - Returns: 列表
+    /// - Parameter limit: limit
+    /// - Returns: 列表
     func fetchRecentLogs(limit: Int) async throws -> [LLMCallLog] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -160,7 +160,7 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     // MARK: - RAG 评估 (Evaluations)
 
     /// 保存RAGEvaluation
-    /// /// - Parameter evaluation: evaluation
+    /// - Parameter evaluation: evaluation
     func saveRAGEvaluation(_ evaluation: RAGEvaluation) async throws {
         let writer = await dbWriter
         try await writer.write { db in
@@ -170,8 +170,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 拉取RAGEvaluations
-    /// /// - Parameter limit: limit
-    /// /// - Returns: 列表
+    /// - Parameter limit: limit
+    /// - Returns: 列表
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -183,8 +183,8 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
     }
 
     /// 计算AverageRAGScores
-    /// /// - Parameter days: days
-    /// /// - Returns: 返回值
+    /// - Parameter days: days
+    /// - Returns: 返回值
     func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
         let writer = await dbWriter
         return try await writer.read { db in

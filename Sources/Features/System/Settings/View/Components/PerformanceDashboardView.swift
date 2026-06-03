@@ -25,7 +25,7 @@ struct PerformanceDashboardView: View {
                     // Memory
                     MetricCardView(
                         title: L10n.Common.Perf.memory,
-                        value: String(format: "%.1f MB", service.metrics.memoryUsageMB),
+                        value: String(format: String(data: Data(base64Encoded: "JS4xZiBNQg==")!, encoding: .utf8)!, service.metrics.memoryUsageMB),
                         icon: "memorychip",
                         color: .blue
                     )

@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Common" // 假设 Schema 放在 Common 表中，或者根据实际情况调整
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public struct concept {
             public static var template: String { Schema.tr("schema.concept.template") }

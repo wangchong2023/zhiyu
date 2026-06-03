@@ -77,7 +77,7 @@ struct SynthesisView: View {
                         case (.running, .completed):
                             AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFinishedAnnouncement(newTask.name))
                         case (.running, .failed(let error)):
-                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "，" + error)
+                            AccessibilityService.postAnnouncement(L10n.AI.Task.Accessibility.taskFailedAnnouncement(newTask.name) + "" + error)
                         default:
                             break
                         }
@@ -424,11 +424,11 @@ struct SynthesisView: View {
     /// - Parameter task: 异步后台任务
     /// - Returns: 结合了进度与执行阶段描述的文本
     private func buildTaskAccessibilityLabel(_ task: GlobalTask) -> String {
-        let base = "\(task.name)，\(L10n.AI.Task.Accessibility.taskInProgress)"
+        let base = "\(task.name)\(L10n.AI.Task.Accessibility.taskInProgress)"
         if case .running(let progress, let stage) = task.status {
             let percentage = Int(progress * 100)
             let stageName = localizedStageName(stage)
-            return base + "，" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
+            return base + "" + L10n.AI.Task.Accessibility.progressValue(percentage, stageName)
         }
         return base
     }
@@ -555,7 +555,7 @@ extension View {
 extension View {
 
     /// alertNoPages
-    /// /// - Parameter isPresented: isPresented
+    /// - Parameter isPresented: isPresented
     func alertNoPages(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.AI.Synthesis.Error.noPages, isPresented: isPresented) {
             Button(L10n.Common.ok, role: .cancel) { }
@@ -563,7 +563,7 @@ extension View {
     }
     
     /// alertLimitReached
-    /// /// - Parameter isPresented: isPresented
+    /// - Parameter isPresented: isPresented
     func alertLimitReached(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.AI.Synthesis.Error.limitReached, isPresented: isPresented) {
             Button(L10n.Common.done, role: .cancel) { }
@@ -571,9 +571,9 @@ extension View {
     }
     
     /// alert重命名Doc
-    /// /// - Parameter isPresented: isPresented
-    /// /// - Parameter name: name
-    /// /// - Parameter doc: doc
+    /// - Parameter isPresented: isPresented
+    /// - Parameter name: name
+    /// - Parameter doc: doc
     func alertRenameDoc(isPresented: Binding<Bool>, name: Binding<String>, doc: SynthesisStore.SynthesisDocument?) -> some View {
         self.alert(L10n.Tag.Action.rename, isPresented: isPresented) {
             TextField(L10n.Tag.Management.inputName, text: name)
@@ -588,7 +588,7 @@ extension View {
     }
     
     /// alertLLMNotConfigured
-    /// /// - Parameter isPresented: isPresented
+    /// - Parameter isPresented: isPresented
     func alertLLMNotConfigured(isPresented: Binding<Bool>) -> some View {
         self.alert(L10n.Chat.configureFirst, isPresented: isPresented) {
             Button(L10n.Common.confirm, role: .cancel) { }
@@ -598,9 +598,9 @@ extension View {
     }
     
     /// confirmBatch删除
-    /// /// - Parameter isPresented: isPresented
-    /// /// - Parameter action: action
-    /// /// - Returns: 视图
+    /// - Parameter isPresented: isPresented
+    /// - Parameter action: action
+    /// - Returns: 视图
     func confirmBatchDelete(isPresented: Binding<Bool>, action: @escaping () -> Void) -> some View {
         self.confirmationDialog(L10n.AI.Synthesis.batchDeleteConfirm, isPresented: isPresented, titleVisibility: .automatic) {
             Button(L10n.Common.delete, role: .destructive) { action() }
@@ -609,8 +609,8 @@ extension View {
     }
     
     /// alert删除Doc
-    /// /// - Parameter isPresented: isPresented
-    /// /// - Parameter doc: doc
+    /// - Parameter isPresented: isPresented
+    /// - Parameter doc: doc
     func alertDeleteDoc(isPresented: Binding<Bool>, doc: SynthesisStore.SynthesisDocument?) -> some View {
         self.alert(L10n.Common.deleteConfirm, isPresented: isPresented) {
             Button(L10n.Common.delete, role: .destructive) {

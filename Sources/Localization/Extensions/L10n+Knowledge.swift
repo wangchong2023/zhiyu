@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "Knowledge"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public enum Page {
@@ -51,61 +51,61 @@ extension L10n {
             public static var backlinks: String { Knowledge.tr("page.backlinks") }
 
             /// 删除PageTitle
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func deletePageTitle(_ name: String) -> String { Knowledge.trf("page.deletePageTitle", name) }
 
             /// backlinkAccessibility
-            /// /// - Parameter title: title
-            /// /// - Parameter type: type
-            /// /// - Returns: 字符串
+            /// - Parameter title: title
+            /// - Parameter type: type
+            /// - Returns: 字符串
             public static func backlinkAccessibility(_ title: String, _ type: String) -> String { Knowledge.trf("page.backlinkAccessibility", title, type) }
 
             /// titleAccessibility
-            /// /// - Parameter title: title
-            /// /// - Returns: 字符串
+            /// - Parameter title: title
+            /// - Returns: 字符串
             public static func titleAccessibility(_ title: String) -> String { Knowledge.trf("page.titleAccessibility", title) }
 
             /// createdAt格式化
-            /// /// - Parameter date: date
-            /// /// - Returns: 字符串
+            /// - Parameter date: date
+            /// - Returns: 字符串
             public static func createdAtFormat(_ date: String) -> String { Knowledge.trf("page.createdAtFormat", date) }
 
             /// updatedAt格式化
-            /// /// - Parameter date: date
-            /// /// - Returns: 字符串
+            /// - Parameter date: date
+            /// - Returns: 字符串
             public static func updatedAtFormat(_ date: String) -> String { Knowledge.trf("page.updatedAtFormat", date) }
 
             /// word计数
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func wordCount(_ count: Int) -> String { Knowledge.trf("page.wordCount", count) }
 
             /// outLinks计数
-            /// /// - Parameter count: 计数
-            /// /// - Returns: 字符串
+            /// - Parameter count: 计数
+            /// - Returns: 字符串
             public static func outLinksCount(_ count: Int) -> String { Knowledge.trf("page.outLinksCount", count) }
 
             /// metaAccessibility
-            /// /// - Parameter date: date
-            /// /// - Parameter words: words
-            /// /// - Parameter links: links
-            /// /// - Returns: 字符串
+            /// - Parameter date: date
+            /// - Parameter words: words
+            /// - Parameter links: links
+            /// - Returns: 字符串
             public static func metaAccessibility(_ date: String, _ words: Int, _ links: Int) -> String { Knowledge.trf("page.metaAccessibility", date, words, links) }
 
             /// pageTypeAccessibility
-            /// /// - Parameter type: type
-            /// /// - Returns: 字符串
+            /// - Parameter type: type
+            /// - Returns: 字符串
             public static func pageTypeAccessibility(_ type: String) -> String { Knowledge.trf("page.pageTypeAccessibility", type) }
 
             /// statusAccessibility
-            /// /// - Parameter status: status
-            /// /// - Returns: 字符串
+            /// - Parameter status: status
+            /// - Returns: 字符串
             public static func statusAccessibility(_ status: String) -> String { Knowledge.trf("page.statusAccessibility", status) }
 
             /// confidenceAccessibility
-            /// /// - Parameter confidence: confidence
-            /// /// - Returns: 字符串
+            /// - Parameter confidence: confidence
+            /// - Returns: 字符串
             public static func confidenceAccessibility(_ confidence: String) -> String { Knowledge.trf("page.confidenceAccessibility", confidence) }
 
             public struct AIInsightsVal {

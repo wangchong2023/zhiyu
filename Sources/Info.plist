@@ -50,14 +50,14 @@
 	<string>ZhiYu needs microphone access to record voice notes.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>ZhiYu needs photo library access for OCR text scanning.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>ZhiYu needs reminders access to sync your action items to the system Reminders app.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>ZhiYu needs speech recognition to transcribe your voice notes.</string>
 	<key>NSSpotlightUsageDescription</key>
 	<string>ZhiYu will index your knowledge vault so you can find pages directly via system search.</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>ZhiYu needs reminders access to sync your action items to the system Reminders app.</string>
-	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

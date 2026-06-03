@@ -196,11 +196,11 @@ final class ZhiYuDomainTests: XCTestCase {
     // MARK: - PromptRegistry Tests
     func testPromptRegistryTemplates() {
         let summaryPrompt = PromptRegistry.Ingest.summary(content: "Test Content")
-        XCTAssertTrue(summaryPrompt.contains("摘要"))
+        XCTAssertTrue(summaryPrompt.contains(L10n.AI.Prompt.summaryPrefix))
         XCTAssertTrue(summaryPrompt.contains("Test Content"))
         
         let qaPrompt = PromptRegistry.Ingest.reverseQA(content: "Test QA Content")
-        XCTAssertTrue(qaPrompt.contains("问题"))
+        XCTAssertTrue(qaPrompt.contains(L10n.AI.Prompt.reverseQAPrefix))
         XCTAssertTrue(qaPrompt.contains("Test QA Content"))
         
         let discoverPrompt = PromptRegistry.Structure.discoverLinks(content: "Content", existingTitles: ["Title1", "Title2"])
@@ -412,7 +412,7 @@ final class ZhiYuDomainTests: XCTestCase {
         
         // 7. 测试 hybridSearchWithDiagnostics 混合双轨检索 (调用 Mock 下的向量管理器)
         let embeddingManager = ServiceContainer.shared.resolve(EmbeddingManager.self)
-        let hybridResult = await service.hybridSearchWithDiagnostics(query: "Apple", in: allPages, embeddingManager: embeddingManager)
+        let hybridResult = await service.hybridSearchWithDiagnostics(query: "Apple", in: allPages, embeddingProvider: embeddingManager)
         XCTAssertNotNil(hybridResult)
     }
     

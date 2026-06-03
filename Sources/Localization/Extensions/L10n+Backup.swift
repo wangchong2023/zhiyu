@@ -15,8 +15,8 @@ extension L10n {
         public static let t = "Ingest"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("backup.title") }
         public static var autoBackup: String { tr("backup.autoBackup") }

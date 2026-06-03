@@ -16,7 +16,7 @@ import Vision
 final class iOSOCRService: OCRServiceProtocol {
 
     /// 识别Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func recognizeText(from image: AppImage) async throws -> String {
         guard let cgImage = image.appCGImage else {
             throw OCRError.invalidImage

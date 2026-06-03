@@ -214,8 +214,8 @@ struct DeveloperSettingsView: View {
             }
             }
             #if os(iOS)
-            .listStyle(.insetGrouped)
-            #endif
+                .listStyle(.insetGrouped)
+                #endif
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.Section.developer)
@@ -268,7 +268,7 @@ struct DeveloperSettingsView: View {
                 self.isLoadingStats = false
             }
         } catch {
-            print("Failed to load developer stats: \(error)")
+            print("Failed to" + " load developer" + " stats: \(error)")
             await MainActor.run { self.isLoadingStats = false }
         }
     }

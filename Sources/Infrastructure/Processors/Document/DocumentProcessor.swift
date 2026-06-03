@@ -71,7 +71,7 @@ struct PDFProcessorProxy: DocumentProcessor {
     @Inject private var pdfService: any PDFServiceProtocol
 
     /// 提取Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func extractText(from url: URL) async throws -> String {
         guard let text = await pdfService.extractText(from: url) else {
             throw ProcessorError.extractionFailed
@@ -84,7 +84,7 @@ struct PDFProcessorProxy: DocumentProcessor {
 struct DocxProcessorProxy: DocumentProcessor {
 
     /// 提取Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func extractText(from url: URL) async throws -> String {
         guard let archive = ZipUtility.readZipArchive(at: url) else {
             throw ProcessorError.invalidArchive
@@ -107,7 +107,7 @@ struct DocxProcessorProxy: DocumentProcessor {
 struct XlsxProcessorProxy: DocumentProcessor {
 
     /// 提取Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func extractText(from url: URL) async throws -> String {
         guard let archive = ZipUtility.readZipArchive(at: url) else {
             throw ProcessorError.invalidArchive
@@ -155,7 +155,7 @@ struct XlsxProcessorProxy: DocumentProcessor {
 struct TextProcessorProxy: DocumentProcessor {
 
     /// 提取Text
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     func extractText(from url: URL) async throws -> String {
         do {
             return try String(contentsOf: url, encoding: .utf8)

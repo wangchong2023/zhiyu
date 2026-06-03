@@ -15,7 +15,7 @@ extension View {
     @ViewBuilder
 
     /// 应用
-    /// /// - Returns: 返回值
+    /// - Returns: 返回值
     func apply<Content: View>(@ViewBuilder _ transform: (Self) -> Content) -> Content {
         transform(self)
     }

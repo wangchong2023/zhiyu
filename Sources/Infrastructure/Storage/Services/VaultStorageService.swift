@@ -60,7 +60,7 @@ final class VaultStorageService {
                 lastModified: modificationDate
             )
         } catch {
-            Logger.shared.addLog(action: .error, target: "VaultStorageService", details: "Failed to process external file \(url): \(error.localizedDescription)")
+            Logger.shared.addLog(action: .error, target: "VaultStorageService", details: "Vault_Failed1")
             return nil
         }
     }

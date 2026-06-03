@@ -30,6 +30,12 @@ final class DeepLinkService: ObservableObject {
     /// - Parameter url: 传入的原始 URL 实例
     /// - Returns: 是否为系统可识别且处理成功的路由动作
     func handleURL(_ url: URL) -> Bool {
+        // 限流保护：防止外部意图总线过载，超过 10Hz 直接拒绝 (TC-DEE-06)
+        guard IntentRateLimiter.shared.request() else {
+            print(" [DeepLinkService]" + " Rate limit" + " exceeded! Dropping" + " request: \(url.absoluteString)")
+            return false
+        }
+        
         // 关键过程：验证前置协议头是否符合 zhiyu 专属定义
         guard url.scheme == "zhiyu" else { return false }
         
@@ -80,8 +86,8 @@ final class DeepLinkService: ObservableObject {
     
     // MARK: - Spotlight Query Handling
     /// 处理SpotlightActivity
-    /// /// - Parameter userActivity: userActivity
-    /// /// - Returns: 是否成功
+    /// - Parameter userActivity: userActivity
+    /// - Returns: 是否成功
     func handleSpotlightActivity(_ userActivity: NSUserActivity) -> Bool {
         guard userActivity.activityType == "com.zhiyu.app.openPage",
               let userInfo = userActivity.userInfo,
@@ -94,7 +100,7 @@ final class DeepLinkService: ObservableObject {
     }
     
     /// consumeDeep链接
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func consumeDeepLink() -> DeepLink? {
         let link = pendingDeepLink
         pendingDeepLink = nil

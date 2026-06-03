@@ -15,7 +15,7 @@ import UIKit
 final class iOSHapticService: HapticFeedbackProtocol {
 
     /// trigger
-    /// /// - Parameter pattern: pattern
+    /// - Parameter pattern: pattern
     func trigger(_ pattern: HapticPattern) {
         #if !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
         switch pattern {

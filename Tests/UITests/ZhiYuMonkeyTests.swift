@@ -35,6 +35,9 @@ final class ZhiYuMonkeyTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        // 优雅关闭：先返回主屏幕触发应用进入后台生命周期，让底层资源有机会安全清理
+        XCUIDevice.shared.press(.home)
+        try? await Task.sleep(nanoseconds: 500_000_000)
         app?.terminate()
         try await super.tearDown()
     }

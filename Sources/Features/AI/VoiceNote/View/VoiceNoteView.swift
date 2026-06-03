@@ -49,8 +49,10 @@ struct VoiceNoteView: View {
         .navigationTitle(L10n.Voice.Speech.title)
 #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
-#endif
+        #endif
+        #if os(iOS)
+        .toolbar(true ? .hidden : .visible, for: .navigationBar)
+        #endif
         .sheet(isPresented: $showSaveSheet) {
             SaveVoiceNoteSheet(speechService: speechService, title: $noteTitle)
         }
@@ -94,8 +96,8 @@ struct VoiceNoteView: View {
             }
             #if !os(watchOS)
             .pickerStyle(.menu)
-            #endif
             .tint(.appAccent)
+            #endif
         }
         .appContainer(cornerRadius: DesignSystem.cardRadius, padding: true)
     }
@@ -245,7 +247,6 @@ struct VoiceNoteView: View {
                 .padding(Spacing.medium)
                 .background(Color.appCard)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-            #endif
             
             HStack {
                 Text("\(speechService.transcribedText.count) \(L10n.Voice.Speech.characters)")
@@ -269,6 +270,7 @@ struct VoiceNoteView: View {
                     .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
                 }
             }
+            #endif
         }
         .appContainer(cornerRadius: DesignSystem.cardRadius, padding: true)
     }

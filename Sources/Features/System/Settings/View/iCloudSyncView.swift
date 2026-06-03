@@ -79,8 +79,8 @@ struct iCloudSyncView: View {
             .appListRowBackground()
         }
 #if os(iOS)
-        .listStyle(.insetGrouped)
-#endif
+                .listStyle(.insetGrouped)
+                #endif
         .scrollContentBackground(.hidden)
         .background(PageBackgroundView(accentColor: .appAccent))
         .navigationTitle(L10n.ICloud.title)

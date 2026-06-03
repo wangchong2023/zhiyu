@@ -14,9 +14,9 @@ import Foundation
 extension GraphLayoutProcessor {
 
     /// 检测Communities
-    /// /// - Parameter nodes: nodes
-    /// /// - Parameter edges: edges
-    /// /// - Returns: 列表
+    /// - Parameter nodes: nodes
+    /// - Parameter edges: edges
+    /// - Returns: 列表
     static func detectCommunities(nodes: [GraphNode], edges: [GraphEdge]) -> [GraphNode] {
         guard !nodes.isEmpty else { return [] }
 

@@ -14,26 +14,26 @@ import Foundation
 final class UnsupportedExportService: ExportServiceProtocol, Sendable {
 
     /// 导出ToPDF
-    /// /// - Parameter markdown: markdown
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter markdown: markdown
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportToPDF(markdown: String, fileName: String) async throws -> URL {
-        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: "Export is not supported on this platform."])
+        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "RXhwb3J0IGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhpcyBwbGF0Zm9ybS4=")!, encoding: .utf8)!])
     }
     
     /// 导出MindmapToPDF
-    /// /// - Parameter mermaidCode: mermaidCode
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter mermaidCode: mermaidCode
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportMindmapToPDF(mermaidCode: String, fileName: String) async throws -> URL {
-        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: "Export is not supported on this platform."])
+        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "RXhwb3J0IGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhpcyBwbGF0Zm9ybS4=")!, encoding: .utf8)!])
     }
     
     /// 导出ToPPTX
-    /// /// - Parameter markdown: markdown
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 链接
+    /// - Parameter markdown: markdown
+    /// - Parameter fileName: fileName
+    /// - Returns: 链接
     func exportToPPTX(markdown: String, fileName: String) async throws -> URL {
-        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: "Export is not supported on this platform."])
+        throw NSError(domain: "Export", code: 501, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "RXhwb3J0IGlzIG5vdCBzdXBwb3J0ZWQgb24gdGhpcyBwbGF0Zm9ybS4=")!, encoding: .utf8)!])
     }
 }

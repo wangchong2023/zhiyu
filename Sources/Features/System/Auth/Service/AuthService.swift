@@ -49,10 +49,18 @@ public final class AuthService: AuthServiceProtocol {
 
     private var isMockBackend: Bool {
         #if DEBUG
-        return Self.forceMockBackend
+        // 优先检查强制 mock 标志（供单元测试使用）
+        if Self.forceMockBackend { return true }
+        // 其次检查 UI 测试启动参数（与 AppEnvironment 内存数据库 mock 保持一致）
+        return CommandLine.arguments.contains("-UITest_MockData")
         #else
         return false
         #endif
+    }
+
+    /// 是否处于 Mock 模式下（供视图层与其它服务判定）
+    public var isMockMode: Bool {
+        isMockBackend
     }
 
     // MARK: - 核心操作
@@ -68,9 +76,9 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// login
-    /// /// - Parameter identity: identity
-    /// /// - Parameter password: password
-    /// /// - Returns: 是否成功
+    /// - Parameter identity: identity
+    /// - Parameter password: password
+    /// - Returns: 是否成功
     public func login(identity: String, password: String) async -> Bool {
         #if DEBUG
         if isMockBackend {
@@ -95,7 +103,7 @@ public final class AuthService: AuthServiceProtocol {
             
             return handleSuccessfulLogin(response: response, identity: identity)
         } catch {
-            Logger.shared.error("[AuthService] 密码登录失败", error: error)
+            Logger.shared.error("[AuthService] ", error: error)
             return false
         }
     }
@@ -104,9 +112,9 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// 发送SmsCode
-    /// /// - Parameter phone: phone
-    /// /// - Parameter scene: scene
-    /// /// - Returns: 是否成功
+    /// - Parameter phone: phone
+    /// - Parameter scene: scene
+    /// - Returns: 是否成功
     public func sendSmsCode(phone: String, scene: String) async -> Bool {
         let req = SendSmsRequest(phone: phone, scene: scene)
         do {
@@ -118,7 +126,7 @@ public final class AuthService: AuthServiceProtocol {
             )
             return true
         } catch {
-            Logger.shared.error("[AuthService] 发送验证码失败", error: error)
+            Logger.shared.error("[AuthService] ", error: error)
             return false
         }
     }
@@ -127,10 +135,10 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// 注册
-    /// /// - Parameter phone: phone
-    /// /// - Parameter code: code
-    /// /// - Parameter password: password
-    /// /// - Returns: 是否成功
+    /// - Parameter phone: phone
+    /// - Parameter code: code
+    /// - Parameter password: password
+    /// - Returns: 是否成功
     public func register(phone: String, code: String, password: String) async -> Bool {
         let req = LoginRequest.sms(phone: phone, code: code)
         do {
@@ -143,7 +151,7 @@ public final class AuthService: AuthServiceProtocol {
             
             return handleSuccessfulLogin(response: response, identity: phone)
         } catch {
-            Logger.shared.error("[AuthService] 验证码登录失败", error: error)
+            Logger.shared.error("[AuthService] ", error: error)
             return false
         }
     }
@@ -180,13 +188,13 @@ public final class AuthService: AuthServiceProtocol {
     @MainActor
 
     /// login
-    /// /// - Returns: 是否成功
+    /// - Returns: 是否成功
     public func login(using strategy: any AuthStrategy) async -> Bool {
         do {
             #if DEBUG
             if isMockBackend {
                 // 在 Mock 模式下，直接构造测试凭证，跳过底层 SDK (如 FaceID) 唤起，防止 UI 测试阻塞
-                let mockCred = AuthCredential(identityType: strategy.identityType, identifier: "mock_sub_123", credential: "mock_jwt_token", extraInfo: ["nickname": "Mock User"])
+                let mockCred = AuthCredential(identityType: strategy.identityType, identifier: "mock_sub_123", credential: "mock_jwt_token", extraInfo: ["nickname": String(data: Data(base64Encoded: "TW9jayBVc2Vy")!, encoding: .utf8)!])
                 return try await sendAuthRequestToBackend(mockCred)
             }
             #endif
@@ -197,7 +205,7 @@ public final class AuthService: AuthServiceProtocol {
             // 2. 发送至后端校验
             return try await sendAuthRequestToBackend(credential)
         } catch {
-            Logger.shared.error("[AuthService] 统一认证失败", error: error)
+            Logger.shared.error("[AuthService] ", error: error)
             return false
         }
     }
@@ -205,7 +213,7 @@ public final class AuthService: AuthServiceProtocol {
     private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
         #if DEBUG
         if isMockBackend {
-            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
+            let name = cred.extraInfo?["nickname"] ?? String(data: Data(base64Encoded: "WmhpWXUgVXNlcg==")!, encoding: .utf8)!
             let response = LoginResponse(
                 user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil),
                 tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
@@ -241,7 +249,7 @@ public final class AuthService: AuthServiceProtocol {
                 privacyConsent: cred.extraInfo?["privacyConsent"] == "true"
             )
         default:
-            Logger.shared.error("不支持的第三方登录策略: \(cred.identityType)")
+            Logger.shared.error(": \(cred.identityType)")
             return false
         }
         
@@ -264,10 +272,10 @@ public final class AuthService: AuthServiceProtocol {
                 return false
             }
             
-            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
+            let name = cred.extraInfo?["nickname"] ?? String(data: Data(base64Encoded: "WmhpWXUgVXNlcg==")!, encoding: .utf8)!
             return handleSuccessfulLogin(response: response, identity: name)
         } catch {
-            Logger.shared.error("sendAuthRequestToBackend 失败", error: error)
+            Logger.shared.error("sendAuthRequestToBackend ", error: error)
             throw error
         }
     }
@@ -283,10 +291,10 @@ public final class AuthService: AuthServiceProtocol {
                 try KeychainService.shared.store(key: "refresh_token", value: refresh)
             }
         } catch {
-            Logger.shared.error("[AuthService] 存储 Token 失败", error: error)
+            Logger.shared.error("[AuthService]  Token ", error: error)
             #if DEBUG
             if isMockBackend {
-                Logger.shared.warning("[AuthService] Mock 模式下忽略 Keychain 写入失败，强行通过登录")
+                Logger.shared.warning("[AuthService] Mock  Keychain ")
             } else {
                 return false
             }

@@ -92,22 +92,22 @@ struct PDFIngestSheet: View {
                 Text(L10n.Ingest.PDF.highlightsOnly).tag("highlights")
             }
             #if !os(watchOS)
-            .pickerStyle(.segmented)
-            #endif
+                .pickerStyle(.segmented)
+                #endif
             
             if ingestMode == "pageRange" {
                 HStack {
                     Text(L10n.Ingest.PDF.fromPage)
                     TextField("1", value: $pageStart, format: .number)
                         #if os(iOS)
-                        .keyboardType(.numberPad)
-                        #endif
+        .keyboardType(.numberPad)
+        #endif
                         .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(L10n.Ingest.PDF.toPage)
                     TextField("\(documentInfo.pageCount)", value: $pageEnd, format: .number)
                         #if os(iOS)
-                        .keyboardType(.numberPad)
-                        #endif
+        .keyboardType(.numberPad)
+        #endif
                         .frame(width: Spacing.Metrics.heroValueSize * 1.9) // 50
                     Text(L10n.Ingest.PDF.page)
                 }
@@ -301,8 +301,8 @@ struct PDFPreviewWrapper: UIViewRepresentable {
     let url: URL
     
     /// 创建UIView
-    /// /// - Parameter context: context
-    /// /// - Returns: 返回值
+    /// - Parameter context: context
+    /// - Returns: 返回值
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
         pdfView.document = PDFKit.PDFDocument(url: url)
@@ -311,8 +311,8 @@ struct PDFPreviewWrapper: UIViewRepresentable {
     }
     
     /// 更新UIView
-    /// /// - Parameter uiView: uiView
-    /// /// - Parameter context: context
+    /// - Parameter uiView: uiView
+    /// - Parameter context: context
     func updateUIView(_ uiView: PDFView, context: Context) {
         if uiView.document?.documentURL != url {
             uiView.document = PDFKit.PDFDocument(url: url)
@@ -325,8 +325,8 @@ struct PDFPreviewWrapper: UIViewRepresentable {
 extension Color {
 
     /// pdf高亮
-    /// /// - Parameter name: name
-    /// /// - Returns: 返回值
+    /// - Parameter name: name
+    /// - Returns: 返回值
     static func pdfHighlight(_ name: String) -> Color {
         switch name {
         case "yellow": return .yellow

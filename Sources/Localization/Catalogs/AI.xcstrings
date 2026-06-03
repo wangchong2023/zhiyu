@@ -1021,7 +1021,6 @@
         }
       }
     },
-
     "chat.clearHistory": {
       "extractionState": "manual",
       "localizations": {
@@ -2054,7 +2053,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.error"
+            "value": "LLM 服务错误"
           }
         }
       }
@@ -2224,7 +2223,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.error"
+            "value": "评估出错"
           }
         }
       }
@@ -2241,7 +2240,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.fail"
+            "value": "评估未通过"
           }
         }
       }
@@ -2258,7 +2257,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.pass"
+            "value": "评估通过"
           }
         }
       }
@@ -2275,7 +2274,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.warning"
+            "value": "评估警告"
           }
         }
       }
@@ -3533,7 +3532,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apple Intelligence"
+            "value": "Apple 智能"
           }
         }
       }
@@ -5063,7 +5062,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.quiz.title"
+            "value": "AI 测验生成"
           }
         }
       }
@@ -6236,7 +6235,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.error"
+            "value": "知识合成失败"
           }
         }
       }
@@ -6287,7 +6286,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.generate"
+            "value": "知识合成生成"
           }
         }
       }
@@ -6645,6 +6644,295 @@
           "stringUnit": {
             "state": "translated",
             "value": "进度百分之%lld，当前处于：%@阶段"
+          }
+        }
+      }
+    },
+    "aitask.status.ready": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask.status.ready"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "任务就绪"
+          }
+        }
+      }
+    },
+    "aitask.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aitask."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 任务"
+          }
+        }
+      }
+    },
+    "prompt.replyInChinese": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.replyInChinese "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.replyInChinese"
+          }
+        }
+      }
+    },
+    "prompt.summaryPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.summaryPrefix "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.summaryPrefix"
+          }
+        }
+      }
+    },
+    "prompt.discoverLinksPrefix2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix2 "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix2"
+          }
+        }
+      }
+    },
+    "prompt.reverseQAPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.reverseQAPrefix "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.reverseQAPrefix"
+          }
+        }
+      }
+    },
+    "prompt.ingestDiscoveryAssistant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestDiscoveryAssistant "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestDiscoveryAssistant"
+          }
+        }
+      }
+    },
+    "prompt.queryExpansion": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.queryExpansion "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.queryExpansion"
+          }
+        }
+      }
+    },
+    "prompt.discoverLinksPrefix1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix1 "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.discoverLinksPrefix1"
+          }
+        }
+      }
+    },
+    "prompt.hydeUserPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeUserPrompt "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeUserPrompt"
+          }
+        }
+      }
+    },
+    "prompt.hydeSystem": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeSystem "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.hydeSystem"
+          }
+        }
+      }
+    },
+    "prompt.rerankUserPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankUserPrompt "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankUserPrompt"
+          }
+        }
+      }
+    },
+    "prompt.rerankSystem": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankSystem "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.rerankSystem"
+          }
+        }
+      }
+    },
+    "prompt.ingestManagementAssistant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestManagementAssistant "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prompt.ingestManagementAssistant"
+          }
+        }
+      }
+    },
+    "pageTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Title"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面标题"
+          }
+        }
+      }
+    },
+    "ondevice.errorFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ondevice.errorFormat "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ondevice.errorFormat"
+          }
+        }
+      }
+    },
+    "sidebar.synthesis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.synthesis "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sidebar.synthesis"
           }
         }
       }

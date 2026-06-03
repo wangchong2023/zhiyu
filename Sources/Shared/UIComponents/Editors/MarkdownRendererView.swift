@@ -169,7 +169,7 @@ struct MarkdownRendererView: View {
                             .foregroundStyle(.appAccent)
                             .frame(width: 24, alignment: .trailing)
                     } else {
-                        Text("•")
+                        Text("")
                             .foregroundStyle(.appAccent)
                             .frame(width: DesignSystem.iconSmall)
                     }

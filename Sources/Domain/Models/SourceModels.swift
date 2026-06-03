@@ -16,7 +16,7 @@ public struct KnowledgeSource: Identifiable, Codable, Sendable, Equatable {
     public let pageID: UUID      // 关联的原文页面 ID
     public let title: String     // 页面标题
     public let snippet: String   // 引用的文本片段
-    public let anchorPath: String? // 语义路径 (如: "原理 > 分块算法")
+    public let anchorPath: String? // 语义路径 (如: " > ")
     public let score: Double     // 相似度或置信度分数 (0.0 - 1.0)
     public let timestamp: Date
     

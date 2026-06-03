@@ -38,7 +38,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     private let governanceRepository: any GovernanceRepository
     
     // ── 助手服务 ──
-    public let embeddingManager: EmbeddingManager
+    public let embeddingProvider: any EmbeddingProvider
 
     // MARK: - 初始化
     
@@ -50,7 +50,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         self.knowledgeRepository = knowledgeRepo
         self.vectorRepository = vectorRepo
         self.governanceRepository = governanceRepo
-        self.embeddingManager = EmbeddingManager(repository: vectorRepo)
+        self.embeddingProvider = EmbeddingManager(repository: vectorRepo)
         
         // 初始同步
         Task {
@@ -106,21 +106,21 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     }
     
     /// 更新Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func updatePage(_ page: KnowledgePage) async throws {
         try await knowledgeRepository.save(page)
         await reloadFromDisk()
     }
     
     /// 删除Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func deletePage(_ page: KnowledgePage) async throws {
         try await knowledgeRepository.delete(id: page.id)
         await reloadFromDisk()
     }
 
     /// 同步RemotePage
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func syncRemotePage(_ page: KnowledgePage) async {
         _ = try? await knowledgeRepository.save(page)
         await reloadFromDisk()
@@ -145,14 +145,14 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // MARK: - 搜索与关联
 
     /// 搜索Pages
-    /// /// - Parameter query: query
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Returns: 列表
     public func searchPages(query: String) async -> [KnowledgePage] {
         return (try? await knowledgeRepository.search(query: query)) ?? []
     }
 
     /// 拉取BacklinksByID
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     public func fetchBacklinksByID(for id: UUID) async -> [KnowledgePage] {
         let backlinkIDs = (try? await knowledgeRepository.fetchBacklinks(for: id)) ?? []
         return _pages.filter { backlinkIDs.contains($0.id) }
@@ -161,14 +161,14 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // MARK: - 标签管理
     
     /// 重命名Tag
-    /// /// - Parameter oldTag: oldTag
+    /// - Parameter oldTag: oldTag
     public func renameTag(_ oldTag: String, to newTag: String) async {
         _ = try? await knowledgeRepository.renameTag(old: oldTag, to: newTag)
         await reloadFromDisk()
     }
     
     /// 删除Tag
-    /// /// - Parameter tag: tag
+    /// - Parameter tag: tag
     public func deleteTag(_ tag: String) async {
         _ = try? await knowledgeRepository.deleteTag(tag)
         await reloadFromDisk()
@@ -247,12 +247,12 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         
         for (title, type, content, tags) in pagesToCreate {
             _ = try? await createPage(title: title, pageType: type, content: content, tags: tags)
-            logger(.create, title, "Seeded default content")
+            logger(.create, title, "Seeded_default_content")
         }
     }
 
     /// 替换AllPages
-    /// /// - Parameter newPages: newPages
+    /// - Parameter newPages: newPages
     public func replaceAllPages(_ newPages: [KnowledgePage]) async {
         try? await performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
@@ -293,26 +293,26 @@ extension SQLiteStore {
     }
 
     /// any更新Page
-    /// /// - Parameter page: page
-    /// /// - Parameter forceDeepScan: forceDeep扫描
+    /// - Parameter page: page
+    /// - Parameter forceDeepScan: forceDeep扫描
     public func anyUpdatePage(_ page: KnowledgePage, forceDeepScan: Bool) async {
         _ = try? await updatePage(page)
     }
     
     /// any删除Page
-    /// /// - Parameter page: page
+    /// - Parameter page: page
     public func anyDeletePage(_ page: KnowledgePage) async {
         _ = try? await deletePage(page)
     }
 
     /// 添加记录日志
-    /// /// - Parameter action: action
-    /// /// - Parameter target: target
-    /// /// - Parameter details: details
-    /// /// - Parameter duration: duration
-    /// /// - Parameter startTime: 启动Time
-    /// /// - Parameter endTime: 结束Time
-    /// /// - Parameter module: module
+    /// - Parameter action: action
+    /// - Parameter target: target
+    /// - Parameter details: details
+    /// - Parameter duration: duration
+    /// - Parameter startTime: 启动Time
+    /// - Parameter endTime: 结束Time
+    /// - Parameter module: module
     public nonisolated func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?) {
         // 存储引擎层不直接记录日志，由上层协调
     }

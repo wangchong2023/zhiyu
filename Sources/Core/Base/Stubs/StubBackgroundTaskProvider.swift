@@ -13,8 +13,8 @@ import Foundation
 final class StubBackgroundTaskProvider: BackgroundTaskProtocol {
 
     /// 注册
-    /// /// - Parameter handler: handler
-    /// /// - Returns: 返回值
+    /// - Parameter handler: handler
+    /// - Returns: 返回值
     func register(handler: @escaping @Sendable @MainActor () -> Void) {}
 
     /// 调度

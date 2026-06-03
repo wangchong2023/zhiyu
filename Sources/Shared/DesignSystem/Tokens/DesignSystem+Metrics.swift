@@ -65,6 +65,10 @@ extension DesignSystem {
         public static let welcomeHeroCircleSize: CGFloat = Spacing.Metrics.welcomeHeroCircleSize
         public static let welcomeHeroIconSize: CGFloat = Spacing.Metrics.welcomeHeroIconSize
         public static let statCardMinWidth: CGFloat = Spacing.Metrics.statCardMinWidth
+        /// macOS/Catalyst 最小窗口宽度 (800px)
+        public static let minWindowWidth: CGFloat = Spacing.Metrics.minWindowWidth
+        /// macOS/Catalyst 最小窗口高度 (600px)
+        public static let minWindowHeight: CGFloat = Spacing.Metrics.minWindowHeight
         /// 笔记本名称最大长度限制 (24字符)
         public static let maxNotebookNameLength: Int = 24
     }

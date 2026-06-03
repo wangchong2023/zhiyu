@@ -18,7 +18,7 @@ import Combine
 @Observable
 final class IngestStore {
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
-    @ObservationIgnored @Inject private var llmService: LLMService
+    @ObservationIgnored @Inject private var llmService: any LLMServiceProtocol
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var ingestService: IngestService
     @ObservationIgnored @Inject private var pdfService: any PDFServiceProtocol
@@ -71,9 +71,9 @@ final class IngestStore {
     @discardableResult
 
     /// 保存PDFDocument
-    /// /// - Parameter data: data
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter data: data
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     public func savePDFDocument(data: Data, fileName: String) async -> URL? {
         await pdfService.savePDF(data: data, fileName: fileName)
     }
@@ -90,8 +90,8 @@ final class IngestStore {
     @discardableResult
 
     /// 删除PDFDocument
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 是否成功
+    /// - Parameter fileName: fileName
+    /// - Returns: 是否成功
     public func deletePDFDocument(fileName: String) async -> Bool {
         await pdfService.deletePDF(fileName: fileName)
     }
@@ -214,9 +214,9 @@ final class IngestStore {
 
     /// 从外部文件直接导入（拖拽/文件选择器），异步处理
     func importFile(at url: URL) async {
-        logger.debug("📥 [IngestStore] 正在导入文件：\(url.lastPathComponent)")
+        logger.debug(" [IngestStore] \(url.lastPathComponent)")
         guard let content = try? String(contentsOf: url) else {
-            logger.error("❌ [IngestStore] 无法读取文件内容：\(url.path)")
+            logger.error(" [IngestStore] \(url.path)")
             return
         }
 
@@ -237,7 +237,7 @@ final class IngestStore {
     /// 处理文件导入流程（含提取与安全校验）
     func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
         guard url.startAccessingSecurityScopedResource() else {
-            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Permission denied"])
+            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "UGVybWlzc2lvbiBkZW5pZWQ=")!, encoding: .utf8)!])
         }
         defer { url.stopAccessingSecurityScopedResource() }
 

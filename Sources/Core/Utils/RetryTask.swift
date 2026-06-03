@@ -42,7 +42,7 @@ public enum RetryTask {
             } catch {
                 if retries >= maxRetries {
                     // 重试次数耗尽，直接抛出异常
-                    Logger.shared.error("[RetryTask] 任务失败且已达最大重试次数 (\(maxRetries)次)", error: error)
+                    Logger.shared.error("[RetryTask]  (\(maxRetries))", error: error)
                     throw error
                 }
                 
@@ -53,7 +53,7 @@ public enum RetryTask {
                 let jitter = Double.random(in: 0.8...1.2)
                 let actualDelay = min(currentDelay * jitter, maxDelay)
                 
-                Logger.shared.warning("[RetryTask] 任务失败: \(error.localizedDescription)。即将进行第 \(retries)/\(maxRetries) 次重试，等待 \(String(format: "%.2f", actualDelay)) 秒...")
+                Logger.shared.warning("[RetryTask] : \(error.localizedDescription) \(retries)/\(maxRetries)  \(String(format: "%.2f", actualDelay)) ...")
                 
                 // 挂起协程等待重试
                 try await Task.sleep(nanoseconds: UInt64(actualDelay * 1_000_000_000))

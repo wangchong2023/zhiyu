@@ -27,9 +27,9 @@ final class iOSPDFService: PDFServiceProtocol {
     // MARK: - File Management
 
     /// 保存PDF
-    /// /// - Parameter data: data
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter data: data
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     func savePDF(data: Data, fileName: String) async -> URL? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
@@ -41,8 +41,8 @@ final class iOSPDFService: PDFServiceProtocol {
     }
 
     /// 删除PDF
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 是否成功
+    /// - Parameter fileName: fileName
+    /// - Returns: 是否成功
     func deletePDF(fileName: String) async -> Bool {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         do {
@@ -54,7 +54,7 @@ final class iOSPDFService: PDFServiceProtocol {
     }
 
     /// allPDFFilenames
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func allPDFFilenames() async -> [String] {
         do {
             let files = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
@@ -68,8 +68,8 @@ final class iOSPDFService: PDFServiceProtocol {
     }
 
     /// 获取PDFURL
-    /// /// - Parameter fileName: fileName
-    /// /// - Returns: 可选值
+    /// - Parameter fileName: fileName
+    /// - Returns: 可选值
     func getPDFURL(fileName: String) -> URL? {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         return FileManager.default.fileExists(atPath: fileURL.path) ? fileURL : nil
@@ -78,15 +78,15 @@ final class iOSPDFService: PDFServiceProtocol {
     // MARK: - Text Extraction
 
     /// 提取Text
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func extractText(from url: URL) async -> String? {
         guard let document = PDFDocument(url: url) else { return nil }
         return await extractText(from: url, pageRange: 0..<document.pageCount)
     }
 
     /// 提取Text
-    /// /// - Parameter pageRange: pageRange
-    /// /// - Returns: 可选值
+    /// - Parameter pageRange: pageRange
+    /// - Returns: 可选值
     func extractText(from url: URL, pageRange: Range<Int>) async -> String? {
         guard let document = PDFDocument(url: url) else { return nil }
         
@@ -102,6 +102,9 @@ final class iOSPDFService: PDFServiceProtocol {
         
         for i in start..<end {
             if let page = document.page(at: i) {
+                // 实时推送当前正在处理的 PDF 物理页状态
+                TaskCenter.shared.addIngestSubLog("Extracting_Page_\(i + 1)_of_\(document.pageCount)")
+                
                 // 2. 在提取当前页面文本前，织入当前页关联的大纲层级标题
                 if let outlines = pageOutlines[i], !outlines.isEmpty {
                     for title in outlines {
@@ -136,7 +139,7 @@ final class iOSPDFService: PDFServiceProtocol {
     // MARK: - Metadata Persistence
 
     /// 保存DocumentsInfo
-    /// /// - Parameter docs: docs
+    /// - Parameter docs: docs
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         if let data = try? JSONEncoder().encode(docs) {
@@ -145,7 +148,7 @@ final class iOSPDFService: PDFServiceProtocol {
     }
 
     /// 加载DocumentsInfo
-    /// /// - Returns: 列表
+    /// - Returns: 列表
     func loadDocumentsInfo() async -> [PDFDocumentInfo] {
         let url = documentsDirectory.appendingPathComponent("pdf_metadata.json")
         guard let data = try? Data(contentsOf: url),

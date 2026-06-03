@@ -423,7 +423,7 @@ struct GraphSelectedNodeCard: View {
                 Text(page.title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Text("\(page.pageType.displayName) · \(page.wordCount) \(L10n.Knowledge.Page.wordCountUnit) · \(page.outgoingLinks.count) \(L10n.Knowledge.Page.outLinkUnit)")
+                Text("\(page.pageType.displayName)  \(page.wordCount) \(L10n.Knowledge.Page.wordCountUnit)  \(page.outgoingLinks.count) \(L10n.Knowledge.Page.outLinkUnit)")
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
             }

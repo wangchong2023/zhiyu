@@ -100,14 +100,24 @@ function preProcess(content) {
 
 ## 5. 完整的模板拓扑 (Template Topology)
 
-一个标准的智宇插件是一个目录，其内部包含 manifest.json、index.js 以及可选的 styles.css。它的标准文件布局拓扑结构如下：
+智宇插件采用统一的 `.zyplugin` 压缩包格式分发（本地安装与商店下载均使用此格式）。本质为 ZIP 归档，内部结构如下：
 
 ```text
-my-zhiyu-plugin/
+plugin.zyplugin (ZIP 压缩包)
 ├── manifest.json      # 插件元数据与权限白名单声明
 ├── index.js           # 插件 JS 逻辑主入口文件 (JavaScriptCore 载入)
-└── styles.css         # 插件自定义 CSS 样式表 (由主 App 自定义视图挂载渲染)
+└── assets/            # 可选：图标、配图等静态资源
 ```
+
+### 打包命令
+```bash
+# 将插件目录打包为 .zyplugin
+cd my-zhiyu-plugin
+zip -r ../my-plugin.zyplugin manifest.json index.js
+```
+
+### 安装方式
+将 `.zyplugin` 文件放入 App 的 `Documents/Plugins/` 目录，App 启动时自动扫描并加载。兼容旧版裸 `.js` 脚本文件。
 
 ### 文件的协同关系
 1. **`manifest.json`**：主 App 启动时，首先解析 manifest，静态核验权限列表（如 `requestAIAccess`、`fetch` 等）和 `allowedDomains` 域名白名单。

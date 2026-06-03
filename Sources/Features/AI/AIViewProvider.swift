@@ -13,7 +13,7 @@ import SwiftUI
 struct AIViewProvider: ViewProvider {
 
     /// 创建View
-    /// /// - Returns: 可选值
+    /// - Returns: 可选值
     func makeView(for route: AnyHashable) -> AnyView? {
         guard let route = route as? AppRoute, route.domain == .ai else { return nil }
         
@@ -28,7 +28,7 @@ struct AIViewProvider: ViewProvider {
             return AnyView(WeeklyReportView())
         case .quiz:
             // Quiz 目前可能通过辅助视图或独立的 Route 呈现
-            return AnyView(Text("Quiz View")) 
+            return AnyView(Text("Quiz_View")) 
         default:
             return nil
         }

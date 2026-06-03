@@ -142,19 +142,19 @@ final class LinkServiceTests: XCTestCase {
         await embeddingManager.syncEmbeddings(pages: searchPages)
         
         // 1. 测试短查询分支 (< 3 字符，例如 "3D")
-        let resultShort = await sut.hybridSearchWithDiagnostics(query: "3D", in: searchPages, embeddingManager: embeddingManager)
+        let resultShort = await sut.hybridSearchWithDiagnostics(query: "3D", in: searchPages, embeddingProvider: embeddingManager)
         XCTAssertNotNil(resultShort.diagnostic)
         XCTAssertEqual(resultShort.diagnostic.query, "3D")
         
         // 2. 测试长查询分支 (>= 3 字符，例如 "swift")
-        let resultLong = await sut.hybridSearchWithDiagnostics(query: "swift", in: searchPages, embeddingManager: embeddingManager)
+        let resultLong = await sut.hybridSearchWithDiagnostics(query: "swift", in: searchPages, embeddingProvider: embeddingManager)
         XCTAssertNotNil(resultLong.diagnostic)
         XCTAssertEqual(resultLong.diagnostic.query, "swift")
         
         // 3. 极速爆破：测试 compactMap nil 返回分支
         // 我们在 embeddingManager 里注册了 page1 和 page2，但是在搜索传入的候选页面中故意把 page2 刨除（仅传入 page1）
         // 这样当语义搜索召回 page2.id 时，在 candidate pages 里面找不到它，就会触发 compactMap nil 分支！
-        let resultCompactMapNil = await sut.hybridSearchWithDiagnostics(query: "swift", in: [page1], embeddingManager: embeddingManager)
+        let resultCompactMapNil = await sut.hybridSearchWithDiagnostics(query: "swift", in: [page1], embeddingProvider: embeddingManager)
         XCTAssertEqual(resultCompactMapNil.results.count, 1)
         XCTAssertEqual(resultCompactMapNil.results.first?.id, page1.id)
     }

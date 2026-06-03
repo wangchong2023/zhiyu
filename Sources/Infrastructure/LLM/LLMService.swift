@@ -94,97 +94,97 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     // MARK: - LLMServiceProtocol 统一门面契约实现 (100% 委派转发)
 
     /// 生成
-    /// /// - Parameter prompt: prompt
-    /// /// - Parameter systemPrompt: systemPrompt
-    /// /// - Returns: 字符串
+    /// - Parameter prompt: prompt
+    /// - Parameter systemPrompt: systemPrompt
+    /// - Returns: 字符串
     func generate(prompt: String, systemPrompt: String) async throws -> String {
         try await chatRunner.generate(prompt: prompt, systemPrompt: systemPrompt)
     }
 
     /// chat
-    /// /// - Parameter query: query
-    /// /// - Parameter history: history
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 返回值
+    /// - Parameter query: query
+    /// - Parameter history: history
+    /// - Parameter pages: pages
+    /// - Returns: 返回值
     func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
         try await chatRunner.chat(query: query, history: history, pages: pages)
     }
  
     /// chatStream
-    /// /// - Parameter query: query
-    /// /// - Parameter history: history
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 返回值
+    /// - Parameter query: query
+    /// - Parameter history: history
+    /// - Parameter pages: pages
+    /// - Returns: 返回值
     func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
         chatRunner.chatStream(query: query, history: history, pages: pages)
     }
 
     /// smart导入摄取
-    /// /// - Parameter title: title
-    /// /// - Parameter rawContent: rawContent
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 返回值
+    /// - Parameter title: title
+    /// - Parameter rawContent: rawContent
+    /// - Parameter pages: pages
+    /// - Returns: 返回值
     func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         try await ingestProcessor.smartIngest(title: title, rawContent: rawContent, pages: pages)
     }
 
     /// discoverPotentialLinks
-    /// /// - Parameter content: content
-    /// /// - Parameter existingTitles: existingTitles
-    /// /// - Returns: 列表
+    /// - Parameter content: content
+    /// - Parameter existingTitles: existingTitles
+    /// - Returns: 列表
     func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] {
         try await ingestProcessor.discoverPotentialLinks(content: content, existingTitles: existingTitles)
     }
 
     /// foldContent
-    /// /// - Parameter existingContent: existingContent
-    /// /// - Parameter newContent: newContent
-    /// /// - Parameter title: title
-    /// /// - Returns: 字符串
+    /// - Parameter existingContent: existingContent
+    /// - Parameter newContent: newContent
+    /// - Parameter title: title
+    /// - Returns: 字符串
     func foldContent(existingContent: String, newContent: String, title: String) async throws -> String {
         try await ingestProcessor.foldContent(existingContent: existingContent, newContent: newContent, title: title)
     }
 
     /// analyzeForRefactoring
-    /// /// - Parameter pages: pages
-    /// /// - Returns: 列表
+    /// - Parameter pages: pages
+    /// - Returns: 列表
     func analyzeForRefactoring(pages: [any KnowledgePageRepresentable]) async throws -> [RefactorSuggestionDTO] {
         try await ingestProcessor.analyzeForRefactoring(pages: pages)
     }
 
     /// rewriteQuery
-    /// /// - Parameter query: query
-    /// /// - Returns: 字符串
+    /// - Parameter query: query
+    /// - Returns: 字符串
     func rewriteQuery(_ query: String) async -> String {
         await queryReranker.rewriteQuery(query)
     }
 
     /// expandQuery
-    /// /// - Parameter query: query
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Returns: 列表
     func expandQuery(_ query: String) async -> [String] {
         await queryReranker.expandQuery(query)
     }
 
     /// rerank
-    /// /// - Parameter query: query
-    /// /// - Parameter candidates: candidates
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Parameter candidates: candidates
+    /// - Returns: 列表
     func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] {
         try await queryReranker.rerank(query: query, candidates: candidates)
     }
 
     /// rerankChunks
-    /// /// - Parameter query: query
-    /// /// - Parameter chunks: chunks
-    /// /// - Returns: 列表
+    /// - Parameter query: query
+    /// - Parameter chunks: chunks
+    /// - Returns: 列表
     func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk] {
         await queryReranker.rerankChunks(query: query, chunks: chunks)
     }
 
     /// 生成HypotheticalDocument
-    /// /// - Parameter query: query
-    /// /// - Returns: 字符串
+    /// - Parameter query: query
+    /// - Returns: 字符串
     func generateHypotheticalDocument(query: String) async -> String {
         await queryReranker.generateHypotheticalDocument(query: query)
     }

@@ -347,8 +347,8 @@ struct PulsingDot: ViewModifier {
     @State private var isAnimating = false
     
     /// 视图主体
-    /// /// - Parameter content: content
-    /// /// - Returns: 返回值
+    /// - Parameter content: content
+    /// - Returns: 返回值
     func body(content: Content) -> some View {
         content
             .scaleEffect(isAnimating ? 1.0 : 0.6)

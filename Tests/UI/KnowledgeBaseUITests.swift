@@ -40,7 +40,7 @@ class KnowledgeBaseUITests: XCTestCase {
 
         continueAfterFailure = true
         app = XCUIApplication()
-        app.launchArguments = ["--uitesting", "--reset-state", "-ResetUserDefaults"]
+        app.launchArguments = ["--uitesting", "--reset-state", "-ResetUserDefaults", "-UITest_MockData"]
         app.launchEnvironment = ["UITesting": "true"]
         app.launch()
 
@@ -87,6 +87,9 @@ class KnowledgeBaseUITests: XCTestCase {
 
     /// 每个测试用例结束后终止 App，确保下一个测试用例从干净状态开始
     override func tearDown() async throws {
+        // 优雅关闭：先返回主屏幕触发应用进入后台生命周期，让底层资源（如 WebKit, GRDB）有机会安全清理
+        XCUIDevice.shared.press(.home)
+        try? await Task.sleep(nanoseconds: 500_000_000)
         app?.terminate()
         try await super.tearDown()
     }

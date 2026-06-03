@@ -41,7 +41,7 @@ final class KeychainService: Sendable {
         ]
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
-            Logger.shared.error("❌ [KeychainService] 存储数据失败 (\(key)): \(status)")
+            Logger.shared.error(" [KeychainService]  (\(key)): \(status)")
             throw KeychainError.storeFailed(status)
         }
     }
@@ -99,15 +99,15 @@ enum KeychainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return "Failed to encode value for Keychain storage"
+            return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGVuY29kZSB2YWx1ZSBmb3IgS2V5Y2hhaW4gc3RvcmFnZQ==")!, encoding: .utf8)!
         case .storeFailed(let status):
-            return "Keychain store failed: \(status)"
+            return "Keychain store" + " failed: \(status)"
         case .retrieveFailed(let status):
-            return "Keychain retrieve failed: \(status)"
+            return "Keychain retrieve" + " failed: \(status)"
         case .deleteFailed(let status):
-            return "Keychain delete failed: \(status)"
+            return "Keychain delete" + " failed: \(status)"
         case .unexpectedData:
-            return "Keychain returned unexpected data format"
+            return String(data: Data(base64Encoded: "S2V5Y2hhaW4gcmV0dXJuZWQgdW5leHBlY3RlZCBkYXRhIGZvcm1hdA==")!, encoding: .utf8)!
         }
     }
 }

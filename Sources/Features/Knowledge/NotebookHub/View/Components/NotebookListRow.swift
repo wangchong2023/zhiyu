@@ -105,7 +105,7 @@ struct NotebookListRow: View {
         .buttonStyle(AppCardButtonStyle())
         // MARK: - A11y 无障碍适配
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(notebook.name)，\(L10n.Accessibility.notebookCardLabel)")
+        .accessibilityLabel("\(notebook.name)\(L10n.Accessibility.notebookCardLabel)")
         .accessibilityValue(
             "\(notebook.description ?? ""). \(notebook.pageCount) \(L10n.Vault.pageCountSuffix)"
         )

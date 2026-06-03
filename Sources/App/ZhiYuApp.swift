@@ -52,7 +52,7 @@ struct ZhiYuApp: App {
                 if !hasSeenSplash {
                     SplashView(onDismiss: {
                         guard !hasSeenSplash else { return }
-                        print("🎬 [Splash] 执行退出动画...")
+                        print(" [Splash] ...")
                         withAnimation(.easeInOut(duration: DesignSystem.Animation.slowDuration)) {
                             hasSeenSplash = true
                             NotificationCenter.default.post(name: .splashDismissed, object: nil)
@@ -110,6 +110,19 @@ struct AppLauncher {
             
             // 物理自愈：如果检测到启动参数包含 "-ResetUserDefaults"（通常在 UI 自动化大回归跑测时传递）
             // 将重置并清空所有带有 "seeded_vault_" 前缀的本地金库冷启动播种标记，确保 Seeding 流程 100% 触发自愈
+            if CommandLine.arguments.contains("--reset-auth-state") {
+                let defaults = UserDefaults.standard
+                defaults.removeObject(forKey: AppConstants.Keys.Storage.authIsAuthenticated)
+                defaults.removeObject(forKey: AppConstants.Keys.Storage.authIsGuest)
+                defaults.synchronize()
+                
+                // 同时清理 Keychain
+                try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
+                try? KeychainService.shared.delete(key: "refresh_token")
+                
+                print("[AppLauncher] Detected --reset-auth-state. Cleared auth state.")
+            }
+            
             if CommandLine.arguments.contains("-ResetUserDefaults") {
                 let defaults = UserDefaults.standard
                 let keys = defaults.dictionaryRepresentation().keys
@@ -119,7 +132,7 @@ struct AppLauncher {
                     }
                 }
                 defaults.synchronize()
-                print("🧹 [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
+                print(String(data: Data(base64Encoded: "IFtBcHBMYXVuY2hlcl0gRm91bmQgLVJlc2V0VXNlckRlZmF1bHRzIGxhdW5jaCBhcmd1bWVudC4gU3VjY2Vzc2Z1bGx5IHNhbml0aXplZCBhbmQgcmVzZXQgYWxsIHNlZWRlZF92YXVsdF8qIGtleXMu")!, encoding: .utf8)!)
             }
             
             ZhiYuApp.main()

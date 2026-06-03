@@ -15,14 +15,14 @@ extension L10n {
         public static let t = "AI"
 
         /// 本地化翻译
-        /// /// - Parameter key: key
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Returns: 返回值
         public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
 
         /// 本地化格式化翻译
-        /// /// - Parameter key: key
-        /// /// - Parameter args: args
-        /// /// - Returns: 返回值
+        /// - Parameter key: key
+        /// - Parameter args: args
+        /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
         public enum Status {
@@ -39,10 +39,10 @@ extension L10n {
             public static var visualizing: String { AI.tr("ai.status.visualizing") }
 
             /// indexing
-            /// /// - Parameter current: current
-            /// /// - Parameter total: total
-            /// /// - Parameter filename: filename
-            /// /// - Returns: 字符串
+            /// - Parameter current: current
+            /// - Parameter total: total
+            /// - Parameter filename: filename
+            /// - Returns: 字符串
             public static func indexing(_ current: Int, _ total: Int, _ filename: String) -> String {
                 AI.trf("ai.status.indexing", current, total, filename)
             }
@@ -61,8 +61,8 @@ extension L10n {
             public static var validationFailed: String { AI.tr("llm.validationFailed") }
 
             /// latency
-            /// /// - Parameter value: value
-            /// /// - Returns: 字符串
+            /// - Parameter value: value
+            /// - Returns: 字符串
             public static func latency(_ value: String) -> String { AI.trf("llm.latency", value) }
             public static var configuration: String { AI.tr("llm.configuration") }
             public static var enableAssistant: String { AI.tr("llm.enableAssistant") }
@@ -159,21 +159,51 @@ extension L10n {
             public static var assistMode: String { AI.tr("ondevice.assistMode") }
             public static var assistDesc: String { AI.tr("ondevice.assistDesc") }
             public static var available: String { AI.tr("ondevice.available") }
+            public static var unavailable: String { AI.tr("ondevice.unavailable") }
             public static var connected: String { AI.tr("ondevice.connected") }
             public static var statusReady: String { AI.tr("ondevice.status.ready") }
             public static var statusLoading: String { AI.tr("ondevice.status.loading") }
             public static var appleIntelligence: String { AI.tr("ondevice.appleIntelligence") }
             public static var enableAutoScan: String { AI.tr("ondevice.enableAutoScan") }
             public static var autoRefactor: String { AI.tr("ondevice.autoRefactor") }
+            
+            public static var models: String { AI.tr("ondevice.models") }
+            public static var loadModel: String { AI.tr("ondevice.loadModel") }
+            public static var test: String { AI.tr("ondevice.test") }
+            public static var info: String { AI.tr("ondevice.info") }
+            public static var subtitle: String { AI.tr("ondevice.subtitle") }
+            public static var supportsFoundation: String { AI.tr("ondevice.supportsFoundation") }
+            public static var supportsCoreML: String { AI.tr("ondevice.supportsCoreML") }
+            public static var requiresIOS17: String { AI.tr("ondevice.requiresIOS17") }
+            public static var noModels: String { AI.tr("ondevice.noModels") }
+            public static var modelLoaded: String { AI.tr("ondevice.modelLoaded") }
+            public static var unload: String { AI.tr("ondevice.unload") }
+            public static var importModel: String { AI.tr("ondevice.importModel") }
+            public static var testGeneration: String { AI.tr("ondevice.testGeneration") }
+            public static var inferenceSpeed: String { AI.tr("ondevice.inferenceSpeed") }
+            public static var testPrompt: String { AI.tr("ondevice.testPrompt") }
+            public static var generating: String { AI.tr("ondevice.generating") }
+            public static var generate: String { AI.tr("ondevice.generate") }
+            public static var result: String { AI.tr("ondevice.result") }
+            public static var system: String { AI.tr("ondevice.system") }
+            public static var local: String { AI.tr("ondevice.local") }
+
+            public enum Info {
+                public static var privacy: String { AI.tr("ondevice.info.privacy") }
+                public static var offline: String { AI.tr("ondevice.info.offline") }
+                public static var ne: String { AI.tr("ondevice.info.ne") }
+                public static var memory: String { AI.tr("ondevice.info.memory") }
+            }
 
             /// error格式化
-            /// /// - Parameter code: code
-            /// /// - Returns: 字符串
+            /// - Parameter code: code
+            /// - Returns: 字符串
             public static func errorFormat(_ code: String) -> String { AI.trf("ondevice.errorFormat", code) }
 
             public enum Error {
                 public static var loadFailed: String { AI.tr("ondevice.error.loadFailed") }
                 public static var compilationFailed: String { AI.tr("ondevice.error.compilationFailed") }
+                public static var inferenceFailed: String { AI.tr("ondevice.error.inferenceFailed") }
             }
         }
 
@@ -181,10 +211,10 @@ extension L10n {
             public static var systemPrompt: String { AI.tr("llm.eval.systemPrompt") }
 
             /// judgePrompt
-            /// /// - Parameter context: context
-            /// /// - Parameter query: query
-            /// /// - Parameter answer: answer
-            /// /// - Returns: 字符串
+            /// - Parameter context: context
+            /// - Parameter query: query
+            /// - Parameter answer: answer
+            /// - Returns: 字符串
             public static func judgePrompt(_ context: String, _ query: String, _ answer: String) -> String {
                 AI.trf("llm.eval.judgePrompt", context, query, answer)
             }
@@ -213,25 +243,25 @@ extension L10n {
             // MARK: - L10n 净化后的 AI 提示词
             
             /// 搜索变体生成提示词
-            public static let queryExpansion = "你是一个搜索专家。请根据原始问题生成 3 个不同的搜索查询变体，以提高 RAG 系统的检索覆盖率。变体应涵盖：1. 语义改写 2. 核心关键词 3. 假设性提问。请仅返回一个包含 3 个字符串的 JSON 数组。"
+            public static var queryExpansion: String { AI.tr("prompt.queryExpansion") }
             
             /// 中文回复指令
-            public static let replyInChinese = "\n\n请使用中文回复。"
+            public static var replyInChinese: String { AI.tr("prompt.replyInChinese") }
             
             /// 摘要生成提示词前缀
-            public static let summaryPrefix = "请为以下内容生成一段 200 字以内的专业摘要，直接输出摘要内容："
+            public static var summaryPrefix: String { AI.tr("prompt.summaryPrefix") }
             
             /// 反向提问生成提示词前缀
-            public static let reverseQAPrefix = "针对以下文本片段，生成 3 个用户可能会提出的核心问题。要求：问题必须专业、简练，每行一个问题。直接输出问题："
+            public static var reverseQAPrefix: String { AI.tr("prompt.reverseQAPrefix") }
             
             /// 发现潜在链接提示词前缀 1
-            public static let discoverLinksPrefix1 = "以下是一篇笔记内容和现有的知识库标题列表。请分析内容，识别其中可以链接到现有标题的关键词。仅返回一个 JSON 数组。\n\n标题列表："
+            public static var discoverLinksPrefix1: String { AI.tr("prompt.discoverLinksPrefix1") }
             
             /// 发现潜在链接提示词前缀 2
-            public static let discoverLinksPrefix2 = "\n\n内容："
+            public static var discoverLinksPrefix2: String { AI.tr("prompt.discoverLinksPrefix2") }
 
             /// Rerank 引擎系统提示词
-            public static let rerankSystem = "你是一个精准的 Rerank 引擎。仅返回 JSON 数组。"
+            public static var rerankSystem: String { AI.tr("prompt.rerankSystem") }
             
             /// 生成 Rerank 用户提示词
             /// - Parameters:
@@ -239,31 +269,24 @@ extension L10n {
             ///   - context: 候选文本上下文
             /// - Returns: 格式化后的提示词字符串
             public static func rerankUserPrompt(query: String, context: String) -> String {
-                return """
-                查询: \(query)
-
-                候选文本块:
-                \(context)
-
-                请根据相关性对上述块进行排序。仅返回排序后的索引数组，例如 [2, 0, 1]。
-                """
+                AI.trf("prompt.rerankUserPrompt", query, context)
             }
 
             /// 假设性回答 (HyDE) 系统提示词
-            public static let hydeSystem = "你是一个知识库助手，擅长生成精准的学术或技术性回答。"
+            public static var hydeSystem: String { AI.tr("prompt.hydeSystem") }
             
             /// 生成假设性回答用户提示词
             /// - Parameter query: 原始查询问题
             /// - Returns: 格式化后的提示词字符串
             public static func hydeUserPrompt(query: String) -> String {
-                return "请针对以下问题写一个简短但专业的假设性回答（不要包含前导词），这将用于向量检索优化：\n\n问题：\(query)"
+                AI.trf("prompt.hydeUserPrompt", query)
             }
 
             /// 知识导入管理助手角色描述
-            public static let ingestManagementAssistant = "你是一个专业的知识管理助手。"
+            public static var ingestManagementAssistant: String { AI.tr("prompt.ingestManagementAssistant") }
             
             /// 知识导入发现助手角色描述
-            public static let ingestDiscoveryAssistant = "你是一个专业的知识发现助手。"
+            public static var ingestDiscoveryAssistant: String { AI.tr("prompt.ingestDiscoveryAssistant") }
 
             public enum QueryRewrite {
                 public static var instruction: String { AI.tr("prompt.queryRewrite.instruction") }
@@ -372,49 +395,78 @@ extension L10n {
             public static let t = "AI"
 
             /// 本地化翻译
-            /// /// - Parameter key: key
-            /// /// - Returns: 返回值
+            /// - Parameter key: key
+            /// - Returns: 返回值
             public static func tr(_ key: String) -> String { Localized.tr("aitask." + key, table: t) }
 
             /// 本地化格式化翻译
-            /// /// - Parameter key: key
-            /// /// - Parameter args: args
-            /// /// - Returns: 返回值
+            /// - Parameter key: key
+            /// - Parameter args: args
+            /// - Returns: 返回值
             public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf("aitask." + key, table: t, args) }
             
             public static var running: String { Localized.tr("aitask.status.running", table: t) }
             public static var processing: String { Localized.tr("aitask.processing", table: t) }
             public static var typeIngest: String { Localized.tr("aitask.type.ingest", table: t) }
+            public static var typeHealthCheck: String { Localized.tr("aitask.type.healthCheck", table: t) }
+            public static var typeAIScan: String { Localized.tr("aitask.type.aiScan", table: t) }
+            public static var typeSynthesis: String { Localized.tr("aitask.type.synthesis", table: t) }
+            
+            public static var categories: String { Localized.tr("aitask.categories", table: t) }
+            public static var noHistory: String { Localized.tr("aitask.noHistory", table: t) }
+            public static var listTitle: String { Localized.tr("aitask.list.title", table: t) }
+            public static var clearConfirmTitle: String { Localized.tr("aitask.clearConfirmTitle", table: t) }
+            public static var clearConfirmMessage: String { Localized.tr("aitask.clearConfirmMessage", table: t) }
+            public static var howToTrigger: String { Localized.tr("aitask.howToTrigger", table: t) }
+            
+            public static var guideHealth: String { Localized.tr("aitask.guide.health", table: t) }
+            public static var guideHealthDesc: String { Localized.tr("aitask.guide.health.desc", table: t) }
+            public static var guideAIScan: String { Localized.tr("aitask.guide.aiscan", table: t) }
+            public static var guideAIScanDesc: String { Localized.tr("aitask.guide.aiscan.desc", table: t) }
+            public static var guideIngest: String { Localized.tr("aitask.guide.ingest", table: t) }
+            public static var guideIngestDesc: String { Localized.tr("aitask.guide.ingest.desc", table: t) }
+            public static var guideSynthesis: String { Localized.tr("aitask.guide.synthesis", table: t) }
+            public static var guideSynthesisDesc: String { Localized.tr("aitask.guide.synthesis.desc", table: t) }
+            
+            public static var statusPending: String { Localized.tr("aitask.status.pending", table: t) }
+            public static var statusCompleted: String { Localized.tr("aitask.status.completed", table: t) }
+            public static var statusFailed: String { Localized.tr("aitask.status.failed", table: t) }
+
+            /// historyCount
+            public static func historyCount(_ count: Int) -> String {
+                Localized.trf("aitask.history.count", table: t, count)
+            }
+
             public static var centerTitle: String { Localized.tr("aitask.center.title", table: t) }
             public static var emptyTitle: String { Status.emptyTitle }
             public static var emptyDesc: String { Status.emptyDesc }
             
             /// starting
-            /// /// - Parameter name: name
-            /// /// - Parameter target: target
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Parameter target: target
+            /// - Returns: 字符串
             public static func starting(_ name: String, _ target: String) -> String {
                 Localized.trf("aitask.status.startingFormat", table: t, name, target)
             }
 
             /// running
-            /// /// - Parameter name: name
-            /// /// - Parameter target: target
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Parameter target: target
+            /// - Returns: 字符串
             public static func running(_ name: String, _ target: String) -> String {
                 Localized.trf("aitask.status.runningFormat", table: t, name, target)
             }
 
             /// completed
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func completed(_ name: String) -> String {
                 Localized.trf("aitask.status.completedFormat", table: t, name)
             }
 
             /// failed
-            /// /// - Parameter name: name
-            /// /// - Returns: 字符串
+            /// - Parameter name: name
+            /// - Returns: 字符串
             public static func failed(_ name: String) -> String {
                 Localized.trf("aitask.status.failedFormat", table: t, name)
             }

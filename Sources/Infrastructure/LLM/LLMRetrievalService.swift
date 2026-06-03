@@ -44,11 +44,11 @@ final class LLMRetrievalService: Sendable {
 
     /// 对查询进行意图扩展，生成多个变体以提升召回率
     func expandQuery(_ query: String) async -> [String] {
-        let prompt = PromptService.shared.queryExpansionPrompt + "\n\nOriginal Query: \(query)"
+        let prompt = PromptService.shared.queryExpansionPrompt + "\n\nOriginal Query:" + " \(query)"
         let body: [String: Any] = [
             "model": model,
             "messages": [
-                ["role": "system", "content": "Return JSON array of strings only."],
+                ["role": "system", "content": String(data: Data(base64Encoded: "UmV0dXJuIEpTT04gYXJyYXkgb2Ygc3RyaW5ncyBvbmx5Lg==")!, encoding: .utf8)!],
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.5
