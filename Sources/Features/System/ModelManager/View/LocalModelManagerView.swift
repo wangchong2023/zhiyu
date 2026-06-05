@@ -1,0 +1,161 @@
+//
+//  LocalModelManagerView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/05.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 表现层
+//  核心职责：本地大模型管理统一入口，集成模型商店、参数调优、服务器配置、智能路由四大核心功能模块。
+//
+
+import SwiftUI
+
+/// 本地大模型管理统一入口视图
+/// 采用 Tab 切换架构，整合模型商店、参数调优、服务器配置、智能路由四大功能域
+@MainActor
+public struct LocalModelManagerView: View {
+
+    // MARK: - 环境注入
+
+    @Environment(AppStore.self) private var store
+    @Environment(Router.self) private var router
+    @EnvironmentObject private var themeManager: ThemeManager
+
+    // MARK: - 状态管理
+
+    /// 当前选中的 Tab 索引
+    /// 0: 模型商店, 1: 参数调优, 2: 服务器配置, 3: 智能路由
+    @State private var selectedTab: Tab = .store
+
+    // MARK: - Tab 枚举
+
+    private enum Tab: Int, CaseIterable {
+        case store = 0
+        case parameters = 1
+        case servers = 2
+        case routing = 3
+
+        var title: String {
+            switch self {
+            case .store:
+                return L10n.ModelManager.storeTitle
+            case .parameters:
+                return L10n.ModelManager.parametersTitle
+            case .servers:
+                return L10n.ModelManager.serversTitle
+            case .routing:
+                return L10n.ModelManager.routingTitle
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .store:
+                return "square.stack.3d.up.fill"
+            case .parameters:
+                return "slider.horizontal.3"
+            case .servers:
+                return "server.rack"
+            case .routing:
+                return "arrow.triangle.branch"
+            }
+        }
+    }
+
+    public init() {}
+
+    public var body: some View {
+        ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // 自定义 Tab 选择器
+                tabSelector
+
+                // 内容区域
+                TabView(selection: $selectedTab) {
+                    ModelStoreView()
+                        .tag(Tab.store)
+
+                    InferenceParametersView()
+                        .tag(Tab.parameters)
+
+                    ServerConfigView()
+                        .tag(Tab.servers)
+
+                    SmartRoutingView()
+                        .tag(Tab.routing)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+        }
+        .navigationTitle(L10n.Settings.localModelManager)
+        #if !os(watchOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    // MARK: - 子视图组件
+
+    /// 顶部 Tab 选择器
+    private var tabSelector: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: DesignSystem.medium) {
+                ForEach(Tab.allCases, id: \.self) { tab in
+                    tabButton(for: tab)
+                }
+            }
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.small)
+        }
+        .background(Color.appCard.opacity(0.6))
+        .overlay(
+            Rectangle()
+                .frame(height: 1)
+                .foregroundStyle(Color.appBorder.opacity(0.6)),
+            alignment: .bottom
+        )
+    }
+
+    /// 单个 Tab 按钮
+    private func tabButton(for tab: Tab) -> some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                selectedTab = tab
+            }
+            HapticFeedback.shared.trigger(.selection)
+        }) {
+            VStack(spacing: 4) {
+                Image(systemName: tab.icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(selectedTab == tab ? .appAccent : .appSecondary)
+
+                Text(tab.title)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(selectedTab == tab ? .appAccent : .appSecondary)
+
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundStyle(selectedTab == tab ? .appAccent : .clear)
+            }
+            .frame(width: 80)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - 预览
+
+#if DEBUG
+#Preview {
+    NavigationStack {
+        LocalModelManagerView()
+            .environment(AppStore())
+            .environment(Router())
+            .environmentObject(ThemeManager.shared)
+    }
+}
+#endif

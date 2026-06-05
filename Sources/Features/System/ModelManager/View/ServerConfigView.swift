@@ -1,0 +1,401 @@
+//
+//  ServerConfigView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/05.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 表现层
+//  核心职责：Mock 服务器配置管理视图，支持添加、编辑、测试、删除服务器配置。
+//
+
+import SwiftUI
+
+/// Mock 服务器配置管理视图
+@MainActor
+public struct ServerConfigView: View {
+
+    // MARK: - 环境注入
+
+    @EnvironmentObject private var themeManager: ThemeManager
+
+    // MARK: - 状态管理
+
+    @State private var servers: [MockServerConfig] = []
+    @State private var showAddSheet = false
+    @State private var editingServer: MockServerConfig?
+
+    public init() {}
+
+    public var body: some View {
+        ZStack {
+            if servers.isEmpty {
+                emptyStateView
+            } else {
+                serverList
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            addButton
+        }
+        .sheet(isPresented: $showAddSheet) {
+            ServerEditSheet(server: nil, onSave: { server in
+                servers.append(server)
+            })
+        }
+        .sheet(item: $editingServer) { server in
+            ServerEditSheet(server: server, onSave: { updated in
+                if let index = servers.firstIndex(where: { $0.id == updated.id }) {
+                    servers[index] = updated
+                }
+            })
+        }
+        .onAppear {
+            loadServers()
+        }
+    }
+
+    // MARK: - 子视图组件
+
+    /// 空状态视图
+    private var emptyStateView: some View {
+        VStack(spacing: DesignSystem.large) {
+            Image(systemName: "server.rack")
+                .font(.system(size: 64))
+                .foregroundStyle(.appSecondary.opacity(0.6))
+
+            Text(L10n.ModelManager.Server.emptyTitleAlt)
+                .font(.headline)
+                .foregroundStyle(.appText)
+
+            Text(L10n.ModelManager.Server.emptySubtitleAlt)
+                .font(.subheadline)
+                .foregroundStyle(.appSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignSystem.large)
+
+            Button(action: { showAddSheet = true }) {
+                Label(L10n.ModelManager.Server.addServer, systemImage: "plus")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, DesignSystem.large)
+                    .padding(.vertical, DesignSystem.medium)
+                    .background(Color.appAccent)
+                    .clipShape(Capsule())
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// 服务器列表
+    private var serverList: some View {
+        ScrollView {
+            LazyVStack(spacing: DesignSystem.medium) {
+                ForEach(servers) { server in
+                    serverCard(for: server)
+                }
+            }
+            .padding(DesignSystem.medium)
+        }
+    }
+
+    /// 服务器卡片
+    private func serverCard(for server: MockServerConfig) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            HStack {
+                statusIndicator(for: server)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(server.name)
+                        .font(.headline)
+                        .foregroundStyle(.appText)
+
+                    Text(server.baseURL)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                if server.isDefault {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.orange)
+                        .font(.caption)
+                }
+            }
+
+            if let lastTested = server.lastTestedAt, let latency = server.latencyMs {
+                HStack(spacing: 4) {
+                    Text(L10n.ModelManager.Server.lastTested(formatDate(lastTested)))
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+
+                    Text("·")
+                        .foregroundStyle(.appSecondary)
+
+                    Text(L10n.ModelManager.Server.latencyMs(latency))
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+            }
+
+            Divider()
+
+            HStack(spacing: DesignSystem.medium) {
+                Button(action: { testConnection(for: server) }) {
+                    Text(L10n.ModelManager.Server.testConnection)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.appAccent)
+                }
+
+                Button(action: { editingServer = server }) {
+                    Text(L10n.ModelManager.Server.editAction)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.appAccent)
+                }
+
+                Button(action: { deleteServer(server) }) {
+                    Text(L10n.ModelManager.Server.deleteAction)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.red)
+                }
+
+                Spacer()
+
+                if !server.isDefault {
+                    Button(action: { setDefaultServer(server) }) {
+                        Text(L10n.ModelManager.Server.setDefaultAction)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color.appCard)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
+                .stroke(server.isDefault ? Color.appAccent : Color.appBorder.opacity(0.3), lineWidth: server.isDefault ? 2 : 1)
+        )
+    }
+
+    /// 状态指示器
+    private func statusIndicator(for server: MockServerConfig) -> some View {
+        Circle()
+            .fill(server.isHealthy ? Color.green : Color.red)
+            .frame(width: 12, height: 12)
+    }
+
+    /// 添加按钮
+    private var addButton: some View {
+        Button(action: { showAddSheet = true }) {
+            Image(systemName: "plus")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 56, height: 56)
+                .background(Color.appAccent)
+                .clipShape(Circle())
+                .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+        }
+        .padding(DesignSystem.large)
+    }
+
+    // MARK: - 辅助方法
+
+    private func loadServers() {
+        // TODO: 从 UserDefaults 或持久化存储加载服务器列表
+        // 示例数据
+        servers = [
+            MockServerConfig(
+                id: UUID(),
+                name: L10n.ModelManager.Server.mockLocalDev,
+                baseURL: "http://localhost:8000",
+                apiKey: nil,
+                isDefault: true,
+                lastTestedAt: Date(),
+                latencyMs: 12,
+                isHealthy: true
+            )
+        ]
+    }
+
+    private func testConnection(for server: MockServerConfig) {
+        // TODO: 实现连接测试逻辑
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    private func deleteServer(_ server: MockServerConfig) {
+        servers.removeAll { $0.id == server.id }
+        // TODO: 从持久化存储删除
+    }
+
+    private func setDefaultServer(_ server: MockServerConfig) {
+        servers = servers.map { config in
+            var updated = config
+            updated.isDefault = (config.id == server.id)
+            return updated
+        }
+        // TODO: 保存到持久化存储
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    private func formatDate(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+}
+
+// MARK: - 服务器编辑 Sheet
+
+private struct ServerEditSheet: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject private var themeManager: ThemeManager
+
+    let server: MockServerConfig?
+    let onSave: (MockServerConfig) -> Void
+
+    @State private var name: String = ""
+    @State private var baseURL: String = ""
+    @State private var apiKey: String = ""
+    @State private var isDefault: Bool = false
+    @State private var enableSSL: Bool = true
+    @State private var testResult: String?
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                themeManager.pageBackground()
+                    .ignoresSafeArea()
+
+                Form {
+                    Section {
+                        TextField(L10n.ModelManager.Server.formNameLabel, text: $name)
+                        TextField(L10n.ModelManager.Server.formURLLabel, text: $baseURL)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.URL)
+                        TextField(L10n.ModelManager.Server.formAPIKeyLabel, text: $apiKey)
+                            .textInputAutocapitalization(.never)
+                    }
+                    .appListRowBackground()
+
+                    Section {
+                        Toggle(L10n.ModelManager.Server.formSetDefault, isOn: $isDefault)
+                        Toggle(L10n.ModelManager.Server.formEnableSSL, isOn: $enableSSL)
+                    }
+                    .appListRowBackground()
+
+                    Section {
+                        Button(action: testConnection) {
+                            HStack {
+                                Spacer()
+                                Text(L10n.ModelManager.Server.testConnection)
+                                    .font(.subheadline.weight(.semibold))
+                                Spacer()
+                            }
+                        }
+
+                        if let result = testResult {
+                            Text(result)
+                                .font(.caption)
+                                .foregroundStyle(result.contains(L10n.ModelManager.Server.testSuccess) ? .green : .red)
+                        }
+                    }
+                    .appListRowBackground()
+                }
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle(server == nil ? L10n.ModelManager.Server.formAddTitle : L10n.ModelManager.Server.formEditTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.ModelManager.Server.formCancel) {
+                        dismiss()
+                    }
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.ModelManager.Server.formSave) {
+                        saveServer()
+                    }
+                    .disabled(name.isEmpty || baseURL.isEmpty)
+                }
+            }
+        }
+        .onAppear {
+            if let server = server {
+                name = server.name
+                baseURL = server.baseURL
+                apiKey = server.apiKey ?? ""
+                isDefault = server.isDefault
+            }
+        }
+    }
+
+    private func testConnection() {
+        // TODO: 实现实际的连接测试
+        testResult = L10n.ModelManager.Server.testResult
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    private func saveServer() {
+        let newServer = MockServerConfig(
+            id: server?.id ?? UUID(),
+            name: name,
+            baseURL: baseURL,
+            apiKey: apiKey.isEmpty ? nil : apiKey,
+            isDefault: isDefault,
+            lastTestedAt: Date(),
+            latencyMs: 12,
+            isHealthy: true
+        )
+
+        onSave(newServer)
+        dismiss()
+        HapticFeedback.shared.trigger(.success)
+    }
+}
+
+// MARK: - MockServerConfig 模型
+
+public struct MockServerConfig: Codable, Identifiable {
+    public let id: UUID
+    public let name: String
+    public let baseURL: String
+    public let apiKey: String?
+    public var isDefault: Bool
+    public let lastTestedAt: Date?
+    public let latencyMs: Int?
+    public let isHealthy: Bool
+
+    public init(
+        id: UUID,
+        name: String,
+        baseURL: String,
+        apiKey: String?,
+        isDefault: Bool,
+        lastTestedAt: Date?,
+        latencyMs: Int?,
+        isHealthy: Bool
+    ) {
+        self.id = id
+        self.name = name
+        self.baseURL = baseURL
+        self.apiKey = apiKey
+        self.isDefault = isDefault
+        self.lastTestedAt = lastTestedAt
+        self.latencyMs = latencyMs
+        self.isHealthy = isHealthy
+    }
+}
+
+// MARK: - 预览
+
+#if DEBUG
+#Preview {
+    ServerConfigView()
+        .environmentObject(ThemeManager.shared)
+}
+#endif
