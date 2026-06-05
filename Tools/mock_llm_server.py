@@ -117,10 +117,17 @@ class MockLLMHandler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = 8080
-    server = HTTPServer(("localhost", port), MockLLMHandler)
-    print(f"Mock LLM Server 已启动在 http://localhost:{port}")
+    # 🔧 修复：绑定到 0.0.0.0 以便 iOS 模拟器可以访问
+    server = HTTPServer(("0.0.0.0", port), MockLLMHandler)
+
+    # 保存 PID
+    with open('/tmp/mock_llm_server.pid', 'w') as f:
+        f.write(str(os.getpid()))
+
+    print(f"Mock LLM Server 已启动在 http://0.0.0.0:{port}")
     print(f"API 端点:")
     print(f"  - GET http://localhost:{port}/api/models")
+    print(f"  - GET http://127.0.0.1:{port}/api/models")
     print(f"  - GET http://localhost:{port}/api/models/{{model_id}}")
     print("\n按 Ctrl+C 停止服务器")
     try:

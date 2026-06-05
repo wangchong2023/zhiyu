@@ -174,10 +174,17 @@ class MockPluginHandler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     port = 9091
-    server = HTTPServer(("localhost", port), MockPluginHandler)
-    print(f"Mock Plugin Market 已启动在 http://localhost:{port}")
+    # 🔧 修复：绑定到 0.0.0.0 以便 iOS 模拟器可以访问
+    server = HTTPServer(("0.0.0.0", port), MockPluginHandler)
+
+    # 保存 PID
+    with open('/tmp/mock_plugin_market.pid', 'w') as f:
+        f.write(str(os.getpid()))
+
+    print(f"Mock Plugin Market 已启动在 http://0.0.0.0:{port}")
     print(f"API 端点:")
     print(f"  - GET http://localhost:{port}/api/plugins")
+    print(f"  - GET http://127.0.0.1:{port}/api/plugins")
     print(f"  - GET http://localhost:{port}/api/plugins/{{plugin_id}}")
     print(f"  - GET http://localhost:{port}/plugins/{{filename}}.zyplugin")
     print("\n按 Ctrl+C 停止服务器")
