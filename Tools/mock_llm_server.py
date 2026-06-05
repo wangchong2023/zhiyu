@@ -14,58 +14,75 @@ from datetime import datetime
 import os
 
 # 参考 Google AI Gallery 的模型数据结构
+# 完全匹配 LLMManifest.swift 的字段
 MODELS = [
     {
         "modelId": "llama3.2:3b",
         "displayName": "Llama 3.2 3B",
         "vendor": "Meta",
+        "fileSizeInBytes": 2147483648,
+        "minDeviceMemoryInGb": 4.0,
+        "remoteURLString": "http://localhost:8080/models/llama3.2-3b.gguf",
+        "sha256Checksum": "abc123",
+        "parameterCount": "3B",
+        "supportedTasks": ["chat", "completion"],
         "description": "轻量级对话模型，适合日常任务",
-        "contextWindow": 128000,
-        "parameterSize": "3B",
-        "quantization": "Q4_K_M",
-        "tags": ["chat", "lightweight", "fast"],
-        "capabilities": ["chat", "completion"],
-        "memoryRequirement": "4GB",
-        "downloadSize": "2.0GB"
+        "defaultParameters": {
+            "temperature": 0.7,
+            "topP": 0.9,
+            "maxTokens": 2048
+        }
     },
     {
         "modelId": "qwen2.5:7b",
         "displayName": "Qwen 2.5 7B",
         "vendor": "Alibaba",
+        "fileSizeInBytes": 5046586573,
+        "minDeviceMemoryInGb": 8.0,
+        "remoteURLString": "http://localhost:8080/models/qwen2.5-7b.gguf",
+        "sha256Checksum": "def456",
+        "parameterCount": "7B",
+        "supportedTasks": ["chat", "completion", "reasoning"],
         "description": "中文友好的通用对话模型",
-        "contextWindow": 128000,
-        "parameterSize": "7B",
-        "quantization": "Q4_K_M",
-        "tags": ["chat", "chinese", "multilingual"],
-        "capabilities": ["chat", "completion", "reasoning"],
-        "memoryRequirement": "8GB",
-        "downloadSize": "4.7GB"
+        "defaultParameters": {
+            "temperature": 0.7,
+            "topP": 0.9,
+            "maxTokens": 2048
+        }
     },
     {
         "modelId": "deepseek-r1:8b",
         "displayName": "DeepSeek R1 8B",
         "vendor": "DeepSeek",
+        "fileSizeInBytes": 5579096883,
+        "minDeviceMemoryInGb": 8.0,
+        "remoteURLString": "http://localhost:8080/models/deepseek-r1-8b.gguf",
+        "sha256Checksum": "ghi789",
+        "parameterCount": "8B",
+        "supportedTasks": ["chat", "reasoning", "code"],
         "description": "强化学习优化的推理模型",
-        "contextWindow": 64000,
-        "parameterSize": "8B",
-        "quantization": "Q4_K_M",
-        "tags": ["reasoning", "chat", "advanced"],
-        "capabilities": ["chat", "reasoning", "code"],
-        "memoryRequirement": "8GB",
-        "downloadSize": "5.2GB"
+        "defaultParameters": {
+            "temperature": 0.7,
+            "topP": 0.9,
+            "maxTokens": 2048
+        }
     },
     {
         "modelId": "gemma2:9b",
         "displayName": "Gemma 2 9B",
         "vendor": "Google",
+        "fileSizeInBytes": 6225789952,
+        "minDeviceMemoryInGb": 10.0,
+        "remoteURLString": "http://localhost:8080/models/gemma2-9b.gguf",
+        "sha256Checksum": "jkl012",
+        "parameterCount": "9B",
+        "supportedTasks": ["chat", "completion"],
         "description": "Google 开源的高性能模型",
-        "contextWindow": 8192,
-        "parameterSize": "9B",
-        "quantization": "Q4_K_M",
-        "tags": ["chat", "general"],
-        "capabilities": ["chat", "completion"],
-        "memoryRequirement": "10GB",
-        "downloadSize": "5.8GB"
+        "defaultParameters": {
+            "temperature": 0.7,
+            "topP": 0.9,
+            "maxTokens": 2048
+        }
     }
 ]
 
