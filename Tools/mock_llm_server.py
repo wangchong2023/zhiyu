@@ -16,9 +16,9 @@ import os
 # 参考 Google AI Gallery 的模型数据结构
 MODELS = [
     {
-        "id": "llama3.2:3b",
-        "name": "Llama 3.2 3B",
-        "provider": "Meta",
+        "modelId": "llama3.2:3b",
+        "displayName": "Llama 3.2 3B",
+        "vendor": "Meta",
         "description": "轻量级对话模型，适合日常任务",
         "contextWindow": 128000,
         "parameterSize": "3B",
@@ -29,9 +29,9 @@ MODELS = [
         "downloadSize": "2.0GB"
     },
     {
-        "id": "qwen2.5:7b",
-        "name": "Qwen 2.5 7B",
-        "provider": "Alibaba",
+        "modelId": "qwen2.5:7b",
+        "displayName": "Qwen 2.5 7B",
+        "vendor": "Alibaba",
         "description": "中文友好的通用对话模型",
         "contextWindow": 128000,
         "parameterSize": "7B",
@@ -42,9 +42,9 @@ MODELS = [
         "downloadSize": "4.7GB"
     },
     {
-        "id": "deepseek-r1:8b",
-        "name": "DeepSeek R1 8B",
-        "provider": "DeepSeek",
+        "modelId": "deepseek-r1:8b",
+        "displayName": "DeepSeek R1 8B",
+        "vendor": "DeepSeek",
         "description": "强化学习优化的推理模型",
         "contextWindow": 64000,
         "parameterSize": "8B",
@@ -55,9 +55,9 @@ MODELS = [
         "downloadSize": "5.2GB"
     },
     {
-        "id": "gemma2:9b",
-        "name": "Gemma 2 9B",
-        "provider": "Google",
+        "modelId": "gemma2:9b",
+        "displayName": "Gemma 2 9B",
+        "vendor": "Google",
         "description": "Google 开源的高性能模型",
         "contextWindow": 8192,
         "parameterSize": "9B",
