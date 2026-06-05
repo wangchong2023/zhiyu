@@ -1,0 +1,429 @@
+//
+//  InferenceParametersView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/05.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L3] 表现层
+//  核心职责：推理参数调优视图，提供温度、Top-P、Top-K、Max Tokens 等参数的可视化调节界面。
+//
+
+import SwiftUI
+
+/// 推理参数调优视图
+@MainActor
+public struct InferenceParametersView: View {
+
+    // MARK: - 环境注入
+
+    @EnvironmentObject private var themeManager: ThemeManager
+    @State private var modelManager = GlobalModelManager()
+
+    // MARK: - 状态管理
+
+    @State private var selectedPreset: ParameterPreset = .balanced
+    @State private var temperature: Double = 0.7
+    @State private var topP: Double = 0.9
+    @State private var topK: Int = 40
+    @State private var maxTokens: Int = 2048
+
+    // MARK: - 持久化存储
+
+    private let parametersStore = InferenceParametersStore.shared
+
+    // MARK: - 预设模板
+
+    private enum ParameterPreset: String, CaseIterable {
+        case creative
+        case balanced
+        case precise
+
+        var displayName: String {
+            switch self {
+            case .creative:
+                return L10n.ModelManager.Parameters.presetCreative
+            case .balanced:
+                return L10n.ModelManager.Parameters.presetBalanced
+            case .precise:
+                return L10n.ModelManager.Parameters.presetPrecise
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .creative:
+                return "paintbrush.fill"
+            case .balanced:
+                return "scale.3d"
+            case .precise:
+                return "target"
+            }
+        }
+
+        var parameters: (temperature: Double, topP: Double, topK: Int, maxTokens: Int) {
+            switch self {
+            case .creative:
+                return (1.2, 0.95, 50, 2048)
+            case .balanced:
+                return (0.7, 0.9, 40, 2048)
+            case .precise:
+                return (0.3, 0.85, 20, 1024)
+            }
+        }
+    }
+
+    public init() {}
+
+    public var body: some View {
+        ScrollView {
+            VStack(spacing: DesignSystem.large) {
+                // 当前模型选择器
+                currentModelSelector
+
+                // 预设模板选择
+                presetSelector
+
+                // 温度调节
+                parameterSlider(
+                    title: L10n.ModelManager.Parameters.temperature,
+                    value: $temperature,
+                    range: 0.0...2.0,
+                    tip: L10n.ModelManager.Parameters.tipTemperature
+                )
+
+                // Top-P 调节
+                parameterSlider(
+                    title: L10n.ModelManager.Parameters.topP,
+                    value: $topP,
+                    range: 0.0...1.0,
+                    tip: L10n.ModelManager.Parameters.tipTopP
+                )
+
+                // Top-K 调节
+                parameterIntSlider(
+                    title: L10n.ModelManager.Parameters.topK,
+                    value: $topK,
+                    range: 1...100,
+                    tip: L10n.ModelManager.Parameters.tipTopK
+                )
+
+                // Max Tokens 调节
+                parameterIntSlider(
+                    title: L10n.ModelManager.Parameters.maxTokens,
+                    value: $maxTokens,
+                    range: 128...4096,
+                    tip: L10n.ModelManager.Parameters.tipMaxTokens
+                )
+
+                // 操作按钮
+                actionButtons
+            }
+            .padding(DesignSystem.medium)
+        }
+        .onAppear {
+            // 首次加载当前模型的参数
+            loadParametersForModel(modelManager.activeModelId)
+        }
+        .onChange(of: modelManager.activeModelId) { _, newModelId in
+            // 模型切换时自动加载对应参数
+            loadParametersForModel(newModelId)
+        }
+    }
+
+    // MARK: - 子视图组件
+
+    /// 当前模型选择器
+    private var currentModelSelector: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            Text(L10n.ModelManager.Parameters.currentModel)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.appText)
+
+            Menu {
+                ForEach(modelManager.remoteManifests.filter { modelManager.isModelLocalReady(for: $0.modelId) }) { manifest in
+                    Button(action: {
+                        modelManager.activeModelId = manifest.modelId
+                        loadParametersForModel(manifest.modelId)
+                    }) {
+                        HStack {
+                            Text(manifest.displayName)
+                            if modelManager.activeModelId == manifest.modelId {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack {
+                    Text(getActiveModelName())
+                        .foregroundStyle(.appText)
+                    Spacer()
+                    Image(systemName: "chevron.down")
+                        .foregroundStyle(.appSecondary)
+                }
+                .padding()
+                .background(Color.appCard)
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+            }
+        }
+    }
+
+    /// 预设模板选择器
+    private var presetSelector: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            Text(L10n.ModelManager.Parameters.presetTemplate)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.appText)
+
+            HStack(spacing: DesignSystem.small) {
+                ForEach(ParameterPreset.allCases, id: \.self) { preset in
+                    presetButton(for: preset)
+                }
+            }
+        }
+        .padding()
+        .background(Color.appCard.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+    }
+
+    /// 预设按钮
+    private func presetButton(for preset: ParameterPreset) -> some View {
+        Button(action: {
+            applyPreset(preset)
+        }) {
+            VStack(spacing: DesignSystem.tiny) {
+                Image(systemName: preset.icon)
+                    .font(.title3)
+                Text(preset.displayName)
+                    .font(.caption.weight(.medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSystem.small)
+            .background(
+                selectedPreset == preset ? Color.appAccent : Color.appBackground
+            )
+            .foregroundStyle(
+                selectedPreset == preset ? .white : .appText
+            )
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// 参数滑块（Double 类型）
+    private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            HStack {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.appText)
+                Spacer()
+                Button(action: {}) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.appSecondary)
+                }
+            }
+
+            Slider(value: value, in: range)
+                .tint(.appAccent)
+
+            HStack {
+                Text(String(format: "%.1f", range.lowerBound))
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+                Spacer()
+                Text(String(format: "%.2f", value.wrappedValue))
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.appAccent)
+                Spacer()
+                Text(String(format: "%.1f", range.upperBound))
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+
+            HStack(spacing: 4) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Text(tip)
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+        }
+        .padding()
+        .background(Color.appCard.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+    }
+
+    /// 参数滑块（Int 类型）
+    private func parameterIntSlider(title: String, value: Binding<Int>, range: ClosedRange<Int>, tip: String) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            HStack {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.appText)
+                Spacer()
+                Button(action: {}) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.appSecondary)
+                }
+            }
+
+            Slider(value: Binding(
+                get: { Double(value.wrappedValue) },
+                set: { value.wrappedValue = Int($0) }
+            ), in: Double(range.lowerBound)...Double(range.upperBound), step: 1.0)
+                .tint(.appAccent)
+
+            HStack {
+                Text("\(range.lowerBound)")
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+                Spacer()
+                Text("\(value.wrappedValue)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.appAccent)
+                Spacer()
+                Text("\(range.upperBound)")
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+
+            HStack(spacing: 4) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Text(tip)
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+        }
+        .padding()
+        .background(Color.appCard.opacity(0.6))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+    }
+
+    /// 操作按钮
+    private var actionButtons: some View {
+        HStack(spacing: DesignSystem.medium) {
+            Button(action: resetToDefaults) {
+                Text(L10n.ModelManager.Parameters.reset)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.appSecondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignSystem.medium)
+                    .background(Color.appBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+            }
+
+            Button(action: saveConfiguration) {
+                Text(L10n.ModelManager.Parameters.save)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignSystem.medium)
+                    .background(Color.appAccent)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+            }
+        }
+    }
+
+    // MARK: - 辅助方法
+
+    private func getActiveModelName() -> String {
+        if let manifest = modelManager.remoteManifests.first(where: { $0.modelId == modelManager.activeModelId }) {
+            return manifest.displayName
+        }
+        return L10n.ModelManager.Parameters.selectModel
+    }
+
+    private func applyPreset(_ preset: ParameterPreset) {
+        selectedPreset = preset
+        let params = preset.parameters
+
+        withAnimation(.easeInOut(duration: 0.3)) {
+            temperature = params.temperature
+            topP = params.topP
+            topK = params.topK
+            maxTokens = params.maxTokens
+        }
+
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    private func loadParametersForModel(_ modelId: String) {
+        // 尝试从持久化存储加载该模型的参数配置
+        if let config = parametersStore.loadParameters(for: modelId) {
+            // 找到保存的配置，恢复参数
+            withAnimation(.easeInOut(duration: 0.3)) {
+                temperature = config.temperature
+                topP = config.topP
+                topK = config.topK
+                maxTokens = config.maxTokens
+
+                // 根据预设名称恢复预设选择
+                if let preset = ParameterPreset(rawValue: config.presetName) {
+                    selectedPreset = preset
+                } else {
+                    // 如果是自定义配置，选择最接近的预设
+                    selectedPreset = matchPreset(
+                        temperature: config.temperature,
+                        topP: config.topP,
+                        topK: config.topK,
+                        maxTokens: config.maxTokens
+                    )
+                }
+            }
+        } else {
+            // 未找到保存的配置，使用默认 balanced 预设
+            applyPreset(.balanced)
+        }
+    }
+
+    private func resetToDefaults() {
+        applyPreset(.balanced)
+    }
+
+    private func saveConfiguration() {
+        // 构建配置对象
+        let config = InferenceParametersConfig(
+            modelId: modelManager.activeModelId,
+            presetName: selectedPreset.rawValue,
+            temperature: temperature,
+            topP: topP,
+            topK: topK,
+            maxTokens: maxTokens
+        )
+
+        // 保存到持久化存储
+        parametersStore.saveParameters(config)
+
+        // 触发成功反馈
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    /// 根据参数值匹配最接近的预设
+    private func matchPreset(temperature: Double, topP: Double, topK: Int, maxTokens: Int) -> ParameterPreset {
+        for preset in ParameterPreset.allCases {
+            let params = preset.parameters
+            if abs(params.temperature - temperature) < 0.01 &&
+               abs(params.topP - topP) < 0.01 &&
+               params.topK == topK &&
+               params.maxTokens == maxTokens {
+                return preset
+            }
+        }
+        // 如果没有完全匹配，返回 balanced 作为默认
+        return .balanced
+    }
+}
+
+// MARK: - 预览
+
+#if DEBUG
+#Preview {
+    InferenceParametersView()
+        .environmentObject(ThemeManager.shared)
+}
+#endif
