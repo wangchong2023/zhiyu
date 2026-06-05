@@ -100,6 +100,7 @@ class MockLLMHandler(BaseHTTPRequestHandler):
                 "code": 0,
                 "message": "success",
                 "data": MODELS,
+                "requestId": "req_" + str(int(datetime.now().timestamp())),
                 "timestamp": int(datetime.now().timestamp())
             }
             self.wfile.write(json.dumps(response, ensure_ascii=False).encode())
