@@ -11,6 +11,7 @@ Mock LLM Server - 参考 Google AI Gallery 提供模型列表 API
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 from datetime import datetime
+import os
 
 # 参考 Google AI Gallery 的模型数据结构
 MODELS = [

@@ -12,6 +12,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 from datetime import datetime
 import os
+from pathlib import Path
 
 # 插件市场数据（包含远程插件的下载URL）
 PLUGINS = [
