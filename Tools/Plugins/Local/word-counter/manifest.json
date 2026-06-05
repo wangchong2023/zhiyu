@@ -1,0 +1,15 @@
+{
+  "id": "com.zhiyu.plugin.local.word-counter",
+  "version": "1.0.0",
+  "author": "ZhiYu Local Team",
+  "permissions": ["readContent", "log"],
+  "allowedDomains": [],
+  "names": {
+    "en": "[Local] Word Counter",
+    "zh-Hans": "[本地] 字数统计"
+  },
+  "descriptions": {
+    "en": "Real-time word and character counting for Markdown documents with detailed statistics.",
+    "zh-Hans": "实时统计 Markdown 文档的字数、字符数，提供详细的统计信息。"
+  }
+}

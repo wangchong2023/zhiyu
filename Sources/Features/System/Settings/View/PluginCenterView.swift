@@ -50,7 +50,10 @@ struct PluginCenterView: View {
                 .background(PageBackgroundView(accentColor: .appAccent))
                 .id(router.languageForceUpdate)
                 .navigationTitle(L10n.Plugin.centerTitle)
-.appNavigationBarTitleDisplayMode(.inline)
+                .appNavigationBarTitleDisplayMode(.inline)
+                .task {
+                    await marketService.fetchPlugins()
+                }
 #if !os(watchOS)
                 .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
                     // 处理文件选择结果

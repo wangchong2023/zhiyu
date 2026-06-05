@@ -65,7 +65,7 @@ extension L10n {
             }
         }
 
-        public static var centerTitle: String { tr("plugin.market") }
+        public static var centerTitle: String { tr("plugin.center") }
         public static var marketTitle: String { tr("plugin.market") }
         public static var myPlugins: String { tr("plugin.myPlugins") }
         public static var safeModeTitle: String { tr("plugin.safeMode") }

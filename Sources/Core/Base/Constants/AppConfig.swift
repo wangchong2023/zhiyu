@@ -29,6 +29,8 @@ enum AppConfig {
         enum Network: String {
             case pluginMarketProduction = "plugin_market_production"
             case pluginMarketDebug = "plugin_market_debug"
+            case modelStoreProduction = "model_store_production"
+            case modelStoreDebug = "model_store_debug"
             case jinaReaderBase = "jina_reader_base"
             case ollamaBase = "ollama_base"
             case deepseekBase = "deepseek_base"
@@ -78,9 +80,33 @@ enum AppConfig {
         (configData["storage"] as? [String: String])?[key.rawValue] ?? ""
     }
 
+    /// 获取 LLM 提供商 URL
+    /// - Parameter provider: 提供商 ID
+    /// - Returns: Base URL
+    static func llmProviderURL(for provider: String) -> String {
+        (configData["llm_providers"] as? [String: String])?[provider] ?? ""
+    }
+
+    /// 获取 CDN 资源配置
+    /// - Parameter resource: 资源名称
+    /// - Returns: CDN URL 或 "local"
+    static func cdnResource(_ resource: String) -> String {
+        (configData["cdn"] as? [String: String])?[resource] ?? ""
+    }
+
     // MARK: - 网络与服务器
     static var productionURL: String { getNetwork(.pluginMarketProduction) }
     static var mockServerURL: String { getNetwork(.pluginMarketDebug) }
+
+    /// 模型商店 URL（根据环境自动选择）
+    static var modelStoreURL: String {
+        #if DEBUG
+        return getNetwork(.modelStoreDebug)
+        #else
+        return getNetwork(.modelStoreProduction)
+        #endif
+    }
+
     static var jinaReaderURL: String { getNetwork(.jinaReaderBase) }
     static var ollamaDefaultURL: String { getNetwork(.ollamaBase) }
     static var deepseekDefaultURL: String { getNetwork(.deepseekBase) }

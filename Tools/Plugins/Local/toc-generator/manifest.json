@@ -1,0 +1,15 @@
+{
+  "id": "com.zhiyu.plugin.local.toc-generator",
+  "version": "1.0.0",
+  "author": "ZhiYu Local Team",
+  "permissions": ["writeContent", "log"],
+  "allowedDomains": [],
+  "names": {
+    "en": "[Local] TOC Generator",
+    "zh-Hans": "[本地] 目录生成器"
+  },
+  "descriptions": {
+    "en": "Automatically generates table of contents for Markdown documents based on headings structure.",
+    "zh-Hans": "根据标题结构自动为 Markdown 文档生成目录索引。"
+  }
+}

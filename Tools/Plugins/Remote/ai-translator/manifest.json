@@ -1,0 +1,15 @@
+{
+  "id": "com.zhiyu.plugin.remote.ai-translator",
+  "version": "1.0.0",
+  "author": "ZhiYu Remote Team",
+  "permissions": ["readContent", "writeContent", "aiAccess", "log"],
+  "allowedDomains": [],
+  "names": {
+    "en": "[Remote] AI Translator",
+    "zh-Hans": "[远程] AI 翻译器"
+  },
+  "descriptions": {
+    "en": "Automatically translates selected text using AI service with support for multiple languages.",
+    "zh-Hans": "使用 AI 服务自动翻译选中的文本，支持多种语言互译。"
+  }
+}

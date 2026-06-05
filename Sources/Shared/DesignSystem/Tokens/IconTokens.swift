@@ -14,20 +14,20 @@ import Foundation
 public enum IconTokens {
     
     // MARK: - 笔记本与知识库默认 Emoji
-    
+
     /// 我的知识库默认 Emoji 图标
-    public static let defaultBook: String = ""
-    
+    public static let defaultBook: String = "📚"
+
     /// 项目调研默认 Emoji 图标
-    public static let defaultResearch: String = ""
-    
+    public static let defaultResearch: String = "🔬"
+
     /// 缺省容错兜底笔记本 Emoji 图标
-    public static let fallbackNotebook: String = ""
-    
+    public static let fallbackNotebook: String = "📓"
+
     // MARK: - 笔记本与知识库可选列表
-    
+
     /// 笔记本卡片、列表及创建表单中可选的所有高品质 Emoji 图标数组
     public static let options: [String] = [
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+        "📚", "📖", "📝", "📓", "📔", "📕", "📗", "📘", "📙", "🔬", "🧪", "💡", "🎯", "🚀", "⭐️"
     ]
 }

@@ -47,6 +47,7 @@ extension L10n {
         public static var systemLanguage: String { tr("settings.systemLanguage") }
         public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
+        public static var smartRouting: String { tr("settings.smartRouting") }
         public static var promptLab: String { tr("promptLab") }
         public static var onDeviceLLM: String { tr("settings.onDeviceLLM") }
         public static var localModelManager: String { tr("settings.localModelManager") }

@@ -73,14 +73,24 @@ final class PluginMarketService: ObservableObject {
             // 真实的网络请求逻辑
             let (data, _) = try await URLSession.shared.data(from: targetURL)
             let decoder = JSONDecoder()
-            // 在 MainActor 上解码，因为 MarketPlugin 是 MainActor 隔离的
-            let decodedPlugins = try await MainActor.run {
-                try decoder.decode([MarketPlugin].self, from: data)
-            }
 
-            await MainActor.run {
-                self.availablePlugins = decodedPlugins
-                self.isLoading = false
+            // 尝试解析为 ApiResponse 格式（Mock 服务器）
+            if let apiResponse = try? await MainActor.run(body: {
+                try decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data)
+            }), let plugins = apiResponse.data {
+                await MainActor.run {
+                    self.availablePlugins = plugins
+                    self.isLoading = false
+                }
+            } else {
+                // 直接解析为数组格式（生产环境）
+                let decodedPlugins = try await MainActor.run {
+                    try decoder.decode([MarketPlugin].self, from: data)
+                }
+                await MainActor.run {
+                    self.availablePlugins = decodedPlugins
+                    self.isLoading = false
+                }
             }
         } catch {
             Logger.shared.addLog(action: .error, target: "PluginMarketService", details: ": \(error.localizedDescription)")

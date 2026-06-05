@@ -89,3 +89,17 @@ Temporary Items
 # Other
 *.log
 scratch/
+
+# Claude Code 生成文件
+.codegraph/
+
+# 临时日志文件
+/tmp/*.log
+/tmp/*.pid
+
+# Xcode 用户数据
+*.xcuserstate
+.DS_Store
+
+# Mock 服务器 PID 文件
+/tmp/mock_*.pid

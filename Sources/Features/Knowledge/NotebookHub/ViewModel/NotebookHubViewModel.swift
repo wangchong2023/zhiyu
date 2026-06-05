@@ -57,7 +57,7 @@ public final class NotebookHubViewModel {
     }
     
     /// 新笔记本图标 (Emoji)
-    public var newNotebookIcon: String = ""
+    public var newNotebookIcon: String = IconTokens.options.first ?? "📚"
     
     /// 新笔记本描述
     public var newNotebookDescription: String = ""
@@ -152,7 +152,7 @@ public final class NotebookHubViewModel {
         
         // 重置状态
         newNotebookName = ""
-        newNotebookIcon = ""
+        newNotebookIcon = IconTokens.options.first ?? "📚"
         newNotebookDescription = ""
         isShowingCreateSheet = false
     }
