@@ -48,6 +48,13 @@
 	<string>Copyright © 2026 ZhiYu. All rights reserved.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>ZhiYu needs microphone access to record voice notes.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>ZhiYu needs photo library access for OCR text scanning.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
