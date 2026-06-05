@@ -64,6 +64,10 @@ final class PluginMarketService: ObservableObject {
 
     /// 拉取Plugins
     func fetchPlugins() async {
+        // 🔍 添加详细日志
+        Logger.shared.info("🔍 [PluginMarket] Target URL: \(targetURL)")
+        print("🔍 [DEBUG] Plugin Market URL: \(targetURL)")
+
         await MainActor.run {
             isLoading = true
             errorMessage = nil
@@ -71,7 +75,13 @@ final class PluginMarketService: ObservableObject {
 
         do {
             // 真实的网络请求逻辑
-            let (data, _) = try await URLSession.shared.data(from: targetURL)
+            let (data, response) = try await URLSession.shared.data(from: targetURL)
+
+            // 🔍 记录响应
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            Logger.shared.info("✅ [PluginMarket] Response: \(statusCode), bytes: \(data.count)")
+            print("✅ [DEBUG] Plugin response: \(statusCode), bytes: \(data.count)")
+
             let decoder = JSONDecoder()
 
             // 尝试解析为 ApiResponse 格式（Mock 服务器）
