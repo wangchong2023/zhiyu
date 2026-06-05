@@ -24,8 +24,8 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     /// 异步拉取云端大模型兼容白名单列表
     public func fetchLLMManifests() async throws -> [LLMManifest] {
-        // 根据 DEBUG/RELEASE 环境自动选择 URL
-        let remoteURLString = AppConfig.modelStoreURL
+        // 🔥 临时硬编码 URL 用于调试
+        let remoteURLString = "http://127.0.0.1:8080/api/models"
 
         // 🔍 添加详细日志
         Logger.shared.info("🔍 [RemoteConfigService] Fetching from URL: \(remoteURLString)")

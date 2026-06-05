@@ -55,11 +55,8 @@ final class PluginMarketService: ObservableObject {
     private let debugURL = URL(string: AppConfig.mockServerURL)!
 
     private var targetURL: URL {
-        #if DEBUG
-        return debugURL
-        #else
-        return productionURL
-        #endif
+        // 🔥 临时硬编码 URL 用于调试
+        return URL(string: "http://127.0.0.1:9091/api/plugins")!
     }
 
     /// 拉取Plugins
