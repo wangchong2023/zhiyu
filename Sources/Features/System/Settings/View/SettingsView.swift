@@ -298,13 +298,13 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.llmSettings, systemImage: "network")
             }
-            
+
             NavigationLink {
-                OnDeviceLLMSettingsView()
+                LocalModelManagerView()
             } label: {
-                Label(L10n.Settings.onDeviceLLM, systemImage: "cpu")
+                Label(L10n.Settings.localModelManager, systemImage: "cpu")
             }
-            
+
             NavigationLink {
                 PromptWorkshopView()
             } label: {
