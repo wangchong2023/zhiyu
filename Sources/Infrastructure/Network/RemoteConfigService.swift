@@ -24,10 +24,9 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     /// 异步拉取云端大模型兼容白名单列表
     public func fetchLLMManifests() async throws -> [LLMManifest] {
-        // 白名单 JSON 托管的 URL 地址。在后续联调时可动态配置于 AppConfig。
-        // 这里提供了一个标准的 CDN / 本地 Mock 混合路由
-        let remoteURLString = AppConfig.backendBaseURL + "/api/ai/models/allowlist"
-        
+        // 根据 DEBUG/RELEASE 环境自动选择 URL
+        let remoteURLString = AppConfig.modelStoreURL
+
         guard let url = URL(string: remoteURLString) else {
             throw NetworkError.invalidURL
         }
