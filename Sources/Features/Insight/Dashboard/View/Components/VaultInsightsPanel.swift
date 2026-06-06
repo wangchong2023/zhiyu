@@ -72,7 +72,7 @@ struct VaultInsightsPanel: View {
             }
             .padding(DesignSystem.huge)
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .presentationBackground(.ultraThinMaterial)
     }
 }
