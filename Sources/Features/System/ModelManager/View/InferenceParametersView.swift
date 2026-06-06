@@ -130,6 +130,14 @@ public struct InferenceParametersView: View {
             // 模型切换时自动加载对应参数
             loadParametersForModel(newModelId)
         }
+        .alert(L10n.ModelManager.parametersTitle, isPresented: Binding(
+            get: { infoTip != nil },
+            set: { if !$0 { infoTip = nil } }
+        )) {
+            Button(L10n.Common.ok) { infoTip = nil }
+        } message: {
+            Text(infoTip ?? "")
+        }
     }
 
     // MARK: - 子视图组件
