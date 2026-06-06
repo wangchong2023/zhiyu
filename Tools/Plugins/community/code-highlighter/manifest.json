@@ -2,13 +2,40 @@
   "id": "com.zhiyu.plugin.code-highlighter",
   "version": "1.5.2",
   "author": "DevTools",
-  "permissions": ["readContent", "log"],
+  "permissions": [
+    "readContent",
+    "log"
+  ],
   "allowedDomains": [],
-  "names": {"en": "Code Highlighter", "zh-Hans": "代码高亮"},
-  "descriptions": {"en": "Add syntax highlighting and line numbers to code blocks.", "zh-Hans": "为代码块添加语法高亮和行号。"},
+  "names": {
+    "en": "Code Highlighter",
+    "zh-Hans": "代码高亮"
+  },
+  "descriptions": {
+    "en": "Add syntax highlighting and line numbers to code blocks.",
+    "zh-Hans": "为代码块添加语法高亮和行号。"
+  },
   "category": "community",
   "iconFile": "icon.png",
-  "readmeFiles": {"en": "README.md", "zh-Hans": "README.zh-Hans.md"},
-  "inputSchema": {"type": "object", "properties": {"content": {"type": "string"}}},
-  "outputSchema": {"type": "object", "properties": {"content": {"type": "string"}}}
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string"
+      }
+    }
+  },
+  "source": "community"
 }

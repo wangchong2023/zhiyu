@@ -10,8 +10,8 @@
   ],
   "allowedDomains": [],
   "names": {
-    "en": "[Remote] AI Translator",
-    "zh-Hans": "[远程] AI 翻译器"
+    "en": "AI Translator",
+    "zh-Hans": "AI 翻译器"
   },
   "descriptions": {
     "en": "Automatically translates selected text using AI service with support for multiple languages.",
@@ -44,5 +44,6 @@
         "description": "Translated text"
       }
     }
-  }
+  },
+  "source": "remote"
 }

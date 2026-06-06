@@ -12,8 +12,8 @@
     "*"
   ],
   "names": {
-    "en": "[Remote] Link Preview",
-    "zh-Hans": "[远程] 链接预览"
+    "en": "Link Preview",
+    "zh-Hans": "链接预览"
   },
   "descriptions": {
     "en": "Automatically fetches URL meta information and generates rich preview cards with images and descriptions.",
@@ -50,5 +50,6 @@
         "description": "OG image URL"
       }
     }
-  }
+  },
+  "source": "remote"
 }

@@ -33,8 +33,8 @@ PLUGINS = [
             "model": "free"
         },
         "names": {
-            "en": "[Remote] Link Preview",
-            "zh-Hans": "[远程] 链接预览"
+            "en": "Link Preview",
+            "zh-Hans": "链接预览"
         },
         "descriptions": {
             "en": "Auto fetches URL meta and generates rich preview cards.",
@@ -62,8 +62,8 @@ PLUGINS = [
             "model": "free"
         },
         "names": {
-            "en": "[Remote] AI Translator",
-            "zh-Hans": "[远程] AI 翻译器"
+            "en": "AI Translator",
+            "zh-Hans": "AI 翻译器"
         },
         "descriptions": {
             "en": "Auto translate text using AI with multi-language support.",

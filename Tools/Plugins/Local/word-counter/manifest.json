@@ -8,8 +8,8 @@
   ],
   "allowedDomains": [],
   "names": {
-    "en": "[Local] Word Counter",
-    "zh-Hans": "[本地] 字数统计"
+    "en": "Word Counter",
+    "zh-Hans": "字数统计"
   },
   "descriptions": {
     "en": "Real-time word and character counting for Markdown documents with detailed statistics.",
@@ -46,5 +46,6 @@
         "description": "Paragraph count"
       }
     }
-  }
+  },
+  "source": "local"
 }
