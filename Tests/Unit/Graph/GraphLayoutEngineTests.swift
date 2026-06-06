@@ -211,4 +211,53 @@ final class GraphLayoutProcessorTests: XCTestCase {
         XCTAssertTrue(result.edges.isEmpty, "孤立节点不应产生边")
         XCTAssertEqual(result.nodes.count, 1)
     }
+
+    // MARK: - 连线密度控制
+
+    /// 验证每节点最多保留 maxEdgesPerNode 条连线
+    func testEdgeDensityTruncation() {
+        let maxEdges = BusinessConstants.Graph.maxEdgesPerNode
+        // Hub 节点链接 10 个子节点
+        var pages: [KnowledgePage] = []
+        let links = (1...10).map { "[[Node\($0)]]" }.joined(separator: " ")
+        let hub = KnowledgePage(title: "Hub", pageType: .concept, content: "中心节点 \(links)")
+        pages.append(hub)
+        for i in 1...10 {
+            pages.append(KnowledgePage(title: "Node\(i)", pageType: .entity, content: "子节点 \(i)"))
+        }
+
+        let allTitles = Set(pages.map(\.title))
+        let linkResolver: (String) -> KnowledgePage? = { title in
+            pages.first(where: { $0.title == title })
+        }
+
+        let result = GraphLayoutProcessor.layout(
+            pages: pages,
+            linkResolver: linkResolver,
+            canvasSize: CGSize(width: 800, height: 600)
+        )
+
+        // 源布局引擎生成所有 10 条边（Hub → 每个子节点）
+        let hubEdges = result.edges.filter { $0.source == hub.id }
+        XCTAssertEqual(hubEdges.count, 10, "布局引擎应为 Hub 生成 10 条边")
+
+        // 模拟 GraphView 的 Top-K 过滤
+        let filteredIDs = Set(result.nodes.map(\.id))
+        var edgeWeights: [UUID: Int] = [:]
+        for edge in result.edges where filteredIDs.contains(edge.source) && filteredIDs.contains(edge.target) {
+            let srcLinks = result.nodes.first(where: { $0.id == edge.source })?.linkCount ?? 0
+            let tgtLinks = result.nodes.first(where: { $0.id == edge.target })?.linkCount ?? 0
+            edgeWeights[edge.id] = srcLinks + tgtLinks
+        }
+        let groupedBySource = Dictionary(grouping: result.edges) { $0.source }
+        let topEdges = groupedBySource.flatMap { _, edges in
+            edges.sorted { (edgeWeights[$0.id] ?? 0) > (edgeWeights[$1.id] ?? 0) }
+                .prefix(maxEdges)
+        }
+
+        XCTAssertEqual(topEdges.filter { $0.source == hub.id }.count, maxEdges,
+                       "Hub 节点应仅保留 Top \(maxEdges) 条连线")
+        XCTAssertLessThan(topEdges.count, result.edges.count,
+                          "过滤后边数应少于原始边数")
+    }
 }
