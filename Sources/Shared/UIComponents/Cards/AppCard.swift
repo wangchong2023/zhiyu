@@ -149,7 +149,7 @@ public struct AppGlassCard<Content: View>: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(
-                color: .black.opacity(isHighlighted ? DesignSystem.glassOpacity : DesignSystem.shadowOpacity * 0.75), 
+                color: .primary.opacity(isHighlighted ? DesignSystem.glassOpacity : DesignSystem.shadowOpacity * 0.75),
                 radius: isHighlighted ? Spacing.Decorator.shadowRadiusLarge : Spacing.Decorator.shadowRadiusSmall, 
                 x: 0, 
                 y: isHighlighted ? Spacing.Decorator.shadowOffsetYLarge : Spacing.Decorator.shadowOffsetYSmall

@@ -72,7 +72,7 @@ struct NotebookCard: View {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .strokeBorder(.primary.opacity(0.04), lineWidth: 0.5)
             )
-            .premiumAmbientShadow(color: .black, radius: 10)
+            .premiumAmbientShadow(color: .primary.opacity(0.08), radius: 10)
             .scaleOnHover()
             // 绑定长按上下文菜单 (ContextMenu)，支持重命名与沙盒物理彻底擦除
             .contextMenu {
