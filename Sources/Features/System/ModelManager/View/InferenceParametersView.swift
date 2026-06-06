@@ -250,6 +250,7 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
             }
             .onHover { hovering in hoveredTitle = hovering ? title : nil }
+            .onTapGesture { hoveredTitle = isHovered ? nil : title }
             .overlay(alignment: .top) {
                 if isHovered {
                     HStack(spacing: 4) {
@@ -302,6 +303,7 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
             }
             .onHover { hovering in hoveredTitle = hovering ? title : nil }
+            .onTapGesture { hoveredTitle = isHovered ? nil : title }
             .overlay(alignment: .top) {
                 if isHovered {
                     HStack(spacing: 4) {
