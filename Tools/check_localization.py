@@ -287,6 +287,8 @@ def check_missing_keys():
     table_pattern = re.compile(r'static let t\s*=\s*"([^"]+)"')
     tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"')
     tr_func_pattern = re.compile(r'trf?\(\s*"([^"]+)"')
+    # 手表端本地 L.tr() 模式
+    l_tr_pattern = re.compile(r'L\.trf?\(\s*"([^"]+)"')
 
     extensions_dir = 'Sources/Localization/Extensions'
     missing = []
@@ -305,7 +307,7 @@ def check_missing_keys():
         declared_table = tables[0]  # 取第一个 t = "XXX" 声明
 
         # 提取该扩展引用的所有 key
-        keys = set(tr_pattern.findall(content) + tr_func_pattern.findall(content))
+        keys = set(tr_pattern.findall(content) + tr_func_pattern.findall(content) + l_tr_pattern.findall(content))
         if not keys:
             continue
 
@@ -326,6 +328,21 @@ def check_missing_keys():
                         f"Table mismatch: key in L10n+{os.path.basename(path).replace('L10n+', '').replace('.swift', '')} (table=\"{declared_table}\") "
                         f"but key only exists in {actual_files}, NOT in {declared_table}.xcstrings",
                         "ERROR"))
+
+    # 额外扫描非扩展文件中的 L.tr() 硬编码调用（如手表端）
+    l_tr_all = re.compile(r'L\.trf?\(\s*"([^"]+)"')
+    for root, dirs, files in os.walk('Sources'):
+        dirs[:] = [d for d in dirs if not d.startswith('.')]
+        for f in files:
+            if f.endswith('.swift') and 'Extensions' not in root:
+                path = os.path.join(root, f)
+                with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
+                    content = fh.read()
+                for key in set(l_tr_all.findall(content)):
+                    if key not in all_keys:
+                        missing.append((path, key,
+                            f"L.tr() key used in {os.path.basename(path)} but missing from ALL .xcstrings",
+                            "ERROR"))
 
     return missing
 

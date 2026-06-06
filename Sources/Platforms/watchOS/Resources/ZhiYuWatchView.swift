@@ -117,20 +117,12 @@ struct WatchKnowledgeStatsView: View {
 }
 
 // MARK: - 本地化助手 (手表端精简版)
+/// 委托到 Watch.xcstrings 表，避免手表端硬编码空字典
 enum L {
-
-    /// 本地化翻译
-    /// - Parameter key: key
-    /// - Returns: 返回值
-    static func tr(_ key: String) -> String {
-        let table: [String: String] = [
-            "watch.pages": "",
-            "watch.words": "",
-            "watch.recentUpdates": "",
-            "watch.tenThousand": "",
-        ]
-        return table[key] ?? key
-    }
+    /// 从 Watch.xcstrings 表获取本地化字符串
+    /// - Parameter key: 本地化键
+    /// - Returns: 本地化后的字符串
+    static func tr(_ key: String) -> String { Localized.tr(key, table: "Watch") }
 }
 
 // MARK: - 手表端最近更新单行视图
