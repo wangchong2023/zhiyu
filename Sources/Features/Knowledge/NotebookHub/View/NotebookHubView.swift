@@ -94,6 +94,7 @@ public struct NotebookHubView: View {
         .sheet(isPresented: $showLintSheet) {
             NavigationStack {
                 LintWrapper()
+                    .environment(router)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button(L10n.Common.close) {
@@ -102,6 +103,7 @@ public struct NotebookHubView: View {
                         }
                     }
             }
+            .environment(router)
         }
     }
     
