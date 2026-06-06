@@ -15,5 +15,9 @@
     "en": "Real-time word and character counting for Markdown documents with detailed statistics.",
     "zh-Hans": "实时统计 Markdown 文档的字数、字符数，提供详细的统计信息。"
   },
-  "iconFile": "icon.png"
+  "iconFile": "icon.png",
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  }
 }

@@ -15,5 +15,9 @@
     "en": "Automatically cleans redundant blank lines, normalizes whitespace, and optimizes Markdown formatting.",
     "zh-Hans": "自动清理冗余空行、规范化空白字符并优化 Markdown 格式。"
   },
-  "iconFile": "icon.png"
+  "iconFile": "icon.png",
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  }
 }

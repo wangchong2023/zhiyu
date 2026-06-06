@@ -15,5 +15,9 @@
     "en": "Automatically generates table of contents for Markdown documents based on headings structure.",
     "zh-Hans": "根据标题结构自动为 Markdown 文档生成目录索引。"
   },
-  "iconFile": "icon.png"
+  "iconFile": "icon.png",
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  }
 }

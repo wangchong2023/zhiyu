@@ -21,7 +21,9 @@ struct PluginCenterView: View {
     @State private var isSafeModeOn = true
     @State private var showSafeModeWarning = false
     @State private var showFileImporter = false
-    
+    @State private var showURLImporter = false
+    @State private var importURL = ""
+
     var body: some View {
             
             VStack(spacing: 0) {
@@ -116,11 +118,18 @@ struct PluginCenterView: View {
                 Spacer()
                 
                 // 加载本地插件 Action
-                Button(action: { 
+                Button(action: {
                     HapticFeedback.shared.trigger(.selection)
-                    showFileImporter = true 
+                    showFileImporter = true
                 }) {
                     Label(L10n.Plugin.local.mount, systemImage: DesignSystem.Icons.plusCircle)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appAccent)
+                }
+
+                // 从 URL 加载
+                Button(action: { showURLImporter = true }) {
+                    Label("URL", systemImage: "link")
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
                 }

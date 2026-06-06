@@ -19,5 +19,9 @@
     "en": "Automatically fetches URL meta information and generates rich preview cards with images and descriptions.",
     "zh-Hans": "自动获取 URL 的 meta 信息，生成包含图片和描述的丰富预览卡片。"
   },
-  "iconFile": "icon.png"
+  "iconFile": "icon.png",
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  }
 }

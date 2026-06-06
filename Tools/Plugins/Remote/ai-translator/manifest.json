@@ -17,5 +17,9 @@
     "en": "Automatically translates selected text using AI service with support for multiple languages.",
     "zh-Hans": "使用 AI 服务自动翻译选中的文本，支持多种语言互译。"
   },
-  "iconFile": "icon.png"
+  "iconFile": "icon.png",
+  "readmeFiles": {
+    "en": "README.md",
+    "zh-Hans": "README.zh-Hans.md"
+  }
 }

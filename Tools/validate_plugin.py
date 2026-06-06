@@ -47,7 +47,13 @@ def validate_plugin(plugin_path):
                     errors.append(f"{required} 缺失")
             
             # 5. 检查推荐文件
-            recommended_files = ['README.md', 'LICENSE', 'CHANGELOG.md']
+            recommended_files = ['README.md', 'README.zh-Hans.md', 'LICENSE', 'CHANGELOG.md']
+
+            # 5a. 检查 manifest 中的 readmeFiles 声明
+            if 'readmeFiles' in manifest:
+                info.append(f"✓ manifest.readmeFiles 已声明")
+            else:
+                warnings.append("manifest 缺少 readmeFiles 字段，建议声明多语言 README")
             for recommended in recommended_files:
                 if recommended in file_list:
                     info.append(f"✓ {recommended} 存在")
