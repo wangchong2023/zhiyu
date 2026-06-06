@@ -137,7 +137,7 @@ struct LLMSettingsView: View {
                     if let result = testResult {
                         VStack(alignment: .leading, spacing: DesignSystem.small) {
                             switch result {
-                            case .success(let latency, let streamOK, let streamTested):
+                            case .success(let latency, _, _):
                                 HStack {
                                     Image(systemName: DesignSystem.Icons.checkCircle)
                                         .foregroundStyle(.green)
@@ -149,7 +149,7 @@ struct LLMSettingsView: View {
                                         .font(.caption.monospaced())
                                         .foregroundStyle(.appSecondary)
                                 }
-                            case .failure(let code, let message, let latency, let streamTested):
+                            case .failure(let code, let message, let latency, _):
                                 HStack(alignment: .top) {
                                     Image(systemName: DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(.red)
