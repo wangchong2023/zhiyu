@@ -122,7 +122,7 @@ enum L {
     /// 从 Watch.xcstrings 表获取本地化字符串
     /// - Parameter key: 本地化键
     /// - Returns: 本地化后的字符串
-    static func tr(_ key: String) -> String { Localized.tr(key, table: "Watch") }
+    static func tr(_ key: String) -> String { Localized.tr(key, table: "Platform") }
 }
 
 // MARK: - 手表端最近更新单行视图

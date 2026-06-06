@@ -26,10 +26,8 @@ extension L10n {
         
         // ─── 新增 watchOS 专用本地化翻译 ───────────────────────────────────────────
         
-        private static let watchTable = "Watch"
-        
-        /// 从 Watch.xcstrings 获取翻译
-        private static func watchTr(_ key: String) -> String { Localized.tr(key, table: watchTable) }
+        /// 从 Platform.xcstrings 获取翻译（复用已工作的 Platform 表）
+        private static func watchTr(_ key: String) -> String { Localized.tr(key, table: t) }
         
         public static var briefingSynthesizing: String { watchTr("watch.briefing.synthesizing") }
         public static var briefingGetToday: String { watchTr("watch.briefing.getToday") }
