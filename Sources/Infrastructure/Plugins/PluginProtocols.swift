@@ -23,8 +23,12 @@ struct PluginManifest: Codable {
     private let names: [String: String]
     /// 本地化描述信息
     private let descriptions: [String: String]
-    
-    init(id: String, version: String, author: String = "Unknown", permissions: [String] = [], allowedDomains: [String]? = nil, names: [String: String], descriptions: [String: String]) {
+    /// 多语言 README 文件映射 (Key: 语言代码, Value: 文件名)
+    public let readmeFiles: [String: String]?
+    /// 插件图标文件名
+    public let iconFile: String?
+
+    init(id: String, version: String, author: String = "Unknown", permissions: [String] = [], allowedDomains: [String]? = nil, names: [String: String], descriptions: [String: String], readmeFiles: [String: String]? = nil, iconFile: String? = nil) {
         self.id = id
         self.version = version
         self.author = author
@@ -32,6 +36,8 @@ struct PluginManifest: Codable {
         self.allowedDomains = allowedDomains
         self.names = names
         self.descriptions = descriptions
+        self.readmeFiles = readmeFiles
+        self.iconFile = iconFile
     }
     
     /// 获取当前语言环境下的显示名称

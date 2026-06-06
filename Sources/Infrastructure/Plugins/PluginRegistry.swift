@@ -502,6 +502,38 @@ extension PluginRegistry {
         }
     }
 
+    // MARK: - 多语言 README 校验
+
+    /// 校验插件包中是否包含 manifest.readmeFiles 声明的所有多语言 README
+    private func validateReadmeFiles(manifest: PluginManifest, extractedDir: URL) {
+        guard let readmeMap = manifest.readmeFiles, !readmeMap.isEmpty else {
+            Logger.shared.warning("[PluginRegistry] \(manifest.id): manifest 未声明 readmeFiles，建议添加多语言 README")
+            return
+        }
+
+        for (locale, filename) in readmeMap {
+            let fileURL = extractedDir.appendingPathComponent(filename)
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                Logger.shared.info("[PluginRegistry] \(manifest.id): README.\(locale) ✓")
+            } else {
+                Logger.shared.warning("[PluginRegistry] \(manifest.id): README.\(locale) (\(filename)) 缺失")
+            }
+        }
+
+        // 强制要求至少 en 和 zh-Hans
+        let requiredLocales = ["en", "zh-Hans"]
+        for locale in requiredLocales {
+            guard let filename = readmeMap[locale] else {
+                Logger.shared.warning("[PluginRegistry] \(manifest.id): readmeFiles 缺少 \(locale) 语言")
+                continue
+            }
+            let fileURL = extractedDir.appendingPathComponent(filename)
+            if !FileManager.default.fileExists(atPath: fileURL.path) {
+                Logger.shared.warning("[PluginRegistry] \(manifest.id): \(locale) README 文件 (\(filename)) 未找到")
+            }
+        }
+    }
+
     // MARK: - .zyplugin 加载（ZIPFoundation 文件提取）
 
     /// 使用 ZIPFoundation 解压 .zyplugin：提取到临时文件后读取，确保数据完整性
@@ -550,6 +582,9 @@ extension PluginRegistry {
             Logger.shared.info("[PluginRegistry] JS preview: \(String(script.prefix(80)).replacingOccurrences(of: "\n", with: " "))")
 
             let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestData)
+
+            // 校验多语言 README 完整性
+            validateReadmeFiles(manifest: manifest, extractedDir: tempDir)
 
             #if canImport(JavaScriptCore) && !os(watchOS)
             if let jsPlugin = JavaScriptPlugin(script: script, manifest: manifest) {
