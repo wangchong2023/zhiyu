@@ -95,18 +95,12 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .task { layoutGraph() }
         .onChange(of: store.pages.count) { _, _ in
-            guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
         .onChange(of: viewModel.graphSize) { _, newSize in
             guard newSize != .zero else { return }
-            if viewModel.nodes.isEmpty {
-                layoutGraph()
-            } else {
-                fitToScreen()
-            }
+            layoutGraph()
         }
         .sheet(isPresented: $viewModel.showInsights) { insightsPanel }
         .fullScreenCover(isPresented: $viewModel.show3D) {
