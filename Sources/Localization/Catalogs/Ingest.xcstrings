@@ -4684,6 +4684,12 @@
             "state": "translated",
             "value": "知识处理与沉淀完成"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completed"
+          }
         }
       }
     },
@@ -4694,6 +4700,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Level 1: Jina 高级解析成功"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 1 extraction succeeded"
           }
         }
       }
@@ -4723,6 +4735,12 @@
             "state": "translated",
             "value": "Level 2: Googlebot 伪装抓取成功"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 2 extraction succeeded"
+          }
         }
       }
     },
@@ -4750,6 +4768,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Level 3: 成功从网页存档提取数据"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 3 extraction succeeded"
           }
         }
       }
@@ -4779,6 +4803,12 @@
             "state": "translated",
             "value": "Level 4: 本地深度解析兜底成功"
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 4 extraction succeeded"
+          }
         }
       }
     },
@@ -4789,6 +4819,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "检测到付费墙或访问限制 (HTTP %d)，正在绕过..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paywall detected"
           }
         }
       }
