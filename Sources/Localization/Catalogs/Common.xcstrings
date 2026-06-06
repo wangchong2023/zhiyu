@@ -1027,13 +1027,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.createPageSubtitle"
+            "value": "Create a new knowledge page"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.createPageSubtitle"
+            "value": "创建新的知识页面"
           }
         }
       }
