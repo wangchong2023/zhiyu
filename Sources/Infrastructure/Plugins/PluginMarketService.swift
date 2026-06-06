@@ -33,13 +33,11 @@ struct MarketPlugin: Codable, Identifiable {
     let descriptions: [String: String]
     
     var name: String {
-        let lang = Locale.current.language.languageCode?.identifier ?? "en"
-        return names[lang] ?? names["en"] ?? names.values.first ?? id
+        return Localized.bestMatch(in: names, fallback: id)
     }
-    
+
     var description: String {
-        let lang = Locale.current.language.languageCode?.identifier ?? "en"
-        return descriptions[lang] ?? descriptions["en"] ?? descriptions.values.first ?? ""
+        return Localized.bestMatch(in: descriptions, fallback: "")
     }
 }
 

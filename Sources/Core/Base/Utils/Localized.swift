@@ -225,6 +225,28 @@ internal struct Localized {
     static func trf(_ key: String, table: String, _ args: CVarArg...) -> String {
         return trf(key, table: table, arguments: args)
     }
+
+    /// 从多语言字典中匹配最佳语言（zh-Hans > zh > en > first）
+    /// - Parameters:
+    ///   - dict: [语言代码: 值] 字典
+    ///   - fallback: 所有语言都不匹配时的默认值
+    /// - Returns: 最佳匹配的值
+    static func bestMatch(in dict: [String: String], fallback: String = "") -> String {
+        let fullId = Locale.current.identifier  // e.g. "zh-Hans_CN"
+        let langCode = Locale.current.language.languageCode?.identifier ?? "en"  // e.g. "zh"
+        // 1. 完整 ID 前缀匹配 (zh-Hans)
+        for key in dict.keys {
+            if fullId.hasPrefix(key) { return dict[key] ?? fallback }
+        }
+        // 2. 仅语言码匹配 (zh)
+        for key in dict.keys {
+            if key.hasPrefix(langCode) { return dict[key] ?? fallback }
+        }
+        // 3. en fallback
+        if let en = dict["en"] { return en }
+        // 4. 任意值
+        return dict.values.first ?? fallback
+    }
 }
 
 /// 智宇本地化资源表名常量定义

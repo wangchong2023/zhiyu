@@ -42,14 +42,12 @@ struct PluginManifest: Codable {
     
     /// 获取当前语言环境下的显示名称
     var name: String {
-        let lang = Locale.current.language.languageCode?.identifier ?? "en"
-        return names[lang] ?? names["en"] ?? names.values.first ?? id
+        Localized.bestMatch(in: names, fallback: id)
     }
-    
+
     /// 获取当前语言环境下的描述信息
     var description: String {
-        let lang = Locale.current.language.languageCode?.identifier ?? "en"
-        return descriptions[lang] ?? descriptions["en"] ?? descriptions.values.first ?? ""
+        Localized.bestMatch(in: descriptions, fallback: "")
     }
 }
 
