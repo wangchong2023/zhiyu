@@ -42,7 +42,7 @@ extension L10n {
         /// /// - Parameter content: content
         /// /// - Returns: 字符串
         public static func briefingPromptTemplate(_ content: String) -> String {
-            Localized.trf("watch.briefing.promptTemplate", table: watchTable, content)
+            Localized.trf("watch.briefing.promptTemplate", table: t, content)
         }
         public static var briefingSystemPrompt: String { watchTr("watch.briefing.systemPrompt") }
         public static var briefingFailed: String { watchTr("watch.briefing.failed") }
