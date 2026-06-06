@@ -172,7 +172,7 @@ struct MermaidWKWebView: UIViewRepresentable {
         <html>
         <head>
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-            <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+            <script src="mermaid.min.js"></script>
             <style>
                 body { background-color: transparent; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; width: 100vw; font-family: -apple-system; }
                 #mermaid-root { background-color: transparent; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
@@ -263,7 +263,7 @@ struct MermaidWKWebViewMac: NSViewRepresentable {
         <!DOCTYPE html>
         <html>
         <head>
-            <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+            <script src="mermaid.min.js"></script>
             <style>
                 body { background-color: transparent; margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; font-family: -apple-system; color: white; }
                 #mermaid-root { background-color: transparent; width: 100%; padding: 20px; box-sizing: border-box; }
