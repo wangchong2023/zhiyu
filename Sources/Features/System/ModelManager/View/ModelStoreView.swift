@@ -27,7 +27,7 @@ public struct ModelStoreView: View {
     // MARK: - 局部视图状态
     
     /// 分段器当前选中的 Tab (0: 我的模型, 1: 模型商店)
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1
     
     /// 触发警告弹窗的模型元数据
     @State private var alertManifest: LLMManifest?
