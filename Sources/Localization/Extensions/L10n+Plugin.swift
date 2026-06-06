@@ -25,43 +25,46 @@ extension L10n {
         /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
-        /// permTitle
-        /// - Returns: 字符串
+        /// permTitle — 全显式 case，杜绝动态拼接，所有 key 都可被静态分析检测
+        /// - Returns: 本地化权限名称
         public static func permTitle(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
                 return Localized.tr("plugin.perm.content", table: t)
+            case "readContent":
+                return Localized.tr("plugin.perm.readContent", table: t)
             case "network":
                 return Localized.tr("plugin.perm.network", table: t)
+            case "aiAccess":
+                return Localized.tr("plugin.perm.aiAccess", table: t)
+            case "log":
+                return Localized.tr("plugin.perm.log", table: t)
             case "sandbox":
                 return Localized.tr("plugin.perm.sandbox", table: t)
             default:
-                let key = "plugin.perm." + perm
-                let localized = Localized.tr(key, table: t)
-                return localized == key ? perm.capitalized : localized
+                // 未知权限：直接回退展示原始标识，不再动态拼接
+                return perm
             }
         }
 
-        /// permDesc
-        /// - Returns: 字符串
+        /// permDesc — 全显式 case，禁止 default 分支动态构造 key
+        /// - Returns: 权限详细说明
         public static func permDesc(for perm: String) -> String {
             switch perm {
             case "writeContent", "content":
-                let key = "plugin.perm.content.desc"
-                let localized = Localized.tr(key, table: t)
-                return localized == key ? Plugin.tr("permission.modifyKnowledgeDesc") : localized
+                return Plugin.tr("plugin.perm.content.desc")
+            case "readContent":
+                return Plugin.tr("plugin.perm.readContent.desc")
             case "network":
-                let key = "plugin.perm.network.desc"
-                let localized = Localized.tr(key, table: t)
-                return localized == key ? Plugin.tr("permission.networkAccessDesc") : localized
+                return Plugin.tr("plugin.perm.network.desc")
+            case "aiAccess":
+                return Plugin.tr("plugin.perm.aiAccess.desc")
+            case "log":
+                return Plugin.tr("plugin.perm.log.desc")
             case "sandbox":
-                let key = "plugin.perm.sandbox.desc"
-                let localized = Localized.tr(key, table: t)
-                return localized == key ? Plugin.tr("permission.sandboxDesc") : localized
+                return Plugin.tr("plugin.perm.sandbox.desc")
             default:
-                let key = "plugin.perm." + perm + ".desc"
-                let localized = Localized.tr(key, table: t)
-                return localized == key ? Plugin.trf("permission.requestPermission", perm) : localized
+                return Plugin.trf("plugin.perm.unknown.desc", perm)
             }
         }
 

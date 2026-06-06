@@ -1690,13 +1690,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.sandboxDesc "
+            "value": "Allows plugin to access the local file system within sandbox"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.sandboxDesc"
+            "value": "允许插件在沙盒内访问本地文件系统"
           }
         }
       }
@@ -1707,13 +1707,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.networkAccessDesc "
+            "value": "Allows plugin to access the internet for data fetching"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.networkAccessDesc"
+            "value": "允许插件访问互联网获取数据"
           }
         }
       }
@@ -1724,13 +1724,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.modifyKnowledgeDesc "
+            "value": "Allows plugin to read and modify your document content"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.modifyKnowledgeDesc"
+            "value": "允许插件读取和修改您的文档内容"
           }
         }
       }
@@ -1741,13 +1741,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.requestPermission "
+            "value": "Requests permission: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "permission.requestPermission"
+            "value": "请求权限：%@"
           }
         }
       }
@@ -1758,13 +1758,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.message "
+            "value": "Plugin \"%@\" requires the following permissions to function"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.message"
+            "value": "插件「%@」需要以下权限才能正常工作"
           }
         }
       }
@@ -2156,6 +2156,125 @@
           "stringUnit": {
             "state": "translated",
             "value": "日志记录"
+          }
+        }
+      }
+    },
+    "plugin.perm.content.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modify document content, clean formatting, generate tables of contents etc."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改文档内容，清洗格式、生成目录等"
+          }
+        }
+      }
+    },
+    "plugin.perm.readContent.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read document content for analysis, statistics, and processing."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读取文档内容以进行分析、统计和处理"
+          }
+        }
+      }
+    },
+    "plugin.perm.network.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access the internet to fetch web page data or call external APIs."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "访问互联网以获取网页数据或调用外部 API"
+          }
+        }
+      }
+    },
+    "plugin.perm.aiAccess.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Call ZhiYu AI service for translation, summarization and other smart features."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调用智宇 AI 服务进行翻译、摘要等智能处理"
+          }
+        }
+      }
+    },
+    "plugin.perm.log.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write operation logs for debugging and statistics purposes."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写入操作日志用于调试和统计"
+          }
+        }
+      }
+    },
+    "plugin.perm.sandbox.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access the local file system within the sandbox for reading and writing files."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在沙盒内访问本地文件系统进行文件读写"
+          }
+        }
+      }
+    },
+    "plugin.perm.unknown.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This plugin requests permission: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此插件请求权限：%@"
           }
         }
       }
