@@ -43,7 +43,7 @@ actor IngestService {
     ) async -> KnowledgePage {
         let startTime = Date()
         await MainActor.run {
-            DatabaseManager.shared.incrementActiveTransactions()
+            ServiceContainer.shared.resolve(DatabaseManager.self).incrementActiveTransactions()
         }
         let pageID = UUID()
 
@@ -116,7 +116,7 @@ actor IngestService {
         )
 
         await MainActor.run {
-            DatabaseManager.shared.decrementActiveTransactions()
+            ServiceContainer.shared.resolve(DatabaseManager.self).decrementActiveTransactions()
         }
         return page
     }
