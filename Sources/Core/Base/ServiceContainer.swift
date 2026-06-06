@@ -125,6 +125,15 @@ final class ServiceContainer: @unchecked Sendable {
         os_unfair_lock_unlock(lockPointer)
         return exists
     }
+
+    /// 安全解析服务，未注册时返回 nil（不 fatalError）
+    func optionalResolve<T>(_ type: T.Type) -> T? {
+        let key = makeKey(for: type)
+        os_unfair_lock_lock(lockPointer)
+        let service = services[key]
+        os_unfair_lock_unlock(lockPointer)
+        return service as? T
+    }
 }
 
 /// 服务注入助手属性包装器
