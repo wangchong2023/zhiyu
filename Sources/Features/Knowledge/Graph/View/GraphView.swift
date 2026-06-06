@@ -100,7 +100,7 @@ struct GraphContainerView: View {
             guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
-        .onChange(of: store.pages.count) { _, _ in
+        .onChange(of: store.pages.map(\.id)) { _, _ in
             guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
