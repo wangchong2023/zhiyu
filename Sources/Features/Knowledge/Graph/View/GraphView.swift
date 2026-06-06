@@ -254,8 +254,8 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func layoutGraph() {
+        guard viewModel.graphSize != .zero else { return }
         let pages = store.pages
-        // 核心修复：如果数据为空，必须清空视图模型，否则旧数据会残留
         if pages.isEmpty {
             viewModel.nodes = []
             viewModel.edges = []
