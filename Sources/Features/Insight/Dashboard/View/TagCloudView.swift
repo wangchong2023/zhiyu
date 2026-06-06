@@ -347,7 +347,9 @@ struct TagCloudViewContent: View {
                 List {
                     Section {
                         ForEach(coordinator.filteredPages) { page in
-                            NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            Button {
+                                Router.shared.path.append(AppRoute.pageDetail(id: page.id))
+                            } label: {
                                 PageRowView(page: page, compact: true)
                                     .padding(.vertical, DesignSystem.tiny)
                             }

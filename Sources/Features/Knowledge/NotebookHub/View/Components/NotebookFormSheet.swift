@@ -68,10 +68,14 @@ struct NotebookFormSheet: View {
                                 Circle()
                                     .fill(Color.appAccent.opacity(0.1))
                                     .frame(width: 100, height: 100)
-                                
+                                Circle()
+                                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 2)
+                                    .frame(width: 100, height: 100)
+
                                 Text(icon.isEmpty ? "" : icon)
                                     .font(.largeTitle)
                             }
+                            .padding(.vertical, DesignSystem.small)
                             
                             Text(L10n.Vault.iconLabel)
                                 .font(.subheadline)

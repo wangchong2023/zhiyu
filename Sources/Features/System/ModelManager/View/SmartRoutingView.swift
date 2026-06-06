@@ -25,21 +25,19 @@ public struct SmartRoutingView: View {
     public init() {}
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: DesignSystem.large) {
-                // 端云混合策略
-                cloudEscalationSection
+        ZStack {
+            themeManager.pageBackground()
+                .ignoresSafeArea()
 
-                // 任务路由规则
-                routingRulesSection
-
-                // 网络状态监控
-                networkStatusSection
-
-                // 高级设置
-                advancedSettingsSection
+            ScrollView {
+                VStack(spacing: DesignSystem.large) {
+                    cloudEscalationSection
+                    routingRulesSection
+                    networkStatusSection
+                    advancedSettingsSection
+                }
+                .padding(DesignSystem.medium)
             }
-            .padding(DesignSystem.medium)
         }
         .navigationTitle(L10n.Settings.smartRouting)
         #if !os(watchOS)
