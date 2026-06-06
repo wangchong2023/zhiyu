@@ -79,20 +79,26 @@ struct PluginDetailView: View {
 
     private var headerSection: some View {
         HStack(alignment: .top, spacing: DesignSystem.wide) {
-            // 插件图标
-            Image(systemName: plugin.icon)
-                .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
-                .foregroundStyle(.white)
-                .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
-                .background(
-                    LinearGradient(
-                        colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
-                .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
+            // 插件图标 — 优先显示本地 icon.png，fallback SF Symbol
+            if let iconURL = PluginRegistry.shared.iconURL(for: plugin.id),
+               let imageData = try? Data(contentsOf: iconURL),
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable().scaledToFit()
+                    .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
+                    .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
+            } else {
+                Image(systemName: plugin.icon)
+                    .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
+                    .foregroundStyle(.white)
+                    .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                    .background(
+                        LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
+                    .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
+            }
 
             VStack(alignment: .leading, spacing: DesignSystem.small) {
                 // 名称 + 版本标签
@@ -292,11 +298,20 @@ struct PluginDetailView: View {
                 .font(.headline)
                 .foregroundStyle(.appText)
 
-            Text(plugin.description)
-                .font(.body)
-                .foregroundStyle(.appText)
-                .lineSpacing(6)
-                .fixedSize(horizontal: false, vertical: true)
+            // 已安装插件优先展示本地化 README，否则使用 JSON description
+            if let readme = PluginRegistry.shared.localizedReadme(for: plugin.id) {
+                Text(readme)
+                    .font(.body)
+                    .foregroundStyle(.appText)
+                    .lineSpacing(DesignSystem.medium)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(plugin.description)
+                    .font(.body)
+                    .foregroundStyle(.appText)
+                    .lineSpacing(DesignSystem.medium)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 

@@ -21,8 +21,6 @@ struct PluginCenterView: View {
     @State private var isSafeModeOn = true
     @State private var showSafeModeWarning = false
     @State private var showFileImporter = false
-    @State private var showURLImporter = false
-    @State private var importURL = ""
 
     var body: some View {
             
@@ -127,12 +125,6 @@ struct PluginCenterView: View {
                         .foregroundStyle(.appAccent)
                 }
 
-                // 从 URL 加载
-                Button(action: { showURLImporter = true }) {
-                    Label("URL", systemImage: "link")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.appAccent)
-                }
             }
             .padding(.top, DesignSystem.tiny)
         }

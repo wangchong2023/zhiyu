@@ -534,6 +534,63 @@ extension PluginRegistry {
         }
     }
 
+    // MARK: - 持久化资源
+
+    /// 从解压目录复制 icon.png + README 到 Documents/Plugins/{id}_*
+    private func persistPluginAssets(manifest: PluginManifest, extractedDir: URL) {
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let assetsDir = documentsURL.appendingPathComponent("Plugins")
+        try? fileManager.createDirectory(at: assetsDir, withIntermediateDirectories: true)
+
+        // 保存图标
+        if let iconFile = manifest.iconFile {
+            let src = extractedDir.appendingPathComponent(iconFile)
+            let dst = assetsDir.appendingPathComponent("\(manifest.id)_icon.png")
+            try? fileManager.removeItem(at: dst)
+            if fileManager.fileExists(atPath: src.path) {
+                try? fileManager.copyItem(at: src, to: dst)
+                Logger.shared.info("[PluginRegistry] \(manifest.id): icon saved")
+            }
+        }
+
+        // 保存多语言 README
+        if let readmeMap = manifest.readmeFiles {
+            for (locale, filename) in readmeMap {
+                let src = extractedDir.appendingPathComponent(filename)
+                let dst = assetsDir.appendingPathComponent("\(manifest.id)_\(locale).md")
+                try? fileManager.removeItem(at: dst)
+                if fileManager.fileExists(atPath: src.path) {
+                    try? fileManager.copyItem(at: src, to: dst)
+                }
+            }
+        }
+    }
+
+    /// 获取已安装插件的图标 URL
+    public func iconURL(for pluginID: String) -> URL? {
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let url = documentsURL.appendingPathComponent("Plugins/\(pluginID)_icon.png")
+        return fileManager.fileExists(atPath: url.path) ? url : nil
+    }
+
+    /// 获取已安装插件的本地化 README 内容
+    public func localizedReadme(for pluginID: String) -> String? {
+        let lang = Locale.current.language.languageCode?.identifier ?? "en"
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+
+        // 尝试用户语言 → en fallback
+        for locale in [lang, "en"] {
+            let url = documentsURL.appendingPathComponent("Plugins/\(pluginID)_\(locale).md")
+            if fileManager.fileExists(atPath: url.path) {
+                return try? String(contentsOf: url, encoding: .utf8)
+            }
+        }
+        return nil
+    }
+
     // MARK: - .zyplugin 加载（ZIPFoundation 文件提取）
 
     /// 使用 ZIPFoundation 解压 .zyplugin：提取到临时文件后读取，确保数据完整性
@@ -585,6 +642,9 @@ extension PluginRegistry {
 
             // 校验多语言 README 完整性
             validateReadmeFiles(manifest: manifest, extractedDir: tempDir)
+
+            // 持久化图标和 README 到 Documents/Plugins/{id}_icon.png
+            persistPluginAssets(manifest: manifest, extractedDir: tempDir)
 
             #if canImport(JavaScriptCore) && !os(watchOS)
             if let jsPlugin = JavaScriptPlugin(script: script, manifest: manifest) {
