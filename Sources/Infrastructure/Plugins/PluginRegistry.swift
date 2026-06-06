@@ -603,8 +603,11 @@ extension PluginRegistry {
             defer { try? FileManager.default.removeItem(at: tempDir) }
 
             // 打开 ZIP 归档
-            guard let archive = try? Archive(url: archiveURL, accessMode: .read) else {
-                Logger.shared.error("[PluginRegistry] Cannot open archive: \(archiveURL.lastPathComponent)")
+            let archive: Archive
+            do {
+                archive = try Archive(url: archiveURL, accessMode: .read)
+            } catch {
+                Logger.shared.error("[PluginRegistry] Cannot open archive: \(archiveURL.lastPathComponent), error: \(error)")
                 return
             }
 
