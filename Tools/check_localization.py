@@ -344,6 +344,26 @@ def check_missing_keys():
                             f"L.tr() key used in {os.path.basename(path)} but missing from ALL .xcstrings",
                             "ERROR"))
 
+    # 额外扫描 View 文件中的 L10n. 引用——验证顶层模块在 Extension 中存在
+    l10n_module_pattern = re.compile(r'L10n\.([A-Z][a-zA-Z]*)\.')
+    existing_modules = set()
+    for f in os.listdir(extensions_dir):
+        if f.startswith('L10n+') and f.endswith('.swift'):
+            existing_modules.add(f.replace('L10n+', '').replace('.swift', ''))
+
+    for root, dirs, files in os.walk('Sources'):
+        dirs[:] = [d for d in dirs if d not in ('.git', 'Localization') and not d.startswith('.')]
+        for f in files:
+            if not f.endswith('.swift'): continue
+            path = os.path.join(root, f)
+            with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
+                content = fh.read()
+            for module in set(l10n_module_pattern.findall(content)):
+                if module not in existing_modules:
+                    missing.append((path, module,
+                        f"L10n.{module}.* used in {os.path.basename(path)} but L10n+{module}.swift not found",
+                        "ERROR"))
+
     return missing
 
 
