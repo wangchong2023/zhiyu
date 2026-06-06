@@ -103,8 +103,8 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onAppear {
-            guard viewModel.graphSize != .zero, !store.pages.isEmpty else { return }
+        .onChange(of: store.pages) { _, newPages in
+            guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
         .task(id: viewModel.graphSize) {
