@@ -45,31 +45,30 @@ public struct SmartRoutingView: View {
     private var modelStrategySection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.modelStrategy)
-                .font(.headline).foregroundStyle(.appText)
+                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
             // 端云混合开关
-            HStack {
-                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                    Text(L10n.ModelManager.Routing.cloudEscalationToggle)
-                        .font(.subheadline).foregroundStyle(.appText)
-                    Text(L10n.ModelManager.Routing.cloudEscalationDesc)
-                        .font(.caption2).foregroundStyle(.appSecondary)
+            VStack(alignment: .leading, spacing: DesignSystem.small) {
+                HStack {
+                    VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                        Text(L10n.ModelManager.Routing.cloudEscalationToggle)
+                            .font(.subheadline).foregroundStyle(.appText)
+                        Text(L10n.ModelManager.Routing.cloudEscalationDesc)
+                            .font(.caption2).foregroundStyle(.appSecondary)
+                    }
+                    Spacer()
+                    Toggle("", isOn: Binding(get: { modelManager.isCloudEscalationEnabled },
+                        set: { modelManager.isCloudEscalationEnabled = $0 })).labelsHidden()
                 }
-                Spacer()
-                Toggle("", isOn: Binding(get: { modelManager.isCloudEscalationEnabled },
-                    set: { modelManager.isCloudEscalationEnabled = $0 })).labelsHidden()
+                Divider()
+                Toggle(L10n.ModelManager.Routing.wifiOnly, isOn: .constant(false)).font(.subheadline)
+                Toggle(L10n.ModelManager.Routing.autoFallback, isOn: .constant(true)).font(.subheadline)
+                Toggle(L10n.ModelManager.Routing.preferLocal, isOn: .constant(true)).font(.subheadline)
             }
-
-            Divider()
-
-            // 高级选项
-            Toggle(L10n.ModelManager.Routing.wifiOnly, isOn: .constant(false)).font(.subheadline)
-            Toggle(L10n.ModelManager.Routing.autoFallback, isOn: .constant(true)).font(.subheadline)
-            Toggle(L10n.ModelManager.Routing.preferLocal, isOn: .constant(true)).font(.subheadline)
+            .padding()
+            .background(Color.appCard.opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
-        .padding()
-        .background(Color.appCard.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
     // MARK: - 任务路由
@@ -77,7 +76,8 @@ public struct SmartRoutingView: View {
     private var taskRoutingSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.taskRules)
-                .font(.headline).foregroundStyle(.appText)
+                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
+
             VStack(spacing: DesignSystem.small) {
                 routingRuleRow(icon: "lock.fill", iconColor: .red, task: L10n.ModelManager.Routing.taskSemanticChunking, rule: L10n.ModelManager.Routing.strategyForceLocal)
                 routingRuleRow(icon: "lock.fill", iconColor: .red, task: L10n.ModelManager.Routing.taskLinkDiscovery, rule: L10n.ModelManager.Routing.strategyForceLocal)
@@ -85,10 +85,10 @@ public struct SmartRoutingView: View {
                 routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskChat, rule: L10n.ModelManager.Routing.strategySmartRouting)
                 routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskTagGeneration, rule: L10n.ModelManager.Routing.strategySmartRouting)
             }
+            .padding()
+            .background(Color.appCard.opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
-        .padding()
-        .background(Color.appCard.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
     // MARK: - 运行状态
@@ -96,14 +96,12 @@ public struct SmartRoutingView: View {
     private var runtimeStatusSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.runtimeStatus)
-                .font(.headline).foregroundStyle(.appText)
+                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
             VStack(spacing: DesignSystem.small) {
-                // 本地模型
                 statusRow(label: L10n.ModelManager.Routing.localModelReady,
                     value: getActiveModelName(),
                     status: modelManager.isModelLocalReady(for: modelManager.activeModelId) ? .healthy : .warning)
-                // 当前决策
                 HStack {
                     Image(systemName: "cpu").foregroundStyle(.appAccent).frame(width: DesignSystem.titleIconSize)
                     Text(L10n.ModelManager.Routing.currentDecision).font(.subheadline).foregroundStyle(.appText)
@@ -113,15 +111,14 @@ public struct SmartRoutingView: View {
                         .background(Color.appAccent.opacity(0.15)).clipShape(Capsule())
                 }
                 Divider()
-                // 网络
                 statusRow(label: L10n.ModelManager.Routing.networkCurrent, value: "WiFi", status: .healthy)
                 statusRow(label: L10n.ModelManager.Routing.networkLatency, value: "23ms", status: .healthy)
                 statusRow(label: L10n.ModelManager.Routing.networkBandwidth, value: L10n.ModelManager.Routing.networkBandwidthExcellent, status: .healthy)
             }
+            .padding()
+            .background(Color.appCard.opacity(0.6))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
-        .padding()
-        .background(Color.appCard.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
     // MARK: - 子视图组件
