@@ -857,13 +857,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Community Market"
+            "value": "Plugin Market"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "社区市场"
+            "value": "插件市场"
           }
         }
       }
