@@ -119,8 +119,6 @@ public struct InferenceParametersView: View {
                     tip: L10n.ModelManager.Parameters.tipMaxTokens
                 )
 
-                // 操作按钮
-                actionButtons
             }
             .padding(DesignSystem.medium)
         }
@@ -333,16 +331,6 @@ public struct InferenceParametersView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
-    /// Apple 风格重置（修改即生效，无需保存按钮）
-    private var actionButtons: some View {
-        Button(role: .destructive, action: resetToDefaults) {
-            Label(L10n.ModelManager.Parameters.reset, systemImage: "arrow.counterclockwise")
-                .font(.subheadline)
-        }
-        .frame(maxWidth: .infinity, alignment: .trailing)
-        .padding(.top, DesignSystem.small)
-    }
-
     // MARK: - 辅助方法
 
     private func getActiveModelName() -> String {
@@ -379,10 +367,6 @@ public struct InferenceParametersView: View {
             // 未找到保存的配置，使用默认 balanced 预设
             applyPreset(.balanced)
         }
-    }
-
-    private func resetToDefaults() {
-        applyPreset(.balanced)
     }
 
     private func autoSave() {
