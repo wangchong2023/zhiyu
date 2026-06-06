@@ -11,6 +11,17 @@
 import SwiftUI
 import WidgetKit
 
+// MARK: - Widget 设计常量（独立于 DesignSystem，Widget Extension 无法引入主 App 模块）
+
+private enum WidgetMetrics {
+    static let cardPadding: CGFloat = 16
+    static let contentPadding: CGFloat = 12
+    static let footerPadding: CGFloat = 18
+    static let iconSize: CGFloat = 20
+    static let bulletSize: CGFloat = 4
+    static let progressBarWidth: CGFloat = 80
+}
+
 // MARK: - Timeline Entry
 /// 桌面静态小组件的时间线实体
 struct KnowledgeStatsEntry: TimelineEntry {
@@ -155,7 +166,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                 statItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
             }
         }
-        .padding(12)
+        .padding(WidgetMetrics.contentPadding)
     }
 
     // MARK: - Medium 尺寸布局
@@ -195,9 +206,9 @@ struct KnowledgeStatsWidgetEntryView: View {
                 actionButton(label: "AI Chat", icon: "sparkles", color: .blue, url: "zhiyu://chat")
                 actionButton(label: "Search", icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
             }
-            .frame(width: 80)
+            .frame(width: WidgetMetrics.progressBarWidth)
         }
-        .padding(16)
+        .padding(WidgetMetrics.cardPadding)
     }
 
     // MARK: - Large 尺寸布局
@@ -253,7 +264,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                         Image(systemName: page.typeName == "concept" ? "lightbulb.fill" : "person.text.rectangle.fill")
                             .font(.system(size: 11))
                             .foregroundStyle(page.colorName == "accent" ? .blue : .purple)
-                            .frame(width: 20, height: 20)
+                            .frame(width: WidgetMetrics.iconSize, height: WidgetMetrics.iconSize)
                             .background(Color.white.opacity(0.06))
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                         
@@ -275,7 +286,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                 }
             }
         }
-        .padding(18)
+        .padding(WidgetMetrics.footerPadding)
     }
 
     // MARK: - 辅助子视图构建
@@ -284,7 +295,7 @@ struct KnowledgeStatsWidgetEntryView: View {
         HStack(spacing: 3) {
             Circle()
                 .fill(color)
-                .frame(width: 4, height: 4)
+                .frame(width: WidgetMetrics.bulletSize, height: WidgetMetrics.bulletSize)
             Text("\(label):")
                 .font(.system(size: 9))
                 .foregroundStyle(.secondary)
