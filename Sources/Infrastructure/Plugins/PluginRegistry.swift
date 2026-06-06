@@ -333,8 +333,10 @@ final class PluginRegistry: ObservableObject {
         customViews.removeAll(where: { $0.pluginID == id })
         eventListeners.removeAll(where: { $0.pluginID == id })
 
-        // 注销页面处理器
-        ServiceContainer.shared.resolve(KnowledgeStore.self).unregisterProcessors(for: id)
+        // 注销页面处理器（测试环境可能未注册 KnowledgeStore）
+        if ServiceContainer.shared.hasService(for: KnowledgeStore.self) {
+            ServiceContainer.shared.resolve(KnowledgeStore.self).unregisterProcessors(for: id)
+        }
 
         // 删除磁盘上的插件文件，防止重启后重新加载
         removePluginFilesFromDisk(pluginID: id)

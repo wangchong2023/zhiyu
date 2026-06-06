@@ -163,6 +163,10 @@ final class JavaScriptPlugin: InterceptionPlugin {
         }
         
         let loadDataBlock: @convention(block) (String) -> String? = { key in
+            // JSC 回调可能在任意线程，避免 dispatch_sync 死锁
+            if Thread.isMainThread {
+                return pluginCtx.loadData(key: key)
+            }
             var result: String?
             DispatchQueue.main.sync {
                 result = pluginCtx.loadData(key: key)
