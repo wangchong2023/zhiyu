@@ -37,6 +37,12 @@ public final class GlobalModelManager {
     /// 物理设备总内存大小 (字节)
     public let physicalMemory: UInt64
     
+    /// 已下载模型的存储占用（字节），按 modelId 索引
+    public private(set) var modelStorageUsage: [String: Int64] = [:]
+
+    /// 模型调用次数统计，按 modelId 索引
+    public private(set) var modelCallCounts: [String: Int] = [:]
+
     /// 物理硬件运存防爆评估拦截服务
     @ObservationIgnored private let hardwareGuard: DeviceHardwareGuard
     

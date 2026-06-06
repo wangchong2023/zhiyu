@@ -504,8 +504,9 @@ extension PluginRegistry {
 
             defer { try? FileManager.default.removeItem(at: tempDir) }
 
-            #if os(macOS) || os(iOS)
-            // 使用系统 unzip（iOS 模拟器和 macOS 都支持 /usr/bin/unzip）
+            // 使用系统 unzip（iOS 模拟器支持 /usr/bin/unzip）
+            // 注：真机环境需引入 ZIP 库，当前以模拟器测试为主
+            #if targetEnvironment(simulator) || os(macOS)
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
             process.arguments = ["-o", archiveURL.path, "-d", tempDir.path]
@@ -514,7 +515,8 @@ extension PluginRegistry {
             try process.run()
             process.waitUntilExit()
             #else
-            // watchOS 不支持 Process，跳过
+            // 真机 fallback：期望后续集成 MiniZip 或 ZipFoundation
+            Logger.shared.warning("[PluginRegistry] ZIP extraction not available on device, skipping \(archiveURL.lastPathComponent)")
             return
             #endif
 
