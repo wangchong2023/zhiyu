@@ -24,46 +24,27 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     /// 异步拉取云端大模型兼容白名单列表
     public func fetchLLMManifests() async throws -> [LLMManifest] {
-        // 🔥 临时硬编码 URL 用于调试
-        let remoteURLString = "http://127.0.0.1:8080/api/models"
-
-        // 🔍 添加详细日志
-        Logger.shared.info("🔍 [RemoteConfigService] Fetching from URL: \(remoteURLString)")
-        print("🔍 [DEBUG] Model Store URL: \(remoteURLString)")
+        // 根据 DEBUG/RELEASE 环境自动选择 URL
+        let remoteURLString = AppConfig.modelStoreURL
 
         guard let url = URL(string: remoteURLString) else {
-            Logger.shared.error("❌ [RemoteConfigService] Invalid URL: \(remoteURLString)")
             throw NetworkError.invalidURL
         }
 
         do {
             let (data, response) = try await session.data(from: url)
-
-            // 🔍 记录响应状态
             let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-            Logger.shared.info("✅ [RemoteConfigService] Response status: \(statusCode), data size: \(data.count)")
-            print("✅ [DEBUG] Response: \(statusCode), bytes: \(data.count)")
-
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                Logger.shared.error("❌ [RemoteConfigService] HTTP error: \(statusCode)")
+            guard statusCode == 200 else {
                 throw NetworkError.serverError(500, String(data: Data(base64Encoded: "RmV0Y2ggcmVtb3RlIG1vZGVscyBhbGxvd2xpc3QgZmFpbGVkLg==")!, encoding: .utf8)!)
             }
 
-            // 解析来自后端的统一 API 响应格式 (ApiResponse)
             let apiResponse = try decoder.decode(ApiResponse<[LLMManifest]>.self, from: data)
-            Logger.shared.info("📦 [RemoteConfigService] Decoded models: \(apiResponse.data?.count ?? 0)")
-            print("📦 [DEBUG] Models count: \(apiResponse.data?.count ?? 0)")
-
             if apiResponse.isSuccess, let list = apiResponse.data {
-                Logger.shared.info("✅ [RemoteConfigService] Success! Returning \(list.count) models")
                 return list
             }
-            Logger.shared.error("❌ [RemoteConfigService] API response not successful or empty")
             throw NetworkError.unexpected(String(data: Data(base64Encoded: "UmVtb3RlIG1vZGVscyBwYXlsb2FkIGlzIGVtcHR5Lg==")!, encoding: .utf8)!)
         } catch {
-            // 🟢 网络断开或环境崩毁时的【终极离线预设兜底】—— 保障知识库 100% 离线存活且首屏不卡死
-            Logger.shared.error("❌ [RemoteConfigService] Network error, using fallback: \(error)")
-            print("❌ [DEBUG] Network error: \(error), using fallback")
+            Logger.shared.error("[RemoteConfigService] Error, using fallback: \(error)")
             return getFallbackLLMManifests()
         }
     }
