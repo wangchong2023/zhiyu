@@ -132,7 +132,8 @@ public struct ModelStoreView: View {
         let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.red.opacity(0.4) : Color.appBorder.opacity(0.8))
         let shadowColor = isSelected ? Color.appAccent.opacity(0.2) : Color.black.opacity(0.05)
         
-        return VStack(alignment: .leading, spacing: DesignSystem.small) {
+        return VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: DesignSystem.small) {
             // 头部：标题与状态标签
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -225,9 +226,10 @@ public struct ModelStoreView: View {
             }
         }
 
-        // 展开的 Model Spec Sheet（参照 Gallery Model Management）
-        if expandedModelId == manifest.modelId {
-            modelSpecSheet(for: manifest)
+            // 展开的 Model Spec Sheet（参照 Gallery Model Management）
+            if expandedModelId == manifest.modelId {
+                modelSpecSheet(for: manifest)
+            }
         }
     }
 
