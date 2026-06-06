@@ -51,7 +51,7 @@ final class ChatCoordinator {
     /// 加载InsightfulQuestions
     /// - Parameter pages: pages
     func loadInsightfulQuestions(pages: [KnowledgePage]) async {
-        guard !pages.isEmpty && llmService.isEnabled && insightfulQuestions.isEmpty else { return }
+        guard !pages.isEmpty && llmService.isEnabled && insightfulQuestions.isEmpty && !isGeneratingAIQuestions else { return }
         
         isGeneratingAIQuestions = true
         do {

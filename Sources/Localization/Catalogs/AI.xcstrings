@@ -4410,13 +4410,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Insight Questions"
+            "value": "Based on the following knowledge pages, generate 3 insightful questions that help the user explore deeper connections between concepts and discover knowledge gaps.\n\nOutput ONLY a JSON array of 3 strings, no other text: [\"question1\", \"question2\", \"question3\"]"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "洞察提问"
+            "value": "根据以下知识页面，生成 3 个有洞察力的问题，帮助用户发现概念间的深层联系和知识盲区。\n\n只输出 JSON 数组，不要其他文字：[\"问题1\", \"问题2\", \"问题3\"]"
           }
         }
       }
@@ -6688,13 +6688,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.replyInChinese "
+            "value": "\nPlease reply in English."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.replyInChinese"
+            "value": "\n请用中文回复。"
           }
         }
       }
