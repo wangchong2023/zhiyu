@@ -169,9 +169,15 @@ final class PluginRegistry: ObservableObject {
     /// 加载Plugin
     /// - Parameter plugin: plugin
     func loadPlugin(_ plugin: KnowledgePlugin) {
+        // 去重检查：防止重复加载已存在的插件
+        guard !plugins.contains(where: { $0.manifest.id == plugin.manifest.id }) else {
+            Logger.shared.info("[PluginRegistry] Skipped duplicate: \(plugin.manifest.id)")
+            return
+        }
+
         // 安全检查：如果该插件已被持久化封禁，禁止加载
         guard !suspendedPluginIDs.contains(plugin.manifest.id) else {
-            Logger.shared.warning(" [Security]  \(plugin.manifest.id) ")
+            Logger.shared.warning("[Security] Blocked: \(plugin.manifest.id)")
             return
         }
 
@@ -538,6 +544,9 @@ extension PluginRegistry {
                         extracted.append(chunk)
                     })
                     scriptContent = String(data: extracted, encoding: .utf8)
+                    if scriptContent == nil {
+                        Logger.shared.error("[PluginRegistry] Failed to decode index.js as UTF-8")
+                    }
                 }
             }
 

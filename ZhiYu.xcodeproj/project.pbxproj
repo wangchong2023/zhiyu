@@ -4920,6 +4920,8 @@
 				33014A31F919A5A558FB9030 /* [Gatekeeper] Domain Purity Check */,
 				904EC091C95D986AC4547D85 /* [Gatekeeper] L10n Leak & Hardcode Audit */,
 				2A69259A1201D499BFE864FF /* [Gatekeeper] Storage Constants Audit */,
+				54BCA2BEFAE17BF627BC4908 /* [Gatekeeper] Magic Number Audit */,
+				E01D6AFE11C2508020949DE2 /* [Gatekeeper] Hardcoded Secrets Audit */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -5261,6 +5263,25 @@
 			shellPath = /bin/sh;
 			shellScript = "./env/venv/bin/python3 Tools/check_domain_purity.py";
 		};
+		54BCA2BEFAE17BF627BC4908 /* [Gatekeeper] Magic Number Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Magic Number Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./env/venv/bin/python3 Tools/check_magic_numbers.py";
+		};
 		5ED6F7C33F6474A5ED332F3D /* [Gatekeeper] L10n Leak & Hardcode Audit */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -5374,6 +5395,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./env/venv/bin/python3 Tools/check_storage_constants.py";
+		};
+		E01D6AFE11C2508020949DE2 /* [Gatekeeper] Hardcoded Secrets Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Hardcoded Secrets Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./env/venv/bin/python3 Tools/check_hardcoded_secrets.py";
 		};
 /* End PBXShellScriptBuildPhase section */
 

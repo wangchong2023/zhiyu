@@ -91,7 +91,7 @@ struct PluginDetailView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 22))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
                 .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
 
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -493,7 +493,7 @@ struct PermissionConfirmationSheet: View {
             }
             .padding()
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
 
             Spacer()
 
@@ -505,7 +505,7 @@ struct PermissionConfirmationSheet: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.appAccent)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                 }
 
                 Button(L10n.Common.cancel) {

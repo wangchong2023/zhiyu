@@ -67,6 +67,12 @@ targets:
       - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_magic_numbers.py"
+        name: "[Gatekeeper] Magic Number Audit"
+        basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/check_hardcoded_secrets.py"
+        name: "[Gatekeeper] Hardcoded Secrets Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - package: Lottie

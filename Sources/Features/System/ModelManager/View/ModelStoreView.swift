@@ -252,7 +252,7 @@ public struct ModelStoreView: View {
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
                             .background(Color.appBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
                             .foregroundStyle(.appSecondary)
                     }
                 }
@@ -377,7 +377,7 @@ public struct ModelStoreView: View {
                 Button(action: { modelManager.pauseDownload(for: manifest.modelId) }) {
                     Image(systemName: "pause.fill")
                         .font(.caption)
-                        .padding(8)
+                        .padding(DesignSystem.small)
                         .background(Color.appBackground)
                         .foregroundStyle(.orange)
                         .clipShape(Circle())
@@ -388,7 +388,7 @@ public struct ModelStoreView: View {
                     Button(action: { modelManager.cancelDownload(for: manifest.modelId) }) {
                         Image(systemName: "xmark")
                             .font(.caption2)
-                            .padding(8)
+                            .padding(DesignSystem.small)
                             .background(Color.appBackground)
                             .foregroundStyle(.appSecondary)
                             .clipShape(Circle())
@@ -396,7 +396,7 @@ public struct ModelStoreView: View {
                     Button(action: { modelManager.resumeDownload(for: manifest.modelId) }) {
                         Image(systemName: "play.fill")
                             .font(.caption2)
-                            .padding(8)
+                            .padding(DesignSystem.small)
                             .background(Color.appAccent)
                             .foregroundStyle(.white)
                             .clipShape(Circle())
