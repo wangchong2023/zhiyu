@@ -310,26 +310,71 @@ final class PluginRegistry: ObservableObject {
         }
     }
 
-    /// unloadPlugin
-    /// - Parameter id: id
+    /// 卸载插件：从内存移除并删除磁盘文件，防止重启后重新加载
+    /// - Parameter id: 插件 ID
     func unloadPlugin(id: String) {
         if let index = plugins.firstIndex(where: { $0.manifest.id == id }) {
             plugins[index].onUnload()
             plugins.remove(at: index)
         }
         intercepters.removeAll(where: { $0.manifest.id == id })
-        
+
         // 清理该插件注册的所有扩展点
         commands.removeAll(where: { $0.pluginID == id })
         ribbonItems.removeAll(where: { $0.pluginID == id })
         settingTabs.removeAll(where: { $0.pluginID == id })
         customViews.removeAll(where: { $0.pluginID == id })
         eventListeners.removeAll(where: { $0.pluginID == id })
-        
+
         // 注销页面处理器
         ServiceContainer.shared.resolve(KnowledgeStore.self).unregisterProcessors(for: id)
-        
+
+        // 删除磁盘上的插件文件，防止重启后重新加载
+        removePluginFilesFromDisk(pluginID: id)
+
         analytics?.trackEvent("plugin_unloaded", properties: ["id": id])
+    }
+
+    // MARK: - 磁盘清理
+
+    /// 删除插件在磁盘上的 .zyplugin 和 .js 文件
+    private func removePluginFilesFromDisk(pluginID: String) {
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let pluginsDir = documentsURL.appendingPathComponent("Plugins")
+
+        // 匹配策略：pluginID 或 ID 的部分匹配文件名
+        let patterns = [
+            "\(pluginID).zyplugin",
+            "\(pluginID).js",
+        ]
+
+        for pattern in patterns {
+            let fileURL = pluginsDir.appendingPathComponent(pattern)
+            if fileManager.fileExists(atPath: fileURL.path) {
+                do {
+                    try fileManager.removeItem(at: fileURL)
+                    Logger.shared.info("[PluginRegistry] Deleted: \(fileURL.lastPathComponent)")
+                } catch {
+                    Logger.shared.error("[PluginRegistry] Failed to delete \(fileURL.lastPathComponent)", error: error)
+                }
+            }
+        }
+
+        // 模糊匹配：删除包含 pluginID 片段的文件（兼容旧格式）
+        do {
+            let files = try fileManager.contentsOfDirectory(at: pluginsDir, includingPropertiesForKeys: nil)
+            let idSlug = pluginID.replacingOccurrences(of: "com.zhiyu.plugin.", with: "")
+            for file in files {
+                let name = file.deletingPathExtension().lastPathComponent
+                if name.contains(idSlug) || name == pluginID {
+                    try? fileManager.removeItem(at: file)
+                    Logger.shared.info("[PluginRegistry] Cleaned up: \(file.lastPathComponent)")
+                }
+            }
+        } catch {
+            Logger.shared.error("[PluginRegistry] Cleanup scan error", error: error)
+        }
     }
 
     /// 分发事件给插件监听器
