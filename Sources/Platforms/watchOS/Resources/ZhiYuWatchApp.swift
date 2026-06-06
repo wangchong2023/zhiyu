@@ -21,8 +21,8 @@ struct AppWatchApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                WatchDictationView()
                 WatchKnowledgeStatsView()
+                WatchDictationView()
                 WatchBriefingView()
             }
             .tabViewStyle(.verticalPage)
