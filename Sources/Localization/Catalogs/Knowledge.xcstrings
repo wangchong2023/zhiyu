@@ -3679,13 +3679,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "| 维度 | A | B |\n|------|---|---|\n| | | |\n| | | |\n"
+            "value": "请在下方逐条列出对比内容，系统会自动格式化。"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "| Dimension | A | B |\n|------|---|---|\n| | | |\n| | | |\n"
+            "value": "List comparison points below — they will be formatted automatically."
           }
         }
       }

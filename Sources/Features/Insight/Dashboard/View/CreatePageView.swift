@@ -65,32 +65,6 @@ struct CreatePageView: View {
                     Text(L10n.Creation.basicInfo)
                 }
 
-                // ── 结构化内容区 ──
-                Section {
-                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        // 一句话定义
-                        definitionField
-
-                        Divider()
-
-                        // 主体内容
-                        bodyContentField
-
-                        Divider()
-
-                        // 关联页面
-                        relatedLinksField
-                    }
-                } header: {
-                    HStack {
-                        Text(bodySectionTitle)
-                        Spacer()
-                        Text(L10n.Editor.bidirectionalLinks)
-                            .font(.caption2)
-                            .foregroundStyle(.appSecondary)
-                    }
-                }
-
                 // Quick templates
                 Section {
                     VStack(spacing: DesignSystem.small) {
@@ -115,6 +89,25 @@ struct CreatePageView: View {
                     }
                 } header: {
                     Text(L10n.Creation.quickTemplates)
+                }
+
+                // ── 结构化内容区 ──
+                Section {
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                        definitionField
+                        Divider()
+                        bodyContentField
+                        Divider()
+                        relatedLinksField
+                    }
+                } header: {
+                    HStack {
+                        Text(bodySectionTitle)
+                        Spacer()
+                        Text(L10n.Editor.bidirectionalLinks)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                    }
                 }
             }
             .scrollContentBackground(.hidden)
@@ -260,9 +253,6 @@ struct CreatePageView: View {
     private func applyComparisonTemplate() {
         type = .comparison
         bodySectionTitle = L10n.Creation.template.comparison.desc
-        if bodyContent.isEmpty {
-            bodyContent = L10n.Creation.template.comparison.table
-        }
     }
 
     // MARK: - 模板卡片
