@@ -25,10 +25,7 @@ public struct ModelStoreView: View {
     @State private var modelManager = GlobalModelManager()
     
     // MARK: - 局部视图状态
-    
-    /// 分段器当前选中的 Tab (0: 我的模型, 1: 模型商店)
-    @State private var selectedTab = 1
-    
+
     /// 触发警告弹窗的模型元数据
     @State private var alertManifest: LLMManifest?
     /// 展开详情的模型 ID（参照 Gallery Model Spec Sheet）
@@ -44,32 +41,12 @@ public struct ModelStoreView: View {
             VStack(spacing: 0) {
                 // 1. 物理设备运存信息看板
                 deviceHardwareHeader
-                
-                // 2. 「我的模型」与「模型商店」中枢分段器
-                segmentedPicker
-                
-                // 3. 模型列表展示区
+
+                // 2. 模型列表展示区
                 ScrollView {
                     LazyVStack(spacing: DesignSystem.medium) {
-                        if selectedTab == 0 {
-                            // 我的模型：仅展示已下载并就绪的模型
-                            let localModels = modelManager.remoteManifests.filter { modelManager.isModelLocalReady(for: $0.modelId) }
-                            if localModels.isEmpty {
-                                emptyStateView(
-                                    title: "",
-                                    subtitle: " Gemma-2B",
-                                    icon: "arrow.down.circle.dotted"
-                                )
-                            } else {
-                                ForEach(localModels) { manifest in
-                                    modelCard(for: manifest)
-                                }
-                            }
-                        } else {
-                            // 模型商店：展示所有白名单模型
-                            ForEach(modelManager.remoteManifests) { manifest in
-                                modelCard(for: manifest)
-                            }
+                        ForEach(modelManager.remoteManifests) { manifest in
+                            modelCard(for: manifest)
                         }
                     }
                     .padding(DesignSystem.medium)
@@ -137,59 +114,8 @@ public struct ModelStoreView: View {
         )
     }
     
-    /// 中枢分段器
-    private var segmentedPicker: some View {
-        HStack(spacing: 0) {
-            Button(action: { withAnimation { selectedTab = 0 } }) {
-                VStack(spacing: 6) {
-                    Text("")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(selectedTab == 0 ? .appAccent : .appSecondary)
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundStyle(selectedTab == 0 ? .appAccent : .clear)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            
-            Button(action: { withAnimation { selectedTab = 1 } }) {
-                VStack(spacing: 6) {
-                    Text("")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(selectedTab == 1 ? .appAccent : .appSecondary)
-                    Rectangle()
-                        .frame(height: 2)
-                        .foregroundStyle(selectedTab == 1 ? .appAccent : .clear)
-                }
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .padding(.top, 12)
-        .background(Color.appCard.opacity(0.4))
-    }
-    
-    /// 空状态占位视图
-    private func emptyStateView(title: String, subtitle: String, icon: String) -> some View {
-        VStack(spacing: DesignSystem.medium) {
-            Spacer().frame(height: 40)
-            Image(systemName: icon)
-                .font(.system(size: 48))
-                .foregroundStyle(.appSecondary.opacity(0.6))
-            
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.appText)
-            
-            Text(subtitle)
-                .font(.caption)
-                .foregroundStyle(.appSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            Spacer()
-        }
-        .padding(.vertical, 40)
-    }
-    
+
+
     /// 大模型卡片渲染逻辑
     private func modelCard(for manifest: LLMManifest) -> some View {
         let isSelected = modelManager.activeModelId == manifest.modelId
