@@ -964,6 +964,7 @@
 		91C42B7DAFF6BCB20E5C64E5 /* NotebookThemeConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A43A31D6ABBA87239FAE83 /* NotebookThemeConfig.swift */; };
 		91C7B93338962B683ECE788F /* iCloudSyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08B062AF5EC020AF7A7F68B /* iCloudSyncCoordinator.swift */; };
 		925FC566E34707D4E947B517 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751F592B285200694823E27F /* AppConstants.swift */; };
+		928D78C914CD62A78EF866C5 /* AppMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC484EB92F2217EF0DDBB87F /* AppMetricCard.swift */; };
 		929D697C5412A2ADA2B6F9C9 /* MarkdownProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A3D67D9E1192A5BD67C55A /* MarkdownProcessor.swift */; };
 		92CA2CD9303940BDCC226A79 /* KnowledgeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F80B6AABB8C77A3110DE73D5 /* KnowledgeDashboardView.swift */; };
 		92DBACB9B476D6ADF4318D58 /* RetryTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09455162A4B32A61FAEE9535 /* RetryTask.swift */; };
@@ -1392,6 +1393,7 @@
 		D4EE5D39B7AC2A9161674C6D /* L10n+Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7DBD8241E884C88C613522 /* L10n+Editor.swift */; };
 		D4F6FF4AF884F73C92D78903 /* TaskCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177B1A4B8E84CD6DD25475F3 /* TaskCenter.swift */; };
 		D526F0FCBBA03D7EC741163E /* DesignSystem+ZIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF7B1556D14A0F06E8CA0D8 /* DesignSystem+ZIndex.swift */; };
+		D53A9D0A51E1156BE97E75EA /* AppMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC484EB92F2217EF0DDBB87F /* AppMetricCard.swift */; };
 		D5A19A6A2F580C4DC6AD5D39 /* AppLinkProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04434B2108D3CAD90067B99 /* AppLinkProcessor.swift */; };
 		D5E4612C606DD3216BB9CED2 /* testAIPulseIndicator.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 058DF6AD09237AF576C50F85 /* testAIPulseIndicator.1.png */; };
 		D5F2018D6FA522A6EBEA82AF /* PageLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C00BEF4D3E7453F17B36249 /* PageLink.swift */; };
@@ -1428,6 +1430,7 @@
 		DB7631B54C6915997829104B /* LiveActivityProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3434F84A6D86B06ABE48E0B /* LiveActivityProtocol.swift */; };
 		DB7CF314D7845AAAAC3BC8ED /* DesignSystem+List.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B94B0DC023E4C992D7ECDF /* DesignSystem+List.swift */; };
 		DBA87005A4207B2C0F4E9289 /* L10n+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5D0C26BAFBCF248AB65993 /* L10n+Network.swift */; };
+		DBDC33BDF96E4BAAC1B1BDB6 /* AppMetricCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC484EB92F2217EF0DDBB87F /* AppMetricCard.swift */; };
 		DC3CD320121819D26B5FE02D /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52DB27515F908373C4C9B6F /* AppNotifications.swift */; };
 		DCCEC81B297A1B7925041238 /* AIContentEnricher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379EB33CD08039E70EBE5D88 /* AIContentEnricher.swift */; };
 		DD46B62C1DE049F88BA13854 /* SiriWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A37F1322AA0C54FE4495FF /* SiriWaveformView.swift */; };
@@ -2366,6 +2369,7 @@
 		EB0A3BDB92212E7DDA16E7B1 /* iOSWatchSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSWatchSyncService.swift; sourceTree = "<group>"; };
 		EB9304999EBF6F661781B53A /* ReminderServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderServiceProtocol.swift; sourceTree = "<group>"; };
 		EBB204F4389493E70C9FFD48 /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
+		EC484EB92F2217EF0DDBB87F /* AppMetricCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMetricCard.swift; sourceTree = "<group>"; };
 		ECD332478BCA833BF0058B4C /* GitHubAuthStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubAuthStrategy.swift; sourceTree = "<group>"; };
 		ECDF7024DAA4D41115E55166 /* AppEventBus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEventBus.swift; sourceTree = "<group>"; };
 		ECE9BADF97A235C1DD7989C1 /* AIProcessingAttributesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProcessingAttributesTests.swift; sourceTree = "<group>"; };
@@ -3838,6 +3842,7 @@
 			isa = PBXGroup;
 			children = (
 				17BC29A16D1A13E2AC51E1CB /* AppCard.swift */,
+				EC484EB92F2217EF0DDBB87F /* AppMetricCard.swift */,
 				3E5FA92A0002FCE1320C6DBE /* StatCard.swift */,
 			);
 			path = Cards;
@@ -5615,6 +5620,7 @@
 				7AFFCDC28EF35396A06BF7C5 /* AppLoadingOverlay.swift in Sources */,
 				4C1762E8D3C478617D5436BF /* AppLoadingSkeleton.swift in Sources */,
 				0C0D38785E957F152CDF673D /* AppLottieView.swift in Sources */,
+				D53A9D0A51E1156BE97E75EA /* AppMetricCard.swift in Sources */,
 				507A7F89B378EE45918C8F97 /* AppModels.swift in Sources */,
 				DC3CD320121819D26B5FE02D /* AppNotifications.swift in Sources */,
 				343CCBABD3A3408F81969D3D /* AppRows.swift in Sources */,
@@ -6183,6 +6189,7 @@
 				DEB37EEB9CC4D34B7D91CF8C /* AppLoadingOverlay.swift in Sources */,
 				42CBEBC0C2E5FB4A9B9C19D6 /* AppLoadingSkeleton.swift in Sources */,
 				629EB7CAAED7FC0657F1FEF8 /* AppLottieView.swift in Sources */,
+				928D78C914CD62A78EF866C5 /* AppMetricCard.swift in Sources */,
 				9116E79DB44AC159718A78C2 /* AppModels.swift in Sources */,
 				912D37D38B0DAE40AF688142 /* AppNotifications.swift in Sources */,
 				CE4DC32E1C6819FC3EEC998A /* AppRows.swift in Sources */,
@@ -6702,6 +6709,7 @@
 				D5A19A6A2F580C4DC6AD5D39 /* AppLinkProcessor.swift in Sources */,
 				F1E465D663670A53BD46FDD5 /* AppLoadingOverlay.swift in Sources */,
 				6C65A7D67948BD8664D22DF2 /* AppLoadingSkeleton.swift in Sources */,
+				DBDC33BDF96E4BAAC1B1BDB6 /* AppMetricCard.swift in Sources */,
 				ACA7DE081F4138B1C4B7AD5C /* AppNotifications.swift in Sources */,
 				70B9ED9B39F25DB956B5EC80 /* AppRows.swift in Sources */,
 				60E7C710F79A5D428B321E2B /* AppStoreProtocol.swift in Sources */,
