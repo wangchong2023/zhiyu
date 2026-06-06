@@ -81,7 +81,7 @@ extension ContentView {
             }
             .sheet(isPresented: $store.showCreateSheet) {
                 CreatePageView()
-                    .presentationDetents([.large])
+                    .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
             }
             
             // 统一挂载性能监控 Sheet，避免分散在互斥视图分支导致状态丢失
