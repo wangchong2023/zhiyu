@@ -107,7 +107,7 @@ PLUGINS = [
         "reviewCount": 189,
         "category": "AI 增强",
         "icon": "sparkles",
-        "downloadURL": None,
+        "downloadURL": "http://localhost:9091/plugins/ai-summary.zyplugin",
         "minAppVersion": "1.0.0",
         "requiredPermissions": [
             "readContent",
@@ -135,7 +135,7 @@ PLUGINS = [
         "reviewCount": 673,
         "category": "编辑增强",
         "icon": "curlybraces",
-        "downloadURL": None,
+        "downloadURL": "http://localhost:9091/plugins/code-highlighter.zyplugin",
         "minAppVersion": "1.0.0",
         "requiredPermissions": [
             "readContent",
@@ -182,7 +182,7 @@ class MockPluginHandler(BaseHTTPRequestHandler):
                 self.send_response(404); self.end_headers()
         elif self.path.startswith("/plugins/"):
             filename = self.path.split("/")[-1]
-            for search_dir in ["Tools/Plugins/Remote", "Tools/Plugins"]:
+            for search_dir in ["Tools/Plugins/Remote", "Tools/Plugins", "Tools/Plugins/community"]:
                 fp = os.path.join(search_dir, filename)
                 if os.path.exists(fp):
                     self.send_response(200)

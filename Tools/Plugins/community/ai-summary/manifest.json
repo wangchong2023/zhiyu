@@ -1,0 +1,14 @@
+{
+  "id": "com.zhiyu.plugin.ai-summary",
+  "version": "2.1.0",
+  "author": "Community",
+  "permissions": ["readContent", "network", "log"],
+  "allowedDomains": [],
+  "names": {"en": "AI Summary Generator", "zh-Hans": "AI 摘要生成"},
+  "descriptions": {"en": "Extract key points and generate structured summaries.", "zh-Hans": "提取核心要点，生成结构化摘要。"},
+  "category": "community",
+  "iconFile": "icon.png",
+  "readmeFiles": {"en": "README.md", "zh-Hans": "README.zh-Hans.md"},
+  "inputSchema": {"type": "object", "properties": {"content": {"type": "string"}}},
+  "outputSchema": {"type": "object", "properties": {"summary": {"type": "string"}}}
+}
