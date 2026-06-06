@@ -379,7 +379,8 @@ final class MarkdownProcessor: Sendable {
 
             let isItem = trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
             let isNumItem: Bool
-            if let dotIndex = trimmed.firstIndex(of: "."), dotIndex < trimmed.index(trimmed.startIndex, offsetBy: 4) {
+            let maxDot = min(4, trimmed.count)
+            if let dotIndex = trimmed.firstIndex(of: "."), maxDot > 0, dotIndex < trimmed.index(trimmed.startIndex, offsetBy: maxDot) {
                 let prefix = trimmed[..<dotIndex]
                 isNumItem = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
             } else {
