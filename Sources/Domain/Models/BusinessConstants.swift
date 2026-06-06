@@ -60,12 +60,13 @@ public struct BusinessConstants {
         public static let semanticShortHighConfidence: Float = 0.88
         /// 短查询字符数判断阈值
         public static let shortQueryThreshold: Int = 4
-        /// 图谱每节点最大显示连线数
-        public static let maxEdgesPerNode: Int = 5
     }
 
     // MARK: - 图谱物理仿真与布局
     public struct Graph {
+        /// 图谱每节点最大显示连线数
+        public static let maxEdgesPerNode: Int = 5
+
         /// 2D 图谱逻辑配置
         public struct TwoD {
             public static let virtualSizeMultiplier: CGFloat = 2.0

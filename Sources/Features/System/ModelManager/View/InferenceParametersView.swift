@@ -237,6 +237,7 @@ public struct InferenceParametersView: View {
     private var isCustomMode: Bool { matchedPreset == nil }
 
     /// 参数滑块（Double 类型）
+    @ViewBuilder
     private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
         let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -259,11 +260,11 @@ public struct InferenceParametersView: View {
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, DesignSystem.small)
+                    .padding(.vertical, DesignSystem.atomic)
                     .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .offset(y: -28)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                    .offset(y: -DesignSystem.largeIconSize)
                 }
             }
 
@@ -288,6 +289,7 @@ public struct InferenceParametersView: View {
     }
 
     /// 参数滑块（Int 类型）
+    @ViewBuilder
     private func parameterIntSlider(title: String, value: Binding<Int>, range: ClosedRange<Int>, tip: String) -> some View {
         let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
