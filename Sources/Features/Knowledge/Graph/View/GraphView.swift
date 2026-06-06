@@ -95,15 +95,11 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onChange(of: store.pages.count) { _, _ in
-            // 仅在 graphSize 已有真实值时布局，否则等待 graphSize onChange
-            guard viewModel.graphSize.width > 400 || viewModel.graphSize.height > 600 else { return }
-            layoutGraph()
-        }
-        .onChange(of: viewModel.graphSize) { _, newSize in
-            // iPad 上初始 graphSize 为默认 400x600，需等 GeometryReader 上报真实尺寸后再布局
-            guard newSize.width > 0, newSize.height > 0 else { return }
-            if viewModel.nodes.isEmpty {
+        .task { layoutGraph() }
+        .onChange(of: store.pages.count) { _, _ in layoutGraph() }
+        .onChange(of: viewModel.graphSize) { oldSize, _ in
+            let isInitialResize = oldSize == GraphViewModel.defaultGraphSize
+            if viewModel.nodes.isEmpty || isInitialResize {
                 layoutGraph()
             } else {
                 fitToScreen()
