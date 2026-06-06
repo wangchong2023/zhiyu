@@ -263,8 +263,7 @@ final class PluginRegistry: ObservableObject {
         /// 注册PageProcessor
         /// - Parameter processor: processor
         func registerPageProcessor(_ processor: any KnowledgePageProcessor) {
-            // 通过 ServiceContainer 获取 KnowledgeStore 并注册，关联当前插件 ID
-            let store = ServiceContainer.shared.resolve(KnowledgeStore.self)
+            guard let store = ServiceContainer.shared.optionalResolve(KnowledgeStore.self) else { return }
             store.registerProcessor(processor, pluginID: manifest.id)
             log(": \(processor.name)")
         }
