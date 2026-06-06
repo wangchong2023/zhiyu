@@ -100,6 +100,17 @@ extension L10n {
             public static var availableModels: String { ModelManager.tr("model_manager.header.availableModels") }
         }
 
+        // MARK: - 任务标签
+
+        public enum Task {
+            public static var chat: String { ModelManager.tr("model_manager.task.chat") }
+            public static var completion: String { ModelManager.tr("model_manager.task.completion") }
+            public static var reasoning: String { ModelManager.tr("model_manager.task.reasoning") }
+            public static var code: String { ModelManager.tr("model_manager.task.code") }
+            public static var rag: String { ModelManager.tr("model_manager.task.rag") }
+            public static var translation: String { ModelManager.tr("model_manager.task.translation") }
+        }
+
         // MARK: - 规格详表（Model Spec Sheet）
 
         public enum Spec {

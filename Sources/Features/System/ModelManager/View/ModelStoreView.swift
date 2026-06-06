@@ -466,10 +466,15 @@ public struct ModelStoreView: View {
     // MARK: - 任务标签（参照 Gallery taskTypes）
 
     private func taskLabel(for task: String) -> String {
-        // 国际化：优先使用 L10n 映射，fallback 为原始 task 值
-        let key = "model.task.\(task)"
-        let localized = String(localized: String.LocalizationValue(key))
-        return localized == key ? task : localized
+        switch task {
+        case "chat": return L10n.ModelManager.Task.chat
+        case "completion": return L10n.ModelManager.Task.completion
+        case "reasoning": return L10n.ModelManager.Task.reasoning
+        case "code": return L10n.ModelManager.Task.code
+        case "rag": return L10n.ModelManager.Task.rag
+        case "translation": return L10n.ModelManager.Task.translation
+        default: return task
+        }
     }
 
     private func taskColor(for task: String) -> Color {
