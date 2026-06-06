@@ -4410,13 +4410,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You are a knowledge exploration expert. Based on the user's following knowledge pages, generate 3 insightful, thought-provoking questions that help the user discover: 1) hidden connections between concepts, 2) potential gaps in their knowledge, 3) new directions for deeper exploration. Output ONLY a JSON array of 3 strings: [\"question1\", \"question2\", \"question3\"]"
+            "value": "Insight Questions"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一位知识探索专家。根据用户以下的知识页面，生成 3 个有洞察力、引人深思的问题，帮助用户发现：1) 概念之间的隐藏联系，2) 知识体系中的潜在断层，3) 深入探索的新方向。只输出一个包含 3 个字符串的 JSON 数组：[\"问题1\", \"问题2\", \"问题3\"]"
+            "value": "洞察提问"
           }
         }
       }
@@ -6688,13 +6688,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "\nPlease reply in English."
+            "value": "prompt.replyInChinese "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "\n请用中文回复。"
+            "value": "prompt.replyInChinese"
           }
         }
       }
