@@ -129,7 +129,7 @@ struct ContentView: View {
                 .frame(width: DesignSystem.Sidebar.width)
                 .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
-                .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.shadowRadius)
+                .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.shadowRadius)
                 .padding(.vertical, DesignSystem.Layout.sidebarOverlayVerticalPadding)
                 .padding(.leading, DesignSystem.medium)
             Spacer()
@@ -277,7 +277,7 @@ struct DatabaseCorruptedBanner: View {
             .padding(.vertical, 12)
             .background(.ultraThinMaterial)
             .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
+            .shadow(color: .primary.opacity(0.12), radius: 6, x: 0, y: 3)
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(Color.orange.opacity(0.3), lineWidth: 1)

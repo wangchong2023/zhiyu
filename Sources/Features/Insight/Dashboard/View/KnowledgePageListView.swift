@@ -422,12 +422,12 @@ struct KnowledgeStatItem: View {
                 .stroke(.white.opacity(DesignSystem.accentStrokeOpacity), lineWidth: DesignSystem.borderWidth / 2)
         )
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
+        .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                 .stroke(color.opacity(DesignSystem.dimmedOpacity), lineWidth: DesignSystem.borderWidth)
         )
-        .shadow(color: Color.black.opacity(DesignSystem.shadowOpacity * DesignSystem.subtleOpacity), radius: DesignSystem.medium, x: 0, y: DesignSystem.tiny)
+        .shadow(color: .primary.opacity(DesignSystem.shadowOpacity * DesignSystem.subtleOpacity), radius: DesignSystem.medium, x: 0, y: DesignSystem.tiny)
     }
 }
 

@@ -197,7 +197,7 @@ public struct ServerConfigView: View {
                 .frame(width: 56, height: 56)
                 .background(Color.appAccent)
                 .clipShape(Circle())
-                .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+                .shadow(color: .primary.opacity(0.2), radius: 8, y: 4)
         }
         .padding(DesignSystem.large)
     }

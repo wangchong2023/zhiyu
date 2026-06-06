@@ -79,7 +79,7 @@ struct CoachMarkOverlay: View {
             .background(
                 RoundedRectangle(cornerRadius: DesignSystem.largeRadius + DesignSystem.Metrics.coachMarkRadiusOffset)
                     .fill(Color.appCard)
-                    .shadow(color: .black.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.coachMarkShadowRadius, x: 0, y: DesignSystem.Metrics.coachMarkShadowY)
+                    .shadow(color: .primary.opacity(DesignSystem.glassOpacity * 2), radius: DesignSystem.Metrics.coachMarkShadowRadius, x: 0, y: DesignSystem.Metrics.coachMarkShadowY)
             )
             .padding(DesignSystem.giant)
         }

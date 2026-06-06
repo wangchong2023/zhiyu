@@ -85,6 +85,6 @@ struct MedalWallView: View {
         .padding(DesignSystem.standardPadding)
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        .shadow(color: .black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: shadowY)
+        .shadow(color: .primary.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: shadowY)
     }
 }

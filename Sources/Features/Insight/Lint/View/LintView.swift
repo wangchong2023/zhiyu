@@ -286,7 +286,7 @@ struct LintViewContent: View {
         .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .appContainer(background: Color.appCard, cornerRadius: DesignSystem.Metrics.dashboardRadius, padding: false)
-        .shadow(color: Color.black.opacity(0.04), radius: DesignSystem.small + DesignSystem.tiny, x: 0, y: DesignSystem.tiny + DesignSystem.atomic)
+        .shadow(color: .primary.opacity(0.04), radius: DesignSystem.small + DesignSystem.tiny, x: 0, y: DesignSystem.tiny + DesignSystem.atomic)
     }
 
     // MARK: - AI 建议板块

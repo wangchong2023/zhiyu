@@ -35,7 +35,7 @@ struct OCRImagePickerArea: View {
                     .scaledToFit()
                     .frame(maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 300
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                    .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
+                    .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                             .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 1
@@ -46,7 +46,7 @@ struct OCRImagePickerArea: View {
                     .scaledToFit()
                     .frame(maxHeight: DesignSystem.Metrics.heroValueSize * 11.5) // 300
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                    .shadow(color: .black.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
+                    .shadow(color: .primary.opacity(DesignSystem.shadowOpacity), radius: DesignSystem.small) // 0.1, 8
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                             .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth) // 1

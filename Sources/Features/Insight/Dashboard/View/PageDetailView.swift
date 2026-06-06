@@ -175,7 +175,7 @@ struct PageDetailView: View {
                     lineWidth: 1
                 )
         )
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+        .shadow(color: .primary.opacity(0.05), radius: 10, x: 0, y: 5)
         .padding(.vertical, DesignSystem.medium)
     }
     

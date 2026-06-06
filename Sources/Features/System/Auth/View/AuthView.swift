@@ -339,7 +339,7 @@ struct ThirdPartyIconButton: View {
                 Circle()
                     .fill(Color.appCard)
                     .frame(width: DesignSystem.Domain.Auth.thirdPartyIconContainerSize, height: DesignSystem.Domain.Auth.thirdPartyIconContainerSize)
-                    .shadow(color: .black.opacity(0.05), radius: 4, y: 2)
+                    .shadow(color: .primary.opacity(0.05), radius: 4, y: 2)
                 
                 if isSystem {
                     Image(systemName: icon)

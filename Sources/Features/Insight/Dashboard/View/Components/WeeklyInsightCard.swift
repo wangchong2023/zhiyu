@@ -122,7 +122,7 @@ struct WeeklyInsightCard: View {
                                     .stroke(LinearGradient(colors: [DesignSystem.containerBorder, .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: DesignSystem.borderWidth)
                             )
                     }
-                    .shadow(color: .black.opacity(DesignSystem.shadowOpacity * 1.25), radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY) // 0.05, 10, 4
+                    .shadow(color: .primary.opacity(DesignSystem.shadowOpacity * 1.25), radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY) // 0.05, 10, 4
                 }
                 .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
             } else {
@@ -157,7 +157,7 @@ struct WeeklyInsightCard: View {
             }
         )
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.loosePadding)) // 20
-        .shadow(color: .black.opacity(DesignSystem.shadowOpacity * 1.25), radius: DesignSystem.shadowRadius * 1.5, x: 0, y: DesignSystem.shadowY * 2) // 0.05, 15, 8
+        .shadow(color: .primary.opacity(DesignSystem.shadowOpacity * 1.25), radius: DesignSystem.shadowRadius * 1.5, x: 0, y: DesignSystem.shadowY * 2) // 0.05, 15, 8
         .onAppear {
             if aiStore.weeklyInsight == nil && !store.pages.isEmpty {
                 generateInsight()
