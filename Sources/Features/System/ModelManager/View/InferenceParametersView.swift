@@ -24,7 +24,7 @@ public struct InferenceParametersView: View {
     @State private var topP: Double = 0.9
     @State private var topK: Int = 40
     @State private var maxTokens: Int = 2048
-    @State private var infoTip: String?
+    @State private var expandedTipKey: String?  // 当前展开提示的参数标题
 
     /// 当前位置是否匹配某个预设（不匹配时按钮不高亮）
     private var matchedPreset: ParameterPreset? {
@@ -129,14 +129,6 @@ public struct InferenceParametersView: View {
         .onChange(of: modelManager.activeModelId) { _, newModelId in
             // 模型切换时自动加载对应参数
             loadParametersForModel(newModelId)
-        }
-        .alert(L10n.ModelManager.parametersTitle, isPresented: Binding(
-            get: { infoTip != nil },
-            set: { if !$0 { infoTip = nil } }
-        )) {
-            Button(L10n.Common.ok) { infoTip = nil }
-        } message: {
-            Text(infoTip ?? "")
         }
     }
 
@@ -246,16 +238,18 @@ public struct InferenceParametersView: View {
 
     /// 参数滑块（Double 类型）
     private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
+        let isExpanded = expandedTipKey == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack {
+            HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Spacer()
-                Button(action: { infoTip = tip }) {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(.appSecondary)
+                Button(action: { expandedTipKey = isExpanded ? nil : title }) {
+                    Image(systemName: isExpanded ? "info.circle.fill" : "info.circle")
+                        .font(.caption)
+                        .foregroundStyle(isExpanded ? .appAccent : .appSecondary)
                 }
+                .buttonStyle(.plain)
             }
 
             Slider(value: value, in: range)
@@ -276,15 +270,19 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(.appSecondary)
             }
 
-            HStack(spacing: 4) {
-                Image(systemName: "lightbulb.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
-                Text(tip)
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+            if isExpanded {
+                HStack(spacing: 4) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                    Text(tip)
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: isExpanded)
         .padding()
         .background(Color.appCard.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
@@ -292,16 +290,18 @@ public struct InferenceParametersView: View {
 
     /// 参数滑块（Int 类型）
     private func parameterIntSlider(title: String, value: Binding<Int>, range: ClosedRange<Int>, tip: String) -> some View {
+        let isExpanded = expandedTipKey == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack {
+            HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Spacer()
-                Button(action: { infoTip = tip }) {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(.appSecondary)
+                Button(action: { expandedTipKey = isExpanded ? nil : title }) {
+                    Image(systemName: isExpanded ? "info.circle.fill" : "info.circle")
+                        .font(.caption)
+                        .foregroundStyle(isExpanded ? .appAccent : .appSecondary)
                 }
+                .buttonStyle(.plain)
             }
 
             Slider(value: Binding(
@@ -325,15 +325,19 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(.appSecondary)
             }
 
-            HStack(spacing: 4) {
-                Image(systemName: "lightbulb.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
-                Text(tip)
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+            if isExpanded {
+                HStack(spacing: 4) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                    Text(tip)
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: isExpanded)
         .padding()
         .background(Color.appCard.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
