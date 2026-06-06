@@ -375,7 +375,7 @@ public enum Spacing {
         public static let cardHeight: CGFloat = 180
         public static let coverHeight: CGFloat = 100
         public static let listCoverSize: CGFloat = 44
-        public static let homePadding: CGFloat = 25
+        public static let homePadding: CGFloat = 16
         public static let homeVerticalPadding: CGFloat = 40
     }
     
