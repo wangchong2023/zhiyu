@@ -57,12 +57,9 @@ public struct NotebookHubView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                sparklesButton
-            }
-            
             ToolbarItem(placement: .topBarTrailing) {
                 HStack(spacing: DesignSystem.medium) {
+                    sparklesButton
                     #if !os(watchOS)
                     sortMenu
                     #endif
@@ -182,6 +179,7 @@ public struct NotebookHubView: View {
     
     private var sparklesButton: some View {
         Button {
+            HapticFeedback.shared.trigger(.selection)
             showLintSheet = true
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
@@ -189,7 +187,6 @@ public struct NotebookHubView: View {
                 .foregroundStyle(.appAccent)
         }
         .buttonStyle(.plain)
-        .contentShape(Rectangle())
     }
     
     private var displayModeButton: some View {
