@@ -1,122 +1,20 @@
-# 字数统计
+# Word Counter
 
-> 实时统计 Markdown 文档的字数、字符数和段落数
+> Real-time word and character counting for Markdown documents
 
-## 📖 简介
+## Features
+- Accurate Chinese and English mixed word counting
+- Auto-filters Markdown syntax marks
+- Preserves last 10 count records
+- Works completely offline
 
-字数统计是一个本地插件，提供准确的文档统计功能。支持中英文混合统计，自动过滤 Markdown 语法标记，保留统计历史记录。
+## Usage
+Save your document and tap the toolbar button to view word count details.
 
-## ✨ 功能特性
+## Permissions
+- **readContent**: Read document for counting
+- **log**: Record operation logs
 
-- **精准统计**：智能识别中文字符和英文单词
-- **语法过滤**：自动过滤代码块、链接、图片等 Markdown 语法
-- **多维度统计**：字数、字符数、段落数、行数
-- **历史记录**：保存最近 10 次统计记录
-- **离线可用**：无需网络权限，完全本地处理
-
-## 🚀 使用方法
-
-### 自动统计
-
-插件会在文档保存后自动统计，无需手动操作：
-
-1. 编辑 Markdown 文档
-2. 保存文档
-3. 插件自动后台统计
-
-### 查看统计结果
-
-点击工具栏的「字数统计」按钮，显示统计信息：
-
-```
-字数统计
-
-统计次数: 15
-
-最近统计:
-字数: 1250
-字符数: 3678
-时间: 2026-06-06 01:28:00
-```
-
-### 命令列表
-
-| 命令 ID | 命令名称 | 功能说明 |
-|---------|---------|---------|
-| `count-words` | 查看统计 | 显示最近的统计结果 |
-
-### 工具栏按钮
-
-- 🔢 **字数统计**：点击查看详细统计信息
-
-## ⚙️ 统计规则
-
-### 字数统计
-- **中文字符**：每个汉字计为 1 个字
-- **英文单词**：连续的字母序列计为 1 个单词
-- **数字**：不计入字数
-
-### 字符统计
-- 统计所有可见字符（不含空格）
-- 过滤 Markdown 语法标记
-
-### 段落统计
-- 以空行分隔的文本块计为 1 个段落
-- 空段落不计入统计
-
-### 行数统计
-- 统计文档总行数（包括空行）
-
-## 🔒 权限说明
-
-本插件需要以下权限：
-
-- **readContent**: 读取文档内容进行统计
-- **log**: 记录日志信息
-
-## 🌐 网络请求
-
-✅ 本插件不需要网络权限，完全离线可用。
-
-## 💡 使用技巧
-
-### 过滤语法的好处
-
-插件会自动过滤以下内容，确保统计准确性：
-
-- 代码块（```...```）
-- 行内代码（`...`）
-- 图片标记（![...](...)）
-- 链接标记（[...](...)）
-- Markdown 符号（#, *, _, ~, `）
-
-### 历史记录
-
-插件保存最近 10 次统计记录，您可以：
-
-- 对比不同版本的文档长度
-- 追踪写作进度
-
-## 📝 更新日志
-
+## Changelog
 ### v1.0.0 (2026-06-06)
-- ✨ 初始版本发布
-- 支持中英文混合统计
-- 支持 Markdown 语法过滤
-- 保存统计历史记录
-
-## 📄 开源协议
-
-本插件使用 MIT License 开源。
-
-## 🔗 相关链接
-
-- 类型：本地插件（Local Plugin）
-- 大小：1.9 KB
-- ID：`com.zhiyu.plugin.local.word-counter`
-
----
-
-**作者**: ZhiYu Local Team  
-**版本**: 1.0.0  
-**更新**: 2026-06-06
+- Initial release with mixed language word counting
