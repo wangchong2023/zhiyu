@@ -24,7 +24,7 @@ public struct InferenceParametersView: View {
     @State private var topP: Double = 0.9
     @State private var topK: Int = 40
     @State private var maxTokens: Int = 2048
-    @State private var expandedTipKey: String?  // 当前展开提示的参数标题
+    @State private var hoveredTitle: String?  // 当前悬浮的参数标题
 
     /// 当前位置是否匹配某个预设（不匹配时按钮不高亮）
     private var matchedPreset: ParameterPreset? {
@@ -238,18 +238,33 @@ public struct InferenceParametersView: View {
 
     /// 参数滑块（Double 类型）
     private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
-        let isExpanded = expandedTipKey == title
+        let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Button(action: { expandedTipKey = isExpanded ? nil : title }) {
-                    Image(systemName: isExpanded ? "info.circle.fill" : "info.circle")
-                        .font(.caption)
-                        .foregroundStyle(isExpanded ? .appAccent : .appSecondary)
+                Image(systemName: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
+            }
+            .onHover { hovering in hoveredTitle = hovering ? title : nil }
+            .overlay(alignment: .top) {
+                if isHovered {
+                    HStack(spacing: 4) {
+                        Image(systemName: "lightbulb.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                        Text(tip)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .offset(y: -28)
                 }
-                .buttonStyle(.plain)
             }
 
             Slider(value: value, in: range)
@@ -258,31 +273,15 @@ public struct InferenceParametersView: View {
 
             HStack {
                 Text(String(format: "%.1f", range.lowerBound))
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+                    .font(.caption2).foregroundStyle(.appSecondary)
                 Spacer()
                 Text(String(format: "%.2f", value.wrappedValue))
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.appAccent)
+                    .font(.caption.weight(.bold)).foregroundStyle(.appAccent)
                 Spacer()
                 Text(String(format: "%.1f", range.upperBound))
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
-            }
-
-            if isExpanded {
-                HStack(spacing: 4) {
-                    Image(systemName: "lightbulb.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                    Text(tip)
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                    .font(.caption2).foregroundStyle(.appSecondary)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isExpanded)
         .padding()
         .background(Color.appCard.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
@@ -290,54 +289,44 @@ public struct InferenceParametersView: View {
 
     /// 参数滑块（Int 类型）
     private func parameterIntSlider(title: String, value: Binding<Int>, range: ClosedRange<Int>, tip: String) -> some View {
-        let isExpanded = expandedTipKey == title
+        let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Button(action: { expandedTipKey = isExpanded ? nil : title }) {
-                    Image(systemName: isExpanded ? "info.circle.fill" : "info.circle")
-                        .font(.caption)
-                        .foregroundStyle(isExpanded ? .appAccent : .appSecondary)
+                Image(systemName: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
+            }
+            .onHover { hovering in hoveredTitle = hovering ? title : nil }
+            .overlay(alignment: .top) {
+                if isHovered {
+                    HStack(spacing: 4) {
+                        Image(systemName: "lightbulb.fill").font(.caption2).foregroundStyle(.orange)
+                        Text(tip).font(.caption2).foregroundStyle(.appSecondary)
+                    }
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .offset(y: -28)
                 }
-                .buttonStyle(.plain)
             }
 
             Slider(value: Binding(
                 get: { Double(value.wrappedValue) },
                 set: { value.wrappedValue = Int($0) }
             ), in: Double(range.lowerBound)...Double(range.upperBound), step: 1.0)
-                .tint(.appAccent)
-                .disabled(!isCustomMode)
+                .tint(.appAccent).disabled(!isCustomMode)
 
             HStack {
-                Text("\(range.lowerBound)")
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
+                Text("\(range.lowerBound)").font(.caption2).foregroundStyle(.appSecondary)
                 Spacer()
-                Text("\(value.wrappedValue)")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.appAccent)
+                Text("\(value.wrappedValue)").font(.caption.weight(.bold)).foregroundStyle(.appAccent)
                 Spacer()
-                Text("\(range.upperBound)")
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
-            }
-
-            if isExpanded {
-                HStack(spacing: 4) {
-                    Image(systemName: "lightbulb.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                    Text(tip)
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                Text("\(range.upperBound)").font(.caption2).foregroundStyle(.appSecondary)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: isExpanded)
         .padding()
         .background(Color.appCard.opacity(0.6))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
