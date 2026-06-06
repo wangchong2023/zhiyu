@@ -6,29 +6,35 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L3] 表现层
-//  核心职责：推理参数调优视图，提供温度、Top-P、Top-K、Max Tokens 等参数的可视化调节界面。
+//  核心职责：推理参数优化视图，修改即生效，提供温度、Top-P、Top-K、Max Tokens 等参数的可视化调节界面。
 //
 
 import SwiftUI
 
-/// 推理参数调优视图
+/// 推理参数优化视图
 @MainActor
 public struct InferenceParametersView: View {
-
-    // MARK: - 环境注入
 
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var modelManager = GlobalModelManager()
 
     // MARK: - 状态管理
 
-    @State private var selectedPreset: ParameterPreset = .balanced
     @State private var temperature: Double = 0.7
     @State private var topP: Double = 0.9
     @State private var topK: Int = 40
     @State private var maxTokens: Int = 2048
+    @State private var infoTip: String?
 
-    // MARK: - 持久化存储
+    /// 当前位置是否匹配某个预设（不匹配时按钮不高亮）
+    private var matchedPreset: ParameterPreset? {
+        for p in ParameterPreset.allCases {
+            let v = p.parameters
+            if abs(temperature - v.temperature) < 0.01, abs(topP - v.topP) < 0.01,
+               topK == v.topK, maxTokens == v.maxTokens { return p }
+        }
+        return nil
+    }
 
     private let parametersStore = InferenceParametersStore.shared
 
@@ -78,9 +84,6 @@ public struct InferenceParametersView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: DesignSystem.large) {
-                // 当前模型选择器
-                currentModelSelector
-
                 // 预设模板选择
                 presetSelector
 
@@ -201,10 +204,10 @@ public struct InferenceParametersView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignSystem.small)
             .background(
-                selectedPreset == preset ? Color.appAccent : Color.appBackground
+                matchedPreset == preset ? Color.appAccent : Color.appBackground
             )
             .foregroundStyle(
-                selectedPreset == preset ? .white : .appText
+                matchedPreset == preset ? .white : .appText
             )
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
@@ -219,7 +222,7 @@ public struct InferenceParametersView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 Spacer()
-                Button(action: {}) {
+                Button(action: { infoTip = tip }) {
                     Image(systemName: "info.circle")
                         .foregroundStyle(.appSecondary)
                 }
@@ -264,7 +267,7 @@ public struct InferenceParametersView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
                 Spacer()
-                Button(action: {}) {
+                Button(action: { infoTip = tip }) {
                     Image(systemName: "info.circle")
                         .foregroundStyle(.appSecondary)
                 }
@@ -304,29 +307,14 @@ public struct InferenceParametersView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
-    /// 操作按钮
+    /// Apple 风格重置（修改即生效，无需保存按钮）
     private var actionButtons: some View {
-        HStack(spacing: DesignSystem.medium) {
-            Button(action: resetToDefaults) {
-                Text(L10n.ModelManager.Parameters.reset)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.appSecondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignSystem.medium)
-                    .background(Color.appBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-            }
-
-            Button(action: saveConfiguration) {
-                Text(L10n.ModelManager.Parameters.save)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignSystem.medium)
-                    .background(Color.appAccent)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-            }
+        Button(role: .destructive, action: resetToDefaults) {
+            Label(L10n.ModelManager.Parameters.reset, systemImage: "arrow.counterclockwise")
+                .font(.subheadline)
         }
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding(.top, DesignSystem.small)
     }
 
     // MARK: - 辅助方法
@@ -339,16 +327,13 @@ public struct InferenceParametersView: View {
     }
 
     private func applyPreset(_ preset: ParameterPreset) {
-        selectedPreset = preset
         let params = preset.parameters
-
         withAnimation(.easeInOut(duration: 0.3)) {
             temperature = params.temperature
             topP = params.topP
             topK = params.topK
             maxTokens = params.maxTokens
         }
-
         HapticFeedback.shared.trigger(.success)
     }
 
@@ -362,18 +347,7 @@ public struct InferenceParametersView: View {
                 topK = config.topK
                 maxTokens = config.maxTokens
 
-                // 根据预设名称恢复预设选择
-                if let preset = ParameterPreset(rawValue: config.presetName) {
-                    selectedPreset = preset
-                } else {
-                    // 如果是自定义配置，选择最接近的预设
-                    selectedPreset = matchPreset(
-                        temperature: config.temperature,
-                        topP: config.topP,
-                        topK: config.topK,
-                        maxTokens: config.maxTokens
-                    )
-                }
+                // 恢复预设参数（matchedPreset 自动计算）
             }
         } else {
             // 未找到保存的配置，使用默认 balanced 预设
@@ -385,11 +359,11 @@ public struct InferenceParametersView: View {
         applyPreset(.balanced)
     }
 
-    private func saveConfiguration() {
+    private func autoSave() {
         // 构建配置对象
         let config = InferenceParametersConfig(
             modelId: modelManager.activeModelId,
-            presetName: selectedPreset.rawValue,
+            presetName: matchedPreset?.rawValue ?? "custom",
             temperature: temperature,
             topP: topP,
             topK: topK,

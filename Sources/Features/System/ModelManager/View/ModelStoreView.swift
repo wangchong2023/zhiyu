@@ -63,16 +63,6 @@ public struct ModelStoreView: View {
         #if !os(watchOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                // 右上角齿轮跳转云端 API 密匙高级配置
-                NavigationLink(value: AppRoute.settings) {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(.appAccent)
-                        .font(.system(size: 16, weight: .medium))
-                }
-            }
-        }
         .alert(item: $alertManifest) { manifest in
             Alert(
                 title: Text(" "),

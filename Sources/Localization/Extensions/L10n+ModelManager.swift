@@ -110,7 +110,7 @@ extension L10n {
             public static var tasks: String { ModelManager.tr("model_manager.spec.tasks") }
         }
 
-        // MARK: - 参数调优
+        // MARK: - 参数优化
 
         public enum Parameters {
             public static var temperature: String {
