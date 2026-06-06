@@ -93,14 +93,17 @@ struct GraphContainerView: View {
                 }
             }
         }
+        .onReceive(AppEventBus.shared.subscribe()) { event in
+            guard viewModel.graphSize != .zero else { return }
+            switch event {
+            case .pagesCleared, .graphRelayoutRequested:
+                layoutGraph()
+            default: break
+            }
+        }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task(id: viewModel.graphSize) {
-            // task(id:) 自动取消上一次未完成的 task，只保留最新 graphSize 的布局
-            guard viewModel.graphSize != .zero else { return }
-            layoutGraph()
-        }
-        .onChange(of: store.pages.map(\.id)) { _, _ in
             guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }

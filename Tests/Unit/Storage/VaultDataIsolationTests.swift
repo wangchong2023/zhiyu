@@ -352,4 +352,76 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertTrue(titles.contains("StressNode_50"), "生成节点中应包含 StressNode_50")
         print("✅ 【Success】压力测试节点生成功能及随机关联引用架构验证 100% 顺利通过！")
     }
+
+    // MARK: - clearAllDataRequested 事件驱动清理测试
+
+    /// 验证 ChatService 订阅 clearAllDataRequested 后清除聊天历史
+    func testChatServiceClearsOnClearAllRequested() {
+        let chatService = ChatService.shared
+        chatService.saveUserMessage("测试消息")
+        chatService.saveAssistantMessage("测试回复")
+        XCTAssertFalse(chatService.loadHistory().isEmpty, "写入后历史不应为空")
+
+        AppEventBus.shared.publish(.clearAllDataRequested)
+
+        let expectation = XCTestExpectation(description: "ChatService 清除完成")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(chatService.loadHistory().isEmpty, "事件后聊天历史应为空")
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    /// 验证 AIWorkflowStore 订阅 clearAllDataRequested 后清除工作流数据
+    func testAIWorkflowStoreClearsOnClearAllRequested() {
+        let store = AIWorkflowStore()
+        store.isScanningAI = true
+        XCTAssertTrue(store.isScanningAI, "应已模拟扫描中状态")
+
+        AppEventBus.shared.publish(.clearAllDataRequested)
+
+        let expectation = XCTestExpectation(description: "AIWorkflowStore 清除完成")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertFalse(store.isScanningAI, "事件后扫描状态应重置")
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    /// 验证 SearchStore 订阅 clearAllDataRequested 后清除搜索数据
+    func testSearchStoreClearsOnClearAllRequested() {
+        let store = SearchStore()
+        store.searchText = "AI"
+        store.searchResults = [KnowledgePage(
+            title: "Test", content: "", pageType: .entity, customIcon: nil,
+            tags: [], sourceURL: nil, sourceType: nil, fileSize: nil
+        )]
+        XCTAssertFalse(store.searchResults.isEmpty, "写入后搜索结果不应为空")
+
+        AppEventBus.shared.publish(.clearAllDataRequested)
+
+        let expectation = XCTestExpectation(description: "SearchStore 清除完成")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertTrue(store.searchResults.isEmpty, "事件后搜索结果应为空")
+            XCTAssertTrue(store.searchText.isEmpty, "事件后搜索文本应为空")
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
+
+    /// 验证 SettingsStore 订阅 clearAllDataRequested 后重置设置
+    func testSettingsStoreResetsOnClearAllRequested() {
+        let settings = SettingsStore()
+        settings.isPrivacyModeEnabled = true
+        XCTAssertTrue(settings.isPrivacyModeEnabled, "隐私模式应已开启")
+
+        AppEventBus.shared.publish(.clearAllDataRequested)
+
+        let expectation = XCTestExpectation(description: "SettingsStore 重置完成")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            XCTAssertFalse(settings.isPrivacyModeEnabled, "事件后隐私模式应回到默认值")
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+    }
 }
