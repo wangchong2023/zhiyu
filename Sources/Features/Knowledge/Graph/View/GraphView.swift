@@ -95,11 +95,13 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onChange(of: store.pages.count) { _, _ in
+        .task(id: viewModel.graphSize) {
+            // task(id:) 自动取消上一次未完成的 task，只保留最新 graphSize 的布局
+            guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
-        .onChange(of: viewModel.graphSize) { _, newSize in
-            guard newSize != .zero else { return }
+        .onChange(of: store.pages.count) { _, _ in
+            guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
         .sheet(isPresented: $viewModel.showInsights) { insightsPanel }
