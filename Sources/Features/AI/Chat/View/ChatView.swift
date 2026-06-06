@@ -126,12 +126,6 @@ struct ChatViewContent: View {
                     }
                 }
             }
-            
-            Section {
-                NavigationLink(value: AppRoute.settings) {
-                    Label(L10n.Chat.llmSettings, systemImage: DesignSystem.Icons.settings)
-                }
-            }
         } label: {
             Image(systemName: DesignSystem.Icons.more)
                 .font(.callout.weight(.bold))
