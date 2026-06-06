@@ -97,8 +97,8 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     /// - Parameter prompt: prompt
     /// - Parameter systemPrompt: systemPrompt
     /// - Returns: 字符串
-    func generate(prompt: String, systemPrompt: String) async throws -> String {
-        try await chatRunner.generate(prompt: prompt, systemPrompt: systemPrompt)
+    func generate(prompt: String, systemPrompt: String, maxTokens: Int = BusinessConstants.AI.maxOutputTokens) async throws -> String {
+        try await chatRunner.generate(prompt: prompt, systemPrompt: systemPrompt, maxTokens: maxTokens)
     }
 
     /// chat

@@ -49,7 +49,7 @@ protocol LLMChatServiceProtocol: AnyObject, Sendable {
     ///   - systemPrompt: 系统的角色设定或运行指令约束。
     /// - Returns: 返回生成的纯文本内容。
     /// - Throws: `LLMError` 生成出错或配置缺失时抛出。
-    func generate(prompt: String, systemPrompt: String) async throws -> String
+    func generate(prompt: String, systemPrompt: String, maxTokens: Int) async throws -> String
 }
 
 // MARK: - LLM 知识维护服务协议

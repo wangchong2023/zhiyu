@@ -54,7 +54,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
     // MARK: - LLMChatServiceProtocol 契约方法
     
     /// 通用单次一问一答文本推理生成接口
-    func generate(prompt: String, systemPrompt: String) async throws -> String {
+    func generate(prompt: String, systemPrompt: String, maxTokens: Int = BusinessConstants.AI.maxOutputTokens) async throws -> String {
         guard configManager.isEnabled, !configManager.apiKey.isEmpty else { throw LLMError.notConfigured }
         let client = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
         let sanitizedPrompt = PromptSanitizer.shared.sanitize(prompt)
@@ -69,7 +69,8 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                 ["role": "system", "content": anonSystemPrompt],
                 ["role": "user", "content": anonPrompt]
             ],
-            "temperature": AppConfig.AI.defaultTemperature
+            "temperature": AppConfig.AI.defaultTemperature,
+            "max_tokens": maxTokens
         ]
 
         let startTime = Date()

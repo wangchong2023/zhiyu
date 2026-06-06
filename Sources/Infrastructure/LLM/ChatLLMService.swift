@@ -37,7 +37,7 @@ public final class ChatLLMService: NSObject, LLMChatServiceProtocol, @unchecked 
     ///   - prompt: 提示词
     ///   - systemPrompt: 系统设定
     /// - Returns: 生成纯文本结果
-    public func generate(prompt: String, systemPrompt: String) async throws -> String {
+    public func generate(prompt: String, systemPrompt: String, maxTokens: Int = BusinessConstants.AI.maxOutputTokens) async throws -> String {
         guard isEnabled, !configManager.apiKey.isEmpty else {
             throw LLMError.notConfigured
         }

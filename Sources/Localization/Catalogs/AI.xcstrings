@@ -4461,13 +4461,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。"
+            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。\n\nKeep the report within 1000 characters, be concise and to the point."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。"
+            "value": "请基于以下内容生成一份深度的分析报告。包含：核心摘要、现状分析、挑战与对策、结论建议。\n\n报告请控制在 1000 字以内，简明扼要。"
           }
         }
       }

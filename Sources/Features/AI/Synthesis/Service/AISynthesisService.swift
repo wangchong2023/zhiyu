@@ -28,18 +28,23 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         container.register(shared, for: AISynthesisService.self)
     }
 
+    /// 输入截断保护：超长内容统一截断至 BusinessConstants.AI.maxSynthesisInputLength
+    private func truncated(_ content: String) -> String {
+        String(content.prefix(BusinessConstants.AI.maxSynthesisInputLength))
+    }
+
     /// 摘要
     /// - Parameter content: content
     /// - Returns: 字符串
     func summarize(content: String) async throws -> String {
-        let prompt = PromptService.shared.summaryPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.summaryPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
     /// 生成思维导图 (Mermaid)
     func generateMindMap(content: String) async throws -> String {
-        let prompt = PromptService.shared.mindmapPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.mindmapPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let systemPrompt = """
         You are a Mermaid mindmap expert.
         Always start with '# <Summary Title>'.
@@ -55,7 +60,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func extractActions(content: String) async throws -> String {
-        let prompt = PromptService.shared.actionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.actionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
         return SynthesisProcessor.cleanMarkdown(result)
     }
@@ -64,7 +69,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func generatePresentation(content: String) async throws -> String {
-        let prompt = PromptService.shared.slidesPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.slidesPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "presentation_expert_prompt")
         return SynthesisProcessor.cleanMarkdown(result)
     }
@@ -76,7 +81,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     /// 生成测验题
     func generateQuiz(content: String) async throws -> String {
-        let prompt = PromptService.shared.quizPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.quizPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let quizTitle = L10n.AI.Prompt.Quiz.defaultTitle
         let questionLabel = L10n.AI.Prompt.Quiz.question
         let optionLabel = L10n.AI.Prompt.Quiz.option
@@ -102,7 +107,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
 
     /// 生成信息图表 (Mermaid)
     func generateInfographic(content: String) async throws -> String {
-        let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let systemPrompt = """
         You are a senior data visualization expert.
         Create a professional Mermaid graph TD structure.
@@ -118,14 +123,14 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     /// - Parameter content: content
     /// - Returns: 字符串
     func generateReport(content: String) async throws -> String {
-        let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.reportPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let result = try await llm.generate(prompt: prompt, systemPrompt: "report_writer_prompt")
         return SynthesisProcessor.cleanMarkdown(result)
     }
 
     /// 知识深度扩充：对现有内容进行多维度深挖与背景补充
     func expandKnowledge(content: String) async throws -> String {
-        let prompt = PromptService.shared.expansionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(content)"
+        let prompt = PromptService.shared.expansionPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"
         let result = try await llm.generate(prompt: prompt, systemPrompt: PromptService.shared.expansionSystemPrompt)
         return SynthesisProcessor.cleanMarkdown(result)
     }

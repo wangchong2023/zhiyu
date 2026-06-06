@@ -19,14 +19,14 @@ public struct BusinessConstants {
         public static let charactersPerToken: Int = 4
         /// 默认历史消息上下文长度
         public static let maxChatHistorySize: Int = 10
-        /// 用户输入最大字符数
+
+        // MARK: 输入/输出统一长度控制
+        /// Chat 用户输入最大字符数
         public static let maxUserInputLength: Int = 1000
-        /// AI 回复目标长度（字符），注入 system prompt 引导模型控制篇幅
-        public static let maxResponseLength: Int = 500
-        /// 回复长度可调区间下界
-        public static let minResponseLength: Int = 500
-        /// 回复长度可调区间上界
-        public static let maxResponseLengthUpper: Int = 1000
+        /// 合成/后台 prompt 输入内容最大字符数（知识页面正文截断至此）
+        public static let maxSynthesisInputLength: Int = 500
+        /// AI 回复 API 级硬上限 (max_tokens)，≈1000 中文字符 / ≈4000 英文
+        public static let maxOutputTokens: Int = 1000
         /// 默认文本模型
         public static let defaultTextModel: String = AppModel.gpt4o.rawValue
         /// 默认向量模型
