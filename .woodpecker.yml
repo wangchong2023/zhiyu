@@ -8,7 +8,10 @@ steps:
     image: bash
     commands:
       - echo "machine localhost login $CI_NETRC_USERNAME password $CI_NETRC_PASSWORD" > ~/.netrc
-      - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's/gitea:3000/localhost:3000/g')
+      # 将 Docker 内部主机名替换为 localhost，确保本地 agent 可访问 Gitea
+      - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's|http://[^/]*:3000|http://localhost:3000|g')
+      # 清理持久化工作空间残留文件，避免 git clone 因目录非空而失败
+      - find . -maxdepth 1 -not -name '.' -exec rm -rf {} \; 2>/dev/null || true
       - git clone $CLONE_URL .
       - git checkout $CI_COMMIT_SHA
 
