@@ -4582,6 +4582,12 @@
             "state": "translated",
             "value": "开始智能解析..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starting parsing..."
+          }
         }
       }
     },
@@ -4593,6 +4599,12 @@
             "state": "translated",
             "value": "AI 正在理解与增强语义..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI enriching semantics..."
+          }
         }
       }
     },
@@ -4603,6 +4615,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "提炼全局结构化摘要中..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generating summary..."
           }
         }
       }
@@ -4632,6 +4650,12 @@
             "state": "translated",
             "value": "处理段落分块..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing chunk..."
+          }
         }
       }
     },
@@ -4642,6 +4666,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "计算并存储向量嵌入索引 (Vector Indexing)..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Computing vector embeddings..."
           }
         }
       }
@@ -4676,6 +4706,12 @@
             "state": "translated",
             "value": "Level 1 失败，正在降级使用原生直连..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 1 extraction failed"
+          }
         }
       }
     },
@@ -4698,6 +4734,12 @@
             "state": "translated",
             "value": "Level 2 失败或遇到限制，正在寻找历史快照..."
           }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 2 extraction failed"
+          }
         }
       }
     },
@@ -4719,6 +4761,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Level 3 失败，正在使用深度 DOM 提取器作为最终方案..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Level 3 extraction failed"
           }
         }
       }
