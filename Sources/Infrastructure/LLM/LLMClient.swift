@@ -34,8 +34,8 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
     private let apiKey: String
     
     // MARK: - Constants
-    private static let defaultTimeout: TimeInterval = 90
-    private static let streamingTimeout: TimeInterval = 180
+    private static let defaultTimeout: TimeInterval = 30
+    private static let streamingTimeout: TimeInterval = 30
     private static let maxRetries = 3
     
     // MARK: - Initialization

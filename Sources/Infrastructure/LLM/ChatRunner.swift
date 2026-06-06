@@ -154,6 +154,23 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                 }
  
                 do {
+                    // 0. 连通性预检：发送极短请求验证 API 可达，避免流式请求长时间挂起无反馈
+                    let preflightClient = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
+                    let preflightBody: [String: Any] = [
+                        "model": configManager.model,
+                        "messages": [["role": "user", "content": "ping"]],
+                        "max_tokens": 1,
+                        "temperature": 0
+                    ]
+                    do {
+                        _ = try await preflightClient.sendRequest(body: preflightBody)
+                    } catch {
+                        // 预检失败 → 将底层错误转化为用户友好提示
+                        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
+                        logger.error("[ChatRunner] 预检失败 — API 不可达", error: error)
+                        throw LLMError.apiError("LLM API : \(error.localizedDescription)")
+                    }
+
                     // 1. 构建混合上下文，更新引用源
                     let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
                     SourceStore.shared.updateSources(sources)
