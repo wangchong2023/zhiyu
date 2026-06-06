@@ -242,22 +242,23 @@ public struct ModelStoreView: View {
                 .foregroundStyle(.appSecondary)
                 .lineLimit(2)
             
-            // 场景能力标签 (Chips)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    // 支持的任务展示
-                    ForEach(manifest.displayName == "Gemma-2B" ? [" ", " ", ""] : [""], id: \.self) { tag in
-                        Text(tag)
-                            .font(.system(size: 10, weight: .medium))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Color.appBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
-                            .foregroundStyle(.appSecondary)
+            // 场景能力标签 (Chips) — 从 Mock/API 数据动态生成
+            if !manifest.supportedTasks.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: DesignSystem.tiny) {
+                        ForEach(manifest.supportedTasks, id: \.self) { task in
+                            Text(taskLabel(for: task))
+                                .font(.system(size: DesignSystem.microFontSize, weight: .medium))
+                                .padding(.horizontal, DesignSystem.small)
+                                .padding(.vertical, DesignSystem.atomic)
+                                .background(taskColor(for: task).opacity(0.12))
+                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
+                                .foregroundStyle(taskColor(for: task))
+                        }
                     }
                 }
+                .padding(.vertical, DesignSystem.atomic)
             }
-            .padding(.vertical, 2)
             
             // 硬件防爆护栏层
             if eligibility == .restricted {
@@ -465,6 +466,32 @@ public struct ModelStoreView: View {
             return String(format: String(data: Data(base64Encoded: "JS4yZiBHQg==")!, encoding: .utf8)!, gb)
         } else {
             return String(format: String(data: Data(base64Encoded: "JS4xZiBNQg==")!, encoding: .utf8)!, mb)
+        }
+    }
+
+    // MARK: - 任务标签（参照 Gallery taskTypes）
+
+    private func taskLabel(for task: String) -> String {
+        switch task {
+        case "chat": return "对话"
+        case "completion": return "文本补全"
+        case "reasoning": return "推理"
+        case "code": return "代码"
+        case "rag": return "RAG"
+        case "translation": return "翻译"
+        default: return task
+        }
+    }
+
+    private func taskColor(for task: String) -> Color {
+        switch task {
+        case "chat": return .blue
+        case "completion": return .green
+        case "reasoning": return .purple
+        case "code": return .orange
+        case "rag": return .pink
+        case "translation": return .teal
+        default: return .appSecondary
         }
     }
 }
