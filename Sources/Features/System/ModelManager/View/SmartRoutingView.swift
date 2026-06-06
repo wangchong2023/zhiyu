@@ -45,7 +45,7 @@ public struct SmartRoutingView: View {
     private var modelStrategySection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.modelStrategy)
-                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
+                .font(.subheadline.weight(.semibold)).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
             // 端云混合开关
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -76,7 +76,7 @@ public struct SmartRoutingView: View {
     private var taskRoutingSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.taskRules)
-                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
+                .font(.subheadline.weight(.semibold)).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
             VStack(spacing: DesignSystem.small) {
                 routingRuleRow(icon: "lock.fill", iconColor: .red, task: L10n.ModelManager.Routing.taskSemanticChunking, rule: L10n.ModelManager.Routing.strategyForceLocal)
@@ -96,7 +96,7 @@ public struct SmartRoutingView: View {
     private var runtimeStatusSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Routing.runtimeStatus)
-                .font(.headline).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
+                .font(.subheadline.weight(.semibold)).foregroundStyle(.appText).padding(.horizontal, DesignSystem.small)
 
             VStack(spacing: DesignSystem.small) {
                 statusRow(label: L10n.ModelManager.Routing.localModelReady,
