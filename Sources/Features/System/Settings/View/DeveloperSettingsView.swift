@@ -17,7 +17,6 @@ struct DeveloperSettingsView: View {
     @ObservedObject var onboardingService: OnboardingService
     
     @State private var showInjectConfirmation = false
-    @State private var showClearAllConfirmation = false
     @State private var showResetOnboardingConfirmation = false
     @State private var showStressTestConfirmation = false
     @State private var stressTestTargetCount = 1000
@@ -116,19 +115,6 @@ struct DeveloperSettingsView: View {
                         Button(L10n.Common.cancel, role: .cancel) { }
                     } message: {
                         Text(L10n.Settings.resetOnboarding.message)
-                    }
-                    
-                    Button(role: .destructive, action: { showClearAllConfirmation = true }) {
-                        Label(L10n.Settings.clearAll.label, systemImage: "trash.slash.fill")
-                    }
-                    .confirmationDialog(L10n.Settings.clearAll.confirmTitle, isPresented: $showClearAllConfirmation, titleVisibility: .visible) {
-                        Button(L10n.Settings.clearAll.action, role: .destructive) {
-                            store.clearAllDeveloperData()
-                            HapticFeedback.shared.trigger(.success)
-                        }
-                        Button(L10n.Common.cancel, role: .cancel) { }
-                    } message: {
-                        Text(L10n.Settings.clearAll.message)
                     }
                 } header: {
                     Text(L10n.Settings.developer.section.dataReset)

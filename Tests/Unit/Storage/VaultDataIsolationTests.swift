@@ -243,33 +243,36 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(initialPages.count, 1, "注入前应该有 1 个旧页面")
         XCTAssertEqual(initialPages.first?.title, oldPageTitle, "旧页面的标题应当一致")
         
-        // 2. 调用演示数据生成器
+        // 2. DemoDataGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
         print("🎬 调用 DemoDataGenerator 注入演示数据")
         let generatedCount = try await DemoDataGenerator.generate(in: store)
-        XCTAssertEqual(generatedCount, AppConstants.Demo.defaultPageCount, "演示数据生成器应当报告成功生成了 \(AppConstants.Demo.defaultPageCount) 个页面")
+        XCTAssertEqual(generatedCount, AppConstants.Demo.defaultPageCount,
+                       "应生成 \(AppConstants.Demo.defaultPageCount) 个演示页面")
 
-        // 3. 验证生成后的数据状态
+        // 3. 模拟上层 AppStore.generateDemoData() 的 refresh 行为
+        let ks = KnowledgeStore()
+        await ks.refresh()
+        XCTAssertFalse(ks.pages.isEmpty, "KnowledgeStore.refresh() 后 pages 应非空")
+
+        // 4. 验证 KnowledgeStore 同步的页面数量、核心标题、标签完整性
+        let ksTitles = ks.pages.map(\.title)
+        XCTAssertEqual(ks.pages.count, AppConstants.Demo.defaultPageCount,
+                       "KnowledgeStore 应为恰好 \(AppConstants.Demo.defaultPageCount) 页")
+        XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.aiAgent.title), "应包含 AI Agent 页面")
+        XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.llm.title), "应包含 LLM 页面")
+        // 验证标签不为空（演示数据应有关联标签）
+        let taggedPages = ks.pages.filter { !$0.tags.isEmpty }
+        XCTAssertEqual(taggedPages.count, AppConstants.Demo.defaultPageCount,
+                       "全部 \(AppConstants.Demo.defaultPageCount) 页均应有关联标签")
+
+        // 5. 验证 DB 层一致性
         let finalPages = try await store.fetchAllPages()
-        XCTAssertEqual(finalPages.count, AppConstants.Demo.defaultPageCount, "注入演示数据后，应该有且仅有 \(AppConstants.Demo.defaultPageCount) 个演示页面（原有页面被清理）")
-        // 确保旧页面被清理了
-        let hasOldPage = finalPages.contains(where: { $0.title == oldPageTitle })
-        XCTAssertFalse(hasOldPage, "原有旧页面应该在注入演示数据时被成功清理")
-        
-        // 验证演示页面的关键标题
-        let finalTitles = finalPages.map { $0.title }
-        XCTAssertTrue(finalTitles.contains(L10n.Common.Demo.aiAgent.title), "应该包含 AI 智能体演示页面")
-        XCTAssertTrue(finalTitles.contains(L10n.Common.Demo.llm.title), "应该包含 大语言模型演示页面")
-        
-        print("✅ 【Success】演示数据注入及其旧数据清理验证 100% 顺利通过！")
-    }
+        XCTAssertEqual(finalPages.count, AppConstants.Demo.defaultPageCount,
+                       "DB 层页面数应与 KnowledgeStore 一致")
+        XCTAssertFalse(finalPages.contains(where: { $0.title == oldPageTitle }),
+                       "旧页面应已被清理")
 
-    /// 验证 DemoDataGenerator 注入后 AppEventBus 发布 graphRelayoutRequested
-    func testDemoDataInjectionPublishesGraphRelayout() async throws {
-        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
-        StorageModuleRegistrar.register(in: ServiceContainer.shared)
-
-        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
-
+        // 6. 验证事件发布（模拟 AppStore.generateDemoData 的行为）
         let expectation = XCTestExpectation(description: "graphRelayoutRequested")
         var eventReceived = false
         let cancellable = AppEventBus.shared.subscribe()
@@ -279,12 +282,12 @@ final class VaultDataIsolationTests: XCTestCase {
                     expectation.fulfill()
                 }
             }
-
         AppEventBus.shared.publish(.graphRelayoutRequested)
-
         await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertTrue(eventReceived, "graphRelayoutRequested 事件应被订阅者收到")
+        XCTAssertTrue(eventReceived, "graphRelayoutRequested 事件应可达")
         _ = cancellable
+
+        print("✅ 【Success】完整链路：DB写入 → KnowledgeStore同步 → 4标题+标签 → 事件发布 全通过！")
     }
 
     // MARK: - 更多开发者工具单元测试用例
