@@ -61,18 +61,10 @@ public final class AppStore {
     // ── UI 状态 ──
     public var pendingCoachMark: CoachMarkType? = nil
     
-    // ── 自有数据（直接持有，不再转发 KnowledgeStore，确保 @Observable 可靠追踪）──
-    public var pages: [KnowledgePage] = []
-    public var totalPages: Int = 0
-    public var totalWords: Int = 0
-
-    /// 从 KnowledgeStore 同步数据到 AppStore 自有属性
-    private func syncFromKnowledgeStore() {
-        pages = knowledgeStore.pages
-        totalPages = knowledgeStore.totalPages
-        totalWords = knowledgeStore.totalWords
-    }
-
+    // ── 转发指标 (由 KnowledgeStore 持有，@Observable 自动追踪) ──
+    public var pages: [KnowledgePage] { knowledgeStore.pages }
+    public var totalPages: Int { knowledgeStore.totalPages }
+    public var totalWords: Int { knowledgeStore.totalWords }
     public var isScanning: Bool { knowledgeStore.isScanning }
     public var isScanningAI: Bool { isScanning }
     public var showCreateSheet: Bool {
@@ -155,7 +147,7 @@ public final class AppStore {
                 guard let self = self else { return }
                 switch event {
                 case .pagesCleared:
-                    syncFromKnowledgeStore()
+                    break
                 case .pageCreated, .pageUpdated, .pageDeleted:
                     // 页面事件由 KnowledgeStore 处理，AppStore 仅负责跨模块协调（如 Insight 更新）
                     Task { [weak self] in
@@ -184,7 +176,6 @@ public final class AppStore {
     /// 刷新
     public func refresh() async {
         await knowledgeStore.refresh()
-        syncFromKnowledgeStore()
         await aiInsightStore.updateStatistics()
     }
 
