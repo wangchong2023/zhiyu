@@ -298,11 +298,9 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func layoutGraph() {
-        print("[GRAPH-DEBUG] layoutGraph() 被调用 — graphSize=\(viewModel.graphSize), pages.count=\(store.pages.count), nodes.isEmpty=\(viewModel.nodes.isEmpty)")
-        guard viewModel.graphSize != .zero else { print("[GRAPH-DEBUG]  → 跳过: graphSize 为 .zero"); return }
+        guard viewModel.graphSize != .zero else { return }
         let pages = store.pages
         if pages.isEmpty {
-            print("[GRAPH-DEBUG]  → 跳过: store.pages 为空")
             viewModel.nodes = []
             viewModel.edges = []
             viewModel.isLayouting = false

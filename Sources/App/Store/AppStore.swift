@@ -302,12 +302,9 @@ extension AppStore: CollaborationDelegate {
     /// - Returns: 数值
     func generateDemoData() async -> Int {
         let count = await maintenanceService.generateDemoData()
-        print("[DEMO-DEBUG] generateDemoData() — 写入DB: \(count) 页")
         if count > 0 {
             AppEventBus.shared.publish(.graphRelayoutRequested)
-            print("[DEMO-DEBUG]  → 已发布 .graphRelayoutRequested")
             await refresh()
-            print("[DEMO-DEBUG]  → refresh() 后 store.pages.count=\(pages.count)")
         }
         return count
     }
@@ -346,13 +343,9 @@ extension AppStore: CollaborationDelegate {
     /// 清除AllDeveloperData
     func clearAllDeveloperData() {
         Task {
-            print("[RESET-DEBUG] clearAllDeveloperData() 开始")
             AppEventBus.shared.publish(.clearAllDataRequested)
-            print("[RESET-DEBUG]  → 已发布 .clearAllDataRequested")
             await maintenanceService.clearAllDeveloperData()
-            print("[RESET-DEBUG]  → DB 重置完成")
             await refresh()
-            print("[RESET-DEBUG]  → refresh() 后 pages.count=\(pages.count), totalPages=\(totalPages)")
         }
     }
 

@@ -126,14 +126,14 @@ public final class KnowledgeStore {
     /// 刷新内存镜像
     public func refresh() async {
         let startTime = Date()
-        let fetched = (try? await knowledgeRepository.fetchAll()) ?? []
-        print("[RESET-DEBUG] KnowledgeStore.refresh() — fetchAll 返回 \(fetched.count) 页")
-        self.pages = fetched
+        self.pages = (try? await knowledgeRepository.fetchAll()) ?? []
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
         
         let duration = Date().timeIntervalSince(startTime)
-        performanceService.record(.databaseLoad, duration: duration)
+        if let perf = ServiceContainer.shared.optionalResolve(PerformanceService.self) {
+            perf.record(.databaseLoad, duration: duration)
+        }
     }
 
     /// 填充默认内容
