@@ -26,16 +26,20 @@ final class JavaScriptPlugin: InterceptionPlugin {
         self.manifest = manifest
         self.monetization = monetization
         self.scriptContent = script
-        
-        // 初始时仅用于校验脚本是否合法
+
+        // 语法校验：确保 JS 在 JavaScriptCore 中可解析
         let tempContext = JSContext()
-        tempContext?.exceptionHandler = { ctx, exception in
-            if let ctx = ctx, let exception = exception { ctx.exception = exception }
+        tempContext?.exceptionHandler = { _, exception in
+            // 语法错误会在 evaluateScript 之后立即触发
+            Logger.shared.error("[JSPlugin: \(manifest.id)] Init syntax check failed: \(exception?.toString() ?? "unknown")")
         }
         tempContext?.evaluateScript(script)
-        if tempContext?.exception != nil {
+        if let exc = tempContext?.exception {
+            Logger.shared.error("[JSPlugin: \(manifest.id)] Rejected: \(exc.toString() ?? "nil")")
             return nil
         }
+
+        Logger.shared.info("[JSPlugin: \(manifest.id)] Syntax validated OK")
     }
     
     /// 辅助方法：动态从池中租借 JSContext，装配 ZhiYu API 后执行，执行完后在 defer 中安全归还
@@ -60,24 +64,24 @@ final class JavaScriptPlugin: InterceptionPlugin {
         // 2.2 核心安全加固：配置运行时看门狗护栏 (@SR-04)
         PluginSandboxGateway.configureWatchdog(for: ctx)
         
-        // 安全硬化：禁用 eval 和 Function，防止沙箱逃逸
+        // 安全硬化：禁用 eval 和 Function（JavaScriptCore 中没有 console，勿用）
         let hardeningScript = """
         (function() {
-            var errMsg = "Security: eval and Function are disabled in ZhiYu sandbox.";
-            var forbidden = function() { throw new Error(errMsg); };
             try {
-                eval = forbidden;
-                Function = forbidden;
-                Object.freeze(forbidden);
-            } catch (e) {
-                console.error("Sandbox hardening failed: " + e);
-            }
+                eval = function() { throw new Error("eval disabled"); };
+                Function = function() { throw new Error("Function disabled"); };
+            } catch(e) {}
         })();
         """
         ctx.evaluateScript(hardeningScript)
         
-        // 3. 加载脚本
+        // 加载插件脚本
         ctx.evaluateScript(self.scriptContent)
+        if let exc = ctx.exception {
+            Logger.shared.error("[JSPlugin: \(self.manifest.id)] Script evaluate failed: \(exc.toString() ?? "nil")")
+            ctx.exception = nil
+            throw PluginSandboxError.scriptSyntaxError(exc.toString() ?? "unknown")
+        }
         
         // 4. 执行业务逻辑
         return try body(ctx)
@@ -270,16 +274,12 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 
                 if let exception = ctx.exception {
                     ctx.exception = nil
-                    throw NSError(
-                        domain: "PluginSandbox",
-                        code: 408,
-                        userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.preProcessException(exception.toString() ?? "unknown")]
-                    )
+                    throw PluginSandboxError.preProcessException(exception.toString() ?? "unknown")
                 }
-                
+
                 let resultString = result?.toString() ?? content
                 if resultString.count > maxResponseSize {
-                    throw NSError(domain: "PluginSandbox", code: 413, userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.payloadTooLarge])
+                    throw PluginSandboxError.payloadTooLarge
                 }
                 return resultString
             }
@@ -305,11 +305,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 
                 if let exception = ctx.exception {
                     ctx.exception = nil
-                    throw NSError(
-                        domain: "PluginSandbox",
-                        code: 408,
-                        userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.postProcessException(exception.toString() ?? "unknown")]
-                    )
+                    throw PluginSandboxError.postProcessException(exception.toString() ?? "unknown")
                 }
                 
                 return result?.toString() ?? content

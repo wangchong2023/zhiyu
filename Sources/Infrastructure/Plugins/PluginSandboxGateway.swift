@@ -50,41 +50,25 @@ struct PluginSandboxGateway {
     /// - Throws: 包含域名拦截或大小超限的安全错误说明
     static func auditFetch(url urlString: String, options: [String: Any]?, allowedDomains: [String]) throws -> URLRequest {
         guard let requestURL = URL(string: urlString), let host = requestURL.host else {
-            throw NSError(
-                domain: "PluginSandboxGateway",
-                code: 400,
-                userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.invalidURL(urlString)]
-            )
+            throw PluginSandboxError.invalidURL(urlString)
         }
-        
-        // 1. 域名安全白名单 DLP 审计
+
+        // 域名白名单审计
         let isAllowed = allowedDomains.contains(where: { host.contains($0) })
         guard isAllowed else {
-            throw NSError(
-                domain: "PluginSandboxGateway",
-                code: 403,
-                userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.dlpFetchBlocked(host)]
-            )
+            throw PluginSandboxError.dlpFetchBlocked(host)
         }
-        
+
         var request = URLRequest(url: requestURL)
-        
-        // 2. 网络载荷大小过滤审计
+
         if let opts = options {
             request.httpMethod = (opts["method"] as? String)?.uppercased() ?? "GET"
             if let headers = opts["headers"] as? [String: String] {
-                for (key, val) in headers {
-                    request.setValue(val, forHTTPHeaderField: key)
-                }
+                for (key, val) in headers { request.setValue(val, forHTTPHeaderField: key) }
             }
-            
             if let body = opts["body"] as? String {
                 guard body.utf8.count <= maxPayloadSize else {
-                    throw NSError(
-                        domain: "PluginSandboxGateway",
-                        code: 413,
-                        userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.payloadTooLarge]
-                    )
+                    throw PluginSandboxError.payloadTooLarge
                 }
                 request.httpBody = body.data(using: .utf8)
             }
@@ -102,19 +86,11 @@ struct PluginSandboxGateway {
     /// - Throws: 包含存储超限的异常错误
     static func auditStorage(key: String, value: String) throws {
         guard key.count <= maxKeyLength else {
-            throw NSError(
-                domain: "PluginSandboxGateway",
-                code: 400,
-                userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.keyLengthExceeded(maxKeyLength)]
-            )
+            throw PluginSandboxError.keyLengthExceeded(maxKeyLength)
         }
-        
+
         guard value.utf8.count <= maxPayloadSize else {
-            throw NSError(
-                domain: "PluginSandboxGateway",
-                code: 413,
-                userInfo: [NSLocalizedDescriptionKey: L10n.Plugin.Error.payloadTooLarge]
-            )
+            throw PluginSandboxError.payloadTooLarge
         }
     }
 

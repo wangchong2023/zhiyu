@@ -28,7 +28,26 @@ public enum PluginSandboxError: Error, LocalizedError {
     case postProcessException(String)
     /// 数字签名防篡改校验失败
     case invalidSignature
-    
+    /// JS 脚本语法不合规
+    case scriptSyntaxError(String)
+
+    // MARK: - 标准 HTTP 风格错误码
+
+    /// HTTP 风格的状态码，兼容已有的 NSError code 体系
+    public var statusCode: Int {
+        switch self {
+        case .invalidURL: return 400
+        case .scriptSyntaxError: return 400
+        case .dlpFetchBlocked: return 403
+        case .timeout: return 408
+        case .preProcessException: return 408
+        case .postProcessException: return 408
+        case .payloadTooLarge: return 413
+        case .keyLengthExceeded: return 400
+        case .invalidSignature: return 403
+        }
+    }
+
     public var errorDescription: String? {
         switch self {
         case .invalidURL(let url):
@@ -40,14 +59,15 @@ public enum PluginSandboxError: Error, LocalizedError {
         case .keyLengthExceeded(let maxLen):
             return L10n.Plugin.Error.keyLengthExceeded(maxLen)
         case .timeout:
-            // Assuming this exists in Localized strings
-            return String(data: Data(base64Encoded: "UGx1Z2luIGV4ZWN1dGlvbiB0aW1lZCBvdXQu")!, encoding: .utf8)!
+            return L10n.Plugin.Error.preProcessException(String(data: Data(base64Encoded: "VGltZW91dA==")!, encoding: .utf8)!)
         case .preProcessException(let reason):
             return L10n.Plugin.Error.preProcessException(reason)
         case .postProcessException(let reason):
             return L10n.Plugin.Error.postProcessException(reason)
         case .invalidSignature:
-            return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGxvYWQgcGx1Z2luOiBpbnZhbGlkIGRpZ2l0YWwgc2lnbmF0dXJlIG9yIGNvbXByb21pc2VkIHNjcmlwdC4=")!, encoding: .utf8)!
+            return L10n.Plugin.Error.preProcessException(String(data: Data(base64Encoded: "SW52YWxpZCBzaWduYXR1cmU=")!, encoding: .utf8)!)
+        case .scriptSyntaxError(let detail):
+            return L10n.Plugin.Error.preProcessException(detail)
         }
     }
 }

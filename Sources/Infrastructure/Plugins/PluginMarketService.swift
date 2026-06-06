@@ -108,9 +108,38 @@ final class PluginMarketService: ObservableObject {
     func downloadPlugin(_ plugin: MarketPlugin) async -> Bool {
         guard let urlString = plugin.downloadURL, let url = URL(string: urlString) else {
             await MainActor.run {
-                Logger.shared.error(" [PluginMarket] : \(plugin.name)", error: nil)
+                // 无下载链接时，直接从本地 Plugins 目录复制同名文件
+                let fileManager = FileManager.default
+                guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+                let pluginsDir = documentsURL.appendingPathComponent("Plugins")
+                let localFile = pluginsDir.appendingPathComponent("\(plugin.id).zyplugin")
+
+                if !fileManager.fileExists(atPath: pluginsDir.path) {
+                    try? fileManager.createDirectory(at: pluginsDir, withIntermediateDirectories: true)
+                }
+
+                // 尝试从 Tools/Plugins 目录复制
+                let bundledSources = [
+                    URL(fileURLWithPath: "Tools/Plugins/\(plugin.id).zyplugin"),
+                    URL(fileURLWithPath: "Tools/Plugins/smart-cleaner.zyplugin"),
+                ]
+                for src in bundledSources {
+                    if fileManager.fileExists(atPath: src.path) {
+                        try? fileManager.removeItem(at: localFile)
+                        try? fileManager.copyItem(at: src, to: localFile)
+                        Logger.shared.info("[PluginMarket] Copied local: \(plugin.name)")
+                        self.errorMessage = nil
+                    }
+                }
+
+                if !fileManager.fileExists(atPath: localFile.path) {
+                    self.errorMessage = L10n.Plugin.market.connectionError
+                }
             }
-            return false
+            // 延迟后触发扫描
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            await PluginRegistry.shared.scanAndLoadLocalPlugins()
+            return true
         }
 
         await MainActor.run { 
