@@ -16,7 +16,18 @@ final class ChatService: ChatServiceProtocol, @unchecked Sendable {
     
     private let historyStore = ChatHistoryStore()
     
-    init() {}
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        AppEventBus.shared.subscribe()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] event in
+                if case .clearAllDataRequested = event {
+                    self?.clearHistory()
+                }
+            }
+            .store(in: &cancellables)
+    }
     
     /// 加载History
     /// - Returns: 列表

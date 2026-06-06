@@ -30,7 +30,11 @@ public final class SearchStore {
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
-    init() {}
+    init() {
+        AppEventBus.shared.subscribe()
+            .sink { [weak self] in if case .clearAllDataRequested = $0 { self?.clearAll() } }
+            .store(in: &cancellables)
+    }
 
     /// 执行高级（混合）搜索
     func performAdvancedSearch(query: String) async -> [KnowledgePage] {

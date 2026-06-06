@@ -154,8 +154,6 @@ public final class AppStore {
                     Task { [weak self] in
                         await self?.aiInsightStore.updateStatistics()
                     }
-                case .clearAllDataRequested:
-                    self.clearAllDeveloperData()
                 default: break
                 }
             }
@@ -334,10 +332,8 @@ extension AppStore: CollaborationDelegate {
     /// 清除AllDeveloperData
     func clearAllDeveloperData() {
         Task {
+            AppEventBus.shared.publish(.clearAllDataRequested)
             await maintenanceService.clearAllDeveloperData()
-            searchStore.clearAll()
-            settingsStore.reset()
-            aiWorkflowStore.clearAll()
             await refresh()
         }
     }

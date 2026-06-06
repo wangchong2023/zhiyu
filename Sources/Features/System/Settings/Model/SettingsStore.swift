@@ -18,7 +18,11 @@ import Combine
 public final class SettingsStore {
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
-    public init() {}
+    public init() {
+        AppEventBus.shared.subscribe()
+            .sink { [weak self] in if case .clearAllDataRequested = $0 { self?.reset() } }
+            .store(in: &cancellables)
+    }
     // ── 隐私与安全 ──
     @ObservationIgnored private var _isPrivacyModeEnabled: Bool = {
         return UserDefaults.standard.object(forKey: AppConstants.Keys.Storage.isPrivacyModeEnabled) as? Bool ?? true

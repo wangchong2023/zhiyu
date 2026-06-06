@@ -76,7 +76,11 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
-    public init() {}
+    public init() {
+        AppEventBus.shared.subscribe()
+            .sink { [weak self] in if case .clearAllDataRequested = $0 { self?.clearAll() } }
+            .store(in: &cancellables)
+    }
 
     // ── 扫描与健康检查逻辑 ──
 
