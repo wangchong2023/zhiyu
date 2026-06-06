@@ -31,6 +31,8 @@ public struct ModelStoreView: View {
     
     /// 触发警告弹窗的模型元数据
     @State private var alertManifest: LLMManifest?
+    /// 展开详情的模型 ID（参照 Gallery Model Spec Sheet）
+    @State private var expandedModelId: String?
     
     public init() {}
     
@@ -287,6 +289,68 @@ public struct ModelStoreView: View {
                 .stroke(borderColor, lineWidth: isSelected ? 2 : 1)
         )
         .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                expandedModelId = (expandedModelId == manifest.modelId) ? nil : manifest.modelId
+            }
+        }
+
+        // 展开的 Model Spec Sheet（参照 Gallery Model Management）
+        if expandedModelId == manifest.modelId {
+            modelSpecSheet(for: manifest)
+        }
+    }
+
+    // MARK: - Model Spec Sheet（参照 Gallery）
+
+    @ViewBuilder
+    private func modelSpecSheet(for manifest: LLMManifest) -> some View {
+        let specBg = Color.appCard.opacity(0.6)
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            Divider().foregroundStyle(Color.appBorder.opacity(0.5))
+
+            // 完整描述
+            Text(manifest.description)
+                .font(.subheadline).foregroundStyle(.appText).fixedSize(horizontal: false, vertical: true)
+
+            // 规格网格
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.small) {
+                specItem(icon: "cpu", label: L10n.ModelManager.Spec.memory, value: String(format: "%.0f GB", manifest.minDeviceMemoryInGb))
+                specItem(icon: "arrow.down.doc", label: L10n.ModelManager.Spec.downloadSize, value: formattedSize(manifest.fileSizeInBytes))
+                specItem(icon: "square.3.layers.3d", label: L10n.ModelManager.Spec.parameters, value: manifest.parameterCount)
+                specItem(icon: "number", label: L10n.ModelManager.Spec.checksum, value: String(manifest.sha256Checksum.prefix(12)) + "...")
+            }
+
+            // 支持的任务
+            if !manifest.supportedTasks.isEmpty {
+                HStack(spacing: DesignSystem.tiny) {
+                    Text(L10n.ModelManager.Spec.tasks).font(.caption).foregroundStyle(.appSecondary)
+                    ForEach(manifest.supportedTasks, id: \.self) { t in
+                        Text(taskLabel(for: t)).font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(taskColor(for: t).opacity(0.12)).clipShape(Capsule())
+                            .foregroundStyle(taskColor(for: t))
+                    }
+                }
+            }
+        }
+        .padding(DesignSystem.medium)
+        .background(specBg)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+    }
+
+    private func specItem(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: DesignSystem.tiny) {
+            Image(systemName: icon).font(.caption2).foregroundStyle(.appAccent).frame(width: 16)
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(value).font(.subheadline.weight(.medium)).foregroundStyle(.appText)
+                Text(label).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
+            }
+        }
+        .padding(DesignSystem.small)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.appBackground.opacity(0.3))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
     
     // MARK: - 状态子栏与操作按钮
@@ -472,15 +536,10 @@ public struct ModelStoreView: View {
     // MARK: - 任务标签（参照 Gallery taskTypes）
 
     private func taskLabel(for task: String) -> String {
-        switch task {
-        case "chat": return "对话"
-        case "completion": return "文本补全"
-        case "reasoning": return "推理"
-        case "code": return "代码"
-        case "rag": return "RAG"
-        case "translation": return "翻译"
-        default: return task
-        }
+        // 国际化：优先使用 L10n 映射，fallback 为原始 task 值
+        let key = "model.task.\(task)"
+        let localized = String(localized: String.LocalizationValue(key))
+        return localized == key ? task : localized
     }
 
     private func taskColor(for task: String) -> Color {

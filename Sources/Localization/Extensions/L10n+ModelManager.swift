@@ -94,6 +94,16 @@ extension L10n {
             }
         }
 
+        // MARK: - 规格详表（Model Spec Sheet）
+
+        public enum Spec {
+            public static var memory: String { ModelManager.tr("model_manager.spec.memory") }
+            public static var downloadSize: String { ModelManager.tr("model_manager.spec.downloadSize") }
+            public static var parameters: String { ModelManager.tr("model_manager.spec.parameters") }
+            public static var checksum: String { ModelManager.tr("model_manager.spec.checksum") }
+            public static var tasks: String { ModelManager.tr("model_manager.spec.tasks") }
+        }
+
         // MARK: - 参数调优
 
         public enum Parameters {
