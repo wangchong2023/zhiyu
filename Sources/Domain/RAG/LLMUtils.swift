@@ -37,14 +37,16 @@ enum LLMUtils {
     }
 
     /// 从 LLM 标准响应字典中提取内容文本
+    /// 从 OpenAI 兼容 API 响应中提取文本内容。
+    /// 兼容标准模型 (message.content) 和推理模型如 DeepSeek v4 Pro (message.reasoning_content)。
     static func extractContent(from response: [String: Any]) -> String? {
         guard let choices = response["choices"] as? [[String: Any]],
               let firstChoice = choices.first,
-              let message = firstChoice["message"] as? [String: Any],
-              let content = message["content"] as? String else {
+              let message = firstChoice["message"] as? [String: Any] else {
             return nil
         }
-        return content
+        // 优先 content；推理模型（DeepSeek v4 Pro 等）输出走 reasoning_content
+        return (message["content"] as? String) ?? (message["reasoning_content"] as? String)
     }
 
     /// 剥离 Markdown 语法标记（如 ```json 等）并修剪空白。

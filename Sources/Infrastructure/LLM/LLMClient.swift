@@ -221,14 +221,20 @@ final class SSEParser {
                             continue
                         }
 
-                        // 兼容 delta.content 和 message.content 两种 JSON 路径
+                        // 兼容多种主流提供商的流式字段差异:
+                        //   标准 OpenAI → delta.content
+                        //   DeepSeek v4 Pro 等推理模型 → delta.reasoning_content
+                        //   非流式回退 → message.content
                         if let choices = json["choices"] as? [[String: Any]],
                            let first = choices.first {
                             let content: String?
                             if let delta = first["delta"] as? [String: Any] {
-                                content = delta["content"] as? String
+                                // 优先取 content；推理模型文本走 reasoning_content
+                                content = (delta["content"] as? String)
+                                    ?? (delta["reasoning_content"] as? String)
                             } else if let message = first["message"] as? [String: Any] {
-                                content = message["content"] as? String
+                                content = (message["content"] as? String)
+                                    ?? (message["reasoning_content"] as? String)
                             } else {
                                 content = nil
                             }
