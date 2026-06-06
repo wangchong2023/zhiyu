@@ -76,8 +76,38 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     // MARK: - 离线预设与灾备机制 (High-Availability Presets)
     
-    /// 获取本地物理预设的模型 Manifest 灾备清单
+    /// 从 model_allowlist.json 加载离线预设模型清单
     private func getFallbackLLMManifests() -> [LLMManifest] {
+        guard let url = Bundle.main.url(forResource: "model_allowlist", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let models = json["models"] as? [[String: Any]] else {
+            return []
+        }
+        return models.compactMap { dict in
+            guard let modelId = dict["modelId"] as? String,
+                  let displayName = dict["displayName"] as? String,
+                  let vendor = dict["vendor"] as? String else { return nil }
+            let params = dict["defaultParameters"] as? [String: Any] ?? [:]
+            return LLMManifest(
+                modelId: modelId, displayName: displayName, vendor: vendor,
+                fileSizeInBytes: (dict["fileSizeInBytes"] as? Int64) ?? 0,
+                minDeviceMemoryInGb: (dict["minDeviceMemoryInGb"] as? Double) ?? 0,
+                remoteURLString: (dict["remoteURLString"] as? String) ?? "",
+                sha256Checksum: (dict["sha256Checksum"] as? String) ?? "",
+                parameterCount: (dict["parameterCount"] as? String) ?? "",
+                description: (dict["description"] as? String) ?? "",
+                defaultParameters: InferenceParameters(
+                    temperature: (params["temperature"] as? Double) ?? 0.7,
+                    topP: (params["topP"] as? Double) ?? 0.9,
+                    topK: (params["topK"] as? Int) ?? 40,
+                    maxTokens: (params["maxTokens"] as? Int) ?? 2048)
+            )
+        }
+    }
+
+    /// (废弃：已迁移至 model_allowlist.json)
+    private func _getFallbackLLMManifests_old() -> [LLMManifest] {
         return [
             LLMManifest(
                 modelId: "gemma-2b-it",

@@ -122,7 +122,8 @@
       "Bash(xcodebuild test-without-building *)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:api.github.com)"
+      "WebFetch(domain:api.github.com)",
+      "Bash(./Tools/copy_plugins_to_sim.sh)"
     ]
   }
 }
