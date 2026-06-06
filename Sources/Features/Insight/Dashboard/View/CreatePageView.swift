@@ -18,97 +18,21 @@ struct CreatePageView: View {
     @State private var type: PageType = .concept
     @State private var tags = ""
 
-    // 结构化表单字段（替代单一 TextEditor）
-    @State private var definition = ""   // 一句话定义/描述
+    // 通用字段
+    @State private var summary = ""      // 一句话定义 / 对比背景
     @State private var bodyContent = ""  // 主体内容
-    @State private var relatedLinks = "" // 关联页面标题
+    @State private var relatedItems = "" // 关联页面
 
-    /// 当前类型对应的模板标题（由模板按钮设置，用于 Section header）
-    @State private var bodySectionTitle = L10n.Creation.content
+    // 对比模板专用
+    @State private var compareItemA = ""
+    @State private var compareItemB = ""
 
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    TextField(L10n.Creation.pageTitle, text: $title)
-                        .font(.body)
-                        .accessibilityIdentifier("pageTitle")
-
-                    // Type picker
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: DesignSystem.small) {
-                            ForEach(PageType.allCases) { pageType in
-                                Button(action: { type = pageType }) {
-                                    HStack(spacing: DesignSystem.tightPadding) {
-                                        Image(systemName: pageType.icon)
-                                            .font(.caption)
-                                        Text(pageType.displayName)
-                                            .font(.caption)
-                                    }
-                                    .padding(.horizontal, DesignSystem.medium)
-                                    .padding(.vertical, DesignSystem.small)
-                                    .background(type == pageType ? Color.fromModelColorName(pageType.colorName).opacity(0.25) : Color.appCard)
-                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                                    .foregroundStyle(type == pageType ? Color.fromModelColorName(pageType.colorName) : .appSecondary)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                                            .stroke(type == pageType ? Color.fromModelColorName(pageType.colorName).opacity(0.5) : Color.clear, lineWidth: 1)
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-
-                    TextField(L10n.Creation.tagsPlaceholder, text: $tags)
-                } header: {
-                    Text(L10n.Creation.basicInfo)
-                }
-
-                // Quick templates
-                Section {
-                    VStack(spacing: DesignSystem.small) {
-                        templateCard(
-                            icon: DesignSystem.Icons.entity,
-                            title: L10n.Creation.entityTemplate,
-                            description: L10n.Creation.template.entity.desc,
-                            action: applyEntityTemplate
-                        )
-                        templateCard(
-                            icon: DesignSystem.Icons.concept,
-                            title: L10n.Creation.conceptTemplate,
-                            description: L10n.Creation.template.concept.desc,
-                            action: applyConceptTemplate
-                        )
-                        templateCard(
-                            icon: DesignSystem.Icons.comparison,
-                            title: L10n.Creation.comparisonTemplate,
-                            description: L10n.Creation.template.comparison.desc,
-                            action: applyComparisonTemplate
-                        )
-                    }
-                } header: {
-                    Text(L10n.Creation.quickTemplates)
-                }
-
-                // ── 结构化内容区 ──
-                Section {
-                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        definitionField
-                        Divider()
-                        bodyContentField
-                        Divider()
-                        relatedLinksField
-                    }
-                } header: {
-                    HStack {
-                        Text(bodySectionTitle)
-                        Spacer()
-                        Text(L10n.Editor.bidirectionalLinks)
-                            .font(.caption2)
-                            .foregroundStyle(.appSecondary)
-                    }
-                }
+                basicInfoSection
+                templateSection
+                contentSection
             }
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
@@ -116,52 +40,225 @@ struct CreatePageView: View {
             .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.cancel) {
-                        dismiss()
-                    }
+                    Button(L10n.Common.cancel) { dismiss() }
                 }
-
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(L10n.Creation.create) {
-                        createPage()
-                    }
-                    .disabled(title.isEmpty)
-                    .fontWeight(.semibold)
+                    Button(L10n.Creation.create) { createPage() }
+                        .disabled(title.isEmpty)
+                        .fontWeight(.semibold)
                 }
             }
         }
     }
 
-    // MARK: - 结构化表单组件
+    // MARK: - 基本信息
+
+    private var basicInfoSection: some View {
+        Section {
+            TextField(L10n.Creation.pageTitle, text: $title)
+                .font(.body)
+                .accessibilityIdentifier("pageTitle")
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DesignSystem.small) {
+                    ForEach(PageType.allCases) { pageType in
+                        Button(action: { type = pageType }) {
+                            HStack(spacing: DesignSystem.tightPadding) {
+                                Image(systemName: pageType.icon).font(.caption)
+                                Text(pageType.displayName).font(.caption)
+                            }
+                            .padding(.horizontal, DesignSystem.medium)
+                            .padding(.vertical, DesignSystem.small)
+                            .background(type == pageType
+                                ? Color.fromModelColorName(pageType.colorName).opacity(0.25)
+                                : Color.appCard)
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                            .foregroundStyle(type == pageType
+                                ? Color.fromModelColorName(pageType.colorName)
+                                : .appSecondary)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                                    .stroke(type == pageType
+                                        ? Color.fromModelColorName(pageType.colorName).opacity(0.5)
+                                        : Color.clear, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            TextField(L10n.Creation.tagsPlaceholder, text: $tags)
+        } header: {
+            Text(L10n.Creation.basicInfo)
+        }
+    }
+
+    // MARK: - 快速模板
+
+    private var templateSection: some View {
+        Section {
+            VStack(spacing: DesignSystem.small) {
+                templateCard(
+                    icon: DesignSystem.Icons.entity,
+                    title: L10n.Creation.entityTemplate,
+                    description: L10n.Creation.template.entity.desc,
+                    action: { type = .entity }
+                )
+                templateCard(
+                    icon: DesignSystem.Icons.concept,
+                    title: L10n.Creation.conceptTemplate,
+                    description: L10n.Creation.template.concept.desc,
+                    action: { type = .concept }
+                )
+                templateCard(
+                    icon: DesignSystem.Icons.comparison,
+                    title: L10n.Creation.comparisonTemplate,
+                    description: L10n.Creation.template.comparison.desc,
+                    action: { type = .comparison }
+                )
+            }
+        } header: {
+            Text(L10n.Creation.quickTemplates)
+        }
+    }
+
+    // MARK: - 内容区（按类型不同布局）
 
     @ViewBuilder
-    private var definitionField: some View {
+    private var contentSection: some View {
+        switch type {
+        case .entity:
+            entityContent
+        case .concept:
+            conceptContent
+        case .comparison:
+            comparisonContent
+        default:
+            conceptContent
+        }
+    }
+
+    // MARK: 实体内容
+
+    private var entityContent: some View {
+        Section {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                labeledField(
+                    L10n.Creation.template.entity.overview
+                        .replacingOccurrences(of: "## ", with: "")
+                        .replacingOccurrences(of: "\n", with: "")
+                        .trimmingCharacters(in: .whitespaces),
+                    hint: L10n.Creation.template.entity.desc,
+                    text: $summary
+                )
+                Divider()
+                labeledEditor(
+                    L10n.Creation.template.entity.overviewHint,
+                    text: $bodyContent
+                )
+                Divider()
+                labeledField(
+                    L10n.Creation.template.entity.related
+                        .replacingOccurrences(of: "## ", with: "")
+                        .replacingOccurrences(of: "\n", with: "")
+                        .trimmingCharacters(in: .whitespaces),
+                    hint: L10n.Creation.tagsPlaceholder,
+                    text: $relatedItems
+                )
+            }
+        } header: {
+            detailHeader
+        }
+    }
+
+    // MARK: 概念内容
+
+    private var conceptContent: some View {
+        Section {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                labeledField(
+                    L10n.Creation.template.concept.definition
+                        .replacingOccurrences(of: "## ", with: "")
+                        .replacingOccurrences(of: "\n", with: "")
+                        .trimmingCharacters(in: .whitespaces),
+                    hint: L10n.Creation.template.concept.desc,
+                    text: $summary
+                )
+                Divider()
+                labeledEditor(
+                    L10n.Creation.template.concept.analysisHint,
+                    text: $bodyContent
+                )
+                Divider()
+                labeledField(
+                    L10n.Creation.relatedLinks,
+                    hint: L10n.Creation.tagsPlaceholder,
+                    text: $relatedItems
+                )
+            }
+        } header: {
+            detailHeader
+        }
+    }
+
+    // MARK: 对比内容
+
+    private var comparisonContent: some View {
+        Section {
+            VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                labeledField(L10n.Creation.template.comparison.desc, hint: "", text: $summary)
+                Divider()
+                HStack(spacing: DesignSystem.medium) {
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                        Text(L10n.Creation.compareItemA).font(.caption.weight(.semibold)).foregroundStyle(.appAccent)
+                        TextField(L10n.Creation.compareItemA, text: $compareItemA).font(.body)
+                    }
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                        Text(L10n.Creation.compareItemB).font(.caption.weight(.semibold)).foregroundStyle(.orange)
+                        TextField(L10n.Creation.compareItemB, text: $compareItemB).font(.body)
+                    }
+                }
+                Divider()
+                labeledEditor(
+                    L10n.Creation.template.comparison.conclusionHint,
+                    text: $bodyContent
+                )
+                Divider()
+                labeledField(
+                    L10n.Creation.relatedLinks,
+                    hint: L10n.Creation.tagsPlaceholder,
+                    text: $relatedItems
+                )
+            }
+        } header: {
+            detailHeader
+        }
+    }
+
+    // MARK: - 共用组件
+
+    private func labeledField(_ label: String, hint: String, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-            Text(L10n.Creation.content)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.appSecondary)
-            TextField(L10n.Creation.template.entity.desc, text: $definition, axis: .vertical)
+            Text(label).font(.caption.weight(.semibold)).foregroundStyle(.appSecondary)
+            TextField(hint.isEmpty ? label : hint, text: text, axis: .vertical)
                 .font(.body)
         }
     }
 
-    @ViewBuilder
-    private var bodyContentField: some View {
+    private func labeledEditor(_ hint: String, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             #if os(watchOS)
-            TextField(bodySectionHint, text: $bodyContent, axis: .vertical)
-                .font(.body)
+            TextField(hint, text: text, axis: .vertical).font(.body)
             #else
-            TextEditor(text: $bodyContent)
+            TextEditor(text: text)
                 .font(.body)
-                .frame(minHeight: 100)
+                .frame(minHeight: 80)
                 .overlay(alignment: .topLeading) {
-                    if bodyContent.isEmpty {
-                        Text(bodySectionHint)
+                    if text.wrappedValue.isEmpty {
+                        Text(hint)
                             .font(.body)
                             .foregroundStyle(.appSecondary.opacity(0.4))
-                            .padding(.top, 8)
-                            .padding(.leading, 4)
+                            .padding(.top, 8).padding(.leading, 4)
                             .allowsHitTesting(false)
                     }
                 }
@@ -169,28 +266,33 @@ struct CreatePageView: View {
         }
     }
 
-    @ViewBuilder
-    private var relatedLinksField: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-            Text(verbatim: L10n.Creation.template.entity.related
-                .replacingOccurrences(of: "## ", with: "")
-                .replacingOccurrences(of: "\n", with: "")
-                .trimmingCharacters(in: .whitespaces))
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.appSecondary)
-            TextField(L10n.Creation.tagsPlaceholder, text: $relatedLinks)
-                .font(.body)
+    private var detailHeader: some View {
+        HStack {
+            Text(L10n.Creation.content)
+            Spacer()
+            Text(L10n.Editor.bidirectionalLinks)
+                .font(.caption2).foregroundStyle(.appSecondary)
         }
     }
 
-    /// 内容区 placeholder 提示文字
-    private var bodySectionHint: String {
-        switch type {
-        case .entity: return L10n.Creation.template.entity.overviewHint
-        case .concept: return L10n.Creation.template.concept.analysisHint
-        case .comparison: return L10n.Creation.template.comparison.conclusionHint
-        default: return ""
+    private func templateCard(icon: String, title: String, description: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: DesignSystem.medium) {
+                Image(systemName: icon)
+                    .font(.title3).foregroundStyle(.appAccent)
+                    .frame(width: DesignSystem.iconLarge)
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                    Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.appText)
+                    Text(description).font(.caption).foregroundStyle(.appSecondary).lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: DesignSystem.Icons.forward)
+                    .font(.caption).foregroundStyle(.appSecondary.opacity(0.4))
+            }
+            .padding(.vertical, DesignSystem.tiny)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 
     // MARK: - 创建页面
@@ -201,8 +303,8 @@ struct CreatePageView: View {
             .filter { !$0.isEmpty }
 
         var relatedSection = ""
-        if !relatedLinks.isEmpty {
-            let links = relatedLinks.split(separator: ",")
+        if !relatedItems.isEmpty {
+            let links = relatedItems.split(separator: ",")
                 .map { $0.trimmingCharacters(in: .whitespaces) }
                 .filter { !$0.isEmpty }
             if !links.isEmpty {
@@ -210,8 +312,17 @@ struct CreatePageView: View {
             }
         }
 
+        var compareHeader = ""
+        if type == .comparison {
+            let a = compareItemA.trimmingCharacters(in: .whitespaces)
+            let b = compareItemB.trimmingCharacters(in: .whitespaces)
+            if !a.isEmpty || !b.isEmpty {
+                compareHeader = "## \(a) vs \(b)\n\n"
+            }
+        }
+
         let content = """
-        \(definition)
+        \(compareHeader)\(summary)
 
         \(bodyContent)
         \(relatedSection)
@@ -224,63 +335,10 @@ struct CreatePageView: View {
                 content: content,
                 tags: tagList
             )
-
             await MainActor.run {
                 router.navigateToPage(id: page.id)
                 dismiss()
             }
         }
-    }
-
-    // MARK: - 引导式模板
-
-    private func applyEntityTemplate() {
-        type = .entity
-        bodySectionTitle = L10n.Creation.template.entity.overview
-            .replacingOccurrences(of: "## ", with: "")
-            .replacingOccurrences(of: "\n", with: "")
-        if definition.isEmpty { definition = "" }
-    }
-
-    private func applyConceptTemplate() {
-        type = .concept
-        bodySectionTitle = L10n.Creation.template.concept.definition
-            .replacingOccurrences(of: "## ", with: "")
-            .replacingOccurrences(of: "\n", with: "")
-        if definition.isEmpty { definition = "" }
-    }
-
-    private func applyComparisonTemplate() {
-        type = .comparison
-        bodySectionTitle = L10n.Creation.template.comparison.desc
-    }
-
-    // MARK: - 模板卡片
-
-    private func templateCard(icon: String, title: String, description: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: DesignSystem.medium) {
-                Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(.appAccent)
-                    .frame(width: DesignSystem.iconLarge)
-                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                    Text(title)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.appText)
-                    Text(description)
-                        .font(.caption)
-                        .foregroundStyle(.appSecondary)
-                        .lineLimit(2)
-                }
-                Spacer()
-                Image(systemName: DesignSystem.Icons.forward)
-                    .font(.caption)
-                    .foregroundStyle(.appSecondary.opacity(0.4))
-            }
-            .padding(.vertical, DesignSystem.tiny)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 }
