@@ -349,13 +349,6 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.resetData, systemImage: "trash.fill")
             }
-            .confirmationDialog(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
-                Button(L10n.Settings.clearAll.action, role: .destructive) {
-                    store.clearAllDeveloperData()
-                }
-            } message: {
-                Text(L10n.Settings.resetOnboarding.message)
-            }
         } header: {
             Text(L10n.Settings.Section.data)
         }
@@ -396,6 +389,14 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.Section.about, systemImage: "info.circle")
             }
+        }
+        .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
+            Button(L10n.Settings.clearAll.action, role: .destructive) {
+                store.clearAllDeveloperData()
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        } message: {
+            Text(L10n.Settings.resetOnboarding.message)
         }
     }
 }
