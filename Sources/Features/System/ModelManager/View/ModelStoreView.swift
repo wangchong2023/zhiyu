@@ -72,6 +72,9 @@ public struct ModelStoreView: View {
                     }
                     .padding(DesignSystem.medium)
                 }
+                .task {
+                    await modelManager.reload()
+                }
                 .refreshable {
                     await modelManager.reload()
                 }
