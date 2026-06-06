@@ -146,7 +146,7 @@ struct PluginCenterView: View {
                     NavigationLink {
                         LocalPluginDetailView(manifest: plugin.manifest)
                     } label: {
-                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, pluginID: plugin.manifest.id, isLocal: true)
+                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, pluginID: plugin.manifest.id, source: "local", isLocal: true)
                     }
                 }
                 .padding(.horizontal)
@@ -172,7 +172,7 @@ struct PluginCenterView: View {
                 } else {
                     ForEach(filtered) { p in
                         NavigationLink(destination: PluginDetailView(plugin: p, marketService: marketService)) {
-                            PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon)
+                            PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon, source: "community")
                         }
                     }
                     .padding(.horizontal)
@@ -201,7 +201,8 @@ struct PluginCard: View {
     var downloads: String? = nil
     var rating: Double? = nil
     var icon: String = "puzzlepiece.fill"
-    var pluginID: String? = nil  // 已安装插件的 ID，用于显示本地图标
+    var pluginID: String? = nil
+    var source: String? = nil    // "local" / "remote" / "community"
     var isLocal: Bool = false
 
     @State private var localIcon: UIImage?
@@ -227,6 +228,13 @@ struct PluginCard: View {
                 Text(name).font(.subheadline.bold()).foregroundStyle(.appText)
                 HStack(spacing: DesignSystem.tightPadding) {
                     Text("v\(version)").font(.caption2).foregroundStyle(.appSecondary)
+                    // 来源标签
+                    if let src = source {
+                        Text(sourceLabel(src)).font(.system(size: DesignSystem.microFontSize, weight: .medium))
+                            .padding(.horizontal, DesignSystem.tiny).padding(.vertical, DesignSystem.atomic)
+                            .background(sourceColor(src).opacity(0.12)).clipShape(Capsule())
+                            .foregroundStyle(sourceColor(src))
+                    }
                     if let author = author {
                         Text(DesignSystem.Icons.bullet).font(.caption2).foregroundStyle(.appSecondary)
                         Text(author).font(.caption2).foregroundStyle(.appSecondary)
@@ -250,10 +258,27 @@ struct PluginCard: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius))
         .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius).stroke(Color.white.opacity(DesignSystem.glassOpacity / 3), lineWidth: DesignSystem.borderWidth))
         .task {
-            // 已安装插件尝试加载本地图标
             if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
             }
+        }
+    }
+
+    private func sourceLabel(_ src: String) -> String {
+        switch src {
+        case "local": return L10n.Plugin.Detail.categoryLocal
+        case "remote": return L10n.Plugin.Detail.categoryRemote
+        case "community": return L10n.Plugin.Detail.categoryCommunity
+        default: return src
+        }
+    }
+
+    private func sourceColor(_ src: String) -> Color {
+        switch src {
+        case "local": return .green
+        case "remote": return .blue
+        case "community": return .orange
+        default: return .appSecondary
         }
     }
 }

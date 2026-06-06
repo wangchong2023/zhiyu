@@ -28,6 +28,8 @@ struct MarketPlugin: Codable, Identifiable {
     let reviewCount: Int?
     /// 插件分类
     let category: String?
+    /// 来源类型：remote / local / community
+    let source: String?
 
     let names: [String: String]
     let descriptions: [String: String]
