@@ -17,7 +17,6 @@ struct PluginDetailView: View {
     @ObservedObject var marketService: PluginMarketService
 
     @Environment(\.dismiss) var dismiss
-    @State private var showPermissionSheet = false
     @State private var isInstalling = false
     @State private var localIcon: UIImage?
     @State private var localReadme: String?
@@ -70,16 +69,6 @@ struct PluginDetailView: View {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
             }
             localReadme = PluginRegistry.shared.localizedReadme(for: plugin.id)
-        }
-        .sheet(isPresented: $showPermissionSheet) {
-            PermissionConfirmationSheet(plugin: plugin) {
-                Task {
-                    showPermissionSheet = false
-                    isInstalling = true
-                    _ = await marketService.downloadPlugin(plugin)
-                    isInstalling = false
-                }
-            }
         }
         .appNavigationBarTitleDisplayMode(.inline)
     }
@@ -179,27 +168,31 @@ struct PluginDetailView: View {
     // MARK: - 操作按钮
 
     private var actionButtons: some View {
-        HStack(spacing: DesignSystem.medium) {
+        HStack(spacing: DesignSystem.small) {
             // 安装 / 卸载
             Button(action: {
                 if isInstalled {
                     PluginRegistry.shared.unloadPlugin(id: plugin.id)
                     HapticFeedback.shared.trigger(.success)
                 } else {
-                    showPermissionSheet = true
+                    HapticFeedback.shared.trigger(.selection)
+                    isInstalling = true
+                    Task {
+                        _ = await marketService.downloadPlugin(plugin)
+                        isInstalling = false
+                    }
                 }
             }) {
-                HStack {
+                HStack(spacing: DesignSystem.tiny) {
                     if isInstalling || marketService.downloadingPluginID == plugin.id {
-                        ProgressView().tint(.white).padding(.trailing, DesignSystem.small)
+                        ProgressView().scaleEffect(DesignSystem.iconSmall / DesignSystem.largeIconSize)
+                    } else {
+                        Image(systemName: isInstalled ? "trash" : "icloud.and.arrow.down")
                     }
-                    Label(
-                        isInstalled ? L10n.Plugin.Action.uninstall : L10n.Plugin.Action.install,
-                        systemImage: isInstalled ? "trash" : "icloud.and.arrow.down"
-                    )
+                    Text(isInstalled ? L10n.Plugin.Action.uninstall : L10n.Plugin.Action.install)
+                        .fontWeight(.medium)
                 }
-                .font(.headline)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, DesignSystem.standardPadding)
                 .padding(.vertical, DesignSystem.small)
             }
             .buttonStyle(.borderedProminent)
@@ -207,9 +200,8 @@ struct PluginDetailView: View {
             .disabled(isInstalling || marketService.downloadingPluginID == plugin.id)
 
             // 分享
-            Button(action: {}) {
+            ShareLink(item: "\(plugin.name) — v\(plugin.version)\n\(plugin.description)") {
                 Image(systemName: "square.and.arrow.up")
-                    .padding(DesignSystem.small)
             }
             .buttonStyle(.bordered)
         }
@@ -305,20 +297,9 @@ struct PluginDetailView: View {
                 .font(.headline)
                 .foregroundStyle(.appText)
 
-            // 已安装插件优先展示已缓存的本地化 README，否则使用 JSON description
-            if let readme = localReadme {
-                Text(readme)
-                    .font(.body)
-                    .foregroundStyle(.appText)
-                    .lineSpacing(DesignSystem.medium)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                Text(plugin.description)
-                    .font(.body)
-                    .foregroundStyle(.appText)
-                    .lineSpacing(DesignSystem.medium)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            // 使用统一的 MarkdownRendererView 渲染 README
+            let content = localReadme ?? plugin.description
+            MarkdownRendererView(content: content, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
         }
     }
 
