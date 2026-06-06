@@ -82,6 +82,15 @@ final class LLMChatService: Sendable {
         let safeBody = SendableBody(dict: requestBody)
         let (stream, continuation) = AsyncThrowingStream<String, Error>.makeStream()
         
+        // 诊断日志：记录发送给模型的消息概览
+        if let logger {
+            let msgCount = (requestBody["messages"] as? [[String: Any]])?.count ?? 0
+            let sysPreview = String(systemPrompt.prefix(300))
+            logger.debug("[LLMChat] 发送流式请求 — \(msgCount) 条消息, model=\(model)")
+            logger.debug("[LLMChat] SystemPrompt(前300): \(sysPreview)")
+            logger.debug("[LLMChat] Query: \(String(query.prefix(200)))")
+        }
+
         let task = Task {
             do {
                 let bytes = try await localClient.sendStreamingRequest(body: safeBody.dict)

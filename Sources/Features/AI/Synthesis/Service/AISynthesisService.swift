@@ -169,14 +169,19 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(PromptService.shared.insightQuestionsPrompt)
         \(PromptService.shared.languageInstruction)
 
-        
+
         1.  JSON : ["1", "2", "3"]
 
-        
+
         \(pageSummaries)
         """
 
+        // 诊断日志：记录发送给模型的完整 prompt
+        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
+        logger.debug("[InsightQuestions] Prompt(前500): \(String(prompt.prefix(500)))")
+
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
+        logger.debug("[InsightQuestions] 原始响应(前300): \(String(result.prefix(300)))")
         return LLMUtils.parseJSONArray(result)
     }
 
