@@ -17,6 +17,7 @@ struct LocalPluginDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var showUninstallConfirm = false
+    @State private var localIcon: UIImage?
 
     private var isInstalled: Bool {
         PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == manifest.id })
@@ -28,14 +29,21 @@ struct LocalPluginDetailView: View {
 
                 // MARK: - 头部
                 HStack(spacing: DesignSystem.wide) {
-                    Image(systemName: "puzzlepiece.extension.fill")
-                        .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
-                        .foregroundStyle(.white)
-                        .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
-                        .background(
-                            LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
-                                           startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
+                    // 优先显示本地 icon.png，fallback SF Symbol
+                    if let image = localIcon {
+                        Image(uiImage: image).resizable().scaledToFit()
+                            .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
+                    } else {
+                        Image(systemName: "puzzlepiece.extension.fill")
+                            .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
+                            .foregroundStyle(.white)
+                            .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
+                            .background(
+                                LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
+                    }
 
                     VStack(alignment: .leading, spacing: DesignSystem.small) {
                         Text(manifest.name)
@@ -111,6 +119,7 @@ struct LocalPluginDetailView: View {
             .padding()
         }
         .background(PageBackgroundView(accentColor: .appAccent))
+        .task { if let url = PluginRegistry.shared.iconURL(for: manifest.id), let d = try? Data(contentsOf: url) { localIcon = UIImage(data: d) } }
         .navigationTitle(manifest.name)
         .appNavigationBarTitleDisplayMode(.inline)
     }

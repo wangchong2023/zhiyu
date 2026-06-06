@@ -874,13 +874,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cannot connect to Plugin Market. Please ensure the mock server is running."
+            "value": "Cannot connect to Plugin Market. Ensure Mock server is running."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "无法连接至插件市场 (影子服务器)，请确保已启动 python3 -m http.server 8000"
+            "value": "无法连接插件市场，请确保 Mock 服务器已启动（python3 Tools/mock_plugin_market.py）"
           }
         }
       }
