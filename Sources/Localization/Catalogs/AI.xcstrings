@@ -1112,13 +1112,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deep exploration: %@"
+            "value": "Explore: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "总体探索: %@"
+            "value": "探索：%@"
           }
         }
       }
@@ -1163,13 +1163,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exploration & Prompts"
+            "value": "Prompts"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "总体探索与快捷指令"
+            "value": "提示词"
           }
         }
       }
@@ -5266,7 +5266,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "新增快捷指令"
+            "value": "新增指令"
           }
         }
       }
@@ -5277,13 +5277,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enter shortcut command..."
+            "value": "Enter shortcut…"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "输入快捷指令..."
+            "value": "输入指令…"
           }
         }
       }
@@ -5294,13 +5294,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The Prompt Settings is your laboratory for tuning AI logic. You can modify underlying 'System Prompts' to change AI generation depth and style, or pin your own frequent shortcuts."
+            "value": "Customize AI core logic, modify system prompts to control generation depth and style, and manage personal shortcuts."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "在这里，您可以深度定制 AI 的核心处理逻辑。通过修改底层“系统指令”，精准掌控生成内容的深度与风格，并管理您的个性化快捷指令。"
+            "value": "定制 AI 的核心处理逻辑，修改系统指令来掌控生成内容的深度与风格，管理个性化快捷指令。"
           }
         }
       }
@@ -5345,13 +5345,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pinned: Quick Actions"
+            "value": "Pinned Shortcuts"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "置顶：一键快捷指令"
+            "value": "置顶指令"
           }
         }
       }

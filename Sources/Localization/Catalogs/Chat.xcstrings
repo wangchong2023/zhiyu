@@ -160,13 +160,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deep explore: %@"
+            "value": "Explore: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "深度探索：%@"
+            "value": "探索：%@"
           }
         }
       }
