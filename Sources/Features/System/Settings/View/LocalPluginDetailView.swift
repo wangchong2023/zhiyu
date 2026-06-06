@@ -18,6 +18,7 @@ struct LocalPluginDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showUninstallConfirm = false
     @State private var localIcon: UIImage?
+    @State private var localReadme: String?
 
     private var isInstalled: Bool {
         PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == manifest.id })
@@ -113,13 +114,16 @@ struct LocalPluginDetailView: View {
                 // MARK: - 描述
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     Text(L10n.Plugin.section.about).font(.headline).foregroundStyle(.appText)
-                    Text(manifest.description).font(.body).foregroundStyle(.appText).lineSpacing(6)
+                    MarkdownRendererView(content: localReadme ?? manifest.description, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
                 }
             }
             .padding()
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .task { if let url = PluginRegistry.shared.iconURL(for: manifest.id), let d = try? Data(contentsOf: url) { localIcon = UIImage(data: d) } }
+        .task {
+            if let url = PluginRegistry.shared.iconURL(for: manifest.id), let d = try? Data(contentsOf: url) { localIcon = UIImage(data: d) }
+            localReadme = PluginRegistry.shared.localizedReadme(for: manifest.id)
+        }
         .navigationTitle(manifest.name)
         .appNavigationBarTitleDisplayMode(.inline)
     }
