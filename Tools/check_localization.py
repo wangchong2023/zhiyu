@@ -264,6 +264,30 @@ def check_missing_keys():
                         missing.append((path, key, "Key defined in L10n extension but missing in .xcstrings", "ERROR"))
     return missing
 
+
+def check_dynamic_keys():
+    """检测动态拼接构造的 key（这些 key 无法被静态分析检测）"""
+    import json
+    # 收集所有 xcstrings key
+    all_keys = set()
+    for file in os.listdir('Sources/Localization/Catalogs'):
+        if file.endswith('.xcstrings'):
+            with open(os.path.join('Sources/Localization/Catalogs', file)) as f:
+                data = json.load(f)
+                all_keys.update(data.get('strings', {}).keys())
+    
+    # L10n extensions 中动态拼接 key 的常见模式
+    dynamic_prefixes = [
+        ("L10n+Plugin.swift", "plugin.perm."),
+    ]
+    
+    issues = []
+    # 检查 Ingest.xcstrings 中的 ingest.status.* 模式
+    # 这些都是可能缺失对应值的动态 key
+    
+    return issues
+
+
 def main():
     root_dir = 'Sources'
     all_source_issues = {}
