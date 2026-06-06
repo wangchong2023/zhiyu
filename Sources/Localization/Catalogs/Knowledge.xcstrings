@@ -3553,6 +3553,159 @@
           }
         }
       }
+    },
+    "creation.template.entity.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一句话说清楚它是什么——定义、背景、核心特征。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe what it is in one sentence — definition, background, key traits."
+          }
+        }
+      }
+    },
+    "creation.template.entity.overview": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "## 核心贡献与影响\n"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "## Core Contributions\n"
+          }
+        }
+      }
+    },
+    "creation.template.entity.overviewHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它带来了哪些改变？解决了什么重要问题？每行一个要点。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What changes did it bring? What problems did it solve? One per line."
+          }
+        }
+      }
+    },
+    "creation.template.concept.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "简要说明它是什么、核心原理是什么。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefly explain what it is and its core principles."
+          }
+        }
+      }
+    },
+    "creation.template.concept.definition": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "## 分析与洞察\n"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "## Analysis & Insights\n"
+          }
+        }
+      }
+    },
+    "creation.template.concept.analysisHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "它为什么重要？优势和局限是什么？适用什么场景？"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why is it important? Strengths, limitations, use cases."
+          }
+        }
+      }
+    },
+    "creation.template.comparison.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对比两个事物的异同——选好维度，逐项分析。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare two things — pick dimensions, analyze each."
+          }
+        }
+      }
+    },
+    "creation.template.comparison.table": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "| 维度 | A | B |\n|------|---|---|\n| | | |\n| | | |\n"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "| Dimension | A | B |\n|------|---|---|\n| | | |\n| | | |\n"
+          }
+        }
+      }
+    },
+    "creation.template.comparison.conclusionHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基于以上对比，总结各自适用场景与选择建议。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summarize use cases and selection advice based on the comparison."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

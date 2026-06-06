@@ -61,10 +61,10 @@ struct CreatePageView: View {
                 Section {
                     #if os(watchOS)
                     TextField("", text: $content, axis: .vertical)
-                        .font(.system(.body, design: .monospaced))
+                        .font(.body)
                     #else
                     TextEditor(text: $content)
-                        .font(.system(.body, design: .monospaced))
+                        .font(.body)
                         .frame(minHeight: 150)
                     #endif
                 } header: {
@@ -79,14 +79,25 @@ struct CreatePageView: View {
                 
                 // Quick templates
                 Section {
-                    Button(action: applyEntityTemplate) {
-                        Label(L10n.Creation.entityTemplate, systemImage: DesignSystem.Icons.entity)
-                    }
-                    Button(action: applyConceptTemplate) {
-                        Label(L10n.Creation.conceptTemplate, systemImage: DesignSystem.Icons.concept)
-                    }
-                    Button(action: applyComparisonTemplate) {
-                        Label(L10n.Creation.comparisonTemplate, systemImage: DesignSystem.Icons.comparison)
+                    VStack(spacing: DesignSystem.small) {
+                        templateCard(
+                            icon: DesignSystem.Icons.entity,
+                            title: L10n.Creation.entityTemplate,
+                            description: L10n.Creation.template.entity.desc,
+                            action: applyEntityTemplate
+                        )
+                        templateCard(
+                            icon: DesignSystem.Icons.concept,
+                            title: L10n.Creation.conceptTemplate,
+                            description: L10n.Creation.template.concept.desc,
+                            action: applyConceptTemplate
+                        )
+                        templateCard(
+                            icon: DesignSystem.Icons.comparison,
+                            title: L10n.Creation.comparisonTemplate,
+                            description: L10n.Creation.template.comparison.desc,
+                            action: applyComparisonTemplate
+                        )
                     }
                 } header: {
                     Text(L10n.Creation.quickTemplates)
@@ -134,52 +145,62 @@ struct CreatePageView: View {
         }
     }
     
-    private var entityTemplateContent: String {
-        """
-        # \(title)
-        
-        \(L10n.Creation.template.entity.overview)
-        \(L10n.Creation.template.entity.overviewPlaceholder)
-        
-        \(L10n.Creation.template.entity.contributions)
-        \(L10n.Creation.template.entity.contributionsPlaceholder)
-        
-        \(L10n.Creation.template.entity.related)
-        \(L10n.Creation.template.entity.relatedPlaceholder)
-        
-        """
-    }
-    
+    // MARK: - 引导式模板
+
     private func applyEntityTemplate() {
-        content = entityTemplateContent
-    }
-    
-    private func applyConceptTemplate() {
+        type = .entity
         content = """
-        # \(title)
+        \(L10n.Creation.template.entity.overview)
+        \(L10n.Creation.template.entity.overviewHint)
 
+        """
+    }
+
+    private func applyConceptTemplate() {
+        type = .concept
+        content = """
         \(L10n.Creation.template.concept.definition)
-        \(L10n.Creation.template.concept.definitionPlaceholder)
-
-        \(L10n.Creation.template.concept.analysis)
-        \(L10n.Creation.template.concept.analysisPlaceholder)
-
-        \(L10n.Creation.template.concept.links)
-        \(L10n.Creation.template.concept.linksPlaceholder)
+        \(L10n.Creation.template.concept.analysisHint)
 
         """
     }
 
     private func applyComparisonTemplate() {
+        type = .comparison
         content = """
-        # \(title) \(L10n.Creation.template.comparison.suffix)
+        \(L10n.Creation.template.comparison.table)
 
-        \(L10n.Creation.template.comparison.dimensions)
-        \(L10n.Creation.template.comparison.dimensionsPlaceholder)
-
-        \(L10n.Creation.template.comparison.conclusion)
-        \(L10n.Creation.template.comparison.conclusionPlaceholder)
+        \(L10n.Creation.template.comparison.conclusionHint)
 
         """
+    }
+
+    // MARK: - 模板卡片
+
+    private func templateCard(icon: String, title: String, description: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: DesignSystem.medium) {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(.appAccent)
+                    .frame(width: DesignSystem.iconLarge)
+                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.appText)
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: DesignSystem.Icons.forward)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary.opacity(0.4))
+            }
+            .padding(.vertical, DesignSystem.tiny)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
