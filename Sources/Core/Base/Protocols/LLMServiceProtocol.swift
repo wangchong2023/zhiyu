@@ -159,3 +159,11 @@ protocol LLMServiceProtocol: ObservableObject, LLMChatServiceProtocol, LLMKnowle
     var autoRefactor: Bool { get set }
 }
 
+// MARK: - LLMChatServiceProtocol 默认参数
+
+extension LLMChatServiceProtocol {
+    /// generate() 的 maxTokens 默认值，所有调用方无需显式传参
+    func generate(prompt: String, systemPrompt: String) async throws -> String {
+        try await generate(prompt: prompt, systemPrompt: systemPrompt, maxTokens: BusinessConstants.AI.maxOutputTokens)
+    }
+}

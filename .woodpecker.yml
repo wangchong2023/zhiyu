@@ -30,6 +30,8 @@ steps:
       - echo "===> Running Static Analysis..."
       - ./env/venv/bin/python3 Tools/check_domain_purity.py
       - bash Tools/lint_layer_markers.sh
+      - echo "===> Scanning unsafe String.Index offsetBy: calls..."
+      - ./env/venv/bin/python3 Tools/scan_unsafe_string_index.py
 
   generate-project:
     image: bash
