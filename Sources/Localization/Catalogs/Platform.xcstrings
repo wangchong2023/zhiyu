@@ -289,6 +289,40 @@
           }
         }
       }
+    },
+    "pagesCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages Count"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "页面数量"
+          }
+        }
+      }
+    },
+    "watch.briefing.promptTemplate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Based on the recently entered notes, generate a short, colloquial, and voice-broadcast-friendly daily knowledge briefing. Requirements: Remove all Markdown marks, use natural language transitions, and sound like a knowledge steward talking to me. Content:\n%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据以下最近录入的笔记，生成一段简短、口语化、适合用语音播报的每日知识简报。\n要求：去除所有 Markdown 标记，使用自然语言的转折词，像一位知识管家在对我说话。\n内容：\n%@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
