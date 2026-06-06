@@ -110,7 +110,7 @@ extension L10n {
             public static var tasks: String { ModelManager.tr("model_manager.spec.tasks") }
         }
 
-        // MARK: - 参数优化
+        // MARK: - 参数调节
 
         public enum Parameters {
             public static var temperature: String {
@@ -140,6 +140,8 @@ extension L10n {
             public static var presetPrecise: String {
                 ModelManager.tr("model_manager.params.preset.precise")
             }
+
+            public static var custom: String { ModelManager.tr("model_manager.params.custom") }
 
             public static var resetToDefaults: String {
                 ModelManager.tr("model_manager.params.reset_to_defaults")

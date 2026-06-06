@@ -183,7 +183,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "参数优化"
+            "value": "参数调节"
           }
         }
       }
@@ -1969,6 +1969,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "可用模型"
+          }
+        }
+      }
+    },
+    "model_manager.params.custom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义"
           }
         }
       }

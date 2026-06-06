@@ -6,12 +6,12 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L3] 表现层
-//  核心职责：推理参数优化视图，修改即生效，提供温度、Top-P、Top-K、Max Tokens 等参数的可视化调节界面。
+//  核心职责：推理参数调节视图，修改即生效，提供温度、Top-P、Top-K、Max Tokens 等参数的可视化调节界面。
 //
 
 import SwiftUI
 
-/// 推理参数优化视图
+/// 推理参数调节视图
 @MainActor
 public struct InferenceParametersView: View {
 
@@ -172,7 +172,7 @@ public struct InferenceParametersView: View {
         }
     }
 
-    /// 预设模板选择器
+    /// 预设模板选择器（预设锁定 + 自定义按钮）
     private var presetSelector: some View {
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             Text(L10n.ModelManager.Parameters.presetTemplate)
@@ -183,6 +183,8 @@ public struct InferenceParametersView: View {
                 ForEach(ParameterPreset.allCases, id: \.self) { preset in
                     presetButton(for: preset)
                 }
+                // "自定义"按钮 — 解锁参数编辑
+                customButton
             }
         }
         .padding()
@@ -190,11 +192,34 @@ public struct InferenceParametersView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
+    /// 自定义模式按钮
+    private var customButton: some View {
+        let isCustom = matchedPreset == nil
+        return Button(action: {
+            if let preset = matchedPreset {
+                // 从已锁定预设进入自定义：微调后 matchedPreset 自动变 nil
+                temperature = preset.parameters.temperature + 0.01
+            }
+        }) {
+            VStack(spacing: DesignSystem.tiny) {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.title3)
+                Text(L10n.ModelManager.Parameters.custom)
+                    .font(.caption.weight(.medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSystem.small)
+            .background(isCustom ? Color.appAccent : Color.appBackground)
+            .foregroundStyle(isCustom ? .white : .appText)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        }
+        .buttonStyle(.plain)
+        .disabled(isCustom) // 已在自定义模式时禁用
+    }
+
     /// 预设按钮
     private func presetButton(for preset: ParameterPreset) -> some View {
-        Button(action: {
-            applyPreset(preset)
-        }) {
+        Button(action: { applyPreset(preset) }) {
             VStack(spacing: DesignSystem.tiny) {
                 Image(systemName: preset.icon)
                     .font(.title3)
@@ -203,16 +228,15 @@ public struct InferenceParametersView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignSystem.small)
-            .background(
-                matchedPreset == preset ? Color.appAccent : Color.appBackground
-            )
-            .foregroundStyle(
-                matchedPreset == preset ? .white : .appText
-            )
+            .background(matchedPreset == preset ? Color.appAccent : Color.appBackground)
+            .foregroundStyle(matchedPreset == preset ? .white : .appText)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
         .buttonStyle(.plain)
     }
+
+    /// 是否可编辑参数（仅自定义模式）
+    private var isCustomMode: Bool { matchedPreset == nil }
 
     /// 参数滑块（Double 类型）
     private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
@@ -230,6 +254,7 @@ public struct InferenceParametersView: View {
 
             Slider(value: value, in: range)
                 .tint(.appAccent)
+                .disabled(!isCustomMode)
 
             HStack {
                 Text(String(format: "%.1f", range.lowerBound))
@@ -278,6 +303,7 @@ public struct InferenceParametersView: View {
                 set: { value.wrappedValue = Int($0) }
             ), in: Double(range.lowerBound)...Double(range.upperBound), step: 1.0)
                 .tint(.appAccent)
+                .disabled(!isCustomMode)
 
             HStack {
                 Text("\(range.lowerBound)")

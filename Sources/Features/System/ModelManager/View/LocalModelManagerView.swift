@@ -25,7 +25,7 @@ public struct LocalModelManagerView: View {
     // MARK: - 状态管理
 
     /// 当前选中的 Tab 索引
-    /// 0: 模型商店, 1: 参数优化
+    /// 0: 模型商店, 1: 参数调节
     @State private var selectedTab: Tab = .store
 
     // MARK: - Tab 枚举
