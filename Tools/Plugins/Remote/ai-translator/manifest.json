@@ -21,5 +21,28 @@
   "readmeFiles": {
     "en": "README.md",
     "zh-Hans": "README.zh-Hans.md"
+  },
+  "category": "community",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string",
+        "description": "Source text"
+      },
+      "targetLang": {
+        "type": "string",
+        "description": "Target language code (en/zh/ja/ko)"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "translation": {
+        "type": "string",
+        "description": "Translated text"
+      }
+    }
   }
 }

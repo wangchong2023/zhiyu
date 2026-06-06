@@ -23,5 +23,32 @@
   "readmeFiles": {
     "en": "README.md",
     "zh-Hans": "README.zh-Hans.md"
+  },
+  "category": "community",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "URL to fetch preview for"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Page title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Meta description"
+      },
+      "image": {
+        "type": "string",
+        "description": "OG image URL"
+      }
+    }
   }
 }

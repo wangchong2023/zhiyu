@@ -19,5 +19,32 @@
   "readmeFiles": {
     "en": "README.md",
     "zh-Hans": "README.zh-Hans.md"
+  },
+  "category": "built-in",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "Markdown document content"
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "words": {
+        "type": "integer",
+        "description": "Word count"
+      },
+      "characters": {
+        "type": "integer",
+        "description": "Character count"
+      },
+      "paragraphs": {
+        "type": "integer",
+        "description": "Paragraph count"
+      }
+    }
   }
 }
