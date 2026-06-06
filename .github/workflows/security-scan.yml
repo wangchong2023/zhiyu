@@ -1,0 +1,41 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * 1'  # 每周一凌晨 2 点
+
+jobs:
+  security-audit:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Security Scan
+        run: |
+          echo "🔍 Running hardcoded secrets check..."
+          python3 Tools/check_hardcoded_secrets.py
+          
+      - name: Run Localization Check
+        run: |
+          echo "🔍 Running localization check..."
+          python3 Tools/check_localization.py
+          
+      - name: Build Verification
+        run: |
+          echo "🔨 Verifying build..."
+          xcodebuild build \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYu \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build.log
+          if grep -q "BUILD FAILED" build.log; then
+            echo "❌ Build failed!"
+            exit 1
+          fi
+          echo "✅ Build succeeded"
