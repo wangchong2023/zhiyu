@@ -313,7 +313,7 @@ struct ChatViewContent: View {
 .appNavigationBarTitleDisplayMode(.inline)
                         .toolbar { ToolbarItem(placement: .automatic) { Button(L10n.Common.close) { coordinator.showPrompts = false } } }
                 }
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
             }
         }
     }
