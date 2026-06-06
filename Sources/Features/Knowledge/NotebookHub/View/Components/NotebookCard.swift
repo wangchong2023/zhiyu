@@ -61,9 +61,9 @@ struct NotebookCard: View {
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.secondary.opacity(0.6))
             }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.top, DesignSystem.medium)
-            .padding(.bottom, DesignSystem.standardPadding) // 增加底部内边距，使上次编辑文字位置上移，提升呼吸感与均衡度
+            .padding(.horizontal, DesignSystem.small)
+            .padding(.top, DesignSystem.small)
+            .padding(.bottom, DesignSystem.small) // 统一收紧内边距，减少卡片内部白边
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 180)
             .background(Color.appCard)
