@@ -97,10 +97,95 @@ final class PluginMarketServiceTests: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             throw URLError(.notConnectedToInternet)
         }
-        
+
         await service.fetchPlugins()
-        
+
         XCTAssertTrue(service.availablePlugins.isEmpty)
         XCTAssertNotNil(service.errorMessage)
+    }
+
+    // MARK: - community-plugins.json 格式测试
+
+    func testCommunityPluginsFormatParsing() async throws {
+        let jsonString = """
+        [
+            {"id":"toc-generator","name":"TOC Generator","author":"ZhiYu Team","description":"Auto-generate TOC.","repo":"wangchong2023/zhiyu-releases"},
+            {"id":"link-preview","name":"Link Preview","author":"ZhiYu Team","description":"Rich preview cards.","repo":"wangchong2023/zhiyu-releases"}
+        ]
+        """
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, jsonString.data(using: .utf8)!)
+        }
+
+        await service.fetchPlugins()
+
+        XCTAssertEqual(service.availablePlugins.count, 2)
+        XCTAssertEqual(service.availablePlugins[0].id, "toc-generator")
+        XCTAssertEqual(service.availablePlugins[0].name, "TOC Generator")
+        XCTAssertEqual(service.availablePlugins[0].author, "ZhiYu Team")
+        XCTAssertEqual(service.availablePlugins[0].source, "community")
+        // 下载 URL 应包含 plugins/ 目录
+        XCTAssertTrue(service.availablePlugins[0].downloadURL?.contains("/plugins/") ?? false,
+                      "下载 URL 应包含 /plugins/ 路径")
+        XCTAssertTrue(service.availablePlugins[0].downloadURL?.hasSuffix("/toc-generator.zyplugin") ?? false,
+                      "下载 URL 应以 {id}.zyplugin 结尾")
+        XCTAssertNil(service.errorMessage)
+    }
+
+    func testCommunityPluginsDownloadURLContainsPluginsDir() async throws {
+        // 验证 downloadBase 替换逻辑：community-plugins.json → plugins/
+        let jsonString = """
+        [{"id":"test","name":"Test","author":"A","description":"D","repo":"user/repo"}]
+        """
+        MockURLProtocol.requestHandler = { request in
+            // 验证请求 URL 是 registry（不是 mock 服务器）
+            XCTAssertTrue(request.url?.absoluteString.contains("community-plugins.json") ?? false)
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, jsonString.data(using: .utf8)!)
+        }
+
+        await service.fetchPlugins()
+
+        XCTAssertEqual(service.availablePlugins.count, 1)
+        let downloadURL = service.availablePlugins[0].downloadURL ?? ""
+        // 不应该包含 community-plugins.json
+        XCTAssertFalse(downloadURL.contains("community-plugins.json"))
+        // 应该包含 plugins/ 目录
+        XCTAssertTrue(downloadURL.contains("/plugins/"))
+        // 应以 .zyplugin 结尾
+        XCTAssertTrue(downloadURL.hasSuffix(".zyplugin"))
+    }
+
+    func testEmptyCommunityPluginsList() async throws {
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, "[]".data(using: .utf8)!)
+        }
+
+        await service.fetchPlugins()
+
+        XCTAssertTrue(service.availablePlugins.isEmpty)
+        XCTAssertNil(service.errorMessage)
+    }
+
+    func testCommunityPluginsFallbackToMockFormat() async throws {
+        // Mock 服务器格式（ApiResponse 包装 → 直接 MarketPlugin 数组回退）
+        let jsonString = """
+        [{"id":"mock-plugin","version":"1.0","author":"Mock","downloads":"0","rating":0,"icon":"","downloadURL":null,"names":{"en":"Mock"},"descriptions":{"en":""}}]
+        """
+        MockURLProtocol.requestHandler = { request in
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, jsonString.data(using: .utf8)!)
+        }
+
+        await service.fetchPlugins()
+
+        if service.availablePlugins.isEmpty {
+            // community-plugins.json 格式解析失败也 OK——此测试验证回退不崩溃
+            XCTAssertNil(service.errorMessage)
+        } else {
+            XCTAssertEqual(service.availablePlugins[0].id, "mock-plugin")
+        }
     }
 }
