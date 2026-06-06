@@ -33,11 +33,18 @@ struct GraphContainerView: View {
 
     var body: some View {
         // 强制 @Observable 追踪：确保 store.pages 变更时触发重绘
-        let _ = store.pages.count
         ZStack {
+            // 始终捕获画布尺寸，避免鸡-蛋死锁：
+            // nodes 为空 → 不渲染 GraphCanvasView → GeometryReader 不触发
+            // → graphSize=.zero → layoutGraph() 守卫失败 → nodes 永远为空
+            GeometryReader { geometry in
+                Color.clear
+                    .onAppear { viewModel.graphSize = geometry.size }
+                    .onChange(of: geometry.size) { _, newSize in viewModel.graphSize = newSize }
+            }
             themeManager.pageBackground()
                 .ignoresSafeArea()
-            
+
             if viewModel.nodes.isEmpty {
                 GraphEmptyStateView(selectedTab: $selectedTab)
             } else {
@@ -96,7 +103,6 @@ struct GraphContainerView: View {
             }
         }
         .onReceive(AppEventBus.shared.subscribe()) { event in
-            guard viewModel.graphSize != .zero else { return }
             switch event {
             case .pagesCleared, .graphRelayoutRequested:
                 layoutGraph()
@@ -105,12 +111,7 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .onChange(of: store.pages) { _, newPages in
-            guard viewModel.graphSize != .zero else { return }
-            layoutGraph()
-        }
-        .task(id: viewModel.graphSize) {
-            guard viewModel.graphSize != .zero else { return }
+        .task {
             layoutGraph()
         }
         .sheet(isPresented: $viewModel.showInsights) { insightsPanel }
