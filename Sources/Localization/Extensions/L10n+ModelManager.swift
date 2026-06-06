@@ -339,6 +339,15 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.cloud_escalation")
             }
 
+            public static var modelStrategy: String {
+                ModelManager.tr("model_manager.routing.modelStrategy")
+            }
+
+            public static var runtimeStatus: String {
+                ModelManager.tr("model_manager.routing.runtimeStatus")
+            }
+
+
             public static var cloudModel: String {
                 ModelManager.tr("model_manager.routing.cloud_model")
             }

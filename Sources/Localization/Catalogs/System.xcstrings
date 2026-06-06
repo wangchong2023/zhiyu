@@ -5022,13 +5022,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Smart Routing"
+            "value": "Model Strategy"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智能路由"
+            "value": "大模型策略"
           }
         }
       }
