@@ -146,7 +146,7 @@ struct PluginCenterView: View {
                     NavigationLink {
                         LocalPluginDetailView(manifest: plugin.manifest)
                     } label: {
-                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, isLocal: true)
+                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, pluginID: plugin.manifest.id, isLocal: true)
                     }
                 }
                 .padding(.horizontal)
@@ -201,16 +201,27 @@ struct PluginCard: View {
     var downloads: String? = nil
     var rating: Double? = nil
     var icon: String = "puzzlepiece.fill"
+    var pluginID: String? = nil  // 已安装插件的 ID，用于显示本地图标
     var isLocal: Bool = false
-    
+
+    @State private var localIcon: UIImage?
+
     var body: some View {
         HStack(spacing: DesignSystem.standardPadding) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(.white)
-                .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
-                .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity * 2)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+            // 优先显示本地 icon.png，fallback SF Symbol
+            if let uiImage = localIcon {
+                Image(uiImage: uiImage)
+                    .resizable().scaledToFit()
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+            } else {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
+                    .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity * 2)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+            }
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(name).font(.subheadline.bold()).foregroundStyle(.appText)
@@ -238,5 +249,11 @@ struct PluginCard: View {
         .background(Color.appCard.opacity(DesignSystem.glassOpacity * 4))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius))
         .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius).stroke(Color.white.opacity(DesignSystem.glassOpacity / 3), lineWidth: DesignSystem.borderWidth))
+        .task {
+            // 已安装插件尝试加载本地图标
+            if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
+                localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
+            }
+        }
     }
 }

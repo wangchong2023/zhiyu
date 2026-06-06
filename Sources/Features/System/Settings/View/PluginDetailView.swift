@@ -19,6 +19,8 @@ struct PluginDetailView: View {
     @Environment(\.dismiss) var dismiss
     @State private var showPermissionSheet = false
     @State private var isInstalling = false
+    @State private var localIcon: UIImage?
+    @State private var localReadme: String?
 
     private var isInstalled: Bool {
         PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == plugin.id })
@@ -62,6 +64,13 @@ struct PluginDetailView: View {
             .padding()
         }
         .background(PageBackgroundView(accentColor: .appAccent))
+        .task {
+            // 异步加载本地图标和 README，避免主线程 I/O 阻塞
+            if let url = PluginRegistry.shared.iconURL(for: plugin.id) {
+                localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
+            }
+            localReadme = PluginRegistry.shared.localizedReadme(for: plugin.id)
+        }
         .sheet(isPresented: $showPermissionSheet) {
             PermissionConfirmationSheet(plugin: plugin) {
                 Task {
@@ -79,10 +88,8 @@ struct PluginDetailView: View {
 
     private var headerSection: some View {
         HStack(alignment: .top, spacing: DesignSystem.wide) {
-            // 插件图标 — 优先显示本地 icon.png，fallback SF Symbol
-            if let iconURL = PluginRegistry.shared.iconURL(for: plugin.id),
-               let imageData = try? Data(contentsOf: iconURL),
-               let uiImage = UIImage(data: imageData) {
+            // 插件图标 — 优先显示已缓存的本地 icon.png，fallback SF Symbol
+            if let uiImage = localIcon {
                 Image(uiImage: uiImage)
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
@@ -298,8 +305,8 @@ struct PluginDetailView: View {
                 .font(.headline)
                 .foregroundStyle(.appText)
 
-            // 已安装插件优先展示本地化 README，否则使用 JSON description
-            if let readme = PluginRegistry.shared.localizedReadme(for: plugin.id) {
+            // 已安装插件优先展示已缓存的本地化 README，否则使用 JSON description
+            if let readme = localReadme {
                 Text(readme)
                     .font(.body)
                     .foregroundStyle(.appText)
