@@ -344,6 +344,26 @@ def check_missing_keys():
                             f"L.tr() key used in {os.path.basename(path)} but missing from ALL .xcstrings",
                             "ERROR"))
 
+    # 额外检查：Extension 中 Localized.tr() 隐式用 Common 表，但 key 只在其他表
+    localized_tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"')
+    for file in os.listdir(extensions_dir):
+        if not file.endswith('.swift'): continue
+        path = os.path.join(extensions_dir, file)
+        with open(path, 'r', encoding='utf-8') as fh:
+            content = fh.read()
+        tables = table_pattern.findall(content)
+        declared_table = tables[0] if tables else "Common"
+        if declared_table == "Common": continue
+        for key in set(localized_tr_pattern.findall(content)):
+            if key in all_keys and key not in table_keys.get(declared_table, set()):
+                actual = [t for t, ks in table_keys.items() if key in ks]
+                if declared_table not in actual:
+                    mod = file.replace('L10n+', '').replace('.swift', '')
+                    missing.append((path, key,
+                        f"Localized.tr() in L10n+{mod} (table={declared_table}) "
+                        f"but key only in {actual} — use {mod}.tr() instead",
+                        "ERROR"))
+
     # 额外扫描 View 文件中的 L10n. 引用——验证顶层模块在 Extension 中存在
     l10n_module_pattern = re.compile(r'L10n\.([A-Z][a-zA-Z]*)\.')
     existing_modules = set()
