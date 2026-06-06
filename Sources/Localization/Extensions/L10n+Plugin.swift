@@ -177,6 +177,9 @@ extension L10n {
             public static var licenseFree: String { Plugin.tr("plugin.detail.license.free") }
             public static var licenseDonation: String { Plugin.tr("plugin.detail.license.donation") }
             public static var licenseSubscription: String { Plugin.tr("plugin.detail.license.subscription") }
+
+            /// 评价数格式化，如 "（287）"
+            public static func reviewCount(_ count: Int) -> String { Plugin.trf("plugin.detail.reviewCount", count) }
         }
 
         public enum Error {

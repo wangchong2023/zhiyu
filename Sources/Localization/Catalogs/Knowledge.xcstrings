@@ -2,7 +2,7 @@
   "sourceLanguage": "en",
   "strings": {
     "basicInfo": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -19,7 +19,7 @@
       }
     },
     "bidirectionalLinks": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -36,7 +36,7 @@
       }
     },
     "comparisonTemplate": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -53,7 +53,7 @@
       }
     },
     "conceptTemplate": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -70,7 +70,7 @@
       }
     },
     "content": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -971,7 +971,7 @@
       }
     },
     "entityTemplate": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2195,7 +2195,7 @@
       }
     },
     "quickTemplates": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2841,7 +2841,7 @@
       }
     },
     "tagsPlaceholder": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3249,7 +3249,7 @@
       }
     },
     "vault.noSelection": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {

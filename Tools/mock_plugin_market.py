@@ -10,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 
 # 完全匹配 MarketPlugin Codable 结构的插件数据
+
 PLUGINS = [
     {
         "id": "com.zhiyu.plugin.remote.link-preview",
@@ -17,12 +18,24 @@ PLUGINS = [
         "author": "ZhiYu Remote Team",
         "downloads": "8500",
         "rating": 4.7,
+        "reviewCount": 287,
+        "category": "内容增强",
         "icon": "link",
         "downloadURL": "http://localhost:9091/plugins/link-preview-remote.zyplugin",
         "minAppVersion": "1.0.0",
-        "requiredPermissions": ["readContent", "writeContent", "network", "log"],
-        "monetization": {"model": "free"},
-        "names": {"en": "[Remote] Link Preview", "zh-Hans": "[远程] 链接预览"},
+        "requiredPermissions": [
+            "readContent",
+            "writeContent",
+            "network",
+            "log"
+        ],
+        "monetization": {
+            "model": "free"
+        },
+        "names": {
+            "en": "[Remote] Link Preview",
+            "zh-Hans": "[远程] 链接预览"
+        },
         "descriptions": {
             "en": "Auto fetches URL meta and generates rich preview cards.",
             "zh-Hans": "自动获取 URL meta 信息，生成丰富预览卡片。"
@@ -34,12 +47,24 @@ PLUGINS = [
         "author": "ZhiYu Remote Team",
         "downloads": "12300",
         "rating": 4.9,
+        "reviewCount": 425,
+        "category": "AI 增强",
         "icon": "globe",
         "downloadURL": "http://localhost:9091/plugins/ai-translator-remote.zyplugin",
         "minAppVersion": "1.0.0",
-        "requiredPermissions": ["readContent", "writeContent", "aiAccess", "log"],
-        "monetization": {"model": "free"},
-        "names": {"en": "[Remote] AI Translator", "zh-Hans": "[远程] AI 翻译器"},
+        "requiredPermissions": [
+            "readContent",
+            "writeContent",
+            "aiAccess",
+            "log"
+        ],
+        "monetization": {
+            "model": "free"
+        },
+        "names": {
+            "en": "[Remote] AI Translator",
+            "zh-Hans": "[远程] AI 翻译器"
+        },
         "descriptions": {
             "en": "Auto translate text using AI with multi-language support.",
             "zh-Hans": "使用 AI 自动翻译文本，支持多语言。"
@@ -51,12 +76,23 @@ PLUGINS = [
         "author": "ZhiYu Team",
         "downloads": "12500",
         "rating": 4.8,
+        "reviewCount": 532,
+        "category": "编辑增强",
         "icon": "doc.text.fill",
         "downloadURL": "http://localhost:9091/plugins/smart-cleaner.zyplugin",
         "minAppVersion": "1.0.0",
-        "requiredPermissions": ["readContent", "writeContent", "log"],
-        "monetization": {"model": "free"},
-        "names": {"en": "Markdown Beautifier", "zh-Hans": "Markdown 美化器"},
+        "requiredPermissions": [
+            "readContent",
+            "writeContent",
+            "log"
+        ],
+        "monetization": {
+            "model": "free"
+        },
+        "names": {
+            "en": "Markdown Beautifier",
+            "zh-Hans": "Markdown 美化器"
+        },
         "descriptions": {
             "en": "Auto format and beautify Markdown documents.",
             "zh-Hans": "自动格式化和美化 Markdown 文档。"
@@ -68,12 +104,23 @@ PLUGINS = [
         "author": "Community",
         "downloads": "8300",
         "rating": 4.6,
+        "reviewCount": 189,
+        "category": "AI 增强",
         "icon": "sparkles",
-        "downloadURL": None,
+        "downloadURL": null,
         "minAppVersion": "1.0.0",
-        "requiredPermissions": ["readContent", "network", "log"],
-        "monetization": {"model": "free"},
-        "names": {"en": "AI Summary Generator", "zh-Hans": "AI 摘要生成"},
+        "requiredPermissions": [
+            "readContent",
+            "network",
+            "log"
+        ],
+        "monetization": {
+            "model": "free"
+        },
+        "names": {
+            "en": "AI Summary Generator",
+            "zh-Hans": "AI 摘要生成"
+        },
         "descriptions": {
             "en": "Extract key points and generate structured summaries.",
             "zh-Hans": "提取核心要点，生成结构化摘要。"
@@ -85,18 +132,29 @@ PLUGINS = [
         "author": "DevTools",
         "downloads": "15600",
         "rating": 4.9,
+        "reviewCount": 673,
+        "category": "编辑增强",
         "icon": "curlybraces",
-        "downloadURL": None,
+        "downloadURL": null,
         "minAppVersion": "1.0.0",
-        "requiredPermissions": ["readContent", "log"],
-        "monetization": {"model": "free"},
-        "names": {"en": "Code Highlighter", "zh-Hans": "代码高亮"},
+        "requiredPermissions": [
+            "readContent",
+            "log"
+        ],
+        "monetization": {
+            "model": "free"
+        },
+        "names": {
+            "en": "Code Highlighter",
+            "zh-Hans": "代码高亮"
+        },
         "descriptions": {
             "en": "Add syntax highlighting and line numbers to code blocks.",
             "zh-Hans": "为代码块添加语法高亮和行号。"
         }
     }
 ]
+
 
 class MockPluginHandler(BaseHTTPRequestHandler):
     def do_GET(self):

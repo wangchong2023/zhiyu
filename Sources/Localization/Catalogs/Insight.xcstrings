@@ -2348,7 +2348,7 @@
       }
     },
     "graph.accessibility.canvasHint": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2365,7 +2365,7 @@
       }
     },
     "graph.accessibility.canvasLabel": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2382,7 +2382,7 @@
       }
     },
     "graph.accessibility.nodeHint": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2433,7 +2433,7 @@
       }
     },
     "graph.copyPageLink": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2450,7 +2450,7 @@
       }
     },
     "graph.emptyDesc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2467,7 +2467,7 @@
       }
     },
     "graph.emptyTitle": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2501,7 +2501,7 @@
       }
     },
     "graph.insightBridges": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2518,7 +2518,7 @@
       }
     },
     "graph.insightBridgesDesc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2535,7 +2535,7 @@
       }
     },
     "graph.insightOrphans": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2552,7 +2552,7 @@
       }
     },
     "graph.insightOrphansDesc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2569,7 +2569,7 @@
       }
     },
     "graph.insightSparse": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2586,7 +2586,7 @@
       }
     },
     "graph.insightSparseDesc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2603,7 +2603,7 @@
       }
     },
     "graph.insightSurprising": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2620,7 +2620,7 @@
       }
     },
     "graph.insightSurprisingDesc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2637,7 +2637,7 @@
       }
     },
     "graph.insights": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2671,7 +2671,7 @@
       }
     },
     "graph.linksCountFormat": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2688,7 +2688,7 @@
       }
     },
     "graph.nodesConnections": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2722,7 +2722,7 @@
       }
     },
     "graph.startBuilding": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2739,7 +2739,7 @@
       }
     },
     "graph.tip.biLink": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2773,7 +2773,7 @@
       }
     },
     "graph.viewDetail": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3674,7 +3674,7 @@
       }
     },
     "stats.short.comparison": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3691,7 +3691,7 @@
       }
     },
     "stats.short.concept": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3708,7 +3708,7 @@
       }
     },
     "stats.short.entity": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3725,7 +3725,7 @@
       }
     },
     "stats.short.new": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3742,7 +3742,7 @@
       }
     },
     "stats.short.pages": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3759,7 +3759,7 @@
       }
     },
     "stats.short.ref": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3776,7 +3776,7 @@
       }
     },
     "stats.short.source": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {

@@ -70,7 +70,7 @@
       }
     },
     "(%@)": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -206,7 +206,7 @@
       }
     },
     "%@ (%@%@)": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -257,7 +257,7 @@
       }
     },
     "%@ %@ %@": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -325,7 +325,7 @@
       }
     },
     "%@.": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -342,9 +342,15 @@
       }
     },
     "%@%@": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@%2$@"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "%1$@%2$@"
@@ -1220,7 +1226,7 @@
       }
     },
     "AI 正在分析您的知识库以生成洞察...": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1237,7 +1243,7 @@
       }
     },
     "aiThinking": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1254,7 +1260,7 @@
       }
     },
     "app.name": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1271,7 +1277,7 @@
       }
     },
     "awesome": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1356,7 +1362,7 @@
       }
     },
     "cancel": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1681,7 +1687,7 @@
       }
     },
     "copy": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2157,7 +2163,7 @@
       }
     },
     "delete": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2395,7 +2401,7 @@
       }
     },
     "demo.welcome.card.desc": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2412,7 +2418,7 @@
       }
     },
     "demo.welcome.card.recommend": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2429,7 +2435,7 @@
       }
     },
     "demo.welcome.card.title": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2446,7 +2452,7 @@
       }
     },
     "demo.welcome.content": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2463,7 +2469,7 @@
       }
     },
     "demo.welcome.prompt": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2480,7 +2486,7 @@
       }
     },
     "demo.welcome.tag1": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2497,7 +2503,7 @@
       }
     },
     "demo.welcome.tag2": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2514,7 +2520,7 @@
       }
     },
     "demo.welcome.tag3": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2531,7 +2537,7 @@
       }
     },
     "demo.welcome.title": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2616,7 +2622,7 @@
       }
     },
     "done": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2633,7 +2639,7 @@
       }
     },
     "edit": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2701,7 +2707,7 @@
       }
     },
     "error": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2718,7 +2724,7 @@
       }
     },
     "Error.notFound": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2769,7 +2775,7 @@
       }
     },
     "failed": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2786,7 +2792,7 @@
       }
     },
     "FPS: %@": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2854,7 +2860,7 @@
       }
     },
     "help": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3364,7 +3370,7 @@
       }
     },
     "lock": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -3942,7 +3948,7 @@
       }
     },
     "logout": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -5117,7 +5123,7 @@
     },
     "NSFaceIDUsageDescription": {
       "comment": "Privacy - Face ID Usage Description",
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -5223,7 +5229,7 @@
       }
     },
     "ok": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6022,7 +6028,7 @@
       }
     },
     "refresh": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6039,7 +6045,7 @@
       }
     },
     "save": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6209,7 +6215,7 @@
       }
     },
     "search": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6634,7 +6640,7 @@
       }
     },
     "security": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6719,7 +6725,7 @@
       }
     },
     "security.unlockReason": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -6770,7 +6776,7 @@
       }
     },
     "settings": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -8555,7 +8561,7 @@
       }
     },
     "success": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -8878,7 +8884,7 @@
       }
     },
     "title": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -9116,7 +9122,7 @@
       }
     },
     "智宇 AI": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -9133,7 +9139,7 @@
       }
     },
     "点击右上角刷新，让 AI 为您生成今日知识见解": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -9150,9 +9156,15 @@
       }
     },
     "调用次数: %@ | 平均耗时: %@ms": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调用次数: %1$@ | 平均耗时: %2$@ms"
+          }
+        },
+        "en": {
           "stringUnit": {
             "state": "translated",
             "value": "调用次数: %1$@ | 平均耗时: %2$@ms"

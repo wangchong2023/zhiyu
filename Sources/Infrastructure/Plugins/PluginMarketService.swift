@@ -20,11 +20,15 @@ struct MarketPlugin: Codable, Identifiable {
     let downloads: String
     let rating: Double
     let icon: String
-    let downloadURL: String? 
+    let downloadURL: String?
     let minAppVersion: String?
     let requiredPermissions: [String]?
     let monetization: MonetizationInfo?
-    
+    /// 审核评价数量
+    let reviewCount: Int?
+    /// 插件分类
+    let category: String?
+
     let names: [String: String]
     let descriptions: [String: String]
     

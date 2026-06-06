@@ -126,9 +126,11 @@ struct PluginDetailView: View {
                         Text(String(format: "%.1f", plugin.rating))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.appText)
-                        Text("(\(Int.random(in: 42...287)))")
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
+                        if let reviewCount = plugin.reviewCount {
+                            Text(L10n.Plugin.Detail.reviewCount(reviewCount))
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary)
+                        }
                     }
 
                     // 下载量
@@ -395,14 +397,9 @@ struct PluginDetailView: View {
 
     // MARK: - 辅助方法
 
-    /// 分类名称（基于 plugin ID 推断）
+    /// 分类名称（从插件元数据获取）
     private var categoryName: String {
-        if plugin.id.contains("local.") {
-            return L10n.Plugin.Detail.categoryLocal
-        } else if plugin.id.contains("remote.") {
-            return L10n.Plugin.Detail.categoryRemote
-        }
-        return L10n.Plugin.Detail.categoryCommunity
+        return plugin.category ?? L10n.Plugin.Detail.categoryCommunity
     }
 
     /// 商业化模式标签

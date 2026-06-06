@@ -402,7 +402,10 @@ public struct ModelStoreView: View {
                     }
                 }
             default:
-                Button(action: { modelManager.startDownload(for: manifest) }) {
+                // Mock 环境：仅显示提示，不执行实际下载
+                Button(action: {
+                    print(" [ModelStore] \(manifest.modelId) ")
+                }) {
                     HStack(spacing: 4) {
                         Image(systemName: "icloud.and.arrow.down")
                         Text("")

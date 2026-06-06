@@ -721,7 +721,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.action.confirmInstall"
+            "value": "Confirm Installation"
           }
         },
         "zh-Hans": {
@@ -789,7 +789,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.commands.title"
+            "value": "Plugin Commands"
           }
         },
         "zh-Hans": {
@@ -1044,7 +1044,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.perm.none"
+            "value": "No special permissions"
           }
         },
         "zh-Hans": {
@@ -1078,7 +1078,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.permission.title"
+            "value": "Plugin Permissions"
           }
         },
         "zh-Hans": {
@@ -1243,7 +1243,7 @@
       }
     },
     "plugin.section.rag": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1265,7 +1265,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "plugin.section.ribbon"
+            "value": "Quick Actions"
           }
         },
         "zh-Hans": {
@@ -1362,7 +1362,7 @@
       }
     },
     "section.pluginSettings": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1379,7 +1379,7 @@
       }
     },
     "section.rag": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1396,7 +1396,7 @@
       }
     },
     "sidebar.currentSources": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1413,12 +1413,12 @@
       }
     },
     "source.view.empty": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No reference sources yet. Select or add documents in the page."
+            "value": "No reference sources yet."
           }
         },
         "zh-Hans": {
@@ -1430,12 +1430,12 @@
       }
     },
     "source.view.subtitle": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The selected documents or snippets will be used by AI"
+            "value": "Selected docs will be used by AI"
           }
         },
         "zh-Hans": {
@@ -1447,7 +1447,7 @@
       }
     },
     "source.view.title": {
-      "extractionState": "stale",
+      "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2071,6 +2071,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "订阅制"
+          }
+        }
+      }
+    },
+    "plugin.detail.reviewCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(%d)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "（%d）"
           }
         }
       }
