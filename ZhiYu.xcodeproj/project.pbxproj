@@ -4922,6 +4922,7 @@
 				2A69259A1201D499BFE864FF /* [Gatekeeper] Storage Constants Audit */,
 				54BCA2BEFAE17BF627BC4908 /* [Gatekeeper] Magic Number Audit */,
 				E01D6AFE11C2508020949DE2 /* [Gatekeeper] Hardcoded Secrets Audit */,
+				1C36350608A3539763C967DB /* [Gatekeeper] Plugin E2E Test */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -5206,6 +5207,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1C36350608A3539763C967DB /* [Gatekeeper] Plugin E2E Test */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Plugin E2E Test";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./env/venv/bin/python3 Tools/test_plugin_e2e.py";
+		};
 		2A69259A1201D499BFE864FF /* [Gatekeeper] Storage Constants Audit */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

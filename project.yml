@@ -73,6 +73,9 @@ targets:
       - script: "./env/venv/bin/python3 Tools/check_hardcoded_secrets.py"
         name: "[Gatekeeper] Hardcoded Secrets Audit"
         basedOnDependencyAnalysis: false
+      - script: "./env/venv/bin/python3 Tools/test_plugin_e2e.py"
+        name: "[Gatekeeper] Plugin E2E Test"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - package: Lottie

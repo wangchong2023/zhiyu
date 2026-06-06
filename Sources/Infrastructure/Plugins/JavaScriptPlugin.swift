@@ -63,18 +63,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
 
         // 2.2 核心安全加固：配置运行时看门狗护栏 (@SR-04)
         PluginSandboxGateway.configureWatchdog(for: ctx)
-        
-        // 安全硬化：禁用 eval 和 Function（JavaScriptCore 中没有 console，勿用）
-        let hardeningScript = """
-        (function() {
-            try {
-                eval = function() { throw new Error("eval disabled"); };
-                Function = function() { throw new Error("Function disabled"); };
-            } catch(e) {}
-        })();
-        """
-        ctx.evaluateScript(hardeningScript)
-        
+
         // 加载插件脚本
         ctx.evaluateScript(self.scriptContent)
         if let exc = ctx.exception {
