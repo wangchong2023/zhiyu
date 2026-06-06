@@ -143,7 +143,10 @@ struct GraphContainerView: View {
         .task {
             layoutGraph()
         }
-        .sheet(isPresented: $viewModel.showInsights) { insightsPanel }
+        .sheet(isPresented: $viewModel.showInsights) {
+            insightsPanel
+                .presentationDetents([.large])
+        }
         .fullScreenCover(isPresented: $viewModel.show3D) {
             NavigationStack {
                 Graph3DView(selectedNodeID: $viewModel.selectedNodeID, isFullScreen: $viewModel.show3D)
