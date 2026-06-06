@@ -353,7 +353,8 @@ final class MarkdownProcessor: Sendable {
         let isBulletList = trimmedStart.hasPrefix("- ") || trimmedStart.hasPrefix("* ")
         // 识别有序列表前缀（如 "1. " 或 "1.[[" 等数字加上点号的情况）
         let isNumberedList: Bool
-        if let dotIndex = trimmedStart.firstIndex(of: "."), dotIndex < trimmedStart.index(trimmedStart.startIndex, offsetBy: 4) {
+        let maxDotPos = min(4, trimmedStart.count)
+        if let dotIndex = trimmedStart.firstIndex(of: "."), dotIndex < trimmedStart.index(trimmedStart.startIndex, offsetBy: maxDotPos) {
             let prefix = trimmedStart[..<dotIndex]
             isNumberedList = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
         } else {
