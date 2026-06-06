@@ -291,6 +291,8 @@ schemes:
       targets:
         - ZhiYuTests
         - ZhiYuUITests
+      environmentVariables:
+        RECORD_SNAPSHOTS: "0"
     run:
       executable: ZhiYu
   
