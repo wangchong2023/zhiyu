@@ -18,6 +18,7 @@
 		01659D2C2F1E14914D437544 /* UserProfileMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E90BD834EB38BF336501889 /* UserProfileMenu.swift */; };
 		01700C37ECFE63CE46072C74 /* CollaborationProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D1DD594A163F34C57837A7 /* CollaborationProviderProtocol.swift */; };
 		019AE3C76EA7A693DC0EDB95 /* KnowledgePage+GRDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556E86773BE20DEF3DAAC4AB /* KnowledgePage+GRDB.swift */; };
+		01BF4CECD43C806E1231CBD4 /* PlatformTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5035506836452876F55D7D1 /* PlatformTextEditor.swift */; };
 		0222B76B9DD8E4095CB40124 /* iOSSpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C08B72CE96C4C6087A68E /* iOSSpotlightIndexer.swift */; };
 		022E00CC34B25DBCC408E64F /* LLMContextBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859DF0025A6C5B88C856BB1B /* LLMContextBuilderTests.swift */; };
 		022EADA572095F1C329E213C /* WatchAppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F4C08317C1A9534B6952B25 /* WatchAppEnvironment.swift */; };
@@ -1600,6 +1601,7 @@
 		F63693BB09A7B486166B2310 /* iCloudSyncIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB6DCB5FF21D25AF2DE9B5C /* iCloudSyncIntegrationTests.swift */; };
 		F647738F6FCCAE7976889AEF /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E732B5FBEAB333B42B827BC3 /* Spacing.swift */; };
 		F650264B5A8622EFE49B66CA /* IngestTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF76635B437548E4513D9044 /* IngestTimelineView.swift */; };
+		F66BBEE48BC527A5C3E9D705 /* PlatformTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5035506836452876F55D7D1 /* PlatformTextEditor.swift */; };
 		F67733A3E68DC1A05CD697AB /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8390567A95F898612D1932BB /* DatabaseManager.swift */; };
 		F699B31ED37F09ED30B38B24 /* LLMRefactorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14AE12868D60824B4EA7167E /* LLMRefactorService.swift */; };
 		F70C4C1A32AAC3D35CED58D0 /* GitHubAuthStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD332478BCA833BF0058B4C /* GitHubAuthStrategy.swift */; };
@@ -2392,6 +2394,7 @@
 		F4B8A06619B5AECD1BFBF4C7 /* VaultInsightsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultInsightsPanel.swift; sourceTree = "<group>"; };
 		F4CE6B0A2892569834C0D8D7 /* GuideStepRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideStepRow.swift; sourceTree = "<group>"; };
 		F4E7C238B00D09E936040D6F /* CollaborationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaborationModels.swift; sourceTree = "<group>"; };
+		F5035506836452876F55D7D1 /* PlatformTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformTextEditor.swift; sourceTree = "<group>"; };
 		F506E68AECCCBCFE3EC5F4FE /* NetworkClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClientTests.swift; sourceTree = "<group>"; };
 		F57A5760D19F7F1927ED221B /* IconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerView.swift; sourceTree = "<group>"; };
 		F755F616ED53E45CAFE6F34C /* BacklinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BacklinksView.swift; sourceTree = "<group>"; };
@@ -4797,6 +4800,7 @@
 				51E576EA1E3290CF2CFA8C35 /* MarkdownRendererView.swift */,
 				0824B2CE9F1C37B08C6BA66A /* MarkdownTextView.swift */,
 				0CEBE188CC30225A4692F171 /* MermaidWebView.swift */,
+				F5035506836452876F55D7D1 /* PlatformTextEditor.swift */,
 			);
 			path = Editors;
 			sourceTree = "<group>";
@@ -5930,6 +5934,7 @@
 				438179293D2BD4178168A059 /* PlatformCapabilities.swift in Sources */,
 				904435C0F8B5469DED84E233 /* PlatformModifiers.swift in Sources */,
 				E736AF99D300240BFA2F3BDF /* PlatformRegistrar.swift in Sources */,
+				F66BBEE48BC527A5C3E9D705 /* PlatformTextEditor.swift in Sources */,
 				8FF31C23D15C330C8BE6F4C3 /* PluginCenterView.swift in Sources */,
 				A8714A3A70A0995A56F68479 /* PluginDetailView.swift in Sources */,
 				703ECC26B8C71B1D1357C746 /* PluginEnginePool.swift in Sources */,
@@ -6492,6 +6497,7 @@
 				A06E5BA4FE918C15B5C30CF9 /* PlatformCapabilities.swift in Sources */,
 				8FF76950B0924FF464B4075F /* PlatformModifiers.swift in Sources */,
 				0A73C80E673B16A9D832014C /* PlatformRegistrar.swift in Sources */,
+				01BF4CECD43C806E1231CBD4 /* PlatformTextEditor.swift in Sources */,
 				D888F727CE493E658E1FF7FC /* PluginCenterView.swift in Sources */,
 				4440C698F87D98C4303A1C25 /* PluginDetailView.swift in Sources */,
 				18E8B2BC4B211BF6D40E7B6D /* PluginEnginePool.swift in Sources */,

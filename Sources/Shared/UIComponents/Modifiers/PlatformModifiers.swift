@@ -134,4 +134,24 @@ public extension View {
         self
         #endif
     }
+
+    @ViewBuilder
+    /// 在 watchOS 上隐藏视图（手表端不支持的操作/控件）
+    func hiddenOnWatch() -> some View {
+        #if os(watchOS)
+        self.hidden()
+        #else
+        self
+        #endif
+    }
+
+    @ViewBuilder
+    /// 仅在 iOS/macOS 显示视图（手表端不渲染）
+    func visibleOniOSOrMac() -> some View {
+        #if os(watchOS)
+        self.hidden()
+        #else
+        self
+        #endif
+    }
 }

@@ -247,12 +247,7 @@ struct CreatePageView: View {
 
     private func labeledEditor(_ hint: String, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-            #if os(watchOS)
-            TextField(hint, text: text, axis: .vertical).font(.body)
-            #else
-            TextEditor(text: text)
-                .font(.body)
-                .frame(minHeight: 80)
+            PlatformTextEditor(text: text, minHeight: 80)
                 .overlay(alignment: .topLeading) {
                     if text.wrappedValue.isEmpty {
                         Text(hint)
@@ -262,7 +257,6 @@ struct CreatePageView: View {
                             .allowsHitTesting(false)
                     }
                 }
-            #endif
         }
     }
 
