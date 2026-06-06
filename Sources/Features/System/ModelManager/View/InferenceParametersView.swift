@@ -261,8 +261,8 @@ public struct InferenceParametersView: View {
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.atomic)
+                    .padding(.horizontal, DesignSystem.medium)
+                    .padding(.vertical, DesignSystem.small)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .offset(y: -DesignSystem.largeIconSize)
@@ -307,11 +307,11 @@ public struct InferenceParametersView: View {
             .overlay(alignment: .top) {
                 if isHovered {
                     HStack(spacing: 4) {
-                        Image(systemName: "lightbulb.fill").font(.caption2).foregroundStyle(.orange)
-                        Text(tip).font(.caption2).foregroundStyle(.appSecondary)
+                        Image(systemName: "lightbulb.fill").font(.subheadline).foregroundStyle(.orange)
+                        Text(tip).font(.subheadline).foregroundStyle(.appSecondary)
                     }
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.atomic)
+                    .padding(.horizontal, DesignSystem.medium)
+                    .padding(.vertical, DesignSystem.small)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .offset(y: -DesignSystem.largeIconSize)
