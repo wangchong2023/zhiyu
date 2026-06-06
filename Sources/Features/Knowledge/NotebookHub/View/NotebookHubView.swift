@@ -180,9 +180,6 @@ public struct NotebookHubView: View {
     
     private var sparklesButton: some View {
         Button {
-            HapticFeedback.shared.trigger(.selection)
-            // NotebookHub 处于独立 NavigationStack（无 navigationDestination），
-            // 以 sheet 方式弹出 LintView 避免路由无法响应的问题
             showLintSheet = true
         } label: {
             Image(systemName: DesignSystem.Icons.sparkles)
@@ -190,6 +187,7 @@ public struct NotebookHubView: View {
                 .foregroundStyle(.appAccent)
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
     
     private var displayModeButton: some View {
