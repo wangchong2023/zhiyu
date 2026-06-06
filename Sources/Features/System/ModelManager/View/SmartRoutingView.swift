@@ -126,6 +126,34 @@ public struct SmartRoutingView: View {
 
     // MARK: - 子视图组件
 
+    private func routingRuleRow(icon: String, iconColor: Color, task: String, rule: String) -> some View {
+        HStack(spacing: DesignSystem.medium) {
+            Image(systemName: icon).font(.caption).foregroundStyle(iconColor).frame(width: DesignSystem.titleIconSize)
+            Text(task).font(.subheadline).foregroundStyle(.appText)
+            Spacer()
+            Image(systemName: "arrow.right").font(.caption2).foregroundStyle(.appSecondary)
+            Text(rule).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
+        }
+        .padding(.vertical, DesignSystem.small).padding(.horizontal, DesignSystem.medium)
+        .background(Color.appBackground.opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+    }
+
+    private func statusRow(label: String, value: String, status: HealthStatus) -> some View {
+        HStack {
+            Circle().fill(status.color).frame(width: DesignSystem.iconSmall, height: DesignSystem.iconSmall)
+            Text(label).font(.subheadline).foregroundStyle(.appText)
+            Spacer()
+            Text(value).font(.caption.weight(.medium)).foregroundStyle(.appSecondary)
+        }
+    }
+
+    private func getActiveModelName() -> String {
+        if let m = modelManager.remoteManifests.first(where: { $0.modelId == modelManager.activeModelId }) {
+            return m.displayName
+        }
+        return L10n.ModelManager.Routing.decisionUnselected
+    }
 
     private func getCurrentRoutingDecision() -> String {
         if modelManager.isCloudEscalationEnabled {
