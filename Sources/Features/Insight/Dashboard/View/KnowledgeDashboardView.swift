@@ -454,10 +454,6 @@ struct HotTopicMedal: View {
             }
             
             Spacer()
-            
-            Image(systemName: DesignSystem.Icons.forward)
-                .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
-                .foregroundColor(.appSecondary.opacity(DesignSystem.Icons.display == 48 ? 0.3 : 0.3)) // standardized opacity later
         }
         .padding(DesignSystem.standardPadding)
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
