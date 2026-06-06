@@ -133,8 +133,8 @@ final class PluginMarketService: ObservableObject {
             if !fileManager.fileExists(atPath: pluginsDirectory.path) {
                 try fileManager.createDirectory(at: pluginsDirectory, withIntermediateDirectories: true, attributes: nil)
             }
-            
-            let destinationURL = pluginsDirectory.appendingPathComponent("\(plugin.id).js")
+
+            let destinationURL = pluginsDirectory.appendingPathComponent("\(plugin.id).zyplugin")
             
             // 如果已存在则移除旧版
             if fileManager.fileExists(atPath: destinationURL.path) {

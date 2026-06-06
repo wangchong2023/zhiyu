@@ -417,37 +417,116 @@ extension PluginRegistry {
         let fileManager = FileManager.default
         guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let pluginsDirectory = documentsURL.appendingPathComponent("Plugins")
-        
-        // 如果目录不存在则创建
+
         if !fileManager.fileExists(atPath: pluginsDirectory.path) {
             try? fileManager.createDirectory(at: pluginsDirectory, withIntermediateDirectories: true, attributes: nil)
-            Logger.shared.info(" [PluginRegistry] : \(pluginsDirectory.path)")
+            Logger.shared.info("[PluginRegistry] Created: \(pluginsDirectory.path)")
             return
         }
-        
+
         do {
             let files = try fileManager.contentsOfDirectory(at: pluginsDirectory, includingPropertiesForKeys: nil)
-            for file in files where file.pathExtension == "js" {
-                // 生产环境需进一步读取配套的 manifest.json，此处仅作示例
-                let scriptContent = try String(contentsOf: file, encoding: .utf8)
-                let manifest = PluginManifest(
-                    id: "local.\(file.lastPathComponent)",
-                    version: "1.0.0",
-                    author: String(data: Data(base64Encoded: "TG9jYWwgRGV2ZWxvcGVy")!, encoding: .utf8)!,
-                    permissions: ["log", "writeContent"],
-                    names: ["en": file.deletingPathExtension().lastPathComponent],
-                    descriptions: ["en": String(data: Data(base64Encoded: "TG9jYWxseSBsb2FkZWQgc2NyaXB0IHBsdWdpbi4=")!, encoding: .utf8)!]
-                )
-                
-                #if canImport(JavaScriptCore) && !os(watchOS)
-                if let jsPlugin = JavaScriptPlugin(script: scriptContent, manifest: manifest) {
-                    self.loadPlugin(jsPlugin)
-                    Logger.shared.info(" [PluginRegistry] : \(manifest.name)")
+
+            for file in files {
+                let ext = file.pathExtension.lowercased()
+
+                switch ext {
+                case "zyplugin":
+                    // .zyplugin 是标准 ZIP 格式，内含 manifest.json + index.js
+                    loadPluginFromArchive(file)
+
+                case "js":
+                    // 兼容裸 .js 文件（使用内置占位 manifest）
+                    loadPluginFromRawJS(file)
+
+                default:
+                    continue
                 }
-                #endif
             }
         } catch {
-            Logger.shared.error(" [PluginRegistry] ", error: error)
+            Logger.shared.error("[PluginRegistry] Scan error", error: error)
+        }
+    }
+
+    // MARK: - .zyplugin 加载（标准 ZIP）
+
+    private func loadPluginFromArchive(_ archiveURL: URL) {
+        do {
+            // 浅解压到临时目录
+            let tempDir = FileManager.default.temporaryDirectory
+                .appendingPathComponent("plugin_extract_\(UUID().uuidString)")
+            try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+            defer { try? FileManager.default.removeItem(at: tempDir) }
+
+            #if os(macOS) || os(iOS)
+            // 使用系统 unzip（iOS 模拟器和 macOS 都支持 /usr/bin/unzip）
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
+            process.arguments = ["-o", archiveURL.path, "-d", tempDir.path]
+            process.standardOutput = FileHandle.nullDevice
+            process.standardError = FileHandle.nullDevice
+            try process.run()
+            process.waitUntilExit()
+            #else
+            // watchOS 不支持 Process，跳过
+            return
+            #endif
+
+            // 查找 manifest.json 和 index.js
+            var manifestURL: URL?
+            var scriptURL: URL?
+            let enumerator = FileManager.default.enumerator(at: tempDir, includingPropertiesForKeys: nil)
+            while let item = enumerator?.nextObject() as? URL {
+                let name = item.lastPathComponent.lowercased()
+                if name == "manifest.json" { manifestURL = item }
+                if name == "index.js" { scriptURL = item }
+            }
+
+            guard let manifestFile = manifestURL, let scriptFile = scriptURL else {
+                Logger.shared.error("[PluginRegistry] Invalid .zyplugin: missing manifest or script")
+                return
+            }
+
+            let manifestData = try Data(contentsOf: manifestFile)
+            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestData)
+            let scriptContent = try String(contentsOf: scriptFile, encoding: .utf8)
+
+            #if canImport(JavaScriptCore) && !os(watchOS)
+            if let jsPlugin = JavaScriptPlugin(script: scriptContent, manifest: manifest) {
+                loadPlugin(jsPlugin)
+                Logger.shared.info("[PluginRegistry] Loaded .zyplugin: \(manifest.name)")
+            }
+            #endif
+
+        } catch {
+            Logger.shared.error("[PluginRegistry] Failed to load .zyplugin: \(archiveURL.lastPathComponent)", error: error)
+        }
+    }
+
+    // MARK: - 裸 .js 加载（兼容旧格式）
+
+    private func loadPluginFromRawJS(_ fileURL: URL) {
+        do {
+            let scriptContent = try String(contentsOf: fileURL, encoding: .utf8)
+            let displayName = fileURL.deletingPathExtension().lastPathComponent
+            let manifest = PluginManifest(
+                id: "local.\(displayName)",
+                version: "1.0.0",
+                author: "Local Developer",
+                permissions: ["log", "writeContent"],
+                names: ["en": displayName],
+                descriptions: ["en": "Legacy .js plugin (migrate to .zyplugin format)"]
+            )
+
+            #if canImport(JavaScriptCore) && !os(watchOS)
+            if let jsPlugin = JavaScriptPlugin(script: scriptContent, manifest: manifest) {
+                loadPlugin(jsPlugin)
+                Logger.shared.info("[PluginRegistry] Loaded legacy .js: \(displayName)")
+            }
+            #endif
+        } catch {
+            Logger.shared.error("[PluginRegistry] Failed to load .js: \(fileURL.lastPathComponent)", error: error)
         }
     }
 }
