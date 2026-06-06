@@ -58,8 +58,10 @@ public struct BusinessConstants {
         public static let semanticThresholdLong: Float = 0.75
         /// 短查询语义高信度门槛
         public static let semanticShortHighConfidence: Float = 0.88
-        /// 短查询字符数判断阈值 (消除硬编码魔鬼数字)
+        /// 短查询字符数判断阈值
         public static let shortQueryThreshold: Int = 4
+        /// 图谱每节点最大显示连线数
+        public static let maxEdgesPerNode: Int = 5
     }
 
     // MARK: - 图谱物理仿真与布局

@@ -306,10 +306,11 @@ public struct InferenceParametersView: View {
                         Image(systemName: "lightbulb.fill").font(.caption2).foregroundStyle(.orange)
                         Text(tip).font(.caption2).foregroundStyle(.appSecondary)
                     }
-                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .padding(.horizontal, DesignSystem.small)
+                    .padding(.vertical, DesignSystem.atomic)
                     .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .offset(y: -28)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                    .offset(y: -DesignSystem.largeIconSize)
                 }
             }
 

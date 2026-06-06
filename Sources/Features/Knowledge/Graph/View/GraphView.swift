@@ -26,7 +26,7 @@ struct GraphContainerView: View {
     @StateObject private var tooltipManager = TooltipManager.shared
 
     /// 每个节点最多保留的重要连线数
-    private static let maxEdgesPerNode = 5
+    private var maxEdgesPerNode: Int { BusinessConstants.Graph.maxEdgesPerNode }
 
     /// 动态过滤后的边列表：每节点仅保留最重要 K 条连线，避免密集时视觉混乱
     private var currentFilteredEdges: [GraphEdge] {
@@ -46,7 +46,7 @@ struct GraphContainerView: View {
         let groupedBySource = Dictionary(grouping: allEdges) { $0.source }
         let topEdges = groupedBySource.flatMap { _, edges in
             edges.sorted { (edgeWeights[$0.id] ?? 0) > (edgeWeights[$1.id] ?? 0) }
-                .prefix(Self.maxEdgesPerNode)
+                .prefix(maxEdgesPerNode)
         }
 
         return topEdges
@@ -244,7 +244,7 @@ struct GraphContainerView: View {
                     .foregroundStyle(.appSecondary)
 
                 if isTruncatingEdges {
-                    Text(L10n.Graph.edgeTruncationHint(Self.maxEdgesPerNode))
+                    Text(L10n.Graph.edgeTruncationHint(maxEdgesPerNode))
                         .font(.system(size: DesignSystem.microFontSize, weight: .regular))
                         .foregroundStyle(.appSecondary.opacity(0.6))
                 }
