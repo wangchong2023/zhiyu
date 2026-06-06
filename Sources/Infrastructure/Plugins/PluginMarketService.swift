@@ -41,6 +41,36 @@ struct MarketPlugin: Codable, Identifiable {
     var description: String {
         return Localized.bestMatch(in: descriptions, fallback: "")
     }
+
+    /// 从 community-plugins.json 条目构造
+    init(from entry: CommunityPluginEntry, downloadBase: URL) {
+        self.id = entry.id
+        self.version = "latest"
+        self.author = entry.author
+        self.downloads = "N/A"
+        self.rating = 0
+        self.icon = "puzzlepiece.extension.fill"
+        self.downloadURL = downloadBase
+            .appendingPathComponent("\(entry.id).zyplugin")
+            .absoluteString
+        self.minAppVersion = nil
+        self.requiredPermissions = nil
+        self.monetization = nil
+        self.reviewCount = nil
+        self.category = nil
+        self.source = "community"
+        self.names = ["en": entry.name]
+        self.descriptions = ["en": entry.description]
+    }
+}
+
+/// community-plugins.json 条目 (Obsidian 风格)
+struct CommunityPluginEntry: Codable {
+    let id: String
+    let name: String
+    let author: String
+    let description: String
+    let repo: String
 }
 
 /// 插件市场服务 (Architect 视角：实现云端分发体系)
@@ -52,15 +82,21 @@ final class PluginMarketService: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    // 生产环境地址 (GitHub 模式)
-    private let productionURL = URL(string: AppConfig.productionURL)!
+    // 生产环境 (GitHub)
+    private let registryGitHub = URL(string: "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/community-plugins.json")!
 
-    // 本地调试地址 (开发者模式)
-    private let debugURL = URL(string: AppConfig.mockServerURL)!
+    // 本地 Gitea (开发/离线优先)
+    private let registryGitea = URL(string: "http://localhost:3000/constantine/zhiyu-releases/raw/branch/master/community-plugins.json")!
+
+    // 元数据回退 (mock 服务器，保留兼容)
+    private let mockURL = URL(string: "http://127.0.0.1:9091/api/plugins")!
 
     private var targetURL: URL {
-        // 🔥 临时硬编码 URL 用于调试
-        return URL(string: "http://127.0.0.1:9091/api/plugins")!
+        #if DEBUG
+        return registryGitea
+        #else
+        return registryGitHub
+        #endif
     }
 
     /// 拉取Plugins
@@ -77,23 +113,36 @@ final class PluginMarketService: ObservableObject {
 
             let decoder = JSONDecoder()
 
-            // 尝试解析为 ApiResponse 格式（Mock 服务器）
-            if let apiResponse = try? await MainActor.run(body: {
-                try decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data)
-            }), let plugins = apiResponse.data {
+            // 1. 先尝试解析 community-plugins.json 格式 (Obsidian 风格)
+            if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
+                // 从 registry URL 推导下载 base：community-plugins.json → plugins/
+                let downloadBase = URL(string: targetURL.absoluteString
+                    .replacingOccurrences(of: "community-plugins.json", with: "plugins"))!
+                let plugins = await MainActor.run {
+                    communityPlugins.map { MarketPlugin(from: $0, downloadBase: downloadBase) }
+                }
                 await MainActor.run {
                     self.availablePlugins = plugins
                     self.isLoading = false
                 }
-            } else {
-                // 直接解析为数组格式（生产环境）
-                let decodedPlugins = try await MainActor.run {
-                    try decoder.decode([MarketPlugin].self, from: data)
-                }
+                return
+            }
+
+            // 2. 回退：ApiResponse 格式（Mock 服务器兼容）
+            if let apiResponse = try? decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data),
+               let plugins = apiResponse.data {
                 await MainActor.run {
-                    self.availablePlugins = decodedPlugins
+                    self.availablePlugins = plugins
                     self.isLoading = false
                 }
+                return
+            }
+
+            // 3. 回退：直接数组格式
+            let decodedPlugins = try decoder.decode([MarketPlugin].self, from: data)
+            await MainActor.run {
+                self.availablePlugins = decodedPlugins
+                self.isLoading = false
             }
         } catch {
             Logger.shared.addLog(action: .error, target: "PluginMarketService", details: ": \(error.localizedDescription)")
