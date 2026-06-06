@@ -170,9 +170,6 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(PromptService.shared.languageInstruction)
 
 
-        1.  JSON : ["1", "2", "3"]
-
-
         \(pageSummaries)
         """
 

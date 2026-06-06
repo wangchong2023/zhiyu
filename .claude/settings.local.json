@@ -125,7 +125,11 @@
       "WebFetch(domain:api.github.com)",
       "Bash(./Tools/copy_plugins_to_sim.sh)",
       "Bash(sed -n '108,112p' Tools/mock_plugin_market.py)",
-      "Bash(sed -n '136,140p' Tools/mock_plugin_market.py)"
+      "Bash(sed -n '136,140p' Tools/mock_plugin_market.py)",
+      "Bash(log show *)",
+      "Bash(syslog)",
+      "Bash(pkill -f mock_llm_server.py)",
+      "Bash(git revert *)"
     ]
   }
 }

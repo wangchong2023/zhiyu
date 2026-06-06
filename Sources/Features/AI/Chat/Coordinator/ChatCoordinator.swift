@@ -66,8 +66,11 @@ final class ChatCoordinator {
     /// - Parameter query: query
     /// - Parameter pages: pages
     func sendMessage(query: String? = nil, pages: [KnowledgePage]) async {
-        let text = (query ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return }
+        let rawText = (query ?? inputText).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !rawText.isEmpty else { return }
+
+        // 用户输入长度保护：截断至 BusinessConstants.AI.maxUserInputLength
+        let text = String(rawText.prefix(BusinessConstants.AI.maxUserInputLength))
         
         if isProcessing {
             cancelCurrentRequest()

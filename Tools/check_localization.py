@@ -109,6 +109,41 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
             zh_val = zh_loc.get('value', '')
             zh_state = zh_loc.get('state', '')
 
+            # 规范化：trim 首尾空白，避免尾部空格掩盖真实匹配（如 "action.regenerate " vs "action.regenerate"）
+            en_trimmed = en_val.strip()
+            zh_trimmed = zh_val.strip()
+
+            # -1. 值为自身的 key —— 当 key 包含命名空间分隔符(.)且值完全等于 key 时，一定是漏填
+            if en_trimmed and '.' in key and en_trimmed == key:
+                issues.append((file, key,
+                    f'English value equals its own key: "{en_trimmed}" — unfilled placeholder',
+                    "ERROR"))
+            if zh_trimmed and '.' in key and zh_trimmed == key:
+                issues.append((file, key,
+                    f'zh-Hans value equals its own key: "{zh_trimmed}" — unfilled placeholder',
+                    "ERROR"))
+
+            # -0.5 值看起来像 localization key 模式（如 prompt.replyInChinese）
+            KEY_PATTERN = re.compile(r'^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$')
+            if KEY_PATTERN.match(en_trimmed):
+                issues.append((file, key,
+                    f'English value looks like a localization key (dotted pattern): "{en_trimmed}"',
+                    "ERROR"))
+            if KEY_PATTERN.match(zh_trimmed):
+                issues.append((file, key,
+                    f'zh-Hans value looks like a localization key (dotted pattern): "{zh_trimmed}"',
+                    "ERROR"))
+
+            # -0.2 尾部空格告警（en/zh 值末端含空格，通常是复制粘贴导致的值不完全匹配）
+            if en_val != en_trimmed:
+                issues.append((file, key,
+                    f'English value has leading/trailing whitespace: "{repr(en_val)}"',
+                    "WARNING"))
+            if zh_val != zh_trimmed:
+                issues.append((file, key,
+                    f'zh-Hans value has leading/trailing whitespace: "{repr(zh_val)}"',
+                    "WARNING"))
+
             # 0. 英文值为 PascalCase/camelCase 复合词（自动生成占位符特征）
             if is_compound_pascal_case(en_val):
                 issues.append((file, key,
@@ -124,17 +159,17 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
             elif is_chinese(en_val) and not is_chinese(zh_val):
                  issues.append((file, key, f"English field contains Chinese: \"{en_val}\"", "ERROR"))
             
-            # 3. 翻译值与 Key 相同 (且不是简单的格式符)
-            elif en_val == zh_val and not is_chinese(en_val) and en_val.strip() != '':
-                if not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', en_val):
+            # 3. 翻译值与 Key 相同 (且不是简单的格式符) —— 使用 trimmed 值比较
+            elif en_trimmed == zh_trimmed and not is_chinese(en_trimmed) and en_trimmed != '':
+                if not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', en_trimmed):
                     # 提示词模板键有意保持英文（zh=en），不告警
                     # 匹配 llm.prompt.XXX 和 llm.ingest.jsonXXX，排除 UI 用的 workshop/reset/expert
                     if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
                         pass
-                    elif is_natural_language_sentence(en_val):
-                        issues.append((file, key, f"Potential fake translation (zh matches en sentence): \"{en_val}\"", "ERROR"))
+                    elif is_natural_language_sentence(en_trimmed):
+                        issues.append((file, key, f"Potential fake translation (zh matches en sentence): \"{en_trimmed}\"", "ERROR"))
                     else:
-                        issues.append((file, key, f"Identical zh/en detected: \"{en_val}\"", "WARNING"))
+                        issues.append((file, key, f"Identical zh/en detected: \"{en_trimmed}\"", "WARNING"))
             
             # 4. 自动生成占位符检测：zh-Hans 值为 "{en} (zh)" 格式或含有 "[译]" 后缀（常见于未翻译项的占位修补）
             elif re.search(r'(\(zh\)|\[译\])$', zh_val.strip()):

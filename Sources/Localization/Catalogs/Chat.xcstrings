@@ -92,13 +92,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.regenerate "
+            "value": "Regenerate"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.regenerate"
+            "value": "重新生成"
           }
         }
       }
