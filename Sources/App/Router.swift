@@ -242,7 +242,8 @@ final class Router {
         isShowingSettingsSheet = false
     }
 
-    private init() {}
+    /// 仅用于预览和测试的公开初始化器
+    public init() {}
     
     // MARK: - 导航指令
     

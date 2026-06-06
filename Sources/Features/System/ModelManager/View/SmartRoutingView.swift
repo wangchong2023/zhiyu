@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L3] 表现层
-//  核心职责：智能路由配置视图，提供端云混合策略、云端模型选择、任务路由规则、网络状态监控等配置界面。
+//  核心职责：智能路由配置视图，提供端云混合策略、任务路由规则、网络状态监控等配置界面。云端模型选择已集成到在线大模型配置中。
 //
 
 import SwiftUI
@@ -17,12 +17,10 @@ public struct SmartRoutingView: View {
 
     // MARK: - 环境注入
 
-    @EnvironmentObject private var themeManager: ThemeManager
+    @StateObject private var themeManager = ThemeManager.shared
     @State private var modelManager = GlobalModelManager()
 
     // MARK: - 状态管理
-
-    @State private var cloudModels = ["GPT-4o", "Claude 3.5 Sonnet", "Gemini Pro 1.5"]
 
     public init() {}
 
@@ -31,9 +29,6 @@ public struct SmartRoutingView: View {
             VStack(spacing: DesignSystem.large) {
                 // 端云混合策略
                 cloudEscalationSection
-
-                // 云端模型选择
-                cloudModelSection
 
                 // 任务路由规则
                 routingRulesSection
@@ -46,6 +41,10 @@ public struct SmartRoutingView: View {
             }
             .padding(DesignSystem.medium)
         }
+        .navigationTitle(L10n.Settings.smartRouting)
+        #if !os(watchOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     // MARK: - 子视图组件
@@ -80,45 +79,6 @@ public struct SmartRoutingView: View {
                     set: { modelManager.isCloudEscalationEnabled = $0 }
                 ))
                 .labelsHidden()
-            }
-        }
-        .padding()
-        .background(Color.appCard.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-    }
-
-    /// 云端模型选择
-    private var cloudModelSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            Text(L10n.ModelManager.Routing.cloudModelSelection)
-                .font(.headline)
-                .foregroundStyle(.appText)
-
-            Menu {
-                ForEach(cloudModels, id: \.self) { model in
-                    Button(action: {
-                        modelManager.activeCloudModelId = model
-                    }) {
-                        HStack {
-                            Text(model)
-                            if modelManager.activeCloudModelId == model {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            } label: {
-                HStack {
-                    Text(L10n.ModelManager.Routing.currentCloudModel(modelManager.activeCloudModelId))
-                        .font(.subheadline)
-                        .foregroundStyle(.appText)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .foregroundStyle(.appSecondary)
-                }
-                .padding()
-                .background(Color.appBackground)
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
         }
         .padding()

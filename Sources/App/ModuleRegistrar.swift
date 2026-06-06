@@ -270,7 +270,10 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(LLMConfigManager(), for: LLMConfigManager.self)
         container.register(AIAnalyticsService(), for: AIAnalyticsService.self)
         container.register(RAGOrchestrator(), for: RAGOrchestrator.self)
-        
+
+        // 注册远程配置服务
+        container.register(RemoteConfigService() as any RemoteConfigCapabilities, for: (any RemoteConfigCapabilities).self)
+
         container.register(ChatRunner(), for: (any LLMChatServiceProtocol).self)
         container.register(IngestProcessor(), for: (any LLMKnowledgeServiceProtocol).self)
         container.register(QueryReranker(), for: (any LLMRetrievalServiceProtocol).self)

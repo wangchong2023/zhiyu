@@ -12,7 +12,7 @@
 import SwiftUI
 
 /// 本地大模型管理统一入口视图
-/// 采用 Tab 切换架构，整合模型商店、参数调优、服务器配置、智能路由四大功能域
+/// 采用 Tab 切换架构，整合模型商店和参数调优两大核心功能模块
 @MainActor
 public struct LocalModelManagerView: View {
 
@@ -20,12 +20,12 @@ public struct LocalModelManagerView: View {
 
     @Environment(AppStore.self) private var store
     @Environment(Router.self) private var router
-    @EnvironmentObject private var themeManager: ThemeManager
+    @StateObject private var themeManager = ThemeManager.shared
 
     // MARK: - 状态管理
 
     /// 当前选中的 Tab 索引
-    /// 0: 模型商店, 1: 参数调优, 2: 服务器配置, 3: 智能路由
+    /// 0: 模型商店, 1: 参数调优
     @State private var selectedTab: Tab = .store
 
     // MARK: - Tab 枚举
@@ -33,8 +33,6 @@ public struct LocalModelManagerView: View {
     private enum Tab: Int, CaseIterable {
         case store = 0
         case parameters = 1
-        case servers = 2
-        case routing = 3
 
         var title: String {
             switch self {
@@ -42,10 +40,6 @@ public struct LocalModelManagerView: View {
                 return L10n.ModelManager.storeTitle
             case .parameters:
                 return L10n.ModelManager.parametersTitle
-            case .servers:
-                return L10n.ModelManager.serversTitle
-            case .routing:
-                return L10n.ModelManager.routingTitle
             }
         }
 
@@ -55,10 +49,6 @@ public struct LocalModelManagerView: View {
                 return "square.stack.3d.up.fill"
             case .parameters:
                 return "slider.horizontal.3"
-            case .servers:
-                return "server.rack"
-            case .routing:
-                return "arrow.triangle.branch"
             }
         }
     }
@@ -81,12 +71,6 @@ public struct LocalModelManagerView: View {
 
                     InferenceParametersView()
                         .tag(Tab.parameters)
-
-                    ServerConfigView()
-                        .tag(Tab.servers)
-
-                    SmartRoutingView()
-                        .tag(Tab.routing)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }

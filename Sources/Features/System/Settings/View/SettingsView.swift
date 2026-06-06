@@ -294,6 +294,12 @@ struct SettingsView: View {
     private var aiSection: some View {
         Section {
             NavigationLink {
+                SmartRoutingView()
+            } label: {
+                Label(L10n.Settings.smartRouting, systemImage: "arrow.triangle.branch")
+            }
+
+            NavigationLink {
                 LLMSettingsView()
             } label: {
                 Label(L10n.Settings.llmSettings, systemImage: "network")

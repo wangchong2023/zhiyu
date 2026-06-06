@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-06-06T00:00:00Z",
+  "servers": [
+    {
+      "id": "ollama-local",
+      "name": "Ollama (本地)",
+      "description": "本地 Ollama 服务器，支持多种开源大模型",
+      "baseURL": "http://localhost:11434",
+      "apiType": "ollama",
+      "enabled": true,
+      "priority": 1,
+      "capabilities": ["chat", "embedding", "completion"],
+      "models": [
+        {
+          "id": "llama3.2:3b",
+          "name": "Llama 3.2 3B",
+          "contextWindow": 128000,
+          "tags": ["chat", "lightweight"]
+        },
+        {
+          "id": "qwen2.5:7b",
+          "name": "Qwen 2.5 7B",
+          "contextWindow": 128000,
+          "tags": ["chat", "chinese"]
+        },
+        {
+          "id": "deepseek-r1:8b",
+          "name": "DeepSeek R1 8B",
+          "contextWindow": 64000,
+          "tags": ["reasoning", "chat"]
+        }
+      ]
+    },
+    {
+      "id": "openai-compatible",
+      "name": "OpenAI 兼容服务器",
+      "description": "支持 OpenAI API 格式的第三方服务",
+      "baseURL": "http://localhost:8080/v1",
+      "apiType": "openai",
+      "enabled": false,
+      "priority": 2,
+      "capabilities": ["chat", "completion"],
+      "models": []
+    },
+    {
+      "id": "lmstudio-local",
+      "name": "LM Studio (本地)",
+      "description": "LM Studio 本地服务器",
+      "baseURL": "http://localhost:1234/v1",
+      "apiType": "openai",
+      "enabled": false,
+      "priority": 3,
+      "capabilities": ["chat", "embedding"],
+      "models": []
+    }
+  ]
+}

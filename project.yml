@@ -111,6 +111,7 @@ targets:
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
+      - package: Lottie
 
   ZhiYuWatch:
     type: application
@@ -146,6 +147,7 @@ targets:
           - "Shared/UIComponents/Interaction/KeyboardShortcutsView.swift"
           - "Shared/UIComponents/Modifiers/AppToolbarModifier.swift"
           - "Shared/UIComponents/Feedback/AppAILoadingSkeleton.swift"
+          - "Shared/UIComponents/Feedback/AppLottieView.swift"
           - "Shared/UIComponents/Feedback/AppTooltip.swift"
           - "Shared/UIComponents/Feedback/TooltipManager.swift"
           - "Shared/DesignSystem/Styles/SynthesisStore+UI.swift"

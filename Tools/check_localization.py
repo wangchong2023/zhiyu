@@ -144,6 +144,12 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
             elif zh_state and zh_state != 'translated':
                  issues.append((file, key, f"zh-Hans state is \"{zh_state}\"", "WARNING"))
 
+            # 6. 检查值为空（空字符串）
+            if not en_val.strip():
+                issues.append((file, key, f"English value is empty or whitespace only", "ERROR"))
+            if not zh_val.strip():
+                issues.append((file, key, f"zh-Hans value is empty or whitespace only", "ERROR"))
+
     return issues
 
 def check_file(file_path):

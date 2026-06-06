@@ -86,7 +86,32 @@
       "Bash(cp /tmp/test_plugin.js /Users/constantine/Library/Developer/CoreSimulator/Devices/9ABEC5B9-E952-422A-A0AB-E2B785C1B36C/data/Containers/Data/Application/4BCCC9CF-874B-45A2-AFB0-23C1114B2DF1/Documents/Plugins/)",
       "Bash(unzip -t /tmp/test_plugin.zyplugin)",
       "Bash(CONTAINER=$\\(xcrun simctl get_app_container \"9ABEC5B9-E952-422A-A0AB-E2B785C1B36C\" \"com.zhiyu.app\" data\\) 2>/dev/null)",
-      "Bash(ls \"$\\(xcrun simctl get_app_container \"9ABEC5B9-E952-422A-A0AB-E2B785C1B36C\" \"com.zhiyu.app\" data\\)/Documents/Plugins/\")"
+      "Bash(ls \"$\\(xcrun simctl get_app_container \"9ABEC5B9-E952-422A-A0AB-E2B785C1B36C\" \"com.zhiyu.app\" data\\)/Documents/Plugins/\")",
+      "Bash(xcodebuild -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 15' -quiet clean build)",
+      "Bash(git checkout *)",
+      "Bash(xcodebuild -list -project ZhiYu.xcodeproj)",
+      "Bash(xcodebuild -scheme ZhiYu -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' clean build)",
+      "Bash(tee /tmp/ios_build.log)",
+      "Bash(xcodebuild -scheme ZhiYu -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17' clean build CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO)",
+      "Bash(chmod +x /tmp/add_files_to_xcode.sh)",
+      "Bash(/tmp/add_files_to_xcode.sh)",
+      "Bash(open *)",
+      "Bash(xcodebuild clean *)",
+      "Bash(awk '{print \"  进程:\", $2, \"-\", $11, $12}')",
+      "Bash(awk '{print \"  •\", $11, $12, \"\\(PID:\", $2\"\\)\"}')",
+      "Bash(chmod +x Tools/test_mock_api.py)",
+      "Bash(unzip -l Tools/Plugins/smart-cleaner.zyplugin)",
+      "Bash(chmod +x Tools/validate_plugin.py)",
+      "Bash(plutil -p -)",
+      "Bash(xcodebuild -showBuildSettings -project ZhiYu.xcodeproj -scheme ZhiYu)",
+      "Bash(awk '{print \"  📄\", $9, \"-\", $5}')",
+      "Bash(chmod +x CHECK_DEBUG_MACRO.sh)",
+      "Bash(./CHECK_DEBUG_MACRO.sh)",
+      "Bash(kill 98210 66107)",
+      "Bash(killall -9 Python)",
+      "Bash(killall Python)",
+      "Bash(echo \"模型商店 PID: $!\")",
+      "Bash(echo \"插件市场 PID: $!\")"
     ]
   }
 }

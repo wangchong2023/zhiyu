@@ -200,7 +200,7 @@ final class DatabaseManager: Sendable {
     /// 发生严重故障时，高可用降级至纯内存模式，阻止 DI 崩溃并允许应用启动。
     private func degradeToInMemory(error: Error) {
         do {
-            print(" [DatabaseManager]" + " Safety warning:" + " Fallback to" + " transient in-memory" + " database configuration" + " due to:" + " \(error.localizedDescription)")
+            print("[DatabaseManager] 安全警告：由于错误回退到临时内存数据库配置：\(error.localizedDescription)")
             
             // 1. 物理重置以清理潜在冲突
             self.dbURL = nil
