@@ -41,8 +41,8 @@ public struct InferenceParametersView: View {
     // MARK: - 预设模板
 
     private enum ParameterPreset: String, CaseIterable {
-        case creative
         case balanced
+        case creative
         case precise
 
         var displayName: String {
