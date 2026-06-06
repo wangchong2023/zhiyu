@@ -47,7 +47,8 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
     
     private func updateSubServices() {
         let client = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
-        self.chatService = LLMChatService(client: client, model: configManager.model)
+        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
+        self.chatService = LLMChatService(client: client, model: configManager.model, logger: logger)
     }
     
     // MARK: - LLMChatServiceProtocol 契约方法

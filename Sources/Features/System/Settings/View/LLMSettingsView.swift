@@ -24,8 +24,8 @@ struct LLMSettingsView: View {
     @State private var isConfigExpanded = true // 默认展开，方便用户发现
     
     enum TestResult {
-        case success(latency: Int)
-        case failure(code: String, message: String, latency: Int?)
+        case success(latency: Int, streamOK: Bool, streamTested: Bool)
+        case failure(code: String, message: String, latency: Int?, streamTested: Bool)
     }
     
     var body: some View {
@@ -137,7 +137,7 @@ struct LLMSettingsView: View {
                     if let result = testResult {
                         VStack(alignment: .leading, spacing: DesignSystem.small) {
                             switch result {
-                            case .success(let latency):
+                            case .success(let latency, let streamOK, let streamTested):
                                 HStack {
                                     Image(systemName: DesignSystem.Icons.checkCircle)
                                         .foregroundStyle(.green)
@@ -149,7 +149,7 @@ struct LLMSettingsView: View {
                                         .font(.caption.monospaced())
                                         .foregroundStyle(.appSecondary)
                                 }
-                            case .failure(let code, let message, let latency):
+                            case .failure(let code, let message, let latency, let streamTested):
                                 HStack(alignment: .top) {
                                     Image(systemName: DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(.red)
@@ -308,15 +308,15 @@ struct LLMSettingsView: View {
                 await MainActor.run {
                     testing = false
                     if res.isSuccess {
-                        testResult = .success(latency: res.latencyMS)
+                        testResult = .success(latency: res.latencyMS, streamOK: res.streamOK, streamTested: res.streamTested)
                     } else {
-                        testResult = .failure(code: res.errorCode ?? "ERR", message: res.errorMessage ?? "Unknown_Error", latency: res.latencyMS)
+                        testResult = .failure(code: res.errorCode ?? "ERR", message: res.errorMessage ?? "Unknown_Error", latency: res.latencyMS, streamTested: res.streamTested)
                     }
                 }
             } catch {
                 await MainActor.run {
                     testing = false
-                    testResult = .failure(code: "CATCH", message: error.localizedDescription, latency: nil)
+                    testResult = .failure(code: "CATCH", message: error.localizedDescription, latency: nil, streamTested: false)
                 }
             }
         }

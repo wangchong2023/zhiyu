@@ -189,16 +189,45 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
         await queryReranker.generateHypotheticalDocument(query: query)
     }
 
-    /// AI 模块连通性与响应测速测试。
+    /// AI 模块连通性与响应测速测试（同时验证非流式与流式信道）。
     func validateAPIKey() async throws -> ValidationResult {
         let start = Date()
+        var streamTested = false
+        var streamOK = false
+
         do {
-            _ = try await generate(prompt: "Hello", systemPrompt: "Keep it short.")
+            // 阶段 1：非流式快速探活
+            _ = try await generate(prompt: "Hi", systemPrompt: "Reply 'OK' only.")
+
+            // 阶段 2：流式信道验证 — 确保聊天管道可用
+            let stream = chatStream(query: "ping", history: [], pages: [])
+            for try await chunk in stream {
+                if !chunk.isEmpty {
+                    streamTested = true
+                    streamOK = true
+                    break
+                }
+            }
+
             let latency = Int(Date().timeIntervalSince(start) * 1000)
-            return ValidationResult(isSuccess: true, latencyMS: latency, errorCode: nil, errorMessage: nil)
+            return ValidationResult(
+                isSuccess: true,
+                latencyMS: latency,
+                streamTested: streamTested,
+                streamOK: streamOK,
+                errorCode: nil,
+                errorMessage: nil
+            )
         } catch {
             let latency = Int(Date().timeIntervalSince(start) * 1000)
-            return ValidationResult(isSuccess: false, latencyMS: latency, errorCode: "ERR", errorMessage: error.localizedDescription)
+            return ValidationResult(
+                isSuccess: false,
+                latencyMS: latency,
+                streamTested: streamTested,
+                streamOK: streamOK,
+                errorCode: "ERR",
+                errorMessage: error.localizedDescription
+            )
         }
     }
 }
@@ -212,6 +241,10 @@ extension LLMService {
         let isSuccess: Bool
         /// 网关响应的总耗时（毫秒）。
         let latencyMS: Int
+        /// 是否已执行流式信道验证。
+        let streamTested: Bool
+        /// 流式信道是否正常。
+        let streamOK: Bool
         /// 异常错误代码（如有）。
         let errorCode: String?
         /// 具体的错误解析文案。

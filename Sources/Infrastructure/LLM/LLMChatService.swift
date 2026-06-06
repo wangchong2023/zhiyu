@@ -15,10 +15,12 @@ import Foundation
 final class LLMChatService: Sendable {
     private let client: any LLMClientProtocol
     private let model: String
+    private let logger: (any LoggerProtocol)?
 
-    init(client: any LLMClientProtocol, model: String) {
+    init(client: any LLMClientProtocol, model: String, logger: (any LoggerProtocol)? = nil) {
         self.client = client
         self.model = model
+        self.logger = logger
     }
 
     // MARK: - 请求构造
@@ -83,7 +85,7 @@ final class LLMChatService: Sendable {
         let task = Task {
             do {
                 let bytes = try await localClient.sendStreamingRequest(body: safeBody.dict)
-                for try await chunk in SSEParser.parse(bytes: bytes) {
+                for try await chunk in SSEParser.parse(bytes: bytes, logger: logger) {
                     if Task.isCancelled { break }
                     continuation.yield(chunk)
                 }
