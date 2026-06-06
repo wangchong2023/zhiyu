@@ -338,9 +338,13 @@ extension AppStore: CollaborationDelegate {
     /// 清除AllDeveloperData
     func clearAllDeveloperData() {
         Task {
+            print("[RESET-DEBUG] clearAllDeveloperData() 开始")
             AppEventBus.shared.publish(.clearAllDataRequested)
+            print("[RESET-DEBUG]  → 已发布 .clearAllDataRequested")
             await maintenanceService.clearAllDeveloperData()
+            print("[RESET-DEBUG]  → DB 重置完成")
             await refresh()
+            print("[RESET-DEBUG]  → refresh() 后 pages.count=\(pages.count), totalPages=\(totalPages)")
         }
     }
 

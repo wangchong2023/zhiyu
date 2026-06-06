@@ -126,7 +126,9 @@ public final class KnowledgeStore {
     /// 刷新内存镜像
     public func refresh() async {
         let startTime = Date()
-        self.pages = (try? await knowledgeRepository.fetchAll()) ?? []
+        let fetched = (try? await knowledgeRepository.fetchAll()) ?? []
+        print("[RESET-DEBUG] KnowledgeStore.refresh() — fetchAll 返回 \(fetched.count) 页")
+        self.pages = fetched
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
         
