@@ -432,7 +432,6 @@
 		40E3D1DA3A71C2B49E2BCFBB /* PageDetailContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14EBA84BD7ADE0F2ACB754AA /* PageDetailContentSection.swift */; };
 		40EAA3A32B0B688B0E56A30D /* L10n+Coachmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39638948EB15720B1CF596 /* L10n+Coachmark.swift */; };
 		40F41EDBB81C4FD5A0846347 /* DocumentExtractionServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67DE50BA0FFE5B3B502051A /* DocumentExtractionServiceProtocol.swift */; };
-		40FB0F80C3E89B6039BA0748 /* Watch.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 65273EDF593F206B3F9CC261 /* Watch.xcstrings */; };
 		410AE6E5B0F1B93C4C0144C1 /* WatchHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53394E4EF91C08E383DE8F1B /* WatchHapticService.swift */; };
 		412F15E8C943C69CB76764F1 /* EditorComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2895695A2F07F94FD51F1108 /* EditorComponents.swift */; };
 		414D0C4F2AEC4DFDDD8C51B0 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A031147CFB4E8F70AD35B6A /* AboutView.swift */; };
@@ -542,6 +541,7 @@
 		50651E74FBBAD3BE734A146C /* KnowledgeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3318DEC045E056EFA8646D04 /* KnowledgeStore.swift */; };
 		507A7F89B378EE45918C8F97 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEF6FE252A1F56F7BF0E2E3 /* AppModels.swift */; };
 		509BECED88630CCCBF19B619 /* Knowledge.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 05806C670D6DB1EDCDABBBB0 /* Knowledge.xcstrings */; };
+		50B697D1489BA94E1E401A80 /* model_allowlist.json in Resources */ = {isa = PBXBuildFile; fileRef = 85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */; };
 		50DD2AC933A90CC8E6E902B3 /* ServerConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B823234F7F14CE1746CA388 /* ServerConfigView.swift */; };
 		50DE14EF0228ABA1ECA48341 /* UINavigationController+PopGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = F222F3322366805595B60A89 /* UINavigationController+PopGesture.swift */; };
 		5104971A76C8E018F1637DAE /* QuizProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC454C33881B0524198C9E3 /* QuizProcessor.swift */; };
@@ -684,6 +684,7 @@
 		667FC2AA78E6656273D38F0F /* NotebookHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E12E89365066F83036B9D /* NotebookHubView.swift */; };
 		6692556425CA0DA81487FB98 /* L10n+Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7DBD8241E884C88C613522 /* L10n+Editor.swift */; };
 		66B9A994A052D8528DDC5DCC /* IngestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A27F6CBD30D6A3664B1E3A0 /* IngestService.swift */; };
+		6727672321BECB74553C725A /* model_allowlist.json in Resources */ = {isa = PBXBuildFile; fileRef = 85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */; };
 		674BF6B41397A89B2F6FB990 /* XlsxStringsProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458229A1EDF1FFDEB91F01F9 /* XlsxStringsProcessor.swift */; };
 		676BFA051005BFC70079BFC4 /* SecurityReinforcement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CB5CD7975DA1ACA7069ECE /* SecurityReinforcement.swift */; };
 		678CE5331284614F5F44FBDB /* DataCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145774E1257A629C404171A1 /* DataCoordinator.swift */; };
@@ -812,7 +813,6 @@
 		7AFFCDC28EF35396A06BF7C5 /* AppLoadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195527CFD16D661189AD4F3B /* AppLoadingOverlay.swift */; };
 		7B40AE3579B25955177DE41D /* StubCollaborationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9421E8A5489BF6AA581410F /* StubCollaborationProvider.swift */; };
 		7B66F376ECC10D346CF8152A /* PDFHighlight+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFC4AC30FDD7A461C21DF9E /* PDFHighlight+UI.swift */; };
-		7B6E0F7AF10BD5C4F5B4B9DA /* Watch.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 65273EDF593F206B3F9CC261 /* Watch.xcstrings */; };
 		7B886738881D834C62B8B3D3 /* PluginRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC9D9E231F08A7930845D56 /* PluginRepository.swift */; };
 		7BA71563855EA4C8CC693CF5 /* Graph.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A99E81CD203899D47AE64ED3 /* Graph.xcstrings */; };
 		7BB05CFAF44D185A9D10C51B /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A031147CFB4E8F70AD35B6A /* AboutView.swift */; };
@@ -924,7 +924,6 @@
 		8CC613E6290C1E48EB425443 /* GraphCommunityProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6A8F898DED77E6E5FCD9E7 /* GraphCommunityProcessor.swift */; };
 		8CDABE47BCAAC07C94DA5D13 /* DesignSystem+Shadows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223A88F0020EBEE3AF842DE3 /* DesignSystem+Shadows.swift */; };
 		8CE3ACE43DFD474CA85519CC /* iOSOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595E2220CFCAD9E675CD4C74 /* iOSOCRService.swift */; };
-		8CE89C159956D1C67D8024AC /* Watch.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 65273EDF593F206B3F9CC261 /* Watch.xcstrings */; };
 		8D00900935A591C300D082DE /* DesignSystem+Gallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24DB9CC1C9116591E5B61D98 /* DesignSystem+Gallery.swift */; };
 		8D2A3188298B3C1D77FCFA5A /* L10n+Ingest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7E2DDFDA6D16DAC4F9C54B /* L10n+Ingest.swift */; };
 		8D2A5EB19AA10D3F528292FB /* init_schema.sql in Resources */ = {isa = PBXBuildFile; fileRef = 64107641678BEE149996E9B5 /* init_schema.sql */; };
@@ -1272,6 +1271,7 @@
 		BEC7FC4F645C6630CD48812D /* AppEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA77275F3ACC64E00CAE8993 /* AppEmptyState.swift */; };
 		C0065C24EB020843C404CCE1 /* SystemStatsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2376A3A79D6CF289F25A16A9 /* SystemStatsCoordinator.swift */; };
 		C00D9ECE3DE489260E80C6BC /* MacHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0139F64CD1544279326E3B93 /* MacHapticService.swift */; };
+		C00E52E117F752E2C56D1BCB /* model_allowlist.json in Resources */ = {isa = PBXBuildFile; fileRef = 85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */; };
 		C03539D73D5F53AD871E563F /* KnowledgeRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38E641235EECC22B0A1145D /* KnowledgeRepository.swift */; };
 		C0711FA5A9DF7747474927FD /* StoreCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3458CE4B1CF822AF54590A7 /* StoreCapabilities.swift */; };
 		C07B62F3ED5AA1B4FD9C0829 /* SyncProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C225072441FE7A1087E971E /* SyncProtocols.swift */; };
@@ -2004,10 +2004,9 @@
 		63E4735D1EE81F9FF6172755 /* ExportReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportReportView.swift; sourceTree = "<group>"; };
 		63FD160FB200B0ED44B841C8 /* L10n+Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Log.swift"; sourceTree = "<group>"; };
 		640D9C971BB82792F28FAF84 /* WebScraperProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebScraperProcessorTests.swift; sourceTree = "<group>"; };
-		64107641678BEE149996E9B5 /* init_schema.sql */ = {isa = PBXFileReference; lastKnownFileType = text; path = init_schema.sql; sourceTree = "<group>"; };
+		64107641678BEE149996E9B5 /* init_schema.sql */ = {isa = PBXFileReference; path = init_schema.sql; sourceTree = "<group>"; };
 		64B0C3628072DC9F68E62B9E /* WatchAccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchAccessibilityService.swift; sourceTree = "<group>"; };
 		6505AB6895A4F5F1DAF951A5 /* GraphFilterPillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphFilterPillsView.swift; sourceTree = "<group>"; };
-		65273EDF593F206B3F9CC261 /* Watch.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Watch.xcstrings; sourceTree = "<group>"; };
 		6596B3855C4AA12B94C925AF /* QuickActionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionRow.swift; sourceTree = "<group>"; };
 		65983F53F7CB3063E77E4516 /* L10n+Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Common.swift"; sourceTree = "<group>"; };
 		65BF382B80E63AA9FEC6CF09 /* CloudChaosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudChaosTests.swift; sourceTree = "<group>"; };
@@ -2060,7 +2059,7 @@
 		7880DD208AE245809269D822 /* SearchIndexerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchIndexerProtocol.swift; sourceTree = "<group>"; };
 		78A54CB4ED37F010F1F7AFF1 /* FloatingContextCapsule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingContextCapsule.swift; sourceTree = "<group>"; };
 		78F4DB2B9A4A056F95ED1FF9 /* L10n+Workflow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Workflow.swift"; sourceTree = "<group>"; };
-		79A620414E80D0AC144E21FE /* global_schema.sql */ = {isa = PBXFileReference; lastKnownFileType = text; path = global_schema.sql; sourceTree = "<group>"; };
+		79A620414E80D0AC144E21FE /* global_schema.sql */ = {isa = PBXFileReference; path = global_schema.sql; sourceTree = "<group>"; };
 		7AC5900EFA08602931850304 /* ComponentSnapshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentSnapshots.swift; sourceTree = "<group>"; };
 		7AF67C697CB0DFC51EACE446 /* ZhiYuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZhiYuApp.swift; sourceTree = "<group>"; };
 		7B302439FE0CA28FA34BF25E /* ZhiYuWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZhiYuWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2083,11 +2082,12 @@
 		834B3E0D10E1FAB42B99F8F9 /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		8390567A95F898612D1932BB /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		83CDDEBF40929526741E41BF /* StubIngestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubIngestService.swift; sourceTree = "<group>"; };
-		845931ACF7AF46702940544A /* ZhiYu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZhiYu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		845931ACF7AF46702940544A /* ZhiYu.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZhiYu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85475C1E8A636EFD9557FF67 /* KnowledgeIngestPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeIngestPipeline.swift; sourceTree = "<group>"; };
 		856622CAC4CAB31FEA7C3D2A /* LLMIngestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMIngestService.swift; sourceTree = "<group>"; };
 		859DF0025A6C5B88C856BB1B /* LLMContextBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMContextBuilderTests.swift; sourceTree = "<group>"; };
 		85A37F1322AA0C54FE4495FF /* SiriWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiriWaveformView.swift; sourceTree = "<group>"; };
+		85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = model_allowlist.json; sourceTree = "<group>"; };
 		85EA728361DAF8BF8D1AEE25 /* VaultDataIsolationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultDataIsolationTests.swift; sourceTree = "<group>"; };
 		861FA93734BED9A4AF964966 /* Ingest.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Ingest.xcstrings; sourceTree = "<group>"; };
 		86671F0C49670F331F14C589 /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
@@ -3487,7 +3487,6 @@
 				5C2DBF6A400C56160439D22F /* Plugin.xcstrings */,
 				ABD8CD4C32C6003E8BBDEC00 /* System.xcstrings */,
 				938D7456155DFBA2340DAE3B /* Transfer.xcstrings */,
-				65273EDF593F206B3F9CC261 /* Watch.xcstrings */,
 				5F2363B3ACD7889BFEC66EF0 /* Widget.xcstrings */,
 			);
 			path = Catalogs;
@@ -3854,6 +3853,7 @@
 			children = (
 				29D2B623011C6C3BCE1A37B2 /* AppConfig.json */,
 				B4B745A030953BBDF7358633 /* LLMServers.json */,
+				85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -5038,6 +5038,9 @@
 					6408FAB740B3056A6CC305BA = {
 						DevelopmentTeam = "";
 					};
+					67D028F10F307E1351F7262E = {
+						DevelopmentTeam = "";
+					};
 					7A6CFC0442842DC91A9C4990 = {
 						DevelopmentTeam = "";
 					};
@@ -5124,13 +5127,13 @@
 				EE055DBCE931314792B0E856 /* README.md in Resources */,
 				EDDA61DC105BCFB15E2E2A69 /* System.xcstrings in Resources */,
 				A57E48DC1714A13C56A713A6 /* Transfer.xcstrings in Resources */,
-				40FB0F80C3E89B6039BA0748 /* Watch.xcstrings in Resources */,
 				75E96242E3C8D1DCA98A6C21 /* Welcome_To_ZhiYu.md in Resources */,
 				D8DAFBEE594FC27752E64CB1 /* Widget.xcstrings in Resources */,
 				99450232F3E0722B07E45645 /* global_schema.sql in Resources */,
 				8DB9AA3C2E45EFB720B77E5C /* init_schema.sql in Resources */,
 				19E543B78F7AA33626D41DB0 /* marked.min.js in Resources */,
 				A3A535CF0FC995B39EE4C2FF /* mermaid.min.js in Resources */,
+				50B697D1489BA94E1E401A80 /* model_allowlist.json in Resources */,
 				75C52A38FCE3DB44074145B2 /* pptxgen.bundle.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5160,13 +5163,13 @@
 				2CB61E4BB785A5409D640A11 /* README.md in Resources */,
 				1E0096AC573B9B488061AF54 /* System.xcstrings in Resources */,
 				883B9E92B070B4804D5F2210 /* Transfer.xcstrings in Resources */,
-				8CE89C159956D1C67D8024AC /* Watch.xcstrings in Resources */,
 				653E3FA891F34655C6E66B9F /* Welcome_To_ZhiYu.md in Resources */,
 				7750ED53243E59FB3DF58B58 /* Widget.xcstrings in Resources */,
 				79F3994725F51CDD793BAA7F /* global_schema.sql in Resources */,
 				6AE85881910ED71FC46A20D8 /* init_schema.sql in Resources */,
 				C2B8086873C900BB2DF9EE48 /* marked.min.js in Resources */,
 				E647BD1248A9033A42D1005D /* mermaid.min.js in Resources */,
+				C00E52E117F752E2C56D1BCB /* model_allowlist.json in Resources */,
 				9A8F9814EE2FF2501EA5B74E /* pptxgen.bundle.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5197,13 +5200,13 @@
 				2CB3252CF56AD51DB5809EBA /* README.md in Resources */,
 				51C76CD0AE09951420C0B4E6 /* System.xcstrings in Resources */,
 				1D0A05345CE309BCE31340E5 /* Transfer.xcstrings in Resources */,
-				7B6E0F7AF10BD5C4F5B4B9DA /* Watch.xcstrings in Resources */,
 				05BBBC82CB977A4EE7450F23 /* Welcome_To_ZhiYu.md in Resources */,
 				D401A0DFE4AE6F154E9BD9F1 /* Widget.xcstrings in Resources */,
 				38A14843A0DCD00D5DA5788F /* global_schema.sql in Resources */,
 				8D2A5EB19AA10D3F528292FB /* init_schema.sql in Resources */,
 				009E7043D45B409843FB1DC2 /* marked.min.js in Resources */,
 				8F2EBBDA040CD0EC11F14AB4 /* mermaid.min.js in Resources */,
+				6727672321BECB74553C725A /* model_allowlist.json in Resources */,
 				CEAC512699A83C068369327A /* pptxgen.bundle.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7107,6 +7110,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/Platforms/iOS/Widgets/Info.plist;
 				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.zhiyu.app;
 				INFOPLIST_KEY_WKWatchKitApp = YES;
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.watch;
@@ -7235,10 +7239,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(PROJECT_DIR)/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -7295,6 +7296,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/Platforms/iOS/Widgets/Info.plist;
 				INFOPLIST_KEY_WKApplication = YES;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.zhiyu.app;
 				INFOPLIST_KEY_WKWatchKitApp = YES;
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.watch;
@@ -7311,7 +7313,6 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8A472TXX33;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"Frameworks\"",
@@ -7357,7 +7358,6 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Sources/ZhiYu.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 8A472TXX33;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"Frameworks\"",
@@ -7455,10 +7455,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(PROJECT_DIR)/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
