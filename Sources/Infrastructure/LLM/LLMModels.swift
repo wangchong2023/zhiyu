@@ -264,7 +264,7 @@ final class LLMConfigStore: ObservableObject {
             }
             return legacyValue
         }
-        
+
         return ""
     }
 

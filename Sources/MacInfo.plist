@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>ZhiYu</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,30 +19,10 @@
 	</array>
 	<key>CFBundleName</key>
 	<string>ZhiYu</string>
-	<key>CFBundleDisplayName</key>
-	<string>ZhiYu</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>14.0</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-	</dict>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string>LaunchBackground</string>
-	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -52,29 +34,47 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSFaceIDUsageDescription</key>
-	<string>We need Face ID to protect your private knowledge vault.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>ZhiYu needs microphone access to record voice notes.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>ZhiYu needs speech recognition to transcribe your voice notes.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>ZhiYu needs camera access to scan document text (OCR).</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>ZhiYu needs photo library access for OCR text scanning.</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>UIUserInterfaceStyle</key>
-	<string>Automatic</string>
-	<key>NSSpotlightUsageDescription</key>
-	<string>ZhiYu will index your knowledge vault so you can find pages directly via system search.</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>ZhiYu needs reminders access to sync your action items to the system Reminders app.</string>
-	<key>NSRemindersFullAccessUsageDescription</key>
-	<string>ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows.</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2026 ZhiYu. All rights reserved.</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>NSCameraUsageDescription</key>
+	<string>ZhiYu needs camera access to scan document text (OCR).</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We need Face ID to protect your private knowledge vault.</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 ZhiYu. All rights reserved.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>ZhiYu needs microphone access to record voice notes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>ZhiYu needs photo library access for OCR text scanning.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>ZhiYu needs full access to reminders to create and manage task lists for your knowledge workflows.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>ZhiYu needs reminders access to sync your action items to the system Reminders app.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>ZhiYu needs speech recognition to transcribe your voice notes.</string>
+	<key>NSSpotlightUsageDescription</key>
+	<string>ZhiYu will index your knowledge vault so you can find pages directly via system search.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+	</dict>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
 </dict>
 </plist>

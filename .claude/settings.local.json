@@ -129,7 +129,18 @@
       "Bash(log show *)",
       "Bash(syslog)",
       "Bash(pkill -f mock_llm_server.py)",
-      "Bash(git revert *)"
+      "Bash(git revert *)",
+      "Bash(chmod +x Tools/scan_unsafe_string_index.py)",
+      "Bash(grep -n \"var body\\\\|\\\\.alert\\\\|\\\\.sheet\\\\|}^\\\\s*$\" /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/System/ModelManager/View/InferenceParametersView.swift)",
+      "Bash(grep -n \"^    \\\\}$\\\\|^    }$\")",
+      "Bash(sed -n '54,58p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift)",
+      "Bash(sed -n '114,118p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Shared/TestMocks.swift)",
+      "Bash(grep -v 'isPresented.*$viewModel\\\\|$show')",
+      "Bash(pkill -9 xcodebuild)",
+      "Bash(pkill -9 -f \"Xcode\")",
+      "Bash(rm -rf \"/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/XCBuildData/build.db-shm\")",
+      "Bash(rm -rf \"/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/XCBuildData/build.db-wal\")",
+      "Bash(grep -rn \"CGSize\\(width:\\\\|CGRect\\\\|\\\\.onAppear.*\\\\{$\\\\|GeometryReader\" /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features --include=\"*.swift\")"
     ]
   }
 }

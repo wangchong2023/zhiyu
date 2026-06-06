@@ -246,7 +246,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         container.register(UndoService(), for: UndoService.self)
         container.register(KnowledgeInsightService(), for: KnowledgeInsightService.self)
         container.register(KnowledgePageManager(), for: KnowledgePageManager.self)
-        container.register(KnowledgeStore(), for: KnowledgeStore.self)
+        // KnowledgeStore 由 AppStore 统一创建并注册，此处不再重复
         container.register(MaintenanceService(), for: MaintenanceService.self)
         
         container.register(ChatService.shared as any ChatServiceProtocol, for: (any ChatServiceProtocol).self)

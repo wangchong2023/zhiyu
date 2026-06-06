@@ -81,3 +81,64 @@ AI 输出 JSON（匹配 `QuizModel` 结构，`answer` 为 0 起始索引，0=A/1
 - 使用 Swift 5.9 `@Observable` 宏（非 `@ObservableObject` / `@Published`）
 - `NavigationSplitView` 自适应布局：iPhone 上为 TabView，iPad 上为三列布局
 - 通过 `ZhiYuMac` target 支持 Mac Catalyst，带有键盘快捷键（`CommandGroup`、`.keyboardShortcut`）
+
+## LLM 提示词输入/输出长度控制（三层防御）
+
+业界标准做法：**API 硬限制 + Prompt 软引导 + 客户端兜底截断**，三重保障防止回复失控和费用浪费。
+
+### 架构
+
+```
+输入截断                         API 调用                         输出控制
+────────                        ────────                         ────────
+Chat 用户输入                    max_tokens = 1000               API 硬限制
+  .prefix(1000)         ──→      (ChatRunner.generate)    ──→    绝对不超
+
+合成功能 content                 Prompt 注入                      Prompt 软引导
+  .truncated(500)       ──→      "控制在1000字以内"        ──→    提升质量
+
+所有 generate() 调用             BusinessConstants.AI             客户端兜底
+  自动携带 maxTokens 默认值       统一配置入口                     .prefix()
+```
+
+### 统一常量 (`BusinessConstants.AI`)
+
+| 常量 | 值 | 作用域 | 说明 |
+|------|----|--------|------|
+| `maxUserInputLength` | 1000 | Chat 用户输入 | ChatCoordinator 发送前截断 |
+| `maxSynthesisInputLength` | 500 | 合成/后台 prompt | AISynthesisService.truncated() |
+| `maxOutputTokens` | 1000 | 所有 LLM 调用 | ChatRunner.generate() 的 max_tokens 参数 |
+
+> 所有限制在 `Sources/Domain/Models/BusinessConstants.swift` 的 `BusinessConstants.AI` 中一处调整即可全局生效。
+
+### 流式 Chat 特殊处理
+
+流式 Chat（`LLMChatService.streamChat`）走独立管线：
+- **API 层**：`max_tokens: BusinessConstants.AI.maxOutputTokens`
+- **Prompt 层**：注入 `lengthHint` → `"Keep response within 1000 characters."`
+- **输入层**：`ChatCoordinator` 截断用户输入至 `maxUserInputLength`
+
+### 非流式 generate() 特殊处理
+
+所有通过 `llm.generate()` 的调用（合成、摄取、检索、重构）：
+- `ChatRunner.generate()` 接受 `maxTokens` 参数，默认值 = `BusinessConstants.AI.maxOutputTokens`
+- 协议 `LLMChatServiceProtocol` 声明 `maxTokens:` 为必选参数
+- 所有现有调用方无需修改——默认值自动生效
+- 特殊需求（如 `LLMRefactorService`）可显式传参覆盖：
+  ```swift
+  // 链接发现只需短输出
+  try await generate(prompt: ..., systemPrompt: ..., maxTokens: 500)
+  ```
+
+### 如何调整
+
+```swift
+// Sources/Domain/Models/BusinessConstants.swift
+public struct AI {
+    public static let maxUserInputLength: Int = 1000     // ← 改这里
+    public static let maxSynthesisInputLength: Int = 500 // ← 改这里
+    public static let maxOutputTokens: Int = 1000        // ← 改这里
+}
+```
+
+修改后重新编译即可，无需改动任何其他代码。
