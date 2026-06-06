@@ -69,7 +69,6 @@ struct GraphContainerView: View {
                             offset: $viewModel.offset,
                             lastOffset: $viewModel.lastOffset,
                             graphSize: $viewModel.graphSize,
-                            didCaptureSize: $viewModel.didCaptureSize,
                             heroNamespace: heroNamespace
                         ) { node in
                             handleNodeTap(node)
@@ -98,11 +97,11 @@ struct GraphContainerView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { layoutGraph() }
         .onChange(of: store.pages.count) { _, _ in
-            guard viewModel.didCaptureSize else { return }
+            guard viewModel.graphSize != .zero else { return }
             layoutGraph()
         }
-        .onChange(of: viewModel.graphSize) { _, _ in
-            guard viewModel.didCaptureSize else { return }
+        .onChange(of: viewModel.graphSize) { _, newSize in
+            guard newSize != .zero else { return }
             if viewModel.nodes.isEmpty {
                 layoutGraph()
             } else {

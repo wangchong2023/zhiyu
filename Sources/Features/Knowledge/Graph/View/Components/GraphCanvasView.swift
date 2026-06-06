@@ -25,7 +25,6 @@ struct GraphCanvasView: View {
     @Binding var offset: CGSize
     @Binding var lastOffset: CGSize
     @Binding var graphSize: CGSize
-    @Binding var didCaptureSize: Bool
     var heroNamespace: Namespace.ID
     let onNodeTap: (GraphNode) -> Void
 
@@ -57,7 +56,7 @@ struct GraphCanvasView: View {
             .scaleEffect(scale)
             .gesture(zoomGesture)
             .simultaneousGesture(dragGesture)
-            .onAppear { graphSize = geometry.size; didCaptureSize = true }
+            .onAppear { graphSize = geometry.size }
             .onChange(of: geometry.size) { _, newSize in
                 graphSize = newSize
             }

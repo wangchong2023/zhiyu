@@ -18,7 +18,6 @@ final class GraphViewModel {
     var nodes: [GraphNode] = []
     var edges: [GraphEdge] = []
     var graphSize: CGSize = .zero
-    var didCaptureSize = false
     var scale: CGFloat = 1.0
     var lastScale: CGFloat = 1.0
     var offset: CGSize = .zero
