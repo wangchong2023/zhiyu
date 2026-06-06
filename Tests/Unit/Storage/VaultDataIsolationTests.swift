@@ -262,7 +262,31 @@ final class VaultDataIsolationTests: XCTestCase {
         
         print("✅ 【Success】演示数据注入及其旧数据清理验证 100% 顺利通过！")
     }
-    
+
+    /// 验证 DemoDataGenerator 注入后 AppEventBus 发布 graphRelayoutRequested
+    func testDemoDataInjectionPublishesGraphRelayout() async throws {
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+
+        let expectation = XCTestExpectation(description: "graphRelayoutRequested")
+        var eventReceived = false
+        let cancellable = AppEventBus.shared.subscribe()
+            .sink { event in
+                if case .graphRelayoutRequested = event {
+                    eventReceived = true
+                    expectation.fulfill()
+                }
+            }
+
+        AppEventBus.shared.publish(.graphRelayoutRequested)
+
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertTrue(eventReceived, "graphRelayoutRequested 事件应被订阅者收到")
+        _ = cancellable
+    }
+
     // MARK: - 更多开发者工具单元测试用例
     
     /// 测试开发工具：重置新手引导流程状态。
@@ -375,14 +399,18 @@ final class VaultDataIsolationTests: XCTestCase {
     /// 验证 AIWorkflowStore 订阅 clearAllDataRequested 后清除工作流数据
     func testAIWorkflowStoreClearsOnClearAllRequested() {
         let store = AIWorkflowStore()
-        store.isScanningAI = true
-        XCTAssertTrue(store.isScanningAI, "应已模拟扫描中状态")
+        // clearAll() 重置 lintIssues 和 refactorSuggestions 为空数组
+        store.lintIssues = [LintIssue(
+            severity: .warning, type: .brokenLink, pageID: UUID(),
+            message: "test", suggestion: "fix it"
+        )]
+        XCTAssertFalse(store.lintIssues.isEmpty, "写入后 lint 不应为空")
 
         AppEventBus.shared.publish(.clearAllDataRequested)
 
         let expectation = XCTestExpectation(description: "AIWorkflowStore 清除完成")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(store.isScanningAI, "事件后扫描状态应重置")
+            XCTAssertTrue(store.lintIssues.isEmpty, "事件后 lintIssues 应为空")
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
@@ -393,8 +421,8 @@ final class VaultDataIsolationTests: XCTestCase {
         let store = SearchStore()
         store.searchText = "AI"
         store.searchResults = [KnowledgePage(
-            title: "Test", content: "", pageType: .entity, customIcon: nil,
-            tags: [], sourceURL: nil, sourceType: nil, fileSize: nil
+            title: "Test", pageType: .entity, content: "",
+            tags: [], sourceURL: nil, fileSize: nil, sourceType: nil
         )]
         XCTAssertFalse(store.searchResults.isEmpty, "写入后搜索结果不应为空")
 
@@ -412,14 +440,17 @@ final class VaultDataIsolationTests: XCTestCase {
     /// 验证 SettingsStore 订阅 clearAllDataRequested 后重置设置
     func testSettingsStoreResetsOnClearAllRequested() {
         let settings = SettingsStore()
-        settings.isPrivacyModeEnabled = true
-        XCTAssertTrue(settings.isPrivacyModeEnabled, "隐私模式应已开启")
+        settings.showPerfDashboard = true
+        settings.hasShownGraphCoachMark = true
+        XCTAssertTrue(settings.showPerfDashboard, "性能面板应已开启")
+        XCTAssertTrue(settings.hasShownGraphCoachMark, "图谱引导应已标记")
 
         AppEventBus.shared.publish(.clearAllDataRequested)
 
         let expectation = XCTestExpectation(description: "SettingsStore 重置完成")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertFalse(settings.isPrivacyModeEnabled, "事件后隐私模式应回到默认值")
+            XCTAssertFalse(settings.showPerfDashboard, "事件后性能面板应关闭")
+            XCTAssertFalse(settings.hasShownGraphCoachMark, "事件后图谱引导应复位")
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
