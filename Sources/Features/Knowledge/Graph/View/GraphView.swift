@@ -32,6 +32,8 @@ struct GraphContainerView: View {
     }
 
     var body: some View {
+        // 强制 @Observable 追踪：确保 store.pages 变更时触发重绘
+        _ = store.pages.count
         ZStack {
             themeManager.pageBackground()
                 .ignoresSafeArea()
