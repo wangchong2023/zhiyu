@@ -110,60 +110,24 @@ final class PluginRegistry: ObservableObject {
         Logger.shared.error(" [Watchdog 2.0]  \(id) ")
     }
 
-    // MARK: - 插件数据持久化 (Phase 2)
-    
-    /// 获取插件专用存储路径
-    private func dataURL(for pluginID: String) -> URL? {
-        let fileManager = FileManager.default
-        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return nil }
-        let directoryURL = appSupportURL.appendingPathComponent("PluginsData")
-        
-        if !fileManager.fileExists(atPath: directoryURL.path) {
-            try? fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-        }
-        
-        return directoryURL.appendingPathComponent("\(pluginID).json")
-    }
-    
+    // MARK: - 插件数据持久化 (委托至 PluginDataStore)
+
+    /// 插件数据持久化实例
+    private let dataStore = PluginDataStore()
+
     /// 保存插件私有数据
     func savePluginData(pluginID: String, key: String, value: String) {
-        guard let url = dataURL(for: pluginID) else { return }
-        
-        var dict = loadAllPluginData(pluginID: pluginID)
-        dict[key] = value
-        
-        // 序列化并加密
-        if let encodedData = try? JSONEncoder().encode(dict),
-           let jsonString = String(data: encodedData, encoding: .utf8),
-           let encrypted = try? SecurityManager.shared.encrypt(jsonString) {
-            try? encrypted.write(to: url, atomically: true, encoding: .utf8)
-        }
+        dataStore.savePluginData(pluginID: pluginID, key: key, value: value)
     }
-    
+
     /// 读取插件私有数据
     func loadPluginData(pluginID: String, key: String) -> String? {
-        return loadAllPluginData(pluginID: pluginID)[key]
+        dataStore.loadPluginData(pluginID: pluginID, key: key)
     }
 
     /// 获取插件的所有持久化数据（解密后）
     func loadAllPluginData(pluginID: String) -> [String: String] {
-        guard let url = dataURL(for: pluginID),
-              let data = try? Data(contentsOf: url) else {
-            return [:]
-        }
-        
-        // 优先尝试 AES-GCM 解密
-        if let contentString = String(data: data, encoding: .utf8),
-           let decrypted = try? SecurityManager.shared.decrypt(contentString),
-           let decryptedData = decrypted.data(using: .utf8),
-           let dict = try? JSONDecoder().decode([String: String].self, from: decryptedData) {
-            return dict
-        } else if let dict = try? JSONDecoder().decode([String: String].self, from: data) {
-            // 回退尝试明文 JSON 解析 (兼容旧版本)
-            return dict
-        }
-        
-        return [:]
+        dataStore.loadAllPluginData(pluginID: pluginID)
     }
 
     /// 加载Plugin

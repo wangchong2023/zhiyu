@@ -314,6 +314,7 @@
 		2E02FB7DFCEE2EFA6EBF9B59 /* DesignModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34909E3D96BEDC5A366B4778 /* DesignModifiers.swift */; };
 		2E10EC4AC4ECEB631E318DA6 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFBAAF41B7B064820E8022A /* KeychainService.swift */; };
 		2E6B3A28C4F45404CFC9D6B7 /* DatabaseSchemaMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43160021A4EC203F4CB4C915 /* DatabaseSchemaMigrator.swift */; };
+		2E76D73E64D4536496D95FF0 /* PluginDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D48188E888F2528439D834 /* PluginDataStore.swift */; };
 		2E7DDE82B1EBF4FEA39DC88E /* StandardSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298B4CF76CE459BE937A504F /* StandardSection.swift */; };
 		2E9B609C341591ABB21657C3 /* AppleAuthStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E32150871B1F525224182A /* AppleAuthStrategy.swift */; };
 		2EA85E702E1D2B076885D3B8 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = A227A47A3DDD1D0E4EE7AA2B /* AppTab.swift */; };
@@ -365,6 +366,7 @@
 		35C8AED7106E1A2F8676778C /* FileSystemSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE23A6BB463ABF559CBC21F2 /* FileSystemSyncService.swift */; };
 		35F0CC5F133ECDAEB3BEAE8E /* L10n+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9F93AE47E5E27035F29EE4 /* L10n+Shared.swift */; };
 		35F1D0AF7D19C2584F7BF1B3 /* ModuleRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E04BC48EA24BBFEFD9942DB /* ModuleRegistrar.swift */; };
+		3603E146C4CD6B38D18F9895 /* PluginDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D48188E888F2528439D834 /* PluginDataStore.swift */; };
 		366C39F2117C31F1D5826082 /* ZhiYuMonkeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3799922EB40AF0FD809F1EEC /* ZhiYuMonkeyTests.swift */; };
 		366E5628B5812F5C2C9DA183 /* ZIndexTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3A5365876071D4DE6C2AA /* ZIndexTokens.swift */; };
 		3697BF80941F454D8CA5275D /* GlobalModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD5F91CE7F80255119929EC0 /* GlobalModelManager.swift */; };
@@ -1271,6 +1273,7 @@
 		BEA9141467705E4791B5FDBB /* QuickActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6596B3855C4AA12B94C925AF /* QuickActionRow.swift */; };
 		BEACDE43543FC2C43C38413B /* GraphInsightDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5ECAB0C9AF04D912E3521DF /* GraphInsightDetection.swift */; };
 		BEC7FC4F645C6630CD48812D /* AppEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA77275F3ACC64E00CAE8993 /* AppEmptyState.swift */; };
+		BEF8BABF95CD0586BE20751A /* PluginDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D48188E888F2528439D834 /* PluginDataStore.swift */; };
 		C0065C24EB020843C404CCE1 /* SystemStatsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2376A3A79D6CF289F25A16A9 /* SystemStatsCoordinator.swift */; };
 		C00D9ECE3DE489260E80C6BC /* MacHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0139F64CD1544279326E3B93 /* MacHapticService.swift */; };
 		C00E52E117F752E2C56D1BCB /* model_allowlist.json in Resources */ = {isa = PBXBuildFile; fileRef = 85C4610E3C02B8A8FA7078C2 /* model_allowlist.json */; };
@@ -1784,6 +1787,7 @@
 		145774E1257A629C404171A1 /* DataCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCoordinator.swift; sourceTree = "<group>"; };
 		1458265FD2BF40BF04B09949 /* SidebarRowComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarRowComponents.swift; sourceTree = "<group>"; };
 		14AE12868D60824B4EA7167E /* LLMRefactorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMRefactorService.swift; sourceTree = "<group>"; };
+		14D48188E888F2528439D834 /* PluginDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginDataStore.swift; sourceTree = "<group>"; };
 		14EAB7D9C7DA9E242EBC7556 /* LLMManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMManifest.swift; sourceTree = "<group>"; };
 		14EBA84BD7ADE0F2ACB754AA /* PageDetailContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailContentSection.swift; sourceTree = "<group>"; };
 		15AFCFF5D8CE108CF9A5242F /* MedalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedalComponents.swift; sourceTree = "<group>"; };
@@ -3938,6 +3942,7 @@
 			isa = PBXGroup;
 			children = (
 				8F209758E541D5424A0943C8 /* JavaScriptPlugin.swift */,
+				14D48188E888F2528439D834 /* PluginDataStore.swift */,
 				371FCB95A47FEF84D9117F1D /* PluginEnginePool.swift */,
 				DC34C8F971B7B902F7C9D5AA /* PluginMarketService.swift */,
 				2D801F6A65D1A624DE86177D /* PluginProtocols.swift */,
@@ -5942,6 +5947,7 @@
 				E736AF99D300240BFA2F3BDF /* PlatformRegistrar.swift in Sources */,
 				F66BBEE48BC527A5C3E9D705 /* PlatformTextEditor.swift in Sources */,
 				8FF31C23D15C330C8BE6F4C3 /* PluginCenterView.swift in Sources */,
+				2E76D73E64D4536496D95FF0 /* PluginDataStore.swift in Sources */,
 				A8714A3A70A0995A56F68479 /* PluginDetailView.swift in Sources */,
 				703ECC26B8C71B1D1357C746 /* PluginEnginePool.swift in Sources */,
 				48FA10920729BFF8F733B886 /* PluginEventBus.swift in Sources */,
@@ -6506,6 +6512,7 @@
 				0A73C80E673B16A9D832014C /* PlatformRegistrar.swift in Sources */,
 				01BF4CECD43C806E1231CBD4 /* PlatformTextEditor.swift in Sources */,
 				D888F727CE493E658E1FF7FC /* PluginCenterView.swift in Sources */,
+				3603E146C4CD6B38D18F9895 /* PluginDataStore.swift in Sources */,
 				4440C698F87D98C4303A1C25 /* PluginDetailView.swift in Sources */,
 				18E8B2BC4B211BF6D40E7B6D /* PluginEnginePool.swift in Sources */,
 				F08D3F37A02CD47EEA16B141 /* PluginEventBus.swift in Sources */,
@@ -6932,6 +6939,7 @@
 				2DB6378DE8EC10B1A8FA089A /* PlatformCapabilities.swift in Sources */,
 				73A595C1F702D10DFED1C3A7 /* PlatformModifiers.swift in Sources */,
 				9DCFEA0F5DCDF8C8F72CB120 /* PlatformRegistrar.swift in Sources */,
+				BEF8BABF95CD0586BE20751A /* PluginDataStore.swift in Sources */,
 				A5872FAA502340974B99AC5A /* PluginEnginePool.swift in Sources */,
 				8C898AFE103D08CA8F09C7BA /* PluginEventBus.swift in Sources */,
 				902E82963CFC8D31CF6B4CFC /* PluginMarketService.swift in Sources */,
