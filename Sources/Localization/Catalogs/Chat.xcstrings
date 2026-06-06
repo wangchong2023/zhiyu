@@ -109,13 +109,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.ai "
+            "value": "AI Inspiration"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.ai"
+            "value": "AI 启发"
           }
         }
       }
@@ -126,13 +126,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.base "
+            "value": "Explore"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.base"
+            "value": "探索"
           }
         }
       }
@@ -143,13 +143,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.user "
+            "value": "My Shortcuts"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.group.user"
+            "value": "我的指令"
           }
         }
       }
@@ -160,13 +160,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.deepExplorePrompt "
+            "value": "Deep explore: %@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.deepExplorePrompt"
+            "value": "深度探索：%@"
           }
         }
       }
@@ -252,6 +252,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "ai.status.skeleton.synthesis"
+          }
+        }
+      }
+    },
+    "chat.explorationAndPrompts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompts"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提示词"
           }
         }
       }
