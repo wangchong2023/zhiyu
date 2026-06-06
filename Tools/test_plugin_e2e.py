@@ -166,6 +166,45 @@ def validate_js_syntax():
             assert 'console.error' not in js or 'ZhiYu.log' in js, f'{name}: 使用 console 而非 ZhiYu API'
 test('5 个插件 JS 语法合法', validate_js_syntax)
 
+
+# ========== 7. JSContext 池化模拟测试（关键！之前遗漏） ==========
+print("\n🧪 7. JSContext 池化语法模拟测试")
+
+def validate_js_context_compatibility():
+    """模拟 JavaScriptCore 解析：检查 JS 中是否混入 Swift 语法"""
+    import zipfile
+    swift_patterns = [
+        "String(data:",      # Swift String(data:...)
+        "Data(base64Encoded:", # Swift Data(base64Encoded:...)
+        "encoding: .utf8",    # Swift encoding 参数
+        ".utf8)!",            # Swift 可选链 + 强制解包
+    ]
+    for name, path in PLUGINS.items():
+        with zipfile.ZipFile(path) as zf:
+            js = zf.read('index.js').decode('utf-8')
+            for pat in swift_patterns:
+                assert pat not in js, f'{name}: JS 中包含 Swift 语法 "{pat}"'
+    print("  ℹ️  5 个插件 JS 均无 Swift 语法混入")
+
+def validate_plugin_engine_pool_js():
+    """检查 PluginEnginePool.swift 中 evaluateScript 的字符串是否纯 JS"""
+    pool_file = 'Sources/Infrastructure/Plugins/PluginEnginePool.swift'
+    with open(pool_file) as f:
+        code = f.read()
+    # 提取所有 evaluateScript 的字符串内容
+    import re
+    scripts = re.findall(r'evaluateScript\("""(.*?)"""', code, re.DOTALL)
+    swift_keywords = ['String(data:', 'Data(base64Encoded:', 'encoding: .utf8', 'Data(base64Encoded']
+    for i, script in enumerate(scripts):
+        for kw in swift_keywords:
+            assert kw not in script, f'PluginEnginePool script #{i}: 包含 Swift "{kw}" → JSContext 将被污染!'
+    print(f'  ℹ️  PluginEnginePool 中 {len(scripts)} 个 JS 段均无 Swift 语法混入')
+
+validate_js_context_compatibility()
+validate_plugin_engine_pool_js()
+test("JS 无 Swift 语法混入", lambda: None)
+test("PluginEnginePool JS 段纯 JS", lambda: None)
+
 # ========== 结果汇总 ==========
 total = ok + fail
 print(f'\n{"="*50}')

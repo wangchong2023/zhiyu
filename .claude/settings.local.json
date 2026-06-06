@@ -115,7 +115,11 @@
       "Bash(node -c Tools/Plugins/Local/toc-generator/index.js)",
       "Bash(node -c Tools/Plugins/smart-cleaner/index.js)",
       "Bash(node -c Tools/Plugins/Local/word-counter/index.js)",
-      "Bash(chmod +x Tools/test_plugin_e2e.py)"
+      "Bash(chmod +x Tools/test_plugin_e2e.py)",
+      "Bash(node -e ' *)",
+      "Bash(/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc -e ' *)",
+      "Bash(xcodebuild build-for-testing *)",
+      "Bash(xcodebuild test-without-building *)"
     ]
   }
 }

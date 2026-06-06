@@ -500,73 +500,66 @@ extension PluginRegistry {
         }
     }
 
-    // MARK: - .zyplugin 加载（ZIPFoundation 解压）
+    // MARK: - .zyplugin 加载（ZIPFoundation 文件提取）
 
-    /// 使用 ZIPFoundation 解压 .zyplugin 并加载插件
+    /// 使用 ZIPFoundation 解压 .zyplugin：提取到临时文件后读取，确保数据完整性
     private func loadPluginFromArchive(_ archiveURL: URL) {
         do {
-            // 浅解压到临时目录
+            // 创建临时目录
             let tempDir = FileManager.default.temporaryDirectory
-                .appendingPathComponent("plugin_extract_\(UUID().uuidString)")
+                .appendingPathComponent("plugin_\(UUID().uuidString)")
             try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-
             defer { try? FileManager.default.removeItem(at: tempDir) }
 
-            // 使用 ZIPFoundation 解压（纯 Swift，支持 iOS/macOS/watchOS 真机）
+            // 打开 ZIP 归档
             guard let archive = Archive(url: archiveURL, accessMode: .read) else {
-                Logger.shared.error("[PluginRegistry] Cannot open ZIP archive: \(archiveURL.lastPathComponent)")
+                Logger.shared.error("[PluginRegistry] Cannot open archive: \(archiveURL.lastPathComponent)")
                 return
             }
 
-            var manifestData: Data?
-            var scriptContent: String?
-
+            // 提取所有条目到文件（ZIPFoundation 文件提取保证数据完整）
             for entry in archive {
-                // 安全检查：防止 ZIP 炸弹（路径穿越）
                 let entryPath = entry.path
                 guard !entryPath.contains("..") else {
-                    Logger.shared.warning("[PluginRegistry] Skipping suspicious entry: \(entryPath)")
+                    Logger.shared.warning("[PluginRegistry] Skipped: \(entryPath)")
                     continue
                 }
-
-                let fileName = (entryPath as NSString).lastPathComponent.lowercased()
-
-                // 只提取需要的两个文件
-                if fileName == "manifest.json" {
-                    var extracted = Data()
-                    _ = try archive.extract(entry, bufferSize: 4096, consumer: { chunk in
-                        extracted.append(chunk)
-                    })
-                    manifestData = extracted
-                } else if fileName == "index.js" {
-                    var extracted = Data()
-                    _ = try archive.extract(entry, bufferSize: 4096, consumer: { chunk in
-                        extracted.append(chunk)
-                    })
-                    scriptContent = String(data: extracted, encoding: .utf8)
-                    if scriptContent == nil {
-                        Logger.shared.error("[PluginRegistry] Failed to decode index.js as UTF-8")
-                    }
-                }
+                let destURL = tempDir.appendingPathComponent(entryPath)
+                // 确保父目录存在（处理 ZIP 内目录结构）
+                try? FileManager.default.createDirectory(at: destURL.deletingLastPathComponent(),
+                                                         withIntermediateDirectories: true)
+                _ = try archive.extract(entry, to: destURL)
             }
 
-            guard let manifestBinary = manifestData,
-                  let script = scriptContent else {
-                Logger.shared.error("[PluginRegistry] Invalid .zyplugin: missing manifest.json or index.js")
+            // 读取提取的文件
+            let manifestURL = tempDir.appendingPathComponent("manifest.json")
+            let scriptURL = tempDir.appendingPathComponent("index.js")
+
+            guard FileManager.default.fileExists(atPath: manifestURL.path),
+                  FileManager.default.fileExists(atPath: scriptURL.path) else {
+                Logger.shared.error("[PluginRegistry] .zyplugin missing manifest.json or index.js")
                 return
             }
 
-            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestBinary)
+            let manifestData = try Data(contentsOf: manifestURL)
+            let script = try String(contentsOf: scriptURL, encoding: .utf8)
+
+            // [DEBUG] 打印前 200 字符验证完整性
+            Logger.shared.info("[PluginRegistry] JS preview: \(String(script.prefix(80)).replacingOccurrences(of: "\n", with: " "))")
+
+            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestData)
 
             #if canImport(JavaScriptCore) && !os(watchOS)
             if let jsPlugin = JavaScriptPlugin(script: script, manifest: manifest) {
                 loadPlugin(jsPlugin)
-                Logger.shared.info("[PluginRegistry] Loaded .zyplugin: \(manifest.name)")
+                Logger.shared.info("[PluginRegistry] Loaded: \(manifest.name)")
+            } else {
+                Logger.shared.error("[PluginRegistry] Init failed: \(manifest.name)")
             }
             #endif
 
         } catch {
-            Logger.shared.error("[PluginRegistry] Failed to load .zyplugin: \(archiveURL.lastPathComponent)", error: error)
+            Logger.shared.error("[PluginRegistry] Archive error: \(archiveURL.lastPathComponent)", error: error)
         }
     }
 

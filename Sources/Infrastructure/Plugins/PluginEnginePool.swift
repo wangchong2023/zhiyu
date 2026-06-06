@@ -44,77 +44,55 @@ final class PluginEnginePool: @unchecked Sendable {
     func borrowContext() -> JSContext {
         os_unfair_lock_lock(lockPointer)
         defer { os_unfair_lock_unlock(lockPointer) }
-        
-        // 1. 尝试从空闲队列中复用
+
         if let context = availableContexts.popLast() {
-            // 清理异常状态
             context.exception = nil
             return context
         }
-        
-        // 2. 无可用空闲连接时动态分配新实例（在宿主生命周期中受最多 4 个的严格限流）
+
         guard let newContext = JSContext() else {
-            fatalError(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGluaXRpYWxpemUgSlNDb250ZXh0")!, encoding: .utf8)!)
+            fatalError("Cannot create JSContext")
         }
-        
-        // 3. 安全加固：彻底禁用 eval 和 Function 构造器，规避动态字符串代码执行漏洞 (@P1-5)
+
+        // 安全硬化：禁用 eval/Function（纯 JS 语法，无 Swift 代码）
         newContext.evaluateScript("""
         (function() {
-            //  eval eval("...") 
-            if (typeof eval !== 'undefined') {
-                try {
-                    delete globalThis.eval;
-                } catch(e) {}
-                globalThis.eval = undefined;
-            }
-            //  Function  new Function("...") 
-            globalThis.Function = function() {
-                throw new Error(String(data: Data(base64Encoded: "RHluYW1pYyBjb2RlIGV4ZWN1dGlvbiB2aWEgRnVuY3Rpb24gY29uc3RydWN0b3IgaXMgc3RyaWN0bHkgcHJvaGliaXRlZCBpbiBaaGlZdSBzYW5kYm94Lg==")!, encoding: .utf8)!);
-            };
-            
-            // 记录初始全局变量 key 集合，用于归还时清理
+            try { delete globalThis.eval; } catch(e) {}
+            globalThis.eval = undefined;
+            globalThis.Function = undefined;
             globalThis.__zhiyu_initial_keys = new Set(Object.getOwnPropertyNames(globalThis));
-            
-            // 执行 JS 原型链冻结，防止原型链污染攻击
-            const prototypes = [Object.prototype, Array.prototype, String.prototype, Number.prototype, Boolean.prototype, Function.prototype, RegExp.prototype];
-            for (const proto of prototypes) {
-                if (proto) {
-                    Object.freeze(proto);
-                }
+            var frozen = [Object.prototype, Array.prototype, String.prototype,
+                         Number.prototype, Boolean.prototype, Function.prototype, RegExp.prototype];
+            for (var i = 0; i < frozen.length; i++) {
+                if (frozen[i]) { try { Object.freeze(frozen[i]); } catch(e) {} }
             }
         })();
         """)
-        
+
         return newContext
     }
-    
-    /// 将使用过的 JSContext 归还到池中以便下一次复用
-    /// - Parameter context: 归还的 JSContext 实例。
+
+    /// 归还 JSContext 到池中
     func returnContext(_ context: JSContext) {
         os_unfair_lock_lock(lockPointer)
         defer { os_unfair_lock_unlock(lockPointer) }
-        
-        // 1. 检查池是否已满
+
         if availableContexts.count < maxPoolSize {
-            // 2. 擦除异常与残留状态，防止污染下一次借用
             context.exception = nil
-            
-            // 3. 跨插件沙箱状态隔离：删除所有非初始的全局属性
+            // 清理非初始全局属性（纯 JS 语法）
             context.evaluateScript("""
             (function() {
                 if (globalThis.__zhiyu_initial_keys) {
-                    const currentKeys = Object.getOwnPropertyNames(globalThis);
-                    for (const key of currentKeys) {
-                        if (!globalThis.__zhiyu_initial_keys.has(key) && key !== '__zhiyu_initial_keys') {
-                            try {
-                                delete globalThis[key];
-                            } catch(e) {}
+                    var keys = Object.getOwnPropertyNames(globalThis);
+                    for (var i = 0; i < keys.length; i++) {
+                        var k = keys[i];
+                        if (!globalThis.__zhiyu_initial_keys.has(k) && k !== '__zhiyu_initial_keys') {
+                            try { delete globalThis[k]; } catch(e) {}
                         }
                     }
                 }
             })();
             """)
-            
             availableContexts.append(context)
         }
     }
