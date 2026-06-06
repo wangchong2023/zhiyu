@@ -84,34 +84,48 @@ public struct ModelStoreView: View {
     
     // MARK: - 子视图组件
     
-    /// 顶部物理设备运存信息看板
+    /// 顶部设备摘要卡片（内存 + 模型数量）
     private var deviceHardwareHeader: some View {
         let memInGb = Double(modelManager.physicalMemory) / (1024 * 1024 * 1024)
-        return HStack(spacing: DesignSystem.small) {
-            Image(systemName: "cpu")
-                .foregroundStyle(.appAccent)
-                .font(.system(size: 18, weight: .bold))
-                .shadow(color: .appAccent.opacity(0.4), radius: 5)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(": \(String(format: "%.1f", memInGb)) GB")
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.appText)
-                
-                Text(" ")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.appSecondary)
+        let modelCount = modelManager.remoteManifests.count
+
+        return HStack(spacing: DesignSystem.standardPadding) {
+            // 设备内存
+            summaryItem(
+                icon: "memorychip", iconColor: .blue,
+                value: String(format: "%.0f GB", memInGb),
+                label: L10n.ModelManager.Spec.memory
+            )
+            // 分隔
+            Rectangle().frame(width: DesignSystem.borderWidth, height: DesignSystem.huge).foregroundStyle(Color.appBorder.opacity(DesignSystem.glassOpacity))
+            // 可用模型数
+            summaryItem(
+                icon: "square.stack.3d.up", iconColor: .appAccent,
+                value: "\(modelCount)",
+                label: L10n.ModelManager.Header.availableModels
+            )
+        }
+        .padding(.horizontal, DesignSystem.standardPadding)
+        .padding(.vertical, DesignSystem.medium)
+        .frame(maxWidth: .infinity)
+        .background(Color.appCard.opacity(0.4))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        .padding(.horizontal, DesignSystem.medium)
+        .padding(.top, DesignSystem.small)
+    }
+
+    /// 摘要条目
+    private func summaryItem(icon: String, iconColor: Color, value: String, label: String) -> some View {
+        HStack(spacing: DesignSystem.small) {
+            Image(systemName: icon)
+                .font(.title3).foregroundStyle(iconColor)
+                .frame(width: DesignSystem.titleIconSize)
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(value).font(.subheadline.weight(.semibold)).foregroundStyle(.appText)
+                Text(label).font(.caption2).foregroundStyle(.appSecondary)
             }
             Spacer()
         }
-        .padding()
-        .background(Color.appCard.opacity(0.6))
-        .overlay(
-            Rectangle()
-                .frame(height: 1)
-                .foregroundStyle(Color.appBorder.opacity(0.6)),
-            alignment: .bottom
-        )
     }
     
 

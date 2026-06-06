@@ -94,6 +94,12 @@ extension L10n {
             }
         }
 
+        // MARK: - 顶部摘要
+
+        public enum Header {
+            public static var availableModels: String { ModelManager.tr("model_manager.header.availableModels") }
+        }
+
         // MARK: - 规格详表（Model Spec Sheet）
 
         public enum Spec {
