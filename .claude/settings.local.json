@@ -119,7 +119,10 @@
       "Bash(node -e ' *)",
       "Bash(/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Helpers/jsc -e ' *)",
       "Bash(xcodebuild build-for-testing *)",
-      "Bash(xcodebuild test-without-building *)"
+      "Bash(xcodebuild test-without-building *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }

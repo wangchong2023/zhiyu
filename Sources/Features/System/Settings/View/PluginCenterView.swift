@@ -142,7 +142,11 @@ struct PluginCenterView: View {
                     .padding(.horizontal)
                 
                 ForEach(filtered, id: \.manifest.id) { plugin in
-                    PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, isLocal: true)
+                    NavigationLink {
+                        LocalPluginDetailView(manifest: plugin.manifest)
+                    } label: {
+                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, isLocal: true)
+                    }
                 }
                 .padding(.horizontal)
             } else if searchText.isEmpty {

@@ -247,6 +247,7 @@
 		23E0EAEBE6A1113A3972593D /* SourceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A40F03160CF7A3A68B40C29 /* SourceCardView.swift */; };
 		24146F92E6E2ABCC9B917D71 /* DesignSystem+List.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B94B0DC023E4C992D7ECDF /* DesignSystem+List.swift */; };
 		241C2FF0FF4520B2E916E28B /* LintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA48B99193A813CBF4C1A96 /* LintView.swift */; };
+		2470CD446230CA8349B2FED0 /* LocalPluginDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7203CEA647721F414F55EA4 /* LocalPluginDetailView.swift */; };
 		247D3E8BD22512DFEA74B794 /* ZhiYuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD26CFC4DD54386CD30BD8 /* ZhiYuUITests.swift */; };
 		24E735A30DB1137CD1FD85B0 /* LLMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA3E1F1517AF26B3495A36A1 /* LLMClient.swift */; };
 		251A697104898FC1660C2E2C /* ModelDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F226E6A44E63495F9910C9E4 /* ModelDownloadManager.swift */; };
@@ -952,6 +953,7 @@
 		904435C0F8B5469DED84E233 /* PlatformModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDA25AC133D7889B154D8B2 /* PlatformModifiers.swift */; };
 		90811D8A6A32AF3946DDBBEA /* LintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA48B99193A813CBF4C1A96 /* LintView.swift */; };
 		90DD9D73E12CAF153F5AA629 /* CrossPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B6F26341300A6C681D2CD3 /* CrossPlatform.swift */; };
+		91081ED5CA4ACFA4F44E2C4F /* LocalPluginDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7203CEA647721F414F55EA4 /* LocalPluginDetailView.swift */; };
 		9116E79DB44AC159718A78C2 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEF6FE252A1F56F7BF0E2E3 /* AppModels.swift */; };
 		912D37D38B0DAE40AF688142 /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52DB27515F908373C4C9B6F /* AppNotifications.swift */; };
 		9136F81061F8C19FFA0E59D5 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B4EBD884996C5E6A88E4A /* Typography.swift */; };
@@ -2346,6 +2348,7 @@
 		E6FAC6CD740087B1EEF49559 /* StorageRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageRecords.swift; sourceTree = "<group>"; };
 		E70CEABDD4543C5719177067 /* DesignSystem+Shadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem+Shadow.swift"; sourceTree = "<group>"; };
 		E7160A2E53618A96A29EB63E /* MedalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedalService.swift; sourceTree = "<group>"; };
+		E7203CEA647721F414F55EA4 /* LocalPluginDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPluginDetailView.swift; sourceTree = "<group>"; };
 		E732B5FBEAB333B42B827BC3 /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
 		E82D75250B05D42D61C137E8 /* AIInsightStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInsightStore.swift; sourceTree = "<group>"; };
 		E83F8796331C5AE05647CAEF /* LinkServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkServiceTests.swift; sourceTree = "<group>"; };
@@ -3271,6 +3274,7 @@
 				12B96555C36A560A719FA2A0 /* DeveloperSettingsView.swift */,
 				8911F96F9977F06B33CD3302 /* iCloudSyncView.swift */,
 				803C6AF5085D4F2094232CDB /* LLMSettingsView.swift */,
+				E7203CEA647721F414F55EA4 /* LocalPluginDetailView.swift */,
 				28DBF693D9A9A83D29013901 /* OnDeviceLLMSettingsView.swift */,
 				8A5969C8E8BF86D3319A5E4D /* OnDevicePerformanceConfigView.swift */,
 				A45571BAB7B56B433A433C5E /* PluginCenterView.swift */,
@@ -5843,6 +5847,7 @@
 				B8F40A505BDC0DB3FB64D884 /* LiveActivityProtocol.swift in Sources */,
 				6B7003CEDAFAE02CF60C80FD /* LocalAnalyticsService.swift in Sources */,
 				0ACB3AD2428C89E51C99171A /* LocalModelManagerView.swift in Sources */,
+				2470CD446230CA8349B2FED0 /* LocalPluginDetailView.swift in Sources */,
 				AB32E116341D842F942612E1 /* Localized.swift in Sources */,
 				53B317D22C82AF137658E18B /* LockOverlayView.swift in Sources */,
 				F08AC7082BEC0CBCC825A14A /* LogAction.swift in Sources */,
@@ -6409,6 +6414,7 @@
 				DB7631B54C6915997829104B /* LiveActivityProtocol.swift in Sources */,
 				0FD2237FDCE41197D164B3CF /* LocalAnalyticsService.swift in Sources */,
 				DEAFCF36183CF3DB2C444674 /* LocalModelManagerView.swift in Sources */,
+				91081ED5CA4ACFA4F44E2C4F /* LocalPluginDetailView.swift in Sources */,
 				1BD012DCF227022E27760722 /* Localized.swift in Sources */,
 				A3D5DA67D3BA3238CE956BC2 /* LockOverlayView.swift in Sources */,
 				E4D3D66A0002B4AD7FC38598 /* LogAction.swift in Sources */,
