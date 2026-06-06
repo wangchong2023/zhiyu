@@ -60,16 +60,17 @@ final class JavaScriptPlugin: InterceptionPlugin {
         // 2.2 核心安全加固：配置运行时看门狗护栏 (@SR-04)
         PluginSandboxGateway.configureWatchdog(for: ctx)
         
-        // 2.5 注入安全硬化脚本：禁用 eval 和 Function 构造器，防止沙箱逃逸 (@SR-04)
+        // 安全硬化：禁用 eval 和 Function，防止沙箱逃逸
         let hardeningScript = """
         (function() {
-            const forbidden = function() { throw new Error(String(data: Data(base64Encoded: "U2VjdXJpdHkgRXJyb3I6ICdldmFsJyBhbmQgJ0Z1bmN0aW9uJyBhcmUgZGlzYWJsZWQgaW4gWmhpWXUgc2FuZGJveC4=")!, encoding: .utf8)!); };
+            var errMsg = "Security: eval and Function are disabled in ZhiYu sandbox.";
+            var forbidden = function() { throw new Error(errMsg); };
             try {
                 eval = forbidden;
                 Function = forbidden;
                 Object.freeze(forbidden);
             } catch (e) {
-                console.error(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGFwcGx5IHNhbmRib3ggaGFyZGVuaW5nLg==")!, encoding: .utf8)!);
+                console.error("Sandbox hardening failed: " + e);
             }
         })();
         """

@@ -107,7 +107,7 @@ PLUGINS = [
         "reviewCount": 189,
         "category": "AI 增强",
         "icon": "sparkles",
-        "downloadURL": null,
+        "downloadURL": None,
         "minAppVersion": "1.0.0",
         "requiredPermissions": [
             "readContent",
@@ -135,7 +135,7 @@ PLUGINS = [
         "reviewCount": 673,
         "category": "编辑增强",
         "icon": "curlybraces",
-        "downloadURL": null,
+        "downloadURL": None,
         "minAppVersion": "1.0.0",
         "requiredPermissions": [
             "readContent",
