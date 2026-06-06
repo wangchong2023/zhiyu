@@ -270,34 +270,105 @@ def check_file(file_path):
 
 def check_missing_keys():
     import json
-    xcstrings_keys = set()
+    # 构建所有 xcstrings 的 key 集合 + 每个 table 的 key 集合
+    all_keys = set()
+    table_keys = {}  # table_name → set of keys
     catalogs_dir = 'Sources/Localization/Catalogs'
     for file in os.listdir(catalogs_dir):
         if file.endswith('.xcstrings'):
+            table = file.replace('.xcstrings', '')
             with open(os.path.join(catalogs_dir, file), 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 strings = data.get('strings', {})
-                for key in strings.keys():
-                    xcstrings_keys.add(key)
-                    
+                all_keys.update(strings.keys())
+                table_keys[table] = set(strings.keys())
+
+    # 解析每个 L10n 扩展的 table 声明和 key 引用
+    table_pattern = re.compile(r'static let t\s*=\s*"([^"]+)"')
     tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"')
     tr_func_pattern = re.compile(r'trf?\(\s*"([^"]+)"')
-    
+
     extensions_dir = 'Sources/Localization/Extensions'
     missing = []
-    
+
     for file in os.listdir(extensions_dir):
-        if file.endswith('.swift'):
-            path = os.path.join(extensions_dir, file)
-            with open(path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                matches1 = tr_pattern.findall(content)
-                matches2 = tr_func_pattern.findall(content)
-                
-                for key in set(matches1 + matches2):
-                    if key not in xcstrings_keys:
-                        missing.append((path, key, "Key defined in L10n extension but missing in .xcstrings", "ERROR"))
+        if not file.endswith('.swift'):
+            continue
+        path = os.path.join(extensions_dir, file)
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # 提取该扩展声明的 table 名
+        tables = table_pattern.findall(content)
+        if not tables:
+            continue
+        declared_table = tables[0]  # 取第一个 t = "XXX" 声明
+
+        # 提取该扩展引用的所有 key
+        keys = set(tr_pattern.findall(content) + tr_func_pattern.findall(content))
+        if not keys:
+            continue
+
+        # 检查 1：key 是否存在于任何 xcstrings 中
+        for key in keys:
+            if key not in all_keys:
+                missing.append((path, key,
+                    f"Key used in {os.path.basename(path)} (table={declared_table}) but missing from ALL .xcstrings files",
+                    "ERROR"))
+
+        # 检查 2：key 是否存在于 DECLARED table 中（防止存错文件）
+        if declared_table in table_keys:
+            for key in keys:
+                if key in all_keys and key not in table_keys.get(declared_table, set()):
+                    # 找出 key 实际存在的文件
+                    actual_files = [t for t, ks in table_keys.items() if key in ks]
+                    missing.append((path, key,
+                        f"Table mismatch: key in L10n+{os.path.basename(path).replace('L10n+', '').replace('.swift', '')} (table=\"{declared_table}\") "
+                        f"but key only exists in {actual_files}, NOT in {declared_table}.xcstrings",
+                        "ERROR"))
+
     return missing
+
+
+def check_cross_file_duplicates():
+    """检测同一个 key 存在于多个 .xcstrings 文件中但值不一致的情况"""
+    import json
+    catalogs_dir = 'Sources/Localization/Catalogs'
+    # key → {file: (zh_val, en_val)}
+    key_sources = {}
+
+    for file in os.listdir(catalogs_dir):
+        if not file.endswith('.xcstrings'):
+            continue
+        path = os.path.join(catalogs_dir, file)
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        for key, val in data.get('strings', {}).items():
+            locs = val.get('localizations', {})
+            zh = locs.get('zh-Hans', {}).get('stringUnit', {}).get('value', '')
+            en = locs.get('en', {}).get('stringUnit', {}).get('value', '')
+            if key not in key_sources:
+                key_sources[key] = {}
+            key_sources[key][file] = (zh, en)
+
+    issues = []
+    for key, files in key_sources.items():
+        if len(files) <= 1:
+            continue
+        # 检查 zh-Hans 值是否一致
+        zh_values = {f: v[0] for f, v in files.items()}
+        if len(set(zh_values.values())) > 1:
+            issues.append((key, zh_values,
+                f"Cross-file mismatch: key '{key}' has DIFFERENT zh-Hans values across files",
+                "ERROR"))
+        # 检查 en 值是否一致
+        en_values = {f: v[1] for f, v in files.items()}
+        if len(set(en_values.values())) > 1:
+            issues.append((key, en_values,
+                f"Cross-file mismatch: key '{key}' has DIFFERENT en values across files",
+                "ERROR"))
+
+    return issues
 
 
 def check_dynamic_keys():
@@ -338,9 +409,12 @@ def main():
     
     xcstrings_issues = audit_xcstrings()
     
-    # Check for missing keys
+    # Check for missing keys + table mismatch
     missing_key_issues = check_missing_keys()
-    
+
+    # Check for cross-file duplicate keys with inconsistent values
+    cross_file_issues = check_cross_file_duplicates()
+
     has_critical = False
 
     
@@ -372,7 +446,16 @@ def main():
             print(f"  📂 {file}")
             print(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
             
-    if not all_source_issues and not xcstrings_issues and not missing_key_issues:
+    if cross_file_issues:
+        print("\n❌ [L10n Audit] Cross-File Key Inconsistencies:")
+        for key, sources, msg, level in cross_file_issues:
+            icon = "🚨"
+            has_critical = True
+            print(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
+            for file, val in sources.items():
+                print(f"    {file}: \"{val}\"")
+
+    if not all_source_issues and not xcstrings_issues and not missing_key_issues and not cross_file_issues:
         print("✅ [L10n Audit] Localization quality standards met.")
         sys.exit(0)
     
