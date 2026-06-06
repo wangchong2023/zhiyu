@@ -25,10 +25,39 @@ struct GraphContainerView: View {
     @State private var viewModel = GraphViewModel()
     @StateObject private var tooltipManager = TooltipManager.shared
 
-    /// 动态过滤后的边列表
+    /// 每个节点最多保留的重要连线数
+    private static let maxEdgesPerNode = 5
+
+    /// 动态过滤后的边列表：每节点仅保留最重要 K 条连线，避免密集时视觉混乱
     private var currentFilteredEdges: [GraphEdge] {
         let filteredNodes = viewModel.getFilteredNodes()
-        return viewModel.getFilteredEdges(for: filteredNodes)
+        let allEdges = viewModel.getFilteredEdges(for: filteredNodes)
+        let filteredIDs = Set(filteredNodes.map(\.id))
+
+        // 计算每条边的权重（两端节点 linkCount 之和）
+        var edgeWeights: [UUID: Int] = [:]
+        for edge in allEdges where filteredIDs.contains(edge.source) && filteredIDs.contains(edge.target) {
+            let srcLinks = viewModel.nodes.first(where: { $0.id == edge.source })?.linkCount ?? 0
+            let tgtLinks = viewModel.nodes.first(where: { $0.id == edge.target })?.linkCount ?? 0
+            edgeWeights[edge.id] = srcLinks + tgtLinks
+        }
+
+        // 按每个 source 节点分组，取 Top K 权重边
+        let groupedBySource = Dictionary(grouping: allEdges) { $0.source }
+        let topEdges = groupedBySource.flatMap { _, edges in
+            edges.sorted { (edgeWeights[$0.id] ?? 0) > (edgeWeights[$1.id] ?? 0) }
+                .prefix(Self.maxEdgesPerNode)
+        }
+
+        return topEdges
+    }
+
+    /// 是否正在截断连线
+    private var isTruncatingEdges: Bool {
+        let allEdges = viewModel.getFilteredEdges(for: viewModel.getFilteredNodes())
+        let filteredIDs = Set(viewModel.getFilteredNodes().map(\.id))
+        let relevantEdges = allEdges.filter { filteredIDs.contains($0.source) && filteredIDs.contains($0.target) }
+        return relevantEdges.count > currentFilteredEdges.count
     }
 
     var body: some View {
@@ -210,9 +239,15 @@ struct GraphContainerView: View {
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     .foregroundStyle(.appAccent)
                 
-                Text(L10n.Graph.nodesConnections(viewModel.getFilteredNodes().count, viewModel.getFilteredEdges(for: viewModel.getFilteredNodes()).count))
-                    .font(.system(size: DesignSystem.microFontSize, weight: .bold)) // 加粗文字增强视觉重心
+                Text(L10n.Graph.nodesConnections(viewModel.getFilteredNodes().count, currentFilteredEdges.count))
+                    .font(.system(size: DesignSystem.microFontSize, weight: .bold))
                     .foregroundStyle(.appSecondary)
+
+                if isTruncatingEdges {
+                    Text("· 每节点最多 \(Self.maxEdgesPerNode) 条连线")
+                        .font(.system(size: DesignSystem.microFontSize, weight: .regular))
+                        .foregroundStyle(.appSecondary.opacity(0.6))
+                }
                 
                 Image(systemName: DesignSystem.Icons.forward)
                     .font(.system(size: DesignSystem.microFontSize, weight: .bold))
