@@ -32,6 +32,7 @@ extension L10n {
         public static var create: String { Localized.tr("create.create") }
         public static var content: String { Localized.tr("create.content") }
         public static var quickTemplates: String { Localized.tr("create.quickTemplates") }
+        public static var relatedLinks: String { Localized.tr("creation.relatedLinks") }
 
         public struct template {
             public struct entity {

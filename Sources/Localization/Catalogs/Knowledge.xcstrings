@@ -3706,6 +3706,23 @@
           }
         }
       }
+    },
+    "creation.relatedLinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关联"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Related"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

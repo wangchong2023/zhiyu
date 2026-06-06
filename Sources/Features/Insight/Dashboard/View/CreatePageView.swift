@@ -17,8 +17,15 @@ struct CreatePageView: View {
     @State private var title = ""
     @State private var type: PageType = .concept
     @State private var tags = ""
-    @State private var content = ""
-    
+
+    // 结构化表单字段（替代单一 TextEditor）
+    @State private var definition = ""   // 一句话定义/描述
+    @State private var bodyContent = ""  // 主体内容
+    @State private var relatedLinks = "" // 关联页面标题
+
+    /// 当前类型对应的模板标题（由模板按钮设置，用于 Section header）
+    @State private var bodySectionTitle = L10n.Creation.content
+
     var body: some View {
         NavigationStack {
             Form {
@@ -26,7 +33,7 @@ struct CreatePageView: View {
                     TextField(L10n.Creation.pageTitle, text: $title)
                         .font(.body)
                         .accessibilityIdentifier("pageTitle")
-                    
+
                     // Type picker
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: DesignSystem.small) {
@@ -52,31 +59,38 @@ struct CreatePageView: View {
                             }
                         }
                     }
-                    
+
                     TextField(L10n.Creation.tagsPlaceholder, text: $tags)
                 } header: {
                     Text(L10n.Creation.basicInfo)
                 }
-                
+
+                // ── 结构化内容区 ──
                 Section {
-                    #if os(watchOS)
-                    TextField("", text: $content, axis: .vertical)
-                        .font(.body)
-                    #else
-                    TextEditor(text: $content)
-                        .font(.body)
-                        .frame(minHeight: 150)
-                    #endif
+                    VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                        // 一句话定义
+                        definitionField
+
+                        Divider()
+
+                        // 主体内容
+                        bodyContentField
+
+                        Divider()
+
+                        // 关联页面
+                        relatedLinksField
+                    }
                 } header: {
                     HStack {
-                        Text(L10n.Creation.content)
+                        Text(bodySectionTitle)
                         Spacer()
                         Text(L10n.Editor.bidirectionalLinks)
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
                     }
                 }
-                
+
                 // Quick templates
                 Section {
                     VStack(spacing: DesignSystem.small) {
@@ -106,14 +120,14 @@ struct CreatePageView: View {
             .scrollContentBackground(.hidden)
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Creation.title)
-.appNavigationBarTitleDisplayMode(.inline)
+            .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L10n.Common.cancel) {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Creation.create) {
                         createPage()
@@ -124,12 +138,92 @@ struct CreatePageView: View {
             }
         }
     }
-    
+
+    // MARK: - 结构化表单组件
+
+    @ViewBuilder
+    private var definitionField: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            Text(L10n.Creation.content)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.appSecondary)
+            TextField(L10n.Creation.template.entity.desc, text: $definition, axis: .vertical)
+                .font(.body)
+        }
+    }
+
+    @ViewBuilder
+    private var bodyContentField: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            #if os(watchOS)
+            TextField(bodySectionHint, text: $bodyContent, axis: .vertical)
+                .font(.body)
+            #else
+            TextEditor(text: $bodyContent)
+                .font(.body)
+                .frame(minHeight: 100)
+                .overlay(alignment: .topLeading) {
+                    if bodyContent.isEmpty {
+                        Text(bodySectionHint)
+                            .font(.body)
+                            .foregroundStyle(.appSecondary.opacity(0.4))
+                            .padding(.top, 8)
+                            .padding(.leading, 4)
+                            .allowsHitTesting(false)
+                    }
+                }
+            #endif
+        }
+    }
+
+    @ViewBuilder
+    private var relatedLinksField: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            Text(verbatim: L10n.Creation.template.entity.related
+                .replacingOccurrences(of: "## ", with: "")
+                .replacingOccurrences(of: "\n", with: "")
+                .trimmingCharacters(in: .whitespaces))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.appSecondary)
+            TextField(L10n.Creation.tagsPlaceholder, text: $relatedLinks)
+                .font(.body)
+        }
+    }
+
+    /// 内容区 placeholder 提示文字
+    private var bodySectionHint: String {
+        switch type {
+        case .entity: return L10n.Creation.template.entity.overviewHint
+        case .concept: return L10n.Creation.template.concept.analysisHint
+        case .comparison: return L10n.Creation.template.comparison.conclusionHint
+        default: return ""
+        }
+    }
+
+    // MARK: - 创建页面
+
     private func createPage() {
         let tagList = tags.split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-        
+
+        var relatedSection = ""
+        if !relatedLinks.isEmpty {
+            let links = relatedLinks.split(separator: ",")
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+            if !links.isEmpty {
+                relatedSection = "\n## \(L10n.Creation.relatedLinks)\n" + links.map { "- \($0)" }.joined(separator: "\n") + "\n"
+            }
+        }
+
+        let content = """
+        \(definition)
+
+        \(bodyContent)
+        \(relatedSection)
+        """
+
         Task {
             let page = await store.createPage(
                 title: title,
@@ -137,42 +231,38 @@ struct CreatePageView: View {
                 content: content,
                 tags: tagList
             )
-            
+
             await MainActor.run {
                 router.navigateToPage(id: page.id)
                 dismiss()
             }
         }
     }
-    
+
     // MARK: - 引导式模板
 
     private func applyEntityTemplate() {
         type = .entity
-        content = """
-        \(L10n.Creation.template.entity.overview)
-        \(L10n.Creation.template.entity.overviewHint)
-
-        """
+        bodySectionTitle = L10n.Creation.template.entity.overview
+            .replacingOccurrences(of: "## ", with: "")
+            .replacingOccurrences(of: "\n", with: "")
+        if definition.isEmpty { definition = "" }
     }
 
     private func applyConceptTemplate() {
         type = .concept
-        content = """
-        \(L10n.Creation.template.concept.definition)
-        \(L10n.Creation.template.concept.analysisHint)
-
-        """
+        bodySectionTitle = L10n.Creation.template.concept.definition
+            .replacingOccurrences(of: "## ", with: "")
+            .replacingOccurrences(of: "\n", with: "")
+        if definition.isEmpty { definition = "" }
     }
 
     private func applyComparisonTemplate() {
         type = .comparison
-        content = """
-        \(L10n.Creation.template.comparison.table)
-
-        \(L10n.Creation.template.comparison.conclusionHint)
-
-        """
+        bodySectionTitle = L10n.Creation.template.comparison.desc
+        if bodyContent.isEmpty {
+            bodyContent = L10n.Creation.template.comparison.table
+        }
     }
 
     // MARK: - 模板卡片
