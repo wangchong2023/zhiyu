@@ -27,6 +27,10 @@ extension L10n {
         /// - Returns: 本地化格式化文案
         public static func nodesConnections(_ nodes: Int, _ connections: Int) -> String { Localized.trf("graph.nodesConnections", table: t, nodes, connections) }
 
+        /// 连线密度截断提示
+        /// - Parameter max: 每节点最大连线数
+        public static func edgeTruncationHint(_ max: Int) -> String { Localized.trf("graph.edgeTruncationHint", table: t, max) }
+
         /// 获取图谱连接数统计文案
         /// - Parameter count: 连接数
         /// - Returns: 本地化格式化文案

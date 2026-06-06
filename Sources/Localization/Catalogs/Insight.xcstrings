@@ -4420,6 +4420,23 @@
           }
         }
       }
+    },
+    "graph.edgeTruncationHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· 每节点最多 %d 条连线"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· Max %d edges per node"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

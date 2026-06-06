@@ -244,7 +244,7 @@ struct GraphContainerView: View {
                     .foregroundStyle(.appSecondary)
 
                 if isTruncatingEdges {
-                    Text("· 每节点最多 \(Self.maxEdgesPerNode) 条连线")
+                    Text(L10n.Graph.edgeTruncationHint(Self.maxEdgesPerNode))
                         .font(.system(size: DesignSystem.microFontSize, weight: .regular))
                         .foregroundStyle(.appSecondary.opacity(0.6))
                 }
