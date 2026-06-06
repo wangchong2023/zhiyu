@@ -17,8 +17,8 @@ final class GraphViewModel {
     var selectedNodeID: UUID?
     var nodes: [GraphNode] = []
     var edges: [GraphEdge] = []
-    static let defaultGraphSize = CGSize(width: 400, height: 600)
-    var graphSize: CGSize = GraphViewModel.defaultGraphSize
+    var graphSize: CGSize = .zero
+    var didCaptureSize = false
     var scale: CGFloat = 1.0
     var lastScale: CGFloat = 1.0
     var offset: CGSize = .zero

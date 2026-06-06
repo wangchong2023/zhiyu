@@ -69,6 +69,7 @@ struct GraphContainerView: View {
                             offset: $viewModel.offset,
                             lastOffset: $viewModel.lastOffset,
                             graphSize: $viewModel.graphSize,
+                            didCaptureSize: $viewModel.didCaptureSize,
                             heroNamespace: heroNamespace
                         ) { node in
                             handleNodeTap(node)
@@ -96,10 +97,13 @@ struct GraphContainerView: View {
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task { layoutGraph() }
-        .onChange(of: store.pages.count) { _, _ in layoutGraph() }
-        .onChange(of: viewModel.graphSize) { oldSize, _ in
-            let isInitialResize = oldSize == GraphViewModel.defaultGraphSize
-            if viewModel.nodes.isEmpty || isInitialResize {
+        .onChange(of: store.pages.count) { _, _ in
+            guard viewModel.didCaptureSize else { return }
+            layoutGraph()
+        }
+        .onChange(of: viewModel.graphSize) { _, _ in
+            guard viewModel.didCaptureSize else { return }
+            if viewModel.nodes.isEmpty {
                 layoutGraph()
             } else {
                 fitToScreen()
