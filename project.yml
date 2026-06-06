@@ -9,6 +9,9 @@ packages:
   Lottie:
     url: https://github.com/airbnb/lottie-ios.git
     from: 4.4.3
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation.git
+    from: 0.9.19
 
 options:
   bundleIdPrefix: com.zhiyu.app
@@ -67,6 +70,7 @@ targets:
     dependencies:
       - package: GRDB
       - package: Lottie
+      - package: ZIPFoundation
       - target: ZhiYuWidgets
       - framework: Frameworks/WechatOpenSDK.xcframework
       - framework: Frameworks/ATAuthSDK_D.xcframework
@@ -112,6 +116,7 @@ targets:
     dependencies:
       - package: GRDB
       - package: Lottie
+      - package: ZIPFoundation
 
   ZhiYuWatch:
     type: application
@@ -179,6 +184,7 @@ targets:
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
+      - package: ZIPFoundation
 
   ZhiYuWidgets:
     type: app-extension

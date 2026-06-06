@@ -10,6 +10,7 @@
 //
 import Foundation
 import Combine
+import ZIPFoundation
 
 /// 插件注册中心 (L2 层：中枢管理)
 @MainActor
@@ -493,8 +494,9 @@ extension PluginRegistry {
         }
     }
 
-    // MARK: - .zyplugin 加载（标准 ZIP）
+    // MARK: - .zyplugin 加载（ZIPFoundation 解压）
 
+    /// 使用 ZIPFoundation 解压 .zyplugin 并加载插件
     private func loadPluginFromArchive(_ archiveURL: URL) {
         do {
             // 浅解压到临时目录
@@ -504,43 +506,51 @@ extension PluginRegistry {
 
             defer { try? FileManager.default.removeItem(at: tempDir) }
 
-            // 使用系统 unzip（iOS 模拟器支持 /usr/bin/unzip）
-            // 注：真机环境需引入 ZIP 库，当前以模拟器测试为主
-            #if targetEnvironment(simulator) || os(macOS)
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
-            process.arguments = ["-o", archiveURL.path, "-d", tempDir.path]
-            process.standardOutput = FileHandle.nullDevice
-            process.standardError = FileHandle.nullDevice
-            try process.run()
-            process.waitUntilExit()
-            #else
-            // 真机 fallback：期望后续集成 MiniZip 或 ZipFoundation
-            Logger.shared.warning("[PluginRegistry] ZIP extraction not available on device, skipping \(archiveURL.lastPathComponent)")
-            return
-            #endif
-
-            // 查找 manifest.json 和 index.js
-            var manifestURL: URL?
-            var scriptURL: URL?
-            let enumerator = FileManager.default.enumerator(at: tempDir, includingPropertiesForKeys: nil)
-            while let item = enumerator?.nextObject() as? URL {
-                let name = item.lastPathComponent.lowercased()
-                if name == "manifest.json" { manifestURL = item }
-                if name == "index.js" { scriptURL = item }
-            }
-
-            guard let manifestFile = manifestURL, let scriptFile = scriptURL else {
-                Logger.shared.error("[PluginRegistry] Invalid .zyplugin: missing manifest or script")
+            // 使用 ZIPFoundation 解压（纯 Swift，支持 iOS/macOS/watchOS 真机）
+            guard let archive = Archive(url: archiveURL, accessMode: .read) else {
+                Logger.shared.error("[PluginRegistry] Cannot open ZIP archive: \(archiveURL.lastPathComponent)")
                 return
             }
 
-            let manifestData = try Data(contentsOf: manifestFile)
-            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestData)
-            let scriptContent = try String(contentsOf: scriptFile, encoding: .utf8)
+            var manifestData: Data?
+            var scriptContent: String?
+
+            for entry in archive {
+                // 安全检查：防止 ZIP 炸弹（路径穿越）
+                let entryPath = entry.path
+                guard !entryPath.contains("..") else {
+                    Logger.shared.warning("[PluginRegistry] Skipping suspicious entry: \(entryPath)")
+                    continue
+                }
+
+                let fileName = (entryPath as NSString).lastPathComponent.lowercased()
+
+                // 只提取需要的两个文件
+                if fileName == "manifest.json" {
+                    var extracted = Data()
+                    _ = try archive.extract(entry, bufferSize: 4096, consumer: { chunk in
+                        extracted.append(chunk)
+                    })
+                    manifestData = extracted
+                } else if fileName == "index.js" {
+                    var extracted = Data()
+                    _ = try archive.extract(entry, bufferSize: 4096, consumer: { chunk in
+                        extracted.append(chunk)
+                    })
+                    scriptContent = String(data: extracted, encoding: .utf8)
+                }
+            }
+
+            guard let manifestBinary = manifestData,
+                  let script = scriptContent else {
+                Logger.shared.error("[PluginRegistry] Invalid .zyplugin: missing manifest.json or index.js")
+                return
+            }
+
+            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestBinary)
 
             #if canImport(JavaScriptCore) && !os(watchOS)
-            if let jsPlugin = JavaScriptPlugin(script: scriptContent, manifest: manifest) {
+            if let jsPlugin = JavaScriptPlugin(script: script, manifest: manifest) {
                 loadPlugin(jsPlugin)
                 Logger.shared.info("[PluginRegistry] Loaded .zyplugin: \(manifest.name)")
             }

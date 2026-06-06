@@ -103,3 +103,4 @@ scratch/
 
 # Mock 服务器 PID 文件
 /tmp/mock_*.pid
+*.xcuserstate

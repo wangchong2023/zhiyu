@@ -195,8 +195,8 @@ public struct ModelStoreView: View {
         let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)!)
         let isLocalReady = modelManager.isModelLocalReady(for: manifest.modelId)
         
-        // 使用 .thinMaterial 确保在浅色/深色模式下都有合适的卡片背景
-        let cardBackground = Color(uiColor: .secondarySystemGroupedBackground).opacity(eligibility == .restricted ? 0.4 : 0.8)
+        // 卡片背景：复用项目设计令牌，浅色/深色自动适配
+        let cardBackground = Color.appCard.opacity(eligibility == .restricted ? 0.4 : 0.8)
         let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.red.opacity(0.4) : Color.appBorder.opacity(0.8))
         let shadowColor = isSelected ? Color.appAccent.opacity(0.2) : Color.black.opacity(0.05)
         
