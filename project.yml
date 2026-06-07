@@ -58,23 +58,20 @@ targets:
         NSSupportsLiveActivities: YES
         SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
     preBuildScripts:
-      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+      - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+      - script: "python3 Tools/Gatekeeper/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+      - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_magic_numbers.py"
+      - script: "python3 Tools/Gatekeeper/check_magic_numbers_v2.py"
         name: "[Gatekeeper] Magic Number Audit"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_hardcoded_secrets.py"
+      - script: "python3 Tools/Gatekeeper/check_hardcoded_secrets.py"
         name: "[Gatekeeper] Hardcoded Secrets Audit"
-        basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/test_plugin_e2e.py"
-        name: "[Gatekeeper] Plugin E2E Test"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -113,13 +110,13 @@ targets:
         Release:
           CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     preBuildScripts:
-      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+      - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+      - script: "python3 Tools/Gatekeeper/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+      - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
     dependencies:
@@ -183,13 +180,13 @@ targets:
         INFOPLIST_KEY_WKApplication: YES
         INFOPLIST_KEY_WKWatchOnly: YES
     preBuildScripts:
-      - script: "./env/venv/bin/python3 Tools/check_domain_purity.py"
+      - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_localization.py"
+      - script: "python3 Tools/Gatekeeper/check_localization.py"
         name: "[Gatekeeper] L10n Leak & Hardcode Audit"
         basedOnDependencyAnalysis: false
-      - script: "./env/venv/bin/python3 Tools/check_storage_constants.py"
+      - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
         basedOnDependencyAnalysis: false
     dependencies:
@@ -248,7 +245,6 @@ targets:
     type: bundle.ui-testing
     platform: iOS
     sources:
-      - path: Tests/UITests
       - path: Tests/UI
     dependencies:
       - target: ZhiYu

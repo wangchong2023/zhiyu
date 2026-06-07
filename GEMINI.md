@@ -58,7 +58,7 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 - `Sources/Shared`: 设计令牌与跨业务通用 UI 组件。
 - `Sources/Localization`: 全局 String Catalog 资源。
 - `Sources/Platforms`: 平台特有的桥接实现（iOS, macOS, watchOS）。
-- `Docs/superpowers`: 存储工程重构计划与设计文档。
+- `Docs/Architecture`: 存储架构设计文档、分层规范与运维手册。
 
 
 ## 开发约定
@@ -89,19 +89,18 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 - **强校验网关**：项目已集成 `check_localization.py` 编译网关。任何硬编码非 ASCII 字符或非法 `.tr()` 调用将**阻断编译**。开发者必须先在 `L10n` 扩展中定义属性并在 `.xcstrings` 中配置翻译，方可通行。
 
 ### 5. 编码风格
-- 遵循 `Docs/guides/swift-coding-style.md`。
+- 遵循 `Docs/Guides/swift-coding-style.md`。
 - `import` 管理：Model/Service 层 `import Foundation`（严禁导入 `SwiftUI`）；View 层 `import SwiftUI`。
 - 协议遵循放在独立 `extension` 中。
 
 ### 6. 脚本管理规范
-- **长期工具**：存放在 `Tools/` 目录下。
-- **临时脚本**：存放在 `Tools/Temp/` 目录下，使用后需及时清理。
+- **长期工具**：存放在 `Tools/` 目录下，按用途分入子目录（`Gatekeeper/`、`CI/`、`Lint/`、`Mock/`、`Plugins/`、`Utils/`）。
 - **文档维护**：新增或移动脚本后，必须同步更新 `Tools/README.md`。
 
 ### 7. 数据库 Model 字段绑定规范
 - **禁止物理硬编码**：在编写数据库 Schema 迁移、建表与 SQL 数据处理时，严禁直接使用硬编码的裸物理表名或物理字段名字面量（例如 `"created_at"`、`t.column("created_at")`）。
 - **必须通过 Model 字段**：必须使用各数据库 Model 实体自带的 `databaseTableName` 静态常量及 `Columns` / `CodingKeys` 常量作为表名和字段的映射插值，以保证编译期类型安全与模型解耦。
-- **强校验网关**：项目已集成 `check_storage_constants.py` 守卫网关，检测到任何硬编码物理字段或未进行常量插值的硬编码 SQL 均会**阻断编译**。
+- **强校验网关**：项目已集成 `Tools/Gatekeeper/check_storage_constants.py` 守卫网关，检测到任何硬编码物理字段或未进行常量插值的硬编码 SQL 均会**阻断编译**。
 
 ## 提交规范
 使用 Conventional Commits 格式：
@@ -112,5 +111,5 @@ xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iO
 - `Sources/Core/Base/ServiceContainer.swift`: DI 容器实现。
 - `Sources/Domain/Models/`: 核心领域模型。
 - `Sources/Shared/UIComponents/`: 跨平台 SwiftUI 通用视图。
-- `Tools/`: 开发者辅助工具（同步、模拟器、MockServer）。
+- `Tools/`: 开发者工具（`Gatekeeper/` 编译门禁、`CI/` 流水线、`Lint/` 代码检查、`Mock/` 模拟服务器、`Plugins/` 插件SDK、`Utils/` 辅助脚本）。
 - `project.yml`: XcodeGen 项目定义。

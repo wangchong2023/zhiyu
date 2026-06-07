@@ -10,7 +10,7 @@
 - [软件需求规格说明书](Docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md)
 - [全量特性清单](Docs/Requirements/FEATURE_LIST.md)
 - [插件市场 PRD](Docs/Requirements/PLUGIN_MARKET_PRD.md)
-- [进化路线图](Docs/ROADMAP.md)
+- [进化路线图](Docs/Requirements/ROADMAP.md)
 - [本地化规范](Docs/Requirements/LOCALIZATION.md)
 
 ### 架构与设计
@@ -28,12 +28,12 @@
 - [功能测试指引](Docs/Testing/TEST_GUIDE.md)
 - [性能基准报告](Docs/Testing/PERFORMANCE_BENCHMARK.md)
 - [测试用例库](Docs/Testing/TEST_CASES.md)
-- [CI/CD 工作流](Docs/CI_CD_WORKFLOW.md)
+- [CI/CD 工作流](Docs/Architecture/CI_CD_WORKFLOW.md)
 
 ### 开发与社区
-- [贡献指南](Docs/CONTRIBUTING.md)
-- [用户操作指南](Docs/USER_GUIDE.md)
-- [致谢](Docs/ACKNOWLEDGMENTS.md)
+- [贡献指南](Docs/Guides/CONTRIBUTING.md)
+- [用户操作指南](Docs/Guides/USER_GUIDE.md)
+- [致谢](Docs/Guides/ACKNOWLEDGMENTS.md)
 
 ---
 

@@ -40,17 +40,17 @@ jobs:
       - name: Scan for Hardcoded Secrets
         run: |
           echo "🔍 扫描硬编码密钥/Token/IP..."
-          python3 Tools/check_hardcoded_secrets.py
+          python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
       - name: Check Localization Compliance
         run: |
           echo "🔍 扫描硬编码中文和违规 tr() 调用..."
-          python3 Tools/check_localization.py
+          python3 Tools/Gatekeeper/check_localization.py
 
       - name: Audit SPM Dependencies
         run: |
           echo "🔍 审计 SPM 依赖安全版本..."
-          python3 Tools/audit_spm_dependencies.py
+          python3 Tools/CI/audit_spm_dependencies.py
 
       - name: Verify iOS Build
         run: |

@@ -50,7 +50,7 @@ jobs:
       # ── 5. SPM 依赖安全审计（快速，阻断已知风险依赖）───────────────
       - name: Audit SPM Dependencies
         run: |
-          python3 Tools/audit_spm_dependencies.py
+          python3 Tools/CI/audit_spm_dependencies.py
 
       # ── 6. SwiftLint 严格模式（--strict：所有 warning → error）─────
       - name: Run SwiftLint Strict Analysis
@@ -60,12 +60,12 @@ jobs:
       # ── 7. 硬编码密钥扫描（阻断 API Key / Token / 密码泄露）────────
       - name: Scan for Hardcoded Secrets
         run: |
-          python3 Tools/check_hardcoded_secrets.py
+          python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
       # ── 8. 本地化合规检查（阻断硬编码中文 / 直接 tr() 调用）────────
       - name: Check Localization Compliance
         run: |
-          python3 Tools/check_localization.py
+          python3 Tools/Gatekeeper/check_localization.py
 
       # ── 9. 构建 + 单元测试 + 覆盖率收集（快速反馈）─────────────────
       - name: Build and Unit Test with Coverage
@@ -112,7 +112,7 @@ jobs:
       # ── 11. 代码覆盖率红线熔断（Domain 层 ≥ 85%）──────────────────
       - name: Enforce Code Coverage Threshold
         run: |
-          python3 Tools/check_coverage.py
+          python3 Tools/CI/check_coverage.py
 
       # ── 12. 多平台编译验证（确保非 iOS target 可编译）──────────────
       - name: Verify Multi-Platform Build

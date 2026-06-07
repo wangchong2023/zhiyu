@@ -140,7 +140,18 @@
       "Bash(pkill -9 -f \"Xcode\")",
       "Bash(rm -rf \"/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/XCBuildData/build.db-shm\")",
       "Bash(rm -rf \"/Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-ahhasqosjhnjphavyaflyigbvjqi/Build/Intermediates.noindex/XCBuildData/build.db-wal\")",
-      "Bash(grep -rn \"CGSize\\(width:\\\\|CGRect\\\\|\\\\.onAppear.*\\\\{$\\\\|GeometryReader\" /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features --include=\"*.swift\")"
+      "Bash(grep -rn \"CGSize\\(width:\\\\|CGRect\\\\|\\\\.onAppear.*\\\\{$\\\\|GeometryReader\" /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features --include=\"*.swift\")",
+      "Bash(grep -v \"^\\\\.git$\")",
+      "Bash(grep -v \"^\\\\.$\")",
+      "Bash(grep -v \"^\\\\.\\\\.$\")",
+      "Bash(mv CI_CD_WORKFLOW.md Architecture/CI_CD_WORKFLOW.md)",
+      "Bash(mv SECURITY_THREAT_MODEL.md Design/SECURITY_THREAT_MODEL.md)",
+      "Bash(mv ROADMAP.md Requirements/ROADMAP.md)",
+      "Bash(mv CONTRIBUTING.md guides/CONTRIBUTING.md)",
+      "Bash(mv USER_GUIDE.md guides/USER_GUIDE.md)",
+      "Bash(grep -v \"^\\\\.git$\\\\|^\\\\.$\\\\|^\\\\.\\\\.$\")",
+      "Bash(git -C /Users/constantine/Documents/work/code/projects/ZhiYu status --short)",
+      "Bash(grep -v \"^\\\\.$\\\\|^\\\\.\\\\.$\")"
     ]
   }
 }

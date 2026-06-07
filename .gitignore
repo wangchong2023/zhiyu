@@ -1,14 +1,6 @@
 # .gitignore for ZhiYu (Swift/Xcode/macOS)
 
 # Xcode
-#
-# gitignore contributors: scroll through the list and uncomment as needed
-# project.xcworkspace/
-# !default.ca-bundle
-# !default.mode1v3
-# !default.mode2v3
-# !default.perspectivev3
-# !default.xccheckout
 xcuserdata/
 MostRecentCompletionIndex
 *.xcuserstate
@@ -20,57 +12,21 @@ MostRecentCompletionIndex
 *.xcodeproj/xcuserdata/
 DerivedData/
 *.moved-aside
-*.xcuserstate
 *.p_t
-*.moved-aside
-*.xccheckout
-*.xcscmblueprint
-
-# XcodeGen
-# Since project is generated from project.yml, xcodeproj can be ignored
-# But we keep it in case the user wants to commit it
-# ZhiYu.xcodeproj/
 
 # Build results
 build/
 
-# CocoaPods
-#
-# We recommend against committing the Pods directory or the generated workspace.
-# Pods/
-# *.xcworkspace
-
-# Carthage
-#
-# Carthage/Build/
-
-# Accidental test shrapnel
-*.xccheckout
-*.xcscmblueprint
-
 # Swift Package Manager
-#
-# Add this line if you want to avoid committing the checkouts.
-# .build/
-# Packages/
-# Package.resolved
-# .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
-# .swiftpm/xcode/xcuserdata/
+.build/
+.swiftpm/
 
 # macOS
-#
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
 Icon
-
-
-# Thumbnails
 ._*
-
-# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -78,8 +34,6 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
@@ -89,18 +43,27 @@ Temporary Items
 # Other
 *.log
 scratch/
+env/
 
-# Claude Code 生成文件
+# Claude Code
 .codegraph/
 
-# 临时日志文件
+# Temporary log/pid files
 /tmp/*.log
 /tmp/*.pid
-
-# Xcode 用户数据
-*.xcuserstate
-.DS_Store
-
-# Mock 服务器 PID 文件
 /tmp/mock_*.pid
-*.xcuserstate
+
+# Backend CI — 不属于 iOS 项目，防止误放根目录
+.woodpecker.yml
+
+# 插件源文件 — 仅在 Tools/Plugins/ 下管理，禁止根目录散落
+/*.zyplugin
+
+# VS Code 统计工具输出
+.VSCodeCounter/
+
+# 第三方 AI 助手遗留
+.workbuddy/
+
+# 临时测试数据目录
+Configs/
