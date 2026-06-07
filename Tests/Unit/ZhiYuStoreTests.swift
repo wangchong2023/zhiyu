@@ -95,15 +95,15 @@ final class LLMConfigStoreTests: XCTestCase {
         try await super.setUp()
         setupFullMockEnvironment()
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
-        try? KeychainService.shared.delete(key: "llm_api_key")
-        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        try? KeychainStore.shared.delete(key: "llm_api_key")
+        try? KeychainStore.shared.delete(key: "llm_api_key_deepseek")
         configStore = LLMConfigStore()
     }
     
     override func tearDown() async throws {
         UserDefaults.standard.removeObject(forKey: "zhiyu_llm_config")
-        try? KeychainService.shared.delete(key: "llm_api_key")
-        try? KeychainService.shared.delete(key: "llm_api_key_deepseek")
+        try? KeychainStore.shared.delete(key: "llm_api_key")
+        try? KeychainStore.shared.delete(key: "llm_api_key_deepseek")
         configStore = nil
         ServiceContainer.shared.reset()
         try await super.tearDown()

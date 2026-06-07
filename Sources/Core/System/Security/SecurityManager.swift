@@ -54,7 +54,7 @@ final class SecurityManager: @unchecked Sendable {
         generator: () -> String
     ) -> String {
         // 1. 优先从 Keychain 读取
-        if let existing = try? KeychainService.shared.retrieve(key: key) {
+        if let existing = try? KeychainStore.shared.retrieve(key: key) {
             return existing
         }
         
@@ -70,7 +70,7 @@ final class SecurityManager: @unchecked Sendable {
         
         // 4. 持久化
         do {
-            try KeychainService.shared.store(key: key, value: newValue)
+            try KeychainStore.shared.store(key: key, value: newValue)
             return newValue
         } catch {
             #if DEBUG

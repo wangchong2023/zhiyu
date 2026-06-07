@@ -167,7 +167,7 @@ public final class AuthService: AuthServiceProtocol {
         
         Task {
             // 尝试通知后端登出并吊销 RefreshToken
-            if let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") {
+            if let refreshToken = try? KeychainStore.shared.retrieve(key: "refresh_token") {
                 let req = RefreshRequest(refreshToken: refreshToken)
                 let _: EmptyData? = try? await NetworkClient.shared.request(
                     path: "/api/v1/auth/logout",
@@ -178,8 +178,8 @@ public final class AuthService: AuthServiceProtocol {
             }
             
             // 清理本地状态
-            try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
-            try? KeychainService.shared.delete(key: "refresh_token")
+            try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
+            try? KeychainStore.shared.delete(key: "refresh_token")
         }
     }
     
@@ -286,9 +286,9 @@ public final class AuthService: AuthServiceProtocol {
     private func handleSuccessfulLogin(response: LoginResponse, identity: String) -> Bool {
         do {
             // 写入本地安全区
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: response.tokens.accessToken)
+            try KeychainStore.shared.store(key: AppConstants.Network.jwtTokenKey, value: response.tokens.accessToken)
             if let refresh = response.tokens.refreshToken {
-                try KeychainService.shared.store(key: "refresh_token", value: refresh)
+                try KeychainStore.shared.store(key: "refresh_token", value: refresh)
             }
         } catch {
             Logger.shared.error("[AuthService]  Token ", error: error)

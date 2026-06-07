@@ -18,8 +18,8 @@ final class AuthServiceTests: XCTestCase {
         ServiceContainer.shared.register(MockVaultDatabaseSwitcher() as VaultDatabaseSwitcher, for: VaultDatabaseSwitcher.self)
 
         AuthSession.shared.logout()
-        try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
-        try? KeychainService.shared.delete(key: "refresh_token")
+        try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
+        try? KeychainStore.shared.delete(key: "refresh_token")
 
     }
 

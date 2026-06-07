@@ -79,7 +79,7 @@ public actor NetworkClient {
         
         // 2. 注入 Access Token
         if requiresAuth {
-            if let token = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
+            if let token = try? KeychainStore.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
                 request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
         }
@@ -150,7 +150,7 @@ public actor NetworkClient {
             }
             
             // 拿到长效 Refresh Token
-            guard let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") else {
+            guard let refreshToken = try? KeychainStore.shared.retrieve(key: "refresh_token") else {
                 NotificationCenter.default.post(name: .userAuthExpired, object: nil)
                 throw NetworkError.unauthorized(L10n.Network.missingRefreshToken)
             }
@@ -168,13 +168,13 @@ public actor NetworkClient {
             
             if response.isSuccess, let newTokens = response.data {
                 // 更新 Keychain
-                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: newTokens.accessToken)
-                try KeychainService.shared.store(key: "refresh_token", value: newTokens.refreshToken)
+                try KeychainStore.shared.store(key: AppConstants.Network.jwtTokenKey, value: newTokens.accessToken)
+                try KeychainStore.shared.store(key: "refresh_token", value: newTokens.refreshToken)
                 return newTokens.accessToken
             } else {
                 // 刷新失败（如重放攻击 40103，或者已过期），强制退登
-                try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
-                try? KeychainService.shared.delete(key: "refresh_token")
+                try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
+                try? KeychainStore.shared.delete(key: "refresh_token")
                 NotificationCenter.default.post(name: .userAuthExpired, object: nil)
                 throw NetworkError.unauthorized(L10n.Network.sessionInvalidated)
             }

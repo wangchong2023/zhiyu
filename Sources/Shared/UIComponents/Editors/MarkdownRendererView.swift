@@ -362,7 +362,7 @@ struct MarkdownRendererView: View {
             })
     }
     
-    private func buildAttributedString(from segments: [MarkdownProcessor.InlineSegment]) -> AttributedString {
+    private func buildAttributedString(from segments: [AppLinkInlineParser.InlineSegment]) -> AttributedString {
         var result = AttributedString()
         
         for segment in segments {

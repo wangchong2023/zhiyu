@@ -198,4 +198,38 @@ final class MarkdownProcessorTests: XCTestCase {
         let blocks = parser.parse("\n\n\n")
         XCTAssertTrue(blocks.isEmpty)
     }
+
+    /// 验证有序列表（编号列表）的解析（indent 约定为 -1）
+    func testParseOrderedList() {
+        let content = "1. First\n2. Second\n3. Third"
+        let blocks = parser.parse(content)
+
+        guard case .bulletList(let items, let indent) = blocks.first else {
+            XCTFail("应当正常解析出有序列表类型"); return
+        }
+        XCTAssertEqual(indent, -1, "有序列表 indent 约定值为 -1")
+        XCTAssertEqual(items.count, 3)
+        XCTAssertEqual(items[0], "First")
+    }
+
+    /// 验证 HTML <details> 折叠块的解析（swift-markdown 不原生支持，需自研后处理）
+    func testParseDetailsBlock() {
+        let content = """
+        <details>
+        <summary>点击展开</summary>
+
+        折叠内容的第一段。
+
+        折叠内容的第二段。
+        </details>
+        """
+        let blocks = parser.parse(content)
+
+        guard case .details(let summary, let detailContent) = blocks.first else {
+            XCTFail("应当正常解析出 .details 折叠块类型 (实际 blocks.count=\(blocks.count))"); return
+        }
+        XCTAssertEqual(summary, "点击展开")
+        XCTAssertTrue(detailContent.contains("折叠内容的第一段"))
+        XCTAssertTrue(detailContent.contains("折叠内容的第二段"))
+    }
 }
