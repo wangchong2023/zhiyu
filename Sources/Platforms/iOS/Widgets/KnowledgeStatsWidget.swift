@@ -135,8 +135,6 @@ struct KnowledgeStatsWidgetEntryView: View {
         .containerBackground(for: .widget) {
             Color.clear
         }
-        // 禁用自动内容边距，消除系统默认白边，使暗色背景铺满整个 Widget
-        .contentMarginsDisabled()
     }
 
     // MARK: - Small 尺寸布局
@@ -353,5 +351,6 @@ struct KnowledgeStatsWidget: Widget {
         .configurationDisplayName(WidgetL10n.title)
         .description(WidgetL10n.vaultName)
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .contentMarginsDisabled()
     }
 }
