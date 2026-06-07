@@ -1,5 +1,6 @@
 labels:
-  backend: local
+  backend: docker
+  platform: darwin/arm64
 
 skip_clone: true
 
