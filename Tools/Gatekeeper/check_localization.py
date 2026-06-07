@@ -227,6 +227,18 @@ def check_file(file_path):
     is_l10n_extension = 'Localization/Extensions' in file_path
     filename = os.path.basename(file_path)
     is_allow_non_ascii = filename in ALLOW_NON_ASCII_FILES
+
+    # Logger/调试/日志上下文检测模式 — 这些场景的字符串不阻断编译
+    LOGGER_PATTERNS = [
+        r'\.(debug|info|warning|error|notice|trace|log)\s*\(',
+        r'[Ll]ogger\.',
+        r'[Ll]og\.',
+        r'print\s*\(',
+        r'NSLog\(',
+        r'os_log\(',
+        r'fatalError\(',
+    ]
+    LOGGER_LINE_RE = re.compile('|'.join(LOGGER_PATTERNS))
     
     for i, line in enumerate(processed_lines):
         # 1. 检查硬编码字符串
@@ -253,17 +265,22 @@ def check_file(file_path):
             } or "Stress Test Page #" in s:
                 continue
             
+            # 判断当前行是否处于 Logger/调试/日志上下文
+            is_logger_context = bool(LOGGER_LINE_RE.search(line))
+
             if any(ord(c) > 127 for c in s):
                 if not is_allow_non_ascii:
-                    issues.append((i + 1, s, "Hardcoded non-ASCII string detected.", "ERROR"))
+                    severity = "WARNING" if is_logger_context else "ERROR"
+                    issues.append((i + 1, s, "Hardcoded non-ASCII string detected.", severity))
             else:
 
                 # 针对 ASCII 字符串的加强检测：句子启发式
                 is_ui = any(trigger in line for trigger in UI_TRIGGERS)
                 is_sentence = is_natural_language_sentence(s)
-                
+
                 if is_ui and is_sentence:
-                    issues.append((i + 1, s, "Hardcoded English sentence in UI/Logic context.", "ERROR"))
+                    severity = "WARNING" if is_logger_context else "ERROR"
+                    issues.append((i + 1, s, "Hardcoded English sentence in UI/Logic context.", severity))
                 elif is_sentence and not is_l10n_extension:
                     # 在非定义文件中出现句子，大概率需要本地化
                     issues.append((i + 1, s, "Hardcoded English sentence detected.", "WARNING"))
