@@ -105,7 +105,8 @@ jobs:
             2>&1 | tee build/ui_test_output.log
           UI_EXIT=${PIPESTATUS[0]}
           if [ ${UI_EXIT} -ne 0 ]; then
-            echo "⚠️  UI 测试失败 (exit=${UI_EXIT})，不阻断流水线"
+            echo "❌ UI 测试失败 (exit=${UI_EXIT})"
+            exit ${UI_EXIT}
           fi
 
       # ── 11. 代码覆盖率红线熔断（Domain 层 ≥ 85%）──────────────────
