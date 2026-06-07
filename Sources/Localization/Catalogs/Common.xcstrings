@@ -449,7 +449,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "< 50 "
+            "value": "< 50"
           }
         },
         "zh-Hans": {
@@ -517,13 +517,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "50-69"
+            "value": "50–69"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "50-69"
+            "value": "50–69"
           }
         }
       }
@@ -534,13 +534,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "70-89"
+            "value": "70–89"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "70-89"
+            "value": "70–89"
           }
         }
       }
@@ -551,13 +551,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "90-100"
+            "value": "90–100"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "90-100"
+            "value": "90–100"
           }
         }
       }
@@ -755,13 +755,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.links"
+            "value": "Links"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.links"
+            "value": "链接"
           }
         }
       }
@@ -823,13 +823,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tags"
+            "value": "Tags"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tags"
+            "value": "标签"
           }
         }
       }
@@ -840,13 +840,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tapToOpen"
+            "value": "Tap to open"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.tapToOpen"
+            "value": "点击打开"
           }
         }
       }
@@ -857,13 +857,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.words"
+            "value": "Words"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "accessibility.words"
+            "value": "字数"
           }
         }
       }
@@ -1197,13 +1197,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.ingestKnowledgeSubtitle"
+            "value": "Import and process knowledge"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "action.ingestKnowledgeSubtitle"
+            "value": "导入并处理知识"
           }
         }
       }
@@ -1231,7 +1231,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI 正在分析您的知识库以生成洞察..."
+            "value": "AI is analyzing your knowledge base to generate insights..."
           }
         },
         "zh-Hans": {
@@ -1590,13 +1590,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.noOutgoing"
+            "value": "No outgoing links"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.noOutgoing"
+            "value": "无外链"
           }
         }
       }
@@ -1607,13 +1607,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.search"
+            "value": "Search"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "components.search"
+            "value": "搜索"
           }
         }
       }
@@ -2899,7 +2899,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "https://api.example.com/v1 "
+            "value": "https://api.example.com/v1"
           }
         },
         "zh-Hans": {
@@ -3596,13 +3596,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.failure"
+            "value": "Failed"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.failure"
+            "value": "失败"
           }
         }
       }
@@ -3613,13 +3613,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.processing"
+            "value": "Processing"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.processing"
+            "value": "处理中"
           }
         }
       }
@@ -3630,13 +3630,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.success"
+            "value": "Success"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "log.status.success"
+            "value": "成功"
           }
         }
       }
@@ -5116,7 +5116,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智宇需要相机权限来扫描文档文字（OCR）。"
+            "value": "智宇需要访问您的相机，以便扫描并识别文档文本 (OCR)。"
           }
         }
       }
@@ -5134,7 +5134,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智宇需要面容 ID 权限来保护您的私密保险库。"
+            "value": "智宇需要访问您的面容 ID (Face ID)，以保护您的私密知识库安全。"
           }
         }
       }
@@ -5170,7 +5170,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智宇需要麦克风权限来录制语音笔记。"
+            "value": "智宇需要访问您的麦克风，以便录制语音笔记。"
           }
         }
       }
@@ -5188,7 +5188,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智宇需要相册权限来进行 OCR 文字扫描。"
+            "value": "智宇需要访问您的照片图库，以便导入图片并进行 OCR 文本扫描识别。"
           }
         }
       }
@@ -5206,7 +5206,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "智宇需要语音识别来转录你的语音笔记。"
+            "value": "智宇需要访问您的语音识别功能，以将您的语音笔记转写为文本。"
           }
         }
       }
@@ -5948,13 +5948,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This plugin is requesting permission to access protected resources."
+            "value": "Plugin \"%@\" requires the following permissions to function"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "此插件正在请求访问受保护资源的权限。"
+            "value": "插件「%@」需要以下权限才能正常工作"
           }
         }
       }
@@ -7019,13 +7019,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "sidebar.allPages"
+            "value": "All Pages"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "sidebar.allPages"
+            "value": "全部页面"
           }
         }
       }
@@ -7512,7 +7512,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "sk-... "
+            "value": "sk-..."
           }
         },
         "zh-Hans": {
@@ -7835,13 +7835,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "splash.title"
+            "value": "ZhiYu"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "splash.title"
+            "value": "智宇"
           }
         }
       }
@@ -9178,7 +9178,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.relatedConcepts"
+            "value": "Related Concepts"
           }
         },
         "zh-Hans": {
@@ -9195,7 +9195,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.gateway.content"
+            "value": "The API gateway routes requests, handles authentication, and enforces rate limiting for all external access."
           }
         },
         "zh-Hans": {
@@ -9212,7 +9212,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.topology.title"
+            "value": "Graph Topology"
           }
         },
         "zh-Hans": {
@@ -9229,7 +9229,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.dependsOn"
+            "value": "Depends on"
           }
         },
         "zh-Hans": {
@@ -9246,7 +9246,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.quality"
+            "value": "Quality"
           }
         },
         "zh-Hans": {
@@ -9263,7 +9263,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.nlp"
+            "value": "NLP"
           }
         },
         "zh-Hans": {
@@ -9280,7 +9280,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.secureEnv.title"
+            "value": "Secure Enclave"
           }
         },
         "zh-Hans": {
@@ -9297,7 +9297,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.memory"
+            "value": "Memory"
           }
         },
         "zh-Hans": {
@@ -9314,7 +9314,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.topology.content"
+            "value": "Knowledge graph topology analysis reveals cluster structures, central nodes, and information flow patterns."
           }
         },
         "zh-Hans": {
@@ -9331,7 +9331,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolchain.content"
+            "value": "End-to-end toolchain from ingestion to synthesis, supporting multiple document formats and AI models."
           }
         },
         "zh-Hans": {
@@ -9348,7 +9348,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.chunking.title"
+            "value": "Semantic Chunking"
           }
         },
         "zh-Hans": {
@@ -9365,7 +9365,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.network"
+            "value": "Network"
           }
         },
         "zh-Hans": {
@@ -9382,7 +9382,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.ai"
+            "value": "AI"
           }
         },
         "zh-Hans": {
@@ -9399,7 +9399,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.vectorDB.title"
+            "value": "Vector Database"
           }
         },
         "zh-Hans": {
@@ -9416,7 +9416,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.hybridSearch.content"
+            "value": "Combines FTS5 full-text search with vector similarity search using Reciprocal Rank Fusion for optimal retrieval quality."
           }
         },
         "zh-Hans": {
@@ -9433,7 +9433,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.core"
+            "value": "Core"
           }
         },
         "zh-Hans": {
@@ -9450,7 +9450,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.protocol"
+            "value": "Protocol"
           }
         },
         "zh-Hans": {
@@ -9467,7 +9467,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.transformer.content"
+            "value": "Transformer architecture enables deep semantic understanding through multi-head attention mechanisms."
           }
         },
         "zh-Hans": {
@@ -9484,7 +9484,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolInterface.title"
+            "value": "Tool Interface"
           }
         },
         "zh-Hans": {
@@ -9501,7 +9501,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.embedding.content"
+            "value": "High-dimensional vector embeddings capture semantic meaning, enabling similarity search beyond keyword matching."
           }
         },
         "zh-Hans": {
@@ -9518,7 +9518,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.consistency.title"
+            "value": "Consistency Checking"
           }
         },
         "zh-Hans": {
@@ -9535,7 +9535,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.secureEnv.content"
+            "value": "Secure Enclave-based key storage ensures cryptographic operations happen in hardware-isolated environment."
           }
         },
         "zh-Hans": {
@@ -9552,7 +9552,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.tools"
+            "value": "Tools"
           }
         },
         "zh-Hans": {
@@ -9569,7 +9569,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.agent"
+            "value": "Agent"
           }
         },
         "zh-Hans": {
@@ -9586,7 +9586,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.embedding.title"
+            "value": "Vector Embeddings"
           }
         },
         "zh-Hans": {
@@ -9603,7 +9603,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.consistency.content"
+            "value": "Multi-version consistency checking detects conflicts and ensures knowledge integrity across synchronized devices."
           }
         },
         "zh-Hans": {
@@ -9620,7 +9620,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolInterface.content"
+            "value": "Plugin system provides extensible tool interfaces allowing third-party integrations to extend platform capabilities."
           }
         },
         "zh-Hans": {
@@ -9637,7 +9637,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.toolUse"
+            "value": "Tool Use"
           }
         },
         "zh-Hans": {
@@ -9654,7 +9654,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.storage"
+            "value": "Storage"
           }
         },
         "zh-Hans": {
@@ -9671,7 +9671,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.transformer.title"
+            "value": "Transformer"
           }
         },
         "zh-Hans": {
@@ -9688,7 +9688,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.memoryMgmt.content"
+            "value": "Intelligent memory management monitors device resources and dynamically adjusts model loading to prevent OOM crashes."
           }
         },
         "zh-Hans": {
@@ -9705,7 +9705,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.memoryMgmt.title"
+            "value": "Memory Management"
           }
         },
         "zh-Hans": {
@@ -9722,7 +9722,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.theory"
+            "value": "Theory"
           }
         },
         "zh-Hans": {
@@ -9739,7 +9739,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.vectorDB.content"
+            "value": "Vector database stores and indexes embeddings for fast approximate nearest neighbor search at scale."
           }
         },
         "zh-Hans": {
@@ -9756,7 +9756,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.hybridSearch.title"
+            "value": "Hybrid Search"
           }
         },
         "zh-Hans": {
@@ -9773,7 +9773,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.performance"
+            "value": "Performance"
           }
         },
         "zh-Hans": {
@@ -9790,7 +9790,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.gateway.title"
+            "value": "API Gateway"
           }
         },
         "zh-Hans": {
@@ -9807,7 +9807,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.architecture"
+            "value": "Architecture"
           }
         },
         "zh-Hans": {
@@ -9824,7 +9824,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.integratesWith"
+            "value": "Integrates with"
           }
         },
         "zh-Hans": {
@@ -9841,7 +9841,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.toolchain.title"
+            "value": "Processing Toolchain"
           }
         },
         "zh-Hans": {
@@ -9858,7 +9858,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.chunking.content"
+            "value": "Semantic chunking splits documents by meaning boundaries using embedding similarity detection, ensuring each chunk represents a coherent unit of knowledge."
           }
         },
         "zh-Hans": {
@@ -9875,7 +9875,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.planning"
+            "value": "Planning"
           }
         },
         "zh-Hans": {
@@ -9892,7 +9892,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.rag"
+            "value": "RAG"
           }
         },
         "zh-Hans": {
@@ -9909,7 +9909,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "demo.foundation"
+            "value": "Foundation"
           }
         },
         "zh-Hans": {
@@ -9926,7 +9926,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.llm"
+            "value": "LLM"
           }
         },
         "zh-Hans": {
@@ -9943,7 +9943,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.visual"
+            "value": "Visual"
           }
         },
         "zh-Hans": {
@@ -9960,7 +9960,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "tags.security"
+            "value": "Security"
           }
         },
         "zh-Hans": {

@@ -159,7 +159,7 @@ public final class SynthesisStore {
     /// - Returns: 字符串
     public func performSynthesis(type: SynthesisType, combinedContent: String) async throws -> String {
         guard synthesisStates[type] != SynthesisStatus.generating else { 
-            throw NSError(domain: "SynthesisStore", code: -1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "VGFzayBhbHJlYWR5IGluIHByb2dyZXNz")!, encoding: .utf8)!])
+            throw NSError(domain: "SynthesisStore", code: -1, userInfo: [NSLocalizedDescriptionKey: "Task already in progress"])
         }
 
         let existingCount = synthesisResults[type]?.count ?? 0

@@ -92,13 +92,17 @@ struct MockScraperHandler: WebScraperHandler {
     /// /// - Returns: 返回值
     func handle(url: URL, startTime: Date) async throws -> (markdown: String, title: String) {
         if url.host == "paywall-test.com" || url.absoluteString.contains("paywall-test") {
+// swiftlint:disable:next force_unwrapping
             let mockData = Data(base64Encoded: "PGh0bWw+PGhlYWQ+PHRpdGxlPlBheXdhbGwgVGVzdCBBcnRpY2xlPC90aXRsZT48L2hlYWQ+PGJvZHk+PHA+VGhpcyBpcyBtb2NrIHByZW1pdW0gY29udGVudCBieXBhc3Mgc3VjY2Vzcy48L3A+PHA+U2Vjb25kIHBhcmFncmFwaCBvZiB0aGUgcHJlbWl1bSBhcnRpY2xlLjwvcD48L2JvZHk+PC9odG1sPg==")!
+// swiftlint:disable:next force_unwrapping
             let mockPaywallHTML = String(data: mockData, encoding: .utf8)!
             return DumbExtractorHandler.extractFromHTML(mockPaywallHTML)
         }
         
         if url.host == "invalid-host-domain-never-exist-112233.com" {
+// swiftlint:disable:next force_unwrapping
             let mockData = Data(base64Encoded: "PGh0bWw+PGhlYWQ+PHRpdGxlPlJlY292ZXJlZCBBcnRpY2xlIFRpdGxlPC90aXRsZT48L2hlYWQ+PGJvZHk+PHA+VGhpcyBpcyByZWNvdmVyZWQgY29udGVudC4gVGhlIHdlYnNpdGUgYmxvY2tlZCBhdXRvbWF0ZWQgc2NyYXBpbmcsIGJ1dCB0aGUgc3lzdGVtIHN1Y2Nlc3NmdWxseSBieXBhc3NlZCBpdCB1c2luZyBsb2NhbCBkaXNhc3RlciByZWNvdmVyeSB0ZW1wbGF0ZXMuPC9wPjwvYm9keT48L2h0bWw+")!
+// swiftlint:disable:next force_unwrapping
             let recoveryHTML = String(data: mockData, encoding: .utf8)!
             return DumbExtractorHandler.extractFromHTML(recoveryHTML)
         }

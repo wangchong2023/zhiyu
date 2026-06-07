@@ -67,7 +67,7 @@ struct PluginCustomSettingsView: View {
     
     @ViewBuilder
     private func renderItem(_ item: PluginUISchemaItem) -> some View {
-        Section(header: item.header != nil ? Text(item.header!) : nil) {
+        Section(header: item.header.map { Text($0) }) {
             switch item.type {
             case "toggle":
                 Toggle(item.label, isOn: Binding(

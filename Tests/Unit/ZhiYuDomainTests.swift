@@ -128,7 +128,7 @@ final class ZhiYuDomainTests: XCTestCase {
     // MARK: - Hybrid Search Logic Tests
     @MainActor
     func testHybridSearchQueryExpansion() async {
-        let dbQueue = try! DatabaseQueue()
+        guard let dbQueue = try? DatabaseQueue() else { XCTFail("无法创建测试数据库"); return }
         let store = SQLiteStore(dbWriter: dbQueue)
         let query = "Karpathy Deep Learning"
         

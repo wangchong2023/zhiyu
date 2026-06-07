@@ -22,7 +22,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         try await super.setUp()
         await setupFullMockEnvironment()
         
-        mockLLM = (ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as! MockLLMService)
+        mockLLM = try XCTUnwrap(ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockLLMService)
         governanceStore = ServiceContainer.shared.resolve((any GovernanceRepository).self)
         evaluationService = RAGEvaluationService(llmService: mockLLM, governanceStore: governanceStore)
     }

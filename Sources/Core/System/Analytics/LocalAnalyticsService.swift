@@ -18,7 +18,7 @@ final class LocalAnalyticsService: AnalyticsServiceProtocol, @unchecked Sendable
     private let logURL: URL
     
     private init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { fatalError("无法获取文档目录") }
         self.logURL = docs.appendingPathComponent("analytics_log.json")
     }
     

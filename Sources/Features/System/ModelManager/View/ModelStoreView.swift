@@ -124,7 +124,7 @@ public struct ModelStoreView: View {
     private func modelCard(for manifest: LLMManifest) -> some View {
         let isSelected = modelManager.activeModelId == manifest.modelId
         let eligibility = modelManager.evaluateEligibility(for: manifest)
-        let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)!)
+        let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: "Not Downloaded")
         let isLocalReady = modelManager.isModelLocalReady(for: manifest.modelId)
         
         // 卡片背景：复用项目设计令牌，浅色/深色自动适配
@@ -320,7 +320,7 @@ public struct ModelStoreView: View {
         case .completed:
             EmptyView()
         case .failed(let error):
-            if error != String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)! && error != "Cancelled" {
+            if error != "Not Downloaded" && error != "Cancelled" {
                 Text(": \(error)")
                     .font(.caption2)
                     .foregroundStyle(.red)
@@ -459,9 +459,9 @@ public struct ModelStoreView: View {
         let mb = kb / 1024
         let gb = mb / 1024
         if gb >= 1.0 {
-            return String(format: String(data: Data(base64Encoded: "JS4yZiBHQg==")!, encoding: .utf8)!, gb)
+            return String(format: "%.2f GB", gb)
         } else {
-            return String(format: String(data: Data(base64Encoded: "JS4xZiBNQg==")!, encoding: .utf8)!, mb)
+            return String(format: "%.1f MB", mb)
         }
     }
 

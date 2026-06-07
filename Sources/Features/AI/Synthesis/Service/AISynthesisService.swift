@@ -116,7 +116,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         Only output the Title and the Mermaid code.
         """
         let result = try await llm.generate(prompt: prompt, systemPrompt: systemPrompt)
-        return SynthesisProcessor.formatMermaid(result, fallbackPrefix: String(data: Data(base64Encoded: "Z3JhcGggVEQ=")!, encoding: .utf8)!)
+        return SynthesisProcessor.formatMermaid(result, fallbackPrefix: "graph TD")
     }
 
     /// 生成Report

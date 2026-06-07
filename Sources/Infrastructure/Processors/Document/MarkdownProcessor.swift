@@ -267,6 +267,7 @@ final class MarkdownProcessor: Sendable {
             // 步骤 2.3：为防止跨样式对冲命中，在当前偏移量后依次运行所有格式正则，寻找“首个被物理命中的最前方格式前缀”（即 location 最小者）
             for (type, regex) in patterns {
                 if let match = regex.firstMatch(in: text, options: [], range: NSRange(location: currentOffset, length: nsText.length - currentOffset)) {
+// swiftlint:disable:next force_unwrapping
                     if earliestMatch == nil || match.range.location < earliestMatch!.match.range.location {
                         earliestMatch = (type, match)
                     }
@@ -318,23 +319,28 @@ final class MarkdownProcessor: Sendable {
 // MARK: - 正则表达式拓展
 
 extension NSRegularExpression {
-    /// 匹配智宇双向链接 `[[知识标题]]` 或 `[[显示文本|实际标题]]`。
-    /// 使用负向断言 `(?<!\\)` 物理排除转义后的括号，确保 `\[\[` 不会被错误捕获。
-    static let appLinkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[\\[(.+?)\\]\\]")
-    
-    /// 匹配加粗文本 `**加粗内容**`。
-    static let boldRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\*\\*(.+?)\\*\\*")
-    
-    /// 匹配斜体文本 `*斜体内容*` 或 `_斜体内容_`。
-    static let italicRegex = try! NSRegularExpression(pattern: "(?<!\\\\)[\\*_](.+?)[\\*_]")
-    
-    /// 匹配删除线文本 `~~删除线内容~~`。
-    static let strikethroughRegex = try! NSRegularExpression(pattern: "(?<!\\\\)~~(.+?)~~")
-    
-    /// 匹配行内代码 `` `代码` ``。
-    static let codeRegex = try! NSRegularExpression(pattern: "(?<!\\\\)`(.+?)`")
-    
-    /// 匹配标准 Markdown 外链 `[标签](URL)`。
-    /// 对 URL 内部可能嵌套的圆括号作了非贪婪防跨行捕获优化。
-    static let linkRegex = try! NSRegularExpression(pattern: "(?<!\\\\)\\[(.+?)\\]\\((.+?)\\)")
+    static let appLinkRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)\\[\\[(.+?)\\]\\]") }
+        catch { fatalError("MarkdownProcessor: 无效正则 appLinkRegex — \(error)") }
+    }()
+    static let boldRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)\\*\\*(.+?)\\*\\*") }
+        catch { fatalError("MarkdownProcessor: 无效正则 boldRegex — \(error)") }
+    }()
+    static let italicRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)[\\*_](.+?)[\\*_]") }
+        catch { fatalError("MarkdownProcessor: 无效正则 italicRegex — \(error)") }
+    }()
+    static let strikethroughRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)~~(.+?)~~") }
+        catch { fatalError("MarkdownProcessor: 无效正则 strikethroughRegex — \(error)") }
+    }()
+    static let codeRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)`(.+?)`") }
+        catch { fatalError("MarkdownProcessor: 无效正则 codeRegex — \(error)") }
+    }()
+    static let linkRegex: NSRegularExpression = {
+        do { return try NSRegularExpression(pattern: "(?<!\\\\)\\[(.+?)\\]\\((.+?)\\)") }
+        catch { fatalError("MarkdownProcessor: 无效正则 linkRegex — \(error)") }
+    }()
 }

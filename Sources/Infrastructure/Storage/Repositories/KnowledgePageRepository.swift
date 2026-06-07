@@ -22,7 +22,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
                 if let writer = DatabaseManager.shared.dbWriter {
                     return writer
                 }
-                return try! DatabaseQueue()
+                do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(KnowledgeRepo): \(error)") }
             }
         }
     }
@@ -65,7 +65,7 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
                     p.rawTextSnippet = try SecurityManager.shared.encrypt(snippet)
                 }
             } catch {
-                Logger.shared.error(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGVuY3J5cHQgcHJpdmF0ZSBwYWdlIGNvbnRlbnQ=")!, encoding: .utf8)!, error: error)
+                Logger.shared.error("Failed to encrypt private page content", error: error)
             }
         }
         

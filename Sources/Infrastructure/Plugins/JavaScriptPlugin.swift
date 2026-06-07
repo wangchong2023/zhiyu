@@ -118,7 +118,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 pluginCtx.registerSettingTab(name: name, schema: schema) { data in
                     try? self.executeInContext { ctx in
                         if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                            jsFunc.call(withArguments: data != nil ? [data!] : [])
+                            jsFunc.call(withArguments: data.map { [$0] } ?? [])
                         }
                     }
                 }

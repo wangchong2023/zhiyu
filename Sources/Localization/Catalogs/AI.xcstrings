@@ -1333,13 +1333,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Basic Guide"
+            "value": "Explore"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "基础引导"
+            "value": "探索"
           }
         }
       }
@@ -1350,7 +1350,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "My Instructions"
+            "value": "My Shortcuts"
           }
         },
         "zh-Hans": {
@@ -2047,7 +2047,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.error"
+            "value": "LLM Error"
           }
         },
         "zh-Hans": {
@@ -2217,7 +2217,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.error"
+            "value": "Error"
           }
         },
         "zh-Hans": {
@@ -2234,7 +2234,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.fail"
+            "value": "Fail"
           }
         },
         "zh-Hans": {
@@ -2251,7 +2251,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.pass"
+            "value": "Pass"
           }
         },
         "zh-Hans": {
@@ -2268,7 +2268,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.eval.status.warning"
+            "value": "Warning"
           }
         },
         "zh-Hans": {
@@ -2710,13 +2710,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.chunkType"
+            "value": "Chunk Type"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.chunkType"
+            "value": "分块类型"
           }
         }
       }
@@ -2982,13 +2982,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.relevanceScore"
+            "value": "Relevance Score"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "llm.prompt.relevanceScore"
+            "value": "相关度评分"
           }
         }
       }
@@ -5056,7 +5056,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.quiz.title"
+            "value": "Quiz"
           }
         },
         "zh-Hans": {
@@ -6229,7 +6229,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.error"
+            "value": "Synthesis Error"
           }
         },
         "zh-Hans": {
@@ -6280,7 +6280,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "synthesis.generate"
+            "value": "Generate"
           }
         },
         "zh-Hans": {
@@ -6654,7 +6654,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "aitask.status.ready"
+            "value": "Ready"
           }
         },
         "zh-Hans": {
@@ -6671,7 +6671,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "aitask."
+            "value": "AI Task"
           }
         },
         "zh-Hans": {
@@ -6705,13 +6705,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.summaryPrefix "
+            "value": "Summarize the following content concisely."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.summaryPrefix"
+            "value": "简洁地总结以下内容。"
           }
         }
       }
@@ -6722,13 +6722,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.discoverLinksPrefix2 "
+            "value": "Based on the knowledge graph, identify hidden connections between these pages."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.discoverLinksPrefix2"
+            "value": "基于知识图谱，识别这些页面之间的隐藏关联。"
           }
         }
       }
@@ -6739,13 +6739,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.reverseQAPrefix "
+            "value": "Generate a question that this passage could answer."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.reverseQAPrefix"
+            "value": "生成这段文本可以回答的问题。"
           }
         }
       }
@@ -6756,13 +6756,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.ingestDiscoveryAssistant "
+            "value": "You are a knowledge discovery assistant. Analyze the ingested content and identify key topics, entities, and relationships."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.ingestDiscoveryAssistant"
+            "value": "你是知识发现助手。分析摄入内容，识别关键主题、实体和关系。"
           }
         }
       }
@@ -6773,13 +6773,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.queryExpansion "
+            "value": "Expand the following query into multiple search-friendly variations."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.queryExpansion"
+            "value": "将以下查询扩展为多个便于搜索的变体。"
           }
         }
       }
@@ -6790,13 +6790,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.discoverLinksPrefix1 "
+            "value": "Discover semantic links from the following content. Return a JSON array of linked page titles."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.discoverLinksPrefix1"
+            "value": "从以下内容中发现语义关联，返回链接页面标题的 JSON 数组。"
           }
         }
       }
@@ -6807,13 +6807,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.hydeUserPrompt "
+            "value": "Generate a passage that answers: "
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.hydeUserPrompt"
+            "value": "生成一段回答以下问题的文本："
           }
         }
       }
@@ -6824,13 +6824,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.hydeSystem "
+            "value": "You are a document generation assistant. Create a hypothetical document that would match the query."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.hydeSystem"
+            "value": "你是一个文档生成助手。请创建一段与查询匹配的假设性文档内容。"
           }
         }
       }
@@ -6841,13 +6841,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.rerankUserPrompt "
+            "value": "Rank the following documents by relevance."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.rerankUserPrompt"
+            "value": "按相关度排序以下文档。"
           }
         }
       }
@@ -6858,13 +6858,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.rerankSystem "
+            "value": "You are a relevance ranking assistant. Score each document's relevance to the query."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.rerankSystem"
+            "value": "你是相关度排序助手。对每篇文档与查询的相关度进行评分。"
           }
         }
       }
@@ -6875,13 +6875,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.ingestManagementAssistant "
+            "value": "You are a knowledge management assistant. Organize and structure the ingested knowledge."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "prompt.ingestManagementAssistant"
+            "value": "你是知识管理助手。组织和结构化摄入的知识内容。"
           }
         }
       }
@@ -6926,13 +6926,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "sidebar.synthesis "
+            "value": "Synthesis"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "sidebar.synthesis"
+            "value": "合成实验室"
           }
         }
       }

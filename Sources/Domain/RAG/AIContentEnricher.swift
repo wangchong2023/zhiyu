@@ -131,8 +131,8 @@ actor AIContentEnricher {
             return nil
         }
 
-        let altRange = Range(match.range(at: 1), in: line)!
-        let urlRange = Range(match.range(at: 2), in: line)!
+        guard let altRange = Range(match.range(at: 1), in: line) else { return nil }
+        guard let urlRange = Range(match.range(at: 2), in: line) else { return nil }
 
         return .image(url: String(line[urlRange]), alt: String(line[altRange]))
     }

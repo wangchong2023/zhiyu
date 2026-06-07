@@ -84,7 +84,7 @@ struct OllamaAdapter: LLMAdapter {
     /// - Returns: 字符串
     func generate(prompt: String, systemPrompt: String) async throws -> String {
         // 实现略，调用 Ollama API
-        return String(data: Data(base64Encoded: "T2xsYW1hIFJlc3VsdA==")!, encoding: .utf8)!
+        return "Ollama Result"
     }
 
     /// chatStream

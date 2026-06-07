@@ -132,7 +132,7 @@ struct AppLauncher {
                     }
                 }
                 defaults.synchronize()
-                print(String(data: Data(base64Encoded: "IFtBcHBMYXVuY2hlcl0gRm91bmQgLVJlc2V0VXNlckRlZmF1bHRzIGxhdW5jaCBhcmd1bWVudC4gU3VjY2Vzc2Z1bGx5IHNhbml0aXplZCBhbmQgcmVzZXQgYWxsIHNlZWRlZF92YXVsdF8qIGtleXMu")!, encoding: .utf8)!)
+                print(" [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
             }
             
             ZhiYuApp.main()

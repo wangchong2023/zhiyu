@@ -2,8 +2,13 @@
 #
 # 作者: Wang Chong
 # 功能说明: 智宇 (ZhiYu) 项目的全局 SwiftLint 编码规范清单
-# 版本: 1.0
-# 日期: 2026-05-18
+# 版本: 2.0
+# 日期: 2026-06-07
+#
+# 变更 (v2.0):
+#   - P1a: type_name 添加 iOS* 前缀例外（Apple 官方惯例）
+#   - P1b: identifier_name 添加业界通用短变量名例外（i/db/id/x/y 等）
+#   - P1c: nesting 放宽至 3 层（复杂 SwiftUI 视图 + 常量嵌套）
 
 # 1. 强制启用与禁用的校验规则
 disabled_rules:
@@ -30,3 +35,174 @@ excluded:
 # 3. 错误红线配置
 force_cast: error             # 强转 Cast 直接升级为编译错误
 force_try: error              # 强行 try 直接升级为编译错误
+
+# 4. 标识符命名规则（P1b: 消除短变量名误报）
+identifier_name:
+  min_length: 2               # 允许 2 字符变量名（db, vm, id, pi 等）
+  excluded:
+    # 业界通用单字符变量
+    - i                       # 循环索引
+    - j                       # 嵌套循环索引
+    - k                       # 内层循环索引
+    - x                       # 坐标/泛型占位
+    - y                       # 坐标
+    - z                       # 坐标/泛型占位
+    - r                       # 半径/结果/行
+    - g                       # 绿色通道/泛型
+    - b                       # 蓝色通道/字节
+    - a                       # 泛型占位
+    - t                       # 时间/临时变量/泛型
+    - n                       # 计数
+    - s                       # 字符串/源
+    - v                       # 值/向量
+    - p                       # 指针/参数/位置
+    - m                       # 临时映射/矩阵
+    # 领域特定短名
+    - db                      # 数据库引用
+    - vm                      # ViewModel
+    - id                      # 标识符
+    - to                      # 目标
+    - pi                      # 圆周率
+    - os                      # 操作系统
+    - js                      # JavaScript 上下文
+    - ai                      # AI 相关
+    - fm                      # FileManager
+    - v1                      # 向量/版本号
+    - v2                      # 向量/版本号
+    - p1                      # 参数/位置
+    - p2                      # 参数/位置
+    # L10n key 镜像属性 / 测试模型（下划线合法）
+    - performance_test         # L10n key 镜像
+    - expected_keywords        # 测试模型属性
+
+# 5. 类型命名规则（P1a: 消除 iOS* 前缀误报）
+type_name:
+  excluded:
+    - iOS                      # Apple 平台惯例：iOS 开头的类型名
+    - macOS                    # Apple 平台惯例
+    - watchOS                  # Apple 平台惯例
+    - tvOS                     # Apple 平台惯例
+    - L                        # 单字母泛型占位（局部视图）
+    - AI                       # 命名空间类型（AppConfig.AI, DesignSystem+Animation.AI）
+    - UI                       # 命名空间类型（AppConfig.UI）
+    # iOS/macOS/watchOS 平台类型（Apple 官方拼写惯例）
+    - iOSAccessibilityService
+    - iOSAppEnvironment
+    - iOSBackgroundTaskProvider
+    - iOSBiometricAuthProvider
+    - iOSExportService
+    - iOSFileArchiver
+    - iOSHapticService
+    - iOSOCRService
+    - iOSPasteboardService
+    - iOSPDFService
+    - iOSPlatformRegistrar
+    - iOSReminderService
+    - iOSSecurityScopedStorage
+    - iOSSpeechService
+    - iOSSpotlightIndexer
+    - iOSWatchSyncService
+    # iCloud 相关类型
+    - iCloudSyncCoordinator
+    - iCloudSyncIntegrationTests
+    - iCloudSyncManager
+    - iCloudSyncService
+    - iCloudSyncTests
+    - iCloudSyncView
+    # 测试平台标识
+    - iPadEnvironmentTests
+    - iPadRouterTests
+    - iPadTests
+    - iPhoneTests
+    # L10n 扩展嵌套枚举（按功能域分组的命名空间）
+    - clearAll
+    - injectConfirm
+    - resetOnboarding
+    # Demo 标签 / 知识图谱标签（嵌套枚举值）
+    - ai
+    - aiAgent
+    - aiLab
+    - chunking
+    - cmd
+    - commands
+    - comparison
+    - concept
+    - confidence
+    - consistency
+    - daily
+    - developer
+    - embedding
+    - entity
+    - factory
+    - field
+    - gateway
+    - graph
+    - group
+    - growth
+    - hero
+    - hybridSearch
+    - iconPicker
+    - index
+    - info
+    - ingest
+    - input
+    - insight
+    - llm
+    - local
+    - log
+    - market
+    - memory
+    - memoryMgmt
+    - method
+    - mock
+    - ocr
+    - pageList
+    - pdf
+    - perm
+    - permission
+    - planning
+    - prompt
+    - recap
+    - reset
+    - role
+    - section
+    - secureEnv
+    - settings
+    - short
+    - shortcuts
+    - skeleton
+    - sort
+    - stats
+    - stressTest
+    - summary
+    - template
+    - theme
+    - tips
+    - toolchain
+    - toolInterface
+    - toolUse
+    - topology
+    - transformer
+    - type
+    - vault
+    - vectorDB
+    - weekly
+    - workshop
+
+# 6. 嵌套规则（P1c: 放宽类型嵌套深度）
+nesting:
+  type_level: 3               # 允许 3 层嵌套（SwiftUI 视图 + 常量枚举）
+
+# 7. 函数参数数量（放宽协议定义和 Logger 参数上限）
+function_parameter_count:
+  warning: 8
+  error: 15
+
+# 8. 元组/函数体长度放宽
+large_tuple:
+  warning: 2
+  error: 4
+
+function_body_length:
+  warning: 100
+  error: 130

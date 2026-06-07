@@ -91,8 +91,8 @@ struct IconPickerView: View {
                 Text(selectedIcon != nil ? L10n.Editor.iconPicker.customSelected : L10n.Editor.iconPicker.useDefault)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.appText)
-                if selectedIcon != nil {
-                    Text(selectedIcon!)
+                if let icon = selectedIcon {
+                    Text(icon)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
                 }

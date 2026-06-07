@@ -99,7 +99,7 @@ enum KeychainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGVuY29kZSB2YWx1ZSBmb3IgS2V5Y2hhaW4gc3RvcmFnZQ==")!, encoding: .utf8)!
+            return "Failed to encode value for Keychain storage"
         case .storeFailed(let status):
             return "Keychain store" + " failed: \(status)"
         case .retrieveFailed(let status):
@@ -107,7 +107,7 @@ enum KeychainError: LocalizedError {
         case .deleteFailed(let status):
             return "Keychain delete" + " failed: \(status)"
         case .unexpectedData:
-            return String(data: Data(base64Encoded: "S2V5Y2hhaW4gcmV0dXJuZWQgdW5leHBlY3RlZCBkYXRhIGZvcm1hdA==")!, encoding: .utf8)!
+            return "Keychain returned unexpected data format"
         }
     }
 }

@@ -58,13 +58,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.internalError "
+            "value": "Internal Error"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.internalError"
+            "value": "内部错误"
           }
         }
       }
@@ -75,13 +75,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.notReady "
+            "value": "Not Ready"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.notReady"
+            "value": "未就绪"
           }
         }
       }
@@ -92,13 +92,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.busy "
+            "value": "Busy"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.busy"
+            "value": "繁忙"
           }
         }
       }

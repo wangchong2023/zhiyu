@@ -66,6 +66,7 @@ public final class VaultService: VaultServiceProtocol {
     /// 物理路径结构规范：
     /// `Application Support/ZhiYu/Vaults/{Vault_UUID}/vault.sqlite3`
     private func getVaultDatabaseURL(for vaultID: UUID) -> URL {
+        // swiftlint:disable:next force_unwrapping
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport
             .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)

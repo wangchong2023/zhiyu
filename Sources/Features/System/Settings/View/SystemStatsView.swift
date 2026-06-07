@@ -584,8 +584,8 @@ struct ChartView: View {
         let calendar = Calendar.current
         let now = Date()
         let components = calendar.dateComponents([.year, .month], from: now)
-        let startOfMonth = calendar.date(from: components)!
-        let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth)!
+        guard let startOfMonth = calendar.date(from: components),
+              let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) else { return (now, now) }
         return (startOfMonth, endOfMonth)
     }
     

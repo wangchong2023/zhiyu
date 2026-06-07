@@ -32,11 +32,13 @@ actor KnowledgeInsightService {
     /// 生成每日主动召回见解 (Smart Recall)
     /// 每天仅生成一次，结果缓存至 UserDefaults。用户手动刷新时跳过缓存。
     func generateDailyRecap(pages: [KnowledgePage], llmService: any LLMServiceProtocol, forceRefresh: Bool = false) async throws -> DailyRecap {
-        guard pages.count > 0 else { throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Dashboard.insight.addPagesFirst]) }
+        guard !pages.isEmpty else { throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Dashboard.insight.addPagesFirst]) }
 
         // UI 自动化测试靶场下的智能自愈：直接返回本地 Mock 保证 100% 绿通，免除外部大语言模型网络的依赖与波动
         if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-            let target = pages.first!
+            guard let target = pages.first else {
+                throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Dashboard.insight.addPagesFirst])
+            }
             let recap = DailyRecap(
                 targetPageID: target.id,
                 targetPageTitle: target.title,
@@ -56,15 +58,20 @@ actor KnowledgeInsightService {
         let now = Date()
         // ... (省略中间逻辑)
         let calendar = Calendar.current
-        let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now)!
-        let longTermMin = calendar.date(byAdding: .day, value: -90, to: now)!
-        let longTermMax = calendar.date(byAdding: .day, value: -30, to: now)!
+        guard let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now),
+              let longTermMin = calendar.date(byAdding: .day, value: -90, to: now),
+              let longTermMax = calendar.date(byAdding: .day, value: -30, to: now) else {
+            throw NSError(domain: "Insight", code: -2, userInfo: [NSLocalizedDescriptionKey: "日期计算失败"])
+        }
 
         let recentPages = pages.filter { $0.updatedAt >= recentThreshold }
         let recentFocus = recentPages.isEmpty ? L10n.Insight.InsightSection.Daily.noUpdate : recentPages.map { $0.title }.joined(separator: " ")
 
         let candidates = pages.filter { $0.updatedAt >= longTermMin && $0.updatedAt <= longTermMax }
-        let target = candidates.randomElement() ?? pages.sorted { $0.updatedAt < $1.updatedAt }.first!
+        let fallback = pages.sorted { $0.updatedAt < $1.updatedAt }.first
+        guard let target = candidates.randomElement() ?? fallback else {
+            throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Dashboard.insight.addPagesFirst])
+        }
 
         let prompt = L10n.Dashboard.insight.daily.promptRecent(recentFocus, target.title, String(target.content.prefix(500)))
 

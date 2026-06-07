@@ -55,7 +55,7 @@ public final class TagStore {
     /// 物理删除特定标签引用
     public func deleteTag(_ tag: String) async {
         await store.deleteTag(tag)
-        logger.addLog(action: .delete, target: tag, details: String(data: Data(base64Encoded: "VGFnIHJlbW92ZWQgZnJvbSBhbGwgcGFnZXM=")!, encoding: .utf8)!, module: "TagStore")
+        logger.addLog(action: .delete, target: tag, details: "Tag removed from all pages", module: "TagStore")
     }
 
     /// 批量删除标签
@@ -63,11 +63,11 @@ public final class TagStore {
         for tag in tags {
             await store.deleteTag(tag)
         }
-        logger.addLog(action: .delete, target: String(data: Data(base64Encoded: "TXVsdGlwbGUgVGFncw==")!, encoding: .utf8)!, details: "Deleted \(tags.count) tags", module: "TagStore")
+        logger.addLog(action: .delete, target: "Multiple Tags", details: "Deleted \(tags.count) tags", module: "TagStore")
     }
 
     /// 注册新标签 (用于预设)
     public func addNewTag(_ tag: String) {
-        logger.addLog(action: .update, target: tag, details: String(data: Data(base64Encoded: "TmV3IHRhZyByZWdpc3RlcmVk")!, encoding: .utf8)!, module: "TagStore")
+        logger.addLog(action: .update, target: tag, details: "New tag registered", module: "TagStore")
     }
 }

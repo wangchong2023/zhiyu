@@ -177,13 +177,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.ai.thinking "
+            "value": "AI Thinking..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "chat.ai.thinking"
+            "value": "AI 正在思考..."
           }
         }
       }
@@ -194,13 +194,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.thinking "
+            "value": "AI IS THINKING..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.thinking"
+            "value": "AI 正在思考..."
           }
         }
       }
@@ -211,13 +211,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.embedding "
+            "value": "INITIALIZING NEURAL WEIGHTS..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.embedding"
+            "value": "正在初始化神经网络权重..."
           }
         }
       }
@@ -228,13 +228,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.retrieval "
+            "value": "SCANNING LOCAL KNOWLEDGE..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.retrieval"
+            "value": "正在扫描本地知识库..."
           }
         }
       }
@@ -245,13 +245,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.synthesis "
+            "value": "SYNTHESIZING CONCEPTS..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "ai.status.skeleton.synthesis"
+            "value": "正在合成核心概念..."
           }
         }
       }

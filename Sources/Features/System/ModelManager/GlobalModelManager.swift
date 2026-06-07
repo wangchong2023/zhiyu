@@ -137,7 +137,7 @@ public final class GlobalModelManager {
             } else {
                 // 本地尚无权重包，如 downloadStates 里的状态不是 downloading/paused/pending，则归为未下载(即 failed/Idle 初始态)
                 if downloadStates[modelId] == nil {
-                    downloadStates[modelId] = .failed(error: String(data: Data(base64Encoded: "Tm90IERvd25sb2FkZWQ=")!, encoding: .utf8)!)
+                    downloadStates[modelId] = .failed(error: "Not Downloaded")
                 }
             }
         }

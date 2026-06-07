@@ -1,9 +1,17 @@
 # ci.yml
 #
 # 作者: Wang Chong
-# 功能说明: 智宇 (ZhiYu) 全自动 GitHub Actions 持续集成流 (含覆盖率红线熔断)
-# 版本: 1.1
-# 日期: 2026-05-18
+# 功能说明: 智宇 (ZhiYu) 全自动持续集成流水线
+#          快速静态检查 → 构建测试 → 覆盖率红线 → 多平台编译验证
+# 版本: 2.0
+# 日期: 2026-06-07
+#
+# 变更 (v2.0):
+#   - 重排执行顺序：快速检查（SPM/Lint/安全）优先于耗时的构建测试
+#   - 去冗余：Fastlane 仅负责测试，不再重复执行 SwiftLint
+#   - 补全：主流水线新增硬编码密钥扫描 + 本地化强制检查
+#   - 多平台：新增 macOS / watchOS 编译验证，防止跨平台破坏性变更
+#   - 命名：步骤名称与实际执行内容严格对齐
 
 name: ZhiYu CI Pipeline
 
@@ -14,48 +22,102 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build-and-test:
-    name: Build, Lint and Test (with Coverage Enforcer)
+  ci:
+    name: CI — Lint → Test → Coverage → Multi-Platform
     runs-on: macos-14
 
     steps:
-      # 1. 检出代码仓库
+      # ── 1. 检出代码仓库 ─────────────────────────────────────────────
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. 挂载标准的 Xcode 环境
-      - name: Set up Xcode Version
+      # ── 2. 挂载 Xcode 环境 ──────────────────────────────────────────
+      - name: Select Xcode Version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '15.4'
 
-      # 3. 准备系统依赖工具箱
-      - name: Install System Dependencies
+      # ── 3. 安装构建工具链 ───────────────────────────────────────────
+      - name: Install Build Toolchain
         run: |
-          brew install xcodegen swiftlint fastlane
+          brew install xcodegen swiftlint
 
-      # 4. 基于 project.yml 配置动态生成 Xcode 工程结构 (开发规范强绑定)
-      - name: Generate Xcode Project via XcodeGen
+      # ── 4. 生成 Xcode 工程 ──────────────────────────────────────────
+      - name: Generate Xcode Project
         run: |
           xcodegen generate
 
-      # 5. 执行 Fastlane 自动化跑测与静态风格规约扫描，并将 code_coverage 转储至 DerivedData
-      - name: Run CI Pipeline via Fastlane
+      # ── 5. SPM 依赖安全审计（快速，阻断已知风险依赖）───────────────
+      - name: Audit SPM Dependencies
         run: |
-          bundle exec fastlane ci_test || fastlane ci_test
+          python3 Tools/audit_spm_dependencies.py
 
-      # 6. SwiftLint 严格模式静态代码质量扫描（--strict 参数：将所有 warning 升级为 error，任何违规立即熔断）
+      # ── 6. SwiftLint 严格模式（--strict：所有 warning → error）─────
       - name: Run SwiftLint Strict Analysis
         run: |
           swiftlint lint --strict --reporter github-actions-logging
 
-      # 7. 拉起领域层 (Domain) 85% 代码覆盖率红线熔断拦截校验，低于红线则阻断 CI 流程！
-      - name: Run Domain Layer 85% Code Coverage Enforcer
+      # ── 7. 硬编码密钥扫描（阻断 API Key / Token / 密码泄露）────────
+      - name: Scan for Hardcoded Secrets
         run: |
-          ./Tools/check_coverage.py
+          python3 Tools/check_hardcoded_secrets.py
 
-      # 8. SPM 第三方依赖安全漏洞静态审计门禁，阻断已知供应链漏洞缺陷！
-      - name: Run SPM Dependency Vulnerability Scan
+      # ── 8. 本地化合规检查（阻断硬编码中文 / 直接 tr() 调用）────────
+      - name: Check Localization Compliance
         run: |
-          ./Tools/audit_spm_dependencies.py
+          python3 Tools/check_localization.py
 
+      # ── 9. 构建 + 全量测试 + 覆盖率收集 ────────────────────────────
+      - name: Build and Test with Coverage
+        run: |
+          xcodebuild test \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYu \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -enableCodeCoverage YES \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build/test_output.log
+          TEST_EXIT=${PIPESTATUS[0]}
+          if [ ${TEST_EXIT} -ne 0 ]; then
+            echo "❌ 测试失败 (exit=${TEST_EXIT})"
+            exit ${TEST_EXIT}
+          fi
+
+      # ── 10. 代码覆盖率红线熔断（Domain 层 ≥ 85%）──────────────────
+      - name: Enforce Code Coverage Threshold
+        run: |
+          python3 Tools/check_coverage.py
+
+      # ── 11. 多平台编译验证（确保非 iOS target 可编译）──────────────
+      - name: Verify Multi-Platform Build
+        run: |
+          echo "🔨 验证 iOS 设备构建..."
+          xcodebuild build \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYu \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | tail -5
+
+          echo "🔨 验证 macOS 构建..."
+          xcodebuild build \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYuMac \
+            -destination 'platform=macOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | tail -5
+
+          echo "🔨 验证 watchOS 构建..."
+          xcodebuild build \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYuWatch \
+            -destination 'generic/platform=watchOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            | tail -5
+
+          echo "✅ 全平台编译验证通过"

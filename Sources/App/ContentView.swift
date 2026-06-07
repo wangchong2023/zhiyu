@@ -292,12 +292,12 @@ struct DatabaseCorruptedBanner: View {
         isRetrying = true
         Task {
             do {
-                let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+                guard let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { throw NSError(domain: "Insight", code: -1) }
                 let dbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
                 
                 // 重新执行 setup 挂载物理沙盒
                 try DatabaseManager.shared.setup(at: dbURL)
-                print(String(data: Data(base64Encoded: "W0RhdGFiYXNlQ29ycnVwdGVkQmFubmVyXSBSZXZlcmlmaWNhdGlvbiBzdWNjZWVkZWQhIFJlbW91bnRlZCBwaHlzaWNhbCBkYXRhYmFzZS4=")!, encoding: .utf8)!)
+                print("[DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database.")
             } catch {
                 print("[DatabaseCorruptedBanner] Reverification" + " failed: \(error)")
             }

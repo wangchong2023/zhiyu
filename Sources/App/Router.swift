@@ -118,7 +118,7 @@ public enum AppRoute: Hashable, Identifiable {
     public var sidebarSelection: SidebarSelection? {
         switch self {
         case .notebookHub, .dashboard, .medalWall: return .tool(.dashboard)
-        case .pageList(let type): return type == nil ? .tool(.pageList) : .filteredIndex(type!)
+        case .pageList(let type): return type.map { .filteredIndex($0) } ?? .tool(.pageList)
         case .tagCloud: return .tool(.tagCloud)
         case .taskCenter: return .tool(.taskCenter)
         case .chat: return .tool(.chat)

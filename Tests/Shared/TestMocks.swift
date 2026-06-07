@@ -235,9 +235,9 @@ extension XCTestCase {
         #endif
         
         // 2. Storage Services (L1)
-        let dbQueue = try! DatabaseQueue()
+        guard let dbQueue = try? DatabaseQueue() else { fatalError("TestMocks: 无法创建测试数据库") }
         // 绑定外部测试数据库写入器，并同步跑完所有 Schema 架构迁移以建立完整的物理表、虚拟表与触发器
-        try! DatabaseManager.shared.setupForTesting(with: dbQueue)
+        do { try DatabaseManager.shared.setupForTesting(with: dbQueue) } catch { fatalError("TestMocks: 迁移失败 \(error)") }
         // 注册 DatabaseManager 到 DI 容器，供 IngestService 等 L2 服务在摄入/清理时追踪活跃事务计数 (@DIP)
         ServiceContainer.shared.register(DatabaseManager.shared, for: DatabaseManager.self)
         

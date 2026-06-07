@@ -317,7 +317,7 @@ struct KnowledgeStatsWidgetEntryView: View {
     }
     
     private func actionButton(label: String, icon: String, color: Color, url: String) -> some View {
-        Link(destination: URL(string: url)!) {
+        Link(destination: URL(string: url) ?? URL(string: "about:blank")!) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.system(size: 10))

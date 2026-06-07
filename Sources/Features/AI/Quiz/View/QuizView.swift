@@ -195,7 +195,7 @@ struct QuizView: View {
     private func fixExplanationNumbering(_ explanation: String, correctIndex: Int) -> String {
         let letter = optionLabel(for: correctIndex).replacingOccurrences(of: ".", with: "")
         let targetNums = Set([correctIndex, correctIndex + 1])
-        let pattern = String(data: Data(base64Encoded: "KHx8fHx8fENvcnJlY3QgQW5zd2VyfEFuc3dlcnxDb3JyZWN0IE9wdGlvbnxPcHRpb258VGhlIGFuc3dlciBpcylbOlxzXSooXGQrKQ==")!, encoding: .utf8)!
+        let pattern = "(||||||Correct Answer|Answer|Correct Option|Option|The answer is)[:\\s]*(\\d+)"
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return explanation }
         let nsRange = NSRange(explanation.startIndex..<explanation.endIndex, in: explanation)
         let matches = regex.matches(in: explanation, range: nsRange)

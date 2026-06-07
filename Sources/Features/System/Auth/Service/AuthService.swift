@@ -194,7 +194,7 @@ public final class AuthService: AuthServiceProtocol {
             #if DEBUG
             if isMockBackend {
                 // 在 Mock 模式下，直接构造测试凭证，跳过底层 SDK (如 FaceID) 唤起，防止 UI 测试阻塞
-                let mockCred = AuthCredential(identityType: strategy.identityType, identifier: "mock_sub_123", credential: "mock_jwt_token", extraInfo: ["nickname": String(data: Data(base64Encoded: "TW9jayBVc2Vy")!, encoding: .utf8)!])
+                let mockCred = AuthCredential(identityType: strategy.identityType, identifier: "mock_sub_123", credential: "mock_jwt_token", extraInfo: ["nickname": "Mock User"])
                 return try await sendAuthRequestToBackend(mockCred)
             }
             #endif
@@ -213,7 +213,7 @@ public final class AuthService: AuthServiceProtocol {
     private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
         #if DEBUG
         if isMockBackend {
-            let name = cred.extraInfo?["nickname"] ?? String(data: Data(base64Encoded: "WmhpWXUgVXNlcg==")!, encoding: .utf8)!
+            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
             let response = LoginResponse(
                 user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil),
                 tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
@@ -272,7 +272,7 @@ public final class AuthService: AuthServiceProtocol {
                 return false
             }
             
-            let name = cred.extraInfo?["nickname"] ?? String(data: Data(base64Encoded: "WmhpWXUgVXNlcg==")!, encoding: .utf8)!
+            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
             return handleSuccessfulLogin(response: response, identity: name)
         } catch {
             Logger.shared.error("sendAuthRequestToBackend ", error: error)

@@ -4342,13 +4342,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.context "
+            "value": "Context Window"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.context"
+            "value": "上下文窗口"
           }
         }
       }
@@ -4359,13 +4359,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descContext "
+            "value": "Maximum token limit for on-device model context."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descContext"
+            "value": "端侧模型上下文的最大 Token 限制。"
           }
         }
       }
@@ -4376,13 +4376,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descNpu "
+            "value": "Enable Apple Neural Engine acceleration for faster inference."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descNpu"
+            "value": "启用 Apple 神经网络引擎加速推理。"
           }
         }
       }
@@ -4393,13 +4393,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descOverheat "
+            "value": "Automatically throttle when device temperature exceeds safe threshold."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descOverheat"
+            "value": "设备温度超过安全阈值时自动降频。"
           }
         }
       }
@@ -4410,13 +4410,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descRam "
+            "value": "Maximum RAM budget allocated to the on-device model."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.descRam"
+            "value": "分配给端侧模型的最大内存预算。"
           }
         }
       }
@@ -4427,13 +4427,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.npu "
+            "value": "Neural Engine"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.npu"
+            "value": "神经网络引擎"
           }
         }
       }
@@ -4444,13 +4444,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.overheat "
+            "value": "Thermal Throttling"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.overheat"
+            "value": "过热保护"
           }
         }
       }
@@ -4461,13 +4461,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.perfConfig "
+            "value": "Performance Configuration"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.perfConfig"
+            "value": "性能配置"
           }
         }
       }
@@ -4478,13 +4478,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.ram "
+            "value": "Memory Limit"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "settings.ondevice.ram"
+            "value": "内存限制"
           }
         }
       }
@@ -6076,7 +6076,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.concepts"
+            "value": "Concepts"
           }
         },
         "zh-Hans": {
@@ -6093,7 +6093,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.entities"
+            "value": "Entities"
           }
         },
         "zh-Hans": {
@@ -6110,7 +6110,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.sources"
+            "value": "Sources"
           }
         },
         "zh-Hans": {
@@ -6127,7 +6127,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "welcome.stat.totalPages"
+            "value": "Total Pages"
           }
         },
         "zh-Hans": {

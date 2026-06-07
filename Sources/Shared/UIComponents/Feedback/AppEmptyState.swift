@@ -162,7 +162,7 @@ public struct AppEmptyState: View {
         var label = "\(title)."
         if let description = description { label += " \(description)." }
         if let hint = hint { label += " Hint: \(hint)" }
-        if action != nil { label += " Action: \(action!.label)." }
+        if let action = action { label += " Action: \(action.label)." }
         return label
     }
 }

@@ -239,7 +239,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
                 let modelToPredict = self.currentModel as? MLModel
                 
                 let generatedTextResult = try await Task.detached(priority: .userInitiated) {
-                    guard let model = modelToPredict else { throw LLMError.apiError(String(data: Data(base64Encoded: "TW9kZWwgbm90IGxvYWRlZA==")!, encoding: .utf8)!) }
+                    guard let model = modelToPredict else { throw LLMError.apiError("Model not loaded") }
                     let prediction = try model.prediction(from: provider)
                     return prediction.featureValue(for: "generated_text")?.stringValue
                 }.value

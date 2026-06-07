@@ -150,17 +150,17 @@ actor LinkService {
             diagMap[page.id] = (existing.fts, index + 1)
         }
 
-        let sortedIDs = scores.keys.sorted { scores[$0]! > scores[$1]! }
+        let sortedIDs = scores.keys.sorted { (scores[$0] ?? 0) > (scores[$1] ?? 0) }
         let results = sortedIDs.compactMap { id in pages.first { $0.id == id } }
 
-        let topDiagnostics = results.prefix(10).map { page in
-            let ranks = diagMap[page.id]!
+        let topDiagnostics = results.prefix(10).compactMap { page -> SearchDiagnosticInfo.ResultScore? in
+            guard let ranks = diagMap[page.id] else { return nil }
             return SearchDiagnosticInfo.ResultScore(
                 id: page.id,
                 title: page.title,
                 ftsRank: ranks.fts,
                 vectorRank: ranks.vec,
-                finalScore: scores[page.id]!
+                finalScore: scores[page.id] ?? 0
             )
         }
 
@@ -191,7 +191,7 @@ actor LinkService {
         }
 
         // 合并去重并按 RRF 总分排序
-        let sortedIDs = scores.keys.sorted { scores[$0]! > scores[$1]! }
+        let sortedIDs = scores.keys.sorted { (scores[$0] ?? 0) > (scores[$1] ?? 0) }
 
         // 将 ID 映射回 KnowledgePage 对象（从全集中查找以保持引用一致）
         let allCandidates = Set(keywordResults + semanticResults)

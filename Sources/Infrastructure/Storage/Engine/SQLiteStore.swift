@@ -27,7 +27,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
                 if let writer = DatabaseManager.shared.dbWriter {
                     return writer
                 }
-                return try! DatabaseQueue()
+                do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(SQLiteStore): \(error)") }
             }
         }
     }
@@ -206,6 +206,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         }
         
         // 3. 级联遍历扫描沙盒目录，累加其他非激活状态笔记本专属库大小
+        // swiftlint:disable:next force_unwrapping
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
         

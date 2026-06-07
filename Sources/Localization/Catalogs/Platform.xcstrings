@@ -262,7 +262,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "platform.unsupported.pdf"
+            "value": "PDF export is not supported on this platform."
           }
         },
         "zh-Hans": {
@@ -279,7 +279,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "platform.unsupported.mermaid"
+            "value": "Mermaid diagrams are not supported on this platform."
           }
         },
         "zh-Hans": {

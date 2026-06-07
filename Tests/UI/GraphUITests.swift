@@ -98,7 +98,7 @@ final class TagCloudTests: KnowledgeBaseUITests {
             safeTap(tagCloudButton)
             try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
             // 标签云应展示内容或空状态
-            XCTAssertFalse(app.staticTexts.count == 0, "标签云应有内容或空状态提示")
+            XCTAssertFalse(app.staticTexts.isEmpty, "标签云应有内容或空状态提示")
         }
     }
 }

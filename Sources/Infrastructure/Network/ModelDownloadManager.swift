@@ -88,7 +88,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
             resumeDataCache[modelId] = data
             updateState(for: modelId, to: .paused)
         } else {
-            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmFpbGVkIHRvIGdlbmVyYXRlIHJlc3VtZSBkYXRhIGZvciBwYXVzaW5nLg==")!, encoding: .utf8)!))
+            updateState(for: modelId, to: .failed(error: "Failed to generate resume data for pausing."))
         }
         
         activeTasks[modelId] = nil
@@ -99,7 +99,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         // 1. 检索断点缓存数据
         guard let data = resumeDataCache[modelId] else {
             // 如果缓存为空，尝试重新从 url 启动下载 (需在业务层补充 URL 记录)
-            updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "Tm8gcmVzdW1lIGRhdGEgYXZhaWxhYmxlLg==")!, encoding: .utf8)!))
+            updateState(for: modelId, to: .failed(error: "No resume data available."))
             return
         }
         
@@ -125,7 +125,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         activeTasks[modelId] = nil
         cleanPreviousFiles(for: modelId)
         
-        updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RG93bmxvYWQgY2FuY2VsbGVkIGJ5IHVzZXIu")!, encoding: .utf8)!))
+        updateState(for: modelId, to: .failed(error: "Download cancelled by user."))
     }
     
     /// 监听特定大模型任务的实时状态与进度变化流
@@ -175,7 +175,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
             
             // 1. 进行完好性校验 (SHA256)
             if !manager.verifySHA256(of: tempFileURL, expectedHash: checksum) {
-                await manager.updateState(for: modelId, to: .failed(error: String(data: Data(base64Encoded: "RmlsZSB2ZXJpZmljYXRpb24gZmFpbGVkLiBTSEEyNTYgbWlzbWF0Y2gu")!, encoding: .utf8)!))
+                await manager.updateState(for: modelId, to: .failed(error: "File verification failed. SHA256 mismatch."))
                 try? FileManager.default.removeItem(at: tempFileURL)
                 return
             }

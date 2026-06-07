@@ -162,7 +162,7 @@ public struct AppConstants {
         public static let mockPageCount = 1258
         public static let mockLinkCount = 89
         public static let mockTagCount = 32
-        public static let vaultName = String(data: Data(base64Encoded: "RGVtbyBWYXVsdA==")!, encoding: .utf8)!
+        public static let vaultName = "Demo Vault"
         public static let mockRecentPagesCount = 3
         public static let widgetRefreshIntervalMinutes: Double = 30.0
     }

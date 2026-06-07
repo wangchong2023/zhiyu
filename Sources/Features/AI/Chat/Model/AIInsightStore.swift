@@ -86,7 +86,8 @@ public final class AIInsightStore {
         let sortedDays = dailyCounts.keys.sorted()
         for day in sortedDays {
             runningTotal += dailyCounts[day] ?? 0
-            if day > calendar.date(byAdding: .day, value: -7, to: now)! {
+            guard let weekAgo = calendar.date(byAdding: .day, value: -7, to: now) else { continue }
+            if day > weekAgo {
                 series.append(AppStore.KnowledgeGrowthPoint(date: day, count: runningTotal))
             }
         }

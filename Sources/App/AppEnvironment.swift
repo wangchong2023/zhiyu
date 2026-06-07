@@ -31,7 +31,7 @@ final class AppEnvironment {
     let llmConfig: LLMConfigManager
     
     private init() {
-        Logger.shared.info(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBTdGFydGluZyBpbml0aWFsaXphdGlvbi4uLg==")!, encoding: .utf8)!)
+        Logger.shared.info("[AppEnvironment] Starting initialization...")
         
         // 0. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         // 注意：在实际多库模式下，此处应由 VaultService 驱动，但为了保证系统稳定性与 DI 完整性，
@@ -41,7 +41,7 @@ final class AppEnvironment {
             let appGroupIdentifier = "group.com.zhiyu.app"
             
             // 旧的沙盒独立路径
-            let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            guard let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { throw NSError(domain: "Insight", code: -1) }
             let oldDbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
             
             // 新的 App Group 共享路径（若不可用，回退到沙盒路径）
@@ -52,14 +52,14 @@ final class AppEnvironment {
                 dbURL = groupURL.appendingPathComponent(AppConstants.Storage.databaseName)
                 baseGlobalURL = groupURL
             } else {
-                Logger.shared.warning(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBBcHAgR3JvdXAgdW5hdmFpbGFibGUsIGZhbGxpbmcgYmFjayB0byBzYW5kYm94IHBhdGg=")!, encoding: .utf8)!)
+                Logger.shared.warning("[AppEnvironment] App Group unavailable, falling back to sandbox path")
                 dbURL = oldDbURL
                 baseGlobalURL = appSupport
             }
 
             // 数据无缝热迁移（如果旧库存在且新库不存在）
             if fileManager.fileExists(atPath: oldDbURL.path) && !fileManager.fileExists(atPath: dbURL.path) {
-                Logger.shared.info(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBQZXJmb3JtaW5nIGRhdGFiYXNlIEFwcCBHcm91cCBob3QgbWlncmF0aW9uLi4u")!, encoding: .utf8)!)
+                Logger.shared.info("[AppEnvironment] Performing database App Group hot migration...")
                 try fileManager.moveItem(at: oldDbURL, to: dbURL)
 
                 // 迁移关联文件 (如 global.sqlite3)
@@ -79,7 +79,7 @@ final class AppEnvironment {
                 Logger.shared.info("[AppEnvironment] Core database ready (App Group): \(dbURL.lastPathComponent)")
             }
         } catch {
-            Logger.shared.error(String(data: Data(base64Encoded: "W0FwcEVudmlyb25tZW50XSBDcml0aWNhbDogRGF0YWJhc2UgaW5pdGlhbGl6YXRpb24gZmFpbGVk")!, encoding: .utf8)!, error: error)
+            Logger.shared.error("[AppEnvironment] Critical: Database initialization failed", error: error)
             // 生产环境下可考虑弹出警报，开发环境下此处失败将导致后续 register 报错并 panic
         }
         

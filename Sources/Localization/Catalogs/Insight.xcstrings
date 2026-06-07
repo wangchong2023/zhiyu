@@ -41,7 +41,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.apiRequests"
+            "value": "API Requests"
           }
         },
         "zh-Hans": {
@@ -58,7 +58,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.cleanup.action"
+            "value": "Clean Up"
           }
         },
         "zh-Hans": {
@@ -415,7 +415,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.index.title"
+            "value": "Index"
           }
         },
         "zh-Hans": {
@@ -2149,7 +2149,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.database"
+            "value": "Database"
           }
         },
         "zh-Hans": {
@@ -2166,7 +2166,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.logs"
+            "value": "Logs"
           }
         },
         "zh-Hans": {
@@ -2183,7 +2183,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.system.status"
+            "value": "System Status"
           }
         },
         "zh-Hans": {
@@ -2217,7 +2217,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.tokens"
+            "value": "Tokens"
           }
         },
         "zh-Hans": {
@@ -2268,7 +2268,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.totalStorage"
+            "value": "Total Storage"
           }
         },
         "zh-Hans": {
@@ -2285,7 +2285,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dashboard.updateSuccess"
+            "value": "Update Successful"
           }
         },
         "zh-Hans": {

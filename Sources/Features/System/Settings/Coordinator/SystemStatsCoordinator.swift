@@ -66,8 +66,8 @@ final class SystemStatsCoordinator {
             let calendar = Calendar.current
             let today = calendar.startOfDay(for: Date())
             let components = calendar.dateComponents([.year, .month], from: today)
-            let startDate = calendar.date(from: components)!
-            let numberOfDays = calendar.dateComponents([.day], from: startDate, to: today).day! + 1
+            let startDate = calendar.date(from: components) ?? today
+            let numberOfDays = (calendar.dateComponents([.day], from: startDate, to: today).day ?? 0) + 1
             
             var statsMap: [String: DailyAIUsage] = [:]
             for i in 0..<numberOfDays {

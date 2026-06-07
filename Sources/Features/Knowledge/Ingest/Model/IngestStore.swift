@@ -237,7 +237,7 @@ final class IngestStore {
     /// 处理文件导入流程（含提取与安全校验）
     func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
         guard url.startAccessingSecurityScopedResource() else {
-            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "UGVybWlzc2lvbiBkZW5pZWQ=")!, encoding: .utf8)!])
+            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Permission denied"])
         }
         defer { url.stopAccessingSecurityScopedResource() }
 

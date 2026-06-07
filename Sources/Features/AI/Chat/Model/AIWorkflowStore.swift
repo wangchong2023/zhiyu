@@ -97,7 +97,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
     /// 运行AI扫描
     public func runAIScan() async {
         guard llmService.isEnabled else {
-            logger.addLog(action: .aiscanSkipped, target: "System", details: String(data: Data(base64Encoded: "TExNIHNlcnZpY2UgZGlzYWJsZWQ=")!, encoding: .utf8)!)
+            logger.addLog(action: .aiscanSkipped, target: "System", details: "LLM service disabled")
             return
         }
 
@@ -233,7 +233,7 @@ public final class AIWorkflowStore: AIWorkflowCapabilities {
 
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.lastLintIssues)
 
-        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: String(data: Data(base64Encoded: "QUkgV29ya2Zsb3cgZGF0YSBjbGVhcmVkLg==")!, encoding: .utf8)!, module: "AIWorkflowStore")
+        logger.addLog(action: .systemInit, target: "AIWorkflowStore", details: "AI Workflow data cleared.", module: "AIWorkflowStore")
     }
 
     // ── 建议清理方法 ──

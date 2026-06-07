@@ -52,7 +52,7 @@ final class PerformanceBenchmarker {
     }
 
     private func measureSearchPerformance(store: any AnyPageStore) async {
-        let query = String(data: Data(base64Encoded: "U3RyZXNzIFRlc3Q=")!, encoding: .utf8)!
+        let query = "Stress Test"
         let startTime = CFAbsoluteTimeGetCurrent()
 
         let results = await store.searchPages(query: query)

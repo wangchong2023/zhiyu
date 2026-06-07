@@ -26,11 +26,11 @@ public enum AuthError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .carrierSDKNotInitialized: return String(data: Data(base64Encoded: "Q2FycmllciBTREsgTm90IEluaXRpYWxpemVk")!, encoding: .utf8)!
-        case .carrierFailed:            return String(data: Data(base64Encoded: "Q2FycmllciBGYWlsZWQ=")!, encoding: .utf8)!
-        case .userCancelled:            return String(data: Data(base64Encoded: "VXNlciBDYW5jZWxsZWQ=")!, encoding: .utf8)!
-        case .carrierNoSIM:             return String(data: Data(base64Encoded: "Tm8gU0lNIENhcmQ=")!, encoding: .utf8)!
-        case .carrierNoNetwork:         return String(data: Data(base64Encoded: "Tm8gTmV0d29yaw==")!, encoding: .utf8)!
+        case .carrierSDKNotInitialized: return "Carrier SDK Not Initialized"
+        case .carrierFailed:            return "Carrier Failed"
+        case .userCancelled:            return "User Cancelled"
+        case .carrierNoSIM:             return "No SIM Card"
+        case .carrierNoNetwork:         return "No Network"
         case .carrierTimeout:           return "Timeout"
         }
     }
@@ -107,7 +107,7 @@ public final class CarrierAuthStrategy: AuthStrategy {
     /// 获取运营商凭证（watchOS 不支持，直接抛错）
     public func acquireCredentials() async throws -> AuthCredential {
         throw NSError(domain: "CarrierAuthStrategy", code: -99,
-                      userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "V2F0Y2hPUyBub3Qgc3VwcG9ydGVk")!, encoding: .utf8)!])
+                      userInfo: [NSLocalizedDescriptionKey: "WatchOS not supported"])
     }
 }
 

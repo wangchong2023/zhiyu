@@ -112,7 +112,7 @@ extension GraphLayoutProcessor {
             iteration += 1
 
             for nodeID in nodeIDs {
-                let currentComm = community[nodeID]!
+                guard let currentComm = community[nodeID] else { continue }
                 let bestComm = findBestCommunity(
                     for: nodeID,
                     currentComm: currentComm,
@@ -153,7 +153,7 @@ extension GraphLayoutProcessor {
         var neighborCommunities: [Int: [UUID]] = [:]
         if let neighbors = adjacency[nodeID] {
             for neighbor in neighbors {
-                let neighborComm = community[neighbor]!
+                guard let neighborComm = community[neighbor] else { continue }
                 if neighborComm != currentComm {
                     neighborCommunities[neighborComm, default: []].append(neighbor)
                 }
@@ -193,8 +193,8 @@ extension GraphLayoutProcessor {
         var communityTotalEdges: [Int: Int] = [:]
 
         for edge in undirectedEdges {
-            let comm0 = community[edge.source]!
-            let comm1 = community[edge.target]!
+            guard let comm0 = community[edge.source] else { continue }
+            guard let comm1 = community[edge.target] else { continue }
             communityTotalEdges[comm0, default: 0] += 1
             communityTotalEdges[comm1, default: 0] += 1
             if comm0 == comm1 {

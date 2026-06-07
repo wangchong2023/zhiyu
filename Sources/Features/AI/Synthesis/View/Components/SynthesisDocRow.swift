@@ -126,14 +126,14 @@ struct SynthesisDocRow: View {
     // MARK: - Helpers
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = String(data: Data(base64Encoded: "eXl5eS1NTS1kZCBISDptbQ==")!, encoding: .utf8)!
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
         return formatter.string(from: date)
     }
 
     private func formatByteSize(_ bytes: Int) -> String {
         let b = Double(bytes)
         if b < 1024 { return "\(bytes) B" }
-        if b < 1024 * 1024 { return String(format: String(data: Data(base64Encoded: "JS4xZiBLQg==")!, encoding: .utf8)!, b / 1024) }
-        return String(format: String(data: Data(base64Encoded: "JS4xZiBNQg==")!, encoding: .utf8)!, b / (1024 * 1024))
+        if b < 1024 * 1024 { return String(format: "%.1f KB", b / 1024) }
+        return String(format: "%.1f MB", b / (1024 * 1024))
     }
 }

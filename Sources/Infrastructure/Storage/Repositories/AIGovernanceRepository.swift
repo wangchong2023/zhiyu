@@ -20,7 +20,7 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
                 if let writer = DatabaseManager.shared.dbWriter {
                     return writer
                 }
-                return try! DatabaseQueue()
+                do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(GovernanceRepo): \(error)") }
             }
         }
     }

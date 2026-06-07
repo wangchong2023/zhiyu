@@ -110,6 +110,7 @@ public actor NetworkClient {
                 return payload
             } else if T.self == EmptyData.self {
                 // 如果泛型是 EmptyData 且 data 为空，强转通过
+                // swiftlint:disable:next force_cast
                 return EmptyData() as! T
             }
             throw NetworkError.unexpected(L10n.Network.missingDataPayload)
@@ -157,7 +158,7 @@ public actor NetworkClient {
             // 发起刷新请求
             let req = RefreshRequest(refreshToken: refreshToken)
             let refreshURL = AppConfig.backendBaseURL + "/api/auth/refresh"
-            var request = URLRequest(url: URL(string: refreshURL)!)
+            var request = URLRequest(url: URL(string: refreshURL) ?? URL(string: "about:blank")!)
             request.httpMethod = "POST"
             request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
             request.httpBody = try encoder.encode(req)
@@ -180,6 +181,7 @@ public actor NetworkClient {
         }
         
         // 等待刷新完成并重试原请求
+// swiftlint:disable:next force_unwrapping
         _ = try await refreshTask!.value
         return try await performRequest(path: path, method: method, body: body, requiresAuth: true, isRetry: true)
     }

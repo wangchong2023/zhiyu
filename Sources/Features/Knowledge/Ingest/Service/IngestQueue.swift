@@ -42,7 +42,7 @@ final class IngestQueue: ObservableObject {
 
     /// 拦截通知取消所有任务
     private func cancelAllTasks() {
-        Logger.shared.debug(String(data: Data(base64Encoded: "IFtJbmdlc3RRdWV1ZV0gVmF1bHQgd2lsbCBzd2l0Y2gsIGNhbmNlbGxpbmcgYWxsIHBlbmRpbmcgdGFza3M=")!, encoding: .utf8)!)
+        Logger.shared.debug(" [IngestQueue] Vault will switch, cancelling all pending tasks")
         operationQueue.cancelAllOperations()
         for task in activeTasks.values {
             task.cancel()
@@ -87,7 +87,7 @@ final class IngestQueue: ObservableObject {
                 } catch is CancellationError {
                     Logger.shared.debug(" [IngestQueue]" + " Task cancelled:" + " \(title)")
                 } catch {
-                    Logger.shared.error(String(data: Data(base64Encoded: "IFtJbmdlc3RRdWV1ZV0gVGFzayBmYWlsZWQ6IA==")!, encoding: .utf8)! + title + String(data: Data(base64Encoded: "LCBFcnJvcjog")!, encoding: .utf8)! + String(describing: error))
+                    Logger.shared.error(" [IngestQueue] Task failed: " + title + ", Error: " + String(describing: error))
                     await MainActor.run { 
                         self.activeTasks.removeValue(forKey: taskID)
                         self.decrementCount() 

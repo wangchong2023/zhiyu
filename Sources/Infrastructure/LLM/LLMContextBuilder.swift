@@ -247,7 +247,7 @@ final class LLMContextBuilder: Sendable {
                     
                     // 仅对有效长度的敏感实体进行遮掩，避免过短噪音，且避免重复分配
                     if original.count >= 2 && reversedMapping[original] == nil {
-                        let character = Character(UnicodeScalar(65 + (count % 26))!)
+                        let character = Character(UnicodeScalar(UInt8(65 + (count % 26))))
                         let suffix = count >= 26 ? "\(count / 26)" : ""
                         let placeholder = "[ENTITY_\(character)\(suffix)]"
                         

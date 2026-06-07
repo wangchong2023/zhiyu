@@ -74,7 +74,7 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         
         guard let pagesData = record["pagesData"] as? Data,
               let logsData = record["logEntriesData"] as? Data else {
-            throw NSError(domain: "CloudKitSyncProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "SW52YWxpZCBkYXRhIGZvcm1hdCBpbiBDbG91ZEtpdA==")!, encoding: .utf8)!])
+            throw NSError(domain: "CloudKitSyncProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid data format in CloudKit"])
         }
         
         let pages = try JSONDecoder().decode([KnowledgePage].self, from: pagesData)

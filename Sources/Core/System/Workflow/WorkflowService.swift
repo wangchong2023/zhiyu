@@ -71,7 +71,7 @@ final class WorkflowService: ObservableObject {
         print(" [Workflow]" + " Extracted to-do" + " items: \(tasks.count)" + " items")
         
         guard !tasks.isEmpty else {
-            print(String(data: Data(base64Encoded: "IFtXb3JrZmxvd10gRmFpbGVkIHRvIHBhcnNlIHRvLWRvIGl0ZW1zIGZyb20gdGV4dA==")!, encoding: .utf8)!)
+            print(" [Workflow] Failed to parse to-do items from text")
             // 重构：将 Toast 硬编码文字替换为 L10n 强类型多语言接口
             ToastManager.shared.show(type: .info, message: L10n.Workflow.noTasksFoundMessage)
             return

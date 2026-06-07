@@ -168,7 +168,7 @@ final class SecurityManager: @unchecked Sendable {
         let currentSalt = await getSalt()
         do {
             guard let repo = signatureRepository else {
-                throw NSError(domain: "SecurityManager", code: 404, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "RmlsZVNpZ25hdHVyZVJlcG9zaXRvcnkgaXMgbm90IHJlZ2lzdGVyZWQgeWV0")!, encoding: .utf8)!])
+                throw NSError(domain: "SecurityManager", code: 404, userInfo: [NSLocalizedDescriptionKey: "FileSignatureRepository is not registered yet"])
             }
             try await repo.saveSignature(signature, forFilePath: filePath, salt: currentSalt)
         } catch {
@@ -236,9 +236,9 @@ enum SecurityError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidSalt: return String(data: Data(base64Encoded: "RmFpbGVkIHRvIGRlcml2ZSBrZXkgZnJvbSBzYWx0OiBpbnZhbGlkIGVuY29kaW5n")!, encoding: .utf8)!
-        case .encodingFailed: return String(data: Data(base64Encoded: "RGF0YSBlbmNvZGluZyBmYWlsZWQ=")!, encoding: .utf8)!
-        case .decodingFailed: return String(data: Data(base64Encoded: "RGF0YSBkZWNvZGluZyBmYWlsZWQ=")!, encoding: .utf8)!
+        case .invalidSalt: return "Failed to derive key from salt: invalid encoding"
+        case .encodingFailed: return "Data encoding failed"
+        case .decodingFailed: return "Data decoding failed"
         }
     }
 }

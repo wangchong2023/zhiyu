@@ -76,7 +76,7 @@ struct DemoDataGenerator {
                 let prompt = Int.random(in: 200...1000)
                 let completion = Int.random(in: 100...2000)
                 let latency = Int.random(in: 400...4500)
-                let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...720), to: Date())!
+                guard let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...720), to: Date()) else { continue }
                 
                 var log = LLMCallLog(
                     model: model,

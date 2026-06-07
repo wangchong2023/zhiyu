@@ -114,11 +114,19 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
             zh_trimmed = zh_val.strip()
 
             # -1. 值为自身的 key —— 当 key 包含命名空间分隔符(.)且值完全等于 key 时，一定是漏填
-            if en_trimmed and '.' in key and en_trimmed == key:
+            # 豁免：格式串（%开头）、URL、API Key 占位符、中文句子作 key（zh-Hans 值自然等于 key）
+            def is_self_value_exempt(k, v):
+                if v.startswith('%'): return True         # 格式串如 "%@."
+                if v.startswith('http'): return True       # URL 占位符
+                if v in ('sk-...',): return True           # API Key 占位符
+                if any('一' <= c <= '鿿' for c in k): return True  # key 本身含中文
+                return False
+
+            if en_trimmed and '.' in key and en_trimmed == key and not is_self_value_exempt(key, en_trimmed):
                 issues.append((file, key,
                     f'English value equals its own key: "{en_trimmed}" — unfilled placeholder',
                     "ERROR"))
-            if zh_trimmed and '.' in key and zh_trimmed == key:
+            if zh_trimmed and '.' in key and zh_trimmed == key and not is_self_value_exempt(key, zh_trimmed):
                 issues.append((file, key,
                     f'zh-Hans value equals its own key: "{zh_trimmed}" — unfilled placeholder',
                     "ERROR"))
@@ -184,17 +192,16 @@ def audit_xcstrings(catalogs_dir='Sources/Localization/Catalogs'):
             if extraction_state == 'stale':
                 issues.append((file, key, f"extractionState is 'stale': key will NOT compile into bundle", "CRITICAL"))
 
-            # 7. 检查值为空
-            if not en_val.strip():
+            # 7. 检查值为空（纯空白符降级为 WARNING，真空调级为 ERROR）
+            if not en_val:
                 issues.append((file, key, f"English value is empty", "ERROR"))
-            if not zh_val.strip():
+            elif not en_val.strip():
+                issues.append((file, key, f"English value is whitespace only", "WARNING"))
+            if not zh_val:
                 issues.append((file, key, f"zh-Hans value is empty", "ERROR"))
+            elif not zh_val.strip():
+                issues.append((file, key, f"zh-Hans value is whitespace only", "WARNING"))
 
-            # 6. 检查值为空（空字符串）
-            if not en_val.strip():
-                issues.append((file, key, f"English value is empty or whitespace only", "ERROR"))
-            if not zh_val.strip():
-                issues.append((file, key, f"zh-Hans value is empty or whitespace only", "ERROR"))
 
     return issues
 

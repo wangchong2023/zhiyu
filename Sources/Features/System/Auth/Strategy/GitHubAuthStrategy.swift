@@ -42,7 +42,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                     identityType: identityType,
                     identifier: "mock_github_user_id",
                     credential: mockCode,
-                    extraInfo: ["state": state, "nickname": String(data: Data(base64Encoded: "R2l0SHViIE1vY2sgVXNlcg==")!, encoding: .utf8)!]
+                    extraInfo: ["state": state, "nickname": "GitHub Mock User"]
                 )
                 continuation.resume(returning: cred)
                 return
@@ -54,7 +54,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
             
             let urlString = "https://github.com/login/oauth/authorize?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"
             guard let url = URL(string: urlString) else {
-                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "R2l0SHViIFVSTCBFcnJvcg==")!, encoding: .utf8)!]))
+                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: "GitHub URL Error"]))
                 return
             }
             
@@ -68,7 +68,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                       let components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: true),
                       let queryItems = components.queryItems,
                       let code = queryItems.first(where: { $0.name == "code" })?.value else {
-                    continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "R2l0SHViIENhbGxiYWNrIEVycm9y")!, encoding: .utf8)!]))
+                    continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: "GitHub Callback Error"]))
                     return
                 }
                 

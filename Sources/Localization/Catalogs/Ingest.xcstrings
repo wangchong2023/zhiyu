@@ -755,7 +755,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.clear"
+            "value": "Clear iCloud Data"
           }
         },
         "zh-Hans": {
@@ -1197,7 +1197,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.pull"
+            "value": "Pull from iCloud"
           }
         },
         "zh-Hans": {
@@ -1282,7 +1282,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.push"
+            "value": "Push to iCloud"
           }
         },
         "zh-Hans": {
@@ -1435,7 +1435,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "icloud.sync"
+            "value": "Sync with iCloud"
           }
         },
         "zh-Hans": {
@@ -1877,7 +1877,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.fileTooLarge"
+            "value": "File is too large to ingest."
           }
         },
         "zh-Hans": {
@@ -1894,7 +1894,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ingest.error.storageFull"
+            "value": "Storage is full. Please free up space."
           }
         },
         "zh-Hans": {
@@ -4274,13 +4274,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.manualMerge "
+            "value": "Manual Merge"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.manualMerge"
+            "value": "手动合并"
           }
         }
       }
@@ -4291,13 +4291,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.finishMerge "
+            "value": "Finish Merge"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.finishMerge"
+            "value": "完成合并"
           }
         }
       }
@@ -4308,13 +4308,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.noContentConflict "
+            "value": "No content conflicts detected."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.noContentConflict"
+            "value": "未检测到内容冲突。"
           }
         }
       }
@@ -4325,13 +4325,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.autoResolveDesc "
+            "value": "Automatically merge non-conflicting changes and resolve simple conflicts with smart defaults."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.autoResolveDesc"
+            "value": "自动合并非冲突变更，并以智能默认策略解决简单冲突。"
           }
         }
       }
@@ -4342,13 +4342,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.doAutoResolve "
+            "value": "Auto Resolve"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.doAutoResolve"
+            "value": "自动解决"
           }
         }
       }
@@ -4359,13 +4359,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.listTitle "
+            "value": "Conflicts"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.listTitle"
+            "value": "冲突列表"
           }
         }
       }
@@ -4376,13 +4376,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.localTime "
+            "value": "Local Time"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.localTime"
+            "value": "本地时间"
           }
         }
       }
@@ -4393,13 +4393,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.cloudTime "
+            "value": "Cloud Time"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.cloudTime"
+            "value": "云端时间"
           }
         }
       }
@@ -4410,13 +4410,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.smartOverrideMode "
+            "value": "Smart Override Mode"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.smartOverrideMode"
+            "value": "智能覆盖模式"
           }
         }
       }
@@ -4427,13 +4427,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.keepLocalAll "
+            "value": "Keep All Local"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.keepLocalAll"
+            "value": "全部采用本地"
           }
         }
       }
@@ -4444,13 +4444,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.keepCloudAll "
+            "value": "Keep All Cloud"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.keepCloudAll"
+            "value": "全部采用云端"
           }
         }
       }
@@ -4461,13 +4461,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.localVersionTag "
+            "value": "Local Version"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.localVersionTag"
+            "value": "本地版本"
           }
         }
       }
@@ -4478,13 +4478,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.cloudVersionTag "
+            "value": "Cloud Version"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.cloudVersionTag"
+            "value": "云端版本"
           }
         }
       }
@@ -4495,13 +4495,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.editorTag "
+            "value": "Editor"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.editorTag"
+            "value": "编辑器"
           }
         }
       }
@@ -4512,13 +4512,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.takeLocalAction "
+            "value": "Take Local Version"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.takeLocalAction"
+            "value": "采用本地版本"
           }
         }
       }
@@ -4529,13 +4529,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.takeCloudAction "
+            "value": "Take Cloud Version"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.takeCloudAction"
+            "value": "采用云端版本"
           }
         }
       }
@@ -4546,13 +4546,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.noTimeInfo "
+            "value": "No time info"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "conflict.noTimeInfo"
+            "value": "无时间信息"
           }
         }
       }
@@ -4886,13 +4886,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.internalError "
+            "value": "Internal Error"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.internalError"
+            "value": "内部错误"
           }
         }
       }
@@ -4937,13 +4937,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.notReady "
+            "value": "Not Ready"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.notReady"
+            "value": "未就绪"
           }
         }
       }
@@ -4971,13 +4971,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.busy "
+            "value": "Busy"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "error.busy"
+            "value": "繁忙"
           }
         }
       }

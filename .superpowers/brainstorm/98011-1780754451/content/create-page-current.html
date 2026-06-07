@@ -1,0 +1,116 @@
+<link rel="stylesheet" href="/style.css">
+
+<div class="compare">
+<div>
+<h3>📋 现状：实体模板</h3>
+<div class="mockup current">
+<div class="header">新建页面</div>
+<div class="field">
+  <label>页面标题</label>
+  <input value="人工智能" readonly>
+</div>
+<div class="field">
+  <label>类型</label>
+  <div class="pills"><span class="pill">实体</span><span class="pill">概念</span><span class="pill">对比</span></div>
+</div>
+<div class="field">
+  <label>快速模板</label>
+  <button class="tmpl-btn">📦 实体模板</button>
+  <button class="tmpl-btn">💡 概念模板</button>
+  <button class="tmpl-btn">⚖️ 对比模板</button>
+</div>
+<div class="field">
+  <label>内容 <span class="hint">支持双向链接 [[ ]]</span></label>
+  <div class="editor markdown">
+# 人工智能<br><br>
+## 概览与定义<br>
+在此描述实体的基本定义...<br><br>
+## 核心贡献与应用<br>
+列出该实体在领域内的关键作用...<br><br>
+## 关联实体<br>
+- [[相关实体A]]<br>
+- [[相关实体B]]
+  </div>
+</div>
+</div>
+</div>
+
+<div>
+<h3>✨ 改进方案：引导式结构化表单</h3>
+<div class="mockup proposed">
+<div class="header">新建页面</div>
+<div class="field">
+  <label>页面标题</label>
+  <input value="人工智能" readonly>
+</div>
+<div class="field">
+  <label>类型</label>
+  <div class="pills"><span class="pill active">实体</span><span class="pill">概念</span><span class="pill">对比</span></div>
+</div>
+<div class="field">
+  <label>快速填写引导</label>
+  <p class="guide-desc">选择一个引导模板，帮你结构化地填写内容：</p>
+  <div class="guide-cards">
+    <div class="guide-card active">
+      <div class="guide-icon">📦</div>
+      <div class="guide-title">实体</div>
+      <div class="guide-sub">人物 / 组织 / 工具</div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-icon">💡</div>
+      <div class="guide-title">概念</div>
+      <div class="guide-sub">理论 / 方法 / 框架</div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-icon">⚖️</div>
+      <div class="guide-title">对比</div>
+      <div class="guide-sub">A vs B 分析</div>
+    </div>
+  </div>
+</div>
+<div class="field">
+  <label>基本定义</label>
+  <textarea class="natural" placeholder="用一两句话描述「人工智能」是什么。例如：人工智能是研究如何让计算机模拟人类智能行为的科学领域。"></textarea>
+</div>
+<div class="field">
+  <label>核心贡献 / 关键作用</label>
+  <textarea class="natural" placeholder="「人工智能」在它的领域中有哪些重要贡献？解决了什么问题？影响了哪些方向？"></textarea>
+</div>
+<div class="field">
+  <label>关联内容</label>
+  <input class="natural" placeholder="输入相关页面标题，按回车自动建立链接。例如：机器学习、深度学习">
+</div>
+</div>
+</div>
+</div>
+
+<style>
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.mockup { border-radius: 16px; padding: 20px; }
+.mockup .header { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.field .hint { font-weight: 400; opacity: 0.5; font-size: 11px; }
+.field input, .field textarea { width: 100%; border-radius: 10px; border: 1px solid var(--border); padding: 10px 14px; font-size: 14px; box-sizing: border-box; }
+.pills { display: flex; gap: 8px; }
+.pill { padding: 6px 14px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border); }
+.pill.active { background: var(--accent); color: white; border-color: var(--accent); }
+.tmpl-btn { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); font-size: 13px; margin-right: 8px; cursor: pointer; }
+.editor.markdown { 
+  font-family: 'SF Mono', Menlo, monospace; font-size: 12px; line-height: 1.7;
+  background: var(--code-bg); color: var(--code-fg); border-radius: 10px; padding: 14px; min-height: 150px;
+}
+.mockup.proposed { border: 2px solid var(--accent); }
+.mockup.current { border: 1px solid var(--border); }
+.guide-desc { font-size: 13px; opacity: 0.6; margin-bottom: 8px; }
+.guide-cards { display: flex; gap: 10px; margin-bottom: 10px; }
+.guide-card { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; cursor: pointer; }
+.guide-card.active { border-color: var(--accent); background: var(--accent-subtle); }
+.guide-card .guide-icon { font-size: 22px; margin-bottom: 4px; }
+.guide-card .guide-title { font-size: 14px; font-weight: 700; }
+.guide-card .guide-sub { font-size: 11px; opacity: 0.5; }
+textarea.natural, input.natural { 
+  font-family: -apple-system, 'SF Pro Text', sans-serif; font-size: 14px; line-height: 1.6;
+  background: var(--card); border-radius: 10px; padding: 12px; min-height: 60px;
+}
+</style>

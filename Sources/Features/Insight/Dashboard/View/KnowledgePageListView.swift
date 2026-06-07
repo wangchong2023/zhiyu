@@ -130,7 +130,7 @@ struct KnowledgePageListContent: View {
             #endif
             
             ToolbarItem(placement: .topBarLeading) {
-                if appEnv.screenClass == .compact || router.path.count > 0 {
+                if appEnv.screenClass == .compact || !router.path.isEmpty {
                     Button(action: {
                         HapticFeedback.shared.trigger(.selection)
                         Router.shared.pop()

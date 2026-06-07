@@ -93,7 +93,7 @@ final class DatabaseManager: Sendable {
         let globalTables = try globalQueue.read { db in
             try String.fetchAll(db, sql: ["SELECT", "name", "FROM", "sqlite_master", "WHERE", "type='table'"].joined(separator: " "))
         }
-        print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHNldHVwRm9yVGVzdGluZyBjb21wbGV0ZWQu")!, encoding: .utf8)!)
+        print(" [DatabaseManager] setupForTesting completed.")
         print(["-", "Vault", "Tables:", "\(tables)"].joined(separator: " "))
         print(["-", "Global", "Tables:", "\(globalTables)"].joined(separator: " "))
     }
@@ -216,7 +216,7 @@ final class DatabaseManager: Sendable {
             self.globalWriter = memoryGlobalQueue
             try globalMigrator.migrate(memoryGlobalQueue)
             
-            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIEZhbGxiYWNrIGluLW1lbW9yeSBkYXRhYmFzZSBzdWNjZXNzZnVsbHkgaW5pdGlhbGl6ZWQu")!, encoding: .utf8)!)
+            print(" [DatabaseManager] Fallback in-memory database successfully initialized.")
         } catch {
             // 如果连内存数据库都无法初始化（极端资源限制），则进行最终崩溃
             fatalError(" Fatal" + " recovery failure:" + " In-memory fallback" + " database could" + " not be" + " initialized: \(error.localizedDescription)")
@@ -252,9 +252,9 @@ final class DatabaseManager: Sendable {
             waitedTime += interval
         }
         if activeTransactionsCount > 0 {
-            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHN3aXRjaERhdGFiYXNlIHdhcm5pbmc6IFRyYW5zYWN0aW9ucyBkcmFpbmluZyB0aW1lZCBvdXQuIEZvcmNpbmcgY29ubmVjdGlvbiBjbG9zZS4=")!, encoding: .utf8)!)
+            print(" [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close.")
         } else {
-            print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIHN3aXRjaERhdGFiYXNlOiBBbGwgYWN0aXZlIHRyYW5zYWN0aW9ucyBkcmFpbmVkIHN1Y2Nlc3NmdWxseS4=")!, encoding: .utf8)!)
+            print(" [DatabaseManager] switchDatabase: All active transactions drained successfully.")
         }
         
         let oldURL = self.dbURL
@@ -348,7 +348,7 @@ final class DatabaseManager: Sendable {
         if let dbPool = writer as? DatabasePool {
             do {
                 try dbPool.close()
-                print(String(data: Data(base64Encoded: "IFtEYXRhYmFzZU1hbmFnZXJdIERhdGFiYXNlUG9vbCBjb25uZWN0aW9uIGNsb3NlZCBzdWNjZXNzZnVsbHku")!, encoding: .utf8)!)
+                print(" [DatabaseManager] DatabasePool connection closed successfully.")
             } catch {
                 print(" [DatabaseManager]" + " Failed to" + " close DatabasePool" + " connection: \(error.localizedDescription)")
             }

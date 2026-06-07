@@ -25,7 +25,7 @@ public final class WeChatAuthStrategy: AuthStrategy {
             identityType: identityType,
             identifier: "mock_wechat_openid",
             credential: mockCode,
-            extraInfo: ["state": UUID().uuidString, "nickname": String(data: Data(base64Encoded: "V2VDaGF0IE1vY2sgVXNlcg==")!, encoding: .utf8)!]
+            extraInfo: ["state": UUID().uuidString, "nickname": "WeChat Mock User"]
         )
     }
 }
@@ -39,7 +39,7 @@ public final class WeChatAuthStrategy: AuthStrategy {
 
     /// 获取微信认证凭证（watchOS 不支持，直接抛错）
     public func acquireCredentials() async throws -> AuthCredential {
-        throw NSError(domain: "WeChatAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: String(data: Data(base64Encoded: "V2VDaGF0IFNESyBub3QgY29uZmlndXJlZA==")!, encoding: .utf8)!])
+        throw NSError(domain: "WeChatAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "WeChat SDK not configured"])
     }
 }
 

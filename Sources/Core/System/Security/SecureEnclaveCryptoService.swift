@@ -110,7 +110,7 @@ final class SecureEnclaveCryptoService: Sendable {
                 // 利用 Token 物理连接回 Secure Enclave 内部的硬件密钥
                 return try SecureEnclave.P256.KeyAgreement.PrivateKey(dataRepresentation: tokenData)
             } catch {
-                Logger.shared.error(String(data: Data(base64Encoded: "RmFpbGVkIHRvIGxvYWQgZXhpc3RpbmcgU2VjdXJlIEVuY2xhdmUgS2V5LCByZWNyZWF0aW5nLi4u")!, encoding: .utf8)!, error: error)
+                Logger.shared.error("Failed to load existing Secure Enclave Key, recreating...", error: error)
             }
         }
         

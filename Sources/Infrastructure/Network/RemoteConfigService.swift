@@ -35,14 +35,14 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
             let (data, response) = try await session.data(from: url)
             let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
             guard statusCode == 200 else {
-                throw NetworkError.serverError(500, String(data: Data(base64Encoded: "RmV0Y2ggcmVtb3RlIG1vZGVscyBhbGxvd2xpc3QgZmFpbGVkLg==")!, encoding: .utf8)!)
+                throw NetworkError.serverError(500, "Fetch remote models allowlist failed.")
             }
 
             let apiResponse = try decoder.decode(ApiResponse<[LLMManifest]>.self, from: data)
             if apiResponse.isSuccess, let list = apiResponse.data {
                 return list
             }
-            throw NetworkError.unexpected(String(data: Data(base64Encoded: "UmVtb3RlIG1vZGVscyBwYXlsb2FkIGlzIGVtcHR5Lg==")!, encoding: .utf8)!)
+            throw NetworkError.unexpected("Remote models payload is empty.")
         } catch {
             Logger.shared.error("[RemoteConfigService] Error, using fallback: \(error)")
             return getFallbackLLMManifests()
@@ -60,14 +60,14 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
         do {
             let (data, response) = try await session.data(from: url)
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw NetworkError.serverError(500, String(data: Data(base64Encoded: "RmV0Y2ggcmVtb3RlIHNraWxscyBsaXN0IGZhaWxlZC4=")!, encoding: .utf8)!)
+                throw NetworkError.serverError(500, "Fetch remote skills list failed.")
             }
             
             let apiResponse = try decoder.decode(ApiResponse<[AgentSkill]>.self, from: data)
             if apiResponse.isSuccess, let list = apiResponse.data {
                 return list
             }
-            throw NetworkError.unexpected(String(data: Data(base64Encoded: "UmVtb3RlIHNraWxscyBwYXlsb2FkIGlzIGVtcHR5Lg==")!, encoding: .utf8)!)
+            throw NetworkError.unexpected("Remote skills payload is empty.")
         } catch {
             // 🟢 离线预设兜底，确保日常的【语义分块】、【AI合成】核心技能完全存活
             return getFallbackAgentSkills()
@@ -155,7 +155,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 skillId: "chunking_formatter",
                 displayName: " ",
                 description: "",
-                systemPromptTemplate: String(data: Data(base64Encoded: "XG57e2lucHV0fX1cbiAzLTUgIEpTT04gU2NoZW1hIA==")!, encoding: .utf8)!,
+                systemPromptTemplate: "\n{{input}}\n 3-5  JSON Schema ",
                 tags: ["Tagging", "Offline"],
                 customParameters: InferenceParameters(temperature: 0.2, topP: 0.95, maxTokens: 1024)
             ),

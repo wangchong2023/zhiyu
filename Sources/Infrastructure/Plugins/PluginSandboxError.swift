@@ -59,13 +59,13 @@ public enum PluginSandboxError: Error, LocalizedError {
         case .keyLengthExceeded(let maxLen):
             return L10n.Plugin.Error.keyLengthExceeded(maxLen)
         case .timeout:
-            return L10n.Plugin.Error.preProcessException(String(data: Data(base64Encoded: "VGltZW91dA==")!, encoding: .utf8)!)
+            return L10n.Plugin.Error.preProcessException("Timeout")
         case .preProcessException(let reason):
             return L10n.Plugin.Error.preProcessException(reason)
         case .postProcessException(let reason):
             return L10n.Plugin.Error.postProcessException(reason)
         case .invalidSignature:
-            return L10n.Plugin.Error.preProcessException(String(data: Data(base64Encoded: "SW52YWxpZCBzaWduYXR1cmU=")!, encoding: .utf8)!)
+            return L10n.Plugin.Error.preProcessException("Invalid signature")
         case .scriptSyntaxError(let detail):
             return L10n.Plugin.Error.preProcessException(detail)
         }

@@ -49,7 +49,7 @@ final class SystemLoggerTests: XCTestCase {
         
         // 获取写入后的日志条目，由于是非隔离 error/addLog 级联，内存中应已存在
         let entries = await logger.getLogEntries()
-        XCTAssertTrue(entries.count > 0, "内存缓存中应至少存在刚才写入的日志记录")
+        XCTAssertTrue(!entries.isEmpty, "内存缓存中应至少存在刚才写入的日志记录")
     }
     
     /// TC-LOG-02: 验证 maxLogEntries (500条) 的截断和溢出管理机制

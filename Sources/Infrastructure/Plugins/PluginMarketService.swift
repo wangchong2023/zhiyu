@@ -117,6 +117,7 @@ final class PluginMarketService: ObservableObject {
             if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
                 // 从 registry URL 推导下载 base：community-plugins.json → plugins/
                 let downloadBase = URL(string: targetURL.absoluteString
+// swiftlint:disable:next force_unwrapping
                     .replacingOccurrences(of: "community-plugins.json", with: "plugins"))!
                 let plugins = await MainActor.run {
                     communityPlugins.map { MarketPlugin(from: $0, downloadBase: downloadBase) }
