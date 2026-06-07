@@ -21,7 +21,9 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
     
     @ObservationIgnored @Inject private var configManager: LLMConfigManager
     @ObservationIgnored @Inject private var analytics: AIAnalyticsService
-    
+    @ObservationIgnored @Inject private var logger: any LoggerProtocol
+    @ObservationIgnored @Inject private var reranker: any LLMRetrievalServiceProtocol
+
     // MARK: - 内部属性
     
     /// 上下文构建器
@@ -47,7 +49,6 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
     
     private func updateSubServices() {
         let client = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
-        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
         self.chatService = LLMChatService(client: client, model: configManager.model, logger: logger)
     }
     
@@ -105,7 +106,6 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.5, stage: .retrieval))
         
         // 获取 Reranker 服务以进行语义重排
-        let reranker = ServiceContainer.shared.resolve((any LLMRetrievalServiceProtocol).self)
         let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
         
         // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
@@ -168,8 +168,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                         _ = try await preflightClient.sendRequest(body: preflightBody)
                     } catch {
                         // 预检失败 → 将底层错误转化为用户友好提示
-                        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
-                        logger.error("[ChatRunner] 预检失败 — API 不可达", error: error)
+                                        logger.error("[ChatRunner] 预检失败 — API 不可达", error: error)
                         throw LLMError.apiError("LLM API : \(error.localizedDescription)")
                     }
 
@@ -178,8 +177,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                     SourceStore.shared.updateSources(sources)
                     
                     // 2. 排序候选文档
-                    let reranker = ServiceContainer.shared.resolve((any LLMRetrievalServiceProtocol).self)
-                    let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
+                                let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
                     
                     // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
                     let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)

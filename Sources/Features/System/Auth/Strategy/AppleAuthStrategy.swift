@@ -62,7 +62,7 @@ extension AppleAuthStrategy: ASAuthorizationControllerDelegate {
         guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
               let tokenData = credential.identityToken,
               let tokenString = String(data: tokenData, encoding: .utf8) else {
-            let error = NSError(domain: "AppleAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Auth.appleTokenExtractFailed])
+            let error = AppError.auth(domain: "AppleAuthStrategy", code: -1, description: L10n.Auth.appleTokenExtractFailed)
             continuation?.resume(throwing: error)
             return
         }

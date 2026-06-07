@@ -14,6 +14,7 @@ import Compression
 // MARK: - Ingest Service (Knowledge Ingestion)
 actor IngestService {
     @Inject private var docExtractor: any DocumentExtractionServiceProtocol
+    @Inject private var dbManager: DatabaseManager
     let scraper = WebScraperProcessor()
 
     /// 将原始内容摄入知识库：执行安全脱敏、进行 RAG 分块与向量索引、自动抽取并链接已知页面概念。
@@ -42,8 +43,9 @@ actor IngestService {
         sourceType: String? = nil
     ) async -> KnowledgePage {
         let startTime = Date()
+        let manager = dbManager  // 捕获以跨 actor 边界传递
         await MainActor.run {
-            ServiceContainer.shared.resolve(DatabaseManager.self).incrementActiveTransactions()
+            manager.incrementActiveTransactions()
         }
         let pageID = UUID()
 
@@ -116,7 +118,7 @@ actor IngestService {
         )
 
         await MainActor.run {
-            ServiceContainer.shared.resolve(DatabaseManager.self).decrementActiveTransactions()
+            manager.decrementActiveTransactions()
         }
         return page
     }

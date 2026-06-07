@@ -47,14 +47,14 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                 continuation.resume(returning: cred)
                 return
                 #else
-                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: L10n.Auth.githubUrlError]))
+                continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -99, description: L10n.Auth.githubUrlError))
                 return
                 #endif
             }
             
             let urlString = "https://github.com/login/oauth/authorize?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"
             guard let url = URL(string: urlString) else {
-                continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: "GitHub URL Error"]))
+                continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -1, description: "GitHub URL Error"))
                 return
             }
             
@@ -68,7 +68,7 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
                       let components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: true),
                       let queryItems = components.queryItems,
                       let code = queryItems.first(where: { $0.name == "code" })?.value else {
-                    continuation.resume(throwing: NSError(domain: "GitHubAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: "GitHub Callback Error"]))
+                    continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -2, description: "GitHub Callback Error"))
                     return
                 }
                 

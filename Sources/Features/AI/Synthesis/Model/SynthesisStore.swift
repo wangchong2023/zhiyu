@@ -159,14 +159,14 @@ public final class SynthesisStore {
     /// - Returns: 字符串
     public func performSynthesis(type: SynthesisType, combinedContent: String) async throws -> String {
         guard synthesisStates[type] != SynthesisStatus.generating else { 
-            throw NSError(domain: "SynthesisStore", code: -1, userInfo: [NSLocalizedDescriptionKey: "Task already in progress"])
+            throw AppError.synthesis("Task already in progress", code: -1)
         }
 
         let existingCount = synthesisResults[type]?.count ?? 0
         if existingCount >= maxSynthesisDocsPerType {
             let errorMsg = L10n.AI.Synthesis.Error.limitReached
             synthesisStates[type] = SynthesisStatus.error(errorMsg)
-            throw NSError(domain: "SynthesisStore", code: -2, userInfo: [NSLocalizedDescriptionKey: errorMsg])
+            throw AppError.synthesis(errorMsg, code: -2)
         }
 
         withMutation(keyPath: \.synthesisStates) {

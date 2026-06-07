@@ -54,7 +54,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
                 ]
             )
             #else
-            throw NSError(domain: "GoogleAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: L10n.Auth.googleSdkNotConfigured])
+            throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: L10n.Auth.googleSdkNotConfigured)
             #endif
         }
         
@@ -63,12 +63,12 @@ public final class GoogleAuthStrategy: AuthStrategy {
             .first { $0.activationState == .foregroundActive }
         
         guard let rootVC = activeScene?.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
-            throw NSError(domain: "GoogleAuthStrategy", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.Auth.googleWindowError])
+            throw AppError.auth(domain: "GoogleAuthStrategy", code: -1, description: L10n.Auth.googleWindowError)
         }
         
         let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootVC)
         guard let idToken = result.user.idToken?.tokenString else {
-            throw NSError(domain: "GoogleAuthStrategy", code: -2, userInfo: [NSLocalizedDescriptionKey: L10n.Auth.googleTokenError])
+            throw AppError.auth(domain: "GoogleAuthStrategy", code: -2, description: L10n.Auth.googleTokenError)
         }
         
         return AuthCredential(
@@ -95,7 +95,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
             ]
         )
         #else
-        throw NSError(domain: "GoogleAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "Google SDK "])
+        throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: "Google SDK ")
         #endif
         #endif
     }

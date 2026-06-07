@@ -39,7 +39,7 @@ public final class WeChatAuthStrategy: AuthStrategy {
 
     /// 获取微信认证凭证（watchOS 不支持，直接抛错）
     public func acquireCredentials() async throws -> AuthCredential {
-        throw NSError(domain: "WeChatAuthStrategy", code: -99, userInfo: [NSLocalizedDescriptionKey: "WeChat SDK not configured"])
+        throw AppError.auth(domain: "WeChatAuthStrategy", code: -99, description: "WeChat SDK not configured")
     }
 }
 

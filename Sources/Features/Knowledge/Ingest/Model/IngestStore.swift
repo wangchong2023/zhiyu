@@ -237,7 +237,7 @@ final class IngestStore {
     /// 处理文件导入流程（含提取与安全校验）
     func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
         guard url.startAccessingSecurityScopedResource() else {
-            throw NSError(domain: "IngestStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Permission denied"])
+            throw AppError.ingest("Permission denied", code: 1)
         }
         defer { url.stopAccessingSecurityScopedResource() }
 
@@ -246,19 +246,19 @@ final class IngestStore {
            let fileSize = resources.fileSize {
             let singleLimit = 50 * 1024 * 1024
             if fileSize > singleLimit {
-                throw NSError(domain: "IngestStore", code: 2, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.fileTooLarge])
+                throw AppError.ingest(L10n.Ingest.fileTooLarge, code: 2)
             }
 
             // 全局容量限制 (1GB)
             let totalLimit: Int64 = 1024 * 1024 * 1024
             let currentTotal = await pageStore.pages.reduce(0) { $0 + ($1.fileSize ?? 0) }
             if currentTotal + Int64(fileSize) > totalLimit {
-                throw NSError(domain: "IngestStore", code: 4, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.storageFull])
+                throw AppError.ingest(L10n.Ingest.storageFull, code: 4)
             }
         }
 
         guard let extracted = await ingestService.ingestDocument(at: url, pageStore: pageStore) else {
-            throw NSError(domain: "IngestStore", code: 3, userInfo: [NSLocalizedDescriptionKey: L10n.Ingest.error])
+            throw AppError.ingest(L10n.Ingest.error, code: 3)
         }
 
         let fileSize = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize).map { Int64($0) } ?? 0

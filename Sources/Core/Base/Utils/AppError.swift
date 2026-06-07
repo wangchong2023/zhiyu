@@ -40,4 +40,19 @@ public extension AppError {
     static func exportNotSupported(_ description: String = "Export is not supported on this platform.") -> NSError {
         make(domain: "Export", code: 501, description: description)
     }
+
+    /// 认证模块错误
+    static func auth(domain: String, code: Int = -1, description: String) -> NSError {
+        make(domain: domain, code: code, description: description)
+    }
+
+    /// AI 合成模块错误
+    static func synthesis(_ description: String, code: Int = -1) -> NSError {
+        make(domain: "SynthesisStore", code: code, description: description)
+    }
+
+    /// 安全模块错误
+    static func security(_ description: String, code: Int = 404) -> NSError {
+        make(domain: "SecurityManager", code: code, description: description)
+    }
 }

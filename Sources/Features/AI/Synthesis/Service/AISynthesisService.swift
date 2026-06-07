@@ -15,6 +15,7 @@ import Foundation
 actor AISynthesisService: AISynthesisServiceProtocol {
     static let shared = AISynthesisService()
 
+    @Inject private var logger: any LoggerProtocol
     private let llm: any LLMServiceProtocol
 
     private init() {
@@ -178,8 +179,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         \(pageSummaries)
         """
 
-        // 诊断日志：记录发送给模型的完整 prompt
-        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
+        // 诊断日志（logger 通过 @Inject 注入）
         logger.debug("[InsightQuestions] Prompt(前500): \(String(prompt.prefix(500)))")
 
         let result = try await llm.generate(prompt: prompt, systemPrompt: "")
