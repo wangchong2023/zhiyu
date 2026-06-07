@@ -16,7 +16,9 @@ final class ChatService: ChatServiceProtocol, @unchecked Sendable {
     static let shared = ChatService()
     
     private let historyStore = ChatHistoryStore()
-    
+    @Inject private var llmService: any LLMServiceProtocol
+    @Inject private var logger: any LoggerProtocol
+
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -59,9 +61,6 @@ final class ChatService: ChatServiceProtocol, @unchecked Sendable {
     /// - Parameter pages: pages
     /// - Returns: 返回值
     func streamChat(query: String, pages: [KnowledgePage]) -> AsyncThrowingStream<String, Error> {
-        let llmService = ServiceContainer.shared.resolve((any LLMServiceProtocol).self)
-        let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
-        
         logger.debug(" [ChatService] : \(query)")
         let history = Array(historyStore.recent(BusinessConstants.AI.maxChatHistorySize))
         return llmService.chatStream(query: query, history: history, pages: pages)

@@ -43,7 +43,7 @@ final class ChatCoordinator {
     @ObservationIgnored private var currentStreamTask: Task<Void, Never>?
 
     init() {
-        self.chatHistory = ServiceContainer.shared.resolve((any ChatServiceProtocol).self).loadHistory()
+        self.chatHistory = chatService.loadHistory()
     }
 
     // ── 业务动作 ──

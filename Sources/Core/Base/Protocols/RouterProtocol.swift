@@ -70,6 +70,7 @@ protocol RouterProtocol: AnyObject, Observable {
 import SwiftUI
 
 extension EnvironmentValues {
+    // Router 在 ModuleRegistrar 中注册，早于任何 SwiftUI 视图创建，因此 resolve 安全
     @Entry var router: any RouterProtocol = ServiceContainer.shared.resolve((any RouterProtocol).self)
 }
 #endif

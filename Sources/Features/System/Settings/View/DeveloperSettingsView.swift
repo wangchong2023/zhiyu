@@ -241,8 +241,9 @@ struct DeveloperSettingsView: View {
         }
     }
     
+    @Inject private var governance: any GovernanceRepository
+
     private func loadStats() async {
-        let governance = ServiceContainer.shared.resolve((any GovernanceRepository).self)
         do {
             let stats = try await governance.calculateAverageRAGScores(days: 30)
             await MainActor.run {
