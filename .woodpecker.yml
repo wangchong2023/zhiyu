@@ -39,6 +39,13 @@ steps:
       - echo "===> Generating Xcode Project via XcodeGen..."
       - xcodegen generate
 
+  resolve-dependencies:
+    image: bash
+    commands:
+      - echo "===> Resolving SPM Package Dependencies..."
+      - set -o pipefail && xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu 2>&1 | tail -10
+      - echo "===> SPM Packages resolved successfully."
+
   check-test-compile:
     image: bash
     commands:
