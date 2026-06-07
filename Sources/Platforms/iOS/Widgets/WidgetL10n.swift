@@ -1,0 +1,24 @@
+//
+//  WidgetL10n.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/07.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[Shared] 平台适配层
+//  核心职责：Widget Extension 独立本地化助手。
+//           Widget 无法引入主 App 的 L10n 模块，故通过 String(localized:)
+//           直接读取 Platform.xcstrings 中的 Widget 相关词条。
+//
+import Foundation
+
+/// Widget 专用本地化命名空间，API 与 L10n.Widget 保持一致。
+enum WidgetL10n {
+    static var vaultName: String { String(localized: "widget.vaultName", table: "Platform") }
+    static var links: String { String(localized: "widget.links", table: "Platform") }
+    static var tags: String { String(localized: "widget.tags", table: "Platform") }
+    static var aiChat: String { String(localized: "widget.aiChat", table: "Platform") }
+    static var search: String { String(localized: "widget.search", table: "Platform") }
+    static var ai: String { String(localized: "widget.ai", table: "Platform") }
+    static var title: String { String(localized: "widget.title", table: "Platform") }
+}

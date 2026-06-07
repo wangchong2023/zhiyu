@@ -881,6 +881,7 @@
 		83F14389EDD38A912ADA1A90 /* PageContentUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D978F4854AF5C3F060FFD7B /* PageContentUtility.swift */; };
 		83F80E0ABAB244A5FFB4B143 /* GraphLayoutProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2B883D78FA629F610F3D5C /* GraphLayoutProcessor.swift */; };
 		8431FC224764FCC19C11BAD9 /* SpeechModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1437C67D5C528CCA7360B282 /* SpeechModels.swift */; };
+		8474A45655C48B77D04A34F7 /* WidgetL10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA80CBD181DB76EF2E8DDEB /* WidgetL10n.swift */; };
 		84844FC0B6A6817D93FBFB09 /* GraphInfoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D8BA90B5D1B8A14001008B /* GraphInfoPanel.swift */; };
 		84BE4AD2596D2F48C6957A4D /* AppErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8806478BEB3457510590BF71 /* AppErrorView.swift */; };
 		84C7825602BB913134ED3DAB /* GraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48351036BECF469DF2648F3B /* GraphViewModel.swift */; };
@@ -1303,6 +1304,7 @@
 		C27D706FFADB2510A4B27051 /* AI.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0B6DB367E4D68E0E5F447356 /* AI.xcstrings */; };
 		C28615ABCC35C50D30031DBF /* IngestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0671133E268EB2E7EE0CFE6 /* IngestStore.swift */; };
 		C28A61A18EA885334418B296 /* Network.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6E55F434A971615DCAAE55E /* Network.xcstrings */; };
+		C28F70F02607D50171C20438 /* WidgetL10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA80CBD181DB76EF2E8DDEB /* WidgetL10n.swift */; };
 		C2936BBD681B065D7A0F6DC0 /* GraphInfoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D8BA90B5D1B8A14001008B /* GraphInfoPanel.swift */; };
 		C2A418EBD0FF345FAB436329 /* GuideStepRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CE6B0A2892569834C0D8D7 /* GuideStepRow.swift */; };
 		C2B8086873C900BB2DF9EE48 /* marked.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 600F9630B189F8BAC640CD0E /* marked.min.js */; };
@@ -1570,6 +1572,7 @@
 		F00BBD68F53752AD28EEFD2E /* LinkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E12AD5BEA111DB5F6D20E4B /* LinkService.swift */; };
 		F0389B75A6997CF39F9C967E /* PluginSandboxGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CE1CAB1B36AD355CF9F30A7 /* PluginSandboxGateway.swift */; };
 		F05DD8F19FB389A60704127B /* L10n+Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = D17E91403727B4F7BF405458 /* L10n+Security.swift */; };
+		F079B1B8220370F1FA7EB3D6 /* Platform.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0E5C25A712C75E3F68DCC284 /* Platform.xcstrings */; };
 		F0897E852AEF6972155A4530 /* AsyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A64FFCFBB2B095EBDDF5C66 /* AsyncStatus.swift */; };
 		F08AC7082BEC0CBCC825A14A /* LogAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0147398F5DC7D4EBE943E60 /* LogAction.swift */; };
 		F08D3F37A02CD47EEA16B141 /* PluginEventBus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3377F2D248042634FBEC2728 /* PluginEventBus.swift */; };
@@ -1828,6 +1831,7 @@
 		1CDA70BD2B1CDDF6346AB847 /* L10n+ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+ModelManager.swift"; sourceTree = "<group>"; };
 		1CFBAAF41B7B064820E8022A /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		1D6031265C0856B48123DFBC /* TaskCenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCenterProtocol.swift; sourceTree = "<group>"; };
+		1DA80CBD181DB76EF2E8DDEB /* WidgetL10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetL10n.swift; sourceTree = "<group>"; };
 		1DE32090B01EA27407778988 /* testAdaptiveSidebarView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testAdaptiveSidebarView.1.png; sourceTree = "<group>"; };
 		1DEBA23C20D4626F4A1208D7 /* Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localized.swift; sourceTree = "<group>"; };
 		1EBBDE21C963D718766B9C5F /* DashboardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardModels.swift; sourceTree = "<group>"; };
@@ -4696,6 +4700,7 @@
 				45C25476B572BCD93284E96F /* AIProcessingActivityWidget.swift */,
 				04140BE25A4E1A937DD982FD /* Info.plist */,
 				5C27594D26828F3E34083AFD /* KnowledgeStatsWidget.swift */,
+				1DA80CBD181DB76EF2E8DDEB /* WidgetL10n.swift */,
 				2FBA2AD001B81B2540679AA6 /* ZhiYuWidgetBundle.swift */,
 			);
 			path = Widgets;
@@ -5040,6 +5045,7 @@
 			buildConfigurationList = 79DC5F2B91DAB3659BA39E34 /* Build configuration list for PBXNativeTarget "ZhiYuWidgets" */;
 			buildPhases = (
 				B5F4478787FC5E81816579AD /* Sources */,
+				C39D4A2C940DBCCBEB3839C1 /* Resources */,
 				250B684688D7A587777DD5A1 /* Frameworks */,
 			);
 			buildRules = (
@@ -5249,6 +5255,14 @@
 				8F2EBBDA040CD0EC11F14AB4 /* mermaid.min.js in Resources */,
 				6727672321BECB74553C725A /* model_allowlist.json in Resources */,
 				CEAC512699A83C068369327A /* pptxgen.bundle.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C39D4A2C940DBCCBEB3839C1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F079B1B8220370F1FA7EB3D6 /* Platform.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5576,6 +5590,7 @@
 				6296E24CC03294508C6CC57C /* WatchWatchSyncService.swift in Sources */,
 				CCB11A25843E20E6A1C5BB33 /* WeChatAuthStrategyTests.swift in Sources */,
 				5BFD1A84E4E36EDA2544F3E7 /* WebScraperProcessorTests.swift in Sources */,
+				C28F70F02607D50171C20438 /* WidgetL10n.swift in Sources */,
 				183F76B56A5E9B4645FB14E6 /* ZhiYuCoreServiceTests.swift in Sources */,
 				0C9AE5C2017CAEF2892743BF /* ZhiYuDomainTests.swift in Sources */,
 				5F8F1840BABE1FC1EAE2CD49 /* ZhiYuE2ETests.swift in Sources */,
@@ -6153,6 +6168,7 @@
 				062B07AA7BDC97E0A651B3AC /* AIProcessingAttributes.swift in Sources */,
 				201094BDFAD62D4304C82BF0 /* AppConstants.swift in Sources */,
 				A847649BD186079B7B535A09 /* KnowledgeStatsWidget.swift in Sources */,
+				8474A45655C48B77D04A34F7 /* WidgetL10n.swift in Sources */,
 				818BE8A7E076DC3BF30823F9 /* ZhiYuWidgetBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
