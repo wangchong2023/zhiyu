@@ -18,7 +18,6 @@ disabled_rules:
   - file_length               # 允许大型文件
 
 opt_in_rules:
-  - empty_count               # 优先使用 isEmpty 而非 count == 0
   - force_unwrapping          # 提示杜绝非必要强解包，促进安全编码
   - discouraged_object_literal # 鼓励在非界面定义层代码中使用类型安全资产
 

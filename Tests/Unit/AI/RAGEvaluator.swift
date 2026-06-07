@@ -24,7 +24,7 @@ final class RAGEvaluator {
         let goldenSetURL = Bundle.main.url(forResource: "RAG_GoldenSet", withExtension: "json")!
         guard let data = try? Data(contentsOf: goldenSetURL),
               let cases = try? JSONDecoder().decode([GoldenCase].self, from: data) else {
-            return EvaluationResult(totalScore: 0, failures: ["无法加载黄金测试集"])
+            return EvaluationResult(score: 0, failedCases: ["无法加载黄金测试集"])
         }
         
         var totalScore: Double = 0

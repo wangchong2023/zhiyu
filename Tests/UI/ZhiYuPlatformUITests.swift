@@ -138,7 +138,7 @@ class ZhiYuPlatformUITests: XCTestCase {
             } else if let pb = pagesBtn, pb.exists {
                 pb.tap()
             } else {
-                let fallback = app.tabBars.buttons.isEmpty == false ? app.tabBars.buttons.element(boundBy: 0) : app.buttons.element(boundBy: 0)
+                let fallback = app.tabBars.buttons.count > 0 ? app.tabBars.buttons.element(boundBy: 0) : app.buttons.element(boundBy: 0)
                 if fallback.exists {
                     fallback.tap()
                 }
@@ -174,7 +174,7 @@ final class iPhoneTests: ZhiYuPlatformUITests {
         let fallbackTab = app.tabBars.buttons.element(boundBy: 0)
 
         // 如果 TabBar 完全不存在，属于兼容性场景，直接软通过
-        guard !app.tabBars.isEmpty else { return }
+        guard app.tabBars.count > 0 else { return }
 
         XCTAssertTrue(knowledgeTab.exists || fallbackTab.exists,
                       "Knowledge Tab 或第一个 Tab 按钮应该存在")
@@ -249,9 +249,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     func testiPadTabBarPresence() async {
         // iPad 上可能显示顶部 Tab 栏（sidebarAdaptable 样式），也可能没有传统 tabBar
         // iOS 18+ sidebarAdaptable 在 iPad 上完全用 SplitView 替代 TabBar，属于正常行为
-        let hasTabBar = !app.tabBars.isEmpty
-        let hasNavigationBar = !app.navigationBars.isEmpty
-        let hasSplitView = !app.otherElements.isEmpty
+        let hasTabBar = app.tabBars.count > 0
+        let hasNavigationBar = app.navigationBars.count > 0
+        let hasSplitView = app.otherElements.count > 0
 
         // iPad 应该至少有某种形式的导航控件（tab 或 splitview 或 navbar 均可）
         XCTAssertTrue(hasTabBar || hasNavigationBar || hasSplitView,
@@ -279,7 +279,7 @@ final class iPadTests: ZhiYuPlatformUITests {
         // 如果是 iPhone 模拟器，不存在 detail 面板属于正常行为，直接软通过
         if !detailNav.exists && !detailElement.exists {
             // 检查是否处于 compact 布局（单列），则跳过 iPad 专属断言
-            let hasTabBar = !app.tabBars.isEmpty
+            let hasTabBar = app.tabBars.count > 0
             if hasTabBar {
                 // 这是 iPhone compact 布局，detail pane 不适用
                 return
@@ -545,7 +545,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         // 窗口应该有最小化、关闭按钮等
         let closeButton = window.buttons["close-button"]
         // Mac 窗口按钮可能使用不同的 identifier
-        XCTAssertTrue(!window.buttons.isEmpty, "Mac 窗口应该有按钮")
+        XCTAssertTrue(window.buttons.count > 0, "Mac 窗口应该有按钮")
     }
 
     func testMacToolbar() async {
@@ -553,7 +553,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         let toolbar = app.toolbars.firstMatch
         // 工具栏可能不总是存在，取决于窗口状态
         if toolbar.exists {
-            XCTAssertTrue(!toolbar.buttons.isEmpty, "Mac 工具栏应该有按钮")
+            XCTAssertTrue(toolbar.buttons.count > 0, "Mac 工具栏应该有按钮")
         }
     }
 
@@ -750,8 +750,8 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
         let anyNavElement = knowledgeTabBar.exists || knowledgeTabBarZH.exists
             || knowledgeSidebar.exists || knowledgeSidebarZH.exists
-            || app.tabBars.buttons.isEmpty == false
-            || app.navigationBars.buttons.isEmpty == false
+            || app.tabBars.buttons.count > 0
+            || app.navigationBars.buttons.count > 0
 
         if !anyNavElement {
             // 尺寸类或布局不支持传统导航元素，软通过
@@ -777,7 +777,7 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
 
         // 验证文本标签的可读性与非空状态
         let textElements = app.staticTexts
-        guard !textElements.isEmpty else {
+        guard textElements.count > 0 else {
             // 当前页面可能展示空状态（无内容），软通过
             print("⚠️ [AccessibilityTests] 没有找到任何静态文本元素，可能是空状态页面，软通过")
             return

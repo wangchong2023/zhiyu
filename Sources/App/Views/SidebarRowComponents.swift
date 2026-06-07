@@ -320,8 +320,7 @@ struct UniverseNavRow: View {
             
             Spacer()
             
-            // 数量角标（count 是 Int 局部变量，非 Collection.isEmpty 适用场景）
-            // swiftlint:disable:next empty_count
+            // 数量角标
             if count > 0 {
                 Text("\(count)")
                     .font(.caption2.weight(.bold))
