@@ -67,14 +67,14 @@ struct KnowledgeStatsProvider: TimelineProvider {
     func fetchWidgetEntry(date: Date) -> KnowledgeStatsEntry {
         return KnowledgeStatsEntry(
             date: date,
-            vaultName: AppConstants.Demo.vaultName,
+            vaultName: WidgetL10n.vaultName,
             pageCount: AppConstants.Demo.mockPageCount,
             linkCount: AppConstants.Demo.mockLinkCount,
             tagCount: AppConstants.Demo.mockTagCount,
             lastUpdatedPages: [
                 ("Planning (Concept)", "concept", "accent"),
                 ("Memory (Concept)", "concept", "accent"),
-                (AppConstants.Demo.vaultName, "entity", "purple")
+                (WidgetL10n.vaultName, "entity", "purple")
             ]
         )
     }
@@ -158,14 +158,14 @@ struct KnowledgeStatsWidgetEntryView: View {
                     .fontWeight(.black)
                     .foregroundStyle(.white)
                 
-                Text(AppConstants.Demo.vaultName)
+                Text(WidgetL10n.vaultName)
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
             }
             
             HStack(spacing: 12) {
-                statItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
-                statItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
+                statItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
+                statItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
             }
         }
         .padding(WidgetMetrics.contentPadding)
@@ -187,12 +187,12 @@ struct KnowledgeStatsWidgetEntryView: View {
                 }
                 
                 HStack(spacing: 16) {
-                    mainStatItem(label: AppConstants.Demo.vaultName, value: "\(entry.pageCount)", color: .purple)
-                    mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
+                    mainStatItem(label: WidgetL10n.vaultName, value: "\(entry.pageCount)", color: .purple)
+                    mainStatItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
                 }
                 
                 HStack(spacing: 16) {
-                    mainStatItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
+                    mainStatItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
                     Spacer()
                 }
             }
@@ -204,9 +204,9 @@ struct KnowledgeStatsWidgetEntryView: View {
 
             // 右侧：Deep Link 快捷操作区
             VStack(spacing: 8) {
-                actionButton(label: AppConstants.Demo.vaultName, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
-                actionButton(label: "AI Chat", icon: "sparkles", color: .blue, url: "zhiyu://chat")
-                actionButton(label: "Search", icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
+                actionButton(label: WidgetL10n.vaultName, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
+                actionButton(label: WidgetL10n.aiChat, icon: "sparkles", color: .blue, url: "zhiyu://chat")
+                actionButton(label: WidgetL10n.search, icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
             }
             .frame(width: WidgetMetrics.progressBarWidth)
         }
@@ -229,9 +229,9 @@ struct KnowledgeStatsWidgetEntryView: View {
                     }
                     
                     HStack(spacing: 24) {
-                        mainStatItem(label: AppConstants.Demo.vaultName, value: "\(entry.pageCount)", color: .purple)
-                        mainStatItem(label: "Links", value: "\(entry.linkCount)", color: .blue)
-                        mainStatItem(label: "Tags", value: "\(entry.tagCount)", color: .orange)
+                        mainStatItem(label: WidgetL10n.vaultName, value: "\(entry.pageCount)", color: .purple)
+                        mainStatItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
+                        mainStatItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
                     }
                 }
                 
@@ -241,7 +241,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                 Link(destination: URL(string: "zhiyu://chat")!) {
                     HStack(spacing: 4) {
                         Image(systemName: "sparkles")
-                        Text("AI")
+                        Text(WidgetL10n.ai)
                     }
                     .font(.caption.bold())
                     .foregroundStyle(.white)
@@ -255,7 +255,7 @@ struct KnowledgeStatsWidgetEntryView: View {
             
             // 下半部：最近更新的知识页卡片列表
             VStack(alignment: .leading, spacing: 10) {
-                Text(AppConstants.Demo.vaultName)
+                Text(WidgetL10n.vaultName)
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 2)
@@ -348,8 +348,8 @@ struct KnowledgeStatsWidget: Widget {
         StaticConfiguration(kind: kind, provider: KnowledgeStatsProvider()) { entry in
             KnowledgeStatsWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName(AppConstants.Demo.vaultName)
-        .description(AppConstants.Demo.vaultName)
+        .configurationDisplayName(WidgetL10n.title)
+        .description(WidgetL10n.vaultName)
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

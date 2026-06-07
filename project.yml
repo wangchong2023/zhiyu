@@ -215,6 +215,8 @@ targets:
       - path: Sources/Platforms/iOS/Widgets
       - path: Sources/Platforms/iOS/Activity/AIProcessingAttributes.swift
       - path: Sources/Core/Base/Constants/AppConstants.swift
+      - path: Sources/Platforms/iOS/Widgets/WidgetL10n.swift
+      - path: Sources/Localization/Catalogs/Platform.xcstrings
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.zhiyu.app.widgets
@@ -248,6 +250,7 @@ targets:
           - "Platforms/watchOS/WatchPasteboardService.swift"
           - "Platforms/watchOS/WatchSpeechService.swift"
           - "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift"
+          - "Platforms/iOS/Widgets/WidgetL10n.swift"
           - "Core/Base/Constants/AppConstants.swift"
     dependencies:
       - target: ZhiYu
