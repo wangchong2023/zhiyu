@@ -26,6 +26,12 @@ extension L10n {
         public static var recentUpdates: String { Localized.tr("widget.recentUpdates", table: t) }
         public static var stub: String { Localized.tr("widget.stub", table: t) }
         public static var knowledgeCompile: String { Localized.tr("widget.knowledgeCompile", table: t) }
+        public static var aiChat: String { Localized.tr("widget.aiChat", table: t) }
+        public static var search: String { Localized.tr("widget.search", table: t) }
+        public static var links: String { Localized.tr("widget.links", table: t) }
+        public static var tags: String { Localized.tr("widget.tags", table: t) }
+        public static var vaultName: String { Localized.tr("widget.vaultName", table: t) }
+        public static var ai: String { Localized.tr("widget.ai", table: t) }
 
         /// pages
         /// - Parameter n: n
