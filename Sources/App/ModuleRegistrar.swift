@@ -30,118 +30,13 @@ struct CoreModuleRegistrar: ModuleRegistrar {
         let logger = Logger.shared
         container.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
         
-        #if os(iOS) && !os(watchOS)
-        container.register(iOSBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
-        #else
-        container.register(StubBackgroundTaskProvider(), for: (any BackgroundTaskProtocol).self)
-        #endif
-        
+        // 委托平台注册器注入平台特有服务（消除 15 个 #if os 宏，收敛为单一分发点）
         #if os(macOS)
-        container.register(MacPasteboardService(), for: (any PasteboardProtocol).self)
+        MacPlatformRegistrar.registerServices(in: container)
         #elseif os(watchOS)
-        container.register(WatchPasteboardService(), for: (any PasteboardProtocol).self)
+        WatchPlatformRegistrar.registerServices(in: container)
         #else
-        container.register(iOSPasteboardService(), for: (any PasteboardProtocol).self)
-        #endif
-
-        #if targetEnvironment(simulator) || os(watchOS)
-        container.register(StubCollaborationProvider(), for: (any CollaborationProviderProtocol).self)
-        #else
-        container.register(MultipeerCollaborationProvider(), for: (any CollaborationProviderProtocol).self)
-        #endif
-
-        #if os(watchOS)
-        container.register(WatchPDFService(), for: (any PDFServiceProtocol).self)
-        #else
-        container.register(iOSPDFService(), for: (any PDFServiceProtocol).self)
-        #endif
-
-        #if os(macOS)
-        container.register(MacOSSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
-        #elseif os(watchOS)
-        container.register(WatchSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
-        #else
-        container.register(iOSSecurityScopedStorage(), for: SecurityScopedStorageProtocol.self)
-        #endif
-
-        #if os(macOS)
-        container.register(CoreMLModelCompiler(), for: MLModelCompilerProtocol.self)
-        #elseif os(watchOS)
-        container.register(WatchModelCompiler(), for: MLModelCompilerProtocol.self)
-        #else
-        container.register(CoreMLModelCompiler(), for: MLModelCompilerProtocol.self)
-        #endif
-
-        #if os(macOS)
-        container.register(MacOSBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
-        #elseif os(watchOS)
-        container.register(WatchBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
-        #else
-        container.register(iOSBiometricAuthProvider(), for: BiometricAuthProviderProtocol.self)
-        #endif
-
-        #if os(iOS) && !targetEnvironment(macCatalyst) && !os(watchOS)
-        container.register(ActivityService.shared as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
-        #else
-        container.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
-        #endif
-        
-        #if os(macOS)
-        container.register(MacAppEnvironment(), for: (any AppEnvironmentProtocol).self)
-        #elseif os(watchOS)
-        container.register(WatchAppEnvironment(), for: (any AppEnvironmentProtocol).self)
-        #else
-        container.register(iOSAppEnvironment(), for: (any AppEnvironmentProtocol).self)
-        #endif
-        
-        #if os(macOS)
-        container.register(MacHapticService(), for: (any HapticFeedbackProtocol).self)
-        #elseif os(watchOS)
-        container.register(WatchHapticService(), for: (any HapticFeedbackProtocol).self)
-        #else
-        container.register(iOSHapticService(), for: (any HapticFeedbackProtocol).self)
-        #endif
-        
-        #if os(macOS)
-        container.register(StubWatchSyncService(), for: (any WatchSyncProtocol).self)
-        #elseif os(watchOS)
-        container.register(WatchWatchSyncService(), for: (any WatchSyncProtocol).self)
-        #else
-        container.register(iOSWatchSyncService(), for: (any WatchSyncProtocol).self)
-        #endif
-        
-        #if os(watchOS)
-        container.register(UnsupportedReminderService(), for: (any ReminderServiceProtocol).self)
-        #else
-        container.register(iOSReminderService(), for: (any ReminderServiceProtocol).self)
-        #endif
-        
-        #if canImport(WebKit)
-        container.register(iOSExportService(), for: (any ExportServiceProtocol).self)
-        #else
-        container.register(UnsupportedExportService(), for: (any ExportServiceProtocol).self)
-        #endif
-        
-        #if os(macOS) && !targetEnvironment(macCatalyst)
-        container.register(MacFileArchiver(), for: (any FileArchiverProtocol).self)
-        #elseif os(watchOS)
-        container.register(UnsupportedFileArchiver(), for: (any FileArchiverProtocol).self)
-        #else
-        container.register(iOSFileArchiver(), for: (any FileArchiverProtocol).self)
-        #endif
-        
-        #if canImport(CoreSpotlight)
-        container.register(iOSSpotlightIndexer(), for: (any SearchIndexerProtocol).self)
-        #else
-        container.register(UnsupportedSearchIndexer(), for: (any SearchIndexerProtocol).self)
-        #endif
-        
-        #if os(macOS) && !targetEnvironment(macCatalyst)
-        container.register(MacAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
-        #elseif os(watchOS)
-        container.register(WatchAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
-        #else
-        container.register(iOSAccessibilityService(), for: (any AccessibilityServiceProtocol).self)
+        iOSPlatformRegistrar.registerServices(in: container)
         #endif
         
         // 注册其他平台级服务

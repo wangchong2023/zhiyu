@@ -34,6 +34,7 @@ struct WatchPlatformRegistrar: PlatformRegistrar {
         
         // 4. 系统集成
         container.register(DummyActivityService() as any LiveActivityProtocol, for: (any LiveActivityProtocol).self)
+        container.register(WatchAppEnvironment(), for: (any AppEnvironmentProtocol).self)
         container.register(WatchHapticService(), for: (any HapticFeedbackProtocol).self)
         container.register(WatchWatchSyncService(), for: (any WatchSyncProtocol).self)
         
