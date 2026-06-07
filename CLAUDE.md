@@ -6,9 +6,31 @@
 
 | 指南 | 内容 |
 |------|------|
-| [swift-coding-style.md](Docs/guides/swift-coding-style.md) | 命名、Protocol、Localization key、CodingKeys、Boolean 前缀等 Swift 编码约定 |
-| [config-conventions.md](Docs/guides/config-conventions.md) | project.yml、AppConfig.json、Asset Catalog、.xcstrings、文档目录规范 |
-| [implementation-patterns.md](Docs/guides/implementation-patterns.md) | Swift 6 变通方案、图谱模式、合成文档、缓存策略、Mermaid、UI 框架等 |
+| [swift-coding-style.md](docs/guides/swift-coding-style.md) | 命名、Protocol、Localization key、CodingKeys、Boolean 前缀等 Swift 编码约定 |
+| [config-conventions.md](docs/guides/config-conventions.md) | project.yml、AppConfig.json、Asset Catalog、.xcstrings、文档目录规范 |
+| [implementation-patterns.md](docs/guides/implementation-patterns.md) | Swift 6 变通方案、图谱模式、合成文档、缓存策略、Mermaid、UI 框架等 |
+
+## 文档索引
+
+| 文档 | 内容 |
+|------|------|
+| `docs/Architecture/HIGH_LEVEL_DESIGN.md` | L0-L3 分层、模块依赖、数据流 |
+| `docs/Architecture/LAYERING_L0_L3.md` | 严格分层架构定义与依赖规则 |
+| `docs/Architecture/AUTH_ARCHITECTURE.md` | 认证架构与多平台登录流程 |
+| `docs/Design/DATABASE_SCHEMA.md` | 完整 DDL、ER 关系、索引设计 |
+| `docs/Design/SECURITY_DESIGN.md` | 安全设计、OWASP、个人信息保护 |
+| `docs/Design/UI_COMPONENTS.md` | 通用 UI 组件库规范 |
+| `docs/Design/PLUGIN_SDK.md` | 插件 SDK 接口与沙箱规范 |
+| `docs/Requirements/PRODUCT_REQUIREMENTS.md` | 产品需求与功能范围 |
+| `docs/Requirements/SOFTWARE_REQUIREMENTS_SPECIFICATION.md` | 软件需求规格说明 |
+| `docs/Testing/TEST_CASES.md` | 各模块测试用例 |
+| `docs/Testing/UNIT_TEST_GUIDE.md` | 单元测试编写指南 |
+| `docs/Testing/SYSTEM_TEST_PLAN.md` | 系统测试计划 |
+| `docs/CI_CD_WORKFLOW.md` | CI/CD 流水线与构建部署 |
+| `docs/SECURITY_THREAT_MODEL.md` | 安全威胁模型 |
+| `docs/ROADMAP.md` | 版本路线图 |
+| `docs/CONTRIBUTING.md` | 贡献指南 |
+| `docs/USER_GUIDE.md` | 用户使用手册 |
 
 ## 项目概览
 
