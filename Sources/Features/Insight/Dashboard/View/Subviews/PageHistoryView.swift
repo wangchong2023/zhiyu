@@ -119,7 +119,7 @@ struct SnapshotDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.appAccent)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                     }
                     .buttonStyle(.plain)
                     

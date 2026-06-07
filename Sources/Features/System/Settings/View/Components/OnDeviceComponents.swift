@@ -77,7 +77,7 @@ public struct OnDeviceTestView: View {
             }
             .font(.body)
             .frame(height: 100)
-            .padding(10)
+            .padding(DesignSystem.atomic + DesignSystem.small) /* 10pt = 2+8 */
             .scrollContentBackground(.hidden)
             .background(Color.appCard.opacity(0.4))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))

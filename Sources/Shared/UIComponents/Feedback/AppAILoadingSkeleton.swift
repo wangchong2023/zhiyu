@@ -72,7 +72,7 @@ public struct AppAILoadingSkeleton: View {
     
     private func skeletonRow(widthRatio: CGFloat) -> some View {
         GeometryReader { geo in
-            RoundedRectangle(cornerRadius: 4)
+            RoundedRectangle(cornerRadius: DesignSystem.microRadius)
                 .fill(
                     LinearGradient(
                         colors: [

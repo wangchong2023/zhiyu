@@ -30,25 +30,7 @@ public enum SidebarSelection: Hashable {
     public func asRoute() -> AppRoute {
         switch self {
         case .page(let id): return .pageDetail(id: id)
-        case .tool(let tool):
-            switch tool {
-            case .dashboard: return .dashboard
-            case .pageList: return .pageList()
-            case .lint: return .lint
-            case .taskCenter: return .taskCenter
-            case .tagCloud: return .tagCloud
-            case .chat: return .chat
-            case .synthesis: return .synthesis
-            case .weeklyReport: return .weeklyReport
-            case .log: return .log
-            case .collab: return .collab
-            case .pluginMarket: return .pluginMarket
-            case .healthCheck: return .lint
-            case .search: return .search()
-            case .ingest: return .ingest
-            case .graph: return .graph
-            case .sources: return .sources
-            }
+        case .tool(let tool): return tool.route
         case .filteredIndex(let type): return .pageList(filterType: type)
         }
     }

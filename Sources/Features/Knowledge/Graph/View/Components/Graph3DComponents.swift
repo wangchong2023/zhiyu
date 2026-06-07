@@ -477,7 +477,7 @@ struct Graph3DControlsOverlay: View {
                         }
                         .frame(width: 140)
                         .background(
-                            RoundedRectangle(cornerRadius: 14)
+                            RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                                 .fill(.regularMaterial)
                                 .shadow(color: .black.opacity(DesignSystem.Opacity.glass), radius: 8, x: -4, y: 4)
                         )

@@ -1,0 +1,4 @@
+# Tests/.swiftlint.yml
+# 测试代码的圈复杂度和函数体长度限制放宽——测试函数本质上是声明式的 Arrange-Act-Assert 序列
+cyclomatic_complexity: disabled
+function_body_length: disabled

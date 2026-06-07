@@ -20,6 +20,8 @@ private enum WidgetMetrics {
     static let iconSize: CGFloat = 20
     static let bulletSize: CGFloat = 4
     static let progressBarWidth: CGFloat = 80
+    static let widgetCornerRadius: CGFloat = 6
+    static let microCornerRadius: CGFloat = 4
 }
 
 // MARK: - Timeline Entry
@@ -266,7 +268,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                             .foregroundStyle(page.colorName == "accent" ? .blue : .purple)
                             .frame(width: WidgetMetrics.iconSize, height: WidgetMetrics.iconSize)
                             .background(Color.white.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.microCornerRadius))
                         
                         Text(page.title)
                             .font(.footnote.bold())
@@ -282,7 +284,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
                     .background(Color.white.opacity(0.03))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius))
                 }
             }
         }
@@ -329,10 +331,10 @@ struct KnowledgeStatsWidgetEntryView: View {
             .padding(.vertical, 6)
             .background(Color.white.opacity(0.06))
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius)
                     .stroke(color.opacity(0.3), lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius))
         }
     }
 }

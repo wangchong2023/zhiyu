@@ -123,9 +123,9 @@ struct SearchView: View {
             .padding(.horizontal, DesignSystem.standardPadding)
             .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
             .background(Color.appCard.opacity(0.6))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
                     .strokeBorder(.appAccent.opacity(0.25), lineWidth: 1)
             )
             .padding(.horizontal, DesignSystem.standardPadding)

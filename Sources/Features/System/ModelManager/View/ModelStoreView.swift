@@ -431,9 +431,9 @@ public struct ModelStoreView: View {
                 .foregroundStyle(.red)
             Spacer()
         }
-        .padding(8)
+        .padding(DesignSystem.tightPadding)
         .background(Color.red.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     
     /// 临界运存警告黄条
@@ -446,9 +446,9 @@ public struct ModelStoreView: View {
                 .foregroundStyle(.orange)
             Spacer()
         }
-        .padding(8)
+        .padding(DesignSystem.tightPadding)
         .background(Color.orange.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     
     // MARK: - 辅助计算

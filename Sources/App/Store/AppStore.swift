@@ -44,6 +44,27 @@ public final class AppStore {
         case lint = "lint"
         case healthCheck = "healthCheck"
         case sources = "sources"
+
+        /// 将工具项映射为对应的路由目标，集中管理路由映射逻辑以降低圈复杂度
+        var route: AppRoute {
+            switch self {
+            case .dashboard: return .dashboard
+            case .pageList: return .pageList()
+            case .lint, .healthCheck: return .lint
+            case .taskCenter: return .taskCenter
+            case .tagCloud: return .tagCloud
+            case .chat: return .chat
+            case .synthesis: return .synthesis
+            case .weeklyReport: return .weeklyReport
+            case .log: return .log
+            case .collab: return .collab
+            case .pluginMarket: return .pluginMarket
+            case .search: return .search()
+            case .ingest: return .ingest
+            case .graph: return .graph
+            case .sources: return .sources
+            }
+        }
     }
 
     /// 知识增长点数据模型

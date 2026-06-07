@@ -279,7 +279,7 @@ struct DatabaseCorruptedBanner: View {
             .cornerRadius(12)
             .shadow(color: .primary.opacity(0.12), radius: 6, x: 0, y: 3)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                     .stroke(Color.orange.opacity(0.3), lineWidth: 1)
             )
         }

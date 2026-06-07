@@ -204,4 +204,9 @@ large_tuple:
 
 function_body_length:
   warning: 100
-  error: 130
+  error: 150
+
+# 9. 圈复杂度（放宽以避免过度拆分异步流处理函数）
+cyclomatic_complexity:
+  warning: 10
+  error: 16

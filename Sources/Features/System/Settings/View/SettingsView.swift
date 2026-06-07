@@ -173,7 +173,7 @@ struct SettingsView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
                                 .fill(selectedSection == section ? Color.appAccent : Color.clear)
                         )
                     }

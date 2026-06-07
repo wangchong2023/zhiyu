@@ -61,9 +61,9 @@ struct AIProcessingStatusBanner: View {
                 .padding(.vertical, 10)
                 .background(Color.appCard.opacity(0.8))
                 .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
                         .strokeBorder(LinearGradient(colors: [.appAccent.opacity(0.3), .purple.opacity(0.1)], startPoint: .leading, endPoint: .trailing), lineWidth: 1)
                 )
                 .shadow(color: .black.opacity(0.05), radius: 10, y: 5)

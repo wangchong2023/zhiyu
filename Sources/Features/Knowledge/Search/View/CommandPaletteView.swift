@@ -31,7 +31,7 @@ struct CommandPaletteView: View {
                     .font(.caption2.weight(.bold))
                     .padding(DesignSystem.tiny)
                     .background(Color.appBorder.opacity(0.3))
-                    .clipShape(RoundedRectangle(cornerRadius: 4))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
             }
             .padding()
             .background(Color.appCard)
@@ -80,7 +80,7 @@ struct CommandPaletteView: View {
             .frame(height: 300)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .shadow(color: .black.opacity(0.5), radius: 20)
         .frame(width: 500)
         .onAppear { isFocused = true }

@@ -69,7 +69,7 @@ public struct AppTextEditor: View {
             .background(Color.primary.opacity(0.03))
             .cornerRadius(8)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                     .stroke(
                         isFocused ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12),
                         lineWidth: 1

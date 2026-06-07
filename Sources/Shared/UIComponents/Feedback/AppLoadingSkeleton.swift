@@ -76,7 +76,7 @@ public struct AppLoadingSkeleton: View {
     
     /// 构建骨架屏基础灰色微动画圆角矩形
     private func skeletonRectangle() -> some View {
-        RoundedRectangle(cornerRadius: 6)
+        RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius)
             .fill(Color.secondary.opacity(0.12))
             .opacity(animateOpacity)
     }

@@ -115,7 +115,7 @@ struct NotebookFormSheet: View {
                                     .font(.title3.bold())
                                     .padding()
                                     .background(Color.appCard)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                                     // MARK: [UI 测试自愈] 注入唯一的可测试性定位标识符，以便在新建金库笔记本表单弹窗中精准定位名字输入框
                                     .accessibilityIdentifier("notebook_name_textfield")
                             }
@@ -129,7 +129,7 @@ struct NotebookFormSheet: View {
                                     .lineLimit(3...5)
                                     .padding()
                                     .background(Color.appCard)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                             }
                         }
                         .padding(.horizontal)

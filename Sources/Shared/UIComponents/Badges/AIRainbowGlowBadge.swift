@@ -202,7 +202,7 @@ public struct AIRainbowGlowBadge: View {
             }
             .padding(DesignSystem.tiny)
             .background(Color.green.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
             
             Divider()
             

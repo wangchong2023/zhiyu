@@ -14,27 +14,17 @@ extension Color {
     /// 从模型层的颜色名称字符串转换为 SwiftUI.Color
     /// - Parameter name: 颜色名称（如 "green", "red" 等）
     /// - Returns: 对应的 SwiftUI.Color，默认为 .gray
+    /// 颜色名称到 SwiftUI.Color 的映射表（集中管理以降低圈复杂度）
+    private static let colorNameMap: [String: Color] = [
+        "entity": .appEntity, "concept": .appConcept, "source": .appSource,
+        "map": .appMap, "comparison": .appComparison,
+        "green": .green, "blue": .blue, "red": .red, "orange": .orange,
+        "purple": .purple, "yellow": .yellow, "teal": .teal, "indigo": .indigo,
+        "pink": .pink, "gray": .gray
+    ]
+
+    /// 从模型层的颜色名称字符串转换为 SwiftUI.Color
     static func fromModelColorName(_ name: String) -> Color {
-        switch name {
-        // 语义化名称映射（对应 AppUI 知识分类颜色）
-        case "entity": return .appEntity
-        case "concept": return .appConcept
-        case "source": return .appSource
-        case "map": return .appMap
-        case "comparison": return .appComparison
-        
-        // 基础颜色映射
-        case "green": return .green
-        case "blue": return .blue
-        case "red": return .red
-        case "orange": return .orange
-        case "purple": return .purple
-        case "yellow": return .yellow
-        case "teal": return .teal
-        case "indigo": return .indigo
-        case "pink": return .pink
-        case "gray": return .gray
-        default: return .gray
-        }
+        colorNameMap[name] ?? .gray
     }
 }

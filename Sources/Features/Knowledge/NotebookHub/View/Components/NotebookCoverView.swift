@@ -53,7 +53,7 @@ public struct NotebookCoverView: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.white)
                 Spacer()
-                RoundedRectangle(cornerRadius: 2)
+                RoundedRectangle(cornerRadius: 2 /* 装饰微圆角，暂无 DesignSystem token */)
                     .fill(Color.white.opacity(0.4))
                     .frame(width: 40, height: 4)
             }
@@ -73,7 +73,7 @@ public struct NotebookCoverView: View {
                     .foregroundColor(.white.opacity(0.8))
             }
         }
-        .padding(16)
+        .padding(DesignSystem.standardPadding)
         .frame(width: 140, height: 180)
         .background(
             // 根据主题类型绘制背景

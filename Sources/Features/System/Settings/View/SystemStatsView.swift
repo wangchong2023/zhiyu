@@ -607,7 +607,7 @@ struct ChartView: View {
         .padding(.horizontal, DesignSystem.medium)
         .padding(.vertical, DesignSystem.small)
         .background {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
+            RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius, style: .continuous)
                 .fill(Color.appCard)
                 .appStandardShadow()
         }

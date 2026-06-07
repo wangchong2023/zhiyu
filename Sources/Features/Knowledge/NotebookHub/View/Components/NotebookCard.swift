@@ -31,7 +31,7 @@ struct NotebookCard: View {
             VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
                 // 1. 图标展示 (根据卡片哈希色计算出来的彩色发光底座，赋予视觉独特性)
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
                         .fill(colorForVault.opacity(0.1))
                         .frame(width: 44, height: 44)
                     
@@ -67,9 +67,9 @@ struct NotebookCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: 180)
             .background(Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
                     .strokeBorder(.primary.opacity(0.04), lineWidth: 0.5)
             )
             .premiumAmbientShadow(color: .primary.opacity(0.08), radius: 10)

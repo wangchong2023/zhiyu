@@ -20,7 +20,7 @@ struct AboutView: View {
                 // App Icon & Name
                 VStack(spacing: Spacing.medium) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 24)
+                        RoundedRectangle(cornerRadius: Spacing.giant)
                             .fill(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .frame(width: DesignSystem.Domain.About.logoSize, height: DesignSystem.Domain.About.logoSize)
                             .shadow(color: .appAccent.opacity(0.3), radius: 15, y: 8)

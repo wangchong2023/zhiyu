@@ -55,7 +55,7 @@ struct PageDragDropModifier: ViewModifier {
                 }
                 .padding(DesignSystem.small)
                 .background(Color.appCard)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
     }
 }
