@@ -154,4 +154,35 @@ public extension View {
         self
         #endif
     }
+
+    /// 跨平台工具栏：watchOS 上跳过渲染，其他平台正常显示
+    @ViewBuilder
+    /// toolbarIfNotWatchOS
+    func toolbarIfNotWatchOS() -> some View {
+        #if !os(watchOS)
+        self
+        #endif
+    }
+
+    /// 标准侧边栏列表样式（macOS 用 .sidebar，其他平台用默认）
+    @ViewBuilder
+    /// adaptiveSidebarListStyle
+    func adaptiveSidebarListStyle() -> some View {
+        #if os(macOS)
+        self.listStyle(.sidebar)
+        #else
+        self
+        #endif
+    }
+
+    /// watchOS 上跳过，其他平台执行自定义 modifier
+    @ViewBuilder
+    /// skipOnWatch
+    func skipOnWatch<Content: View>(@ViewBuilder _ modifier: (Self) -> Content) -> some View {
+        #if os(watchOS)
+        self
+        #else
+        modifier(self)
+        #endif
+    }
 }
