@@ -89,7 +89,10 @@ final class PluginMarketServiceTests: XCTestCase {
         
         XCTAssertFalse(service.availablePlugins.isEmpty)
         XCTAssertEqual(service.availablePlugins.first?.id, "com.test.plugin")
-        XCTAssertEqual(service.availablePlugins.first?.name, "Test Plugin")
+        // Localized.bestMatch 根据系统语言返回对应本地化名称，接受中/英文
+        let pluginName = service.availablePlugins.first?.name
+        XCTAssertTrue(pluginName == "Test Plugin" || pluginName == "测试插件",
+                      "插件名称应为英文或中文本地化值，实际为: \(pluginName ?? "nil")")
         XCTAssertNil(service.errorMessage)
     }
     

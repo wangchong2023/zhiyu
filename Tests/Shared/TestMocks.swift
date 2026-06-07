@@ -238,6 +238,8 @@ extension XCTestCase {
         let dbQueue = try! DatabaseQueue()
         // 绑定外部测试数据库写入器，并同步跑完所有 Schema 架构迁移以建立完整的物理表、虚拟表与触发器
         try! DatabaseManager.shared.setupForTesting(with: dbQueue)
+        // 注册 DatabaseManager 到 DI 容器，供 IngestService 等 L2 服务在摄入/清理时追踪活跃事务计数 (@DIP)
+        ServiceContainer.shared.register(DatabaseManager.shared, for: DatabaseManager.self)
         
         let sqliteStore = SQLiteStore(dbWriter: dbQueue)
         ServiceContainer.shared.register(sqliteStore as any AnyPageStoreCapabilities, for: (any AnyPageStoreCapabilities).self)
@@ -272,6 +274,8 @@ extension XCTestCase {
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
+        // LLMContextBuilder 通过具体类型解析，需注册双重绑定以覆盖 resolve(KnowledgePageRepository.self) (@DIP)
+        ServiceContainer.shared.register(knowledgeRepo, for: KnowledgePageRepository.self)
         
         let governanceRepo = AIGovernanceRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)

@@ -374,7 +374,7 @@ extension TimeInterval {
     /// 自动根据量级选择最合适的单位进行格式化 (µs, ms, s, m)
     public var formattedAdaptive: String {
         if self < 0.001 {
-            return String(format: "%.0fs", self * 1_000_000)
+            return String(format: "%.0fµs", self * 1_000_000)
         } else if self < 1.0 {
             return String(format: "%.1fms", self * 1000)
         } else if self < 60.0 {

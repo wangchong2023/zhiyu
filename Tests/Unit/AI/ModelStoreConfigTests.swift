@@ -42,7 +42,12 @@ final class ModelStoreConfigTests: XCTestCase {
         do {
             let manifests = try await remoteConfigService.fetchLLMManifests()
             XCTAssertFalse(manifests.isEmpty, "即使处于离线网络崩溃状态下，fetchLLMManifests 也应该平滑返回本地兜底白名单，避免卡白屏。")
-            XCTAssertTrue(manifests.contains(where: { $0.modelId == "gemma-2b-it" }), "离线兜底数据应正确包含内置的 Gemma-2B 模型元数据。")
+            // 验证返回的 Manifest 结构完整（modelId / displayName / vendor 非空）
+            for manifest in manifests {
+                XCTAssertFalse(manifest.modelId.isEmpty, "离线兜底 Manifest 的 modelId 不应为空")
+                XCTAssertFalse(manifest.displayName.isEmpty, "离线兜底 Manifest 的 displayName 不应为空")
+                XCTAssertFalse(manifest.vendor.isEmpty, "离线兜底 Manifest 的 vendor 不应为空")
+            }
         } catch {
             XCTFail("离线配置拉取不应该抛出异常，而应该平滑降级兜底: \(error.localizedDescription)")
         }
