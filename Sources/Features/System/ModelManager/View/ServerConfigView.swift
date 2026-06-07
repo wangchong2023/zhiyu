@@ -204,31 +204,66 @@ public struct ServerConfigView: View {
 
     // MARK: - 辅助方法
 
+    private static let storageKey = "com.zhiyu.serverConfigs"
+
+    private func saveServers() {
+        guard let data = try? JSONEncoder().encode(servers) else { return }
+        UserDefaults.standard.set(data, forKey: Self.storageKey)
+    }
+
     private func loadServers() {
-        // TODO: 从 UserDefaults 或持久化存储加载服务器列表
-        // 示例数据
-        servers = [
-            MockServerConfig(
-                id: UUID(),
-                name: L10n.ModelManager.Server.mockLocalDev,
-                baseURL: "http://localhost:8000",
-                apiKey: nil,
-                isDefault: true,
-                lastTestedAt: Date(),
-                latencyMs: 12,
-                isHealthy: true
-            )
-        ]
+        guard let data = UserDefaults.standard.data(forKey: Self.storageKey),
+              let saved = try? JSONDecoder().decode([MockServerConfig].self, from: data),
+              !saved.isEmpty else {
+            // 无已保存数据时使用示例配置
+            servers = [
+                MockServerConfig(
+                    id: UUID(),
+                    name: L10n.ModelManager.Server.mockLocalDev,
+                    baseURL: "http://localhost:8000",
+                    apiKey: nil,
+                    isDefault: true,
+                    lastTestedAt: Date(),
+                    latencyMs: 12,
+                    isHealthy: true
+                )
+            ]
+            return
+        }
+        servers = saved
     }
 
     private func testConnection(for server: MockServerConfig) {
-        // TODO: 实现连接测试逻辑
-        HapticFeedback.shared.trigger(.success)
+        Task {
+            let start = Date()
+            let isHealthy: Bool
+            let latency: Int
+            if let url = URL(string: server.baseURL + "/health") {
+                do {
+                    let (_, response) = try await URLSession.shared.data(from: url)
+                    isHealthy = (response as? HTTPURLResponse)?.statusCode == 200
+                } catch {
+                    isHealthy = false
+                }
+            } else {
+                isHealthy = false
+            }
+            latency = Int(Date().timeIntervalSince(start) * 1000)
+            if let idx = servers.firstIndex(where: { $0.id == server.id }) {
+                servers[idx] = MockServerConfig(
+                    id: server.id, name: server.name, baseURL: server.baseURL,
+                    apiKey: server.apiKey, isDefault: server.isDefault,
+                    lastTestedAt: Date(), latencyMs: latency, isHealthy: isHealthy
+                )
+                saveServers()
+            }
+            HapticFeedback.shared.trigger(isHealthy ? .success : .error)
+        }
     }
 
     private func deleteServer(_ server: MockServerConfig) {
         servers.removeAll { $0.id == server.id }
-        // TODO: 从持久化存储删除
+        saveServers()
     }
 
     private func setDefaultServer(_ server: MockServerConfig) {
@@ -237,7 +272,7 @@ public struct ServerConfigView: View {
             updated.isDefault = (config.id == server.id)
             return updated
         }
-        // TODO: 保存到持久化存储
+        saveServers()
         HapticFeedback.shared.trigger(.success)
     }
 
@@ -335,9 +370,26 @@ private struct ServerEditSheet: View {
     }
 
     private func testConnection() {
-        // TODO: 实现实际的连接测试
-        testResult = L10n.ModelManager.Server.testResult
-        HapticFeedback.shared.trigger(.success)
+        guard let url = URL(string: baseURL + "/health") else {
+            testResult = L10n.ModelManager.Server.testResult
+            return
+        }
+        testResult = "\(L10n.ModelManager.Server.testResult)..."
+        Task {
+            do {
+                let (_, response) = try await URLSession.shared.data(from: url)
+                let isHealthy = (response as? HTTPURLResponse)?.statusCode == 200
+                await MainActor.run {
+                    testResult = isHealthy ? "✅ Connected" : "❌ HTTP \((response as? HTTPURLResponse)?.statusCode ?? 0)"
+                    HapticFeedback.shared.trigger(isHealthy ? .success : .error)
+                }
+            } catch {
+                await MainActor.run {
+                    testResult = "❌ \(error.localizedDescription)"
+                    HapticFeedback.shared.trigger(.error)
+                }
+            }
+        }
     }
 
     private func saveServer() {
