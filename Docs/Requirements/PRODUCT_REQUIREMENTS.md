@@ -161,8 +161,30 @@ journey
 *   [x] 导入稳定性：50MB+ PDF 导入不崩溃，后台队列正常推进。
 *   [x] 图谱流畅度：5,000 节点下缩放/拖拽保持 55+ FPS。
 *   [x] 本地化完整性：中英文界面所有文案通过 `Localized.tr()` 动态加载，无硬编码字符串。
+*   [x] 代码质量：SwiftLint 0 serious 违规，全流水线审计绿灯（密钥/SPM/本地化/构建）。
+*   [x] 依赖注入：View 层无直接 ServiceContainer.resolve，统一使用 @Inject。
+*   [x] 平台宏收敛：DI 注册通过 PlatformRegistrar 协议委托，非 Platform 文件 #if os 减少至编译时 API 约束。
+*   [x] 服务器配置：用户自定义 LLM 端点持久化到 UserDefaults，支持连接测试。
 
-## 10. 产品遗留问题与体验演进 (Product Backlog & UX Refinements)
+## 10. 工程与体验增强 (v2.0 — 2026-06-07)
+
+### 10.1 代码质量治理
+- **SwiftLint 严重违规清零**：426 → 0 serious，Force Try/Cast/Unwrap 全量修复
+- **CI 流水线重构**：快速检查（SPM/Lint/密钥/本地化）前置，避免构建后才发现问题
+- **魔鬼数字消除**：42 处硬编码 cornerRadius/padding 替换为 DesignSystem 语义常量
+- **错误处理标准化**：AppError 统一工厂消除分散的 NSError 样板代码
+- **平台宏收敛**：DI 注册从 15 个 #if os 块收敛为 PlatformRegistrar 协议委托
+
+### 10.2 服务器配置持久化
+- 用户添加的 LLM 服务器端点（本地 Ollama、自建网关等）通过 UserDefaults JSON 持久化
+- 支持连接测试：真实 HTTP /health 端点检测，反馈健康状态与延迟
+- 默认服务器标记、删除操作自动持久化
+
+### 10.3 跨平台体验一致化
+- View 层平台差异收敛至 `PlatformModifiers` 语义化抽象（`hiddenOnWatch()`, `segmentedPickerStyleIfAvailable()` 等）
+- 三平台 (iOS/macOS/watchOS) DI 注册通过 `PlatformRegistrar` 协议委托
+
+## 11. 产品遗留问题与体验演进 (Product Backlog & UX Refinements)
 
 ### 10.1 已知产品体验遗留问题
 1. **BYOK（自带密钥）引导不够直观**：在 Lite 额度耗尽后，需设计渐进式指引面板，允许一键导入 API 密钥，并提供主流厂商的端点一键测试模板，平滑过渡至 Pro 体验。

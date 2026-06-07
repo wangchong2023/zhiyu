@@ -142,3 +142,154 @@ public struct AI {
 ```
 
 修改后重新编译即可，无需改动任何其他代码。
+
+## AppError 统一错误工厂 (v2.0 新增)
+
+所有业务层 NSError 创建收敛至 `Core/Base/Utils/AppError.swift`：
+
+```swift
+// ❌ 旧模式 — 分散的 NSError 样板
+throw NSError(domain: "Insight", code: -1, userInfo: [NSLocalizedDescriptionKey: L10n.xxx])
+
+// ✅ 新模式 — AppError 工厂
+throw AppError.insight(L10n.xxx)
+throw AppError.insight("日期计算失败", code: -2)
+throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: "...")
+throw AppError.ingest("存储空间已满", code: -1)
+throw AppError.synthesis("任务进行中")
+throw AppError.security("签名仓库未注册")
+throw AppError.exportNotSupported()
+```
+
+**已应用范围**: Insight(6处), Ingest(4处), Auth(10处), Synthesis(2处), Security(1处)
+
+## 平台适配模式 (v2.0 新增)
+
+### PlatformModifiers — View 层平台差异封装
+
+```swift
+// ❌ 旧模式 — View 文件中直接 #if os
+#if !os(watchOS)
+    .pickerStyle(.segmented)
+#endif
+
+// ✅ 新模式 — 语义化 View Modifier
+.segmentedPickerStyleIfAvailable()    // iOS/macOS 上分段选择器
+.inlineNavigationBarTitleIfAvailable() // iOS 上内联标题
+.hiddenOnWatch()                       // watchOS 上隐藏
+.visibleOniOSOrMac()                   // 仅非手表显示
+.toolbarIfNotWatchOS()                 // 非手表上渲染工具栏
+.adaptiveSidebarListStyle()            // macOS 自动 .sidebar
+.skipOnWatch { $0.keyboardType(.numberPad) } // watch 上安全跳过
+```
+
+**位置**: `Shared/UIComponents/Modifiers/PlatformModifiers.swift`
+
+### PlatformRegistrar — DI 层平台分发
+
+```swift
+// CoreModuleRegistrar 中：单一分发点替代 15 个 #if os 块
+#if os(macOS)
+MacPlatformRegistrar.registerServices(in: container)
+#elseif os(watchOS)
+WatchPlatformRegistrar.registerServices(in: container)
+#else
+iOSPlatformRegistrar.registerServices(in: container)
+#endif
+```
+
+**各平台实现**: `Platforms/{iOS, macOS, watchOS}/{iOS, Mac, Watch}PlatformRegistrar.swift`
+
+## DesignSystem 常量迁移模式 (v2.0 新增)
+
+```swift
+// ❌ 旧模式 — 魔鬼数字
+.clipShape(RoundedRectangle(cornerRadius: 12))
+.padding(16)
+
+// ✅ 新模式 — DesignSystem 语义常量
+.clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+.padding(DesignSystem.standardPadding)
+```
+
+**迁移映射表**:
+
+| 硬编码 | DesignSystem |
+|--------|-------------|
+| `cornerRadius: 4` | `DesignSystem.microRadius` |
+| `cornerRadius: 8` | `DesignSystem.smallRadius` |
+| `cornerRadius: 10` | `DesignSystem.mediumRadius` |
+| `cornerRadius: 12` | `DesignSystem.cardRadius` |
+| `cornerRadius: 14` | `DesignSystem.largeRadius` |
+| `cornerRadius: 24` | `Spacing.giant` |
+| `padding(8)` | `DesignSystem.tightPadding` |
+| `padding(16)` | `DesignSystem.standardPadding` |
+
+## @Inject DI 模式 (v2.0 强化)
+
+```swift
+// ❌ 旧模式 — 方法内重复 resolve
+func streamChat(...) {
+    let llmService = ServiceContainer.shared.resolve((any LLMServiceProtocol).self)
+    let logger = ServiceContainer.shared.resolve((any LoggerProtocol).self)
+}
+
+// ✅ 新模式 — 类级别 @Inject
+@Inject private var llmService: any LLMServiceProtocol
+@Inject private var logger: any LoggerProtocol
+
+func streamChat(...) {
+    logger.debug("[ChatService] starting...")
+}
+```
+
+**Actor 跨边界传递**:
+```swift
+actor IngestService {
+    @Inject private var dbManager: DatabaseManager
+    func ingest() async {
+        let manager = dbManager  // 捕获以跨 actor 边界
+        await MainActor.run { manager.incrementActiveTransactions() }
+    }
+}
+```
+
+## 代码拆分模式 (v2.0 新增)
+
+### View 文件分组件拆分
+
+当 View 文件超过 500 行且有清晰的 MARK 分区时：
+
+```
+GraphComponents.swift (592行)
+  → GraphComponents.swift (336行) — 核心视图
+  → GraphInfoPanel.swift (272行) — 信息面板
+
+SystemStatsView.swift (626行)
+  → SystemStatsView.swift (419行) — 主布局
+  → SystemStatsChartView.swift (222行) — 图表渲染
+```
+
+### 拆分原则
+- **优先 class/actor 文件**: 可安全提取为 extension 文件
+- **SwiftUI struct 谨慎**: 计算属性 subview 无法安全抽取，标记为设计约束
+- **有测试覆盖的文件优先**: 拆分后立即运行测试验证
+
+## 文件头注释规范 (v2.0 新增)
+
+```swift
+//
+//  FileName.swift
+//  ZhiYu
+//
+//  Created by ... on ...
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L1] 基础设施层
+//  核心职责：领域相关的具体描述，而非"提供相关的结构体或工具支撑"。
+//
+```
+
+- **系统层级**: L0-L3 标识
+- **核心职责**: 一句话说清本文件的职责，避免模板化表达
+- 278 个文件已从模板注释更新为领域描述
