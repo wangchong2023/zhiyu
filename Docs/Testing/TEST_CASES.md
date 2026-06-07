@@ -117,10 +117,10 @@
 | TC-AI-02 | `LLMServiceTests` | `testHighConcurrencyQueueStability` |
 | TC-ING-01 | `IngestQueueTests` | `testWebIngestAndMarkdownParsing` |
 | TC-ING-02 | `IngestQueueTests` | `testMultiFormatIngestCompatibility` |
-| TC-NAV-01 | `ZhiYuUITests` (Tests/UITests) | `testWikiLinkNavigationStack` |
+| TC-NAV-01 | `ZhiYuUITests` (Tests/UI) | `testWikiLinkNavigationStack` |
 | TC-NAV-02 | `KnowledgeBaseUITests` (Tests/UI) | `testDeepLinkRoutingAction` |
 | TC-UI-01 | `RecapTests` (Tests/Unit) | `testDailyRecapRefreshRecalculation` |
-| TC-SEC-01 | `ZhiYuUITests` (Tests/UITests) | `testBiometricUnlockAuthSimulation` |
+| TC-SEC-01 | `ZhiYuUITests` (Tests/UI) | `testBiometricUnlockAuthSimulation` |
 | TC-SEC-02 | `KnowledgeRepositoryTests` (Tests/Unit/Storage) | `testPrivatePageContentIsEncryptedInDB` |
 | TC-GRF-01 | `GraphLayoutEngineTests` (Tests/Unit/Graph) | `testLayoutMultiplePagesCreatesNodesForAll`, `testLayoutNodePositionsAreDistinct` |
 | TC-GRF-02 | `KnowledgeBaseUITests` | `testNavigateTo3DGraph` |

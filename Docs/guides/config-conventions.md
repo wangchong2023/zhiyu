@@ -99,7 +99,7 @@ packages:
 详见 [国际化与本地化指南](../Requirements/LOCALIZATION.md)。
 
 *   **物理分表**：按业务域（L0-L2）物理拆分为多个 `.xcstrings` 文件。
-*   **自动化同步**：通过 `Tools/update_localization.py` 在发布前将子表词条合并至 `Localizable.xcstrings` 主表。
+*   **自动化同步**：发布前同步子表词条至主表。
 *   **禁止直接引用**：View 严禁直接使用硬编码字符串，必须通过类型安全的 `L10n` 结构体访问。
 
 ## 文档文件 (.md)

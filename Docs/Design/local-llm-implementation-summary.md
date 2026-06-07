@@ -228,8 +228,8 @@ LocalModelManagerView (统一入口)
 ### Phase 4: 国际化完善 (优先级: P0)
 - [ ] 创建 `ModelManager.xcstrings` 文件
 - [ ] 添加所有中英文词条
-- [ ] 运行 `python3 Tools/update_localization.py` 同步分表
-- [ ] 验证 `Tools/check_localization.py` 通过
+- [ ] 同步本地化词条至 .xcstrings
+- [ ] 验证 `Tools/Gatekeeper/check_localization.py` 通过
 
 ### Phase 5: 测试覆盖 (优先级: P1)
 - [ ] 单元测试：`GlobalModelManager` 业务逻辑

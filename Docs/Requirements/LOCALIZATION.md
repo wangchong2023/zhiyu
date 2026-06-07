@@ -42,11 +42,7 @@
     *   示例：`Text(L10n.Chat.title)`。
 
 ### 2.2 自动化同步 (Sync Mechanism)
-在每次重大功能提交或发布前，必须执行同步脚本：
-```bash
-python3 Tools/update_localization.py
-```
-*   **原理**：该脚本会扫描所有子表，并将其增量合并到主表 `Localizable.xcstrings`。
+在每次重大功能提交或发布前，必须执行同步脚本更新 .xcstrings 词条。
 *   **价值**：确保了开发时的“模块化隔离”与运行时的“单表加载性能”完美平衡。
 
 ---
