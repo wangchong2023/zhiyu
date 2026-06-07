@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L0.5] 系统集成层
-//  核心职责：属于 Shortcuts 模块，提供相关的结构体或工具支撑。
+//  核心职责：键盘快捷键定义，提供 Mac Catalyst 菜单命令绑定。
 //
 import Foundation
 

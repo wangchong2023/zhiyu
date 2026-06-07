@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L3] 应用层
-//  核心职责：属于 Store 模块，提供相关的结构体或工具支撑。
+//  核心职责：全局状态管理（AppStore），持有应用级 @Observable 状态树。
 //
 import Foundation
 

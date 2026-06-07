@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：属于 LLM 模块，提供相关的结构体或工具支撑。
+//  核心职责：大语言模型客户端：多提供商适配、流式响应解析、端侧推理。
 //
 import Foundation
 import Observation

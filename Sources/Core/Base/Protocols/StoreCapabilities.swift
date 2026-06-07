@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L0] 底层基座层
-//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//  核心职责：跨层协议定义，建立 L0-L3 各层间的抽象契约。
 //
 import Foundation
 import GRDB

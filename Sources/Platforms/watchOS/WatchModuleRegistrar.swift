@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 平台适配层
-//  核心职责：属于 watchOS 模块，提供相关的结构体或工具支撑。
+//  核心职责：watchOS 平台实现：语音听写、健康数据同步、紧凑 UI。
 //
 import Foundation
 

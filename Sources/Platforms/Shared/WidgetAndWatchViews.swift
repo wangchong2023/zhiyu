@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 平台适配层
-//  核心职责：属于 Shared 模块，提供相关的结构体或工具支撑。
+//  核心职责：SwiftUI 视图，负责 WidgetAndWatchs 界面的布局与渲染。
 //
 import SwiftUI
 import WidgetKit

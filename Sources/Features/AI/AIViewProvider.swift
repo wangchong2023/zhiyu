@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 AI 模块，提供相关的结构体或工具支撑。
+//  核心职责：SwiftUI 视图，负责 AIProvider 界面的布局与渲染。
 //
 import SwiftUI
 

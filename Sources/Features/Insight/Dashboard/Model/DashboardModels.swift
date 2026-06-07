@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//  核心职责：仪表盘：页面列表、知识统计、每周洞察、回链视图。
 //
 import Foundation
 

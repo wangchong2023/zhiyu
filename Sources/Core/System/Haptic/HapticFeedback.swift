@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L0.5] 系统集成层
-//  核心职责：属于 Haptic 模块，提供相关的结构体或工具支撑。
+//  核心职责：触觉反馈抽象层，按平台分发 iOS/Mac/Watch 实现。
 //
 import Foundation
 

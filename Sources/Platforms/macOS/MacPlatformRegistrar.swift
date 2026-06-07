@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 平台适配层
-//  核心职责：属于 macOS 模块，提供相关的结构体或工具支撑。
+//  核心职责：macOS 平台实现：菜单栏、文件归档、辅助功能。
 //
 #if os(macOS)
 import Foundation

@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//  核心职责：AI 合成实验室：摘要、思维导图、测验、报告生成。
 //
 import SwiftUI
 

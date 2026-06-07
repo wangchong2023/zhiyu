@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Components 模块，提供相关的结构体或工具支撑。
+//  核心职责：成就勋章墙：解锁条件追踪与视觉展示。
 //
 import SwiftUI
 

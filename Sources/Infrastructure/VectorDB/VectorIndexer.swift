@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：属于 VectorDB 模块，提供相关的结构体或工具支撑。
+//  核心职责：向量数据库：嵌入管理、向量索引、相似度搜索。
 //
 import Foundation
 

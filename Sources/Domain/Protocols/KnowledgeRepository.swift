@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1.5] 领域层
-//  核心职责：属于 Protocols 模块，提供相关的结构体或工具支撑。
+//  核心职责：领域层协议定义（Repository、Service、Strategy 等抽象）。
 //
 import Foundation
 import Combine

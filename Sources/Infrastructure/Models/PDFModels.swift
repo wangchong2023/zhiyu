@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：属于 Models 模块，提供相关的结构体或工具支撑。
+//  核心职责：数据模型与状态管理，定义数据结构与 @Observable 状态。
 //
 import Foundation
 

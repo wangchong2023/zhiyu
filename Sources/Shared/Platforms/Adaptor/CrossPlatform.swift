@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 共享标准层
-//  核心职责：属于 Adaptor 模块，提供相关的结构体或工具支撑。
+//  核心职责：跨平台适配器：统一不同平台的类型别名与 API 差异。
 //
 import Foundation
 

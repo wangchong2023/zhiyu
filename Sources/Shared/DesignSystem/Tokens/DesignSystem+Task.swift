@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 共享标准层
-//  核心职责：属于 Tokens 模块，提供相关的结构体或工具支撑。
+//  核心职责：设计系统令牌：颜色、排版、间距、动画、图标等可视化常量。
 //
 import SwiftUI
 import CoreGraphics

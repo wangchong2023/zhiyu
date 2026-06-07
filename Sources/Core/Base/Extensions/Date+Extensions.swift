@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L0] 底层基座层
-//  核心职责：属于 Extensions 模块，提供相关的结构体或工具支撑。
+//  核心职责：Swift 标准类型的便利扩展（Date 格式化、字符串工具等）。
 //
 import Foundation
 

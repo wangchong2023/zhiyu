@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：属于 Plugins 模块，提供相关的结构体或工具支撑。
+//  核心职责：插件系统：JavaScript 沙箱、市场服务、插件注册与生命周期。
 //
 #if canImport(JavaScriptCore) && !os(watchOS)
 

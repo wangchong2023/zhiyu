@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Service 模块，提供相关的结构体或工具支撑。
+//  核心职责：任务中心：后台 AI 任务调度与进度追踪。
 //
 import Foundation
 import Combine

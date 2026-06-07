@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L0.5] 系统集成层
-//  核心职责：属于 Routing 模块，提供相关的结构体或工具支撑。
+//  核心职责：深度链接与通用链接解析，将外部 URL 映射为内部 AppRoute。
 //
 import Foundation
 

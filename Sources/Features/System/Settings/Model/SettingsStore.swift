@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//  核心职责：系统设置：LLM 配置、性能监控、插件管理、iCloud、备份。
 //
 import Foundation
 import Observation

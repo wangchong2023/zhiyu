@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：属于 Performance 模块，提供相关的结构体或工具支撑。
+//  核心职责：性能基准测试：测量核心操作的吞吐量与延迟。
 //
 import Foundation
 

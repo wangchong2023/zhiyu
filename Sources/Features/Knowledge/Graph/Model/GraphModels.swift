@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：属于 Model 模块，提供相关的结构体或工具支撑。
+//  核心职责：知识图谱：3D 可视化、社区发现、力导向布局。
 //
 import Foundation
 import CoreGraphics
