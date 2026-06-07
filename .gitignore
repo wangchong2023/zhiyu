@@ -53,9 +53,6 @@ env/
 /tmp/*.pid
 /tmp/mock_*.pid
 
-# Backend CI — 不属于 iOS 项目，防止误放根目录
-.woodpecker.yml
-
 # 插件源文件 — 仅在 Tools/Plugins/ 下管理，禁止根目录散落
 /*.zyplugin
 
