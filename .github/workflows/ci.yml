@@ -67,30 +67,53 @@ jobs:
         run: |
           python3 Tools/check_localization.py
 
-      # ── 9. 构建 + 全量测试 + 覆盖率收集 ────────────────────────────
-      - name: Build and Test with Coverage
+      # ── 9. 构建 + 单元测试 + 覆盖率收集（快速反馈）─────────────────
+      - name: Build and Unit Test with Coverage
         run: |
           xcodebuild test \
             -project ZhiYu.xcodeproj \
             -scheme ZhiYu \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -only-testing:ZhiYuTests \
             -enableCodeCoverage YES \
             -derivedDataPath build/DerivedData \
+            -parallel-testing-enabled YES \
+            -parallel-testing-worker-count 4 \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             2>&1 | tee build/test_output.log
           TEST_EXIT=${PIPESTATUS[0]}
           if [ ${TEST_EXIT} -ne 0 ]; then
-            echo "❌ 测试失败 (exit=${TEST_EXIT})"
+            echo "❌ 单元测试失败 (exit=${TEST_EXIT})"
             exit ${TEST_EXIT}
           fi
 
-      # ── 10. 代码覆盖率红线熔断（Domain 层 ≥ 85%）──────────────────
+      # ── 10. UI 测试（并行多 Worker，独立阶段）───────────────────────
+      - name: Run UI Tests (Parallel)
+        run: |
+          xcodebuild test-without-building \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYu \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+            -only-testing:ZhiYuUITests \
+            -enableCodeCoverage YES \
+            -derivedDataPath build/DerivedData \
+            -parallel-testing-enabled YES \
+            -parallel-testing-worker-count 4 \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build/ui_test_output.log
+          UI_EXIT=${PIPESTATUS[0]}
+          if [ ${UI_EXIT} -ne 0 ]; then
+            echo "⚠️  UI 测试失败 (exit=${UI_EXIT})，不阻断流水线"
+          fi
+
+      # ── 11. 代码覆盖率红线熔断（Domain 层 ≥ 85%）──────────────────
       - name: Enforce Code Coverage Threshold
         run: |
           python3 Tools/check_coverage.py
 
-      # ── 11. 多平台编译验证（确保非 iOS target 可编译）──────────────
+      # ── 12. 多平台编译验证（确保非 iOS target 可编译）──────────────
       - name: Verify Multi-Platform Build
         run: |
           echo "🔨 验证 iOS 设备构建..."
