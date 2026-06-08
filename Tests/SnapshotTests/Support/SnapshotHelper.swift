@@ -28,7 +28,7 @@ final class SnapshotHelper {
         let currentHash = data.base64EncodedString().count // 简易哈希：使用长度作为初步校验
         
         // 1. 获取参考快照路径
-        guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { fatalError("No documents directory") }
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let refURL = docs.appendingPathComponent("snapshots/\(name).ref")
         
         // 2. 如果不存在参考快照，则记录当前快照为参考（录制模式）

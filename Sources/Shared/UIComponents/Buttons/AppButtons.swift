@@ -16,7 +16,7 @@ import SwiftUI
 /// 支持渐变背景、加载指示器及图标显示。
 public struct AppPrimaryButton: View {
     public let title: String
-    public var icon: String?
+    public var icon: String? = nil
     public var isLoading: Bool = false
     public var gradientColors: [Color] = [.appAccent, .appAccent.opacity(DesignSystem.subtleOpacity)]
     public var maxWidth: CGFloat? = .infinity
@@ -69,7 +69,7 @@ public struct AppPrimaryButton: View {
 /// 适用于次要但依然重要的操作，替代系统默认的 .bordered 样式以解决白边问题。
 public struct AppBorderedButton: View {
     public let title: String
-    public var icon: String?
+    public var icon: String? = nil
     public var color: Color = .appAccent
     public var maxWidth: CGFloat? = .infinity
     public let action: () -> Void
@@ -118,7 +118,7 @@ public struct AppBorderedButton: View {
 /// 适用于预览视图、详情页操作 or 辅助性质的功能标识。
 public struct AppCapsuleButton: View {
     public let title: String
-    public var icon: String?
+    public var icon: String? = nil
     public var isPrimary: Bool = true
     public var color: Color = .appAccent
 

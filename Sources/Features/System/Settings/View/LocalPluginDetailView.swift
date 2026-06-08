@@ -121,7 +121,7 @@ struct LocalPluginDetailView: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .task {
-            if let url = PluginRegistry.shared.iconURL(for: manifest.id), let iconData = try? Data(contentsOf: url) { localIcon = UIImage(data: d) }
+            if let url = PluginRegistry.shared.iconURL(for: manifest.id), let d = try? Data(contentsOf: url) { localIcon = UIImage(data: d) }
             localReadme = PluginRegistry.shared.localizedReadme(for: manifest.id)
         }
         .navigationTitle(manifest.name)

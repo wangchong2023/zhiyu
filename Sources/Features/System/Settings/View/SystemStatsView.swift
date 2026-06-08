@@ -24,8 +24,8 @@ struct SystemStatsView: View {
     @State private var selectedTab: Tab = .performance
     
     enum Tab: String, CaseIterable {
-        case performance
-        case storage
+        case performance = "performance"
+        case storage = "storage"
         
         var title: String {
             switch self {
@@ -415,3 +415,4 @@ struct SystemStatsView: View {
             .padding(.horizontal, DesignSystem.tiny)
     }
 }
+

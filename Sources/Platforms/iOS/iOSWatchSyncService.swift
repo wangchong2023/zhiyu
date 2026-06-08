@@ -16,7 +16,7 @@ import Combine
 /// iOS 端手表同步实现
 final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate {
     @Published var lastReceivedText: String = ""
-    @Published var latestBriefing: String?
+    @Published var latestBriefing: String? = nil
     @Published var isBriefingLoading: Bool = false
     
     override init() {
@@ -44,7 +44,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
             return
         }
         
-        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String: Any]
+        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
         session.transferUserInfo(userInfo)
         Logger.shared.info("WatchSync_Success")
     }
@@ -97,7 +97,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
         guard session.activationState == .activated && session.isPaired && session.isWatchAppInstalled else {
             return
         }
-        let userInfo = ["type": "briefing_response", "content": content] as [String: Any]
+        let userInfo = ["type": "briefing_response", "content": content] as [String : Any]
         session.transferUserInfo(userInfo)
     }
     
@@ -159,7 +159,7 @@ final class iOSWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate 
     
     /// session回调
     /// - Parameter session: session
-    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         if let type = userInfo["type"] as? String {
             if type == "request_briefing" {
                 Task { @MainActor in

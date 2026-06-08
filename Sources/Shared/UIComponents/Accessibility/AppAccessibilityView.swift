@@ -75,8 +75,7 @@ struct ConditionalAnimationModifier: ViewModifier {
 
 // MARK: - SwiftUI Bridge for Scaling
 extension AccessibilityService {
-    // 视图层使用的字体缩放逻辑，桥接到 SwiftUI 的 ContentSizeCategory
-    // swiftlint:disable:next cyclomatic_complexity
+    /// 视图层使用的字体缩放逻辑，桥接到 SwiftUI 的 ContentSizeCategory
     func scaledFont(base: CGFloat, category: ContentSizeCategory) -> CGFloat {
         let multiplier: CGFloat
         switch category {

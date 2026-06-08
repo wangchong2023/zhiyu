@@ -354,12 +354,13 @@ struct SearchView: View {
     }
 }
 
+
 // MARK: - Filter Pill
 struct FilterPill: View {
     let title: String
-    var icon: String?
+    var icon: String? = nil
     var color: Color = .appAccent
-    var accessibilityIdentifier: String?
+    var accessibilityIdentifier: String? = nil
     let isSelected: Bool
     let action: () -> Void
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -388,6 +389,7 @@ struct FilterPill: View {
         .accessibilityIdentifier(accessibilityIdentifier ?? title)
     }
 }
+
 
 struct SearchBadgeView: View {
     let label: String

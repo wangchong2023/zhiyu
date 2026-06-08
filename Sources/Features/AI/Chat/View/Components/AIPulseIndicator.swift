@@ -100,7 +100,7 @@ struct AIPulseIndicator: View {
         )
         .animation(.spring(response: DesignSystem.Animation.standardDuration * 1.2), value: TaskCenter.shared.latestStatus) // 0.3
         .animation(.spring(), value: isActive)
-        .onChange(of: isActive) { _, newValue in
+        .onChange(of: isActive) { oldValue, newValue in
             if newValue {
                 startHapticPulse()
             }

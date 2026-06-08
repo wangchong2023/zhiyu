@@ -57,7 +57,7 @@ final class iOSSpotlightIndexer: SearchIndexerProtocol, @unchecked Sendable {
     
     /// 取消索引All
     func deindexAll() {
-        CSSearchableIndex.default().deleteAllSearchableItems { _ in }
+        CSSearchableIndex.default().deleteAllSearchableItems() { _ in }
     }
     
     /// reindexAll

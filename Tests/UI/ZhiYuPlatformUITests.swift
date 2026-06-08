@@ -101,7 +101,7 @@ class ZhiYuPlatformUITests: XCTestCase {
         }
     }
 
-    // 获取当前平台
+    /// 获取当前平台
     var currentPlatform: String {
         let screenHeight = app.windows.firstMatch.frame.height
         if screenHeight >= 1024 {
@@ -111,7 +111,7 @@ class ZhiYuPlatformUITests: XCTestCase {
         }
     }
 
-    // 统一、健壮地跨端导航到 Knowledge 主 Tab，兼容不同设备的 UI 表现形式（TabBar / Sidebar 等），消除多处重复代码
+    /// 统一、健壮地跨端导航到 Knowledge 主 Tab，兼容不同设备的 UI 表现形式（TabBar / Sidebar 等），消除多处重复代码
     func navigateToKnowledgeTab() async {
         let iphoneTab = app.tabBars.buttons["Knowledge"].exists ? app.tabBars.buttons["Knowledge"] : app.tabBars.buttons["知识"]
         if iphoneTab.exists {
@@ -311,8 +311,8 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadTabNavigation() async {
-        // 函数头说明: 测试 iPad 侧边栏导航切换的完备性与高精度 UI 定位
-        // - 验证点: 通过精确查找 "SidebarTab_\(tab)" 标识符模拟用户点击，彻底消除大屏模式下 Tab 导航的覆盖死角
+        /// 函数头说明: 测试 iPad 侧边栏导航切换的完备性与高精度 UI 定位
+        /// - 验证点: 通过精确查找 "SidebarTab_\(tab)" 标识符模拟用户点击，彻底消除大屏模式下 Tab 导航的覆盖死角
         let tabs = ["knowledge", "chat", "ingest", "synthesis", "graph"]
 
         for tab in tabs {
@@ -331,7 +331,7 @@ final class iPadTests: ZhiYuPlatformUITests {
         }
     }
     
-    // 测试在 iPad/Mac 大屏模式下点击侧边栏“任务中心”入口的响应
+    /// 测试在 iPad/Mac 大屏模式下点击侧边栏“任务中心”入口的响应
     func testiPadSidebarTaskCenterNavigation() async {
         guard UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .mac else {
             return
@@ -350,9 +350,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadBreadcrumbNavigation() async {
-        // 函数头说明: 测试 iPad 空间导航面包屑 (BreadcrumbView) 组件的交互与回溯表现
-        // - 验证点: 1. 在深度进入知识页面后，面包屑组件 `BreadcrumbNavigation` 应该成功展示在屏幕顶部；
-        //          2. 寻找第 0 个面包屑节点 `BreadcrumbItem_0` 并尝试点击，验证其能够正常回溯交互。
+        /// 函数头说明: 测试 iPad 空间导航面包屑 (BreadcrumbView) 组件的交互与回溯表现
+        /// - 验证点: 1. 在深度进入知识页面后，面包屑组件 `BreadcrumbNavigation` 应该成功展示在屏幕顶部；
+        ///          2. 寻找第 0 个面包屑节点 `BreadcrumbItem_0` 并尝试点击，验证其能够正常回溯交互。
         
         await navigateToKnowledgeTab()
         
@@ -415,9 +415,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadKeyboardShortcuts() async {
-        // 函数头说明: 模拟 iPad 实体键盘 Cmd+K 快捷组合键并验证命令面板弹出生命周期
-        // - 验证点: 1. 按下 Cmd+K 能否正常唤起 CommandPaletteView 面板；
-        //          2. 按下 Escape 键能否成功关闭该面板。
+        /// 函数头说明: 模拟 iPad 实体键盘 Cmd+K 快捷组合键并验证命令面板弹出生命周期
+        /// - 验证点: 1. 按下 Cmd+K 能否正常唤起 CommandPaletteView 面板；
+        ///          2. 按下 Escape 键能否成功关闭该面板。
         await navigateToKnowledgeTab()
         
         // 1. 使用 XCUITest 的 typeKey 接口真正模拟按下 Command + K 键
@@ -446,9 +446,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadSplitViewSidebarLinkage() async {
-        // 函数头说明: 测试 iPad SplitView 侧边栏折叠/展开与选定 Tab 的动态联动可见性逻辑
-        // - 验证点: 1. 切换至知识库 (.knowledge) Tab 时，侧边栏自动展开为 doubleColumn 并处于可交互状态；
-        //          2. 切换至其他功能（如设置 .settings）时，侧边栏自动收折为 detailOnly 状态。
+        /// 函数头说明: 测试 iPad SplitView 侧边栏折叠/展开与选定 Tab 的动态联动可见性逻辑
+        /// - 验证点: 1. 切换至知识库 (.knowledge) Tab 时，侧边栏自动展开为 doubleColumn 并处于可交互状态；
+        ///          2. 切换至其他功能（如设置 .settings）时，侧边栏自动收折为 detailOnly 状态。
         
         // 1. 切换至知识宇宙主视图
         await navigateToKnowledgeTab()
@@ -472,9 +472,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadPerformanceDashboardToggle() async {
-        // 函数头说明: 测试 iPad 性能监控仪表盘（Performance Dashboard）的弹出和多层可观察状态转发的完整链路
-        // - 验证点: 1. 在开发者设置页面，切换性能仪表盘 Toggle 后，仪表盘 Sheet 能够正常展现在屏幕上；
-        //          2. 再次关闭 Toggle 后，仪表盘 Sheet 正常收折。
+        /// 函数头说明: 测试 iPad 性能监控仪表盘（Performance Dashboard）的弹出和多层可观察状态转发的完整链路
+        /// - 验证点: 1. 在开发者设置页面，切换性能仪表盘 Toggle 后，仪表盘 Sheet 能够正常展现在屏幕上；
+        ///          2. 再次关闭 Toggle 后，仪表盘 Sheet 正常收折。
         
         // 1. 导航切换至 Settings (设置) 页面
         let settingsTab = app.tabBars.buttons["Settings"].exists ? app.tabBars.buttons["Settings"] : app.tabBars.buttons["设置"]
@@ -522,7 +522,13 @@ final class iPadTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class MacCatalystTests: ZhiYuPlatformUITests {
 
-    // 验证 Mac 菜单栏存在（仅 macCatalyst 环境）
+    override func setUp() async throws {
+        try await super.setUp()
+        // async throws setUp 中 throw XCTSkip 在部分 XCTest 版本无法可靠阻止异步方法执行
+        // 跳过逻辑改为在每个测试方法内部通过 XCTSkipUnless 实现
+    }
+
+    /// 验证 Mac 菜单栏存在（仅 macCatalyst 环境）
     func testMacMenuBarExists() throws {
         // 非 Mac Catalyst 环境下跳过
         try XCTSkipUnless(ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp,
@@ -551,7 +557,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         }
     }
 
-    // 测试 Mac 键盘快捷键支持（仅 macCatalyst 环境）
+    /// 测试 Mac 键盘快捷键支持（仅 macCatalyst 环境）
     func testMacKeyboardShortcuts() async throws {
         // 非 Mac Catalyst 环境下跳过
         try XCTSkipUnless(ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp,
@@ -575,6 +581,7 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         app.typeText("f")
         try await Task.sleep(nanoseconds: UInt64(500_000_000))
     }
+
 
     func testMacMouseInteractions() async {
         // Mac 应该支持鼠标悬停
@@ -687,9 +694,9 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class ResponsiveLayoutTests: ZhiYuPlatformUITests {
 
-    // 测试屏幕方向旋转切换时的响应式布局适配
-    // - Note: 由于 iPhone 模拟器在 XCTest 控制下强制改变 orientation 容易发生 unexpected exit 异常退出，
-    //         以及 iPhone 竖屏通常不支持此类旋转，此测试仅在 iPad 设备上执行，非 iPad 平台将优雅 Skip。
+    /// 测试屏幕方向旋转切换时的响应式布局适配
+    /// - Note: 由于 iPhone 模拟器在 XCTest 控制下强制改变 orientation 容易发生 unexpected exit 异常退出，
+    ///         以及 iPhone 竖屏通常不支持此类旋转，此测试仅在 iPad 设备上执行，非 iPad 平台将优雅 Skip。
     func testOrientationChange() async throws {
         // 测试横竖屏切换（仅支持 iPad 平台）
         guard currentPlatform == "iPad" else {
@@ -762,8 +769,8 @@ final class AccessibilityTests: ZhiYuPlatformUITests {
         }
     }
 
-    // 测试系统 Dynamic Type 动态字体支持情况下的界面文本可访问性
-    // 确保文本元素（StaticTexts）能够正常渲染并具备非空内容，满足无障碍阅读要求
+    /// 测试系统 Dynamic Type 动态字体支持情况下的界面文本可访问性
+    /// 确保文本元素（StaticTexts）能够正常渲染并具备非空内容，满足无障碍阅读要求
     func testDynamicType() async {
         // 导航至知识宇宙主 Tab 页面
         await navigateToKnowledgeTab()

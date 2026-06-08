@@ -17,8 +17,7 @@ struct SplashBackgroundView: View {
     let nodeGlow: Bool
 
     // 预生成的随机数据
-    private struct StarConfig { let x: CGFloat; let y: CGFloat; let size: CGFloat; let delay: Double }
-    private let stars: [StarConfig] = [
+    private let stars: [(x: CGFloat, y: CGFloat, size: CGFloat, delay: Double)] = [
         (0.12, 0.08, 1.5, 0.0), (0.85, 0.05, 1.0, 0.3), (0.45, 0.12, 2.0, 0.6),
         (0.72, 0.18, 1.2, 0.2), (0.28, 0.22, 1.8, 0.8), (0.93, 0.25, 1.0, 0.1),
         (0.08, 0.30, 1.5, 0.5), (0.55, 0.08, 1.3, 0.7), (0.38, 0.28, 1.0, 0.4),
@@ -28,18 +27,17 @@ struct SplashBackgroundView: View {
         (0.75, 0.55, 1.2, 0.05), (0.22, 0.62, 1.0, 0.95), (0.88, 0.62, 1.8, 0.38),
         (0.15, 0.68, 1.5, 0.58), (0.58, 0.42, 1.0, 0.18), (0.35, 0.72, 2.0, 0.78),
         (0.82, 0.72, 1.3, 0.28), (0.48, 0.68, 1.0, 0.48), (0.68, 0.48, 1.5, 0.68),
-        (0.10, 0.78, 1.2, 0.88), (0.92, 0.82, 1.0, 0.08), (0.40, 0.82, 1.8, 0.42)
+        (0.10, 0.78, 1.2, 0.88), (0.92, 0.82, 1.0, 0.08), (0.40, 0.82, 1.8, 0.42),
     ]
 
     // 神经网络节点位置
-    private struct NetworkNodeConfig { let x: CGFloat; let y: CGFloat; let size: CGFloat; let isAccent: Bool }
-    private let networkNodes: [NetworkNodeConfig] = [
-        (0.20, 0.15, 5, false), (0.40, 0.10, 6, true), (0.60, 0.18, 5, false),
+    private let networkNodes: [(x: CGFloat, y: CGFloat, size: CGFloat, isAccent: Bool)] = [
+        (0.20, 0.15, 5, false), (0.40, 0.10, 6, true),  (0.60, 0.18, 5, false),
         (0.80, 0.12, 4, false), (0.15, 0.30, 4, false), (0.35, 0.28, 7, true),
-        (0.55, 0.25, 5, false), (0.75, 0.30, 6, true), (0.90, 0.22, 4, false),
-        (0.25, 0.45, 5, false), (0.50, 0.40, 8, true), (0.70, 0.42, 5, false),
+        (0.55, 0.25, 5, false), (0.75, 0.30, 6, true),  (0.90, 0.22, 4, false),
+        (0.25, 0.45, 5, false), (0.50, 0.40, 8, true),  (0.70, 0.42, 5, false),
         (0.10, 0.50, 4, false), (0.85, 0.48, 5, false), (0.30, 0.55, 6, true),
-        (0.60, 0.52, 4, false), (0.80, 0.55, 5, false), (0.45, 0.60, 7, true)
+        (0.60, 0.52, 4, false), (0.80, 0.55, 5, false), (0.45, 0.60, 7, true),
     ]
 
     // 网络连接线
@@ -47,7 +45,7 @@ struct SplashBackgroundView: View {
         (0, 1), (1, 2), (2, 3), (0, 4), (1, 5), (2, 6), (3, 7), (8, 7),
         (4, 5), (5, 6), (6, 7), (5, 10), (6, 10), (9, 10), (10, 11),
         (4, 9), (9, 14), (10, 15), (11, 16), (14, 17), (15, 17),
-        (12, 9), (13, 16), (8, 5), (1, 6), (5, 10), (10, 17)
+        (12, 9), (13, 16), (8, 5), (1, 6), (5, 10), (10, 17),
     ]
 
     var body: some View {
@@ -61,7 +59,7 @@ struct SplashBackgroundView: View {
                     .init(color: Color(red: 0.10, green: 0.12, blue: 0.30), location: 0.7),
                     .init(color: Color(red: 0.12, green: 0.10, blue: 0.22), location: 0.85),
                     .init(color: Color(red: 0.18, green: 0.12, blue: 0.15), location: 0.95),
-                    .init(color: Color(red: 0.25, green: 0.15, blue: 0.10), location: 1.0)
+                    .init(color: Color(red: 0.25, green: 0.15, blue: 0.10), location: 1.0),
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -70,7 +68,7 @@ struct SplashBackgroundView: View {
             // 星星层
             GeometryReader { geo in
                 if geo.size.width > 1 && geo.size.height > 1 {
-                    ForEach(Array(stars.enumerated()), id: \.offset) { _, star in
+                    ForEach(Array(stars.enumerated()), id: \.offset) { index, star in
                         Circle()
                             .fill(.appGloss)
                             .frame(width: star.size, height: star.size)

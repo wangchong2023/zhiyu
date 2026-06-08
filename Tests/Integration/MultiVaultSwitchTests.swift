@@ -111,15 +111,14 @@ final class MultiVaultSwitchTests: XCTestCase {
         let localVaultA = vaultAID
         let localVaultB = vaultBID
         let localVaultC = vaultCID
-        guard let localDbA = dbAURL else { XCTFail("dbAURL is nil"); return }
-        guard let localDbB = dbBURL else { XCTFail("dbBURL is nil"); return }
-        guard let localDbC = dbCURL else { XCTFail("dbCURL is nil"); return }
+        let localDbA = dbAURL!
+        let localDbB = dbBURL!
+        let localDbC = dbCURL!
         
         await withTaskGroup(of: Void.self) { group in
             for i in 0..<concurrencyLevel {
                 group.addTask {
-                    struct VaultTarget { let id: UUID; let url: URL; let title: String }
-        let targets: [VaultTarget] = [
+                    let targets: [(id: UUID, url: URL, title: String)] = [
                         (localVaultA, localDbA, "PageA"),
                         (localVaultB, localDbB, "PageB"),
                         (localVaultC, localDbC, "PageC")
@@ -219,7 +218,7 @@ final class MultiVaultSwitchTests: XCTestCase {
 }
 
 // MARK: - 存储模块依赖重装工具
-private enum StorageModuleRegistrar {
+fileprivate enum StorageModuleRegistrar {
     /// 动态热重装 DI 容器中的持久化仓储服务
     @MainActor
     static func register(in container: ServiceContainer) {

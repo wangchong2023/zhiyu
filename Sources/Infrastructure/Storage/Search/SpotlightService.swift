@@ -45,3 +45,4 @@ final class SpotlightService {
         indexer.reindexAll(pages: pages)
     }
 }
+

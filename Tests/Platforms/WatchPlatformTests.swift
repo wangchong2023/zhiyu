@@ -112,12 +112,10 @@ final class WatchPlatformTests: XCTestCase {
         let getURL = service.getPDFURL(fileName: "test.pdf")
         XCTAssertNil(getURL, "watchOS PDF 存根获取 URL 应该返回 nil")
         
-        guard let url = url else { XCTFail("url is nil"); return }
-                let text1 = await service.extractText(from: url)
+        let text1 = await service.extractText(from: url!)
         XCTAssertNil(text1, "watchOS PDF 存根提取文本应该返回 nil")
         
-        guard let url2 = url else { XCTFail("url is nil"); return }
-                let text2 = await service.extractText(from: url2, pageRange: 0..<1)
+        let text2 = await service.extractText(from: url!, pageRange: 0..<1)
         XCTAssertNil(text2, "watchOS PDF 存根提取分页文本应该返回 nil")
         
         // 验证 saveDocumentsInfo 和 loadDocumentsInfo
@@ -192,3 +190,4 @@ private final class MockLAContext: LAContext {
         reply(mockEvaluatePolicyResult, nil)
     }
 }
+

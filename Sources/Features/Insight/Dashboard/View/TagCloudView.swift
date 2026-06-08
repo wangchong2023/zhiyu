@@ -18,7 +18,7 @@ import AppKit
 /// 标签管理的顶层视图容器，负责承载主内容
 struct TagCloudView: View {
     /// 初始选中的标签（由外部跳转传入）
-    var initialTag: String?
+    var initialTag: String? = nil
     
     var body: some View {
         TagCloudViewContent(initialTag: initialTag)
@@ -185,7 +185,7 @@ struct TagCloudViewContent: View {
                         iconColor: .appSource
                     )
                     Spacer()
-                    if coordinator != nil {
+                    if let _ = coordinator.selectedTag, !coordinator.isEditMode {
                         Text(L10n.Tag.Action.tagPages(coordinator.filteredPages.count))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
@@ -204,6 +204,7 @@ struct TagCloudViewContent: View {
             Spacer(minLength: 0)
         }
     }
+
 
     // MARK: - 子视图组件
 
@@ -415,3 +416,5 @@ struct BlurView: View {
     }
 }
 #endif
+
+

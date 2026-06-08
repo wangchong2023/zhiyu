@@ -176,9 +176,8 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     // MARK: - 统计与系统
 
-    // 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
-    // - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
-    // swiftlint:disable:next large_tuple
+    /// 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
+    /// - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         let (dbPath, globalDBPath) = await MainActor.run {
             (DatabaseManager.shared.dbURL?.path ?? "", DatabaseManager.shared.globalDBURL?.path ?? "")
@@ -240,8 +239,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     /// 填充默认引导内容
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        struct SeedPage { let title: String; let type: PageType; let content: String; let tags: [String] }
-        let pagesToCreate: [SeedPage] = [
+        let pagesToCreate: [(String, PageType, String, [String])] = [
             (L10n.Common.Demo.Welcome.title, .concept, L10n.Common.Demo.Welcome.content, [L10n.Common.Demo.Welcome.tag1, L10n.Common.Demo.Welcome.tag2, L10n.Common.Demo.Welcome.tag3]),
             (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content, ["AI", "Agent"]),
             (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content, ["AI", "Planning"]),
@@ -269,8 +267,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
 
 extension SQLiteStore {
 
-    // any创建Page
-    // swiftlint:disable:next function_parameter_count
+    /// any创建Page
     public func anyCreatePage(
         title: String,
         pageType: PageType,

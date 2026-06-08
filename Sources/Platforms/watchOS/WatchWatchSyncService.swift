@@ -16,12 +16,12 @@ import Combine
 /// watchOS 端同步实现
 final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate {
     @Published var lastReceivedText: String = ""
-    @Published var latestBriefing: String?
+    @Published var latestBriefing: String? = nil
     @Published var isBriefingLoading: Bool = false
     
     #if DEBUG
     /// 仅限单元测试模拟使用的激活状态插桩，绕过模拟器测试时 session 激活受限的问题
-    var mockActivationState: WCSessionActivationState?
+    var mockActivationState: WCSessionActivationState? = nil
     #endif
     
     override init() {
@@ -43,7 +43,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         let activationState = session.activationState
         #endif
         guard activationState == .activated else { return }
-        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String: Any]
+        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
         session.transferUserInfo(userInfo)
     }
     
@@ -145,7 +145,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
             return
         }
         
-        let userInfo = ["type": "request_briefing"] as [String: Any]
+        let userInfo = ["type": "request_briefing"] as [String : Any]
         session.transferUserInfo(userInfo)
     }
     
@@ -163,7 +163,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     /// - Parameter session: session
     /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if error != nil {
+        if let _ = error {
             Logger.shared.error("WatchSync_Anomaly2")
         } else if activationState == .activated {
             let delegate = session.delegate as? WatchWatchSyncService
@@ -175,7 +175,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     
     /// session回调
     /// - Parameter session: session
-    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         let type = userInfo["type"] as? String
         let contentStr = userInfo["content"] as? String
         

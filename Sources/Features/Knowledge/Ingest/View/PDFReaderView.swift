@@ -92,7 +92,7 @@ struct PDFLibraryView: View {
             let fileName = "\(UUID().uuidString).pdf"
 
             Task {
-                if await != nil {
+                if let _ = await ingestStore.savePDFDocument(data: data, fileName: fileName) {
                     let pdfDoc = PDFKit.PDFDocument(data: data)
                     let docInfo = PDFDocumentInfo(
                         title: url.deletingPathExtension().lastPathComponent,

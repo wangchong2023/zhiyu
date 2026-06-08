@@ -229,7 +229,10 @@
       "Bash(/usr/bin/python3 *)",
       "Bash(sed -n '166p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Plugins/PluginMarketServiceTests.swift)",
       "Bash(sed -n '195p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)",
-      "Bash(sed -n '359p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)"
+      "Bash(sed -n '359p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)",
+      "Bash(sed -n '50,55p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Domain/Knowledge/LWWSyncConflictResolver.swift)",
+      "Bash(sed -n '236,240p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Core/Base/Utils/Localized.swift)",
+      "Bash(sed -n '93,97p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/Knowledge/Ingest/View/PDFReaderView.swift)"
     ]
   }
 }

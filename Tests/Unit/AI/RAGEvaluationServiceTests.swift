@@ -39,7 +39,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     /// 验证当 LLM 裁判给出高分时，报告被正确划归为 "Pass" 状态，并成功落入 SQLite 数据库
     func testEvaluationPassStatusAndPersistence() async throws {
         // 1. 模拟裁判输出合格的高分 JSON 字符串
-        mockLLM.generateHandler = { _, systemPrompt in
+        mockLLM.generateHandler = { prompt, systemPrompt in
             XCTAssertTrue(systemPrompt.contains("Judge"))
             return """
             {
@@ -81,7 +81,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     
     /// 验证当 LLM 裁判给出中等分数时，报告被正确划归为 "Warning" 状态
     func testEvaluationWarningStatus() async {
-        mockLLM.generateHandler = { _, _ in
+        mockLLM.generateHandler = { prompt, systemPrompt in
             return """
             {
                 "faithfulness": 0.65,
@@ -101,7 +101,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     
     /// 验证当 LLM 裁判给出极低分数时，报告被正确标记为 "Fail" 状态
     func testEvaluationFailStatus() async {
-        mockLLM.generateHandler = { _, _ in
+        mockLLM.generateHandler = { prompt, systemPrompt in
             return """
             {
                 "faithfulness": 0.35,
@@ -122,7 +122,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     /// 验证当 LLM 损坏输出或超时时，评估服务能够平稳拦截异常，优雅降级为 0 分 error 报告
     func testEvaluationDegradedOnInvalidJSON() async {
         // 模拟 LLM 发生网络中断或输出乱码，非有效 JSON
-        mockLLM.generateHandler = { _, _ in
+        mockLLM.generateHandler = { prompt, systemPrompt in
             return "Server Timeout, Raw HTML error..."
         }
         
@@ -153,7 +153,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     
     /// 验证当 LLM 裁判返回的 JSON 中缺少部分指标字段时，评估服务能够平稳使用 0.0 兜底，并成功生成报告并持久化
     func testEvaluationMissingJSONKeys() async {
-        mockLLM.generateHandler = { _, _ in
+        mockLLM.generateHandler = { prompt, systemPrompt in
             return "{}"
         }
         

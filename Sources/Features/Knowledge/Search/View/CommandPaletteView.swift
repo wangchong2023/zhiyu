@@ -90,7 +90,7 @@ struct CommandPaletteView: View {
 private struct CommandRow: View {
     let icon: String
     let title: String
-    var shortcut: String?
+    var shortcut: String? = nil
     let action: () -> Void
     
     var body: some View {

@@ -80,7 +80,7 @@ public final class AppStore {
     }
 
     // ── UI 状态 ──
-    public var pendingCoachMark: CoachMarkType?
+    public var pendingCoachMark: CoachMarkType? = nil
     
     // ── 转发指标 (由 KnowledgeStore 持有，@Observable 自动追踪) ──
     public var pages: [KnowledgePage] { knowledgeStore.pages }
@@ -442,8 +442,7 @@ extension AppStore: AnyPageStore {
         await knowledgeStore.refresh()
     }
 
-    // 创建Page
-    // swiftlint:disable:next function_parameter_count
+    /// 创建Page
     public func createPage(
         title: String,
         pageType: PageType,
@@ -468,7 +467,6 @@ extension AppStore: AnyPageStore {
         )
     }
 
-    // swiftlint:disable:next function_parameter_count
     /// any创建Page
     public func anyCreatePage(
         title: String,
@@ -541,9 +539,8 @@ extension AppStore: AnyPageStore {
         await knowledgeStore.seedDefaultContent()
     }
 
-    // 获取StorageStats
-    // - Returns: 返回值
-    // swiftlint:disable:next large_tuple
+    /// 获取StorageStats
+    /// - Returns: 返回值
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         await pageStore.getStorageStats()
     }

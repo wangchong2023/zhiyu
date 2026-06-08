@@ -53,3 +53,4 @@ public protocol EmbeddingProvider: Sendable {
     /// 物理清空内存向量缓存并重载
     func clearCacheAndReload() async
 }
+

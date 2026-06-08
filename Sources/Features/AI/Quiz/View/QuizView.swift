@@ -37,7 +37,7 @@ struct QuizView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentIndex = 0
-    @State private var selectedOption: Int?
+    @State private var selectedOption: Int? = nil
     @State private var showResult = false
     @State private var score = 0
     @State private var isCompleted = false

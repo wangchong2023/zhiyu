@@ -176,3 +176,4 @@ final class VaultSecurityTests: XCTestCase {
         XCTAssertTrue(vault.isLocked, "解锁失败后，金库仍应处于锁定状态")
     }
 }
+

@@ -29,7 +29,7 @@ extension GraphLayoutProcessor {
         nodes: [GraphNode],
         edges: [GraphEdge],
         pages: [KnowledgePage]
-    ) -> GraphInsightResult {
+    ) -> (surprising: [UUID], orphans: [UUID], sparse: [UUID], bridges: [UUID]) {
         // 性能优化：建立节点查找索引
         let nodeMap = Dictionary(uniqueKeysWithValues: nodes.map { ($0.id, $0) })
 

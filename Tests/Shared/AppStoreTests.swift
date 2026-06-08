@@ -32,7 +32,7 @@ final class AppStoreTests: XCTestCase {
     
     func testPageCreation() async {
         let initialCount = store.totalPages
-        _ = await store.createPage(title: "Test Page", pageType: .concept, content: "Test Content")
+        let _ = await store.createPage(title: "Test Page", pageType: .concept, content: "Test Content")
         
         // Wait for ValueObservation
         try? await Task.sleep(nanoseconds: 200_000_000)
@@ -58,7 +58,7 @@ final class AppStoreTests: XCTestCase {
     }
     
     func testTagManagement() async {
-        _ = await store.createPage(title: "Tag Test", pageType: .concept, tags: ["OldTag"])
+        let _ = await store.createPage(title: "Tag Test", pageType: .concept, tags: ["OldTag"])
         
         // Wait for ValueObservation
         try? await Task.sleep(nanoseconds: 200_000_000)

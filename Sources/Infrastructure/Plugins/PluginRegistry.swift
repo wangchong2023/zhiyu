@@ -318,7 +318,7 @@ final class PluginRegistry: ObservableObject {
         // 匹配策略：pluginID 或 ID 的部分匹配文件名
         let patterns = [
             "\(pluginID).zyplugin",
-            "\(pluginID).js"
+            "\(pluginID).js",
         ]
 
         for pattern in patterns {

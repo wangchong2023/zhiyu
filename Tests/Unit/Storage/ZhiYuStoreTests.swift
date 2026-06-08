@@ -139,6 +139,8 @@ final class LLMConfigStoreTests: XCTestCase {
         XCTAssertTrue(restored.isEnabled)
         #endif
     }
+
+    
     /// 验证所有 AI 服务提供商的模型图标与文案配置无误
     func testAllProviderDefaults() {
         for provider in LLMProvider.allCases {

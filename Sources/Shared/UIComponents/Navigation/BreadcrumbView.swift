@@ -61,3 +61,4 @@ struct BreadcrumbView: View {
         onNavigate(page.id)
     }
 }
+

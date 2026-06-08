@@ -162,8 +162,10 @@ actor IngestService {
     /// - Returns: 识别到的现有知识标题字符串列表
     func extractConcepts(from content: String, pages: [KnowledgePage]) -> [String] {
         var found: [String] = []
-        for page in pages where content.lowercased().contains(page.title.lowercased()) {
+        for page in pages {
+            if content.lowercased().contains(page.title.lowercased()) {
                 found.append(page.title)
+            }
         }
         return found
     }

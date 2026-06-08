@@ -35,7 +35,7 @@ final class IngestCoordinator {
     var newTitle = ""
     var newContent = ""
     var newType: PageType = .source
-    var newCustomIcon: String?
+    var newCustomIcon: String? = nil
     var newURL = ""
     var useSmartIngest = false
 
@@ -92,13 +92,13 @@ final class IngestCoordinator {
     func handleFileImport(_ result: Result<[URL], Error>) {
         if case .success(let urls) = result {
             for url in urls {
-                _ = url.startAccessingSecurityScopedResource()
+                let _ = url.startAccessingSecurityScopedResource()
                 let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: url.lastPathComponent)
                 Task {
                     defer { url.stopAccessingSecurityScopedResource() }
                     let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
                     await MainActor.run {
-                        if page != nil {
+                        if let _ = page {
                             TaskCenter.shared.updateTask(taskID, status: .completed)
                             HapticFeedback.shared.trigger(.success)
                         } else {
@@ -126,7 +126,7 @@ final class IngestCoordinator {
         Task {
             let page = try? await store.ingestService.ingestURL(urlString: url.absoluteString, pageStore: store)
             await MainActor.run {
-                if page != nil {
+                if let _ = page {
                     TaskCenter.shared.updateTask(taskID, status: .completed)
                     HapticFeedback.shared.trigger(.success)
                     self.newURL = ""

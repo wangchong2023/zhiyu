@@ -81,8 +81,7 @@ final class LocalizationTests: XCTestCase {
     
     /// 自动化全量审计：动态遍历所有 L10n 模块并验证 Key 的存在性
     func testComprehensiveLocalizationAudit() {
-        struct L10nModule { let name: String; let table: String; let keys: [String] }
-        let modules: [L10nModule] = [
+        let modules: [(name: String, table: String, keys: [String])] = [
             ("Common", "Common", ["ok", "cancel", "done"]),
             ("Settings", "Settings", ["aboutApp", "version", "section.about"]),
             ("Chat", "Chat", ["chat.title", "inputPlaceholder"]),
@@ -117,3 +116,4 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(missingKeys.isEmpty, "以下本地化 Key 缺失或未在对应的表中定义: \n\(missingKeys.joined(separator: "\n"))")
     }
 }
+

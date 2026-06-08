@@ -25,14 +25,6 @@ private enum WidgetMetrics {
 }
 
 // MARK: - Timeline Entry
-
-/// Widget 最近更新页面条目
-struct RecentPageEntry {
-    let title: String
-    let typeName: String
-    let colorName: String
-}
-
 /// 桌面静态小组件的时间线实体
 struct KnowledgeStatsEntry: TimelineEntry {
     let date: Date
@@ -40,7 +32,7 @@ struct KnowledgeStatsEntry: TimelineEntry {
     let pageCount: Int
     let linkCount: Int
     let tagCount: Int
-    let lastUpdatedPages: [RecentPageEntry]
+    let lastUpdatedPages: [(title: String, typeName: String, colorName: String)]
 }
 
 // MARK: - Timeline Provider
@@ -80,9 +72,9 @@ struct KnowledgeStatsProvider: TimelineProvider {
             linkCount: AppConstants.Demo.mockLinkCount,
             tagCount: AppConstants.Demo.mockTagCount,
             lastUpdatedPages: [
-                RecentPageEntry(title: "Planning (Concept)", typeName: "concept", colorName: "accent"),
-                RecentPageEntry(title: "Memory (Concept)", typeName: "concept", colorName: "accent"),
-                RecentPageEntry(title: WidgetL10n.vaultName, typeName: "entity", colorName: "purple")
+                ("Planning (Concept)", "concept", "accent"),
+                ("Memory (Concept)", "concept", "accent"),
+                (WidgetL10n.vaultName, "entity", "purple")
             ]
         )
     }

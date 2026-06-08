@@ -235,7 +235,7 @@ final class IngestStore {
     }
 
     /// 处理文件导入流程（含提取与安全校验）
-    func handleFileUpload(at url: URL) async throws -> FileUploadResult {
+    func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
         guard url.startAccessingSecurityScopedResource() else {
             throw AppError.ingest("Permission denied", code: 1)
         }

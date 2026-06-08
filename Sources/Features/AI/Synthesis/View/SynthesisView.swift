@@ -40,7 +40,7 @@ struct SynthesisView: View {
     @State private var showClearAllConfirm = false
     @State private var showBatchDeleteConfirm = false
     @State private var showLLMAlert = false
-    @State private var selectedFilterType: SynthesisStore.SynthesisType?
+    @State private var selectedFilterType: SynthesisStore.SynthesisType? = nil
 
     var body: some View {
         @Bindable var synthesisStore = synthesisStore
@@ -491,8 +491,7 @@ struct SynthesisView: View {
 // MARK: - 辅助扩展：解耦 View Presentations
 extension View {
 
-    // synthesisViewPresentations
-    // swiftlint:disable:next function_parameter_count
+    /// synthesisViewPresentations
     func synthesisViewPresentations(
         showOutput: Binding<Bool>,
         pdfURL: Binding<IdentifiableURL?>,
@@ -530,7 +529,6 @@ extension View {
                 batchDelete: batchDelete
             )
     }
-    // swiftlint:disable:next function_parameter_count
 
     private func synthesisAlerts(
         showNoPagesAlert: Binding<Bool>,

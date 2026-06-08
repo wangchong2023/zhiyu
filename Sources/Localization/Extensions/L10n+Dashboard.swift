@@ -205,6 +205,7 @@ extension L10n {
             }
         }
 
+
         public struct index {
             public static var title: String { Localized.tr("dashboard.index.title", table: t) }
             public static var overview: String { Localized.tr("dashboard.index.overview", table: t) }

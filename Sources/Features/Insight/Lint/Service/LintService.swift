@@ -121,7 +121,8 @@ public final class LintService: @unchecked Sendable {
     private func checkBrokenLinks(pages: [KnowledgePage], titleMap: [String: KnowledgePage]) -> [LintIssue] {
         var issues: [LintIssue] = []
         for page in pages {
-            for link in page.outgoingLinks where titleMap[link.lowercased()] == nil {
+            for link in page.outgoingLinks {
+                if titleMap[link.lowercased()] == nil {
                     issues.append(LintIssue(
                         severity: .error,
                         type: .brokenLink,
@@ -129,6 +130,7 @@ public final class LintService: @unchecked Sendable {
                         message: String(format: L10n.Lint.brokenLink, page.title, link),
                         suggestion: String(format: L10n.Lint.brokenLinkSuggestion, link)
                     ))
+                }
             }
         }
         return issues

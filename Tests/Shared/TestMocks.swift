@@ -23,7 +23,6 @@ import LocalAuthentication
 final class MockLogger: LoggerProtocol, @unchecked Sendable {
     var logEntries: [LogEntry] = []
     var logEntriesPublisher: AnyPublisher<[LogEntry], Never> { Just([]).eraseToAnyPublisher() }
-    // swiftlint:disable:next function_parameter_count
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?) {}
     func debug(_ message: String, file: String, function: String, line: Int) {}
     func info(_ message: String, file: String, function: String, line: Int) {}
@@ -156,6 +155,7 @@ final class MockOnDeviceLLMService: OnDeviceLLMServiceProtocol, @unchecked Senda
 }
 #endif
 
+
 // MARK: - Mock Biometric Auth Provider
 
 /// 模拟的生物识别提供商，用于测试环境下的认证操作
@@ -219,7 +219,6 @@ final class MockReminderService: ReminderServiceProtocol, @unchecked Sendable {
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
-    // swiftlint:disable:next function_body_length
     func setupFullMockEnvironment() {
         // 注意：不调用 ServiceContainer.shared.reset() — register() 本身会覆盖已有注册。
         // reset() 会清空 AppEnvironment.init() 建立的完整 DI 链，导致 @Inject 解析崩溃。
@@ -310,6 +309,7 @@ extension XCTestCase {
         let mockVectorStore = MockVectorIndexableStore(embeddingProvider: embeddingManager)
         ServiceContainer.shared.register(mockVectorStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
 
+        
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
         // LLMContextBuilder 通过具体类型解析，需注册双重绑定以覆盖 resolve(KnowledgePageRepository.self) (@DIP)

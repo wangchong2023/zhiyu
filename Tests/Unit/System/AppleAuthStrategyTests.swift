@@ -32,7 +32,7 @@ final class AppleAuthStrategyTests: XCTestCase {
 
     func testAcquireCredentialsInitiatesAuthorization() async {
         do {
-            _ = try await strategy.acquireCredentials()
+            let _ = try await strategy.acquireCredentials()
             XCTFail("单元测试环境无 Apple ID 授权 UI，应抛出错误")
         } catch {
             XCTAssertNotNil(error, "应抛出 ASAuthorization 相关错误")

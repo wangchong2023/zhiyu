@@ -20,7 +20,7 @@ struct Graph3DView: View {
     @State private var scene: SCNScene?
     @State private var cameraDistance: Float = BusinessConstants.Graph.ThreeD.defaultCameraDistance
     @State private var autoRotate = false
-    @State private var filterType: PageType?
+    @State private var filterType: PageType? = nil
     @State private var showNodeInfo = false
     @State private var infoPage: KnowledgePage?
     @State private var cameraNode: SCNNode?
@@ -39,7 +39,7 @@ struct Graph3DView: View {
             TappableSceneView(scene: scene) { uuid in
                 handleNodeTap(uuid)
             }
-            .onChange(of: selectedNodeID) { _, _ in
+            .onChange(of: selectedNodeID) { oldValue, newValue in
                 buildScene()
             }
             

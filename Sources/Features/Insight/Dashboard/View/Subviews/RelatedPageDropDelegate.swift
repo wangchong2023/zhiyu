@@ -29,7 +29,7 @@ struct RelatedPageDropDelegate: DropDelegate {
     func dropEntered(info: DropInfo) {
         guard let fromItem = info.itemProviders(for: [.text]).first else { return }
         
-        fromItem.loadObject(ofClass: NSString.self) { (uuidString, _) in
+        fromItem.loadObject(ofClass: NSString.self) { (uuidString, error) in
             guard let uuidString = uuidString as? String,
                   let fromID = UUID(uuidString: uuidString),
                   fromID != item.id else { return }

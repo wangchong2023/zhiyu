@@ -176,8 +176,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         XCTAssertFalse(undoService.canUndo)
 
         // Redo v1 → v2
-        guard let afterUndo = afterUndo else { XCTFail("afterUndo is nil"); return }
-                let afterRedo = undoService.redo(currentPages: afterUndo)
+        let afterRedo = undoService.redo(currentPages: afterUndo!)
         XCTAssertEqual(afterRedo?.first?.title, "V2")
         XCTAssertTrue(undoService.canUndo)
         XCTAssertFalse(undoService.canRedo)
@@ -523,7 +522,7 @@ final class IngestPipelineTests: XCTestCase {
             ("data.xlsx", .xlsx),
             ("document.docx", .docx),
             ("unknown.xyz", .unknown),
-            ("UPPERCASE.MD", .markdown)
+            ("UPPERCASE.MD", .markdown),
         ]
 
         for (filename, expected) in testCases {

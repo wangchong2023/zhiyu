@@ -27,8 +27,7 @@ struct GraphLayoutProcessor {
         static let `default` = Config()
     }
 
-    // 对页面集合执行力导向布局，返回节点和边。
-    // swiftlint:disable:next cyclomatic_complexity
+    /// 对页面集合执行力导向布局，返回节点和边。
     static func layout(
         pages: [KnowledgePage],
         linkResolver: (String) -> KnowledgePage?,
@@ -81,10 +80,12 @@ struct GraphLayoutProcessor {
                 }
             }
             // 解析相关页面
-            for relatedID in page.relatedPageIDs where pageIDSet.contains(relatedID) {
+            for relatedID in page.relatedPageIDs {
+                if pageIDSet.contains(relatedID) {
                     let directed = DirectedEdge(source: page.id, target: relatedID)
                     if page.id != relatedID && edgeSet.insert(directed).inserted {
                         edges.append(GraphEdge(source: page.id, target: relatedID))
+                    }
                 }
             }
         }

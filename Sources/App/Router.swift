@@ -164,7 +164,7 @@ final class Router {
     var path = NavigationPath()
     
     /// 当前侧边栏选中项
-    var sidebarSelection: SidebarSelection? {
+    var sidebarSelection: SidebarSelection? = nil {
         didSet {
             // 每次侧边栏选中项发生变动（无论切换还是置空），均需将导航路径清空。
             // 这是为了防止在 iPadOS/Mac Catalyst 上，因详情页导航栈（NavigationPath）历史残留
@@ -218,7 +218,7 @@ final class Router {
     var navigationHistory: [KnowledgePage] = []
     
     /// 用于在跳转至 AI 对话时自动发送的预设提示词 (冷启动 Aha Moment)
-    var pendingInitialChatPrompt: String?
+    var pendingInitialChatPrompt: String? = nil
 
     /// 强制 UI 刷新标识（主要用于多语言切换）
     var languageForceUpdate: Bool = false

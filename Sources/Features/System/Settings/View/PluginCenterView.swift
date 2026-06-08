@@ -55,7 +55,7 @@ struct PluginCenterView: View {
                     await marketService.fetchPlugins()
                 }
 #if !os(watchOS)
-                .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { _ in
+                .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.item]) { result in
                     // 处理文件选择结果
                 }
 #endif
@@ -197,12 +197,12 @@ struct PluginCenterView: View {
 struct PluginCard: View {
     let name: String
     let version: String
-    var author: String?
-    var downloads: String?
-    var rating: Double?
+    var author: String? = nil
+    var downloads: String? = nil
+    var rating: Double? = nil
     var icon: String = "puzzlepiece.fill"
-    var pluginID: String?
-    var source: String?    // "local" / "remote" / "community"
+    var pluginID: String? = nil
+    var source: String? = nil    // "local" / "remote" / "community"
     var isLocal: Bool = false
 
     @State private var localIcon: UIImage?

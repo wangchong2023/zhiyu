@@ -50,9 +50,9 @@ final class JavaScriptPlugin: InterceptionPlugin {
         }
         
         // 1. 设置异常捕获器
-        ctx.exceptionHandler = { [weak self] ctx, exception in
+        ctx.exceptionHandler = { [weak self] c, exception in
             guard let self = self else { return }
-            if let context = ctx, let exception = exception {
+            if let c = c, let exception = exception {
                 c.exception = exception
             }
             Logger.shared.error(" [JSPlugin: \(self.manifest.id)] Exception: \(exception?.toString() ?? "unknown")", error: nil)
@@ -76,8 +76,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
         return try body(ctx)
     }
     
-    // 装配宿主为 JS 沙箱提供的标准 API 网关
-    // swiftlint:disable:next cyclomatic_complexity
+    /// 装配宿主为 JS 沙箱提供的标准 API 网关
     private func setupAPI(in context: JSContext) {
         guard let pluginCtx = self.pluginContext else { return }
         
@@ -142,7 +141,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
         let addEventListenerBlock: @convention(block) (String, String) -> Void = { [weak self] event, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                pluginCtx.addEventListener(event: event) { _ in
+                pluginCtx.addEventListener(event: event) { data in
                     try? self.executeInContext { ctx in
                         if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
                             jsFunc.call(withArguments: [])
@@ -310,3 +309,4 @@ final class JavaScriptPlugin: InterceptionPlugin {
 }
 
 #endif
+

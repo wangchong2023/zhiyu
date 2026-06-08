@@ -210,7 +210,6 @@ public final class AuthService: AuthServiceProtocol {
         }
     }
     
-    // swiftlint:disable:next cyclomatic_complexity
     private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
         #if DEBUG
         if isMockBackend {

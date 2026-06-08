@@ -171,3 +171,4 @@ final class KnowledgeRepositoryTests: XCTestCase {
         XCTAssertEqual(hybridResults.first?.title, "FTS5 全文搜索与向量检索的混合引擎")
     }
 }
+

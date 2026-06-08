@@ -126,8 +126,10 @@ struct AppLauncher {
             if CommandLine.arguments.contains("-ResetUserDefaults") {
                 let defaults = UserDefaults.standard
                 let keys = defaults.dictionaryRepresentation().keys
-                for key in keys where key.hasPrefix("seeded_vault_") {
+                for key in keys {
+                    if key.hasPrefix("seeded_vault_") {
                         defaults.removeObject(forKey: key)
+                    }
                 }
                 defaults.synchronize()
                 print(" [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
@@ -137,3 +139,4 @@ struct AppLauncher {
         }
     }
 }
+

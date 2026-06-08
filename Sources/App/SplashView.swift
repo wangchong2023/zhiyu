@@ -130,6 +130,7 @@ struct SplashView: View {
             logoOpacity = 1
         }
 
+        
         // 名言淡入
         DispatchQueue.main.asyncAfter(deadline: .now() + DesignSystem.Animation.Splash.quoteDelay) {
             withAnimation(.easeOut(duration: DesignSystem.Animation.looseDuration * 0.8)) {

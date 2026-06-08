@@ -40,7 +40,6 @@ public final class AppSyncOrchestrator: CloudSyncOrchestrator {
         }
         
         // 2. 拉取云端（容错：云端不存在则视为本地主权）
-    // swiftlint:disable:next large_tuple
         let remote: (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
         do {
             remote = try await provider.pull()

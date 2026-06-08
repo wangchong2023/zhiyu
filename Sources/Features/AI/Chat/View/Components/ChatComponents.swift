@@ -23,7 +23,7 @@ struct ChatBubbleView: View {
     
     var isSelectionMode: Bool = false
     var isSelected: Bool = false
-    var onRegenerate: (() -> Void)?
+    var onRegenerate: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: Spacing.medium) { // 12

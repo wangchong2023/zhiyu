@@ -230,7 +230,7 @@ final class LoggerTests: XCTestCase {
     override func tearDown() async throws {
         // 清理测试在沙盒目录产生的物理文件
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        if let docs = docs { _ = try? FileManager.default.removeItem(at: docs.appendingPathComponent("zhiyu_logs.json")) }
+        _ = try? FileManager.default.removeItem(at: docs!.appendingPathComponent("zhiyu_logs.json"))
         logService = nil
         try await super.tearDown()
     }

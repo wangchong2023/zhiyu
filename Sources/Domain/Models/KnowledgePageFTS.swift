@@ -10,6 +10,7 @@
 //
 import Foundation
 
+
 /// 全文搜索索引模型 (FTS5)
 public struct KnowledgePageFTS: Codable, Sendable {
     

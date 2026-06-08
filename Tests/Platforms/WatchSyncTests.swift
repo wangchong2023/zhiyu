@@ -192,8 +192,7 @@ final class WatchSyncTests: XCTestCase {
         let originalSize = 1024 * 1024 // 1MB
         var randomBytes = Data(count: originalSize)
         _ = randomBytes.withUnsafeMutableBytes {
-            guard let pointer = $0.baseAddress else { XCTFail("缓冲区指针为空"); return }
-            SecRandomCopyBytes(kSecRandomDefault, originalSize, pointer)
+            SecRandomCopyBytes(kSecRandomDefault, originalSize, $0.baseAddress!)
         }
         
         let chunks = AudioSplitter.split(data: randomBytes, chunkSize: 256 * 1024)
@@ -243,7 +242,7 @@ final class WatchSyncTests: XCTestCase {
     /// 验证规范中的 WatchSyncPayload 能够与 WCSession 的 [String: Any] 字典载荷进行无损互转，保证向下兼容
     func testPayloadCodableCompatibility() throws {
         let originalPayload = TestWatchSyncPayload(
-            id: UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F") ?? UUID(),
+            id: UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!,
             type: .quickCapture,
             content: "这是一条测试内容",
             timestamp: Date(timeIntervalSince1970: 100000),
@@ -270,8 +269,7 @@ final class WatchSyncTests: XCTestCase {
         }
         
         // 4. 将字典反序列化回结构体，验证无损转换
-        guard let dict = dictionary else { XCTFail("dictionary is nil"); return }
-                let newJsonData = try JSONSerialization.data(withJSONObject: dict, options: [])
+        let newJsonData = try JSONSerialization.data(withJSONObject: dictionary!, options: [])
         let decoder = JSONDecoder()
         let decodedPayload = try decoder.decode(TestWatchSyncPayload.self, from: newJsonData)
         
@@ -357,7 +355,7 @@ final class WatchSyncTests: XCTestCase {
         
         // 验证发送完毕后，本地离线队列应被清零
         let pendingAfterActive = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]]
-        XCTAssertTrue(pendingAfterActive?.isEmpty ?? true, "重传成功后，本地离线队列应被清空")
+        XCTAssertTrue(pendingAfterActive == nil || pendingAfterActive!.isEmpty, "重传成功后，本地离线队列应被清空")
         
         service.mockActivationState = nil
         UserDefaults.standard.removeObject(forKey: "watch_pending_audio_transfers")

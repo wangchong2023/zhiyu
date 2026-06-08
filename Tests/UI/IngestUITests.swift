@@ -224,8 +224,7 @@ final class IngestTests: KnowledgeBaseUITests {
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 
-    // 验证网页链接导入非法/损坏的 URL 链接时的防御能力与错误弹窗
-    // swiftlint:disable:next cyclomatic_complexity
+    /// 验证网页链接导入非法/损坏的 URL 链接时的防御能力与错误弹窗
     func testInvalidURLIngestDefense() async {
         let urlButton = app.buttons["ingest.url"]
         guard urlButton.waitForExistence(timeout: 5) else {

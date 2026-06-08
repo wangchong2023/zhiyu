@@ -10,6 +10,7 @@
 //
 import Foundation
 
+
 /// 知识图谱链接模型
 public struct PageLink: Codable, Hashable, Sendable {
     
@@ -25,6 +26,7 @@ public struct PageLink: Codable, Hashable, Sendable {
         case createdAt = "created_at"
     }
     
+
     public init(sourceID: UUID, targetID: UUID, context: String? = nil, createdAt: Date = Date()) {
         self.sourceID = sourceID
         self.targetID = targetID

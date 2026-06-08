@@ -41,6 +41,8 @@ public struct PageChunk: Identifiable, Codable, Sendable {
         case updatedAt = "updated_at"
     }
 
+
+    
     public init(
         id: String,
         pageID: UUID,
@@ -76,10 +78,13 @@ public struct PageEmbedding: Identifiable, Codable, Sendable {
     public var vector: [Float]
     public var modelName: String
     
+
+    
     public init(id: UUID, vector: [Float], modelName: String) {
         self.id = id
         self.vector = vector
         self.modelName = modelName
     }
     
+
 }

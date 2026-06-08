@@ -28,9 +28,9 @@ final class MedalService: ObservableObject {
         let category: Category
 
         enum Category: String, Codable {
-            case accumulation // 知识积累 (节点数)
-            case connection     // 知识链接 (链接数)
-            case explore           // 探索 (首次行为)
+            case accumulation = "accumulation" // 知识积累 (节点数)
+            case connection = "connection"     // 知识链接 (链接数)
+            case explore = "explore"           // 探索 (首次行为)
         }
     }
 

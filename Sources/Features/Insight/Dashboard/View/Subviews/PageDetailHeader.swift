@@ -18,7 +18,7 @@ import SwiftUI
 /// 负责在详情页显著位置展示核心元数据（标题、类型、状态、置信度、别名、标签及统计信息），支持 Hero 动画
 struct PageDetailHeader: View {
     let page: KnowledgePage
-    var heroNamespace: Namespace.ID?
+    var heroNamespace: Namespace.ID? = nil
     @ObservedObject private var taskCenter = TaskCenter.shared
     
     var body: some View {

@@ -83,7 +83,7 @@ final class MacPlatformTests: XCTestCase {
         
         // 2. 验证 canEvaluatePolicy 返回值，因测试环境无物理硬件，仅验证方法调用不会崩溃
         let context = LAContext()
-        _ = provider.canEvaluatePolicy(context: context)
+        let _ = provider.canEvaluatePolicy(context: context)
         #endif
     }
     

@@ -20,12 +20,6 @@ extension GraphLayoutProcessor {
     static func detectCommunities(nodes: [GraphNode], edges: [GraphEdge]) -> [GraphNode] {
         guard !nodes.isEmpty else { return [] }
 
-    /// 图结构构建结果
-    struct GraphStructure {
-        let adjacency: [UUID: Set<UUID>]
-        let nodeMap: [UUID: GraphNode]
-    }
-
         let (adjacency, nodeDegree, undirectedEdges) = buildGraphStructures(nodes: nodes, edges: edges)
         let m = Double(undirectedEdges.count)
 
@@ -52,8 +46,7 @@ extension GraphLayoutProcessor {
 
     // MARK: - 私有优化组件
 
-    // 构建图的邻接关系与度数信息
-    // swiftlint:disable:next large_tuple
+    /// 构建图的邻接关系与度数信息
     private static func buildGraphStructures(nodes: [GraphNode], edges: [GraphEdge]) -> (adjacency: [UUID: Set<UUID>], nodeDegree: [UUID: Int], undirectedEdges: Set<EdgePair>) {
         let nodeIDs = Set(nodes.map { $0.id })
         var adjacency: [UUID: Set<UUID>] = [:]
@@ -234,13 +227,15 @@ extension GraphLayoutProcessor {
     ) -> Double {
         guard m > 0 else { return 0 }
 
-        var modularity = 0.0
+        var Q = 0.0
         for (nodeID, neighbors) in adjacency {
             let ki = Double(nodeDegree[nodeID] ?? 0)
-            for neighborID in neighbors where nodeID < neighborID { // 每条边只计算一次
-                let kj = Double(nodeDegree[neighborID] ?? 0)
+            for neighborID in neighbors {
+                if nodeID < neighborID { // 每条边只计算一次
+                    let kj = Double(nodeDegree[neighborID] ?? 0)
                     let sameCommunity = community[nodeID] == community[neighborID] ? 1.0 : 0.0
                     Q += (1.0 - (ki * kj) / (2 * m)) * sameCommunity
+                }
             }
         }
         return Q / (2 * m)

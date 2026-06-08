@@ -76,7 +76,7 @@ struct OCRPickerModifier: ViewModifier {
         content
             #if !os(watchOS)
             .photosPicker(isPresented: $isPresented, selection: $selectedItem, matching: .images)
-            .onChange(of: selectedItem) { _, newValue in
+            .onChange(of: selectedItem) { oldValue, newValue in
                 guard let newItem = newValue else { return }
                 Task {
                     if let data = try? await newItem.loadTransferable(type: Data.self),

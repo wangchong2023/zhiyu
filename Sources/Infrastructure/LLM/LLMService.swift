@@ -201,10 +201,12 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
 
             // 阶段 2：流式信道验证 — 确保聊天管道可用
             let stream = chatStream(query: "ping", history: [], pages: [])
-            for try await chunk in stream where !chunk.isEmpty {
+            for try await chunk in stream {
+                if !chunk.isEmpty {
                     streamTested = true
                     streamOK = true
                     break
+                }
             }
 
             let latency = Int(Date().timeIntervalSince(start) * 1000)
@@ -249,3 +251,6 @@ extension LLMService {
         let errorMessage: String?
     }
 }
+
+
+

@@ -53,18 +53,18 @@ struct PluginManifest: Codable {
 
 /// 插件权限定义
 enum PluginPermission: String, Codable {
-    case readContent    // 读取内容
-    case writeContent  // 修改内容
-    case network            // 网络访问
-    case aiAccess          // 调用 LLM 服务
+    case readContent = "readContent"    // 读取内容
+    case writeContent = "writeContent"  // 修改内容
+    case network = "network"            // 网络访问
+    case aiAccess = "aiAccess"          // 调用 LLM 服务
 }
 
 /// 插件商业化信息
 struct MonetizationInfo: Codable {
     enum Model: String, Codable {
-        case free               // 免费
-        case donation       // 赞助/打赏
-        case subscription // 订阅
+        case free = "free"               // 免费
+        case donation = "donation"       // 赞助/打赏
+        case subscription = "subscription" // 订阅
     }
     var model: Model
     var supportURL: String? // 打赏链接或订阅主页

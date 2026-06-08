@@ -48,12 +48,12 @@ struct Provider: TimelineProvider {
     }
 
     /// 供系统调用的快照数据接口
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         makeSnapshot(completion: completion)
     }
 
     /// 供系统调用的时间线数据接口
-    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         makeTimeline(completion: completion)
     }
     
@@ -65,13 +65,13 @@ struct Provider: TimelineProvider {
     }
     
     /// 单元测试可直接调用的快照数据生成逻辑
-    func makeSnapshot(completion: @escaping (SimpleEntry) -> Void) {
+    func makeSnapshot(completion: @escaping (SimpleEntry) -> ()) {
         let entry = SimpleEntry(date: Date())
         completion(entry)
     }
     
     /// 单元测试可直接调用的时间线生成逻辑
-    func makeTimeline(completion: @escaping (Timeline<SimpleEntry>) -> Void) {
+    func makeTimeline(completion: @escaping (Timeline<SimpleEntry>) -> ()) {
         let timeline = Timeline(entries: [SimpleEntry(date: Date())], policy: .atEnd)
         completion(timeline)
     }

@@ -47,10 +47,12 @@ enum SynthesisProcessor {
 
         // 3. 增强：确保关键字与根节点之间有换行，防止 "mindmap root" 这种在一行导致的解析错误
         if foundMatch {
-            for keyword in ["mindmap", ["graph", "TD"].joined(separator: " "), ["graph", "LR"].joined(separator: " "), ["graph", "TB"].joined(separator: " "), ["graph", "BT"].joined(separator: " "), "graph", "timeline", "gantt", "pie", "sequenceDiagram"] where mermaidCode.hasPrefix(keyword) {
+            for keyword in ["mindmap", ["graph", "TD"].joined(separator: " "), ["graph", "LR"].joined(separator: " "), ["graph", "TB"].joined(separator: " "), ["graph", "BT"].joined(separator: " "), "graph", "timeline", "gantt", "pie", "sequenceDiagram"] {
+                if mermaidCode.hasPrefix(keyword) {
                     let afterKeyword = mermaidCode.dropFirst(keyword.count)
                     if !afterKeyword.isEmpty && !afterKeyword.hasPrefix("\n") {
                         mermaidCode = keyword + "\n  " + afterKeyword.trimmingCharacters(in: .whitespaces)
+                    }
                     break
                 }
             }

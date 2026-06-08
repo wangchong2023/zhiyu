@@ -50,11 +50,11 @@ final class WatchViewTests: XCTestCase {
         
         // 2. 使用可测试化 init 构建带有 mock 数据的实例，确保 body 中 ForEach 逻辑闭包被触发执行
         let statsViewWithData = WatchKnowledgeStatsView(totalPages: 10, totalWords: 1500, recentTitles: ["测试页面1", "测试页面2"])
-        _ = statsViewWithData.body
+        let _ = statsViewWithData.body
         
         // 2.1 测试单独抽离的行视图组件，完整覆盖最近更新列表每一行的渲染细节
         let rowView = WatchRecentUpdateRowView(title: "测试最近页面标题")
-        _ = rowView.body
+        let _ = rowView.body
         
         // 3. 测试直接调用 formatNumber 覆盖所有条件分支
         let formattedTenThousand = statsView.formatNumber(25000)
@@ -85,11 +85,11 @@ final class WatchViewTests: XCTestCase {
         
         // 2. 测试 WatchWidgetView 视图渲染，验证其 body 是否能被正常计算
         let widgetView = WatchWidgetView(entry: SimpleEntry(date: Date()))
-        _ = widgetView.body
+        let _ = widgetView.body
         
         // 3. 测试 WatchCaptureWidget 及其配置 body，覆盖小组件描述和支持的家族列表
         let widget = WatchCaptureWidget()
-        _ = widget.body
+        let _ = widget.body
         
         // 4. 测试 Provider 重构后的逻辑函数
         let provider = Provider()

@@ -362,7 +362,6 @@ struct MarkdownRendererView: View {
             })
     }
     
-    // swiftlint:disable:next cyclomatic_complexity
     private func buildAttributedString(from segments: [MarkdownProcessor.InlineSegment]) -> AttributedString {
         var result = AttributedString()
         

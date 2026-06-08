@@ -51,14 +51,14 @@ public enum TaskType: String, CaseIterable, Sendable {
 
 /// RAG / AI 执行阶段 (用于多维视觉反馈)
 public enum TaskStage: String, Equatable, Sendable {
-    case pending      // 准备阶段
-    case extraction   // 文本提取/预处理 (Gray)
-    case enrichment   // AI语义增强 (Indigo)
-    case chunking     // 语义分块 (Cyan)
-    case embedding    // 向量化/特征提取 (Teal)
-    case retrieval    // 数据库检索/BM25 (Blue)
-    case synthesis    // 大模型合成生成 (Purple)
-    case general      // 通用执行 (Orange)
+    case pending       = "pending"      // 准备阶段
+    case extraction    = "extraction"   // 文本提取/预处理 (Gray)
+    case enrichment    = "enrichment"   // AI语义增强 (Indigo)
+    case chunking      = "chunking"     // 语义分块 (Cyan)
+    case embedding     = "embedding"    // 向量化/特征提取 (Teal)
+    case retrieval     = "retrieval"    // 数据库检索/BM25 (Blue)
+    case synthesis     = "synthesis"    // 大模型合成生成 (Purple)
+    case general       = "general"      // 通用执行 (Orange)
 }
 
 /// 任务执行状态

@@ -171,9 +171,9 @@ final class AuthUITests: XCTestCase {
 
         // 依次测试代表性第三方按钮（微信、Apple、运营商）
         let testCases: [(id: String, name: String)] = [
-            ("auth.thirdparty.wechat", "微信"),
-            ("auth.thirdparty.apple", "Apple"),
-            ("auth.thirdparty.carrier", "运营商")
+            ("auth.thirdparty.wechat",  "微信"),
+            ("auth.thirdparty.apple",   "Apple"),
+            ("auth.thirdparty.carrier", "运营商"),
         ]
 
         for item in testCases {
@@ -202,11 +202,11 @@ final class AuthUITests: XCTestCase {
         takeScreenshot(name: "TC05_01_ThirdParty_Section_Visible")
 
         let thirdPartyButtons: [(id: String, name: String)] = [
-            ("auth.thirdparty.wechat", "微信登录"),
-            ("auth.thirdparty.apple", "Apple 登录"),
-            ("auth.thirdparty.google", "Google 登录"),
-            ("auth.thirdparty.github", "GitHub 登录"),
-            ("auth.thirdparty.carrier", "运营商二次入口")
+            ("auth.thirdparty.wechat",   "微信登录"),
+            ("auth.thirdparty.apple",    "Apple 登录"),
+            ("auth.thirdparty.google",   "Google 登录"),
+            ("auth.thirdparty.github",   "GitHub 登录"),
+            ("auth.thirdparty.carrier",  "运营商二次入口"),
         ]
 
         for item in thirdPartyButtons {

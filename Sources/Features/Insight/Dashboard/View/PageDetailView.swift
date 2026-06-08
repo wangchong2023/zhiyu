@@ -13,7 +13,7 @@ import SwiftUI
 /// 页面详情视图
 struct PageDetailView: View {
     @State private var coordinator: PageDetailCoordinator
-    var heroNamespace: Namespace.ID?
+    var heroNamespace: Namespace.ID? = nil
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
     @Environment(Router.self) var router
@@ -181,7 +181,7 @@ struct PageDetailView: View {
     
     var body: some View {
         @Bindable var coordinator = coordinator
-        ScrollViewReader { _ in
+        ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 0) {
                     Color.clear.frame(height: 10)

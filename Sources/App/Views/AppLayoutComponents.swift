@@ -249,6 +249,7 @@ extension ContentView {
                 }
                 .tag(AppTab.chat)
 
+
             ingestTabContent
                 .accessibilityIdentifier("Ingest")
                 .tabItem {
@@ -382,7 +383,7 @@ extension ContentView {
                 }
             }
             
-        case .search(let queryTerm):
+        case .search(let q):
             // 🟢 切换至搜索 Tab，并注入待搜索关键词
             router.navigateToTool(.search)
             store.searchStore.searchText = q

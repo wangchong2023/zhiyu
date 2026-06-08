@@ -13,7 +13,7 @@ import Combine
 
 final class StubWatchSyncService: NSObject, WatchSyncProtocol {
     @Published var lastReceivedText: String = ""
-    @Published var latestBriefing: String?
+    @Published var latestBriefing: String? = nil
     @Published var isBriefingLoading: Bool = false
 
     /// 发送Content

@@ -12,21 +12,21 @@ import Foundation
 
 // MARK: - LLM 客户端协议
 
-// LLM 客户端抽象，支持 Mock 替换
+/// LLM 客户端抽象，支持 Mock 替换
 protocol LLMClientProtocol: Sendable {
 
-    // 发送请求
-    // - Parameter body: body
+    /// 发送请求
+    /// - Parameter body: body
     func sendRequest(body: [String: Any]) async throws -> [String: Any]
 
-    // 发送Streaming请求
-    // - Parameter body: body
+    /// 发送Streaming请求
+    /// - Parameter body: body
     func sendStreamingRequest(body: [String: Any]) async throws -> URLSession.AsyncBytes
 }
 
 // MARK: - LLM 网络客户端
 
-// 负责与兼容 OpenAI 协议的 LLM API 进行所有网络通信。
+/// 负责与兼容 OpenAI 协议的 LLM API 进行所有网络通信。
 class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
     // MARK: - Properties
@@ -40,10 +40,10 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
     // MARK: - Initialization
 
-    // 初始化 LLM 客户端
-    // - Parameters:
-    //   - baseURL: API 基础路径
-    //   - apiKey: API 密钥
+    /// 初始化 LLM 客户端
+    /// - Parameters:
+    ///   - baseURL: API 基础路径
+    ///   - apiKey: API 密钥
     init(baseURL: String, apiKey: String) {
         self.baseURL = baseURL
         self.apiKey = apiKey
@@ -57,10 +57,10 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
     // MARK: - Standard Request
 
-    // 发送非流式对话补全请求 (支持自动重试机制)
-    // - Parameter body: 请求体字典
-    // - Returns: API 响应字典
-    // - Throws: 网络或 API 错误
+    /// 发送非流式对话补全请求 (支持自动重试机制)
+    /// - Parameter body: 请求体字典
+    /// - Returns: API 响应字典
+    /// - Throws: 网络或 API 错误
     func sendRequest(body: [String: Any]) async throws -> [String: Any] {
         var lastError: Error?
 
@@ -143,10 +143,10 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
     // MARK: - Streaming Request
 
-    // 发送流式对话补全请求，返回原始 AsyncBytes 流
-    // - Parameter body: 请求体字典
-    // - Returns: 异步字节流
-    // - Throws: 网络或 API 错误
+    /// 发送流式对话补全请求，返回原始 AsyncBytes 流
+    /// - Parameter body: 请求体字典
+    /// - Returns: 异步字节流
+    /// - Throws: 网络或 API 错误
     func sendStreamingRequest(body: [String: Any]) async throws -> URLSession.AsyncBytes {
         guard let url = URL(string: "\(normalizedBaseURL)/chat/completions") else {
             throw LLMError.invalidURL
@@ -174,16 +174,15 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 
 // MARK: - SSE 解析器
 
-// 负责从流式响应中解析服务器发送事件 (SSE)。
+/// 负责从流式响应中解析服务器发送事件 (SSE)。
 final class SSEParser {
 
-    // 解析 SSE 字节流为文本 chunk 序列。
-    // 兼容 OpenAI / DeepSeek / Qwen / Zhipu 等主流提供商的流式格式差异。
-    //
-    // - Parameter bytes: URLSession 异步字节流
-    // - Parameter logger: 可选的诊断日志记录器，用于排查格式兼容问题
-    // - Returns: 逐 chunk 产出的文本流
-    // swiftlint:disable:next cyclomatic_complexity
+    /// 解析 SSE 字节流为文本 chunk 序列。
+    /// 兼容 OpenAI / DeepSeek / Qwen / Zhipu 等主流提供商的流式格式差异。
+    ///
+    /// - Parameter bytes: URLSession 异步字节流
+    /// - Parameter logger: 可选的诊断日志记录器，用于排查格式兼容问题
+    /// - Returns: 逐 chunk 产出的文本流
     static func parse(
         bytes: URLSession.AsyncBytes,
         logger: (any LoggerProtocol)? = nil

@@ -3577,13 +3577,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "## 核心贡献与影响"
+            "value": "## 核心贡献与影响\n"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "## Core Contributions"
+            "value": "## Core Contributions\n"
           }
         }
       }
@@ -3628,13 +3628,13 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "## 分析与洞察"
+            "value": "## 分析与洞察\n"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "## Analysis & Insights"
+            "value": "## Analysis & Insights\n"
           }
         }
       }

@@ -50,7 +50,7 @@ final class ZhiYuDomainTests: XCTestCase {
           ]
         }
         """
-        let data = Data(json.utf8)
+        let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         
         do {
@@ -139,7 +139,7 @@ final class ZhiYuDomainTests: XCTestCase {
     // MARK: - QuizModel Fault Tolerance
     func testQuizModelFaultTolerance() {
         let brokenJson = "{\"title\": \"Broken\", \"questions\": []" // 缺少闭合括号
-        let data = Data(brokenJson.utf8)
+        let data = brokenJson.data(using: .utf8)!
         let decoder = JSONDecoder()
         
         XCTAssertThrowsError(try decoder.decode(QuizModel.self, from: data))
@@ -527,3 +527,4 @@ final class ZhiYuDomainTests: XCTestCase {
         }
     }
 }
+

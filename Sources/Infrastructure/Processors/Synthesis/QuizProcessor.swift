@@ -70,7 +70,7 @@ enum QuizProcessor {
         guard let quiz = try? JSONDecoder().decode(QuizJSON.self, from: data) else { return nil }
 
         var md = "# \(quiz.title ?? L10n.Quiz.title)\n\n"
-        for (index, question) in quiz.questions.enumerated() {
+        for (index, q) in quiz.questions.enumerated() {
             md += "## \(index + 1). \(q.text)\n\n"
             for opt in q.options {
                 md += "* \(opt)\n"

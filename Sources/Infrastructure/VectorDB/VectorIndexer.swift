@@ -28,3 +28,4 @@ final class VectorIndexer {
         await embeddingProvider.indexChunks(pageID: pageID, chunks: chunks)
     }
 }
+

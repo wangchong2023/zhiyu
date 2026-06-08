@@ -23,7 +23,7 @@ struct DeveloperSettingsView: View {
     
     @State private var isStressTesting = false
     @State private var isInjecting = false
-    @State private var stressTestCount: Int?
+    @State private var stressTestCount: Int? = nil
     
     // ── 标签定义 ──
     enum DeveloperTab: String, CaseIterable {

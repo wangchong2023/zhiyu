@@ -34,12 +34,12 @@ public final class SynthesisStore {
     }
 
     public enum SynthesisType: String, CaseIterable, Codable, Identifiable, Sendable {
-        case mindmap
-        case slides
-        case quiz
-        case report
-        case infographic
-        case expansion
+        case mindmap = "mindmap"
+        case slides = "slides"
+        case quiz = "quiz"
+        case report = "report"
+        case infographic = "infographic"
+        case expansion = "expansion"
         public var id: String { rawValue }
         public var title: String {
             switch self {
@@ -306,7 +306,7 @@ public final class SynthesisStore {
     }
 
     private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
+        let f = DateFormatter()
         f.dateStyle = .medium
         f.timeStyle = .short
         return f

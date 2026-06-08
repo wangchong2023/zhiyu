@@ -51,8 +51,10 @@ public final class JailbreakDetector: Sendable {
             "/etc/apt",
             "/usr/bin/ssh"
         ]
-        for path in jbPaths where FileManager.default.fileExists(atPath: path) {
+        for path in jbPaths {
+            if FileManager.default.fileExists(atPath: path) {
                 return true
+            }
         }
         return false
     }
