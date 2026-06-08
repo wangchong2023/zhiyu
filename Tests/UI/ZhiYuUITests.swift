@@ -187,109 +187,118 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(app.navigationBars.element.waitForExistence(timeout: 3))
     }
     
-    // MARK: - 金库切换与播种流程
-
-    /// 闭环测试：退出至工作台 → 多笔记本金库切换 → 校验播种数据幂等填充
+    /// 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
     func testVaultSwitchingAndSeedingFlow() throws {
+        // 执行登录自愈防卫
         ensureAppIsLoggedInAndInVault()
-        navigateToNotebookHub()
-        selectFirstAvailableVault()
-        navigateToKnowledgePageList()
-        waitForContentToLoad(timeout: 20)
-        verifyWelcomeDocumentExists()
-    }
-
-    /// 步骤 1-2：若当前在特定笔记本中，点击角标退回 NotebookHub 工作台
-    private func navigateToNotebookHub() {
-        let badgePredicate = NSPredicate(format: “label CONTAINS '笔记本' OR label CONTAINS 'Notebook'”)
+        
+        // 1. 若当前已经在特定笔记本中，点击左上角“笔记本/金库”角标退出至 Hub 平台（自适应适配系统底层文字标签及中英文差异）
+        let badgePredicate = NSPredicate(format: "label CONTAINS '笔记本' OR label CONTAINS 'Notebook'")
         var vaultBadge = app.buttons.matching(badgePredicate).element(boundBy: 0)
         if !vaultBadge.exists {
             vaultBadge = app.buttons.containing(badgePredicate).element(boundBy: 0)
         }
-
+        
         if vaultBadge.waitForExistence(timeout: 3) {
             vaultBadge.tap()
-            var backButton = app.buttons[“所有笔记本”]
-            if !backButton.exists { backButton = app.buttons[“返回工作台”] }
-            if !backButton.exists { backButton = app.buttons[“All Notebooks”] }
-            if backButton.waitForExistence(timeout: 3) { backButton.tap() }
+            // 兼容性查找：“所有笔记本”（Knowledge.xcstrings 中的 vault.backToHub 翻译）或历史残留硬编码“返回工作台”
+            var backButton = app.buttons["所有笔记本"]
+            if !backButton.exists {
+                backButton = app.buttons["返回工作台"]
+            }
+            if !backButton.exists {
+                backButton = app.buttons["All Notebooks"]
+            }
+            if backButton.waitForExistence(timeout: 3) && backButton.exists {
+                backButton.tap()
+            }
         }
-
-        let hubTitle = app.staticTexts.matching(
-            NSPredicate(format: “label CONTAINS '笔记本' OR label CONTAINS 'Notebooks' OR label CONTAINS 'Notebook'”)
-        ).firstMatch
-        XCTAssertTrue(hubTitle.waitForExistence(timeout: 5), “NotebookHub 工作台界面应当在 5 秒内显示”)
-    }
-
-    /// 步骤 3：点击切换笔记本（优先自定义命名卡片 → NotebookCard_Item → 降级首个按钮）
-    private func selectFirstAvailableVault() {
-        let cardPredicate = NSPredicate(format: “label CONTAINS '的笔记本'”)
+        
+        // 2. 确认安全退回至 NotebookHub 工作台
+        let hubTitle = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '笔记本' OR label CONTAINS 'Notebooks' OR label CONTAINS 'Notebook'")).firstMatch
+        XCTAssertTrue(hubTitle.waitForExistence(timeout: 5), "NotebookHub 工作台界面应当在 5 秒内显示")
+        
+        // 3. 点击切换笔记本（优先匹配自定义命名的笔记本卡片，否则匹配带有唯一标识符的卡片，最后降级匹配网格中首个按钮）
+        let cardPredicate = NSPredicate(format: "label CONTAINS '的笔记本'")
         var firstVaultCard = app.buttons.matching(cardPredicate).element(boundBy: 0)
         if !firstVaultCard.exists {
             firstVaultCard = app.buttons.containing(cardPredicate).element(boundBy: 0)
         }
-
+        
         if firstVaultCard.exists {
             firstVaultCard.tap()
         } else {
-            var anyCard = app.buttons.matching(identifier: “NotebookCard_Item”).element(boundBy: 0)
-            if !anyCard.exists { anyCard = app.buttons.element(boundBy: 0) }
+            var anyCard = app.buttons.matching(identifier: "NotebookCard_Item").element(boundBy: 0)
+            if !anyCard.exists {
+                anyCard = app.buttons.element(boundBy: 0)
+            }
             XCTAssertTrue(anyCard.exists)
             anyCard.tap()
         }
-    }
-
-    /// 步骤 4：切换至 Knowledge Tab → 点击”所有页面”进入文档列表
-    private func navigateToKnowledgePageList() {
-        var knowledgeTab = app.tabBars.buttons[“Knowledge”]
-        if !knowledgeTab.exists { knowledgeTab = app.tabBars.buttons[“books.vertical.fill”] }
-        if !knowledgeTab.exists { knowledgeTab = app.tabBars.buttons[“知识库”] }
-        XCTAssertTrue(knowledgeTab.exists, “知识库 Tab 按钮应该存在”)
+        
+        // 4. 进入新金库后，校验冷启动数据播种 (Data Seeding) 是否幂等安全触发
+        // 切换至 Knowledge Tab（展示的是 Sidebar 列表页），点击“所有页面”分类项进入文档列表后，验证导引文档渲染情况
+        var knowledgeTab = app.tabBars.buttons["Knowledge"]
+        if !knowledgeTab.exists {
+            knowledgeTab = app.tabBars.buttons["books.vertical.fill"]
+        }
+        if !knowledgeTab.exists {
+            knowledgeTab = app.tabBars.buttons["知识库"]
+        }
+        XCTAssertTrue(knowledgeTab.exists, "知识库 Tab 按钮应该存在")
         knowledgeTab.tap()
-
-        let listPredicate = NSPredicate(format: “label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'”)
+        
+        // 由于重构了侧边栏分类列表，需点击“所有页面”方能进入文档列表
+        let listPredicate = NSPredicate(format: "label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'")
         var pageListRow = app.buttons.matching(listPredicate).element(boundBy: 0)
+        
+        // 智能自愈：先使用最有可能的匹配策略等待 5 秒以兼容侧边栏异步滑入
         if !pageListRow.waitForExistence(timeout: 5) {
             pageListRow = app.cells.matching(listPredicate).element(boundBy: 0)
         }
-        if !pageListRow.exists { pageListRow = app.cells.containing(listPredicate).element(boundBy: 0) }
-        if !pageListRow.exists { pageListRow = app.buttons.containing(listPredicate).element(boundBy: 0) }
-        if pageListRow.exists { pageListRow.tap() }
-    }
-
-    /// 步骤 5：校验列表中至少存在一个文档 cell（冷启动种子化最多 20s 缓冲）
-    private func waitForContentToLoad(timeout: Double) {
-        let firstCell = app.buttons.matching(identifier: “PageRow_Item”).element(boundBy: 0)
-        XCTAssertTrue(firstCell.waitForExistence(timeout: timeout),
-                      “切换笔记本并进入文档列表后，列表中应该至少加载出一个文档项”)
-    }
-
-    /// 步骤 6：校验冷启动导引文档（多策略降级匹配 buttons/cells/staticTexts）
-    private func verifyWelcomeDocumentExists() {
-        let welcomePredicate = NSPredicate(format: “label CONTAINS '欢迎' OR label CONTAINS 'Welcome' OR label CONTAINS 'welcome'”)
-        let strategies: [(XCUIElementQuery) -> XCUIElement] = [
-            { $0.buttons.matching(welcomePredicate).element(boundBy: 0) },
-            { $0.buttons.containing(welcomePredicate).element(boundBy: 0) },
-            { $0.cells.matching(welcomePredicate).element(boundBy: 0) },
-            { $0.cells.containing(welcomePredicate).element(boundBy: 0) },
-            { $0.staticTexts.matching(welcomePredicate).element(boundBy: 0) }
- {
-        ]
-
-        var welcomeDocument: XCUIElement = strategies[0](app)
-        for strategy in strategies {
-            if welcomeDocument.exists { break }
-            let candidate = strategy(app)
-            if candidate.waitForExistence(timeout: 10) || candidate.exists {
-                welcomeDocument = candidate
-                break
-            }
+        if !pageListRow.exists {
+            pageListRow = app.cells.containing(listPredicate).element(boundBy: 0)
         }
+        if !pageListRow.exists {
+            pageListRow = app.buttons.containing(listPredicate).element(boundBy: 0)
+        }
+        
+        if pageListRow.exists {
+            pageListRow.tap()
+        }
+        // 5. 校验列表中至少存在一个文档 cell，确保列表渲染成功
+        // 冷启动异步种子化最多给予 20 秒缓冲，兼容 GRDB 磁盘写入延迟场景
+        let firstCell = app.buttons.matching(identifier: "PageRow_Item").element(boundBy: 0)
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 20), "切换笔记本并进入文档列表后，列表中应该至少加载出一个文档项")
 
-        // 降级容错：只要列表非空即认为种子化成功
-        let firstCell = app.buttons.matching(identifier: “PageRow_Item”).element(boundBy: 0)
-        XCTAssertTrue(welcomeDocument.exists || firstCell.exists,
-                      “冷启动播种的引导文档应当存在，或列表中至少应有文档项”)
+        // 6. 校验冷启动导引文档（如 “欢迎来到智宇” / “Welcome”）是否存在
+        let welcomePredicate = NSPredicate(format: "label CONTAINS '欢迎' OR label CONTAINS 'Welcome' OR label CONTAINS 'welcome'")
+        
+        // 智能自愈：分别从 buttons, cells 或 staticTexts 中模糊检索，兼容不同的 List 渲染节点层级
+        var welcomeDocument = app.buttons.matching(welcomePredicate).element(boundBy: 0)
+        if !welcomeDocument.waitForExistence(timeout: 10) {
+            welcomeDocument = app.buttons.containing(welcomePredicate).element(boundBy: 0)
+        }
+        if !welcomeDocument.exists {
+            welcomeDocument = app.cells.matching(welcomePredicate).element(boundBy: 0)
+        }
+        if !welcomeDocument.exists {
+            welcomeDocument = app.cells.containing(welcomePredicate).element(boundBy: 0)
+        }
+        if !welcomeDocument.exists {
+            welcomeDocument = app.staticTexts.matching(welcomePredicate).element(boundBy: 0)
+        }
+        if !welcomeDocument.exists {
+            welcomeDocument = app.staticTexts.containing(welcomePredicate).element(boundBy: 0)
+        }
+        // 欢迎文档是冷启动幂等播种的核心校验项，但在极端压力测试环境（如 Monkey 测试后）下播种可能尚未完成，
+        // 只要 cells 列表已有至少一项（步骤 5 已验证），此处给予额外容错
+        if !welcomeDocument.exists {
+            // 降级校验：只要列表非空即认为种子化成功，欢迎文档标签的本地化差异可能导致无法精确匹配
+            XCTAssertTrue(firstCell.exists, "列表中应当至少有文档项存在（欢迎文档或其他幂等播种文档）")
+        } else {
+            XCTAssertTrue(welcomeDocument.exists, "冷启动播种的引导文档应当存在于列表中")
+        }
     }
     
     // MARK: - 新增高级 UI 冒烟测试
@@ -344,3 +353,4 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         try? Thread.sleep(forTimeInterval: 1.0)
     }
 }
+

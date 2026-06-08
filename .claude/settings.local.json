@@ -232,7 +232,8 @@
       "Bash(sed -n '359p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)",
       "Bash(sed -n '50,55p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Domain/Knowledge/LWWSyncConflictResolver.swift)",
       "Bash(sed -n '236,240p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Core/Base/Utils/Localized.swift)",
-      "Bash(sed -n '93,97p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/Knowledge/Ingest/View/PDFReaderView.swift)"
+      "Bash(sed -n '93,97p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/Knowledge/Ingest/View/PDFReaderView.swift)",
+      "Bash(perl -ne 'print \"$.: $_\" if /\\\\b\\\\\"\\\\w+\\\\\"|\\\\\"\\\\\\\\/ || /error:/' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuUITests.swift)"
     ]
   }
 }
