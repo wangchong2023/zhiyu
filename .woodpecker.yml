@@ -39,18 +39,18 @@ steps:
       - echo "===> Generating Xcode Project via XcodeGen..."
       - xcodegen generate
 
-  # ── Stage 2: SPM 依赖缓存预热 + iOS 测试编译验证 ──
-  spm-warmup:
+  # ── Stage 2: 构建前准备（SPM 缓存 + 测试编译预检）──
+  prepare:
     image: bash
     commands:
-      - echo "===> Warming SPM cache + pre-checking test compilation..."
+      - echo "===> Preparing dependencies + pre-checking test compilation..."
       - mkdir -p $HOME/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo "===> SPM cache ready, test compilation OK."
+      - echo "===> Preparation complete."
 
-  # ── Stage 3: 三平台并行编译（复用 SPM 缓存）──
+  # ── Stage 3: 三平台并行编译 ──
   build-ios:
-    depends_on: [spm-warmup]
+    depends_on: [prepare]
     image: bash
     commands:
       - echo "===> Building iOS app..."
@@ -58,7 +58,7 @@ steps:
       - echo "===> iOS Build completed."
 
   build-macos:
-    depends_on: [spm-warmup]
+    depends_on: [prepare]
     image: bash
     commands:
       - echo "===> Building macOS (Catalyst) app..."
@@ -66,7 +66,7 @@ steps:
       - echo "===> macOS Build completed."
 
   build-watchos:
-    depends_on: [spm-warmup]
+    depends_on: [prepare]
     image: bash
     commands:
       - echo "===> Building watchOS app..."
