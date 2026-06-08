@@ -106,7 +106,13 @@ public final class GlobalModelManager {
     private func initializeManager() async {
         self.isLoading = true
         defer { self.isLoading = false }
-        
+
+        // 在测试环境中 DI 容器可能尚未完全就绪，使用可选解析兜底
+        guard let remoteConfig = ServiceContainer.shared.resolveOptional((any RemoteConfigCapabilities).self) else {
+            print("[GlobalModelManager] RemoteConfigCapabilities 未注册，跳过远程清单拉取")
+            return
+        }
+
         do {
             // 1. 静默拉取白名单（支持极致的离线兜底 fallback）
             self.remoteManifests = try await remoteConfig.fetchLLMManifests()
