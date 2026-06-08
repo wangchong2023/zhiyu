@@ -203,13 +203,17 @@ final class MockVaultDatabaseSwitcher: VaultDatabaseSwitcher, @unchecked Sendabl
 }
 
 /// Mock 后台任务协议，用于测试环境 DI 容器注册
+@MainActor
 final class MockBackgroundTask: BackgroundTaskProtocol, @unchecked Sendable {
     func register(handler: @escaping @Sendable @MainActor () -> Void) {}
+    func schedule() {}
 }
 
 /// Mock 提醒服务协议，用于测试环境 DI 容器注册
+@MainActor
 final class MockReminderService: ReminderServiceProtocol, @unchecked Sendable {
     func requestAccess() async -> Bool { false }
+    func createReminder(title: String, notes: String) async throws {}
 }
 
 // MARK: - XCTestCase Extension
