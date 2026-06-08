@@ -109,7 +109,7 @@ public final class GlobalModelManager {
 
         // 在测试环境中 DI 容器可能尚未完全就绪，使用可选解析兜底
         guard let remoteConfig = ServiceContainer.shared.resolveOptional((any RemoteConfigCapabilities).self) else {
-            print("[GlobalModelManager] RemoteConfigCapabilities 未注册，跳过远程清单拉取")
+            Logger.shared.warning("[GlobalModelManager] RemoteConfigCapabilities 未注册，跳过远程清单拉取")
             return
         }
 
@@ -120,7 +120,7 @@ public final class GlobalModelManager {
             // 2. 扫描本地沙盒文件，对齐下载状态
             refreshLocalModelFiles()
         } catch {
-            print(" [GlobalModelManager] : \(error.localizedDescription)")
+            Logger.shared.error(" [GlobalModelManager] : \(error.localizedDescription)")
         }
     }
     
