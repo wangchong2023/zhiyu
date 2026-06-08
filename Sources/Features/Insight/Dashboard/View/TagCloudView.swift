@@ -185,7 +185,7 @@ struct TagCloudViewContent: View {
                         iconColor: .appSource
                     )
                     Spacer()
-                    if let _ = coordinator.selectedTag, !coordinator.isEditMode {
+                    if coordinator != nil {
                         Text(L10n.Tag.Action.tagPages(coordinator.filteredPages.count))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)

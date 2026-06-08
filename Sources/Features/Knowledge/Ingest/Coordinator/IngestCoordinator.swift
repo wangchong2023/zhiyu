@@ -98,7 +98,7 @@ final class IngestCoordinator {
                     defer { url.stopAccessingSecurityScopedResource() }
                     let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
                     await MainActor.run {
-                        if let _ = page {
+                        if page != nil {
                             TaskCenter.shared.updateTask(taskID, status: .completed)
                             HapticFeedback.shared.trigger(.success)
                         } else {
@@ -126,7 +126,7 @@ final class IngestCoordinator {
         Task {
             let page = try? await store.ingestService.ingestURL(urlString: url.absoluteString, pageStore: store)
             await MainActor.run {
-                if let _ = page {
+                if page != nil {
                     TaskCenter.shared.updateTask(taskID, status: .completed)
                     HapticFeedback.shared.trigger(.success)
                     self.newURL = ""

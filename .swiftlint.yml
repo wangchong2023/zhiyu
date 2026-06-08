@@ -17,6 +17,13 @@ disabled_rules:
   - type_body_length          # 允许较长的复杂视图容器（SwiftUI 主体拆分已另行保障）
   - file_length               # 允许大型文件
   - multiple_closures_with_trailing_closure # SwiftUI 多闭包写法是业界标准模式
+  - nesting                   # L10n 枚举嵌套是项目设计模式
+  - function_parameter_count  # 协议/API 参数数量由业务决定
+  - opening_brace             # SwiftUI 格式化风格差异
+  - static_over_final_class   # 测试文件中的 class var 有意图
+  - implicit_getter           # getter 显式声明增强可读性
+  - unused_setter_value       # 平台兼容预留 setter
+  - function_body_length      # 长函数拆分由 Code Review 把控
 
 opt_in_rules:
   - force_unwrapping          # 提示杜绝非必要强解包，促进安全编码

@@ -163,7 +163,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     /// - Parameter session: session
     /// - Parameter error: error
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        if let _ = error {
+        if error != nil {
             Logger.shared.error("WatchSync_Anomaly2")
         } else if activationState == .activated {
             let delegate = session.delegate as? WatchWatchSyncService

@@ -46,7 +46,7 @@ struct TextChunkerProcessor: Sendable {
         separators: ["\n# ", "\n## ", "\n### ", "\n#### ", "\n\n", "\n", ". ", ". ", " ", ""]
     )
 
-    /**
+    /*
      * @description: 执行高级语义分块
      * @param {String} text 原始文本
      * @return {[Chunk]} 包含元数据的高质量切片

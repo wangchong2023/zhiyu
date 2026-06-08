@@ -219,6 +219,7 @@ final class MockReminderService: ReminderServiceProtocol, @unchecked Sendable {
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
+    // swiftlint:disable:next function_body_length
     func setupFullMockEnvironment() {
         // 注意：不调用 ServiceContainer.shared.reset() — register() 本身会覆盖已有注册。
         // reset() 会清空 AppEnvironment.init() 建立的完整 DI 链，导致 @Inject 解析崩溃。
