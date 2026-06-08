@@ -220,9 +220,10 @@ final class MockReminderService: ReminderServiceProtocol, @unchecked Sendable {
 extension XCTestCase {
     @MainActor
     func setupFullMockEnvironment() {
-        ServiceContainer.shared.reset()
+        // 注意：不调用 ServiceContainer.shared.reset() — register() 本身会覆盖已有注册。
+        // reset() 会清空 AppEnvironment.init() 建立的完整 DI 链，导致 @Inject 解析崩溃。
         DatabaseManager.shared.reset()
-        
+
         // 1. Core Services (L0)
         let logger = MockLogger()
         ServiceContainer.shared.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)

@@ -97,7 +97,10 @@ final class AppEnvironment {
 
         // L3 应用模块
         AppModuleRegistrar.register(in: ServiceContainer.shared)
-        
+
+        // 标记生产 DI 链完成 — 禁止测试中 reset() 清空容器
+        ServiceContainer.shared.markProductionChainComplete()
+
         // 1.5 在模块注册完成后，解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
         self.router = Router.shared
         self.themeManager = ThemeManager.shared

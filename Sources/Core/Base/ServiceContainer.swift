@@ -47,8 +47,21 @@ final class ServiceContainer: @unchecked Sendable {
         #endif
     }
     
+    /// 标记是否由生产注册链（AppEnvironment）完成初始化，防止测试误清
+    private var isProductionChainPopulated = false
+
+    /// 标记生产链已完成，禁止 reset() 清空
+    func markProductionChainComplete() {
+        isProductionChainPopulated = true
+    }
+
     /// 重置所有服务（主要用于测试环境隔离）
+    /// 生产注册链完成后调用此方法无效果，防止测试误清导致 @Inject 崩溃
     func reset() {
+        guard !isProductionChainPopulated else {
+            Logger.shared.warning("[ServiceContainer] reset() 被拒绝：生产注册链已完成，不允许清空容器。测试请用 register() 覆盖特定服务。")
+            return
+        }
         os_unfair_lock_lock(lockPointer)
         services.removeAll()
         os_unfair_lock_unlock(lockPointer)
