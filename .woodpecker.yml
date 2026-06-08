@@ -15,14 +15,6 @@ steps:
       - git clone $CLONE_URL .
       - git checkout $CI_COMMIT_SHA
 
-  setup:
-    image: bash
-    commands:
-      - echo "===> Setting up build environment..."
-      - mkdir -p build
-      - brew install xcbeautify 2>/dev/null || echo "xcbeautify already installed"
-      - echo "===> Build environment is ready."
-
   static-analysis:
     image: bash
     commands:
@@ -43,8 +35,8 @@ steps:
   prepare:
     image: bash
     commands:
-      - echo "===> Preparing dependencies + pre-checking test compilation..."
-      - mkdir -p $HOME/.cache/zhiyu-spm
+      - echo "===> Preparing build environment + dependencies..."
+      - mkdir -p build $HOME/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
       - echo "===> Preparation complete."
 
