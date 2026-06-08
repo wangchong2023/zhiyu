@@ -86,7 +86,16 @@ final class AppEnvironment {
         // 1. 执行模块化注册 (L0 - L3)
         CoreModuleRegistrar.register(in: ServiceContainer.shared)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
-        DomainModuleRegistrar.register(in: ServiceContainer.shared)
+
+        // L1 插件系统
+        ServiceContainer.shared.register(PluginRegistry.shared, for: PluginRegistry.self)
+
+        // L2 领域模块 — 按依赖顺序：Auth → Knowledge → AI
+        AuthModuleRegistrar.register(in: ServiceContainer.shared)
+        KnowledgeModuleRegistrar.register(in: ServiceContainer.shared)
+        AIModuleRegistrar.register(in: ServiceContainer.shared)
+
+        // L3 应用模块
         AppModuleRegistrar.register(in: ServiceContainer.shared)
         
         // 1.5 在模块注册完成后，解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
