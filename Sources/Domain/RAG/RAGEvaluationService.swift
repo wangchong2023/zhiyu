@@ -45,7 +45,7 @@ final class RAGEvaluationService {
             if let data = response.data(using: .utf8),
                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
 
-                let f = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
+                let faithfulnessScore = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
                 let r = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
                 let p = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
 

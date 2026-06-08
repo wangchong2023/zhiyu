@@ -106,7 +106,7 @@ final class LinkServiceTests: XCTestCase {
     
     // MARK: - Test Search Relevance Sorting All Branches
     func testSearch_RelevanceSorting_AllBranches() async {
-        let q = "ios"
+        let query = "ios"
         let p1 = KnowledgePage(title: "iOS Development", content: "contains nothing special")
         let p2 = KnowledgePage(title: "iOS", content: "exact match")
         let p3 = KnowledgePage(title: "Learning iOS", content: "contains match")

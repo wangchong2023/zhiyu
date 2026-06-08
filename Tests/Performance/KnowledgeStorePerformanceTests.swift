@@ -47,7 +47,8 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
         // --- 阶段一：单一写事务内批量 Bulk Insert 注入 100,000 节点 ---
         let writeStartTime = Date()
         
-        try await dbWriter!.write { db in
+        guard let dbWriter = dbWriter else { XCTFail("dbWriter is nil"); return }
+                try await dbWriter.write { db in
             let batchSize = 10_000
             let batches = nodeCount / batchSize
             

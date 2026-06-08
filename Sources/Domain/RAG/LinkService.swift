@@ -68,7 +68,7 @@ actor LinkService {
     /// - Returns: 列表
     func search(query: String, in pages: [KnowledgePage]) -> [KnowledgePage] {
         guard !query.isEmpty else { return pages }
-        let q = query.lowercased()
+        let normalizedQuery = query.lowercased()
 
         let filtered = pages.filter { page in
             page.title.lowercased().contains(q) ||

@@ -76,10 +76,10 @@ final class PluginMarketServiceTests: XCTestCase {
         ]
         """
         
-        let responseData = jsonString.data(using: .utf8)!
+        let responseData = Data(jsonString.utf8)
         
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            guard let response = HTTPURLResponse(url: request.url ?? URL(fileURLWithPath: ""), statusCode: 200, httpVersion: nil, headerFields: nil) else { XCTFail("无法创建 HTTPURLResponse"); return (HTTPURLResponse(), Data()) }
             return (response, responseData)
         }
         
@@ -117,8 +117,8 @@ final class PluginMarketServiceTests: XCTestCase {
         ]
         """
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            guard let response = HTTPURLResponse(url: request.url ?? URL(fileURLWithPath: ""), statusCode: 200, httpVersion: nil, headerFields: nil) else { XCTFail("无法创建 HTTPURLResponse"); return (HTTPURLResponse(), Data()) }
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()
@@ -144,8 +144,8 @@ final class PluginMarketServiceTests: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             // 验证请求 URL 是 registry（不是 mock 服务器）
             XCTAssertTrue(request.url?.absoluteString.contains("community-plugins.json") ?? false)
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            guard let response = HTTPURLResponse(url: request.url ?? URL(fileURLWithPath: ""), statusCode: 200, httpVersion: nil, headerFields: nil) else { XCTFail("无法创建 HTTPURLResponse"); return (HTTPURLResponse(), Data()) }
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()
@@ -162,8 +162,8 @@ final class PluginMarketServiceTests: XCTestCase {
 
     func testEmptyCommunityPluginsList() async throws {
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, "[]".data(using: .utf8)!)
+            guard let response = HTTPURLResponse(url: request.url ?? URL(fileURLWithPath: ""), statusCode: 200, httpVersion: nil, headerFields: nil) else { XCTFail("无法创建 HTTPURLResponse"); return (HTTPURLResponse(), Data()) }
+            return (response, Data("[]".utf8))
         }
 
         await service.fetchPlugins()
@@ -178,8 +178,8 @@ final class PluginMarketServiceTests: XCTestCase {
         [{"id":"mock-plugin","version":"1.0","author":"Mock","downloads":"0","rating":0,"icon":"","downloadURL":null,"names":{"en":"Mock"},"descriptions":{"en":""}}]
         """
         MockURLProtocol.requestHandler = { request in
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            guard let response = HTTPURLResponse(url: request.url ?? URL(fileURLWithPath: ""), statusCode: 200, httpVersion: nil, headerFields: nil) else { XCTFail("无法创建 HTTPURLResponse"); return (HTTPURLResponse(), Data()) }
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()

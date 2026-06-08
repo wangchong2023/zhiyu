@@ -111,9 +111,9 @@ final class MultiVaultSwitchTests: XCTestCase {
         let localVaultA = vaultAID
         let localVaultB = vaultBID
         let localVaultC = vaultCID
-        let localDbA = dbAURL!
-        let localDbB = dbBURL!
-        let localDbC = dbCURL!
+        guard let localDbA = dbAURL else { XCTFail("dbAURL is nil"); return }
+        guard let localDbB = dbBURL else { XCTFail("dbBURL is nil"); return }
+        guard let localDbC = dbCURL else { XCTFail("dbCURL is nil"); return }
         
         await withTaskGroup(of: Void.self) { group in
             for i in 0..<concurrencyLevel {

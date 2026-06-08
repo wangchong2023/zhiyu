@@ -44,7 +44,7 @@ public final class MaintenanceService {
     /// 填充默认引导内容
     public func seedDefaultContent(pages: [KnowledgePage]) async {
         if pages.isEmpty {
-            await pageStore.seedDefaultContent { [weak self] a, t, d in
+            await pageStore.seedDefaultContent { [weak self] action, target, detail in
                 Task { @MainActor [weak self] in
                     self?.logger.addLog(action: a, target: t, details: d, module: "Maintenance")
                 }

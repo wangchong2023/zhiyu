@@ -161,7 +161,7 @@ struct LLMSettingsView: View {
                                             .foregroundStyle(.appSecondary)
                                     }
                                     Spacer()
-                                    if let l = latency {
+                                    if let latencyMs = latency {
                                         Text(L10n.AI.LLM.latency("\(l) \(L10n.Dashboard.unitMs)"))
                                             .font(.caption.monospaced())
                                             .foregroundStyle(.appSecondary)

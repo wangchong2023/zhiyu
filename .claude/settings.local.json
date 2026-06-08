@@ -225,7 +225,11 @@
       "Bash(sed -n '447,452p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuPlatformUITests.swift)",
       "Bash(sed -i '' '15s|^    /// Enables drag and drop for page items in the knowledge base|    // Enables drag and drop for page items in the knowledge base|' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/UIComponents/Interaction/DragDropComponents.swift)",
       "Bash(sed -i '' '/^        \\\\/\\\\/\\\\/ /{N;s/\\\\n\\\\n/\\\\n/;}' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Services/iPadRouterTests.swift)",
-      "Bash(sed -i '' '/^        \\\\/\\\\/\\\\/ /{N;s/\\\\n\\\\n/\\\\n/;}' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuPlatformUITests.swift)"
+      "Bash(sed -i '' '/^        \\\\/\\\\/\\\\/ /{N;s/\\\\n\\\\n/\\\\n/;}' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuPlatformUITests.swift)",
+      "Bash(/usr/bin/python3 *)",
+      "Bash(sed -n '166p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Plugins/PluginMarketServiceTests.swift)",
+      "Bash(sed -n '195p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)",
+      "Bash(sed -n '359p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Platforms/WatchSyncTests.swift)"
     ]
   }
 }

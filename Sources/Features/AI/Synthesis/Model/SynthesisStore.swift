@@ -306,7 +306,7 @@ public final class SynthesisStore {
     }
 
     private static let dateFormatter: DateFormatter = {
-        let f = DateFormatter()
+        let formatter = DateFormatter()
         f.dateStyle = .medium
         f.timeStyle = .short
         return f

@@ -21,7 +21,7 @@ final class RAGEvaluator {
     
     /// 执行回归测试
     func evaluate(llmService: LLMService, store: SQLiteStore) async -> EvaluationResult {
-        let goldenSetURL = Bundle.main.url(forResource: "RAG_GoldenSet", withExtension: "json")!
+        guard let goldenSetURL = Bundle.main.url(forResource: "RAG_GoldenSet", withExtension: "json") else { fatalError("RAG_GoldenSet.json not found in test bundle") }
         guard let data = try? Data(contentsOf: goldenSetURL),
               let cases = try? JSONDecoder().decode([GoldenCase].self, from: data) else {
             return EvaluationResult(score: 0, failedCases: ["无法加载黄金测试集"])

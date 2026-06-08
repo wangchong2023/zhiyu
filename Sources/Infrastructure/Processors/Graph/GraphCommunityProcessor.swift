@@ -227,7 +227,7 @@ extension GraphLayoutProcessor {
     ) -> Double {
         guard m > 0 else { return 0 }
 
-        var Q = 0.0
+        var modularity = 0.0
         for (nodeID, neighbors) in adjacency {
             let ki = Double(nodeDegree[nodeID] ?? 0)
             for neighborID in neighbors where nodeID < neighborID // 每条边只计算一次 {

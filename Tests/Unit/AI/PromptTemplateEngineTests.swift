@@ -132,7 +132,8 @@ final class PromptTemplateEngineTests: XCTestCase {
         let remotePromptText = "这是拉取到的远程高级提示词内容，输入为：{{query}}"
         MockURLProtocol.mockData = remotePromptText.data(using: .utf8)
         MockURLProtocol.mockResponse = HTTPURLResponse(
-            url: URL(string: skill.remotePromptURLString!)!,
+            guard let promptURL = skill.remotePromptURLString else { XCTFail("promptURLString is nil"); return }
+                        url: URL(string: promptURL) ?? URL(fileURLWithPath: "/"),
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil

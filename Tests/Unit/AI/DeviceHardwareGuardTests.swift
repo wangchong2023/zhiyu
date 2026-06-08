@@ -110,7 +110,8 @@ final class DeviceHardwareGuardTests: XCTestCase {
     /// 测试对模型白名单列表进行批量匹配计算
     func testBatchEligibilityEvaluation() {
         let guardEvaluator = DeviceHardwareGuard(physicalMemory: eightGbBytes)
-        let batchManifests = [gemmaManifest!, llamaManifest!]
+        guard let gemma = gemmaManifest, let llama = llamaManifest else { XCTFail("Manifests are nil"); return }
+                let batchManifests = [gemma, llama]
         
         let batchResult = guardEvaluator.batchEvaluateEligibility(for: batchManifests)
         

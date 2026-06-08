@@ -176,7 +176,8 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         XCTAssertFalse(undoService.canUndo)
 
         // Redo v1 → v2
-        let afterRedo = undoService.redo(currentPages: afterUndo!)
+        guard let afterUndo = afterUndo else { XCTFail("afterUndo is nil"); return }
+                let afterRedo = undoService.redo(currentPages: afterUndo)
         XCTAssertEqual(afterRedo?.first?.title, "V2")
         XCTAssertTrue(undoService.canUndo)
         XCTAssertFalse(undoService.canRedo)

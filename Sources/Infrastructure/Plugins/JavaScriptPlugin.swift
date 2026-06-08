@@ -50,9 +50,9 @@ final class JavaScriptPlugin: InterceptionPlugin {
         }
         
         // 1. 设置异常捕获器
-        ctx.exceptionHandler = { [weak self] c, exception in
+        ctx.exceptionHandler = { [weak self] ctx, exception in
             guard let self = self else { return }
-            if let c = c, let exception = exception {
+            if let context = ctx, let exception = exception {
                 c.exception = exception
             }
             Logger.shared.error(" [JSPlugin: \(self.manifest.id)] Exception: \(exception?.toString() ?? "unknown")", error: nil)

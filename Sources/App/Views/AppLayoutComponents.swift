@@ -382,7 +382,7 @@ extension ContentView {
                 }
             }
             
-        case .search(let q):
+        case .search(let queryTerm):
             // 🟢 切换至搜索 Tab，并注入待搜索关键词
             router.navigateToTool(.search)
             store.searchStore.searchText = q
