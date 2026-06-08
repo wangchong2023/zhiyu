@@ -39,33 +39,43 @@ steps:
       - echo "===> Generating Xcode Project via XcodeGen..."
       - xcodegen generate
 
-  # ── Stage 3: 三平台编译（iOS 先行填充 SPM 缓存，macOS/watchOS 并行复用）──
-  build-ios:
+  # ── Stage 2: SPM 依赖缓存预热 + iOS 测试编译验证 ──
+  spm-warmup:
     image: bash
     commands:
-      - echo "===> Building for iOS Simulator..."
+      - echo "===> Warming SPM cache + pre-checking test compilation..."
       - mkdir -p $HOME/.cache/zhiyu-spm
+      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
+      - echo "===> SPM cache ready, test compilation OK."
+
+  # ── Stage 3: 三平台并行编译（复用 SPM 缓存）──
+  build-ios:
+    depends_on: [spm-warmup]
+    image: bash
+    commands:
+      - echo "===> Building iOS app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "===> iOS Build completed successfully."
+      - echo "===> iOS Build completed."
 
   build-macos:
-    depends_on: [build-ios]
+    depends_on: [spm-warmup]
     image: bash
     commands:
-      - echo "===> Building for macOS (Catalyst)..."
+      - echo "===> Building macOS (Catalyst) app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
-      - echo "===> macOS Build completed successfully."
+      - echo "===> macOS Build completed."
 
   build-watchos:
-    depends_on: [build-ios]
+    depends_on: [spm-warmup]
     image: bash
     commands:
-      - echo "===> Building for watchOS Simulator..."
+      - echo "===> Building watchOS app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
-      - echo "===> watchOS Build completed successfully."
+      - echo "===> watchOS Build completed."
 
+  # ── Stage 4: 测试执行 ──
   count-tests:
-    depends_on: [build-macos, build-watchos]
+    depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
       - echo "===> Counting test cases..."
