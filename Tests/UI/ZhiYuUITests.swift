@@ -353,4 +353,3 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         try? Thread.sleep(forTimeInterval: 1.0)
     }
 }
-

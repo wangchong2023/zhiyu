@@ -258,7 +258,7 @@ final class iOSExportService: NSObject, ExportServiceProtocol, @unchecked Sendab
     private func parseMarkdownForSlides(_ markdown: String) -> [SlideData] {
         var slides: [SlideData] = []
         let parts = markdown.components(separatedBy: "\n## ")
-        for (_, part) in parts.enumerated() {
+        for part in parts {
             let lines = part.components(separatedBy: .newlines)
             let title = lines.first?.replacingOccurrences(of: "# ", with: "").trimmingCharacters(in: .whitespaces) ?? ""
             let bullets = lines.dropFirst().filter { 

@@ -64,7 +64,10 @@ final class SecurityManagerTests: XCTestCase {
         // 创建临时测试文件
         let tempDir = FileManager.default.temporaryDirectory
         let fileURL = tempDir.appendingPathComponent("integrity_test_\(UUID().uuidString).db")
-        let content = "Fake Database Content".data(using: .utf8)!
+        guard let content = "Fake Database Content".data(using: .utf8) else {
+            XCTFail("Failed to encode test content")
+            return
+        }
         try content.write(to: fileURL)
 
         defer { try? FileManager.default.removeItem(at: fileURL) }
@@ -76,7 +79,10 @@ final class SecurityManagerTests: XCTestCase {
         XCTAssertEqual(sig1, sig2, "同一文件两次计算应产生相同 HMAC 摘要（幂等性）")
 
         // 2. 修改文件内容后重新计算，验证差异敏感性
-        let corruptedContent = "Corrupted Data".data(using: .utf8)!
+        guard let corruptedContent = "Corrupted Data".data(using: .utf8) else {
+            XCTFail("Failed to encode corrupted content")
+            return
+        }
         try corruptedContent.write(to: fileURL)
 
         let sig3 = try await securityManager.calculateHMAC(for: fileURL)

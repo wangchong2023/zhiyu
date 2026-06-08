@@ -52,7 +52,7 @@ final class CloudChaosTests: XCTestCase {
         let concurrentCount = 1000
         let expectation = XCTestExpectation(description: "高并发大文件上传不崩溃")
         
-        DispatchQueue.concurrentPerform(iterations: concurrentCount) { i in
+        DispatchQueue.concurrentPerform(iterations: concurrentCount) { _ in
             // 并发调用同步网关
         }
         

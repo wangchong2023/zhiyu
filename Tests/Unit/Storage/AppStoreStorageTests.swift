@@ -35,7 +35,7 @@ final class AppStoreStorageTests: XCTestCase {
     /// 测试页面添加与持久化
     func testAddPage() async {
         let initialCount = store.totalPages
-        let _ = await store.createPage(title: "测试页面", pageType: .concept, content: "内容")
+        _ = await store.createPage(title: "测试页面", pageType: .concept, content: "内容")
         
         // 等待观察者更新内存状态
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
