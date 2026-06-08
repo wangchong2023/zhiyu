@@ -212,6 +212,16 @@ final class MockVaultDatabaseSwitcher: VaultDatabaseSwitcher, @unchecked Sendabl
     func releaseDatabaseConnection() {}
 }
 
+/// Mock 后台任务协议，用于测试环境 DI 容器注册
+final class MockBackgroundTask: BackgroundTaskProtocol, @unchecked Sendable {
+    func register(handler: @escaping @Sendable @MainActor () -> Void) {}
+}
+
+/// Mock 提醒服务协议，用于测试环境 DI 容器注册
+final class MockReminderService: ReminderServiceProtocol, @unchecked Sendable {
+    func requestAccess() async -> Bool { false }
+}
+
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
@@ -361,6 +371,10 @@ extension XCTestCase {
         ServiceContainer.shared.register(iOSWatchSyncService() as any WatchSyncProtocol, for: (any WatchSyncProtocol).self)
         #endif
         
+        // 3.5. 后台任务 & 提醒服务 Mock（WorkflowService/IngestQueue 的 @Inject 依赖）
+        ServiceContainer.shared.register(MockBackgroundTask() as any BackgroundTaskProtocol, for: (any BackgroundTaskProtocol).self)
+        ServiceContainer.shared.register(MockReminderService() as any ReminderServiceProtocol, for: (any ReminderServiceProtocol).self)
+
         // 4. Data Sync Coordination (L1.5) & Sibling Stores - 必须在底层所有 Mock 物理仓储和 L1 基础设施就绪后注册，以防时序竞争崩溃
         ServiceContainer.shared.register(IngestStore(), for: IngestStore.self)
         #if !os(watchOS)

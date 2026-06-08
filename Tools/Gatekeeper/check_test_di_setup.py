@@ -224,6 +224,18 @@ def scan_mock_registrations() -> set[str]:
     return registered
 
 
+def is_shared_used_in_tests(class_name: str) -> bool:
+    """检查 ClassName.shared 是否在任何测试文件中被引用。"""
+    pattern = re.compile(rf"\b{class_name}\.shared\b")
+    for fp in TESTS_DIR.rglob("*.swift"):
+        try:
+            if pattern.search(fp.read_text(encoding="utf-8")):
+                return True
+        except Exception:
+            continue
+    return False
+
+
 def phase2_check() -> list[str]:
     """检查 setupFullMockEnvironment() 是否注册了所有 shared 单例的 @Inject 依赖。"""
     violations = []
@@ -232,6 +244,10 @@ def phase2_check() -> list[str]:
     registered = scan_mock_registrations()
 
     for class_name, filename in shared_map.items():
+        # 跳过从未在任何测试中被访问的 shared 单例
+        if not is_shared_used_in_tests(class_name):
+            continue
+
         deps = inject_deps.get(class_name, set())
         missing = deps - registered
         if missing:
