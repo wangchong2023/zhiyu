@@ -21,7 +21,7 @@ extension GraphLayoutProcessor {
         guard !nodes.isEmpty else { return [] }
 
     /// 图结构构建结果
-    private struct GraphStructure {
+    struct GraphStructure {
         let adjacency: [UUID: Set<UUID>]
         let nodeMap: [UUID: GraphNode]
     }
@@ -237,8 +237,8 @@ extension GraphLayoutProcessor {
         var modularity = 0.0
         for (nodeID, neighbors) in adjacency {
             let ki = Double(nodeDegree[nodeID] ?? 0)
-            for neighborID in neighbors where nodeID < neighborID // 每条边只计算一次 {
-                    let kj = Double(nodeDegree[neighborID] ?? 0)
+            for neighborID in neighbors where nodeID < neighborID { // 每条边只计算一次
+                let kj = Double(nodeDegree[neighborID] ?? 0)
                     let sameCommunity = community[nodeID] == community[neighborID] ? 1.0 : 0.0
                     Q += (1.0 - (ki * kj) / (2 * m)) * sameCommunity
             }
