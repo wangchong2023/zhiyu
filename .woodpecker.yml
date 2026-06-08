@@ -50,7 +50,7 @@ steps:
       - xcodegen generate
       - echo "===> Preparing build environment + dependencies..."
       - mkdir -p build $HOME/.cache/zhiyu-spm
-      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
+      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
       - echo "===> Preparation complete."
 
   # ── Stage 3: 三平台并行编译 ──
@@ -59,7 +59,7 @@ steps:
     image: bash
     commands:
       - echo "===> Building iOS app..."
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
       - echo "===> iOS Build completed."
 
   build-macos:
@@ -67,7 +67,7 @@ steps:
     image: bash
     commands:
       - echo "===> Building macOS (Catalyst) app..."
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
       - echo "===> macOS Build completed."
 
   build-watchos:
@@ -75,7 +75,7 @@ steps:
     image: bash
     commands:
       - echo "===> Building watchOS app..."
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "===> watchOS Build completed."
 
   # ── Stage 4: 测试 + 覆盖率 ──
@@ -86,7 +86,7 @@ steps:
       - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
       - echo "===> Running Unit Tests..."
-      - set -o pipefail && xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm -enableCodeCoverage YES -parallel-testing-enabled YES -parallel-testing-worker-count 4 -skip-testing:ZhiYuUITests/ZhiYuUITests/testChatAISkeletonLoadingState -skip-testing:ZhiYuUITests/IngestTests/testManualEntrySectionExists -skip-testing:ZhiYuUITests/IngestTests/testURLImportButton 2>&1 | tee build/test_raw.log | Tools/CI/ci-test-progress.sh | xcbeautify --report junit --report-path build/test_report.junit
+      - set -o pipefail && xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm -enableCodeCoverage YES -parallel-testing-enabled YES -parallel-testing-worker-count 4 -skip-testing:ZhiYuUITests/ZhiYuUITests/testChatAISkeletonLoadingState -skip-testing:ZhiYuUITests/IngestTests/testManualEntrySectionExists -skip-testing:ZhiYuUITests/IngestTests/testURLImportButton 2>&1 | tee build/test_raw.log | Tools/CI/ci-test-progress.sh | xcbeautify --report junit --report-path build/test_report.junit
       - echo "===> All Tests passed."
       - echo "===> Checking code coverage..."
       - python3 Tools/CI/check_coverage.py
