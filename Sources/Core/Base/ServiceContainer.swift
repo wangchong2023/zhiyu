@@ -59,7 +59,7 @@ final class ServiceContainer: @unchecked Sendable {
     /// 生产注册链完成后调用此方法无效果，防止测试误清导致 @Inject 崩溃
     func reset() {
         guard !isProductionChainPopulated else {
-            Logger.shared.warning("[ServiceContainer] reset() 被拒绝：生产注册链已完成，不允许清空容器。测试请用 register() 覆盖特定服务。")
+            Logger.shared.warning("[ServiceContainer] reset() blocked: production DI chain is complete. Use register() to override specific services in tests.")
             return
         }
         os_unfair_lock_lock(lockPointer)
