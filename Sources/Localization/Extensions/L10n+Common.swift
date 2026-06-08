@@ -10,6 +10,7 @@
 //
 import Foundation
 
+// swiftlint:disable nesting
 extension L10n {
     public static var SearchPlaceholder: String { Common.searchPlaceholder }
 

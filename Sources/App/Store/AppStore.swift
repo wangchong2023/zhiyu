@@ -442,7 +442,8 @@ extension AppStore: AnyPageStore {
         await knowledgeStore.refresh()
     }
 
-    /// 创建Page
+    // 创建Page
+    // swiftlint:disable:next function_parameter_count
     public func createPage(
         title: String,
         pageType: PageType,
@@ -467,6 +468,7 @@ extension AppStore: AnyPageStore {
         )
     }
 
+    // swiftlint:disable:next function_parameter_count
     /// any创建Page
     public func anyCreatePage(
         title: String,
@@ -539,8 +541,9 @@ extension AppStore: AnyPageStore {
         await knowledgeStore.seedDefaultContent()
     }
 
-    /// 获取StorageStats
+    // 获取StorageStats
     /// - Returns: 返回值
+    // swiftlint:disable:next large_tuple
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         await pageStore.getStorageStats()
     }

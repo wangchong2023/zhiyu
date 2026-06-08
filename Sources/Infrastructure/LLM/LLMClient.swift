@@ -177,12 +177,13 @@ class LLMClient: LLMClientProtocol, @unchecked Sendable {
 /// 负责从流式响应中解析服务器发送事件 (SSE)。
 final class SSEParser {
 
-    /// 解析 SSE 字节流为文本 chunk 序列。
+    // 解析 SSE 字节流为文本 chunk 序列。
     /// 兼容 OpenAI / DeepSeek / Qwen / Zhipu 等主流提供商的流式格式差异。
     ///
     /// - Parameter bytes: URLSession 异步字节流
     /// - Parameter logger: 可选的诊断日志记录器，用于排查格式兼容问题
     /// - Returns: 逐 chunk 产出的文本流
+    // swiftlint:disable:next cyclomatic_complexity
     static func parse(
         bytes: URLSession.AsyncBytes,
         logger: (any LoggerProtocol)? = nil

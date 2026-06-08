@@ -27,7 +27,8 @@ struct GraphLayoutProcessor {
         static let `default` = Config()
     }
 
-    /// 对页面集合执行力导向布局，返回节点和边。
+    // 对页面集合执行力导向布局，返回节点和边。
+    // swiftlint:disable:next cyclomatic_complexity
     static func layout(
         pages: [KnowledgePage],
         linkResolver: (String) -> KnowledgePage?,

@@ -18,7 +18,8 @@ final class SystemStatsCoordinator {
     var dailyStats: [DailyAIUsage] = []
     var monthlyStats: [MonthlyToken] = []
     var totalStorage: Int64 = 0
-    var provenance: (importedCount: Int, importedSize: Int64, createdCount: Int, createdSize: Int64) = (0, 0, 0, 0)
+    struct ContentProvenance { var importedCount: Int = 0; var importedSize: Int64 = 0; var createdCount: Int = 0; var createdSize: Int64 = 0 }
+    var provenance = ContentProvenance()
     var exportCount: Int = 0
     var exportSize: Int64 = 0
     var avgLatency: Int = 0
@@ -54,7 +55,8 @@ final class SystemStatsCoordinator {
 
     // ── 业务动作 ──
 
-    /// 加载系统统计数据
+    // 加载系统统计数据
+    // swiftlint:disable:next cyclomatic_complexity
     func loadStats() async {
         let startTime = Date()
         

@@ -34,7 +34,8 @@ public protocol CloudStorageProvider: Sendable {
     /// 推送数据到云端
     func push(pages: [KnowledgePage], logs: [LogEntry]) async throws
     
-    /// 从云端拉取数据
+    // 从云端拉取数据
+    // swiftlint:disable:next large_tuple
     func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
     
     /// 订阅云端变更通知

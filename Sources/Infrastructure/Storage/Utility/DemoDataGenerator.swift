@@ -41,7 +41,8 @@ struct DemoDataGenerator {
             try TokenUsage.deleteAll(db)
             try LLMCallLog.deleteAll(db)
             
-            let pagesToCreate: [(String, PageType, String, [String])] = [
+            struct DemoSeedPage { let title: String; let type: PageType; let content: String; let tags: [String] }
+    let pagesToCreate: [DemoSeedPage] = [
                 (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
                 (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
                 (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),

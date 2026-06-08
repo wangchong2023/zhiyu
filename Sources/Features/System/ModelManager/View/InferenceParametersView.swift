@@ -67,7 +67,7 @@ public struct InferenceParametersView: View {
             }
         }
 
-        var parameters: (temperature: Double, topP: Double, topK: Int, maxTokens: Int) {
+        var parameters: InferenceParamConfig {
             switch self {
             case .creative:
                 return (1.2, 0.95, 50, 2048)

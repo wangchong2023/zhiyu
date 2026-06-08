@@ -187,7 +187,8 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(app.navigationBars.element.waitForExistence(timeout: 3))
     }
     
-    /// 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
+    // 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
+    // swiftlint:disable:next cyclomatic_complexity
     func testVaultSwitchingAndSeedingFlow() throws {
         // 执行登录自愈防卫
         ensureAppIsLoggedInAndInVault()

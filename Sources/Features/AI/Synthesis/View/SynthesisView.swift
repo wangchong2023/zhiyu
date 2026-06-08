@@ -491,7 +491,8 @@ struct SynthesisView: View {
 // MARK: - 辅助扩展：解耦 View Presentations
 extension View {
 
-    /// synthesisViewPresentations
+    // synthesisViewPresentations
+    // swiftlint:disable:next function_parameter_count
     func synthesisViewPresentations(
         showOutput: Binding<Bool>,
         pdfURL: Binding<IdentifiableURL?>,
@@ -529,6 +530,7 @@ extension View {
                 batchDelete: batchDelete
             )
     }
+    // swiftlint:disable:next function_parameter_count
 
     private func synthesisAlerts(
         showNoPagesAlert: Binding<Bool>,

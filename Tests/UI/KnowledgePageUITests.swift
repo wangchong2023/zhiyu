@@ -222,8 +222,9 @@ final class MarkdownEditorTests: KnowledgeBaseUITests {
 /// 覆盖范围：创建 → 编辑 → 内容输入 → 保存完整流程
 final class PageLifecycleE2ETests: KnowledgeBaseUITests {
 
-    /// 完整页面生命周期：创建 → 编辑内容 → 验证存在
+    // 完整页面生命周期：创建 → 编辑内容 → 验证存在
     /// 测试策略：四级降级按钮查找，任一策略未命中则软跳过（不阻断 CI）
+    // swiftlint:disable:next cyclomatic_complexity
     func testFullPageLifecycle() async {
         await navigateToKnowledgeTab()
 

@@ -155,7 +155,8 @@ final class PluginLoadUnloadTests: XCTestCase {
 
     /// 4. 5 个插件批量安装 → 全部卸载，零崩溃
     func testBatchInstallUninstall() {
-        let specs: [(String, String, String, [String])] = [
+        struct PluginSpec { let name: String; let id: String; let desc: String; let perms: [String] }
+        let specs: [PluginSpec] = [
             ("toc", "Tools/Plugins/Local/toc-generator/index.js", "test.b.toc", ["writeContent", "log"]),
             ("word", "Tools/Plugins/Local/word-counter/index.js", "test.b.word", ["readContent", "log"]),
             ("clean", "Tools/Plugins/smart-cleaner/index.js", "test.b.clean", ["writeContent", "log"]),

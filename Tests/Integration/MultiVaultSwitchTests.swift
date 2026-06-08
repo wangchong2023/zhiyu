@@ -118,7 +118,8 @@ final class MultiVaultSwitchTests: XCTestCase {
         await withTaskGroup(of: Void.self) { group in
             for i in 0..<concurrencyLevel {
                 group.addTask {
-                    let targets: [(id: UUID, url: URL, title: String)] = [
+                    struct VaultTarget { let id: UUID; let url: URL; let title: String }
+        let targets: [VaultTarget] = [
                         (localVaultA, localDbA, "PageA"),
                         (localVaultB, localDbB, "PageB"),
                         (localVaultC, localDbC, "PageC")

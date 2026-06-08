@@ -20,6 +20,12 @@ extension GraphLayoutProcessor {
     static func detectCommunities(nodes: [GraphNode], edges: [GraphEdge]) -> [GraphNode] {
         guard !nodes.isEmpty else { return [] }
 
+    /// 图结构构建结果
+    private struct GraphStructure {
+        let adjacency: [UUID: Set<UUID>]
+        let nodeMap: [UUID: GraphNode]
+    }
+
         let (adjacency, nodeDegree, undirectedEdges) = buildGraphStructures(nodes: nodes, edges: edges)
         let m = Double(undirectedEdges.count)
 
@@ -46,7 +52,8 @@ extension GraphLayoutProcessor {
 
     // MARK: - 私有优化组件
 
-    /// 构建图的邻接关系与度数信息
+    // 构建图的邻接关系与度数信息
+    // swiftlint:disable:next large_tuple
     private static func buildGraphStructures(nodes: [GraphNode], edges: [GraphEdge]) -> (adjacency: [UUID: Set<UUID>], nodeDegree: [UUID: Int], undirectedEdges: Set<EdgePair>) {
         let nodeIDs = Set(nodes.map { $0.id })
         var adjacency: [UUID: Set<UUID>] = [:]

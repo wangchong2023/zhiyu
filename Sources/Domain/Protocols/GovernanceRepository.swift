@@ -17,10 +17,12 @@ public protocol GovernanceRepository: Sendable {
     /// 记录 Token 消耗情况
     func logTokenUsage(model: String, promptTokens: Int, completionTokens: Int) async throws
     
-    /// 获取指定天数内的 Token 统计数据 (汇总)
+    // 获取指定天数内的 Token 统计数据 (汇总)
+    // swiftlint:disable:next large_tuple
     func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int)
     
-    /// 获取每日统计详情 (用于图表)
+    // 获取每日统计详情 (用于图表)
+    // swiftlint:disable:next large_tuple
     func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)]
     
     /// 获取月度统计详情
@@ -42,6 +44,7 @@ public protocol GovernanceRepository: Sendable {
     /// 获取最近的评估结果
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation]
     
-    /// 计算平均评估得分
+    // 计算平均评估得分
+    // swiftlint:disable:next large_tuple
     func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double)
 }

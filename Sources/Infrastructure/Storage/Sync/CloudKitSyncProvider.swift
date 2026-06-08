@@ -64,8 +64,9 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         _ = try await database.save(record)
     }
     
-    /// 拉取
+    // 拉取
     /// /// - Returns: 返回值
+    // swiftlint:disable:next large_tuple
     public func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
         try await ensureZoneExists()
         

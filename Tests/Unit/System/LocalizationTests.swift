@@ -81,7 +81,8 @@ final class LocalizationTests: XCTestCase {
     
     /// 自动化全量审计：动态遍历所有 L10n 模块并验证 Key 的存在性
     func testComprehensiveLocalizationAudit() {
-        let modules: [(name: String, table: String, keys: [String])] = [
+        struct L10nModule { let name: String; let table: String; let keys: [String] }
+        let modules: [L10nModule] = [
             ("Common", "Common", ["ok", "cancel", "done"]),
             ("Settings", "Settings", ["aboutApp", "version", "section.about"]),
             ("Chat", "Chat", ["chat.title", "inputPlaceholder"]),

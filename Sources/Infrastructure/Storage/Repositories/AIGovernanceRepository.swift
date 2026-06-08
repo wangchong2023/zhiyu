@@ -43,9 +43,10 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
-    /// 拉取TokenStats
+    // 拉取TokenStats
     /// - Parameter days: days
     /// - Returns: 返回值
+    // swiftlint:disable:next large_tuple
     func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int) {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -70,9 +71,10 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
-    /// 拉取DailyAIStats
+    // 拉取DailyAIStats
     /// - Parameter days: days
     /// - Returns: 列表
+    // swiftlint:disable:next large_tuple
     func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)] {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -182,9 +184,10 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
-    /// 计算AverageRAGScores
+    // 计算AverageRAGScores
     /// - Parameter days: days
     /// - Returns: 返回值
+    // swiftlint:disable:next large_tuple
     func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
         let writer = await dbWriter
         return try await writer.read { db in

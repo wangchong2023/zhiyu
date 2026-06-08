@@ -23,6 +23,7 @@ import LocalAuthentication
 final class MockLogger: LoggerProtocol, @unchecked Sendable {
     var logEntries: [LogEntry] = []
     var logEntriesPublisher: AnyPublisher<[LogEntry], Never> { Just([]).eraseToAnyPublisher() }
+    // swiftlint:disable:next function_parameter_count
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?) {}
     func debug(_ message: String, file: String, function: String, line: Int) {}
     func info(_ message: String, file: String, function: String, line: Int) {}

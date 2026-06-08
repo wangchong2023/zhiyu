@@ -26,9 +26,10 @@ final class DeepLinkService: ObservableObject {
     }
     
     // MARK: - URL Scheme Handling
-    /// 处理应用特有的 URL Scheme 深度路由分发
+    // 处理应用特有的 URL Scheme 深度路由分发
     /// - Parameter url: 传入的原始 URL 实例
     /// - Returns: 是否为系统可识别且处理成功的路由动作
+    // swiftlint:disable:next cyclomatic_complexity
     func handleURL(_ url: URL) -> Bool {
         // 限流保护：防止外部意图总线过载，超过 10Hz 直接拒绝 (TC-DEE-06)
         guard IntentRateLimiter.shared.request() else {

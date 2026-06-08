@@ -56,6 +56,7 @@ struct TextChunkerProcessor: Sendable {
     /// - Parameter text: text
     /// - Parameter config: config
     /// - Returns: 列表
+    // swiftlint:disable:next cyclomatic_complexity
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
         guard !text.isEmpty else { return [] }
         

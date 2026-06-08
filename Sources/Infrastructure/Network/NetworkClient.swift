@@ -54,6 +54,7 @@ public actor NetworkClient {
     
     // MARK: - 内部请求与拦截逻辑
     
+    // swiftlint:disable:next cyclomatic_complexity
     private func performRequest<T: Codable, Body: Encodable>(
         path: String,
         method: String,

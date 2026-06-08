@@ -36,6 +36,7 @@ final class MockCloudStorageProvider: CloudStorageProvider, @unchecked Sendable 
         self.cloudLastModified = Date()
     }
     
+    // swiftlint:disable:next large_tuple
     func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
         guard isNetworkConnected else {
             throw NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])

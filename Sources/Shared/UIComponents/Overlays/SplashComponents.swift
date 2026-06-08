@@ -17,7 +17,8 @@ struct SplashBackgroundView: View {
     let nodeGlow: Bool
 
     // 预生成的随机数据
-    private let stars: [(x: CGFloat, y: CGFloat, size: CGFloat, delay: Double)] = [
+    private struct StarConfig { let x: CGFloat; let y: CGFloat; let size: CGFloat; let delay: Double }
+    private let stars: [StarConfig] = [
         (0.12, 0.08, 1.5, 0.0), (0.85, 0.05, 1.0, 0.3), (0.45, 0.12, 2.0, 0.6),
         (0.72, 0.18, 1.2, 0.2), (0.28, 0.22, 1.8, 0.8), (0.93, 0.25, 1.0, 0.1),
         (0.08, 0.30, 1.5, 0.5), (0.55, 0.08, 1.3, 0.7), (0.38, 0.28, 1.0, 0.4),
@@ -31,7 +32,8 @@ struct SplashBackgroundView: View {
     ]
 
     // 神经网络节点位置
-    private let networkNodes: [(x: CGFloat, y: CGFloat, size: CGFloat, isAccent: Bool)] = [
+    private struct NetworkNodeConfig { let x: CGFloat; let y: CGFloat; let size: CGFloat; let isAccent: Bool }
+    private let networkNodes: [NetworkNodeConfig] = [
         (0.20, 0.15, 5, false), (0.40, 0.10, 6, true), (0.60, 0.18, 5, false),
         (0.80, 0.12, 4, false), (0.15, 0.30, 4, false), (0.35, 0.28, 7, true),
         (0.55, 0.25, 5, false), (0.75, 0.30, 6, true), (0.90, 0.22, 4, false),

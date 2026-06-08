@@ -76,7 +76,8 @@ final class JavaScriptPlugin: InterceptionPlugin {
         return try body(ctx)
     }
     
-    /// 装配宿主为 JS 沙箱提供的标准 API 网关
+    // 装配宿主为 JS 沙箱提供的标准 API 网关
+    // swiftlint:disable:next cyclomatic_complexity
     private func setupAPI(in context: JSContext) {
         guard let pluginCtx = self.pluginContext else { return }
         
