@@ -19,7 +19,8 @@ final class RAGPerformanceTests: XCTestCase {
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
-        
+        setupFullMockEnvironment()
+
         // 由于 RerankService 是一个真实服务单例，获取其实例
         llmService = LLMService.shared
         
@@ -43,6 +44,10 @@ final class RAGPerformanceTests: XCTestCase {
     override func tearDown() async throws {
         self.largeCandidates = []
         self.llmService = nil
+        // 允许当前协程事件循环排水，确保未完成的异步任务执行完毕
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        DatabaseManager.shared.reset()
+        ServiceContainer.shared.reset()
         try await super.tearDown()
     }
     
