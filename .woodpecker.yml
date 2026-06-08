@@ -28,6 +28,7 @@ steps:
     commands:
       - echo "===> Running Static Analysis..."
       - python3 Tools/Gatekeeper/check_domain_purity.py
+      - python3 Tools/Gatekeeper/check_test_di_setup.py
       - bash Tools/Lint/lint_layer_markers.sh
       - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
