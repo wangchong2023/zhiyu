@@ -118,6 +118,16 @@ final class MockLLMChatService: LLMChatServiceProtocol, @unchecked Sendable {
     }
 }
 
+/// Mock LLM 知识服务，用于测试环境 DI 容器注册
+@MainActor
+final class MockKnowledgeLLMService: LLMKnowledgeServiceProtocol, @unchecked Sendable {
+    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
+        SmartIngestResultDTO(chunks: [], detectedEntities: [], suggestedTags: [])
+    }
+    func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] { [] }
+    func foldContent(existingContent: String, newContent: String, title: String) async throws -> String { "" }
+}
+
 #if !os(watchOS)
 // MARK: - Mock On-Device LLM Service
 @MainActor
@@ -278,6 +288,10 @@ extension XCTestCase {
         ServiceContainer.shared.register(mockOnDevice as any OnDeviceLLMServiceProtocol, for: (any OnDeviceLLMServiceProtocol).self)
         #endif
         
+        // LLMKnowledgeServiceProtocol 虽被 MockLLMService 重写覆盖，但注册确保 @Inject 后备方案安全
+        let mockKnowledgeLLM = MockKnowledgeLLMService()
+        ServiceContainer.shared.register(mockKnowledgeLLM as any LLMKnowledgeServiceProtocol, for: (any LLMKnowledgeServiceProtocol).self)
+
         ServiceContainer.shared.register(QueryReranker(), for: (any LLMRetrievalServiceProtocol).self)
 
         // 注册 Mock 环境下的 EmbeddingManager 和仓库，加固向量同步功能
