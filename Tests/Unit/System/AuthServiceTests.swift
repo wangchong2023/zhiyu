@@ -14,17 +14,20 @@ import XCTest
 @MainActor
 final class AuthServiceTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        ServiceContainer.shared.register(MockVaultDatabaseSwitcher() as VaultDatabaseSwitcher, for: VaultDatabaseSwitcher.self)
+    override func setUp() async throws {
+        try await super.setUp()
+        setupFullMockEnvironment()
 
         AuthSession.shared.logout()
         try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
         try? KeychainService.shared.delete(key: "refresh_token")
-
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
         AuthSession.shared.logout()
+        ServiceContainer.shared.reset()
+        DatabaseManager.shared.reset()
+        try await super.tearDown()
     }
 
     // MARK: - 登出测试

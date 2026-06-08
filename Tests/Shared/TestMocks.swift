@@ -187,6 +187,15 @@ final class MockBiometricAuthProvider: BiometricAuthProviderProtocol, @unchecked
     }
 }
 
+/// Mock 向量索引存储，用于测试环境 DI 容器注册
+final class MockVectorIndexableStore: VectorIndexableStore, @unchecked Sendable {
+    let embeddingProvider: any EmbeddingProvider
+
+    init(embeddingProvider: any EmbeddingProvider) {
+        self.embeddingProvider = embeddingProvider
+    }
+}
+
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
@@ -270,6 +279,10 @@ extension XCTestCase {
         let embeddingManager = EmbeddingManager(repository: vectorRepo)
         ServiceContainer.shared.register(embeddingManager as any EmbeddingProvider, for: (any EmbeddingProvider).self)
         ServiceContainer.shared.register(embeddingManager, for: EmbeddingManager.self)
+
+        // 注册 Mock VectorIndexableStore（AIWorkflowStore 等 7 个 @Inject 依赖之一）
+        let mockVectorStore = MockVectorIndexableStore(embeddingProvider: embeddingManager)
+        ServiceContainer.shared.register(mockVectorStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
 
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
