@@ -10,11 +10,11 @@
 //
 import Foundation
 
-/// 递归分块器 (RAG 核心：语义保真)
-/// 负责将长文档拆分为适合向量检索的小块，对标 Karpathy 的 LLM Wiki 切片标准。
+// 递归分块器 (RAG 核心：语义保真)
+// 负责将长文档拆分为适合向量检索的小块，对标 Karpathy 的 LLM Wiki 切片标准。
 struct TextChunkerProcessor: Sendable {
 
-    /// 增强型分块模型
+    // 增强型分块模型
     public struct Chunk: Identifiable, Sendable {
         public let id = UUID()
         public let text: String       // 分块文本内容
@@ -23,7 +23,7 @@ struct TextChunkerProcessor: Sendable {
         public let breadcrumbPath: String // 级联面包屑路径 (例如: " > ") - 专门用于 Hierarchy RAG
         public let isCode: Bool       // 是否包含完整代码块
         
-        /// 级联面包屑注入后的上下文文本，最大化提升检索语义相关性
+        // 级联面包屑注入后的上下文文本，最大化提升检索语义相关性
         public var contextualText: String {
             if breadcrumbPath == "Root" || breadcrumbPath.isEmpty {
                 return text
@@ -33,7 +33,7 @@ struct TextChunkerProcessor: Sendable {
         }
     }
 
-    /// 分块配置
+    // 分块配置
     public struct Config {
         public let chunkSize: Int      // 目标字符数 (800-1200 推荐)
         public let chunkOverlap: Int   // 重叠窗口大小 (150-200 推荐)
@@ -52,10 +52,10 @@ struct TextChunkerProcessor: Sendable {
      * @return {[Chunk]} 包含元数据的高质量切片
      */
 
-    /// 拆分
-    /// - Parameter text: text
-    /// - Parameter config: config
-    /// - Returns: 列表
+    // 拆分
+    // - Parameter text: text
+    // - Parameter config: config
+    // - Returns: 列表
     // swiftlint:disable:next cyclomatic_complexity
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
         guard !text.isEmpty else { return [] }
@@ -159,9 +159,9 @@ struct TextChunkerProcessor: Sendable {
 
 private extension String {
 
-    /// 索引
-    /// - Parameter index: 索引
-    /// - Returns: 返回值
+    // 索引
+    // - Parameter index: 索引
+    // - Returns: 返回值
     func index(_ index: String.Index, offsetBy offset: Int, default defaultIndex: String.Index) -> String.Index {
         return self.index(index, offsetBy: offset, limitedBy: self.startIndex) ?? defaultIndex
     }

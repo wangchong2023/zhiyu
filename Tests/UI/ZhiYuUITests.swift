@@ -272,8 +272,8 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
             { $0.buttons.containing(welcomePredicate).element(boundBy: 0) },
             { $0.cells.matching(welcomePredicate).element(boundBy: 0) },
             { $0.cells.containing(welcomePredicate).element(boundBy: 0) },
-            { $0.staticTexts.matching(welcomePredicate).element(boundBy: 0) },
-            { $0.staticTexts.containing(welcomePredicate).element(boundBy: 0) },
+            { $0.staticTexts.matching(welcomePredicate).element(boundBy: 0) }
+            { $0.staticTexts.containing(welcomePredicate).element(boundBy: 0) }
         ]
 
         var welcomeDocument: XCUIElement = strategies[0](app)
