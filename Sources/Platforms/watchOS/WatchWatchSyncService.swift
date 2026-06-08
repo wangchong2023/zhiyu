@@ -16,12 +16,12 @@ import Combine
 /// watchOS 端同步实现
 final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegate {
     @Published var lastReceivedText: String = ""
-    @Published var latestBriefing: String? = nil
+    @Published var latestBriefing: String?
     @Published var isBriefingLoading: Bool = false
     
     #if DEBUG
     /// 仅限单元测试模拟使用的激活状态插桩，绕过模拟器测试时 session 激活受限的问题
-    var mockActivationState: WCSessionActivationState? = nil
+    var mockActivationState: WCSessionActivationState?
     #endif
     
     override init() {

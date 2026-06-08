@@ -23,10 +23,6 @@ final class AIContentEnricherTests: XCTestCase {
         await setupFullMockEnvironment()
     }
     
-    override func tearDown() async throws {
-        try await super.tearDown()
-    }
-    
     // MARK: - 纯文本测试
     
     /// 验证普通 Markdown 段落（不含表格和图片）在 Actor 中秒回原文本，且不触发大模型
@@ -35,7 +31,7 @@ final class AIContentEnricherTests: XCTestCase {
         let mockLLM = MockLLMService()
         
         let triggerBox = TriggerBox()
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, _ in
             triggerBox.isTriggered = true
             return "不应该被触发"
         }

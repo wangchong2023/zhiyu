@@ -33,7 +33,7 @@ final class GitHubAuthStrategyTests: XCTestCase {
         }
         #else
         do {
-            let _ = try await strategy.acquireCredentials()
+            _ = try await strategy.acquireCredentials()
             XCTFail("GitHub 未配置时在 Release 模式下应该抛出错误")
         } catch let error as NSError {
             XCTAssertEqual(error.domain, "GitHubAuthStrategy")

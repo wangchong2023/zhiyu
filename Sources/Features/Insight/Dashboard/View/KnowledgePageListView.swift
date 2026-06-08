@@ -13,7 +13,7 @@ import SwiftUI
 // MARK: - Index View (entry point with NavigationStack)
 @MainActor
 struct KnowledgePageListView: View {
-    var filterType: PageType? = nil
+    var filterType: PageType?
     var body: some View {
         KnowledgePageListContent(filterType: filterType)
     }
@@ -25,7 +25,7 @@ struct KnowledgePageListContent: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
-    var filterType: PageType? = nil
+    var filterType: PageType?
     
     /// 全局注入的平台设备环境
     private var appEnv: any AppEnvironmentProtocol {
@@ -40,7 +40,7 @@ struct KnowledgePageListContent: View {
     // 全局混合搜索与语义检索核心状态
     @State private var searchResults: [KnowledgePage] = []
     @State private var isSearchingAdvanced = false
-    @State private var searchTask: Task<Void, Never>? = nil
+    @State private var searchTask: Task<Void, Never>?
     
     private var totalLinks: Int {
         store.pages.reduce(0) { $0 + $1.outgoingLinks.count }

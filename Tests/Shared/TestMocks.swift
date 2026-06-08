@@ -155,7 +155,6 @@ final class MockOnDeviceLLMService: OnDeviceLLMServiceProtocol, @unchecked Senda
 }
 #endif
 
-
 // MARK: - Mock Biometric Auth Provider
 
 /// 模拟的生物识别提供商，用于测试环境下的认证操作
@@ -309,7 +308,6 @@ extension XCTestCase {
         let mockVectorStore = MockVectorIndexableStore(embeddingProvider: embeddingManager)
         ServiceContainer.shared.register(mockVectorStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
 
-        
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
         // LLMContextBuilder 通过具体类型解析，需注册双重绑定以覆盖 resolve(KnowledgePageRepository.self) (@DIP)

@@ -141,7 +141,7 @@ final class JavaScriptPlugin: InterceptionPlugin {
         let addEventListenerBlock: @convention(block) (String, String) -> Void = { [weak self] event, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                pluginCtx.addEventListener(event: event) { data in
+                pluginCtx.addEventListener(event: event) { _ in
                     try? self.executeInContext { ctx in
                         if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
                             jsFunc.call(withArguments: [])

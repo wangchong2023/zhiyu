@@ -80,7 +80,7 @@ actor KnowledgeInsightService {
             updateStatus(L10n.AI.Status.generating)
 
             // 提取并解析 JSON (增强鲁棒性：处理多行及 Markdown 代码块)
-            var jsonString: String? = nil
+            var jsonString: String?
             if let firstBrace = response.firstIndex(of: "{"),
                let lastBrace = response.lastIndex(of: "}") {
                 jsonString = String(response[firstBrace...lastBrace])

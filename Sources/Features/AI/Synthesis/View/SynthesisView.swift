@@ -40,7 +40,7 @@ struct SynthesisView: View {
     @State private var showClearAllConfirm = false
     @State private var showBatchDeleteConfirm = false
     @State private var showLLMAlert = false
-    @State private var selectedFilterType: SynthesisStore.SynthesisType? = nil
+    @State private var selectedFilterType: SynthesisStore.SynthesisType?
 
     var body: some View {
         @Bindable var synthesisStore = synthesisStore

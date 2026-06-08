@@ -29,7 +29,7 @@ final class SystemStatsCoordinator {
     var totalPages: Int = 0
     var isLoading = true
     var isCleaning = false
-    var cleanedCount: Int? = nil
+    var cleanedCount: Int?
     
     // ── 内部类型定义与多笔记本存储状态 ──
     struct VaultStorageItem: Identifiable, Sendable {

@@ -15,7 +15,7 @@ import GRDB
 /// 它是知识金库高内聚持久化层（Persistence）的基座大脑，托管了专属笔记本数据库（Workspace DB）
 /// 和全局共享设置数据库（Global DB）的双轨道生命周期。
 @MainActor
-final class DatabaseManager: Sendable {
+final class DatabaseManager {
     
     /// 全局唯一的线程安全单例实例。
     static let shared = DatabaseManager()
@@ -370,7 +370,6 @@ extension DatabaseManager: VaultDatabaseSwitcher {
         self.dbWriter = nil
     }
 }
-
 
 // MARK: - 核心通知扩展
 

@@ -218,7 +218,8 @@
       "Bash(swiftlint lint *)",
       "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t\\\\n\\\\t\\\\/\\\\/ MARK/\\\\}\\\\n\\\\n\\\\t\\\\/\\\\/ MARK/g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Security/SecurityManagerTests.swift)",
       "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t    \\\\/\\\\//g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)",
-      "Bash(sed -i '' '/^[[:space:]]*$/N;/\\\\n[[:space:]]*$/d' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)"
+      "Bash(sed -i '' '/^[[:space:]]*$/N;/\\\\n[[:space:]]*$/d' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)",
+      "Bash(swiftlint --fix)"
     ]
   }
 }

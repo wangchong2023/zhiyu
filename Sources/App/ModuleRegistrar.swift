@@ -104,7 +104,6 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         container.register(embeddingManager as any EmbeddingProvider, for: (any EmbeddingProvider).self)
         container.register(embeddingManager, for: EmbeddingManager.self)
 
-        
         // 注册 VectorIndexableStore 协议（L0 层向量检索能力），让 L2 可通过 DIP 访问
         container.register(sqliteStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
         

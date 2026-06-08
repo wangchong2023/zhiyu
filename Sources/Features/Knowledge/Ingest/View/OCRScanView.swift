@@ -32,7 +32,7 @@ struct OCRScanView: View {
     @State private var showResult = false
     @State private var targetTitle = ""
     @State private var targetType: PageType = .source
-    @State private var targetCustomIcon: String? = nil
+    @State private var targetCustomIcon: String?
     @State private var targetTags: [String] = ["OCR", L10n.Ingest.OCR.scanTag]
     @State private var showIconPicker = false
     @State private var showOCRError = false

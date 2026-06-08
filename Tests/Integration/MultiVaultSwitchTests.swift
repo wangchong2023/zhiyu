@@ -218,7 +218,7 @@ final class MultiVaultSwitchTests: XCTestCase {
 }
 
 // MARK: - 存储模块依赖重装工具
-fileprivate enum StorageModuleRegistrar {
+private enum StorageModuleRegistrar {
     /// 动态热重装 DI 容器中的持久化仓储服务
     @MainActor
     static func register(in container: ServiceContainer) {

@@ -522,7 +522,7 @@ final class IngestPipelineTests: XCTestCase {
             ("data.xlsx", .xlsx),
             ("document.docx", .docx),
             ("unknown.xyz", .unknown),
-            ("UPPERCASE.MD", .markdown),
+            ("UPPERCASE.MD", .markdown)
         ]
 
         for (filename, expected) in testCases {

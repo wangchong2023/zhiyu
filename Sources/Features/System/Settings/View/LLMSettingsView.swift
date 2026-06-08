@@ -298,7 +298,7 @@ struct LLMSettingsView: View {
         config.provider.suggestedModels
     }
     
-    private func testConnection() {
+    func testConnection() {
         testing = true
         testResult = nil
         

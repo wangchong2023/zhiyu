@@ -115,7 +115,7 @@ public struct ShimmerModifier: ViewModifier {
 
 /// 骨架屏占位组件
 public struct AppSkeleton: View {
-    public var width: CGFloat? = nil
+    public var width: CGFloat?
     public var height: CGFloat = Spacing.large
     public var cornerRadius: CGFloat = Spacing.tiny
 

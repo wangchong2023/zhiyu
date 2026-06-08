@@ -110,7 +110,6 @@ extension L10n {
 
             public struct AIInsightsVal {
                 public let title: String
-                init(title: String) { self.title = title }
             }
             public static var aiInsights: AIInsightsVal { AIInsightsVal(title: Knowledge.tr("page.aiInsights")) }
 

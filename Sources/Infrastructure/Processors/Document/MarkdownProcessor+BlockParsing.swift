@@ -286,7 +286,6 @@ extension MarkdownProcessor {
         return (.table(headers: headers, rows: rows), i)
     }
 
-
     /// - Parameter line: 包含管线符的 Markdown 原始表格单行字符串。
     /// - Returns: 清除首尾空格并物理过滤掉虚线对齐分隔符后，所包含的单元格字符有序数组。
 
@@ -298,7 +297,6 @@ extension MarkdownProcessor {
         let isFormatLine = line.hasPrefix("|") || line.range(of: #"^\d+\. "#, options: .regularExpression) != nil
         return hasPipe && isFormatLine
     }
-
 
 	/// 提取表格行中被管线符 | 分隔的单元格文本。
 	/// - Parameter line: 包含管线符的原始表格行。

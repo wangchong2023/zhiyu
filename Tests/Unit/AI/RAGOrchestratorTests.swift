@@ -20,10 +20,6 @@ final class RAGOrchestratorTests: XCTestCase {
         TaskCenter.shared.reset()
     }
     
-    override func tearDown() async throws {
-        try await super.tearDown()
-    }
-    
     // MARK: - RAG Chat 同步编排测试
     
     /// 验证普通 RAG 对话 (Chat) 正常走完流程并返回结果
@@ -33,7 +29,7 @@ final class RAGOrchestratorTests: XCTestCase {
         // 1. 设置 MockLLMService.generateHandler 产生定制回答
         // RAGOrchestrator.chat() 内部调用 llmService.generate()  
         guard let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockLLMService else { XCTFail("MockLLMService 未注册"); return }
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, systemPrompt in
             XCTAssertTrue(systemPrompt.contains("量子力学"))
             return "量子力学是研究微观粒子的物理学分支。"
         }
@@ -73,7 +69,7 @@ final class RAGOrchestratorTests: XCTestCase {
         // 1. 设置 MockLLMService.chatStreamHandler 产生流式 Chunk
         // RAGOrchestrator.chatStream() 内部调用 llmService.chatStream()
         guard let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockLLMService else { XCTFail("MockLLMService 未注册"); return }
-        mockLLM.chatStreamHandler = { query, history, pages in
+        mockLLM.chatStreamHandler = { _, _, _ in
             return AsyncThrowingStream { continuation in
                 continuation.yield("量子")
                 continuation.yield("力学")
@@ -122,7 +118,7 @@ final class RAGOrchestratorTests: XCTestCase {
             var errorDescription: String? { "Mock LLM Timeout Error" }
         }
         
-        mockLLM.chatStreamHandler = { query, history, pages in
+        mockLLM.chatStreamHandler = { _, _, _ in
             return AsyncThrowingStream { continuation in
                 continuation.yield("初步内容")
                 continuation.finish(throwing: MockError())

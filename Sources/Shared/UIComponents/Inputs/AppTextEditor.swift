@@ -58,7 +58,7 @@ public struct AppTextEditor: View {
                     .scrollContentBackground(.hidden) // 隐藏原生背景以便显示自定义半透明底色
                     .background(Color.clear)
                     .focused($isFocused)
-                    .onChange(of: text) { oldValue, newValue in
+                    .onChange(of: text) { _, newValue in
                         // 1. 若超限，则进行物理字符剪切，起到硬阻拦作用
                         if let limit = maxCharacters, newValue.count > limit {
                             text = String(newValue.prefix(limit))

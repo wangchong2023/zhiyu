@@ -10,7 +10,6 @@
 //
 import SwiftUI
 
-
 // MARK: - Ingest Tips Section
 /// 导入操作提示区域组件
 /// 负责提供各导入方式的功能说明及操作建议，提升用户初次使用体验

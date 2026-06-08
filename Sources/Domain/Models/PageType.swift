@@ -10,7 +10,6 @@
 //
 import Foundation
 
-
 // MARK: - Page Type
 public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
     case entity = "entity"

@@ -80,7 +80,7 @@ public final class AppStore {
     }
 
     // ── UI 状态 ──
-    public var pendingCoachMark: CoachMarkType? = nil
+    public var pendingCoachMark: CoachMarkType?
     
     // ── 转发指标 (由 KnowledgeStore 持有，@Observable 自动追踪) ──
     public var pages: [KnowledgePage] { knowledgeStore.pages }

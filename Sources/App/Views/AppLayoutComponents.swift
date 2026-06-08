@@ -249,7 +249,6 @@ extension ContentView {
                 }
                 .tag(AppTab.chat)
 
-
             ingestTabContent
                 .accessibilityIdentifier("Ingest")
                 .tabItem {

@@ -92,8 +92,6 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
             }
         }
 
-
-        
         let writeDuration = Date().timeIntervalSince(writeStartTime)
         print("💾 [PerformanceTest] 十万节点及十万拓扑边批量注入完毕，总耗时: \(String(format: "%.3f", writeDuration)) 秒")
         

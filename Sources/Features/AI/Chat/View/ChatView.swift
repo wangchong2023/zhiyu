@@ -291,8 +291,7 @@ struct ChatViewContent: View {
                     .onSubmit { if canSend { Task { await coordinator.sendMessage(pages: store.pages) } } }
                 
                 Button { 
-                    if coordinator.isProcessing { coordinator.cancelCurrentRequest() }
-                    else { HapticFeedback.shared.trigger(.selection); Task { await coordinator.sendMessage(pages: store.pages) } }
+                    if coordinator.isProcessing { coordinator.cancelCurrentRequest() } else { HapticFeedback.shared.trigger(.selection); Task { await coordinator.sendMessage(pages: store.pages) } }
                 } label: {
                     Image(systemName: coordinator.isProcessing ? DesignSystem.Icons.stop : DesignSystem.Icons.send)
                         .font(.title2).foregroundStyle(coordinator.isProcessing ? .red : (canSend ? .appAccent : .appSecondary))

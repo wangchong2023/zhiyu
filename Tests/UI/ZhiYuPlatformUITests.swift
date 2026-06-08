@@ -522,12 +522,6 @@ final class iPadTests: ZhiYuPlatformUITests {
 @available(iOS 17.0, *)
 final class MacCatalystTests: ZhiYuPlatformUITests {
 
-    override func setUp() async throws {
-        try await super.setUp()
-        // async throws setUp 中 throw XCTSkip 在部分 XCTest 版本无法可靠阻止异步方法执行
-        // 跳过逻辑改为在每个测试方法内部通过 XCTSkipUnless 实现
-    }
-
     /// 验证 Mac 菜单栏存在（仅 macCatalyst 环境）
     func testMacMenuBarExists() throws {
         // 非 Mac Catalyst 环境下跳过
@@ -581,7 +575,6 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         app.typeText("f")
         try await Task.sleep(nanoseconds: UInt64(500_000_000))
     }
-
 
     func testMacMouseInteractions() async {
         // Mac 应该支持鼠标悬停

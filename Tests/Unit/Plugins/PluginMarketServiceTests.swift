@@ -97,7 +97,7 @@ final class PluginMarketServiceTests: XCTestCase {
     }
     
     func testFetchPluginsFailure() async throws {
-        MockURLProtocol.requestHandler = { request in
+        MockURLProtocol.requestHandler = { _ in
             throw URLError(.notConnectedToInternet)
         }
 

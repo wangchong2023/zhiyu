@@ -171,7 +171,7 @@ final class PluginMarketService: ObservableObject {
                 // 尝试从 Tools/Plugins 目录复制
                 let bundledSources = [
                     URL(fileURLWithPath: "Tools/Plugins/\(plugin.id).zyplugin"),
-                    URL(fileURLWithPath: "Tools/Plugins/smart-cleaner.zyplugin"),
+                    URL(fileURLWithPath: "Tools/Plugins/smart-cleaner.zyplugin")
                 ]
                 for src in bundledSources {
                     if fileManager.fileExists(atPath: src.path) {

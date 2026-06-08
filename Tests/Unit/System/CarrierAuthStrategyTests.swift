@@ -43,7 +43,7 @@ final class CarrierAuthStrategyTests: XCTestCase {
         }
         #else
         do {
-            let _ = try await strategy.acquireCredentials()
+            _ = try await strategy.acquireCredentials()
             XCTFail("SDK 未初始化时在 Release 模式下应该抛出错误")
         } catch let error as AuthError {
             XCTAssertEqual(error, AuthError.carrierSDKNotInitialized)

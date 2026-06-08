@@ -39,7 +39,6 @@ struct ViewFactory {
     }
 }
 
-
 // MARK: - 包装器 (用于处理复杂的 Binding 或依赖)
 
 struct PageDetailWrapper: View {

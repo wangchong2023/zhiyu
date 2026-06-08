@@ -347,7 +347,6 @@ extension L10n {
                 ModelManager.tr("model_manager.routing.runtimeStatus")
             }
 
-
             public static var cloudModel: String {
                 ModelManager.tr("model_manager.routing.cloud_model")
             }

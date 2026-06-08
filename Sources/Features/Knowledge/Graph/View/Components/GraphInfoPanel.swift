@@ -10,7 +10,6 @@
 //
 import SwiftUI
 
-
 // MARK: - Graph Legend Row
 /// 图谱图例行组件
 private struct GraphLegendRow: View {
@@ -75,7 +74,7 @@ struct GraphLegend: View {
 /// 负责在选中节点时于底部弹出信息摘要卡片，展示页面核心元数据并提供跳转入口
 struct GraphSelectedNodeCard: View {
     let page: KnowledgePage
-    var heroNamespace: Namespace.ID? = nil
+    var heroNamespace: Namespace.ID?
 
     var body: some View {
         NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
