@@ -37,7 +37,7 @@ public extension AppError {
     }
 
     /// 导出功能不支持错误（默认 501 Not Implemented）
-    static func exportNotSupported(_ description: String = "Export is not supported on this platform.") -> NSError {
+    static func exportNotSupported(_ description: String = "") -> NSError {
         make(domain: "Export", code: 501, description: description)
     }
 
