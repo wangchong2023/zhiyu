@@ -10,8 +10,8 @@
 //
 import Foundation
 
-// swiftlint:disable nesting
 extension L10n {
+// swiftlint:disable nesting
     public enum AI {
         public static let t = "AI"
 

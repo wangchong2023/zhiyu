@@ -542,7 +542,7 @@ extension AppStore: AnyPageStore {
     }
 
     // 获取StorageStats
-    /// - Returns: 返回值
+    // - Returns: 返回值
     // swiftlint:disable:next large_tuple
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         await pageStore.getStorageStats()

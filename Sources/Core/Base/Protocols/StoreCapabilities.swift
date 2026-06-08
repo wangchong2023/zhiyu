@@ -189,8 +189,8 @@ public protocol AnyPageStore: Sendable {
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?, startTime: Date?, endTime: Date?, module: String?)
     
     // 获取当前应用各持久化目录所占用的物理存储空间统计信息。
-    ///
-    /// - Returns: 返回包含数据库物理文件大小、日志文件大小、以及导出缓存大小的元组。
+    //
+    // - Returns: 返回包含数据库物理文件大小、日志文件大小、以及导出缓存大小的元组。
     // swiftlint:disable:next large_tuple
     func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64)
 }

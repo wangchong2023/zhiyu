@@ -177,7 +177,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // MARK: - 统计与系统
 
     // 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
-    /// - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
+    // - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
     // swiftlint:disable:next large_tuple
     public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
         let (dbPath, globalDBPath) = await MainActor.run {
