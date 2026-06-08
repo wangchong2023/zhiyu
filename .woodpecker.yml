@@ -39,22 +39,17 @@ steps:
       - echo "===> Generating Xcode Project via XcodeGen..."
       - xcodegen generate
 
-  check-test-compile:
-    image: bash
-    commands:
-      - echo "===> Pre-checking Test Suites Compilation..."
-      - mkdir -p $HOME/.cache/zhiyu-spm
-      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo "===> Test Suites compiled successfully."
-
+  # ── Stage 3: 三平台编译（iOS 先行填充 SPM 缓存，macOS/watchOS 并行复用）──
   build-ios:
     image: bash
     commands:
       - echo "===> Building for iOS Simulator..."
+      - mkdir -p $HOME/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
       - echo "===> iOS Build completed successfully."
 
   build-macos:
+    depends_on: [build-ios]
     image: bash
     commands:
       - echo "===> Building for macOS (Catalyst)..."
@@ -62,6 +57,7 @@ steps:
       - echo "===> macOS Build completed successfully."
 
   build-watchos:
+    depends_on: [build-ios]
     image: bash
     commands:
       - echo "===> Building for watchOS Simulator..."
@@ -69,12 +65,14 @@ steps:
       - echo "===> watchOS Build completed successfully."
 
   count-tests:
+    depends_on: [build-macos, build-watchos]
     image: bash
     commands:
       - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
 
   run-tests:
+    depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
       - echo "===> Running Unit Tests..."
@@ -82,6 +80,7 @@ steps:
       - echo "===> All Tests passed successfully."
 
   coverage-check:
+    depends_on: [run-tests]
     image: bash
     commands:
       - echo "===> Checking code coverage threshold..."
