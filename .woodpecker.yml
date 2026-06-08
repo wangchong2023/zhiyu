@@ -15,7 +15,9 @@ steps:
       - git clone $CLONE_URL .
       - git checkout $CI_COMMIT_SHA
 
+  # ── Stage 1: 静态检查 + 工程生成（并行，互不依赖）──
   static-analysis:
+    depends_on: [clone-repo]
     image: bash
     commands:
       - echo "===> Running Static Analysis..."
@@ -26,6 +28,7 @@ steps:
       - python3 Tools/Lint/scan_unsafe_string_index.py
 
   generate-project:
+    depends_on: [clone-repo]
     image: bash
     commands:
       - echo "===> Generating Xcode Project via XcodeGen..."
@@ -33,6 +36,7 @@ steps:
 
   # ── Stage 2: 构建前准备（SPM 缓存 + 测试编译预检）──
   prepare:
+    depends_on: [static-analysis, generate-project]
     image: bash
     commands:
       - echo "===> Preparing build environment + dependencies..."
@@ -65,25 +69,15 @@ steps:
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "===> watchOS Build completed."
 
-  # ── Stage 4: 测试执行 ──
-  count-tests:
+  # ── Stage 4: 测试 + 覆盖率 ──
+  test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
       - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-
-  run-tests:
-    depends_on: [build-ios, build-macos, build-watchos]
-    image: bash
-    commands:
       - echo "===> Running Unit Tests..."
       - set -o pipefail && xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm -enableCodeCoverage YES -parallel-testing-enabled YES -parallel-testing-worker-count 4 -skip-testing:ZhiYuUITests/ZhiYuUITests/testChatAISkeletonLoadingState -skip-testing:ZhiYuUITests/IngestTests/testManualEntrySectionExists -skip-testing:ZhiYuUITests/IngestTests/testURLImportButton 2>&1 | tee build/test_raw.log | Tools/CI/ci-test-progress.sh | xcbeautify --report junit --report-path build/test_report.junit
-      - echo "===> All Tests passed successfully."
-
-  coverage-check:
-    depends_on: [run-tests]
-    image: bash
-    commands:
-      - echo "===> Checking code coverage threshold..."
+      - echo "===> All Tests passed."
+      - echo "===> Checking code coverage..."
       - python3 Tools/CI/check_coverage.py
