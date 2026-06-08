@@ -80,12 +80,10 @@ struct GraphLayoutProcessor {
                 }
             }
             // 解析相关页面
-            for relatedID in page.relatedPageIDs {
-                if pageIDSet.contains(relatedID) {
+            for relatedID in page.relatedPageIDs where pageIDSet.contains(relatedID) {
                     let directed = DirectedEdge(source: page.id, target: relatedID)
                     if page.id != relatedID && edgeSet.insert(directed).inserted {
                         edges.append(GraphEdge(source: page.id, target: relatedID))
-                    }
                 }
             }
         }

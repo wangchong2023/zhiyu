@@ -34,12 +34,12 @@ public final class SynthesisStore {
     }
 
     public enum SynthesisType: String, CaseIterable, Codable, Identifiable, Sendable {
-        case mindmap = "mindmap"
-        case slides = "slides"
-        case quiz = "quiz"
-        case report = "report"
-        case infographic = "infographic"
-        case expansion = "expansion"
+        case mindmap
+        case slides
+        case quiz
+        case report
+        case infographic
+        case expansion
         public var id: String { rawValue }
         public var title: String {
             switch self {

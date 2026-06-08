@@ -71,10 +71,8 @@ public actor EmbeddingManager: EmbeddingProvider {
 
     /// 同步所有待更新的页面向量 (@RR-01)
     public func syncEmbeddings(pages: [KnowledgePage]) async {
-        for page in pages {
-            if vectorCache[page.id] == nil {
+        for page in pages where vectorCache[page.id] == nil {
                 await updateEmbedding(for: page)
-            }
         }
     }
 

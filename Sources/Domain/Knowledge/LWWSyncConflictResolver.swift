@@ -49,10 +49,8 @@ public struct LWWSyncConflictResolver: SyncConflictResolver {
         var merged = local
 
         // 1. 追加不存在于本地的远程审计日志记录，按 id 进行去重判断
-        for remoteLog in remote {
-            if !merged.contains(where: { $0.id == remoteLog.id }) {
+        for remoteLog in remote where !merged.contains(where: $0.id == remoteLog.id }) {
                 merged.append(remoteLog)
-            }
         }
 
         // 2. 将去重融合后的审计日志按产生时间戳进行降序（由新到旧）排列

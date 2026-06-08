@@ -38,10 +38,10 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testRouterSyncTabForSidebarSelection() async {
-        /// 函数头说明: 验证 iPad 侧边栏选中项切换时，主 Tab (selectedTab) 的自动联动同步算法
-        /// - 验证点: 1. 选中 AI 工具（.chat, .synthesis）时，自动同步主 Tab；
-        ///          2. 选中多金库过滤索引 (.filteredIndex) 或笔记详情 (.page) 时，主 Tab 同步为 .knowledge；
-        ///          3. 验证 selectedTab 的联动是否精确对齐。
+        // 函数头说明: 验证 iPad 侧边栏选中项切换时，主 Tab (selectedTab) 的自动联动同步算法
+        // - 验证点: 1. 选中 AI 工具（.chat, .synthesis）时，自动同步主 Tab；
+        //          2. 选中多金库过滤索引 (.filteredIndex) 或笔记详情 (.page) 时，主 Tab 同步为 .knowledge；
+        //          3. 验证 selectedTab 的联动是否精确对齐。
         
         // 1. 验证 AI 会话工具联动
         router.sidebarSelection = .tool(.chat)
@@ -87,10 +87,10 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testRouterNavigationHistoryLimit() async {
-        /// 函数头说明: 测试在大屏连续多级浏览时面包屑导航历史（navigationHistory）的去重与容量上限机制
-        /// - 验证点: 1. 历史长度上限被严格限制在 maxBreadcrumbCount (5个) 以内，防止内存暴涨与大屏渲染断层；
-        ///          2. 重复访问最新页面自动触发去重；
-        ///          3. 超限后，最老的历史页面应被安全丢弃。
+        // 函数头说明: 测试在大屏连续多级浏览时面包屑导航历史（navigationHistory）的去重与容量上限机制
+        // - 验证点: 1. 历史长度上限被严格限制在 maxBreadcrumbCount (5个) 以内，防止内存暴涨与大屏渲染断层；
+        //          2. 重复访问最新页面自动触发去重；
+        //          3. 超限后，最老的历史页面应被安全丢弃。
         
         let maxCount = DesignSystem.Metrics.maxBreadcrumbCount
 
@@ -121,10 +121,10 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testRouterDeepLinkNavigateAndStackPop() async {
-        /// 函数头说明: 测试外部深链接 (Deep Link) 调度解析与 NavigationPath 大屏导航压栈生命周期
-        /// - 验证点: 1. 进入子路由详情页 (如 pageDetail) 时，路由正常 append 并压入 path 导航栈；
-        ///          2. 切换回根目录页面 (如 dashboard) 时，导航栈被安全清空以防状态混乱；
-        ///          3. 验证 pop 操作在导航栈出栈时的准确响应。
+        // 函数头说明: 测试外部深链接 (Deep Link) 调度解析与 NavigationPath 大屏导航压栈生命周期
+        // - 验证点: 1. 进入子路由详情页 (如 pageDetail) 时，路由正常 append 并压入 path 导航栈；
+        //          2. 切换回根目录页面 (如 dashboard) 时，导航栈被安全清空以防状态混乱；
+        //          3. 验证 pop 操作在导航栈出栈时的准确响应。
         
         // 1. 模拟深链接分流，直接推送子笔记详情页进入 NavigationStack
         let mockPageId = UUID()
@@ -152,10 +152,10 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testAppRoutePropertiesAllCases() async {
-        /// 函数头说明: 遍历测试所有 AppRoute 枚举值的 id、sidebarSelection、domain，确保分支覆盖率达 100%
-        /// - 验证点: 1. 验证所有 22 个路由 case 拥有非空的唯一标识符 id；
-        ///          2. 验证所有 case 的 sidebarSelection 对应侧边栏联动策略；
-        ///          3. 验证所有 case 的 domain 归属是否合理。
+        // 函数头说明: 遍历测试所有 AppRoute 枚举值的 id、sidebarSelection、domain，确保分支覆盖率达 100%
+        // - 验证点: 1. 验证所有 22 个路由 case 拥有非空的唯一标识符 id；
+        //          2. 验证所有 case 的 sidebarSelection 对应侧边栏联动策略；
+        //          3. 验证所有 case 的 domain 归属是否合理。
         let testUUID = UUID()
         
         let allRoutes: [AppRoute] = [
@@ -214,12 +214,12 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testRouterAdditionalAPIs() async {
-        /// 函数头说明: 针对 Router 类中其余的高频交互辅助方法进行 100% 物理加固
-        /// - 验证点: 1. triggerLanguageRefresh() 确实能够切换状态标识；
-        ///          2. dismissSheet() 确实能安全隐藏 sheet 控制器；
-        ///          3. navigateToPage(id:) 确实压入详情导航；
-        ///          4. navigateToTool(_:) 确实能够选中特定的侧边栏并清空导航栈；
-        ///          5. 检验 selectedTab 底层 UserDefaults 的写入和读取一致性。
+        // 函数头说明: 针对 Router 类中其余的高频交互辅助方法进行 100% 物理加固
+        // - 验证点: 1. triggerLanguageRefresh() 确实能够切换状态标识；
+        //          2. dismissSheet() 确实能安全隐藏 sheet 控制器；
+        //          3. navigateToPage(id:) 确实压入详情导航；
+        //          4. navigateToTool(_:) 确实能够选中特定的侧边栏并清空导航栈；
+        //          5. 检验 selectedTab 底层 UserDefaults 的写入和读取一致性。
         
         // 1. 测试多语言强制刷新状态转换
         let initialRefreshState = router.languageForceUpdate
@@ -250,9 +250,9 @@ final class iPadRouterTests: XCTestCase {
     }
     
     func testRouterPathClearingOnSelectionChange() async {
-        /// 函数头说明: 验证在切换 selectedTab 或 sidebarSelection 时，能够自动将 path 导航栈清空，以解决右侧视图无联动的 Bug
-        /// - 验证点: 1. 当 path 中存在推栈页面时，修改 selectedTab 会重置 path；
-        ///          2. 当 path 中存在推栈页面时，修改 sidebarSelection 会重置 path。
+        // 函数头说明: 验证在切换 selectedTab 或 sidebarSelection 时，能够自动将 path 导航栈清空，以解决右侧视图无联动的 Bug
+        // - 验证点: 1. 当 path 中存在推栈页面时，修改 selectedTab 会重置 path；
+        //          2. 当 path 中存在推栈页面时，修改 sidebarSelection 会重置 path。
         
         // 1. 验证切换 selectedTab 触发 path 重置
         router.path.append(AppRoute.settings)

@@ -219,7 +219,13 @@
       "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t\\\\n\\\\t\\\\/\\\\/ MARK/\\\\}\\\\n\\\\n\\\\t\\\\/\\\\/ MARK/g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Security/SecurityManagerTests.swift)",
       "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t    \\\\/\\\\//g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)",
       "Bash(sed -i '' '/^[[:space:]]*$/N;/\\\\n[[:space:]]*$/d' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)",
-      "Bash(swiftlint --fix)"
+      "Bash(swiftlint --fix)",
+      "Bash(sed -n '13,18p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/UIComponents/Interaction/DragDropComponents.swift)",
+      "Bash(sed -n '39,44p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Services/iPadRouterTests.swift)",
+      "Bash(sed -n '447,452p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuPlatformUITests.swift)",
+      "Bash(sed -i '' '15s|^    /// Enables drag and drop for page items in the knowledge base|    // Enables drag and drop for page items in the knowledge base|' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Shared/UIComponents/Interaction/DragDropComponents.swift)",
+      "Bash(sed -i '' '/^        \\\\/\\\\/\\\\/ /{N;s/\\\\n\\\\n/\\\\n/;}' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Services/iPadRouterTests.swift)",
+      "Bash(sed -i '' '/^        \\\\/\\\\/\\\\/ /{N;s/\\\\n\\\\n/\\\\n/;}' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuPlatformUITests.swift)"
     ]
   }
 }

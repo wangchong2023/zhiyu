@@ -230,12 +230,10 @@ extension GraphLayoutProcessor {
         var Q = 0.0
         for (nodeID, neighbors) in adjacency {
             let ki = Double(nodeDegree[nodeID] ?? 0)
-            for neighborID in neighbors {
-                if nodeID < neighborID { // 每条边只计算一次
+            for neighborID in neighbors where nodeID < neighborID // 每条边只计算一次 {
                     let kj = Double(nodeDegree[neighborID] ?? 0)
                     let sameCommunity = community[nodeID] == community[neighborID] ? 1.0 : 0.0
                     Q += (1.0 - (ki * kj) / (2 * m)) * sameCommunity
-                }
             }
         }
         return Q / (2 * m)

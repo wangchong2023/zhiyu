@@ -235,13 +235,9 @@ internal struct Localized {
         let fullId = Locale.current.identifier  // e.g. "zh-Hans_CN"
         let langCode = Locale.current.language.languageCode?.identifier ?? "en"  // e.g. "zh"
         // 1. 完整 ID 前缀匹配 (zh-Hans)
-        for key in dict.keys {
-            if fullId.hasPrefix(key) { return dict[key] ?? fallback }
-        }
+        for key in dict.keys where fullId.hasPrefix(key) return dict[key] ?? fallback } {
         // 2. 仅语言码匹配 (zh)
-        for key in dict.keys {
-            if key.hasPrefix(langCode) { return dict[key] ?? fallback }
-        }
+        for key in dict.keys where key.hasPrefix(langCode) return dict[key] ?? fallback } {
         // 3. en fallback
         if let en = dict["en"] { return en }
         // 4. 任意值

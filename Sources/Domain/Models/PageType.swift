@@ -12,12 +12,12 @@ import Foundation
 
 // MARK: - Page Type
 public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
-    case entity = "entity"
-    case concept = "concept"
-    case source = "source"
-    case comparison = "comparison"
-    case map = "map"
-    case raw = "raw"
+    case entity
+    case concept
+    case source
+    case comparison
+    case map
+    case raw
     
     public var id: String { rawValue }
     
@@ -72,9 +72,9 @@ public enum PageStatus: String, Codable, CaseIterable, Sendable {
 
 // MARK: - Confidence Level
 public enum Confidence: String, Codable, CaseIterable, Sendable {
-    case high = "high"
-    case medium = "medium"
-    case low = "low"
+    case high
+    case medium
+    case low
     
     public var displayName: String {
         switch self {

@@ -35,13 +35,13 @@ public struct LintIssue: Identifiable, Codable, Sendable {
     public var suggestion: String
     
     public enum IssueType: String, Codable, Sendable {
-        case generic = "generic"
-        case brokenLink = "brokenLink"
-        case orphan = "orphan"
-        case island = "island"
-        case cycle = "cycle"
-        case stub = "stub"
-        case stale = "stale"
+        case generic
+        case brokenLink
+        case orphan
+        case island
+        case cycle
+        case stub
+        case stale
         
         public var icon: String {
             switch self {
@@ -57,9 +57,9 @@ public struct LintIssue: Identifiable, Codable, Sendable {
     }
 
     public enum LintSeverity: String, Codable, Sendable {
-        case error = "error"
-        case warning = "warning"
-        case info = "info"
+        case error
+        case warning
+        case info
 
         public var icon: String {
             switch self {

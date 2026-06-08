@@ -24,8 +24,8 @@ struct SystemStatsView: View {
     @State private var selectedTab: Tab = .performance
     
     enum Tab: String, CaseIterable {
-        case performance = "performance"
-        case storage = "storage"
+        case performance
+        case storage
         
         var title: String {
             switch self {

@@ -40,11 +40,9 @@ public struct NotebookThemeFactory {
     public static func generate(from name: String, id: UUID) -> NotebookThemeConfig {
         // 1. 语义启发匹配
         var palette: [String] = []
-        for (keyword, colors) in semanticPalettes {
-            if name.localizedCaseInsensitiveContains(keyword) {
+        for (keyword, colors) in semanticPalettes where name.localizedCaseInsensitiveContains(keyword) {
                 palette = colors
                 break
-            }
         }
         
         // 2. 如果未匹配，使用哈希分发默认配色

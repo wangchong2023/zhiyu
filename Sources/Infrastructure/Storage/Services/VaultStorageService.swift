@@ -33,11 +33,9 @@ final class VaultStorageService {
             return []
         }
 
-        for case let fileURL as URL in enumerator {
-            if fileURL.pathExtension.lowercased() == "md" {
+        for case let fileURL as URL in enumerator where fileURL.pathExtension.lowercased() == "md" {
                 if let page = processFile(at: fileURL) {
                     results.append(page)
-                }
             }
         }
 
