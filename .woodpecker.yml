@@ -15,7 +15,7 @@ steps:
       - git clone $CLONE_URL .
       - git checkout $CI_COMMIT_SHA
 
-  # ── Stage 1: 静态检查 + 工程生成（并行，互不依赖）──
+  # ── Stage 1: 并行（静态分析 ∥ 构建准备）──
   static-analysis:
     depends_on: [clone-repo]
     image: bash
@@ -27,18 +27,12 @@ steps:
       - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
 
-  generate-project:
+  prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Generating Xcode Project via XcodeGen..."
+      - echo "===> Generating Xcode project..."
       - xcodegen generate
-
-  # ── Stage 2: 构建前准备（SPM 缓存 + 测试编译预检）──
-  prepare:
-    depends_on: [static-analysis, generate-project]
-    image: bash
-    commands:
       - echo "===> Preparing build environment + dependencies..."
       - mkdir -p build $HOME/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
