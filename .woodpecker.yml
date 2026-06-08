@@ -67,7 +67,7 @@ steps:
     image: bash
     commands:
       - echo "===> Building macOS (Catalyst) app..."
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
+      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData -clonedSourcePackagesDirPath $HOME/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
       - echo "===> macOS Build completed."
 
   build-watchos:
