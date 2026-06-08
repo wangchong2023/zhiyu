@@ -190,4 +190,3 @@ private final class MockLAContext: LAContext {
         reply(mockEvaluatePolicyResult, nil)
     }
 }
-

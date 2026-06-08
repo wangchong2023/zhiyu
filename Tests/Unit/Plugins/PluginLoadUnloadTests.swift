@@ -89,7 +89,7 @@ final class PluginLoadUnloadTests: XCTestCase {
     func testTocGeneratorInsertsTOC() {
         guard let js = readJS("Tools/Plugins/Local/toc-generator/index.js") else { XCTFail("读取"); return }
         let m = PluginManifest(id: "test.toc.func", version: "1.0.0", author: "T",
-                                permissions: ["writeContent","log"], names: ["en":"TOC"], descriptions: ["en":"T"])
+                                permissions: ["writeContent","log"], names: ["en": "TOC"], descriptions: ["en": "T"])
         guard let p = JavaScriptPlugin(script: js, manifest: m) else { XCTFail("init"); return }
         PluginRegistry.shared.loadPlugin(p)
         let input = "# Chapter 1\n\nContent here\n\n## Section 1.1\n\nMore content"
@@ -104,7 +104,7 @@ final class PluginLoadUnloadTests: XCTestCase {
     func testWordCounterPostProcess() {
         guard let js = readJS("Tools/Plugins/Local/word-counter/index.js") else { XCTFail("读取"); return }
         let m = PluginManifest(id: "test.word.func", version: "1.0.0", author: "T",
-                                permissions: ["readContent","log"], names: ["en":"WC"], descriptions: ["en":"WC"])
+                                permissions: ["readContent","log"], names: ["en": "WC"], descriptions: ["en": "WC"])
         guard let p = JavaScriptPlugin(script: js, manifest: m) else { XCTFail("init"); return }
         PluginRegistry.shared.loadPlugin(p)
         let input = "Hello world 你好世界\n\nThis is a test."
@@ -116,7 +116,7 @@ final class PluginLoadUnloadTests: XCTestCase {
     func testSmartCleanerMergesBlankLines() {
         guard let js = readJS("Tools/Plugins/smart-cleaner/index.js") else { XCTFail("读取"); return }
         let m = PluginManifest(id: "test.clean.func", version: "1.0.0", author: "T",
-                                permissions: ["writeContent","log"], names: ["en":"SC"], descriptions: ["en":"SC"])
+                                permissions: ["writeContent","log"], names: ["en": "SC"], descriptions: ["en": "SC"])
         guard let p = JavaScriptPlugin(script: js, manifest: m) else { XCTFail("init"); return }
         PluginRegistry.shared.loadPlugin(p)
         // 3+ 连续空行应被合并为 2 个
@@ -131,7 +131,7 @@ final class PluginLoadUnloadTests: XCTestCase {
     func testLinkPreviewPostProcess() {
         guard let js = readJS("Tools/Plugins/Remote/link-preview/index.js") else { XCTFail("读取"); return }
         let m = PluginManifest(id: "test.link.func", version: "1.0.0", author: "T",
-                                permissions: ["network","log"], names: ["en":"LP"], descriptions: ["en":"LP"])
+                                permissions: ["network","log"], names: ["en": "LP"], descriptions: ["en": "LP"])
         guard let p = JavaScriptPlugin(script: js, manifest: m) else { XCTFail("init"); return }
         PluginRegistry.shared.loadPlugin(p)
         XCTAssertNoThrow(try p.postProcess(content: "Check https://example.com"), "postProcess 不应抛异常")
@@ -142,7 +142,7 @@ final class PluginLoadUnloadTests: XCTestCase {
     func testAITranslatorHandlesMissingAIGracefully() {
         guard let js = readJS("Tools/Plugins/Remote/ai-translator/index.js") else { XCTFail("读取"); return }
         let m = PluginManifest(id: "test.trans.func", version: "1.0.0", author: "T",
-                                permissions: ["readContent","writeContent","aiAccess","log"], names: ["en":"TR"], descriptions: ["en":"TR"])
+                                permissions: ["readContent","writeContent","aiAccess","log"], names: ["en": "TR"], descriptions: ["en": "TR"])
         guard let p = JavaScriptPlugin(script: js, manifest: m) else { XCTFail("init"); return }
         PluginRegistry.shared.loadPlugin(p)
         // 无 LLM 服务时 postProcess 会抛异常，但不应 crash

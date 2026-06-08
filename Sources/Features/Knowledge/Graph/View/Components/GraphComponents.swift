@@ -332,4 +332,3 @@ struct GraphZoomControls: View {
         .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
     }
 }
-

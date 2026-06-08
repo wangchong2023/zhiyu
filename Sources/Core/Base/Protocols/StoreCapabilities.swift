@@ -196,4 +196,3 @@ public protocol AnyPageStore: Sendable {
 
 /// 聚合了页面存取与语义向量检索的复合存储能力协议 (L0-Base 核心大脑)。
 public typealias AnyPageStoreCapabilities = AnyPageStore & VectorIndexableStore
-

@@ -152,4 +152,3 @@ struct IngestEntryCardsSection: View {
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
     }
 }
-

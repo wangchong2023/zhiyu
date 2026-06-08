@@ -309,4 +309,3 @@ final class JavaScriptPlugin: InterceptionPlugin {
 }
 
 #endif
-

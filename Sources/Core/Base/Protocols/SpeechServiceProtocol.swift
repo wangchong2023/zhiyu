@@ -75,4 +75,3 @@ public protocol SpeechServiceProtocol: AnyObject, Observable {
     /// 清除当前转录文本缓存，重置输入框状态。
     func clearTranscription()
 }
-

@@ -174,4 +174,3 @@ public extension View {
         self.modifier(AppListRowBackgroundModifier())
     }
 }
-

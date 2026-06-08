@@ -415,4 +415,3 @@ struct SystemStatsView: View {
             .padding(.horizontal, DesignSystem.tiny)
     }
 }
-

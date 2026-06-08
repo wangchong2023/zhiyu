@@ -527,4 +527,3 @@ final class ZhiYuDomainTests: XCTestCase {
         }
     }
 }
-

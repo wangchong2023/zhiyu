@@ -194,4 +194,3 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, Knowledg
         PageContentUtility.extractAllTags(content: content, existingTags: tags)
     }
 }
-

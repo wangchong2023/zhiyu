@@ -162,4 +162,3 @@ public final class iCloudSyncService: ObservableObject {
 extension iCloudSyncService: @unchecked Sendable {}
 #endif // ICLOUD_ENABLED
 
-

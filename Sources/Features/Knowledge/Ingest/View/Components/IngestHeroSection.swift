@@ -36,4 +36,3 @@ struct IngestHeroSection: View {
         .padding(.vertical, DesignSystem.tightPadding)
     }
 }
-

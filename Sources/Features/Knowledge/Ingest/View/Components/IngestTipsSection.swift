@@ -63,4 +63,3 @@ struct IngestTipsSection: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 }
-

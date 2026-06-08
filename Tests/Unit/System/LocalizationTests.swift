@@ -116,4 +116,3 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(missingKeys.isEmpty, "以下本地化 Key 缺失或未在对应的表中定义: \n\(missingKeys.joined(separator: "\n"))")
     }
 }
-

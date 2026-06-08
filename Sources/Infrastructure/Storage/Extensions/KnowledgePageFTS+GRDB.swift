@@ -27,4 +27,3 @@ extension KnowledgePageFTS {
         public static let aliases = Column("aliases")
     }
 }
-

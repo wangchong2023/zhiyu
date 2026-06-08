@@ -214,7 +214,11 @@
       "Bash(swiftlint version *)",
       "Bash(sed -n '260,262p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Platforms/iOS/iOSExportService.swift)",
       "Bash(sed -n '54,56p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/CloudChaosTests.swift)",
-      "Bash(sed -n '37,39p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/AppStoreStorageTests.swift)"
+      "Bash(sed -n '37,39p' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/AppStoreStorageTests.swift)",
+      "Bash(swiftlint lint *)",
+      "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t\\\\n\\\\t\\\\/\\\\/ MARK/\\\\}\\\\n\\\\n\\\\t\\\\/\\\\/ MARK/g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Security/SecurityManagerTests.swift)",
+      "Bash(perl -i -0777 -pe 's/\\\\}\\\\n\\\\n\\\\t\\\\n\\\\t    \\\\/\\\\//g' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)",
+      "Bash(sed -i '' '/^[[:space:]]*$/N;/\\\\n[[:space:]]*$/d' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/Unit/Storage/ZhiYuStoreTests.swift)"
     ]
   }
 }

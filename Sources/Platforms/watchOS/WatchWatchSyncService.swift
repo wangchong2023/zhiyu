@@ -43,7 +43,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
         let activationState = session.activationState
         #endif
         guard activationState == .activated else { return }
-        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String : Any]
+        let userInfo = ["type": "new_page", "content": text, "date": Date()] as [String: Any]
         session.transferUserInfo(userInfo)
     }
     
@@ -145,7 +145,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
             return
         }
         
-        let userInfo = ["type": "request_briefing"] as [String : Any]
+        let userInfo = ["type": "request_briefing"] as [String: Any]
         session.transferUserInfo(userInfo)
     }
     
@@ -175,7 +175,7 @@ final class WatchWatchSyncService: NSObject, WatchSyncProtocol, WCSessionDelegat
     
     /// session回调
     /// - Parameter session: session
-    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
         let type = userInfo["type"] as? String
         let contentStr = userInfo["content"] as? String
         

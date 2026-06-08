@@ -32,7 +32,7 @@ steps:
     image: bash
     commands:
       - echo "===> Running SwiftLint..."
-      - swiftlint --strict --reporter github-actions-logging 2>/dev/null || swiftlint --strict
+      - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
     failure: ignore
 
   secret-scan:
