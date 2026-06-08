@@ -196,6 +196,12 @@ final class MockVectorIndexableStore: VectorIndexableStore, @unchecked Sendable 
     }
 }
 
+/// Mock Vault 数据库切换器，用于测试环境 DI 容器注册（避免 VaultService.init() 时 @Inject 解析失败）
+final class MockVaultDatabaseSwitcher: VaultDatabaseSwitcher, @unchecked Sendable {
+    func switchDatabase(to vaultID: UUID, at url: URL) async throws {}
+    func releaseDatabaseConnection() {}
+}
+
 // MARK: - XCTestCase Extension
 extension XCTestCase {
     @MainActor
@@ -310,6 +316,7 @@ extension XCTestCase {
         
         // 3. Domain Services (L2)
         ServiceContainer.shared.register(AuthService.shared as any AuthServiceProtocol, for: (any AuthServiceProtocol).self)
+        ServiceContainer.shared.register(MockVaultDatabaseSwitcher() as any VaultDatabaseSwitcher, for: (any VaultDatabaseSwitcher).self)
         ServiceContainer.shared.register(VaultService.shared as any VaultServiceProtocol, for: (any VaultServiceProtocol).self)
         // 注册设置存储中心以供测试沙盒内需要注入 SettingsStore 的类能正常解析，避免测试时闪退
         ServiceContainer.shared.register(SettingsStore(), for: SettingsStore.self)
