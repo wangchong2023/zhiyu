@@ -110,7 +110,10 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         // 注册文档文本提取基础设施服务，遵循依赖倒置契约 (@SRP)
         container.register(DocumentExtractionService() as any DocumentExtractionServiceProtocol, for: (any DocumentExtractionServiceProtocol).self)
-        
+
+        // 注册数据协调器 (Coordination) - 依赖 AnyPageStore + EmbeddingProvider + Logger 均已就绪
+        container.register(DataCoordinator(), for: DataCoordinator.self)
+
         // 异步加载向量缓存以确保启动性能
         Task {
             await embeddingManager.loadInitialCache()
@@ -194,9 +197,7 @@ struct DomainModuleRegistrar: ModuleRegistrar {
         
         // 3. 插件系统 (@SR-04: API 访问白名单管控)
         container.register(PluginRegistry.shared, for: PluginRegistry.self)
-        
-        // 4. 注册协调器 (Coordination) - 必须在所有依赖项就绪后
-        container.register(DataCoordinator(), for: DataCoordinator.self)
+
         print("[DI] Domain capability module registration completed")
     }
 }
