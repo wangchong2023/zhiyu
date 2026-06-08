@@ -282,7 +282,7 @@ public actor Logger: LoggerProtocol {
             _logEntries = Array(_logEntries.prefix(Self.maxLogEntries))
         }
         
-        entriesSubject.send(_logEntries)
+        entriesSubject.send(_logEntries.sorted { $0.timestamp > $1.timestamp })
         await saveToDisk()
     }
 
@@ -365,7 +365,7 @@ public actor Logger: LoggerProtocol {
     /// 获取记录日志Entries
     /// - Returns: 列表
     public func getLogEntries() async -> [LogEntry] {
-        return _logEntries
+        return _logEntries.sorted { $0.timestamp > $1.timestamp }
     }
 }
 

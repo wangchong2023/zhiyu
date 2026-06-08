@@ -41,7 +41,7 @@ final class KnowledgeStatsWidgetTests: XCTestCase {
         let entry = provider.fetchWidgetEntry(date: Date())
         
         // 关键过程：验证拟真的静态 Mock 数据与系统预期指标的对齐情况
-        XCTAssertEqual(entry.vaultName, "Demo Vault", "Mock vault name should be Demo Vault")
+        XCTAssertEqual(entry.vaultName, WidgetL10n.vaultName, "Mock vault name should match localized WidgetL10n.vaultName")
         XCTAssertEqual(entry.pageCount, AppConstants.Demo.mockPageCount)
         XCTAssertEqual(entry.linkCount, AppConstants.Demo.mockLinkCount)
         XCTAssertEqual(entry.tagCount, AppConstants.Demo.mockTagCount)
