@@ -179,25 +179,18 @@ final class ComponentSnapshots: XCTestCase {
         
         // 2. 历经所有 AppTab 的 case 分支，榨干 switch-case 覆盖率死角
         for tab in AppTab.allCases {
-            // 在 knowledge 模式下向导航栈推入不同类型的路由以激活 navigationDestination 闭包体
-            if tab == .knowledge {
-                router.path.append(AppRoute.settings)
-                router.path.append(KnowledgePage(title: "测试路由页面", pageType: .concept, content: ""))
-            }
-            
+            // 注意：不向共享 Router 推入路由 — NavigationStack 在 snapshot 模式下
+            // 解析 NavigationPath 中的路由时会触发 SwiftUI EnvironmentValues 断言，
+            // 导致 AttributeGraph 无限递归 (AG::Graph::update_attribute 30+ 层)。
+            // 导航目的地闭包覆盖率需通过独立单元测试覆盖。
+
             let detailViewForTab = SnapshotContainer { namespace in
                 let detailView = AdaptiveDetailView(
                     selectedTab: Binding(get: { tab }, set: { _ in }),
                     selection: Binding(get: { selection }, set: { selection = $0 }),
                     heroNamespace: namespace
                 )
-                
-                // 显式测试重构后的路由目标页生成逻辑，榨干 makeDestination 覆盖率
-                // ⚠️ [警告]：直接调用返回 `some View` 且可能依赖 `@Environment` 的方法存在极高的崩溃风险，同样建议注释掉。
-                // _ = detailView.makeDestinationView(for: .settings)
-                // _ = detailView.makeDestinationView(for: .taskCenter)
-                // _ = detailView.makePageDetailView(for: KnowledgePage(title: "测试页面", pageType: .concept, content: ""))
-                
+
                 return detailView
             }
             .environment(store)
@@ -209,13 +202,10 @@ final class ComponentSnapshots: XCTestCase {
             .environment(AIWorkflowStore())
             .frame(width: 500, height: 768)
             .background(Color.appBackground)
-            
+
             if tab == .knowledge {
                 assertSnapshot(of: detailViewForTab, as: .image(layout: .fixed(width: 500, height: 768)))
-                // 渲染结束后清空导航栈，保障测试隔离干净
-                router.path.removeLast(2)
             } else {
-                // 直接使用 UIHostingController 促使 SwiftUI 核心布局系统对该分支进行完全渲染，产生 100% 覆盖率
                 let controller = UIHostingController(rootView: detailViewForTab)
                 _ = controller.view
             }
