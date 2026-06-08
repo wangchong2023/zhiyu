@@ -9,6 +9,8 @@
 
 import Foundation
 
+#if !os(watchOS)
+
 // MARK: - 知识管理模块 (L2)
 
 /// 知识模块注册器：负责 Knowledge 领域核心服务
@@ -34,3 +36,5 @@ struct KnowledgeModuleRegistrar: ModuleRegistrar {
         Logger.shared.info("[DI] Knowledge module registration completed")
     }
 }
+
+#endif

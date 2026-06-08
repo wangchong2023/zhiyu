@@ -9,6 +9,8 @@
 
 import Foundation
 
+#if !os(watchOS)
+
 // MARK: - AI 能力模块 (L2)
 
 /// AI 模块注册器：负责 LLM、RAG 编排、合成、Prompt 等 AI 核心服务 (@PR-02)
@@ -63,3 +65,5 @@ struct AIModuleRegistrar: ModuleRegistrar {
         Logger.shared.info("[DI] AI capability module registration completed")
     }
 }
+
+#endif
