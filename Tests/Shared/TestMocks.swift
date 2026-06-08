@@ -118,16 +118,6 @@ final class MockLLMChatService: LLMChatServiceProtocol, @unchecked Sendable {
     }
 }
 
-/// Mock LLM 知识服务，用于测试环境 DI 容器注册
-@MainActor
-final class MockKnowledgeLLMService: LLMKnowledgeServiceProtocol, @unchecked Sendable {
-    func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
-        SmartIngestResultDTO(chunks: [], detectedEntities: [], suggestedTags: [])
-    }
-    func discoverPotentialLinks(content: String, existingTitles: [String]) async throws -> [String] { [] }
-    func foldContent(existingContent: String, newContent: String, title: String) async throws -> String { "" }
-}
-
 #if !os(watchOS)
 // MARK: - Mock On-Device LLM Service
 @MainActor

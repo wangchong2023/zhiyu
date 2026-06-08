@@ -115,10 +115,4 @@ final class AuthServiceTests: XCTestCase {
     }
 }
 
-// MARK: - Mocks
-
-@MainActor
-class MockVaultDatabaseSwitcher: VaultDatabaseSwitcher {
-    func switchDatabase(to vaultID: UUID, at url: URL) async throws {}
-    func releaseDatabaseConnection() {}
-}
+// MockVaultDatabaseSwitcher 已移至 Tests/Shared/TestMocks.swift 统一管理
