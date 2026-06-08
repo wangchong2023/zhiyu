@@ -15,7 +15,7 @@ steps:
       - git clone $CLONE_URL .
       - git checkout $CI_COMMIT_SHA
 
-  # ── Stage 1: 并行（静态分析 ∥ 构建准备）──
+  # ── Stage 1: 并行（静态分析 ∥ Lint ∥ 安全 ∥ 构建准备）──
   static-analysis:
     depends_on: [clone-repo]
     image: bash
@@ -26,6 +26,21 @@ steps:
       - bash Tools/Lint/lint_layer_markers.sh
       - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
+
+  swiftlint:
+    depends_on: [clone-repo]
+    image: bash
+    commands:
+      - echo "===> Running SwiftLint..."
+      - swiftlint --strict --reporter github-actions-logging 2>/dev/null || swiftlint --strict
+    failure: ignore
+
+  secret-scan:
+    depends_on: [clone-repo]
+    image: bash
+    commands:
+      - echo "===> Scanning for hardcoded secrets..."
+      - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
