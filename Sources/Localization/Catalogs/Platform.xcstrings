@@ -228,7 +228,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ZhiYu"
+            "value": "Knowledge Base"
           }
         },
         "zh-Hans": {
@@ -585,13 +585,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Demo Vault"
+            "value": "Vault"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "演示库"
+            "value": "笔记本"
           }
         }
       }
@@ -626,6 +626,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Briefing generation failed, please retry"
+          }
+        }
+      }
+    },
+    "widget.create": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建"
           }
         }
       }

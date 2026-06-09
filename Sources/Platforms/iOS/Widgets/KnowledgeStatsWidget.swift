@@ -248,7 +248,7 @@ struct KnowledgeStatsWidgetEntryView: View {
 
             // 右侧：Deep Link 快捷操作区
             VStack(spacing: WidgetMetrics.spacingStandard) {
-                actionButton(label: WidgetL10n.vaultName, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
+                actionButton(label: WidgetL10n.create, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
                 actionButton(label: WidgetL10n.aiChat, icon: "sparkles", color: .blue, url: "zhiyu://chat")
                 actionButton(label: WidgetL10n.search, icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
             }
