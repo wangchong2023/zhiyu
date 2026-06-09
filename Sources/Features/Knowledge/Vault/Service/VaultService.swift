@@ -68,10 +68,26 @@ public final class VaultService: VaultServiceProtocol {
     private func getVaultDatabaseURL(for vaultID: UUID) -> URL {
         // swiftlint:disable:next force_unwrapping
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return appSupport
+        let sandboxURL = appSupport
             .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
             .appendingPathComponent(vaultID.uuidString)
             .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+
+        // 一次性恢复：之前 App Group 迁移可能遗留数据，沙盒为空时从 App Group 拷回
+        if !FileManager.default.fileExists(atPath: sandboxURL.path),
+           let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.zhiyu.app") {
+            let groupDB = groupURL
+                .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+                .appendingPathComponent(vaultID.uuidString)
+                .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+            if FileManager.default.fileExists(atPath: groupDB.path) {
+                try? FileManager.default.createDirectory(at: sandboxURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try? FileManager.default.copyItem(at: groupDB, to: sandboxURL)
+                Logger.shared.info("[VaultService] Recovered vault DB from App Group to sandbox: \(vaultID.uuidString.prefix(8))")
+            }
+        }
+
+        return sandboxURL
     }
     
     // MARK: - 核心业务操作 API
