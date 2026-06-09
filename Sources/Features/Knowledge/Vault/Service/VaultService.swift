@@ -64,14 +64,57 @@ public final class VaultService: VaultServiceProtocol {
     /// - Returns: 指向该笔记本专属 SQLite `vault.sqlite3` 物理文件的绝对路径 URL。
     ///
     /// 物理路径结构规范：
-    /// `Application Support/ZhiYu/Vaults/{Vault_UUID}/vault.sqlite3`
+    /// `{AppGroup}/Vaults/{Vault_UUID}/vault.sqlite3`（优先 App Group，回退沙盒）
     private func getVaultDatabaseURL(for vaultID: UUID) -> URL {
-        // swiftlint:disable:next force_unwrapping
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return appSupport
+        let baseURL: URL
+        if let groupURL = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.zhiyu.app"
+        ) {
+            baseURL = groupURL
+        } else {
+            // swiftlint:disable:next force_unwrapping
+            baseURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        }
+        return baseURL
             .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
             .appendingPathComponent(vaultID.uuidString)
             .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+    }
+
+    /// 将沙盒中的旧 vault 数据库迁移到 App Group（确保 Widget 可读）
+    private func migrateVaultToAppGroupIfNeeded(vaultID: UUID) {
+        guard let groupURL = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: "group.com.zhiyu.app"
+        ) else { return }
+
+        // swiftlint:disable:next force_unwrapping
+        let sandboxBase = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let sandboxDB = sandboxBase
+            .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+            .appendingPathComponent(vaultID.uuidString)
+            .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+
+        let groupDB = groupURL
+            .appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+            .appendingPathComponent(vaultID.uuidString)
+            .appendingPathComponent(AppConstants.Storage.vaultDatabaseName)
+
+        // 沙盒有数据但 App Group 没有 → 迁移
+        if FileManager.default.fileExists(atPath: sandboxDB.path),
+           !FileManager.default.fileExists(atPath: groupDB.path) {
+            let groupVaultDir = groupDB.deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: groupVaultDir, withIntermediateDirectories: true)
+            try? FileManager.default.copyItem(at: sandboxDB, to: groupDB)
+            // 迁移 WAL 和 SHM 文件
+            for suffix in ["-wal", "-shm"] {
+                let src = sandboxDB.appendingPathExtension(suffix)
+                let dst = groupDB.appendingPathExtension(suffix)
+                if FileManager.default.fileExists(atPath: src.path) {
+                    try? FileManager.default.copyItem(at: src, to: dst)
+                }
+            }
+            Logger.shared.info("[VaultService] Migrated vault DB to App Group: \(vaultID.uuidString.prefix(8))")
+        }
     }
     
     // MARK: - 核心业务操作 API
@@ -177,6 +220,7 @@ public final class VaultService: VaultServiceProtocol {
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
 
+        migrateVaultToAppGroupIfNeeded(vaultID: vault.id)
         let dbURL = getVaultDatabaseURL(for: vault.id)
         try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
         try? await vaultRepository.updateLastAccessed(id: vault.id)
@@ -268,6 +312,7 @@ public final class VaultService: VaultServiceProtocol {
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
         Task {
             do {
+                migrateVaultToAppGroupIfNeeded(vaultID: vault.id)
                 let dbURL = getVaultDatabaseURL(for: vault.id)
                 try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
 
