@@ -88,6 +88,7 @@ struct ContentView: View {
                 .environment(settingsStore)
                 .environmentObject(onboardingService)
                 .environmentObject(themeManager)
+                .environment(\.locale, router.currentLocale)
                 .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
                 .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
         }
