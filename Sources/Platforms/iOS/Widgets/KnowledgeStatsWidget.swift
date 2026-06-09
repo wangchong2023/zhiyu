@@ -14,6 +14,7 @@ import WidgetKit
 // MARK: - Widget 设计常量（独立于 DesignSystem，Widget Extension 无法引入主 App 模块）
 
 private enum WidgetMetrics {
+    // MARK: - Original Constants
     static let cardPadding: CGFloat = 16
     static let contentPadding: CGFloat = 12
     static let footerPadding: CGFloat = 18
@@ -22,6 +23,45 @@ private enum WidgetMetrics {
     static let progressBarWidth: CGFloat = 80
     static let widgetCornerRadius: CGFloat = 6
     static let microCornerRadius: CGFloat = 4
+
+    // MARK: - Spacing
+    static let spacingTiny: CGFloat = 2
+    static let spacingSmall: CGFloat = 3
+    static let spacingCompact: CGFloat = 4
+    static let spacingStandard: CGFloat = 8
+    static let spacingRegular: CGFloat = 10
+    static let spacingWide: CGFloat = 12
+    static let spacingLarge: CGFloat = 16
+    static let spacingXLarge: CGFloat = 24
+
+    // MARK: - Padding
+    static let horizontalPadding: CGFloat = 8
+    static let verticalPadding: CGFloat = 6
+    static let verticalPaddingSmall: CGFloat = 4
+    static let verticalPaddingStandard: CGFloat = 8
+    static let edgePadding: CGFloat = 12
+
+    // MARK: - Font Sizes
+    static let captionSize: CGFloat = 8
+    static let microFontSize: CGFloat = 9
+    static let smallFontSize: CGFloat = 10
+    static let captionFontSize: CGFloat = 11
+
+    // MARK: - Opacity
+    static let opacityGhost: Double = 0.03
+    static let opacitySubtle: Double = 0.06
+    static let opacityLight: Double = 0.1
+    static let opacityGlow: Double = 0.15
+    static let opacityMedium: Double = 0.3
+    static let opacityHalf: Double = 0.5
+
+    // MARK: - Colors
+    static let darkBgTop: Color = Color(red: 0.1, green: 0.11, blue: 0.18)
+    static let darkBgBottom: Color = Color(red: 0.06, green: 0.07, blue: 0.12)
+
+    // MARK: - Gradient
+    static let gradientStartRadius: CGFloat = 10
+    static let gradientEndRadius: CGFloat = 180
 }
 
 // MARK: - Timeline Entry
@@ -101,17 +141,17 @@ struct KnowledgeStatsWidgetEntryView: View {
         ZStack {
             // 背景：采用智宇标志性的沉浸式暗色渐变
             LinearGradient(
-                colors: [Color(red: 0.1, green: 0.11, blue: 0.18), Color(red: 0.06, green: 0.07, blue: 0.12)],
+                colors: [WidgetMetrics.darkBgTop, WidgetMetrics.darkBgBottom],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             
             // 霓虹光环点缀 (Platinum UI Design)
             RadialGradient(
-                colors: [Color.purple.opacity(0.15), Color.clear],
+                colors: [Color.purple.opacity(WidgetMetrics.opacityGlow), Color.clear],
                 center: .topTrailing,
-                startRadius: 10,
-                endRadius: 180
+                startRadius: WidgetMetrics.gradientStartRadius,
+                endRadius: WidgetMetrics.gradientEndRadius
             )
 
             switch family {
@@ -139,8 +179,8 @@ struct KnowledgeStatsWidgetEntryView: View {
 
     // MARK: - Small 尺寸布局
     private var smallView: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 4) {
+        VStack(alignment: .leading, spacing: WidgetMetrics.spacingRegular) {
+            HStack(spacing: WidgetMetrics.spacingCompact) {
                 Image(systemName: "books.vertical.fill")
                     .font(.footnote)
                     .foregroundStyle(.purple)
@@ -152,18 +192,18 @@ struct KnowledgeStatsWidgetEntryView: View {
             
             Spacer()
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: WidgetMetrics.spacingTiny) {
                 Text("\(entry.pageCount)")
                     .font(.system(.title, design: .rounded))
                     .fontWeight(.black)
                     .foregroundStyle(.white)
                 
                 Text(WidgetL10n.vaultName)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: WidgetMetrics.smallFontSize, weight: .bold))
                     .foregroundStyle(.secondary)
             }
             
-            HStack(spacing: 12) {
+            HStack(spacing: WidgetMetrics.spacingWide) {
                 statItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
                 statItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
             }
@@ -173,10 +213,10 @@ struct KnowledgeStatsWidgetEntryView: View {
 
     // MARK: - Medium 尺寸布局
     private var mediumView: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: WidgetMetrics.spacingLarge) {
             // 左侧：数据面板
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: WidgetMetrics.spacingWide) {
+                HStack(spacing: WidgetMetrics.spacingCompact) {
                     Image(systemName: "books.vertical.fill")
                         .foregroundStyle(.purple)
                         .font(.caption)
@@ -186,12 +226,12 @@ struct KnowledgeStatsWidgetEntryView: View {
                         .lineLimit(1)
                 }
                 
-                HStack(spacing: 16) {
+                HStack(spacing: WidgetMetrics.spacingLarge) {
                     mainStatItem(label: WidgetL10n.vaultName, value: "\(entry.pageCount)", color: .purple)
                     mainStatItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
                 }
                 
-                HStack(spacing: 16) {
+                HStack(spacing: WidgetMetrics.spacingLarge) {
                     mainStatItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
                     Spacer()
                 }
@@ -199,11 +239,11 @@ struct KnowledgeStatsWidgetEntryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             Divider()
-                .background(Color.white.opacity(0.1))
-                .padding(.vertical, 8)
+                .background(Color.white.opacity(WidgetMetrics.opacityLight))
+                .padding(.vertical, WidgetMetrics.verticalPaddingStandard)
 
             // 右侧：Deep Link 快捷操作区
-            VStack(spacing: 8) {
+            VStack(spacing: WidgetMetrics.spacingStandard) {
                 actionButton(label: WidgetL10n.vaultName, icon: "plus.circle.fill", color: .purple, url: "zhiyu://create")
                 actionButton(label: WidgetL10n.aiChat, icon: "sparkles", color: .blue, url: "zhiyu://chat")
                 actionButton(label: WidgetL10n.search, icon: "magnifyingglass", color: .orange, url: "zhiyu://search")
@@ -215,11 +255,11 @@ struct KnowledgeStatsWidgetEntryView: View {
 
     // MARK: - Large 尺寸布局
     private var largeView: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: WidgetMetrics.spacingLarge) {
             // 顶半部复用 Medium 的统计信息
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 4) {
+            HStack(spacing: WidgetMetrics.spacingLarge) {
+                VStack(alignment: .leading, spacing: WidgetMetrics.spacingStandard) {
+                    HStack(spacing: WidgetMetrics.spacingCompact) {
                         Image(systemName: "books.vertical.fill")
                             .foregroundStyle(.purple)
                             .font(.caption)
@@ -228,7 +268,7 @@ struct KnowledgeStatsWidgetEntryView: View {
                             .foregroundStyle(.secondary)
                     }
                     
-                    HStack(spacing: 24) {
+                    HStack(spacing: WidgetMetrics.spacingXLarge) {
                         mainStatItem(label: WidgetL10n.vaultName, value: "\(entry.pageCount)", color: .purple)
                         mainStatItem(label: WidgetL10n.links, value: "\(entry.linkCount)", color: .blue)
                         mainStatItem(label: WidgetL10n.tags, value: "\(entry.tagCount)", color: .orange)
@@ -239,35 +279,35 @@ struct KnowledgeStatsWidgetEntryView: View {
                 
                 // 快捷大按钮
                 Link(destination: URL(string: "zhiyu://chat")!) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: WidgetMetrics.spacingCompact) {
                         Image(systemName: "sparkles")
                         Text(WidgetL10n.ai)
                     }
                     .font(.caption.bold())
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, WidgetMetrics.edgePadding)
+                    .padding(.vertical, WidgetMetrics.verticalPadding)
                     .background(Capsule().fill(Color.purple))
                 }
             }
             
-            Divider().background(Color.white.opacity(0.1))
+            Divider().background(Color.white.opacity(WidgetMetrics.opacityLight))
             
             // 下半部：最近更新的知识页卡片列表
-            VStack(alignment: .leading, spacing: 10) {
-                Text(WidgetL10n.vaultName)
+            VStack(alignment: .leading, spacing: WidgetMetrics.spacingRegular) {
+                Text(WidgetL10n.recentUpdates)
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
-                    .padding(.bottom, 2)
+                    .padding(.bottom, WidgetMetrics.spacingTiny)
                 
                 ForEach(entry.lastUpdatedPages.indices, id: \.self) { index in
                     let page = entry.lastUpdatedPages[index]
-                    HStack(spacing: 8) {
+                    HStack(spacing: WidgetMetrics.spacingStandard) {
                         Image(systemName: page.typeName == "concept" ? "lightbulb.fill" : "person.text.rectangle.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: WidgetMetrics.captionFontSize))
                             .foregroundStyle(page.colorName == "accent" ? .blue : .purple)
                             .frame(width: WidgetMetrics.iconSize, height: WidgetMetrics.iconSize)
-                            .background(Color.white.opacity(0.06))
+                            .background(Color.white.opacity(WidgetMetrics.opacitySubtle))
                             .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.microCornerRadius))
                         
                         Text(page.title)
@@ -278,12 +318,12 @@ struct KnowledgeStatsWidgetEntryView: View {
                         Spacer()
                         
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 8, weight: .bold))
-                            .foregroundStyle(.secondary.opacity(0.5))
+                            .font(.system(size: WidgetMetrics.captionSize, weight: .bold))
+                            .foregroundStyle(.secondary.opacity(WidgetMetrics.opacityHalf))
                     }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 8)
-                    .background(Color.white.opacity(0.03))
+                    .padding(.vertical, WidgetMetrics.verticalPadding)
+                    .padding(.horizontal, WidgetMetrics.horizontalPadding)
+                    .background(Color.white.opacity(WidgetMetrics.opacityGhost))
                     .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius))
                 }
             }
@@ -294,45 +334,45 @@ struct KnowledgeStatsWidgetEntryView: View {
     // MARK: - 辅助子视图构建
     
     private func statItem(label: String, value: String, color: Color) -> some View {
-        HStack(spacing: 3) {
+        HStack(spacing: WidgetMetrics.spacingSmall) {
             Circle()
                 .fill(color)
                 .frame(width: WidgetMetrics.bulletSize, height: WidgetMetrics.bulletSize)
             Text("\(label):")
-                .font(.system(size: 9))
+                .font(.system(size: WidgetMetrics.microFontSize))
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: WidgetMetrics.microFontSize, weight: .bold))
                 .foregroundStyle(.white)
         }
     }
     
     private func mainStatItem(label: String, value: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: WidgetMetrics.spacingTiny) {
             Text(value)
                 .font(.title3.bold())
                 .foregroundStyle(color)
             Text(label)
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: WidgetMetrics.microFontSize, weight: .bold))
                 .foregroundStyle(.secondary)
         }
     }
     
     private func actionButton(label: String, icon: String, color: Color, url: String) -> some View {
         Link(destination: URL(string: url) ?? URL(string: "about:blank")!) {
-            HStack(spacing: 4) {
+            HStack(spacing: WidgetMetrics.spacingCompact) {
                 Image(systemName: icon)
-                    .font(.system(size: 10))
+                    .font(.system(size: WidgetMetrics.smallFontSize))
                 Text(label)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: WidgetMetrics.smallFontSize, weight: .bold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .background(Color.white.opacity(0.06))
+            .padding(.vertical, WidgetMetrics.verticalPadding)
+            .background(Color.white.opacity(WidgetMetrics.opacitySubtle))
             .overlay(
                 RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius)
-                    .stroke(color.opacity(0.3), lineWidth: 1)
+                    .stroke(color.opacity(WidgetMetrics.opacityMedium), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: WidgetMetrics.widgetCornerRadius))
         }

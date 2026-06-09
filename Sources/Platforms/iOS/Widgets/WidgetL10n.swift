@@ -21,4 +21,5 @@ enum WidgetL10n {
     static var search: String { String(localized: "widget.search", table: "Platform") }
     static var ai: String { String(localized: "widget.ai", table: "Platform") }
     static var title: String { String(localized: "widget.title", table: "Platform") }
+    static var recentUpdates: String { String(localized: "widget.recentUpdates", table: "Platform") }
 }
