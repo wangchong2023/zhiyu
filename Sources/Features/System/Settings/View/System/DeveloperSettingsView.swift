@@ -29,7 +29,7 @@ struct DeveloperSettingsView: View {
     enum DeveloperTab: String, CaseIterable {
         case data
         case quality
-        
+
         var title: String {
             switch self {
             case .data: return L10n.Settings.Section.tabData
@@ -130,7 +130,7 @@ struct DeveloperSettingsView: View {
                     Text(L10n.Settings.developer.section.operationInfo)
                 }
                 .appListRowBackground()
-            } else {
+
                 // MARK: - 性能测试 (Performance Testing)
                 Section {
                     HStack {
@@ -186,7 +186,7 @@ struct DeveloperSettingsView: View {
                     Text(L10n.Common.Perf.title)
                 }
                 .appListRowBackground()
-
+            } else {
                 // MARK: - RAG 质量评估 (RAG Quality Evaluation)
                 Section {
                     qualityGrid

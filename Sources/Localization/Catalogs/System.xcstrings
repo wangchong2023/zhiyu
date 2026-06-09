@@ -6579,6 +6579,23 @@
           }
         }
       }
+    },
+    "settings.developer.section.tabMaintenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据维护"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
