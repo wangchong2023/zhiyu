@@ -236,7 +236,7 @@ targets:
           - "Platforms/watchOS/WatchSpeechService.swift"
           - "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift"
           - "Platforms/iOS/Widgets/WidgetL10n.swift"
-          - "Platforms/iOS/Widgets/WidgetDatabaseService.swift"
+          - "Platforms/iOS/Widgets/WidgetRepository.swift"
           - "Platforms/iOS/Widgets/WidgetModels.swift"
           - "Core/Base/Constants/AppConstants.swift"
     dependencies:

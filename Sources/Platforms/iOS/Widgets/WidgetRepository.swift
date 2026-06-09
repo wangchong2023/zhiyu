@@ -62,44 +62,46 @@ enum WidgetRepository {
         return try DatabasePool(path: url.path, configuration: config)
     }
 
-    // MARK: - 查询 API
+    // MARK: - 查询 API（生产环境：从 App Group 文件读取）
 
-    /// 获取知识库统计数据
     static func fetchStats() async -> WidgetStats {
         guard let dbURL = resolveActiveVaultDatabaseURL(),
-              FileManager.default.fileExists(atPath: dbURL.path) else {
+              FileManager.default.fileExists(atPath: dbURL.path),
+              let pool = try? openReadOnlyPool(at: dbURL) else {
             return WidgetStats(pageCount: 0, linkCount: 0, tagCount: 0)
         }
-        do {
-            let pool = try openReadOnlyPool(at: dbURL)
-            defer { try? pool.close() }
+        defer { try? pool.close() }
+        return await fetchStats(from: pool)
+    }
 
-            let pageCount = try await pool.read { db in
-                try WidgetPageRow.fetchCount(db)
-            }
-            let linkCount = try await pool.read { db in
-                try WidgetLinkRow.fetchCount(db)
-            }
-            let tagCount = try await pool.read { db in
-                try fetchDistinctTagCount(db)
-            }
+    static func fetchRecentPages(limit: Int = 3) async -> [WidgetRecentPage] {
+        guard let dbURL = resolveActiveVaultDatabaseURL(),
+              FileManager.default.fileExists(atPath: dbURL.path),
+              let pool = try? openReadOnlyPool(at: dbURL) else {
+            return []
+        }
+        defer { try? pool.close() }
+        return await fetchRecentPages(from: pool, limit: limit)
+    }
+
+    // MARK: - 查询 API（可测试：接受 DatabaseWriter 参数）
+
+    /// 从指定数据库获取统计数据（用于单元测试注入内存 DB）
+    static func fetchStats(from writer: some DatabaseWriter) async -> WidgetStats {
+        do {
+            let pageCount = try await writer.read { db in try WidgetPageRow.fetchCount(db) }
+            let linkCount = try await writer.read { db in try WidgetLinkRow.fetchCount(db) }
+            let tagCount = try await writer.read { db in try fetchDistinctTagCount(db) }
             return WidgetStats(pageCount: pageCount, linkCount: linkCount, tagCount: tagCount)
         } catch {
             return WidgetStats(pageCount: 0, linkCount: 0, tagCount: 0)
         }
     }
 
-    /// 获取最近更新的知识页列表
-    static func fetchRecentPages(limit: Int = 3) async -> [WidgetRecentPage] {
-        guard let dbURL = resolveActiveVaultDatabaseURL(),
-              FileManager.default.fileExists(atPath: dbURL.path) else {
-            return []
-        }
+    /// 从指定数据库获取最近更新页列表（用于单元测试注入内存 DB）
+    static func fetchRecentPages(from writer: some DatabaseWriter, limit: Int = 3) async -> [WidgetRecentPage] {
         do {
-            let pool = try openReadOnlyPool(at: dbURL)
-            defer { try? pool.close() }
-
-            let rows = try await pool.read { db in
+            let rows = try await writer.read { db in
                 try WidgetPageRow
                     .select(WidgetPageRow.Columns.title, WidgetPageRow.Columns.pageType)
                     .order(WidgetPageRow.Columns.updatedAt.desc)
