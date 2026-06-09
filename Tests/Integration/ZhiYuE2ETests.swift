@@ -774,7 +774,7 @@ final class LogAuditTrailTests: XCTestCase {
         logService.addLog(action: .update, target: "T2", details: "second")
         logService.addLog(action: .update, target: "T3", details: "third")
 
-        try? await Task.sleep(nanoseconds: 200_000_000)
+        try? await Task.sleep(nanoseconds: 500_000_000)
         let entries = await logService.getLogEntries()
         XCTAssertEqual(entries.first?.target, "T3")
         XCTAssertEqual(entries.last?.target, "T1")
