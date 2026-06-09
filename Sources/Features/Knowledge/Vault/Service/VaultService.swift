@@ -202,29 +202,32 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
                 vaults[index].pageCount = count
                 try await vaultRepository.saveVault(vaults[index])
             }
-            // 写入 Widget 数据快照到 App Group
-            await writeWidgetStatsSnapshot(pageCount: count)
+            // 写入 Widget 数据快照到 App Group（含 link/tag 计数）
+            let linkCount = (try? await writer.read { db in try PageLink.fetchCount(db) }) ?? 0
+            let tagCount = (try? await writer.read { db in try TagRecord.fetchCount(db) }) ?? 0
+            await writeWidgetStatsSnapshot(pageCount: count, linkCount: linkCount, tagCount: tagCount)
         } catch {
             Logger.shared.warning("[VaultService] refreshPageCount failed: \(error.localizedDescription)")
         }
     }
 
     /// 将当前 vault 的统计快照写入 App Group JSON（供 Widget Extension 读取）
-    private func writeWidgetStatsSnapshot(pageCount: Int) async {
+    private func writeWidgetStatsSnapshot(pageCount: Int, linkCount: Int, tagCount: Int) async {
         guard let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: "group.com.zhiyu.app"
         ) else { return }
 
         let snapshot: [String: Any] = [
             "pageCount": pageCount,
-            "linkCount": 0,
-            "tagCount": 0,
+            "linkCount": linkCount,
+            "tagCount": tagCount,
             "recentPages": []
         ]
         let url = groupURL.appendingPathComponent("widget_stats.json")
         do {
             let data = try JSONSerialization.data(withJSONObject: snapshot)
             try data.write(to: url, options: .atomic)
+            Logger.shared.info("[VaultService] Widget snapshot written: pageCount=\(pageCount) to \(url.lastPathComponent)")
         } catch {
             Logger.shared.warning("[VaultService] Widget snapshot write failed: \(error.localizedDescription)")
         }
