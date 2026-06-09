@@ -218,6 +218,8 @@ public final class VaultService: VaultServiceProtocol {
     public func selectVaultAndWait(_ vault: Vault) async throws {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        // 同步写入 global_settings 表（供 Widget Extension 读取）
+        try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
         NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
 
         migrateVaultToAppGroupIfNeeded(vaultID: vault.id)
@@ -306,7 +308,11 @@ public final class VaultService: VaultServiceProtocol {
     public func selectVault(_ vault: Vault) {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-        
+        // 同步写入 global_settings 表（供 Widget Extension 读取活跃 vault）
+        Task {
+            try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
+        }
+
         NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
         
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄

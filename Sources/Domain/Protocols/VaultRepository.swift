@@ -23,4 +23,7 @@ public protocol VaultRepository: Sendable {
     
     /// 从元数据表中物理删除指定笔记本
     func deleteVault(id: UUID) async throws
+
+    /// 写入全局配置项（供 Widget Extension 跨进程读取）
+    func saveSetting(key: String, value: String) async throws
 }

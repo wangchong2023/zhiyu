@@ -105,4 +105,12 @@ final class SQLiteVaultRepository: VaultRepository, @unchecked Sendable {
             _ = try VaultRecord.deleteOne(db, key: id.uuidString)
         }
     }
+
+    /// 写入全局配置项 - 纯安全 ORM
+    func saveSetting(key: String, value: String) async throws {
+        try await dbWriter.write { db in
+            var record = GlobalSettingRecord(key: key, value: value)
+            try record.save(db)
+        }
+    }
 }
