@@ -74,7 +74,7 @@ struct KnowledgeStatsEntry: TimelineEntry {
     let pageCount: Int
     let linkCount: Int
     let tagCount: Int
-    let lastUpdatedPages: [(title: String, typeName: String, colorName: String)]
+    let lastUpdatedPages: [WidgetRecentPage]
 }
 
 // MARK: - Timeline Provider

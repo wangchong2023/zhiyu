@@ -237,6 +237,7 @@ targets:
           - "Platforms/iOS/Widgets/KnowledgeStatsWidget.swift"
           - "Platforms/iOS/Widgets/WidgetL10n.swift"
           - "Platforms/iOS/Widgets/WidgetDatabaseService.swift"
+          - "Platforms/iOS/Widgets/WidgetModels.swift"
           - "Core/Base/Constants/AppConstants.swift"
     dependencies:
       - target: ZhiYu
