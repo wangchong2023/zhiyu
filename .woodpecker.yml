@@ -3,6 +3,9 @@ labels:
 
 skip_clone: true
 
+# 禁止新推送中断已在执行的流水线
+cancel_previous_pipeline_events: []
+
 steps:
   clone-repo:
     image: bash
