@@ -234,7 +234,10 @@
       "Bash(sed -n '236,240p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Core/Base/Utils/Localized.swift)",
       "Bash(sed -n '93,97p' /Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/Knowledge/Ingest/View/PDFReaderView.swift)",
       "Bash(perl -ne 'print \"$.: $_\" if /\\\\b\\\\\"\\\\w+\\\\\"|\\\\\"\\\\\\\\/ || /error:/' /Users/constantine/Documents/work/code/projects/ZhiYu/Tests/UI/ZhiYuUITests.swift)",
-      "Bash(xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm)"
+      "Bash(xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm)",
+      "Bash(grep \"Test case.*failed$\")",
+      "Bash(tee build/test_serial.log)",
+      "Bash(grep -E \"Test case.*failed$|Test case.*passed|Executed|TEST\")"
     ]
   }
 }

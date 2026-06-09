@@ -222,7 +222,9 @@ extension XCTestCase {
     func setupFullMockEnvironment() {
         // 注意：不调用 ServiceContainer.shared.reset() — register() 本身会覆盖已有注册。
         // reset() 会清空 AppEnvironment.init() 建立的完整 DI 链，导致 @Inject 解析崩溃。
-        DatabaseManager.shared.reset()
+        // 不调用 DatabaseManager.shared.reset() — 生产 SQLiteStore 依赖已打开的数据库连接，
+        // reset() 关闭数据库会导致 SQLiteStore 引用悬空，后续数据库操作全部失败。
+        // 如需测试数据隔离，使用 setupForTesting() 建立独立内存数据库。
 
         // 1. Core Services (L0)
         let logger = MockLogger()
