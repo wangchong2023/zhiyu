@@ -93,15 +93,23 @@ extension WidgetGlobalSettingRow: FetchableRecord { }
 // MARK: - 返回值模型
 
 /// 知识库统计数据
-struct WidgetStats {
+struct WidgetStats: Codable {
     let pageCount: Int
     let linkCount: Int
     let tagCount: Int
 }
 
 /// 最近更新的知识页摘要
-struct WidgetRecentPage {
+struct WidgetRecentPage: Codable {
     let title: String
     let typeName: String
     let colorName: String
+}
+
+/// Widget 统计数据快照（主 App 写入 App Group JSON，Widget Extension 只读）
+struct WidgetStatsSnapshot: Codable {
+    let pageCount: Int
+    let linkCount: Int
+    let tagCount: Int
+    let recentPages: [WidgetRecentPage]
 }

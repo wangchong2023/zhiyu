@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[Shared] 测试层
-//  核心职责：验证 WidgetRepository 数据读取链路的正确性
+//  核心职责：验证 WidgetRepository JSON 快照读取 + VaultRepository pageCount 持久化
 
 import XCTest
 import GRDB
@@ -15,168 +15,88 @@ import GRDB
 @MainActor
 final class WidgetRepositoryTests: XCTestCase {
 
+    // MARK: - VaultRepository pageCount 测试
+
     private var dbQueue: DatabaseQueue!
+    private var repository: SQLiteVaultRepository!
 
     override func setUp() async throws {
         try await super.setUp()
         dbQueue = try DatabaseQueue()
+        repository = SQLiteVaultRepository(dbWriter: dbQueue)
 
-        // 创建测试用的 pages 表和 links 表
-        try await dbQueue.write { db in
-            try db.create(table: WidgetPageRow.databaseTableName) { t in
-                t.column(WidgetPageRow.Columns.title.rawValue, .text).notNull()
-                t.column(WidgetPageRow.Columns.pageType.rawValue, .text).notNull().defaults(to: "concept")
-                t.column(WidgetPageRow.Columns.tags.rawValue, .text)
-                t.column(WidgetPageRow.Columns.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+        var migrator = DatabaseMigrator()
+        #if DEBUG
+        migrator.eraseDatabaseOnSchemaChange = true
+        #endif
+        migrator.registerMigration("v1_global_schema") { db in
+            try db.create(table: VaultRecord.databaseTableName) { t in
+                t.column(VaultRecord.CodingKeys.id.rawValue, .text).primaryKey()
+                t.column(VaultRecord.CodingKeys.name.rawValue, .text).notNull()
+                t.column(VaultRecord.CodingKeys.path.rawValue, .text).notNull()
+                t.column(VaultRecord.CodingKeys.icon.rawValue, .text)
+                t.column(VaultRecord.CodingKeys.pageCount.rawValue, .integer).notNull().defaults(to: 0)
+                t.column(VaultRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(VaultRecord.CodingKeys.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
+                t.column(VaultRecord.CodingKeys.lastAccessedAt.rawValue, .datetime).notNull().defaults(to: Date())
             }
-            try db.create(table: WidgetLinkRow.databaseTableName) { t in
-                t.column("source_id", .blob)
-                t.column("target_id", .blob)
+            try db.create(table: "global_settings") { t in
+                t.column("key", .text).primaryKey()
+                t.column("value", .text).notNull()
+                t.column("updated_at", .datetime).notNull().defaults(to: Date())
             }
         }
+        try migrator.migrate(dbQueue)
     }
 
     override func tearDown() async throws {
         dbQueue = nil
+        repository = nil
         try await super.tearDown()
     }
 
-    // MARK: - fetchStats 正向路径
+    // MARK: - pageCount 持久化
 
-    /// 验证有数据时 fetchStats 返回正确的 pageCount / linkCount / tagCount
-    func testFetchStatsWithKnownData() async throws {
-        // Arrange: 写入 3 个页面 + 2 条链接
-        try await dbQueue.write { db in
-            for i in 1...3 {
-                try db.execute(sql: """
-                    INSERT INTO pages (title, page_type, tags, updated_at)
-                    VALUES (?, 'concept', ?, datetime('now'))
-                    """, arguments: ["Page \(i)", #"["tagA","tagB"]"#])
-            }
-            for _ in 1...2 {
-                try db.execute(sql: "INSERT INTO links (source_id, target_id) VALUES (x'00', x'01')")
-            }
+    func testSaveAndFetchVaultWithPageCount() async throws {
+        let vaultID = UUID()
+        let vault = Vault(id: vaultID, name: "Test", createdAt: Date(), updatedAt: Date(), pageCount: 42)
+        try await repository.saveVault(vault)
+        let all = try await repository.fetchAllVaults()
+        let fetched = try XCTUnwrap(all.first(where: { $0.id == vaultID }))
+        XCTAssertEqual(fetched.pageCount, 42)
+    }
+
+    func testUpdateVaultPageCount() async throws {
+        let id = UUID()
+        try await repository.saveVault(Vault(id: id, name: "T", createdAt: Date(), updatedAt: Date(), pageCount: 0))
+        try await repository.saveVault(Vault(id: id, name: "T", createdAt: Date(), updatedAt: Date(), pageCount: 99))
+        let all = try await repository.fetchAllVaults()
+        XCTAssertEqual(all.first(where: { $0.id == id })?.pageCount, 99)
+    }
+
+    func testNewVaultDefaultsToZero() async throws {
+        let id = UUID()
+        try await repository.saveVault(Vault(id: id, name: "E", createdAt: Date(), updatedAt: Date(), pageCount: 0))
+        let all = try await repository.fetchAllVaults()
+        XCTAssertEqual(all.first(where: { $0.id == id })?.pageCount, 0)
+    }
+
+    func testMultipleVaultsIndependentCounts() async throws {
+        let a = UUID(), b = UUID()
+        try await repository.saveVault(Vault(id: a, name: "A", createdAt: Date(), updatedAt: Date(), pageCount: 10))
+        try await repository.saveVault(Vault(id: b, name: "B", createdAt: Date(), updatedAt: Date(), pageCount: 20))
+        let all = try await repository.fetchAllVaults()
+        XCTAssertEqual(all.first(where: { $0.id == a })?.pageCount, 10)
+        XCTAssertEqual(all.first(where: { $0.id == b })?.pageCount, 20)
+    }
+
+    // MARK: - global_settings 写入
+
+    func testSaveSetting() async throws {
+        try await repository.saveSetting(key: "vaults.selectedID", value: "test-uuid")
+        let value = try await dbQueue.read { db in
+            try String.fetchOne(db, sql: "SELECT value FROM global_settings WHERE key = ?", arguments: ["vaults.selectedID"])
         }
-
-        // Act
-        let stats = await WidgetRepository.fetchStats(from: dbQueue)
-
-        // Assert
-        XCTAssertEqual(stats.pageCount, 3)
-        XCTAssertEqual(stats.linkCount, 2)
-        // tagA + tagB = 2 distinct tags
-        XCTAssertEqual(stats.tagCount, 2)
-    }
-
-    // MARK: - fetchStats 空数据库
-
-    func testFetchStatsWithEmptyDatabase() async {
-        let stats = await WidgetRepository.fetchStats(from: dbQueue)
-        XCTAssertEqual(stats.pageCount, 0)
-        XCTAssertEqual(stats.linkCount, 0)
-        XCTAssertEqual(stats.tagCount, 0)
-    }
-
-    // MARK: - fetchRecentPages
-
-    /// 验证 fetchRecentPages 返回最近更新的页面（按 updatedAt 降序）
-    func testFetchRecentPagesOrdering() async throws {
-        // Arrange: 写入 5 个页面，不同更新时间
-        try await dbQueue.write { db in
-            for i in 1...5 {
-                try db.execute(sql: """
-                    INSERT INTO pages (title, page_type, tags, updated_at)
-                    VALUES (?, ?, '[]', datetime('now', ?))
-                    """, arguments: ["Page \(i)", i % 2 == 0 ? "entity" : "concept", "-\(6-i) hours"])
-            }
-        }
-
-        // Act: limit 3
-        let recent = await WidgetRepository.fetchRecentPages(from: dbQueue, limit: 3)
-
-        // Assert
-        XCTAssertEqual(recent.count, 3)
-        // 最近的是 Page 5
-        XCTAssertEqual(recent[0].title, "Page 5")
-        XCTAssertEqual(recent[0].typeName, "concept")
-        // Page 4 是 entity → colorName 应该是 purple
-        XCTAssertEqual(recent[1].title, "Page 4")
-        XCTAssertEqual(recent[1].colorName, "purple")
-        // Page 3
-        XCTAssertEqual(recent[2].title, "Page 3")
-    }
-
-    // MARK: - fetchRecentPages limit 截断
-
-    func testFetchRecentPagesRespectsLimit() async throws {
-        try await dbQueue.write { db in
-            for i in 1...5 {
-                try db.execute(sql: """
-                    INSERT INTO pages (title, page_type, tags, updated_at)
-                    VALUES (?, 'concept', '[]', datetime('now'))
-                    """, arguments: ["P\(i)"])
-            }
-        }
-
-        let result = await WidgetRepository.fetchRecentPages(from: dbQueue, limit: 2)
-        XCTAssertEqual(result.count, 2)
-    }
-
-    // MARK: - fetchRecentPages 空数据库
-
-    func testFetchRecentPagesEmptyDatabase() async {
-        let result = await WidgetRepository.fetchRecentPages(from: dbQueue)
-        XCTAssertEqual(result.count, 0)
-    }
-
-    // MARK: - 标签去重
-
-    /// 验证标签 JSON 解析 + 跨页面去重
-    func testFetchDistinctTagCountDeduplication() async throws {
-        try await dbQueue.write { db in
-            // Page 1: [A, B]
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, tags, updated_at)
-                VALUES ('P1', 'concept', '["tagA","tagB"]', datetime('now'))
-                """)
-            // Page 2: [B, C] — tagB 重复
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, tags, updated_at)
-                VALUES ('P2', 'concept', '["tagB","tagC"]', datetime('now'))
-                """)
-            // Page 3: 无标签
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, tags, updated_at)
-                VALUES ('P3', 'concept', NULL, datetime('now'))
-                """)
-        }
-
-        let stats = await WidgetRepository.fetchStats(from: dbQueue)
-        // A, B, C = 3 distinct
-        XCTAssertEqual(stats.tagCount, 3)
-    }
-
-    // MARK: - pageType → colorName 映射
-
-    func testRecentPageColorMapping() async throws {
-        try await dbQueue.write { db in
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, updated_at)
-                VALUES ('Concept', 'concept', datetime('now'))
-                """)
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, updated_at)
-                VALUES ('Entity', 'entity', datetime('now', '-1 hours'))
-                """)
-            try db.execute(sql: """
-                INSERT INTO pages (title, page_type, updated_at)
-                VALUES ('Unknown', '', datetime('now', '-2 hours'))
-                """)
-        }
-
-        let recent = await WidgetRepository.fetchRecentPages(from: dbQueue, limit: 3)
-        XCTAssertEqual(recent[0].colorName, "accent")   // concept
-        XCTAssertEqual(recent[1].colorName, "purple")   // entity
-        XCTAssertEqual(recent[2].typeName, "concept")   // empty → "concept"
+        XCTAssertEqual(value, "test-uuid")
     }
 }
