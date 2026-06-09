@@ -46,6 +46,8 @@ struct DemoDataGenerator {
                 (L10n.Common.Demo.hybridSearch.title, .concept, L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.performance])
         ]
 
+        Logger.shared.warning("DemoData_AboutToDeleteAll")
+
         try await store.performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
             try TokenUsage.deleteAll(db)

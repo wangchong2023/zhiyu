@@ -93,6 +93,7 @@ public final class MaintenanceService {
 
     /// 清除所有开发者数据 (重置系统)
     public func clearAllDeveloperData() async {
+        Logger.shared.warning("[MaintenanceService] clearAllDeveloperData called — RESETTING DATABASE")
         undoService.clear()
         try? await pageStore.resetDatabase()
         AppEventBus.shared.publish(.pagesCleared)
