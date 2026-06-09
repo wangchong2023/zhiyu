@@ -215,22 +215,30 @@ struct DeveloperSettingsView: View {
         }
 
     private func runStressTest(count targetCount: Int) async {
-        await MainActor.run { 
-            self.stressTestTargetCount = targetCount
-            self.isStressTesting = true 
-        }
-        
-        try? await Task.sleep(nanoseconds: 500_000_000)
-        
-        let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
-        
         await MainActor.run {
-            self.stressTestCount = count
+            self.stressTestTargetCount = targetCount
+            self.isStressTesting = true
+        }
+
+        try? await Task.sleep(nanoseconds: 500_000_000)
+
+        // 遍历所有笔记本注入压力测试数据
+        let vaultService = ServiceContainer.shared.resolve(VaultService.self)
+        var totalCount = 0
+        for vault in vaultService.vaults {
+            vaultService.selectVault(vault)
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
+            totalCount += count
+        }
+
+        await MainActor.run {
+            self.stressTestCount = totalCount
             self.isStressTesting = false
             Task {
                 await knowledgeStore.refresh()
                 AppEventBus.shared.publish(.pagesCleared)
-                await loadStats() // 压力测试后重新加载统计
+                await loadStats()
             }
         }
     }
