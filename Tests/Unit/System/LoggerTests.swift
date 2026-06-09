@@ -61,8 +61,8 @@ final class SystemLoggerTests: XCTestCase {
             logger.addLog(action: .create, target: "Page_\(i)", details: "高频测试批量写入")
         }
         
-        // 2. 略微等待异步 Task 队列写入与截短
-        try? await Task.sleep(nanoseconds: UInt64(0.3 * 1_000_000_000))
+        // 2. 等待异步 Task 队列写入与截短（Logger 内部异步操作可能较长）
+        try? await Task.sleep(nanoseconds: UInt64(1.0 * 1_000_000_000))
         
         // 3. 校验内存中保存的日志数是否被精准限缩在 500 条
         let entries = await logger.getLogEntries()

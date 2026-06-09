@@ -41,9 +41,9 @@ build_progress() {
 }
 
 while IFS= read -r line; do
-    if echo "$line" | grep -q "Test Case.*passed"; then
+    if echo "$line" | grep -q "Test [Cc]ase.*passed"; then
         ((passed++))
-    elif echo "$line" | grep -q "Test Case.*failed"; then
+    elif echo "$line" | grep -q "Test [Cc]ase.*failed"; then
         ((failed++))
     fi
 

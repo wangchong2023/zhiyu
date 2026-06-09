@@ -25,8 +25,8 @@ final class AuthServiceTests: XCTestCase {
 
     override func tearDown() async throws {
         AuthSession.shared.logout()
-        ServiceContainer.shared.reset()
-        DatabaseManager.shared.reset()
+        // ServiceContainer.reset() 由生产 DI 链保护，不允许清空
+        // DatabaseManager.reset() 会关闭数据库，导致后续测试访问已关闭连接
         try await super.tearDown()
     }
 
