@@ -21,147 +21,108 @@ struct DeveloperSettingsView: View {
     @State private var isStressTesting = false
     @State private var isInjecting = false
     @State private var stressTestCount: Int? = nil
-    
-    // ── 标签定义 ──
-    enum DeveloperTab: String, CaseIterable {
-        case data
-        case quality
 
-        var title: String {
-            switch self {
-            case .data: return L10n.Settings.Section.tabData
-            case .quality: return L10n.Settings.Section.tabQuality
-            }
-        }
-    }
-    
-    @State private var selectedTab: DeveloperTab = .data
-    
-    // RAG 评估数据
-
-
-    
     var body: some View {
         List {
-            // MARK: - Tab 切换
+            // MARK: - 数据注入 (Data Injection)
             Section {
-                Picker("", selection: $selectedTab) {
-                    ForEach(DeveloperTab.allCases, id: \.self) { tab in
-                        Text(tab.title).tag(tab)
+                Button(action: { showInjectConfirmation = true }) {
+                    HStack {
+                        Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
+                        Spacer()
+                        if isInjecting {
+                            ProgressView()
+                        }
                     }
                 }
-                #if !os(watchOS)
-                .pickerStyle(.segmented)
-                #endif
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
-                .padding(.vertical, DesignSystem.small)
+                .disabled(isInjecting)
+                .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
+                    Button(L10n.Common.confirm) {
+                        Task {
+                            isInjecting = true
+                            let count = await store.generateDemoData()
+                            isInjecting = false
+
+                            try? await Task.sleep(nanoseconds: 300_000_000)
+
+                            HapticFeedback.shared.trigger(count > 0 ? .success : .error)
+                            if count > 0 {
+                                ToastManager.shared.show(type: .success, message: L10n.Settings.InjectDemo.successMessage(count))
+                            } else {
+                                ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
+                            }
+                        }
+                    }
+                    Button(L10n.Common.cancel, role: .cancel) { }
+                } message: {
+                    Text(L10n.Settings.injectConfirm.message)
+                }
+
+            } header: {
+                Text(L10n.Settings.developer.section.data)
             }
-            
-            if selectedTab == .data {
-                // MARK: - 数据注入 (Data Injection)
-                Section {
-                    Button(action: { showInjectConfirmation = true }) {
-                        HStack {
-                            Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
-                            Spacer()
-                            if isInjecting {
-                                ProgressView()
-                            }
-                        }
-                    }
-                    .disabled(isInjecting)
-                    .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
-                        Button(L10n.Common.confirm) {
-                            Task {
-                                isInjecting = true
-                                let count = await store.generateDemoData()
-                                isInjecting = false
-                                
-                                // 避开动画冲突
-                                try? await Task.sleep(nanoseconds: 300_000_000)
-                                
-                                HapticFeedback.shared.trigger(count > 0 ? .success : .error)
-                                if count > 0 {
-                                    ToastManager.shared.show(type: .success, message: L10n.Settings.InjectDemo.successMessage(count))
-                                } else {
-                                    ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
-                                }
-                            }
-                        }
-                        Button(L10n.Common.cancel, role: .cancel) { }
-                    } message: {
-                        Text(L10n.Settings.injectConfirm.message)
-                    }
-                    
-                } header: {
-                    Text(L10n.Settings.developer.section.data)
+            .appListRowBackground()
+
+            // MARK: - 性能测试 (Performance Testing)
+            Section {
+                Picker(selection: $stressTestTargetCount) {
+                    Text("100").tag(100)
+                    Text("500").tag(500)
+                    Text("1000").tag(1000)
+                    Text("5000").tag(5000)
+                    Text("10000").tag(10000)
+                } label: {
+                    Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
                 }
-                .appListRowBackground()
-                
-                .appListRowBackground()
 
-                // MARK: - 性能测试 (Performance Testing)
-                Section {
-                    Picker(selection: $stressTestTargetCount) {
-                        Text("100").tag(100)
-                        Text("500").tag(500)
-                        Text("1000").tag(1000)
-                        Text("5000").tag(5000)
-                        Text("10000").tag(10000)
-                    } label: {
-                        Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
-                    }
-
-                    Button(action: { showStressTestConfirmation = true }) {
-                        HStack {
-                            Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
-                            Spacer()
-                            Text(L10n.Settings.developer.stressTest.nodes(stressTestTargetCount))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            if isStressTesting {
-                                ProgressView()
-                            }
-                        }
-                    }
-                    .disabled(isStressTesting)
-                } header: {
-                    Text(L10n.Settings.developer.section.performance_test)
-                } footer: {
-                    if let count = stressTestCount {
-                        Text(L10n.Settings.developer.stressTest.success(count))
+                Button(action: { showStressTestConfirmation = true }) {
+                    HStack {
+                        Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
+                        Spacer()
+                        Text(L10n.Settings.developer.stressTest.nodes(stressTestTargetCount))
                             .font(.caption)
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.secondary)
+                        if isStressTesting {
+                            ProgressView()
+                        }
                     }
                 }
-                .appListRowBackground()
+                .disabled(isStressTesting)
+            } header: {
+                Text(L10n.Settings.developer.section.performance_test)
+            } footer: {
+                if let count = stressTestCount {
+                    Text(L10n.Settings.developer.stressTest.success(count))
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
+            }
+            .appListRowBackground()
 
-                // MARK: - 性能监控面板入口
-                Section {
-                    NavigationLink {
-                        PerformanceDashboardView(service: store.performanceService)
-                    } label: {
-                        Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
-                    }
-                } header: {
-                    Text(L10n.Common.Perf.title)
+            // MARK: - 性能监控面板入口
+            Section {
+                NavigationLink {
+                    PerformanceDashboardView(service: store.performanceService)
+                } label: {
+                    Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
                 }
-                .appListRowBackground()
-            } else {
-                // MARK: - RAG 质量评估
-                Section {
-                    NavigationLink {
-                        RAGEvaluationView()
-                    } label: {
-                        Label(L10n.Dashboard.stats.benchmark, systemImage: "checkmark.shield")
-                    }
-                } header: {
-                    Text(L10n.Dashboard.stats.benchmark)
+            } header: {
+                Text(L10n.Common.Perf.title)
+            }
+            .appListRowBackground()
+
+            // MARK: - RAG 质量评估
+            Section {
+                NavigationLink {
+                    RAGEvaluationView()
+                } label: {
+                    Label(L10n.Dashboard.stats.benchmark, systemImage: "checkmark.shield")
                 }
-                .appListRowBackground()
+            } header: {
+                Text(L10n.Dashboard.stats.benchmark)
             }
-            }
+            .appListRowBackground()
+        }
             #if os(iOS)
                 .listStyle(.insetGrouped)
                 #endif
@@ -186,8 +147,6 @@ struct DeveloperSettingsView: View {
             self.isStressTesting = true
         }
 
-        try? await Task.sleep(nanoseconds: 500_000_000)
-
         // 确保两个默认演示笔记本存在，不存在则创建
         let vaultService = ServiceContainer.shared.resolve(VaultService.self)
         let demoVaultNames = [L10n.Vault.defaultName, L10n.Vault.researchName]
@@ -200,10 +159,13 @@ struct DeveloperSettingsView: View {
         // 对两个默认笔记本注入压力测试数据
         var totalCount = 0
         for vault in vaultService.vaults where demoVaultNames.contains(vault.name) {
-            vaultService.selectVault(vault)
-            try? await Task.sleep(nanoseconds: 300_000_000)
-            let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
-            totalCount += count
+            do {
+                try await vaultService.selectVaultAndWait(vault)
+                let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
+                totalCount += count
+            } catch {
+                // 数据库切换失败时跳过该笔记本
+            }
         }
 
         await MainActor.run {

@@ -170,6 +170,18 @@ public final class VaultService: VaultServiceProtocol {
         }
     }
     
+    /// 异步选择并等待数据库切换完成（用于批量数据操作等需要确保切换完成的场景）
+    /// - Parameter vault: 目标笔记本
+    public func selectVaultAndWait(_ vault: Vault) async throws {
+        self.selectedVaultID = vault.id
+        UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
+
+        let dbURL = getVaultDatabaseURL(for: vault.id)
+        try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
+        try? await vaultRepository.updateLastAccessed(id: vault.id)
+    }
+
     /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
     ///
     /// - 架构时序与并发安全设计说明 (Thread Safety & Switch Flow):

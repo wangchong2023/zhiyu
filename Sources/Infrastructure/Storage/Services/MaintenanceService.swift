@@ -60,15 +60,14 @@ public final class MaintenanceService {
 
         var totalCount = 0
         for vault in existingVaults {
-            vaultService.selectVault(vault)
-            // 等待数据库切换完成
-            try? await Task.sleep(nanoseconds: 300_000_000)
             do {
+                // 使用同步等待版本确保数据库切换完成后才写入
+                try await vaultService.selectVaultAndWait(vault)
                 let count = try await DemoDataGenerator.generate(in: pageStore)
                 totalCount += count
                 logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
             } catch {
-                logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed", module: "Maintenance")
+                logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed: \(error.localizedDescription)", module: "Maintenance")
             }
         }
         return totalCount

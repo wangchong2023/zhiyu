@@ -56,7 +56,10 @@ public protocol VaultServiceProtocol {
     /// 当前活跃的笔记本
     var currentVault: Vault? { get }
     
-    /// 切换/选择笔记本
+    /// 切换/选择笔记本（异步等待数据库切换完成再返回）
+    func selectVaultAndWait(_ vault: Vault) async throws
+
+    /// 切换/选择笔记本（用于 UI 交互，异步执行）
     func selectVault(_ vault: Vault)
     
     /// 退出当前笔记本
