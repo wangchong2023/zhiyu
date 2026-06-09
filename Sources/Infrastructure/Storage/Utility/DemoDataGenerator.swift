@@ -88,7 +88,10 @@ struct DemoDataGenerator {
             }
         }
         
-        Logger.shared.info("DemoData_Finished")
+        // 验证写入: 读回确认页数
+        let verifyCount = (try? await store.fetchAllPages())?.count ?? -1
+        Logger.shared.info("DemoData_Finished, created=\(pagesToCreate.count), verify=\(verifyCount)")
+
         return pagesToCreate.count
     }
  
