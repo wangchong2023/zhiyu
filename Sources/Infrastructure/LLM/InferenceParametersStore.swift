@@ -133,7 +133,7 @@ public final class InferenceParametersStore {
             decoder.dateDecodingStrategy = .iso8601
             cache = try decoder.decode([String: InferenceParametersConfig].self, from: data)
         } catch {
-            print("[InferenceParametersStore] Failed to load configuration: \(error.localizedDescription)")
+            Logger.shared.error("[InferenceParametersStore] Failed to load configuration: \(error.localizedDescription)", error: error)
             // 如果解码失败，清空缓存避免损坏数据
             cache = [:]
         }
@@ -148,7 +148,7 @@ public final class InferenceParametersStore {
             let data = try encoder.encode(cache)
             UserDefaults.standard.set(data, forKey: userDefaultsKey)
         } catch {
-            print("[InferenceParametersStore] Failed to save configuration: \(error.localizedDescription)")
+            Logger.shared.error("[InferenceParametersStore] Failed to save configuration: \(error.localizedDescription)", error: error)
         }
     }
 }

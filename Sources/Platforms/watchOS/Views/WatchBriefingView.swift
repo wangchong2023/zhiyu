@@ -97,7 +97,7 @@ struct WatchBriefingView: View {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("AVAudioSession_Setup_Error: \(error)")
+            Logger.shared.error("AVAudioSession_Setup_Error", error: error)
         }
     }
     

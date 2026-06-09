@@ -183,7 +183,7 @@ internal struct Localized {
         
         // 若最终未命中，输出警示信息并返回 Missing 标签，防空崩溃
         if result == marker {
-            print(" [L10n" + " Error] Missing" + " Key: \(key)@\(resolvedTable)")
+            Logger.shared.warning(" [L10n Error] Missing Key: \(key)@\(resolvedTable)")
             return "[MISSING: \(key)@\(resolvedTable)]"
         }
         return result

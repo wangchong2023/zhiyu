@@ -402,7 +402,7 @@ public struct ModelStoreView: View {
             default:
                 // Mock 环境：仅显示提示，不执行实际下载
                 Button(action: {
-                    print(" [ModelStore] \(manifest.modelId) ")
+                    Logger.shared.info(" [ModelStore] Download tapped for \(manifest.modelId)")
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "icloud.and.arrow.down")

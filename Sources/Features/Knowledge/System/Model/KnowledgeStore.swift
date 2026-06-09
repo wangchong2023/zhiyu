@@ -52,7 +52,7 @@ public final class KnowledgeStore {
     // MARK: - 初始化
     
     public init() {
-        print(" [KnowledgeStore] ...")
+        Logger.shared.info(" [KnowledgeStore] Initializing...")
         setupSubscriptions()
     }
 
@@ -83,7 +83,7 @@ public final class KnowledgeStore {
             .receive(on: RunLoop.main)
             .sink { [weak self] notification in
                 guard let self = self else { return }
-                print(" [KnowledgeStore] ...")
+                Logger.shared.info(" [KnowledgeStore] Database switched, clearing cache...")
                 self.pages = []
                 self.totalPages = 0
                 self.totalWords = 0
@@ -96,7 +96,7 @@ public final class KnowledgeStore {
                     if let vaultID = notification.userInfo?["vaultID"] as? UUID {
                         let seedKey = "seeded_vault_\(vaultID.uuidString)"
                         if !UserDefaults.standard.bool(forKey: seedKey) {
-                            print(" [KnowledgeStore]  \(vaultID.uuidString)...")
+                            Logger.shared.info(" [KnowledgeStore] Seeding guide data for vault \(vaultID.uuidString)...")
                             await self.seedDefaultContent()
                             UserDefaults.standard.set(true, forKey: seedKey)
                         }

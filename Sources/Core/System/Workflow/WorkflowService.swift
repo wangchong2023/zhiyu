@@ -68,10 +68,10 @@ final class WorkflowService: ObservableObject {
             }
             .filter { !$0.isEmpty }
         
-        print(" [Workflow]" + " Extracted to-do" + " items: \(tasks.count)" + " items")
+        Logger.shared.info(" [Workflow]" + " Extracted to-do" + " items: \(tasks.count)" + " items")
         
         guard !tasks.isEmpty else {
-            print(" [Workflow] Failed to parse to-do items from text")
+            Logger.shared.warning(" [Workflow] Failed to parse to-do items from text")
             // 重构：将 Toast 硬编码文字替换为 L10n 强类型多语言接口
             ToastManager.shared.show(type: .info, message: L10n.Workflow.noTasksFoundMessage)
             return
@@ -89,13 +89,13 @@ final class WorkflowService: ObservableObject {
                 )
             }
             
-            print(" [Workflow]" + " Successfully synchronized" + " \(tasks.count)" + " items to" + " Reminders")
+            Logger.shared.info(" [Workflow]" + " Successfully synchronized" + " \(tasks.count)" + " items to" + " Reminders")
             ToastManager.shared.dismiss()
             // 重构：将成功同步的 Toast 提示转换为多语言强类型输出
             ToastManager.shared.show(type: .success, message: L10n.Workflow.syncSuccessMessage(tasks.count))
             HapticFeedback.shared.trigger(.success)
         } catch {
-            print(" [Workflow]" + " Sync failed:" + " \(error.localizedDescription)")
+            Logger.shared.error(" [Workflow]" + " Sync failed:" + " \(error.localizedDescription)", error: error)
             ToastManager.shared.dismiss()
             // 重构：将失败同步的 Toast 错误描述转换为多语言强类型输出
             ToastManager.shared.show(type: .error, message: L10n.Workflow.syncErrorMessage(error.localizedDescription))

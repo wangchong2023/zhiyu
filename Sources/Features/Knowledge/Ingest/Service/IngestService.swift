@@ -184,7 +184,7 @@ actor IngestService {
         let extractedTitle = title ?? url.deletingPathExtension().lastPathComponent
 
         guard docExtractor.canExtract(format: format) else {
-            print("Unsupported or" + " unknown document" + " format: \(url.pathExtension)")
+            Logger.shared.warning("Unsupported or" + " unknown document" + " format: \(url.pathExtension)")
             return nil
         }
 
@@ -193,7 +193,7 @@ actor IngestService {
             if text.isEmpty { return nil }
             return await ingestRawContent(title: extractedTitle, content: text, type: type, forceDeepScan: true, pageStore: pageStore)
         } catch {
-            print("Failed to" + " extract text" + " from document" + " \(url.path):" + " \(error)")
+            Logger.shared.error("Failed to" + " extract text" + " from document" + " \(url.path):" + " \(error)", error: error)
             return nil
         }
     }
@@ -215,13 +215,13 @@ actor IngestService {
             includingPropertiesForKeys: [.isRegularFileKey],
             options: [.skipsHiddenFiles]
         ) else {
-            print("Failed to" + " enumerate folder:" + " \(url.path)")
+            Logger.shared.warning("Failed to" + " enumerate folder:" + " \(url.path)")
             return []
         }
 
         let isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         if isLowPowerMode {
-            print(L10n.Ingest.ecoIndexingLowPower)
+            Logger.shared.info(L10n.Ingest.ecoIndexingLowPower)
         }
 
         let enumeratorArray = enumerator.compactMap { $0 as? URL }

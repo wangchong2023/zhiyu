@@ -40,7 +40,7 @@ public final class MediaStore: Sendable {
                 try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 // 1. 静默创建失败时打印日志，不抛出异常以维持基础组件的高可用
-                print("[MediaStore] : \(error.localizedDescription)")
+                Logger.shared.error("[MediaStore] Failed to create media directory", error: error)
             }
         }
     }

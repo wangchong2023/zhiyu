@@ -338,7 +338,7 @@ struct RAGEvaluationView: View {
             mrr = (try? await meanRR) ?? 0
             ndcg = (try? await n) ?? 0
         } catch {
-            print("[RAG] Evaluation load failed: \(error)")
+            Logger.shared.error("[RAG] Evaluation load failed", error: error)
         }
         isLoading = false
     }

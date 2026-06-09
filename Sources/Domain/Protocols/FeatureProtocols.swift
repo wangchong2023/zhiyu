@@ -59,6 +59,9 @@ public protocol VaultServiceProtocol {
     /// 切换/选择笔记本（异步等待数据库切换完成再返回）
     func selectVaultAndWait(_ vault: Vault) async throws
 
+    /// 刷新指定笔记本的页面计数（从活跃数据库查询并写回全局元数据）
+    func refreshPageCount(for vaultID: UUID) async
+
     /// 切换/选择笔记本（用于 UI 交互，异步执行）
     func selectVault(_ vault: Vault)
     

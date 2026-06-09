@@ -56,7 +56,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
 
     /// 注册
     static func register(in container: ServiceContainer) {
-        print("[DI] Starting registration of storage module...")
+        Logger.shared.info("[DI] Starting registration of storage module...")
         
         // 注册 VaultDatabaseSwitcher 协议服务以支持依赖倒置 (DIP)
         container.register(DatabaseManager.shared as any VaultDatabaseSwitcher, for: (any VaultDatabaseSwitcher).self)
@@ -77,7 +77,7 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         
         // @PR-05: 优化数据库冷启动加载时间
         // 此时 writer 已由上方 guard 确认存在
-        print("[DI] Database writer is ready, registering vertical repositories...")
+        Logger.shared.info("[DI] Database writer is ready, registering vertical repositories...")
         
         let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
         container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
@@ -127,7 +127,7 @@ struct AppModuleRegistrar: ModuleRegistrar {
 
     /// 注册
     static func register(in container: ServiceContainer) {
-        print("[DI] Starting registration of application modules...")
+        Logger.shared.info("[DI] Starting registration of application modules...")
         container.register(Router.shared, for: Router.self)
         
         // 注册视图提供者 (View Factory Evolution)

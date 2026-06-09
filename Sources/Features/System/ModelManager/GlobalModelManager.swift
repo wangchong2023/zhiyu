@@ -159,7 +159,7 @@ public final class GlobalModelManager {
         
         // 1. 如果该模型不支持该硬件物理内存 (restricted)，强力拦截，杜绝 OOM 爆内存
         if evaluateEligibility(for: manifest) == .restricted {
-            print(" [GlobalModelManager]  \(modelId) ")
+            Logger.shared.warning(" [GlobalModelManager]  \(modelId) ")
             return
         }
         

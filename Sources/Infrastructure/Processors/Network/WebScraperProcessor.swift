@@ -144,7 +144,7 @@ struct JinaScraperHandler: WebScraperHandler {
             return (content, title)
             
         } catch {
-            print(L10n.Ingest.Status.webscraperLevel1Failed)
+            Logger.shared.error(L10n.Ingest.Status.webscraperLevel1Failed, error: error)
             guard let next = next else { throw error }
             return try await next.handle(url: url, startTime: startTime)
         }
@@ -174,7 +174,7 @@ struct GooglebotScraperHandler: WebScraperHandler {
             
             let restrictedCodes = [401, 402, 403, 429]
             if restrictedCodes.contains(httpResponse.statusCode) {
-                print(L10n.Ingest.Status.webscraperPaywallDetected(httpResponse.statusCode))
+                Logger.shared.warning(L10n.Ingest.Status.webscraperPaywallDetected(httpResponse.statusCode))
                 throw WebScraperProcessor.ScraperError.networkError(NSError(domain: "WebScraper", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Paywall_Blocked"]))
             }
             
@@ -186,7 +186,7 @@ struct GooglebotScraperHandler: WebScraperHandler {
             return DumbExtractorHandler.extractFromHTML(htmlContent)
             
         } catch {
-            print(L10n.Ingest.Status.webscraperLevel2Failed)
+            Logger.shared.error(L10n.Ingest.Status.webscraperLevel2Failed, error: error)
             guard let next = next else { throw error }
             return try await next.handle(url: url, startTime: startTime)
         }
@@ -223,7 +223,7 @@ struct ArchiveScraperHandler: WebScraperHandler {
             return DumbExtractorHandler.extractFromHTML(htmlContent)
             
         } catch {
-            print(L10n.Ingest.Status.webscraperLevel3Failed)
+            Logger.shared.error(L10n.Ingest.Status.webscraperLevel3Failed, error: error)
             guard let next = next else { throw error }
             return try await next.handle(url: url, startTime: startTime)
         }

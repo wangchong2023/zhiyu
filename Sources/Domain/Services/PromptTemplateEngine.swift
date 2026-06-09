@@ -90,7 +90,7 @@ public actor PromptTemplateEngine: PromptTemplateEngineCapabilities {
                 } catch {
                     // 4. 网络拉取失败（如断网、超时），100% 自动平滑降级为本地预设的 systemPromptTemplate
                     // 打印警告日志以供调试，生产环境无感知保活
-                    print(" [PromptTemplateEngine]  \(skill.skillId) (v\(skill.version)) : \(error.localizedDescription)")
+                    Logger.shared.error(" [PromptTemplateEngine]  \(skill.skillId) (v\(skill.version))", error: error)
                 }
             }
         }

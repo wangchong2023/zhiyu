@@ -52,7 +52,7 @@ struct MacOSSecurityScopedStorage: SecurityScopedStorageProtocol {
             let data = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
             UserDefaults.standard.set(data, forKey: AppConstants.Keys.Storage.vaultBookmarkPrefix + url.lastPathComponent)
         } catch {
-            print("macOS_Error1")
+            Logger.shared.error("macOS_Error1: Failed to store bookmark for \(url.lastPathComponent)", error: error)
         }
     }
     
@@ -66,7 +66,7 @@ struct MacOSSecurityScopedStorage: SecurityScopedStorageProtocol {
             if isStale { return nil }
             return url
         } catch {
-            print("macOS_Error2")
+            Logger.shared.error("macOS_Error2: Failed to resolve bookmark data", error: error)
             return nil
         }
     }

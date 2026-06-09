@@ -174,7 +174,7 @@ final class SecurityManager: @unchecked Sendable {
         } catch {
             #if DEBUG
             // 仅在 DEBUG 下允许降级到 UserDefaults，用于模拟器未签名环境
-            print(" [SecurityManager] DEBUG: HMAC  UserDefaults: \(error)")
+            Logger.shared.debug(" [SecurityManager] HMAC fallback to UserDefaults: \(error.localizedDescription)")
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
             UserDefaults.standard.set(signature, forKey: signatureKeyPrefix + fileName)
             #else

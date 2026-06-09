@@ -32,7 +32,7 @@ final class DeepLinkService: ObservableObject {
     func handleURL(_ url: URL) -> Bool {
         // 限流保护：防止外部意图总线过载，超过 10Hz 直接拒绝 (TC-DEE-06)
         guard IntentRateLimiter.shared.request() else {
-            print(" [DeepLinkService]" + " Rate limit" + " exceeded! Dropping" + " request: \(url.absoluteString)")
+            Logger.shared.warning(" [DeepLinkService]" + " Rate limit" + " exceeded! Dropping" + " request: \(url.absoluteString)")
             return false
         }
         

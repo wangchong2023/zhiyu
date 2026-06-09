@@ -115,7 +115,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.set(slidesPrompt, forKey: "prompt_slides")
         defaults.set(reportPrompt, forKey: "prompt_report")
         defaults.set(expansionPrompt, forKey: "prompt_expansion")
-        print("Prompt configurations saved to UserDefaults.")
+        Logger.shared.info("Prompt configurations saved to UserDefaults.")
     }
 
     /// 重置
@@ -132,7 +132,7 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         self.slidesPrompt = L10n.AI.Prompt.Default.slides
         self.reportPrompt = L10n.AI.Prompt.Default.report
         self.expansionPrompt = L10n.AI.Prompt.Default.expansion
-        print("Prompt configurations reset to default.")
+        Logger.shared.info("Prompt configurations reset to default.")
     }
 
     /// 根据当前界面语言生成的 AI 回复指令

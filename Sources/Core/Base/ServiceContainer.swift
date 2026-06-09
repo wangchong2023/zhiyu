@@ -43,7 +43,7 @@ final class ServiceContainer: @unchecked Sendable {
         services[key] = service
         os_unfair_lock_unlock(lockPointer)
         #if DEBUG
-        print("DI: Registered [\(key)] with instance \(String(describing: service))")
+        Logger.shared.debug("DI: Registered [\(key)] with instance \(String(describing: service))")
         #endif
     }
     
@@ -85,7 +85,7 @@ final class ServiceContainer: @unchecked Sendable {
         let errorMessage = " DI Error: Service [" + key + "] not registered. Expected type: " + String(describing: type) + ". Current keys: " + registeredKeys.joined(separator: ", ")
         
         #if DEBUG
-        print(errorMessage)
+        Logger.shared.error(errorMessage)
         #endif
         
         // 使用断言而非 fatalError，在开发环境下更容易追踪

@@ -299,9 +299,9 @@ struct DatabaseCorruptedBanner: View {
                 
                 // 重新执行 setup 挂载物理沙盒
                 try DatabaseManager.shared.setup(at: dbURL)
-                print("[DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database.")
+                Logger.shared.info("[DatabaseCorruptedBanner] Reverification succeeded! Remounted physical database.")
             } catch {
-                print("[DatabaseCorruptedBanner] Reverification" + " failed: \(error)")
+                Logger.shared.error("[DatabaseCorruptedBanner] Reverification" + " failed: \(error)", error: error)
             }
             isRetrying = false
         }

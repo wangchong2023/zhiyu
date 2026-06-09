@@ -18,7 +18,7 @@ final class PerformanceBenchmarker {
 
     /// 模拟海量文档导入并测量索引耗时
     func runStressTest(count: Int = 50000, store: any AnyPageStore) async {
-        print(" [Benchmark]  \(count) ...")
+        Logger.shared.info(" [Benchmark]  \(count) ...")
 
         let startTime = CFAbsoluteTimeGetCurrent()
 
@@ -26,7 +26,7 @@ final class PerformanceBenchmarker {
         for i in 1...count {
             if i % 5000 == 0 {
                 let currentTotal = await store.pages.count
-                print(" [Benchmark]  \(i) ...  DB : \(currentTotal)")
+                Logger.shared.info(" [Benchmark]  \(i) ...  DB : \(currentTotal)")
             }
 
             _ = try? await store.createPage(
@@ -43,9 +43,9 @@ final class PerformanceBenchmarker {
         }
 
         let duration = CFAbsoluteTimeGetCurrent() - startTime
-        print(" [Benchmark] ")
-        print(" : \(String(format: "%.2f", duration))s")
-        print(" : \(String(format: "%.2f", Double(count)/duration)) docs/s")
+        Logger.shared.info(" [Benchmark] ")
+        Logger.shared.info(" : \(String(format: "%.2f", duration))s")
+        Logger.shared.info(" : \(String(format: "%.2f", Double(count)/duration)) docs/s")
 
         // 触发一次全量搜索测试
         await measureSearchPerformance(store: store)
@@ -58,12 +58,12 @@ final class PerformanceBenchmarker {
         let results = await store.searchPages(query: query)
 
         let duration = CFAbsoluteTimeGetCurrent() - startTime
-        print(" [Benchmark] \"\(query)\"")
-        print(" : \(String(format: "%.2f", duration * 1000))ms")
-        print(" : \(results.count)")
+        Logger.shared.info(" [Benchmark] \"\(query)\"")
+        Logger.shared.info(" : \(String(format: "%.2f", duration * 1000))ms")
+        Logger.shared.info(" : \(results.count)")
 
         if duration > 0.8 {
-            print(" [Warning]  800ms ")
+            Logger.shared.warning(" [Warning]  800ms ")
         }
     }
 }

@@ -118,8 +118,6 @@ public final class VaultService: VaultServiceProtocol {
                 } else {
                     self.vaults = loadedVaults
                 }
-                // 刷新全部笔记本的实际页数
-                await refreshAllPageCounts()
             } catch {
                 Logger.shared.error(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)", error: error)
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
@@ -187,8 +185,8 @@ public final class VaultService: VaultServiceProtocol {
         await refreshPageCount(for: vault.id)
     }
 
-    /// 从当前活跃数据库查询实际页面数并写回全局元数据
-    private func refreshPageCount(for vaultID: UUID) async {
+    /// 从当前活跃数据库查询实际页面数并写回全局元数据（公开方法，供外部数据变更后调用）
+    public func refreshPageCount(for vaultID: UUID) async {
         guard let writer = DatabaseManager.shared.dbWriter else { return }
         do {
             let count = try await writer.read { db in

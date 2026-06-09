@@ -24,7 +24,7 @@ struct DemoDataGenerator {
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
-        print("DemoData_Starting")
+        Logger.shared.info("DemoData_Starting")
 
         let pagesToCreate: [(String, PageType, String, [String])] = [
                 (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
@@ -88,7 +88,7 @@ struct DemoDataGenerator {
             }
         }
         
-        print("DemoData_Finished")
+        Logger.shared.info("DemoData_Finished")
         return pagesToCreate.count
     }
  
@@ -98,7 +98,7 @@ struct DemoDataGenerator {
     ///   - targetCount: 生成的节点数量，默认为 1000
     /// - Returns: 生成的页面数量
     static func generateStressTest(in store: any AnyPageStore, count targetCount: Int = 1000) async throws -> Int {
-        print("StressTestData_Starting")
+        Logger.shared.info("StressTestData_Starting")
         
         try await store.performBatchWrite { db in
             // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
@@ -142,12 +142,12 @@ struct DemoDataGenerator {
                 localCount += 1
                 
                 if localCount % 100 == 0 {
-                    print("")
+                    Logger.shared.debug("")
                 }
             }
         }
         
-        print("")
+        Logger.shared.debug("")
         return targetCount
     }
 }

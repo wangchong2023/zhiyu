@@ -94,6 +94,7 @@ struct UserProfileMenu: View {
         } label: {
             profileLabel
         }
+        .menuIndicator(.hidden) // 隐藏 Menu 下拉箭头指示器，消除系统自动添加的额外水平留白
         .buttonStyle(.plain) // 消除系统在 Toolbar 选项中默认添加的 bordered 灰色背景
         .accessibilityIdentifier("userProfileMenuButton")
         .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }

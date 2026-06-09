@@ -65,6 +65,8 @@ public final class MaintenanceService {
                 try await vaultService.selectVaultAndWait(vault)
                 let count = try await DemoDataGenerator.generate(in: pageStore)
                 totalCount += count
+                // 数据注入后刷新页数到元数据
+                await vaultService.refreshPageCount(for: vault.id)
                 logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
             } catch {
                 logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed: \(error.localizedDescription)", module: "Maintenance")

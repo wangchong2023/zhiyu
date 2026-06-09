@@ -137,7 +137,7 @@ public final class AppStore {
     // MARK: - 初始化
     
     public init() {
-        print(" [AppStore] Initializing core engine...")
+        Logger.shared.info(" [AppStore] Initializing core engine...")
         
         // 1. 初始化子 Store
         self.searchStore = SearchStore()
@@ -184,7 +184,7 @@ public final class AppStore {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                print(" [AppStore] Detected exclusive physical database hot swap success...")
+                Logger.shared.info(" [AppStore] Detected exclusive physical database hot swap success...")
                 Task { [weak self] in
                     await self?.aiInsightStore.updateStatistics()
                 }

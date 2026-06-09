@@ -270,18 +270,18 @@ final class iCloudSyncCoordinator {
                     try FileManager.default.removeItem(at: local)
                 }
                 try FileManager.default.copyItem(at: remote, to: local)
-                print("ICloudSync_LWW_Remote")
+                Logger.shared.info("ICloudSync_LWW_Remote")
             } else {
                 // Local 比较新，覆盖云端
                 if FileManager.default.fileExists(atPath: remote.path) {
                     try FileManager.default.removeItem(at: remote)
                 }
                 try FileManager.default.copyItem(at: local, to: remote)
-                print("ICloudSync_LWW_Local")
+                Logger.shared.info("ICloudSync_LWW_Local")
             }
             return true
         } catch {
-            print("ICloudSync_LWW_Failed")
+            Logger.shared.error("ICloudSync_LWW_Failed", error: error)
             return false
         }
     }

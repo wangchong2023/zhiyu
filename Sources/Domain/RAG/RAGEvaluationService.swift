@@ -108,7 +108,7 @@ final class RAGEvaluationService {
                 )
             }
         } catch {
-            print("Evaluation failed:" + " \(error)")
+            Logger.shared.error("Evaluation failed", error: error)
         }
 
         return EvaluationReport(

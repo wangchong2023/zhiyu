@@ -86,7 +86,7 @@ struct OCRPickerModifier: ViewModifier {
                             onResult(text)
                         } catch {
                             // 错误处理通常由 UI 层展示 Toast
-                            print("OCR_Failed")
+                            Logger.shared.error("OCR_Failed", error: error)
                         }
                     }
                     selectedItem = nil

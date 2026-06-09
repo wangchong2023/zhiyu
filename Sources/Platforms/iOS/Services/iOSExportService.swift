@@ -278,7 +278,7 @@ extension iOSExportService: WKNavigationDelegate {
     /// webView回调
     /// - Parameter webView: webView
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("Export_Failed")
+        Logger.shared.error("Export_Failed", error: error)
     }
 }
 #endif

@@ -52,7 +52,7 @@ struct ZhiYuApp: App {
                 if !hasSeenSplash {
                     SplashView(onDismiss: {
                         guard !hasSeenSplash else { return }
-                        print(" [Splash] ...")
+                        Logger.shared.info(" [Splash] ...")
                         withAnimation(.easeInOut(duration: DesignSystem.Animation.slowDuration)) {
                             hasSeenSplash = true
                             NotificationCenter.default.post(name: .splashDismissed, object: nil)
@@ -120,7 +120,7 @@ struct AppLauncher {
                 try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
                 try? KeychainService.shared.delete(key: "refresh_token")
                 
-                print("[AppLauncher] Detected --reset-auth-state. Cleared auth state.")
+                Logger.shared.info("[AppLauncher] Detected --reset-auth-state. Cleared auth state.")
             }
             
             if CommandLine.arguments.contains("-ResetUserDefaults") {
@@ -132,7 +132,7 @@ struct AppLauncher {
                     }
                 }
                 defaults.synchronize()
-                print(" [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
+                Logger.shared.info(" [AppLauncher] Found -ResetUserDefaults launch argument. Successfully sanitized and reset all seeded_vault_* keys.")
             }
             
             ZhiYuApp.main()

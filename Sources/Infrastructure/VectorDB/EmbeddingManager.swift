@@ -65,7 +65,7 @@ public actor EmbeddingManager: EmbeddingProvider {
                 }
             }
         } catch {
-            print(" [Embedding]" + " Failed to" + " load initial" + " cache: \(error)")
+            Logger.shared.error(" [Embedding]" + " Failed to" + " load initial" + " cache: \(error)", error: error)
         }
     }
 
