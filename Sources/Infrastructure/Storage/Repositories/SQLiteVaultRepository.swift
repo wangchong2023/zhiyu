@@ -15,20 +15,22 @@ import GRDB
 struct VaultRecord: Codable, FetchableRecord, MutablePersistableRecord, TableRecord {
     // 映射的数据库表名
     static let databaseTableName = AppConstants.Storage.Tables.globalVaults
-    
+
     var id: String
     var name: String
     var path: String
     var icon: String?
+    var pageCount: Int
     var createdAt: Date
     var updatedAt: Date
     var lastAccessedAt: Date
-    
+
     enum CodingKeys: String, CodingKey, ColumnExpression {
         case id
         case name
         case path
         case icon
+        case pageCount = "page_count"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case lastAccessedAt = "last_accessed_at"
@@ -61,7 +63,7 @@ final class SQLiteVaultRepository: VaultRepository, @unchecked Sendable {
                     name: record.name,
                     createdAt: record.createdAt,
                     updatedAt: record.updatedAt,
-                    pageCount: 0,
+                    pageCount: record.pageCount,
                     themePayload: nil,
                     icon: record.icon,
                     description: record.path
@@ -78,6 +80,7 @@ final class SQLiteVaultRepository: VaultRepository, @unchecked Sendable {
                 name: vault.name,
                 path: vault.description ?? "",
                 icon: vault.icon,
+                pageCount: vault.pageCount,
                 createdAt: vault.createdAt,
                 updatedAt: vault.updatedAt,
                 lastAccessedAt: Date()

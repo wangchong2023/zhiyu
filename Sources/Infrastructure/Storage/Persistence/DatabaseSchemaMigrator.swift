@@ -273,6 +273,7 @@ extension DatabaseManager {
                 t.column(VaultRecord.CodingKeys.name.rawValue, .text).notNull()
                 t.column(VaultRecord.CodingKeys.path.rawValue, .text).notNull()
                 t.column(VaultRecord.CodingKeys.icon.rawValue, .text)
+                t.column(VaultRecord.CodingKeys.pageCount.rawValue, .integer).notNull().defaults(to: 0)
                 t.column(VaultRecord.CodingKeys.createdAt.rawValue, .datetime).notNull().defaults(to: Date())
                 t.column(VaultRecord.CodingKeys.updatedAt.rawValue, .datetime).notNull().defaults(to: Date())
                 t.column(VaultRecord.CodingKeys.lastAccessedAt.rawValue, .datetime).notNull().defaults(to: Date())
@@ -303,6 +304,16 @@ extension DatabaseManager {
             }
         }
         
+        // V2: global_vaults 增加 page_count 列 (@P4: 列表页数展示)
+        migrator.registerMigration("v2_global_page_count") { db in
+            let columns = try db.columns(in: VaultRecord.databaseTableName)
+            if !columns.contains(where: { $0.name == VaultRecord.CodingKeys.pageCount.rawValue }) {
+                try db.alter(table: VaultRecord.databaseTableName) { t in
+                    t.add(column: VaultRecord.CodingKeys.pageCount.rawValue, .integer).notNull().defaults(to: 0)
+                }
+            }
+        }
+
         return migrator
     }
 }
