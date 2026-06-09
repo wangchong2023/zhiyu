@@ -59,7 +59,9 @@ private enum WidgetMetrics {
     static let darkBgTop: Color = Color(red: 0.1, green: 0.11, blue: 0.18)
     static let darkBgBottom: Color = Color(red: 0.06, green: 0.07, blue: 0.12)
 
-    // MARK: - Gradient
+    // MARK: - Refresh
+    /// 小组件刷新间隔（分钟）
+    static let widgetRefreshIntervalMinutes: Double = 30.0
     static let gradientStartRadius: CGFloat = 10
     static let gradientEndRadius: CGFloat = 180
 }
@@ -80,55 +82,57 @@ struct KnowledgeStatsEntry: TimelineEntry {
 struct KnowledgeStatsProvider: TimelineProvider {
     typealias Entry = KnowledgeStatsEntry
 
-    /// placeholder
-    /// - Returns: 返回值
+    /// 占位符：Widget 初次渲染或快速预览时使用
+    /// - Parameter context: context
+    /// - Returns: 空数据的 TimelineEntry
     func placeholder(in context: Context) -> KnowledgeStatsEntry {
-        fetchWidgetEntry(date: Date())
-    }
-
-    /// 获取Snapshot
-    /// - Parameter completion: completion
-    /// - Returns: 返回值
-    func getSnapshot(in context: Context, completion: @escaping (KnowledgeStatsEntry) -> Void) {
-        completion(fetchWidgetEntry(date: Date()))
-    }
-
-    /// 获取Timeline
-    /// - Parameter completion: completion
-    /// - Returns: 返回值
-    func getTimeline(in context: Context, completion: @escaping (Timeline<KnowledgeStatsEntry>) -> Void) {
-        let timeline = calculateTimeline(date: Date())
-        completion(timeline)
-    }
-
-    /// 核心数据构建方法，供小组件渲染与单元测试直接调用，实现高内聚与100%可测试性
-    /// - Parameter date: 基准日期时间
-    /// - Returns: 拟真的小组件概览数据实体
-    func fetchWidgetEntry(date: Date) -> KnowledgeStatsEntry {
-        return KnowledgeStatsEntry(
-            date: date,
-            vaultName: WidgetL10n.vaultName,
-            pageCount: AppConstants.Demo.mockPageCount,
-            linkCount: AppConstants.Demo.mockLinkCount,
-            tagCount: AppConstants.Demo.mockTagCount,
-            lastUpdatedPages: [
-                ("Planning (Concept)", "concept", "accent"),
-                ("Memory (Concept)", "concept", "accent"),
-                (WidgetL10n.vaultName, "entity", "purple")
-            ]
+        KnowledgeStatsEntry(
+            date: Date(),
+            vaultName: WidgetL10n.title,
+            pageCount: 0,
+            linkCount: 0,
+            tagCount: 0,
+            lastUpdatedPages: []
         )
     }
 
-    /// 核心时间线刷新策略计算方法，解耦系统级 Context 依赖，便于在单元测试中直接施加断言
-    /// - Parameter date: 触发时间线的起始基准日期
-    /// - Returns: 计算好的 Timeline
-    func calculateTimeline(date: Date) -> Timeline<KnowledgeStatsEntry> {
-        // 核心安全策略：每 30 分钟刷新一次小组件，限制能耗开销
-        let nextUpdate = date.addingTimeInterval(AppConstants.Demo.widgetRefreshIntervalMinutes * 60)
-        let entry = fetchWidgetEntry(date: date)
-        return Timeline(entries: [entry], policy: .after(nextUpdate))
+    /// 快照：Widget 添加到桌面或预览时调用
+    /// - Parameter completion: completion
+    func getSnapshot(in context: Context, completion: @escaping (KnowledgeStatsEntry) -> Void) {
+        Task {
+            let entry = await buildEntry(for: Date())
+            completion(entry)
+        }
     }
 
+    /// 时间线：Widget 按刷新策略定期更新
+    /// - Parameter completion: completion
+    func getTimeline(in context: Context, completion: @escaping (Timeline<KnowledgeStatsEntry>) -> Void) {
+        Task {
+            let entry = await buildEntry(for: Date())
+            // 核心安全策略：每 30 分钟刷新一次，限制能耗开销
+            let nextUpdate = Date().addingTimeInterval(WidgetMetrics.widgetRefreshIntervalMinutes * 60)
+            let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+            completion(timeline)
+        }
+    }
+
+    /// 异步构建小组件数据实体
+    /// 从 App Group 共享数据库读取真实统计数据和最近更新页面列表
+    /// - Parameter date: 当前时间
+    /// - Returns: 包含真实数据的 KnowledgeStatsEntry
+    private func buildEntry(for date: Date) async -> KnowledgeStatsEntry {
+        let stats = await WidgetDatabaseService.fetchStats()
+        let recentPages = await WidgetDatabaseService.fetchRecentPages(limit: 3)
+        return KnowledgeStatsEntry(
+            date: date,
+            vaultName: WidgetL10n.title,
+            pageCount: stats.pageCount,
+            linkCount: stats.linkCount,
+            tagCount: stats.tagCount,
+            lastUpdatedPages: recentPages
+        )
+    }
 }
 
 // MARK: - Widget View
@@ -389,7 +393,6 @@ struct KnowledgeStatsWidget: Widget {
             KnowledgeStatsWidgetEntryView(entry: entry)
         }
         .configurationDisplayName(WidgetL10n.title)
-        .description(WidgetL10n.vaultName)
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .contentMarginsDisabled()
     }

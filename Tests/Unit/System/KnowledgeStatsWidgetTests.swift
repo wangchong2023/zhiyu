@@ -35,31 +35,20 @@ final class KnowledgeStatsWidgetTests: XCTestCase {
         XCTAssertEqual(entry.lastUpdatedPages.first?.title, "Test Page")
     }
     
-    /// TC-WID-02: 验证时间线提供商在 Snapshot 数据拉取下的数值准确度与字段可靠性
-    func testKnowledgeStatsProviderFetchEntry() throws {
+    /// TC-WID-02: 验证 Provider 占位符返回合法的空数据 Entry（不崩溃）
+    func testKnowledgeStatsProviderPlaceholder() throws {
         let provider = KnowledgeStatsProvider()
-        let entry = provider.fetchWidgetEntry(date: Date())
-        
-        // 关键过程：验证拟真的静态 Mock 数据与系统预期指标的对齐情况
-        XCTAssertEqual(entry.vaultName, WidgetL10n.vaultName, "Mock vault name should match localized WidgetL10n.vaultName")
-        XCTAssertEqual(entry.pageCount, AppConstants.Demo.mockPageCount)
-        XCTAssertEqual(entry.linkCount, AppConstants.Demo.mockLinkCount)
-        XCTAssertEqual(entry.tagCount, AppConstants.Demo.mockTagCount)
-        XCTAssertEqual(entry.lastUpdatedPages.count, 3)
+        let placeholder = provider.placeholder(in: .init())
+        XCTAssertEqual(placeholder.pageCount, 0)
+        XCTAssertEqual(placeholder.linkCount, 0)
+        XCTAssertEqual(placeholder.tagCount, 0)
+        XCTAssertTrue(placeholder.lastUpdatedPages.isEmpty)
     }
-
-    /// TC-WID-03: 验证小组件时间线刷新策略是否严格处于 30 分钟以上的能耗安全保护限制内
-    func testKnowledgeStatsProviderTimelinePolicy() throws {
-        let provider = KnowledgeStatsProvider()
-        let testDate = Date()
-        let timeline = provider.calculateTimeline(date: testDate)
-        
-        XCTAssertEqual(timeline.entries.count, 1, "Timeline should contain exactly 1 baseline entry")
-        
-        // 🟢 经典避坑指南：WidgetKit 的 TimelineReloadPolicy 实际上是 struct 而非 enum，
-        // 它的 .after(Date) 是静态工厂方法。因此我们通过 Equatable 来优雅断言 policy 的对齐情况，
-        // 从而完美避开模式匹配编译限制。
-        let expectedPolicy = TimelineReloadPolicy.after(testDate.addingTimeInterval(AppConstants.Demo.widgetRefreshIntervalMinutes * 60))
-        XCTAssertEqual(timeline.policy, expectedPolicy, "Timeline reload policy should match exactly \(AppConstants.Demo.widgetRefreshIntervalMinutes) minutes later")
+    
+    /// TC-WID-03: 验证时间线刷新策略使用正确的刷新间隔
+    func testKnowledgeStatsProviderRefreshInterval() throws {
+        // 验证 Widget 级别的刷新间隔配置
+        XCTAssertEqual(WidgetMetrics.widgetRefreshIntervalMinutes, 30.0,
+                       "Widget refresh interval should be 30 minutes for energy safety")
     }
 }

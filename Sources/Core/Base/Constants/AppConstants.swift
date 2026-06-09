@@ -156,14 +156,26 @@ public struct AppConstants {
         }
     }
 
-    // MARK: - 演示数据与模拟器配置
+    // MARK: - 小组件配置
+
+    /// 小组件刷新间隔（分钟）
+    public static let widgetRefreshIntervalMinutes: Double = 30.0
+
+    // MARK: - 演示数据与模拟器配置 (已废弃，请勿在新代码中使用)
+
+    @available(*, deprecated, message: "Widget 已改为读取真实数据库，Demo 数据不再使用")
     public struct Demo {
+        @available(*, deprecated, message: "仅用于回退兼容")
         public static let defaultPageCount = 17
+        @available(*, deprecated, message: "不再使用 mock 数据")
         public static let mockPageCount = 1258
+        @available(*, deprecated, message: "不再使用 mock 数据")
         public static let mockLinkCount = 89
+        @available(*, deprecated, message: "不再使用 mock 数据")
         public static let mockTagCount = 32
+        @available(*, deprecated, message: "使用 WidgetL10n.title 代替")
         public static let vaultName = "Demo Vault"
-        public static let mockRecentPagesCount = 3
+        @available(*, deprecated, message: "使用 AppConstants.widgetRefreshIntervalMinutes 代替")
         public static let widgetRefreshIntervalMinutes: Double = 30.0
     }
 

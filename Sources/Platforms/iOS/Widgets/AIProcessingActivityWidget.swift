@@ -12,6 +12,14 @@ import SwiftUI
 import WidgetKit
 import ActivityKit
 
+// MARK: - Widget 私有常量
+
+/// 预计 AI 治理任务时长（1 小时）
+private let estimatedTaskDuration: TimeInterval = 3600
+
+/// 进度条纵向缩放比例
+private let progressBarScale: CGFloat = 1.5
+
 /// AI 治理扫描实时活动视图
 struct AIProcessingActivityWidget: Widget {
     var body: some WidgetConfiguration {
@@ -79,7 +87,7 @@ struct AIProcessingActivityWidget: Widget {
                             Spacer()
                             
                             // 耗时计算
-                            Text(timerInterval: context.attributes.startTime...Date().addingTimeInterval(3600), countsDown: false)
+                            Text(timerInterval: context.attributes.startTime...Date().addingTimeInterval(estimatedTaskDuration), countsDown: false)
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundStyle(.secondary)
                         }
@@ -88,7 +96,7 @@ struct AIProcessingActivityWidget: Widget {
                         ProgressView(value: context.state.progress)
                             .progressViewStyle(.linear)
                             .tint(LinearGradient(colors: [.purple, .blue], startPoint: .leading, endPoint: .trailing))
-                            .scaleEffect(x: 1, y: 1.5, anchor: .center)
+                            .scaleEffect(x: 1, y: progressBarScale, anchor: .center)
                             .clipShape(Capsule())
                     }
                     .padding(.top, 4)
