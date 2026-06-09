@@ -106,6 +106,7 @@ struct SettingsView: View {
                     NavigationStack {
                         detailColumn(for: selectedSection, router: router)
                     }
+                    .id(router.languageForceUpdate)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -116,9 +117,10 @@ struct SettingsView: View {
                 ZStack {
                     themeManager.pageBackground()
                         .ignoresSafeArea()
-                    
+
                     compactList
                 }
+                .id(router.languageForceUpdate)
                 .navigationTitle(L10n.Settings.title)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
