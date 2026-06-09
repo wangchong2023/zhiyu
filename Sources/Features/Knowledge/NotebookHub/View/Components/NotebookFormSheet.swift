@@ -67,9 +67,10 @@ struct NotebookFormSheet: View {
                             ZStack {
                                 Circle()
                                     .fill(Color.appAccent.opacity(0.1))
-                                    .frame(width: 96, height: 96)
-                                Circle()
-                                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 2)
+                                    .overlay(
+                                        Circle()
+                                            .strokeBorder(Color.appAccent.opacity(0.3), lineWidth: 2)
+                                    )
                                     .frame(width: 96, height: 96)
 
                                 Text(icon.isEmpty ? "" : icon)
@@ -94,7 +95,7 @@ struct NotebookFormSheet: View {
                                                 .clipShape(Circle())
                                                 .overlay(
                                                     Circle()
-                                                        .stroke(icon == item ? Color.appAccent : Color.clear, lineWidth: 2)
+                                                        .strokeBorder(icon == item ? Color.appAccent : Color.clear, lineWidth: 2)
                                                 )
                                         }
                                     }
