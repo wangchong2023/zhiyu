@@ -203,6 +203,22 @@ extension DatabaseManager {
             }
         }
 
+        // V5: RAG 评估维度扩展 — 新增幻觉率与引用准确度指标 (@P2: 生成质量细粒度量化)
+        migrator.registerMigration("v5_rag_hallucination_citation") { db in
+            // 检查列是否存在，避免重复迁移崩溃
+            let columns = try db.columns(in: RAGEvaluation.databaseTableName)
+            if !columns.contains(where: { $0.name == RAGEvaluation.Columns.hallucinationRate.name }) {
+                try db.alter(table: RAGEvaluation.databaseTableName) { t in
+                    t.add(column: RAGEvaluation.Columns.hallucinationRate.name, .double).notNull().defaults(to: 0.0)
+                }
+            }
+            if !columns.contains(where: { $0.name == RAGEvaluation.Columns.citationAccuracy.name }) {
+                try db.alter(table: RAGEvaluation.databaseTableName) { t in
+                    t.add(column: RAGEvaluation.Columns.citationAccuracy.name, .double).notNull().defaults(to: 0.0)
+                }
+            }
+        }
+
         return migrator
     }
 

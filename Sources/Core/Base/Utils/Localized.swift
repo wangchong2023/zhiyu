@@ -298,6 +298,8 @@ extension EvaluationMetric {
         case .faithfulness: return L10n.Dashboard.stats.faithfulness
         case .relevance: return L10n.Dashboard.stats.relevance
         case .precision: return L10n.Dashboard.stats.precision
+        case .hallucinationRate: return L10n.Dashboard.stats.hallucinationRate
+        case .citationAccuracy: return L10n.Dashboard.stats.citationAccuracy
         }
     }
 }

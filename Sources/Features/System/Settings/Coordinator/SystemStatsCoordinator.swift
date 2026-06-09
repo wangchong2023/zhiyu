@@ -46,7 +46,7 @@ final class SystemStatsCoordinator {
     @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var knowledgeRepo: any KnowledgeRepository
     @ObservationIgnored @Inject private var vectorRepo: any VectorRepository
-    @ObservationIgnored @Inject private var governanceRepo: any GovernanceRepository
+    @ObservationIgnored @Inject private var governanceRepo: any RAGGovernanceRepository
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var haptic: any HapticFeedbackProtocol
 

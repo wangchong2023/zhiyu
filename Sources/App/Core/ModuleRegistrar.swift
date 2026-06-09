@@ -87,9 +87,9 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         container.register(vectorRepo as any VectorRepository, for: (any VectorRepository).self)
         container.register(vectorRepo, for: VectorDataRepository.self)
         
-        let governanceRepo = AIGovernanceRepository(dbWriter: writer)
-        container.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
-        container.register(governanceRepo, for: AIGovernanceRepository.self)
+        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: writer)
+        container.register(governanceRepo as any RAGGovernanceRepository, for: (any RAGGovernanceRepository).self)
+        container.register(governanceRepo, for: RAGGovernanceSQLiteStore.self)
         
         // 注册全新的 Vault 笔记本与 FileSignature 文件签名仓储协议 (纯 ORM，无 raw SQL)
         if let globalWriter = DatabaseManager.shared.globalWriter {

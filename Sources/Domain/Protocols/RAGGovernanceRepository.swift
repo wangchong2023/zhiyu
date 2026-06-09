@@ -10,8 +10,8 @@
 //
 import Foundation
 
-/// [Domain] AI 治理与观测性仓储协议
-public protocol GovernanceRepository: Sendable {
+/// [Domain] RAG 全链路质量治理仓储协议（评估、Token 审计、调用日志）
+public protocol RAGGovernanceRepository: Sendable {
     // MARK: - Token 计费 (Usage)
     
     /// 记录 Token 消耗情况
@@ -42,6 +42,12 @@ public protocol GovernanceRepository: Sendable {
     /// 获取最近的评估结果
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation]
     
-    /// 计算平均评估得分
-    func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double)
+    /// 计算平均评估得分（包含生成质量与引用保真指标）
+    func calculateAverageRAGScores(days: Int) async throws -> (
+        faithfulness: Double,
+        relevance: Double,
+        precision: Double,
+        hallucinationRate: Double,
+        citationAccuracy: Double
+    )
 }

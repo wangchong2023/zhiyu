@@ -1,18 +1,18 @@
 //
-//  AIGovernanceRepository.swift
+//  RAGGovernanceSQLiteStore.swift
 //  ZhiYu
 //
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：持久化引擎：GRDB/SQLite 仓库、同步、加密、数据库管理。
+//  核心职责：RAG 全链路质量治理 SQLite 存储实现。
 //
 import Foundation
 import GRDB
 
-/// [Infra] AI 治理存储实现
-final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
+/// [Infra] RAG 全链路质量治理 SQLite 存储
+final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, @unchecked Sendable {
     private var dbWriter: any DatabaseWriter {
         get async {
             await MainActor.run {
@@ -182,30 +182,40 @@ final class AIGovernanceRepository: GovernanceRepository, @unchecked Sendable {
         }
     }
 
-    /// 计算AverageRAGScores
+    /// 计算AverageRAGScores（含幻觉率与引用准确度）
     /// - Parameter days: days
-    /// - Returns: 返回值
-    func calculateAverageRAGScores(days: Int) async throws -> (faithfulness: Double, relevance: Double, precision: Double) {
+    /// - Returns: 五维均值元组
+    func calculateAverageRAGScores(days: Int) async throws -> (
+        faithfulness: Double,
+        relevance: Double,
+        precision: Double,
+        hallucinationRate: Double,
+        citationAccuracy: Double
+    ) {
         let writer = await dbWriter
         return try await writer.read { db in
             let dateThreshold = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-            
+
             let request = RAGEvaluation
                 .filter(RAGEvaluation.Columns.createdAt >= dateThreshold)
                 .select(
                     average(RAGEvaluation.Columns.faithfulness),
                     average(RAGEvaluation.Columns.relevance),
-                    average(RAGEvaluation.Columns.precision)
+                    average(RAGEvaluation.Columns.precision),
+                    average(RAGEvaluation.Columns.hallucinationRate),
+                    average(RAGEvaluation.Columns.citationAccuracy)
                 )
-            
+
             if let row = try Row.fetchOne(db, request) {
                 return (
                     faithfulness: row[0] ?? 0.0,
                     relevance: row[1] ?? 0.0,
-                    precision: row[2] ?? 0.0
+                    precision: row[2] ?? 0.0,
+                    hallucinationRate: row[3] ?? 0.0,
+                    citationAccuracy: row[4] ?? 0.0
                 )
             }
-            return (0.0, 0.0, 0.0)
+            return (0.0, 0.0, 0.0, 0.0, 0.0)
         }
     }
 }

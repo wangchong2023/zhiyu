@@ -156,6 +156,10 @@ extension L10n {
             public static var faithfulness: String { Dashboard.tr("stats.faithfulness") }
             public static var relevance: String { Dashboard.tr("stats.relevance") }
             public static var precision: String { Dashboard.tr("stats.precision") }
+            public static var hallucinationRate: String { Localized.tr("dashboard.stats.hallucinationRate", table: t) }
+            public static var citationAccuracy: String { Localized.tr("dashboard.stats.citationAccuracy", table: t) }
+            public static var generationQuality: String { Localized.tr("dashboard.stats.generationQuality", table: t) }
+            public static var retrievalFidelity: String { Localized.tr("dashboard.stats.retrievalFidelity", table: t) }
             public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }
             public static var recentEvaluations: String { Localized.tr("dashboard.stats.recentEvaluations", table: t) }
             public static var noEvaluations: String { Localized.tr("dashboard.stats.noEvaluations", table: t) }

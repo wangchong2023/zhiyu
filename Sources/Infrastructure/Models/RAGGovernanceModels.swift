@@ -1,12 +1,12 @@
 //
-//  GovernanceModels.swift
+//  RAGGovernanceModels.swift
 //  ZhiYu
 //
 //  Created by Antigravity on 2026/05/23.
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：数据模型与状态管理，定义数据结构与 @Observable 状态。
+//  核心职责：RAG 全链路质量治理数据模型（Token、调用日志、评估结果）。
 //
 import Foundation
 import GRDB
@@ -62,9 +62,13 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
     public var faithfulness: Double
     public var relevance: Double
     public var precision: Double
+    /// 幻觉率 (0-1)，AI 生成内容中无上下文支撑的比例。越高越差。
+    public var hallucinationRate: Double
+    /// 引用准确度 (0-1)，引用是否真实指向原文对应位置。越高越好。
+    public var citationAccuracy: Double
     public var evaluatorModel: String
     public var createdAt: Date
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case query
@@ -72,10 +76,12 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         case faithfulness = "faithfulness_score"
         case relevance = "relevance_score"
         case precision = "context_precision"
+        case hallucinationRate = "hallucination_rate"
+        case citationAccuracy = "citation_accuracy"
         case evaluatorModel = "evaluator_model"
         case createdAt = "created_at"
     }
-    
+
     public enum Columns {
         static let id = Column(CodingKeys.id)
         static let query = Column(CodingKeys.query)
@@ -83,10 +89,12 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         static let faithfulness = Column(CodingKeys.faithfulness)
         static let relevance = Column(CodingKeys.relevance)
         static let precision = Column(CodingKeys.precision)
+        static let hallucinationRate = Column(CodingKeys.hallucinationRate)
+        static let citationAccuracy = Column(CodingKeys.citationAccuracy)
         static let evaluatorModel = Column(CodingKeys.evaluatorModel)
         static let createdAt = Column(CodingKeys.createdAt)
     }
-    
+
     public init(
         id: Int64? = nil,
         query: String,
@@ -94,6 +102,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         faithfulness: Double,
         relevance: Double,
         precision: Double,
+        hallucinationRate: Double = 0.0,
+        citationAccuracy: Double = 0.0,
         evaluatorModel: String,
         createdAt: Date = Date()
     ) {
@@ -103,6 +113,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         self.faithfulness = faithfulness
         self.relevance = relevance
         self.precision = precision
+        self.hallucinationRate = hallucinationRate
+        self.citationAccuracy = citationAccuracy
         self.evaluatorModel = evaluatorModel
         self.createdAt = createdAt
     }

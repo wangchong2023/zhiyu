@@ -317,8 +317,8 @@ extension XCTestCase {
         // LLMContextBuilder 通过具体类型解析，需注册双重绑定以覆盖 resolve(KnowledgePageRepository.self) (@DIP)
         ServiceContainer.shared.register(knowledgeRepo, for: KnowledgePageRepository.self)
         
-        let governanceRepo = AIGovernanceRepository(dbWriter: dbQueue)
-        ServiceContainer.shared.register(governanceRepo as any GovernanceRepository, for: (any GovernanceRepository).self)
+        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: dbQueue)
+        ServiceContainer.shared.register(governanceRepo as any RAGGovernanceRepository, for: (any RAGGovernanceRepository).self)
 
         if let globalWriter = DatabaseManager.shared.globalWriter {
             let vaultRepo = SQLiteVaultRepository(dbWriter: globalWriter)

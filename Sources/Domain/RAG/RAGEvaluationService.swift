@@ -15,18 +15,20 @@ struct EvaluationReport: Identifiable {
     let id = UUID()
     let query: String
     let answer: String
-    let faithfulness: Double // 忠实度 (0-1)
-    let relevance: Double    // 相关度 (0-1)
-    let precision: Double    // 上下文精确度 (0-1)
-    let status: String       // "Pass" | "Warning" | "Fail"
+    let faithfulness: Double       // 忠实度 (0-1)
+    let relevance: Double          // 相关度 (0-1)
+    let precision: Double          // 上下文精确度 (0-1)
+    let hallucinationRate: Double  // 幻觉率 (0-1)，越低越好
+    let citationAccuracy: Double   // 引用准确度 (0-1)，越高越好
+    let status: String             // "Pass" | "Warning" | "Fail"
 }
 
 /// [L2] 领域服务：RAG 质量评估中心
 final class RAGEvaluationService {
     private let llmService: any LLMServiceProtocol
-    private let governanceStore: any GovernanceRepository
+    private let governanceStore: any RAGGovernanceRepository
 
-    init(llmService: any LLMServiceProtocol, governanceStore: any GovernanceRepository) {
+    init(llmService: any LLMServiceProtocol, governanceStore: any RAGGovernanceRepository) {
         self.llmService = llmService
         self.governanceStore = governanceStore
     }
@@ -48,6 +50,8 @@ final class RAGEvaluationService {
                 let f = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
                 let r = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
                 let p = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
+                let h = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
+                let c = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
 
                 let status: String
                 if f < 0.5 {
@@ -65,16 +69,32 @@ final class RAGEvaluationService {
                     faithfulness: f,
                     relevance: r,
                     precision: p,
+                    hallucinationRate: h,
+                    citationAccuracy: c,
                     evaluatorModel: AppConfig.AI.evaluatorModel
                 )
                 try? await governanceStore.saveRAGEvaluation(eval)
 
-                return EvaluationReport(query: query, answer: answer, faithfulness: f, relevance: r, precision: p, status: status)
+                return EvaluationReport(
+                    query: query,
+                    answer: answer,
+                    faithfulness: f,
+                    relevance: r,
+                    precision: p,
+                    hallucinationRate: h,
+                    citationAccuracy: c,
+                    status: status
+                )
             }
         } catch {
             print("Evaluation failed:" + " \(error)")
         }
 
-        return EvaluationReport(query: query, answer: answer, faithfulness: 0, relevance: 0, precision: 0, status: L10n.AI.Eval.Status.error)
+        return EvaluationReport(
+            query: query, answer: answer,
+            faithfulness: 0, relevance: 0, precision: 0,
+            hallucinationRate: 0, citationAccuracy: 0,
+            status: L10n.AI.Eval.Status.error
+        )
     }
 }

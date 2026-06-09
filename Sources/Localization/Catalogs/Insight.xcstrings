@@ -4489,6 +4489,74 @@
         }
       }
     },
+    "dashboard.stats.hallucinationRate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hallucination"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幻觉率"
+          }
+        }
+      }
+    },
+    "dashboard.stats.citationAccuracy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Citation Acc."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引用准确度"
+          }
+        }
+      }
+    },
+    "dashboard.stats.generationQuality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generation Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生成质量"
+          }
+        }
+      }
+    },
+    "dashboard.stats.retrievalFidelity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrieval Fidelity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索保真"
+          }
+        }
+      }
+    },
     "common.requests": {
       "extractionState": "manual",
       "localizations": {

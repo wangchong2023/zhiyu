@@ -12,7 +12,7 @@ import Foundation
 
 /// AI 指标分析服务 (L1-Infra)
 public final class AIAnalyticsService: @unchecked Sendable {
-    @Inject private var governance: any GovernanceRepository
+    @Inject private var governance: any RAGGovernanceRepository
     @Inject private var evalService: RAGEvaluationService
 
     public init() {}

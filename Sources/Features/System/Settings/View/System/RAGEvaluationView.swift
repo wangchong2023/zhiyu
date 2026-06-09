@@ -6,15 +6,18 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：RAG 质量评估详情页 — 展示检索增强生成全链路指标与评估记录
+//  核心职责：RAG 质量评估详情页 — 展示 5 维全链路指标与评估记录
 
 import SwiftUI
 
 @MainActor
 struct RAGEvaluationView: View {
-    @Inject private var governance: any GovernanceRepository
+    @Inject private var governance: any RAGGovernanceRepository
 
-    @State private var avgScores: (faithfulness: Double, relevance: Double, precision: Double) = (0, 0, 0)
+    @State private var avgScores: (
+        faithfulness: Double, relevance: Double, precision: Double,
+        hallucinationRate: Double, citationAccuracy: Double
+    ) = (0, 0, 0, 0, 0)
     @State private var recentEvaluations: [RAGEvaluation] = []
     @State private var selectedDays = 30
     @State private var isLoading = true
@@ -29,7 +32,8 @@ struct RAGEvaluationView: View {
                 ScrollView {
                     VStack(spacing: DesignSystem.wide) {
                         timeRangePicker
-                        scoreOverviewSection
+                        generationQualitySection
+                        retrievalFidelitySection
                         evaluationHistorySection
                     }
                     .padding(DesignSystem.standardPadding)
@@ -66,11 +70,15 @@ struct RAGEvaluationView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - 综合评分
+    // MARK: - 生成质量（越高越好）
 
-    private var scoreOverviewSection: some View {
+    private var generationQualitySection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            sectionHeader(title: L10n.Dashboard.stats.overview, icon: "chart.bar.fill", color: .appAccent)
+            sectionHeader(
+                title: L10n.Dashboard.stats.generationQuality,
+                icon: "text.bubble.fill",
+                color: .appAccent
+            )
 
             HStack(spacing: DesignSystem.medium) {
                 scoreCard(
@@ -84,10 +92,40 @@ struct RAGEvaluationView: View {
                     icon: "target"
                 )
                 scoreCard(
+                    title: L10n.Dashboard.stats.hallucinationRate,
+                    score: avgScores.hallucinationRate,
+                    icon: "exclamationmark.bubble",
+                    inverted: true
+                )
+            }
+        }
+        .appCardStyle()
+    }
+
+    // MARK: - 检索与引用保真
+
+    private var retrievalFidelitySection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            sectionHeader(
+                title: L10n.Dashboard.stats.retrievalFidelity,
+                icon: "magnifyingglass.circle.fill",
+                color: .blue
+            )
+
+            HStack(spacing: DesignSystem.medium) {
+                scoreCard(
                     title: L10n.Dashboard.stats.precision,
                     score: avgScores.precision,
                     icon: "scope"
                 )
+                scoreCard(
+                    title: L10n.Dashboard.stats.citationAccuracy,
+                    score: avgScores.citationAccuracy,
+                    icon: "quote.bubble"
+                )
+                // 占位保持对齐
+                Color.clear
+                    .frame(maxWidth: .infinity)
             }
         }
         .appCardStyle()
@@ -129,8 +167,11 @@ struct RAGEvaluationView: View {
             .foregroundStyle(color)
     }
 
-    private func scoreCard(title: String, score: Double, icon: String) -> some View {
-        let color = scoreColor(score)
+    /// 评分环形卡片
+    /// - Parameters:
+    ///   - inverted: 若为 true，低分=好（如幻觉率），颜色逻辑反转
+    private func scoreCard(title: String, score: Double, icon: String, inverted: Bool = false) -> some View {
+        let color = inverted ? invertedScoreColor(score) : scoreColor(score)
         return VStack(spacing: DesignSystem.tightPadding) {
             ZStack {
                 Circle()
@@ -155,6 +196,7 @@ struct RAGEvaluationView: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
             Text(String(format: "%.2f", score))
                 .font(.caption2.monospaced())
                 .foregroundStyle(.tertiary)
@@ -169,12 +211,18 @@ struct RAGEvaluationView: View {
                     .font(.subheadline.bold())
                     .lineLimit(1)
                 Spacer()
-                scoreBadge((eval.faithfulness + eval.relevance + eval.precision) / 3.0)
+                scoreBadge(overallScore(eval))
             }
+            // 第一行：生成质量
             HStack(spacing: DesignSystem.small) {
                 tagLabel("F", value: eval.faithfulness)
                 tagLabel("R", value: eval.relevance)
+                tagLabel("H", value: eval.hallucinationRate, inverted: true)
+            }
+            // 第二行：检索保真
+            HStack(spacing: DesignSystem.small) {
                 tagLabel("P", value: eval.precision)
+                tagLabel("C", value: eval.citationAccuracy)
             }
             Text(eval.evaluatorModel)
                 .font(.caption2)
@@ -193,21 +241,36 @@ struct RAGEvaluationView: View {
             .clipShape(Capsule())
     }
 
-    private func tagLabel(_ prefix: String, value: Double) -> some View {
-        Text("\(prefix):\(String(format: "%.2f", value))")
+    private func tagLabel(_ prefix: String, value: Double, inverted: Bool = false) -> some View {
+        let color = inverted ? invertedScoreColor(value) : scoreColor(value)
+        return Text("\(prefix):\(String(format: "%.2f", value))")
             .font(.system(size: 10, weight: .medium, design: .monospaced))
-            .foregroundStyle(scoreColor(value))
+            .foregroundStyle(color)
             .padding(.horizontal, 4)
             .padding(.vertical, 1)
-            .background(scoreColor(value).opacity(0.08))
+            .background(color.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: 3))
     }
 
     // MARK: - 辅助
 
+    private func overallScore(_ eval: RAGEvaluation) -> Double {
+        // 综合分：四项正向指标均值 − 幻觉率（惩罚项）
+        let positiveMean = (eval.faithfulness + eval.relevance + eval.precision + eval.citationAccuracy) / 4.0
+        let penalty = eval.hallucinationRate * 0.3
+        return max(0, positiveMean - penalty)
+    }
+
     private func scoreColor(_ s: Double) -> Color {
         if s >= 0.8 { return .green }
         if s >= 0.6 { return .orange }
+        return .red
+    }
+
+    /// 幻觉率专用色阶（反转：低分=绿，高分=红）
+    private func invertedScoreColor(_ s: Double) -> Color {
+        if s <= 0.2 { return .green }
+        if s <= 0.4 { return .orange }
         return .red
     }
 

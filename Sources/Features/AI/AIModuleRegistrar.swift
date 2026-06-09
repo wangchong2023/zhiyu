@@ -50,16 +50,16 @@ struct AIModuleRegistrar: ModuleRegistrar {
         container.register(AISynthesisService.shared, for: AISynthesisService.self)
         container.register(PromptService.shared, for: PromptService.self)
 
-        // RAG 评估服务 — 依赖 GovernanceRepository (L1 已注册)
+        // RAG 评估服务 — 依赖 RAGGovernanceRepository (L1 已注册)
         Logger.shared.info("[DI] Initializing RAGEvaluationService...")
-        if container.hasService(for: (any GovernanceRepository).self) {
+        if container.hasService(for: (any RAGGovernanceRepository).self) {
             let evaluationService = RAGEvaluationService(
                 llmService: llm,
-                governanceStore: container.resolve((any GovernanceRepository).self)
+                governanceStore: container.resolve((any RAGGovernanceRepository).self)
             )
             container.register(evaluationService, for: RAGEvaluationService.self)
         } else {
-            Logger.shared.error("[DI] GovernanceRepository not registered! RAGEvaluationService initialization will fail.")
+            Logger.shared.error("[DI] RAGGovernanceRepository not registered! RAGEvaluationService initialization will fail.")
         }
 
         Logger.shared.info("[DI] AI capability module registration completed")

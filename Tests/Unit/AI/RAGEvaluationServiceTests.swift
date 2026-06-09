@@ -15,7 +15,7 @@ import XCTest
 final class RAGEvaluationServiceTests: XCTestCase {
     
     private var mockLLM: MockLLMService!
-    private var governanceStore: (any GovernanceRepository)!
+    private var governanceStore: (any RAGGovernanceRepository)!
     private var evaluationService: RAGEvaluationService!
     
     override func setUp() async throws {
@@ -23,7 +23,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         await setupFullMockEnvironment()
         
         mockLLM = try XCTUnwrap(ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockLLMService)
-        governanceStore = ServiceContainer.shared.resolve((any GovernanceRepository).self)
+        governanceStore = ServiceContainer.shared.resolve((any RAGGovernanceRepository).self)
         evaluationService = RAGEvaluationService(llmService: mockLLM, governanceStore: governanceStore)
     }
     
@@ -150,18 +150,128 @@ final class RAGEvaluationServiceTests: XCTestCase {
     }
     
     // MARK: - JSON 字段缺失测试
-    
+
     /// 验证当 LLM 裁判返回的 JSON 中缺少部分指标字段时，评估服务能够平稳使用 0.0 兜底，并成功生成报告并持久化
     func testEvaluationMissingJSONKeys() async {
         mockLLM.generateHandler = { prompt, systemPrompt in
             return "{}"
         }
-        
+
         let report = await evaluationService.evaluate(query: "字段缺失测试", answer: "局部回答", context: "部分上下文")
-        
+
         XCTAssertEqual(report.faithfulness, 0.0)
         XCTAssertEqual(report.relevance, 0.0)
         XCTAssertEqual(report.precision, 0.0)
+        XCTAssertEqual(report.hallucinationRate, 0.0)
+        XCTAssertEqual(report.citationAccuracy, 0.0)
         XCTAssertEqual(report.status, L10n.AI.Eval.Status.fail) // "Fail"
+    }
+
+    // MARK: - 新指标全维度解析测试 (Phase 2)
+
+    /// 验证 LLM 返回 5 维指标（含幻觉率与引用准确度）时全部正确解析并持久化
+    func testEvaluationFiveDimensionalParsingAndPersistence() async throws {
+        mockLLM.generateHandler = { prompt, systemPrompt in
+            // 验证 prompt 包含新维度关键词
+            XCTAssertTrue(prompt.contains("hallucination_rate"))
+            return """
+            {
+                "faithfulness": 0.92,
+                "relevance": 0.85,
+                "context_precision": 0.88,
+                "hallucination_rate": 0.08,
+                "citation_accuracy": 0.90
+            }
+            """
+        }
+
+        let query = "什么是暗物质？"
+        let answer = "暗物质是一种不发光、不反射电磁辐射的物质，通过引力效应被间接探测到。"
+        let context = "暗物质是宇宙中占比约 27% 的不可见物质，其存在由星系旋转曲线和引力透镜效应证实。"
+
+        let report = await evaluationService.evaluate(query: query, answer: answer, context: context)
+
+        // 断言所有 5 维指标
+        XCTAssertEqual(report.faithfulness, 0.92)
+        XCTAssertEqual(report.relevance, 0.85)
+        XCTAssertEqual(report.precision, 0.88)
+        XCTAssertEqual(report.hallucinationRate, 0.08)
+        XCTAssertEqual(report.citationAccuracy, 0.90)
+        XCTAssertEqual(report.status, L10n.AI.Eval.Status.pass)
+
+        // 验证数据库持久化
+        let records = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        XCTAssertEqual(records.count, 1)
+        if let first = records.first {
+            XCTAssertEqual(first.faithfulness, 0.92)
+            XCTAssertEqual(first.relevance, 0.85)
+            XCTAssertEqual(first.precision, 0.88)
+            XCTAssertEqual(first.hallucinationRate, 0.08)
+            XCTAssertEqual(first.citationAccuracy, 0.90)
+        }
+    }
+
+    /// 验证新指标部分缺失时使用 0.0 兜底（向后兼容旧版 JSON）
+    func testEvaluationPartialNewMetricsDefaultToZero() async {
+        mockLLM.generateHandler = { _, _ in
+            // 旧版 JSON 不含 hallucination_rate 和 citation_accuracy
+            return """
+            {
+                "faithfulness": 0.78,
+                "relevance": 0.82,
+                "context_precision": 0.75
+            }
+            """
+        }
+
+        let report = await evaluationService.evaluate(query: "旧格式测试", answer: "兼容回答", context: "部分上下文")
+
+        XCTAssertEqual(report.faithfulness, 0.78)
+        XCTAssertEqual(report.relevance, 0.82)
+        XCTAssertEqual(report.precision, 0.75)
+        // 新字段缺失时应兜底为 0.0
+        XCTAssertEqual(report.hallucinationRate, 0.0)
+        XCTAssertEqual(report.citationAccuracy, 0.0)
+    }
+
+    // MARK: - 五维均值计算测试
+
+    /// 验证 calculateAverageRAGScores 返回 5 维均值的正确性
+    func testCalculateAverageRAGScoresFiveDimensional() async throws {
+        // 写入两条已知评估记录
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "Q1", answer: "A1",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.9,
+            evaluatorModel: "test-model"
+        ))
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "Q2", answer: "A2",
+            faithfulness: 0.7, relevance: 0.6, precision: 0.5,
+            hallucinationRate: 0.3, citationAccuracy: 0.7,
+            evaluatorModel: "test-model"
+        ))
+
+        let avg = try await governanceStore.calculateAverageRAGScores(days: 365)
+
+        // (0.9 + 0.7) / 2 = 0.8
+        XCTAssertEqual(avg.faithfulness, 0.8, accuracy: 0.001)
+        XCTAssertEqual(avg.relevance, 0.7, accuracy: 0.001)
+        XCTAssertEqual(avg.precision, 0.6, accuracy: 0.001)
+        // (0.1 + 0.3) / 2 = 0.2
+        XCTAssertEqual(avg.hallucinationRate, 0.2, accuracy: 0.001)
+        // (0.9 + 0.7) / 2 = 0.8
+        XCTAssertEqual(avg.citationAccuracy, 0.8, accuracy: 0.001)
+    }
+
+    /// 空数据库时 calculateAverageRAGScores 返回全 0
+    func testCalculateAverageRAGScoresEmptyDatabase() async throws {
+        let avg = try await governanceStore.calculateAverageRAGScores(days: 30)
+
+        XCTAssertEqual(avg.faithfulness, 0.0)
+        XCTAssertEqual(avg.relevance, 0.0)
+        XCTAssertEqual(avg.precision, 0.0)
+        XCTAssertEqual(avg.hallucinationRate, 0.0)
+        XCTAssertEqual(avg.citationAccuracy, 0.0)
     }
 }

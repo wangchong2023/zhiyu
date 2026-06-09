@@ -264,4 +264,8 @@ public enum EvaluationMetric: String, CaseIterable, Sendable {
     case faithfulness = "faithfulness"
     case relevance = "relevance"
     case precision = "context_precision"
+    /// 幻觉率：AI 生成内容中缺乏上下文支撑的比例（越低越好）
+    case hallucinationRate = "hallucination_rate"
+    /// 引用准确度：引用是否真实指向原文对应位置（越高越好）
+    case citationAccuracy = "citation_accuracy"
 }

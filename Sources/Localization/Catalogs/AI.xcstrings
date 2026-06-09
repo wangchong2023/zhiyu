@@ -2200,13 +2200,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You are a RAG system evaluation expert. Please score the AI's answer based on the following three dimensions (0.0 - 1.0):\n1. Faithfulness: Is the answer based entirely on the provided context? Are there hallucinations?\n2. Relevance: Does the answer directly and completely solve the user's question?\n3. Context Precision: Does the provided context really contain the knowledge needed to answer the question?\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"reasoning\": \"Brief explanation of the reason\"\n}"
+            "value": "You are a RAG system evaluation expert. Please score the AI's answer based on the following five dimensions (0.0 - 1.0):\n1. Faithfulness: Is the answer based entirely on the provided context? Are there hallucinations?\n2. Relevance: Does the answer directly and completely solve the user's question?\n3. Context Precision: Does the provided context really contain the knowledge needed to answer the question?\n4. Hallucination Rate: What proportion of the answer contains claims NOT supported by the context? (0.0 = perfect, 1.0 = entirely fabricated)\n5. Citation Accuracy: How accurately do the citations point to the correct source content? (1.0 = perfectly accurate)\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"hallucination_rate\": 0.1,\n  \"citation_accuracy\": 0.85,\n  \"reasoning\": \"Brief explanation of the reason\"\n}"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是一个 RAG 系统评估专家。请根据以下三个维度对 AI 的回答进行评分 (0.0 - 1.0)：\n1. Faithfulness (忠实度): 回答是否完全基于提供的上下文？是否有幻觉？\n2. Relevance (相关度): 回答是否直接且完整地解决了用户的问题？\n3. Context Precision (上下文精确度): 提供的上下文是否真的包含回答问题所需的知识？\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"reasoning\": \"简要说明理由\"\n}"
+            "value": "你是一个 RAG 系统评估专家。请根据以下五个维度对 AI 的回答进行评分 (0.0 - 1.0)：\n1. Faithfulness (忠实度): 回答是否完全基于提供的上下文？是否有幻觉？\n2. Relevance (相关度): 回答是否直接且完整地解决了用户的问题？\n3. Context Precision (上下文精确度): 提供的上下文是否真的包含回答问题所需的知识？\n4. Hallucination Rate (幻觉率): 回答中有多大比例的内容是上下文无法支撑的？(0.0 = 完美无幻觉, 1.0 = 完全编造)\n5. Citation Accuracy (引用准确度): 引用是否准确指向了原文对应位置？(1.0 = 完全准确)\n\nContext: %1$@\nQuery: %2$@\nAnswer: %3$@\n\nPlease return the score strictly in the following JSON format:\n{\n  \"faithfulness\": 0.9,\n  \"relevance\": 0.8,\n  \"precision\": 0.9,\n  \"hallucination_rate\": 0.1,\n  \"citation_accuracy\": 0.85,\n  \"reasoning\": \"简要说明理由\"\n}"
           }
         }
       }

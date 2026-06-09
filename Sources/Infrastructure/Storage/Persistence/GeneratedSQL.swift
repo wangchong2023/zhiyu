@@ -115,6 +115,8 @@ CREATE TABLE IF NOT EXISTS rag_evaluations (
     faithfulness_score REAL NOT NULL,
     relevance_score REAL NOT NULL,
     context_precision REAL NOT NULL,
+    hallucination_rate REAL NOT NULL DEFAULT 0.0,
+    citation_accuracy REAL NOT NULL DEFAULT 0.0,
     evaluator_model TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

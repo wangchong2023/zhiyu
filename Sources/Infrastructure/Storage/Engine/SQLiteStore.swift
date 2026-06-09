@@ -35,7 +35,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // ── 仓库依赖 (DI) ──
     private let knowledgeRepository: any KnowledgeRepository
     private let vectorRepository: any VectorRepository
-    private let governanceRepository: any GovernanceRepository
+    private let governanceRepository: any RAGGovernanceRepository
     
     // ── 助手服务 ──
     public let embeddingProvider: any EmbeddingProvider
@@ -45,7 +45,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     public init(dbWriter: any DatabaseWriter) {
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbWriter)
         let vectorRepo = VectorDataRepository(dbWriter: dbWriter)
-        let governanceRepo = AIGovernanceRepository(dbWriter: dbWriter)
+        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: dbWriter)
         
         self.knowledgeRepository = knowledgeRepo
         self.vectorRepository = vectorRepo
