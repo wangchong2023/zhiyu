@@ -22,13 +22,15 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     // ── 物理写入器 ──
     private var dbWriter: any DatabaseWriter {
         get async {
-            await MainActor.run {
-                // 动态获取全局活跃的数据库写入器，确保 SQLite 事务和存储引擎在 Vault 切换后可以立即在新连接上工作。若尚未初始化，则降级为内存数据库。
-                if let writer = DatabaseManager.shared.dbWriter {
+            // 等待 notebook 切换完成（selectVault 异步 Task 可能尚未完成）
+            for _ in 0..<20 {
+                if let writer = await MainActor.run(body: { DatabaseManager.shared.dbWriter }) {
                     return writer
                 }
-                do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(SQLiteStore): \(error)") }
+                try? await Task.sleep(nanoseconds: 50_000_000) // 50ms × 20 = 1s
             }
+            // 极端降级
+            do { return try DatabaseQueue() } catch { fatalError("无法创建内存数据库(SQLiteStore): \(error)") }
         }
     }
     

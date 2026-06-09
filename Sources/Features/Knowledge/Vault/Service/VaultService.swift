@@ -296,7 +296,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         }
 
         NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
-        
+
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
         Task {
             do {
@@ -309,7 +309,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
                 // 3. 同步实际页面数量到元数据
                 await refreshPageCount(for: vault.id)
             } catch {
-                Logger.shared.error(" [VaultService]" + " Failed to" + " switch physical" + " database: \(error)", error: error)
+                Logger.shared.error("[VaultService] selectVault switch failed: \(error.localizedDescription)", error: error)
             }
         }
     }
