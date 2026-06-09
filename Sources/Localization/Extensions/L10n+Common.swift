@@ -181,6 +181,8 @@ extension L10n {
             public static var lastUpdated: String { Common.tr("perf.lastUpdated") }
             public static var memory: String { Common.tr("perf.memory") }
             public static var timing: String { Common.tr("perf.timing") }
+            public static var tokenUsage: String { Common.tr("common.tokenUsage") }
+            public static var requests: String { Common.tr("common.requests") }
             public static var pages: String { Common.tr("perf.pages") }
             public static var words: String { Common.tr("perf.words") }
             public static var nodes: String { Common.tr("perf.nodes") }

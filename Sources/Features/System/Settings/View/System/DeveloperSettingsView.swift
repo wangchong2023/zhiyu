@@ -38,8 +38,8 @@ struct DeveloperSettingsView: View {
     @State private var selectedTab: DeveloperTab = .data
     
     // RAG 评估数据
-    @State private var evalStats: [String: Double] = [:]
-    @State private var isLoadingStats = true
+
+
     
     var body: some View {
         List {
@@ -149,14 +149,15 @@ struct DeveloperSettingsView: View {
                 }
                 .appListRowBackground()
             } else {
-                // MARK: - RAG 质量评估 (RAG Quality Evaluation)
+                // MARK: - RAG 质量评估
                 Section {
-                    qualityGrid
+                    NavigationLink {
+                        RAGEvaluationView()
+                    } label: {
+                        Label(L10n.Dashboard.stats.benchmark, systemImage: "checkmark.shield")
+                    }
                 } header: {
                     Text(L10n.Dashboard.stats.benchmark)
-                } footer: {
-                    Text(L10n.Dashboard.benchmarkDescription)
-                        .font(.caption)
                 }
                 .appListRowBackground()
             }
@@ -169,9 +170,6 @@ struct DeveloperSettingsView: View {
             .navigationTitle(L10n.Settings.Section.developer)
             .navigationBarTitleDisplayMode(.inline)
             .appToast() // 确保在二级导航页面也能正确渲染 Toast，解决被遮挡问题
-            .task {
-                await loadStats()
-            }
             .confirmationDialog(L10n.Settings.developer.stressTest.confirmTitle, isPresented: $showStressTestConfirmation, titleVisibility: .visible) {
                 Button(L10n.Settings.developer.stressTest.confirmAction(stressTestTargetCount), role: .destructive) {
                     Task { await runStressTest(count: stressTestTargetCount) }
@@ -213,70 +211,10 @@ struct DeveloperSettingsView: View {
             self.isStressTesting = false
             Task {
                 await knowledgeStore.refresh()
-                AppEventBus.shared.publish(.pagesCleared)
-                await loadStats()
-            }
+                AppEventBus.shared.publish(.pagesCleared)            }
         }
     }
     
-    @Inject private var governance: any GovernanceRepository
 
-    private func loadStats() async {
-        do {
-            let stats = try await governance.calculateAverageRAGScores(days: 30)
-            await MainActor.run {
-                self.evalStats = [
-                    EvaluationMetric.faithfulness.rawValue: stats.faithfulness,
-                    EvaluationMetric.relevance.rawValue: stats.relevance,
-                    EvaluationMetric.precision.rawValue: stats.precision
-                ]
-                self.isLoadingStats = false
-            }
-        } catch {
-            print("Failed to" + " load developer" + " stats: \(error)")
-            await MainActor.run { self.isLoadingStats = false }
-        }
-    }
-    
-    // MARK: - UI Components
-    
-    private var qualityGrid: some View {
-        HStack(spacing: DesignSystem.standardPadding) {
-            metricCard(title: L10n.Dashboard.stats.faithfulness, value: evalStats[EvaluationMetric.faithfulness.rawValue] ?? 0, icon: "checkmark.shield", color: .appAccent)
-            metricCard(title: L10n.Dashboard.stats.relevance, value: evalStats[EvaluationMetric.relevance.rawValue] ?? 0, icon: "target", color: .appAccent)
-            metricCard(title: L10n.Dashboard.stats.precision, value: evalStats[EvaluationMetric.precision.rawValue] ?? 0, icon: "scope", color: .appAccent)
-        }
-        .padding(.vertical, DesignSystem.small)
-    }
 
-    private func metricCard(title: String, value: Double, icon: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            HStack {
-                ZStack {
-                    Circle()
-                        .fill(color.opacity(DesignSystem.Opacity.glass))
-                        .frame(width: DesignSystem.smallIconSize + 12, height: DesignSystem.smallIconSize + 12)
-                    Image(systemName: icon)
-                        .font(.system(size: DesignSystem.captionFontSize, weight: .bold))
-                        .foregroundColor(color)
-                }
-                Spacer()
-            }
-            
-            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                Text(title)
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(.appSecondary)
-                    .lineLimit(1)
-                
-                Text(String(format: "%.2f", value))
-                    .font(.system(size: DesignSystem.titleFontSize, weight: .bold, design: .rounded))
-                    .foregroundColor(.appText)
-            }
-        }
-        .padding(DesignSystem.medium)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .appMetricCardStyle(color: color)
-        .appStandardShadow()
-    }
 }

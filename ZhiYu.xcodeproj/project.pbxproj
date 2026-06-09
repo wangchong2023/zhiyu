@@ -676,6 +676,7 @@
 		631BE8F5CFF38AEAD16A3A52 /* IconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57A5760D19F7F1927ED221B /* IconPickerView.swift */; };
 		63D30B1722CD3623EADC4A6C /* DeviceHardwareGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37831FBA563DD802F0D7BCA9 /* DeviceHardwareGuard.swift */; };
 		63E079CD10480DEE39608DF7 /* Platform.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0E5C25A712C75E3F68DCC284 /* Platform.xcstrings */; };
+		6443B64449C2294F2E324F40 /* RAGEvaluationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF056668E2CBDB478EB793AC /* RAGEvaluationView.swift */; };
 		644FCAFFDCE214270ACE0083 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8878364D7E58CA8A7DD99D26 /* Lottie */; };
 		645A08498F7FCBABB94E0AAD /* AuthDTOs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCEC87C11E9BA127D9402A /* AuthDTOs.swift */; };
 		64DD6AF021E3D8505E8C616E /* DesignSystem+Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F339F3FF98E40B199E728EA /* DesignSystem+Sidebar.swift */; };
@@ -1185,6 +1186,7 @@
 		AFCDB944EBEE5B23A0ED6BB9 /* WatchBriefingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39184583D529EB25B781B5A8 /* WatchBriefingView.swift */; };
 		B08724648B8224D3CC9BE62C /* VaultBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912726C762F31F918625A562 /* VaultBadge.swift */; };
 		B0CECBDFACD0B0927A0EF99F /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09486FED6E6B19546A8A3329 /* Animations.swift */; };
+		B0E41B46CBDB7C9DFAC1D6DF /* RAGEvaluationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF056668E2CBDB478EB793AC /* RAGEvaluationView.swift */; };
 		B1239A502AAA86EF92CD327A /* PPTXProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FB9ACAFEA11F86CD681D078 /* PPTXProcessor.swift */; };
 		B154FDDDF9D3334459C44DBF /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D61AF026EBC2F06927D94E2 /* SettingsStoreTests.swift */; };
 		B16885FB7C0CB0D21655C056 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A031B40982A6DD320F4B1B /* User.swift */; };
@@ -2289,6 +2291,7 @@
 		BE0DAFE3A714AFDAC3BDE21C /* WatchSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncTests.swift; sourceTree = "<group>"; };
 		BE7C23EB351C2FE0ED9934B0 /* AppStoreStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreStorageTests.swift; sourceTree = "<group>"; };
 		BEE7DA0E60E88EBFC1DAE8EB /* BackgroundTaskProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTaskProtocol.swift; sourceTree = "<group>"; };
+		BF056668E2CBDB478EB793AC /* RAGEvaluationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAGEvaluationView.swift; sourceTree = "<group>"; };
 		BF38D245EACD007D6CB1297F /* EmbeddingProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddingProvider.swift; sourceTree = "<group>"; };
 		BF71292DB26049AF6C361A3D /* RAGPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAGPerformanceTests.swift; sourceTree = "<group>"; };
 		C07B7A0CC9472463435C3701 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -4969,6 +4972,7 @@
 				F08DA901D8759239F0FF6404 /* ConflictDiffView.swift */,
 				CAE1E65D6D6DCE1B46F1C0D9 /* DeveloperSettingsView.swift */,
 				5E3240C7B4211E946C1192A3 /* iCloudSyncView.swift */,
+				BF056668E2CBDB478EB793AC /* RAGEvaluationView.swift */,
 				1FAF2D5137670205F841B54B /* SettingsView.swift */,
 				122439A2BF95E56A4F6F0EAF /* SystemStatsChartView.swift */,
 				0551DF68C292CE2ECA1BBD02 /* SystemStatsView.swift */,
@@ -6123,6 +6127,7 @@
 				5104971A76C8E018F1637DAE /* QuizProcessor.swift in Sources */,
 				60D87D1E0DD230452544967F /* QuizView.swift in Sources */,
 				43198DCC118C8C90EAC4AF6C /* RAGEvaluationService.swift in Sources */,
+				6443B64449C2294F2E324F40 /* RAGEvaluationView.swift in Sources */,
 				E1CD7A0589BE3C7A6E031FB7 /* RAGModels+GRDB.swift in Sources */,
 				AE6FB8830E16A19C5B15C9EC /* RAGModels.swift in Sources */,
 				FEF1BD5A29351773E0E0C40A /* RAGOrchestrator.swift in Sources */,
@@ -6697,6 +6702,7 @@
 				93F542414296FE0E9895E16D /* QuizProcessor.swift in Sources */,
 				9DEE298994DE8A977235A850 /* QuizView.swift in Sources */,
 				43F779AD6B40EAE3DD10DF38 /* RAGEvaluationService.swift in Sources */,
+				B0E41B46CBDB7C9DFAC1D6DF /* RAGEvaluationView.swift in Sources */,
 				2BA2EF6D773582A4892AD2F4 /* RAGModels+GRDB.swift in Sources */,
 				7FD715563981F5C6B6179043 /* RAGModels.swift in Sources */,
 				6C9B6A4FAF0F7AB2A962B39F /* RAGOrchestrator.swift in Sources */,
