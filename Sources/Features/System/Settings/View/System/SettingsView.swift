@@ -26,8 +26,16 @@ struct SettingsView: View {
         case security        // 安全隐私
         case data            // 数据与日志
         case plugins         // 插件与扩展
-        case developer       // 开发者设置
+        case developer       // 开发者设置（仅 DEBUG 可见）
         case about           // 关于软件
+
+        static var allCases: [SettingsSection] {
+            #if DEBUG
+            return [.appearance, .ai, .security, .data, .plugins, .developer, .about]
+            #else
+            return [.appearance, .ai, .security, .data, .plugins, .about]
+            #endif
+        }
 
         var id: String { rawValue }
 
@@ -140,10 +148,12 @@ struct SettingsView: View {
 
             securitySection(store: store)
                 .appListRowBackground()
-            
+
+            #if DEBUG
             developerSection
                 .appListRowBackground()
-            
+            #endif
+
             aboutSection
                 .appListRowBackground()
         }
