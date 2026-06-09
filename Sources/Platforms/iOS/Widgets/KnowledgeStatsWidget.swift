@@ -99,7 +99,7 @@ struct KnowledgeStatsProvider: TimelineProvider {
     /// 快照：Widget 添加到桌面或预览时调用
     /// - Parameter completion: completion
     func getSnapshot(in context: Context, completion: @escaping (KnowledgeStatsEntry) -> Void) {
-        Task {
+        Task { @MainActor in
             let entry = await buildEntry(for: Date())
             completion(entry)
         }
@@ -108,7 +108,7 @@ struct KnowledgeStatsProvider: TimelineProvider {
     /// 时间线：Widget 按刷新策略定期更新
     /// - Parameter completion: completion
     func getTimeline(in context: Context, completion: @escaping (Timeline<KnowledgeStatsEntry>) -> Void) {
-        Task {
+        Task { @MainActor in
             let entry = await buildEntry(for: Date())
             // 核心安全策略：每 30 分钟刷新一次，限制能耗开销
             let nextUpdate = Date().addingTimeInterval(WidgetMetrics.widgetRefreshIntervalMinutes * 60)
