@@ -63,10 +63,13 @@ public final class MaintenanceService {
             do {
                 // 使用同步等待版本确保数据库切换完成后才写入
                 try await vaultService.selectVaultAndWait(vault)
+                logger.addLog(action: .create, target: vault.name, details: "DemoData_DB_Switched", module: "Maintenance")
                 let count = try await DemoDataGenerator.generate(in: pageStore)
                 totalCount += count
+                logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
                 // 数据注入后刷新页数到元数据
                 await vaultService.refreshPageCount(for: vault.id)
+                logger.addLog(action: .create, target: vault.name, details: "DemoData_PageCountRefreshed", module: "Maintenance")
                 logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
             } catch {
                 logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed: \(error.localizedDescription)", module: "Maintenance")

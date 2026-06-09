@@ -299,7 +299,8 @@ struct SettingsView: View {
         } header: {
             Text(L10n.Settings.Section.appearance)
         }
-            }
+        .id(router.currentLocale)
+    }
     
     private var aiSection: some View {
         Section {
