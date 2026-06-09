@@ -37,7 +37,8 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-01: 验证日志的非隔离标准级别输出接口执行健壮性，确保高频记录不发生闪退
     func testStandardLogLevels() async {
         let logger = Logger(customDirectory: tempDirectory)
-        
+        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+
         // 验证非隔离环境下的同步快捷调用接口不引发异常
         logger.debug("调试级别日志消息")
         logger.info("信息级别日志消息")
@@ -120,7 +121,8 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-04: 验证日志的物理存盘 (saveToDisk) 与反序列化重载 (loadFromDisk) 的完整无损链路
     func testLoggerDiskPersistence() async {
         let logger = Logger(customDirectory: tempDirectory)
-        
+        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+
         // 1. 写入 3 条特定标识测试日志
         logger.addLog(action: .create, target: "PageForDisk1", details: "落盘测试1", module: "DiskIO")
         logger.addLog(action: .create, target: "PageForDisk2", details: "落盘测试2", module: "DiskIO")
@@ -133,6 +135,7 @@ final class SystemLoggerTests: XCTestCase {
         
         // 3. 实例化一个全新的 Logger（绑定相同物理路径），重新触发磁盘反序列化读取
         let secondLogger = Logger(customDirectory: tempDirectory)
+        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
         await secondLogger.loadFromDisk()
         
         // 4. 校验读回的内容与原始写入是否一致
@@ -148,6 +151,7 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-05: 验证内存清空与通知广播的响应式闭环
     func testClearLogsAndCombinePublisher() async {
         let logger = Logger(customDirectory: tempDirectory)
+        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
         let expectation = XCTestExpectation(description: "等待日志流清空通知")
         
         // 1. 写入数据
