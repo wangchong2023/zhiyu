@@ -93,6 +93,7 @@ extension L10n {
             public struct stressTest {
                 public static var count: String { Localized.tr("settings.developer.stressTest.count", table: t) }
                 public static var run: String { Localized.tr("settings.developer.stressTest.run", table: t) }
+                public static func nodes(_ n: Int) -> String { Localized.trf("settings.developer.stressTest.nodes", table: t, n) }
                 public static var confirmTitle: String { Localized.tr("settings.developer.stressTest.confirmTitle", table: t) }
                 public static var confirmMessage: String { Localized.tr("settings.developer.stressTest.confirmMessage", table: t) }
 

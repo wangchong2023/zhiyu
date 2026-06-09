@@ -147,7 +147,7 @@ struct DeveloperSettingsView: View {
                         HStack {
                             Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
                             Spacer()
-                            Text("\(stressTestTargetCount) 个节点")
+                            Text(L10n.Settings.developer.stressTest.nodes(stressTestTargetCount))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                             if isStressTesting {

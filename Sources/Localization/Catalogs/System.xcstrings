@@ -6596,6 +6596,23 @@
           }
         }
       }
+    },
+    "settings.developer.stressTest.nodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d nodes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个节点"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
