@@ -62,6 +62,34 @@ extension WidgetLinkRow: TableRecord {
 
 extension WidgetLinkRow: FetchableRecord { }
 
+// MARK: - 全局设置行模型
+
+/// Widget 专用的全局配置行，用于读取当前活跃 vault
+struct WidgetGlobalSettingRow: Codable {
+    var key: String
+    var value: String
+
+    enum CodingKeys: String, CodingKey {
+        case key
+        case value
+    }
+}
+
+// MARK: GRDB TableRecord
+
+extension WidgetGlobalSettingRow: TableRecord {
+    static let databaseTableName = "global_settings"
+
+    enum Columns: String, ColumnExpression {
+        case key
+        case value
+    }
+}
+
+// MARK: GRDB FetchableRecord
+
+extension WidgetGlobalSettingRow: FetchableRecord { }
+
 // MARK: - 返回值模型
 
 /// 知识库统计数据

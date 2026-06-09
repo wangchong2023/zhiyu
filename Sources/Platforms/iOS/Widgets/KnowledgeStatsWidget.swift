@@ -122,8 +122,8 @@ struct KnowledgeStatsProvider: TimelineProvider {
     /// - Parameter date: 当前时间
     /// - Returns: 包含真实数据的 KnowledgeStatsEntry
     private func buildEntry(for date: Date) async -> KnowledgeStatsEntry {
-        let stats = await WidgetDatabaseService.fetchStats()
-        let recentPages = await WidgetDatabaseService.fetchRecentPages(limit: 3)
+        let stats = await WidgetRepository.fetchStats()
+        let recentPages = await WidgetRepository.fetchRecentPages(limit: 3)
         return KnowledgeStatsEntry(
             date: date,
             vaultName: WidgetL10n.title,
