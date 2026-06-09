@@ -33,9 +33,23 @@ public final class MaintenanceService {
     /// 生成DemoData
     /// - Returns: 数值
     public func generateDemoData() async -> Int {
-        let vaults = vaultService.vaults
-        guard !vaults.isEmpty else {
-            // 没有笔记本时仅注入当前活跃数据库
+        // 确保两个默认演示笔记本存在，不存在则创建
+        let demoVaultConfigs: [(name: String, icon: String, description: String)] = [
+            (L10n.Vault.defaultName, IconTokens.defaultBook, L10n.Vault.defaultDescription),
+            (L10n.Vault.researchName, IconTokens.defaultResearch, L10n.Vault.researchDescription)
+        ]
+
+        var existingVaults = vaultService.vaults
+        for config in demoVaultConfigs {
+            if !existingVaults.contains(where: { $0.name == config.name }) {
+                vaultService.createVault(name: config.name, icon: config.icon, description: config.description)
+                logger.addLog(action: .create, target: config.name, details: "DemoData_VaultCreated", module: "Maintenance")
+            }
+        }
+
+        // 重新获取（可能新增了笔记本）
+        existingVaults = vaultService.vaults
+        guard !existingVaults.isEmpty else {
             do {
                 return try await DemoDataGenerator.generate(in: pageStore)
             } catch {
@@ -43,14 +57,16 @@ public final class MaintenanceService {
                 return 0
             }
         }
+
         var totalCount = 0
-        for vault in vaults {
+        for vault in existingVaults {
             vaultService.selectVault(vault)
             // 等待数据库切换完成
             try? await Task.sleep(nanoseconds: 300_000_000)
             do {
                 let count = try await DemoDataGenerator.generate(in: pageStore)
                 totalCount += count
+                logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
             } catch {
                 logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed", module: "Maintenance")
             }
