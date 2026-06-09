@@ -180,6 +180,25 @@ public final class VaultService: VaultServiceProtocol {
         let dbURL = getVaultDatabaseURL(for: vault.id)
         try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
         try? await vaultRepository.updateLastAccessed(id: vault.id)
+
+        // 同步实际页面数量
+        await refreshPageCount(for: vault.id)
+    }
+
+    /// 从当前活跃数据库查询实际页面数并写回全局元数据
+    private func refreshPageCount(for vaultID: UUID) async {
+        guard let writer = DatabaseManager.shared.dbWriter else { return }
+        do {
+            let count = try await writer.read { db in
+                try KnowledgePage.fetchCount(db)
+            }
+            if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
+                vaults[index].pageCount = count
+                try await vaultRepository.saveVault(vaults[index])
+            }
+        } catch {
+            // 非关键路径，静默失败
+        }
     }
 
     /// 选择并激活目标金库，同时触发底层的专属物理数据库 WAL 切换。
@@ -227,9 +246,12 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 let dbURL = getVaultDatabaseURL(for: vault.id)
                 try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
-                
+
                 // 2. 更新该笔记本的最近访问访问时序，用以在主界面进行最近使用排序
                 try? await vaultRepository.updateLastAccessed(id: vault.id)
+
+                // 3. 同步实际页面数量到元数据
+                await refreshPageCount(for: vault.id)
             } catch {
                 print(" [VaultService]" + " Failed to" + " switch physical" + " database: \(error)")
             }

@@ -594,7 +594,6 @@
 		56860EAC943BB7A121B76048 /* MermaidWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBE188CC30225A4692F171 /* MermaidWebView.swift */; };
 		56A21F0BD4CDA7295B5E75AA /* ExcelProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3CE18B5829EA4A4D4C5444 /* ExcelProcessor.swift */; };
 		56B469D668F71E920A248C46 /* PluginRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C529EA958CFC131B991B9 /* PluginRecord.swift */; };
-		56BC517A5FCACF8B20BD4BFF /* PluginToolbarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276AFD9C82872056EE9FB19 /* PluginToolbarMenu.swift */; };
 		57160C3F33A03D95CB736E8B /* DesignSystem+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC852275B8B49FA8EA3153E8 /* DesignSystem+Layout.swift */; };
 		571A18378D23858EA747056E /* SQLitePluginRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC941AB0D64A37658EAA0D57 /* SQLitePluginRepository.swift */; };
 		575AE628337B2984CE6EBF47 /* LLMModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D28D18751CF477A2C6F2FCC /* LLMModels.swift */; };
@@ -899,7 +898,6 @@
 		8542C7A0779A3562684A1D27 /* IngestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0004FBE8CD3C64D7AAD96A15 /* IngestUITests.swift */; };
 		855288FFB846010111ECBADF /* GraphFilterPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6505AB6895A4F5F1DAF951A5 /* GraphFilterPillsView.swift */; };
 		85BFE378EC362BFB4DFBFC53 /* GuideStepRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CE6B0A2892569834C0D8D7 /* GuideStepRow.swift */; };
-		85C4A7CBC1EB42869F54C25B /* PluginToolbarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276AFD9C82872056EE9FB19 /* PluginToolbarMenu.swift */; };
 		8619A8A056BBDDAAC7D9C170 /* InsightViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8651D19C274ECBB5839A00 /* InsightViewProvider.swift */; };
 		86293BBFAB292AC7028A5115 /* L10n+Workflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F4DB2B9A4A056F95ED1FF9 /* L10n+Workflow.swift */; };
 		866B8882A638159FFA0B976D /* PDFKitRepresentedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E096EA59DDF40BA7B1B919C /* PDFKitRepresentedView.swift */; };
@@ -1462,7 +1460,6 @@
 		DDF9BCC12D68EBA5D21CAFDA /* L10n+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3601AAFE0A2DBA65D07A4 /* L10n+Watch.swift */; };
 		DE06DF41B536FDCFDE08C103 /* LLMChatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69E4B085428A719FF280AFB9 /* LLMChatService.swift */; };
 		DE2868A538AD861B3359D830 /* WatchPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74C74F977184237AF6792ED /* WatchPlatformTests.swift */; };
-		DE3A35E7BD39BB8948BD696F /* PluginToolbarMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9276AFD9C82872056EE9FB19 /* PluginToolbarMenu.swift */; };
 		DE6ADF38EAA35FCE92A036AB /* Network.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6E55F434A971615DCAAE55E /* Network.xcstrings */; };
 		DE70CB0DF7A09F0E15B6C377 /* AIProcessingStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC345027753A279DD6195ECA /* AIProcessingStatusBanner.swift */; };
 		DEAFCF36183CF3DB2C444674 /* LocalModelManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE9E1A5FAEC1D7E13A07119 /* LocalModelManagerView.swift */; };
@@ -2172,7 +2169,6 @@
 		921DC7189A6BEF38CBB3A542 /* AppSyncOrchestrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSyncOrchestrator.swift; sourceTree = "<group>"; };
 		9245B921C06CFF0C54EB83D9 /* GraphDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphDataProvider.swift; sourceTree = "<group>"; };
 		9247214F117BFA1C9276765A /* NotebookListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookListRow.swift; sourceTree = "<group>"; };
-		9276AFD9C82872056EE9FB19 /* PluginToolbarMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginToolbarMenu.swift; sourceTree = "<group>"; };
 		92B47FD5D792922CD9AA0907 /* testGraphNodeView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testGraphNodeView.1.png; sourceTree = "<group>"; };
 		92CA7A5551787D4E8EE19059 /* TagCapsule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCapsule.swift; sourceTree = "<group>"; };
 		9322DE5526945C03AB7770EB /* DummyActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyActivityService.swift; sourceTree = "<group>"; };
@@ -3238,7 +3234,6 @@
 		561983D8F9F02A6F351541BC /* Menus */ = {
 			isa = PBXGroup;
 			children = (
-				9276AFD9C82872056EE9FB19 /* PluginToolbarMenu.swift */,
 				2E90BD834EB38BF336501889 /* UserProfileMenu.swift */,
 			);
 			path = Menus;
@@ -6117,7 +6112,6 @@
 				1921A66FAD037D822197CC37 /* PluginSandboxGateway.swift in Sources */,
 				4BF4C080408C56FF3CEFDDD5 /* PluginSettingsGenerator.swift in Sources */,
 				C4D4E3C0A9DE27322F47EAE8 /* PluginStatsSection.swift in Sources */,
-				85C4A7CBC1EB42869F54C25B /* PluginToolbarMenu.swift in Sources */,
 				8702ED957D5610502C720ED2 /* PromptRegistry.swift in Sources */,
 				4AF9791512877810DF7CE978 /* PromptSanitizer.swift in Sources */,
 				D7CBB0201A76820E35B5E87C /* PromptService.swift in Sources */,
@@ -6693,7 +6687,6 @@
 				F0389B75A6997CF39F9C967E /* PluginSandboxGateway.swift in Sources */,
 				84EC2CD85C8FD4BC14098F13 /* PluginSettingsGenerator.swift in Sources */,
 				15955D32A1428A8E13DE60B5 /* PluginStatsSection.swift in Sources */,
-				56BC517A5FCACF8B20BD4BFF /* PluginToolbarMenu.swift in Sources */,
 				1110009B381635AA45FD2DC1 /* PromptRegistry.swift in Sources */,
 				A99763AE07C8CD74AE301E82 /* PromptSanitizer.swift in Sources */,
 				3B20473E611209EF0B8D0B43 /* PromptService.swift in Sources */,
@@ -7124,7 +7117,6 @@
 				4A434666E70A3FD4A7E64617 /* PluginRepository.swift in Sources */,
 				7288F41FE151C2620A230250 /* PluginSandboxError.swift in Sources */,
 				1B35B2A3074930734AA0337F /* PluginSandboxGateway.swift in Sources */,
-				DE3A35E7BD39BB8948BD696F /* PluginToolbarMenu.swift in Sources */,
 				4E6F509AD349A59215D4BEDC /* PromptRegistry.swift in Sources */,
 				D7414B702225E6BEDB893C96 /* PromptSanitizer.swift in Sources */,
 				B738E50E67165C8D748BD13C /* PromptService.swift in Sources */,
