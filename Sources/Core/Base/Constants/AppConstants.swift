@@ -55,6 +55,8 @@ public struct AppConstants {
             public static let tokenUsage = "token_usage"
             public static let llmCallLogs = "llm_call_logs"
             public static let ragEvaluations = "rag_evaluations"
+            public static let retrievalSnapshots = "retrieval_snapshots"
+            public static let relevanceJudgments = "relevance_judgments"
             public static let globalVaults = "global_vaults"
             public static let fileSignatures = "file_signatures"
             public static let globalSettings = "global_settings"

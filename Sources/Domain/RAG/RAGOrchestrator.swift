@@ -48,8 +48,9 @@ public final class RAGOrchestrator {
             let response = try await llmService.generate(prompt: query, systemPrompt: systemPrompt)
             let latency = Int(Date().timeIntervalSince(startTime) * 1000)
  
-            // 5. 异步指标记录
-            analytics.recordRAGMetrics(query: query, response: response, context: context, systemPrompt: systemPrompt, modelName: AppConfig.AI.defaultModel, latency: latency)
+            // 5. 异步指标记录（传入检索源以触发检索质量标注）
+            let capturedSources = SourceStore.shared.activeSources
+            analytics.recordRAGMetrics(query: query, response: response, context: context, sources: capturedSources, systemPrompt: systemPrompt, modelName: AppConfig.AI.defaultModel, latency: latency)
             
             TaskCenter.shared.completeTask(id: taskID)
             return ChatMessageDTO(role: .assistant, content: response)
@@ -75,7 +76,8 @@ public final class RAGOrchestrator {
                         continuation.yield(chunk)
                     }
  
-                    analytics.recordRAGMetrics(query: query, response: fullResponse, context: context, systemPrompt: systemPrompt, modelName: AppConfig.AI.defaultModel, latency: 0)
+                    let capturedSources = SourceStore.shared.activeSources
+                    analytics.recordRAGMetrics(query: query, response: fullResponse, context: context, sources: capturedSources, systemPrompt: systemPrompt, modelName: AppConfig.AI.defaultModel, latency: 0)
                     TaskCenter.shared.completeTask(id: taskID)
                     continuation.finish()
                 } catch {

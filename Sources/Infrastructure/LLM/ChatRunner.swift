@@ -101,6 +101,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         // 2. 检索向量库及 FTS5 混合语义，构建保护双链的语义上下文
         let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
         SourceStore.shared.updateSources(sources)
+        let capturedSources = sources  // 捕获用于异步评估
         
         // 3. 执行语义重排，精简检索召回的冗余分块
         TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.5, stage: .retrieval))
@@ -133,7 +134,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         // 🔓 端侧还原 (SR-12)
         let deanonymizedResponse = contextBuilder.deanonymize(response, mapping: currentMapping)
         
-        analytics.recordRAGMetrics(query: sanitizedQuery, response: deanonymizedResponse, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: latency)
+        analytics.recordRAGMetrics(query: sanitizedQuery, response: deanonymizedResponse, context: context, sources: capturedSources, systemPrompt: systemPrompt, modelName: configManager.model, latency: latency)
         
         TaskCenter.shared.completeTask(id: taskID)
         return ChatMessageDTO(role: .assistant, content: deanonymizedResponse)
@@ -175,6 +176,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                     // 1. 构建混合上下文，更新引用源
                     let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
                     SourceStore.shared.updateSources(sources)
+                    let streamCapturedSources = sources
                     
                     // 2. 排序候选文档
                                 let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
@@ -217,7 +219,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
  
                     // 4. 异步归档 RAG 精准度元数据以做治理评估，保存完整的原文以作归档
                     let fullDeanonymizedResponse = contextBuilder.deanonymize(fullResponse, mapping: currentMapping)
-                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullDeanonymizedResponse, context: context, systemPrompt: systemPrompt, modelName: configManager.model, latency: 0)
+                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullDeanonymizedResponse, context: context, sources: streamCapturedSources, systemPrompt: systemPrompt, modelName: configManager.model, latency: 0)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)

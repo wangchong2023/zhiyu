@@ -50,4 +50,28 @@ public protocol RAGGovernanceRepository: Sendable {
         hallucinationRate: Double,
         citationAccuracy: Double
     )
+
+    // MARK: - 检索快照 (Retrieval Snapshots)
+
+    /// 保存检索快照（评估时记录完整 Top-N 排序结果）
+    func saveRetrievalSnapshots(_ snapshots: [RetrievalSnapshot]) async throws
+
+    /// 获取某次评估的检索快照
+    func fetchRetrievalSnapshots(evaluationID: Int64) async throws -> [RetrievalSnapshot]
+
+    // MARK: - 相关性标注 (Relevance Judgments)
+
+    /// 保存相关性标注
+    func saveRelevanceJudgments(_ judgments: [RelevanceJudgment]) async throws
+
+    // MARK: - 检索质量指标 (Retrieval Metrics)
+
+    /// Hit Rate@K：Top-K 结果中至少命中一个相关文档的查询占比
+    func calculateHitRate(days: Int, k: Int) async throws -> Double
+
+    /// MRR (Mean Reciprocal Rank)：首个相关文档排名的倒数均值
+    func calculateMRR(days: Int) async throws -> Double
+
+    /// NDCG@K (Normalized Discounted Cumulative Gain)：归一化折损累计增益
+    func calculateNDCG(days: Int, k: Int) async throws -> Double
 }

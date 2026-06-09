@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：RAG 质量评估详情页 — 展示 5 维全链路指标与评估记录
+//  核心职责：RAG 质量评估详情页 — 5 维指标 + 检索质量 + 评估记录
 
 import SwiftUI
 
@@ -18,6 +18,9 @@ struct RAGEvaluationView: View {
         faithfulness: Double, relevance: Double, precision: Double,
         hallucinationRate: Double, citationAccuracy: Double
     ) = (0, 0, 0, 0, 0)
+    @State private var hitRate: Double = 0
+    @State private var mrr: Double = 0
+    @State private var ndcg: Double = 0
     @State private var recentEvaluations: [RAGEvaluation] = []
     @State private var selectedDays = 30
     @State private var isLoading = true
@@ -33,6 +36,7 @@ struct RAGEvaluationView: View {
                     VStack(spacing: DesignSystem.wide) {
                         timeRangePicker
                         generationQualitySection
+                        retrievalQualitySection
                         retrievalFidelitySection
                         evaluationHistorySection
                     }
@@ -102,7 +106,38 @@ struct RAGEvaluationView: View {
         .appCardStyle()
     }
 
-    // MARK: - 检索与引用保真
+    // MARK: - 检索质量（Hit Rate / MRR / NDCG）
+
+    private var retrievalQualitySection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            sectionHeader(
+                title: L10n.Dashboard.stats.retrievalQuality,
+                icon: "list.number",
+                color: .teal
+            )
+
+            HStack(spacing: DesignSystem.medium) {
+                retrievalMetricCard(
+                    title: "Hit@5",
+                    score: hitRate,
+                    detail: L10n.Dashboard.stats.hitRateDesc
+                )
+                retrievalMetricCard(
+                    title: "MRR",
+                    score: mrr,
+                    detail: L10n.Dashboard.stats.mrrDesc
+                )
+                retrievalMetricCard(
+                    title: "NDCG@10",
+                    score: ndcg,
+                    detail: L10n.Dashboard.stats.ndcgDesc
+                )
+            }
+        }
+        .appCardStyle()
+    }
+
+    // MARK: - 上下文与引用保真
 
     private var retrievalFidelitySection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
@@ -123,9 +158,7 @@ struct RAGEvaluationView: View {
                     score: avgScores.citationAccuracy,
                     icon: "quote.bubble"
                 )
-                // 占位保持对齐
-                Color.clear
-                    .frame(maxWidth: .infinity)
+                Color.clear.frame(maxWidth: .infinity)
             }
         }
         .appCardStyle()
@@ -167,9 +200,6 @@ struct RAGEvaluationView: View {
             .foregroundStyle(color)
     }
 
-    /// 评分环形卡片
-    /// - Parameters:
-    ///   - inverted: 若为 true，低分=好（如幻觉率），颜色逻辑反转
     private func scoreCard(title: String, score: Double, icon: String, inverted: Bool = false) -> some View {
         let color = inverted ? invertedScoreColor(score) : scoreColor(score)
         return VStack(spacing: DesignSystem.tightPadding) {
@@ -204,6 +234,27 @@ struct RAGEvaluationView: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// 检索质量指标迷你卡片（无环形图，简约数值展示）
+    private func retrievalMetricCard(title: String, score: Double, detail: String) -> some View {
+        let color = scoreColor(score)
+        return VStack(spacing: DesignSystem.tightPadding) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text(String(format: "%.2f", score))
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(color)
+            Text(detail)
+                .font(.system(size: 9))
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DesignSystem.small)
+        .background(color.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+    }
+
     private func evaluationRow(_ eval: RAGEvaluation) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             HStack {
@@ -213,13 +264,11 @@ struct RAGEvaluationView: View {
                 Spacer()
                 scoreBadge(overallScore(eval))
             }
-            // 第一行：生成质量
             HStack(spacing: DesignSystem.small) {
                 tagLabel("F", value: eval.faithfulness)
                 tagLabel("R", value: eval.relevance)
                 tagLabel("H", value: eval.hallucinationRate, inverted: true)
             }
-            // 第二行：检索保真
             HStack(spacing: DesignSystem.small) {
                 tagLabel("P", value: eval.precision)
                 tagLabel("C", value: eval.citationAccuracy)
@@ -255,7 +304,6 @@ struct RAGEvaluationView: View {
     // MARK: - 辅助
 
     private func overallScore(_ eval: RAGEvaluation) -> Double {
-        // 综合分：四项正向指标均值 − 幻觉率（惩罚项）
         let positiveMean = (eval.faithfulness + eval.relevance + eval.precision + eval.citationAccuracy) / 4.0
         let penalty = eval.hallucinationRate * 0.3
         return max(0, positiveMean - penalty)
@@ -267,7 +315,6 @@ struct RAGEvaluationView: View {
         return .red
     }
 
-    /// 幻觉率专用色阶（反转：低分=绿，高分=红）
     private func invertedScoreColor(_ s: Double) -> Color {
         if s <= 0.2 { return .green }
         if s <= 0.4 { return .orange }
@@ -281,9 +328,15 @@ struct RAGEvaluationView: View {
         do {
             async let scores = governance.calculateAverageRAGScores(days: selectedDays)
             async let evals = governance.fetchRAGEvaluations(limit: 50)
+            async let hr = governance.calculateHitRate(days: selectedDays, k: 5)
+            async let meanRR = governance.calculateMRR(days: selectedDays)
+            async let n = governance.calculateNDCG(days: selectedDays, k: 10)
 
             avgScores = try await scores
             recentEvaluations = try await evals
+            hitRate = (try? await hr) ?? 0
+            mrr = (try? await meanRR) ?? 0
+            ndcg = (try? await n) ?? 0
         } catch {
             print("[RAG] Evaluation load failed: \(error)")
         }

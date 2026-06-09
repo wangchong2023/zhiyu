@@ -171,3 +171,117 @@ public struct LLMCallLog: Identifiable, Codable, FetchableRecord, MutablePersist
         self.createdAt = createdAt
     }
 }
+
+// MARK: - 检索快照模型
+/// 记录每次 RAG 评估时的完整检索排序结果，用于计算 Hit Rate / MRR / NDCG
+public struct RetrievalSnapshot: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+    public static let databaseTableName: String = AppConstants.Storage.Tables.retrievalSnapshots
+
+    public var id: Int64?
+    public var evaluationID: Int64          // FK → rag_evaluations.id
+    public var rank: Int                    // 排序位置 (1-based)
+    public var sourceID: String             // KnowledgeSource.id (UUID 字符串)
+    public var pageTitle: String            // 页面标题
+    public var snippet: String              // 文本片段 (截断至 200 字符)
+    public var score: Double                // Rerank 相似度
+    public var createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case evaluationID = "evaluation_id"
+        case rank
+        case sourceID = "source_id"
+        case pageTitle = "page_title"
+        case snippet
+        case score
+        case createdAt = "created_at"
+    }
+
+    public enum Columns {
+        static let id = Column(CodingKeys.id)
+        static let evaluationID = Column(CodingKeys.evaluationID)
+        static let rank = Column(CodingKeys.rank)
+        static let sourceID = Column(CodingKeys.sourceID)
+        static let pageTitle = Column(CodingKeys.pageTitle)
+        static let snippet = Column(CodingKeys.snippet)
+        static let score = Column(CodingKeys.score)
+        static let createdAt = Column(CodingKeys.createdAt)
+    }
+
+    public init(
+        id: Int64? = nil,
+        evaluationID: Int64,
+        rank: Int,
+        sourceID: String,
+        pageTitle: String,
+        snippet: String,
+        score: Double,
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.evaluationID = evaluationID
+        self.rank = rank
+        self.sourceID = sourceID
+        self.pageTitle = pageTitle
+        self.snippet = snippet
+        self.score = score
+        self.createdAt = createdAt
+    }
+}
+
+// MARK: - 检索相关性标注模型
+/// 记录 query 与检索结果的相关性标签（LLM 自动标注），用于计算检索质量基准
+public struct RelevanceJudgment: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
+    public static let databaseTableName: String = AppConstants.Storage.Tables.relevanceJudgments
+
+    public var id: Int64?
+    public var queryHash: String             // SHA256(query) 去重
+    public var query: String                 // 原始查询文本
+    public var sourceID: String              // KnowledgeSource.id
+    public var relevanceLevel: Int           // 0=irrelevant, 1=partially, 2=highly relevant
+    public var judgeSource: String           // "llm-auto" | "manual"
+    public var evaluationID: Int64?          // FK → rag_evaluations.id (可为空)
+    public var createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case queryHash = "query_hash"
+        case query
+        case sourceID = "source_id"
+        case relevanceLevel = "relevance_level"
+        case judgeSource = "judge_source"
+        case evaluationID = "evaluation_id"
+        case createdAt = "created_at"
+    }
+
+    public enum Columns {
+        static let id = Column(CodingKeys.id)
+        static let queryHash = Column(CodingKeys.queryHash)
+        static let query = Column(CodingKeys.query)
+        static let sourceID = Column(CodingKeys.sourceID)
+        static let relevanceLevel = Column(CodingKeys.relevanceLevel)
+        static let judgeSource = Column(CodingKeys.judgeSource)
+        static let evaluationID = Column(CodingKeys.evaluationID)
+        static let createdAt = Column(CodingKeys.createdAt)
+    }
+
+    public init(
+        id: Int64? = nil,
+        queryHash: String,
+        query: String,
+        sourceID: String,
+        relevanceLevel: Int,
+        judgeSource: String = "llm-auto",
+        evaluationID: Int64? = nil,
+        createdAt: Date = Date()
+    ) {
+        self.id = id
+        self.queryHash = queryHash
+        self.query = query
+        self.sourceID = sourceID
+        self.relevanceLevel = relevanceLevel
+        self.judgeSource = judgeSource
+        self.evaluationID = evaluationID
+        self.createdAt = createdAt
+    }
+}

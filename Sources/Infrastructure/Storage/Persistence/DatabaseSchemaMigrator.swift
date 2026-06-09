@@ -219,6 +219,37 @@ extension DatabaseManager {
             }
         }
 
+        // V6: 检索质量标注体系 — 检索快照 + 相关性标注表 (@P3: Hit Rate/MRR/NDCG 数据基座)
+        migrator.registerMigration("v6_retrieval_quality") { db in
+            // 1. 检索快照表：记录每次评估的完整 Top-N 排序结果
+            try db.create(table: RetrievalSnapshot.databaseTableName, ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey(RetrievalSnapshot.Columns.id.name)
+                t.column(RetrievalSnapshot.Columns.evaluationID.name, .integer)
+                    .notNull()
+                    .indexed()
+                    .references(RAGEvaluation.databaseTableName, column: RAGEvaluation.Columns.id.name, onDelete: .cascade)
+                t.column(RetrievalSnapshot.Columns.rank.name, .integer).notNull()
+                t.column(RetrievalSnapshot.Columns.sourceID.name, .text).notNull()
+                t.column(RetrievalSnapshot.Columns.pageTitle.name, .text).notNull()
+                t.column(RetrievalSnapshot.Columns.snippet.name, .text).notNull()
+                t.column(RetrievalSnapshot.Columns.score.name, .double).notNull()
+                t.column(RetrievalSnapshot.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+            }
+
+            // 2. 相关性标注表：LLM 自动标注 query→source 的相关性等级
+            try db.create(table: RelevanceJudgment.databaseTableName, ifNotExists: true) { t in
+                t.autoIncrementedPrimaryKey(RelevanceJudgment.Columns.id.name)
+                t.column(RelevanceJudgment.Columns.queryHash.name, .text).notNull().indexed()
+                t.column(RelevanceJudgment.Columns.query.name, .text).notNull()
+                t.column(RelevanceJudgment.Columns.sourceID.name, .text).notNull()
+                t.column(RelevanceJudgment.Columns.relevanceLevel.name, .integer).notNull()
+                t.column(RelevanceJudgment.Columns.judgeSource.name, .text).notNull().defaults(to: "llm-auto")
+                t.column(RelevanceJudgment.Columns.evaluationID.name, .integer)
+                    .references(RAGEvaluation.databaseTableName, column: RAGEvaluation.Columns.id.name, onDelete: .setNull)
+                t.column(RelevanceJudgment.Columns.createdAt.name, .datetime).notNull().defaults(to: Date())
+            }
+        }
+
         return migrator
     }
 

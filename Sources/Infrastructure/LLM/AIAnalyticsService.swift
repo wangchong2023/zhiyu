@@ -33,8 +33,17 @@ public final class AIAnalyticsService: @unchecked Sendable {
         }
     }
 
-    /// 执行 RAG 性能指标异步计算与评估
-    public func recordRAGMetrics(query: String, response: String, context: String, systemPrompt: String, modelName: String, latency: Int) {
+    /// 执行 RAG 性能指标异步计算与评估（含检索源标注）
+    /// - Parameter sources: 检索到的信源列表，传入时触发 Hit Rate/MRR/NDCG 数据记录
+    public func recordRAGMetrics(
+        query: String,
+        response: String,
+        context: String,
+        sources: [KnowledgeSource]? = nil,
+        systemPrompt: String,
+        modelName: String,
+        latency: Int
+    ) {
         // 单测环境下禁用后台异步指标写入，以防重置 DI 容器导致的崩溃
         guard NSClassFromString("XCTestCase") == nil else { return }
 
@@ -46,7 +55,7 @@ public final class AIAnalyticsService: @unchecked Sendable {
 
             _ = try? await governance.logCall(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens, latencyMS: latency, status: AppConstants.Storage.defaultCallStatus)
             _ = try? await governance.logTokenUsage(model: modelName, promptTokens: promptTokens, completionTokens: completionTokens)
-            _ = await evalService.evaluate(query: query, answer: response, context: context)
+            _ = await evalService.evaluate(query: query, answer: response, context: context, sources: sources)
         }
     }
 }

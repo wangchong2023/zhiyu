@@ -160,6 +160,10 @@ extension L10n {
             public static var citationAccuracy: String { Localized.tr("dashboard.stats.citationAccuracy", table: t) }
             public static var generationQuality: String { Localized.tr("dashboard.stats.generationQuality", table: t) }
             public static var retrievalFidelity: String { Localized.tr("dashboard.stats.retrievalFidelity", table: t) }
+            public static var retrievalQuality: String { Localized.tr("dashboard.stats.retrievalQuality", table: t) }
+            public static var hitRateDesc: String { Localized.tr("dashboard.stats.hitRateDesc", table: t) }
+            public static var mrrDesc: String { Localized.tr("dashboard.stats.mrrDesc", table: t) }
+            public static var ndcgDesc: String { Localized.tr("dashboard.stats.ndcgDesc", table: t) }
             public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }
             public static var recentEvaluations: String { Localized.tr("dashboard.stats.recentEvaluations", table: t) }
             public static var noEvaluations: String { Localized.tr("dashboard.stats.noEvaluations", table: t) }
@@ -174,6 +178,8 @@ extension L10n {
             public static var tabStorage: String { Localized.tr("dashboard.stats.tabStorage", table: t) }
             public static var rangeThirtyDays: String { Localized.tr("dashboard.stats.rangeThirtyDays", table: t) }
             public static var requestsUsage: String { Localized.tr("dashboard.stats.requestsUsage", table: t) }
+            public static var tokenUsage: String { Localized.tr("common.tokenUsage", table: t) }
+            public static var requestCount: String { Localized.tr("common.requests", table: t) }
             public static var storageDistribution: String { Localized.tr("dashboard.stats.storageDistribution", table: t) }
             public static var chartDate: String { Localized.tr("dashboard.stats.chartDate", table: t) }
             public static var chartSelected: String { Localized.tr("dashboard.stats.chartSelected", table: t) }

@@ -4557,6 +4557,74 @@
         }
       }
     },
+    "dashboard.stats.retrievalQuality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrieval Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索质量"
+          }
+        }
+      }
+    },
+    "dashboard.stats.hitRateDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top-5 Hit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前5命中"
+          }
+        }
+      }
+    },
+    "dashboard.stats.mrrDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mean Reciprocal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "平均倒排"
+          }
+        }
+      }
+    },
+    "dashboard.stats.ndcgDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ranking Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "排序质量"
+          }
+        }
+      }
+    },
     "common.requests": {
       "extractionState": "manual",
       "localizations": {
