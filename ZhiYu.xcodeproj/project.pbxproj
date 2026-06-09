@@ -600,6 +600,7 @@
 		575AE628337B2984CE6EBF47 /* LLMModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D28D18751CF477A2C6F2FCC /* LLMModels.swift */; };
 		5767B080E5BB10AD81157A79 /* CarrierAuthStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAB40648A8E6E47B8C83296 /* CarrierAuthStrategy.swift */; };
 		578A1B1FA1D6487F5488CFB3 /* AppLinkProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04434B2108D3CAD90067B99 /* AppLinkProcessor.swift */; };
+		5797EB05CBB61E79A70BBB0D /* VaultDataPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152BCF81FB7AE3E16E17A343 /* VaultDataPersistenceTests.swift */; };
 		57CEDBFA14616FE30F024680 /* DesignSystem+SpacingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57D6EFD678A07BDE43E8B965 /* DesignSystem+SpacingToken.swift */; };
 		57D0C8C59A3227186B0072DC /* DocumentExtractionServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67DE50BA0FFE5B3B502051A /* DocumentExtractionServiceProtocol.swift */; };
 		582B3E335C78BB94604472DB /* StubCollaborationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9421E8A5489BF6AA581410F /* StubCollaborationProvider.swift */; };
@@ -1821,6 +1822,7 @@
 		14D48188E888F2528439D834 /* PluginDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginDataStore.swift; sourceTree = "<group>"; };
 		14EAB7D9C7DA9E242EBC7556 /* LLMManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMManifest.swift; sourceTree = "<group>"; };
 		14EBA84BD7ADE0F2ACB754AA /* PageDetailContentSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailContentSection.swift; sourceTree = "<group>"; };
+		152BCF81FB7AE3E16E17A343 /* VaultDataPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultDataPersistenceTests.swift; sourceTree = "<group>"; };
 		15AFCFF5D8CE108CF9A5242F /* MedalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedalComponents.swift; sourceTree = "<group>"; };
 		15D8BA90B5D1B8A14001008B /* GraphInfoPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphInfoPanel.swift; sourceTree = "<group>"; };
 		16A6F2EB416DB8F75711F7D3 /* LocalAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnalyticsService.swift; sourceTree = "<group>"; };
@@ -3820,6 +3822,7 @@
 				1A3336EA4AF6935884DC08A7 /* KnowledgeRepositoryTests.swift */,
 				20639DCA52B2ADEDD0873B58 /* NotebookThemeConfigTests.swift */,
 				85EA728361DAF8BF8D1AEE25 /* VaultDataIsolationTests.swift */,
+				152BCF81FB7AE3E16E17A343 /* VaultDataPersistenceTests.swift */,
 				7EAA83740A2E827249C10E7E /* VaultPageCountTests.swift */,
 				0B981C8A2F686D9BFD31EB55 /* WidgetRepositoryTests.swift */,
 				4AC0C45988798544F3DA2441 /* ZhiYuStoreTests.swift */,
@@ -5696,6 +5699,7 @@
 				C827FB109677336CA5827C30 /* SnapshotHelper.swift in Sources */,
 				F9F91C0B1CD9FA0F57616855 /* TestMocks.swift in Sources */,
 				7D74AE1161A9EF1A362EF5BC /* VaultDataIsolationTests.swift in Sources */,
+				5797EB05CBB61E79A70BBB0D /* VaultDataPersistenceTests.swift in Sources */,
 				25DFA95403E09E4660A2AC4A /* VaultPageCountTests.swift in Sources */,
 				86A9E0C416F2706A4BBB902B /* VaultSecurityTests.swift in Sources */,
 				CCB11A25843E20E6A1C5BB33 /* WeChatAuthStrategyTests.swift in Sources */,
