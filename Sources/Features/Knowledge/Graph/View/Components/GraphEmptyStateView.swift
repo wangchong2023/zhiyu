@@ -13,7 +13,6 @@ import SwiftUI
 /// 知识图谱空状态占位视图
 @MainActor
 struct GraphEmptyStateView: View {
-    @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
     
     var body: some View {
@@ -31,7 +30,7 @@ struct GraphEmptyStateView: View {
                     .padding(.horizontal, DesignSystem.loosePadding * 1.5)
             }
             
-            Button(action: { store.showCreateSheet = true }) {
+            Button(action: { selectedTab = .ingest }) {
                 Text(L10n.Graph.startBuilding)
                     .font(.headline)
                     .padding(.horizontal, DesignSystem.loosePadding + DesignSystem.small)
