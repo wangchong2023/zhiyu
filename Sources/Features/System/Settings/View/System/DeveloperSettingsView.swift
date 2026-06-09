@@ -222,10 +222,18 @@ struct DeveloperSettingsView: View {
 
         try? await Task.sleep(nanoseconds: 500_000_000)
 
-        // 遍历所有笔记本注入压力测试数据
+        // 确保两个默认演示笔记本存在，不存在则创建
         let vaultService = ServiceContainer.shared.resolve(VaultService.self)
+        let demoVaultNames = [L10n.Vault.defaultName, L10n.Vault.researchName]
+        for name in demoVaultNames {
+            if !vaultService.vaults.contains(where: { $0.name == name }) {
+                vaultService.createVault(name: name)
+            }
+        }
+
+        // 对两个默认笔记本注入压力测试数据
         var totalCount = 0
-        for vault in vaultService.vaults {
+        for vault in vaultService.vaults where demoVaultNames.contains(vault.name) {
             vaultService.selectVault(vault)
             try? await Task.sleep(nanoseconds: 300_000_000)
             let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
