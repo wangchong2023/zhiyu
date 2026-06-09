@@ -29,9 +29,6 @@ struct DemoDataGenerator {
         try await store.performBatchWrite { db in
             // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
             // 按照依赖关系的反向顺序进行物理清理
-            try db.execute(sql: "")
-            try db.execute(sql: "")
-            try db.execute(sql: "")
             
             // 2. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
             try KnowledgePage.deleteAll(db)
@@ -110,9 +107,6 @@ struct DemoDataGenerator {
         try await store.performBatchWrite { db in
             // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
             // 按照依赖关系的反向顺序进行物理清理
-            try db.execute(sql: "")
-            try db.execute(sql: "")
-            try db.execute(sql: "")
             
             // 2. 在同一个事务中清理旧数据
             try KnowledgePage.deleteAll(db)
