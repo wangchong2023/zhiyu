@@ -246,8 +246,9 @@ final class VaultDataIsolationTests: XCTestCase {
         // 2. DemoDataGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
         print("🎬 调用 DemoDataGenerator 注入演示数据")
         let generatedCount = try await DemoDataGenerator.generate(in: store)
-        XCTAssertEqual(generatedCount, AppConstants.Demo.defaultPageCount,
-                       "应生成 \(AppConstants.Demo.defaultPageCount) 个演示页面")
+        let expectedCount = 17
+        XCTAssertEqual(generatedCount, expectedCount,
+                       "应生成 \(expectedCount) 个演示页面")
 
         // 3. 模拟上层 AppStore.generateDemoData() 的 refresh 行为
         let ks = KnowledgeStore()
@@ -256,18 +257,18 @@ final class VaultDataIsolationTests: XCTestCase {
 
         // 4. 验证 KnowledgeStore 同步的页面数量、核心标题、标签完整性
         let ksTitles = ks.pages.map(\.title)
-        XCTAssertEqual(ks.pages.count, AppConstants.Demo.defaultPageCount,
-                       "KnowledgeStore 应为恰好 \(AppConstants.Demo.defaultPageCount) 页")
+        XCTAssertEqual(ks.pages.count, expectedCount,
+                       "KnowledgeStore 应为恰好 \(expectedCount) 页")
         XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.aiAgent.title), "应包含 AI Agent 页面")
         XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.llm.title), "应包含 LLM 页面")
         // 验证标签不为空（演示数据应有关联标签）
         let taggedPages = ks.pages.filter { !$0.tags.isEmpty }
-        XCTAssertEqual(taggedPages.count, AppConstants.Demo.defaultPageCount,
-                       "全部 \(AppConstants.Demo.defaultPageCount) 页均应有关联标签")
+        XCTAssertEqual(taggedPages.count, expectedCount,
+                       "全部 \(expectedCount) 页均应有关联标签")
 
         // 5. 验证 DB 层一致性
         let finalPages = try await store.fetchAllPages()
-        XCTAssertEqual(finalPages.count, AppConstants.Demo.defaultPageCount,
+        XCTAssertEqual(finalPages.count, expectedCount,
                        "DB 层页面数应与 KnowledgeStore 一致")
         XCTAssertFalse(finalPages.contains(where: { $0.title == oldPageTitle }),
                        "旧页面应已被清理")

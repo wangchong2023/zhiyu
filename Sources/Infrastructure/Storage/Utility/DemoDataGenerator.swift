@@ -99,7 +99,7 @@ struct DemoDataGenerator {
         }
         
         print("DemoData_Finished")
-        return AppConstants.Demo.defaultPageCount
+        return 17
     }
  
     /// 执行图谱压力测试数据生成
