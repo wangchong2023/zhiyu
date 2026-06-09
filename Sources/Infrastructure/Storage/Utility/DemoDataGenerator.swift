@@ -25,17 +25,8 @@ struct DemoDataGenerator {
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
         print("DemoData_Starting")
-        
-        try await store.performBatchWrite { db in
-            // 1. 先清理所有的外键关联从表以避免自引用及外键级联顺序冲突导致的 SQLite constraint failed 错误
-            // 按照依赖关系的反向顺序进行物理清理
-            
-            // 2. 在同一个事务中清理旧数据，防止并发观察导致 I/O Error
-            try KnowledgePage.deleteAll(db)
-            try TokenUsage.deleteAll(db)
-            try LLMCallLog.deleteAll(db)
-            
-            let pagesToCreate: [(String, PageType, String, [String])] = [
+
+        let pagesToCreate: [(String, PageType, String, [String])] = [
                 (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
                 (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
                 (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
@@ -53,8 +44,13 @@ struct DemoDataGenerator {
                 (L10n.Common.Demo.consistency.title, .concept, L10n.Common.Demo.consistency.content, [L10n.Common.Tags.quality]),
                 (L10n.Common.Demo.topology.title, .concept, L10n.Common.Demo.topology.content, [L10n.Common.Tags.visual]),
                 (L10n.Common.Demo.hybridSearch.title, .concept, L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.performance])
-            ]
-            
+        ]
+
+        try await store.performBatchWrite { db in
+            try KnowledgePage.deleteAll(db)
+            try TokenUsage.deleteAll(db)
+            try LLMCallLog.deleteAll(db)
+
             for (title, type, content, tags) in pagesToCreate {
                 let page = KnowledgePage(title: title, pageType: type, content: content, tags: tags)
                 try page.save(db)
