@@ -125,7 +125,7 @@ struct UserProfileMenu: View {
             }
         }
         .foregroundStyle(.appAccent)
-        .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
+        .frame(width: 28, height: 28)
         .contentShape(Circle())
     }
     

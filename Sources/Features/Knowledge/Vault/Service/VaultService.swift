@@ -121,7 +121,7 @@ public final class VaultService: VaultServiceProtocol {
                 // 后台刷新全部笔记本的实际页数
                 refreshAllPageCounts()
             } catch {
-                print(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)")
+                Logger.shared.error(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)", error: error)
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
                 self.vaults = [
                     Vault(
@@ -158,7 +158,7 @@ public final class VaultService: VaultServiceProtocol {
                     let dbURL = getVaultDatabaseURL(for: id)
                     try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
                 } catch {
-                    print(" [VaultService]" + " Failed to" + " auto-connect to" + " the recently" + " used physical" + " database: \(error)")
+                    Logger.shared.error(" [VaultService]" + " Failed to" + " auto-connect to" + " the recently" + " used physical" + " database: \(error)", error: error)
                 }
             }
         }
@@ -282,7 +282,7 @@ public final class VaultService: VaultServiceProtocol {
                 // 3. 同步实际页面数量到元数据
                 await refreshPageCount(for: vault.id)
             } catch {
-                print(" [VaultService]" + " Failed to" + " switch physical" + " database: \(error)")
+                Logger.shared.error(" [VaultService]" + " Failed to" + " switch physical" + " database: \(error)", error: error)
             }
         }
     }
@@ -320,7 +320,7 @@ public final class VaultService: VaultServiceProtocol {
         do {
             try saveVaultToDatabase(newVault)
         } catch {
-            print(" [VaultService]" + " Failed to" + " write new" + " notebook to" + " database: \(error)")
+            Logger.shared.error(" [VaultService]" + " Failed to" + " write new" + " notebook to" + " database: \(error)", error: error)
         }
     }
     
@@ -340,7 +340,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print(" [VaultService]" + " Failed to" + " write updated" + " notebook metadata" + " to database:" + " \(error)")
+                Logger.shared.error(" [VaultService]" + " Failed to" + " write updated" + " notebook metadata" + " to database:" + " \(error)", error: error)
             }
         }
     }
@@ -357,7 +357,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try saveVaultToDatabase(vaults[index])
             } catch {
-                print(" [VaultService]" + " Failed to" + " write renamed" + " notebook to" + " database: \(error)")
+                Logger.shared.error(" [VaultService]" + " Failed to" + " write renamed" + " notebook to" + " database: \(error)", error: error)
             }
         }
     }
@@ -378,7 +378,7 @@ public final class VaultService: VaultServiceProtocol {
             do {
                 try await vaultRepository.deleteVault(id: id)
             } catch {
-                print(" [VaultService]" + " Failed to" + " delete notebook" + " record from" + " global metadata" + " database: \(error)")
+                Logger.shared.error(" [VaultService]" + " Failed to" + " delete notebook" + " record from" + " global metadata" + " database: \(error)", error: error)
             }
         }
         
@@ -387,7 +387,7 @@ public final class VaultService: VaultServiceProtocol {
         let folderURL = dbURL.deletingLastPathComponent()
         if FileManager.default.fileExists(atPath: folderURL.path) {
             try? FileManager.default.removeItem(at: folderURL)
-            print(" [VaultService]" + " Physically erased" + " notebook sandbox" + " storage: \(id.uuidString)")
+            Logger.shared.info(" [VaultService]" + " Physically erased" + " notebook sandbox" + " storage: \(id.uuidString)")
         }
     }
 }

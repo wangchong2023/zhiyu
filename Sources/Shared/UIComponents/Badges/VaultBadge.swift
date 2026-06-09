@@ -56,17 +56,13 @@ struct VaultBadge: View {
             Image(systemName: DesignSystem.Icons.booksVerticalFill)
                 .imageScale(.small)
                 .foregroundStyle(.primary)
-            
-            Text(L10n.Vault.label + ":")
-                .font(.system(size: DesignSystem.bodyFontSize, weight: .medium))
-                .foregroundStyle(.primary)
-            
+
             Text(vaultService.currentVault?.name ?? L10n.Vault.defaultName)
                 .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
                 .foregroundStyle(.primary)
                 .lineLimit(1)
-                .frame(maxWidth: 160)
-            
+                .frame(maxWidth: 120)
+
             if platformEnv.interactionStyle != InteractionStyle.crown {
                 Image(systemName: DesignSystem.Icons.chevronUpDown)
                     .imageScale(.small)

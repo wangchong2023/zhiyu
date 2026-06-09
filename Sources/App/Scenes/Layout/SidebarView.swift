@@ -135,9 +135,7 @@ struct SidebarToolbarModifier: ViewModifier {
                         VaultBadge()
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        HStack(spacing: DesignSystem.medium) {
-                            UserProfileMenu()
-                        }
+                        UserProfileMenu()
                     }
                     #endif
                 }
