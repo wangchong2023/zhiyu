@@ -52,7 +52,6 @@ struct SidebarView: View {
                         showDeleteConfirmation: $showDeleteConfirmation
                     )
                     ToolsSection()
-                    PluginRibbonSection()
                 }
             } else {
                 List(selection: $router.sidebarSelection) {
@@ -65,7 +64,6 @@ struct SidebarView: View {
                         showDeleteConfirmation: $showDeleteConfirmation
                     )
                     ToolsSection()
-                    PluginRibbonSection()
                 }
             }
         }
@@ -135,6 +133,12 @@ struct SidebarToolbarModifier: ViewModifier {
                     #else
                     ToolbarItem(placement: .principal) {
                         VaultBadge()
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        HStack(spacing: DesignSystem.medium) {
+                            PluginToolbarMenu()
+                            UserProfileMenu()
+                        }
                     }
                     #endif
                 }
