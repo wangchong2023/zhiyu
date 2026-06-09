@@ -61,11 +61,16 @@ final class SystemLoggerTests: XCTestCase {
             logger.addLog(action: .create, target: "Page_\(i)", details: "高频测试批量写入")
         }
         
-        // 2. 等待异步 Task 队列写入与截短（Logger 内部异步操作可能较长）
-        try? await Task.sleep(nanoseconds: UInt64(1.0 * 1_000_000_000))
-        
+        // 2. 轮询等待异步截断完成（CI 环境避免固定 sleep 不可靠）
+        let maxWait = 10
+        var entries: [LogEntry] = []
+        for _ in 0..<maxWait {
+            entries = await logger.getLogEntries()
+            if entries.count <= 500 { break }
+            try? await Task.sleep(nanoseconds: 500_000_000)
+        }
+
         // 3. 校验内存中保存的日志数是否被精准限缩在 500 条
-        let entries = await logger.getLogEntries()
         XCTAssertEqual(entries.count, 500, "超限写入后，内存日志条数应当被严格修剪并限缩在 500 条内")
         
         // 4. 校验最先进去的第 1、2 条被丢弃，最新写入的 page_510 排在最前（因 insert at 0）
