@@ -81,7 +81,7 @@ struct SettingsView: View {
     }
     
     @State private var selectedLanguage: LanguageMode = Localized.languageMode
-    @State private var languageChangeCounter = 0
+    @State private var languageChanged = false
     @State private var showResetConfirmation = false
     /// 当前大屏布局下选中的设置分类，默认选中“外观”
     @State private var selectedSection: SettingsSection? = .appearance
@@ -106,8 +106,7 @@ struct SettingsView: View {
                     NavigationStack {
                         detailColumn(for: selectedSection, router: router)
                     }
-                    .id(languageChangeCounter)
-                }
+                                    }
                 .frame(maxWidth: .infinity)
             }
             #else
@@ -120,8 +119,7 @@ struct SettingsView: View {
 
                     compactList
                 }
-                .id(languageChangeCounter)
-                .navigationTitle(L10n.Settings.title)
+                                .navigationTitle(L10n.Settings.title)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         doneButton(router: router)
@@ -295,14 +293,13 @@ struct SettingsView: View {
             }
             .onChange(of: selectedLanguage) { _, newValue in
                 Localized.languageMode = newValue
-                languageChangeCounter += 1
+                languageChanged = true
                 router.triggerLanguageRefresh()
             }
         } header: {
             Text(L10n.Settings.Section.appearance)
         }
-        .id(languageChangeCounter)
-    }
+            }
     
     private var aiSection: some View {
         Section {
