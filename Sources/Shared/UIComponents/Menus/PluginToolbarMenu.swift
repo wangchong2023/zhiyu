@@ -39,9 +39,11 @@ struct PluginToolbarMenu: View {
             }
         } label: {
             Image(systemName: "puzzlepiece.extension.fill")
-                .font(.subheadline)
+                .font(.caption)
                 .foregroundStyle(.appAccent)
+                .frame(width: 24, height: 24)
         }
+        .buttonStyle(.plain)
         .accessibilityIdentifier("pluginToolbarMenu")
     }
 }

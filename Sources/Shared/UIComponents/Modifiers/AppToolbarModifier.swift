@@ -42,7 +42,7 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: DesignSystem.medium) {
+                    HStack(spacing: DesignSystem.small) {
                         if Trailing.self != EmptyView.self {
                             trailingItems
                         }
