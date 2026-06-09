@@ -50,7 +50,7 @@ def main():
     log_info("启动代码覆盖率熔断校验程序...")
     
     # 1. 定位编译输出数据
-    search_dir = "build/DerivedData"
+    search_dir = "build/DerivedData-ios"
     if not os.path.exists(search_dir):
         log_error(f"未找到 Xcode 派生数据目录: {search_dir}。请先执行自动化跑测。")
         sys.exit(1)
