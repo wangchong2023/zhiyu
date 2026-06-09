@@ -53,7 +53,16 @@ struct UserProfileMenu: View {
             }) {
                 Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
             }
-            
+
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    router.navigate(to: .pluginMarket)
+                }
+            }) {
+                Label(L10n.Settings.Section.plugins, systemImage: "puzzlepiece.extension.fill")
+            }
+
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 // 同步采用异步微延迟，彻底规避原生动画引擎冲突

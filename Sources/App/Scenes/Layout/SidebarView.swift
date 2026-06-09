@@ -136,7 +136,6 @@ struct SidebarToolbarModifier: ViewModifier {
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         HStack(spacing: DesignSystem.medium) {
-                            PluginToolbarMenu()
                             UserProfileMenu()
                         }
                     }

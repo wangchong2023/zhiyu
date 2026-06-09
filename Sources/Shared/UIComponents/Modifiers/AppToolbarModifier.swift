@@ -46,8 +46,7 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                         if Trailing.self != EmptyView.self {
                             trailingItems
                         }
-                        PluginToolbarMenu()
-                        UserProfileMenu()
+UserProfileMenu()
                     }
                 }
             }
@@ -106,8 +105,7 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                         trailingItems
 
                         #if !os(watchOS)
-                        PluginToolbarMenu()
-                        if appEnv.screenClass != .compact {
+if appEnv.screenClass != .compact {
                             UserProfileMenu()
                         }
                         #endif
