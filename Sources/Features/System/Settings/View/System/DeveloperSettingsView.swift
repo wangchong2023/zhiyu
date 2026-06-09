@@ -171,16 +171,10 @@ struct DeveloperSettingsView: View {
 
                 // MARK: - 性能监控面板入口
                 Section {
-                    Button {
-                        store.showPerfDashboard = true
+                    NavigationLink {
+                        PerformanceDashboardView(service: store.performanceService)
                     } label: {
-                        HStack {
-                            Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
                     }
                 } header: {
                     Text(L10n.Common.Perf.title)
