@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件"
+          }
+        }
+      }
+    },
     "collab.connectedUsers": {
       "extractionState": "manual",
       "localizations": {

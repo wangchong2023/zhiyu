@@ -4438,6 +4438,23 @@
         }
       }
     },
+    "dashboard.stats.evaluation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quality Evaluation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "质量评估"
+          }
+        }
+      }
+    },
     "dashboard.stats.overview": {
       "extractionState": "manual",
       "localizations": {

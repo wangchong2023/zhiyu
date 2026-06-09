@@ -95,8 +95,6 @@ struct CapabilitiesSection: View {
                     .contentShape(Rectangle())
             }
             
-            // 插件自定义视图入口
-            PluginCustomViewsSection()
         }
  header: {
             Text(L10n.Common.Sidebar.capabilities)
@@ -247,11 +245,6 @@ struct ToolsSection: View {
                     }
                 }
                 .contentShape(Rectangle())
-            }
-            SidebarRowWrapper(value: SidebarSelection.tool(.pluginMarket)) {
-                Label(L10n.Common.Sidebar.plugins, systemImage: DesignSystem.Icons.plugins)
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.collab)) {
                 Label(L10n.Common.Sidebar.collaboration, systemImage: DesignSystem.Icons.collaborationPeers)

@@ -164,6 +164,7 @@ extension L10n {
             public static var hitRateDesc: String { Localized.tr("dashboard.stats.hitRateDesc", table: t) }
             public static var mrrDesc: String { Localized.tr("dashboard.stats.mrrDesc", table: t) }
             public static var ndcgDesc: String { Localized.tr("dashboard.stats.ndcgDesc", table: t) }
+            public static var evaluation: String { Localized.tr("dashboard.stats.evaluation", table: t) }
             public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }
             public static var recentEvaluations: String { Localized.tr("dashboard.stats.recentEvaluations", table: t) }
             public static var noEvaluations: String { Localized.tr("dashboard.stats.noEvaluations", table: t) }

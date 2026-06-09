@@ -20,6 +20,7 @@ struct UserProfileMenu: View {
     @State private var showAbout = false
     @State private var showWatchMenu = false
     @State private var showStats = false
+    @State private var showPlugins = false
     
     var body: some View {
         #if os(watchOS)
@@ -57,10 +58,10 @@ struct UserProfileMenu: View {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    router.navigate(to: .pluginMarket)
+                    showPlugins = true
                 }
             }) {
-                Label(L10n.Settings.Section.plugins, systemImage: "puzzlepiece.extension.fill")
+                Label(L10n.Plugin.title, systemImage: "puzzlepiece.extension.fill")
             }
 
             Button(action: {
@@ -102,6 +103,11 @@ struct UserProfileMenu: View {
             }
             .environment(store)
             .environmentObject(themeManager)
+        }
+        .sheet(isPresented: $showPlugins) {
+            NavigationStack {
+                PluginCenterView()
+            }
         }
         #endif
     }

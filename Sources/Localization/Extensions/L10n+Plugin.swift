@@ -25,6 +25,9 @@ extension L10n {
         /// - Returns: 返回值
         public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
 
+        // MARK: - 通用
+        public static var title: String { tr("title") }
+
         /// permTitle — 全显式 case，杜绝动态拼接，所有 key 都可被静态分析检测
         /// - Returns: 本地化权限名称
         public static func permTitle(for perm: String) -> String {

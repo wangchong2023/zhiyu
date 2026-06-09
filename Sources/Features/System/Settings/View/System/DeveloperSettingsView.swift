@@ -99,27 +99,21 @@ struct DeveloperSettingsView: View {
             }
             .appListRowBackground()
 
-            // MARK: - 性能监控面板入口
-            Section {
-                NavigationLink {
-                    PerformanceDashboardView(service: store.performanceService)
-                } label: {
-                    Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
-                }
-            } header: {
-                Text(L10n.Common.Perf.title)
-            }
-            .appListRowBackground()
-
-            // MARK: - RAG 质量评估
+            // MARK: - 质量评估
             Section {
                 NavigationLink {
                     RAGEvaluationView()
                 } label: {
                     Label(L10n.Dashboard.stats.benchmark, systemImage: "checkmark.shield")
                 }
+
+                NavigationLink {
+                    PerformanceDashboardView(service: store.performanceService)
+                } label: {
+                    Label(L10n.Common.Perf.title, systemImage: "chart.bar.xaxis")
+                }
             } header: {
-                Text(L10n.Dashboard.stats.benchmark)
+                Text(L10n.Dashboard.stats.evaluation)
             }
             .appListRowBackground()
         }
