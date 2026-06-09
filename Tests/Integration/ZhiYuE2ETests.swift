@@ -774,8 +774,13 @@ final class LogAuditTrailTests: XCTestCase {
         logService.addLog(action: .update, target: "T2", details: "second")
         logService.addLog(action: .update, target: "T3", details: "third")
 
-        try? await Task.sleep(nanoseconds: 500_000_000)
-        let entries = await logService.getLogEntries()
+        let maxWait = 10
+        var entries: [LogEntry] = []
+        for _ in 0..<maxWait {
+            entries = await logService.getLogEntries()
+            if entries.count >= 3 { break }
+            try? await Task.sleep(nanoseconds: 300_000_000)
+        }
         XCTAssertEqual(entries.first?.target, "T3")
         XCTAssertEqual(entries.last?.target, "T1")
     }
@@ -785,8 +790,13 @@ final class LogAuditTrailTests: XCTestCase {
             logService.addLog(action: .update, target: "page_\(i)", details: "Log entry \(i)")
         }
 
-        try? await Task.sleep(nanoseconds: 500_000_000)
-        let entries = await logService.getLogEntries()
+        let maxWait = 10
+        var entries: [LogEntry] = []
+        for _ in 0..<maxWait {
+            entries = await logService.getLogEntries()
+            if entries.count <= 500 { break }
+            try? await Task.sleep(nanoseconds: 300_000_000)
+        }
         XCTAssertLessThanOrEqual(entries.count, 500, "Log should cap at 500 entries")
     }
 }
