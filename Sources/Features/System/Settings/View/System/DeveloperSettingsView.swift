@@ -14,10 +14,7 @@ struct DeveloperSettingsView: View {
     @Environment(AppStore.self) var store
     @Environment(KnowledgeStore.self) var knowledgeStore
     @Environment(SettingsStore.self) var settingsStore
-    @ObservedObject var onboardingService: OnboardingService
-    
     @State private var showInjectConfirmation = false
-    @State private var showResetOnboardingConfirmation = false
     @State private var showStressTestConfirmation = false
     @State private var stressTestTargetCount = 1000
     
@@ -102,33 +99,6 @@ struct DeveloperSettingsView: View {
                 }
                 .appListRowBackground()
                 
-                // MARK: - 数据重置 (Data Reset)
-                Section {
-                    Button(action: { showResetOnboardingConfirmation = true }) {
-                        Label(L10n.Settings.resetOnboarding.label, systemImage: "arrow.triangle.2.circlepath")
-                    }
-                    .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetOnboardingConfirmation) {
-                        Button(L10n.Common.confirm, role: .destructive) {
-                            onboardingService.reset()
-                            HapticFeedback.shared.trigger(.success)
-                        }
-                        Button(L10n.Common.cancel, role: .cancel) { }
-                    } message: {
-                        Text(L10n.Settings.resetOnboarding.message)
-                    }
-                } header: {
-                    Text(L10n.Settings.developer.section.dataReset)
-                }
-                .appListRowBackground()
-
-                // MARK: - 操作信息 (Operation Info)
-                Section {
-                    SettingsNavigationRow(icon: "clock.arrow.circlepath", title: L10n.Settings.operationLog, identifier: "settings.log") {
-                        LogView()
-                    }
-                } header: {
-                    Text(L10n.Settings.developer.section.operationInfo)
-                }
                 .appListRowBackground()
 
                 // MARK: - 性能测试 (Performance Testing)

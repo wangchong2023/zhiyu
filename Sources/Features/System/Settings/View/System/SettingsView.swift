@@ -375,7 +375,7 @@ struct SettingsView: View {
     private var developerSection: some View {
         Section {
             NavigationLink {
-                DeveloperSettingsView(onboardingService: onboardingService)
+                DeveloperSettingsView()
             } label: {
                 Label(L10n.Settings.Section.developer, systemImage: "hammer.fill")
             }
