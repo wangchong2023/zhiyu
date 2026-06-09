@@ -216,13 +216,16 @@ public final class VaultService: VaultServiceProtocol {
                     let count = try await dbQueue.read { db in
                         try KnowledgePage.fetchCount(db)
                     }
-                    await MainActor.run {
+                    let updatedVault: Vault = await MainActor.run {
                         if let index = self.vaults.firstIndex(where: { $0.id == vault.id }) {
                             self.vaults[index].pageCount = count
+                            return self.vaults[index]
                         }
+                        return vault
                     }
-                    // 异步写回全局元数据
-                    try? await self.vaultRepository.saveVault(vault)
+                    if updatedVault.pageCount != vault.pageCount {
+                        try? await self.vaultRepository.saveVault(updatedVault)
+                    }
                 } catch {
                     // 非关键路径，静默失败
                 }
