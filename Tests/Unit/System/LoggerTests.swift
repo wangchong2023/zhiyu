@@ -37,7 +37,11 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-01: 验证日志的非隔离标准级别输出接口执行健壮性，确保高频记录不发生闪退
     func testStandardLogLevels() async {
         let logger = Logger(customDirectory: tempDirectory)
-        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+        // 轮询等待 Logger init Task 完成
+        for _ in 0..<20 {
+            if await logger.getLogEntries().count == 0 { break }
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
 
         // 验证非隔离环境下的同步快捷调用接口不引发异常
         logger.debug("调试级别日志消息")
@@ -57,21 +61,24 @@ final class SystemLoggerTests: XCTestCase {
     func testLogEntriesLimitClipping() async {
         let logger = Logger(customDirectory: tempDirectory)
 
-        // 等待 Logger 异步初始化完成（loadFromDisk 竞态）
-        try? await Task.sleep(nanoseconds: 500_000_000)
-
-        // 1. 高频写入 510 条记录，超出 500 条上限（addLog 同步截断）
+        // 1. 高频写入 510 条记录，超出 500 条上限
         for i in 1...510 {
             logger.addLog(action: .create, target: "Page_\(i)", details: "高频测试批量写入")
         }
 
-        // 2. 获取日志条目（截断已同步完成）
-        let entries = await logger.getLogEntries()
+        // 2. 轮询等待所有非结构化 addLog Task 完成并触发截断
+        let maxRetries = 30
+        var entries: [LogEntry] = []
+        for _ in 0..<maxRetries {
+            entries = await logger.getLogEntries()
+            if entries.count == 500 { break }
+            try? await Task.sleep(nanoseconds: 200_000_000)
+        }
 
         // 3. 校验内存中保存的日志数是否被精准限缩在 500 条
         XCTAssertEqual(entries.count, 500, "超限写入后，内存日志条数应当被严格修剪并限缩在 500 条内")
 
-        // 4. 校验最先进去的第 1、2 条被丢弃，最新写入的 page_510 排在最前（因 insert at 0）
+        // 4. 校验最新写入的 page_510 排在最前（因 insert at 0）
         XCTAssertEqual(entries.first?.target, "Page_510", "最新插入的数据应当排列在缓存头部")
     }
     
@@ -121,7 +128,11 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-04: 验证日志的物理存盘 (saveToDisk) 与反序列化重载 (loadFromDisk) 的完整无损链路
     func testLoggerDiskPersistence() async {
         let logger = Logger(customDirectory: tempDirectory)
-        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+        // 轮询等待 Logger init Task 完成
+        for _ in 0..<20 {
+            if await logger.getLogEntries().count == 0 { break }
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
 
         // 1. 写入 3 条特定标识测试日志
         logger.addLog(action: .create, target: "PageForDisk1", details: "落盘测试1", module: "DiskIO")
@@ -135,7 +146,11 @@ final class SystemLoggerTests: XCTestCase {
         
         // 3. 实例化一个全新的 Logger（绑定相同物理路径），重新触发磁盘反序列化读取
         let secondLogger = Logger(customDirectory: tempDirectory)
-        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+        // 轮询等待 Logger init Task 完成
+        for _ in 0..<20 {
+            if await logger.getLogEntries().count == 0 { break }
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
         await secondLogger.loadFromDisk()
         
         // 4. 校验读回的内容与原始写入是否一致
@@ -151,7 +166,11 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-05: 验证内存清空与通知广播的响应式闭环
     func testClearLogsAndCombinePublisher() async {
         let logger = Logger(customDirectory: tempDirectory)
-        try? await Task.sleep(nanoseconds: 300_000_000) // 等待 init Task 完成
+        // 轮询等待 Logger init Task 完成
+        for _ in 0..<20 {
+            if await logger.getLogEntries().count == 0 { break }
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
         let expectation = XCTestExpectation(description: "等待日志流清空通知")
         
         // 1. 写入数据
