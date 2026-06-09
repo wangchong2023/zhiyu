@@ -2455,13 +2455,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Start by creating your first page or importing Markdown files to see the connections grow."
+            "value": "Go to the Ingest tab to create your first page or import content and watch your knowledge graph grow."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开始创建您的第一个页面，或导入 Markdown 文件，见证知识连接的生长。"
+            "value": "前往「导入」页面，创建或导入您的第一个知识页面，见证知识图谱的生长。"
           }
         }
       }
@@ -2727,13 +2727,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Start Building"
+            "value": "Go to Ingest"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开始构建"
+            "value": "前往导入"
           }
         }
       }
