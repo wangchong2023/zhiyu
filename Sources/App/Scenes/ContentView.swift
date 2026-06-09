@@ -88,6 +88,7 @@ struct ContentView: View {
                 .environment(settingsStore)
                 .environmentObject(onboardingService)
                 .environmentObject(themeManager)
+                .preferredColorScheme(themeManager.colorSchemeMode.preferredColorScheme)
                 .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
         }
         .animation(DesignSystem.Animation.Config.prominentSpring, value: authSession.isLoggedIn || authSession.isGuest)
