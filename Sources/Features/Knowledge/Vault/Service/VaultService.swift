@@ -118,6 +118,8 @@ public final class VaultService: VaultServiceProtocol {
                 } else {
                     self.vaults = loadedVaults
                 }
+                // 后台刷新全部笔记本的实际页数
+                refreshAllPageCounts()
             } catch {
                 print(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)")
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
@@ -198,6 +200,33 @@ public final class VaultService: VaultServiceProtocol {
             }
         } catch {
             // 非关键路径，静默失败
+        }
+    }
+
+    /// 启动后异步刷新全部笔记本的页面计数（直接读取各 vault 数据库文件）
+    private func refreshAllPageCounts() {
+        let vaultsSnapshot = vaults
+        Task.detached(priority: .background) { [weak self] in
+            for vault in vaultsSnapshot {
+                guard let self = self else { break }
+                let dbURL = await self.getVaultDatabaseURL(for: vault.id)
+                guard FileManager.default.fileExists(atPath: dbURL.path) else { continue }
+                do {
+                    let dbQueue = try DatabaseQueue(path: dbURL.path)
+                    let count = try await dbQueue.read { db in
+                        try KnowledgePage.fetchCount(db)
+                    }
+                    await MainActor.run {
+                        if let index = self.vaults.firstIndex(where: { $0.id == vault.id }) {
+                            self.vaults[index].pageCount = count
+                        }
+                    }
+                    // 异步写回全局元数据
+                    try? await self.vaultRepository.saveVault(vault)
+                } catch {
+                    // 非关键路径，静默失败
+                }
+            }
         }
     }
 
