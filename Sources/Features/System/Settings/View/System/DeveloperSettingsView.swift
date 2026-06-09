@@ -133,25 +133,23 @@ struct DeveloperSettingsView: View {
 
                 // MARK: - 性能测试 (Performance Testing)
                 Section {
-                    HStack {
+                    Picker(selection: $stressTestTargetCount) {
+                        Text("100").tag(100)
+                        Text("500").tag(500)
+                        Text("1000").tag(1000)
+                        Text("5000").tag(5000)
+                        Text("10000").tag(10000)
+                    } label: {
                         Label(L10n.Settings.developer.stressTest.count, systemImage: "number.circle")
-                        Spacer()
-                        Picker("", selection: $stressTestTargetCount) {
-                            Text("100").tag(100)
-                            Text("500").tag(500)
-                            Text("1000").tag(1000)
-                            Text("5000").tag(5000)
-                            Text("10000").tag(10000)
-                        }
-                        #if !os(watchOS)
-                        .pickerStyle(.menu)
-                        #endif
                     }
-                    
+
                     Button(action: { showStressTestConfirmation = true }) {
                         HStack {
                             Label(L10n.Settings.developer.stressTest.run, systemImage: "gauge.with.dots.needle.bottom.100percent")
                             Spacer()
+                            Text("\(stressTestTargetCount) 个节点")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                             if isStressTesting {
                                 ProgressView()
                             }
