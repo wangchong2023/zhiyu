@@ -187,17 +187,21 @@ public final class VaultService: VaultServiceProtocol {
 
     /// 从当前活跃数据库查询实际页面数并写回全局元数据（公开方法，供外部数据变更后调用）
     public func refreshPageCount(for vaultID: UUID) async {
-        guard let writer = DatabaseManager.shared.dbWriter else { return }
+        guard let writer = DatabaseManager.shared.dbWriter else {
+            Logger.shared.warning("[VaultService] refreshPageCount skipped: dbWriter is nil")
+            return
+        }
         do {
             let count = try await writer.read { db in
                 try KnowledgePage.fetchCount(db)
             }
+            Logger.shared.info("[VaultService] refreshPageCount: vault=\(vaultID.uuidString.prefix(8)) count=\(count)")
             if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
                 vaults[index].pageCount = count
                 try await vaultRepository.saveVault(vaults[index])
             }
         } catch {
-            // 非关键路径，静默失败
+            Logger.shared.warning("[VaultService] refreshPageCount failed: \(error.localizedDescription)")
         }
     }
 
