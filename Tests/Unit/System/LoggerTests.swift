@@ -55,24 +55,21 @@ final class SystemLoggerTests: XCTestCase {
     /// TC-LOG-02: 验证 maxLogEntries (500条) 的截断和溢出管理机制
     func testLogEntriesLimitClipping() async {
         let logger = Logger(customDirectory: tempDirectory)
-        
-        // 1. 高频写入 510 条记录，超出 500 条上限
+
+        // 等待 Logger 异步初始化完成（loadFromDisk 竞态）
+        try? await Task.sleep(nanoseconds: 500_000_000)
+
+        // 1. 高频写入 510 条记录，超出 500 条上限（addLog 同步截断）
         for i in 1...510 {
             logger.addLog(action: .create, target: "Page_\(i)", details: "高频测试批量写入")
         }
-        
-        // 2. 轮询等待异步截断完成（CI 环境避免固定 sleep 不可靠）
-        let maxWait = 10
-        var entries: [LogEntry] = []
-        for _ in 0..<maxWait {
-            entries = await logger.getLogEntries()
-            if entries.count <= 500 { break }
-            try? await Task.sleep(nanoseconds: 500_000_000)
-        }
+
+        // 2. 获取日志条目（截断已同步完成）
+        let entries = await logger.getLogEntries()
 
         // 3. 校验内存中保存的日志数是否被精准限缩在 500 条
         XCTAssertEqual(entries.count, 500, "超限写入后，内存日志条数应当被严格修剪并限缩在 500 条内")
-        
+
         // 4. 校验最先进去的第 1、2 条被丢弃，最新写入的 page_510 排在最前（因 insert at 0）
         XCTAssertEqual(entries.first?.target, "Page_510", "最新插入的数据应当排列在缓存头部")
     }
