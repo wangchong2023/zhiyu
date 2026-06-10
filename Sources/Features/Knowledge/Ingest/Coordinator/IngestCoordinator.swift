@@ -57,37 +57,10 @@ final class IngestCoordinator {
 
     init() {}
 
-    // MARK: - 原始内容文件存储
-
-    /// 保存原始导入内容到磁盘文件，返回文件路径
-    private nonisolated static func saveRawContentFile(content: String, category: ImportCategory, ext: String = "md") -> String? {
-        guard let data = content.data(using: .utf8) else { return nil }
-        return saveRawDataFile(data: data, category: category, ext: ext)
-    }
-
-    /// 保存原始二进制数据到磁盘文件，返回文件路径
-    private nonisolated static func saveRawDataFile(data: Data, category: ImportCategory, ext: String) -> String? {
-        let fm = FileManager.default
-        guard let docDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        let recordsDir = docDir.appendingPathComponent("import_records", isDirectory: true)
-        try? fm.createDirectory(at: recordsDir, withIntermediateDirectories: true)
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmss"
-        let ts = formatter.string(from: Date())
-        let fileName = "\(category.rawValue)_\(ts).\(ext)"
-        let fileURL = recordsDir.appendingPathComponent(fileName)
-        do {
-            try data.write(to: fileURL, options: .atomic)
-            return fileURL.path
-        } catch {
-            Logger.shared.error("[IngestCoordinator] 保存原始数据文件失败: \(error)", error: error)
-            return nil
-        }
-    }
-
     // MARK: - 图片提取
 
     private let imageExtractor = ImageExtractor()
+    @ObservationIgnored @Inject private var fileStore: any ImportFileStore
 
     /// 从网页 URL 提取图片并 OCR，返回追加的 Markdown 文本
     private func extractImagesFromURL(_ urlString: String) async throws -> String {
@@ -128,7 +101,7 @@ final class IngestCoordinator {
 
         // rawText 以 Markdown 格式存储，带来源头
         let rawText = "> 来源：\(sourceName) | \(Date().formatted(date: .numeric, time: .shortened))\n\n\(content)"
-        let textPath = Self.saveRawContentFile(content: rawText, category: sourceHint)
+        let textPath = fileStore.saveContent(rawText, category: sourceHint, ext: "md")
 
         // OCR：额外保存原始图片文件
         var imagePath: String?
@@ -141,7 +114,7 @@ final class IngestCoordinator {
                 showError = true
                 return
             }
-            imagePath = Self.saveRawDataFile(data: imgData, category: .ocr, ext: "jpg")
+            imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
             pendingImageData = nil
         }
 
@@ -299,6 +272,7 @@ final class IngestCoordinator {
         Task {
             let scraper = WebScraperProcessor()
             let vaultID = VaultService.shared.selectedVaultID?.uuidString
+            let store = fileStore
             let completed = await withTaskGroup(of: (ok: Bool, idx: Int).self) { group in
                 for (i, url) in urls.enumerated() {
                     group.addTask { [self] in
@@ -308,7 +282,7 @@ final class IngestCoordinator {
                         let rawBody = rawResult.map { "> 来源链接：\(urlString)\n> 抓取时间：\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
                         let ocrText = (try? await self.extractImagesFromURL(urlString)) ?? ""
                         let rawMarkdown = rawBody.map { $0 + ocrText }
-                        let filePath = rawMarkdown.flatMap { Self.saveRawContentFile(content: $0, category: .link) }
+                        let filePath = rawMarkdown.flatMap { store.saveContent($0, category: .link, ext: "md") }
                         let title = rawResult?.title ?? urlString
                         let record = ImportRecord(
                             id: recordID, category: ImportCategory.link.rawValue,

@@ -105,3 +105,21 @@ public enum ImportCategory: String, CaseIterable, Sendable {
         }
     }
 }
+
+/// ImportRecord 标签分组工具（领域层）
+public enum ImportRecordTagGrouper {
+    /// 按逗号分隔的 tags 字段分组，未分类的归入 untaggedLabel
+    public static func group(_ records: [ImportRecord], untaggedLabel: String) -> [String: [ImportRecord]] {
+        var groups: [String: [ImportRecord]] = [:]
+        for r in records {
+            let tags: [String] = {
+                guard let t = r.tags, !t.isEmpty else { return [untaggedLabel] }
+                return t.components(separatedBy: ", ").filter { !$0.isEmpty }
+            }()
+            for tag in tags {
+                groups[tag, default: []].append(r)
+            }
+        }
+        return groups
+    }
+}

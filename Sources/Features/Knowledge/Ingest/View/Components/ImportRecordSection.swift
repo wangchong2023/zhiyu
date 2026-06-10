@@ -108,7 +108,7 @@ struct ImportRecordSection: View {
     // MARK: - 标签分组（仅在"全部"tab）
 
     private var tagGroupedList: some View {
-        let grouped = groupByTags(records)
+        let grouped = ImportRecordTagGrouper.group(records, untaggedLabel: L10n.Ingest.untagged)
         return VStack(spacing: DesignSystem.small) {
             ForEach(grouped.keys.sorted(), id: \.self) { tag in
                 VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
@@ -120,17 +120,6 @@ struct ImportRecordSection: View {
                 }
             }
         }
-    }
-
-    private func groupByTags(_ records: [ImportRecord]) -> [String: [ImportRecord]] {
-        var groups: [String: [ImportRecord]] = [:]
-        for r in records {
-            let tags = (r.tags?.isEmpty ?? true) ? [L10n.Ingest.untagged] : (r.tags?.components(separatedBy: ", ") ?? [L10n.Ingest.untagged])
-            for tag in tags {
-                groups[tag, default: []].append(r)
-            }
-        }
-        return groups
     }
 
     // MARK: - 平铺列表

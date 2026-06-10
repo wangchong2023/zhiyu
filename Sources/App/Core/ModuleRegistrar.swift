@@ -97,6 +97,9 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         let feedbackRepo = SQLiteFeedbackRepository()
         container.register(feedbackRepo as any FeedbackRepository, for: (any FeedbackRepository).self)
 
+        let fileStore = FileImportFileStore()
+        container.register(fileStore as any ImportFileStore, for: (any ImportFileStore).self)
+
         // 注册全新的 Vault 笔记本与 FileSignature 文件签名仓储协议 (纯 ORM，无 raw SQL)
         if let globalWriter = DatabaseManager.shared.globalWriter {
             let vaultRepo = SQLiteVaultRepository(dbWriter: globalWriter)
