@@ -263,8 +263,10 @@ extension DatabaseManager {
                 t.column(ImportRecord.CodingKeys.createdAt.name, .datetime).notNull().defaults(to: Date())
                 t.column(ImportRecord.CodingKeys.completedAt.name, .datetime)
             }
-            // V8: 导入记录 AI 分类标签
+            // V8: 导入记录 AI 分类标签（幂等：V7 创建表时可能已含此列）
             migrator.registerMigration("v8_import_record_tags") { db in
+                let columns = try db.columns(in: ImportRecord.databaseTableName).map(\.name)
+                guard !columns.contains(ImportRecord.CodingKeys.tags.name) else { return }
                 try db.alter(table: ImportRecord.databaseTableName) { t in
                     t.add(column: ImportRecord.CodingKeys.tags.name, .text)
                 }
