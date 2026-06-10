@@ -30,8 +30,11 @@ struct SettingsView: View {
         case about           // 关于软件
 
         static var allCases: [SettingsSection] {
-            // 开发者入口已移至右上角头像菜单，设置中不再显示
+            #if DEBUG
+            return [.appearance, .ai, .security, .data, .plugins, .developer, .about]
+            #else
             return [.appearance, .ai, .security, .data, .plugins, .about]
+            #endif
         }
 
         var id: String { rawValue }
@@ -146,13 +149,18 @@ struct SettingsView: View {
             securitySection(store: store)
                 .appListRowBackground()
 
+            #if DEBUG
+            developerSection
+                .appListRowBackground()
+            #endif
+
             aboutSection
                 .appListRowBackground()
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
     }
-    
+
     /// 构建大屏左侧分类侧边栏（气泡圆角卡片样式，具备呼吸感与选中高亮）
     private var sidebarColumn: some View {
         ScrollView {

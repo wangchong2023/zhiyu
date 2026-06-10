@@ -21,6 +21,7 @@ struct UserProfileMenu: View {
     @State private var showWatchMenu = false
     @State private var showStats = false
     @State private var showPlugins = false
+    @State private var showDeveloper = false
     
     var body: some View {
         #if os(watchOS)
@@ -86,7 +87,7 @@ struct UserProfileMenu: View {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    router.isShowingSettingsSheet = true
+                    showDeveloper = true
                 }
             }) {
                 Label(L10n.Settings.Section.developer, systemImage: DesignSystem.Icons.settingsDeveloper)
@@ -120,6 +121,14 @@ struct UserProfileMenu: View {
             NavigationStack {
                 PluginCenterView()
             }
+        }
+        .sheet(isPresented: $showDeveloper) {
+            NavigationStack {
+                DeveloperSettingsView()
+            }
+            .environment(store)
+            .environment(store.knowledgeStore)
+            .environment(store.settingsStore)
         }
         #endif
     }
