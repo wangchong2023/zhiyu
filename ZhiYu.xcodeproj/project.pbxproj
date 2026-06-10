@@ -471,6 +471,7 @@
 		43F779AD6B40EAE3DD10DF38 /* RAGEvaluationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4554E8C7264F2BB8EE52DE7 /* RAGEvaluationService.swift */; };
 		44295B085C78A943D2B8FE2D /* iOSExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3290B4C24E1DC045599B2C /* iOSExportService.swift */; };
 		442F3735F1F0993CB36893A8 /* MedalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AFCFF5D8CE108CF9A5242F /* MedalComponents.swift */; };
+		445A3BBD992CB229B3684912 /* ImportRecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA32EEB7F25B605AAAC31F7 /* ImportRecordCard.swift */; };
 		446033D38B25170160646293 /* TaskCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177B1A4B8E84CD6DD25475F3 /* TaskCenter.swift */; };
 		44945E92DC2B8C855906D2C9 /* LLMProviders.json in Resources */ = {isa = PBXBuildFile; fileRef = 185B78C17147A3E10192A046 /* LLMProviders.json */; };
 		44A4339F7A44E012821156DB /* CollaborationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA66A036B9775F16B55A4A0 /* CollaborationService.swift */; };
@@ -930,6 +931,7 @@
 		89304DD66A28533D017C3F7B /* IngestEntryCardsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD0D341F8BF72F6A2241D16 /* IngestEntryCardsSection.swift */; };
 		8939AEDC1CA32BEE73CF25F7 /* AISynthesisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783350EF5AFE6259B68D28D5 /* AISynthesisService.swift */; };
 		896B8F904301038FB1E6A770 /* CollaborationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA65555329C4C9A9318EB91 /* CollaborationView.swift */; };
+		89A16398076601B6F8CAD326 /* ImportRecordCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA32EEB7F25B605AAAC31F7 /* ImportRecordCard.swift */; };
 		89B15EF396B6937FE8534C3C /* L10n+Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FD160FB200B0ED44B841C8 /* L10n+Log.swift */; };
 		8A5054B06CDF7B9B40A9ABEF /* VectorDataRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCE29060A0BD520D46D87D3 /* VectorDataRepository.swift */; };
 		8A8B02D082FAEC5E976DC00F /* PDFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D2993F89C99ED470703073 /* PDFReaderView.swift */; };
@@ -2202,6 +2204,7 @@
 		98E88AE55C7718F630303B4D /* AppRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRows.swift; sourceTree = "<group>"; };
 		99223DDAA47AF89C6CB98BD9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		9A0E17F66C8BD168E87FF1DF /* SettingsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewTests.swift; sourceTree = "<group>"; };
+		9BA32EEB7F25B605AAAC31F7 /* ImportRecordCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportRecordCard.swift; sourceTree = "<group>"; };
 		9C37E9AFD78FA7C4019EF787 /* PageBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageBackground.swift; sourceTree = "<group>"; };
 		9CB7960701EB8E99B58D925E /* PageDetailHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailHeader.swift; sourceTree = "<group>"; };
 		9CBD4E32BC345BA0A2712D05 /* L10n+Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L10n+Dashboard.swift"; sourceTree = "<group>"; };
@@ -4159,6 +4162,7 @@
 		B2DB9A916FC5E7FE1113EB7B /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9BA32EEB7F25B605AAAC31F7 /* ImportRecordCard.swift */,
 				3CD0D341F8BF72F6A2241D16 /* IngestEntryCardsSection.swift */,
 				1FECB31F1DB5C78590BC5EE9 /* IngestHeroSection.swift */,
 				39741AE6C2261B9FA83739CA /* IngestManualFormSection.swift */,
@@ -5938,6 +5942,7 @@
 				421F3C15A144B6241D070330 /* IconPickerView.swift in Sources */,
 				2649FF0A895D404B559ADE4E /* IconTokens.swift in Sources */,
 				7D93B1A23AB4364BF31B5841 /* ImportRecord.swift in Sources */,
+				445A3BBD992CB229B3684912 /* ImportRecordCard.swift in Sources */,
 				FCA681C7034CE7EEF3BDFD6F /* ImportRecordRepository.swift in Sources */,
 				1D3B269374E52DFF38EE3797 /* InferenceParametersStore.swift in Sources */,
 				AA55019AB89C542ECA1066D6 /* InferenceParametersView.swift in Sources */,
@@ -6521,6 +6526,7 @@
 				631BE8F5CFF38AEAD16A3A52 /* IconPickerView.swift in Sources */,
 				8775AC8A5615603859967C6B /* IconTokens.swift in Sources */,
 				435070DA094FBB4D5ACF8844 /* ImportRecord.swift in Sources */,
+				89A16398076601B6F8CAD326 /* ImportRecordCard.swift in Sources */,
 				425BF77D969CD0C50870DA0F /* ImportRecordRepository.swift in Sources */,
 				A83CCDEB860EAE45D4A52FE0 /* InferenceParametersStore.swift in Sources */,
 				2262C48EEBCD543EEEBB3B49 /* InferenceParametersView.swift in Sources */,
