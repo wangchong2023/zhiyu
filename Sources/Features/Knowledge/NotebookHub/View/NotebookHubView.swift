@@ -235,7 +235,6 @@ public struct NotebookHubView: View {
 /// 新用户欢迎横幅（不遮挡笔记本网格）
 struct WelcomeBannerView: View {
     @EnvironmentObject var onboardingService: OnboardingService
-    @Environment(AppStore.self) var store
 
     var body: some View {
         HStack(spacing: DesignSystem.medium) {
@@ -250,20 +249,16 @@ struct WelcomeBannerView: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Button(L10n.Vault.new) {
-                HapticFeedback.shared.trigger(.selection)
-                store.showCreateSheet = true
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.blue)
-            .controlSize(.small)
             Button {
                 HapticFeedback.shared.trigger(.selection)
                 withAnimation { onboardingService.hasCompletedOnboarding = true }
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.title3)
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
+                    .padding(6)
+                    .background(Color.secondary.opacity(0.1))
+                    .clipShape(Circle())
             }
         }
         .padding()
