@@ -38,6 +38,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
 #endif
     private var audioEngine: AVAudioEngine?
     private var audioRecorder: AVAudioRecorder?
+    private var lastRecordingDuration: TimeInterval = 0
     var currentAudioFileURL: URL? {
         audioRecorder?.url
     }
@@ -226,6 +227,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
 #endif
+        lastRecordingDuration = audioRecorder?.currentTime ?? 0
         audioRecorder?.stop()
         isRecording = false
         audioLevel = 0
@@ -259,7 +261,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     /// - Parameter title: title
     /// - Returns: 返回值
     func saveRecording(title: String) -> VoiceRecording {
-        let recording = VoiceRecording(id: UUID(), title: title, text: transcribedText, language: selectedLanguage, duration: 0, createdAt: Date())
+        let recording = VoiceRecording(id: UUID(), title: title, text: transcribedText, language: selectedLanguage, duration: lastRecordingDuration, createdAt: Date())
         recordings.insert(recording, at: 0)
         saveRecordingsToDisk()
         return recording
