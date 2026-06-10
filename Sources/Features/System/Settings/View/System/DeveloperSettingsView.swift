@@ -225,7 +225,7 @@ struct DeveloperSettingsView: View {
         Task {
             try? await Task.sleep(nanoseconds: 500_000_000)
             svc.hasCompletedOnboarding = false
-            svc.nextStep()
+            // 不调 nextStep()——旧 tooltip overlay 已废弃，新引导用 WelcomePathSelectionSection
             await MainActor.run {
                 ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
             }
