@@ -90,7 +90,7 @@ final class SQLiteImportRecordRepository: ImportRecordRepository, @unchecked Sen
         let records = try await fetchAll(category: nil, limit: 2000)
         var total: Int64 = 0
         for r in records {
-            if let path = r.filePath, let size = r.fileSize {
+            if let _ = r.filePath, let size = r.fileSize {
                 total += size
             }
             if let text = r.rawText {

@@ -46,11 +46,11 @@ public struct NotebookHubView: View {
                         .padding(.horizontal, DesignSystem.Vault.homePadding)
 
                     if !onboardingService.hasCompletedOnboarding {
-                        WelcomePathSelectionSection(selectedTab: $router.selectedTab)
+                        WelcomeBannerView()
                             .environmentObject(onboardingService)
-                    } else {
-                        notebookGridSection
+                            .padding(.horizontal, DesignSystem.Vault.homePadding)
                     }
+                    notebookGridSection
                 }
                 .padding(.bottom, DesignSystem.huge)
             }
@@ -229,5 +229,45 @@ public struct NotebookHubView: View {
         }
         .buttonStyle(.plain)
         #endif
+    }
+}
+
+/// 新用户欢迎横幅（不遮挡笔记本网格）
+struct WelcomeBannerView: View {
+    @EnvironmentObject var onboardingService: OnboardingService
+    @Environment(AppStore.self) var store
+
+    var body: some View {
+        HStack(spacing: DesignSystem.medium) {
+            Image(systemName: "sparkles")
+                .font(.title2)
+                .foregroundStyle(.blue)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(L10n.Onboarding.pathTitle)
+                    .font(.subheadline.bold())
+                Text(L10n.Onboarding.subtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button(L10n.Vault.new) {
+                HapticFeedback.shared.trigger(.selection)
+                store.showCreateSheet = true
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.blue)
+            .controlSize(.small)
+            Button {
+                HapticFeedback.shared.trigger(.selection)
+                withAnimation { onboardingService.hasCompletedOnboarding = true }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
 }
