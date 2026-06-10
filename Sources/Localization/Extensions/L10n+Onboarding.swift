@@ -30,6 +30,27 @@ extension L10n {
         public static var quickStart: String { tr("welcome.quickStart") }
         public static var growthTrend: String { tr("welcome.growthTrend") }
 
+        public static var pathTitle: String { tr("onboarding.path.title") }
+
+        public enum Path {
+            public static var quickStart: String { Onboarding.tr("onboarding.path.quickStart") }
+            public static var quickStartDesc: String { Onboarding.tr("onboarding.path.quickStartDesc") }
+            public static var importData: String { Onboarding.tr("onboarding.path.importData") }
+            public static var importDataDesc: String { Onboarding.tr("onboarding.path.importDataDesc") }
+            public static var explore: String { Onboarding.tr("onboarding.path.explore") }
+            public static var exploreDesc: String { Onboarding.tr("onboarding.path.exploreDesc") }
+        }
+
+        public enum Milestone {
+            public static var firstPage: String { Onboarding.tr("onboarding.milestone.firstPage") }
+            public static var firstChat: String { Onboarding.tr("onboarding.milestone.firstChat") }
+            public static var firstGraph: String { Onboarding.tr("onboarding.milestone.firstGraph") }
+            public static var firstSynthesis: String { Onboarding.tr("onboarding.milestone.firstSynthesis") }
+            public static var page10: String { Onboarding.tr("onboarding.milestone.page10") }
+            public static var page50: String { Onboarding.tr("onboarding.milestone.page50") }
+            public static var page100: String { Onboarding.tr("onboarding.milestone.page100") }
+        }
+
         public enum Guide {
             public static var title: String { Onboarding.tr("welcome.demo.title") }
             public static var desc: String { Onboarding.tr("welcome.demo.desc") }
