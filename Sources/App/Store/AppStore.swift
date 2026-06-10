@@ -315,8 +315,8 @@ extension AppStore: CollaborationDelegate {
     func generateDemoData() async -> Int {
         let count = await maintenanceService.generateDemoData()
         if count > 0 {
-            AppEventBus.shared.publish(.graphRelayoutRequested)
             await refresh()
+            AppEventBus.shared.publish(.graphRelayoutRequested)
         }
         return count
     }
