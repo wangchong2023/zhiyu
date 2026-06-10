@@ -47,6 +47,7 @@ struct VaultBadge: View {
         }
         .buttonStyle(.plain)
         .tint(.primary)
+        .accessibilityLabel("\(L10n.Vault.label): \(currentVault.name)")
         .accessibilityIdentifier("vaultBadgeButton")
         #endif
     }
