@@ -19,6 +19,7 @@ public struct NotebookHubView: View {
     @State private var showLintSheet = false   // 控制知识巡检面板弹出
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var onboardingService: OnboardingService
     @Inject var appEnv: any AppEnvironmentProtocol // 注入环境能力
     
     // MARK: - 初始化
@@ -29,7 +30,8 @@ public struct NotebookHubView: View {
     
     public var body: some View {
         @Bindable var viewModel = viewModel
-        
+        @Bindable var router = router
+
         ZStack(alignment: .top) {
             // 统一背景系统：自动适配深浅模式与强调色
             themeManager.pageBackground()
@@ -42,6 +44,10 @@ public struct NotebookHubView: View {
                     
                     AIProcessingStatusBanner()
                         .padding(.horizontal, DesignSystem.Vault.homePadding)
+
+                    if !onboardingService.hasCompletedOnboarding {
+                        WelcomePathSelectionSection(selectedTab: $router.selectedTab)
+                    }
 
                     notebookGridSection
                 }
