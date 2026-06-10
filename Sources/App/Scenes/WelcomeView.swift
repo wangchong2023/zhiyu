@@ -15,6 +15,7 @@ struct WelcomeView: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
     @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var onboardingService: OnboardingService
     @State private var showInjectSuccess = false
     @State private var injectedCount = 0
 
@@ -24,7 +25,7 @@ struct WelcomeView: View {
             VStack(spacing: Spacing.huge) {
                 WelcomeHeroSection()
                 WelcomeStatsSection()
-                if !store.pages.isEmpty {
+                if !store.pages.isEmpty && onboardingService.hasCompletedOnboarding {
                     WelcomeGrowthChartSection(data: store.growthSeries)
                     WelcomeRecentUpdatesSection(selectedTab: $selectedTab)
                 } else {
