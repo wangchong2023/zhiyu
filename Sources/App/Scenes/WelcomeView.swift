@@ -25,7 +25,11 @@ struct WelcomeView: View {
             VStack(spacing: Spacing.huge) {
                 WelcomeHeroSection()
                 WelcomeStatsSection()
-                if !store.pages.isEmpty && onboardingService.hasCompletedOnboarding {
+                let pagesEmpty = store.pages.isEmpty
+                let onboardDone = onboardingService.hasCompletedOnboarding
+                let _ = Logger.shared.info("[WelcomeView] pagesEmpty=\(pagesEmpty) onboardDone=\(onboardDone)")
+
+                if !pagesEmpty && onboardDone {
                     WelcomeGrowthChartSection(data: store.growthSeries)
                     WelcomeRecentUpdatesSection(selectedTab: $selectedTab)
                 } else {
