@@ -78,6 +78,9 @@ extension L10n {
         public static var ocrScan: String { Ingest.tr("ingest.ocrScan") }
         public static var clipboardImport: String { Ingest.tr("ingest.clipboardImport") }
         public static var voiceNote: String { Ingest.tr("ingest.voiceNote") }
+        public static var importRecords: String { Ingest.tr("ingest.importRecords") }
+        public static var importAll: String { Ingest.tr("ingest.importAll") }
+        public static var noImportRecords: String { Ingest.tr("ingest.noImportRecords") }
         public static var fileTooLarge: String { Ingest.tr("ingest.error.fileTooLarge") }
         public static var storageFull: String { Ingest.tr("ingest.error.storageFull") }
         public static var error: String { Ingest.tr("ingest.error") }

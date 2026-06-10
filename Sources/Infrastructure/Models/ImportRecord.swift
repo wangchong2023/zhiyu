@@ -81,4 +81,15 @@ public enum ImportCategory: String, CaseIterable, Sendable {
     case ocr = "ocr"
     case clipboard = "clipboard"
     case voice = "voice"
+
+    public var displayName: String {
+        switch self {
+        case .link: return L10n.Ingest.urlImport
+        case .file: return L10n.Ingest.fileImport
+        case .manual: return L10n.Ingest.manualEntry
+        case .ocr: return L10n.Ingest.ocrScan
+        case .clipboard: return L10n.Ingest.clipboardImport
+        case .voice: return L10n.Ingest.voiceNote
+        }
+    }
 }

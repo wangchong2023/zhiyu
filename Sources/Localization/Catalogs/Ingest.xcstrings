@@ -3129,6 +3129,27 @@
         }
       }
     },
+    "ingest.importRecords": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Import History" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "导入原始内容" } }
+      }
+    },
+    "ingest.importAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "All" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "全部" } }
+      }
+    },
+    "ingest.noImportRecords": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No import history yet" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "暂无导入记录" } }
+      }
+    },
     "ingest.voiceNoteHint": {
       "extractionState": "manual",
       "localizations": {

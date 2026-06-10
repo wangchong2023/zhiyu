@@ -1380,6 +1380,7 @@
 		CD86D3E7959262D5D06E2ECE /* DesignSystem+Vault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E53FDB16F85DF68FA2750E /* DesignSystem+Vault.swift */; };
 		CD9C46916112147D7CBC015F /* SystemStatsChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122439A2BF95E56A4F6F0EAF /* SystemStatsChartView.swift */; };
 		CDB6D15F809EBA9572AB4646 /* ZhiYuMonkeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B57CB225C24E6BBD401480D /* ZhiYuMonkeyTests.swift */; };
+		CDC8B845103B7C219DD2AFBF /* ImportRecordSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2134DB4E72EABD9610480808 /* ImportRecordSection.swift */; };
 		CDDCB9FC7709B79E16B6AFDE /* KnowledgePageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C2410AA13623399A639EF2 /* KnowledgePageManager.swift */; };
 		CE1AA6D19C1D61DD9BBB05A7 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751F592B285200694823E27F /* AppConstants.swift */; };
 		CE28D32BD93495FC40C54D7B /* AppleAuthStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E32150871B1F525224182A /* AppleAuthStrategy.swift */; };
@@ -1500,6 +1501,7 @@
 		E1BA6FD2AD7F339F5CD4342B /* OnDeviceLLMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCCBF4BE6F396BA8842591A /* OnDeviceLLMService.swift */; };
 		E1CD7A0589BE3C7A6E031FB7 /* RAGModels+GRDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4F409221BDB8A7D56B0602 /* RAGModels+GRDB.swift */; };
 		E1E5476248E9F0EAE8BBDFFE /* DesignSystem+Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4505A9454AC460AB4B996FFE /* DesignSystem+Task.swift */; };
+		E20A58E4A971ED0725167404 /* ImportRecordSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2134DB4E72EABD9610480808 /* ImportRecordSection.swift */; };
 		E20B04B8128E2998E16114FD /* DocumentFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4912BDEF2C5552443B5198 /* DocumentFormat.swift */; };
 		E2564D3129357671620F8737 /* AppConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 29D2B623011C6C3BCE1A37B2 /* AppConfig.json */; };
 		E2617DE594276FD151FC7152 /* PluginCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82D50FBA1BE6AABD87E9ED9 /* PluginCenterView.swift */; };
@@ -1873,6 +1875,7 @@
 		203D67A66A551D8C65E57B8C /* RelatedPageDropDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedPageDropDelegate.swift; sourceTree = "<group>"; };
 		20452010195FAEED1B8BC9E1 /* EmbeddingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddingManagerTests.swift; sourceTree = "<group>"; };
 		20639DCA52B2ADEDD0873B58 /* NotebookThemeConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookThemeConfigTests.swift; sourceTree = "<group>"; };
+		2134DB4E72EABD9610480808 /* ImportRecordSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportRecordSection.swift; sourceTree = "<group>"; };
 		2179BFDE3EEE56249DC8559C /* AITaskProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AITaskProgress.swift; sourceTree = "<group>"; };
 		21D5E4512C170EF039C98037 /* iOSAccessibilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSAccessibilityService.swift; sourceTree = "<group>"; };
 		21DECBA9E8104312A893299E /* iOSSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSSpeechService.swift; sourceTree = "<group>"; };
@@ -4163,6 +4166,7 @@
 			isa = PBXGroup;
 			children = (
 				9BA32EEB7F25B605AAAC31F7 /* ImportRecordCard.swift */,
+				2134DB4E72EABD9610480808 /* ImportRecordSection.swift */,
 				3CD0D341F8BF72F6A2241D16 /* IngestEntryCardsSection.swift */,
 				1FECB31F1DB5C78590BC5EE9 /* IngestHeroSection.swift */,
 				39741AE6C2261B9FA83739CA /* IngestManualFormSection.swift */,
@@ -5944,6 +5948,7 @@
 				7D93B1A23AB4364BF31B5841 /* ImportRecord.swift in Sources */,
 				445A3BBD992CB229B3684912 /* ImportRecordCard.swift in Sources */,
 				FCA681C7034CE7EEF3BDFD6F /* ImportRecordRepository.swift in Sources */,
+				CDC8B845103B7C219DD2AFBF /* ImportRecordSection.swift in Sources */,
 				1D3B269374E52DFF38EE3797 /* InferenceParametersStore.swift in Sources */,
 				AA55019AB89C542ECA1066D6 /* InferenceParametersView.swift in Sources */,
 				65DC4CD728AEB17ADBFAAFB1 /* IngestCoordinator.swift in Sources */,
@@ -6528,6 +6533,7 @@
 				435070DA094FBB4D5ACF8844 /* ImportRecord.swift in Sources */,
 				89A16398076601B6F8CAD326 /* ImportRecordCard.swift in Sources */,
 				425BF77D969CD0C50870DA0F /* ImportRecordRepository.swift in Sources */,
+				E20A58E4A971ED0725167404 /* ImportRecordSection.swift in Sources */,
 				A83CCDEB860EAE45D4A52FE0 /* InferenceParametersStore.swift in Sources */,
 				2262C48EEBCD543EEEBB3B49 /* InferenceParametersView.swift in Sources */,
 				ED2939B597B7EDD12A6B1672 /* IngestCoordinator.swift in Sources */,

@@ -32,6 +32,7 @@ struct IngestView: View {
                     ingestProgressPanel
                     actionsSection
                     importSourcesSection
+                    ImportRecordSection()
                     if !TaskCenter.shared.tasks.filter({ $0.type == .ingest }).isEmpty { taskCenterLinkSection }
                     recentActivitiesSection
                 }
