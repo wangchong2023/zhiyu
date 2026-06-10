@@ -26,6 +26,7 @@ extension L10n {
         public static var all: String { Search.tr("search.all") }
         public static var noResults: String { Search.tr("search.noResults") }
         public static var noResultsHint: String { Search.tr("search.noResultsHint") }
+        public static var filterTags: String { Search.tr("search.filterTags") }
 
         /// results计数
         /// - Parameter count: 计数

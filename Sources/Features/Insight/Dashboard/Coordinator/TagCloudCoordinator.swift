@@ -17,6 +17,7 @@ final class TagCloudCoordinator {
     // ── 状态属性 ──
     var tags: [(tag: String, count: Int)] = []
     var selectedTag: String?
+    static let searchThreshold = 30
     var searchText = ""
     var isEditMode = false
     var selectedTagsForBulk: Set<String> = []

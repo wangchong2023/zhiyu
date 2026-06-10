@@ -24,6 +24,7 @@ extension L10n {
         public static var title: String { tr("tag.title") }
         public static var allTags: String { tr("tag.allTags") }
         public static var relatedPagesTitle: String { tr("tag.relatedPagesTitle") }
+        public static func tagCount(_ n: Int) -> String { trf("tag.count", n) }
 
         public enum Action {
             public static var rename: String { Tag.tr("tag.rename") }

@@ -151,16 +151,41 @@ struct TagCloudViewContent: View {
             .padding(.horizontal, DesignSystem.wide)
             .padding(.vertical, DesignSystem.Layout.headerVerticalPadding)
 
-            // 2. 标签云展示区（带标准边框的卡片）
+            // 2. 搜索栏（标签数 > 30 时显示）
+            if coordinator.tags.count > TagCloudCoordinator.searchThreshold {
+                HStack(spacing: DesignSystem.tightPadding) {
+                    Image(systemName: DesignSystem.Icons.search)
+                        .foregroundStyle(.appSecondary)
+                    TextField(L10n.Search.filterTags, text: $coordinator.searchText)
+                        .textFieldStyle(.plain)
+                    if !coordinator.searchText.isEmpty {
+                        Button { coordinator.searchText = "" } label: {
+                            Image(systemName: "xmark.circle.fill").foregroundStyle(.appSecondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.vertical, DesignSystem.tightPadding)
+                .background(Color.appCard.opacity(DesignSystem.glassOpacity))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                .padding(.horizontal, DesignSystem.huge)
+            }
+
+            // 3. 标签云展示区（带标准边框的卡片）
             if coordinator.tags.isEmpty {
                 emptyTagsView
             } else {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                    AppSectionHeader(
-                        title: L10n.Tag.allTags,
-                        icon: DesignSystem.Icons.tag,
-                        iconColor: .appAccent
-                    )
+                    HStack {
+                        AppSectionHeader(
+                            title: L10n.Tag.allTags,
+                            icon: DesignSystem.Icons.tag,
+                            iconColor: .appAccent
+                        )
+                        Spacer()
+                        Text(L10n.Tag.tagCount(coordinator.filteredTags.count))
+                            .font(.caption2).foregroundStyle(.appSecondary)
+                    }
                     .padding(.horizontal, DesignSystem.tiny) // 4
 
                     VStack(spacing: 0) {
