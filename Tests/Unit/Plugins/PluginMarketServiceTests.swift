@@ -76,13 +76,15 @@ final class PluginMarketServiceTests: XCTestCase {
         ]
         """
         
+        // swiftlint:disable:next force_unwrapping
         let responseData = jsonString.data(using: .utf8)!
         
         MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
             return (response, responseData)
         }
-        
+
         XCTAssertTrue(service.availablePlugins.isEmpty)
         
         await service.fetchPlugins()
@@ -97,7 +99,7 @@ final class PluginMarketServiceTests: XCTestCase {
     }
     
     func testFetchPluginsFailure() async throws {
-        MockURLProtocol.requestHandler = { request in
+        MockURLProtocol.requestHandler = { _ in
             throw URLError(.notConnectedToInternet)
         }
 
@@ -117,8 +119,9 @@ final class PluginMarketServiceTests: XCTestCase {
         ]
         """
         MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()
@@ -144,8 +147,9 @@ final class PluginMarketServiceTests: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             // 验证请求 URL 是 registry（不是 mock 服务器）
             XCTAssertTrue(request.url?.absoluteString.contains("community-plugins.json") ?? false)
+            // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()
@@ -162,8 +166,9 @@ final class PluginMarketServiceTests: XCTestCase {
 
     func testEmptyCommunityPluginsList() async throws {
         MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, "[]".data(using: .utf8)!)
+            return (response, Data("[]".utf8))
         }
 
         await service.fetchPlugins()
@@ -178,8 +183,9 @@ final class PluginMarketServiceTests: XCTestCase {
         [{"id":"mock-plugin","version":"1.0","author":"Mock","downloads":"0","rating":0,"icon":"","downloadURL":null,"names":{"en":"Mock"},"descriptions":{"en":""}}]
         """
         MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
-            return (response, jsonString.data(using: .utf8)!)
+            return (response, Data(jsonString.utf8))
         }
 
         await service.fetchPlugins()

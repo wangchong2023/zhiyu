@@ -30,57 +30,36 @@ final class DeepLinkService: ObservableObject {
     /// - Parameter url: 传入的原始 URL 实例
     /// - Returns: 是否为系统可识别且处理成功的路由动作
     func handleURL(_ url: URL) -> Bool {
-        // 限流保护：防止外部意图总线过载，超过 10Hz 直接拒绝 (TC-DEE-06)
         guard IntentRateLimiter.shared.request() else {
             Logger.shared.warning(" [DeepLinkService]" + " Rate limit" + " exceeded! Dropping" + " request: \(url.absoluteString)")
             return false
         }
-        
-        // 关键过程：验证前置协议头是否符合 zhiyu 专属定义
         guard url.scheme == "zhiyu" else { return false }
-        
-        switch url.host {
-        case "page":
-            // 物理页面 ID 快速跳转解析
-            if let idString = url.queryParameters["id"],
-               let id = UUID(uuidString: idString) {
-                pendingDeepLink = .openPage(id: id)
-                return true
-            }
-            // 页面标题快速跳转解析
-            if let title = url.queryParameters["title"] {
-                pendingDeepLink = .openPageByTitle(title)
-                return true
-            }
-            
-        case "create":
-            // 🟢 补全桌面小组件的新建笔记路由：直达新建卡片弹窗
-            pendingDeepLink = .create
-            return true
-            
-        case "search":
-            // 🟢 容错与防灾降级策略：若缺失 q 参数（例如从小组件点击 Search 按钮），
-            // 则将其安全降级解析为空搜索 q=""，拉起搜索面板而不丢弃路由。
-            let query = url.queryParameters["q"] ?? ""
-            pendingDeepLink = .search(query)
-            return true
-            
-        case "ingest":
-            pendingDeepLink = .ingest
-            return true
-            
-        case "graph":
-            pendingDeepLink = .graph
-            return true
-            
-        case "chat":
-            pendingDeepLink = .chat
-            return true
-            
-        default:
-            break
+        return handleKnownHost(url.host, url: url)
+    }
+
+    private func handleKnownHost(_ host: String?, url: URL) -> Bool {
+        switch host {
+        case "page": return handlePageDeepLink(url: url)
+        case "create": pendingDeepLink = .create; return true
+        case "search": pendingDeepLink = .search(url.queryParameters["q"] ?? ""); return true
+        case "ingest": pendingDeepLink = .ingest; return true
+        case "graph": pendingDeepLink = .graph; return true
+        case "chat": pendingDeepLink = .chat; return true
+        default: return false
         }
-        
+    }
+
+    private func handlePageDeepLink(url: URL) -> Bool {
+        if let idString = url.queryParameters["id"],
+           let id = UUID(uuidString: idString) {
+            pendingDeepLink = .openPage(id: id)
+            return true
+        }
+        if let title = url.queryParameters["title"] {
+            pendingDeepLink = .openPageByTitle(title)
+            return true
+        }
         return false
     }
     

@@ -51,8 +51,9 @@ struct SynthesisActionButton: View {
                 }
                 
                 let combinedContent = store.pages.map { "# \($0.title)\n\($0.content)" }.joined(separator: "\n\n---\n\n")
+                let sourceIDs = store.pages.map(\.id)
                 Task {
-                    try? await synthesisStore.performSynthesis(type: type, combinedContent: combinedContent)
+                    try? await synthesisStore.performSynthesis(type: type, combinedContent: combinedContent, sourcePageIDs: sourceIDs)
                 }
             }) {
                 VStack(spacing: DesignSystem.tiny) {
@@ -95,4 +96,3 @@ struct SynthesisActionButton: View {
         }
     }
 }
-

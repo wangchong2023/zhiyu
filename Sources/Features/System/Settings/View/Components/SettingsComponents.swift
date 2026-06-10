@@ -119,7 +119,6 @@ struct InfoRow: View {
     }
 }
 
-
 // MARK: - 插件扩展组件
 
 struct PluginExtensionsSection: View {

@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Watch {
-        public static let t = "Platform"
-
+    public struct Watch: L10nTableEntry {
+        public static let tableName = "Platform"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var capture: String { tr("watch.capture") }
         public static var recents: String { Localized.tr("watch.recents", table: t) }
         public static var dictateHint: String { Localized.tr("watch.dictate.hint", table: t) }

@@ -13,7 +13,7 @@ import SwiftUI
 /// 页面详情视图
 struct PageDetailView: View {
     @State private var coordinator: PageDetailCoordinator
-    var heroNamespace: Namespace.ID? = nil
+    var heroNamespace: Namespace.ID?
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
     @Environment(Router.self) var router
@@ -181,7 +181,7 @@ struct PageDetailView: View {
     
     var body: some View {
         @Bindable var coordinator = coordinator
-        ScrollViewReader { proxy in
+        ScrollViewReader { _ in
             ScrollView {
                 VStack(spacing: 0) {
                     Color.clear.frame(height: 10)
@@ -194,10 +194,14 @@ struct PageDetailView: View {
                         Group {
                             PageDetailContentSection(page: $coordinator.page, isEditing: $coordinator.isEditing, onLinkTap: navigateToPage)
                             
+                            if coordinator.page.sourceURL != nil || coordinator.page.sourceType != nil {
+                                sourceCitationBar
+                            }
+
                             if coordinator.page.title == L10n.Common.Demo.Welcome.title {
                                 welcomeAhaPromptCard
                             }
-                            
+
                             Divider().background(Color.appBorder)
                             
                             PageDetailMetadataSection(page: coordinator.page, backlinks: coordinator.backlinks, recommendations: recommendations)
@@ -287,6 +291,47 @@ struct PageDetailView: View {
             }
         }
         .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
+    }
+
+    private var sourceCitationBar: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
+            Label(L10n.Knowledge.Page.sourceCitation, systemImage: "link")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.appSecondary)
+            HStack(spacing: DesignSystem.medium) {
+                if let url = coordinator.page.sourceURL {
+                    Button(action: {
+                        guard let u = URL(string: url) else { return }
+                        #if os(iOS)
+                        UIApplication.shared.open(u)
+                        #endif
+                    }) {
+                        HStack(spacing: DesignSystem.tiny) {
+                            Image(systemName: "safari")
+                                .font(.caption2)
+                            Text(url)
+                                .font(.caption)
+                                .lineLimit(1)
+                        }
+                        .foregroundStyle(.blue)
+                    }
+                }
+                if let st = coordinator.page.sourceType {
+                    Label("\(L10n.Knowledge.Page.sourceTypeFile): \(st)", systemImage: "doc")
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+                if let fs = coordinator.page.fileSize {
+                    Text(ByteCountFormatter.string(fromByteCount: fs, countStyle: .file))
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+            }
+        }
+        .padding(DesignSystem.medium)
+        .background(Color.appCard.opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .padding(.vertical, DesignSystem.tightPadding)
     }
 
     private func navigateToPage(_ title: String) {

@@ -37,6 +37,10 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
     private var recognitionTask: SFSpeechRecognitionTask?
 #endif
     private var audioEngine: AVAudioEngine?
+    private var audioRecorder: AVAudioRecorder?
+    var currentAudioFileURL: URL? {
+        audioRecorder?.url
+    }
 
     override init() {
         super.init()
@@ -126,7 +130,27 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         startAudioEngine(audioEngine)
         startRecognitionTask(recognizer: recognizer)
         #endif
+
+        // 并行录制原始音频到文件
+        startAudioRecorder()
 #endif
+    }
+
+    private func startAudioRecorder() {
+        let tempDir = FileManager.default.temporaryDirectory
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmss"
+        let ts = formatter.string(from: Date())
+        let fileName = "voice_\(ts).m4a"
+        let fileURL = tempDir.appendingPathComponent(fileName)
+        let settings: [String: Any] = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        audioRecorder = try? AVAudioRecorder(url: fileURL, settings: settings)
+        audioRecorder?.record()
     }
 
     private func setupRecognitionRequest() {
@@ -199,6 +223,7 @@ final class iOSSpeechService: NSObject, SpeechServiceProtocol {
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
 #endif
+        audioRecorder?.stop()
         isRecording = false
         audioLevel = 0
         audioLevelHistory = Array(repeating: 0, count: 20)

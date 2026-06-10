@@ -9,7 +9,7 @@
 //  核心职责：导入原始内容留存数据模型
 
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 /// 导入原始内容留存记录
 public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersistableRecord, Sendable {
@@ -26,6 +26,7 @@ public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersi
     public var pageID: String?   // 关联 KnowledgePage UUID
     public var vaultID: String?  // 关联 Vault UUID
     public var taskID: String?   // 关联 GlobalTask UUID
+    public var tags: String?     // AI 分类标签，逗号分隔
     public var createdAt: Date
     public var completedAt: Date?
 
@@ -38,6 +39,7 @@ public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersi
         case pageID = "page_id"
         case vaultID = "vault_id"
         case taskID = "task_id"
+        case tags
         case createdAt = "created_at"
         case completedAt = "completed_at"
     }
@@ -54,6 +56,7 @@ public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersi
         pageID: String? = nil,
         vaultID: String? = nil,
         taskID: String? = nil,
+        tags: String? = nil,
         createdAt: Date = Date(),
         completedAt: Date? = nil
     ) {
@@ -68,6 +71,7 @@ public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersi
         self.pageID = pageID
         self.vaultID = vaultID
         self.taskID = taskID
+        self.tags = tags
         self.createdAt = createdAt
         self.completedAt = completedAt
     }
@@ -83,12 +87,12 @@ public enum ImportRecordStatus {
 
 /// 导入分类枚举
 public enum ImportCategory: String, CaseIterable, Sendable {
-    case link = "link"
-    case file = "file"
-    case manual = "manual"
-    case ocr = "ocr"
-    case clipboard = "clipboard"
-    case voice = "voice"
+    case link
+    case file
+    case manual
+    case ocr
+    case clipboard
+    case voice
 
     public var displayName: String {
         switch self {

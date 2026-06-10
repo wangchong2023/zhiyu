@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public struct Vault {
-        public static let t = "Knowledge"
-
+    public struct Vault: L10nTableEntry {
+        public static let tableName = "Knowledge"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         public static var homeTitle: String { tr("vault.homeTitle") }
         public static var label: String { tr("vault.label") }
         public static var backToHub: String { tr("vault.backToHub") }

@@ -240,9 +240,9 @@ final class iCloudSyncCoordinator {
                 let formatters = [
                     ISO8601DateFormatter(),
                     {
-                        let f = DateFormatter()
-                        f.dateFormat = ""
-                        f.locale = Locale(identifier: "en_US_POSIX")
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = ""
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
                         return f
                     }()
                 ]

@@ -56,7 +56,7 @@ final class IngestTests: KnowledgeBaseUITests {
         safeTap(manualCard)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
-        // 增量防灾校验：在标题与正文完全为空的初始状态下，手动的“导入”确认按钮必须处于 Disabled 禁用状态，杜绝空数据摄入
+        // 增量防灾校验：在标题与正文完全为空的初始状态下，手动的"导入"确认按钮必须处于 Disabled 禁用状态，杜绝空数据摄入
         var confirmButton = app.buttons["导入"]
         if !confirmButton.exists {
             confirmButton = app.buttons["Import"]
@@ -202,7 +202,7 @@ final class IngestTests: KnowledgeBaseUITests {
         XCTAssertTrue(urlButton.isHittable, "网页链接导入按钮存在但不可点击")
         safeTap(urlButton)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-        
+
         // 智能模糊检验 URL 导入弹窗
         let urlImportTitle = app.navigationBars["网页导入"].exists
             || app.navigationBars["URL Import"].exists
@@ -210,7 +210,7 @@ final class IngestTests: KnowledgeBaseUITests {
             || app.buttons["取消"].exists
             || app.buttons["Cancel"].exists
         XCTAssertTrue(urlImportTitle, "网页导入 Sheet 应该成功展开")
-        
+
         // 点击取消释放交互链路树
         let cancelButton = app.buttons["取消"]
         if !cancelButton.exists {
@@ -233,53 +233,65 @@ final class IngestTests: KnowledgeBaseUITests {
         }
         safeTap(urlButton)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-        
-        // 找到 URL 输入框（在 URL 导入弹窗内）
-        let urlTextField = app.textFields["ingest.url.inputField"].exists ? app.textFields["ingest.url.inputField"] : app.textFields.firstMatch
-        if urlTextField.exists {
-            safeTap(urlTextField)
-            // 键盘模拟输入损坏/非法的 URL 链接以触发防卫
-            urlTextField.typeText("invalid_scheme://bad_url")
-            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
-            
-            // 点击“导入”或“确定”提交按钮
-            var submitBtn = app.buttons["导入"]
-            if !submitBtn.exists {
-                submitBtn = app.buttons["Import"]
-            }
-            if !submitBtn.exists {
-                submitBtn = app.buttons["确认"]
-            }
-            if !submitBtn.exists {
-                submitBtn = app.buttons["Confirm"]
-            }
-            
-            if submitBtn.exists && submitBtn.isEnabled {
-                safeTap(submitBtn)
-                // 等待过渡骨架屏及防御逻辑生效
-                try? await Task.sleep(nanoseconds: UInt64(2.5 * 1_000_000_000))
-                
-                // 验证没有闪退，并且在屏幕上优雅地弹出了警告 Alert 或者是错误反馈行
-                let errorFeedback = app.alerts.firstMatch.exists 
-                    || app.staticTexts.matching(NSPredicate(format: "label CONTAINS '格式错误' OR label CONTAINS '非法' OR label CONTAINS 'Error' OR label CONTAINS 'Invalid'")).firstMatch.exists
-                XCTAssertTrue(errorFeedback, "网页导入非法 URL 应当有优雅 of 错误反馈，且应用不崩溃")
-                
-                // 如果有 Alert，点击“确定”或“OK”关闭它以释放焦点
-                let alert = app.alerts.firstMatch
-                if alert.exists {
-                    var okBtn = alert.buttons["确定"]
-                    if !okBtn.exists { okBtn = alert.buttons["OK"] }
-                    if !okBtn.exists { okBtn = alert.buttons.element(boundBy: 0) }
-                    if okBtn.exists { safeTap(okBtn) }
-                }
-            }
+
+        let urlTextField = resolveURLInputField()
+        guard urlTextField.exists else {
+            await dismissURLSheet()
+            return
         }
-        
-        // 最后兜底：如还在弹窗内，点击取消按钮返回，保持测试链路的绝对干净
+        safeTap(urlTextField)
+        urlTextField.typeText("invalid_scheme://bad_url")
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+
+        await submitInvalidURL()
+        await dismissURLSheet()
+    }
+
+    private func resolveURLInputField() -> XCUIElement {
+        if app.textFields["ingest.url.inputField"].exists {
+            return app.textFields["ingest.url.inputField"]
+        }
+        return app.textFields.firstMatch
+    }
+
+    private func submitInvalidURL() async {
+        let submitBtn = findSubmitButton()
+        guard submitBtn.exists && submitBtn.isEnabled else { return }
+        safeTap(submitBtn)
+        try? await Task.sleep(nanoseconds: UInt64(2.5 * 1_000_000_000))
+
+        let hasErrorFeedback = app.alerts.firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS '格式错误' OR label CONTAINS '非法' OR label CONTAINS 'Error' OR label CONTAINS 'Invalid'")).firstMatch.exists
+        XCTAssertTrue(hasErrorFeedback, "网页导入非法 URL 应当有优雅 of 错误反馈，且应用不崩溃")
+
+        dismissAlertIfPresent()
+    }
+
+    private func findSubmitButton() -> XCUIElement {
+        let labels = ["导入", "Import", "确认", "Confirm"]
+        for label in labels {
+            let btn = app.buttons[label]
+            if btn.exists { return btn }
+        }
+        return app.buttons.firstMatch
+    }
+
+    private func dismissAlertIfPresent() {
+        let alert = app.alerts.firstMatch
+        guard alert.exists else { return }
+        let okLabels = ["确定", "OK"]
+        for label in okLabels {
+            let btn = alert.buttons[label]
+            if btn.exists { safeTap(btn); return }
+        }
+        let firstBtn = alert.buttons.element(boundBy: 0)
+        if firstBtn.exists { safeTap(firstBtn) }
+    }
+
+    private func dismissURLSheet() async {
         let cancelButton = app.buttons["取消"].exists ? app.buttons["取消"] : app.buttons["Cancel"]
-        if cancelButton.exists && cancelButton.isHittable {
-            safeTap(cancelButton)
-            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-        }
+        guard cancelButton.exists && cancelButton.isHittable else { return }
+        safeTap(cancelButton)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }

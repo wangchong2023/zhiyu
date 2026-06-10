@@ -9,7 +9,7 @@
 //  核心职责：验证 ImportRecordRepository CRUD 类型安全操作
 
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 @MainActor
@@ -21,7 +21,7 @@ final class ImportRecordRepositoryTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         dbQueue = try DatabaseQueue()
-        repo = SQLiteImportRecordRepository(dbWriter: dbQueue)
+        repo = SQLiteImportRecordRepository()
 
         var migrator = DatabaseMigrator()
         migrator.registerMigration("v7_test") { db in
@@ -37,6 +37,7 @@ final class ImportRecordRepositoryTests: XCTestCase {
                 t.column(ImportRecord.CodingKeys.pageID.name, .text)
                 t.column(ImportRecord.CodingKeys.vaultID.name, .text)
                 t.column(ImportRecord.CodingKeys.taskID.name, .text)
+                t.column(ImportRecord.CodingKeys.tags.name, .text)
                 t.column(ImportRecord.CodingKeys.createdAt.name, .datetime).notNull()
                 t.column(ImportRecord.CodingKeys.completedAt.name, .datetime)
             }

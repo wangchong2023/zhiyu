@@ -75,7 +75,7 @@ struct DiscoveredRoomRow: View {
 struct ConnectedPeerRow: View {
     let peer: CollabUser
     var showRole: Bool = false
-    var roleDisplayName: String? = nil
+    var roleDisplayName: String?
 
     var body: some View {
         HStack {

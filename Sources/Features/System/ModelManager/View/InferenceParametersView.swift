@@ -67,14 +67,15 @@ public struct InferenceParametersView: View {
             }
         }
 
-        var parameters: (temperature: Double, topP: Double, topK: Int, maxTokens: Int) {
+        struct InferenceParams { var temperature: Double; var topP: Double; var topK: Int; var maxTokens: Int }
+        var parameters: InferenceParams {
             switch self {
             case .creative:
-                return (1.2, 0.95, 50, 2048)
+                return InferenceParams(temperature: 1.2, topP: 0.95, topK: 50, maxTokens: 2048)
             case .balanced:
-                return (0.7, 0.9, 40, 2048)
+                return InferenceParams(temperature: 0.7, topP: 0.9, topK: 40, maxTokens: 2048)
             case .precise:
-                return (0.3, 0.85, 20, 1024)
+                return InferenceParams(temperature: 0.3, topP: 0.85, topK: 20, maxTokens: 1024)
             }
         }
     }

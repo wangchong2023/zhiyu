@@ -10,7 +10,7 @@
 //
 import XCTest
 import SwiftUI
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 // MARK: - 多轮对话会话缓存 (ChatHistoryStore) 单元测试
@@ -140,7 +140,6 @@ final class LLMConfigStoreTests: XCTestCase {
         #endif
     }
 
-    
     /// 验证所有 AI 服务提供商的模型图标与文案配置无误
     func testAllProviderDefaults() {
         for provider in LLMProvider.allCases {

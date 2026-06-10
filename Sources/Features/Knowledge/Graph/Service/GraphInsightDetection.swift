@@ -25,11 +25,12 @@ extension GraphLayoutProcessor {
 
     /// 综合检测所有类型的洞察：意外关联、孤立页面、稀疏社区、桥接节点
     /// - Returns: (surprisingConnections, orphans, sparseCommunity, bridges)
+    struct InsightResults { var surprising: [UUID]; var orphans: [UUID]; var sparse: [UUID]; var bridges: [UUID] }
     static func detectInsights(
         nodes: [GraphNode],
         edges: [GraphEdge],
         pages: [KnowledgePage]
-    ) -> (surprising: [UUID], orphans: [UUID], sparse: [UUID], bridges: [UUID]) {
+    ) -> InsightResults {
         // 性能优化：建立节点查找索引
         let nodeMap = Dictionary(uniqueKeysWithValues: nodes.map { ($0.id, $0) })
 
@@ -45,7 +46,7 @@ extension GraphLayoutProcessor {
         // 4. 意外关联检测（跨社区且类型不同的关联）
         let surprising = detectSurprisingConnections(edges: edges, nodeMap: nodeMap)
 
-        return (surprising, orphans, sparse, bridges)
+        return InsightResults(surprising: surprising, orphans: orphans, sparse: sparse, bridges: bridges)
     }
 
     // MARK: - 私有检测组件

@@ -12,20 +12,9 @@
 import Foundation
 
 extension L10n {
-    public enum ModelManager {
-        public static let t = "ModelManager"
-
-        /// 本地化翻译
-        /// - Parameter key: key
-        /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
-        /// 本地化格式化翻译
-        /// - Parameter key: key
-        /// - Parameter args: args
-        /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
+    public enum ModelManager: L10nTableEntry {
+        public static let tableName = "ModelManager"
+        public static var t: String { tableName }
         // MARK: - Tab 标题
 
         public static var storeTitle: String {
@@ -346,7 +335,6 @@ extension L10n {
             public static var runtimeStatus: String {
                 ModelManager.tr("model_manager.routing.runtimeStatus")
             }
-
 
             public static var cloudModel: String {
                 ModelManager.tr("model_manager.routing.cloud_model")

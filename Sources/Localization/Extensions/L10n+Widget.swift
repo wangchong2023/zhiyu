@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Widget {
-        public static let t = "Platform"
-
+    public struct Widget: L10nTableEntry {
+        public static let tableName = "Platform"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { Localized.tr("widget.title", table: t) }
         public static var pages: String { Localized.tr("widget.pages", table: t) }
         public static var words: String { Localized.tr("widget.words", table: t) }

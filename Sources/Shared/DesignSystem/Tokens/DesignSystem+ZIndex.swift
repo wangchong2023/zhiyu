@@ -15,9 +15,9 @@ extension DesignSystem {
 
     // MARK: - 13.5 全局层级 (ZIndex)
     public enum ZIndex {
-        public static let lockOverlay: Double = ZIndexTokens.lockOverlay
-        public static let medalPopup: Double = ZIndexTokens.medalPopup
-        public static let coachMark: Double = ZIndexTokens.coachMark
-        public static let sidebarOverlay: Double = ZIndexTokens.sidebarOverlay
+        public static let lockOverlay: Double = 100
+        public static let medalPopup: Double = 200
+        public static let coachMark: Double = 300
+        public static let sidebarOverlay: Double = 1000
     }
 }

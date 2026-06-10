@@ -126,7 +126,6 @@ final class SearchPerformanceTests: XCTestCase {
         XCTAssertLessThan(averageMs, 200.0, "FTS5 平均全文检索性能超出预期阈值 200ms（内存 Mock DB）")
     }
 
-
     /// 测试多笔记本（Vault）物理热插拔和架构迁移重挂载的平均延迟性能
     func testVaultSwitchingPerformance() async throws {
         let vault1ID = UUID()

@@ -18,7 +18,7 @@ import AppKit
 /// 标签管理的顶层视图容器，负责承载主内容
 struct TagCloudView: View {
     /// 初始选中的标签（由外部跳转传入）
-    var initialTag: String? = nil
+    var initialTag: String?
     
     var body: some View {
         TagCloudViewContent(initialTag: initialTag)
@@ -104,7 +104,7 @@ struct TagCloudViewContent: View {
             .alert(L10n.Tag.Management.addNew, isPresented: $coordinator.showAddTagDialog) {
                 TextField(L10n.Tag.Management.inputName, text: $coordinator.addTagName)
                 Button(L10n.Common.cancel, role: .cancel) { coordinator.addTagName = "" }
-                Button(L10n.Common.create) {
+                Button(L10n.Common.Misc.create) {
                     coordinator.performAddTag()
                 }
             } message: {
@@ -116,7 +116,7 @@ struct TagCloudViewContent: View {
                 isPresented: $showBulkDeleteConfirm,
                 titleVisibility: .automatic
             ) {
-                Button(L10n.Common.deleteAll, role: .destructive) {
+                Button(L10n.Common.Misc.deleteAll, role: .destructive) {
                     coordinator.performBulkDelete()
                 }
                 Button(L10n.Common.cancel, role: .cancel) { }
@@ -185,7 +185,7 @@ struct TagCloudViewContent: View {
                         iconColor: .appSource
                     )
                     Spacer()
-                    if let _ = coordinator.selectedTag, !coordinator.isEditMode {
+                    if coordinator.selectedTag != nil, !coordinator.isEditMode {
                         Text(L10n.Tag.Action.tagPages(coordinator.filteredPages.count))
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
@@ -205,7 +205,6 @@ struct TagCloudViewContent: View {
         }
     }
 
-
     // MARK: - 子视图组件
 
     private var bulkActionBar: some View {
@@ -215,7 +214,7 @@ struct TagCloudViewContent: View {
                 .foregroundStyle(.white)
             Spacer()
             Button(role: .destructive, action: { showBulkDeleteConfirm = true }) {
-                Text(L10n.Common.bulkDelete)
+                Text(L10n.Common.Misc.bulkDelete)
                     .padding(.horizontal, DesignSystem.large)
                     .padding(.vertical, DesignSystem.small - DesignSystem.atomic) // 6
                     .background(Color.red)
@@ -416,5 +415,3 @@ struct BlurView: View {
     }
 }
 #endif
-
-

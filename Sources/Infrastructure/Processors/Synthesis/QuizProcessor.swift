@@ -70,16 +70,16 @@ enum QuizProcessor {
         guard let quiz = try? JSONDecoder().decode(QuizJSON.self, from: data) else { return nil }
 
         var md = "# \(quiz.title ?? L10n.Quiz.title)\n\n"
-        for (index, q) in quiz.questions.enumerated() {
-            md += "## \(index + 1). \(q.text)\n\n"
-            for opt in q.options {
+        for (index, question) in quiz.questions.enumerated() {
+            md += "## \(index + 1). \(question.text)\n\n"
+            for opt in question.options {
                 md += "* \(opt)\n"
             }
             md += "\n<details>\n<summary>\(L10n.Quiz.showAnswer)</summary>\n\n"
-            if let ans = q.answer {
+            if let ans = question.answer {
                 md += "**\(L10n.Quiz.correctAnswer):** \(ans.stringValue)\n\n"
             }
-            if let exp = q.explanation {
+            if let exp = question.explanation {
                 md += "**\(L10n.Quiz.explanation):** \(exp)\n"
             }
             md += "\n</details>\n\n"

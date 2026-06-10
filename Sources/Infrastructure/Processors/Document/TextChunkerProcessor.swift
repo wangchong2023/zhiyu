@@ -58,101 +58,84 @@ struct TextChunkerProcessor: Sendable {
     /// - Returns: 列表
     func split(text: String, config: Config = TextChunkerProcessor.default) -> [Chunk] {
         guard !text.isEmpty else { return [] }
-        
-        var chunks: [Chunk] = []
         let lines = text.components(separatedBy: .newlines)
-        
+        var state = ChunkingState()
+
+        for line in lines {
+            let shouldTurnOffCodeBlock = updateCodeBlockState(line: line, state: &state)
+            if !state.isInCodeBlock && line.hasPrefix("#") {
+                flushCurrentChunk(lines: lines, state: &state, text: text)
+                updateHeaderTracking(line: line, state: &state)
+            }
+            let lineWithNewline = line + "\n"
+            if (state.currentChunkText.count + lineWithNewline.count) > config.chunkSize && !state.isInCodeBlock {
+                flushChunkOnOverflow(lineWithNewline: lineWithNewline, config: config, state: &state)
+            } else {
+                state.currentChunkText += lineWithNewline
+            }
+            if shouldTurnOffCodeBlock {
+                state.isInCodeBlock = false
+            }
+        }
+
+        let trimmedLast = state.currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedLast.isEmpty {
+            state.chunks.append(Chunk(text: trimmedLast, startIndex: state.currentStartIndex, anchorPath: state.currentAnchor, breadcrumbPath: state.currentBreadcrumb, isCode: state.currentChunkText.contains("```")))
+        }
+        return state.chunks
+    }
+
+    private struct ChunkingState {
+        var chunks: [Chunk] = []
         var currentChunkText = ""
         var currentAnchor = "Root"
         var currentBreadcrumb = "Root"
-        var anchorStack: [String] = [] // 标题层级栈，保存当前所处的大纲树路径
+        var anchorStack: [String] = []
         var currentStartIndex = 0
         var isInCodeBlock = false
-        
-        for line in lines {
-            let isCodeFlag = line.trimmingCharacters(in: .whitespaces).hasPrefix("```")
-            var shouldTurnOffCodeBlock = false
-            
-            // 1. 状态追踪：代码块保护前置判定
-            if isCodeFlag {
-                if isInCodeBlock {
-                    shouldTurnOffCodeBlock = true
-                } else {
-                    isInCodeBlock = true
-                }
-            }
-            
-            // 2. 标题路径追踪 (Anchor Tracking)与天然物理切分
-            if !isInCodeBlock && line.hasPrefix("#") {
-                let trimmedPrev = currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmedPrev.isEmpty {
-                    chunks.append(Chunk(
-                        text: trimmedPrev,
-                        startIndex: currentStartIndex,
-                        anchorPath: currentAnchor,
-                        breadcrumbPath: currentBreadcrumb,
-                        isCode: currentChunkText.contains("```")
-                    ))
-                    currentStartIndex += currentChunkText.count
-                    currentChunkText = ""
-                }
-                
-                // 解析当前的标题级别（计算 # 的个数）
-                let headerLevel = line.prefix(while: { $0 == "#" }).count
-                let headerText = line.dropFirst(headerLevel).trimmingCharacters(in: .whitespaces)
-                
-                if headerLevel > 0 {
-                    let keepCount = headerLevel - 1
-                    if anchorStack.count > keepCount {
-                        anchorStack = Array(anchorStack.prefix(keepCount))
-                    }
-                    anchorStack.append(headerText)
-                    currentBreadcrumb = anchorStack.joined(separator: " > ")
-                    currentAnchor = headerText
-                } else {
-                    currentBreadcrumb = headerText
-                    currentAnchor = headerText
-                }
-            }
-            
-            let lineWithNewline = line + "\n"
-            
-            // 3. 贪婪聚合与重叠判定
-            if (currentChunkText.count + lineWithNewline.count) > config.chunkSize && !isInCodeBlock {
-                chunks.append(Chunk(
-                    text: currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines),
-                    startIndex: currentStartIndex,
-                    anchorPath: currentAnchor,
-                    breadcrumbPath: currentBreadcrumb,
-                    isCode: currentChunkText.contains("```")
-                ))
-                
-                let overlapIndex = currentChunkText.index(currentChunkText.endIndex, offsetBy: -config.chunkOverlap, default: currentChunkText.startIndex)
-                currentChunkText = String(currentChunkText[overlapIndex...]) + lineWithNewline
-                currentStartIndex += (currentChunkText.count - config.chunkOverlap)
-            } else {
-                currentChunkText += lineWithNewline
-            }
-            
-            // 4. 代码块保护后置判定
-            if shouldTurnOffCodeBlock {
-                isInCodeBlock = false
-            }
-        }
-        
-        // 补全最后一个块
-        let trimmedLast = currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmedLast.isEmpty {
-            chunks.append(Chunk(
-                text: trimmedLast,
-                startIndex: currentStartIndex,
-                anchorPath: currentAnchor,
-                breadcrumbPath: currentBreadcrumb,
-                isCode: currentChunkText.contains("```")
-            ))
-        }
+    }
 
-        return chunks
+    private func updateCodeBlockState(line: String, state: inout ChunkingState) -> Bool {
+        let isCodeFlag = line.trimmingCharacters(in: .whitespaces).hasPrefix("```")
+        guard isCodeFlag else { return false }
+        if state.isInCodeBlock {
+            return true
+        } else {
+            state.isInCodeBlock = true
+            return false
+        }
+    }
+
+    private func flushCurrentChunk(lines: [String], state: inout ChunkingState, text: String) {
+        let trimmedPrev = state.currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedPrev.isEmpty else { return }
+        state.chunks.append(Chunk(text: trimmedPrev, startIndex: state.currentStartIndex, anchorPath: state.currentAnchor, breadcrumbPath: state.currentBreadcrumb, isCode: state.currentChunkText.contains("```")))
+        state.currentStartIndex += state.currentChunkText.count
+        state.currentChunkText = ""
+    }
+
+    private func updateHeaderTracking(line: String, state: inout ChunkingState) {
+        let headerLevel = line.prefix(while: { $0 == "#" }).count
+        let headerText = line.dropFirst(headerLevel).trimmingCharacters(in: .whitespaces)
+        guard headerLevel > 0 else {
+            state.currentBreadcrumb = headerText
+            state.currentAnchor = headerText
+            return
+        }
+        let keepCount = headerLevel - 1
+        if state.anchorStack.count > keepCount {
+            state.anchorStack = Array(state.anchorStack.prefix(keepCount))
+        }
+        state.anchorStack.append(headerText)
+        state.currentBreadcrumb = state.anchorStack.joined(separator: " > ")
+        state.currentAnchor = headerText
+    }
+
+    private func flushChunkOnOverflow(lineWithNewline: String, config: Config, state: inout ChunkingState) {
+        state.chunks.append(Chunk(text: state.currentChunkText.trimmingCharacters(in: .whitespacesAndNewlines), startIndex: state.currentStartIndex, anchorPath: state.currentAnchor, breadcrumbPath: state.currentBreadcrumb, isCode: state.currentChunkText.contains("```")))
+        let overlapIndex = state.currentChunkText.index(state.currentChunkText.endIndex, offsetBy: -config.chunkOverlap, default: state.currentChunkText.startIndex)
+        state.currentChunkText = String(state.currentChunkText[overlapIndex...]) + lineWithNewline
+        state.currentStartIndex += (state.currentChunkText.count - config.chunkOverlap)
     }
 }
 

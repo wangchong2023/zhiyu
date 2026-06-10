@@ -10,7 +10,6 @@
 //
 import SwiftUI
 
-
 // MARK: - Ingest Hero Section
 /// 导入模块顶部宣传区域组件
 /// 负责展示导入功能的品牌视觉元素及核心价值主张
@@ -36,4 +35,3 @@ struct IngestHeroSection: View {
         .padding(.vertical, DesignSystem.tightPadding)
     }
 }
-

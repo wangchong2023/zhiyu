@@ -235,7 +235,8 @@ final class IngestStore {
     }
 
     /// 处理文件导入流程（含提取与安全校验）
-    func handleFileUpload(at url: URL) async throws -> (title: String, content: String, size: Int64, type: String) {
+    struct FileUploadResult { var title: String; var content: String; var size: Int64; var type: String }
+    func handleFileUpload(at url: URL) async throws -> FileUploadResult {
         guard url.startAccessingSecurityScopedResource() else {
             throw AppError.ingest("Permission denied", code: 1)
         }
@@ -264,6 +265,6 @@ final class IngestStore {
         let fileSize = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize).map { Int64($0) } ?? 0
         let fileType = url.pathExtension.lowercased()
 
-        return (extracted.title, extracted.content, fileSize, fileType)
+        return FileUploadResult(title: extracted.title, content: extracted.content, size: fileSize, type: fileType)
     }
 }

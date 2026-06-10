@@ -114,7 +114,7 @@ struct NotebookListRow: View {
     
     /// 获取根据笔记本 ID 哈希值计算出来的兜底默认 Emoji 图标，收拢至强类型设计令牌
     private var defaultIcon: String {
-        let index = abs(notebook.id.hashValue) % IconTokens.options.count
-        return IconTokens.options[index]
+        let index = abs(notebook.id.hashValue) % DesignSystem.Icons.Notebook.options.count
+        return DesignSystem.Icons.Notebook.options[index]
     }
 }

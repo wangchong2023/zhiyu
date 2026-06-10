@@ -15,7 +15,7 @@ import PhotosUI
 #if os(watchOS)
 @MainActor
 struct OCRScanView: View {
-    var onFinish: ((String, String) -> Void)?
+    var onFinish: ((String, String, Data?) -> Void)?
     
     var body: some View {
         Text(L10n.Common.Status.simulatorNotSupported)
@@ -32,15 +32,16 @@ struct OCRScanView: View {
     @State private var showResult = false
     @State private var targetTitle = ""
     @State private var targetType: PageType = .source
-    @State private var targetCustomIcon: String? = nil
+    @State private var targetCustomIcon: String?
     @State private var targetTags: [String] = ["OCR", L10n.Ingest.OCR.scanTag]
     @State private var showIconPicker = false
     @State private var showOCRError = false
     @State private var ocrErrorMessage = ""
     @State private var showAddTagInput = false
     @State private var newTagText = ""
+    @State private var recognitionTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
-    var onFinish: ((String, String) -> Void)?
+    var onFinish: ((String, String, Data?) -> Void)?
     
     var body: some View {
         NavigationStack {
@@ -66,7 +67,8 @@ struct OCRScanView: View {
                     // Save to 知识库 (Now just finishes and returns data)
                     if !recognizedText.isEmpty {
                         Button(action: {
-                            onFinish?(targetTitle, recognizedText)
+                            let imageData = selectedImage?.jpegData(compressionQuality: 0.9)
+                    onFinish?(targetTitle, recognizedText, imageData)
                             dismiss()
                         }) {
                             HStack {
@@ -137,10 +139,12 @@ struct OCRScanView: View {
     private func startRecognition() {
         guard let image = selectedImage else { return }
         isProcessing = true
-        
-        Task {
+        recognitionTask?.cancel()
+
+        recognitionTask = Task {
             do {
                 let text = try await ingestStore.recognizeText(from: image)
+                try Task.checkCancellation()
                 await MainActor.run {
                     recognizedText = text
                     isProcessing = false
@@ -148,6 +152,8 @@ struct OCRScanView: View {
                         targetTitle = String(text.prefix(20)).trimmingCharacters(in: .whitespacesAndNewlines)
                     }
                 }
+            } catch is CancellationError {
+                await MainActor.run { isProcessing = false }
             } catch {
                 await MainActor.run {
                     ocrErrorMessage = error.localizedDescription
@@ -163,7 +169,8 @@ struct OCRScanView: View {
     }
     
     private func saveToApp() {
-        onFinish?(targetTitle, recognizedText)
+        let imageData = selectedImage?.jpegData(compressionQuality: 0.9)
+        onFinish?(targetTitle, recognizedText, imageData)
         dismiss()
     }
     

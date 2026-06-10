@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public enum ICloud {
-        public static let t = "Ingest"
-
+    public enum ICloud: L10nTableEntry {
+        public static let tableName = "Ingest"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// /// - Parameter key: key
         /// /// - Parameter args: args
         /// /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         public static var pushToCloud: String { tr("icloud.push") }
         public static var pullFromCloud: String { tr("icloud.pull") }
         public static var bidirectionalSync: String { tr("icloud.sync") }

@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Shortcuts {
-        public static let t = "System"
-
+    public struct Shortcuts: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args

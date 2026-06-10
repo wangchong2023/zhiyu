@@ -61,72 +61,60 @@ public actor NetworkClient {
         requiresAuth: Bool,
         isRetry: Bool
     ) async throws -> T {
-        
-        // 1. 如果正在刷新，挂起当前请求等待新 token
-        if requiresAuth && isRefreshing && !isRetry {
-            if let refreshTask = self.refreshTask {
-                _ = try await refreshTask.value
-            }
-        }
-        
-        guard let url = URL(string: AppConfig.backendBaseURL + path) else {
-            throw NetworkError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
-        
-        // 2. 注入 Access Token
-        if requiresAuth {
-            if let token = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
-                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            }
-        }
-        
-        if let body = body {
-            request.httpBody = try encoder.encode(body)
-        }
-        
-        // 3. 执行网络请求
+        await waitForTokenRefreshIfNeeded(requiresAuth: requiresAuth, isRetry: isRetry)
+        var request = try buildURLRequest(path: path, method: method, body: body, requiresAuth: requiresAuth)
         let (data, response) = try await session.data(for: request)
-        
-        // HTTP 层校验：确保是标准 HTTP 响应（业务层通过 apiResponse.code 判断成功与否）
         guard response is HTTPURLResponse else {
             throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
         }
-        
-        // 4. 解析全局 JSON
-        let apiResponse: ApiResponse<T>
+        let apiResponse: ApiResponse<T> = try decodeResponse(data)
+        if apiResponse.isSuccess {
+            return try extractPayload(apiResponse)
+        }
+        if apiResponse.code == 40101 && requiresAuth && !isRetry {
+            return try await handleTokenRefreshAndRetry(path: path, method: method, body: body)
+        }
+        throw NetworkError.serverError(apiResponse.code, apiResponse.message)
+    }
+
+    private func waitForTokenRefreshIfNeeded(requiresAuth: Bool, isRetry: Bool) async {
+        guard requiresAuth && isRefreshing && !isRetry else { return }
+        if let refreshTask = self.refreshTask {
+            _ = try? await refreshTask.value
+        }
+    }
+
+    private func buildURLRequest<Body: Encodable>(path: String, method: String, body: Body?, requiresAuth: Bool) throws -> URLRequest {
+        guard let url = URL(string: AppConfig.backendBaseURL + path) else {
+            throw NetworkError.invalidURL
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
+        if requiresAuth, let token = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        if let body = body {
+            request.httpBody = try encoder.encode(body)
+        }
+        return request
+    }
+
+    private func decodeResponse<T: Codable>(_ data: Data) throws -> ApiResponse<T> {
         do {
-            apiResponse = try decoder.decode(ApiResponse<T>.self, from: data)
+            return try decoder.decode(ApiResponse<T>.self, from: data)
         } catch {
             throw NetworkError.decodeFailed(error)
         }
-        
-        // 5. 判断业务响应与 401 拦截
-        if apiResponse.isSuccess {
-            if let payload = apiResponse.data {
-                return payload
-            } else if T.self == EmptyData.self {
-                // 如果泛型是 EmptyData 且 data 为空，强转通过
-                // swiftlint:disable:next force_cast
-                return EmptyData() as! T
-            }
-            throw NetworkError.unexpected(L10n.Network.missingDataPayload)
+    }
+
+    private func extractPayload<T: Codable>(_ apiResponse: ApiResponse<T>) throws -> T {
+        if let payload = apiResponse.data { return payload }
+        if T.self == EmptyData.self {
+            // swiftlint:disable:next force_cast
+            return EmptyData() as! T
         }
-        
-        // 6. Token 过期处理 (后端业务码 40101)
-        if apiResponse.code == 40101 && requiresAuth && !isRetry {
-            return try await handleTokenRefreshAndRetry(
-                path: path,
-                method: method,
-                body: body
-            )
-        }
-        
-        // 7. 其他统一报错
-        throw NetworkError.serverError(apiResponse.code, apiResponse.message)
+        throw NetworkError.unexpected(L10n.Network.missingDataPayload)
     }
     
     // MARK: - 无感刷新逻辑 (Refresh Token)

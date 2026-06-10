@@ -192,6 +192,7 @@ final class WatchSyncTests: XCTestCase {
         let originalSize = 1024 * 1024 // 1MB
         var randomBytes = Data(count: originalSize)
         _ = randomBytes.withUnsafeMutableBytes {
+            // swiftlint:disable:next force_unwrapping
             SecRandomCopyBytes(kSecRandomDefault, originalSize, $0.baseAddress!)
         }
         
@@ -242,6 +243,7 @@ final class WatchSyncTests: XCTestCase {
     /// 验证规范中的 WatchSyncPayload 能够与 WCSession 的 [String: Any] 字典载荷进行无损互转，保证向下兼容
     func testPayloadCodableCompatibility() throws {
         let originalPayload = TestWatchSyncPayload(
+            // swiftlint:disable:next force_unwrapping
             id: UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!,
             type: .quickCapture,
             content: "这是一条测试内容",
@@ -254,22 +256,23 @@ final class WatchSyncTests: XCTestCase {
         let jsonData = try encoder.encode(originalPayload)
         
         // 2. 将 JSON 转化为 WCSession 能接受的字典
-        let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
-        XCTAssertNotNil(dictionary)
+        guard let dictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
+            XCTFail("字典反序列化失败"); return
+        }
         
         // 3. 校验关键字段在字典中存在且值正确
-        XCTAssertEqual(dictionary?["id"] as? String, "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
-        XCTAssertEqual(dictionary?["type"] as? String, "quickCapture")
-        XCTAssertEqual(dictionary?["content"] as? String, "这是一条测试内容")
+        XCTAssertEqual(dictionary["id"] as? String, "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")
+        XCTAssertEqual(dictionary["type"] as? String, "quickCapture")
+        XCTAssertEqual(dictionary["content"] as? String, "这是一条测试内容")
         
-        if let metadata = dictionary?["metadata"] as? [String: String] {
+        if let metadata = dictionary["metadata"] as? [String: String] {
             XCTAssertEqual(metadata["source"], "watchOS_complication")
         } else {
             XCTFail("metadata 解析失败")
         }
         
         // 4. 将字典反序列化回结构体，验证无损转换
-        let newJsonData = try JSONSerialization.data(withJSONObject: dictionary!, options: [])
+        let newJsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [])
         let decoder = JSONDecoder()
         let decodedPayload = try decoder.decode(TestWatchSyncPayload.self, from: newJsonData)
         
@@ -355,7 +358,7 @@ final class WatchSyncTests: XCTestCase {
         
         // 验证发送完毕后，本地离线队列应被清零
         let pendingAfterActive = UserDefaults.standard.dictionary(forKey: "watch_pending_audio_transfers") as? [String: [String: Any]]
-        XCTAssertTrue(pendingAfterActive == nil || pendingAfterActive!.isEmpty, "重传成功后，本地离线队列应被清空")
+        XCTAssertTrue(pendingAfterActive?.isEmpty ?? true, "重传成功后，本地离线队列应被清空")
         
         service.mockActivationState = nil
         UserDefaults.standard.removeObject(forKey: "watch_pending_audio_transfers")

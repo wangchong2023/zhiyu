@@ -11,7 +11,7 @@
 import SwiftUI
 import Combine
 import Observation
-import GRDB
+@preconcurrency import GRDB
 
 /// 智宇核心状态中心 (L3-Facade)
 /// 负责全局状态同步、跨服务协调及业务流程封装。
@@ -80,7 +80,7 @@ public final class AppStore {
     }
 
     // ── UI 状态 ──
-    public var pendingCoachMark: CoachMarkType? = nil
+    public var pendingCoachMark: CoachMarkType?
     
     // ── 转发指标 (由 KnowledgeStore 持有，@Observable 自动追踪) ──
     public var pages: [KnowledgePage] { knowledgeStore.pages }
@@ -541,7 +541,7 @@ extension AppStore: AnyPageStore {
 
     /// 获取StorageStats
     /// - Returns: 返回值
-    public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
+    public func getStorageStats() async -> StorageStats {
         await pageStore.getStorageStats()
     }
 }

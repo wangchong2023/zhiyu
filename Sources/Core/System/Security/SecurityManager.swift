@@ -10,7 +10,7 @@
 //
 import Foundation
 import CryptoKit
-import GRDB
+@preconcurrency import GRDB
 
 /// 安全管理器：负责数据签名、加密与完整性校验。
 final class SecurityManager: @unchecked Sendable {

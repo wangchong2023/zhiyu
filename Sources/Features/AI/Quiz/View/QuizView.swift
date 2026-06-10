@@ -37,7 +37,7 @@ struct QuizView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var currentIndex = 0
-    @State private var selectedOption: Int? = nil
+    @State private var selectedOption: Int?
     @State private var showResult = false
     @State private var score = 0
     @State private var isCompleted = false
@@ -101,7 +101,7 @@ struct QuizView: View {
                                 HStack {
                                     Image(systemName: selectedOption == correctIdx ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.errorCircle)
                                         .foregroundStyle(selectedOption == correctIdx ? .green : .red)
-                                    Text(selectedOption == correctIdx ? L10n.Common.correct : L10n.Common.incorrect)
+                                    Text(selectedOption == correctIdx ? L10n.Common.Misc.correct : L10n.Common.Misc.incorrect)
                                         .font(.subheadline.bold())
                                 }
 
@@ -129,7 +129,7 @@ struct QuizView: View {
                 // Footer Action
                 if showResult {
                     Button(action: nextQuestion) {
-                        Text(currentIndex + 1 < quiz.questions.count ? L10n.Common.nextQuestion : L10n.Common.viewResults)
+                        Text(currentIndex + 1 < quiz.questions.count ? L10n.Common.Misc.nextQuestion : L10n.Common.Misc.viewResults)
                             .font(.headline.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)

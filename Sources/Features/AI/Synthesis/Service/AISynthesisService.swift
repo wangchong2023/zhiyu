@@ -105,7 +105,6 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         return result
     }
 
-
     /// 生成信息图表 (Mermaid)
     func generateInfographic(content: String) async throws -> String {
         let prompt = PromptService.shared.infographicPrompt + PromptService.shared.languageInstruction + "\n\n\n\(truncated(content))"

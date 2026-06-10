@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Log {
-        public static let t = "Common"
-
+    public struct Log: L10nTableEntry {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var noLogs: String { tr("log.noLogs") }
         public static var clearConfirmTitle: String { tr("log.clearConfirmTitle") }
         public static var startTime: String { tr("log.startTime") }

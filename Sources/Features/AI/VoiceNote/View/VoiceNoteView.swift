@@ -18,8 +18,13 @@ struct VoiceNoteView: View {
     @Environment(AppStore.self) var store
     @State private var noteTitle = ""
     @State private var showSaveSheet = false
+    @State private var recordingStartTime: Date?
+    @State private var elapsedSeconds: Int = 0
     @Environment(\.dismiss) private var dismiss
-    var onFinish: ((String, String) -> Void)?
+    var onFinish: ((String, String, URL?) -> Void)?
+
+    private let maxDuration = AppConstants.Keys.ImportLimits.maxVoiceDurationSeconds
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ScrollView {
@@ -55,6 +60,14 @@ struct VoiceNoteView: View {
         #endif
         .sheet(isPresented: $showSaveSheet) {
             SaveVoiceNoteSheet(speechService: speechService, title: $noteTitle)
+        }
+        .onReceive(timer) { _ in
+            guard speechService.isRecording, let start = recordingStartTime else { return }
+            elapsedSeconds = Int(Date().timeIntervalSince(start))
+            if TimeInterval(elapsedSeconds) >= maxDuration {
+                speechService.stopRecording()
+                recordingStartTime = nil
+            }
         }
     }
     
@@ -141,8 +154,11 @@ struct VoiceNoteView: View {
         Button(action: {
             if speechService.isRecording {
                 speechService.stopRecording()
+                recordingStartTime = nil
             } else {
                 speechService.startRecording()
+                recordingStartTime = Date()
+                elapsedSeconds = 0
             }
         }) {
             ZStack {
@@ -256,7 +272,7 @@ struct VoiceNoteView: View {
                 Spacer()
                 
                 Button(action: { 
-                    onFinish?(L10n.Voice.Speech.defaultTitle, speechService.transcribedText)
+                    onFinish?(L10n.Voice.Speech.defaultTitle, speechService.transcribedText, speechService.currentAudioFileURL)
                     dismiss()
                 }) {
                     HStack {

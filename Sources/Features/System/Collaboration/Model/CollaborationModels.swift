@@ -34,9 +34,9 @@ struct CollabEdit: Identifiable, Codable {
 }
 
 enum CollabRole: String, Codable {
-    case owner = "owner"
-    case editor = "editor"
-    case viewer = "viewer"
+    case owner
+    case editor
+    case viewer
 
     var displayName: String {
         switch self {

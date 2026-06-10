@@ -18,7 +18,8 @@ final class SystemStatsCoordinator {
     var dailyStats: [DailyAIUsage] = []
     var monthlyStats: [MonthlyToken] = []
     var totalStorage: Int64 = 0
-    var provenance: (importedCount: Int, importedSize: Int64, createdCount: Int, createdSize: Int64) = (0, 0, 0, 0)
+    struct ProvenanceStats { var importedCount: Int; var importedSize: Int64; var createdCount: Int; var createdSize: Int64 }
+    var provenance = ProvenanceStats(importedCount: 0, importedSize: 0, createdCount: 0, createdSize: 0)
     var exportCount: Int = 0
     var exportSize: Int64 = 0
     var avgLatency: Int = 0
@@ -29,7 +30,7 @@ final class SystemStatsCoordinator {
     var totalPages: Int = 0
     var isLoading = true
     var isCleaning = false
-    var cleanedCount: Int? = nil
+    var cleanedCount: Int?
     
     // ── 内部类型定义与多笔记本存储状态 ──
     struct VaultStorageItem: Identifiable, Sendable {
@@ -58,117 +59,12 @@ final class SystemStatsCoordinator {
     /// 加载系统统计数据
     func loadStats() async {
         let startTime = Date()
-        
-        // 1. AI 性能与资源消耗统计 (容错处理)
-        if let daily = try? await governanceRepo.fetchDailyAIStats(days: 30) {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            
-            let calendar = Calendar.current
-            let today = calendar.startOfDay(for: Date())
-            let components = calendar.dateComponents([.year, .month], from: today)
-            let startDate = calendar.date(from: components) ?? today
-            let numberOfDays = (calendar.dateComponents([.day], from: startDate, to: today).day ?? 0) + 1
-            
-            var statsMap: [String: DailyAIUsage] = [:]
-            for i in 0..<numberOfDays {
-                if let date = calendar.date(byAdding: .day, value: i, to: startDate) {
-                    let ds = dateFormatter.string(from: date)
-                    statsMap[ds] = DailyAIUsage(date: date, dateString: ds, tokens: 0, requests: 0)
-                }
-            }
-            
-            for item in daily {
-                if let date = dateFormatter.date(from: item.date), statsMap[item.date] != nil {
-                    statsMap[item.date] = DailyAIUsage(
-                        date: date,
-                        dateString: item.date,
-                        tokens: item.tokens,
-                        requests: item.requests
-                    )
-                }
-            }
-            self.dailyStats = statsMap.values.sorted { $0.date < $1.date }
-        }
-        
-        if let monthly = try? await governanceRepo.fetchMonthlyTokenStats() {
-            self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
-        }
-        
-        _ = try? await governanceRepo.calculateAverageRAGScores(days: 30)
-        
-        // 2. 存储空间分布统计
-        let stats = await pageStore.getStorageStats()
-        let dbSize = stats.databaseSize
-        let logsSize = stats.logsSize
-        let exportsSize = stats.exportsSize
-        
-        let allLogEntries = await logger.getLogEntries()
-        
-        let categories = [
-            StorageCategory(
-                label: L10n.Dashboard.System.database,
-                value: dbSize,
-                count: VaultService.shared.vaults.count,
-                color: .blue
-            ),
-            StorageCategory(
-                label: L10n.Dashboard.System.logs,
-                value: logsSize,
-                count: allLogEntries.count,
-                color: .orange
-            ),
-            StorageCategory(
-                label: L10n.Dashboard.stats.storageImport,
-                value: (try? await importRecordRepo.totalStorageSize()) ?? 0,
-                count: (try? await importRecordRepo.fetchAll(category: nil, limit: 2000).count) ?? 0,
-                color: .green
-            ),
-            StorageCategory(
-                label: L10n.Dashboard.stats.storageExport,
-                value: exportsSize,
-                count: allLogEntries.filter { $0.action == .export }.count,
-                color: .purple
-            )
-        ]
-        
-        self.storageCategories = categories
-        self.totalStorage = categories.reduce(0) { $0 + $1.value }
-        self.exportSize = exportsSize
-        self.exportCount = allLogEntries.filter { $0.action == .export }.count
-        
-        // 4. 级联提取各个笔记本 (Vault) 沙盒目录下的物理占用大小，并依据大小降序排列
-        var items: [VaultStorageItem] = []
-        let fileManager = FileManager.default
-        if let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
-            
-            for vault in VaultService.shared.vaults {
-                let vaultDir = vaultsDir.appendingPathComponent(vault.id.uuidString)
-                var totalVaultSize: Int64 = 0
-                if let enumerator = fileManager.enumerator(at: vaultDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
-                    // 使用 nextObject() 代替 for-in 以避免 Swift 6 异步上下文下的迭代器不安全警告
-                    while let fileURL = enumerator.nextObject() as? URL {
-                        if let resourceValues = try? fileURL.resourceValues(forKeys: [.fileSizeKey]),
-                           let fileSize = resourceValues.fileSize {
-                            totalVaultSize += Int64(fileSize)
-                        }
-                    }
-                }
-                
-                items.append(VaultStorageItem(
-                    id: vault.id,
-                    name: vault.name,
-                    icon: vault.icon ?? "",
-                    size: totalVaultSize
-                ))
-            }
-        }
-        self.vaultStorageItems = items.sorted { $0.size > $1.size }
-        
-        // 3. 页面统计
+        await fetchAIDailyStats()
+        await fetchMonthlyStats()
+        await fetchStorageStats()
+        await fetchVaultStorageSizes()
         self.totalPages = (try? await knowledgeRepo.count()) ?? 0
-        
+
         let endTime = Date()
         logger.addLog(
             action: .update,
@@ -179,8 +75,76 @@ final class SystemStatsCoordinator {
             endTime: endTime,
             module: "Dashboard"
         )
-        
         self.isLoading = false
+    }
+
+    private func fetchAIDailyStats() async {
+        guard let daily = try? await governanceRepo.fetchDailyAIStats(days: 30) else { return }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let components = calendar.dateComponents([.year, .month], from: today)
+        let startDate = calendar.date(from: components) ?? today
+        let numberOfDays = (calendar.dateComponents([.day], from: startDate, to: today).day ?? 0) + 1
+
+        var statsMap: [String: DailyAIUsage] = [:]
+        for i in 0..<numberOfDays {
+            if let date = calendar.date(byAdding: .day, value: i, to: startDate) {
+                let ds = dateFormatter.string(from: date)
+                statsMap[ds] = DailyAIUsage(date: date, dateString: ds, tokens: 0, requests: 0)
+            }
+        }
+        for item in daily {
+            if let date = dateFormatter.date(from: item.date), statsMap[item.date] != nil {
+                statsMap[item.date] = DailyAIUsage(date: date, dateString: item.date, tokens: item.tokens, requests: item.requests)
+            }
+        }
+        self.dailyStats = statsMap.values.sorted { $0.date < $1.date }
+    }
+
+    private func fetchMonthlyStats() async {
+        if let monthly = try? await governanceRepo.fetchMonthlyTokenStats() {
+            self.monthlyStats = monthly.map { MonthlyToken(month: $0.month, total: $0.total) }
+        }
+        _ = try? await governanceRepo.calculateAverageRAGScores(days: 30)
+    }
+
+    private func fetchStorageStats() async {
+        let stats = await pageStore.getStorageStats()
+        let allLogEntries = await logger.getLogEntries()
+        let categories = [
+            StorageCategory(label: L10n.Dashboard.System.database, value: stats.databaseSize, count: VaultService.shared.vaults.count, color: .blue),
+            StorageCategory(label: L10n.Dashboard.System.logs, value: stats.logsSize, count: allLogEntries.count, color: .orange),
+            StorageCategory(label: L10n.Dashboard.stats.storageImport, value: (try? await importRecordRepo.totalStorageSize()) ?? 0, count: (try? await importRecordRepo.fetchAll(category: nil, limit: 2000).count) ?? 0, color: .green),
+            StorageCategory(label: L10n.Dashboard.stats.storageExport, value: stats.exportsSize, count: allLogEntries.filter { $0.action == .export }.count, color: .purple)
+        ]
+        self.storageCategories = categories
+        self.totalStorage = categories.reduce(0) { $0 + $1.value }
+        self.exportSize = stats.exportsSize
+        self.exportCount = allLogEntries.filter { $0.action == .export }.count
+    }
+
+    private func fetchVaultStorageSizes() async {
+        var items: [VaultStorageItem] = []
+        let fileManager = FileManager.default
+        if let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            let vaultsDir = appSupport.appendingPathComponent(AppConstants.Storage.vaultsDirectoryName)
+            for vault in VaultService.shared.vaults {
+                let vaultDir = vaultsDir.appendingPathComponent(vault.id.uuidString)
+                var totalVaultSize: Int64 = 0
+                if let enumerator = fileManager.enumerator(at: vaultDir, includingPropertiesForKeys: [.fileSizeKey], options: [.skipsHiddenFiles]) {
+                    while let fileURL = enumerator.nextObject() as? URL {
+                        if let resourceValues = try? fileURL.resourceValues(forKeys: [.fileSizeKey]),
+                           let fileSize = resourceValues.fileSize {
+                            totalVaultSize += Int64(fileSize)
+                        }
+                    }
+                }
+                items.append(VaultStorageItem(id: vault.id, name: vault.name, icon: vault.icon ?? "", size: totalVaultSize))
+            }
+        }
+        self.vaultStorageItems = items.sorted { $0.size > $1.size }
     }
 
     /// 执行数据库深度清理

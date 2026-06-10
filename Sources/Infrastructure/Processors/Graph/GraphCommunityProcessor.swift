@@ -20,8 +20,8 @@ extension GraphLayoutProcessor {
     static func detectCommunities(nodes: [GraphNode], edges: [GraphEdge]) -> [GraphNode] {
         guard !nodes.isEmpty else { return [] }
 
-        let (adjacency, nodeDegree, undirectedEdges) = buildGraphStructures(nodes: nodes, edges: edges)
-        let m = Double(undirectedEdges.count)
+        let graphStructures = buildGraphStructures(nodes: nodes, edges: edges)
+        let m = Double(graphStructures.undirectedEdges.count)
 
         guard m > 0 else {
             return assignIndependentCommunities(nodes: nodes)
@@ -32,22 +32,23 @@ extension GraphLayoutProcessor {
         refineCommunities(
             community: &community,
             communityNodes: &communityNodes,
-            adjacency: adjacency,
-            nodeDegree: nodeDegree,
+            adjacency: graphStructures.adjacency,
+            nodeDegree: graphStructures.nodeDegree,
             m: m
         )
 
         return finalizeCommunities(
             nodes: nodes,
             community: community,
-            undirectedEdges: undirectedEdges
+            undirectedEdges: graphStructures.undirectedEdges
         )
     }
 
     // MARK: - 私有优化组件
 
     /// 构建图的邻接关系与度数信息
-    private static func buildGraphStructures(nodes: [GraphNode], edges: [GraphEdge]) -> (adjacency: [UUID: Set<UUID>], nodeDegree: [UUID: Int], undirectedEdges: Set<EdgePair>) {
+    private struct GraphStructures { var adjacency: [UUID: Set<UUID>]; var nodeDegree: [UUID: Int]; var undirectedEdges: Set<EdgePair> }
+    private static func buildGraphStructures(nodes: [GraphNode], edges: [GraphEdge]) -> GraphStructures {
         let nodeIDs = Set(nodes.map { $0.id })
         var adjacency: [UUID: Set<UUID>] = [:]
         var nodeDegree: [UUID: Int] = [:]
@@ -69,7 +70,7 @@ extension GraphLayoutProcessor {
                 }
             }
         }
-        return (adjacency, nodeDegree, undirectedEdges)
+        return GraphStructures(adjacency: adjacency, nodeDegree: nodeDegree, undirectedEdges: undirectedEdges)
     }
 
     /// 当没有边时，为每个节点分配独立的社区
@@ -227,18 +228,16 @@ extension GraphLayoutProcessor {
     ) -> Double {
         guard m > 0 else { return 0 }
 
-        var Q = 0.0
+        var modularity = 0.0
         for (nodeID, neighbors) in adjacency {
             let ki = Double(nodeDegree[nodeID] ?? 0)
-            for neighborID in neighbors {
-                if nodeID < neighborID { // 每条边只计算一次
-                    let kj = Double(nodeDegree[neighborID] ?? 0)
-                    let sameCommunity = community[nodeID] == community[neighborID] ? 1.0 : 0.0
-                    Q += (1.0 - (ki * kj) / (2 * m)) * sameCommunity
-                }
+            for neighborID in neighbors where nodeID < neighborID {
+                let kj = Double(nodeDegree[neighborID] ?? 0)
+                let sameCommunity = community[nodeID] == community[neighborID] ? 1.0 : 0.0
+                modularity += (1.0 - (ki * kj) / (2 * m)) * sameCommunity
             }
         }
-        return Q / (2 * m)
+        return modularity / (2 * m)
     }
 
     /// 计算将节点移动到目标社区的模块度增益

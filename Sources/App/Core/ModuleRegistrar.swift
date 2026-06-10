@@ -9,7 +9,7 @@
 //  核心职责：App 模块的 ModuleRegistrar 实现。
 //
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 // MARK: - 注册协议
 /// 模块注册器协议：定义统一的注入入口 (@SR-04: 模块化沙盒管控基础)
@@ -82,18 +82,21 @@ struct StorageModuleRegistrar: ModuleRegistrar {
         let knowledgeRepo = KnowledgePageRepository(dbWriter: writer)
         container.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
         container.register(knowledgeRepo, for: KnowledgePageRepository.self)
-        
+
         let vectorRepo = VectorDataRepository(dbWriter: writer)
         container.register(vectorRepo as any VectorRepository, for: (any VectorRepository).self)
         container.register(vectorRepo, for: VectorDataRepository.self)
         
-        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: writer)
+        let governanceRepo = RAGGovernanceSQLiteStore()
         container.register(governanceRepo as any RAGGovernanceRepository, for: (any RAGGovernanceRepository).self)
         container.register(governanceRepo, for: RAGGovernanceSQLiteStore.self)
 
-        let importRecordRepo = SQLiteImportRecordRepository(dbWriter: writer)
+        let importRecordRepo = SQLiteImportRecordRepository()
         container.register(importRecordRepo as any ImportRecordRepository, for: (any ImportRecordRepository).self)
-        
+
+        let feedbackRepo = SQLiteFeedbackRepository()
+        container.register(feedbackRepo as any FeedbackRepository, for: (any FeedbackRepository).self)
+
         // 注册全新的 Vault 笔记本与 FileSignature 文件签名仓储协议 (纯 ORM，无 raw SQL)
         if let globalWriter = DatabaseManager.shared.globalWriter {
             let vaultRepo = SQLiteVaultRepository(dbWriter: globalWriter)

@@ -9,7 +9,7 @@
 //  核心职责：针对 KnowledgeRepository 开展自动化单元测试验证。
 //
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 final class KnowledgeRepositoryTests: XCTestCase {
@@ -171,4 +171,3 @@ final class KnowledgeRepositoryTests: XCTestCase {
         XCTAssertEqual(hybridResults.first?.title, "FTS5 全文搜索与向量检索的混合引擎")
     }
 }
-

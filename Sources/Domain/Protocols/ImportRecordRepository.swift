@@ -16,6 +16,8 @@ public protocol ImportRecordRepository: Sendable {
     func fetchByID(_ id: String) async throws -> ImportRecord?
     func updateStatus(id: String, status: String, completedAt: Date?) async throws
     func updatePageID(id: String, pageID: String) async throws
+    func updateRawText(id: String, rawText: String) async throws
+    func updateTags(id: String, tags: String) async throws
     func fetchInProgress() async throws -> [ImportRecord]
     func totalStorageSize() async throws -> Int64
 }

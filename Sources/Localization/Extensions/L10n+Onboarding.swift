@@ -11,24 +11,17 @@
 import Foundation
 
 extension L10n {
-    public enum Onboarding {
-        public static let t = "System"
-
+    public enum Onboarding: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
-        public static var title: String { tr("welcome.title") }
         public static var subtitle: String { tr("welcome.subtitle") }
-        public static var quickStart: String { tr("welcome.quickStart") }
-        public static var growthTrend: String { tr("welcome.growthTrend") }
 
         public static var pathTitle: String { tr("onboarding.path.title") }
 
@@ -49,25 +42,6 @@ extension L10n {
             public static var page10: String { Onboarding.tr("onboarding.milestone.page10") }
             public static var page50: String { Onboarding.tr("onboarding.milestone.page50") }
             public static var page100: String { Onboarding.tr("onboarding.milestone.page100") }
-        }
-
-        public enum Guide {
-            public static var title: String { Onboarding.tr("welcome.demo.title") }
-            public static var desc: String { Onboarding.tr("welcome.demo.desc") }
-            public static var createPage: String { Onboarding.tr("welcome.guide.createPage") }
-            public static var knowledgeLink: String { Onboarding.tr("welcome.guide.knowledgeLink") }
-        }
-
-        public enum Demo {
-            public static var title: String { Guide.title }
-            public static var desc: String { Guide.desc }
-        }
-
-        public enum Stats {
-            public static var totalPages: String { Onboarding.tr("welcome.stat.totalPages") }
-            public static var entities: String { Onboarding.tr("welcome.stat.entities") }
-            public static var concepts: String { Onboarding.tr("welcome.stat.concepts") }
-            public static var sources: String { Onboarding.tr("welcome.stat.sources") }
         }
 
         public enum Step {

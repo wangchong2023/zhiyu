@@ -50,6 +50,7 @@ final class LLMContextBuilder: Sendable {
         \(L10n.AI.LLM.Prompt.rule2)
         \(L10n.AI.LLM.Prompt.rule3)
         \(L10n.AI.LLM.Prompt.rule4)
+        \(L10n.AI.LLM.Prompt.rule5)
 
         \(L10n.AI.LLM.Prompt.overview)
         """

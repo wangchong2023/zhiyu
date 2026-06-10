@@ -161,8 +161,8 @@ struct LLMSettingsView: View {
                                             .foregroundStyle(.appSecondary)
                                     }
                                     Spacer()
-                                    if let l = latency {
-                                        Text(L10n.AI.LLM.latency("\(l) \(L10n.Dashboard.unitMs)"))
+                                    if let latency = latency {
+                                        Text(L10n.AI.LLM.latency("\(latency) \(L10n.Dashboard.unitMs)"))
                                             .font(.caption.monospaced())
                                             .foregroundStyle(.appSecondary)
                                     }
@@ -298,7 +298,7 @@ struct LLMSettingsView: View {
         config.provider.suggestedModels
     }
     
-    private func testConnection() {
+    func testConnection() {
         testing = true
         testResult = nil
         

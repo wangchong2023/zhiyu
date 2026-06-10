@@ -74,5 +74,3 @@ struct NotebookThemeBackgroundView: View {
         }
     }
 }
-
-

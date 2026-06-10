@@ -18,10 +18,10 @@ public protocol RAGGovernanceRepository: Sendable {
     func logTokenUsage(model: String, promptTokens: Int, completionTokens: Int) async throws
     
     /// 获取指定天数内的 Token 统计数据 (汇总)
-    func fetchTokenStats(days: Int) async throws -> (prompt: Int, completion: Int, total: Int)
+    func fetchTokenStats(days: Int) async throws -> TokenStats
     
     /// 获取每日统计详情 (用于图表)
-    func fetchDailyAIStats(days: Int) async throws -> [(date: String, tokens: Int, requests: Int)]
+    func fetchDailyAIStats(days: Int) async throws -> [DailyAIStat]
     
     /// 获取月度统计详情
     func fetchMonthlyTokenStats() async throws -> [(month: String, total: Int)]
@@ -43,13 +43,7 @@ public protocol RAGGovernanceRepository: Sendable {
     func fetchRAGEvaluations(limit: Int) async throws -> [RAGEvaluation]
     
     /// 计算平均评估得分（包含生成质量与引用保真指标）
-    func calculateAverageRAGScores(days: Int) async throws -> (
-        faithfulness: Double,
-        relevance: Double,
-        precision: Double,
-        hallucinationRate: Double,
-        citationAccuracy: Double
-    )
+    func calculateAverageRAGScores(days: Int) async throws -> AverageRAGScores
 
     // MARK: - 检索快照 (Retrieval Snapshots)
 
@@ -74,4 +68,47 @@ public protocol RAGGovernanceRepository: Sendable {
 
     /// NDCG@K (Normalized Discounted Cumulative Gain)：归一化折损累计增益
     func calculateNDCG(days: Int, k: Int) async throws -> Double
+}
+
+/// Token 统计数据
+public struct TokenStats: Sendable, Equatable {
+    public let prompt: Int
+    public let completion: Int
+    public let total: Int
+
+    public init(prompt: Int, completion: Int, total: Int) {
+        self.prompt = prompt
+        self.completion = completion
+        self.total = total
+    }
+}
+
+/// 每日 AI 统计
+public struct DailyAIStat: Sendable, Equatable {
+    public let date: String
+    public let tokens: Int
+    public let requests: Int
+
+    public init(date: String, tokens: Int, requests: Int) {
+        self.date = date
+        self.tokens = tokens
+        self.requests = requests
+    }
+}
+
+/// 平均 RAG 评分（含幻觉率与引用准确度）
+public struct AverageRAGScores: Sendable, Equatable {
+    public let faithfulness: Double
+    public let relevance: Double
+    public let precision: Double
+    public let hallucinationRate: Double
+    public let citationAccuracy: Double
+
+    public init(faithfulness: Double, relevance: Double, precision: Double, hallucinationRate: Double, citationAccuracy: Double) {
+        self.faithfulness = faithfulness
+        self.relevance = relevance
+        self.precision = precision
+        self.hallucinationRate = hallucinationRate
+        self.citationAccuracy = citationAccuracy
+    }
 }

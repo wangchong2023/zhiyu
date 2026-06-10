@@ -21,6 +21,7 @@ struct UserProfileMenu: View {
     @State private var showWatchMenu = false
     @State private var showStats = false
     @State private var showPlugins = false
+    @State private var showFeedback = false
     @State private var showDeveloper = false
     
     var body: some View {
@@ -77,6 +78,15 @@ struct UserProfileMenu: View {
             
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    showFeedback = true
+                }
+            }) {
+                Label(L10n.Settings.Feedback.title, systemImage: "bubble.left.and.bubble.right")
+            }
+
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
                 store.securityService.lock()
                 store.requestRelayout()
             }) {
@@ -121,6 +131,10 @@ struct UserProfileMenu: View {
             NavigationStack {
                 PluginCenterView()
             }
+        }
+        .sheet(isPresented: $showFeedback) {
+            FeedbackView()
+                .environmentObject(themeManager)
         }
         .sheet(isPresented: $showDeveloper) {
             NavigationStack {

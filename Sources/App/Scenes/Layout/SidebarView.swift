@@ -28,7 +28,7 @@ struct SidebarView: View {
     
     // MARK: - Properties
     var heroNamespace: Namespace.ID
-    var selection: Binding<SidebarSelection?>? = nil
+    var selection: Binding<SidebarSelection?>?
     
     // MARK: - Local State
     @State private var showDeleteConfirmation = false

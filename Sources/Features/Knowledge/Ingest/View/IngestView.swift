@@ -31,8 +31,7 @@ struct IngestView: View {
                     if !coordinator.isLLMConfigured { llmWarningSection }
                     ingestProgressPanel
                     actionsSection
-                    importSourcesSection
-                    ImportRecordSection()
+                    ImportRecordSection(onAITag: { record in coordinator.triggerAITagging(for: record) })
                     if !TaskCenter.shared.tasks.filter({ $0.type == .ingest }).isEmpty { taskCenterLinkSection }
                     recentActivitiesSection
                 }
@@ -53,12 +52,26 @@ struct IngestView: View {
         ) { coordinator.handleFileImport($0) }
         #endif
         .sheet(isPresented: $coordinator.showVoiceNote, onDismiss: { if !coordinator.newTitle.isEmpty { coordinator.showManualForm = true } }) {
-            VoiceNoteView(onFinish: { coordinator.newTitle = $0; coordinator.newContent = $1; coordinator.manualFormTitle = L10n.Voice.Speech.title })
+            VoiceNoteView(onFinish: { title, text, audioURL in
+                coordinator.sourceHint = .voice
+                coordinator.newTitle = title
+                coordinator.newContent = text
+                coordinator.manualFormTitle = L10n.Voice.Speech.title
+                coordinator.pendingVoiceFileURL = audioURL
+            })
         }
         .sheet(isPresented: $coordinator.showOCRScan, onDismiss: { if !coordinator.newTitle.isEmpty { coordinator.showManualForm = true } }) {
-            OCRScanView(onFinish: { coordinator.newTitle = $0; coordinator.newContent = $1; coordinator.manualFormTitle = L10n.Ingest.OCR.title })
+            OCRScanView(onFinish: { title, text, imageData in
+                coordinator.sourceHint = .ocr
+                coordinator.newTitle = title
+                coordinator.newContent = text
+                coordinator.manualFormTitle = L10n.Ingest.OCR.title
+                if let data = imageData {
+                    coordinator.pendingImageData = data
+                }
+            })
         }
-        .sheet(isPresented: $coordinator.showURLImport) { URLImportSheet(urlText: $coordinator.newURL, onImport: { coordinator.handleURLImport() }) }
+        .sheet(isPresented: $coordinator.showURLImport) { URLImportSheet(urlText: $coordinator.newURL, onImport: { urls in coordinator.handleBatchURLImport(urls) }) }
         .sheet(isPresented: $coordinator.showManualForm) { manualFormSheet }
         .onReceive(NotificationCenter.default.publisher(for: .importFromClipboard)) { _ in coordinator.performClipboardImport() }
         .toolbarBackground(.hidden, for: .navigationBar)
@@ -134,7 +147,7 @@ struct IngestView: View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             AppSectionHeader(title: L10n.Ingest.actions, icon: DesignSystem.Icons.trayArrowDown).padding(.horizontal, DesignSystem.tiny)
             IngestEntryCardsSection(
-                showManualForm: Binding(get: { coordinator.showManualForm }, set: { if $0 { coordinator.manualFormTitle = L10n.Ingest.manualEntry }; coordinator.showManualForm = $0 }),
+                showManualForm: Binding(get: { coordinator.showManualForm }, set: { if $0 { coordinator.sourceHint = .manual; coordinator.manualFormTitle = L10n.Ingest.manualEntry }; coordinator.showManualForm = $0 }),
                 showOCRScan: $coordinator.showOCRScan, 
                 newType: $coordinator.newType, 
                 showFileImporter: $coordinator.showFileImporter, 
@@ -143,32 +156,6 @@ struct IngestView: View {
             )
             .appContainer(padding: true)
             .disabled(!coordinator.isLLMConfigured).opacity(coordinator.isLLMConfigured ? DesignSystem.fullOpacity : DesignSystem.disabledOpacity)
-        }
-    }
-
-    private var importSourcesSection: some View {
-        let sources = store.pages.filter { $0.pageType == .source || $0.sourceURL != nil }.sorted(by: { $0.createdAt > $1.createdAt }).prefix(DesignSystem.Metrics.maxDashboardItems)
-        return VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            HStack {
-                AppSectionHeader(title: L10n.Ingest.sources, icon: DesignSystem.Icons.trayFill)
-                Spacer()
-                if !sources.isEmpty { Text("\(sources.count)_items").font(.caption2).foregroundStyle(.appSecondary) }
-            }
-            .padding(.horizontal, DesignSystem.tiny)
-            if sources.isEmpty {
-                VStack(spacing: DesignSystem.medium) {
-                    Image(systemName: DesignSystem.Icons.tray).font(.system(size: DesignSystem.Metrics.dashboardValueSize)).foregroundStyle(.appSecondary.opacity(0.5))
-                    Text(L10n.Common.Global.noData).font(.caption).foregroundStyle(.appSecondary)
-                }.frame(maxWidth: .infinity).padding(.vertical, DesignSystem.standardPadding * 2).appContainer()
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: DesignSystem.medium) {
-                        ForEach(sources) { page in
-                            Button(action: { HapticFeedback.shared.trigger(.selection); router.navigateToPage(id: page.id) }) { SourceCardView(page: page) }.buttonStyle(.plain)
-                        }
-                    }.padding(.horizontal, DesignSystem.atomic / 2)
-                }
-            }
         }
     }
 
@@ -264,7 +251,7 @@ struct IngestView: View {
             .scrollContentBackground(.hidden).background(themeManager.pageBackground()).navigationTitle(coordinator.manualFormTitle).navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button(L10n.Common.cancel) { coordinator.showManualForm = false }.buttonStyle(.plain) }
-                ToolbarItem(placement: .confirmationAction) { Button(L10n.Common.import) { coordinator.performIngest() }.disabled(coordinator.newTitle.isEmpty || coordinator.newContent.isEmpty || coordinator.isIngesting).buttonStyle(.plain) }
+                ToolbarItem(placement: .confirmationAction) { Button(L10n.Common.Misc.import) { coordinator.performIngest() }.disabled(coordinator.newTitle.isEmpty || coordinator.newContent.isEmpty || coordinator.isIngesting).buttonStyle(.plain) }
             }
         }
     }

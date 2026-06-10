@@ -83,4 +83,3 @@ protocol CollaborationProviderProtocol: AnyObject {
     /// - Parameter data: 待广播发送的二进制载荷数据。
     func broadcast(data: Data)
 }
-

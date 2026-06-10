@@ -81,24 +81,25 @@ final class LocalizationTests: XCTestCase {
     
     /// 自动化全量审计：动态遍历所有 L10n 模块并验证 Key 的存在性
     func testComprehensiveLocalizationAudit() {
-        let modules: [(name: String, table: String, keys: [String])] = [
-            ("Common", "Common", ["ok", "cancel", "done"]),
-            ("Settings", "Settings", ["aboutApp", "version", "section.about"]),
-            ("Chat", "Chat", ["chat.title", "inputPlaceholder"]),
-            ("Ingest", "Ingest", ["ingest.title", "ingest.manualEntry"]),
-            ("AITasks", "AITasks", ["aitask.center.title", "aitask.status.thinking"]),
-            ("Auth", "Auth", ["guestMode", "login"]),
-            ("Coachmark", "Coachmark", ["onboarding.action.next"]),
-            ("Collaboration", "Collaboration", ["collab.title"]),
-            ("Creation", "Creation", ["pageTitle", "content"]),
-            ("Dashboard", "Dashboard", ["hotTopics", "density"]),
-            ("Graph", "Graph", ["title"]),
-            ("Lint", "Lint", ["noIssues", "noIssuesHint"]),
-            ("Plugin", "Plugin", ["section.rag"]),
-            ("Vault", "Vault", ["vault.label"]),
-            ("Watch", "Watch", ["watch.capture"]),
-            ("Widget", "Widget", ["widget.title"]),
-            ("Localizable", "Localizable", ["misc.ok", "misc.cancel", "misc.done"])
+        struct ModuleEntry { let name: String; let table: String; let keys: [String] }
+        let modules: [ModuleEntry] = [
+            ModuleEntry(name: "Common", table: "Common", keys: ["ok", "cancel", "done"]),
+            ModuleEntry(name: "Settings", table: "Settings", keys: ["aboutApp", "version", "section.about"]),
+            ModuleEntry(name: "Chat", table: "Chat", keys: ["chat.title", "inputPlaceholder"]),
+            ModuleEntry(name: "Ingest", table: "Ingest", keys: ["ingest.title", "ingest.manualEntry"]),
+            ModuleEntry(name: "AITasks", table: "AITasks", keys: ["aitask.center.title", "aitask.status.thinking"]),
+            ModuleEntry(name: "Auth", table: "Auth", keys: ["guestMode", "login"]),
+            ModuleEntry(name: "Coachmark", table: "Coachmark", keys: ["onboarding.action.next"]),
+            ModuleEntry(name: "Collaboration", table: "Collaboration", keys: ["collab.title"]),
+            ModuleEntry(name: "Creation", table: "Creation", keys: ["pageTitle", "content"]),
+            ModuleEntry(name: "Dashboard", table: "Dashboard", keys: ["hotTopics", "density"]),
+            ModuleEntry(name: "Graph", table: "Graph", keys: ["title"]),
+            ModuleEntry(name: "Lint", table: "Lint", keys: ["noIssues", "noIssuesHint"]),
+            ModuleEntry(name: "Plugin", table: "Plugin", keys: ["section.rag"]),
+            ModuleEntry(name: "Vault", table: "Vault", keys: ["vault.label"]),
+            ModuleEntry(name: "Watch", table: "Watch", keys: ["watch.capture"]),
+            ModuleEntry(name: "Widget", table: "Widget", keys: ["widget.title"]),
+            ModuleEntry(name: "Localizable", table: "Localizable", keys: ["misc.ok", "misc.cancel", "misc.done"])
         ]
         
         var missingKeys: [String] = []
@@ -116,4 +117,3 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(missingKeys.isEmpty, "以下本地化 Key 缺失或未在对应的表中定义: \n\(missingKeys.joined(separator: "\n"))")
     }
 }
-

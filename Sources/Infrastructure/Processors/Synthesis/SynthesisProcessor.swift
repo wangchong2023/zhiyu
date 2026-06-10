@@ -19,60 +19,64 @@ enum SynthesisProcessor {
     ///   - fallbackPrefix: 当无法自动识别图表类型时的默认前缀
     /// - Returns: 标准化的 Mermaid 代码块
     static func formatMermaid(_ text: String, fallbackPrefix: String) -> String {
-        var cleaned = text.replacingOccurrences(of: "```mermaid", with: "")
-            .replacingOccurrences(of: "```", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleaned = Self.cleanMermaidDelimiters(text)
+        let title = Self.extractMermaidTitle(from: cleaned).title
+        var code = Self.extractMermaidTitle(from: cleaned).code
+        let foundMatch = Self.findMermaidPattern(in: code, matchedCode: &code)
 
-        // 1. 提取标题 (如果有 # 标题)
-        var title: String?
-        if cleaned.hasPrefix("# ") {
-            if let firstLineEnd = cleaned.firstIndex(of: "\n") {
-                title = String(cleaned[..<firstLineEnd])
-                cleaned = String(cleaned[cleaned.index(after: firstLineEnd)...]).trimmingCharacters(in: .whitespacesAndNewlines)
-            }
-        }
-
-        // 2. 尝试提取核心代码块 (更加灵活的正则，支持不带方向的 graph)
-        let patterns = ["mindmap.*", "graph.*", "pie.*", "timeline.*", "sequenceDiagram.*", "gantt.*"]
-        var mermaidCode: String = cleaned
-        var foundMatch = false
-
-        for pattern in patterns {
-            if let range = cleaned.range(of: "(?s)\(pattern)", options: .regularExpression) {
-                mermaidCode = String(cleaned[range])
-                foundMatch = true
-                break
-            }
-        }
-
-        // 3. 增强：确保关键字与根节点之间有换行，防止 "mindmap root" 这种在一行导致的解析错误
         if foundMatch {
-            for keyword in ["mindmap", ["graph", "TD"].joined(separator: " "), ["graph", "LR"].joined(separator: " "), ["graph", "TB"].joined(separator: " "), ["graph", "BT"].joined(separator: " "), "graph", "timeline", "gantt", "pie", "sequenceDiagram"] {
-                if mermaidCode.hasPrefix(keyword) {
-                    let afterKeyword = mermaidCode.dropFirst(keyword.count)
-                    if !afterKeyword.isEmpty && !afterKeyword.hasPrefix("\n") {
-                        mermaidCode = keyword + "\n  " + afterKeyword.trimmingCharacters(in: .whitespaces)
-                    }
-                    break
-                }
-            }
+            code = Self.fixMermaidKeywordSpacing(code)
+        } else {
+            code = "\(fallbackPrefix)\n  " + code.replacingOccurrences(of: "\n", with: "\n  ")
         }
 
-        // 4. 如果完全没有匹配且不包含关键字，则尝试加上前缀
-        if !foundMatch {
-            mermaidCode = "\(fallbackPrefix)\n  " + mermaidCode.replacingOccurrences(of: "\n", with: "\n  ")
-        } else if mermaidCode.trimmingCharacters(in: .whitespaces) == "graph" {
-            mermaidCode = ["graph", "TD"].joined(separator: " ")
+        if code.trimmingCharacters(in: .whitespaces) == "graph" {
+            code = ["graph", "TD"].joined(separator: " ")
         }
 
-        // 对最终确定的 Mermaid 代码进行语法纠错加固
-        mermaidCode = sanitizeMermaidSyntax(mermaidCode)
+        code = sanitizeMermaidSyntax(code)
 
         if let title = title {
-            return "\(title)\n\n\(mermaidCode)"
-        } else {
-            return mermaidCode
+            return "\(title)\n\n\(code)"
         }
+        return code
+    }
+
+    private static func cleanMermaidDelimiters(_ text: String) -> String {
+        text.replacingOccurrences(of: "```mermaid", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func extractMermaidTitle(from cleaned: String) -> (title: String?, code: String) {
+        guard cleaned.hasPrefix("# "),
+              let firstLineEnd = cleaned.firstIndex(of: "\n") else { return (nil, cleaned) }
+        let title = String(cleaned[..<firstLineEnd])
+        let code = String(cleaned[cleaned.index(after: firstLineEnd)...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        return (title, code)
+    }
+
+    private static func findMermaidPattern(in cleaned: String, matchedCode: inout String) -> Bool {
+        let patterns = ["mindmap.*", "graph.*", "pie.*", "timeline.*", "sequenceDiagram.*", "gantt.*"]
+        for pattern in patterns {
+            if let range = cleaned.range(of: "(?s)\(pattern)", options: .regularExpression) {
+                matchedCode = String(cleaned[range])
+                return true
+            }
+        }
+        return false
+    }
+
+    private static func fixMermaidKeywordSpacing(_ code: String) -> String {
+        let keywords = ["mindmap", ["graph", "TD"].joined(separator: " "), ["graph", "LR"].joined(separator: " "), ["graph", "TB"].joined(separator: " "), ["graph", "BT"].joined(separator: " "), "graph", "timeline", "gantt", "pie", "sequenceDiagram"]
+        for keyword in keywords where code.hasPrefix(keyword) {
+            let afterKeyword = code.dropFirst(keyword.count)
+            if !afterKeyword.isEmpty && !afterKeyword.hasPrefix("\n") {
+                return keyword + "\n  " + afterKeyword.trimmingCharacters(in: .whitespaces)
+            }
+            break
+        }
+        return code
     }
 
     /// 对 Mermaid 进行语法纠错加固 (处理节点文本中的非法字符)

@@ -364,62 +364,99 @@ struct MarkdownRendererView: View {
     
     private func buildAttributedString(from segments: [MarkdownProcessor.InlineSegment]) -> AttributedString {
         var result = AttributedString()
-        
         for segment in segments {
-            var container = AttributedString(segment.content)
-            
-            switch segment.type {
-            case .text:
-                container.swiftUI.font = isCompact ? Font.footnote : Font.body
-            case .bold:
-                container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.bold)
-            case .italic:
-                container.swiftUI.font = (isCompact ? Font.footnote : Font.body).italic()
-            case .strikethrough:
-                container.swiftUI.font = isCompact ? Font.footnote : Font.body
-                container.swiftUI.strikethroughStyle = .single
-            case .code:
-                container.swiftUI.font = .system(.caption, design: .monospaced)
-                container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
-                container.swiftUI.foregroundColor = .appText
-            case .applink:
-                // 双链样式：仅用品牌色区分，不加下划线以降低视觉噪声
-                if segment.content.contains("|") {
-                    let parts = segment.content.split(separator: "|")
-                    let label = String(parts.first ?? "")
-                    let title = String(parts.last ?? "")
-                    container = AttributedString(label)
-                    container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
-                    container.swiftUI.foregroundColor = Color.appAccent
-                    if let encoded = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                        container.foundation.link = URL(string: "applink://\(encoded)")
-                    }
-                } else {
-                    container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
-                    container.swiftUI.foregroundColor = Color.appAccent
-                    if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                        container.foundation.link = URL(string: "applink://\(encoded)")
-                    }
-                }
-            case .link:
-                let parts = segment.content.split(separator: "|")
-                let label = String(parts.first ?? "")
-                let urlString = String(parts.last ?? "")
-                container = AttributedString(label)
-                container.swiftUI.font = isCompact ? Font.footnote : Font.body
-                container.swiftUI.foregroundColor = Color.appAccent
-                container.swiftUI.underlineStyle = .single
-                if let url = URL(string: urlString) {
-                    container.foundation.link = url
-                }
-            case .emoji:
-                container.swiftUI.font = .body
-            }
-            
-            result.append(container)
+            result.append(attributedString(for: segment))
         }
-        
         return result
+    }
+
+    private func attributedString(for segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        switch segment.type {
+        case .text: return textSegment(segment)
+        case .bold: return boldSegment(segment)
+        case .italic: return italicSegment(segment)
+        case .strikethrough: return strikethroughSegment(segment)
+        case .code: return codeSegment(segment)
+        case .applink: return applinkSegment(segment)
+        case .link: return linkSegment(segment)
+        case .emoji: return emojiSegment(segment)
+        }
+    }
+
+    private func textSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = isCompact ? Font.footnote : Font.body
+        return container
+    }
+
+    private func boldSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.bold)
+        return container
+    }
+
+    private func italicSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = (isCompact ? Font.footnote : Font.body).italic()
+        return container
+    }
+
+    private func strikethroughSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = isCompact ? Font.footnote : Font.body
+        container.swiftUI.strikethroughStyle = .single
+        return container
+    }
+
+    private func codeSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = .system(.caption, design: .monospaced)
+        container.swiftUI.backgroundColor = Color.appAccent.opacity(DesignSystem.glassOpacity)
+        container.swiftUI.foregroundColor = .appText
+        return container
+    }
+
+    private func applinkSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        if segment.content.contains("|") {
+            let parts = segment.content.split(separator: "|")
+            let label = String(parts.first ?? "")
+            let title = String(parts.last ?? "")
+            var container = AttributedString(label)
+            container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
+            container.swiftUI.foregroundColor = Color.appAccent
+            if let encoded = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                container.foundation.link = URL(string: "applink://\(encoded)")
+            }
+            return container
+        } else {
+            var container = AttributedString(segment.content)
+            container.swiftUI.font = (isCompact ? Font.footnote : Font.body).weight(.medium)
+            container.swiftUI.foregroundColor = Color.appAccent
+            if let encoded = segment.content.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                container.foundation.link = URL(string: "applink://\(encoded)")
+            }
+            return container
+        }
+    }
+
+    private func linkSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        let parts = segment.content.split(separator: "|")
+        let label = String(parts.first ?? "")
+        let urlString = String(parts.last ?? "")
+        var container = AttributedString(label)
+        container.swiftUI.font = isCompact ? Font.footnote : Font.body
+        container.swiftUI.foregroundColor = Color.appAccent
+        container.swiftUI.underlineStyle = .single
+        if let url = URL(string: urlString) {
+            container.foundation.link = url
+        }
+        return container
+    }
+
+    private func emojiSegment(_ segment: MarkdownProcessor.InlineSegment) -> AttributedString {
+        var container = AttributedString(segment.content)
+        container.swiftUI.font = .body
+        return container
     }
     
     // MARK: - Skeleton View

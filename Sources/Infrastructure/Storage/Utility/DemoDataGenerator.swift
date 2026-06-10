@@ -9,7 +9,7 @@
 //  核心职责：持久化引擎：GRDB/SQLite 仓库、同步、加密、数据库管理。
 //
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 /// 演示数据生成器
 ///
@@ -26,24 +26,25 @@ struct DemoDataGenerator {
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("DemoData_Starting")
 
-        let pagesToCreate: [(String, PageType, String, [String])] = [
-                (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
-                (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
-                (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
-                (L10n.Common.Demo.toolUse.title, .concept, L10n.Common.Demo.toolUse.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.toolUse]),
-                (L10n.Common.Demo.llm.title, .concept, L10n.Common.Demo.llm.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.llm]),
-                (L10n.Common.Demo.memoryMgmt.title, .concept, L10n.Common.Demo.memoryMgmt.content + " [[\(L10n.Common.Demo.vectorDB.title)]]", [L10n.Common.Tags.architecture]),
-                (L10n.Common.Demo.toolchain.title, .concept, L10n.Common.Demo.toolchain.content + " [[\(L10n.Common.Demo.secureEnv.title)]]", [L10n.Common.Tags.tools]),
-                (L10n.Common.Demo.chunking.title, .concept, L10n.Common.Demo.chunking.content + " [[\(L10n.Common.Demo.memory.title)]]", [L10n.Common.Tags.nlp]),
-                (L10n.Common.Demo.vectorDB.title, .concept, L10n.Common.Demo.vectorDB.content + " [[\(L10n.Common.Demo.chunking.title)]]", [L10n.Common.Tags.storage]),
-                (L10n.Common.Demo.secureEnv.title, .concept, L10n.Common.Demo.secureEnv.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", [L10n.Common.Tags.security]),
-                (L10n.Common.Demo.transformer.title, .concept, L10n.Common.Demo.transformer.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.theory]),
-                (L10n.Common.Demo.embedding.title, .concept, L10n.Common.Demo.embedding.content, [L10n.Common.Tags.theory]),
-                (L10n.Common.Demo.gateway.title, .concept, L10n.Common.Demo.gateway.content, [L10n.Common.Tags.network]),
-                (L10n.Common.Demo.toolInterface.title, .concept, L10n.Common.Demo.toolInterface.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", [L10n.Common.Tags.protocol]),
-                (L10n.Common.Demo.consistency.title, .concept, L10n.Common.Demo.consistency.content, [L10n.Common.Tags.quality]),
-                (L10n.Common.Demo.topology.title, .concept, L10n.Common.Demo.topology.content, [L10n.Common.Tags.visual]),
-                (L10n.Common.Demo.hybridSearch.title, .concept, L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.performance])
+        struct PageSeed { let title: String; let type: PageType; let content: String; let tags: [String] }
+        let pagesToCreate: [PageSeed] = [
+                PageSeed(title: L10n.Common.Demo.aiAgent.title, type: .concept, content: L10n.Common.Demo.aiAgent.content + "", tags: [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
+                PageSeed(title: L10n.Common.Demo.planning.title, type: .concept, content: L10n.Common.Demo.planning.content + "", tags: [L10n.Common.Tags.ai, L10n.Common.Tags.planning]),
+                PageSeed(title: L10n.Common.Demo.memory.title, type: .concept, content: L10n.Common.Demo.memory.content + "", tags: [L10n.Common.Tags.ai, L10n.Common.Tags.memory, L10n.Common.Tags.rag]),
+                PageSeed(title: L10n.Common.Demo.toolUse.title, type: .concept, content: L10n.Common.Demo.toolUse.content + "", tags: [L10n.Common.Tags.ai, L10n.Common.Tags.toolUse]),
+                PageSeed(title: L10n.Common.Demo.llm.title, type: .concept, content: L10n.Common.Demo.llm.content + "", tags: [L10n.Common.Tags.ai, L10n.Common.Tags.llm]),
+                PageSeed(title: L10n.Common.Demo.memoryMgmt.title, type: .concept, content: L10n.Common.Demo.memoryMgmt.content + " [[\(L10n.Common.Demo.vectorDB.title)]]", tags: [L10n.Common.Tags.architecture]),
+                PageSeed(title: L10n.Common.Demo.toolchain.title, type: .concept, content: L10n.Common.Demo.toolchain.content + " [[\(L10n.Common.Demo.secureEnv.title)]]", tags: [L10n.Common.Tags.tools]),
+                PageSeed(title: L10n.Common.Demo.chunking.title, type: .concept, content: L10n.Common.Demo.chunking.content + " [[\(L10n.Common.Demo.memory.title)]]", tags: [L10n.Common.Tags.nlp]),
+                PageSeed(title: L10n.Common.Demo.vectorDB.title, type: .concept, content: L10n.Common.Demo.vectorDB.content + " [[\(L10n.Common.Demo.chunking.title)]]", tags: [L10n.Common.Tags.storage]),
+                PageSeed(title: L10n.Common.Demo.secureEnv.title, type: .concept, content: L10n.Common.Demo.secureEnv.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", tags: [L10n.Common.Tags.security]),
+                PageSeed(title: L10n.Common.Demo.transformer.title, type: .concept, content: L10n.Common.Demo.transformer.content + " [[\(L10n.Common.Demo.embedding.title)]]", tags: [L10n.Common.Tags.theory]),
+                PageSeed(title: L10n.Common.Demo.embedding.title, type: .concept, content: L10n.Common.Demo.embedding.content, tags: [L10n.Common.Tags.theory]),
+                PageSeed(title: L10n.Common.Demo.gateway.title, type: .concept, content: L10n.Common.Demo.gateway.content, tags: [L10n.Common.Tags.network]),
+                PageSeed(title: L10n.Common.Demo.toolInterface.title, type: .concept, content: L10n.Common.Demo.toolInterface.content + " [[\(L10n.Common.Demo.aiAgent.title)]]", tags: [L10n.Common.Tags.protocol]),
+                PageSeed(title: L10n.Common.Demo.consistency.title, type: .concept, content: L10n.Common.Demo.consistency.content, tags: [L10n.Common.Tags.quality]),
+                PageSeed(title: L10n.Common.Demo.topology.title, type: .concept, content: L10n.Common.Demo.topology.content, tags: [L10n.Common.Tags.visual]),
+                PageSeed(title: L10n.Common.Demo.hybridSearch.title, type: .concept, content: L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", tags: [L10n.Common.Tags.performance])
         ]
 
         try await store.performBatchWrite { db in
@@ -51,8 +52,8 @@ struct DemoDataGenerator {
             try TokenUsage.deleteAll(db)
             try LLMCallLog.deleteAll(db)
 
-            for (title, type, content, tags) in pagesToCreate {
-                let page = KnowledgePage(title: title, pageType: type, content: content, tags: tags)
+            for seed in pagesToCreate {
+                let page = KnowledgePage(title: seed.title, pageType: seed.type, content: seed.content, tags: seed.tags)
                 try page.save(db)
             }
             

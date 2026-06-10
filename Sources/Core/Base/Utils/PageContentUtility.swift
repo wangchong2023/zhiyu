@@ -48,10 +48,8 @@ public enum PageContentUtility {
         if let regex = try? NSRegularExpression(pattern: pattern) {
             let nsText = content as NSString
             let matches = regex.matches(in: content, range: NSRange(location: 0, length: nsText.length))
-            for match in matches {
-                if match.numberOfRanges > 1 {
+            for match in matches where match.numberOfRanges > 1 {
                     allTags.insert(nsText.substring(with: match.range(at: 1)))
-                }
             }
         }
         return Array(allTags).sorted()

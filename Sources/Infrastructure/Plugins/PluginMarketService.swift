@@ -171,15 +171,13 @@ final class PluginMarketService: ObservableObject {
                 // 尝试从 Tools/Plugins 目录复制
                 let bundledSources = [
                     URL(fileURLWithPath: "Tools/Plugins/\(plugin.id).zyplugin"),
-                    URL(fileURLWithPath: "Tools/Plugins/smart-cleaner.zyplugin"),
+                    URL(fileURLWithPath: "Tools/Plugins/smart-cleaner.zyplugin")
                 ]
-                for src in bundledSources {
-                    if fileManager.fileExists(atPath: src.path) {
+                for src in bundledSources where fileManager.fileExists(atPath: src.path) {
                         try? fileManager.removeItem(at: localFile)
                         try? fileManager.copyItem(at: src, to: localFile)
                         Logger.shared.info("[PluginMarket] Copied local: \(plugin.name)")
                         self.errorMessage = nil
-                    }
                 }
 
                 if !fileManager.fileExists(atPath: localFile.path) {

@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public enum Collaboration {
-        public static let t = "Plugin"
-
+    public enum Collaboration: L10nTableEntry {
+        public static let tableName = "Plugin"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("collab.title") }
         public static var subtitle: String { tr("collab.subtitle") }
         public static var defaultRoom: String { tr("collab.defaultRoom") }

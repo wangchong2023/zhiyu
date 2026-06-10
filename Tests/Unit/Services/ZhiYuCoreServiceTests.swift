@@ -10,7 +10,7 @@
 //
 import XCTest
 import SwiftUI
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 // MARK: - 历史撤销与恢复 (UndoService) 单元测试
@@ -229,8 +229,9 @@ final class LoggerTests: XCTestCase {
     
     override func tearDown() async throws {
         // 清理测试在沙盒目录产生的物理文件
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        _ = try? FileManager.default.removeItem(at: docs!.appendingPathComponent("zhiyu_logs.json"))
+        if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            _ = try? FileManager.default.removeItem(at: docs.appendingPathComponent("zhiyu_logs.json"))
+        }
         logService = nil
         try await super.tearDown()
     }

@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public struct Settings {
-        public static let t = "System"
-
+    public struct Settings: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         /// 获取插件权限提示文案
         /// - Parameter name: 插件名称
         /// - Returns: 本地化格式化文案
@@ -91,11 +87,9 @@ extension L10n {
                 public static var onboarding: String { Localized.tr("settings.developer.section.onboarding", table: t) }
             }
 
-            public static var resetOnboarding: String { Localized.tr("settings.developer.resetOnboarding", table: t) }
-            public static var resetOnboardingConfirm: String { Localized.tr("settings.developer.resetOnboardingConfirm", table: t) }
-            public static var resetOnboardingAction: String { Localized.tr("settings.developer.resetOnboardingAction", table: t) }
-            public static var resetOnboardingMessage: String { Localized.tr("settings.developer.resetOnboardingMessage", table: t) }
             public static var resetOnboardingDone: String { Localized.tr("settings.developer.resetOnboardingDone", table: t) }
+            public static var showGuidePage: String { Localized.tr("settings.developer.showGuidePage", table: t) }
+            public static var showWelcomeBanner: String { Localized.tr("settings.developer.showWelcomeBanner", table: t) }
 
             public struct stressTest {
                 public static var count: String { Localized.tr("settings.developer.stressTest.count", table: t) }
@@ -143,6 +137,28 @@ extension L10n {
             public static var injectedNotebooks: String { Localized.tr("settings.injectDemo.injectedNotebooks", table: t) }
             public static var pageUnit: String { Localized.tr("settings.injectDemo.pageUnit", table: t) }
             public static var itemsSeparator: String { Localized.tr("settings.injectDemo.itemsSeparator", table: t) }
+        }
+
+        public enum Feedback {
+            public static var title: String { Settings.tr("settings.feedback.title") }
+            public static var subject: String { Settings.tr("settings.feedback.subject") }
+            public static var subjectPlaceholder: String { Settings.tr("settings.feedback.subjectPlaceholder") }
+            public static var category: String { Settings.tr("settings.feedback.category") }
+            public static var categoryBug: String { Settings.tr("settings.feedback.categoryBug") }
+            public static var categoryFeature: String { Settings.tr("settings.feedback.categoryFeature") }
+            public static var categoryContent: String { Settings.tr("settings.feedback.categoryContent") }
+            public static var categoryOther: String { Settings.tr("settings.feedback.categoryOther") }
+            public static var rating: String { Settings.tr("settings.feedback.rating") }
+            public static var content: String { Settings.tr("settings.feedback.content") }
+            public static var contentPlaceholder: String { Settings.tr("settings.feedback.contentPlaceholder") }
+            public static var submit: String { Settings.tr("settings.feedback.submit") }
+            public static var submitted: String { Settings.tr("settings.feedback.submitted") }
+            public static var appVersionLabel: String { Settings.tr("settings.feedback.appVersionLabel") }
+            public static var osVersionLabel: String { Settings.tr("settings.feedback.osVersionLabel") }
+            public static var osMacDefault: String { Settings.tr("settings.feedback.osMacDefault") }
+            public static var deviceMacDefault: String { Settings.tr("settings.feedback.deviceMacDefault") }
+            public static var history: String { Settings.tr("settings.feedback.history") }
+            public static var noHistory: String { Settings.tr("settings.feedback.noHistory") }
         }
 
         public struct About {

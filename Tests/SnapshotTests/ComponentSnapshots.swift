@@ -12,7 +12,7 @@ import XCTest
 import SwiftUI
 import SnapshotTesting
 import Combine
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 @MainActor
@@ -149,7 +149,6 @@ final class ComponentSnapshots: XCTestCase {
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
     }
 
-    
     /// 测试响应式侧边栏组件的视觉一致性与代码覆盖率提升
     func testAdaptiveSidebarView() {
         setupMockEnvironment()
@@ -221,7 +220,7 @@ final class ComponentSnapshots: XCTestCase {
             KnowledgePage(title: "当前深度详情", pageType: .concept, content: "")
         ]
         
-        var navigatedId: UUID? = nil
+        var navigatedId: UUID?
         let rawBreadcrumbView = BreadcrumbView(history: history) { navigatedId = $0 }
         
         // 显式触发重构后的面包屑点击行为，消灭未覆盖闭包行

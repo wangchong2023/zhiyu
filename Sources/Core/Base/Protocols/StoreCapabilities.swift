@@ -9,7 +9,7 @@
 //  核心职责：跨层协议定义，建立 L0-L3 各层间的抽象契约。
 //
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 /// 具备向量化与语义嵌入检索能力的底层存储协议。
 public protocol VectorIndexableStore: Sendable {
@@ -191,9 +191,21 @@ public protocol AnyPageStore: Sendable {
     /// 获取当前应用各持久化目录所占用的物理存储空间统计信息。
     ///
     /// - Returns: 返回包含数据库物理文件大小、日志文件大小、以及导出缓存大小的元组。
-    func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64)
+    func getStorageStats() async -> StorageStats
+}
+
+/// 存储资源统计信息
+public struct StorageStats: Sendable, Equatable {
+    public let databaseSize: Int64
+    public let logsSize: Int64
+    public let exportsSize: Int64
+
+    public init(databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
+        self.databaseSize = databaseSize
+        self.logsSize = logsSize
+        self.exportsSize = exportsSize
+    }
 }
 
 /// 聚合了页面存取与语义向量检索的复合存储能力协议 (L0-Base 核心大脑)。
 public typealias AnyPageStoreCapabilities = AnyPageStore & VectorIndexableStore
-

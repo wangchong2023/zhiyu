@@ -9,7 +9,6 @@
 //  核心职责：插件持久化记录模型，将插件元数据、安装状态及运行时统计映射至 SQLite。
 //
 import Foundation
-import GRDB
 
 /// 插件持久化记录：承载插件元数据、安装来源、运行状态及性能统计。
 public struct PluginRecord: Codable, Sendable {
@@ -74,46 +73,5 @@ public struct PluginRecord: Codable, Sendable {
         self.installedAt = installedAt
         self.updatedAt = updatedAt
         self.manifestJSON = manifestJSON
-    }
-}
-
-// MARK: - GRDB 协议遵循
-
-extension PluginRecord: FetchableRecord, MutablePersistableRecord {
-    /// 显式声明 table name，覆盖 GRDB 默认推导
-    public static var databaseTableName: String {
-        AppConstants.Storage.Tables.pluginRecords
-    }
-
-    /// 插入前自动设置时间戳
-    public mutating func didInsert(_ inserted: InsertionSuccess) {
-        // no-op：插入时 installedAt / updatedAt 已预设
-    }
-
-    /// 更新前自动刷新 updatedAt
-    public mutating func willUpdate(_ columns: Set<String>) {
-        updatedAt = Date()
-    }
-}
-
-// MARK: - Database Schema (Type-Safe ColumnExpression)
-
-extension PluginRecord {
-    /// 类型安全的数据库列名定义，支持 GRDB 强类型查询链。
-    public enum Columns: String, ColumnExpression {
-        case id
-        case name
-        case version
-        case author
-        case source
-        case status
-        case permissionsJSON = "permissions_json"
-        case loadDuration = "load_duration"
-        case unloadDuration = "unload_duration"
-        case totalExecutionTime = "total_execution_time"
-        case callCount = "call_count"
-        case installedAt = "installed_at"
-        case updatedAt = "updated_at"
-        case manifestJSON = "manifest_json"
     }
 }

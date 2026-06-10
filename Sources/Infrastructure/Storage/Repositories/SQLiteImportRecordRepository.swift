@@ -9,25 +9,9 @@
 //  核心职责：ImportRecord 的 SQLite 仓储实现
 
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
-final class SQLiteImportRecordRepository: ImportRecordRepository, @unchecked Sendable {
-
-    private var dbWriter: any DatabaseWriter {
-        get async {
-            await MainActor.run {
-                if let writer = DatabaseManager.shared.dbWriter {
-                    return writer
-                }
-                do { return try DatabaseQueue() } catch {
-                    fatalError("SQLiteImportRecordRepository: 无法创建内存数据库")
-                }
-            }
-        }
-    }
-
-    init(dbWriter: any DatabaseWriter) {}
-
+final class SQLiteImportRecordRepository: ImportRecordRepository, DatabaseWriterProvider, @unchecked Sendable {
     // MARK: - ImportRecordRepository
 
     func save(_ record: ImportRecord) async throws {
@@ -86,11 +70,29 @@ final class SQLiteImportRecordRepository: ImportRecordRepository, @unchecked Sen
         }
     }
 
+    func updateRawText(id: String, rawText: String) async throws {
+        let writer = await dbWriter
+        try await writer.write { db in
+            guard var record = try ImportRecord.fetchOne(db, key: id) else { return }
+            record.rawText = rawText
+            try record.update(db)
+        }
+    }
+
+    func updateTags(id: String, tags: String) async throws {
+        let writer = await dbWriter
+        try await writer.write { db in
+            guard var record = try ImportRecord.fetchOne(db, key: id) else { return }
+            record.tags = tags
+            try record.update(db)
+        }
+    }
+
     func totalStorageSize() async throws -> Int64 {
         let records = try await fetchAll(category: nil, limit: 2000)
         var total: Int64 = 0
         for r in records {
-            if let _ = r.filePath, let size = r.fileSize {
+            if r.filePath != nil, let size = r.fileSize {
                 total += size
             }
             if let text = r.rawText {

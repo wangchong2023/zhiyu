@@ -26,7 +26,8 @@ final class WatchSpeechService: NSObject, SpeechServiceProtocol {
     var selectedLanguage: String = "zh-CN"
     var hasPermission: Bool = false
     var recordings: [VoiceRecording] = []
-    
+    var currentAudioFileURL: URL? { nil }
+
     override init() {
         super.init()
     }

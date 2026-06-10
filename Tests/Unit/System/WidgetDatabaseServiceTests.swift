@@ -9,7 +9,7 @@
 //  核心职责：针对 WidgetModels 和 WidgetDatabaseService 开展自动化单元测试。
 //
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 final class WidgetDatabaseServiceTests: XCTestCase {

@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 import Combine
-import GRDB
+@preconcurrency import GRDB
 import LocalAuthentication
 #if os(watchOS)
 @testable import ZhiYuWatch
@@ -155,7 +155,6 @@ final class MockOnDeviceLLMService: OnDeviceLLMServiceProtocol, @unchecked Senda
 }
 #endif
 
-
 // MARK: - Mock Biometric Auth Provider
 
 /// 模拟的生物识别提供商，用于测试环境下的认证操作
@@ -200,6 +199,8 @@ final class MockVectorIndexableStore: VectorIndexableStore, @unchecked Sendable 
 final class MockVaultDatabaseSwitcher: VaultDatabaseSwitcher, @unchecked Sendable {
     func switchDatabase(to vaultID: UUID, at url: URL) async throws {}
     func releaseDatabaseConnection() {}
+    func countPagesInCurrentVault() async throws -> Int { 0 }
+    func countPages(at url: URL) async throws -> Int { 0 }
 }
 
 /// Mock 后台任务协议，用于测试环境 DI 容器注册
@@ -311,13 +312,15 @@ extension XCTestCase {
         let mockVectorStore = MockVectorIndexableStore(embeddingProvider: embeddingManager)
         ServiceContainer.shared.register(mockVectorStore as any VectorIndexableStore, for: (any VectorIndexableStore).self)
 
-        
+        guard let dbQueue = try? DatabaseQueue() else {
+            fatalError("Failed to create database queue")
+        }
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbQueue)
         ServiceContainer.shared.register(knowledgeRepo as any KnowledgeRepository, for: (any KnowledgeRepository).self)
         // LLMContextBuilder 通过具体类型解析，需注册双重绑定以覆盖 resolve(KnowledgePageRepository.self) (@DIP)
         ServiceContainer.shared.register(knowledgeRepo, for: KnowledgePageRepository.self)
         
-        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: dbQueue)
+        let governanceRepo = RAGGovernanceSQLiteStore()
         ServiceContainer.shared.register(governanceRepo as any RAGGovernanceRepository, for: (any RAGGovernanceRepository).self)
 
         if let globalWriter = DatabaseManager.shared.globalWriter {

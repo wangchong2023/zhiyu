@@ -118,8 +118,6 @@ public struct ModelStoreView: View {
         }
     }
     
-
-
     /// 大模型卡片渲染逻辑
     private func modelCard(for manifest: LLMManifest) -> some View {
         let isSelected = modelManager.activeModelId == manifest.modelId

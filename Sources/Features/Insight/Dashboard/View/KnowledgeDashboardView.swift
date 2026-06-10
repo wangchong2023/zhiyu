@@ -349,7 +349,7 @@ struct MetricBox: View {
     let unit: String?
     let icon: String
     let color: Color
-    var trend: String? = nil
+    var trend: String?
     
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium + DesignSystem.atomic) { // 14pt

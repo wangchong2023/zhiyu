@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Accessibility: Sendable {
-        public static let t = "Common"
-
+    public struct Accessibility: L10nTableEntry, Sendable {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         /// 标签的无障碍声明
         public static var tags: String { Localized.tr("accessibility.tags", table: t) }
         /// 字数的无障碍声明

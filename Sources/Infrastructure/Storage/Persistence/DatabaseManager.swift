@@ -9,13 +9,13 @@
 //  核心职责：持久化引擎：GRDB/SQLite 仓库、同步、加密、数据库管理。
 //
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 /// 数据库中枢管理器（DatabaseManager）。
 /// 它是知识金库高内聚持久化层（Persistence）的基座大脑，托管了专属笔记本数据库（Workspace DB）
 /// 和全局共享设置数据库（Global DB）的双轨道生命周期。
 @MainActor
-final class DatabaseManager: Sendable {
+final class DatabaseManager {
     
     /// 全局唯一的线程安全单例实例。
     static let shared = DatabaseManager()
@@ -28,25 +28,18 @@ final class DatabaseManager: Sendable {
     }
     
     /// 并发活跃写入事务计数器，用于 Vault 热切换时的优雅连接排空（Draining）
-    private let transactionLock = NSLock()
-    private var _activeTransactionsCount: Int = 0
-    
-    /// 获取当前活跃的事务数
-    var activeTransactionsCount: Int {
-        transactionLock.withLock { _activeTransactionsCount }
-    }
+    /// 注：DatabaseManager 为 @MainActor，所有访问已在主线程串行化，无需额外同步。
+    private(set) var activeTransactionsCount: Int = 0
     
     /// 递增活跃写入事务数
     func incrementActiveTransactions() {
-        transactionLock.withLock { _activeTransactionsCount += 1 }
+        activeTransactionsCount += 1
     }
     
     /// 递减活跃写入事务数
     func decrementActiveTransactions() {
-        transactionLock.withLock {
-            if _activeTransactionsCount > 0 {
-                _activeTransactionsCount -= 1
-            }
+        if activeTransactionsCount > 0 {
+            activeTransactionsCount -= 1
         }
     }
     
@@ -369,8 +362,21 @@ extension DatabaseManager: VaultDatabaseSwitcher {
         closeWriter(self.dbWriter)
         self.dbWriter = nil
     }
-}
 
+    public func countPagesInCurrentVault() async throws -> Int {
+        guard let writer = dbWriter else { return 0 }
+        return try await writer.read { db in
+            try KnowledgePage.fetchCount(db)
+        }
+    }
+
+    public func countPages(at url: URL) async throws -> Int {
+        let dbQueue = try DatabaseQueue(path: url.path)
+        return try await dbQueue.read { db in
+            try KnowledgePage.fetchCount(db)
+        }
+    }
+}
 
 // MARK: - 核心通知扩展
 

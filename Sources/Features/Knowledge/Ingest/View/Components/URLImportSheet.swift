@@ -10,23 +10,56 @@
 //
 import SwiftUI
 
-
 // MARK: - URL Import Sheet
-/// 网页链接导入面板组件
-/// 负责提供 URL 地址录入界面，并触发基于网页抓取的自动化导入流程
+/// 批量网页链接导入面板（最多 10 个 URL，带格式校验）
 struct URLImportSheet: View {
     @Binding var urlText: String
-    let onImport: () -> Void
+    let onImport: ([URL]) -> Void
     @Environment(\.dismiss) private var dismiss
-    
+
+    private let maxURLCount = AppConstants.Keys.ImportLimits.maxURLCount
+
+    /// 解析所有非空行
+    private var allLines: [String] {
+        urlText.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// 去重后的有效 URL
+    private var validURLs: [URL] {
+        var seen = Set<String>()
+        return allLines.compactMap { line -> URL? in
+            guard let url = URL(string: line),
+                  url.scheme == "http" || url.scheme == "https" else { return nil }
+            let normalized = url.absoluteString.lowercased()
+            guard !seen.contains(normalized) else { return nil }
+            seen.insert(normalized)
+            return url
+        }
+    }
+
+    /// 第一个无效行的行号（1-based）
+    private var firstInvalidLine: Int? {
+        let validSet = Set(validURLs.map { $0.absoluteString.lowercased() })
+        for (i, line) in allLines.enumerated() {
+            guard let url = URL(string: line),
+                  url.scheme == "http" || url.scheme == "https",
+                  validSet.contains(url.absoluteString.lowercased()) else {
+                return i + 1
+            }
+        }
+        return nil
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-                    Text(L10n.Ingest.urlImportPlaceholder)
+                VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    Text(L10n.Ingest.batchURLPlaceholder)
                         .font(.caption)
                         .foregroundStyle(.appSecondary)
-                    
+
                     Group {
                         #if os(watchOS)
                         TextField("", text: $urlText)
@@ -34,46 +67,52 @@ struct URLImportSheet: View {
                         TextEditor(text: $urlText)
                         #endif
                     }
-                        .font(.system(.body, design: .monospaced))
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .padding(DesignSystem.small) // 8
-                        .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                                .stroke(Color.appAccent.opacity(DesignSystem.Opacity.glass * 2), lineWidth: DesignSystem.borderWidth) // 0.2, 1
-                        )
+                    .font(.system(.body, design: .monospaced))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(DesignSystem.small)
+                    .background(Color.appCard)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                            .stroke(
+                                firstInvalidLine != nil ? Color.red.opacity(0.5) : Color.appAccent.opacity(DesignSystem.Opacity.glass * 2),
+                                lineWidth: DesignSystem.borderWidth
+                            )
+                    )
                 }
                 .padding()
-                
-                VStack(alignment: .leading, spacing: DesignSystem.medium) { // 12
-                    Label(L10n.Ingest.webDesc, systemImage: DesignSystem.Icons.info)
+
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    if let line = firstInvalidLine {
+                        Label(String(format: L10n.Ingest.invalidURLAtLine(line)), systemImage: "exclamationmark.triangle.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.red)
+                    }
+                    Label(String(format: L10n.Ingest.validURLCount(validURLs.count, maxURLCount)), systemImage: "link")
                         .font(.caption2)
                         .foregroundStyle(.appSecondary)
-                    
+
                     AppPrimaryButton(
-                        title: L10n.Common.import,
+                        title: L10n.Ingest.batchImport,
                         icon: DesignSystem.Icons.trayArrowDown,
                         isLoading: false
                     ) {
-                        onImport()
+                        let urls = Array(validURLs.prefix(maxURLCount))
+                        onImport(urls)
                     }
-                    .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(validURLs.isEmpty)
                 }
                 .padding()
                 .background(Color.appCard)
             }
-            .navigationTitle(L10n.Ingest.urlImport)
-.appNavigationBarTitleDisplayMode(.inline)
+            .navigationTitle(L10n.Ingest.batchURLTitle)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.cancel) {
-                        dismiss()
-                    }
+                    Button(L10n.Common.cancel) { dismiss() }
                 }
             }
             .background(PageBackgroundView(accentColor: .appAccent))
         }
     }
 }
-

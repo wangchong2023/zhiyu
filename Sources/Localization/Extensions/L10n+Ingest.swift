@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public enum Ingest {
-        public static let t = "Ingest"
-
+    public enum Ingest: L10nTableEntry {
+        public static let tableName = "Ingest"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         /// 获取智能导入完成的提示描述
         /// - Parameter type: 导入类型
         /// - Returns: 本地化文案
@@ -79,9 +75,37 @@ extension L10n {
         public static var clipboardImport: String { Ingest.tr("ingest.clipboardImport") }
         public static var voiceNote: String { Ingest.tr("ingest.voiceNote") }
         public static var importRecords: String { Ingest.tr("ingest.importRecords") }
+        public static var viewRawText: String { Ingest.tr("ingest.viewRawText") }
+        public static var openLink: String { Ingest.tr("ingest.openLink") }
+        public static var previewFile: String { Ingest.tr("ingest.previewFile") }
+        public static var rawContentTitle: String { Ingest.tr("ingest.rawContentTitle") }
+        public static var viewPage: String { Ingest.tr("ingest.viewPage") }
+        public static var openWith: String { Ingest.tr("ingest.openWith") }
+        public static func duplicateFile(_ name: String) -> String { Ingest.trf("ingest.duplicateFile", name) }
+        public static var imageTooLarge: String { Ingest.tr("ingest.imageTooLarge") }
+        public static var voiceTooLong: String { Ingest.tr("ingest.voiceTooLong") }
+        public static var importCooldown: String { Ingest.tr("ingest.importCooldown") }
+        public static var imageExtracting: String { Ingest.tr("ingest.imageExtracting") }
+        public static var imageOCRLabel: String { Ingest.tr("ingest.imageOCRLabel") }
+        public static func imageCount(_ n: Int) -> String { Ingest.trf("ingest.imageCount", n) }
+        public static var imageSkippedTooLarge: String { Ingest.tr("ingest.imageSkippedTooLarge") }
+        public static var imageSkippedFailed: String { Ingest.tr("ingest.imageSkippedFailed") }
+        public static var batchURLTitle: String { Ingest.tr("ingest.batchURLTitle") }
+        public static var batchURLPlaceholder: String { Ingest.tr("ingest.batchURLPlaceholder") }
+        public static var batchImport: String { Ingest.tr("ingest.batchImport") }
+        public static func invalidURLAtLine(_ line: Int) -> String { Ingest.trf("ingest.invalidURLAtLine_%@", String(line)) }
+        public static func validURLCount(_ valid: Int, _ max: Int) -> String { Ingest.trf("ingest.validURLCount_%@_%@", String(valid), String(max)) }
+        public static func importProgress(_ cur: Int, _ total: Int) -> String { Ingest.trf("ingest.importProgress", String(cur), String(total)) }
+        public static func batchResult(_ ok: Int, _ fail: Int) -> String { Ingest.trf("ingest.batchResult", String(ok), String(fail)) }
+        public static var aiTag: String { Ingest.tr("ingest.aiTag") }
+        public static var aiTagging: String { Ingest.tr("ingest.aiTagging") }
+        public static var untagged: String { Ingest.tr("ingest.untagged") }
+        public static var aiTagSuccess: String { Ingest.tr("ingest.aiTagSuccess") }
+        public static var aiTagFailed: String { Ingest.tr("ingest.aiTagFailed") }
+        public static func aiTagPrompt(_ content: String) -> String { Ingest.trf("ingest.aiTagPrompt", content) }
         public static var importAll: String { Ingest.tr("ingest.importAll") }
         public static var noImportRecords: String { Ingest.tr("ingest.noImportRecords") }
-        public static var fileTooLarge: String { Ingest.tr("ingest.error.fileTooLarge") }
+        public static var fileTooLarge: String { Ingest.tr("ingest.fileTooLarge") }
         public static var storageFull: String { Ingest.tr("ingest.error.storageFull") }
         public static var error: String { Ingest.tr("ingest.error") }
         public static var smartToggle: String { Ingest.tr("ingest.smartToggle") }
@@ -103,7 +127,6 @@ extension L10n {
         public static var ok: String { Common.tr("misc.ok") }
         public static var llmRequired: String { Ingest.tr("ingest.llmRequired") }
         public static var actions: String { Ingest.tr("ingest.actions") }
-        public static var sources: String { Ingest.tr("ingest.sources") }
         public static var recentActivity: String { Ingest.tr("ingest.recentActivity") }
         public static var recent: String { Ingest.tr("ingest.recent") }
         public static var noActivities: String { Ingest.tr("ingest.noActivities") }

@@ -298,5 +298,21 @@ extension DesignSystem {
         public static let settingsDeveloper = "hammer.fill"
         /// 关于软件说明图标
         public static let settingsAbout = "info.circle"
+
+        // MARK: - 笔记本 Emoji
+
+        public enum Notebook {
+            /// 默认笔记本图标
+            public static let defaultBook: String = "📚"
+            /// 项目调研笔记本图标
+            public static let defaultResearch: String = "🔬"
+            /// 兜底笔记本图标
+            public static let fallback: String = "📓"
+            /// 可选图标列表
+            public static let options: [String] = [
+                "📚", "🔬", "📓", "📖", "📝", "🗂️", "📊", "🧪",
+                "💡", "🎯", "🚀", "⭐", "🔧", "🎨", "📐", "🧠"
+            ]
+        }
     }
 }

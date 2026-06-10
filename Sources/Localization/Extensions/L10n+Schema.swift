@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Schema {
-        public static let t = "Common" // 假设 Schema 放在 Common 表中，或者根据实际情况调整
-
+    public struct Schema: L10nTableEntry {
+        public static let tableName = "Common" // 假设 Schema 放在 Common 表中，或者根据实际情况调整
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public struct concept {
             public static var template: String { Schema.tr("schema.concept.template") }
             public static var prompt: String { Schema.tr("schema.concept.prompt") }

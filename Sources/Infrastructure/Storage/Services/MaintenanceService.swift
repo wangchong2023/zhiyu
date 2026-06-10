@@ -10,7 +10,7 @@
 //
 import Foundation
 import Observation
-import GRDB
+@preconcurrency import GRDB
 
 /// 系统维护服务 (L1-Infra)
 /// 负责处理非核心业务的系统级管理任务。
@@ -34,17 +34,16 @@ public final class MaintenanceService {
     /// - Returns: 数值
     /// 生成演示数据，返回总数和每个笔记本的注入详情
     public func generateDemoData() async -> (total: Int, details: [(name: String, count: Int)]) {
-        let demoVaultConfigs: [(name: String, icon: String, description: String)] = [
-            (L10n.Vault.defaultName, IconTokens.defaultBook, L10n.Vault.defaultDescription),
-            (L10n.Vault.researchName, IconTokens.defaultResearch, L10n.Vault.researchDescription)
+        struct VaultConfig { let name: String; let icon: String; let description: String }
+        let demoVaultConfigs: [VaultConfig] = [
+            VaultConfig(name: L10n.Vault.defaultName, icon: DesignSystem.Icons.Notebook.defaultBook, description: L10n.Vault.defaultDescription),
+            VaultConfig(name: L10n.Vault.researchName, icon: DesignSystem.Icons.Notebook.defaultResearch, description: L10n.Vault.researchDescription)
         ]
 
         var existingVaults = vaultService.vaults
-        for config in demoVaultConfigs {
-            if !existingVaults.contains(where: { $0.name == config.name }) {
+        for config in demoVaultConfigs where !existingVaults.contains(where: { $0.name == config.name }) {
                 vaultService.createVault(name: config.name, icon: config.icon, description: config.description)
                 logger.addLog(action: .create, target: config.name, details: "DemoData_VaultCreated", module: "Maintenance")
-            }
         }
 
         existingVaults = vaultService.vaults
@@ -77,9 +76,9 @@ public final class MaintenanceService {
     /// 填充默认引导内容
     public func seedDefaultContent(pages: [KnowledgePage]) async {
         if pages.isEmpty {
-            await pageStore.seedDefaultContent { [weak self] a, t, d in
+            await pageStore.seedDefaultContent { [weak self] action, target, details in
                 Task { @MainActor [weak self] in
-                    self?.logger.addLog(action: a, target: t, details: d, module: "Maintenance")
+                    self?.logger.addLog(action: action, target: target, details: details, module: "Maintenance")
                 }
             }
         }

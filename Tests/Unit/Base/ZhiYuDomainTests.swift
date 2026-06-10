@@ -9,7 +9,7 @@
 //  核心职责：针对 ZhiYuDomain 开展自动化单元测试验证。
 //
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 final class ZhiYuDomainTests: XCTestCase {
@@ -50,6 +50,7 @@ final class ZhiYuDomainTests: XCTestCase {
           ]
         }
         """
+        // swiftlint:disable:next force_unwrapping
         let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         
@@ -139,6 +140,7 @@ final class ZhiYuDomainTests: XCTestCase {
     // MARK: - QuizModel Fault Tolerance
     func testQuizModelFaultTolerance() {
         let brokenJson = "{\"title\": \"Broken\", \"questions\": []" // 缺少闭合括号
+        // swiftlint:disable:next force_unwrapping
         let data = brokenJson.data(using: .utf8)!
         let decoder = JSONDecoder()
         
@@ -527,4 +529,3 @@ final class ZhiYuDomainTests: XCTestCase {
         }
     }
 }
-

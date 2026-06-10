@@ -10,7 +10,7 @@
 //
 import Foundation
 import Combine
-import GRDB
+@preconcurrency import GRDB
 
 /// 核心持久化存储引擎 (L1Actor)
 /// 采用 actor 模式确保多端并发下的数据一致性，封装复杂的 SQL 事务。
@@ -47,7 +47,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     public init(dbWriter: any DatabaseWriter) {
         let knowledgeRepo = KnowledgePageRepository(dbWriter: dbWriter)
         let vectorRepo = VectorDataRepository(dbWriter: dbWriter)
-        let governanceRepo = RAGGovernanceSQLiteStore(dbWriter: dbWriter)
+        let governanceRepo = RAGGovernanceSQLiteStore()
         
         self.knowledgeRepository = knowledgeRepo
         self.vectorRepository = vectorRepo
@@ -180,7 +180,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
 
     /// 获取存储资源统计信息，级联累加多笔记本分库及全局配置库大小
     /// - Returns: 数据库总大小、日志总大小、导出文件总大小 (字节)
-    public func getStorageStats() async -> (databaseSize: Int64, logsSize: Int64, exportsSize: Int64) {
+    public func getStorageStats() async -> StorageStats {
         let (dbPath, globalDBPath) = await MainActor.run {
             (DatabaseManager.shared.dbURL?.path ?? "", DatabaseManager.shared.globalDBURL?.path ?? "")
         }
@@ -229,7 +229,7 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
             }
         }
         
-        return (totalDbSize, 0, 0)
+        return StorageStats(databaseSize: totalDbSize, logsSize: 0, exportsSize: 0)
     }
     
     /// 执行批量数据库写入操作 (在隔离环境内)
@@ -241,16 +241,22 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
     
     /// 填充默认引导内容
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        let pagesToCreate: [(String, PageType, String, [String])] = [
-            (L10n.Common.Demo.Welcome.title, .concept, L10n.Common.Demo.Welcome.content, [L10n.Common.Demo.Welcome.tag1, L10n.Common.Demo.Welcome.tag2, L10n.Common.Demo.Welcome.tag3]),
-            (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content, ["AI", "Agent"]),
-            (L10n.Common.Demo.planning.title, .concept, L10n.Common.Demo.planning.content, ["AI", "Planning"]),
-            (L10n.Common.Demo.memory.title, .concept, L10n.Common.Demo.memory.content, ["AI", "Memory", "RAG"])
+        struct PageSeed {
+            let title: String
+            let type: PageType
+            let content: String
+            let tags: [String]
+        }
+        let pagesToCreate: [PageSeed] = [
+            PageSeed(title: L10n.Common.Demo.Welcome.title, type: .concept, content: L10n.Common.Demo.Welcome.content, tags: [L10n.Common.Demo.Welcome.tag1, L10n.Common.Demo.Welcome.tag2, L10n.Common.Demo.Welcome.tag3]),
+            PageSeed(title: L10n.Common.Demo.aiAgent.title, type: .concept, content: L10n.Common.Demo.aiAgent.content, tags: ["AI", "Agent"]),
+            PageSeed(title: L10n.Common.Demo.planning.title, type: .concept, content: L10n.Common.Demo.planning.content, tags: ["AI", "Planning"]),
+            PageSeed(title: L10n.Common.Demo.memory.title, type: .concept, content: L10n.Common.Demo.memory.content, tags: ["AI", "Memory", "RAG"])
         ]
         
-        for (title, type, content, tags) in pagesToCreate {
-            _ = try? await createPage(title: title, pageType: type, content: content, tags: tags)
-            logger(.create, title, "Seeded_default_content")
+        for seed in pagesToCreate {
+            _ = try? await createPage(title: seed.title, pageType: seed.type, content: seed.content, tags: seed.tags)
+            logger(.create, seed.title, "Seeded_default_content")
         }
     }
 

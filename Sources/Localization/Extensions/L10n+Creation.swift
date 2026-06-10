@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Creation {
-        public static let t = "Knowledge"
-
+    public struct Creation: L10nTableEntry {
+        public static let tableName = "Knowledge"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var entityTemplate: String { tr("template.entity") }
         public static var conceptTemplate: String { tr("template.concept") }
         public static var comparisonTemplate: String { tr("template.comparison") }

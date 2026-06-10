@@ -77,22 +77,23 @@ struct ConditionalAnimationModifier: ViewModifier {
 extension AccessibilityService {
     /// 视图层使用的字体缩放逻辑，桥接到 SwiftUI 的 ContentSizeCategory
     func scaledFont(base: CGFloat, category: ContentSizeCategory) -> CGFloat {
-        let multiplier: CGFloat
-        switch category {
-        case .extraSmall: multiplier = 0.82
-        case .small: multiplier = 0.88
-        case .medium: multiplier = 0.95
-        case .large: multiplier = 1.0
-        case .extraLarge: multiplier = 1.12
-        case .extraExtraLarge: multiplier = 1.23
-        case .extraExtraExtraLarge: multiplier = 1.35
-        case .accessibilityMedium: multiplier = 1.5
-        case .accessibilityLarge: multiplier = 1.65
-        case .accessibilityExtraLarge: multiplier = 1.8
-        case .accessibilityExtraExtraLarge: multiplier = 2.0
-        case .accessibilityExtraExtraExtraLarge: multiplier = 2.2
-        @unknown default: multiplier = 1.0
-        }
-        return base * multiplier
+        base * (CategoryMultiplier.map[category] ?? 1.0)
     }
+}
+
+private enum CategoryMultiplier {
+    static let map: [ContentSizeCategory: CGFloat] = [
+        .extraSmall: 0.82,
+        .small: 0.88,
+        .medium: 0.95,
+        .large: 1.0,
+        .extraLarge: 1.12,
+        .extraExtraLarge: 1.23,
+        .extraExtraExtraLarge: 1.35,
+        .accessibilityMedium: 1.5,
+        .accessibilityLarge: 1.65,
+        .accessibilityExtraLarge: 1.8,
+        .accessibilityExtraExtraLarge: 2.0,
+        .accessibilityExtraExtraExtraLarge: 2.2
+    ]
 }

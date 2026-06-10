@@ -14,10 +14,7 @@ import SwiftUI
 struct RAGEvaluationView: View {
     @Inject private var governance: any RAGGovernanceRepository
 
-    @State private var avgScores: (
-        faithfulness: Double, relevance: Double, precision: Double,
-        hallucinationRate: Double, citationAccuracy: Double
-    ) = (0, 0, 0, 0, 0)
+    @State private var avgScores = AverageRAGScores(faithfulness: 0, relevance: 0, precision: 0, hallucinationRate: 0, citationAccuracy: 0)
     @State private var hitRate: Double = 0
     @State private var mrr: Double = 0
     @State private var ndcg: Double = 0

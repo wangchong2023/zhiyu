@@ -10,7 +10,6 @@
 //
 import SwiftUI
 
-
 // MARK: - Ingest Entry Cards Section
 /// 导入入口卡片组组件
 /// 负责展示文件导入、手动录入、网页导入、OCR 扫描等多种导入方式的启动网格
@@ -152,4 +151,3 @@ struct IngestEntryCardsSection: View {
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
     }
 }
-

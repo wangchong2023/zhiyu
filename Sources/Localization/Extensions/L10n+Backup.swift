@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public enum Backup {
-        public static let t = "Ingest"
-
+    public enum Backup: L10nTableEntry {
+        public static let tableName = "Ingest"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { tr("backup.title") }
         public static var autoBackup: String { tr("backup.autoBackup") }
         public static var createNow: String { tr("backup.createNow") }

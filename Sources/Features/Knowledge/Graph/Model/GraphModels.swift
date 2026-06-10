@@ -18,8 +18,8 @@ struct GraphNode: Identifiable {
     let pageType: PageType
     var position: CGPoint
     var isHighlighted: Bool = false
-    var communityID: Int? = nil
-    var communityCohesion: Double? = nil
+    var communityID: Int?
+    var communityCohesion: Double?
     var linkCount: Int = 0
 }
 

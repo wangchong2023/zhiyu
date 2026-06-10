@@ -9,7 +9,7 @@
 //  核心职责：针对 MultiVaultSwitch 开展自动化单元测试验证。
 //
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 import Combine
 @testable import ZhiYu
 
@@ -111,17 +111,21 @@ final class MultiVaultSwitchTests: XCTestCase {
         let localVaultA = vaultAID
         let localVaultB = vaultBID
         let localVaultC = vaultCID
+        // swiftlint:disable:next force_unwrapping
         let localDbA = dbAURL!
+        // swiftlint:disable:next force_unwrapping
         let localDbB = dbBURL!
+        // swiftlint:disable:next force_unwrapping
         let localDbC = dbCURL!
         
         await withTaskGroup(of: Void.self) { group in
             for i in 0..<concurrencyLevel {
                 group.addTask {
-                    let targets: [(id: UUID, url: URL, title: String)] = [
-                        (localVaultA, localDbA, "PageA"),
-                        (localVaultB, localDbB, "PageB"),
-                        (localVaultC, localDbC, "PageC")
+                    struct VaultTarget { let id: UUID; let url: URL; let title: String }
+                    let targets: [VaultTarget] = [
+                        VaultTarget(id: localVaultA, url: localDbA, title: "PageA"),
+                        VaultTarget(id: localVaultB, url: localDbB, title: "PageB"),
+                        VaultTarget(id: localVaultC, url: localDbC, title: "PageC")
                     ]
                     
                     for step in 0..<switchIterations {
@@ -218,7 +222,7 @@ final class MultiVaultSwitchTests: XCTestCase {
 }
 
 // MARK: - 存储模块依赖重装工具
-fileprivate enum StorageModuleRegistrar {
+private enum StorageModuleRegistrar {
     /// 动态热重装 DI 容器中的持久化仓储服务
     @MainActor
     static func register(in container: ServiceContainer) {

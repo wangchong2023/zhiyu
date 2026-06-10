@@ -210,10 +210,10 @@ struct PDFIngestSheet: View {
             }
             #endif
         case "highlights":
-            content = documentInfo.highlights.map { h in
-                var text = "> \(h.text)"
-                if !h.note.isEmpty {
-                    text += "\n\n\(L10n.Ingest.PDF.noteLabel) \(h.note)"
+            content = documentInfo.highlights.map { highlight in
+                var text = "> \(highlight.text)"
+                if !highlight.note.isEmpty {
+                    text += "\n\n\(L10n.Ingest.PDF.noteLabel) \(highlight.note)"
                 }
                 return text
             }.joined(separator: "\n\n---\n\n")

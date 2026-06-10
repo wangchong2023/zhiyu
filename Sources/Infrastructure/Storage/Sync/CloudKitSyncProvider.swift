@@ -66,7 +66,7 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
     
     /// 拉取
     /// /// - Returns: 返回值
-    public func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
+    public func pull() async throws -> CloudSnapshot {
         try await ensureZoneExists()
         
         let recordID = CKRecord.ID(recordName: recordName, zoneID: zoneID)
@@ -81,7 +81,7 @@ public final class CloudKitSyncProvider: CloudStorageProvider {
         let logs = try JSONDecoder().decode([LogEntry].self, from: logsData)
         let lastModified = record["lastModified"] as? Date ?? Date.distantPast
         
-        return (pages, logs, lastModified)
+        return CloudSnapshot(pages: pages, logs: logs, lastModified: lastModified)
     }
     
     /// 配置静默推送，注册 CloudKit 的数据库变更订阅，以便系统后台唤醒更新。

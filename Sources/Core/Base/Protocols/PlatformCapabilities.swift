@@ -26,7 +26,6 @@ public protocol BiometricAuthProviderProtocol: Sendable {
     func evaluatePolicy(context: LAContext, reason: String) async -> Bool
 }
 
-
 // MARK: - 模型编译能力
 
 /// 机器学习模型编译器协议

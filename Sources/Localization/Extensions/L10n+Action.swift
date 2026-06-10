@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Action {
-        public static let t = "Common"
-
+    public struct Action: L10nTableEntry {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var createPage: String { tr("action.createPage") }
         public static var createPageSubtitle: String { tr("action.createPageSubtitle") }
         public static var ingestKnowledge: String { tr("action.ingestKnowledge") }

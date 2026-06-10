@@ -40,7 +40,7 @@ struct SynthesisView: View {
     @State private var showClearAllConfirm = false
     @State private var showBatchDeleteConfirm = false
     @State private var showLLMAlert = false
-    @State private var selectedFilterType: SynthesisStore.SynthesisType? = nil
+    @State private var selectedFilterType: SynthesisStore.SynthesisType?
 
     var body: some View {
         @Bindable var synthesisStore = synthesisStore
@@ -235,65 +235,61 @@ struct SynthesisView: View {
     }
     
     private var listHeader: some View {
-        HStack(alignment: .firstTextBaseline, spacing: DesignSystem.medium) {
-            Text(L10n.AI.Synthesis.documentList)
-                .font(.title3.bold())
-            
-            Spacer()
-            
-            if editMode == .active {
-                HStack(alignment: .firstTextBaseline, spacing: DesignSystem.medium) {
-                    Button(action: {
-                        HapticFeedback.shared.trigger(.warning)
-                        showBatchDeleteConfirm = true
-                    }) {
-                        Text(L10n.Common.delete)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .red)
-                    }
-                    .disabled(selectedDocIDs.isEmpty)
-                    .buttonStyle(.plain)
-                    
-                    Button(action: {
-                        HapticFeedback.shared.trigger(.warning)
-                        showClearAllConfirm = true
-                    }) {
-                        Text(L10n.Common.Misc.clear)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.appSecondary)
-                    }
-                    .buttonStyle(.plain)
-                    .confirmationDialog(L10n.AI.Synthesis.clearAllConfirm, isPresented: $showClearAllConfirm, titleVisibility: .visible) {
-                        Button(L10n.Common.Misc.clear, role: .destructive) {
-                            synthesisStore.clearAll()
-                            HapticFeedback.shared.trigger(.success)
+        AppSectionHeader(
+            title: L10n.AI.Synthesis.documentList,
+            icon: "doc.text",
+            trailing: AnyView(
+                HStack(spacing: DesignSystem.medium) {
+                    if editMode == .active {
+                        Button(action: {
+                            HapticFeedback.shared.trigger(.warning)
+                            showBatchDeleteConfirm = true
+                        }) {
+                            Text(L10n.Common.delete)
+                                .font(.subheadline.bold())
+                                .foregroundStyle(selectedDocIDs.isEmpty ? .appSecondary.opacity(DesignSystem.disabledOpacity) : .red)
                         }
-                        Button(L10n.Common.cancel, role: .cancel) { }
+                        .disabled(selectedDocIDs.isEmpty)
+                        .buttonStyle(.plain)
+
+                        Button(action: {
+                            HapticFeedback.shared.trigger(.warning)
+                            showClearAllConfirm = true
+                        }) {
+                            Text(L10n.Common.Misc.clear)
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.appSecondary)
+                        }
+                        .buttonStyle(.plain)
+                        .confirmationDialog(L10n.AI.Synthesis.clearAllConfirm, isPresented: $showClearAllConfirm, titleVisibility: .visible) {
+                            Button(L10n.Common.Misc.clear, role: .destructive) {
+                                synthesisStore.clearAll()
+                                HapticFeedback.shared.trigger(.success)
+                            }
+                            Button(L10n.Common.cancel, role: .cancel) { }
+                        }
                     }
-                }
-                .transition(.move(edge: .trailing).combined(with: .opacity))
-            }
-            
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                withAnimation(DesignSystem.standardAnimation) {
-                    if editMode == .inactive {
-                        editMode = .active
-                    } else {
-                        editMode = .inactive
-                        selectedDocIDs.removeAll()
+
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.selection)
+                        withAnimation(DesignSystem.standardAnimation) {
+                            if editMode == .inactive {
+                                editMode = .active
+                            } else {
+                                editMode = .inactive
+                                selectedDocIDs.removeAll()
+                            }
+                        }
+                    }) {
+                        Text(editMode == .active ? L10n.Common.done : L10n.Common.edit)
+                            .font(.subheadline.bold())
+                            .foregroundStyle(Color.appAccent)
                     }
+                    .buttonStyle(.plain)
                 }
-            }) {
-                Text(editMode == .active ? L10n.Common.done : L10n.Common.edit)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(Color.appAccent)
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(.vertical, DesignSystem.tightPadding)
-        .foregroundStyle(.appText)
-        .textCase(nil)
+            )
+        )
+        .padding(.horizontal, DesignSystem.tiny)
     }
 
     private func batchDelete() {
@@ -335,6 +331,11 @@ struct SynthesisView: View {
                     }
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                if let doc = selectedDoc, !doc.sourcePageIDs.isEmpty {
+                    sourcePagesSheet(doc: doc)
+                }
+            }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -353,6 +354,47 @@ struct SynthesisView: View {
                         Button { exportAction() } label: { Image(systemName: DesignSystem.Icons.export) }
                     }
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func sourcePagesSheet(doc: SynthesisStore.SynthesisDocument) -> some View {
+        let sourcePages = store.pages.filter { doc.sourcePageIDs.contains($0.id) }
+        VStack(alignment: .leading, spacing: 0) {
+            Divider()
+            HStack {
+                Label(L10n.AI.Synthesis.sourceCount(doc.sourcePageIDs.count), systemImage: "doc.text")
+                    .font(.caption.weight(.semibold))
+                Spacer()
+            }
+            .padding(.horizontal, DesignSystem.standardPadding)
+            .padding(.vertical, DesignSystem.tightPadding)
+            .background(.ultraThinMaterial)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: DesignSystem.small) {
+                    ForEach(sourcePages, id: \.id) { page in
+                        Button(action: {
+                            showOutput = false
+                            router.navigateToPage(id: page.id)
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Image(systemName: page.displayIcon)
+                                    .font(.caption2)
+                                Text(page.title)
+                                    .font(.caption)
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal, DesignSystem.small)
+                            .padding(.vertical, DesignSystem.tightPadding)
+                            .background(Capsule().fill(Color.appAccent.opacity(0.1)))
+                            .foregroundStyle(.appAccent)
+                        }
+                    }
+                }
+                .padding(.horizontal, DesignSystem.standardPadding)
+                .padding(.vertical, DesignSystem.tightPadding)
             }
         }
     }

@@ -11,7 +11,7 @@
 
 import XCTest
 import Combine
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 /// 知识库十万节点性能收敛测试类
@@ -35,8 +35,9 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
     @MainActor
     func testOneHundredThousandNodesFTSRetrievalLatency() async throws {
         // 获取测试环境下被 setupFullMockEnvironment 注入的 dbWriter
-        let dbWriter = DatabaseManager.shared.dbWriter
-        XCTAssertNotNil(dbWriter, "物理数据库写入器不能为空")
+        guard let dbWriter = DatabaseManager.shared.dbWriter else {
+            XCTFail("物理数据库写入器不能为空"); return
+        }
         
         let nodeCount = 100_000
         print("🧪 [PerformanceTest] 启动十万节点性能压力测试，目标数量: \(nodeCount)")
@@ -47,7 +48,7 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
         // --- 阶段一：单一写事务内批量 Bulk Insert 注入 100,000 节点 ---
         let writeStartTime = Date()
         
-        try await dbWriter!.write { db in
+        try await dbWriter.write { db in
             let batchSize = 10_000
             let batches = nodeCount / batchSize
             
@@ -92,8 +93,6 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
             }
         }
 
-
-        
         let writeDuration = Date().timeIntervalSince(writeStartTime)
         print("💾 [PerformanceTest] 十万节点及十万拓扑边批量注入完毕，总耗时: \(String(format: "%.3f", writeDuration)) 秒")
         

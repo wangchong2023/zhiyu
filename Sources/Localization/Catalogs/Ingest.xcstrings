@@ -2098,13 +2098,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "File too large (Max 50MB)"
+            "value": "File too large. Maximum: 10MB"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "文件过大 (限 50MB)"
+            "value": "文件过大，最大支持 10MB"
           }
         }
       }
@@ -3132,22 +3132,52 @@
     "ingest.importRecords": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Import History" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "导入原始内容" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import History"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入原始内容"
+          }
+        }
       }
     },
     "ingest.importAll": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "All" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "全部" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部"
+          }
+        }
       }
     },
     "ingest.noImportRecords": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No import history yet" } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "暂无导入记录" } }
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No import history yet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无导入记录"
+          }
+        }
       }
     },
     "ingest.voiceNoteHint": {
@@ -4999,6 +5029,482 @@
           "stringUnit": {
             "state": "translated",
             "value": "繁忙"
+          }
+        }
+      }
+    },
+    "ingest.viewRawText": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Raw Text"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看原始文本"
+          }
+        }
+      }
+    },
+    "ingest.openLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Original Link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开原始链接"
+          }
+        }
+      }
+    },
+    "ingest.previewFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview Original File"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览原始文件"
+          }
+        }
+      }
+    },
+    "ingest.rawContentTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Content"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始内容"
+          }
+        }
+      }
+    },
+    "ingest.viewPage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View Page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查看页面"
+          }
+        }
+      }
+    },
+    "ingest.openWith": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open With"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打开文件"
+          }
+        }
+      }
+    },
+    "ingest.duplicateFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" already imported, skipping duplicate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」已导入，跳过重复文件"
+          }
+        }
+      }
+    },
+    "ingest.imageTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image too large. Maximum: 5MB"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图片过大，最大支持 5MB"
+          }
+        }
+      }
+    },
+    "ingest.voiceTooLong": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording too long. Maximum: 15 minutes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "录音过长，最长支持 15 分钟"
+          }
+        }
+      }
+    },
+    "ingest.importCooldown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please wait before importing again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请稍后再导入"
+          }
+        }
+      }
+    },
+    "ingest.batchURLTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batch Import URLs"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "批量导入 URL"
+          }
+        }
+      }
+    },
+    "ingest.batchURLPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste URLs, one per line (max 10)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "粘贴 URL，每行一个（最多 10 个）"
+          }
+        }
+      }
+    },
+    "ingest.batchImport": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batch Import"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "批量导入"
+          }
+        }
+      }
+    },
+    "ingest.invalidURLAtLine_%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid URL at line %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %@ 行 URL 格式不正确"
+          }
+        }
+      }
+    },
+    "ingest.validURLCount_%@_%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valid: %@ · Max: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有效: %@ 个 · 最多 %@ 个"
+          }
+        }
+      }
+    },
+    "ingest.importProgress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing (%@/%@)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入中 (%@/%@)"
+          }
+        }
+      }
+    },
+    "ingest.batchResult": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d succeeded, %d failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个成功，%d 个失败"
+          }
+        }
+      }
+    },
+    "ingest.aiTag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Tag & Classify"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 标签与分类"
+          }
+        }
+      }
+    },
+    "ingest.aiTagging": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyzing..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分析中..."
+          }
+        }
+      }
+    },
+    "ingest.untagged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untagged"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未分类"
+          }
+        }
+      }
+    },
+    "ingest.aiTagSuccess": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags updated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签已更新"
+          }
+        }
+      }
+    },
+    "ingest.aiTagFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI analysis failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 分析失败"
+          }
+        }
+      }
+    },
+    "ingest.aiTagPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyze the following web content. Extract: 1) Alias title (3-15 chars) 2) Category tags (1-3, comma-separated).\n\nContent:\n%@\n\nReturn JSON: {\"aliasTitle\": \"...\", \"tags\": [\"tag1\", \"tag2\"]}"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请分析以下网页内容，提取：1) 别名标题（3-15字）2) 分类标签（1-3个，逗号分隔）。\n\n内容：\n%@\n\n请以 JSON 格式返回：{\"aliasTitle\": \"...\", \"tags\": [\"标签1\", \"标签2\"]}"
+          }
+        }
+      }
+    },
+    "ingest.imageExtracting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extracting images..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提取图片中..."
+          }
+        }
+      }
+    },
+    "ingest.imageOCRLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[Image OCR]"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[图片 OCR]"
+          }
+        }
+      }
+    },
+    "ingest.imageCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d image(s) extracted"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已提取 %d 张图片"
+          }
+        }
+      }
+    },
+    "ingest.imageSkippedTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image skipped: too large"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图片已跳过: 过大"
+          }
+        }
+      }
+    },
+    "ingest.imageSkippedFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image skipped: download failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图片已跳过: 下载失败"
           }
         }
       }

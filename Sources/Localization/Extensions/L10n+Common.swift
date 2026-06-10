@@ -13,20 +13,9 @@ import Foundation
 extension L10n {
     public static var SearchPlaceholder: String { Common.searchPlaceholder }
 
-    public enum Common {
-        public static let t = "Common"
-
-        /// 本地化翻译
-        /// - Parameter key: key
-        /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
-        /// 本地化格式化翻译
-        /// - Parameter key: key
-        /// - Parameter args: args
-        /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
+    public enum Common: L10nTableEntry {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
         // MARK: - App Metadata
         public static var appName: String { tr("app.name") }
         public static var aiThinking: String { tr("aiThinking") }
@@ -108,11 +97,7 @@ extension L10n {
             public static var newPages: String { Common.tr("stats.newPages") }
             public static var growth: String { Common.tr("stats.growth") }
             public static var title: String { Common.tr("stats.title") }
-            public static var totalPages: String { Common.tr("stat.totalPages") }
             public static var totalWords: String { Common.tr("stat.totalWords") }
-            public static var entities: String { Common.tr("stat.entities") }
-            public static var concepts: String { Common.tr("stat.concepts") }
-            public static var sources: String { Common.tr("stat.sources") }
         }
         
         public enum Stats {

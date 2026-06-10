@@ -13,6 +13,12 @@ import SwiftUI
 struct ImportRecordSection: View {
     @State private var selectedCategory: String = "all"
     @State private var records: [ImportRecord] = []
+    @State private var previewText: String?
+    @State private var showTextPreview = false
+    @State private var quickLookURL: URL?
+    @State private var showQuickLook = false
+    @Environment(Router.self) var router
+    var onAITag: ((ImportRecord) -> Void)?
 
     @Inject private var repo: any ImportRecordRepository
 
@@ -26,7 +32,7 @@ struct ImportRecordSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Label(L10n.Ingest.importRecords, systemImage: "archivebox")
+            Label(L10n.Ingest.importRecords, systemImage: "arrow.down.doc")
                 .font(.headline)
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -43,16 +49,115 @@ struct ImportRecordSection: View {
                     .foregroundStyle(.secondary)
                     .padding(.vertical, DesignSystem.large)
                     .frame(maxWidth: .infinity)
+            } else if selectedCategory == "all" {
+                tagGroupedList
             } else {
-                LazyVStack(spacing: DesignSystem.small) {
-                    ForEach(records, id: \.id) { record in
-                        ImportRecordCard(record: record)
+                flatCardList(records)
+            }
+        }
+        .sheet(isPresented: $showTextPreview) {
+            NavigationStack {
+                ScrollView {
+                    Text(previewText ?? "")
+                        .font(.body.monospaced())
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .navigationTitle(L10n.Ingest.rawContentTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(L10n.Common.close) { showTextPreview = false }
                     }
                 }
             }
         }
+        .fullScreenCover(isPresented: $showQuickLook) {
+            if let url = quickLookURL {
+                QuickLookPreview(fileURL: url)
+            }
+        }
         .task { await loadRecords() }
         .onChange(of: selectedCategory) { _, _ in Task { await loadRecords() } }
+    }
+
+    // MARK: - 预览分发
+
+    private func previewContent(_ record: ImportRecord) {
+        // 文件 → QuickLook（含链接导入的 .md、文件导入的原始文件）
+        if let path = record.filePath, FileManager.default.fileExists(atPath: path) {
+            quickLookURL = URL(fileURLWithPath: path)
+            showQuickLook = true
+            return
+        }
+        // 链接 → Safari（仅当无本地文件时）
+        if let urlStr = record.sourceURL, let url = URL(string: urlStr) {
+            #if os(iOS)
+            UIApplication.shared.open(url)
+            #endif
+            return
+        }
+        // 文本 → Sheet
+        if record.rawText != nil {
+            previewText = record.rawText
+            showTextPreview = true
+            return
+        }
+    }
+
+    // MARK: - 标签分组（仅在"全部"tab）
+
+    private var tagGroupedList: some View {
+        let grouped = groupByTags(records)
+        return VStack(spacing: DesignSystem.small) {
+            ForEach(grouped.keys.sorted(), id: \.self) { tag in
+                VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
+                    Text(tag)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.appAccent)
+                        .padding(.horizontal, DesignSystem.tiny)
+                    flatCardList(grouped[tag] ?? [])
+                }
+            }
+        }
+    }
+
+    private func groupByTags(_ records: [ImportRecord]) -> [String: [ImportRecord]] {
+        var groups: [String: [ImportRecord]] = [:]
+        for r in records {
+            let tags = (r.tags?.isEmpty ?? true) ? [L10n.Ingest.untagged] : (r.tags?.components(separatedBy: ", ") ?? [L10n.Ingest.untagged])
+            for tag in tags {
+                groups[tag, default: []].append(r)
+            }
+        }
+        return groups
+    }
+
+    // MARK: - 平铺列表
+
+    private func flatCardList(_ items: [ImportRecord]) -> some View {
+        ForEach(items, id: \.id) { record in
+            ImportRecordCard(
+                record: record,
+                onTap: { previewContent(record) },
+                onViewPage: {
+                    guard let pageID = record.pageID, let uuid = UUID(uuidString: pageID) else { return }
+                    router.navigateToPage(id: uuid)
+                },
+                onOpenWith: {
+                    guard let path = record.filePath else { return }
+                    let fileURL = URL(fileURLWithPath: path)
+                    #if os(iOS)
+                    let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let root = scene.windows.first?.rootViewController {
+                        root.present(controller, animated: true)
+                    }
+                    #endif
+                },
+                onAITag: { onAITag?(record) }
+            )
+        }
     }
 
     private func categoryTab(_ key: String, _ label: String) -> some View {

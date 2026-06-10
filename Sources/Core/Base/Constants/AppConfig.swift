@@ -116,7 +116,6 @@ enum AppConfig {
     static var searchDebounceMS: Int { getPerformance(.searchDebounce, default: 300) }
     static var rerankTopLimit: Int { getPerformance(.rerankTopLimit, default: 10) }
     static var maxLogEntries: Int { getPerformance(.maxLogEntries, default: 500) }
-    static let historyLimit: Int = 8
     
     // MARK: - 存储
     static var logsFileName: String { getStorage(.logsFilename) }
@@ -138,9 +137,6 @@ enum AppConfig {
         /// 页面内容预览截断长度
         static var previewTextLength: Int { getPerformance(.previewTextLength, default: 1000) }
         
-        static let summaryMaxLength = 200
-        static let rewriteTemperature = 0.3
-        
         /// 评估模型 (用于 LLM-as-a-Judge)
         static var evaluatorModel: String { getPerformance(.evaluatorModel, default: AppModel.gpt4o.rawValue) }
         
@@ -151,13 +147,10 @@ enum AppConfig {
     // MARK: - UI 交互与动画
     struct UI {
         static let graphLODZoomThreshold: CGFloat = 0.5
-        static let sidebarWidth: CGFloat = 280
         static let animationDuration: Double = 0.3
         static let glassOpacity: Double = 0.15
     }
 
     // MARK: - 插件安全
-    static let pluginThrottlingWindow: Double = 0.5
-    static let maxCallsPerThrottlingWindow: Int = 50
     static let pluginTimeoutLimit: Double = 0.5
 }

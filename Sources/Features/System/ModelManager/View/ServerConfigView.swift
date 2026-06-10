@@ -369,7 +369,7 @@ private struct ServerEditSheet: View {
         }
     }
 
-    private func testConnection() {
+    func testConnection() {
         guard let url = URL(string: baseURL + "/health") else {
             testResult = L10n.ModelManager.Server.testResult
             return

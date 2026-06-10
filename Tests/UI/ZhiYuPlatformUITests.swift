@@ -446,9 +446,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadSplitViewSidebarLinkage() async {
-        /// 函数头说明: 测试 iPad SplitView 侧边栏折叠/展开与选定 Tab 的动态联动可见性逻辑
-        /// - 验证点: 1. 切换至知识库 (.knowledge) Tab 时，侧边栏自动展开为 doubleColumn 并处于可交互状态；
-        ///          2. 切换至其他功能（如设置 .settings）时，侧边栏自动收折为 detailOnly 状态。
+        // 函数头说明: 测试 iPad SplitView 侧边栏折叠/展开与选定 Tab 的动态联动可见性逻辑
+        // - 验证点: 1. 切换至知识库 (.knowledge) Tab 时，侧边栏自动展开为 doubleColumn 并处于可交互状态；
+        //          2. 切换至其他功能（如设置 .settings）时，侧边栏自动收折为 detailOnly 状态。
         
         // 1. 切换至知识宇宙主视图
         await navigateToKnowledgeTab()
@@ -472,9 +472,9 @@ final class iPadTests: ZhiYuPlatformUITests {
     }
 
     func testiPadPerformanceDashboardToggle() async {
-        /// 函数头说明: 测试 iPad 性能监控仪表盘（Performance Dashboard）的弹出和多层可观察状态转发的完整链路
-        /// - 验证点: 1. 在开发者设置页面，切换性能仪表盘 Toggle 后，仪表盘 Sheet 能够正常展现在屏幕上；
-        ///          2. 再次关闭 Toggle 后，仪表盘 Sheet 正常收折。
+        // 函数头说明: 测试 iPad 性能监控仪表盘（Performance Dashboard）的弹出和多层可观察状态转发的完整链路
+        // - 验证点: 1. 在开发者设置页面，切换性能仪表盘 Toggle 后，仪表盘 Sheet 能够正常展现在屏幕上；
+        //          2. 再次关闭 Toggle 后，仪表盘 Sheet 正常收折。
         
         // 1. 导航切换至 Settings (设置) 页面
         let settingsTab = app.tabBars.buttons["Settings"].exists ? app.tabBars.buttons["Settings"] : app.tabBars.buttons["设置"]
@@ -521,12 +521,6 @@ final class iPadTests: ZhiYuPlatformUITests {
 /// 在 iOS 模拟器上运行时，每个测试方法内部通过 XCTSkipUnless 跳过。
 @available(iOS 17.0, *)
 final class MacCatalystTests: ZhiYuPlatformUITests {
-
-    override func setUp() async throws {
-        try await super.setUp()
-        // async throws setUp 中 throw XCTSkip 在部分 XCTest 版本无法可靠阻止异步方法执行
-        // 跳过逻辑改为在每个测试方法内部通过 XCTSkipUnless 实现
-    }
 
     /// 验证 Mac 菜单栏存在（仅 macCatalyst 环境）
     func testMacMenuBarExists() throws {
@@ -581,7 +575,6 @@ final class MacCatalystTests: ZhiYuPlatformUITests {
         app.typeText("f")
         try await Task.sleep(nanoseconds: UInt64(500_000_000))
     }
-
 
     func testMacMouseInteractions() async {
         // Mac 应该支持鼠标悬停

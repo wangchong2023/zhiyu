@@ -21,25 +21,27 @@ public final class SynthesisStore {
         public let name: String
         public let content: String
         public let createdAt: Date
-        public let size: Int // 内容字节大小
-        
-        public init(id: UUID = UUID(), type: SynthesisType, name: String, content: String, createdAt: Date = Date(), size: Int) {
+        public let size: Int
+        public var sourcePageIDs: [UUID]
+
+        public init(id: UUID = UUID(), type: SynthesisType, name: String, content: String, createdAt: Date = Date(), size: Int, sourcePageIDs: [UUID] = []) {
             self.id = id
             self.type = type
             self.name = name
             self.content = content
             self.createdAt = createdAt
             self.size = size
+            self.sourcePageIDs = sourcePageIDs
         }
     }
 
     public enum SynthesisType: String, CaseIterable, Codable, Identifiable, Sendable {
-        case mindmap = "mindmap"
-        case slides = "slides"
-        case quiz = "quiz"
-        case report = "report"
-        case infographic = "infographic"
-        case expansion = "expansion"
+        case mindmap
+        case slides
+        case quiz
+        case report
+        case infographic
+        case expansion
         public var id: String { rawValue }
         public var title: String {
             switch self {
@@ -139,12 +141,12 @@ public final class SynthesisStore {
     /// 保存SynthesisResult
     /// - Parameter type: type
     /// - Parameter content: content
-    public func saveSynthesisResult(type: SynthesisType, content: String) {
+    public func saveSynthesisResult(type: SynthesisType, content: String, sourcePageIDs: [UUID] = []) {
         let cleanedContent = Self.cleanMarkdown(content)
         let title = extractTitle(from: cleanedContent, type: type)
         let name = "\(title) - \(formatDateFull(Date()))"
         let size = cleanedContent.utf8.count
-        let doc = SynthesisDocument(id: UUID(), type: type, name: name, content: cleanedContent, createdAt: Date(), size: size)
+        let doc = SynthesisDocument(id: UUID(), type: type, name: name, content: cleanedContent, createdAt: Date(), size: size, sourcePageIDs: sourcePageIDs)
 
         var existing = synthesisResults[type] ?? []
         existing.insert(doc, at: 0)
@@ -157,7 +159,7 @@ public final class SynthesisStore {
     /// - Parameter type: type
     /// - Parameter combinedContent: combinedContent
     /// - Returns: 字符串
-    public func performSynthesis(type: SynthesisType, combinedContent: String) async throws -> String {
+    public func performSynthesis(type: SynthesisType, combinedContent: String, sourcePageIDs: [UUID] = []) async throws -> String {
         guard synthesisStates[type] != SynthesisStatus.generating else { 
             throw AppError.synthesis("Task already in progress", code: -1)
         }
@@ -174,24 +176,32 @@ public final class SynthesisStore {
         }
         let taskID = TaskCenter.shared.addTask(type: .synthesis, name: type.title, target: L10n.Common.Sidebar.synthesis)
 
+        // Prepend anti-hallucination + source citation instruction
+        let augmentedContent = """
+        \(L10n.AI.Synthesis.citationInstruction)
+
+        ---
+        \(combinedContent)
+        """
+
         do {
             let content: String
             switch type {
             case .mindmap:
-                content = try await AISynthesisService.shared.generateMindMap(content: combinedContent)
+                content = try await AISynthesisService.shared.generateMindMap(content: augmentedContent)
             case .slides:
-                content = try await AISynthesisService.shared.generatePresentation(content: combinedContent)
+                content = try await AISynthesisService.shared.generatePresentation(content: augmentedContent)
             case .quiz:
-                content = try await AISynthesisService.shared.generateQuiz(content: combinedContent)
+                content = try await AISynthesisService.shared.generateQuiz(content: augmentedContent)
             case .report:
-                content = try await AISynthesisService.shared.generateReport(content: combinedContent)
+                content = try await AISynthesisService.shared.generateReport(content: augmentedContent)
             case .infographic:
-                content = try await AISynthesisService.shared.generateInfographic(content: combinedContent)
+                content = try await AISynthesisService.shared.generateInfographic(content: augmentedContent)
             case .expansion:
-                content = try await AISynthesisService.shared.expandKnowledge(content: combinedContent)
+                content = try await AISynthesisService.shared.expandKnowledge(content: augmentedContent)
             }
 
-            self.saveSynthesisResult(type: type, content: content)
+            self.saveSynthesisResult(type: type, content: content, sourcePageIDs: sourcePageIDs)
             TaskCenter.shared.completeTask(id: taskID)
             return content
         } catch {
@@ -306,10 +316,10 @@ public final class SynthesisStore {
     }
 
     private static let dateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateStyle = .medium
-        f.timeStyle = .short
-        return f
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
     }()
 
     private func formatDateFull(_ date: Date) -> String {

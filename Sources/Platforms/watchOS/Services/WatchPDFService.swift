@@ -43,6 +43,8 @@ final class WatchPDFService: PDFServiceProtocol {
     /// - Returns: 可选值
     func extractText(from url: URL, pageRange: Range<Int>) async -> String? { return nil }
 
+    func extractImages(from url: URL) async -> [Data] { return [] }
+
     /// 保存DocumentsInfo
     /// - Parameter docs: docs
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async {}

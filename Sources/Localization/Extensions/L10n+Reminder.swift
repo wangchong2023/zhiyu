@@ -12,14 +12,12 @@ import Foundation
 
 extension L10n {
     /// 提醒事项服务多语言强类型扩展
-    public enum Reminder {
-        public static let t = "System"
-        
+    public enum Reminder: L10nTableEntry {
+        public static let tableName = "System"        
+        public static var t: String { tableName }
         /// 获取带表名映射的翻译
         /// - Parameter key: 多语言键值
         /// - Returns: 翻译文案
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 找不到可用的提醒事项列表错误提示
         public static var noListAvailableMessage: String { tr("reminder.noListAvailableMessage") }
     }

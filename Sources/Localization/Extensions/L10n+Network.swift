@@ -12,15 +12,11 @@
 import Foundation
 
 public extension L10n {
-    enum Network {
-        public static let t = "System"
-
+    enum Network: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         public static var invalidHTTPResponse: String { tr("invalidHTTPResponse") }
         public static var missingDataPayload: String { tr("missingDataPayload") }
         public static var missingRefreshToken: String { tr("missingRefreshToken") }

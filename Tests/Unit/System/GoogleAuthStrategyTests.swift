@@ -40,7 +40,7 @@ final class GoogleAuthStrategyTests: XCTestCase {
         }
         #else
         do {
-            let _ = try await strategy.acquireCredentials()
+            _ = try await strategy.acquireCredentials()
             XCTFail("Google SDK 未配置时，Release 模式下应当抛出未配置错误")
         } catch let error as NSError {
             XCTAssertEqual(error.domain, "GoogleAuthStrategy")

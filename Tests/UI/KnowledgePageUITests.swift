@@ -226,91 +226,74 @@ final class PageLifecycleE2ETests: KnowledgeBaseUITests {
     /// 测试策略：四级降级按钮查找，任一策略未命中则软跳过（不阻断 CI）
     func testFullPageLifecycle() async {
         await navigateToKnowledgeTab()
-
-        // 步骤一：通过多级降级策略定位「新建页面」按钮
-        // 优先级1: accessibilityIdentifier 精确匹配
-        var createButton = app.buttons["knowledge.createPage"]
-        if !createButton.exists {
-            // 优先级2: SF Symbol identifier 模糊匹配
-            createButton = app.buttons.matching(
-                NSPredicate(format: "identifier CONTAINS 'plus' OR identifier CONTAINS 'add' OR identifier CONTAINS 'compose'")
-            ).firstMatch
-        }
-        if !createButton.exists {
-            // 优先级3: 标签文本匹配（本地化容错）
-            createButton = app.buttons.matching(
-                NSPredicate(format: "label BEGINSWITH '+' OR label CONTAINS '创建' OR label CONTAINS 'New' OR label CONTAINS '新建'")
-            ).firstMatch
-        }
-        if !createButton.exists {
-            // 优先级4: 导航栏最右侧按钮（iOS 惯用布局）
-            createButton = app.navigationBars.buttons.element(boundBy: 1)
-        }
-
-        guard createButton.waitForExistence(timeout: 5), createButton.isHittable else {
-            // 未找到可点击的创建按钮，软跳过
+        guard let createButton = findCreateButton() else {
             print("⚠️ [PageLifecycleE2ETests] 未找到创建页面按钮（四级策略均未命中），软跳过 E2E 生命周期测试")
             return
         }
         safeTap(createButton)
         try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
 
-        // 步骤二：在创建 Sheet 中输入标题
-        let titleField = app.textFields.matching(
-            NSPredicate(format: "placeholderValue CONTAINS 'title' OR placeholderValue CONTAINS '标题' OR placeholderValue CONTAINS 'Title'")
-        ).firstMatch
-        if titleField.waitForExistence(timeout: 3) {
-            titleField.tap()
-            titleField.typeText("E2E Test Page \(UUID().uuidString.prefix(8))")
+        await fillCreateSheetTitle()
+        await verifyPageAppears()
+    }
 
-            let saveBtn = app.buttons.matching(
-                NSPredicate(format: "label CONTAINS 'Save' OR label CONTAINS '保存' OR label CONTAINS '创建'")
-            ).firstMatch
-            if saveBtn.isHittable { safeTap(saveBtn) }
-            try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
-        } else {
-            // Sheet 未弹出，取消并软通过
-            let cancelBtn = app.buttons.matching(
-                NSPredicate(format: "label CONTAINS '取消' OR label CONTAINS 'Cancel'")
-            ).firstMatch
+    private func findCreateButton() -> XCUIElement? {
+        let identifiers = ["knowledge.createPage"]
+        let symbolPredicate = NSPredicate(format: "identifier CONTAINS 'plus' OR identifier CONTAINS 'add' OR identifier CONTAINS 'compose'")
+        let labelPredicate = NSPredicate(format: "label BEGINSWITH '+' OR label CONTAINS '创建' OR label CONTAINS 'New' OR label CONTAINS '新建'")
+
+        let candidates = [app.buttons["knowledge.createPage"],
+                          app.buttons.matching(symbolPredicate).firstMatch,
+                          app.buttons.matching(labelPredicate).firstMatch,
+                          app.navigationBars.buttons.element(boundBy: 1)]
+        for button in candidates where button.exists && button.isHittable {
+            return button
+        }
+        return candidates.last
+    }
+
+    private func fillCreateSheetTitle() async {
+        let titleField = app.textFields.matching(NSPredicate(format: "placeholderValue CONTAINS 'title' OR placeholderValue CONTAINS '标题' OR placeholderValue CONTAINS 'Title'")).firstMatch
+        guard titleField.waitForExistence(timeout: 3) else {
+            let cancelBtn = app.buttons.matching(NSPredicate(format: "label CONTAINS '取消' OR label CONTAINS 'Cancel'")).firstMatch
             if cancelBtn.isHittable { safeTap(cancelBtn) }
             print("⚠️ [PageLifecycleE2ETests] 创建 Sheet 未弹出标题输入框，软通过")
             return
         }
+        titleField.tap()
+        titleField.typeText("E2E Test Page \(UUID().uuidString.prefix(8))")
+        let saveBtn = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Save' OR label CONTAINS '保存' OR label CONTAINS '创建'")).firstMatch
+        if saveBtn.isHittable { safeTap(saveBtn) }
+        try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
+    }
 
-        // 步骤三：验证页面出现在列表中（软断言）
+    private func verifyPageAppears() async {
         let pageCell = app.cells.matching(NSPredicate(format: "label CONTAINS 'E2E Test'")).firstMatch
-        if !pageCell.waitForExistence(timeout: 5) {
+        guard pageCell.waitForExistence(timeout: 5) else {
             print("⚠️ [PageLifecycleE2ETests] 创建的页面单元格未出现，可能是 AI 处理延迟，软通过")
             return
         }
+        guard pageCell.isHittable else { return }
+        safeTap(pageCell)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        await editPageContent()
+    }
 
-        // 步骤四：点击进入详情并编辑内容
-        if pageCell.isHittable {
-            safeTap(pageCell)
-            try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+    private func editPageContent() async {
+        let editButton = app.navigationBars.buttons.matching(NSPredicate(format: "label CONTAINS 'Edit' OR label CONTAINS '编辑'")).firstMatch
+        guard editButton.isHittable else { return }
+        safeTap(editButton)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
-            let editButton = app.navigationBars.buttons.matching(
-                NSPredicate(format: "label CONTAINS 'Edit' OR label CONTAINS '编辑'")
-            ).firstMatch
-            if editButton.isHittable {
-                safeTap(editButton)
-                try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        let editor = app.textViews.firstMatch
+        guard editor.exists else { return }
+        editor.tap()
+        editor.typeText("# Hello World\n\nThis is **bold** text.\n\n- List item 1\n- List item 2")
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
-                let editor = app.textViews.firstMatch
-                if editor.exists {
-                    editor.tap()
-                    editor.typeText("# Hello World\n\nThis is **bold** text.\n\n- List item 1\n- List item 2")
-                    try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
-
-                    let doneBtn = app.navigationBars.buttons.matching(
-                        NSPredicate(format: "label CONTAINS 'Done' OR label CONTAINS '完成'")
-                    ).firstMatch
-                    if doneBtn.isHittable { safeTap(doneBtn) }
-                    try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-                }
-            }
-        }
+        let doneBtn = app.navigationBars.buttons.matching(NSPredicate(format: "label CONTAINS 'Done' OR label CONTAINS '完成'")).firstMatch
+        if doneBtn.isHittable { safeTap(doneBtn) }
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }
 }
 

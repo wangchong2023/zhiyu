@@ -9,7 +9,7 @@
 //  核心职责：验证 WidgetRepository JSON 快照读取 + VaultRepository pageCount 持久化
 
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 @MainActor

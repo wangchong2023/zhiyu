@@ -11,19 +11,9 @@
 import Foundation
 
 extension L10n {
-    public enum AI {
-        public static let t = "AI"
-
-        /// 本地化翻译
-        /// - Parameter key: key
-        /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
-        /// 本地化格式化翻译
-        /// - Parameter key: key
-        /// - Parameter args: args
-        /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
+    public enum AI: L10nTableEntry {
+        public static let tableName = "AI"
+        public static var t: String { tableName }
 
         public enum Status {
             public static var analyzing: String { AI.tr("ai.status.analyzing") }
@@ -113,6 +103,7 @@ extension L10n {
                 public static var rule2: String { AI.tr("llm.prompt.rule2") }
                 public static var rule3: String { AI.tr("llm.prompt.rule3") }
                 public static var rule4: String { AI.tr("llm.prompt.rule4") }
+                public static var rule5: String { AI.tr("llm.prompt.rule5") }
                 public static var overview: String { AI.tr("llm.prompt.overview") }
                 public static var totalPages: String { AI.tr("llm.prompt.totalPages") }
                 public static var entityCount: String { AI.tr("llm.prompt.entityCount") }
@@ -379,6 +370,8 @@ extension L10n {
             public static var noDocs: String { AI.tr("synthesis.noDocs") }
             public static var documentList: String { AI.tr("synthesis.documentList") }
             public static var actions: String { AI.tr("synthesis.actions") }
+            public static var citationInstruction: String { AI.tr("synthesis.citationInstruction") }
+            public static func sourceCount(_ n: Int) -> String { AI.trf("synthesis.sourceCount_%d", n) }
             
             public enum Mindmap {
                 public static var title: String { AI.tr("synthesis.mindmap.title") }

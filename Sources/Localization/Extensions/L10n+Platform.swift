@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public enum Platform {
-        public static let t = "Platform"
-
+    public enum Platform: L10nTableEntry {
+        public static let tableName = "Platform"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// /// - Parameter key: key
         /// /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         public enum Unsupported {
             public static var pdf: String { Platform.tr("platform.unsupported.pdf") }
             public static var mermaid: String { Platform.tr("platform.unsupported.mermaid") }

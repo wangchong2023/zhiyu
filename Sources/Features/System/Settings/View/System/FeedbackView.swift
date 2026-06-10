@@ -1,0 +1,228 @@
+//
+//  FeedbackView.swift
+//  ZhiYu
+//
+//  Created by Antigravity on 2026/06/10.
+//  Copyright © 2026 WangChong. All rights reserved.
+//
+//  系统层级：[L2] 业务功能层
+//  核心职责：用户反馈表单 + 历史记录
+
+import SwiftUI
+#if os(iOS)
+import UIKit
+#endif
+
+struct FeedbackView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedTab = 0
+    @State private var titleText = ""
+    @State private var selectedCategory = FeedbackCategory.bug
+    private let maxRating = DesignSystem.Domain.Feedback.maxRating
+    @State private var rating: Int = DesignSystem.Domain.Feedback.defaultRating
+    @State private var contentText = ""
+    @State private var isSubmitting = false
+    @State private var history: [FeedbackEntry] = []
+
+    @Inject private var repo: any FeedbackRepository
+
+    private let appVersion: String = {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }()
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                Picker("", selection: $selectedTab) {
+                    Text(L10n.Settings.Feedback.submit).tag(0)
+                    Text(L10n.Settings.Feedback.history).tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding()
+
+                if selectedTab == 0 {
+                    submitForm
+                } else {
+                    historyList
+                }
+            }
+            .navigationTitle(L10n.Settings.Feedback.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.Common.cancel) { dismiss() }
+                }
+            }
+        }
+        .task { await loadHistory() }
+    }
+
+    // MARK: - 提交表单
+
+    private var submitForm: some View {
+        Form {
+            Section(L10n.Settings.Feedback.subject) {
+                TextField(L10n.Settings.Feedback.subjectPlaceholder, text: $titleText)
+            }
+            Section(L10n.Settings.Feedback.category) {
+                Picker(L10n.Settings.Feedback.category, selection: $selectedCategory) {
+                    ForEach(FeedbackCategory.allCases, id: \.self) { cat in
+                        Text(FeedbackCategory.displayName(cat)).tag(cat)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+            Section(L10n.Settings.Feedback.rating) {
+                HStack {
+                    Text(L10n.Settings.Feedback.rating)
+                    Spacer()
+                    ForEach(1...maxRating, id: \.self) { star in
+                        Image(systemName: star <= rating ? "star.fill" : "star")
+                            .foregroundStyle(.yellow)
+                            .onTapGesture { rating = star }
+                    }
+                }
+            }
+            Section(L10n.Settings.Feedback.content) {
+                TextEditor(text: $contentText)
+                    .frame(minHeight: DesignSystem.FeedbackMetrics.textEditorHeight)
+                    .overlay(alignment: .topLeading) {
+                        if contentText.isEmpty {
+                            Text(L10n.Settings.Feedback.contentPlaceholder)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, DesignSystem.tightPadding)
+                                .padding(.leading, DesignSystem.atomic)
+                                .allowsHitTesting(false)
+                        }
+                    }
+            }
+            Section {
+                HStack {
+                    Text(L10n.Settings.Feedback.appVersionLabel)
+                    Spacer()
+                    Text(appVersion).foregroundStyle(.secondary)
+                }
+                HStack {
+                    Text(L10n.Settings.Feedback.osVersionLabel)
+                    Spacer()
+                    #if os(iOS)
+                    Text(UIDevice.current.systemVersion).foregroundStyle(.secondary)
+                    #else
+                    Text(L10n.Settings.Feedback.osMacDefault).foregroundStyle(.secondary)
+                    #endif
+                }
+            }
+            Section {
+                Button(action: submit) {
+                    HStack {
+                        Spacer()
+                        if isSubmitting { ProgressView() }
+                        else { Text(L10n.Settings.Feedback.submit).bold() }
+                        Spacer()
+                    }
+                }
+                .disabled(titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSubmitting)
+            }
+        }
+    }
+
+    // MARK: - 历史列表
+
+    private var historyList: some View {
+        Group {
+            if history.isEmpty {
+                VStack(spacing: DesignSystem.standardPadding) {
+                    Image(systemName: "bubble.left.and.bubble.right")
+                        .font(.largeTitle).foregroundStyle(.secondary.opacity(0.5))
+                    Text(L10n.Settings.Feedback.noHistory)
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    ForEach(history, id: \.id) { entry in
+                        FeedbackHistoryRow(entry: entry)
+                    }
+                }
+                .listStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func loadHistory() async {
+        history = (try? await repo.fetchAll(limit: 50)) ?? []
+    }
+
+    private func submit() {
+        isSubmitting = true
+        let entry = FeedbackEntry(
+            title: titleText, category: selectedCategory, rating: rating,
+            content: contentText, appVersion: appVersion,
+            osVersion: {
+                #if os(iOS)
+                UIDevice.current.systemVersion
+                #else
+                L10n.Settings.Feedback.osMacDefault
+                #endif
+            }(),
+            deviceModel: {
+                #if os(iOS)
+                UIDevice.current.model
+                #else
+                L10n.Settings.Feedback.deviceMacDefault
+                #endif
+            }()
+        )
+        Task {
+            try? await repo.save(entry)
+            await MainActor.run {
+                isSubmitting = false
+                titleText = ""; contentText = ""; rating = DesignSystem.Domain.Feedback.defaultRating
+                HapticFeedback.shared.trigger(.success)
+                ToastManager.shared.show(type: .success, message: L10n.Settings.Feedback.submitted)
+                Task { await loadHistory() }
+                selectedTab = 1
+            }
+        }
+    }
+}
+
+// MARK: - 历史行
+
+private struct FeedbackHistoryRow: View {
+    let entry: FeedbackEntry
+
+    private var categoryColor: Color {
+        switch entry.category {
+        case FeedbackCategory.bug: return .red
+        case FeedbackCategory.feature: return .green
+        case FeedbackCategory.content: return .yellow
+        default: return .gray
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            HStack(spacing: DesignSystem.tightPadding) {
+                Circle().fill(categoryColor).frame(width: 8, height: 8)
+                Text(entry.title).font(.subheadline.weight(.medium)).lineLimit(1)
+                Spacer()
+                Text(FeedbackCategory.displayName(entry.category))
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+            HStack(spacing: DesignSystem.tightPadding) {
+                Text(entry.createdAt.formatted(date: .numeric, time: .shortened))
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack(spacing: 0) {
+                    ForEach(1...DesignSystem.Domain.Feedback.maxRating, id: \.self) { i in
+                        Image(systemName: i <= entry.rating ? "star.fill" : "star")
+                            .font(.caption2).foregroundStyle(.yellow)
+                    }
+                }
+            }
+        }
+        .padding(.vertical, DesignSystem.tightPadding)
+    }
+}

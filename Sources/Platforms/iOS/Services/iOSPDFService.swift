@@ -136,6 +136,37 @@ final class iOSPDFService: PDFServiceProtocol {
         }
     }
 
+    // MARK: - Image Extraction
+
+    func extractImages(from url: URL) async -> [Data] {
+        guard let document = PDFDocument(url: url) else { return [] }
+        let maxPages = AppConstants.Keys.ImportLimits.maxImagesPerPage
+        let pageCount = min(document.pageCount, maxPages)
+        var images: [Data] = []
+
+        for i in 0..<pageCount {
+            guard let page = document.page(at: i) else { continue }
+            // 渲染页面为图片（缩放到合理尺寸）
+            let rect = page.bounds(for: .mediaBox)
+            let scale = AppConstants.Keys.ImportLimits.pdfRenderScale
+            let size = CGSize(width: rect.width * scale, height: rect.height * scale)
+
+            let renderer = UIGraphicsImageRenderer(size: size)
+            let image = renderer.image { ctx in
+                UIColor.white.setFill()
+                ctx.fill(CGRect(origin: .zero, size: size))
+                ctx.cgContext.scaleBy(x: scale, y: scale)
+                page.draw(with: .mediaBox, to: ctx.cgContext)
+            }
+
+            if let jpegData = image.jpegData(compressionQuality: AppConstants.Keys.ImportLimits.imageJPEGQuality),
+               jpegData.count <= AppConstants.Keys.ImportLimits.maxImageSizeBytes {
+                images.append(jpegData)
+            }
+        }
+        return images
+    }
+
     // MARK: - Metadata Persistence
 
     /// 保存DocumentsInfo

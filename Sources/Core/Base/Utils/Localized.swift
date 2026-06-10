@@ -235,13 +235,9 @@ internal struct Localized {
         let fullId = Locale.current.identifier  // e.g. "zh-Hans_CN"
         let langCode = Locale.current.language.languageCode?.identifier ?? "en"  // e.g. "zh"
         // 1. 完整 ID 前缀匹配 (zh-Hans)
-        for key in dict.keys {
-            if fullId.hasPrefix(key) { return dict[key] ?? fallback }
-        }
+        for key in dict.keys where fullId.hasPrefix(key) { return dict[key] ?? fallback }
         // 2. 仅语言码匹配 (zh)
-        for key in dict.keys {
-            if key.hasPrefix(langCode) { return dict[key] ?? fallback }
-        }
+        for key in dict.keys where key.hasPrefix(langCode) { return dict[key] ?? fallback }
         // 3. en fallback
         if let en = dict["en"] { return en }
         // 4. 任意值
@@ -284,6 +280,23 @@ private enum L10nTable {
     static let collaboration = "Collaboration"
     static let watch = "Watch"
     static let widget = "Widget"
+}
+
+/// 为本地化命名空间中的枚举/结构体提供 `tr`/`trf` 默认实现的协议。
+///
+/// 消除 40+ L10n 扩展文件中重复的 `tr`/`trf` 样板。
+public protocol L10nTableEntry {
+    static var tableName: String { get }
+}
+
+extension L10nTableEntry {
+    public static func tr(_ key: String) -> String {
+        Localized.tr(key, table: tableName)
+    }
+
+    public static func trf(_ key: String, _ args: CVarArg...) -> String {
+        Localized.trf(key, table: tableName, arguments: args)
+    }
 }
 
 /// 智宇全局本地化强类型访问中枢的静态命名空间。

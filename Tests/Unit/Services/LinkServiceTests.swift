@@ -106,14 +106,14 @@ final class LinkServiceTests: XCTestCase {
     
     // MARK: - Test Search Relevance Sorting All Branches
     func testSearch_RelevanceSorting_AllBranches() async {
-        let q = "ios"
+        let query = "ios"
         let p1 = KnowledgePage(title: "iOS Development", content: "contains nothing special")
         let p2 = KnowledgePage(title: "iOS", content: "exact match")
         let p3 = KnowledgePage(title: "Learning iOS", content: "contains match")
         let p4 = KnowledgePage(title: "Other", content: "content contains ios")
         
         let searchPages = [p1, p2, p3, p4]
-        let results = await sut.search(query: q, in: searchPages)
+        let results = await sut.search(query: query, in: searchPages)
         
         XCTAssertEqual(results.count, 4)
         // 1. 精确匹配最优先 (p2)

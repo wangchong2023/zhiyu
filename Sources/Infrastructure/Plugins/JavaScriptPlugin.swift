@@ -50,10 +50,10 @@ final class JavaScriptPlugin: InterceptionPlugin {
         }
         
         // 1. 设置异常捕获器
-        ctx.exceptionHandler = { [weak self] c, exception in
+        ctx.exceptionHandler = { [weak self] context, exception in
             guard let self = self else { return }
-            if let c = c, let exception = exception {
-                c.exception = exception
+            if let context = context, let exception = exception {
+                context.exception = exception
             }
             Logger.shared.error(" [JSPlugin: \(self.manifest.id)] Exception: \(exception?.toString() ?? "unknown")", error: nil)
         }
@@ -79,40 +79,53 @@ final class JavaScriptPlugin: InterceptionPlugin {
     /// 装配宿主为 JS 沙箱提供的标准 API 网关
     private func setupAPI(in context: JSContext) {
         guard let pluginCtx = self.pluginContext else { return }
-        
-        let logBlock: @convention(block) (String) -> Void = { msg in
-            DispatchQueue.main.async {
-                pluginCtx.log(msg)
-            }
-        }
-        
-        let registerCommandBlock: @convention(block) (String, String, String) -> Void = { [weak self] id, name, funcName in
+
+        let jsContextObj: [String: Any] = [
+            "log": unsafeBitCast(makeLogBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "registerCommand": unsafeBitCast(makeRegisterCommandBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "registerRibbonItem": unsafeBitCast(makeRegisterRibbonItemBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "registerSettingTab": unsafeBitCast(makeRegisterSettingTabBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "registerView": unsafeBitCast(makeRegisterViewBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "addEventListener": unsafeBitCast(makeAddEventListenerBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "saveData": unsafeBitCast(makeSaveDataBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "loadData": unsafeBitCast(makeLoadDataBlock(pluginCtx: pluginCtx), to: AnyObject.self),
+            "fetch": unsafeBitCast(makeFetchBlock(pluginCtx: pluginCtx), to: AnyObject.self)
+        ]
+        context.setObject(jsContextObj, forKeyedSubscript: "ZhiYu" as NSString)
+    }
+
+    private func makeLogBlock(pluginCtx: PluginContext) -> @convention(block) (String) -> Void {
+        { msg in DispatchQueue.main.async { pluginCtx.log(msg) } }
+    }
+
+    private func makeRegisterCommandBlock(pluginCtx: PluginContext) -> @convention(block) (String, String, String) -> Void {
+        { [weak self] id, name, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 pluginCtx.registerCommand(id: id, name: name) {
                     try? self.executeInContext { ctx in
-                        if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                            jsFunc.call(withArguments: [])
-                        }
+                        self.callJSFunction(funcName, in: ctx)
                     }
                 }
             }
         }
-        
-        let registerRibbonItemBlock: @convention(block) (String, String, String) -> Void = { [weak self] icon, title, funcName in
+    }
+
+    private func makeRegisterRibbonItemBlock(pluginCtx: PluginContext) -> @convention(block) (String, String, String) -> Void {
+        { [weak self] icon, title, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 pluginCtx.registerRibbonItem(icon: icon, title: title) {
                     try? self.executeInContext { ctx in
-                        if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                            jsFunc.call(withArguments: [])
-                        }
+                        self.callJSFunction(funcName, in: ctx)
                     }
                 }
             }
         }
-        
-        let registerSettingTabBlock: @convention(block) (String, String?, String) -> Void = { [weak self] name, schema, funcName in
+    }
+
+    private func makeRegisterSettingTabBlock(pluginCtx: PluginContext) -> @convention(block) (String, String?, String) -> Void {
+        { [weak self] name, schema, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 pluginCtx.registerSettingTab(name: name, schema: schema) { data in
@@ -124,34 +137,36 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 }
             }
         }
-        
-        let registerViewBlock: @convention(block) (String, String, String, String) -> Void = { [weak self] id, title, icon, funcName in
+    }
+
+    private func makeRegisterViewBlock(pluginCtx: PluginContext) -> @convention(block) (String, String, String, String) -> Void {
+        { [weak self] id, title, icon, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 pluginCtx.registerView(id: id, title: title, icon: icon) {
                     try? self.executeInContext { ctx in
-                        if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                            jsFunc.call(withArguments: [])
-                        }
+                        self.callJSFunction(funcName, in: ctx)
                     }
                 }
             }
         }
-        
-        let addEventListenerBlock: @convention(block) (String, String) -> Void = { [weak self] event, funcName in
+    }
+
+    private func makeAddEventListenerBlock(pluginCtx: PluginContext) -> @convention(block) (String, String) -> Void {
+        { [weak self] event, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                pluginCtx.addEventListener(event: event) { data in
+                pluginCtx.addEventListener(event: event) { _ in
                     try? self.executeInContext { ctx in
-                        if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                            jsFunc.call(withArguments: [])
-                        }
+                        self.callJSFunction(funcName, in: ctx)
                     }
                 }
             }
         }
-        
-        let saveDataBlock: @convention(block) (String, String) -> Void = { key, value in
+    }
+
+    private func makeSaveDataBlock(pluginCtx: PluginContext) -> @convention(block) (String, String) -> Void {
+        { key, value in
             DispatchQueue.main.async {
                 do {
                     try PluginSandboxGateway.auditStorage(key: key, value: value)
@@ -161,9 +176,10 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 }
             }
         }
-        
-        let loadDataBlock: @convention(block) (String) -> String? = { key in
-            // JSC 回调可能在任意线程，避免 dispatch_sync 死锁
+    }
+
+    private func makeLoadDataBlock(pluginCtx: PluginContext) -> @convention(block) (String) -> String? {
+        { key in
             if Thread.isMainThread {
                 return pluginCtx.loadData(key: key)
             }
@@ -173,8 +189,10 @@ final class JavaScriptPlugin: InterceptionPlugin {
             }
             return result
         }
-        
-        let fetchBlock: @convention(block) (String, [String: Any]?, String) -> Void = { [weak self] url, options, funcName in
+    }
+
+    private func makeFetchBlock(pluginCtx: PluginContext) -> @convention(block) (String, [String: Any]?, String) -> Void {
+        { [weak self] url, options, funcName in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 Task {
@@ -183,12 +201,9 @@ final class JavaScriptPlugin: InterceptionPlugin {
                         let request = try PluginSandboxGateway.auditFetch(url: url, options: options, allowedDomains: allowed)
                         let (data, _) = try await URLSession.shared.data(for: request)
                         let responseString = String(data: data, encoding: .utf8) ?? ""
-                        
                         try? self.executeInContext { ctx in
                             JSGarbageCollect(ctx.jsGlobalContextRef)
-                            if let jsFunc = ctx.objectForKeyedSubscript(funcName), !jsFunc.isUndefined {
-                                jsFunc.call(withArguments: [responseString])
-                            }
+                            self.callJSFunction(funcName, in: ctx, arguments: [responseString])
                         }
                     } catch {
                         pluginCtx.log(" [FetchError] \(error.localizedDescription)")
@@ -196,20 +211,12 @@ final class JavaScriptPlugin: InterceptionPlugin {
                 }
             }
         }
-        
-        let jsContextObj: [String: Any] = [
-            "log": unsafeBitCast(logBlock, to: AnyObject.self),
-            "registerCommand": unsafeBitCast(registerCommandBlock, to: AnyObject.self),
-            "registerRibbonItem": unsafeBitCast(registerRibbonItemBlock, to: AnyObject.self),
-            "registerSettingTab": unsafeBitCast(registerSettingTabBlock, to: AnyObject.self),
-            "registerView": unsafeBitCast(registerViewBlock, to: AnyObject.self),
-            "addEventListener": unsafeBitCast(addEventListenerBlock, to: AnyObject.self),
-            "saveData": unsafeBitCast(saveDataBlock, to: AnyObject.self),
-            "loadData": unsafeBitCast(loadDataBlock, to: AnyObject.self),
-            "fetch": unsafeBitCast(fetchBlock, to: AnyObject.self)
-        ]
-        
-        context.setObject(jsContextObj, forKeyedSubscript: "ZhiYu" as NSString)
+    }
+
+    private func callJSFunction(_ name: String, in ctx: JSContext, arguments: [Any] = []) {
+        if let jsFunc = ctx.objectForKeyedSubscript(name), !jsFunc.isUndefined {
+            jsFunc.call(withArguments: arguments)
+        }
     }
     
     /// on加载
@@ -309,4 +316,3 @@ final class JavaScriptPlugin: InterceptionPlugin {
 }
 
 #endif
-

@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Lint {
-        public static let t = "System"
-
+    public struct Lint: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var title: String { Localized.tr("lint.title", table: t) }
         public static var refactorSection: String { tr("refactorSection") }
         public static var linkDiscoverySection: String { tr("linkDiscoverySection") }

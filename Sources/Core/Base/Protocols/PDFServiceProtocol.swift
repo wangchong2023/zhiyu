@@ -30,7 +30,10 @@ public protocol PDFServiceProtocol: Sendable {
     
     /// 提取指定页码范围的文本内容
     func extractText(from url: URL, pageRange: Range<Int>) async -> String?
-    
+
+    /// 提取 PDF 中的嵌入图片数据（用于 OCR）
+    func extractImages(from url: URL) async -> [Data]
+
     /// 保存元数据
     func saveDocumentsInfo(_ docs: [PDFDocumentInfo]) async
     

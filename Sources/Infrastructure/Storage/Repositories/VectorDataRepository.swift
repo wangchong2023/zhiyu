@@ -9,14 +9,13 @@
 //  核心职责：持久化引擎：GRDB/SQLite 仓库、同步、加密、数据库管理。
 //
 import Foundation
-import GRDB
+@preconcurrency import GRDB
 
 /// [Infra] 向量存储实现
 final class VectorDataRepository: VectorRepository, @unchecked Sendable {
     private var dbWriter: any DatabaseWriter {
         get async {
             await MainActor.run {
-                // 动态获取当前活跃的数据库写入器以用于向量存储和分块。若尚未挂载，则降级创建内存队列。
                 if let writer = DatabaseManager.shared.dbWriter {
                     return writer
                 }

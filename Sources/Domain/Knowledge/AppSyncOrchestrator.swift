@@ -40,7 +40,7 @@ public final class AppSyncOrchestrator: CloudSyncOrchestrator {
         }
         
         // 2. 拉取云端（容错：云端不存在则视为本地主权）
-        let remote: (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
+        let remote: CloudSnapshot
         do {
             remote = try await provider.pull()
         } catch {

@@ -22,7 +22,7 @@ struct DeveloperSettingsView: View {
     
     @State private var isStressTesting = false
     @State private var isInjecting = false
-    @State private var stressTestCount: Int? = nil
+    @State private var stressTestCount: Int?
 
     var body: some View {
         List {
@@ -55,9 +55,9 @@ struct DeveloperSettingsView: View {
                                 let suffix = L10n.Settings.InjectDemo.pageUnit
                                 let sep = L10n.Settings.InjectDemo.itemsSeparator
                                 var vaultsDesc = ""
-                                for (i, d) in details.enumerated() {
+                                for (i, detail) in details.enumerated() {
                                     if i > 0 { vaultsDesc += sep }
-                                    vaultsDesc += d.name + String(d.count) + suffix
+                                    vaultsDesc += detail.name + String(detail.count) + suffix
                                 }
                                 let msg = prefix + vaultsDesc
                                 ToastManager.shared.show(type: .success, message: msg)
@@ -130,18 +130,23 @@ struct DeveloperSettingsView: View {
             }
             .appListRowBackground()
 
-            // MARK: - 重置引导数据
+            // MARK: - 引导
             Section {
-                Button(role: .destructive) {
-                    showResetOnboardingConfirmation = true
+                Button {
+                    onboardingService.hasCompletedOnboarding = false
+                    ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
                 } label: {
-                    Label(L10n.Settings.developer.resetOnboarding, systemImage: "arrow.counterclockwise")
+                    Label(L10n.Settings.developer.showWelcomeBanner, systemImage: "sparkles")
                 }
-                .alert(L10n.Settings.developer.resetOnboardingConfirm, isPresented: $showResetOnboardingConfirmation) {
-                    Button(L10n.Settings.developer.resetOnboardingAction, role: .destructive) { resetOnboarding() }
-                    Button(L10n.Common.cancel, role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.developer.resetOnboardingMessage)
+
+                Button {
+                    dismiss()
+                    Task {
+                        try? await Task.sleep(nanoseconds: 400_000_000)
+                        onboardingService.reset()
+                    }
+                } label: {
+                    Label(L10n.Settings.developer.showGuidePage, systemImage: "questionmark.circle")
                 }
             } header: {
                 Text(L10n.Settings.developer.section.onboarding)
@@ -183,10 +188,8 @@ struct DeveloperSettingsView: View {
         // 确保两个默认演示笔记本存在，不存在则创建
         let vaultService = ServiceContainer.shared.resolve(VaultService.self)
         let demoVaultNames = [L10n.Vault.defaultName, L10n.Vault.researchName]
-        for name in demoVaultNames {
-            if !vaultService.vaults.contains(where: { $0.name == name }) {
+        for name in demoVaultNames where !vaultService.vaults.contains(where: { $0.name == name }) {
                 vaultService.createVault(name: name)
-            }
         }
 
         // 对两个默认笔记本注入压力测试数据
@@ -210,25 +213,4 @@ struct DeveloperSettingsView: View {
         }
     }
 
-    @State private var showResetOnboardingConfirmation = false
-
-    private func resetOnboarding() {
-        // 清除里程碑
-        OnboardingMilestone.allCases.forEach {
-            UserDefaults.standard.removeObject(forKey: $0.key)
-        }
-        // 退出笔记本回到主界面
-        VaultService.shared.exitVault()
-        dismiss()
-        // 延时触发引导（等视图切换完成）
-        let svc = onboardingService
-        Task {
-            try? await Task.sleep(nanoseconds: 500_000_000)
-            svc.hasCompletedOnboarding = false
-            // 不调 nextStep()——旧 tooltip overlay 已废弃，新引导用 WelcomePathSelectionSection
-            await MainActor.run {
-                ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
-            }
-        }
-    }
 }

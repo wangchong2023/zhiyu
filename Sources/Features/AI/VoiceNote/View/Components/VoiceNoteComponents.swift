@@ -127,7 +127,7 @@ struct SaveVoiceNoteSheet: View {
             )
             
             await MainActor.run {
-                let _ = speechService.saveRecording(title: noteTitle)
+                _ = speechService.saveRecording(title: noteTitle)
                 speechService.clearTranscription()
                 title = ""
                 dismiss()

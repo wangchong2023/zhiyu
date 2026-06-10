@@ -75,6 +75,11 @@ struct SynthesisDocRow: View {
                     Text(formatDate(doc.createdAt))
                     Text(DesignSystem.Icons.dotSeparator)
                     Text(formatByteSize(doc.size))
+                    if !doc.sourcePageIDs.isEmpty {
+                        Text(DesignSystem.Icons.dotSeparator)
+                        Text(L10n.AI.Synthesis.sourceCount(doc.sourcePageIDs.count))
+                            .foregroundStyle(.appAccent)
+                    }
                 }
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)

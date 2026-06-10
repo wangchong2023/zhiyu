@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public enum Knowledge {
-        public static let t = "Knowledge"
-
+    public enum Knowledge: L10nTableEntry {
+        public static let tableName = "Knowledge"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         public enum Page {
             public static var title: String { Common.tr("pageTitle") }
             public static var edit: String { Knowledge.tr("page.edit") }
@@ -47,6 +43,9 @@ extension L10n {
             public static var wordCountUnit: String { Knowledge.tr("page.wordCountUnit") }
             public static var outLinkUnit: String { Knowledge.tr("page.outLinkUnit") }
             public static var noBackLinks: String { Knowledge.tr("page.noBackLinks") }
+            public static var sourceCitation: String { Knowledge.tr("page.sourceCitation") }
+            public static var sourceOpenLink: String { Knowledge.tr("page.sourceOpenLink") }
+            public static var sourceTypeFile: String { Knowledge.tr("page.sourceTypeFile") }
             public static var doubleTapToNavigate: String { Knowledge.tr("page.doubleTapToNavigate") }
             public static var backlinks: String { Knowledge.tr("page.backlinks") }
 
@@ -110,13 +109,14 @@ extension L10n {
 
             public struct AIInsightsVal {
                 public let title: String
-                init(title: String) { self.title = title }
             }
             public static var aiInsights: AIInsightsVal { AIInsightsVal(title: Knowledge.tr("page.aiInsights")) }
 
             public enum Source {
                 public static var title: String { Knowledge.tr("page.source.title") }
                 public static var open: String { Knowledge.tr("page.source.open") }
+                public static var content: String { Knowledge.tr("page.source.content") }
+                public static var empty: String { Knowledge.tr("page.source.empty") }
             }
 
             public enum AI {

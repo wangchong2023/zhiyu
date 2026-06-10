@@ -52,7 +52,7 @@ struct NotebookFormSheet: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var themeManager: ThemeManager
     /// 笔记本可供选择的高品质 Emoji 图标数组，引用自 Shared 设计令牌
-    private let iconOptions = IconTokens.options
+    private let iconOptions = DesignSystem.Icons.Notebook.options
     
     var body: some View {
         NavigationStack {

@@ -12,7 +12,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 // MARK: - Drag & Drop Support for ZhiYu
-/// Enables drag and drop for page items in the knowledge base
 
 // MARK: - Page Drag Item
 /// Custom transfer type for page items

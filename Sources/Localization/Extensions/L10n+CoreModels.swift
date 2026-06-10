@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public enum CoreModels {
-        public static let t = "Common"
-
+    public enum CoreModels: L10nTableEntry {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         public enum type {
             public static var entity: String { CoreModels.tr("type.entity") }
             public static var concept: String { CoreModels.tr("type.concept") }

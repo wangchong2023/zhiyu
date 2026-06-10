@@ -29,18 +29,12 @@ public struct AppConstants {
         public static let globalDatabaseName: String = "global.sqlite3"
         /// 笔记本专属物理数据库文件名
         public static let vaultDatabaseName: String = "vault.sqlite3"
-        /// 旧版本 legacy 物理数据库文件名 (兼容向下迁移)
-        public static let legacyDatabaseName: String = "App.sqlite"
         /// 笔记本沙盒存储子目录名称
         public static let vaultsDirectoryName: String = "Vaults"
         /// 间隔重复算法(SRS)默认易用度因子 (SuperMemo-2 经典默认值)
         public static let defaultEaseFactor: Double = 2.5
         /// 日志文件名
         public static let logsFileName: String = "audit_logs.json"
-        /// 性能监控回溯天数 (最近 30 天)
-        public static let observabilityWindowDays: Int = 30
-        /// 30 天的秒数 (用于 SQL 查询)
-        public static let thirtyDaysSeconds: TimeInterval = 30 * 24 * 3600
         /// 默认调用状态
         public static let defaultCallStatus: String = "success"
         
@@ -65,6 +59,7 @@ public struct AppConstants {
             public static let pageTags = "page_tags"
             public static let srsMetadata = "srs_metadata"
             public static let importRecords = "import_records"
+            public static let feedbackEntries = "feedback_entries"
             public static let pluginRecords = "plugin_records"
             public static let pluginRecordsFTS = "plugin_records_fts"
         }
@@ -230,35 +225,50 @@ public struct AppConstants {
                 public static let synthesisDocsPrefix = "synthesis_docs_"
             }
         }
-    }
 
-    // MARK: - 3D 图谱视觉引擎配置 (@SRS-6.1)
-    public struct Graph {
-        /// 节点渲染大小
-        public static let nodeSize: Float = 0.08
-        /// 选中节点的放大倍率
-        public static let selectionScale: Float = 1.5
-        /// 连线默认不透明度
-        public static let edgeOpacity: Float = 0.3
-        /// 节点默认颜色 (十六进制)
-        public static let defaultNodeColor: String = "60A5FA"
-        /// 选中的节点颜色
-        public static let selectedNodeColor: String = "F59E0B"
-        /// 默认力场强度
-        public static let chargeStrength: Float = -200
-        /// 默认链接距离
-        public static let linkDistance: Float = 30.0
-        /// 粒子扩散范围
-        public static let particleRadius: Float = 2.0
+        // MARK: - 导入限制
+
+        public enum ImportLimits {
+            /// 单文件最大大小：10 MB
+            public static let maxFileSizeBytes: Int64 = 10 * 1_024 * 1_024
+            /// 语音录制最大时长：15 分钟
+            public static let maxVoiceDurationSeconds: TimeInterval = 15 * 60
+            /// OCR 图片最大大小：5 MB
+            public static let maxOCRImageSizeBytes: Int64 = 5 * 1_024 * 1_024
+            /// AI 标签分析截取字符数
+            public static let aiTagSnippetLength: Int = 3000
+            /// 导入冷却间隔（秒）
+            public static let importCooldownSeconds: TimeInterval = 1.0
+            /// Sheet 关闭后延迟执行操作的等待时间（纳秒）
+            public static let dismissDelayNS: UInt64 = 400_000_000
+            /// 批量导入 URL 最大数量
+            public static let maxURLCount: Int = 10
+            /// 图片提取：单张最大大小（5 MB）
+            public static let maxImageSizeBytes: Int64 = 5 * 1_024 * 1_024
+            /// 图片提取：每页最多数量
+            public static let maxImagesPerPage: Int = 10
+            /// 图片提取：下载超时（秒）
+            public static let imageDownloadTimeoutSeconds: TimeInterval = 10
+            /// PDF 页面渲染缩放比例
+            public static let pdfRenderScale: CGFloat = 0.5
+            /// 图片 JPEG 压缩质量
+            public static let imageJPEGQuality: CGFloat = 0.8
+            /// 支持图片提取的 Office 文件扩展名
+            public static let officeExtensions: Set<String> = ["docx", "xlsx", "pptx"]
+            /// 支持的图片格式扩展名
+            public static let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "gif"]
+            /// 支持图片提取的 PDF 扩展名
+            public static let pdfExtension: String = "pdf"
+            /// Office ZIP 中排除的图片路径关键词（页眉页脚背景通常为装饰性图像）
+            public static let officeImageExcludeKeywords: Set<String> = ["header", "footer", "background"]
+        }
     }
 }
 
 /// 支持的 AI 模型枚举 (技术层标识)
 public enum AppModel: String, CaseIterable, Sendable {
     case gpt4o = "gpt-4o"
-    case gpt35Turbo = "gpt-3.5-turbo"
     case appleNLv1 = "apple_nl_v1"
-    case localLlama3 = "llama3"
     case evaluator = "evaluator"
 }
 

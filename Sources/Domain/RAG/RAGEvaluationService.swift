@@ -41,10 +41,9 @@ final class RAGEvaluationService {
     ///   - context: 检索到的上下文片段（合并后）
     ///   - sources: 检索源列表（传入时触发检索快照记录 + 相关性标注）
     func evaluate(query: String, answer: String, context: String, sources: [KnowledgeSource]? = nil) async -> EvaluationReport {
-        let hasSources = (sources?.isEmpty == false)
         let prompt: String
-        if hasSources {
-            prompt = Self.buildJudgePromptWithSources(context: context, query: query, answer: answer, sources: sources!)
+        if let sources, !sources.isEmpty {
+            prompt = Self.buildJudgePromptWithSources(context: context, query: query, answer: answer, sources: sources)
         } else {
             prompt = L10n.AI.Eval.judgePrompt(context, query, answer)
         }
@@ -55,16 +54,16 @@ final class RAGEvaluationService {
             if let data = response.data(using: .utf8),
                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
 
-                let f = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
-                let r = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
-                let p = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
-                let h = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
-                let c = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
+                let faithfulnessScore = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
+                let relevanceScore = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
+                let precisionScore = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
+                let hallucinationRate = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
+                let citationAccuracy = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
 
                 let status: String
-                if f < 0.5 {
+                if faithfulnessScore < 0.5 {
                     status = L10n.AI.Eval.Status.fail
-                } else if f < 0.7 {
+                } else if faithfulnessScore < 0.7 {
                     status = L10n.AI.Eval.Status.warning
                 } else {
                     status = L10n.AI.Eval.Status.pass
@@ -74,11 +73,11 @@ final class RAGEvaluationService {
                 let eval = RAGEvaluation(
                     query: query,
                     answer: answer,
-                    faithfulness: f,
-                    relevance: r,
-                    precision: p,
-                    hallucinationRate: h,
-                    citationAccuracy: c,
+                    faithfulness: faithfulnessScore,
+                    relevance: relevanceScore,
+                    precision: precisionScore,
+                    hallucinationRate: hallucinationRate,
+                    citationAccuracy: citationAccuracy,
                     evaluatorModel: AppConfig.AI.evaluatorModel
                 )
                 try? await governanceStore.saveRAGEvaluation(eval)
@@ -87,11 +86,11 @@ final class RAGEvaluationService {
                 let savedEvalID = savedEvals.first.flatMap { $0.id }
 
                 // 检索快照 + 相关性标注（仅当有 sources 时）
-                if hasSources, let evalID = savedEvalID {
+                if let sources, let evalID = savedEvalID {
                     await recordRetrievalQuality(
                         evalID: evalID,
                         query: query,
-                        sources: sources!,
+                        sources: sources,
                         relevanceScoresJSON: json["relevance_scores"] as? [Int]
                     )
                 }
@@ -99,11 +98,11 @@ final class RAGEvaluationService {
                 return EvaluationReport(
                     query: query,
                     answer: answer,
-                    faithfulness: f,
-                    relevance: r,
-                    precision: p,
-                    hallucinationRate: h,
-                    citationAccuracy: c,
+                    faithfulness: faithfulnessScore,
+                    relevance: relevanceScore,
+                    precision: precisionScore,
+                    hallucinationRate: hallucinationRate,
+                    citationAccuracy: citationAccuracy,
                     status: status
                 )
             }
@@ -150,9 +149,7 @@ final class RAGEvaluationService {
                 level = max(0, min(2, scores[idx]))
             } else {
                 // 回退：基于相似度分数的启发式标注
-                if src.score >= 0.8 { level = 2 }
-                else if src.score >= 0.5 { level = 1 }
-                else { level = 0 }
+                if src.score >= 0.8 { level = 2 } else if src.score >= 0.5 { level = 1 } else { level = 0 }
             }
             return RelevanceJudgment(
                 queryHash: queryHash,

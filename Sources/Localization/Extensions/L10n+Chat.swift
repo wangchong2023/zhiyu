@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Chat {
-        public static let t = "AI"
-
+    public struct Chat: L10nTableEntry {
+        public static let tableName = "AI"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 获取活跃会话个数文案
         /// - Parameter count: 会话个数
         /// - Returns: 本地化格式化文案

@@ -40,10 +40,10 @@ struct SourceView: View {
     private var header: some View {
         HStack {
             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                Text("Source_View")
+                Text(L10n.Knowledge.Page.Source.title)
                     .font(.headline)
                     .foregroundStyle(.appText)
-                Text("Original_Source_Content")
+                Text(L10n.Knowledge.Page.Source.content)
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
             }
@@ -66,7 +66,7 @@ struct SourceView: View {
                 .font(.largeTitle)
                 .foregroundStyle(.appSecondary.opacity(0.3))
             
-            Text("No_Source_Found")
+            Text(L10n.Knowledge.Page.Source.empty)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)

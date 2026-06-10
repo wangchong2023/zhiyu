@@ -71,6 +71,7 @@ final class ModelStoreConfigTests: XCTestCase {
         let sampleFileURL = tempDirectory.appendingPathComponent("temp_test_weight.bin")
         
         let sampleContent = "ZhiYu端侧大模型下载完整性测试数据流"
+        // swiftlint:disable:next force_unwrapping
         let fileData = sampleContent.data(using: .utf8)!
         try fileData.write(to: sampleFileURL)
         

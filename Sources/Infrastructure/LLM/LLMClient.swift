@@ -196,53 +196,15 @@ final class SSEParser {
                     for try await line in bytes.lines {
                         if Task.isCancelled { break }
                         lineCount += 1
+                        logDiagnosticLine(line: line, lineCount: lineCount, logger: logger, rawLines: &rawLinesForDiagnostic)
 
-                        // 诊断：记录前 15 行 SSE 数据，用于排查不同提供商的格式差异
-                        if let logger, lineCount <= 15 {
-                            let preview = String(line.prefix(250))
-                            rawLinesForDiagnostic.append(preview)
-                            if !preview.isEmpty {
-                                logger.debug("[SSE] L\(lineCount): \(preview)")
-                            }
-                        }
-
-                        // 兼容 "data: xxx" 和 "data:xxx"（无空格）两种格式
-                        let dataPrefix = "data:"
-                        guard line.hasPrefix(dataPrefix) else { continue }
-                        let dataString = String(line.dropFirst(line.hasPrefix("data: ") ? 6 : 5))
-
+                        guard let dataString = extractDataString(from: line) else { continue }
                         if dataString == "[DONE]" { break }
 
-                        guard let data = dataString.data(using: .utf8),
-                              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                            if let logger, !dataString.isEmpty {
-                                logger.debug("[SSE] 跳过非 JSON 行: \(String(dataString.prefix(120)))")
-                            }
-                            continue
-                        }
-
-                        // 兼容多种主流提供商的流式字段差异:
-                        //   标准 OpenAI → delta.content
-                        //   DeepSeek v4 Pro 等推理模型 → delta.reasoning_content
-                        //   非流式回退 → message.content
-                        if let choices = json["choices"] as? [[String: Any]],
-                           let first = choices.first {
-                            let content: String?
-                            if let delta = first["delta"] as? [String: Any] {
-                                // 优先取 content；推理模型文本走 reasoning_content
-                                content = (delta["content"] as? String)
-                                    ?? (delta["reasoning_content"] as? String)
-                            } else if let message = first["message"] as? [String: Any] {
-                                content = (message["content"] as? String)
-                                    ?? (message["reasoning_content"] as? String)
-                            } else {
-                                content = nil
-                            }
-
-                            if let content, !content.isEmpty {
-                                chunkCount += 1
-                                continuation.yield(content)
-                            }
+                        guard let json = parseJSONLine(dataString, logger: logger) else { continue }
+                        if let content = extractContent(from: json) {
+                            chunkCount += 1
+                            continuation.yield(content)
                         }
                     }
 
@@ -261,5 +223,46 @@ final class SSEParser {
                 }
             }
         }
+    }
+
+    private static func logDiagnosticLine(line: String, lineCount: Int, logger: (any LoggerProtocol)?, rawLines: inout [String]) {
+        guard let logger, lineCount <= 15 else { return }
+        let preview = String(line.prefix(250))
+        rawLines.append(preview)
+        if !preview.isEmpty {
+            logger.debug("[SSE] L\(lineCount): \(preview)")
+        }
+    }
+
+    private static func extractDataString(from line: String) -> String? {
+        let dataPrefix = "data:"
+        guard line.hasPrefix(dataPrefix) else { return nil }
+        return String(line.dropFirst(line.hasPrefix("data: ") ? 6 : 5))
+    }
+
+    private static func parseJSONLine(_ dataString: String, logger: (any LoggerProtocol)?) -> [String: Any]? {
+        guard let data = dataString.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            if let logger, !dataString.isEmpty {
+                logger.debug("[SSE] 跳过非 JSON 行: \(String(dataString.prefix(120)))")
+            }
+            return nil
+        }
+        return json
+    }
+
+    private static func extractContent(from json: [String: Any]) -> String? {
+        guard let choices = json["choices"] as? [[String: Any]],
+              let first = choices.first else { return nil }
+        let content: String?
+        if let delta = first["delta"] as? [String: Any] {
+            content = (delta["content"] as? String) ?? (delta["reasoning_content"] as? String)
+        } else if let message = first["message"] as? [String: Any] {
+            content = (message["content"] as? String) ?? (message["reasoning_content"] as? String)
+        } else {
+            content = nil
+        }
+        guard let content, !content.isEmpty else { return nil }
+        return content
     }
 }

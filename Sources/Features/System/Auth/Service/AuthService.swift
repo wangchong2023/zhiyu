@@ -212,72 +212,64 @@ public final class AuthService: AuthServiceProtocol {
     
     private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
         #if DEBUG
-        if isMockBackend {
-            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-            let response = LoginResponse(
-                user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil),
-                tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
-                isNewUser: false,
-                totpRequired: false
-            )
-            // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return handleSuccessfulLogin(response: response, identity: name)
-        }
+        if let result = tryMockAuthRequest(cred) { return result }
         #endif
-        
+
+        let info = resolveAuthRequestInfo(cred)
+        let response = try await sendOAuthRequest(path: info.path, reqBody: info.body)
+        let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
+        return handleSuccessfulLogin(response: response, identity: name)
+    }
+
+    #if DEBUG
+    private func tryMockAuthRequest(_ cred: AuthCredential) -> Bool? {
+        guard isMockBackend else { return nil }
+        let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
+        let response = LoginResponse(
+            user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil),
+            tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
+            isNewUser: false,
+            totpRequired: false
+        )
+        return handleSuccessfulLogin(response: response, identity: name)
+    }
+    #endif
+
+    private struct AuthRequestInfo {
         let path: String
-        let reqBody: Any
-        
+        let body: Any
+    }
+
+    private func resolveAuthRequestInfo(_ cred: AuthCredential) -> AuthRequestInfo {
         switch cred.identityType {
-        case "apple":
-            path = "/api/v1/auth/apple"
-            reqBody = OAuthAppleRequest(code: cred.credential, state: cred.extraInfo?["state"], idToken: cred.extraInfo?["idToken"])
-        case "wechat":
-            path = "/api/v1/auth/wechat"
-            reqBody = OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"])
-        case "google":
-            path = "/api/v1/auth/google"
-            reqBody = OAuthGoogleRequest(idToken: cred.extraInfo?["idToken"] ?? "")
-        case "github":
-            path = "/api/v1/auth/github"
-            reqBody = OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"])
-        case "carrier":
-            path = "/api/v1/auth/carrier"
-            reqBody = CarrierAuthRequest(
-                carrierToken: cred.extraInfo?["carrierToken"] ?? "",
-                appKey: cred.extraInfo?["appKey"] ?? "",
-                privacyConsent: cred.extraInfo?["privacyConsent"] == "true"
-            )
+        case "apple": return AuthRequestInfo(path: "/api/v1/auth/apple", body: OAuthAppleRequest(code: cred.credential, state: cred.extraInfo?["state"], idToken: cred.extraInfo?["idToken"]))
+        case "wechat": return AuthRequestInfo(path: "/api/v1/auth/wechat", body: OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"]))
+        case "google": return AuthRequestInfo(path: "/api/v1/auth/google", body: OAuthGoogleRequest(idToken: cred.extraInfo?["idToken"] ?? ""))
+        case "github": return AuthRequestInfo(path: "/api/v1/auth/github", body: OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"]))
+        case "carrier": return AuthRequestInfo(path: "/api/v1/auth/carrier", body: CarrierAuthRequest(carrierToken: cred.extraInfo?["carrierToken"] ?? "", appKey: cred.extraInfo?["appKey"] ?? "", privacyConsent: cred.extraInfo?["privacyConsent"] == "true"))
         default:
             Logger.shared.error(": \(cred.identityType)")
-            return false
+            return AuthRequestInfo(path: "", body: "")
         }
-        
-        // 此处为了兼容，直接使用底层 URLSession 或扩展 NetworkClient 处理字典
-        // 使用 NetworkClient 进行动态泛型调用
-        do {
-            let response: LoginResponse
-            
-            if let appleReq = reqBody as? OAuthAppleRequest {
-                response = try await NetworkClient.shared.request(path: path, method: "POST", body: appleReq, requiresAuth: false)
-            } else if let wechatReq = reqBody as? OAuthWeChatRequest {
-                response = try await NetworkClient.shared.request(path: path, method: "POST", body: wechatReq, requiresAuth: false)
-            } else if let googleReq = reqBody as? OAuthGoogleRequest {
-                response = try await NetworkClient.shared.request(path: path, method: "POST", body: googleReq, requiresAuth: false)
-            } else if let githubReq = reqBody as? OAuthGitHubRequest {
-                response = try await NetworkClient.shared.request(path: path, method: "POST", body: githubReq, requiresAuth: false)
-            } else if let carrierReq = reqBody as? CarrierAuthRequest {
-                response = try await NetworkClient.shared.request(path: path, method: "POST", body: carrierReq, requiresAuth: false)
-            } else {
-                return false
-            }
-            
-            let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-            return handleSuccessfulLogin(response: response, identity: name)
-        } catch {
-            Logger.shared.error("sendAuthRequestToBackend ", error: error)
-            throw error
+    }
+
+    private func sendOAuthRequest(path: String, reqBody: Any) async throws -> LoginResponse {
+        if let appleReq = reqBody as? OAuthAppleRequest {
+            return try await NetworkClient.shared.request(path: path, method: "POST", body: appleReq, requiresAuth: false)
         }
+        if let wechatReq = reqBody as? OAuthWeChatRequest {
+            return try await NetworkClient.shared.request(path: path, method: "POST", body: wechatReq, requiresAuth: false)
+        }
+        if let googleReq = reqBody as? OAuthGoogleRequest {
+            return try await NetworkClient.shared.request(path: path, method: "POST", body: googleReq, requiresAuth: false)
+        }
+        if let githubReq = reqBody as? OAuthGitHubRequest {
+            return try await NetworkClient.shared.request(path: path, method: "POST", body: githubReq, requiresAuth: false)
+        }
+        if let carrierReq = reqBody as? CarrierAuthRequest {
+            return try await NetworkClient.shared.request(path: path, method: "POST", body: carrierReq, requiresAuth: false)
+        }
+        throw NetworkError.unexpected("Unsupported auth request type")
     }
     
     // MARK: - 私有辅助方法

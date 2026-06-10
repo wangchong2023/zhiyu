@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Coachmark {
-        public static let t = "System"
-
+    public struct Coachmark: L10nTableEntry {
+        public static let tableName = "System"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 引导对话框：发现隐藏关联标题
         public static var graphDiscoveryTitle: String { tr("coachmark.graphDiscovery.title") }
 

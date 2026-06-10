@@ -26,7 +26,6 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         return URLSession(configuration: config, delegate: delegateHelper, delegateQueue: nil)
     }()
 
-    
     /// 模型 ID 到当前下载任务状态的映射表
     private var downloadStates: [String: DownloadState] = [:]
     
@@ -276,7 +275,7 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
 // MARK: - 桥接 Delegate 协调助手类 (NSObject Bridge Pattern)
 
 /// URLSession 代理协助类。继承自 NSObject 满足 Objective-C 回调契约，负责无声桥接后台系统通知至 Actor
-fileprivate final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloadDelegate, Sendable {
+private final class ModelDownloadDelegateHelper: NSObject, URLSessionDownloadDelegate, Sendable {
     
     /// 持有弱引用的 Actor 控制器
     private let manager: ModelDownloadManager

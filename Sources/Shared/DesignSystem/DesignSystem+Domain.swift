@@ -86,5 +86,10 @@ extension DesignSystem {
                 public static let bubbleTrailingPadding: CGFloat = 48
             }
         }
+
+        public enum Feedback {
+            public static let defaultRating: Int = 3
+            public static let maxRating: Int = 5
+        }
     }
 }

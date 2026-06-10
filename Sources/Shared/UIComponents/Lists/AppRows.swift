@@ -16,9 +16,9 @@ import SwiftUI
 /// 支持左侧图标、标题文本及右侧自定义工具栏。
 public struct AppSectionHeader: View {
     public let title: String
-    public var icon: String? = nil
+    public var icon: String?
     public var iconColor: Color = .appSource
-    public var trailing: AnyView? = nil
+    public var trailing: AnyView?
 
     public init(title: String, icon: String? = nil, iconColor: Color = .appSource, trailing: AnyView? = nil) {
         self.title = title
@@ -111,8 +111,8 @@ public struct AppStepRow: View {
 /// 带标题和图标的分隔线
 /// 用于视觉层级的横向切割与引导。
 public struct AppDivider: View {
-    public var icon: String? = nil
-    public var title: String? = nil
+    public var icon: String?
+    public var title: String?
     public var color: Color = .appBorder
 
     public init(icon: String? = nil, title: String? = nil, color: Color = .appBorder) {

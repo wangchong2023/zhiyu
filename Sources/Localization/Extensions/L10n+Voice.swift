@@ -11,20 +11,16 @@
 import Foundation
 
 extension L10n {
-    public enum Voice {
-        public static let t = "AI"
-
+    public enum Voice: L10nTableEntry {
+        public static let tableName = "AI"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
         /// - Returns: 返回值
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         public enum Speech {
             public static var title: String { Voice.tr("speech.title") }
             public static var subtitle: String { Voice.tr("speech.subtitle") }

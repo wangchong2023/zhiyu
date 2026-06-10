@@ -308,7 +308,10 @@ def check_missing_keys():
                 table_keys[table] = set(strings.keys())
 
     # 解析每个 L10n 扩展的 table 声明和 key 引用
-    table_pattern = re.compile(r'static let t\s*=\s*"([^"]+)"')
+    # 支持两种模式：
+    #   旧: static let t = "System"
+    #   新: static let tableName = "System" (L10nTableEntry 协议)
+    table_pattern = re.compile(r'static (?:let t|let tableName)\s*=\s*"([^"]+)"')
     tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"')
     tr_func_pattern = re.compile(r'trf?\(\s*"([^"]+)"')
     # 手表端本地 L.tr() 模式

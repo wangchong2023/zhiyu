@@ -21,6 +21,7 @@ final class RAGEvaluator {
     
     /// 执行回归测试
     func evaluate(llmService: LLMService, store: SQLiteStore) async -> EvaluationResult {
+        // swiftlint:disable:next force_unwrapping
         let goldenSetURL = Bundle.main.url(forResource: "RAG_GoldenSet", withExtension: "json")!
         guard let data = try? Data(contentsOf: goldenSetURL),
               let cases = try? JSONDecoder().decode([GoldenCase].self, from: data) else {

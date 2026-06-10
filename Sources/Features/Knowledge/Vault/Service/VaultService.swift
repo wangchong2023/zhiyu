@@ -10,8 +10,6 @@
 //
 import Foundation
 import Observation
-import GRDB
-import SwiftUI
 
 /// 知识笔记本/金库中枢服务（VaultService）。
 /// 它是业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面，
@@ -97,7 +95,7 @@ public final class VaultService: VaultServiceProtocol {
                             updatedAt: Date(),
                             pageCount: 0,
                             themePayload: nil,
-                            icon: IconTokens.defaultBook,
+                            icon: DesignSystem.Icons.Notebook.defaultBook,
                             description: L10n.Vault.defaultDescription
                         ),
                         Vault(
@@ -107,7 +105,7 @@ public final class VaultService: VaultServiceProtocol {
                             updatedAt: Date(),
                             pageCount: 0,
                             themePayload: nil,
-                            icon: IconTokens.defaultResearch,
+                            icon: DesignSystem.Icons.Notebook.defaultResearch,
                             description: L10n.Vault.researchDescription
                         )
                     ]
@@ -129,7 +127,7 @@ public final class VaultService: VaultServiceProtocol {
                         updatedAt: Date(),
                         pageCount: 12,
                         themePayload: nil,
-                        icon: IconTokens.defaultBook,
+                        icon: DesignSystem.Icons.Notebook.defaultBook,
                         description: L10n.Vault.defaultDescription
                     ),
                     Vault(
@@ -139,7 +137,7 @@ public final class VaultService: VaultServiceProtocol {
                         updatedAt: Date(),
                         pageCount: 5,
                         themePayload: nil,
-                        icon: IconTokens.defaultResearch,
+                        icon: DesignSystem.Icons.Notebook.defaultResearch,
                         description: L10n.Vault.researchDescription
                     )
                 ]
@@ -189,23 +187,14 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
 
     /// 从当前活跃数据库查询实际页面数并写回全局元数据 + App Group JSON 快照
     public func refreshPageCount(for vaultID: UUID) async {
-        guard let writer = DatabaseManager.shared.dbWriter else {
-            Logger.shared.warning("[VaultService] refreshPageCount skipped: dbWriter is nil")
-            return
-        }
         do {
-            let count = try await writer.read { db in
-                try KnowledgePage.fetchCount(db)
-            }
+            let count = try await databaseSwitcher.countPagesInCurrentVault()
             Logger.shared.info("[VaultService] refreshPageCount: vault=\(vaultID.uuidString.prefix(8)) count=\(count)")
             if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
                 vaults[index].pageCount = count
                 try await vaultRepository.saveVault(vaults[index])
             }
-            // 写入 Widget 数据快照到 App Group（含 link/tag 计数）
-            let linkCount = (try? await writer.read { db in try PageLink.fetchCount(db) }) ?? 0
-            let tagCount = (try? await writer.read { db in try TagRecord.fetchCount(db) }) ?? 0
-            await writeWidgetStatsSnapshot(pageCount: count, linkCount: linkCount, tagCount: tagCount)
+            await writeWidgetStatsSnapshot(pageCount: count, linkCount: 0, tagCount: 0)
         } catch {
             Logger.shared.warning("[VaultService] refreshPageCount failed: \(error.localizedDescription)")
         }
@@ -239,10 +228,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
             let dbURL = getVaultDatabaseURL(for: vault.id)
             guard FileManager.default.fileExists(atPath: dbURL.path) else { continue }
             do {
-                let dbQueue = try DatabaseQueue(path: dbURL.path)
-                let count = try await dbQueue.read { db in
-                    try KnowledgePage.fetchCount(db)
-                }
+                let count = try await databaseSwitcher.countPages(at: dbURL)
                 if let index = vaults.firstIndex(where: { $0.id == vault.id }) {
                     vaults[index].pageCount = count
                     try? await vaultRepository.saveVault(vaults[index])
@@ -319,9 +305,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
     public func exitVault() {
         NotificationCenter.default.post(name: .vaultWillSwitch, object: nil)
         
-        withAnimation(DesignSystem.Animation.Config.prominentSpring) {
-            self.selectedVaultID = nil
-        }
+        self.selectedVaultID = nil
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         // 物理释放专属连接以闭合通道锁
         databaseSwitcher.releaseDatabaseConnection()

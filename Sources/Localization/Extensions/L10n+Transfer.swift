@@ -11,8 +11,9 @@
 import Foundation
 
 extension L10n {
-    public struct Transfer {
-        public static let t = "Ingest"
+    public struct Transfer: L10nTableEntry {
+        public static let tableName = "Ingest"
+        public static var t: String { tableName }
         public struct Export {
 
             /// 本地化格式化翻译

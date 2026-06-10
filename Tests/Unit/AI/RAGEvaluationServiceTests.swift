@@ -39,7 +39,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     /// 验证当 LLM 裁判给出高分时，报告被正确划归为 "Pass" 状态，并成功落入 SQLite 数据库
     func testEvaluationPassStatusAndPersistence() async throws {
         // 1. 模拟裁判输出合格的高分 JSON 字符串
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, systemPrompt in
             XCTAssertTrue(systemPrompt.contains("Judge"))
             return """
             {
@@ -81,7 +81,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     
     /// 验证当 LLM 裁判给出中等分数时，报告被正确划归为 "Warning" 状态
     func testEvaluationWarningStatus() async {
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, _ in
             return """
             {
                 "faithfulness": 0.65,
@@ -101,7 +101,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     
     /// 验证当 LLM 裁判给出极低分数时，报告被正确标记为 "Fail" 状态
     func testEvaluationFailStatus() async {
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, _ in
             return """
             {
                 "faithfulness": 0.35,
@@ -122,7 +122,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
     /// 验证当 LLM 损坏输出或超时时，评估服务能够平稳拦截异常，优雅降级为 0 分 error 报告
     func testEvaluationDegradedOnInvalidJSON() async {
         // 模拟 LLM 发生网络中断或输出乱码，非有效 JSON
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, _ in
             return "Server Timeout, Raw HTML error..."
         }
         
@@ -153,7 +153,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
 
     /// 验证当 LLM 裁判返回的 JSON 中缺少部分指标字段时，评估服务能够平稳使用 0.0 兜底，并成功生成报告并持久化
     func testEvaluationMissingJSONKeys() async {
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { _, _ in
             return "{}"
         }
 
@@ -171,7 +171,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
 
     /// 验证 LLM 返回 5 维指标（含幻觉率与引用准确度）时全部正确解析并持久化
     func testEvaluationFiveDimensionalParsingAndPersistence() async throws {
-        mockLLM.generateHandler = { prompt, systemPrompt in
+        mockLLM.generateHandler = { prompt, _ in
             // 验证 prompt 包含新维度关键词
             XCTAssertTrue(prompt.contains("hallucination_rate"))
             return """
@@ -293,7 +293,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         let snapshots = [
             RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: UUID().uuidString, pageTitle: "文档A", snippet: "片段A", score: 0.95),
             RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: UUID().uuidString, pageTitle: "文档B", snippet: "片段B", score: 0.82),
-            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: UUID().uuidString, pageTitle: "文档C", snippet: "片段C", score: 0.71),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: UUID().uuidString, pageTitle: "文档C", snippet: "片段C", score: 0.71)
         ]
         try await governanceStore.saveRetrievalSnapshots(snapshots)
 
@@ -315,14 +315,14 @@ final class RAGEvaluationServiceTests: XCTestCase {
 
         let judgments = [
             RelevanceJudgment(queryHash: queryHash, query: "标注测试", sourceID: sourceIDs[0], relevanceLevel: 2),
-            RelevanceJudgment(queryHash: queryHash, query: "标注测试", sourceID: sourceIDs[1], relevanceLevel: 0),
+            RelevanceJudgment(queryHash: queryHash, query: "标注测试", sourceID: sourceIDs[1], relevanceLevel: 0)
         ]
         try await governanceStore.saveRelevanceJudgments(judgments)
 
         // 验证保存成功即可（upsert 不抛异常）
         // 更新覆盖：同一 queryHash + sourceID 组合
         let updated = [
-            RelevanceJudgment(queryHash: queryHash, query: "标注测试", sourceID: sourceIDs[0], relevanceLevel: 1),
+            RelevanceJudgment(queryHash: queryHash, query: "标注测试", sourceID: sourceIDs[0], relevanceLevel: 1)
         ]
         try await governanceStore.saveRelevanceJudgments(updated)
         // 测试通过：upsert 不抛错
@@ -350,14 +350,14 @@ final class RAGEvaluationServiceTests: XCTestCase {
         try await governanceStore.saveRetrievalSnapshots([
             RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: source0, pageTitle: "P0", snippet: "s0", score: 0.9),
             RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: source1, pageTitle: "P1", snippet: "s1", score: 0.8),
-            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: source2, pageTitle: "P2", snippet: "s2", score: 0.5),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: source2, pageTitle: "P2", snippet: "s2", score: 0.5)
         ])
 
         let qHash = "hit_rate_test_hash"
         try await governanceStore.saveRelevanceJudgments([
             RelevanceJudgment(queryHash: qHash, query: "HR测试", sourceID: source0, relevanceLevel: 0),
             RelevanceJudgment(queryHash: qHash, query: "HR测试", sourceID: source1, relevanceLevel: 2),  // 相关
-            RelevanceJudgment(queryHash: qHash, query: "HR测试", sourceID: source2, relevanceLevel: 0),
+            RelevanceJudgment(queryHash: qHash, query: "HR测试", sourceID: source2, relevanceLevel: 0)
         ])
 
         // Hit@2: Top-2 中 source1 在第 2 位 → Hit ✓
@@ -389,14 +389,14 @@ final class RAGEvaluationServiceTests: XCTestCase {
         try await governanceStore.saveRetrievalSnapshots([
             RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: s0, pageTitle: "P0", snippet: "-", score: 0.6),
             RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: s1, pageTitle: "P1", snippet: "-", score: 0.8),
-            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.4),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.4)
         ])
 
         let qHash = "mrr_test_hash"
         try await governanceStore.saveRelevanceJudgments([
             RelevanceJudgment(queryHash: qHash, query: "MRR测试", sourceID: s0, relevanceLevel: 0),
             RelevanceJudgment(queryHash: qHash, query: "MRR测试", sourceID: s1, relevanceLevel: 2),  // 第 2 位相关
-            RelevanceJudgment(queryHash: qHash, query: "MRR测试", sourceID: s2, relevanceLevel: 0),
+            RelevanceJudgment(queryHash: qHash, query: "MRR测试", sourceID: s2, relevanceLevel: 0)
         ])
 
         // MRR = 1/2 = 0.5（首个相关文档在第 2 位）
@@ -424,7 +424,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         try await governanceStore.saveRetrievalSnapshots([
             RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: s0, pageTitle: "P0", snippet: "-", score: 0.9),
             RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: s1, pageTitle: "P1", snippet: "-", score: 0.7),
-            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.5),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.5)
         ])
 
         let qHash = "ndcg_test_hash"
@@ -432,7 +432,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         try await governanceStore.saveRelevanceJudgments([
             RelevanceJudgment(queryHash: qHash, query: "NDCG测试", sourceID: s0, relevanceLevel: 2),
             RelevanceJudgment(queryHash: qHash, query: "NDCG测试", sourceID: s1, relevanceLevel: 1),
-            RelevanceJudgment(queryHash: qHash, query: "NDCG测试", sourceID: s2, relevanceLevel: 0),
+            RelevanceJudgment(queryHash: qHash, query: "NDCG测试", sourceID: s2, relevanceLevel: 0)
         ])
 
         // DCG@3 = (2²-1)/log₂(2) + (2¹-1)/log₂(3) + 0 = 3/1 + 1/1.585 = 3.631
@@ -479,7 +479,7 @@ final class RAGEvaluationServiceTests: XCTestCase {
         let sources: [KnowledgeSource] = [
             KnowledgeSource(pageID: UUID(), title: "源A", snippet: "内容A", score: 0.95),
             KnowledgeSource(pageID: UUID(), title: "源B", snippet: "内容B", score: 0.72),
-            KnowledgeSource(pageID: UUID(), title: "源C", snippet: "内容C", score: 0.45),
+            KnowledgeSource(pageID: UUID(), title: "源C", snippet: "内容C", score: 0.45)
         ]
 
         let report = await evaluationService.evaluate(

@@ -11,14 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Dashboard {
-        public static let t = "Insight"
-
+    public struct Dashboard: L10nTableEntry {
+        public static let tableName = "Insight"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-
         /// 本地化格式化翻译
         /// - Parameter key: key
         /// - Parameter args: args
@@ -219,7 +217,6 @@ extension L10n {
                 public static var ref: String { Dashboard.tr("stats.short.ref") }
             }
         }
-
 
         public struct index {
             public static var title: String { Localized.tr("dashboard.index.title", table: t) }

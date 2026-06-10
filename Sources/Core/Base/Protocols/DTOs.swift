@@ -33,9 +33,9 @@ public struct ChatMessageDTO: Codable, Identifiable, Sendable {
     public var relatedPageIDs: [UUID] = []
     
     public enum ChatRole: String, Codable, Sendable {
-        case user = "user"
-        case assistant = "assistant"
-        case system = "system"
+        case user
+        case assistant
+        case system
     }
     
     public init(id: UUID = UUID(), role: ChatRole, content: String, timestamp: Date = Date(), relatedPageIDs: [UUID] = []) {

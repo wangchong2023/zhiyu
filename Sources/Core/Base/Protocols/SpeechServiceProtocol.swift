@@ -72,7 +72,9 @@ public protocol SpeechServiceProtocol: AnyObject, Observable {
     /// - Parameter recording: 待删除的录音实体模型。
     func deleteRecording(_ recording: VoiceRecording)
     
+    /// 当前录制音频文件的沙盒 URL（并行录制），stopRecording 后可用
+    var currentAudioFileURL: URL? { get }
+
     /// 清除当前转录文本缓存，重置输入框状态。
     func clearTranscription()
 }
-

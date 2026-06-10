@@ -10,7 +10,7 @@
 //
 
 import XCTest
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 /// 物理笔记本数据强隔离功能单元测试类（VaultDataIsolationTests）

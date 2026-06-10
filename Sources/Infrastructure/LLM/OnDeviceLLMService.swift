@@ -109,8 +109,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
         let modelsDir = docsDir.appendingPathComponent("MLModels")
 
         if let enumerator = FileManager.default.enumerator(at: modelsDir, includingPropertiesForKeys: [.fileSizeKey]) {
-            for case let fileURL as URL in enumerator {
-                if fileURL.pathExtension == "mlmodelc" {
+            for case let fileURL as URL in enumerator where fileURL.pathExtension == "mlmodelc" {
                     let name = fileURL.deletingPathExtension().lastPathComponent
                     models.append(OnDeviceModel(
                         id: "downloaded_\(name)",
@@ -119,7 +118,6 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
                         size: estimateModelSize(url: fileURL),
                         type: .downloaded
                     ))
-                }
             }
         }
 

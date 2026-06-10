@@ -12,21 +12,17 @@ import Foundation
 
 extension L10n {
     /// 工作流服务多语言强类型扩展
-    public enum Workflow {
-        public static let t = "System"
-        
+    public enum Workflow: L10nTableEntry {
+        public static let tableName = "System"        
+        public static var t: String { tableName }
         /// 获取带表名映射的翻译
         /// - Parameter key: 多语言键值
         /// - Returns: 翻译文案
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
-        
         /// 获取带参数的格式化翻译
         /// - Parameters:
         ///   - key: 多语言键值
         ///   - args: 参数列表
         /// - Returns: 格式化后的翻译文案
-        public static func trf(_ key: String, _ args: CVarArg...) -> String { Localized.trf(key, table: t, arguments: args) }
-
         /// 无法访问提醒事项时的错误信息
         public static var accessDeniedMessage: String { tr("workflow.accessDeniedMessage") }
         

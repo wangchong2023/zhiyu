@@ -110,7 +110,6 @@ final class BackupServiceTests: XCTestCase {
     }
 }
 
-
 // MARK: - CollaborationService Tests
 import MultipeerConnectivity
 final class ZhiYuServiceCollaborationTests: XCTestCase {
@@ -676,9 +675,9 @@ final class PluginRegistryTests: XCTestCase {
 @MainActor
 final class MockPlugin: InterceptionPlugin {
     let manifest: PluginManifest
-    var monetization: MonetizationInfo? = nil
+    var monetization: MonetizationInfo?
     
-    var preProcessor: ((String) -> String)? = nil
+    var preProcessor: ((String) -> String)?
     
     init(id: String, preProcessor: ((String) -> String)? = nil) {
         self.manifest = PluginManifest(

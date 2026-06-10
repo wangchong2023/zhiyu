@@ -29,4 +29,11 @@ public protocol VaultDatabaseSwitcher: Sendable {
     /// 此方法旨在同步释放专属物理库的所有活跃读取与写入句柄，强制关闭物理库的 WAL 缓存，
     /// 以允许对数据库文件进行离线备份、擦除或移动等操作。
     func releaseDatabaseConnection()
+
+    /// 读取当前活跃 Vault 数据库的页面数量。
+    func countPagesInCurrentVault() async throws -> Int
+
+    /// 读取指定 URL 处数据库文件的页面数量。
+    /// - Parameter url: 数据库文件路径
+    func countPages(at url: URL) async throws -> Int
 }

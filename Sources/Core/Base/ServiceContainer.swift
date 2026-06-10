@@ -156,4 +156,3 @@ struct Inject<T>: @unchecked Sendable {
         ServiceContainer.shared.resolve(T.self)
     }
 }
-

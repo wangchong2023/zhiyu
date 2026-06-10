@@ -286,15 +286,15 @@ struct GraphContainerView: View {
      * @return {*}
      */
     private func computeInsights() {
-        let (surprising, orphans, sparse, bridges) = GraphLayoutProcessor.detectInsights(
+        let insights = GraphLayoutProcessor.detectInsights(
             nodes: viewModel.nodes,
             edges: viewModel.edges,
             pages: store.pages
         )
-        viewModel.insightSurprising = surprising
-        viewModel.insightOrphans = orphans
-        viewModel.insightSparse = sparse
-        viewModel.insightBridges = bridges
+        viewModel.insightSurprising = insights.surprising
+        viewModel.insightOrphans = insights.orphans
+        viewModel.insightSparse = insights.sparse
+        viewModel.insightBridges = insights.bridges
     }
 
     /**

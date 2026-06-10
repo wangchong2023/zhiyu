@@ -7863,40 +7863,6 @@
         }
       }
     },
-    "stat.concepts": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total Concepts"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "概念总数"
-          }
-        }
-      }
-    },
-    "stat.entities": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total Entities"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "实体总数"
-          }
-        }
-      }
-    },
     "stat.growth": {
       "extractionState": "manual",
       "localizations": {
@@ -7948,23 +7914,6 @@
         }
       }
     },
-    "stat.sources": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total Sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "来源总数"
-          }
-        }
-      }
-    },
     "stat.stubPages": {
       "extractionState": "manual",
       "localizations": {
@@ -7978,23 +7927,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "待完善页面"
-          }
-        }
-      }
-    },
-    "stat.totalPages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total Nodes"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "总节点数"
           }
         }
       }

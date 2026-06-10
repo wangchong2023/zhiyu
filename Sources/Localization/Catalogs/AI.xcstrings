@@ -7038,6 +7038,57 @@
           }
         }
       }
+    },
+    "synthesis.citationInstruction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When synthesizing, cite source pages using [[Page Title]] format. Only state facts grounded in the provided content. Do not fabricate information not present in the sources."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合成时请使用 [[页面标题]] 格式注明来源。仅陈述源材料中可验证的事实，禁止编造不存在的信息。"
+          }
+        }
+      }
+    },
+    "synthesis.sourceCount_%d": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d sources"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个来源"
+          }
+        }
+      }
+    },
+    "llm.prompt.rule5": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "- Never fabricate facts, data, or names. If no evidence, say \"Not found in knowledge base\""
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "- 严禁编造事实、数据或人名。无依据时明确回答「知识库中未找到相关信息」，引用时使用 [[页面标题]] 注明出处"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -18,7 +18,6 @@ final class KnowledgePageRepository: KnowledgeRepository, @unchecked Sendable {
     private var dbWriter: any DatabaseWriter {
         get async {
             await MainActor.run {
-                // 动态获取当前活跃的数据库写入器以支持多 Vault 热插拔切换。如果尚未创建（如测试初始化中），则降级创建内存数据库队列，防止崩溃。
                 if let writer = DatabaseManager.shared.dbWriter {
                     return writer
                 }

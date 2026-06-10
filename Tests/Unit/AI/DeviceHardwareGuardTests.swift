@@ -110,6 +110,7 @@ final class DeviceHardwareGuardTests: XCTestCase {
     /// 测试对模型白名单列表进行批量匹配计算
     func testBatchEligibilityEvaluation() {
         let guardEvaluator = DeviceHardwareGuard(physicalMemory: eightGbBytes)
+        // swiftlint:disable:next force_unwrapping
         let batchManifests = [gemmaManifest!, llamaManifest!]
         
         let batchResult = guardEvaluator.batchEvaluateEligibility(for: batchManifests)

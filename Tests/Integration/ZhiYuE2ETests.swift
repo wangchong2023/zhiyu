@@ -10,7 +10,7 @@
 //
 import XCTest
 import MultipeerConnectivity
-import GRDB
+@preconcurrency import GRDB
 @testable import ZhiYu
 
 // MARK: - E2E: Complete Knowledge Page Workflow Tests
@@ -176,6 +176,7 @@ final class KnowledgePageWorkflowTests: XCTestCase {
         XCTAssertFalse(undoService.canUndo)
 
         // Redo v1 → v2
+        // swiftlint:disable:next force_unwrapping
         let afterRedo = undoService.redo(currentPages: afterUndo!)
         XCTAssertEqual(afterRedo?.first?.title, "V2")
         XCTAssertTrue(undoService.canUndo)
@@ -522,7 +523,7 @@ final class IngestPipelineTests: XCTestCase {
             ("data.xlsx", .xlsx),
             ("document.docx", .docx),
             ("unknown.xyz", .unknown),
-            ("UPPERCASE.MD", .markdown),
+            ("UPPERCASE.MD", .markdown)
         ]
 
         for (filename, expected) in testCases {

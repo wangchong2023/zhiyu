@@ -35,4 +35,3 @@ final class WebViewExportService {
         try await exportService.exportToPPTX(markdown: markdown, fileName: fileName)
     }
 }
-

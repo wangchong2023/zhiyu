@@ -35,7 +35,7 @@ public protocol CloudStorageProvider: Sendable {
     func push(pages: [KnowledgePage], logs: [LogEntry]) async throws
     
     /// 从云端拉取数据
-    func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date)
+    func pull() async throws -> CloudSnapshot
     
     /// 订阅云端变更通知
     func subscribeToChanges() async throws
@@ -58,4 +58,17 @@ public protocol CloudSyncOrchestrator: ObservableObject {
     
     /// 执行全量双向同步
     func performSync(localPages: [KnowledgePage], localLogs: [LogEntry]) async throws -> (pages: [KnowledgePage], logs: [LogEntry])
+}
+
+/// 云存储快照，包含页面、日志和最后修改时间
+public struct CloudSnapshot: Sendable {
+    public let pages: [KnowledgePage]
+    public let logs: [LogEntry]
+    public let lastModified: Date
+
+    public init(pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
+        self.pages = pages
+        self.logs = logs
+        self.lastModified = lastModified
+    }
 }

@@ -10,7 +10,6 @@
 //
 import SwiftUI
 
-
 // MARK: - Smart Ingest Preview
 /// 智能导入预览卡片组件
 /// 负责展示 LLM 预处理后的建议结果（标题、摘要、自动标签等），供用户确认或修正
@@ -99,4 +98,3 @@ struct SmartIngestPreview: View {
         }
     }
 }
-

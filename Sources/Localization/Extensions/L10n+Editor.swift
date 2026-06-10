@@ -11,13 +11,12 @@
 import Foundation
 
 extension L10n {
-    public struct Editor {
-        public static let t = "Knowledge"
-
+    public struct Editor: L10nTableEntry {
+        public static let tableName = "Knowledge"
+        public static var t: String { tableName }
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
-        public static func tr(_ key: String) -> String { Localized.tr(key, table: t) }
         public static var insertPageLink: String { Localized.tr("editor.insertPageLink", table: t) }
         public static var searchPages: String { Localized.tr("editor.searchPages", table: t) }
         public static var bidirectionalLinks: String { Localized.tr("editor.bidirectionalLinks", table: t) }

@@ -36,11 +36,11 @@ final class MockCloudStorageProvider: CloudStorageProvider, @unchecked Sendable 
         self.cloudLastModified = Date()
     }
     
-    func pull() async throws -> (pages: [KnowledgePage], logs: [LogEntry], lastModified: Date) {
+    func pull() async throws -> CloudSnapshot {
         guard isNetworkConnected else {
             throw NSError(domain: "NSURLErrorDomain", code: -1009, userInfo: [NSLocalizedDescriptionKey: "The Internet connection appears to be offline."])
         }
-        return (cloudPages, cloudLogs, cloudLastModified)
+        return CloudSnapshot(pages: cloudPages, logs: cloudLogs, lastModified: cloudLastModified)
     }
     
     func subscribeToChanges() async throws {}
