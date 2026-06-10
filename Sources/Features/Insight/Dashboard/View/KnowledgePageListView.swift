@@ -117,7 +117,7 @@ struct KnowledgePageListContent: View {
         }
         .navigationTitle(filterType?.displayName ?? L10n.Common.Sidebar.pageList)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(false)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
@@ -128,21 +128,6 @@ struct KnowledgePageListContent: View {
                 }
             }
             #endif
-            
-            ToolbarItem(placement: .topBarLeading) {
-                if appEnv.screenClass == .compact || !router.path.isEmpty {
-                    Button(action: {
-                        HapticFeedback.shared.trigger(.selection)
-                        Router.shared.pop()
-                    }) {
-                        Image(systemName: DesignSystem.Icons.back)
-                            .font(.system(size: DesignSystem.bodyFontSize, weight: .bold))
-                            .foregroundStyle(.appText)
-                            .frame(width: DesignSystem.CompositeRow.iconBoxSize, height: DesignSystem.Action.buttonHeight)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
         }
         .onChange(of: searchText) { _, newValue in
             triggerSearch(query: newValue)
