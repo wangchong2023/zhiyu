@@ -165,7 +165,7 @@ struct WelcomeQuickStartGuideSection: View {
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 Task {
-                    injectedCount = await store.generateDemoData()
+                    injectedCount = await store.generateDemoData().total
                     HapticFeedback.shared.trigger(.success)
                     showInjectSuccess = true
                 }

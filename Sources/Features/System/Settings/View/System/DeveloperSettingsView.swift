@@ -40,14 +40,23 @@ struct DeveloperSettingsView: View {
                     Button(L10n.Common.confirm) {
                         Task {
                             isInjecting = true
-                            let count = await store.generateDemoData()
+                            let result = await store.generateDemoData()
                             isInjecting = false
 
                             try? await Task.sleep(nanoseconds: 300_000_000)
 
-                            HapticFeedback.shared.trigger(count > 0 ? .success : .error)
-                            if count > 0 {
-                                ToastManager.shared.show(type: .success, message: L10n.Settings.InjectDemo.successMessage(count))
+                            HapticFeedback.shared.trigger(result.total > 0 ? .success : .error)
+                            let total = result.total
+                            let details = result.details
+                            if total > 0 {
+                                var msg = "已为 \(details.count) 个笔记本注入数据："
+                                var first = true
+                                for d in details {
+                                    if !first { msg += "，" }
+                                    first = false
+                                    msg += "\(d.name) \(d.count) 条"
+                                }
+                                ToastManager.shared.show(type: .success, message: msg)
                             } else {
                                 ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
                             }
@@ -169,8 +178,4 @@ struct DeveloperSettingsView: View {
                 await knowledgeStore.refresh()
                 AppEventBus.shared.publish(.pagesCleared)            }
         }
-    }
-    
-
-
-}
+    }}

@@ -384,7 +384,8 @@ extension L10n {
             public static var create: String { Localized.tr("misc.create", table: t) }
             public static var clear: String { Localized.tr("misc.clear", table: t) }
             public static var clearAll: String { Localized.tr("misc.clearAll", table: t) }
-            public static var `import`: String { Localized.tr("misc.import", table: t) }
+            public static var listSeparator: String { Localized.tr("misc.listSeparator", table: t) }
+        public static var `import`: String { Localized.tr("misc.import", table: t) }
             public static var deleteAll: String { Localized.tr("misc.deleteAll", table: t) }
             public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: t) }
         }

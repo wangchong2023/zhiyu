@@ -4270,6 +4270,23 @@
         }
       }
     },
+    "misc.listSeparator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "，"
+          }
+        }
+      }
+    },
     "misc.create": {
       "extractionState": "manual",
       "localizations": {

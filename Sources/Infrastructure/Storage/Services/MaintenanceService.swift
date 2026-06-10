@@ -32,8 +32,8 @@ public final class MaintenanceService {
 
     /// 生成DemoData
     /// - Returns: 数值
-    public func generateDemoData() async -> Int {
-        // 确保两个默认演示笔记本存在，不存在则创建
+    /// 生成演示数据，返回总数和每个笔记本的注入详情
+    public func generateDemoData() async -> (total: Int, details: [(name: String, count: Int)]) {
         let demoVaultConfigs: [(name: String, icon: String, description: String)] = [
             (L10n.Vault.defaultName, IconTokens.defaultBook, L10n.Vault.defaultDescription),
             (L10n.Vault.researchName, IconTokens.defaultResearch, L10n.Vault.researchDescription)
@@ -47,35 +47,31 @@ public final class MaintenanceService {
             }
         }
 
-        // 重新获取（可能新增了笔记本）
         existingVaults = vaultService.vaults
         guard !existingVaults.isEmpty else {
             do {
-                return try await DemoDataGenerator.generate(in: pageStore)
+                let count = try await DemoDataGenerator.generate(in: pageStore)
+                return (total: count, details: [(L10n.Vault.defaultName, count)])
             } catch {
-                logger.addLog(action: .error, target: "Demo", details: "Maintenance_Failed1", module: "Maintenance")
-                return 0
+                return (total: 0, details: [])
             }
         }
 
         var totalCount = 0
+        var vaultDetails: [(name: String, count: Int)] = []
         for vault in existingVaults {
             do {
-                // 使用同步等待版本确保数据库切换完成后才写入
                 try await vaultService.selectVaultAndWait(vault)
-                logger.addLog(action: .create, target: vault.name, details: "DemoData_DB_Switched", module: "Maintenance")
                 let count = try await DemoDataGenerator.generate(in: pageStore)
                 totalCount += count
-                logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
-                // 数据注入后刷新页数到元数据
+                vaultDetails.append((name: vault.name, count: count))
                 await vaultService.refreshPageCount(for: vault.id)
                 logger.addLog(action: .create, target: vault.name, details: "DemoData_PageCountRefreshed", module: "Maintenance")
-                logger.addLog(action: .create, target: vault.name, details: "DemoData_Injected_\(count)", module: "Maintenance")
             } catch {
-                logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed: \(error.localizedDescription)", module: "Maintenance")
+                logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed", module: "Maintenance")
             }
         }
-        return totalCount
+        return (total: totalCount, details: vaultDetails)
     }
 
     /// 填充默认引导内容

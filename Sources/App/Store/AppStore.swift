@@ -312,13 +312,13 @@ extension AppStore: CollaborationDelegate {
 
     /// 生成DemoData
     /// - Returns: 数值
-    func generateDemoData() async -> Int {
-        let count = await maintenanceService.generateDemoData()
-        if count > 0 {
+    func generateDemoData() async -> (total: Int, details: [(name: String, count: Int)]) {
+        let result = await maintenanceService.generateDemoData()
+        if result.total > 0 {
             await refresh()
             AppEventBus.shared.publish(.graphRelayoutRequested)
         }
-        return count
+        return result
     }
 
     /// 应用Potential链接

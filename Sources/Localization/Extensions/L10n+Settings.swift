@@ -129,6 +129,9 @@ extension L10n {
             /// - Returns: 字符串
             public static func successMessage(_ n: Int) -> String { Localized.trf("settings.injectDemo.successMessage", table: t, n) }
             public static var errorMessage: String { Localized.tr("settings.injectDemo.errorMessage", table: t) }
+            /// 含每个笔记本详情
+            public static func successDetail(_ vaultCount: Int, _ details: String) -> String { Localized.trf("settings.injectDemo.successDetail", table: t, vaultCount, details) }
+            public static func vaultDetail(_ name: String, _ count: Int) -> String { Localized.trf("settings.injectDemo.vaultDetail", table: t, name, count) }
         }
 
         public struct About {
