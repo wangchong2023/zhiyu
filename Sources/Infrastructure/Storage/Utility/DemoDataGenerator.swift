@@ -24,7 +24,8 @@ struct DemoDataGenerator {
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
-        Logger.shared.info("DemoData_Starting")
+        Logger.shared.warning(">>> [DemoData] Starting injection to current vault")
+        Logger.shared.warning(">>> [DemoData] CallStack: \(Thread.callStackSymbols.prefix(10).joined(separator: "\n"))")
 
         let pagesToCreate: [(String, PageType, String, [String])] = [
                 (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),

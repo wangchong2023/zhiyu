@@ -33,6 +33,7 @@ public final class MaintenanceService {
     /// 生成DemoData
     /// - Returns: 数值
     public func generateDemoData() async -> Int {
+        Logger.shared.warning(">>> [MaintenanceService] generateDemoData START")
         // 确保两个默认演示笔记本存在，不存在则创建
         let demoVaultConfigs: [(name: String, icon: String, description: String)] = [
             (L10n.Vault.defaultName, IconTokens.defaultBook, L10n.Vault.defaultDescription),
@@ -75,6 +76,7 @@ public final class MaintenanceService {
                 logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed: \(error.localizedDescription)", module: "Maintenance")
             }
         }
+        Logger.shared.warning(">>> [MaintenanceService] generateDemoData END, totalCount=\(totalCount)")
         return totalCount
     }
 
