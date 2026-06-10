@@ -3660,8 +3660,8 @@
     "settings.developer.resetOnboardingDone": {
       "extractionState": "manual",
       "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Onboarding data reset. Will reappear on next launch." } },
-        "zh-Hans": { "stringUnit": { "state": "translated", "value": "引导数据已重置，下次启动将重新展示引导" } }
+        "en": { "stringUnit": { "state": "translated", "value": "Onboarding reset — returning to home screen" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "引导已重置，正在返回主界面" } }
       }
     },
     "settings.developer.section.system": {

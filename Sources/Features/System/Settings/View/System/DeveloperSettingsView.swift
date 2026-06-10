@@ -216,12 +216,17 @@ struct DeveloperSettingsView: View {
         OnboardingMilestone.allCases.forEach {
             UserDefaults.standard.removeObject(forKey: $0.key)
         }
-        // 重置引导服务 — 立即显示第一步引导
-        OnboardingService.shared.hasCompletedOnboarding = false
-        OnboardingService.shared.nextStep()
-        // 退出笔记本回到主界面（展示引导 Overlay）
+        // 退出笔记本回到主界面
         VaultService.shared.exitVault()
         dismiss()
-        ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
+        // 延时触发引导（等视图切换完成）
+        Task {
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            OnboardingService.shared.hasCompletedOnboarding = false
+            OnboardingService.shared.nextStep()
+            await MainActor.run {
+                ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
+            }
+        }
     }
 }
