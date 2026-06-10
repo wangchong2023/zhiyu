@@ -47,9 +47,10 @@ public struct NotebookHubView: View {
 
                     if !onboardingService.hasCompletedOnboarding {
                         WelcomePathSelectionSection(selectedTab: $router.selectedTab)
+                            .environmentObject(onboardingService)
+                    } else {
+                        notebookGridSection
                     }
-
-                    notebookGridSection
                 }
                 .padding(.bottom, DesignSystem.huge)
             }

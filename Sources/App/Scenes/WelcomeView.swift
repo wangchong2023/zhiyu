@@ -15,7 +15,6 @@ struct WelcomeView: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
     @EnvironmentObject var themeManager: ThemeManager
-    @EnvironmentObject var onboardingService: OnboardingService
     @State private var showInjectSuccess = false
     @State private var injectedCount = 0
 
@@ -25,11 +24,7 @@ struct WelcomeView: View {
             VStack(spacing: Spacing.huge) {
                 WelcomeHeroSection()
                 WelcomeStatsSection()
-                let pagesEmpty = store.pages.isEmpty
-                let onboardDone = onboardingService.hasCompletedOnboarding
-                let _ = Logger.shared.info("[WelcomeView] pagesEmpty=\(pagesEmpty) onboardDone=\(onboardDone)")
-
-                if !pagesEmpty && onboardDone {
+                if !store.pages.isEmpty {
                     WelcomeGrowthChartSection(data: store.growthSeries)
                     WelcomeRecentUpdatesSection(selectedTab: $selectedTab)
                 } else {
@@ -144,100 +139,74 @@ struct WelcomeRecentUpdatesSection: View {
     }
 }
 
+/// 新用户引导：双路径选择卡片
 struct WelcomePathSelectionSection: View {
     @Environment(AppStore.self) var store
     @Binding var selectedTab: AppTab
-    @State private var selectedPath: OnboardingPath? = nil
+    @EnvironmentObject var onboardingService: OnboardingService
 
     var body: some View {
         VStack(spacing: DesignSystem.wide) {
             Label(L10n.Onboarding.pathTitle, systemImage: DesignSystem.Icons.sparkles)
                 .font(.headline)
 
-            HStack(spacing: DesignSystem.medium) {
-                ForEach(OnboardingPath.allCases, id: \.rawValue) { path in
-                    pathCard(path)
+            // 创建笔记本
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                store.showCreateSheet = true
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.blue)
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                        Text(L10n.Action.createPage)
+                            .font(.subheadline.bold())
+                        Text(L10n.Action.createPageSubtitle)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+                .padding()
+                .background(Color.blue.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
             }
+            .buttonStyle(.plain)
 
-            if selectedPath == .quickStart {
-                demoPreviewCard
+            // 自己探索
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                onboardingService.hasCompletedOnboarding = true
+            }) {
+                HStack {
+                    Image(systemName: "book.pages.fill")
+                        .font(.title2)
+                        .foregroundStyle(.green)
+                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                        Text(L10n.Onboarding.Path.explore)
+                            .font(.subheadline.bold())
+                        Text(L10n.Onboarding.Path.exploreDesc)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(Color.green.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
             }
+            .buttonStyle(.plain)
         }
         .padding(DesignSystem.wide)
         .appContainer(background: Color.appCard)
         .padding(.horizontal)
-    }
-
-    private func pathCard(_ path: OnboardingPath) -> some View {
-        let isSelected = selectedPath == path
-        return Button(action: {
-            withAnimation(.easeInOut(duration: 0.2)) { selectedPath = isSelected ? nil : path }
-            if path == .importData {
-                HapticFeedback.shared.trigger(.selection)
-                selectedTab = .ingest
-            }
-        }) {
-            VStack(spacing: DesignSystem.tightPadding) {
-                Image(systemName: path.icon)
-                    .font(.title2)
-                    .foregroundStyle(path.color)
-                Text(pathLabel(path))
-                    .font(.caption.bold())
-                    .multilineTextAlignment(.center)
-                Text(pathDesc(path))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .padding(DesignSystem.medium)
-            .frame(maxWidth: .infinity)
-            .background(isSelected ? path.color.opacity(0.1) : Color.appCard)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                    .stroke(isSelected ? path.color : Color.clear, lineWidth: 2)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var demoPreviewCard: some View {
-        VStack(spacing: DesignSystem.small) {
-            Text(L10n.Onboarding.Demo.title)
-                .font(.subheadline.bold())
-            Text(L10n.Onboarding.Demo.desc)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                Task { await store.generateDemoData() }
-            }) {
-                Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(.blue)
-        }
-        .padding()
-        .background(Color.blue.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-    }
-
-    private func pathLabel(_ path: OnboardingPath) -> String {
-        switch path {
-        case .quickStart: return L10n.Onboarding.Path.quickStart
-        case .importData: return L10n.Onboarding.Path.importData
-        case .explore: return L10n.Onboarding.Path.explore
-        }
-    }
-
-    private func pathDesc(_ path: OnboardingPath) -> String {
-        switch path {
-        case .quickStart: return L10n.Onboarding.Path.quickStartDesc
-        case .importData: return L10n.Onboarding.Path.importDataDesc
-        case .explore: return L10n.Onboarding.Path.exploreDesc
-        }
     }
 }
 
