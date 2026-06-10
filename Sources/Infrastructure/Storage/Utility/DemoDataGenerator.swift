@@ -24,8 +24,7 @@ struct DemoDataGenerator {
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
-        Logger.shared.warning(">>> [DemoData] Starting injection to current vault")
-        Logger.shared.warning(">>> [DemoData] CallStack: \(Thread.callStackSymbols.prefix(10).joined(separator: "\n"))")
+        Logger.shared.info("DemoData_Starting")
 
         let pagesToCreate: [(String, PageType, String, [String])] = [
                 (L10n.Common.Demo.aiAgent.title, .concept, L10n.Common.Demo.aiAgent.content + "", [L10n.Common.Tags.ai, L10n.Common.Tags.agent]),
@@ -46,8 +45,6 @@ struct DemoDataGenerator {
                 (L10n.Common.Demo.topology.title, .concept, L10n.Common.Demo.topology.content, [L10n.Common.Tags.visual]),
                 (L10n.Common.Demo.hybridSearch.title, .concept, L10n.Common.Demo.hybridSearch.content + " [[\(L10n.Common.Demo.embedding.title)]]", [L10n.Common.Tags.performance])
         ]
-
-        Logger.shared.warning("DemoData_AboutToDeleteAll")
 
         try await store.performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
@@ -91,10 +88,7 @@ struct DemoDataGenerator {
             }
         }
         
-        // 验证写入: 读回确认页数
-        let verifyCount = (try? await store.fetchAllPages())?.count ?? -1
-        Logger.shared.info("DemoData_Finished, created=\(pagesToCreate.count), verify=\(verifyCount)")
-
+        Logger.shared.info("DemoData_Finished")
         return pagesToCreate.count
     }
  

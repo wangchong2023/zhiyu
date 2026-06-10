@@ -20,12 +20,8 @@ extension DatabaseManager {
     var migrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
         
-        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
-        #if DEBUG
-        if !isInTesting {
-            migrator.eraseDatabaseOnSchemaChange = true
-        }
-        #endif
+        // DEBUG 模式下也不抹除——schema 变更统一通过增量迁移处理
+        // (eraseDatabaseOnSchemaChange=true 会导致每次切库数据全部丢失)
 
         // V1: 初始工业化架构 - 全表审计标准化
         migrator.registerMigration("v1_initial_schema") { db in
@@ -259,12 +255,8 @@ extension DatabaseManager {
     var globalMigrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
         
-        // 若在 DEBUG 研发模式下发生不兼容变动，且不在单元测试中，允许就地抹除以加速迭代
-        #if DEBUG
-        if !isInTesting {
-            migrator.eraseDatabaseOnSchemaChange = true
-        }
-        #endif
+        // DEBUG 模式下也不抹除——schema 变更统一通过增量迁移处理
+        // (eraseDatabaseOnSchemaChange=true 会导致每次切库数据全部丢失)
         
         migrator.registerMigration("v1_global_schema") { db in
             // 1. 笔记本元数据主表：托管所有多笔记本卡片信息
