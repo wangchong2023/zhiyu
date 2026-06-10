@@ -3622,6 +3622,48 @@
         }
       }
     },
+    "settings.developer.section.onboarding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Onboarding Test" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "引导测试" } }
+      }
+    },
+    "settings.developer.resetOnboarding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reset Onboarding" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置引导数据" } }
+      }
+    },
+    "settings.developer.resetOnboardingConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Confirm Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "确认重置" } }
+      }
+    },
+    "settings.developer.resetOnboardingAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Reset" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "重置" } }
+      }
+    },
+    "settings.developer.resetOnboardingMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "All onboarding milestones will be cleared and will reappear on next launch." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "将清除所有引导里程碑（首次对话提示等），下次启动重新展示。" } }
+      }
+    },
+    "settings.developer.resetOnboardingDone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Onboarding data reset. Will reappear on next launch." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "引导数据已重置，下次启动将重新展示引导" } }
+      }
+    },
     "settings.developer.section.system": {
       "extractionState": "manual",
       "localizations": {

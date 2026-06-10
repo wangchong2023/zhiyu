@@ -133,16 +133,16 @@ struct DeveloperSettingsView: View {
                 Button(role: .destructive) {
                     showResetOnboardingConfirmation = true
                 } label: {
-                    Label("重置引导数据", systemImage: "arrow.counterclockwise")
+                    Label(L10n.Settings.developer.resetOnboarding, systemImage: "arrow.counterclockwise")
                 }
-                .alert("确认重置", isPresented: $showResetOnboardingConfirmation) {
-                    Button("重置", role: .destructive) { resetOnboarding() }
+                .alert(L10n.Settings.developer.resetOnboardingConfirm, isPresented: $showResetOnboardingConfirmation) {
+                    Button(L10n.Settings.developer.resetOnboardingAction, role: .destructive) { resetOnboarding() }
                     Button(L10n.Common.cancel, role: .cancel) { }
                 } message: {
-                    Text("将清除所有引导里程碑（首次对话提示等），下次启动重新展示。")
+                    Text(L10n.Settings.developer.resetOnboardingMessage)
                 }
             } header: {
-                Text("引导测试")
+                Text(L10n.Settings.developer.section.onboarding)
             }
             .appListRowBackground()
         }
@@ -203,9 +203,13 @@ struct DeveloperSettingsView: View {
     @State private var showResetOnboardingConfirmation = false
 
     private func resetOnboarding() {
+        // 清除里程碑
         OnboardingMilestone.allCases.forEach {
             UserDefaults.standard.removeObject(forKey: $0.key)
         }
-        ToastManager.shared.show(type: .success, message: "引导数据已重置，下次启动将重新展示引导")
+        // 重置引导服务
+        OnboardingService.shared.hasCompletedOnboarding = false
+        OnboardingService.shared.currentStep = nil
+        ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
     }
 }

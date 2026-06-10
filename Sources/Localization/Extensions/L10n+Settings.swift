@@ -88,7 +88,14 @@ extension L10n {
                 public static var dataReset: String { Localized.tr("settings.developer.section.dataReset", table: t) }
                 public static var operationInfo: String { Localized.tr("settings.developer.section.operationInfo", table: t) }
                 public static var performance_test: String { Localized.tr("settings.developer.section.performance_test", table: t) }
+                public static var onboarding: String { Localized.tr("settings.developer.section.onboarding", table: t) }
             }
+
+            public static var resetOnboarding: String { Localized.tr("settings.developer.resetOnboarding", table: t) }
+            public static var resetOnboardingConfirm: String { Localized.tr("settings.developer.resetOnboardingConfirm", table: t) }
+            public static var resetOnboardingAction: String { Localized.tr("settings.developer.resetOnboardingAction", table: t) }
+            public static var resetOnboardingMessage: String { Localized.tr("settings.developer.resetOnboardingMessage", table: t) }
+            public static var resetOnboardingDone: String { Localized.tr("settings.developer.resetOnboardingDone", table: t) }
 
             public struct stressTest {
                 public static var count: String { Localized.tr("settings.developer.stressTest.count", table: t) }
