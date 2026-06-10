@@ -19,6 +19,7 @@ final class IngestCoordinator {
     @ObservationIgnored @Inject var store: AppStore
     @ObservationIgnored @Inject var ingestStore: IngestStore
     @ObservationIgnored @Inject var llmService: any LLMServiceProtocol
+    @ObservationIgnored @Inject var importRecordRepo: any ImportRecordRepository
 
     // ── UI 控制状态 ──
     var isIngesting = false
@@ -51,7 +52,18 @@ final class IngestCoordinator {
     func performIngest() {
         isIngesting = true
         let title = newTitle, content = newContent, type = newType, icon = newCustomIcon, smart = useSmartIngest
-        
+        let category = newURL.isEmpty ? ImportCategory.manual.rawValue : ImportCategory.link.rawValue
+        let recordID = UUID().uuidString
+
+        // 创建导入记录
+        let record = ImportRecord(
+            id: recordID, category: category, title: title,
+            status: "processing", rawText: content,
+            sourceURL: newURL.isEmpty ? nil : newURL,
+            vaultID: VaultService.shared.selectedVaultID?.uuidString
+        )
+        Task { try? await importRecordRepo.save(record) }
+
         Task {
             do {
                 let page = try await ingestStore.performIngest(
@@ -63,13 +75,15 @@ final class IngestCoordinator {
                     useSmart: smart,
                     useDeepScan: true
                 )
-                
+                try? await importRecordRepo.updateStatus(id: recordID, status: "done", completedAt: Date())
+                try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+
                 if let icon = icon {
                     var updated = page
                     updated.customIcon = icon
                     await store.updatePage(updated, forceDeepScan: true)
                 }
-                
+
                 await MainActor.run {
                     self.isIngesting = false
                     self.showManualForm = false
@@ -77,6 +91,7 @@ final class IngestCoordinator {
                     HapticFeedback.shared.trigger(.success)
                 }
             } catch {
+                try? await importRecordRepo.updateStatus(id: recordID, status: "failed", completedAt: Date())
                 await MainActor.run {
                     self.isIngesting = false
                     self.errorMessage = L10n.Ingest.importFailed
@@ -93,15 +108,36 @@ final class IngestCoordinator {
         if case .success(let urls) = result {
             for url in urls {
                 let _ = url.startAccessingSecurityScopedResource()
-                let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: url.lastPathComponent)
+                let fileName = url.lastPathComponent
+                let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: fileName)
+                let recordID = UUID().uuidString
+
+                // 获取文件大小
+                let fileSize: Int64? = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize.map(Int64.init)
+
+                let record = ImportRecord(
+                    id: recordID, category: ImportCategory.file.rawValue,
+                    title: fileName, status: "processing",
+                    filePath: url.path, fileSize: fileSize,
+                    vaultID: VaultService.shared.selectedVaultID?.uuidString
+                )
+                Task { try? await importRecordRepo.save(record) }
+
                 Task {
                     defer { url.stopAccessingSecurityScopedResource() }
                     let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
                     await MainActor.run {
-                        if let _ = page {
+                        if let page = page {
+                            Task { @MainActor in
+                                try? await importRecordRepo.updateStatus(id: recordID, status: "done", completedAt: Date())
+                                try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+                            }
                             TaskCenter.shared.updateTask(taskID, status: .completed)
                             HapticFeedback.shared.trigger(.success)
                         } else {
+                            Task { @MainActor in
+                                try? await importRecordRepo.updateStatus(id: recordID, status: "failed", completedAt: Date())
+                            }
                             TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
                             HapticFeedback.shared.trigger(.error)
                         }
@@ -122,15 +158,33 @@ final class IngestCoordinator {
             return
         }
         showURLImport = false
+        let recordID = UUID().uuidString
         let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.fetchingURL, target: url.host ?? url.absoluteString)
+
+        // 创建导入记录
+        let record = ImportRecord(
+            id: recordID, category: ImportCategory.link.rawValue,
+            title: url.absoluteString, status: "processing",
+            sourceURL: url.absoluteString,
+            vaultID: VaultService.shared.selectedVaultID?.uuidString
+        )
+        Task { try? await importRecordRepo.save(record) }
+
         Task {
             let page = try? await store.ingestService.ingestURL(urlString: url.absoluteString, pageStore: store)
             await MainActor.run {
-                if let _ = page {
+                if let page = page {
+                    Task { @MainActor in
+                        try? await importRecordRepo.updateStatus(id: recordID, status: "done", completedAt: Date())
+                        try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+                    }
                     TaskCenter.shared.updateTask(taskID, status: .completed)
                     HapticFeedback.shared.trigger(.success)
                     self.newURL = ""
                 } else {
+                    Task { @MainActor in
+                        try? await importRecordRepo.updateStatus(id: recordID, status: "failed", completedAt: Date())
+                    }
                     TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
                     HapticFeedback.shared.trigger(.error)
                 }
