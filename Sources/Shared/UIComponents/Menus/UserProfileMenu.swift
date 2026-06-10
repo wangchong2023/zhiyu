@@ -129,6 +129,7 @@ struct UserProfileMenu: View {
             .environment(store)
             .environment(store.knowledgeStore)
             .environment(store.settingsStore)
+            .environmentObject(onboardingService)
         }
         #endif
     }

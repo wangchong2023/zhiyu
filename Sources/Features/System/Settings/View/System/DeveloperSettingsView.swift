@@ -14,6 +14,7 @@ struct DeveloperSettingsView: View {
     @Environment(AppStore.self) var store
     @Environment(KnowledgeStore.self) var knowledgeStore
     @Environment(SettingsStore.self) var settingsStore
+    @EnvironmentObject var onboardingService: OnboardingService
     @Environment(\.dismiss) var dismiss
     @State private var showInjectConfirmation = false
     @State private var showStressTestConfirmation = false
@@ -220,10 +221,11 @@ struct DeveloperSettingsView: View {
         VaultService.shared.exitVault()
         dismiss()
         // 延时触发引导（等视图切换完成）
+        let svc = onboardingService
         Task {
             try? await Task.sleep(nanoseconds: 500_000_000)
-            OnboardingService.shared.hasCompletedOnboarding = false
-            OnboardingService.shared.nextStep()
+            svc.hasCompletedOnboarding = false
+            svc.nextStep()
             await MainActor.run {
                 ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
             }
