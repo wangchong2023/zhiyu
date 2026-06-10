@@ -14,6 +14,7 @@ struct DeveloperSettingsView: View {
     @Environment(AppStore.self) var store
     @Environment(KnowledgeStore.self) var knowledgeStore
     @Environment(SettingsStore.self) var settingsStore
+    @Environment(\.dismiss) var dismiss
     @State private var showInjectConfirmation = false
     @State private var showStressTestConfirmation = false
     @State private var stressTestTargetCount = 1000
@@ -153,6 +154,14 @@ struct DeveloperSettingsView: View {
             .background(PageBackgroundView(accentColor: .blue))
             .navigationTitle(L10n.Settings.Section.developer)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L10n.Common.done) {
+                        dismiss()
+                    }
+                    .bold()
+                }
+            }
             .appToast() // 确保在二级导航页面也能正确渲染 Toast，解决被遮挡问题
             .confirmationDialog(L10n.Settings.developer.stressTest.confirmTitle, isPresented: $showStressTestConfirmation, titleVisibility: .visible) {
                 Button(L10n.Settings.developer.stressTest.confirmAction(stressTestTargetCount), role: .destructive) {
@@ -210,6 +219,9 @@ struct DeveloperSettingsView: View {
         // 重置引导服务 — 立即显示第一步引导
         OnboardingService.shared.hasCompletedOnboarding = false
         OnboardingService.shared.nextStep()
+        // 退出笔记本回到主界面（展示引导 Overlay）
+        VaultService.shared.exitVault()
+        dismiss()
         ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
     }
 }
