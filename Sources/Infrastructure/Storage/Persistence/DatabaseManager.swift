@@ -280,8 +280,16 @@ final class DatabaseManager: Sendable {
         let dbPool = try DatabasePool(path: url.path, configuration: config)
         self.dbWriter = dbPool
         
-        // 4. 对新专属库自动运行 Schema 迁移
+        // 4. 诊断: 迁移前页数
+        let preCount = (try? await dbPool.read { try KnowledgePage.fetchCount($0) }) ?? -1
+        Logger.shared.warning(" [DatabaseManager] pre-migrate pageCount=\(preCount) for \(url.lastPathComponent)")
+
+        // 5. 对新专属库自动运行 Schema 迁移
         try migrator.migrate(dbPool)
+
+        // 6. 诊断: 迁移后页数
+        let postCount = (try? await dbPool.read { try KnowledgePage.fetchCount($0) }) ?? -1
+        Logger.shared.warning(" [DatabaseManager] post-migrate pageCount=\(postCount) for \(url.lastPathComponent)")
         Logger.shared.info(" [DatabaseManager]" + " Exclusive physical" + " database successfully" + " switched and" + " remounted =>" + " \(url.lastPathComponent)")
         
         // 5. 切换成功，异步刷新物理完整性指纹
