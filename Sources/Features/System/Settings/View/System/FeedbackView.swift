@@ -78,7 +78,7 @@ struct FeedbackView: View {
                     Spacer()
                     ForEach(1...maxRating, id: \.self) { star in
                         Image(systemName: star <= rating ? "star.fill" : "star")
-                            .foregroundStyle(.yellow)
+                            .foregroundStyle(.appAccent)
                             .onTapGesture { rating = star }
                     }
                 }
@@ -218,7 +218,7 @@ private struct FeedbackHistoryRow: View {
                 HStack(spacing: 0) {
                     ForEach(1...DesignSystem.Domain.Feedback.maxRating, id: \.self) { i in
                         Image(systemName: i <= entry.rating ? "star.fill" : "star")
-                            .font(.caption2).foregroundStyle(.yellow)
+                            .font(.caption2).foregroundStyle(.appAccent)
                     }
                 }
             }
