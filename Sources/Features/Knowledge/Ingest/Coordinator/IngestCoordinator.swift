@@ -60,13 +60,13 @@ final class IngestCoordinator {
     // MARK: - 原始内容文件存储
 
     /// 保存原始导入内容到磁盘文件，返回文件路径
-    private static func saveRawContentFile(content: String, category: ImportCategory, ext: String = "md") -> String? {
+    private nonisolated static func saveRawContentFile(content: String, category: ImportCategory, ext: String = "md") -> String? {
         guard let data = content.data(using: .utf8) else { return nil }
         return saveRawDataFile(data: data, category: category, ext: ext)
     }
 
     /// 保存原始二进制数据到磁盘文件，返回文件路径
-    private static func saveRawDataFile(data: Data, category: ImportCategory, ext: String) -> String? {
+    private nonisolated static func saveRawDataFile(data: Data, category: ImportCategory, ext: String) -> String? {
         let fm = FileManager.default
         guard let docDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
         let recordsDir = docDir.appendingPathComponent("import_records", isDirectory: true)
@@ -297,41 +297,43 @@ final class IngestCoordinator {
         var ok = 0, fail = 0
 
         Task {
-            for (i, url) in urls.enumerated() {
-                await MainActor.run {
-                    ToastManager.shared.show(type: .info, message: L10n.Ingest.importProgress(i + 1, total))
+            let scraper = WebScraperProcessor()
+            let vaultID = VaultService.shared.selectedVaultID?.uuidString
+            let completed = await withTaskGroup(of: (ok: Bool, idx: Int).self) { group in
+                for (i, url) in urls.enumerated() {
+                    group.addTask { [self] in
+                        let urlString = url.absoluteString
+                        let recordID = UUID().uuidString
+                        let rawResult = try? await scraper.fetchMarkdown(from: urlString)
+                        let rawBody = rawResult.map { "> 来源链接：\(urlString)\n> 抓取时间：\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
+                        let ocrText = (try? await self.extractImagesFromURL(urlString)) ?? ""
+                        let rawMarkdown = rawBody.map { $0 + ocrText }
+                        let filePath = rawMarkdown.flatMap { Self.saveRawContentFile(content: $0, category: .link) }
+                        let title = rawResult?.title ?? urlString
+                        let record = ImportRecord(
+                            id: recordID, category: ImportCategory.link.rawValue,
+                            title: title, status: ImportRecordStatus.processing,
+                            rawText: rawMarkdown, sourceURL: urlString, filePath: filePath,
+                            vaultID: vaultID
+                        )
+                        try? await self.importRecordRepo.save(record)
+                        let page = try? await self.store.ingestService.ingestURL(urlString: urlString, pageStore: self.store)
+                        if let page = page {
+                            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
+                            try? await self.importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+                            return (true, i)
+                        } else {
+                            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
+                            return (false, i)
+                        }
+                    }
                 }
-                let urlString = url.absoluteString
-                let recordID = UUID().uuidString
-                let scraper = WebScraperProcessor()
-
-                // 抓取
-                let rawResult = try? await scraper.fetchMarkdown(from: urlString)
-                let rawBody = rawResult.map { "> 来源链接：\(urlString)\n> 抓取时间：\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
-                let ocrText = (try? await extractImagesFromURL(urlString)) ?? ""
-                let rawMarkdown = rawBody.map { $0 + ocrText }
-                let filePath = rawMarkdown.flatMap { Self.saveRawContentFile(content: $0, category: .link) }
-                let title = rawResult?.title ?? urlString
-
-                let record = ImportRecord(
-                    id: recordID, category: ImportCategory.link.rawValue,
-                    title: title, status: ImportRecordStatus.processing,
-                    rawText: rawMarkdown, sourceURL: urlString, filePath: filePath,
-                    vaultID: VaultService.shared.selectedVaultID?.uuidString
-                )
-                try? await importRecordRepo.save(record)
-
-                // 摄入
-                let page = try? await store.ingestService.ingestURL(urlString: urlString, pageStore: store)
-                if let page = page {
-                    try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
-                    try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
-                    ok += 1
-                } else {
-                    try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
-                    fail += 1
-                }
+                var results = [(ok: Bool, idx: Int)]()
+                for await r in group { results.append(r) }
+                return results
             }
+            let ok = completed.filter(\.ok).count
+            let fail = completed.count - ok
             await MainActor.run {
                 ToastManager.shared.show(type: ok > 0 ? .success : .error, message: L10n.Ingest.batchResult(ok, fail))
             }
