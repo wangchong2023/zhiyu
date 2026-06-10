@@ -134,8 +134,67 @@ public final class ChatViewModel: ObservableObject {
 
 ---
 
-## 5. 架构门禁自动扫描规范
+## 5. 已知违例案例与修复指引
+
+### 红线 4：L0 基座层引用 L3 应用层类型
+*   **违例文件**：`Sources/Core/Base/Protocols/RouterProtocol.swift` (L0)
+*   **具体问题**：引用了 `ToolItem` (定义于 `Sources/App/Store/AppModels.swift`, L3) 和 `AppTab` (定义于 `Sources/App/AppTab.swift`, L3)
+*   **示例代码**：
+    ```swift
+    // RouterProtocol.swift (L0) — 不应引用 L3 类型
+    func navigateToTool(_ tool: ToolItem)  // ToolItem ∈ L3
+    var selectedTab: AppTab { get set }    // AppTab ∈ L3
+    var path: NavigationPath               // NavigationPath ∈ SwiftUI
+    ```
+*   **修复指引**：
+    1. 将 `AppTab`、`ToolItem` 等导航相关类型定义迁移至 `Core/Base/Constants/` (L0)
+    2. 或将 `RouterProtocol` 泛型化：`protocol RouterProtocol<Tab, Tool>`
+    3. 使用 `AnyNavigationPath` 包装器隔离 SwiftUI 依赖
+
+### 红线 5：L1-L2 领域/业务层直接 import 框架实现
+*   **违例文件** (共 6 处)：
+
+| 文件 | 层级 | 违规框架 | 修复指引 |
+|------|------|----------|----------|
+| `Domain/Models/RAGModels.swift:12` | L1.5 | `import GRDB` | 抽取 Record 封装至 L1 |
+| `Domain/Models/PluginRecord.swift:12` | L1.5 | `import GRDB` | 同上 |
+| `Domain/Models/PluginRecordFTS.swift:12` | L1.5 | `import GRDB` | 同上 |
+| `Features/Vault/VaultService.swift:13-14` | L2 | `import GRDB` + `import SwiftUI` | 移除 SwiftUI；GRDB 移至 Repository |
+| `Features/Knowledge/System/Model/KnowledgeStore.swift:11` | L2 | `import SwiftUI` | 改用 `import Observation` |
+| `Features/Knowledge/NotebookHub/Model/NotebookThemeFactory.swift:12` | L2 | `import SwiftUI` | 移除 (仅需 Foundation) |
+
+*   **危害**：领域模型与 GRDB 绑定则无法在不同持久化方案间切换；业务层引入 SwiftUI 则无法在非 UI 上下文中复用。
+*   **最佳实践**：
+    - Domain Models 保持纯 Swift struct，GRDB 映射在 L1 Repository 中通过 `extension Model: FetchableRecord` 实现
+    - 非 View 文件使用 `import Observation` 而非 `import SwiftUI`
+    - 所有数据访问通过 Repository 协议 (`Domain/Protocols/*Repository.swift`)
+
+### 红线 6：使用 `NSLock` 而非 actor (Swift 6 严格并发禁止)
+*   **违例文件**：`Sources/Infrastructure/Storage/Engine/DatabaseManager.swift:31` — 使用 `NSLock` 保护数据库连接
+*   **其他受影响的 @unchecked Sendable 文件** (需审计)：
+
+| 文件 | 声明 | 建议替代 |
+|------|------|----------|
+| `Core/Base/ServiceContainer.swift` | `@unchecked Sendable` + `os_unfair_lock` | `actor` |
+| `Core/System/Security/SecurityManager.swift` | `@unchecked Sendable` + `NSLock` | `actor` 或 `os_unfair_lock` |
+| `Core/System/Events/IntentRateLimiter.swift` | `@unchecked Sendable` | `actor` |
+| `Core/System/Analytics/LocalAnalyticsService.swift` | `@unchecked Sendable` | `actor` |
+| `Infrastructure/LLM/LLMService.swift` 系列 | `@unchecked Sendable` (14+ 类) | 逐类审计改为 actor |
+| `PluginEnginePool.swift` | `os_unfair_lock` | 已符合安全，可保留 |
+
+*   **危害**：Swift 6 严格并发模式下 `NSLock` 是非 Sendable 类型，会导致数据竞争警告。`@unchecked Sendable` 将安全检查责任转移给开发者，在大型团队中容易遗漏。
+*   **最佳实践**：
+    - 有可变状态的单例 → 改为 `actor`
+    - 需要 `@MainActor` 隔离的类型 → 标注 `@MainActor final class`
+    - 不可变值类型 → 标注 `struct: Sendable`
+    - 真正需要 `os_unfair_lock` 的场景 → 封装到独立的 `Locked<T>` 包装器中
+
+---
+
+## 6. 架构门禁自动扫描规范
 
 为了确保规范在团队协作中不被突破，配置以下构建门禁：
 1. **XcodeGen 配置**：在 `project.yml` 中将各个子 Slice 划分为独立的 Target。通过限制 `dependencies`，强制实现在编译期拦截不合规依赖。
 2. **SwiftLint 脚本拦截**：在 `.swiftlint.yml` 中配置 `custom_rules`，限制物理路径下的非法 `import` 语句。
+3. **自定义扫描**：集成 `Tools/Gatekeeper/check_magic_numbers_v2.py` 到 CI，新增 Python 文件扫描。
+4. **CodeGraph 集成**：初始化 `.codegraph/` 知识图谱以支持自动化架构违规检测。

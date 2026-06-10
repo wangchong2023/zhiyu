@@ -47,6 +47,7 @@ final class SystemStatsCoordinator {
     @ObservationIgnored @Inject private var knowledgeRepo: any KnowledgeRepository
     @ObservationIgnored @Inject private var vectorRepo: any VectorRepository
     @ObservationIgnored @Inject private var governanceRepo: any RAGGovernanceRepository
+    @ObservationIgnored @Inject private var importRecordRepo: any ImportRecordRepository
     @ObservationIgnored @Inject private var logger: any LoggerProtocol
     @ObservationIgnored @Inject private var haptic: any HapticFeedbackProtocol
 
@@ -119,8 +120,8 @@ final class SystemStatsCoordinator {
             ),
             StorageCategory(
                 label: L10n.Dashboard.stats.storageImport,
-                value: 0, // 页面内容暂不单独计算字节
-                count: (try? await knowledgeRepo.count()) ?? 0,
+                value: (try? await importRecordRepo.totalStorageSize()) ?? 0,
+                count: (try? await importRecordRepo.fetchAll(category: nil, limit: 2000).count) ?? 0,
                 color: .green
             ),
             StorageCategory(

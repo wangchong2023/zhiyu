@@ -73,6 +73,14 @@ public struct ImportRecord: Identifiable, Codable, FetchableRecord, MutablePersi
     }
 }
 
+/// 导入记录状态常量
+public enum ImportRecordStatus {
+    public static let pending = "pending"
+    public static let processing = "processing"
+    public static let done = "done"
+    public static let failed = "failed"
+}
+
 /// 导入分类枚举
 public enum ImportCategory: String, CaseIterable, Sendable {
     case link = "link"

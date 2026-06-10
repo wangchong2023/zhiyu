@@ -80,7 +80,7 @@ final class SQLiteImportRecordRepository: ImportRecordRepository, @unchecked Sen
         let writer = await dbWriter
         return try await writer.read { db in
             try ImportRecord
-                .filter(ImportRecord.CodingKeys.status == "processing" || ImportRecord.CodingKeys.status == "pending")
+                .filter(ImportRecord.CodingKeys.status == ImportRecordStatus.processing || ImportRecord.CodingKeys.status == ImportRecordStatus.pending)
                 .order(ImportRecord.CodingKeys.createdAt.desc)
                 .fetchAll(db)
         }

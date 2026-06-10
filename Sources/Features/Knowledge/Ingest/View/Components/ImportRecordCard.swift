@@ -67,7 +67,7 @@ struct ImportRecordCard: View {
         HStack(spacing: DesignSystem.small) {
             Label(record.createdAt.formatted(date: .numeric, time: .shortened), systemImage: "clock")
                 .font(.caption2)
-            if record.status == "done", let done = record.completedAt {
+            if record.status == ImportRecordStatus.done, let done = record.completedAt {
                 Label(done.formatted(date: .numeric, time: .shortened), systemImage: "flag.checkered")
                     .font(.caption2)
             }
@@ -82,7 +82,7 @@ struct ImportRecordCard: View {
         switch record.status {
         case "done":
             Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-        case "failed":
+        case ImportRecordStatus.failed:
             Image(systemName: "xmark.circle.fill").foregroundStyle(.red)
         default:
             ProgressView().scaleEffect(0.8)

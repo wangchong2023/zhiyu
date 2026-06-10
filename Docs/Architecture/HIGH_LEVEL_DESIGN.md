@@ -1,8 +1,8 @@
 # 智宇 (ZhiYu) 概要设计文档 (High Level Design)
 
-**版本**：1.0  
+**版本**：2.0  
 **作者**：架构师团队  
-**日期**：2026-05-20  
+**日期**：2026-06-10  
 
 ---
 
@@ -154,6 +154,47 @@ public protocol LLMServiceProtocol: Sendable {
     func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable]
 }
 ```
+
+---
+
+## 5. 已知架构偏差与代码质量全景
+
+### 5.1 跨层访问违例一览 (截至 2026-06)
+
+| 严重度 | 源文件 | 问题描述 |
+|--------|--------|----------|
+| 🔴 P0 | `Sources/Core/Base/Protocols/RouterProtocol.swift:41,48` | L0 协议引用 L3 类型 `ToolItem`、`AppTab` |
+| 🔴 P0 | `Sources/Domain/Models/RAGModels.swift:12` | Domain 层依赖 L0 `import GRDB` (3 文件) |
+| 🔴 P0 | `Sources/Features/Knowledge/Vault/Service/VaultService.swift:13-14` | L2 业务服务 `import GRDB` + `import SwiftUI` 双跨层 |
+| 🟡 P1 | `Sources/Core/Base/Protocols/LLMProtocols.swift:29` | L0 协议引用 Domain 类型 |
+| 🟡 P1 | `Sources/Infrastructure/Storage/Sync/iCloudSyncCoordinator.swift:21-22` | L1 同步协调器引用 L3 AppStore |
+
+### 5.2 模块健康度矩阵
+
+```
+模块           文件数  P0  P1  P2  P3  健康度  主要改进方向
+─────          ─────  ──  ──  ──  ──  ─────  ────────────
+Core/             75   1   4   6   8   🟡     并发安全 (@unchecked Sendable)
+Infrastructure/   84   2   8  10   6   🟡     God Class 拆分 + NSLock 移除
+Domain/           48   3   1   2   2   🟡     GRDB import 移除
+App/              20   4   3   3   5   🟠     God Class 拆分 + 跨层引用修复
+Features/AI/      23   0   2   5   3   🟡     大型视图拆分 + 协调器瘦身
+Features/Known/   57   2   5   8   4   🟡     硬编码字符串 + 跨层 import
+Shared/           96   0   3  12  15   🟡     #if os 消除 + SRP 拆分
+Platforms/        50   0   0   2   3   🟢     Adaptor 层补全
+Tests/            93   0   1   5   3   🟡     swift-testing 迁移 + 边界测试
+```
+
+### 5.3 已完成的代码质量修复
+
+详情见 [CODEBASE_ANALYSIS.md](CODEBASE_ANALYSIS.md)。
+
+| 阶段 | 完成项 | 涉及文件 |
+|------|--------|----------|
+| 架构分析 | 全项目 564 个 Swift 文件 18 项扫描 | 全部 9 个模块 |
+| Docker 清理 | 释放 206 GB (85%) — 清理 120+ 旧版镜像 | 3 个微服务 |
+| Mock 服务重构 | 抽取 mock_constants.py, 消除重复参数模板 | 4 个 Python 文件 (-191 行) |
+| 扫描器增强 | check_magic_numbers_v2.py 覆盖 Python 文件 | 2 个扫描目录 |
 
 ---
 *本文档为智宇系统的高阶概要设计，实现细节请参阅详细设计 [DETAILED_DESIGN.md](../Design/DETAILED_DESIGN.md)。*
