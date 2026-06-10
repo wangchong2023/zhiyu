@@ -159,14 +159,6 @@ struct SettingsView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
-            Button(L10n.Settings.clearAll.action, role: .destructive) {
-                store.clearAllDeveloperData()
-            }
-            Button(L10n.Common.cancel, role: .cancel) { }
-        } message: {
-            Text(L10n.Settings.resetOnboarding.message)
-        }
     }
 
     /// 构建大屏左侧分类侧边栏（气泡圆角卡片样式，具备呼吸感与选中高亮）
