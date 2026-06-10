@@ -108,8 +108,11 @@ final class ImageExtractor: Sendable {
     // MARK: - 下载
 
     private func downloadImage(_ url: URL) async -> Data? {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForResource = AppConstants.Keys.ImportLimits.imageDownloadTimeoutSeconds
+        let session = URLSession(configuration: config)
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await session.data(from: url)
             return data
         } catch {
             return nil

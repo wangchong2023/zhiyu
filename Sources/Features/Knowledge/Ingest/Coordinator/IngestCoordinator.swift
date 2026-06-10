@@ -136,6 +136,7 @@ final class IngestCoordinator {
             if imgData.count > AppConstants.Keys.ImportLimits.maxOCRImageSizeBytes {
                 pendingImageData = nil
                 isIngesting = false
+                lastImportTime = .distantPast
                 errorMessage = L10n.Ingest.imageTooLarge
                 showError = true
                 return
@@ -144,22 +145,10 @@ final class IngestCoordinator {
             pendingImageData = nil
         }
 
-        // 语音：复制原始录音文件到 import_records
+        // 语音：录音已由 AVAudioRecorder 直接存入 Documents/import_records/
         var voicePath: String?
         if sourceHint == .voice, let audioURL = pendingVoiceFileURL {
-            let fm = FileManager.default
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyyMMdd_HHmmss"
-            let ts = formatter.string(from: Date())
-            let fileName = "voice_\(ts).m4a"
-            if let docDir = fm.urls(for: .documentDirectory, in: .userDomainMask).first {
-                let recordsDir = docDir.appendingPathComponent("import_records", isDirectory: true)
-                try? fm.createDirectory(at: recordsDir, withIntermediateDirectories: true)
-                let dest = recordsDir.appendingPathComponent(fileName)
-                if (try? fm.copyItem(at: audioURL, to: dest)) != nil {
-                    voicePath = dest.path
-                }
-            }
+            voicePath = audioURL.path
             pendingVoiceFileURL = nil
         }
         let savedPath = imagePath ?? voicePath ?? textPath
@@ -230,6 +219,7 @@ final class IngestCoordinator {
                 let fileSize: Int64? = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize.map(Int64.init)
                 if let size = fileSize, size > AppConstants.Keys.ImportLimits.maxFileSizeBytes {
                     url.stopAccessingSecurityScopedResource()
+                    lastImportTime = .distantPast
                     Task { @MainActor in
                         ToastManager.shared.show(type: .error, message: L10n.Ingest.fileTooLarge)
                     }
@@ -292,61 +282,6 @@ final class IngestCoordinator {
         } else if case .failure(let error) = result {
             errorMessage = error.localizedDescription
             showError = true
-        }
-    }
-
-    /// 处理URL导入
-    func handleURLImport() {
-        guard !isImporting else {
-            ToastManager.shared.show(type: .info, message: L10n.Ingest.importCooldown)
-            return
-        }
-        guard let url = URL(string: newURL) else {
-            errorMessage = L10n.Ingest.invalidURL
-            showError = true
-            return
-        }
-        let urlString = url.absoluteString
-        showURLImport = false
-        lastImportTime = Date()
-        let recordID = UUID().uuidString
-        let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.fetchingURL, target: url.host ?? urlString)
-
-        Task {
-            // 先抓取原始 Markdown 并保存为文件（含来源 URL 头）
-            let scraper = WebScraperProcessor()
-            let rawResult = try? await scraper.fetchMarkdown(from: urlString)
-            let rawBody = rawResult.map { "> 来源链接：\(urlString)\n> 抓取时间：\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
-            let ocrText = (try? await extractImagesFromURL(urlString)) ?? ""
-            let rawMarkdown = rawBody.map { $0 + ocrText }
-            let filePath = rawMarkdown.flatMap { Self.saveRawContentFile(content: $0, category: .link) }
-
-            let record = ImportRecord(
-                id: recordID, category: ImportCategory.link.rawValue,
-                title: urlString, status: ImportRecordStatus.processing,
-                rawText: rawMarkdown, sourceURL: urlString, filePath: filePath,
-                vaultID: VaultService.shared.selectedVaultID?.uuidString
-            )
-            try? await importRecordRepo.save(record)
-
-            let page = try? await store.ingestService.ingestURL(urlString: urlString, pageStore: store)
-            await MainActor.run {
-                if let page = page {
-                    Task { @MainActor in
-                        try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
-                        try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
-                    }
-                    TaskCenter.shared.updateTask(taskID, status: .completed)
-                    HapticFeedback.shared.trigger(.success)
-                    self.newURL = ""
-                } else {
-                    Task { @MainActor in
-                        try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
-                    }
-                    TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
-                    HapticFeedback.shared.trigger(.error)
-                }
-            }
         }
     }
 
@@ -439,10 +374,14 @@ final class IngestCoordinator {
 
     /// 从 LLM 返回文本中提取 JSON
     private func extractJSON(from text: String) -> [String: Any] {
-        guard let start = text.firstIndex(of: "{"),
-              let end = text.lastIndex(of: "}"),
+        let stripped = text
+            .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let start = stripped.firstIndex(of: "{"),
+              let end = stripped.lastIndex(of: "}"),
               start < end else { return [:] }
-        let jsonStr = String(text[start...end])
+        let jsonStr = String(stripped[start...end])
         guard let data = jsonStr.data(using: .utf8),
               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [:] }
         return obj
