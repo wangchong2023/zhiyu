@@ -132,6 +132,10 @@ extension L10n {
             /// 含每个笔记本详情
             public static func successDetail(_ vaultCount: Int, _ details: String) -> String { Localized.trf("settings.injectDemo.successDetail", table: t, vaultCount, details) }
             public static func vaultDetail(_ name: String, _ count: Int) -> String { Localized.trf("settings.injectDemo.vaultDetail", table: t, name, count) }
+            /// 简单字符串片段
+            public static var injectedNotebooks: String { Localized.tr("settings.injectDemo.injectedNotebooks", table: t) }
+            public static var pageUnit: String { Localized.tr("settings.injectDemo.pageUnit", table: t) }
+            public static var itemsSeparator: String { Localized.tr("settings.injectDemo.itemsSeparator", table: t) }
         }
 
         public struct About {

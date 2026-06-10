@@ -4200,6 +4200,57 @@
         }
       }
     },
+    "settings.injectDemo.injectedNotebooks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d notebooks injected: "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已为 %d 个笔记本注入数据："
+          }
+        }
+      }
+    },
+    "settings.injectDemo.pageUnit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " 条"
+          }
+        }
+      }
+    },
+    "settings.injectDemo.itemsSeparator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "，"
+          }
+        }
+      }
+    },
     "settings.injectDemoData": {
       "extractionState": "manual",
       "localizations": {

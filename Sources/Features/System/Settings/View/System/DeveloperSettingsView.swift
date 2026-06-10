@@ -49,13 +49,15 @@ struct DeveloperSettingsView: View {
                             let total = result.total
                             let details = result.details
                             if total > 0 {
-                                var msg = "已为 \(details.count) 个笔记本注入数据："
-                                var first = true
-                                for d in details {
-                                    if !first { msg += "，" }
-                                    first = false
-                                    msg += "\(d.name) \(d.count) 条"
+                                let prefix = String(format: L10n.Settings.InjectDemo.injectedNotebooks, details.count)
+                                let suffix = L10n.Settings.InjectDemo.pageUnit
+                                let sep = L10n.Settings.InjectDemo.itemsSeparator
+                                var vaultsDesc = ""
+                                for (i, d) in details.enumerated() {
+                                    if i > 0 { vaultsDesc += sep }
+                                    vaultsDesc += d.name + String(d.count) + suffix
                                 }
+                                let msg = prefix + vaultsDesc
                                 ToastManager.shared.show(type: .success, message: msg)
                             } else {
                                 ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
@@ -178,4 +180,5 @@ struct DeveloperSettingsView: View {
                 await knowledgeStore.refresh()
                 AppEventBus.shared.publish(.pagesCleared)            }
         }
-    }}
+    }
+}
