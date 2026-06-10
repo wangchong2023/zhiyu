@@ -140,6 +140,7 @@ struct GraphContainerView: View {
         }
         .appTabToolbar(title: L10n.Graph.title)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .onChange(of: store.pages.count) { _, _ in layoutGraph() }
         .task {
             layoutGraph()
         }
