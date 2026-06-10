@@ -126,6 +126,14 @@ struct SettingsView: View {
                     }
                 }
             }
+            .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
+                Button(L10n.Settings.clearAll.action, role: .destructive) {
+                    store.clearAllDeveloperData()
+                }
+                Button(L10n.Common.cancel, role: .cancel) { }
+            } message: {
+                Text(L10n.Settings.resetOnboarding.message)
+            }
             #endif
         }
         .environment(\.locale, router.currentLocale)
@@ -400,14 +408,6 @@ struct SettingsView: View {
             } label: {
                 Label(L10n.Settings.Section.about, systemImage: "info.circle")
             }
-        }
-        .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
-            Button(L10n.Settings.clearAll.action, role: .destructive) {
-                store.clearAllDeveloperData()
-            }
-            Button(L10n.Common.cancel, role: .cancel) { }
-        } message: {
-            Text(L10n.Settings.resetOnboarding.message)
         }
     }
 }
