@@ -185,6 +185,15 @@ public final class KnowledgeStore {
         }
 
         await refresh()
+
+        // 里程碑检查
+        if let milestone = OnboardingMilestone.checkPageCountMilestone(totalPages) {
+            if !milestone.hasBeenShown {
+                ToastManager.shared.show(type: .success, message: milestone.toastMessage)
+                milestone.markAsShown()
+            }
+        }
+
         return page
     }
 

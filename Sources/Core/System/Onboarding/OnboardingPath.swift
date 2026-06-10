@@ -50,7 +50,7 @@ public enum OnboardingMilestone: String, CaseIterable, Sendable {
 
     private static let prefix = "onboarding.milestone"
 
-    private var key: String { "\(Self.prefix).\(rawValue)" }
+    var key: String { "\(Self.prefix).\(rawValue)" }
 
     public var hasBeenShown: Bool {
         UserDefaults.standard.bool(forKey: key)

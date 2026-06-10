@@ -17,7 +17,7 @@ struct WelcomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var showInjectSuccess = false
     @State private var injectedCount = 0
-    
+
     var body: some View {
         @Bindable var store = store
         ScrollView {
@@ -28,7 +28,7 @@ struct WelcomeView: View {
                     WelcomeGrowthChartSection(data: store.growthSeries)
                     WelcomeRecentUpdatesSection(selectedTab: $selectedTab)
                 } else {
-                    WelcomeQuickStartGuideSection(showInjectSuccess: $showInjectSuccess, injectedCount: $injectedCount)
+                    WelcomePathSelectionSection(selectedTab: $selectedTab)
                 }
                 WelcomeQuickActionsSection(selectedTab: $selectedTab)
             }
@@ -52,22 +52,22 @@ struct WelcomeHeroSection: View {
                 AppDotPattern(dotColor: Color.appBorder, spacing: DesignSystem.wide, dotSize: DesignSystem.atomic)
                     .frame(width: DesignSystem.Metrics.welcomeHeroDotWidth, height: DesignSystem.Metrics.welcomeHeroDotHeight)
                     .opacity(DesignSystem.halfOpacity)
-                
+
                 Circle().fill(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8))
                     .frame(width: DesignSystem.Metrics.welcomeHeroCircleSize, height: DesignSystem.Metrics.welcomeHeroCircleSize)
                     .blur(radius: DesignSystem.wide)
-                
+
                 Image(systemName: DesignSystem.Icons.knowledge)
                     .font(.system(size: DesignSystem.Metrics.welcomeHeroIconSize))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .shadow(color: .appAccent.opacity(DesignSystem.softOpacity), radius: DesignSystem.standardPadding)
             }
             .frame(height: DesignSystem.Metrics.welcomeHeroDotHeight)
-            
+
             Text(L10n.Common.appName)
                 .font(.system(size: DesignSystem.huge + DesignSystem.tiny, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.appText)
-            
+
             Text(L10n.Onboarding.subtitle)
                 .font(.subheadline)
                 .foregroundStyle(Color.appSecondary)
@@ -139,64 +139,100 @@ struct WelcomeRecentUpdatesSection: View {
     }
 }
 
-struct WelcomeQuickStartGuideSection: View {
+struct WelcomePathSelectionSection: View {
     @Environment(AppStore.self) var store
-    @Binding var showInjectSuccess: Bool
-    @Binding var injectedCount: Int
-    
+    @Binding var selectedTab: AppTab
+    @State private var selectedPath: OnboardingPath? = nil
+
     var body: some View {
         VStack(spacing: DesignSystem.wide) {
-            HStack {
-                Image(systemName: DesignSystem.Icons.sparkles)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(Color.appText)
-                Text(L10n.Onboarding.quickStart)
-                    .font(.headline)
-                    .foregroundStyle(Color.appText)
-                Spacer()
-            }
-            
-            VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                GuideStepRow(number: 1, text: L10n.Onboarding.Guide.createPage, icon: DesignSystem.Icons.docBadgePlus)
-                GuideStepRow(number: 2, text: L10n.Onboarding.Guide.knowledgeLink, icon: DesignSystem.Icons.link)
-            }
-            
-            // 快捷注入演示数据入口
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                Task {
-                    injectedCount = await store.generateDemoData().total
-                    HapticFeedback.shared.trigger(.success)
-                    showInjectSuccess = true
+            Label(L10n.Onboarding.pathTitle, systemImage: DesignSystem.Icons.sparkles)
+                .font(.headline)
+
+            HStack(spacing: DesignSystem.medium) {
+                ForEach(OnboardingPath.allCases, id: \.rawValue) { path in
+                    pathCard(path)
                 }
-            }) {
-                HStack {
-                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                        Text(L10n.Onboarding.Demo.title)
-                            .font(.subheadline.bold())
-                            .foregroundStyle(Color.appAccent)
-                        Text(L10n.Onboarding.Demo.desc)
-                            .font(.caption2)
-                            .foregroundStyle(Color.appSecondary)
-                    }
-                    Spacer()
-                    Image(systemName: DesignSystem.Icons.forwardCircle)
-                        .font(.title3)
-                        .foregroundStyle(Color.appAccent)
-                }
-                .padding()
-                .background(Color.appAccent.opacity(DesignSystem.glassOpacity * 0.5))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                        .stroke(Color.appAccent.opacity(DesignSystem.glassOpacity), lineWidth: DesignSystem.borderWidth)
-                )
             }
-            .buttonStyle(.plain)
+
+            if selectedPath == .quickStart {
+                demoPreviewCard
+            }
         }
         .padding(DesignSystem.wide)
         .appContainer(background: Color.appCard)
         .padding(.horizontal)
+    }
+
+    private func pathCard(_ path: OnboardingPath) -> some View {
+        let isSelected = selectedPath == path
+        return Button(action: {
+            withAnimation(.easeInOut(duration: 0.2)) { selectedPath = isSelected ? nil : path }
+            if path == .importData {
+                HapticFeedback.shared.trigger(.selection)
+                selectedTab = .ingest
+            }
+        }) {
+            VStack(spacing: DesignSystem.tightPadding) {
+                Image(systemName: path.icon)
+                    .font(.title2)
+                    .foregroundStyle(path.color)
+                Text(pathLabel(path))
+                    .font(.caption.bold())
+                    .multilineTextAlignment(.center)
+                Text(pathDesc(path))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(DesignSystem.medium)
+            .frame(maxWidth: .infinity)
+            .background(isSelected ? path.color.opacity(0.1) : Color.appCard)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
+                    .stroke(isSelected ? path.color : Color.clear, lineWidth: 2)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var demoPreviewCard: some View {
+        VStack(spacing: DesignSystem.small) {
+            Text(L10n.Onboarding.Demo.title)
+                .font(.subheadline.bold())
+            Text(L10n.Onboarding.Demo.desc)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                Task { await store.generateDemoData() }
+            }) {
+                Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.blue)
+        }
+        .padding()
+        .background(Color.blue.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+    }
+
+    private func pathLabel(_ path: OnboardingPath) -> String {
+        switch path {
+        case .quickStart: return L10n.Onboarding.Path.quickStart
+        case .importData: return L10n.Onboarding.Path.importData
+        case .explore: return L10n.Onboarding.Path.explore
+        }
+    }
+
+    private func pathDesc(_ path: OnboardingPath) -> String {
+        switch path {
+        case .quickStart: return L10n.Onboarding.Path.quickStartDesc
+        case .importData: return L10n.Onboarding.Path.importDataDesc
+        case .explore: return L10n.Onboarding.Path.exploreDesc
+        }
     }
 }
 
