@@ -246,6 +246,25 @@ extension DatabaseManager {
             }
         }
 
+        // V7: 导入原始内容留存表 (@P5: 导入原始数据持久化)
+        migrator.registerMigration("v7_import_records") { db in
+            try db.create(table: ImportRecord.databaseTableName, ifNotExists: true) { t in
+                t.column(ImportRecord.CodingKeys.id.name, .text).primaryKey()
+                t.column(ImportRecord.CodingKeys.category.name, .text).notNull().indexed()
+                t.column(ImportRecord.CodingKeys.title.name, .text).notNull()
+                t.column(ImportRecord.CodingKeys.status.name, .text).notNull().defaults(to: "pending")
+                t.column(ImportRecord.CodingKeys.rawText.name, .text)
+                t.column(ImportRecord.CodingKeys.sourceURL.name, .text)
+                t.column(ImportRecord.CodingKeys.filePath.name, .text)
+                t.column(ImportRecord.CodingKeys.fileSize.name, .integer)
+                t.column(ImportRecord.CodingKeys.pageID.name, .text)
+                t.column(ImportRecord.CodingKeys.vaultID.name, .text)
+                t.column(ImportRecord.CodingKeys.taskID.name, .text)
+                t.column(ImportRecord.CodingKeys.createdAt.name, .datetime).notNull().defaults(to: Date())
+                t.column(ImportRecord.CodingKeys.completedAt.name, .datetime)
+            }
+        }
+
         return migrator
     }
 
