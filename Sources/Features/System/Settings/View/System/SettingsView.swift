@@ -30,11 +30,8 @@ struct SettingsView: View {
         case about           // 关于软件
 
         static var allCases: [SettingsSection] {
-            #if DEBUG
-            return [.appearance, .ai, .security, .data, .plugins, .developer, .about]
-            #else
+            // 开发者入口已移至右上角头像菜单，设置中不再显示
             return [.appearance, .ai, .security, .data, .plugins, .about]
-            #endif
         }
 
         var id: String { rawValue }
@@ -148,11 +145,6 @@ struct SettingsView: View {
 
             securitySection(store: store)
                 .appListRowBackground()
-
-            #if DEBUG
-            developerSection
-                .appListRowBackground()
-            #endif
 
             aboutSection
                 .appListRowBackground()

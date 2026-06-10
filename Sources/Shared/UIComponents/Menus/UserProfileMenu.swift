@@ -81,9 +81,20 @@ struct UserProfileMenu: View {
             }) {
                 Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
             }
-            
+
+            #if DEBUG
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    router.isShowingSettingsSheet = true
+                }
+            }) {
+                Label(L10n.Settings.Section.developer, systemImage: DesignSystem.Icons.settingsDeveloper)
+            }
+            #endif
+
             Divider()
-            
+
             Button(role: .destructive, action: {
                 HapticFeedback.shared.trigger(.selection)
                 authService.logout()
