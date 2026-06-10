@@ -223,6 +223,7 @@
 		1F121CFB2B6C5EF4855EB118 /* GraphLayoutEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A4CC7CA8614AC6E821EA44 /* GraphLayoutEngineTests.swift */; };
 		1F74128E999CF3AD8C3AFA4B /* DesignSystem+Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB7001B34CD0E7E2B740E59 /* DesignSystem+Icons.swift */; };
 		1F7628991B8C0343251F779F /* DocumentExtractionServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67DE50BA0FFE5B3B502051A /* DocumentExtractionServiceProtocol.swift */; };
+		1FAEDE6B8D74694D929F5C24 /* ImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */; };
 		20090050BD82720CC89EBD34 /* L10n+Widget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7E64186804A699673EB1EB /* L10n+Widget.swift */; };
 		201094BDFAD62D4304C82BF0 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751F592B285200694823E27F /* AppConstants.swift */; };
 		20152F3AD70C220FCCED2340 /* DesignSystem+RadiusToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74960508417EF540D882DA72 /* DesignSystem+RadiusToken.swift */; };
@@ -450,6 +451,7 @@
 		421F3C15A144B6241D070330 /* IconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F57A5760D19F7F1927ED221B /* IconPickerView.swift */; };
 		421FB6459E6FC80DB6B86ECE /* FileSignatureRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F5796C4944A120A20F9CEF9 /* FileSignatureRepository.swift */; };
 		4235983653B31ABF79190843 /* TextChunkerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD611728AE29F7A6EE9C485E /* TextChunkerProcessor.swift */; };
+		425BF77D969CD0C50870DA0F /* ImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */; };
 		426E23DFF00F4551B32BFEF0 /* CollaborationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EA66A036B9775F16B55A4A0 /* CollaborationService.swift */; };
 		426EA9B2F7033E5FA8B9483F /* ChatCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E9B84576565B6084281F85 /* ChatCoordinator.swift */; };
 		42B870D9ACA5ECEFE9D63B20 /* L10n+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3601AAFE0A2DBA65D07A4 /* L10n+Watch.swift */; };
@@ -596,6 +598,7 @@
 		567C9340F1FBB3C8D48B23E8 /* PageContentUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D978F4854AF5C3F060FFD7B /* PageContentUtility.swift */; };
 		56860EAC943BB7A121B76048 /* MermaidWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEBE188CC30225A4692F171 /* MermaidWebView.swift */; };
 		56A21F0BD4CDA7295B5E75AA /* ExcelProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3CE18B5829EA4A4D4C5444 /* ExcelProcessor.swift */; };
+		56AE8AABF69F03044E280CE2 /* SQLiteImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E34D3DAA5E64E76B6EAD5F /* SQLiteImportRecordRepository.swift */; };
 		56B469D668F71E920A248C46 /* PluginRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C529EA958CFC131B991B9 /* PluginRecord.swift */; };
 		57160C3F33A03D95CB736E8B /* DesignSystem+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC852275B8B49FA8EA3153E8 /* DesignSystem+Layout.swift */; };
 		571A18378D23858EA747056E /* SQLitePluginRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC941AB0D64A37658EAA0D57 /* SQLitePluginRepository.swift */; };
@@ -607,6 +610,7 @@
 		57D0C8C59A3227186B0072DC /* DocumentExtractionServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67DE50BA0FFE5B3B502051A /* DocumentExtractionServiceProtocol.swift */; };
 		582B3E335C78BB94604472DB /* StubCollaborationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9421E8A5489BF6AA581410F /* StubCollaborationProvider.swift */; };
 		5848A8B2DD9EA45AECE7546C /* ChatRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5294BBBE0CB8D49758743DC3 /* ChatRunner.swift */; };
+		5895BDA7C4E0F396F792F8BA /* SQLiteImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E34D3DAA5E64E76B6EAD5F /* SQLiteImportRecordRepository.swift */; };
 		58A092B985FD8A1530CA9636 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBBDE21C963D718766B9C5F /* DashboardModels.swift */; };
 		58B60BCE1B71B30D97A384F1 /* L10n+Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65983F53F7CB3063E77E4516 /* L10n+Common.swift */; };
 		5905FA9FE12F8811F57C46E8 /* PluginRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE0C529EA958CFC131B991B9 /* PluginRecord.swift */; };
@@ -1083,6 +1087,7 @@
 		A06E5BA4FE918C15B5C30CF9 /* PlatformCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F854391C926615E4B542DFA2 /* PlatformCapabilities.swift */; };
 		A07231CBA4B1C0B9631CEE34 /* UnsupportedSearchIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABD92C47788739350A46760 /* UnsupportedSearchIndexer.swift */; };
 		A0958A25C8682686A183F081 /* OnboardingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C2AFD833E82F3975C05B31A /* OnboardingService.swift */; };
+		A0CB3E730B250D3980B5521B /* SQLiteImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E34D3DAA5E64E76B6EAD5F /* SQLiteImportRecordRepository.swift */; };
 		A0E27C152B2960C1C10F3482 /* QueryReranker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701F3393E1BA5DC6576628FB /* QueryReranker.swift */; };
 		A102DB705A6A4E9E9675423E /* DesignSystem+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF071E7A2A43067EDED049A6 /* DesignSystem+Action.swift */; };
 		A1042726FC91BC8716ADE55D /* KnowledgePage+GRDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556E86773BE20DEF3DAAC4AB /* KnowledgePage+GRDB.swift */; };
@@ -1676,6 +1681,7 @@
 		FC417FA3DD0D9D7F811CC41E /* SecureEnclaveCryptoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18024DCFA49AD32978E89D06 /* SecureEnclaveCryptoService.swift */; };
 		FC4B27611B0E9CB5397ADB95 /* AuthServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B4021185237449A94155D4 /* AuthServiceTests.swift */; };
 		FC5316A1D712FDAC3897FAB3 /* testSettingsView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A282DE798084F26CEDD70A4 /* testSettingsView.1.png */; };
+		FCA681C7034CE7EEF3BDFD6F /* ImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */; };
 		FCB2EDF7335BC913D26D3A9C /* Date+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6658DF413C53D918BE7A3DE /* Date+App.swift */; };
 		FD02BC39555C9620553597DE /* AppChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BA716F925D2B7D2F354619 /* AppChips.swift */; };
 		FD0BDA25A900BC0D26E8BAB4 /* ViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF02A3527182FABD32736B77 /* ViewProvider.swift */; };
@@ -2388,6 +2394,7 @@
 		E166036D4330093EF612CC12 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		E16C8D0B86306FBCE029F4E1 /* GoogleAuthStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAuthStrategyTests.swift; sourceTree = "<group>"; };
 		E1825EE74E7C96219E4237DD /* DesignSystem+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DesignSystem+Grid.swift"; sourceTree = "<group>"; };
+		E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportRecordRepository.swift; sourceTree = "<group>"; };
 		E2DE70E79AD3103BC0F11C38 /* TooltipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TooltipManager.swift; sourceTree = "<group>"; };
 		E3A51EE6A4FE1465685B2652 /* WatchViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchViewTests.swift; sourceTree = "<group>"; };
 		E3D5652E41AB77CC3C72FB60 /* CreatePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePageView.swift; sourceTree = "<group>"; };
@@ -2416,6 +2423,7 @@
 		E9998E1BE95E800CF1515D41 /* ZhiYuWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZhiYuWatchApp.swift; sourceTree = "<group>"; };
 		E9B86CFA19141866776ABB3C /* MacPasteboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacPasteboardService.swift; sourceTree = "<group>"; };
 		E9D304A47798EF5E2F56A4F3 /* RAGGovernanceRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAGGovernanceRepository.swift; sourceTree = "<group>"; };
+		E9E34D3DAA5E64E76B6EAD5F /* SQLiteImportRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteImportRecordRepository.swift; sourceTree = "<group>"; };
 		E9F65EE6629562B7EB7AFB0C /* PageDetailAISection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageDetailAISection.swift; sourceTree = "<group>"; };
 		EA78C3D14D93C5AB3E6CC9F3 /* NotebookThemeBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookThemeBackgroundView.swift; sourceTree = "<group>"; };
 		EB1E0FBE976566DBB9B786B3 /* ZhiYuModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZhiYuModelTests.swift; sourceTree = "<group>"; };
@@ -3150,6 +3158,7 @@
 				70036C4A620278A0352D027C /* KnowledgePageRepository.swift */,
 				B10F336D65F0CD2ED7556ED3 /* RAGGovernanceSQLiteStore.swift */,
 				31C00EEE2F7189E4AB0CAC23 /* SQLiteFileSignatureRepository.swift */,
+				E9E34D3DAA5E64E76B6EAD5F /* SQLiteImportRecordRepository.swift */,
 				CC941AB0D64A37658EAA0D57 /* SQLitePluginRepository.swift */,
 				1427E7628E9563C93D0D636E /* SQLiteVaultRepository.swift */,
 				0D439CA33CA3ACE12B5AF66B /* TagRepository.swift */,
@@ -4810,6 +4819,7 @@
 				82DB88C98C6753B07B87B42F /* AuthStrategy.swift */,
 				0227844531C257F93B5878DA /* FeatureProtocols.swift */,
 				7F5796C4944A120A20F9CEF9 /* FileSignatureRepository.swift */,
+				E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */,
 				1F6F7A445FA4BEE3F901EE10 /* IngestServiceProtocol.swift */,
 				18CDADB0A9E70F741C7E266F /* KnowledgePageProcessor.swift */,
 				C38E641235EECC22B0A1145D /* KnowledgeRepository.swift */,
@@ -5928,6 +5938,7 @@
 				421F3C15A144B6241D070330 /* IconPickerView.swift in Sources */,
 				2649FF0A895D404B559ADE4E /* IconTokens.swift in Sources */,
 				7D93B1A23AB4364BF31B5841 /* ImportRecord.swift in Sources */,
+				FCA681C7034CE7EEF3BDFD6F /* ImportRecordRepository.swift in Sources */,
 				1D3B269374E52DFF38EE3797 /* InferenceParametersStore.swift in Sources */,
 				AA55019AB89C542ECA1066D6 /* InferenceParametersView.swift in Sources */,
 				65DC4CD728AEB17ADBFAAFB1 /* IngestCoordinator.swift in Sources */,
@@ -6159,6 +6170,7 @@
 				10F58D979E00D77656964E8E /* Router.swift in Sources */,
 				4C2D975709ADADF8D9B9367F /* RouterProtocol.swift in Sources */,
 				F30C9120797C83DF9B1BB01B /* SQLiteFileSignatureRepository.swift in Sources */,
+				5895BDA7C4E0F396F792F8BA /* SQLiteImportRecordRepository.swift in Sources */,
 				FE58C9493436D9D07A1E40AD /* SQLitePluginRepository.swift in Sources */,
 				18B1660BABB1FE0A042751DD /* SQLiteStore.swift in Sources */,
 				A5A3042278DD069758511AE8 /* SQLiteVaultRepository.swift in Sources */,
@@ -6509,6 +6521,7 @@
 				631BE8F5CFF38AEAD16A3A52 /* IconPickerView.swift in Sources */,
 				8775AC8A5615603859967C6B /* IconTokens.swift in Sources */,
 				435070DA094FBB4D5ACF8844 /* ImportRecord.swift in Sources */,
+				425BF77D969CD0C50870DA0F /* ImportRecordRepository.swift in Sources */,
 				A83CCDEB860EAE45D4A52FE0 /* InferenceParametersStore.swift in Sources */,
 				2262C48EEBCD543EEEBB3B49 /* InferenceParametersView.swift in Sources */,
 				ED2939B597B7EDD12A6B1672 /* IngestCoordinator.swift in Sources */,
@@ -6735,6 +6748,7 @@
 				87E606B5EC22AF89CA6F8D47 /* Router.swift in Sources */,
 				B31A15558648D7EC81925743 /* RouterProtocol.swift in Sources */,
 				7E3A192EBBB565D4B8DC48E0 /* SQLiteFileSignatureRepository.swift in Sources */,
+				A0CB3E730B250D3980B5521B /* SQLiteImportRecordRepository.swift in Sources */,
 				536EDB71F361F7E7B8438913 /* SQLitePluginRepository.swift in Sources */,
 				AFB89B4FF4F1C9B1A9AA6A72 /* SQLiteStore.swift in Sources */,
 				3C240EEF6C908FDEE6C5434D /* SQLiteVaultRepository.swift in Sources */,
@@ -7002,6 +7016,7 @@
 				7D5A2FFFDB114F49988505DE /* HapticFeedbackProtocol.swift in Sources */,
 				14DE72E6BCCD277259DDA45A /* IconTokens.swift in Sources */,
 				2C4987631ADF47FC1A7A6DCF /* ImportRecord.swift in Sources */,
+				1FAEDE6B8D74694D929F5C24 /* ImportRecordRepository.swift in Sources */,
 				C3DF669FB262B2DFB0B010BE /* InferenceParametersStore.swift in Sources */,
 				B2AB52DF3223BB31A4257738 /* IngestLLMService.swift in Sources */,
 				544A00893093468863645C8B /* IngestProcessor.swift in Sources */,
@@ -7160,6 +7175,7 @@
 				114AE5C6E6FCE6E416DCA283 /* RetryTask.swift in Sources */,
 				ED26FA8AA77172EB86346FB3 /* RouterProtocol.swift in Sources */,
 				F171206A017A7A74287130DD /* SQLiteFileSignatureRepository.swift in Sources */,
+				56AE8AABF69F03044E280CE2 /* SQLiteImportRecordRepository.swift in Sources */,
 				571A18378D23858EA747056E /* SQLitePluginRepository.swift in Sources */,
 				D73B75FFBD998FEE8D0D94AA /* SQLiteStore.swift in Sources */,
 				2AA0538D0AEBC3521CEA68A3 /* SQLiteVaultRepository.swift in Sources */,
