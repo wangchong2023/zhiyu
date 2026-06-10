@@ -5,205 +5,115 @@ Mock Plugin Market Server - 插件市场 Mock 服务器
 
 import json
 import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
 from datetime import datetime
-from pathlib import Path
 
-# 完全匹配 MarketPlugin Codable 结构的插件数据
+from mock_constants import (
+    HOST_ALL, PORT_PLUGIN, HTTP_OK, HTTP_NOT_FOUND,
+    PLUGIN_SEARCH_DIRS, MSG_SUCCESS,
+    make_api_response, send_json, start_server
+)
+
+PLUGIN_VERSION_DEFAULT = "1.0.0"
+PLUGIN_MIN_APP_VERSION = "1.0.0"
+PLUGIN_MONETIZATION_FREE = {"model": "free"}
+PLUGIN_HUB_BASE = "http://localhost:9091/plugins/"
+PLUGIN_REQUIRED_PERMS = {
+    "full": ["readContent", "writeContent", "network", "log"],
+    "ai": ["readContent", "writeContent", "aiAccess", "log"],
+    "minimal": ["readContent", "log"],
+    "log": ["log"],
+}
+
+
+def _make_plugin(pid, author, downloads, rating, reviews, category, icon,
+                 filename, names, descriptions, perms_key="full",
+                 version=PLUGIN_VERSION_DEFAULT):
+    return {
+        "id": pid,
+        "version": version,
+        "author": author,
+        "downloads": str(downloads),
+        "rating": rating,
+        "reviewCount": reviews,
+        "category": category,
+        "icon": icon,
+        "downloadURL": f"{PLUGIN_HUB_BASE}{filename}",
+        "minAppVersion": PLUGIN_MIN_APP_VERSION,
+        "requiredPermissions": PLUGIN_REQUIRED_PERMS.get(perms_key, PLUGIN_REQUIRED_PERMS["log"]),
+        "monetization": PLUGIN_MONETIZATION_FREE,
+        "names": names,
+        "descriptions": descriptions
+    }
+
 
 PLUGINS = [
-    {
-        "id": "com.zhiyu.plugin.remote.link-preview",
-        "version": "1.0.0",
-        "author": "ZhiYu Remote Team",
-        "downloads": "8500",
-        "rating": 4.7,
-        "reviewCount": 287,
-        "category": "内容增强",
-        "icon": "link",
-        "downloadURL": "http://localhost:9091/plugins/link-preview-remote.zyplugin",
-        "minAppVersion": "1.0.0",
-        "requiredPermissions": [
-            "readContent",
-            "writeContent",
-            "network",
-            "log"
-        ],
-        "monetization": {
-            "model": "free"
-        },
-        "names": {
-            "en": "Link Preview",
-            "zh-Hans": "链接预览"
-        },
-        "descriptions": {
-            "en": "Auto fetches URL meta and generates rich preview cards.",
-            "zh-Hans": "自动获取 URL meta 信息，生成丰富预览卡片。"
-        }
-    },
-    {
-        "id": "com.zhiyu.plugin.remote.ai-translator",
-        "version": "1.0.0",
-        "author": "ZhiYu Remote Team",
-        "downloads": "12300",
-        "rating": 4.9,
-        "reviewCount": 425,
-        "category": "AI 增强",
-        "icon": "globe",
-        "downloadURL": "http://localhost:9091/plugins/ai-translator-remote.zyplugin",
-        "minAppVersion": "1.0.0",
-        "requiredPermissions": [
-            "readContent",
-            "writeContent",
-            "aiAccess",
-            "log"
-        ],
-        "monetization": {
-            "model": "free"
-        },
-        "names": {
-            "en": "AI Translator",
-            "zh-Hans": "AI 翻译器"
-        },
-        "descriptions": {
-            "en": "Auto translate text using AI with multi-language support.",
-            "zh-Hans": "使用 AI 自动翻译文本，支持多语言。"
-        }
-    },
-    {
-        "id": "com.zhiyu.plugin.markdown-beautifier",
-        "version": "1.0.0",
-        "author": "ZhiYu Team",
-        "downloads": "12500",
-        "rating": 4.8,
-        "reviewCount": 532,
-        "category": "编辑增强",
-        "icon": "doc.text.fill",
-        "downloadURL": "http://localhost:9091/plugins/smart-cleaner.zyplugin",
-        "minAppVersion": "1.0.0",
-        "requiredPermissions": [
-            "readContent",
-            "writeContent",
-            "log"
-        ],
-        "monetization": {
-            "model": "free"
-        },
-        "names": {
-            "en": "Markdown Beautifier",
-            "zh-Hans": "Markdown 美化器"
-        },
-        "descriptions": {
-            "en": "Auto format and beautify Markdown documents.",
-            "zh-Hans": "自动格式化和美化 Markdown 文档。"
-        }
-    },
-    {
-        "id": "com.zhiyu.plugin.ai-summary",
-        "version": "2.1.0",
-        "author": "Community",
-        "downloads": "8300",
-        "rating": 4.6,
-        "reviewCount": 189,
-        "category": "AI 增强",
-        "icon": "sparkles",
-        "downloadURL": "http://localhost:9091/plugins/ai-summary.zyplugin",
-        "minAppVersion": "1.0.0",
-        "requiredPermissions": [
-            "readContent",
-            "network",
-            "log"
-        ],
-        "monetization": {
-            "model": "free"
-        },
-        "names": {
-            "en": "AI Summary Generator",
-            "zh-Hans": "AI 摘要生成"
-        },
-        "descriptions": {
-            "en": "Extract key points and generate structured summaries.",
-            "zh-Hans": "提取核心要点，生成结构化摘要。"
-        }
-    },
-    {
-        "id": "com.zhiyu.plugin.code-highlighter",
-        "version": "1.5.2",
-        "author": "DevTools",
-        "downloads": "15600",
-        "rating": 4.9,
-        "reviewCount": 673,
-        "category": "编辑增强",
-        "icon": "curlybraces",
-        "downloadURL": "http://localhost:9091/plugins/code-highlighter.zyplugin",
-        "minAppVersion": "1.0.0",
-        "requiredPermissions": [
-            "readContent",
-            "log"
-        ],
-        "monetization": {
-            "model": "free"
-        },
-        "names": {
-            "en": "Code Highlighter",
-            "zh-Hans": "代码高亮"
-        },
-        "descriptions": {
-            "en": "Add syntax highlighting and line numbers to code blocks.",
-            "zh-Hans": "为代码块添加语法高亮和行号。"
-        }
-    }
+    _make_plugin("com.zhiyu.plugin.remote.link-preview", "ZhiYu Remote Team",
+                 8500, 4.7, 287, "内容增强", "link",
+                 "link-preview-remote.zyplugin",
+                 {"en": "Link Preview", "zh-Hans": "链接预览"},
+                 {"en": "Auto fetches URL meta and generates rich preview cards.",
+                  "zh-Hans": "自动获取 URL meta 信息，生成丰富预览卡片。"}),
+    _make_plugin("com.zhiyu.plugin.remote.ai-translator", "ZhiYu Remote Team",
+                 12300, 4.9, 425, "AI 增强", "globe",
+                 "ai-translator-remote.zyplugin",
+                 {"en": "AI Translator", "zh-Hans": "AI 翻译器"},
+                 {"en": "Auto translate text using AI with multi-language support.",
+                  "zh-Hans": "使用 AI 自动翻译文本，支持多语言。"},
+                 perms_key="ai"),
+    _make_plugin("com.zhiyu.plugin.markdown-beautifier", "ZhiYu Team",
+                 12500, 4.8, 532, "编辑增强", "doc.text.fill",
+                 "smart-cleaner.zyplugin",
+                 {"en": "Markdown Beautifier", "zh-Hans": "Markdown 美化器"},
+                 {"en": "Auto format and beautify Markdown documents.",
+                  "zh-Hans": "自动格式化和美化 Markdown 文档。"}),
+    _make_plugin("com.zhiyu.plugin.ai-summary", "Community",
+                 8300, 4.6, 189, "AI 增强", "sparkles",
+                 "ai-summary.zyplugin",
+                 {"en": "AI Summary Generator", "zh-Hans": "AI 摘要生成"},
+                 {"en": "Extract key points and generate structured summaries.",
+                  "zh-Hans": "提取核心要点，生成结构化摘要。"},
+                 perms_key="minimal",
+                 version="2.1.0"),
+    _make_plugin("com.zhiyu.plugin.code-highlighter", "DevTools",
+                 15600, 4.9, 673, "编辑增强", "curlybraces",
+                 "code-highlighter.zyplugin",
+                 {"en": "Code Highlighter", "zh-Hans": "代码高亮"},
+                 {"en": "Add syntax highlighting and line numbers to code blocks.",
+                  "zh-Hans": "为代码块添加语法高亮和行号。"},
+                 perms_key="minimal",
+                 version="1.5.2"),
 ]
 
 
 class MockPluginHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/api/plugins":
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            response = {
-                "code": 0,
-                "message": "success",
-                "data": PLUGINS,
-                "requestId": "req_" + str(int(datetime.now().timestamp())),
-                "timestamp": int(datetime.now().timestamp())
-            }
-            self.wfile.write(json.dumps(response, ensure_ascii=False).encode())
+            send_json(self, HTTP_OK, make_api_response(PLUGINS))
         elif self.path.startswith("/api/plugins/"):
             pid = self.path.split("/")[-1]
             plugin = next((p for p in PLUGINS if p["id"] == pid), None)
             if plugin:
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(json.dumps({"code": 0, "data": plugin}, ensure_ascii=False).encode())
+                send_json(self, HTTP_OK, {"code": 0, "data": plugin})
             else:
-                self.send_response(404); self.end_headers()
+                send_json(self, HTTP_NOT_FOUND, make_api_response(None, code=HTTP_NOT_FOUND))
         elif self.path.startswith("/plugins/"):
             filename = self.path.split("/")[-1]
-            for search_dir in ["Tools/Plugins/Remote", "Tools/Plugins", "Tools/Plugins/community"]:
+            for search_dir in PLUGIN_SEARCH_DIRS:
                 fp = os.path.join(search_dir, filename)
                 if os.path.exists(fp):
-                    self.send_response(200)
+                    self.send_response(HTTP_OK)
                     self.send_header("Content-Type", "application/zip")
                     self.end_headers()
-                    with open(fp, 'rb') as f: self.wfile.write(f.read())
+                    with open(fp, 'rb') as f:
+                        self.wfile.write(f.read())
                     return
-            self.send_response(404); self.end_headers()
+            send_json(self, HTTP_NOT_FOUND, make_api_response(None, code=HTTP_NOT_FOUND))
         else:
-            self.send_response(404); self.end_headers()
+            send_json(self, HTTP_NOT_FOUND, make_api_response(None, code=HTTP_NOT_FOUND))
 
     def log_message(self, fmt, *args):
         print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] {fmt % args}")
 
 if __name__ == "__main__":
-    port = 9091
-    server = HTTPServer(("0.0.0.0", port), MockPluginHandler)
-    with open('/tmp/mock_plugin_market.pid', 'w') as f:
-        f.write(str(os.getpid()))
-    print(f"Plugin Market @ 0.0.0.0:{port}")
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nStopped")
+    start_server(MockPluginHandler, PORT_PLUGIN, host=HOST_ALL, name="mock_plugin_market")
