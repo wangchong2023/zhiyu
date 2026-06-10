@@ -207,9 +207,9 @@ struct DeveloperSettingsView: View {
         OnboardingMilestone.allCases.forEach {
             UserDefaults.standard.removeObject(forKey: $0.key)
         }
-        // 重置引导服务
+        // 重置引导服务 — 立即显示第一步引导
         OnboardingService.shared.hasCompletedOnboarding = false
-        OnboardingService.shared.currentStep = nil
+        OnboardingService.shared.nextStep()
         ToastManager.shared.show(type: .success, message: L10n.Settings.developer.resetOnboardingDone)
     }
 }
