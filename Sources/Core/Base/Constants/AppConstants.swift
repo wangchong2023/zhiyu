@@ -64,6 +64,7 @@ public struct AppConstants {
             public static let tags = "tags"
             public static let pageTags = "page_tags"
             public static let srsMetadata = "srs_metadata"
+            public static let importRecords = "import_records"
             public static let pluginRecords = "plugin_records"
             public static let pluginRecordsFTS = "plugin_records_fts"
         }
