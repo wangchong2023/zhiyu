@@ -25,8 +25,7 @@ public struct SubscriptionUpgradeView: View {
 
     /// 选中的订阅周期：月付 / 年付
     @State private var selectedCycle: BillingCycle = .yearly
-    /// 选中的支付渠道
-    @State private var selectedPayment: PaymentChannel = .apple
+
     /// 是否正在处理购买
     @State private var isPurchasing = false
     /// 是否已升级成功（触发 Confetti）
@@ -93,10 +92,7 @@ public struct SubscriptionUpgradeView: View {
                     // 2. 订阅周期选择
                     cycleSelector
 
-                    // 3. 支付渠道选择
-                    paymentChannelSelector
-
-                    // 4. 错误提示
+                    // 3. 错误提示
                     if let error = errorMessage {
                         Text(error)
                             .font(.caption)
@@ -238,48 +234,7 @@ public struct SubscriptionUpgradeView: View {
         .buttonStyle(ScaleButtonStyle())
     }
 
-    /// 支付渠道选择器
-    private var paymentChannelSelector: some View {
-        AppCard {
-            VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                Text(L10n.Auth.selectPayment)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.appText)
-                    .padding(.horizontal, DesignSystem.medium)
-                    .padding(.top, DesignSystem.medium)
 
-                ForEach(PaymentChannel.allCases, id: \.self) { channel in
-                    paymentRow(channel)
-                }
-                .padding(.bottom, DesignSystem.small)
-            }
-        }
-    }
-
-    /// 单行支付渠道
-    private func paymentRow(_ channel: PaymentChannel) -> some View {
-        let isSelected = selectedPayment == channel
-        return Button(action: { selectedPayment = channel }) {
-            HStack(spacing: DesignSystem.medium) {
-                Image(systemName: channel.icon)
-                    .font(.title3)
-                    .foregroundStyle(channel.color)
-                    .frame(width: 32)
-
-                Text(channel.localizedTitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.appText)
-
-                Spacer()
-
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? .appAccent : .appBorder)
-            }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-        }
-        .buttonStyle(.plain)
-    }
 
     /// 底部确认支付按钮
     private var purchaseButton: some View {
@@ -287,10 +242,10 @@ public struct SubscriptionUpgradeView: View {
             AppDivider()
             AppPrimaryButton(
                 title: L10n.Auth.confirmPurchase,
-                icon: selectedPayment == .apple ? "applelogo" : nil,
+                icon: "applelogo",
                 isLoading: isPurchasing
             ) {
-                handlePurchase()
+                handleApplePurchase()
             }
             .padding(.horizontal, DesignSystem.medium)
             .padding(.vertical, DesignSystem.small)
@@ -343,38 +298,7 @@ public struct SubscriptionUpgradeView: View {
 
     // MARK: - 购买逻辑
 
-    /// 处理购买操作（Apple Pay 走 StoreKit，其他渠道模拟）
-    private func handlePurchase() {
-        errorMessage = nil
 
-        switch selectedPayment {
-        case .apple:
-            handleApplePurchase()
-        case .wechat, .alipay:
-            // 第三方支付渠道：模拟支付成功后调用后端 verify 接口
-            Task {
-                isPurchasing = true
-                // 模拟网络延迟
-                try? await Task.sleep(for: .seconds(1.5))
-                // 真实场景：打开微信/支付宝 SDK，获取支付结果后向后端验证
-                let fakeReceipt = "mock_receipt_\(UUID().uuidString)"
-                let productId = selectedCycle == .monthly ? "com.zhiyu.pro.monthly" : "com.zhiyu.pro.yearly"
-                let success = await authService.verifyApplePurchase(
-                    productId: productId,
-                    receiptData: fakeReceipt,
-                    orderNo: nil
-                )
-                isPurchasing = false
-                if success {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                        isUpgradeSuccess = true
-                    }
-                } else {
-                    errorMessage = L10n.Auth.purchaseFailed
-                }
-            }
-        }
-    }
 
     /// 调起 StoreKit 内购流程（仅 Apple Pay）
     private func handleApplePurchase() {
@@ -443,36 +367,7 @@ enum BillingCycle {
     case yearly
 }
 
-/// 支付渠道
-enum PaymentChannel: CaseIterable {
-    case apple
-    case wechat
-    case alipay
 
-    var icon: String {
-        switch self {
-        case .apple: return "applelogo"
-        case .wechat: return "message.fill"
-        case .alipay: return "creditcard.fill"
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .apple: return .primary
-        case .wechat: return .green
-        case .alipay: return .blue
-        }
-    }
-
-    var localizedTitle: String {
-        switch self {
-        case .apple: return L10n.Auth.Payment.apple
-        case .wechat: return L10n.Auth.Payment.wechat
-        case .alipay: return L10n.Auth.Payment.alipay
-        }
-    }
-}
 
 /// 套餐权益条目
 struct PlanFeature {

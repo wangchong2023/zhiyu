@@ -266,8 +266,6 @@ final class IngestCoordinator {
         }
         showURLImport = false
         lastImportTime = Date()
-        let total = urls.count
-        var ok = 0, fail = 0
 
         Task {
             let scraper = WebScraperProcessor()

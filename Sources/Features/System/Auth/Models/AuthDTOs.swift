@@ -78,7 +78,7 @@ public struct GuestLoginRequest: Encodable {
 
 // MARK: - 第三方 OAuth 登录
 
-public struct OAuthAppleRequest: Encodable {
+public struct OAuthAppleRequest: Encodable, Sendable {
     public let code: String
     public let state: String?
     public let idToken: String?
@@ -90,7 +90,7 @@ public struct OAuthAppleRequest: Encodable {
     }
 }
 
-public struct OAuthWeChatRequest: Encodable {
+public struct OAuthWeChatRequest: Encodable, Sendable {
     public let code: String
     public let state: String?
     
@@ -100,7 +100,7 @@ public struct OAuthWeChatRequest: Encodable {
     }
 }
 
-public struct OAuthGoogleRequest: Encodable {
+public struct OAuthGoogleRequest: Encodable, Sendable {
     public let idToken: String
     
     public init(idToken: String) {
@@ -108,7 +108,7 @@ public struct OAuthGoogleRequest: Encodable {
     }
 }
 
-public struct OAuthGitHubRequest: Encodable {
+public struct OAuthGitHubRequest: Encodable, Sendable {
     public let code: String
     public let state: String?
     
@@ -120,7 +120,7 @@ public struct OAuthGitHubRequest: Encodable {
 
 // MARK: - 运营商一键登录
 
-public struct CarrierAuthRequest: Encodable {
+public struct CarrierAuthRequest: Encodable, Sendable {
     public let carrierToken: String
     public let appKey: String
     public let privacyConsent: Bool

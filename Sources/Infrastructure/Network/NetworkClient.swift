@@ -123,7 +123,7 @@ public actor NetworkClient {
         isRetry: Bool
     ) async throws -> T {
         await waitForTokenRefreshIfNeeded(requiresAuth: requiresAuth, isRetry: isRetry)
-        var request = try buildURLRequest(path: path, method: method, body: body, requiresAuth: requiresAuth)
+        let request = try buildURLRequest(path: path, method: method, body: body, requiresAuth: requiresAuth)
         let (data, response) = try await session.data(for: request)
         guard response is HTTPURLResponse else {
             throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
