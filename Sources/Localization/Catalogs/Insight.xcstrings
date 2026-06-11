@@ -5521,7 +5521,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "召回覆盖"
+            "value": "覆盖率"
           }
         }
       }
@@ -5555,7 +5555,75 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "响应时延"
+            "value": "响应延迟"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.retrieval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrieval"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索阶段"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.generation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生成阶段"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.satisfaction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "满意度及消耗"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "评估记录"
           }
         }
       }

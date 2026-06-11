@@ -46,6 +46,24 @@ private enum UserRating {
     static let thumbsUp = 2
 }
 
+private enum EvalTab: Int, CaseIterable, Identifiable {
+    case retrieval
+    case generation
+    case satisfaction
+    case history
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .retrieval: return L10n.Dashboard.stats.tabRetrieval
+        case .generation: return L10n.Dashboard.stats.tabGeneration
+        case .satisfaction: return L10n.Dashboard.stats.tabSatisfaction
+        case .history: return L10n.Dashboard.stats.tabHistory
+        }
+    }
+}
+
 // MARK: - SF Symbol 图标名
 
 private enum RatingIcon {
@@ -150,6 +168,7 @@ struct RAGEvaluationView: View {
     @State private var selectedDays = 30
     @State private var isLoading = true
     @State private var activeTooltip: String?
+    @State private var selectedTab: EvalTab = .retrieval
 
     private let dayOptions = [7, 30, 90]
 
@@ -161,11 +180,26 @@ struct RAGEvaluationView: View {
                 ScrollView {
                     VStack(spacing: DesignSystem.wide) {
                         timeRangePicker
-                        retrievalSection
-                        generationSection
-                        satisfactionSection
-                        costSection
-                        evaluationHistorySection
+                        
+                        Picker("", selection: $selectedTab) {
+                            ForEach(EvalTab.allCases) { tab in
+                                Text(tab.title).tag(tab)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal, DesignSystem.small)
+
+                        switch selectedTab {
+                        case .retrieval:
+                            retrievalSection
+                        case .generation:
+                            generationSection
+                        case .satisfaction:
+                            satisfactionSection
+                            costSection
+                        case .history:
+                            evaluationHistorySection
+                        }
                     }
                     .padding(DesignSystem.standardPadding)
                 }
@@ -203,7 +237,7 @@ struct RAGEvaluationView: View {
             infoSectionHeader(id: "retrievalPhase", title: L10n.Dashboard.stats.retrievalQuality,
                               icon: "magnifyingglass.circle.fill", color: .teal, tip: L10n.Dashboard.stats.tipRetrievalPhase)
 
-            subSectionLabel("Ranking Quality", icon: "list.number")
+            subSectionLabel(L10n.Dashboard.stats.rankingQuality, icon: "list.number")
             HStack(spacing: DesignSystem.medium) {
                 retrievalMetricCard(id: "hitRate", title: MetricTitle.hitRate(AppConfig.AI.evaluationHitK),
                                     score: hitRate, detail: L10n.Dashboard.stats.hitRateDesc, tip: L10n.Dashboard.stats.tipHitRate)
@@ -213,7 +247,7 @@ struct RAGEvaluationView: View {
                                     score: ndcg, detail: L10n.Dashboard.stats.ndcgDesc, tip: L10n.Dashboard.stats.tipNDCG)
             }
 
-            subSectionLabel("Coverage", icon: "chart.pie.fill")
+            subSectionLabel(L10n.Dashboard.stats.coverage, icon: "chart.pie.fill")
             HStack(spacing: DesignSystem.medium) {
                 retrievalMetricCard(id: "recall", title: L10n.Dashboard.stats.recallAtK,
                                     score: recall, detail: L10n.Dashboard.stats.recallDesc, tip: L10n.Dashboard.stats.tipRecall)
@@ -223,7 +257,7 @@ struct RAGEvaluationView: View {
                                     score: mapScore, detail: L10n.Dashboard.stats.mapDesc, tip: L10n.Dashboard.stats.tipMAP)
             }
 
-            subSectionLabel("Context Fidelity", icon: "scope")
+            subSectionLabel(L10n.Dashboard.stats.contextFidelity, icon: "scope")
             HStack(spacing: DesignSystem.medium) {
                 scoreCardMedium(id: "precision", title: L10n.Dashboard.stats.precision,
                                 score: avgScores.precision, tip: L10n.Dashboard.stats.tipPrecision)
@@ -232,7 +266,7 @@ struct RAGEvaluationView: View {
                 Color.clear.frame(maxWidth: .infinity)
             }
 
-            subSectionLabel("Response Latency", icon: "stopwatch")
+            subSectionLabel(L10n.Dashboard.stats.responseLatency, icon: "stopwatch")
             latencyGrid
         }
         .appCardStyle()
@@ -389,7 +423,7 @@ struct RAGEvaluationView: View {
         }
     }
 
-    private func subSectionLabel(_ text: LocalizedStringKey, icon: String) -> some View {
+    private func subSectionLabel(_ text: String, icon: String) -> some View {
         Label(text, systemImage: icon).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
     }
 

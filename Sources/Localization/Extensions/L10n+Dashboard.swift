@@ -159,6 +159,10 @@ extension L10n {
             public static var generationQuality: String { Localized.tr("dashboard.stats.generationQuality", table: t) }
             public static var retrievalFidelity: String { Localized.tr("dashboard.stats.retrievalFidelity", table: t) }
             public static var retrievalQuality: String { Localized.tr("dashboard.stats.retrievalQuality", table: t) }
+            public static var rankingQuality: String { Localized.tr("dashboard.stats.rankingQuality", table: t) }
+            public static var coverage: String { Localized.tr("dashboard.stats.coverage", table: t) }
+            public static var contextFidelity: String { Localized.tr("dashboard.stats.contextFidelity", table: t) }
+            public static var responseLatency: String { Localized.tr("dashboard.stats.responseLatency", table: t) }
             public static var hitRateDesc: String { Localized.tr("dashboard.stats.hitRateDesc", table: t) }
             public static var mrrTitle: String { Localized.tr("dashboard.stats.mrrTitle", table: t) }
             public static var mrrDesc: String { Localized.tr("dashboard.stats.mrrDesc", table: t) }
@@ -184,6 +188,10 @@ extension L10n {
             public static var avgTokensPerQuery: String { Localized.tr("dashboard.stats.avgTokensPerQuery", table: t) }
             public static var estimatedCost: String { Localized.tr("dashboard.stats.estimatedCost", table: t) }
             public static var queryCount: String { Localized.tr("dashboard.stats.queryCount", table: t) }
+            public static var tabRetrieval: String { Localized.tr("dashboard.stats.tab.retrieval", table: t) }
+            public static var tabGeneration: String { Localized.tr("dashboard.stats.tab.generation", table: t) }
+            public static var tabSatisfaction: String { Localized.tr("dashboard.stats.tab.satisfaction", table: t) }
+            public static var tabHistory: String { Localized.tr("dashboard.stats.tab.history", table: t) }
 
             // MARK: - Tooltip 说明文案
 
