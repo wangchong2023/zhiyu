@@ -68,6 +68,25 @@ public protocol RAGGovernanceRepository: Sendable {
 
     /// NDCG@K (Normalized Discounted Cumulative Gain)：归一化折损累计增益
     func calculateNDCG(days: Int, k: Int) async throws -> Double
+
+    /// Recall@K：所有相关文档中被 Top-K 检索结果覆盖的比例
+    func calculateRecall(days: Int, k: Int) async throws -> Double
+
+    /// F1@K：Precision@K 与 Recall@K 的调和平均
+    func calculateF1Score(days: Int, k: Int) async throws -> Double
+
+    /// MAP (Mean Average Precision)：每个查询在各召回位置的精确率均值
+    func calculateMAP(days: Int) async throws -> Double
+
+    // MARK: - 性能延迟 (Latency)
+
+    /// 计算指定天数内的检索延迟百分位分布
+    func calculateRetrievalLatency(days: Int) async throws -> LatencyPercentiles
+
+    // MARK: - Token 效率 (Efficiency)
+
+    /// 计算指定天数内的 Token 效率与成本摘要
+    func calculateTokenEfficiency(days: Int) async throws -> TokenEfficiency
 }
 
 /// Token 统计数据
@@ -96,19 +115,59 @@ public struct DailyAIStat: Sendable, Equatable {
     }
 }
 
-/// 平均 RAG 评分（含幻觉率与引用准确度）
+/// 平均 RAG 评分（含幻觉率、引用准确度与答案正确性）
 public struct AverageRAGScores: Sendable, Equatable {
     public let faithfulness: Double
     public let relevance: Double
     public let precision: Double
     public let hallucinationRate: Double
     public let citationAccuracy: Double
+    public let answerCorrectness: Double
 
-    public init(faithfulness: Double, relevance: Double, precision: Double, hallucinationRate: Double, citationAccuracy: Double) {
+    public init(faithfulness: Double, relevance: Double, precision: Double, hallucinationRate: Double, citationAccuracy: Double, answerCorrectness: Double = 0.0) {
         self.faithfulness = faithfulness
         self.relevance = relevance
         self.precision = precision
         self.hallucinationRate = hallucinationRate
         self.citationAccuracy = citationAccuracy
+        self.answerCorrectness = answerCorrectness
+    }
+}
+
+/// 检索延迟百分位分布
+public struct LatencyPercentiles: Sendable, Equatable {
+    /// 中位延迟（毫秒）
+    public let p50: Int
+    /// P95 延迟（毫秒）
+    public let p95: Int
+    /// P99 延迟（毫秒）
+    public let p99: Int
+    /// 样本数量
+    public let sampleCount: Int
+
+    public init(p50: Int, p95: Int, p99: Int, sampleCount: Int) {
+        self.p50 = p50
+        self.p95 = p95
+        self.p99 = p99
+        self.sampleCount = sampleCount
+    }
+}
+
+/// Token 效率与成本摘要
+public struct TokenEfficiency: Sendable, Equatable {
+    /// 总 Token 消耗
+    public let totalTokens: Int
+    /// 查询总数
+    public let queryCount: Int
+    /// 每次查询平均 Token
+    public let avgTokensPerQuery: Double
+    /// 估算成本（美元，按 GPT-4o 计费）
+    public let estimatedCostUSD: Double
+
+    public init(totalTokens: Int, queryCount: Int, avgTokensPerQuery: Double, estimatedCostUSD: Double) {
+        self.totalTokens = totalTokens
+        self.queryCount = queryCount
+        self.avgTokensPerQuery = avgTokensPerQuery
+        self.estimatedCostUSD = estimatedCostUSD
     }
 }

@@ -288,6 +288,16 @@ extension DatabaseManager {
             }
         }
 
+        // V10: RAG 评估新增答案正确性维度（幂等：检查列是否存在）
+        migrator.registerMigration("v10_rag_answer_correctness") { db in
+            let columns = try db.columns(in: RAGEvaluation.databaseTableName)
+            if !columns.contains(where: { $0.name == RAGEvaluation.Columns.answerCorrectness.name }) {
+                try db.alter(table: RAGEvaluation.databaseTableName) { t in
+                    t.add(column: RAGEvaluation.Columns.answerCorrectness.name, .double).notNull().defaults(to: 0.0)
+                }
+            }
+        }
+
         return migrator
     }
 

@@ -4591,21 +4591,25 @@
         }
       }
     },
+    "dashboard.stats.hitRateTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Hit@5" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "命中率@5" } }
+      }
+    },
     "dashboard.stats.hitRateDesc": {
       "extractionState": "manual",
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top-5 Hit"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "前5命中"
-          }
-        }
+        "en": { "stringUnit": { "state": "translated", "value": "Top-5 Hit" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "前5命中" } }
+      }
+    },
+    "dashboard.stats.mrrTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "MRR" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "MRR" } }
       }
     },
     "dashboard.stats.mrrDesc": {
@@ -4625,6 +4629,13 @@
         }
       }
     },
+    "dashboard.stats.ndcgTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "NDCG@10" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "NDCG@10" } }
+      }
+    },
     "dashboard.stats.ndcgDesc": {
       "extractionState": "manual",
       "localizations": {
@@ -4640,6 +4651,258 @@
             "value": "排序质量"
           }
         }
+      }
+    },
+    "dashboard.stats.recallAtK": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Recall@5" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "召回率@5" } }
+      }
+    },
+    "dashboard.stats.recallDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Relevant Docs Covered" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "相关文档覆盖比" } }
+      }
+    },
+    "dashboard.stats.f1AtK": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "F1@5" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "F1@5" } }
+      }
+    },
+    "dashboard.stats.f1Desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "P-R Harmonic Mean" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "精确-召回调和均值" } }
+      }
+    },
+    "dashboard.stats.mapTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "MAP" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "MAP" } }
+      }
+    },
+    "dashboard.stats.mapDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mean Avg Precision" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "平均精确率均值" } }
+      }
+    },
+    "dashboard.stats.answerCorrectness": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Correctness" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "答案正确性" } }
+      }
+    },
+    "dashboard.stats.answerCorrectnessDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Factual Accuracy" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "事实准确性" } }
+      }
+    },
+    "dashboard.stats.retrievalLatency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Retrieval Latency" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "检索延迟" } }
+      }
+    },
+    "dashboard.stats.latencyP50": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "P50" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "中位延迟" } }
+      }
+    },
+    "dashboard.stats.latencyP95": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "P95" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "P95 延迟" } }
+      }
+    },
+    "dashboard.stats.latencyP99": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "P99" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "P99 延迟" } }
+      }
+    },
+    "dashboard.stats.latencyUnitMS": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "ms" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "毫秒" } }
+      }
+    },
+    "dashboard.stats.latencySampleCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "samples" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "样本数" } }
+      }
+    },
+    "dashboard.stats.tokenEfficiency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Token Efficiency" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "Token 效率" } }
+      }
+    },
+    "dashboard.stats.totalTokens": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total Tokens" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "Token 总量" } }
+      }
+    },
+    "dashboard.stats.avgTokensPerQuery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Avg Tokens/Query" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "每次查询均值" } }
+      }
+    },
+    "dashboard.stats.estimatedCost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Est. Cost" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "估算成本" } }
+      }
+    },
+    "dashboard.stats.queryCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Queries" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "查询次数" } }
+      }
+    },
+    "dashboard.stats.tipRetrievalPhase": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The full pipeline of finding relevant documents from the knowledge base, including vector search, semantic matching, and result ranking. Measures retrieval hit rate, coverage, and response speed." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "从知识库中查找相关文档的全流程，涵盖向量搜索、语义匹配与结果排序。衡量检索命中率、覆盖度与响应速度。" } }
+      }
+    },
+    "dashboard.stats.tipGenerationPhase": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Based on retrieved context documents, the LLM generates the final answer. Measures faithfulness, relevance, correctness, and hallucination levels." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "基于检索到的上下文文档，由大模型生成最终回答。衡量回答的忠实度、相关性、正确性以及幻觉程度。" } }
+      }
+    },
+    "dashboard.stats.tipCostPhase": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Token consumption and cost estimation for LLM calls. Monitor resource usage per query to help control operational costs." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "大模型调用的 Token 消耗与费用估算。监控每次查询的资源开销，帮助控制运营成本。" } }
+      }
+    },
+    "dashboard.stats.tipHitRate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Fraction of queries where at least one relevant doc appears in the top-K results. Measures initial retrieval screening accuracy." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "检索结果前K条中至少命中一条相关文档的查询比例，衡量检索初步筛选的准确性。" } }
+      }
+    },
+    "dashboard.stats.tipMRR": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mean Reciprocal Rank. Average of the reciprocal of the rank where the first relevant doc appears. Higher means better positioning of relevant results." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "平均倒数排名。第一个相关文档在结果中排名的倒数取平均，越高说明检索将相关结果排得越靠前。" } }
+      }
+    },
+    "dashboard.stats.tipNDCG": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Normalized Discounted Cumulative Gain. A ranking-quality metric that gives higher weight to relevant docs appearing earlier in the list." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "归一化折损累计增益。考虑排序位置权重的排序质量指标，位置越靠前的相关文档得分越高。" } }
+      }
+    },
+    "dashboard.stats.tipRecall": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The fraction of all relevant documents captured within the top-K results. Measures how completely the retrieval system finds relevant content." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "所有实际相关文档中被前K条结果覆盖的比例，衡量检索系统找回相关内容的完整度。" } }
+      }
+    },
+    "dashboard.stats.tipF1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Harmonic mean of precision and recall. Provides a balanced composite score when the two metrics diverge." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "精确率与召回率的调和平均，当两者存在冲突时提供平衡的综合评价。" } }
+      }
+    },
+    "dashboard.stats.tipMAP": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Mean Average Precision. Averages precision across all recall positions for a holistic ranking quality measure." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "平均精确率均值。在各召回位置计算精确率后取均值，综合衡量整个排序列表的检索质量。" } }
+      }
+    },
+    "dashboard.stats.tipFaithfulness": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Whether every claim in the answer can be traced to a source in the retrieved context documents." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "回答中的每条陈述是否都能在检索到的上下文中找到出处和依据。" } }
+      }
+    },
+    "dashboard.stats.tipRelevance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Whether the answer directly addresses the user's query intent without drifting off-topic." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "回答内容是否直接回应了用户的提问意图，而非偏离主题。" } }
+      }
+    },
+    "dashboard.stats.tipHallucination": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The fraction of generated content lacking contextual support. Lower is better — this is an inverted metric." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "回答中无上下文支撑的编造内容占比，越低越好（反向指标）。" } }
+      }
+    },
+    "dashboard.stats.tipPrecision": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "The density of useful information in the generated content. Measures whether the answer is concise without redundant filler." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "生成内容中有效信息的密度，衡量回答是否简洁且无冗余废话。" } }
+      }
+    },
+    "dashboard.stats.tipCitation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Whether citation markers in the answer genuinely point to the correct locations in the source documents." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "回答中标注的引用编号是否真实指向原文对应位置。" } }
+      }
+    },
+    "dashboard.stats.tipCorrectness": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Fact-based accuracy assessment of the answer. Distinct from faithfulness (is it grounded?) and relevance (is it on-topic?)." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "基于事实标准的答案准确度评估。不同于忠实度（可否溯源）和相关性（是否切题）。" } }
+      }
+    },
+    "dashboard.stats.tipLatency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Percentile latency distribution of retrieval responses. P50 is the median; P95/P99 mean 95%/99% of requests complete within this time." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "检索响应的百分位延迟分布。P50 为中位数，P95/P99 表示 95%/99% 的请求在此时间内完成。" } }
+      }
+    },
+    "dashboard.stats.tipTokenEfficiency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Total tokens consumed, query count, average tokens per query, and estimated USD cost based on GPT-4o pricing." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "总 Token 消耗、查询次数、每次查询的 Token 均值，以及基于 GPT-4o 定价的估算美元成本。" } }
       }
     },
     "common.requests": {

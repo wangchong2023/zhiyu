@@ -142,6 +142,20 @@ enum AppConfig {
         
         /// 默认大模型名称
         static var defaultModel: String { getPerformance(.defaultModel, default: "deepseek-v4-pro") }
+
+        // MARK: - RAG 评估参数
+        /// Hit Rate 评估的 Top-K 值
+        static let evaluationHitK: Int = 5
+        /// NDCG 评估的 Top-K 值
+        static let evaluationNDCGK: Int = 10
+        /// Recall / F1 / MAP 评估的 Top-K 值
+        static let evaluationRecallK: Int = 5
+
+        // MARK: - 成本估算参数（GPT-4o 定价，单位：美元/1M tokens）
+        /// Prompt Token 单价（$/1M）
+        static let pricingPromptPer1M: Double = 2.50
+        /// Completion Token 单价（$/1M）
+        static let pricingCompletionPer1M: Double = 10.00
     }
     
     // MARK: - UI 交互与动画

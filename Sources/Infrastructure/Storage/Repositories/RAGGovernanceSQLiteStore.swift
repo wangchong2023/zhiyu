@@ -170,9 +170,9 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
         }
     }
 
-    /// 计算AverageRAGScores（含幻觉率与引用准确度）
+    /// 计算AverageRAGScores（含幻觉率、引用准确度与答案正确性）
     /// - Parameter days: days
-    /// - Returns: 五维均值元组
+    /// - Returns: 六维均值元组
     func calculateAverageRAGScores(days: Int) async throws -> AverageRAGScores {
         let writer = await dbWriter
         return try await writer.read { db in
@@ -185,7 +185,8 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
                     average(RAGEvaluation.Columns.relevance),
                     average(RAGEvaluation.Columns.precision),
                     average(RAGEvaluation.Columns.hallucinationRate),
-                    average(RAGEvaluation.Columns.citationAccuracy)
+                    average(RAGEvaluation.Columns.citationAccuracy),
+                    average(RAGEvaluation.Columns.answerCorrectness)
                 )
 
             if let row = try Row.fetchOne(db, request) {
@@ -194,10 +195,11 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
                     relevance: row[1] ?? 0.0,
                     precision: row[2] ?? 0.0,
                     hallucinationRate: row[3] ?? 0.0,
-                    citationAccuracy: row[4] ?? 0.0
+                    citationAccuracy: row[4] ?? 0.0,
+                    answerCorrectness: row[5] ?? 0.0
                 )
             }
-            return AverageRAGScores(faithfulness: 0.0, relevance: 0.0, precision: 0.0, hallucinationRate: 0.0, citationAccuracy: 0.0)
+            return AverageRAGScores(faithfulness: 0.0, relevance: 0.0, precision: 0.0, hallucinationRate: 0.0, citationAccuracy: 0.0, answerCorrectness: 0.0)
         }
     }
 
@@ -359,6 +361,143 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
                 }
             }
             return queryCount > 0 ? totalNDCG / Double(queryCount) : 0.0
+        }
+    }
+
+    func calculateRecall(days: Int, k: Int) async throws -> Double {
+        let writer = await dbWriter
+        return try await writer.read { db in
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            let evals = try RAGEvaluation.filter(RAGEvaluation.Columns.createdAt >= cutoff).fetchAll(db)
+            guard !evals.isEmpty else { return 0.0 }
+            var totalRecall: Double = 0
+            var queryCount = 0
+            for eval in evals {
+                guard let evalID = eval.id else { continue }
+                let allRelevant = try RelevanceJudgment
+                    .filter(RelevanceJudgment.Columns.evaluationID == evalID && RelevanceJudgment.Columns.relevanceLevel >= 1)
+                    .fetchAll(db)
+                guard !allRelevant.isEmpty else { continue }
+                let relevantSourceIDs = Set(allRelevant.map(\.sourceID))
+                let snapshots = try RetrievalSnapshot
+                    .filter(RetrievalSnapshot.Columns.evaluationID == evalID && RetrievalSnapshot.Columns.rank <= k)
+                    .order(RetrievalSnapshot.Columns.rank).fetchAll(db)
+                let retrievedRelevant = snapshots.filter { relevantSourceIDs.contains($0.sourceID) }.count
+                totalRecall += Double(retrievedRelevant) / Double(allRelevant.count)
+                queryCount += 1
+            }
+            return queryCount > 0 ? totalRecall / Double(queryCount) : 0.0
+        }
+    }
+
+    func calculateF1Score(days: Int, k: Int) async throws -> Double {
+        let writer = await dbWriter
+        return try await writer.read { db in
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            let evals = try RAGEvaluation.filter(RAGEvaluation.Columns.createdAt >= cutoff).fetchAll(db)
+            guard !evals.isEmpty else { return 0.0 }
+            var totalF1: Double = 0
+            var queryCount = 0
+            for eval in evals {
+                guard let evalID = eval.id else { continue }
+                let allRelevant = try RelevanceJudgment
+                    .filter(RelevanceJudgment.Columns.evaluationID == evalID && RelevanceJudgment.Columns.relevanceLevel >= 1)
+                    .fetchAll(db)
+                guard !allRelevant.isEmpty else { continue }
+                let relevantSourceIDs = Set(allRelevant.map(\.sourceID))
+                let topK = try RetrievalSnapshot
+                    .filter(RetrievalSnapshot.Columns.evaluationID == evalID && RetrievalSnapshot.Columns.rank <= k)
+                    .order(RetrievalSnapshot.Columns.rank).fetchAll(db)
+                guard !topK.isEmpty else { continue }
+                let retrievedRelevant = topK.filter { relevantSourceIDs.contains($0.sourceID) }.count
+                let precision = Double(retrievedRelevant) / Double(topK.count)
+                let recall = Double(retrievedRelevant) / Double(allRelevant.count)
+                let denominator = precision + recall
+                guard denominator > 0 else { continue }
+                totalF1 += 2.0 * precision * recall / denominator
+                queryCount += 1
+            }
+            return queryCount > 0 ? totalF1 / Double(queryCount) : 0.0
+        }
+    }
+
+    // MARK: - MAP (Mean Average Precision)
+
+    func calculateMAP(days: Int) async throws -> Double {
+        let writer = await dbWriter
+        return try await writer.read { db in
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            let evals = try RAGEvaluation.filter(RAGEvaluation.Columns.createdAt >= cutoff).fetchAll(db)
+            guard !evals.isEmpty else { return 0.0 }
+            var totalAP: Double = 0
+            var queryCount = 0
+            for eval in evals {
+                guard let evalID = eval.id else { continue }
+                let allRelevant = try RelevanceJudgment
+                    .filter(RelevanceJudgment.Columns.evaluationID == evalID && RelevanceJudgment.Columns.relevanceLevel >= 1)
+                    .fetchAll(db)
+                guard !allRelevant.isEmpty else { continue }
+                let relevantSet = Set(allRelevant.map(\.sourceID))
+                let totalRelevant = allRelevant.count
+                let snapshots = try RetrievalSnapshot
+                    .filter(RetrievalSnapshot.Columns.evaluationID == evalID)
+                    .order(RetrievalSnapshot.Columns.rank).fetchAll(db)
+                guard !snapshots.isEmpty else { continue }
+                var relevantHitCount = 0
+                var sumPrecision: Double = 0
+                for (idx, snap) in snapshots.enumerated() where relevantSet.contains(snap.sourceID) {
+                    relevantHitCount += 1
+                    sumPrecision += Double(relevantHitCount) / Double(idx + 1)
+                }
+                totalAP += sumPrecision / Double(totalRelevant)
+                queryCount += 1
+            }
+            return queryCount > 0 ? totalAP / Double(queryCount) : 0.0
+        }
+    }
+
+    // MARK: - 检索延迟百分位
+
+    func calculateRetrievalLatency(days: Int) async throws -> LatencyPercentiles {
+        let writer = await dbWriter
+        return try await writer.read { db in
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            let logs = try LLMCallLog
+                .filter(LLMCallLog.Columns.createdAt >= cutoff)
+                .order(LLMCallLog.Columns.latencyMS).fetchAll(db)
+            let latencies = logs.map(\.latencyMS)
+            guard !latencies.isEmpty else { return LatencyPercentiles(p50: 0, p95: 0, p99: 0, sampleCount: 0) }
+            let count = latencies.count
+            func percentile(_ p: Double) -> Int {
+                let index = Int((Double(count - 1) * p / 100.0).rounded())
+                return latencies[max(0, min(index, count - 1))]
+            }
+            return LatencyPercentiles(p50: percentile(50), p95: percentile(95), p99: percentile(99), sampleCount: count)
+        }
+    }
+
+    // MARK: - Token 效率与成本
+
+    func calculateTokenEfficiency(days: Int) async throws -> TokenEfficiency {
+        let writer = await dbWriter
+        return try await writer.read { db in
+            let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+            let statsRequest = TokenUsage
+                .filter(TokenUsage.Columns.createdAt >= cutoff)
+                .select(sum(TokenUsage.Columns.totalTokens), sum(TokenUsage.Columns.promptTokens),
+                        sum(TokenUsage.Columns.completionTokens), count(TokenUsage.Columns.id))
+            guard let row = try Row.fetchOne(db, statsRequest) else {
+                return TokenEfficiency(totalTokens: 0, queryCount: 0, avgTokensPerQuery: 0, estimatedCostUSD: 0)
+            }
+            let totalTokens: Int = row[0] ?? 0
+            let promptTokens: Int = row[1] ?? 0
+            let completionTokens: Int = row[2] ?? 0
+            let queryCount: Int = row[3] ?? 0
+            let avgTokensPerQuery = queryCount > 0 ? Double(totalTokens) / Double(queryCount) : 0.0
+            let promptCost = Double(promptTokens) / 1_000_000.0 * AppConfig.AI.pricingPromptPer1M
+            let completionCost = Double(completionTokens) / 1_000_000.0 * AppConfig.AI.pricingCompletionPer1M
+            return TokenEfficiency(totalTokens: totalTokens, queryCount: queryCount,
+                                   avgTokensPerQuery: avgTokensPerQuery, estimatedCostUSD: promptCost + completionCost)
         }
     }
 }

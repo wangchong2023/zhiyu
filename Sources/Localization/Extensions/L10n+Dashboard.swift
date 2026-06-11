@@ -160,8 +160,68 @@ extension L10n {
             public static var retrievalFidelity: String { Localized.tr("dashboard.stats.retrievalFidelity", table: t) }
             public static var retrievalQuality: String { Localized.tr("dashboard.stats.retrievalQuality", table: t) }
             public static var hitRateDesc: String { Localized.tr("dashboard.stats.hitRateDesc", table: t) }
+            public static var mrrTitle: String { Localized.tr("dashboard.stats.mrrTitle", table: t) }
             public static var mrrDesc: String { Localized.tr("dashboard.stats.mrrDesc", table: t) }
+            public static var ndcgTitle: String { Localized.tr("dashboard.stats.ndcgTitle", table: t) }
             public static var ndcgDesc: String { Localized.tr("dashboard.stats.ndcgDesc", table: t) }
+            public static var hitRateTitle: String { Localized.tr("dashboard.stats.hitRateTitle", table: t) }
+            public static var recallAtK: String { Localized.tr("dashboard.stats.recallAtK", table: t) }
+            public static var recallDesc: String { Localized.tr("dashboard.stats.recallDesc", table: t) }
+            public static var f1AtK: String { Localized.tr("dashboard.stats.f1AtK", table: t) }
+            public static var f1Desc: String { Localized.tr("dashboard.stats.f1Desc", table: t) }
+            public static var mapTitle: String { Localized.tr("dashboard.stats.mapTitle", table: t) }
+            public static var mapDesc: String { Localized.tr("dashboard.stats.mapDesc", table: t) }
+            public static var answerCorrectness: String { Localized.tr("dashboard.stats.answerCorrectness", table: t) }
+            public static var answerCorrectnessDesc: String { Localized.tr("dashboard.stats.answerCorrectnessDesc", table: t) }
+            public static var retrievalLatency: String { Localized.tr("dashboard.stats.retrievalLatency", table: t) }
+            public static var latencyP50: String { Localized.tr("dashboard.stats.latencyP50", table: t) }
+            public static var latencyP95: String { Localized.tr("dashboard.stats.latencyP95", table: t) }
+            public static var latencyP99: String { Localized.tr("dashboard.stats.latencyP99", table: t) }
+            public static var latencyUnitMS: String { Localized.tr("dashboard.stats.latencyUnitMS", table: t) }
+            public static var latencySampleCount: String { Localized.tr("dashboard.stats.latencySampleCount", table: t) }
+            public static var tokenEfficiency: String { Localized.tr("dashboard.stats.tokenEfficiency", table: t) }
+            public static var totalTokens: String { Localized.tr("dashboard.stats.totalTokens", table: t) }
+            public static var avgTokensPerQuery: String { Localized.tr("dashboard.stats.avgTokensPerQuery", table: t) }
+            public static var estimatedCost: String { Localized.tr("dashboard.stats.estimatedCost", table: t) }
+            public static var queryCount: String { Localized.tr("dashboard.stats.queryCount", table: t) }
+
+            // MARK: - Tooltip 说明文案
+
+            /// 检索阶段说明
+            public static var tipRetrievalPhase: String { Localized.tr("dashboard.stats.tipRetrievalPhase", table: t) }
+            /// 生成阶段说明
+            public static var tipGenerationPhase: String { Localized.tr("dashboard.stats.tipGenerationPhase", table: t) }
+            /// 资源消耗说明
+            public static var tipCostPhase: String { Localized.tr("dashboard.stats.tipCostPhase", table: t) }
+            /// Hit@5 说明
+            public static var tipHitRate: String { Localized.tr("dashboard.stats.tipHitRate", table: t) }
+            /// MRR 说明
+            public static var tipMRR: String { Localized.tr("dashboard.stats.tipMRR", table: t) }
+            /// NDCG 说明
+            public static var tipNDCG: String { Localized.tr("dashboard.stats.tipNDCG", table: t) }
+            /// Recall 说明
+            public static var tipRecall: String { Localized.tr("dashboard.stats.tipRecall", table: t) }
+            /// F1 说明
+            public static var tipF1: String { Localized.tr("dashboard.stats.tipF1", table: t) }
+            /// MAP 说明
+            public static var tipMAP: String { Localized.tr("dashboard.stats.tipMAP", table: t) }
+            /// Faithfulness 说明
+            public static var tipFaithfulness: String { Localized.tr("dashboard.stats.tipFaithfulness", table: t) }
+            /// Relevance 说明
+            public static var tipRelevance: String { Localized.tr("dashboard.stats.tipRelevance", table: t) }
+            /// Hallucination 说明
+            public static var tipHallucination: String { Localized.tr("dashboard.stats.tipHallucination", table: t) }
+            /// Precision 说明
+            public static var tipPrecision: String { Localized.tr("dashboard.stats.tipPrecision", table: t) }
+            /// Citation Accuracy 说明
+            public static var tipCitation: String { Localized.tr("dashboard.stats.tipCitation", table: t) }
+            /// Correctness 说明
+            public static var tipCorrectness: String { Localized.tr("dashboard.stats.tipCorrectness", table: t) }
+            /// 检索延迟说明
+            public static var tipLatency: String { Localized.tr("dashboard.stats.tipLatency", table: t) }
+            /// Token 效率说明
+            public static var tipTokenEfficiency: String { Localized.tr("dashboard.stats.tipTokenEfficiency", table: t) }
+
             public static var evaluation: String { Localized.tr("dashboard.stats.evaluation", table: t) }
             public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }
             public static var recentEvaluations: String { Localized.tr("dashboard.stats.recentEvaluations", table: t) }

@@ -66,6 +66,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
     public var hallucinationRate: Double
     /// 引用准确度 (0-1)，引用是否真实指向原文对应位置。越高越好。
     public var citationAccuracy: Double
+    /// 答案正确性 (0-1)，基于黄金标准答案或 LLM 判定的事实性评估。越高越好。
+    public var answerCorrectness: Double
     public var evaluatorModel: String
     public var createdAt: Date
 
@@ -78,6 +80,7 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         case precision = "context_precision"
         case hallucinationRate = "hallucination_rate"
         case citationAccuracy = "citation_accuracy"
+        case answerCorrectness = "answer_correctness"
         case evaluatorModel = "evaluator_model"
         case createdAt = "created_at"
     }
@@ -91,6 +94,7 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         static let precision = Column(CodingKeys.precision)
         static let hallucinationRate = Column(CodingKeys.hallucinationRate)
         static let citationAccuracy = Column(CodingKeys.citationAccuracy)
+        static let answerCorrectness = Column(CodingKeys.answerCorrectness)
         static let evaluatorModel = Column(CodingKeys.evaluatorModel)
         static let createdAt = Column(CodingKeys.createdAt)
     }
@@ -104,6 +108,7 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         precision: Double,
         hallucinationRate: Double = 0.0,
         citationAccuracy: Double = 0.0,
+        answerCorrectness: Double = 0.0,
         evaluatorModel: String,
         createdAt: Date = Date()
     ) {
@@ -115,6 +120,7 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         self.precision = precision
         self.hallucinationRate = hallucinationRate
         self.citationAccuracy = citationAccuracy
+        self.answerCorrectness = answerCorrectness
         self.evaluatorModel = evaluatorModel
         self.createdAt = createdAt
     }
