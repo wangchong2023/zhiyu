@@ -55,14 +55,15 @@ struct InitialNotebookGenerator {
         Logger.shared.info("InitialNotebook_Starting")
 
         let pagesToCreate: [PageSeed] = [
+            // 首个页面节点：PKM 方法论，使用本地 Markdown 文件作为引用溯源
             PageSeed(
                 title: L10n.InitialNotebook.PKM.title1,
                 type: .concept,
                 content: L10n.InitialNotebook.PKM.content1,
                 tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
-                sourceURL: "https://karpathy.github.io/",
-                rawTextSnippet: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines.",
-                sourceType: "web"
+                sourceURL: "file:///Users/constantine/Documents/work/pkm_methodology.md",
+                rawTextSnippet: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file.",
+                sourceType: "markdown"
             ),
             PageSeed(title: L10n.InitialNotebook.PKM.title2, type: .concept, content: L10n.InitialNotebook.PKM.content2, tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency]),
             PageSeed(title: L10n.InitialNotebook.PKM.title3, type: .concept, content: L10n.InitialNotebook.PKM.content3, tags: [L10n.InitialNotebook.Tags.techPrinciple, L10n.InitialNotebook.Tags.association]),
@@ -151,14 +152,15 @@ struct InitialNotebookGenerator {
         Logger.shared.info("ResearchInitialNotebook_Starting")
 
         let pagesToCreate: [PageSeed] = [
+            // 竞品分析页面节点：瑞幸与星巴克对比，使用本地 PDF 报告作为引用溯源
             PageSeed(
                 title: "竞品分析：瑞幸 vs 星巴克",
                 type: .comparison,
                 content: "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。",
                 tags: ["竞品分析", "市场调研"],
-                sourceURL: "https://finance.yahoo.com/quote/LKNCY",
-                rawTextSnippet: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience.",
-                sourceType: "web"
+                sourceURL: "file:///Users/constantine/Downloads/luckin_vs_starbucks_report.pdf",
+                rawTextSnippet: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report.",
+                sourceType: "pdf"
             ),
             PageSeed(title: "精品咖啡体验", type: .concept, content: "放弃全自动机器，采用半自动意式机与手冲吧台双轨制。定期举办杯测活动，增强社区黏性，这与我们的[[目标客群分析]]高度吻合。", tags: ["产品设计", "运营"]),
             PageSeed(
@@ -232,6 +234,15 @@ struct InitialNotebookGenerator {
         return pagesToCreate.count
     }
     
+    /// 执行图谱压力测试数据生成（兼容测试套件调用）
+    /// - Parameters:
+    ///   - store: 目标存储对象
+    ///   - targetCount: 注入的节点数量
+    /// - Returns: 实际生成的页面数
+    static func generateStressTest(in store: any AnyPageStore, count targetCount: Int = 1000) async throws -> Int {
+        try await generateStressTestNotebooks(in: store, count: targetCount)
+    }
+
     /// 执行图谱压力测试数据生成
     /// - Parameters:
     ///   - store: 目标存储对象

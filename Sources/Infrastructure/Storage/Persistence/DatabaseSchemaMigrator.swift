@@ -263,28 +263,29 @@ extension DatabaseManager {
                 t.column(ImportRecord.CodingKeys.createdAt.name, .datetime).notNull().defaults(to: Date())
                 t.column(ImportRecord.CodingKeys.completedAt.name, .datetime)
             }
-            // V8: 导入记录 AI 分类标签（幂等：V7 创建表时可能已含此列）
-            migrator.registerMigration("v8_import_record_tags") { db in
-                let columns = try db.columns(in: ImportRecord.databaseTableName).map(\.name)
-                guard !columns.contains(ImportRecord.CodingKeys.tags.name) else { return }
-                try db.alter(table: ImportRecord.databaseTableName) { t in
-                    t.add(column: ImportRecord.CodingKeys.tags.name, .text)
-                }
-            }
+        }
 
-            // V9: 用户反馈表
-            migrator.registerMigration("v9_feedback_entries") { db in
-                try db.create(table: FeedbackEntry.databaseTableName, ifNotExists: true) { t in
-                    t.column(FeedbackEntry.CodingKeys.id.name, .text).primaryKey()
-                    t.column(FeedbackEntry.CodingKeys.title.name, .text).notNull()
-                    t.column(FeedbackEntry.CodingKeys.category.name, .text).notNull().indexed()
-                    t.column(FeedbackEntry.CodingKeys.rating.name, .integer).notNull().defaults(to: 3)
-                    t.column(FeedbackEntry.CodingKeys.content.name, .text).notNull()
-                    t.column(FeedbackEntry.CodingKeys.appVersion.name, .text)
-                    t.column(FeedbackEntry.CodingKeys.osVersion.name, .text)
-                    t.column(FeedbackEntry.CodingKeys.deviceModel.name, .text)
-                    t.column(FeedbackEntry.CodingKeys.createdAt.name, .datetime).notNull().defaults(to: Date())
-                }
+        // V8: 导入记录 AI 分类标签（幂等：V7 创建表时可能已含此列）
+        migrator.registerMigration("v8_import_record_tags") { db in
+            let columns = try db.columns(in: ImportRecord.databaseTableName).map(\.name)
+            guard !columns.contains(ImportRecord.CodingKeys.tags.name) else { return }
+            try db.alter(table: ImportRecord.databaseTableName) { t in
+                t.add(column: ImportRecord.CodingKeys.tags.name, .text)
+            }
+        }
+
+        // V9: 用户反馈表
+        migrator.registerMigration("v9_feedback_entries") { db in
+            try db.create(table: FeedbackEntry.databaseTableName, ifNotExists: true) { t in
+                t.column(FeedbackEntry.CodingKeys.id.name, .text).primaryKey()
+                t.column(FeedbackEntry.CodingKeys.title.name, .text).notNull()
+                t.column(FeedbackEntry.CodingKeys.category.name, .text).notNull().indexed()
+                t.column(FeedbackEntry.CodingKeys.rating.name, .integer).notNull().defaults(to: 3)
+                t.column(FeedbackEntry.CodingKeys.content.name, .text).notNull()
+                t.column(FeedbackEntry.CodingKeys.appVersion.name, .text)
+                t.column(FeedbackEntry.CodingKeys.osVersion.name, .text)
+                t.column(FeedbackEntry.CodingKeys.deviceModel.name, .text)
+                t.column(FeedbackEntry.CodingKeys.createdAt.name, .datetime).notNull().defaults(to: Date())
             }
         }
 

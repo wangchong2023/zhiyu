@@ -443,28 +443,27 @@ public struct SubscriptionPlanView: View {
     private var planComparisonGrid: some View {
         AppCard {
             VStack(spacing: 0) {
-                // 标题行
-                HStack {
+                // 标题行：显式指定垂直居中对齐
+                HStack(alignment: .center) {
                     Color.clear
                         .frame(maxWidth: .infinity)
                     
                     Text(L10n.Auth.litePlan)
                         .font(.subheadline.bold())
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, alignment: .center) // 居中
+                        .frame(maxWidth: .infinity, alignment: .center) // 单元格居中
                         .foregroundStyle(.appSecondary)
                     
                     Rectangle()
-                        // swiftlint:disable:next magic_numbers_opacity
                         .fill(Color.appBorder.opacity(0.8))
                         .frame(width: DesignSystem.Metrics.customSize1)
                         .padding(.horizontal, 4)
-                        .padding(.vertical, -DesignSystem.small) // 减小负的垂直 padding，控制高度
+                        .frame(maxHeight: 24) // 限制垂直分割线高度，保证对齐
                     
                     Text(L10n.Auth.proPlan)
                         .font(.subheadline.bold())
                         .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, alignment: .center) // 居中
+                        .frame(maxWidth: .infinity, alignment: .center) // 单元格居中
                         .foregroundStyle(.appAccent)
                 }
                 .padding(.horizontal, DesignSystem.medium)
@@ -496,23 +495,22 @@ public struct SubscriptionPlanView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Lite 值 (右对齐)
+            // Lite 值 (优化为居中对齐，以便与表头单元格对齐)
             Text(lite.value)
                 .font(.caption.bold())
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .center)
                 .foregroundStyle(.appSecondary)
 
             Rectangle()
-                // swiftlint:disable:next magic_numbers_opacity
                 .fill(Color.appBorder.opacity(0.8))
                 .frame(width: DesignSystem.Metrics.customSize1)
                 .padding(.horizontal, 4)
-                .padding(.vertical, -DesignSystem.small)
+                .frame(maxHeight: 16) // 限制行内分割线高度，保证美观
 
-            // Pro 值 (右对齐)
+            // Pro 值 (优化为居中对齐，以便与表头单元格对齐)
             Text(pro.value)
                 .font(.caption.bold())
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .frame(maxWidth: .infinity, alignment: .center)
                 .foregroundStyle(.appAccent)
         }
         .padding(.horizontal, DesignSystem.medium)

@@ -191,3 +191,49 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, Knowledg
         PageContentUtility.extractAllTags(content: content, existingTags: tags)
     }
 }
+
+// MARK: - 页面来源展示美化扩展
+extension KnowledgePage {
+    /// 是否为本地文件来源
+    public var isLocalFileSource: Bool {
+        guard let urlStr = sourceURL else { return false }
+        return urlStr.lowercased().hasPrefix("file://")
+    }
+    
+    /// 来源在 UI 上的友好展示名称
+    public var displaySourceName: String {
+        guard let urlStr = sourceURL else { return "" }
+        if isLocalFileSource {
+            // 如果是本地文件，尝试获取文件名
+            if let url = URL(string: urlStr) {
+                return url.lastPathComponent
+            }
+            // 兜底：如果 URL 解析失败，从字符串切片中提取最后一部分
+            if let lastSlash = urlStr.lastIndex(of: "/") {
+                let index = urlStr.index(after: lastSlash)
+                return String(urlStr[index...])
+            }
+            return urlStr
+        } else {
+            // 如果是网页，尝试获取 host
+            if let url = URL(string: urlStr), let host = url.host {
+                return host
+            }
+            return urlStr
+        }
+    }
+    
+    /// 来源的显示图标 (SF Symbol 名称)
+    public var displaySourceIcon: String {
+        guard let type = sourceType?.lowercased() else {
+            return isLocalFileSource ? "doc.fill" : "safari"
+        }
+        if type == "pdf" {
+            return "doc.text.fill"
+        } else if type == "markdown" || type == "md" || type == "txt" {
+            return "doc.text"
+        } else {
+            return isLocalFileSource ? "doc.fill" : "safari"
+        }
+    }
+}

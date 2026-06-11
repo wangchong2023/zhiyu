@@ -117,6 +117,9 @@ extension L10n {
                 public static var open: String { Knowledge.tr("page.source.open") }
                 public static var content: String { Knowledge.tr("page.source.content") }
                 public static var empty: String { Knowledge.tr("page.source.empty") }
+                public static var copied: String { Knowledge.tr("page.source.copied") }
+                public static var copyPath: String { Knowledge.tr("page.source.copyPath") }
+                public static var localFile: String { Knowledge.tr("page.source.localFile") }
             }
 
             public enum AI {

@@ -16,6 +16,8 @@ struct PageDetailMetadataSection: View {
     let backlinks: [KnowledgePage]
     let recommendations: [KnowledgePage]
     
+    @State private var copiedUrl: String? = nil
+    
     var body: some View {
         VStack(spacing: 0) {
             provenanceSection
@@ -29,21 +31,60 @@ struct PageDetailMetadataSection: View {
             if let sourceURL = page.sourceURL, let url = URL(string: sourceURL) {
                 VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
                     HStack {
-                        Image(systemName: DesignSystem.Icons.safari).foregroundStyle(.appAccent)
+                        Image(systemName: page.displaySourceIcon).foregroundStyle(.appAccent)
                         Text(L10n.Knowledge.Page.Source.title).font(.headline).foregroundStyle(.appText)
                         Spacer()
-                        Link(destination: url) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Text(L10n.Knowledge.Page.Source.open)
-                                Image(systemName: DesignSystem.Icons.arrowUpRightCircle)
+                        if page.isLocalFileSource {
+                            Button(action: {
+                                #if os(iOS)
+                                UIPasteboard.general.string = sourceURL
+                                #endif
+                                withAnimation(.spring()) {
+                                    copiedUrl = sourceURL
+                                }
+                                Task {
+                                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                                    withAnimation(.spring()) {
+                                        if copiedUrl == sourceURL {
+                                            copiedUrl = nil
+                                        }
+                                    }
+                                }
+                            }) {
+                                HStack(spacing: DesignSystem.tiny) {
+                                    Text(copiedUrl == sourceURL ? L10n.Knowledge.Page.Source.copied : L10n.Knowledge.Page.Source.copyPath)
+                                    Image(systemName: copiedUrl == sourceURL ? "checkmark.circle.fill" : "doc.on.doc")
+                                }
+                                .font(.caption)
+                                .foregroundStyle(.appAccent)
                             }
-                            .font(.caption)
-                            .foregroundStyle(.appAccent)
+                            .buttonStyle(.plain)
+                        } else {
+                            Link(destination: url) {
+                                HStack(spacing: DesignSystem.tiny) {
+                                    Text(L10n.Knowledge.Page.Source.open)
+                                    Image(systemName: DesignSystem.Icons.arrowUpRightCircle)
+                                }
+                                .font(.caption)
+                                .foregroundStyle(.appAccent)
+                            }
                         }
                     }
                     
                     VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
-                        Text(sourceURL).font(.caption2).foregroundStyle(.appSecondary).lineLimit(1).truncationMode(.middle)
+                        if page.isLocalFileSource {
+                            Text("\(L10n.Knowledge.Page.Source.localFile): \(page.displaySourceName)")
+                                .font(.caption2)
+                                .foregroundStyle(.appSecondary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        } else {
+                            Text(sourceURL)
+                                .font(.caption2)
+                                .foregroundStyle(.appSecondary)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
                         
                         if let snippet = page.rawTextSnippet, !snippet.isEmpty {
                             Text(snippet).font(.caption).foregroundStyle(.appSecondary).padding(DesignSystem.small).frame(maxWidth: .infinity, alignment: .leading).background(Color.appCard).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius)).lineLimit(3)

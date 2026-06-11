@@ -66,9 +66,6 @@ private final class MockFullLLMService: LLMServiceProtocol {
         AsyncThrowingStream { $0.finish() }
     }
     func generate(prompt: String, systemPrompt: String, maxTokens: Int) async throws -> String { "" }
-    func validateAPIKey() async throws -> LLMConnectionValidationResult {
-        LLMConnectionValidationResult(isSuccess: true, latencyMS: 0, streamTested: false, streamOK: false, errorCode: nil, errorMessage: nil)
-    }
     func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         SmartIngestResultDTO(title: "", compiledContent: "", suggestedTags: [], suggestedType: "", relatedTitles: [], summary: "")
     }

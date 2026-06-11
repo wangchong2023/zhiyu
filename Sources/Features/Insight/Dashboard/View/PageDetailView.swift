@@ -18,6 +18,7 @@ struct PageDetailView: View {
     @Environment(AIWorkflowStore.self) var aiStore
     @Environment(Router.self) var router
     @State private var recommendations: [KnowledgePage] = []
+    @State private var copiedUrl: String? = nil
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
         self.heroNamespace = heroNamespace
@@ -300,20 +301,49 @@ struct PageDetailView: View {
                 .foregroundStyle(.appSecondary)
             HStack(spacing: DesignSystem.medium) {
                 if let url = coordinator.page.sourceURL {
-                    Button(action: {
-                        guard let urlObject = URL(string: url) else { return }
-                        #if os(iOS)
-                        UIApplication.shared.open(urlObject)
-                        #endif
-                    }) {
-                        HStack(spacing: DesignSystem.tiny) {
-                            Image(systemName: "safari")
-                                .font(.caption2)
-                            Text(url)
-                                .font(.caption)
-                                .lineLimit(1)
+                    if coordinator.page.isLocalFileSource {
+                        Button(action: {
+                            #if os(iOS)
+                            UIPasteboard.general.string = url
+                            #endif
+                            withAnimation(.spring()) {
+                                copiedUrl = url
+                            }
+                            Task {
+                                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                                withAnimation(.spring()) {
+                                    if copiedUrl == url {
+                                        copiedUrl = nil
+                                    }
+                                }
+                            }
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Image(systemName: coordinator.page.displaySourceIcon)
+                                    .font(.caption2)
+                                Text(copiedUrl == url ? L10n.Knowledge.Page.Source.copied : "\(coordinator.page.displaySourceName) (\(L10n.Knowledge.Page.Source.copyPath))")
+                                    .font(.caption)
+                                    .lineLimit(1)
+                            }
+                            .foregroundStyle(.blue)
                         }
-                        .foregroundStyle(.blue)
+                        .buttonStyle(.plain)
+                    } else {
+                        Button(action: {
+                            guard let urlObject = URL(string: url) else { return }
+                            #if os(iOS)
+                            UIApplication.shared.open(urlObject)
+                            #endif
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Image(systemName: coordinator.page.displaySourceIcon)
+                                    .font(.caption2)
+                                Text(coordinator.page.displaySourceName)
+                                    .font(.caption)
+                                    .lineLimit(1)
+                            }
+                            .foregroundStyle(.blue)
+                        }
                     }
                 }
                 if let st = coordinator.page.sourceType {
