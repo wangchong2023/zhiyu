@@ -62,16 +62,23 @@ struct AuthView: View {
         }
         .sheet(isPresented: $showPrivacySheet) {
             NavigationStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: Spacing.medium) {
-                        Text(L10n.Auth.privacyPolicyContent)
-                            .font(.body)
-                            .foregroundStyle(.appText)
-                            .lineSpacing(Spacing.tiny)
+                ZStack {
+                    themeManager.pageBackground()
+                        .ignoresSafeArea()
                         
-                        Spacer()
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: Spacing.medium) {
+                            Text(L10n.Auth.privacyPolicyContent)
+                                .font(.body)
+                                .foregroundStyle(.appText)
+                                .lineSpacing(Spacing.tiny)
+                            
+                            Spacer()
+                        }
+                        .padding()
+                        .appListRowBackground()
+                        .padding()
                     }
-                    .padding()
                 }
                 .navigationTitle(L10n.Auth.privacyPolicyTitle)
                 .navigationBarTitleDisplayMode(.inline)

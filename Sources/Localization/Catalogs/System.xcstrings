@@ -211,13 +211,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "We highly value your privacy. ZhiYu is an AI-native knowledge management application. All your vaults, knowledge nodes, and local configurations are stored strictly on your local device (and your personal iCloud space if sync is enabled). We do not collect, upload, or disclose your personal data or knowledge contents to any third parties. When using local AI features, data is processed locally; when using remote AI services, we strictly adhere to the privacy standards of the respective APIs and do not retain any of your query details."
+            "value": "[ZhiYu Privacy Policy]\n\nWelcome to ZhiYu. We understand the importance of your personal information and will take industry-standard security measures to protect your data.\n\n1. Information Collection and Use\nWe collect your account information (e.g., phone number, third-party linked accounts) and application logs when you register and use our services. This information is strictly used to provide stable and personalized knowledge management and AI-enhanced retrieval services.\n\n2. Information Storage and Protection\nYour knowledge graph and notes data will be securely stored on your local device or protected servers (iCloud sync is not supported at this time). We use multiple encryption and security protection mechanisms to prevent unauthorized access or data loss.\n\n3. Information Sharing\nWithout your explicit consent, or unless required by law, we will not provide, share, or sell your personal data to any third party.\n\n4. Your Data Rights\nYou have the right to access, correct, delete your personal information, and cancel your account. You can manage your data and authorizations through the in-app system settings.\n\n5. Policy Changes\nAs our services evolve, we may update this privacy policy from time to time. We will notify you prominently of any significant changes.\n\n6. Contact Us\nIf you have any questions about this policy, please feel free to contact us via \"Help & Feedback\" in the app."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "我们非常重视您的隐私。智宇（ZhiYu）是一款 AI 原生知识管理应用，您的所有金库数据、知识库节点及本地配置均完全存储在您的本地设备（及您的个人 iCloud 空间中，如果启用了同步功能）。我们不会收集、上传或向任何第三方披露您的个人数据或知识库内容。在使用本地 AI 能力时，数据将在您的本地设备进行处理；在使用远程 AI 能力时，我们会严格遵循相关接口的隐私规范，不保留您的任何查询内容。"
+            "value": "【智宇 (ZhiYu) 隐私政策】\n\n欢迎使用智宇。我们深知个人信息对您的重要性，并会采取业界标准的安全措施保护您的信息安全。\n\n1. 信息的收集与使用\n我们将在您注册和使用服务时，收集您的账号信息（如手机号码、第三方关联账号等）及应用运行日志。这些信息仅用于向您提供稳定、个性化的知识管理与 AI 增强检索服务。\n\n2. 信息的存储与保护\n您的知识图谱及笔记数据将安全地保存在本地设备或受保护的服务端中（当前暂不支持 iCloud 同步）。我们采用多重加密和安全防护机制，防止您的数据遭到未经授权的访问或丢失。\n\n3. 信息的共享\n未经您的明确同意，或非因法定情形，我们不会向任何第三方提供、共享或出售您的个人数据。\n\n4. 您的数据权利\n您拥有访问、更正、删除个人信息以及注销账号的权利。您可以通过应用内的系统设置来管理您的各项数据及授权。\n\n5. 政策变更\n随着服务的升级，我们可能会适时更新本隐私政策。若有重大变更，我们将通过显著方式向您发出通知。\n\n6. 联系我们\n如果您对本政策有任何疑问，请通过应用内的“帮助与反馈”随时与我们取得联系。"
           }
         }
       }
