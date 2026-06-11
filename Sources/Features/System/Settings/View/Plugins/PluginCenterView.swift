@@ -104,7 +104,7 @@ struct PluginCenterView: View {
                 HStack(spacing: DesignSystem.small) {
                     Image(systemName: isSafeModeOn ? DesignSystem.Icons.shieldFill : DesignSystem.Icons.shieldSlash)
                         .font(.subheadline.bold())
-                        .foregroundStyle(isSafeModeOn ? .green : .orange)
+                        .foregroundStyle(.appAccent) // 与右侧加载本地插件按钮相同风格的图标颜色
                     
                     Text(L10n.Plugin.safeModeTitle)
                         .font(.subheadline.bold())
