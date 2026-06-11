@@ -177,13 +177,47 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "By logging in, you agree to the Privacy Policy"
+            "value": "By logging in, you agree to the [Privacy Policy](privacy://policy)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "登录即表示同意《隐私政策》"
+            "value": "登录即表示同意[《隐私政策》](privacy://policy)"
+          }
+        }
+      }
+    },
+    "auth.privacyPolicy.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy Policy"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐私政策"
+          }
+        }
+      }
+    },
+    "auth.privacyPolicy.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We highly value your privacy. ZhiYu is an AI-native knowledge management application. All your vaults, knowledge nodes, and local configurations are stored strictly on your local device (and your personal iCloud space if sync is enabled). We do not collect, upload, or disclose your personal data or knowledge contents to any third parties. When using local AI features, data is processed locally; when using remote AI services, we strictly adhere to the privacy standards of the respective APIs and do not retain any of your query details."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们非常重视您的隐私。智宇（ZhiYu）是一款 AI 原生知识管理应用，您的所有金库数据、知识库节点及本地配置均完全存储在您的本地设备（及您的个人 iCloud 空间中，如果启用了同步功能）。我们不会收集、上传或向任何第三方披露您的个人数据或知识库内容。在使用本地 AI 能力时，数据将在您的本地设备进行处理；在使用远程 AI 能力时，我们会严格遵循相关接口的隐私规范，不保留您的任何查询内容。"
           }
         }
       }
@@ -239,6 +273,42 @@
         }
       }
     },
+    "auth.avatar": {
+      "comment": "修改头像",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change Avatar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改头像"
+          }
+        }
+      }
+    },
+    "auth.bestValue": {
+      "comment": "最划算",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best Value"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最划算"
+          }
+        }
+      }
+    },
     "auth.code.placeholder": {
       "extractionState": "manual",
       "localizations": {
@@ -252,6 +322,42 @@
           "stringUnit": {
             "state": "translated",
             "value": "验证码"
+          }
+        }
+      }
+    },
+    "auth.confirmPurchase": {
+      "comment": "确认升级",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm Upgrade"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认升级"
+          }
+        }
+      }
+    },
+    "auth.currentSubscription": {
+      "comment": "当前套餐",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前套餐"
           }
         }
       }
@@ -286,6 +392,222 @@
           "stringUnit": {
             "state": "translated",
             "value": "认证失败，请重试"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynth": {
+      "comment": "AI 合成能力",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Synthesis"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 合成能力"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynthLiteValue": {
+      "comment": "基础",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basic"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基础"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynthProValue": {
+      "comment": "全量",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全量"
+          }
+        }
+      }
+    },
+    "auth.feature.pages": {
+      "comment": "知识页上限",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages Limit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页上限"
+          }
+        }
+      }
+    },
+    "auth.feature.pagesLiteValue": {
+      "comment": "1,000 页",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1,000"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1,000 页"
+          }
+        }
+      }
+    },
+    "auth.feature.pagesProValue": {
+      "comment": "50,000 页",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50,000"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50,000 页"
+          }
+        }
+      }
+    },
+    "auth.feature.plugins": {
+      "comment": "插件数量",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件数量"
+          }
+        }
+      }
+    },
+    "auth.feature.pluginsLiteValue": {
+      "comment": "3 个",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 个"
+          }
+        }
+      }
+    },
+    "auth.feature.pluginsProValue": {
+      "comment": "不限",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不限"
+          }
+        }
+      }
+    },
+    "auth.feature.vaults": {
+      "comment": "金库数量",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaults"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金库数量"
+          }
+        }
+      }
+    },
+    "auth.feature.vaultsLiteValue": {
+      "comment": "2 个",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 个"
+          }
+        }
+      }
+    },
+    "auth.feature.vaultsProValue": {
+      "comment": "10 个",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 个"
           }
         }
       }
@@ -392,6 +714,24 @@
         }
       }
     },
+    "auth.litePlan": {
+      "comment": "Lite 基础版",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite 基础版"
+          }
+        }
+      }
+    },
     "auth.login": {
       "extractionState": "manual",
       "localizations": {
@@ -426,6 +766,42 @@
         }
       }
     },
+    "auth.monthly": {
+      "comment": "月付",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月付"
+          }
+        }
+      }
+    },
+    "auth.monthlyPrice": {
+      "comment": "¥38/月",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥38/mo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥38/月"
+          }
+        }
+      }
+    },
     "auth.moreLoginMethods": {
       "extractionState": "manual",
       "localizations": {
@@ -439,6 +815,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "— 更多登录方式 —"
+          }
+        }
+      }
+    },
+    "auth.nickname": {
+      "comment": "昵称",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nickname"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "昵称"
           }
         }
       }
@@ -477,6 +871,60 @@
         }
       }
     },
+    "auth.payment.alipay": {
+      "comment": "支付宝",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alipay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付宝"
+          }
+        }
+      }
+    },
+    "auth.payment.apple": {
+      "comment": "Apple Pay / 内购",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay / In-App"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay / 内购"
+          }
+        }
+      }
+    },
+    "auth.payment.wechat": {
+      "comment": "微信支付",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WeChat Pay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "微信支付"
+          }
+        }
+      }
+    },
     "auth.phone.placeholder": {
       "extractionState": "manual",
       "localizations": {
@@ -511,6 +959,132 @@
         }
       }
     },
+    "auth.productNotFound": {
+      "comment": "未找到该商品，请稍后重试",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Product not found, please try again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到该商品，请稍后重试"
+          }
+        }
+      }
+    },
+    "auth.profileAndQuota": {
+      "comment": "个人信息与套餐",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile & Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人信息与套餐"
+          }
+        }
+      }
+    },
+    "auth.proPlan": {
+      "comment": "Pro 专业版",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro 专业版"
+          }
+        }
+      }
+    },
+    "auth.purchaseDisclaimer": {
+      "comment": "订阅将通过 App Store 账户扣款，可随时在设置中取消。",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription billed via App Store. Cancel anytime in Settings."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订阅将通过 App Store 账户扣款，可随时在设置中取消。"
+          }
+        }
+      }
+    },
+    "auth.purchaseFailed": {
+      "comment": "支付失败，请重试",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment failed, please try again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付失败，请重试"
+          }
+        }
+      }
+    },
+    "auth.purchasePending": {
+      "comment": "支付审核中，请稍后查看",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment pending, check back later"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付审核中，请稍后查看"
+          }
+        }
+      }
+    },
+    "auth.purchasing": {
+      "comment": "正在处理支付...",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing payment..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在处理支付..."
+          }
+        }
+      }
+    },
     "auth.qq": {
       "extractionState": "manual",
       "localizations": {
@@ -528,6 +1102,60 @@
         }
       }
     },
+    "auth.quota.pagesUsage": {
+      "comment": "知识页",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页"
+          }
+        }
+      }
+    },
+    "auth.quota.pluginsUsage": {
+      "comment": "插件",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件"
+          }
+        }
+      }
+    },
+    "auth.quota.vaultUsage": {
+      "comment": "金库",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaults"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金库"
+          }
+        }
+      }
+    },
     "auth.register": {
       "extractionState": "manual",
       "localizations": {
@@ -541,6 +1169,96 @@
           "stringUnit": {
             "state": "translated",
             "value": "注册"
+          }
+        }
+      }
+    },
+    "auth.saveChanges": {
+      "comment": "保存修改",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存修改"
+          }
+        }
+      }
+    },
+    "auth.saveFailed": {
+      "comment": "保存失败，请重试",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save failed, please try again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存失败，请重试"
+          }
+        }
+      }
+    },
+    "auth.saveSuccess": {
+      "comment": "保存成功",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存成功"
+          }
+        }
+      }
+    },
+    "auth.selectCycle": {
+      "comment": "选择订阅周期",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Billing Cycle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择订阅周期"
+          }
+        }
+      }
+    },
+    "auth.selectPayment": {
+      "comment": "选择支付方式",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment Method"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择支付方式"
           }
         }
       }
@@ -579,6 +1297,24 @@
         }
       }
     },
+    "auth.startUsingPro": {
+      "comment": "开始使用 Pro",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Using Pro"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始使用 Pro"
+          }
+        }
+      }
+    },
     "auth.thirdParty": {
       "extractionState": "manual",
       "localizations": {
@@ -592,6 +1328,132 @@
           "stringUnit": {
             "state": "translated",
             "value": "其他登录方式"
+          }
+        }
+      }
+    },
+    "auth.upgradePro": {
+      "comment": "升级 Pro",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade to Pro"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级 Pro"
+          }
+        }
+      }
+    },
+    "auth.upgradeSuccessMessage": {
+      "comment": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Pro! Enjoy unlimited storage and AI features."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。"
+          }
+        }
+      }
+    },
+    "auth.upgradeSuccessTitle": {
+      "comment": "升级成功！",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade Successful!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级成功！"
+          }
+        }
+      }
+    },
+    "auth.uploadFailed": {
+      "comment": "头像上传失败",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "头像上传失败"
+          }
+        }
+      }
+    },
+    "auth.uploadingAvatar": {
+      "comment": "正在上传头像...",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploading avatar..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在上传头像..."
+          }
+        }
+      }
+    },
+    "auth.uploadSuccess": {
+      "comment": "头像上传成功",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avatar uploaded"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "头像上传成功"
+          }
+        }
+      }
+    },
+    "auth.verifyFailed": {
+      "comment": "凭证校验失败，请联系客服",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verification failed, please contact support"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "凭证校验失败，请联系客服"
           }
         }
       }
@@ -626,6 +1488,59 @@
           "stringUnit": {
             "state": "translated",
             "value": "微信登录功能正在研发中..."
+          }
+        }
+      }
+    },
+    "auth.yearly": {
+      "comment": "年付",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yearly"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年付"
+          }
+        }
+      }
+    },
+    "auth.yearlyPrice": {
+      "comment": "¥368/年",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥368/yr"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥368/年"
+          }
+        }
+      }
+    },
+    "backup.restore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复备份"
           }
         }
       }
@@ -851,6 +1766,57 @@
         }
       }
     },
+    "errorDecodeFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decode Failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据解析失败"
+          }
+        }
+      }
+    },
+    "errorHTTP": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP 错误"
+          }
+        }
+      }
+    },
+    "errorInvalidURL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid URL"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无效的 URL"
+          }
+        }
+      }
+    },
     "errorsCount": {
       "extractionState": "manual",
       "localizations": {
@@ -864,6 +1830,312 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d 个错误"
+          }
+        }
+      }
+    },
+    "errorServer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务器错误"
+          }
+        }
+      }
+    },
+    "errorTokenExpired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token Expired"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token 已过期"
+          }
+        }
+      }
+    },
+    "errorUnauthorized": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unauthorized"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未授权"
+          }
+        }
+      }
+    },
+    "errorUnexpected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unexpected Error"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未知错误"
+          }
+        }
+      }
+    },
+    "feedback.category": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类"
+          }
+        }
+      }
+    },
+    "feedback.category.bug": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bug Report"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "问题反馈"
+          }
+        }
+      }
+    },
+    "feedback.category.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内容质量"
+          }
+        }
+      }
+    },
+    "feedback.category.feature": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feature Request"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "功能建议"
+          }
+        }
+      }
+    },
+    "feedback.category.other": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他"
+          }
+        }
+      }
+    },
+    "feedback.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详细描述"
+          }
+        }
+      }
+    },
+    "feedback.contentPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe your feedback in detail..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请详细描述你的反馈..."
+          }
+        }
+      }
+    },
+    "feedback.error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to submit feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交反馈失败"
+          }
+        }
+      }
+    },
+    "feedback.rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "评分"
+          }
+        }
+      }
+    },
+    "feedback.subject": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subject"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标题"
+          }
+        }
+      }
+    },
+    "feedback.subjectPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefly describe your feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "简要描述你的反馈"
+          }
+        }
+      }
+    },
+    "feedback.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Submit Feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交反馈"
+          }
+        }
+      }
+    },
+    "feedback.submitted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you! Feedback submitted."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "感谢反馈！已提交。"
+          }
+        }
+      }
+    },
+    "feedback.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "反馈"
           }
         }
       }
@@ -1068,6 +2340,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "手机号 / 账号"
+          }
+        }
+      }
+    },
+    "invalidHTTPResponse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid HTTP Response"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无效的 HTTP 响应"
           }
         }
       }
@@ -2194,6 +3483,23 @@
         }
       }
     },
+    "logout": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logout"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "退出"
+          }
+        }
+      }
+    },
     "metric.bridges": {
       "extractionState": "manual",
       "localizations": {
@@ -2275,6 +3581,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "总节点数"
+          }
+        }
+      }
+    },
+    "missingDataPayload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missing Data Payload"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺少数据负载"
+          }
+        }
+      }
+    },
+    "missingRefreshToken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missing Refresh Token"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺少刷新 Token"
           }
         }
       }
@@ -2394,6 +3734,244 @@
           "stringUnit": {
             "state": "translated",
             "value": "立即开始"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.firstChat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI is answering based on your knowledge"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 正在基于你的知识回答"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.firstGraph": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge connections ready, explore the graph"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识关联已就绪，拖拽探索连接"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.firstPage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First page added to your knowledge base!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第一页！已加入知识库"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.firstSynthesis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insight generated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "洞察已生成"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.page10": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 pages! Try AI Synthesis"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已有 10 页，试试 AI 综合"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.page50": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 pages! Your knowledge base is growing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 页！知识库初具规模"
+          }
+        }
+      }
+    },
+    "onboarding.milestone.page100": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 pages! Impressive knowledge base"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 页！庞大的知识体系"
+          }
+        }
+      }
+    },
+    "onboarding.path.explore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自己探索"
+          }
+        }
+      }
+    },
+    "onboarding.path.exploreDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start fresh, learn as you go"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从空白画布开始，用到哪学到哪"
+          }
+        }
+      }
+    },
+    "onboarding.path.importData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入数据"
+          }
+        }
+      }
+    },
+    "onboarding.path.importDataDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Migrate from files, links or clipboard"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从文件、链接或剪贴板迁移现有笔记"
+          }
+        }
+      }
+    },
+    "onboarding.path.quickStart": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quick Start"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快速体验"
+          }
+        }
+      }
+    },
+    "onboarding.path.quickStartDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instantly see what ZhiYu can do"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一键注入演示数据，立即感受完整功能"
+          }
+        }
+      }
+    },
+    "onboarding.path.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Started"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始使用"
           }
         }
       }
@@ -2568,6 +4146,23 @@
         }
       }
     },
+    "ondevice.errorFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection Failed: %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连接失败: %@"
+          }
+        }
+      }
+    },
     "orphan.page": {
       "extractionState": "manual",
       "localizations": {
@@ -2632,6 +4227,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "密码"
+          }
+        }
+      }
+    },
+    "plugin.permission.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugin \"%@\" requires the following permissions to function"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件「%@」需要以下权限才能正常工作"
           }
         }
       }
@@ -3129,6 +4741,40 @@
         }
       }
     },
+    "sessionInvalidated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session Invalidated"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "会话已失效"
+          }
+        }
+      }
+    },
+    "settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置"
+          }
+        }
+      }
+    },
     "settings.about.copyright": {
       "extractionState": "manual",
       "localizations": {
@@ -3537,6 +5183,23 @@
         }
       }
     },
+    "settings.developer.resetOnboardingDone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome banner is now visible on the home page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎横幅已显示在首页"
+          }
+        }
+      }
+    },
     "settings.developer.section.data": {
       "extractionState": "manual",
       "localizations": {
@@ -3567,6 +5230,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "数据重置"
+          }
+        }
+      }
+    },
+    "settings.developer.section.onboarding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引导"
           }
         }
       }
@@ -3622,40 +5302,6 @@
         }
       }
     },
-    "settings.developer.section.onboarding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guide"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "引导"
-          }
-        }
-      }
-    },
-    "settings.developer.showGuidePage": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show Guide Page"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示引导页面"
-          }
-        }
-      }
-    },
     "settings.developer.section.system": {
       "extractionState": "manual",
       "localizations": {
@@ -3690,6 +5336,23 @@
         }
       }
     },
+    "settings.developer.section.tabMaintenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "数据维护"
+          }
+        }
+      }
+    },
     "settings.developer.section.tabQuality": {
       "extractionState": "manual",
       "localizations": {
@@ -3703,6 +5366,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "质量评估"
+          }
+        }
+      }
+    },
+    "settings.developer.showGuidePage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Guide Page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示引导页面"
+          }
+        }
+      }
+    },
+    "settings.developer.showWelcomeBanner": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Welcome Banner"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示欢迎横幅"
           }
         }
       }
@@ -3805,6 +5502,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "测试节点数量"
+          }
+        }
+      }
+    },
+    "settings.developer.stressTest.nodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d nodes"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个节点"
           }
         }
       }
@@ -3941,6 +5655,329 @@
           "stringUnit": {
             "state": "translated",
             "value": "导出为 Markdown 文件夹 (多文件)"
+          }
+        }
+      }
+    },
+    "settings.feedback.appVersionLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Version"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用版本"
+          }
+        }
+      }
+    },
+    "settings.feedback.category": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分类"
+          }
+        }
+      }
+    },
+    "settings.feedback.categoryBug": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bug Report"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "问题反馈"
+          }
+        }
+      }
+    },
+    "settings.feedback.categoryContent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content Quality"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内容质量"
+          }
+        }
+      }
+    },
+    "settings.feedback.categoryFeature": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feature Request"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "功能建议"
+          }
+        }
+      }
+    },
+    "settings.feedback.categoryOther": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他"
+          }
+        }
+      }
+    },
+    "settings.feedback.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "详细描述"
+          }
+        }
+      }
+    },
+    "settings.feedback.contentPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe your feedback in detail..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请详细描述你的反馈..."
+          }
+        }
+      }
+    },
+    "settings.feedback.deviceMacDefault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac"
+          }
+        }
+      }
+    },
+    "settings.feedback.history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "历史记录"
+          }
+        }
+      }
+    },
+    "settings.feedback.noHistory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No feedback yet"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无反馈记录"
+          }
+        }
+      }
+    },
+    "settings.feedback.osMacDefault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS"
+          }
+        }
+      }
+    },
+    "settings.feedback.osVersionLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "系统"
+          }
+        }
+      }
+    },
+    "settings.feedback.rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rating"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "评分"
+          }
+        }
+      }
+    },
+    "settings.feedback.subject": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subject"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标题"
+          }
+        }
+      }
+    },
+    "settings.feedback.subjectPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefly describe your feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "简要描述你的反馈"
+          }
+        }
+      }
+    },
+    "settings.feedback.submit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Submit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交"
+          }
+        }
+      }
+    },
+    "settings.feedback.submitted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thank you! Feedback saved."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "感谢反馈！已保存。"
+          }
+        }
+      }
+    },
+    "settings.feedback.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Feedback"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送反馈"
           }
         }
       }
@@ -4183,57 +6220,6 @@
         }
       }
     },
-    "settings.injectDemo.successMessage": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Successfully injected %d demo entries. UI has been updated."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "成功注入 %d 条演示数据，界面已同步更新。"
-          }
-        }
-      }
-    },
-    "settings.injectDemo.successDetail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d notebooks injected: %2$@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已为 %d 个笔记本注入数据：%2$@"
-          }
-        }
-      }
-    },
-    "settings.injectDemo.vaultDetail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ %2$d pages"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ %2$d 条"
-          }
-        }
-      }
-    },
     "settings.injectDemo.injectedNotebooks": {
       "extractionState": "manual",
       "localizations": {
@@ -4247,6 +6233,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "已为 %d 个笔记本注入数据："
+          }
+        }
+      }
+    },
+    "settings.injectDemo.itemsSeparator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "，"
           }
         }
       }
@@ -4268,19 +6271,53 @@
         }
       }
     },
-    "settings.injectDemo.itemsSeparator": {
+    "settings.injectDemo.successDetail": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": ", "
+            "value": "%d notebooks injected: %2$@"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "，"
+            "value": "已为 %d 个笔记本注入数据：%2$@"
+          }
+        }
+      }
+    },
+    "settings.injectDemo.successMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Successfully injected %d demo entries. UI has been updated."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "成功注入 %d 条演示数据，界面已同步更新。"
+          }
+        }
+      }
+    },
+    "settings.injectDemo.vaultDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$d pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$d 条"
           }
         }
       }
@@ -5900,244 +7937,6 @@
         }
       }
     },
-    "onboarding.path.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Get Started"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "开始使用"
-          }
-        }
-      }
-    },
-    "onboarding.path.quickStart": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quick Start"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "快速体验"
-          }
-        }
-      }
-    },
-    "onboarding.path.quickStartDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instantly see what ZhiYu can do"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一键注入演示数据，立即感受完整功能"
-          }
-        }
-      }
-    },
-    "onboarding.path.importData": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导入数据"
-          }
-        }
-      }
-    },
-    "onboarding.path.importDataDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Migrate from files, links or clipboard"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从文件、链接或剪贴板迁移现有笔记"
-          }
-        }
-      }
-    },
-    "onboarding.path.explore": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Explore"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "自己探索"
-          }
-        }
-      }
-    },
-    "onboarding.path.exploreDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start fresh, learn as you go"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "从空白画布开始，用到哪学到哪"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.firstPage": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "First page added to your knowledge base!"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "第一页！已加入知识库"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.firstChat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI is answering based on your knowledge"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 正在基于你的知识回答"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.firstGraph": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge connections ready, explore the graph"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识关联已就绪，拖拽探索连接"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.firstSynthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Insight generated"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "洞察已生成"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.page10": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "10 pages! Try AI Synthesis"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已有 10 页，试试 AI 综合"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.page50": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "50 pages! Your knowledge base is growing"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "50 页！知识库初具规模"
-          }
-        }
-      }
-    },
-    "onboarding.milestone.page100": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "100 pages! Impressive knowledge base"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "100 页！庞大的知识体系"
-          }
-        }
-      }
-    },
     "welcome.subtitle": {
       "extractionState": "manual",
       "localizations": {
@@ -6253,1723 +8052,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "成功同步 %lld 条待办事项"
-          }
-        }
-      }
-    },
-    "errorHTTP": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HTTP Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HTTP 错误"
-          }
-        }
-      }
-    },
-    "settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置"
-          }
-        }
-      }
-    },
-    "errorUnauthorized": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unauthorized"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未授权"
-          }
-        }
-      }
-    },
-    "errorTokenExpired": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Token Expired"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Token 已过期"
-          }
-        }
-      }
-    },
-    "plugin.permission.message": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugin \"%@\" requires the following permissions to function"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件「%@」需要以下权限才能正常工作"
-          }
-        }
-      }
-    },
-    "missingDataPayload": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Missing Data Payload"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "缺少数据负载"
-          }
-        }
-      }
-    },
-    "errorUnexpected": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unexpected Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未知错误"
-          }
-        }
-      }
-    },
-    "invalidHTTPResponse": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid HTTP Response"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无效的 HTTP 响应"
-          }
-        }
-      }
-    },
-    "ondevice.errorFormat": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connection Failed: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接失败: %@"
-          }
-        }
-      }
-    },
-    "logout": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logout"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出"
-          }
-        }
-      }
-    },
-    "sessionInvalidated": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Session Invalidated"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "会话已失效"
-          }
-        }
-      }
-    },
-    "errorInvalidURL": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid URL"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无效的 URL"
-          }
-        }
-      }
-    },
-    "missingRefreshToken": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Missing Refresh Token"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "缺少刷新 Token"
-          }
-        }
-      }
-    },
-    "backup.restore": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restore"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "恢复备份"
-          }
-        }
-      }
-    },
-    "errorServer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "服务器错误"
-          }
-        }
-      }
-    },
-    "errorDecodeFailed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Decode Failed"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "数据解析失败"
-          }
-        }
-      }
-    },
-    "settings.developer.section.tabMaintenance": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maintenance"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "数据维护"
-          }
-        }
-      }
-    },
-    "settings.developer.stressTest.nodes": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d nodes"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个节点"
-          }
-        }
-      }
-    },
-    "settings.developer.showWelcomeBanner": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show Welcome Banner"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示欢迎横幅"
-          }
-        }
-      }
-    },
-    "settings.developer.resetOnboardingDone": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Welcome banner is now visible on the home page"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "欢迎横幅已显示在首页"
-          }
-        }
-      }
-    },
-    "feedback.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "反馈"
-          }
-        }
-      }
-    },
-    "feedback.subject": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subject"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标题"
-          }
-        }
-      }
-    },
-    "feedback.subjectPlaceholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Briefly describe your feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "简要描述你的反馈"
-          }
-        }
-      }
-    },
-    "feedback.category": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Category"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分类"
-          }
-        }
-      }
-    },
-    "feedback.category.bug": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bug Report"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "问题反馈"
-          }
-        }
-      }
-    },
-    "feedback.category.feature": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feature Request"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "功能建议"
-          }
-        }
-      }
-    },
-    "feedback.category.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Content Quality"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "内容质量"
-          }
-        }
-      }
-    },
-    "feedback.category.other": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Other"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "其他"
-          }
-        }
-      }
-    },
-    "feedback.rating": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rating"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "评分"
-          }
-        }
-      }
-    },
-    "feedback.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "详细描述"
-          }
-        }
-      }
-    },
-    "feedback.contentPlaceholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Describe your feedback in detail..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请详细描述你的反馈..."
-          }
-        }
-      }
-    },
-    "feedback.submit": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Submit Feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交反馈"
-          }
-        }
-      }
-    },
-    "feedback.submitted": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thank you! Feedback submitted."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "感谢反馈！已提交。"
-          }
-        }
-      }
-    },
-    "feedback.error": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Failed to submit feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交反馈失败"
-          }
-        }
-      }
-    },
-    "settings.feedback.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Send Feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "发送反馈"
-          }
-        }
-      }
-    },
-    "settings.feedback.subject": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subject"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标题"
-          }
-        }
-      }
-    },
-    "settings.feedback.subjectPlaceholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Briefly describe your feedback"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "简要描述你的反馈"
-          }
-        }
-      }
-    },
-    "settings.feedback.category": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Category"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分类"
-          }
-        }
-      }
-    },
-    "settings.feedback.categoryBug": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bug Report"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "问题反馈"
-          }
-        }
-      }
-    },
-    "settings.feedback.categoryFeature": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feature Request"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "功能建议"
-          }
-        }
-      }
-    },
-    "settings.feedback.categoryContent": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Content Quality"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "内容质量"
-          }
-        }
-      }
-    },
-    "settings.feedback.categoryOther": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Other"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "其他"
-          }
-        }
-      }
-    },
-    "settings.feedback.rating": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rating"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "评分"
-          }
-        }
-      }
-    },
-    "settings.feedback.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "详细描述"
-          }
-        }
-      }
-    },
-    "settings.feedback.contentPlaceholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Describe your feedback in detail..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请详细描述你的反馈..."
-          }
-        }
-      }
-    },
-    "settings.feedback.submit": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Submit"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "提交"
-          }
-        }
-      }
-    },
-    "settings.feedback.submitted": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thank you! Feedback saved."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "感谢反馈！已保存。"
-          }
-        }
-      }
-    },
-    "settings.feedback.appVersionLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "App Version"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "应用版本"
-          }
-        }
-      }
-    },
-    "settings.feedback.osVersionLabel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统"
-          }
-        }
-      }
-    },
-    "settings.feedback.osMacDefault": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "macOS"
-          }
-        }
-      }
-    },
-    "settings.feedback.deviceMacDefault": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mac"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mac"
-          }
-        }
-      }
-    },
-    "settings.feedback.history": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "History"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "历史记录"
-          }
-        }
-      }
-    },
-    "settings.feedback.noHistory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No feedback yet"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无反馈记录"
-          }
-        }
-      }
-    },
-    "auth.profileAndQuota": {
-      "comment": "个人信息与套餐",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "个人信息与套餐"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Profile & Plan"
-          }
-        }
-      }
-    },
-    "auth.currentSubscription": {
-      "comment": "当前套餐",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "当前套餐"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Current Plan"
-          }
-        }
-      }
-    },
-    "auth.litePlan": {
-      "comment": "Lite 基础版",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lite 基础版"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lite"
-          }
-        }
-      }
-    },
-    "auth.proPlan": {
-      "comment": "Pro 专业版",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro 专业版"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro"
-          }
-        }
-      }
-    },
-    "auth.upgradePro": {
-      "comment": "升级 Pro",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "升级 Pro"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upgrade to Pro"
-          }
-        }
-      }
-    },
-    "auth.nickname": {
-      "comment": "昵称",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "昵称"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nickname"
-          }
-        }
-      }
-    },
-    "auth.avatar": {
-      "comment": "修改头像",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "修改头像"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Change Avatar"
-          }
-        }
-      }
-    },
-    "auth.saveChanges": {
-      "comment": "保存修改",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存修改"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Changes"
-          }
-        }
-      }
-    },
-    "auth.saveSuccess": {
-      "comment": "保存成功",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存成功"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saved"
-          }
-        }
-      }
-    },
-    "auth.saveFailed": {
-      "comment": "保存失败，请重试",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "保存失败，请重试"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save failed, please try again"
-          }
-        }
-      }
-    },
-    "auth.uploadingAvatar": {
-      "comment": "正在上传头像...",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在上传头像..."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uploading avatar..."
-          }
-        }
-      }
-    },
-    "auth.uploadSuccess": {
-      "comment": "头像上传成功",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "头像上传成功"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Avatar uploaded"
-          }
-        }
-      }
-    },
-    "auth.uploadFailed": {
-      "comment": "头像上传失败",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "头像上传失败"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upload failed"
-          }
-        }
-      }
-    },
-    "auth.quota.vaultUsage": {
-      "comment": "金库",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金库"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vaults"
-          }
-        }
-      }
-    },
-    "auth.quota.pagesUsage": {
-      "comment": "知识页",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识页"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        }
-      }
-    },
-    "auth.quota.pluginsUsage": {
-      "comment": "插件",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        }
-      }
-    },
-    "auth.purchasing": {
-      "comment": "正在处理支付...",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在处理支付..."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Processing payment..."
-          }
-        }
-      }
-    },
-    "auth.selectCycle": {
-      "comment": "选择订阅周期",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择订阅周期"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Billing Cycle"
-          }
-        }
-      }
-    },
-    "auth.monthly": {
-      "comment": "月付",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月付"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Monthly"
-          }
-        }
-      }
-    },
-    "auth.yearly": {
-      "comment": "年付",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "年付"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yearly"
-          }
-        }
-      }
-    },
-    "auth.monthlyPrice": {
-      "comment": "¥38/月",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¥38/月"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¥38/mo"
-          }
-        }
-      }
-    },
-    "auth.yearlyPrice": {
-      "comment": "¥368/年",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¥368/年"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¥368/yr"
-          }
-        }
-      }
-    },
-    "auth.bestValue": {
-      "comment": "最划算",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最划算"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best Value"
-          }
-        }
-      }
-    },
-    "auth.selectPayment": {
-      "comment": "选择支付方式",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择支付方式"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Payment Method"
-          }
-        }
-      }
-    },
-    "auth.confirmPurchase": {
-      "comment": "确认升级",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "确认升级"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Confirm Upgrade"
-          }
-        }
-      }
-    },
-    "auth.purchaseDisclaimer": {
-      "comment": "订阅将通过 App Store 账户扣款，可随时在设置中取消。",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "订阅将通过 App Store 账户扣款，可随时在设置中取消。"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscription billed via App Store. Cancel anytime in Settings."
-          }
-        }
-      }
-    },
-    "auth.purchasePending": {
-      "comment": "支付审核中，请稍后查看",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "支付审核中，请稍后查看"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Payment pending, check back later"
-          }
-        }
-      }
-    },
-    "auth.purchaseFailed": {
-      "comment": "支付失败，请重试",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "支付失败，请重试"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Payment failed, please try again"
-          }
-        }
-      }
-    },
-    "auth.verifyFailed": {
-      "comment": "凭证校验失败，请联系客服",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "凭证校验失败，请联系客服"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verification failed, please contact support"
-          }
-        }
-      }
-    },
-    "auth.productNotFound": {
-      "comment": "未找到该商品，请稍后重试",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未找到该商品，请稍后重试"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Product not found, please try again"
-          }
-        }
-      }
-    },
-    "auth.upgradeSuccessTitle": {
-      "comment": "升级成功！",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "升级成功！"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upgrade Successful!"
-          }
-        }
-      }
-    },
-    "auth.upgradeSuccessMessage": {
-      "comment": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Welcome to Pro! Enjoy unlimited storage and AI features."
-          }
-        }
-      }
-    },
-    "auth.startUsingPro": {
-      "comment": "开始使用 Pro",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "开始使用 Pro"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start Using Pro"
-          }
-        }
-      }
-    },
-    "auth.feature.vaults": {
-      "comment": "金库数量",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金库数量"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vaults"
-          }
-        }
-      }
-    },
-    "auth.feature.pages": {
-      "comment": "知识页上限",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识页上限"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages Limit"
-          }
-        }
-      }
-    },
-    "auth.feature.plugins": {
-      "comment": "插件数量",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件数量"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        }
-      }
-    },
-    "auth.feature.aiSynth": {
-      "comment": "AI 合成能力",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 合成能力"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Synthesis"
-          }
-        }
-      }
-    },
-    "auth.feature.vaultsLiteValue": {
-      "comment": "2 个",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "2 个"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "2"
-          }
-        }
-      }
-    },
-    "auth.feature.vaultsProValue": {
-      "comment": "10 个",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "10 个"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "10"
-          }
-        }
-      }
-    },
-    "auth.feature.pagesLiteValue": {
-      "comment": "1,000 页",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1,000 页"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1,000"
-          }
-        }
-      }
-    },
-    "auth.feature.pagesProValue": {
-      "comment": "50,000 页",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "50,000 页"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "50,000"
-          }
-        }
-      }
-    },
-    "auth.feature.pluginsLiteValue": {
-      "comment": "3 个",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 个"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3"
-          }
-        }
-      }
-    },
-    "auth.feature.pluginsProValue": {
-      "comment": "不限",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不限"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlimited"
-          }
-        }
-      }
-    },
-    "auth.feature.aiSynthLiteValue": {
-      "comment": "基础",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "基础"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Basic"
-          }
-        }
-      }
-    },
-    "auth.feature.aiSynthProValue": {
-      "comment": "全量",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全量"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Full"
-          }
-        }
-      }
-    },
-    "auth.payment.apple": {
-      "comment": "Apple Pay / 内购",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apple Pay / 内购"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apple Pay / In-App"
-          }
-        }
-      }
-    },
-    "auth.payment.wechat": {
-      "comment": "微信支付",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "微信支付"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "WeChat Pay"
-          }
-        }
-      }
-    },
-    "auth.payment.alipay": {
-      "comment": "支付宝",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "支付宝"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alipay"
           }
         }
       }

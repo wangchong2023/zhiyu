@@ -10038,6 +10038,23 @@
           }
         }
       }
+    },
+    "search.filterTags": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter tags..."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "筛选标签..."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

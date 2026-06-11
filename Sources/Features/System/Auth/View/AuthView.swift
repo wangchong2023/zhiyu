@@ -17,7 +17,8 @@ struct AuthView: View {
     
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    @State private var isAgreementChecked: Bool = false
+    @State private var isAgreementChecked: Bool = true
+    @State private var showPrivacySheet: Bool = false
     
     var body: some View {
         ZStack {
@@ -59,6 +60,30 @@ struct AuthView: View {
                 .padding(.vertical, Spacing.wide)
             }
         }
+        .sheet(isPresented: $showPrivacySheet) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Spacing.medium) {
+                        Text(L10n.Auth.privacyPolicyContent)
+                            .font(.body)
+                            .foregroundStyle(.appText)
+                            .lineSpacing(Spacing.tiny)
+                        
+                        Spacer()
+                    }
+                    .padding()
+                }
+                .navigationTitle(L10n.Auth.privacyPolicyTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(L10n.Common.confirm) {
+                            showPrivacySheet = false
+                        }
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - 子视图
@@ -69,12 +94,12 @@ struct AuthView: View {
                 Circle()
                     .fill(LinearGradient(colors: [.appAccent.opacity(0.2), .appConcept.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: DesignSystem.Domain.Auth.logoBackgroundSize, height: DesignSystem.Domain.Auth.logoBackgroundSize)
-                    .blur(radius: 10)
+                    .blur(radius: Spacing.shadowRadius)
                 
                 Image(systemName: DesignSystem.Icons.knowledge)
                     .font(.system(size: DesignSystem.displayFontSize * 1.5))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(0.4), radius: 10, y: 4)
+                    .shadow(color: .appAccent.opacity(0.4), radius: Spacing.shadowRadius, y: Spacing.shadowY)
             }
             
             VStack(spacing: Spacing.small) { // 增加间距到 8px，完全拉开字距，告别拥挤
@@ -108,7 +133,7 @@ struct AuthView: View {
             .padding(.vertical, DesignSystem.Domain.Auth.actionButtonVerticalPadding)
             .background(Color.appAccent)
             .clipShape(Capsule())
-            .shadow(color: Color.appAccent.opacity(0.3), radius: 10, y: 5)
+            .shadow(color: Color.appAccent.opacity(0.3), radius: Spacing.shadowRadius, y: Spacing.shadowY)
         }
         .disabled(isLoading)
         .accessibilityIdentifier("oneClickLoginButton")
@@ -121,15 +146,22 @@ struct AuthView: View {
             }) {
                 Image(systemName: isAgreementChecked ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(isAgreementChecked ? Color.appAccent : Color.appSecondary)
-                    .font(.system(size: 16))
+                    .font(.system(size: Spacing.smallIconSize))
             }
             .accessibilityIdentifier("agreementCheckbox")
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(L10n.Auth.agreementText)
+            VStack(alignment: .leading, spacing: Spacing.tiny) {
+                Text(LocalizedStringKey(L10n.Auth.agreementText))
                     .font(.caption2)
                     .foregroundStyle(.appSecondary)
-                    .lineSpacing(2)
+                    .lineSpacing(Spacing.atomic)
+                    .environment(\.openURL, OpenURLAction { url in
+                        if url.scheme == "privacy" {
+                            showPrivacySheet = true
+                            return .handled
+                        }
+                        return .systemAction
+                    })
                 
                 if !isAgreementChecked {
                     Text(L10n.Auth.pleaseCheckAgreement)
@@ -144,24 +176,26 @@ struct AuthView: View {
     private var thirdPartySection: some View {
         VStack(spacing: Spacing.large) {
             HStack {
-                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
+                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: DesignSystem.borderWidth)
                 Text(L10n.Auth.moreLoginMethods)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
                     .lineLimit(1)
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.horizontal, Spacing.small)
-                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: 1)
+                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: DesignSystem.borderWidth)
             }
             
-            HStack(spacing: Spacing.large) { // 加大间距以容纳5个图标
-                ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) { // 微信登录
+            HStack(spacing: Spacing.large) { // 屏蔽了微信和短信，调整了间距
+                /* 暂时屏蔽微信登录
+                ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) {
                     if authService.isMockMode {
                         handleThirdPartyLogin(using: WeChatAuthStrategy())
                     } else {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
                     }
                 }
+                */
                 ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
                     handleThirdPartyLogin(using: AppleAuthStrategy())
                 }
@@ -179,13 +213,15 @@ struct AuthView: View {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
                     }
                 }
-                ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) { // 手机短信登录
+                /* 暂时屏蔽手机短信登录
+                ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) {
                     if authService.isMockMode {
                         handleThirdPartyLogin(using: CarrierAuthStrategy())
                     } else {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
                     }
                 }
+                */
             }
         }
     }
@@ -339,7 +375,7 @@ struct ThirdPartyIconButton: View {
                 Circle()
                     .fill(Color.appCard)
                     .frame(width: DesignSystem.Domain.Auth.thirdPartyIconContainerSize, height: DesignSystem.Domain.Auth.thirdPartyIconContainerSize)
-                    .shadow(color: .primary.opacity(0.05), radius: 4, y: 2)
+                    .shadow(color: .primary.opacity(0.05), radius: Spacing.tiny, y: Spacing.atomic)
                 
                 if isSystem {
                     Image(systemName: icon)
@@ -363,7 +399,7 @@ struct ThirdPartyIconButton: View {
             }
             .overlay(
                 Circle()
-                    .stroke(color.opacity(0.5), lineWidth: 1) // 根据颜色设置边框，与参考图一致
+                    .stroke(color.opacity(0.5), lineWidth: DesignSystem.borderWidth) // 根据颜色设置边框，与参考图一致
             )
         }
         .buttonStyle(.plain)

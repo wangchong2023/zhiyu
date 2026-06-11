@@ -1,23 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugins"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件"
-          }
-        }
-      }
-    },
     "collab.connectedUsers": {
       "extractionState": "manual",
       "localizations": {
@@ -2292,6 +2275,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "此插件请求权限：%@"
+          }
+        }
+      }
+    },
+    "plugin.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件"
           }
         }
       }

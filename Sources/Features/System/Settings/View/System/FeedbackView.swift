@@ -32,9 +32,12 @@ struct FeedbackView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                Picker("", selection: $selectedTab) {
-                    Text(L10n.Settings.Feedback.submit).tag(0)
+            ZStack {
+                ThemeManager.shared.pageBackground().ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    Picker("", selection: $selectedTab) {
+                        Text(L10n.Settings.Feedback.submit).tag(0)
                     Text(L10n.Settings.Feedback.history).tag(1)
                 }
                 .pickerStyle(.segmented)
@@ -53,6 +56,7 @@ struct FeedbackView: View {
                     Button(L10n.Common.cancel) { dismiss() }
                 }
             }
+            }
         }
         .task { await loadHistory() }
     }
@@ -64,6 +68,8 @@ struct FeedbackView: View {
             Section(L10n.Settings.Feedback.subject) {
                 TextField(L10n.Settings.Feedback.subjectPlaceholder, text: $titleText)
             }
+            .appListRowBackground()
+            
             Section(L10n.Settings.Feedback.category) {
                 Picker(L10n.Settings.Feedback.category, selection: $selectedCategory) {
                     ForEach(FeedbackCategory.allCases, id: \.self) { cat in
@@ -72,6 +78,8 @@ struct FeedbackView: View {
                 }
                 .pickerStyle(.segmented)
             }
+            .appListRowBackground()
+            
             Section(L10n.Settings.Feedback.rating) {
                 HStack {
                     Text(L10n.Settings.Feedback.rating)
@@ -83,6 +91,8 @@ struct FeedbackView: View {
                     }
                 }
             }
+            .appListRowBackground()
+            
             Section(L10n.Settings.Feedback.content) {
                 TextEditor(text: $contentText)
                     .frame(minHeight: DesignSystem.FeedbackMetrics.textEditorHeight)
@@ -96,6 +106,8 @@ struct FeedbackView: View {
                         }
                     }
             }
+            .appListRowBackground()
+            
             Section {
                 HStack {
                     Text(L10n.Settings.Feedback.appVersionLabel)
@@ -112,6 +124,8 @@ struct FeedbackView: View {
                     #endif
                 }
             }
+            .appListRowBackground()
+            
             Section {
                 Button(action: submit) {
                     HStack {
@@ -122,7 +136,9 @@ struct FeedbackView: View {
                 }
                 .disabled(titleText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSubmitting)
             }
+            .appListRowBackground()
         }
+        .scrollContentBackground(.hidden)
     }
 
     // MARK: - 历史列表

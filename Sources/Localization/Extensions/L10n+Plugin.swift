@@ -15,7 +15,7 @@ extension L10n {
         public static let tableName = "Plugin"
         public static var t: String { tableName }
         // MARK: - 通用
-        public static var title: String { tr("title") }
+        public static var title: String { Plugin.tr("plugin.title") }
 
         /// permTitle — 全显式 case，杜绝动态拼接，所有 key 都可被静态分析检测
         /// - Returns: 本地化权限名称

@@ -73,6 +73,16 @@ private enum TagVisual {
     static let fontSize: CGFloat = 10
 }
 
+private enum TooltipVisual {
+    static let iconHitTarget: CGFloat = 24
+    static let animationDuration: TimeInterval = 0.2
+    static let shadowOpacity: Double = 0.1
+    static let shadowRadius: CGFloat = 5
+    static let shadowOffsetY: CGFloat = 2
+    static let popupOffsetY: CGFloat = -30
+    static let maxZIndex: Double = 100
+}
+
 // MARK: - 标签缩写
 
 private enum MetricTag {
@@ -390,17 +400,31 @@ struct RAGEvaluationView: View {
         return Image(systemName: "info.circle")
             .font(.caption)
             .foregroundStyle(isActive ? .appAccent : .appSecondary.opacity(0.5))
-            .onTapGesture { activeTooltip = isActive ? nil : id }
+            .frame(width: TooltipVisual.iconHitTarget, height: TooltipVisual.iconHitTarget)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: TooltipVisual.animationDuration)) {
+                    activeTooltip = isActive ? nil : id
+                }
+            }
             .overlay(alignment: .top) {
                 if isActive {
                     Text(tip).font(.caption2).foregroundStyle(.appSecondary)
                         .padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)
                         .background(.regularMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .frame(maxWidth: 260).offset(y: -DesignSystem.largeIconSize)
-                        .onTapGesture { activeTooltip = nil }
+                        .shadow(color: .black.opacity(TooltipVisual.shadowOpacity), radius: TooltipVisual.shadowRadius, y: TooltipVisual.shadowOffsetY)
+                        .frame(maxWidth: 260)
+                        .offset(y: TooltipVisual.popupOffsetY)
+                        .zIndex(TooltipVisual.maxZIndex)
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: TooltipVisual.animationDuration)) {
+                                activeTooltip = nil
+                            }
+                        }
                 }
             }
+            .zIndex(isActive ? TooltipVisual.maxZIndex : 0)
     }
 
     // MARK: - 环形百分比卡片
