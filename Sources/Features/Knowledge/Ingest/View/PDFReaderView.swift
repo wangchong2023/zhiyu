@@ -317,7 +317,7 @@ struct PDFReaderView: View {
                     Button(action: { highlightColor = color }) {
                         Circle()
                             .fill(Color.pdfHighlight(color))
-                            .frame(width: 24, height: 24)
+                            .frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
                             .overlay(
                                 Circle()
                                     .stroke(Color.appText, lineWidth: highlightColor == color ? 2 : 0)

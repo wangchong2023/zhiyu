@@ -37,7 +37,7 @@ public struct AppLottieView: View {
             // 如果找不到 Lottie 资源文件，优雅降级为纯 SwiftUI 的呼吸灯
             ZStack {
                 Circle()
-                    .fill(Color.appAccent.opacity(0.2))
+                    .fill(Color.appAccent.opacity(DesignSystem.Opacity.medium))
                 Circle()
                     .stroke(Color.appAccent, lineWidth: 2)
                     .modifier(PulsingDot(delay: 0))

@@ -149,6 +149,8 @@ public struct UserDTO: Codable, Sendable {
     public let phone: String?
     public let email: String?
     public let avatar: String?
+    public let gender: Int?
+    public let birthday: String?
 }
 
 /// 登录统一响应封装

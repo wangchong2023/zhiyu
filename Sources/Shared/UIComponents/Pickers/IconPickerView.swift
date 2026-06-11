@@ -83,7 +83,7 @@ struct IconPickerView: View {
             Image(systemName: selectedIcon ?? "person.text.rectangle.fill")
                 .font(.title)
                 .foregroundStyle(.appAccent)
-                .frame(width: 48, height: 48)
+                .frame(width: DesignSystem.IconSize.huge, height: DesignSystem.IconSize.huge)
                 .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
 
@@ -136,8 +136,8 @@ struct IconPickerView: View {
                     }) {
                         Image(systemName: icon)
                             .font(.title3)
-                            .frame(width: 44, height: 44)
-                            .background(selectedIcon == icon ? Color.appAccent.opacity(0.25) : Color.appCard)
+                            .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
+                            .background(selectedIcon == icon ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.appCard)
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
                             .foregroundStyle(selectedIcon == icon ? .appAccent : .appText)
                             .overlay(

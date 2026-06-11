@@ -214,7 +214,7 @@ final class VaultDataIsolationTests: XCTestCase {
     // MARK: - 演示数据注入测试用例
     
     /// 测试核心业务：验证在注入演示数据时，能够彻底清理当前金库的原有旧数据，并成功填充 5 个标准的演示页面。
-    /// 职责说明：此测试验证 `DemoDataGenerator.generate(in:)` 功能在多金库模式下的行为，确保数据覆盖与结构安全，无任何硬编码 SQL。
+    /// 职责说明：此测试验证 `InitialNotebookGenerator.generate(in:)` 功能在多金库模式下的行为，确保数据覆盖与结构安全，无任何硬编码 SQL。
     func testDemoDataGeneration() async throws {
         // 🚀 物理挂载切换至 笔记本 A
         print("🎬 【Demo Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
@@ -243,9 +243,9 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(initialPages.count, 1, "注入前应该有 1 个旧页面")
         XCTAssertEqual(initialPages.first?.title, oldPageTitle, "旧页面的标题应当一致")
         
-        // 2. DemoDataGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
-        print("🎬 调用 DemoDataGenerator 注入演示数据")
-        let generatedCount = try await DemoDataGenerator.generate(in: store)
+        // 2. InitialNotebookGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
+        print("🎬 调用 InitialNotebookGenerator 注入演示数据")
+        let generatedCount = try await InitialNotebookGenerator.generate(in: store)
         let expectedCount = 17
         XCTAssertEqual(generatedCount, expectedCount,
                        "应生成 \(expectedCount) 个演示页面")
@@ -355,7 +355,7 @@ final class VaultDataIsolationTests: XCTestCase {
     }
     
     /// 测试开发工具：生成指定节点数量的图谱压力测试数据。
-    /// 职责说明：验证 `DemoDataGenerator.generateStressTest(in:count:)` 能够按指定数量成功创建图谱压测节点，并建立节点间的随机双向引用，且不使用任何硬编码的 SQL。
+    /// 职责说明：验证 `InitialNotebookGenerator.generateStressTest(in:count:)` 能够按指定数量成功创建图谱压测节点，并建立节点间的随机双向引用，且不使用任何硬编码的 SQL。
     func testDeveloperStressTestDataGeneration() async throws {
         // 🚀 物理挂载切换至 笔记本 A
         print("🎬 【Stress Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
@@ -366,8 +366,8 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 1. 运行压力测试数据生成器（指定生成 50 个节点，避免跑过久导致测试挂起超时）
         let targetCount = 50
-        print("🎬 调用 DemoDataGenerator.generateStressTest 生成 \(targetCount) 个压测节点")
-        let count = try await DemoDataGenerator.generateStressTest(in: store, count: targetCount)
+        print("🎬 调用 InitialNotebookGenerator.generateStressTest 生成 \(targetCount) 个压测节点")
+        let count = try await InitialNotebookGenerator.generateStressTest(in: store, count: targetCount)
         XCTAssertEqual(count, targetCount, "生成器返回的数量应当与期望一致")
         
         // 2. 从物理库中抓取全量页面，校验是否为 50 个

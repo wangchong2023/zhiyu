@@ -55,7 +55,7 @@ struct BacklinksView: View {
                                 
                                 Image(systemName: linkedPage.displayIcon)
                                     .foregroundStyle(Color.fromModelColorName(linkedPage.pageType.colorName))
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: DesignSystem.IconSize.medium, height: DesignSystem.IconSize.medium)
                                     .background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass))
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                                 
@@ -93,7 +93,7 @@ struct BacklinksView: View {
                                 
                                 Image(systemName: linkingPage.displayIcon)
                                     .foregroundStyle(Color.fromModelColorName(linkingPage.pageType.colorName))
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: DesignSystem.IconSize.medium, height: DesignSystem.IconSize.medium)
                                     .background(Color.fromModelColorName(linkingPage.pageType.colorName).opacity(DesignSystem.Opacity.glass))
                                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                                 

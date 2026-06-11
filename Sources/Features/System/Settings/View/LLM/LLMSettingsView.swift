@@ -225,11 +225,11 @@ struct LLMSettingsView: View {
                     }
                 }
                 .padding()
-                .background(Color.appCard.opacity(0.8))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                        .stroke(Color.appBorder.opacity(0.8), lineWidth: 1)
+                        .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: 1)
                 )
             }
             // Base URL
@@ -242,11 +242,11 @@ struct LLMSettingsView: View {
                     .font(.system(.body, design: .monospaced))
                     .foregroundStyle(.appText)
                     .padding()
-                    .background(Color.appCard.opacity(0.8))
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                            .stroke(Color.appBorder.opacity(0.8), lineWidth: 1)
+                            .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: 1)
                     )
                     #if !os(watchOS)
                     .autocapitalization(.none)
@@ -263,11 +263,11 @@ struct LLMSettingsView: View {
                     .font(.system(.body, design: .monospaced))
                     .foregroundStyle(.appText)
                     .padding()
-                    .background(Color.appCard.opacity(0.8))
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                            .stroke(Color.appBorder.opacity(0.8), lineWidth: 1)
+                            .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: 1)
                     )
                     #if !os(watchOS)
                     .autocapitalization(.none)
@@ -282,7 +282,7 @@ struct LLMSettingsView: View {
                                 .font(.caption)
                                 .padding(.horizontal, DesignSystem.medium - 2)
                                 .padding(.vertical, DesignSystem.small - 2)
-                                .background(config.model == model ? Color.appAccent.opacity(0.2) : Color.appCard.opacity(0.8))
+                                .background(config.model == model ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.appCard.opacity(DesignSystem.Opacity.prominent))
                                 .clipShape(Capsule())
                                 .foregroundStyle(config.model == model ? .appAccent : .appSecondary)
                         }

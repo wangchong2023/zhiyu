@@ -75,7 +75,7 @@ struct URLImportSheet: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                             .stroke(
-                                firstInvalidLine != nil ? Color.red.opacity(0.5) : Color.appAccent.opacity(DesignSystem.Opacity.glass * 2),
+                                firstInvalidLine != nil ? Color.red.opacity(DesignSystem.Opacity.soft) : Color.appAccent.opacity(DesignSystem.Opacity.glass * 2),
                                 lineWidth: DesignSystem.borderWidth
                             )
                     )

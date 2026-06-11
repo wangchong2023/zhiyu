@@ -76,14 +76,14 @@ public struct OnDeviceTestView: View {
                 #endif
             }
             .font(.body)
-            .frame(height: 100)
+            .frame(height: DesignSystem.Metrics.largeIconBoxSize)
             .padding(DesignSystem.atomic + DesignSystem.small) /* 10pt = 2+8 */
             .scrollContentBackground(.hidden)
-            .background(Color.appCard.opacity(0.4))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: Spacing.standardRadius)
-                    .strokeBorder(Color.appAccent.opacity(0.2), lineWidth: 1.5)
+                    .strokeBorder(Color.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: 1.5)
             )
         }
     }
@@ -106,7 +106,8 @@ public struct OnDeviceTestView: View {
             .padding(.vertical, 14)
             .background(
                 LinearGradient(
-                    colors: isGenerating ? [.gray, .gray.opacity(0.8)] : [.appAccent, .appAccent.opacity(0.85)],
+                    // swiftlint:disable:next magic_numbers_opacity
+                    colors: isGenerating ? [.gray, .gray.opacity(DesignSystem.Opacity.prominent)] : [.appAccent, .appAccent.opacity(0.85)],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -158,7 +159,7 @@ public struct OnDeviceTestView: View {
                             .foregroundStyle(.appAccent)
                             .padding(.horizontal, DesignSystem.small)
                             .padding(.vertical, DesignSystem.tiny)
-                            .background(Color.appAccent.opacity(0.12))
+                            .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                             .clipShape(Capsule())
                     }
                 }
@@ -172,10 +173,11 @@ public struct OnDeviceTestView: View {
                         .padding()
                 }
                 .frame(maxHeight: 220)
-                .background(Color.appCard.opacity(0.3))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.shadow))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
                 .overlay(
                     RoundedRectangle(cornerRadius: Spacing.standardRadius)
+                        // swiftlint:disable:next magic_numbers_opacity
                         .strokeBorder(Color.appText.opacity(0.06), lineWidth: 1)
                 )
             }
@@ -232,7 +234,8 @@ public struct OnDeviceModelRow: View {
             // 左侧精美模型图标
             ZStack {
                 Circle()
-                    .fill(isSelected ? Color.appAccent.opacity(0.15) : Color.appSecondary.opacity(0.08))
+                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.glass) : Color.appSecondary.opacity(DesignSystem.Opacity.light))
+                    // swiftlint:disable:next magic_numbers_frame
                     .frame(width: 38, height: 38)
                 
                 Image(systemName: model.icon)
@@ -257,7 +260,8 @@ public struct OnDeviceModelRow: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, DesignSystem.tightPadding)
                         .padding(.vertical, DesignSystem.atomic)
-                        .background(isSelected ? Color.appAccent.opacity(0.18) : Color.appSecondary.opacity(0.1))
+                        // swiftlint:disable:next magic_numbers_opacity
+                        .background(isSelected ? Color.appAccent.opacity(0.18) : Color.appSecondary.opacity(DesignSystem.Opacity.subtle))
                         .foregroundStyle(isSelected ? .appAccent : .appSecondary)
                         .clipShape(Capsule())
                 }
@@ -273,19 +277,20 @@ public struct OnDeviceModelRow: View {
                     .transition(.scale.combined(with: .opacity))
             } else {
                 Circle()
-                    .stroke(Color.appSecondary.opacity(0.3), lineWidth: 1.5)
-                    .frame(width: 20, height: 20)
+                    .stroke(Color.appSecondary.opacity(DesignSystem.Opacity.shadow), lineWidth: 1.5)
+                    .frame(width: DesignSystem.IconSize.small, height: DesignSystem.IconSize.small)
             }
         }
         .padding(.vertical, DesignSystem.medium)
         .padding(.horizontal, DesignSystem.standardPadding)
         .background(
             RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                .fill(isSelected ? Color.appAccent.opacity(0.06) : Color.appCard.opacity(0.3))
+                // swiftlint:disable:next magic_numbers_opacity
+                .fill(isSelected ? Color.appAccent.opacity(0.06) : Color.appCard.opacity(DesignSystem.Opacity.shadow))
         )
         .overlay(
             RoundedRectangle(cornerRadius: Spacing.cardRadius)
-                .strokeBorder(isSelected ? Color.appAccent.opacity(0.3) : Color.appText.opacity(0.05), lineWidth: 1.5)
+                .strokeBorder(isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.shadow) : Color.appText.opacity(DesignSystem.Opacity.ghost), lineWidth: 1.5)
         )
         .contentShape(Rectangle())
         .onTapGesture {
@@ -320,7 +325,7 @@ struct OnDeviceInfoRow: View {
             Image(systemName: icon)
                 .font(.footnote)
                 .foregroundStyle(.appAccent)
-                .frame(width: 18)
+                .frame(width: DesignSystem.large)
             
             Text(text)
                 .font(.caption)

@@ -92,8 +92,8 @@ struct OCRScanView: View {
             .navigationTitle(L10n.Ingest.OCR.title)
 .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button(L10n.Common.cancel) {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) {
                         dismiss()
                     }
                 }

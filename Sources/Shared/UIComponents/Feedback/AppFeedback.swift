@@ -28,7 +28,7 @@ public struct AppPulseDot: View {
     public var body: some View {
         ZStack {
             Circle()
-                .fill(color.opacity(0.3))
+                .fill(color.opacity(DesignSystem.Opacity.shadow))
                 .frame(width: size * 2, height: size * 2)
                 .scaleEffect(isPulsing ? Spacing.Decorator.pulseScale : 1.0)
                 .opacity(isPulsing ? 0 : 1)
@@ -92,7 +92,7 @@ public struct ShimmerModifier: ViewModifier {
                     LinearGradient(
                         colors: [
                             .clear,
-                            Color.white.opacity(0.2),
+                            Color.white.opacity(DesignSystem.Opacity.medium),
                             .clear
                         ],
                         startPoint: .leading,
@@ -187,7 +187,7 @@ public struct AppGlow: View {
 
             // 内层光晕
             Circle()
-                .fill(color.opacity(0.2))
+                .fill(color.opacity(DesignSystem.Opacity.medium))
                 .frame(width: size * Spacing.Decorator.glowScaleMedium, height: size * Spacing.Decorator.glowScaleMedium)
                 .blur(radius: Spacing.Decorator.glowBlurSmall)
 

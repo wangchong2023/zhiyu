@@ -126,7 +126,7 @@ public struct NotebookHubView: View {
             if !bindableViewModel.searchText.wrappedValue.isEmpty {
                 Button { bindableViewModel.searchText.wrappedValue = "" } label: {
                     Image(systemName: DesignSystem.Icons.errorCircle)
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 }
             }
         }
@@ -192,6 +192,7 @@ public struct NotebookHubView: View {
             Image(systemName: DesignSystem.Icons.sparkles)
                 .font(.callout.weight(.bold))
                 .foregroundStyle(.appAccent)
+                .padding(.leading, 4)
         }
         .buttonStyle(.plain)
     }
@@ -257,7 +258,7 @@ struct WelcomeBannerView: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .padding(6)
-                    .background(Color.secondary.opacity(0.1))
+                    .background(Color.secondary.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(Circle())
             }
         }

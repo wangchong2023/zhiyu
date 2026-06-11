@@ -41,7 +41,7 @@ struct PageDetailHeader: View {
             }
             .padding(.horizontal, DesignSystem.medium)
             .padding(.vertical, DesignSystem.small)
-            .background(Color.appCard.opacity(0.4))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #else
             DisclosureGroup(
@@ -59,7 +59,7 @@ struct PageDetailHeader: View {
             .tint(.appSecondary)
             .padding(.horizontal, DesignSystem.medium)
             .padding(.vertical, DesignSystem.small)
-            .background(Color.appCard.opacity(0.4))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
             #endif
         }
@@ -92,7 +92,7 @@ struct PageDetailHeader: View {
                 .foregroundStyle(.appAccent)
                 .padding(.horizontal, DesignSystem.tightPadding)
                 .padding(.vertical, DesignSystem.atomic)
-                .background(Color.appAccent.opacity(0.1))
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                 .clipShape(Capsule())
                 .transition(.opacity.combined(with: .scale))
             }
@@ -156,16 +156,16 @@ struct PageDetailHeader: View {
                         .padding(.vertical, DesignSystem.tiny)
                         .background(
                             isAlias ? 
-                            Color.appSource.opacity(0.1) : 
-                            Color.appAccent.opacity(0.1)
+                            Color.appSource.opacity(DesignSystem.Opacity.subtle) : 
+                            Color.appAccent.opacity(DesignSystem.Opacity.subtle)
                         )
                         .clipShape(Capsule())
                         .overlay(
                             Capsule()
                                 .stroke(
                                     isAlias ? 
-                                    Color.appSource.opacity(0.2) : 
-                                    Color.appAccent.opacity(0.2), 
+                                    Color.appSource.opacity(DesignSystem.Opacity.medium) : 
+                                    Color.appAccent.opacity(DesignSystem.Opacity.medium), 
                                     lineWidth: 0.5
                                 )
                         )
@@ -214,7 +214,7 @@ private struct TypeBadge: View {
         }
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.tiny)
-        .background(Color.fromModelColorName(page.pageType.colorName).opacity(0.2))
+        .background(Color.fromModelColorName(page.pageType.colorName).opacity(DesignSystem.Opacity.medium))
         .clipShape(Capsule())
         .foregroundStyle(Color.fromModelColorName(page.pageType.colorName))
         .accessibilityElement(children: .combine)
@@ -232,7 +232,7 @@ private struct StatusBadge: View {
         HStack(spacing: DesignSystem.tiny) {
             Circle()
                 .fill(Color.fromModelColorName(page.status.colorName))
-                .frame(width: 6, height: 6)
+                .frame(width: DesignSystem.IconSize.atomic, height: DesignSystem.IconSize.atomic)
             Text(page.status.displayName)
                 .font(.caption)
         }

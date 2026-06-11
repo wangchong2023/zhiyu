@@ -99,14 +99,14 @@ struct AuthView: View {
         VStack(spacing: Spacing.giant) { // 增加空气感，给予 Logo 到主标题足够的呼吸空间
             ZStack {
                 Circle()
-                    .fill(LinearGradient(colors: [.appAccent.opacity(0.2), .appConcept.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.medium), .appConcept.opacity(DesignSystem.Opacity.subtle)], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: DesignSystem.Domain.Auth.logoBackgroundSize, height: DesignSystem.Domain.Auth.logoBackgroundSize)
                     .blur(radius: Spacing.shadowRadius)
                 
                 Image(systemName: DesignSystem.Icons.knowledge)
                     .font(.system(size: DesignSystem.displayFontSize * 1.5))
                     .foregroundStyle(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(color: .appAccent.opacity(0.4), radius: Spacing.shadowRadius, y: Spacing.shadowY)
+                    .shadow(color: .appAccent.opacity(DesignSystem.Opacity.disabled), radius: Spacing.shadowRadius, y: Spacing.shadowY)
             }
             
             VStack(spacing: Spacing.small) { // 增加间距到 8px，完全拉开字距，告别拥挤
@@ -140,7 +140,7 @@ struct AuthView: View {
             .padding(.vertical, DesignSystem.Domain.Auth.actionButtonVerticalPadding)
             .background(Color.appAccent)
             .clipShape(Capsule())
-            .shadow(color: Color.appAccent.opacity(0.3), radius: Spacing.shadowRadius, y: Spacing.shadowY)
+            .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: Spacing.shadowRadius, y: Spacing.shadowY)
         }
         .disabled(isLoading)
         .accessibilityIdentifier("oneClickLoginButton")
@@ -183,14 +183,14 @@ struct AuthView: View {
     private var thirdPartySection: some View {
         VStack(spacing: Spacing.large) {
             HStack {
-                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: DesignSystem.borderWidth)
+                Rectangle().fill(Color.appBorder.opacity(DesignSystem.Opacity.shadow)).frame(height: DesignSystem.borderWidth)
                 Text(L10n.Auth.moreLoginMethods)
                     .font(.caption)
                     .foregroundStyle(.appSecondary)
                     .lineLimit(1)
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.horizontal, Spacing.small)
-                Rectangle().fill(Color.appBorder.opacity(0.3)).frame(height: DesignSystem.borderWidth)
+                Rectangle().fill(Color.appBorder.opacity(DesignSystem.Opacity.shadow)).frame(height: DesignSystem.borderWidth)
             }
             
             HStack(spacing: Spacing.large) { // 屏蔽了微信和短信，调整了间距
@@ -325,7 +325,7 @@ struct AuthTextField: View {
             }
         }
         .padding()
-        .background(Color.appCard.opacity(0.8)) // 稍微加深背景，提升文字对比度
+        .background(Color.appCard.opacity(DesignSystem.Opacity.prominent)) // 稍微加深背景，提升文字对比度
         .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Spacing.standardRadius)
@@ -382,7 +382,7 @@ struct ThirdPartyIconButton: View {
                 Circle()
                     .fill(Color.appCard)
                     .frame(width: DesignSystem.Domain.Auth.thirdPartyIconContainerSize, height: DesignSystem.Domain.Auth.thirdPartyIconContainerSize)
-                    .shadow(color: .primary.opacity(0.05), radius: Spacing.tiny, y: Spacing.atomic)
+                    .shadow(color: .primary.opacity(DesignSystem.Opacity.ghost), radius: Spacing.tiny, y: Spacing.atomic)
                 
                 if isSystem {
                     Image(systemName: icon)
@@ -406,7 +406,7 @@ struct ThirdPartyIconButton: View {
             }
             .overlay(
                 Circle()
-                    .stroke(color.opacity(0.5), lineWidth: DesignSystem.borderWidth) // 根据颜色设置边框，与参考图一致
+                    .stroke(color.opacity(DesignSystem.Opacity.soft), lineWidth: DesignSystem.borderWidth) // 根据颜色设置边框，与参考图一致
             )
         }
         .buttonStyle(.plain)

@@ -2285,13 +2285,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plugins"
+            "value": "Plugin Center"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "插件"
+            "value": "插件中心"
           }
         }
       }

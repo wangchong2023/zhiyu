@@ -48,8 +48,8 @@ struct MermaidWebView: View {
                 zoomButton(icon: DesignSystem.Icons.plusMagnifyingglass) { zoom(by: 1.2) }
                 
                 Divider()
-                    .frame(width: 1, height: 20)
-                    .background(Color.appBorder.opacity(0.5))
+                    .frame(width: DesignSystem.Metrics.customSize1, height: DesignSystem.IconSize.small)
+                    .background(Color.appBorder.opacity(DesignSystem.Opacity.soft))
                 
                 zoomButton(icon: DesignSystem.Icons.refresh) { resetZoom() }
             }
@@ -57,9 +57,9 @@ struct MermaidWebView: View {
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                    .stroke(Color.appBorder.opacity(0.5), lineWidth: 0.5)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.soft), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
+            .shadow(color: .black.opacity(DesignSystem.Opacity.light), radius: 8, x: 0, y: 4)
             .padding(DesignSystem.Layout.cardContentPadding)
         }
         .frame(minHeight: 400)
@@ -90,6 +90,7 @@ struct MermaidWebView: View {
             Image(systemName: icon)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.appText)
+                // swiftlint:disable:next magic_numbers_frame
                 .frame(width: 40, height: 40)
                 .contentShape(Rectangle())
         }

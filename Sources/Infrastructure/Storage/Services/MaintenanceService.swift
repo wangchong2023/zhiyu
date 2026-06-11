@@ -30,10 +30,10 @@ public final class MaintenanceService {
     /// 生成演示数据
     @discardableResult
 
-    /// 生成DemoData
+    /// 生成初始笔记本
     /// - Returns: 数值
     /// 生成演示数据，返回总数和每个笔记本的注入详情
-    public func generateDemoData() async -> (total: Int, details: [(name: String, count: Int)]) {
+    public func generateInitialNotebooks() async -> (total: Int, details: [(name: String, count: Int)]) {
         struct VaultConfig { let name: String; let icon: String; let description: String }
         let demoVaultConfigs: [VaultConfig] = [
             VaultConfig(name: L10n.Vault.defaultName, icon: DesignSystem.Icons.Notebook.defaultBook, description: L10n.Vault.defaultDescription),
@@ -43,13 +43,13 @@ public final class MaintenanceService {
         var existingVaults = vaultService.vaults
         for config in demoVaultConfigs where !existingVaults.contains(where: { $0.name == config.name }) {
                 vaultService.createVault(name: config.name, icon: config.icon, description: config.description)
-                logger.addLog(action: .create, target: config.name, details: "DemoData_VaultCreated", module: "Maintenance")
+                logger.addLog(action: .create, target: config.name, details: "InitialNotebook_VaultCreated", module: "Maintenance")
         }
 
         existingVaults = vaultService.vaults
         guard !existingVaults.isEmpty else {
             do {
-                let count = try await DemoDataGenerator.generate(in: pageStore)
+                let count = try await InitialNotebookGenerator.generate(in: pageStore)
                 return (total: count, details: [(L10n.Vault.defaultName, count)])
             } catch {
                 return (total: 0, details: [])
@@ -61,26 +61,34 @@ public final class MaintenanceService {
         for vault in existingVaults {
             do {
                 try await vaultService.selectVaultAndWait(vault)
-                let count = try await DemoDataGenerator.generate(in: pageStore)
+                let count = try await InitialNotebookGenerator.generate(in: pageStore)
                 totalCount += count
                 vaultDetails.append((name: vault.name, count: count))
                 await vaultService.refreshPageCount(for: vault.id)
-                logger.addLog(action: .create, target: vault.name, details: "DemoData_PageCountRefreshed", module: "Maintenance")
+                logger.addLog(action: .create, target: vault.name, details: "InitialNotebook_PageCountRefreshed", module: "Maintenance")
             } catch {
-                logger.addLog(action: .error, target: vault.name, details: "DemoData_Failed", module: "Maintenance")
+                logger.addLog(action: .error, target: vault.name, details: "InitialNotebook_Failed", module: "Maintenance")
             }
         }
         return (total: totalCount, details: vaultDetails)
     }
 
     /// 填充默认引导内容
-    public func seedDefaultContent(pages: [KnowledgePage]) async {
-        if pages.isEmpty {
-            await pageStore.seedDefaultContent { [weak self] action, target, details in
-                Task { @MainActor [weak self] in
-                    self?.logger.addLog(action: action, target: target, details: details, module: "Maintenance")
-                }
+    public func seedDefaultContent(pages: [KnowledgePage], vaultName: String? = nil) async {
+        guard pages.isEmpty else { return }
+        
+        do {
+            if vaultName == L10n.Vault.defaultName {
+                // “我的知识库” - 使用标准的 AI 概念与大量 API 日志
+                _ = try await InitialNotebookGenerator.generate(in: pageStore)
+                logger.addLog(action: .create, target: "Default Demo Data", details: "Seeded_default_content", module: "Maintenance")
+            } else if vaultName == L10n.Vault.researchName {
+                // “项目调研” - 使用全新均衡的调研数据
+                _ = try await InitialNotebookGenerator.generateResearchNotebook(in: pageStore)
+                logger.addLog(action: .create, target: "Research Demo Data", details: "Seeded_research_content", module: "Maintenance")
             }
+        } catch {
+            logger.addLog(action: .error, target: vaultName ?? "Unknown Vault", details: "Seed_Failed: \(error)", module: "Maintenance")
         }
     }
 

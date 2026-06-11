@@ -38,7 +38,12 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         if let savedQuiz = defaults.string(forKey: "prompt_quiz") { self.quizPrompt = savedQuiz }
         if let savedSlides = defaults.string(forKey: "prompt_slides") { self.slidesPrompt = savedSlides }
         if let savedReport = defaults.string(forKey: "prompt_report") { self.reportPrompt = savedReport }
-        if let savedExpansion = defaults.string(forKey: "prompt_expansion") { self.expansionPrompt = savedExpansion }
+        if let expansion = defaults.string(forKey: "prompt_expansion") { self.expansionPrompt = expansion }
+        
+        if let data = defaults.data(forKey: "prompt_user_shortcuts"),
+           let decoded = try? JSONDecoder().decode([ShortcutItem].self, from: data) {
+            self.userShortcuts = decoded
+        }
     }
 
     // MARK: - 检索增强 (RAG) 相关
@@ -78,12 +83,15 @@ final class PromptService: ObservableObject, @unchecked Sendable {
 
     /// 更新Localizables
     func updateLocalizables() {
-        userShortcuts = [
-            ShortcutItem(text: L10n.AI.Prompt.Shortcut.deepReview),
-            ShortcutItem(text: L10n.AI.Prompt.Shortcut.findGaps),
-            ShortcutItem(text: L10n.AI.Prompt.Shortcut.studyPath)
-        ]
-
+        // Notice: with the new localized ShortcutItem, we don't need to overwrite userShortcuts here.
+        // We only initialize it in load() if it's empty.
+        if userShortcuts.isEmpty {
+            userShortcuts = [
+                ShortcutItem(text: L10n.AI.Prompt.Shortcut.deepReview, localizationKey: "prompt.shortcut.deepReview"),
+                ShortcutItem(text: L10n.AI.Prompt.Shortcut.findGaps, localizationKey: "prompt.shortcut.findGaps"),
+                ShortcutItem(text: L10n.AI.Prompt.Shortcut.studyPath, localizationKey: "prompt.shortcut.studyPath")
+            ]
+        }
         // 刷新其他提示词
         queryRewritePrompt = L10n.AI.Prompt.queryRewrite
         rerankPrompt = L10n.AI.Prompt.rerank
@@ -115,6 +123,10 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.set(slidesPrompt, forKey: "prompt_slides")
         defaults.set(reportPrompt, forKey: "prompt_report")
         defaults.set(expansionPrompt, forKey: "prompt_expansion")
+        
+        if let encoded = try? JSONEncoder().encode(userShortcuts) {
+            defaults.set(encoded, forKey: "prompt_user_shortcuts")
+        }
         Logger.shared.info("Prompt configurations saved to UserDefaults.")
     }
 
@@ -126,12 +138,20 @@ final class PromptService: ObservableObject, @unchecked Sendable {
         defaults.removeObject(forKey: "prompt_slides")
         defaults.removeObject(forKey: "prompt_report")
         defaults.removeObject(forKey: "prompt_expansion")
+        defaults.removeObject(forKey: "prompt_user_shortcuts")
 
         self.mindmapPrompt = L10n.AI.Prompt.Default.mindmap
         self.quizPrompt = L10n.AI.Prompt.Default.quiz
         self.slidesPrompt = L10n.AI.Prompt.Default.slides
         self.reportPrompt = L10n.AI.Prompt.Default.report
         self.expansionPrompt = L10n.AI.Prompt.Default.expansion
+        
+        self.userShortcuts = [
+            ShortcutItem(text: L10n.AI.Prompt.Shortcut.deepReview, localizationKey: "prompt.shortcut.deepReview"),
+            ShortcutItem(text: L10n.AI.Prompt.Shortcut.findGaps, localizationKey: "prompt.shortcut.findGaps"),
+            ShortcutItem(text: L10n.AI.Prompt.Shortcut.studyPath, localizationKey: "prompt.shortcut.studyPath")
+        ]
+        
         Logger.shared.info("Prompt configurations reset to default.")
     }
 
@@ -145,8 +165,26 @@ final class PromptService: ObservableObject, @unchecked Sendable {
     }
 }
 
-/// 快捷指令模型
-struct ShortcutItem: Identifiable, Equatable {
-    let id = UUID()
-    var text: String
+struct ShortcutItem: Identifiable, Equatable, Codable {
+    var id = UUID()
+    var rawText: String
+    var localizationKey: String?
+    
+    var text: String {
+        get {
+            if let key = localizationKey {
+                return Localized.tr(key, table: "AI")
+            }
+            return rawText
+        }
+        set {
+            rawText = newValue
+            localizationKey = nil
+        }
+    }
+    
+    init(text: String, localizationKey: String? = nil) {
+        self.rawText = text
+        self.localizationKey = localizationKey
+    }
 }

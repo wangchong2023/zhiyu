@@ -83,7 +83,7 @@ public final class AuthService: AuthServiceProtocol {
         #if DEBUG
         if isMockBackend {
             let response = LoginResponse(
-                user: UserDTO(id: UUID().uuidString, name: identity, phone: identity, email: nil, avatar: nil),
+                user: UserDTO(id: UUID().uuidString, name: identity, phone: identity, email: nil, avatar: nil, gender: nil, birthday: nil),
                 tokens: TokenDTO(accessToken: "mock_jwt_access_token", refreshToken: "mock_jwt_refresh_token", accessExpireAt: 0, refreshExpireAt: 0),
                 isNewUser: false,
                 totpRequired: false
@@ -226,7 +226,7 @@ public final class AuthService: AuthServiceProtocol {
         guard isMockBackend else { return nil }
         let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
         let response = LoginResponse(
-            user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil),
+            user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil, gender: nil, birthday: nil),
             tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
             isNewUser: false,
             totpRequired: false
@@ -300,6 +300,7 @@ public final class AuthService: AuthServiceProtocol {
             id: UUID(uuidString: response.user.id) ?? UUID(),
             name: response.user.name,
             email: response.user.email ?? "",
+            phone: response.user.phone,
             avatarURL: response.user.avatar.flatMap { URL(string: $0) }
         )
         AuthSession.shared.update(user: user)
@@ -329,8 +330,10 @@ public final class AuthService: AuthServiceProtocol {
     /// - Parameters:
     ///   - nickname: 昵称
     ///   - avatar: 头像地址（URL字符串）
+    ///   - gender: 性别
+    ///   - birthday: 生日
     /// - Returns: 是否更新成功
-    public func updateUserProfile(nickname: String, avatar: String?) async -> Bool {
+    public func updateUserProfile(nickname: String, avatar: String?, gender: Int? = nil, birthday: String? = nil) async -> Bool {
         #if DEBUG
         if isMockBackend {
             // Mock 模式：直接更新本地缓存，不调用网络
@@ -343,7 +346,9 @@ public final class AuthService: AuthServiceProtocol {
                     planKey: user.planKey,
                     maxVaults: user.maxVaults,
                     maxPages: user.maxPages,
-                    maxPlugins: user.maxPlugins
+                    maxPlugins: user.maxPlugins,
+                    gender: gender ?? user.gender,
+                    birthday: birthday ?? user.birthday
                 )
                 AuthSession.shared.update(user: updated)
                 return true
@@ -356,6 +361,8 @@ public final class AuthService: AuthServiceProtocol {
         struct ProfileUpdateRequest: Codable {
             let nick: String
             let avatar: String?
+            let gender: Int?
+            let birthday: String?
         }
         
         struct ProfileUpdateResponse: Codable {
@@ -365,27 +372,33 @@ public final class AuthService: AuthServiceProtocol {
             let avatar: String?
             let email: String?
             let mobile: String?
+            let gender: Int?
+            let birthday: String?
         }
         
-        let body = ProfileUpdateRequest(nick: nickname, avatar: avatar)
+        let req = ProfileUpdateRequest(nick: nickname, avatar: avatar, gender: gender, birthday: birthday)
         do {
             let response: ProfileUpdateResponse = try await NetworkClient.shared.request(
                 path: "/api/v1/user/profile",
                 method: "PUT",
-                body: body,
+                body: req,
                 requiresAuth: true
             )
-            // 同步更新本地 User 缓存
+            
+            // 更新本地用户信息
             if let user = AuthSession.shared.currentUser {
                 let updated = User(
                     id: user.id,
                     name: response.nick,
                     email: response.email ?? user.email,
-                    avatarURL: response.avatar.flatMap { URL(string: $0) },
+                    phone: response.mobile ?? user.phone,
+                    avatarURL: response.avatar.flatMap { URL(string: $0) } ?? user.avatarURL,
                     planKey: user.planKey,
                     maxVaults: user.maxVaults,
                     maxPages: user.maxPages,
-                    maxPlugins: user.maxPlugins
+                    maxPlugins: user.maxPlugins,
+                    gender: response.gender ?? user.gender,
+                    birthday: response.birthday ?? user.birthday
                 )
                 AuthSession.shared.update(user: updated)
             }
@@ -440,9 +453,9 @@ public final class AuthService: AuthServiceProtocol {
                     email: user.email,
                     avatarURL: user.avatarURL,
                     planKey: "pro",
-                    maxVaults: 10,
-                    maxPages: 50000,
-                    maxPlugins: 999999
+                    maxVaults: User.DefaultQuotas.proMaxVaults,
+                    maxPages: User.DefaultQuotas.proMaxPages,
+                    maxPlugins: User.DefaultQuotas.proMaxPlugins
                 )
                 AuthSession.shared.update(user: updated)
                 return true
@@ -502,9 +515,25 @@ public final class AuthService: AuthServiceProtocol {
         struct SubscriptionResponse: Codable {
             let planKey: String?
             let quotasJson: String?
+            let featuresJson: String?
+        }
+        
+        struct PlanQuotas: Codable {
+            let maxVaults: Int
+            let maxPages: Int
+            let maxPlugins: Int
+            
+            enum CodingKeys: String, CodingKey {
+                case maxVaults = "max_vaults"
+                case maxPages = "max_pages"
+                case maxPlugins = "max_plugins"
+            }
         }
         
         var currentPlanKey: String? = "free"
+        var parsedQuotas: PlanQuotas? = nil
+        var parsedFeatures: [String] = []
+        
         do {
             let sub: SubscriptionResponse = try await NetworkClient.shared.request(
                 path: "/api/v1/subscriptions/me",
@@ -512,21 +541,40 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: true
             )
             currentPlanKey = sub.planKey ?? "free"
+            
+            if let quotasStr = sub.quotasJson, let data = quotasStr.data(using: .utf8) {
+                parsedQuotas = try? JSONDecoder().decode(PlanQuotas.self, from: data)
+            }
+            
+            if let featuresStr = sub.featuresJson, let data = featuresStr.data(using: .utf8) {
+                if let decodedFeatures = try? JSONDecoder().decode([String].self, from: data) {
+                    parsedFeatures = decodedFeatures
+                }
+            }
         } catch {
             Logger.shared.warning("[AuthService] 获取当前订阅信息失败，将使用默认配置: \(error)")
         }
         
         // 3. 合并更新本地 User 对象
         if let user = AuthSession.shared.currentUser {
+            // 如果后端未返回或解析失败，默认给与 Lite (free) 的限制以策安全
+            let defaultLiteQuotas = PlanQuotas(
+                maxVaults: User.DefaultQuotas.liteMaxVaults, 
+                maxPages: User.DefaultQuotas.liteMaxPages, 
+                maxPlugins: User.DefaultQuotas.liteMaxPlugins
+            )
+            let quotasToUse = parsedQuotas ?? defaultLiteQuotas
+            
             let updated = User(
                 id: user.id,
                 name: profile.nick,
                 email: profile.email ?? user.email,
                 avatarURL: profile.avatar.flatMap { URL(string: $0) },
                 planKey: currentPlanKey,
-                maxVaults: currentPlanKey == "pro" ? 10 : 2,
-                maxPages: currentPlanKey == "pro" ? 50000 : 1000,
-                maxPlugins: currentPlanKey == "pro" ? 999999 : 3
+                maxVaults: quotasToUse.maxVaults,
+                maxPages: quotasToUse.maxPages,
+                maxPlugins: quotasToUse.maxPlugins,
+                features: parsedFeatures
             )
             AuthSession.shared.update(user: updated)
         }

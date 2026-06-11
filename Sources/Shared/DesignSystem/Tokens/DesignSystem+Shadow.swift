@@ -14,8 +14,8 @@ import CoreGraphics
 extension DesignSystem {
 
     public enum Shadow {
-        public static let light = (color: Color.black.opacity(0.1), radius: 5.0, x: 0.0, y: 2.0)
-        public static let standard = (color: Color.black.opacity(0.15), radius: 10.0, x: 0.0, y: 4.0)
-        public static let prominent = (color: Color.appAccent.opacity(0.3), radius: 10.0, x: 0.0, y: 5.0)
+        public static let light = (color: Color.black.opacity(DesignSystem.Opacity.subtle), radius: 5.0, x: 0.0, y: 2.0)
+        public static let standard = (color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 10.0, x: 0.0, y: 4.0)
+        public static let prominent = (color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10.0, x: 0.0, y: 5.0)
     }
 }

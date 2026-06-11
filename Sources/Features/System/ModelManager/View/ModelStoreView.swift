@@ -98,7 +98,7 @@ public struct ModelStoreView: View {
         .padding(.horizontal, DesignSystem.standardPadding)
         .padding(.vertical, DesignSystem.medium)
         .frame(maxWidth: .infinity)
-        .background(Color.appCard.opacity(0.4))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         .padding(.horizontal, DesignSystem.medium)
         .padding(.top, DesignSystem.small)
@@ -127,8 +127,8 @@ public struct ModelStoreView: View {
         
         // 卡片背景：复用项目设计令牌，浅色/深色自动适配
         let cardBackground = Color.appCard.opacity(eligibility == .restricted ? 0.4 : 0.8)
-        let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.red.opacity(0.4) : Color.appBorder.opacity(0.8))
-        let shadowColor = isSelected ? Color.appAccent.opacity(0.2) : Color.black.opacity(0.05)
+        let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.red.opacity(DesignSystem.Opacity.disabled) : Color.appBorder.opacity(DesignSystem.Opacity.prominent))
+        let shadowColor = isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.black.opacity(DesignSystem.Opacity.ghost)
         
         return VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -144,7 +144,7 @@ public struct ModelStoreView: View {
                             .font(.system(size: 10, weight: .bold, design: .monospaced))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.appAccent.opacity(0.15))
+                            .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                             .clipShape(Capsule())
                             .foregroundStyle(.appAccent)
                     }
@@ -182,7 +182,7 @@ public struct ModelStoreView: View {
                                 .font(.system(size: DesignSystem.microFontSize, weight: .medium))
                                 .padding(.horizontal, DesignSystem.small)
                                 .padding(.vertical, DesignSystem.atomic)
-                                .background(taskColor(for: task).opacity(0.12))
+                                .background(taskColor(for: task).opacity(DesignSystem.Opacity.subtle))
                                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
                                 .foregroundStyle(taskColor(for: task))
                         }
@@ -199,7 +199,7 @@ public struct ModelStoreView: View {
             }
             
             Divider()
-                .foregroundStyle(Color.appBorder.opacity(0.5))
+                .foregroundStyle(Color.appBorder.opacity(DesignSystem.Opacity.soft))
             
             // 底部下载/激活状态交互组
             HStack {
@@ -235,9 +235,9 @@ public struct ModelStoreView: View {
 
     @ViewBuilder
     private func modelSpecSheet(for manifest: LLMManifest) -> some View {
-        let specBg = Color.appCard.opacity(0.6)
+        let specBg = Color.appCard.opacity(DesignSystem.Opacity.dim)
         VStack(alignment: .leading, spacing: DesignSystem.small) {
-            Divider().foregroundStyle(Color.appBorder.opacity(0.5))
+            Divider().foregroundStyle(Color.appBorder.opacity(DesignSystem.Opacity.soft))
 
             // 完整描述
             Text(manifest.description)
@@ -257,7 +257,7 @@ public struct ModelStoreView: View {
                     Text(L10n.ModelManager.Spec.tasks).font(.caption).foregroundStyle(.appSecondary)
                     ForEach(manifest.supportedTasks, id: \.self) { t in
                         Text(taskLabel(for: t)).font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(taskColor(for: t).opacity(0.12)).clipShape(Capsule())
+                            .background(taskColor(for: t).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
                             .foregroundStyle(taskColor(for: t))
                     }
                 }
@@ -271,7 +271,7 @@ public struct ModelStoreView: View {
 
     private func specItem(icon: String, label: String, value: String) -> some View {
         HStack(spacing: DesignSystem.tiny) {
-            Image(systemName: icon).font(.caption2).foregroundStyle(.appAccent).frame(width: 16)
+            Image(systemName: icon).font(.caption2).foregroundStyle(.appAccent).frame(width: DesignSystem.IconSize.micro)
             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                 Text(value).font(.subheadline.weight(.medium)).foregroundStyle(.appText)
                 Text(label).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.appSecondary)
@@ -279,7 +279,7 @@ public struct ModelStoreView: View {
         }
         .padding(DesignSystem.small)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.appBackground.opacity(0.3))
+        .background(Color.appBackground.opacity(DesignSystem.Opacity.shadow))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
     
@@ -297,7 +297,7 @@ public struct ModelStoreView: View {
             HStack(spacing: DesignSystem.small) {
                 ProgressView(value: progress, total: 1.0)
                     .tint(.appAccent)
-                    .frame(width: 80)
+                    .frame(width: DesignSystem.Metrics.indicatorSize)
                 
                 Text("\(Int(progress * 100))%")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
@@ -342,7 +342,7 @@ public struct ModelStoreView: View {
                 .font(.subheadline.bold())
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(Color.red.opacity(0.15))
+                .background(Color.red.opacity(DesignSystem.Opacity.glass))
                 .foregroundStyle(.red)
                 .clipShape(Capsule())
             }
@@ -430,7 +430,7 @@ public struct ModelStoreView: View {
             Spacer()
         }
         .padding(DesignSystem.tightPadding)
-        .background(Color.red.opacity(0.1))
+        .background(Color.red.opacity(DesignSystem.Opacity.subtle))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     
@@ -445,7 +445,7 @@ public struct ModelStoreView: View {
             Spacer()
         }
         .padding(DesignSystem.tightPadding)
-        .background(Color.orange.opacity(0.1))
+        .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     

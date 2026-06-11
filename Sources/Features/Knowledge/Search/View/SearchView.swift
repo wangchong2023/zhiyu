@@ -116,17 +116,17 @@ struct SearchView: View {
                         advancedResults = []
                     }) {
                         Image(systemName: DesignSystem.Icons.errorCircle)
-                            .foregroundStyle(.appSecondary.opacity(0.6))
+                            .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                     }
                 }
             }
             .padding(.horizontal, DesignSystem.standardPadding)
             .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
-            .background(Color.appCard.opacity(0.6))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
-                    .strokeBorder(.appAccent.opacity(0.25), lineWidth: 1)
+                    .strokeBorder(.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: 1)
             )
             .padding(.horizontal, DesignSystem.standardPadding)
             .padding(.vertical, DesignSystem.medium)
@@ -152,7 +152,7 @@ struct SearchView: View {
                             }
                         }
 
-                        Divider().frame(height: 24).background(Color.appBorder)
+                        Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                         // Status Filters
                         #if !os(watchOS)
@@ -177,7 +177,7 @@ struct SearchView: View {
                         .buttonStyle(.plain)
                         #endif
 
-                        Divider().frame(height: 24).background(Color.appBorder)
+                        Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                         // Sort options
                         #if !os(watchOS)
@@ -196,7 +196,7 @@ struct SearchView: View {
                             }
                             .padding(.horizontal, DesignSystem.tightPadding + DesignSystem.atomic) // 10
                             .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic) // 5
-                            .background(Color.appCard.opacity(0.8))
+                            .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
                             .clipShape(Capsule())
                             .foregroundStyle(.appSecondary)
                         }
@@ -207,7 +207,7 @@ struct SearchView: View {
                 }
             }
             .padding(.top, DesignSystem.medium)
-            .background(Color.appBackground.opacity(0.4))
+            .background(Color.appBackground.opacity(DesignSystem.Opacity.disabled))
             .background(.ultraThinMaterial)
             
             // Main Results Content
@@ -350,7 +350,7 @@ struct SearchView: View {
     }
     
     private var filterStatusBackgroundColor: Color {
-        filterStatus == nil ? Color.appCard.opacity(0.8) : Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5)
+        filterStatus == nil ? Color.appCard.opacity(DesignSystem.Opacity.prominent) : Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5)
     }
 }
 
@@ -380,7 +380,7 @@ struct FilterPill: View {
         }
         .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
         .padding(.vertical, DesignSystem.Chip.verticalPadding + DesignSystem.atomic) // 6
-        .background(isSelected ? color.opacity(0.12) : Color.appCard.opacity(0.6))
+        .background(isSelected ? color.opacity(DesignSystem.Opacity.subtle) : Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(Capsule())
         .foregroundStyle(isSelected ? color : .appSecondary)
         .contentShape(Capsule())

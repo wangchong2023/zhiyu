@@ -26,15 +26,11 @@ struct SettingsView: View {
         case security        // 安全隐私
         case data            // 数据与日志
         case plugins         // 插件与扩展
-        case developer       // 开发者设置（仅 DEBUG 可见）
+        case feedback        // 反馈改进
         case about           // 关于软件
 
         static var allCases: [SettingsSection] {
-            #if DEBUG
-            return [.appearance, .ai, .security, .data, .plugins, .developer, .about]
-            #else
-            return [.appearance, .ai, .security, .data, .plugins, .about]
-            #endif
+            return [.appearance, .ai, .security, .data, .plugins, .feedback, .about]
         }
 
         var id: String { rawValue }
@@ -52,8 +48,8 @@ struct SettingsView: View {
                 return L10n.Settings.Section.data
             case .plugins:
                 return L10n.Settings.Section.plugins
-            case .developer:
-                return L10n.Settings.Section.developer
+            case .feedback:
+                return L10n.Settings.Feedback.title
             case .about:
                 return L10n.Settings.Section.about
             }
@@ -72,8 +68,8 @@ struct SettingsView: View {
                 return DesignSystem.Icons.settingsData
             case .plugins:
                 return DesignSystem.Icons.settingsPlugins
-            case .developer:
-                return DesignSystem.Icons.settingsDeveloper
+            case .feedback:
+                return "bubble.left.and.bubble.right.fill"
             case .about:
                 return DesignSystem.Icons.settingsAbout
             }
@@ -83,6 +79,8 @@ struct SettingsView: View {
     @State private var selectedLanguage: LanguageMode = Localized.languageMode
     @State private var languageChanged = false
     @State private var showResetConfirmation = false
+    /// Lite 用户尝试开启安全功能时弹出升级提示
+    @State private var showUpgradeSheet = false
     /// 当前大屏布局下选中的设置分类，默认选中“外观”
     @State private var selectedSection: SettingsSection? = .appearance
     
@@ -94,10 +92,10 @@ struct SettingsView: View {
             // macOS Catalyst 下采用自定义的左右固定分栏 (HStack) 布局，符合 Mac 平台多窗口及大屏偏好设置的操作习惯
             HStack(spacing: 0) {
                 sidebarColumn
-                    .frame(width: 240) // 精准限制左侧分类栏宽度为 240
+                    .frame(width: 240) // swiftlint:disable:this magic_numbers_frame
                 
                 Divider()
-                    .background(Color.appBorder.opacity(0.3))
+                    .background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                 
                 ZStack {
                     themeManager.pageBackground()
@@ -121,7 +119,7 @@ struct SettingsView: View {
                 }
                                 .navigationTitle(L10n.Settings.title)
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .confirmationAction) {
                         doneButton(router: router)
                     }
                 }
@@ -157,10 +155,8 @@ struct SettingsView: View {
             securitySection(store: store)
                 .appListRowBackground()
 
-            #if DEBUG
-            developerSection
+            feedbackSection
                 .appListRowBackground()
-            #endif
 
             aboutSection
                 .appListRowBackground()
@@ -182,7 +178,7 @@ struct SettingsView: View {
                             Image(systemName: section.iconName)
                                 .font(.subheadline)
                                 .foregroundStyle(selectedSection == section ? .white : .appAccent)
-                                .frame(width: 24, alignment: .center)
+                                .frame(width: DesignSystem.IconSize.standard, alignment: .center)
                             Text(section.displayName)
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(selectedSection == section ? .white : .appText)
@@ -201,7 +197,7 @@ struct SettingsView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 16)
         }
-        .background(Color.appCard.opacity(0.4)) // 侧边栏微暗色半透明质感
+        .background(Color.appCard.opacity(DesignSystem.Opacity.disabled)) // 侧边栏微暗色半透明质感
     }
     
     /// 根据当前选中的分类，渲染右侧具体详情面板
@@ -234,8 +230,8 @@ struct SettingsView: View {
                         case .plugins:
                             PluginExtensionsSection()
                                 .appListRowBackground()
-                        case .developer:
-                            developerSection
+                        case .feedback:
+                            feedbackSection
                                 .appListRowBackground()
                         case .about:
                             EmptyView()
@@ -250,7 +246,7 @@ struct SettingsView: View {
             // 同时彻底解决由于 NavigationStack 宽度被约束而导致的 Large Title 偏左贴近侧边栏分割线的排版缺陷
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     doneButton(router: router)
                 }
             }
@@ -264,7 +260,7 @@ struct SettingsView: View {
                     .foregroundStyle(.appText)
             }
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     doneButton(router: router)
                 }
             }
@@ -290,6 +286,7 @@ struct SettingsView: View {
                 }
             } label: {
                 Label(L10n.Settings.systemTheme, systemImage: "paintbrush.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .indigo))
             }
 
             Picker(selection: $selectedLanguage) {
@@ -298,6 +295,7 @@ struct SettingsView: View {
                 }
             } label: {
                 Label(L10n.Settings.systemLanguage, systemImage: "globe")
+                    .labelStyle(ColorfulIconLabelStyle(color: .blue))
             }
             .onChange(of: selectedLanguage) { _, newValue in
                 Localized.languageMode = newValue
@@ -316,24 +314,28 @@ struct SettingsView: View {
                 SmartRoutingView()
             } label: {
                 Label(L10n.Settings.smartRouting, systemImage: "arrow.triangle.branch")
+                    .labelStyle(ColorfulIconLabelStyle(color: .purple))
             }
 
             NavigationLink {
                 LLMSettingsView()
             } label: {
                 Label(L10n.Settings.llmSettings, systemImage: "network")
+                    .labelStyle(ColorfulIconLabelStyle(color: .cyan))
             }
 
             NavigationLink {
                 LocalModelManagerView()
             } label: {
                 Label(L10n.Settings.localModelManager, systemImage: "cpu")
+                    .labelStyle(ColorfulIconLabelStyle(color: .orange))
             }
 
             NavigationLink {
                 PromptWorkshopView()
             } label: {
-                Label(L10n.Settings.promptLab, systemImage: "terminal.fill")
+                Label(L10n.Settings.promptSettings, systemImage: "terminal.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .gray))
             }
         } header: {
             Text(L10n.Settings.Section.ai)
@@ -347,6 +349,7 @@ struct SettingsView: View {
                 iCloudSyncView()
             } label: {
                 Label(L10n.Settings.iCloudSync, systemImage: "icloud.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .blue))
             }
             #endif
             
@@ -354,12 +357,21 @@ struct SettingsView: View {
                 BackupView()
             } label: {
                 Label(L10n.Settings.backupRestore, systemImage: "archivebox.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .brown))
             }
             
             NavigationLink {
                 LogView()
             } label: {
                 Label(L10n.Settings.operationLog, systemImage: "list.bullet.rectangle.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .mint))
+            }
+            
+            NavigationLink {
+                SystemStatsView()
+            } label: {
+                Label(L10n.Common.usage, systemImage: "chart.bar.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .teal))
             }
             
             // 数据重置：清理开发数据与沙盒存储
@@ -367,6 +379,7 @@ struct SettingsView: View {
                 showResetConfirmation = true
             } label: {
                 Label(L10n.Settings.resetData, systemImage: "trash.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .red))
             }
         } header: {
             Text(L10n.Settings.Section.data)
@@ -375,28 +388,72 @@ struct SettingsView: View {
     
     private func securitySection(store: AppStore) -> some View {
         @Bindable var settingsStore = settingsStore
+        let hasFeature = AuthSession.shared.currentUser?.hasPrivacySecurity == true
+        let showBiometric = appEnv.platformEnv.interactionStyle == .touch
+        
+        // 自定义 Binding：Lite 用户尝试开启时拦截并弹出升级提示
+        let privacyBinding = Binding<Bool>(
+            get: { settingsStore.isPrivacyModeEnabled },
+            set: { newValue in
+                if hasFeature {
+                    settingsStore.isPrivacyModeEnabled = newValue
+                } else if newValue {
+                    // Lite 用户尝试开启 → 弹出升级提示，不修改状态
+                    showUpgradeSheet = true
+                } else {
+                    settingsStore.isPrivacyModeEnabled = newValue
+                }
+            }
+        )
+        let biometricBinding = Binding<Bool>(
+            get: { settingsStore.isBiometricEnabled },
+            set: { newValue in
+                if hasFeature {
+                    settingsStore.isBiometricEnabled = newValue
+                } else if newValue {
+                    showUpgradeSheet = true
+                } else {
+                    settingsStore.isBiometricEnabled = newValue
+                }
+            }
+        )
+        
         return Section {
-            Toggle(isOn: $settingsStore.isPrivacyModeEnabled) {
+            Toggle(isOn: privacyBinding) {
                 Label(L10n.Settings.privacyMode, systemImage: "eye.slash.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .purple))
             }
             
-            if appEnv.platformEnv.interactionStyle == .touch { 
-                Toggle(isOn: $settingsStore.isBiometricEnabled) {
+            if showBiometric {
+                Toggle(isOn: biometricBinding) {
                     Label(L10n.Settings.biometricProtection, systemImage: "faceid")
+                        .labelStyle(ColorfulIconLabelStyle(color: .green))
                 }
             }
         } header: {
             Text(L10n.Settings.Section.security)
+        } footer: {
+            // 帮助文案：说明隐私模式与生物识别的作用
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                Text(L10n.Settings.privacyModeDesc)
+                if showBiometric {
+                    Text(L10n.Settings.biometricProtectionDesc)
+                }
+            }
+        }
+        .sheet(isPresented: $showUpgradeSheet) {
+            SubscriptionPlanView()
         }
     }
     
-    /// 开发者独立设置区域，介于系统维护与关于之间
-    private var developerSection: some View {
+    private var feedbackSection: some View {
         Section {
             NavigationLink {
-                DeveloperSettingsView()
+                FeedbackView()
+                    .environmentObject(themeManager)
             } label: {
-                Label(L10n.Settings.Section.developer, systemImage: "hammer.fill")
+                Label(L10n.Settings.Feedback.title, systemImage: "bubble.left.and.bubble.right.fill")
+                    .labelStyle(ColorfulIconLabelStyle(color: .blue))
             }
         }
     }
@@ -407,7 +464,26 @@ struct SettingsView: View {
                 AboutView()
             } label: {
                 Label(L10n.Settings.Section.about, systemImage: "info.circle")
+                    .labelStyle(ColorfulIconLabelStyle(color: .gray))
             }
+        }
+    }
+}
+
+/// A custom label style that adds an iOS-Settings-like colored rounded background to the icon
+struct ColorfulIconLabelStyle: LabelStyle {
+    var color: Color
+    
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: DesignSystem.medium) {
+            configuration.icon
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(color)
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+            
+            configuration.title
         }
     }
 }

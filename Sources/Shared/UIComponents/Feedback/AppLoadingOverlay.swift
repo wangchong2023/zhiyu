@@ -27,6 +27,7 @@ public struct AppLoadingOverlay: View {
     public init(
         isLoading: Bool,
         message: String? = nil,
+        // swiftlint:disable:next magic_numbers_opacity
         backgroundColor: Color = Color.black.opacity(0.35),
         foregroundColor: Color = .appAccent
     ) {

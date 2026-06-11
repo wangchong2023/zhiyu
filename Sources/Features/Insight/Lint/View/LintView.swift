@@ -63,7 +63,7 @@ struct LintViewContent: View {
                 #endif
                 .padding(.horizontal, DesignSystem.huge)
                 .padding(.vertical, DesignSystem.tiny)
-                .background(.ultraThinMaterial.opacity(0.3))
+                .background(.ultraThinMaterial.opacity(DesignSystem.Opacity.shadow))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .padding(.horizontal, DesignSystem.standardPadding)
 
@@ -177,14 +177,14 @@ struct LintViewContent: View {
                     Spacer()
                     ZStack {
                         Circle()
-                            .stroke(healthColor.opacity(0.08), lineWidth: 10)
+                            .stroke(healthColor.opacity(DesignSystem.Opacity.light), lineWidth: 10)
                             .frame(width: DesignSystem.Domain.Lint.chartSize, height: DesignSystem.Domain.Lint.chartSize) // 略微缩小，确保不重叠
                         
                         // 进度环
                         Circle()
                             .trim(from: 0, to: CGFloat(aiStore.lintScore) / 100.0)
                             .stroke(
-                                LinearGradient(colors: [healthColor.opacity(0.6), healthColor], startPoint: .top, endPoint: .bottom),
+                                LinearGradient(colors: [healthColor.opacity(DesignSystem.Opacity.dim), healthColor], startPoint: .top, endPoint: .bottom),
                                 style: StrokeStyle(lineWidth: 10, lineCap: .round)
                             )
                             .frame(width: DesignSystem.Domain.Lint.chartSize, height: DesignSystem.Domain.Lint.chartSize)
@@ -216,11 +216,11 @@ struct LintViewContent: View {
                         HStack(spacing: DesignSystem.small) {
                             Text(label)
                                 .font(.system(size: DesignSystem.microFontSize, weight: .bold))
-                                .frame(width: 32, alignment: .trailing)
+                                .frame(width: DesignSystem.IconSize.large, alignment: .trailing)
                             Text(range)
                                 .font(.system(size: DesignSystem.microFontSize, design: .monospaced))
-                                .foregroundStyle(.appSecondary.opacity(0.8))
-                                .frame(width: 46, alignment: .leading)
+                                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.prominent))
+                                .frame(width: DesignSystem.IconSize.xxlarge, alignment: .leading)
                         }
                     }
                 }
@@ -285,7 +285,7 @@ struct LintViewContent: View {
         .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .appContainer(background: Color.appCard, cornerRadius: DesignSystem.Metrics.dashboardRadius, padding: false)
-        .shadow(color: .primary.opacity(0.04), radius: DesignSystem.small + DesignSystem.tiny, x: 0, y: DesignSystem.tiny + DesignSystem.atomic)
+        .shadow(color: .primary.opacity(DesignSystem.Opacity.faint), radius: DesignSystem.small + DesignSystem.tiny, x: 0, y: DesignSystem.tiny + DesignSystem.atomic)
     }
 
     // MARK: - AI 建议板块
@@ -447,7 +447,7 @@ struct RefactorSuggestionRow: View {
                     .font(.caption2.bold())
                     .padding(.horizontal, DesignSystem.tightPadding)
                     .padding(.vertical, DesignSystem.atomic)
-                    .background(color.opacity(0.2))
+                    .background(color.opacity(DesignSystem.Opacity.medium))
                     .foregroundStyle(color)
                     .clipShape(Capsule())
                 
@@ -536,7 +536,7 @@ struct LintIssueRow: View {
             HStack(spacing: DesignSystem.small) {
                 Image(systemName: issue.type.icon)
                     .foregroundStyle(Color.fromModelColorName(issue.severity.colorName))
-                    .frame(width: 16, height: 16)
+                    .frame(width: DesignSystem.IconSize.micro, height: DesignSystem.IconSize.micro)
 
                 Text(issue.message)
                     .font(.subheadline)
@@ -589,11 +589,11 @@ struct LintIssueRow: View {
                 Text(suggestion)
                     .font(.caption)
                     .padding(DesignSystem.small)
-                    .background(Color.purple.opacity(0.1))
+                    .background(Color.purple.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                            .stroke(Color.purple.opacity(0.2), lineWidth: 1)
+                            .stroke(Color.purple.opacity(DesignSystem.Opacity.medium), lineWidth: 1)
                     )
                     .padding(.leading, DesignSystem.giant)
                     .transition(.move(edge: .top).combined(with: .opacity))

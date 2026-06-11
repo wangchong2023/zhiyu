@@ -279,10 +279,10 @@ struct DatabaseCorruptedBanner: View {
             .padding(.vertical, 12)
             .background(.ultraThinMaterial)
             .cornerRadius(12)
-            .shadow(color: .primary.opacity(0.12), radius: 6, x: 0, y: 3)
+            .shadow(color: .primary.opacity(DesignSystem.Opacity.subtle), radius: 6, x: 0, y: 3)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                    .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.orange.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
             )
         }
         .padding(.horizontal, 16)

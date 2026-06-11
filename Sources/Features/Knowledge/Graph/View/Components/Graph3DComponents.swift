@@ -427,7 +427,7 @@ struct Graph3DControlsOverlay: View {
                                 .padding(.top, 10)
                                 .padding(.bottom, DesignSystem.tightPadding)
                             
-                            Divider().background(Color.appBorder.opacity(0.3))
+                            Divider().background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                             
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 0) {
@@ -475,7 +475,7 @@ struct Graph3DControlsOverlay: View {
                             }
                             .frame(maxHeight: 220) 
                         }
-                        .frame(width: 140)
+                        .frame(width: DesignSystem.Metrics.customSize140)
                         .background(
                             RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                                 .fill(.regularMaterial)

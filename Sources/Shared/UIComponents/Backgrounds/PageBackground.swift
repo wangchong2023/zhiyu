@@ -38,7 +38,8 @@ public struct MeshGradientView: View {
                             ],
                             colors: [
                                 .appBackground, .appBackground, .appBackground,
-                                .appAccent.opacity(0.2), .appConcept.opacity(DesignSystem.Opacity.glass), .appSource.opacity(0.18),
+                                // swiftlint:disable:next magic_numbers_opacity
+                                .appAccent.opacity(DesignSystem.Opacity.medium), .appConcept.opacity(DesignSystem.Opacity.glass), .appSource.opacity(0.18),
                                 .appBackground, .appBackground, .appBackground
                             ],
                             smoothsColors: true
@@ -65,7 +66,7 @@ public struct MeshGradientView: View {
                 context.stroke(Path { p in
                     p.move(to: CGPoint(x: 0, y: y))
                     p.addLine(to: CGPoint(x: size.width, y: y))
-                }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                }, with: .color(Color.appAccent.opacity(DesignSystem.Opacity.ghost)), lineWidth: 0.5)
             }
             
             for col in 0...cols {
@@ -73,7 +74,7 @@ public struct MeshGradientView: View {
                 context.stroke(Path { p in
                     p.move(to: CGPoint(x: x, y: 0))
                     p.addLine(to: CGPoint(x: x, y: size.height))
-                }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                }, with: .color(Color.appAccent.opacity(DesignSystem.Opacity.ghost)), lineWidth: 0.5)
             }
         }
     }
@@ -90,7 +91,7 @@ public struct MeshGradientView: View {
                 context.stroke(Path { p in
                     p.move(to: CGPoint(x: 0, y: y))
                     p.addLine(to: CGPoint(x: size.width, y: y))
-                }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                }, with: .color(Color.appAccent.opacity(DesignSystem.Opacity.ghost)), lineWidth: 0.5)
             }
             
             for col in 0...cols {
@@ -98,7 +99,7 @@ public struct MeshGradientView: View {
                 context.stroke(Path { p in
                     p.move(to: CGPoint(x: x, y: 0))
                     p.addLine(to: CGPoint(x: x, y: size.height))
-                }, with: .color(Color.appAccent.opacity(0.05)), lineWidth: 0.5)
+                }, with: .color(Color.appAccent.opacity(DesignSystem.Opacity.ghost)), lineWidth: 0.5)
             }
         }
     }
@@ -119,13 +120,13 @@ public struct AmbientGlowView: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [color.opacity(0.25), .clear],
+                            colors: [color.opacity(DesignSystem.Opacity.medium), .clear],
                             center: .center,
                             startRadius: 0,
                             endRadius: 300
                         )
                     )
-                    .frame(width: 500, height: 500)
+                    .frame(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize500)
                     .blur(radius: 80)
                     .position(x: size.width / 2, y: size.height / 2)
             }
@@ -146,7 +147,7 @@ public struct PageBackgroundView: View {
             MeshGradientView()
             VStack {
                 AmbientGlowView(color: accentColor)
-                    .frame(height: 300)
+                    .frame(height: DesignSystem.Metrics.customSize300)
                     .offset(y: -150)
                 Spacer()
             }

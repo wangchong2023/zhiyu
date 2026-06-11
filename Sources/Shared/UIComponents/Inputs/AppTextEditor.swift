@@ -46,7 +46,7 @@ public struct AppTextEditor: View {
                 if text.isEmpty {
                     Text(placeholder)
                         .font(.system(size: 15))
-                        .foregroundColor(.secondary.opacity(0.6))
+                        .foregroundColor(.secondary.opacity(DesignSystem.Opacity.dim))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 8)
                         .allowsHitTesting(false) // 允许点击穿透到底层 TextEditor
@@ -66,16 +66,16 @@ public struct AppTextEditor: View {
                     }
             }
             .padding(DesignSystem.SpacingToken.tiny.value)
-            .background(Color.primary.opacity(0.03))
+            .background(Color.primary.opacity(DesignSystem.Opacity.atomic))
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                     .stroke(
-                        isFocused ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12),
+                        isFocused ? Color.blue.opacity(DesignSystem.Opacity.dim) : Color.primary.opacity(DesignSystem.Opacity.subtle),
                         lineWidth: 1
                     )
             )
-            .shadow(color: isFocused ? Color.blue.opacity(0.08) : Color.clear, radius: 4, x: 0, y: 2)
+            .shadow(color: isFocused ? Color.blue.opacity(DesignSystem.Opacity.light) : Color.clear, radius: 4, x: 0, y: 2)
             .frame(minHeight: 120)
             
             // 字数限额计数条

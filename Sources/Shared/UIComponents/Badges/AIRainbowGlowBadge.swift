@@ -65,13 +65,13 @@ public struct AIRainbowGlowBadge: View {
         
         // 色彩配置：本地就绪采用极客霓虹绿，云端提权采用极客梦幻蓝紫，正在下载采用炫彩旋转
         let mainColor: Color = isLocalReady ? .green : (modelManager.isCloudEscalationEnabled ? .purple : .appAccent)
-        let glowColor: Color = isLocalReady ? .green.opacity(0.8) : .appAccent.opacity(0.8)
+        let glowColor: Color = isLocalReady ? .green.opacity(DesignSystem.Opacity.prominent) : .appAccent.opacity(DesignSystem.Opacity.prominent)
         
         return ZStack {
             // 1. 底层呼吸发光光晕 (Rainbow Glow Effect)
             Circle()
                 .fill(glowColor)
-                .frame(width: 14, height: 14)
+                .frame(width: DesignSystem.Metrics.customSize14, height: DesignSystem.Metrics.customSize14)
                 .scaleEffect(1.0 + breathAnim * 0.45)
                 .blur(radius: 2.0 + breathAnim * 3.0)
                 .opacity(0.4 + breathAnim * 0.5)
@@ -86,7 +86,7 @@ public struct AIRainbowGlowBadge: View {
                         ),
                         lineWidth: 2
                     )
-                    .frame(width: 22, height: 22)
+                    .frame(width: DesignSystem.Metrics.customSize22, height: DesignSystem.Metrics.customSize22)
                     .rotationEffect(.degrees(rotateAnim))
             } else if modelManager.isCloudEscalationEnabled {
                 Circle()
@@ -98,7 +98,7 @@ public struct AIRainbowGlowBadge: View {
                         ),
                         lineWidth: 1.5
                     )
-                    .frame(width: 20, height: 20)
+                    .frame(width: DesignSystem.IconSize.small, height: DesignSystem.IconSize.small)
                     .scaleEffect(1.0 + breathAnim * 0.1)
             }
             
@@ -106,7 +106,7 @@ public struct AIRainbowGlowBadge: View {
             ZStack {
                 Circle()
                     .fill(Color.appCard)
-                    .frame(width: 18, height: 18)
+                    .frame(width: DesignSystem.large, height: DesignSystem.large)
                 
                 Image(systemName: isLocalReady ? "checkmark.shield.fill" : (isDownloading ? "arrow.down.circle.fill" : "sparkles"))
                     .font(.system(size: isLocalReady ? 10 : 9, weight: .bold))
@@ -133,7 +133,7 @@ public struct AIRainbowGlowBadge: View {
                 
                 Button(action: { isShowingPopover = false }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                         .font(.system(size: 20))
                 }
                 .buttonStyle(.plain)
@@ -166,7 +166,7 @@ public struct AIRainbowGlowBadge: View {
                 }
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.appBackground.opacity(0.6))
+                .background(Color.appBackground.opacity(DesignSystem.Opacity.dim))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
             
@@ -201,7 +201,7 @@ public struct AIRainbowGlowBadge: View {
                     .foregroundStyle(.appSecondary)
             }
             .padding(DesignSystem.tiny)
-            .background(Color.green.opacity(0.1))
+            .background(Color.green.opacity(DesignSystem.Opacity.subtle))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
             
             Divider()
@@ -228,7 +228,8 @@ public struct AIRainbowGlowBadge: View {
             .buttonStyle(.plain)
         }
         .padding()
-        .frame(width: 300)
+        .frame(width: DesignSystem.Metrics.customSize300)
+        // swiftlint:disable:next magic_numbers_opacity
         .background(Color.appCard.opacity(0.95))
         .presentationBackgroundInteraction(.enabled)
     }

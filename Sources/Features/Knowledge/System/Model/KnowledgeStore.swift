@@ -97,7 +97,8 @@ public final class KnowledgeStore {
                         let seedKey = "seeded_vault_\(vaultID.uuidString)"
                         if !UserDefaults.standard.bool(forKey: seedKey) {
                             Logger.shared.info(" [KnowledgeStore] Seeding guide data for vault \(vaultID.uuidString)...")
-                            await self.seedDefaultContent()
+                            let vaultName = VaultService.shared.vaults.first(where: { $0.id == vaultID })?.name
+                            await self.seedDefaultContent(vaultName: vaultName)
                             UserDefaults.standard.set(true, forKey: seedKey)
                         }
                     }
@@ -137,8 +138,8 @@ public final class KnowledgeStore {
     }
 
     /// 填充默认内容
-    public func seedDefaultContent() async {
-        await maintenanceService.seedDefaultContent(pages: pages)
+    public func seedDefaultContent(vaultName: String? = nil) async {
+        await maintenanceService.seedDefaultContent(pages: pages, vaultName: vaultName)
         await refresh()
     }
 

@@ -63,10 +63,11 @@ public struct AppEmptyState: View {
                 // 背景装饰圆环
                 Circle()
                     .fill(Color.appAccent.opacity(Colors.glassOpacity * 0.5))
-                    .frame(width: 120, height: 120)
+                    .frame(width: DesignSystem.Metrics.heroValueSize, height: DesignSystem.Metrics.heroValueSize)
 
                 Circle()
                     .fill(Color.appAccent.opacity(Colors.glassOpacity * 0.3))
+                    // swiftlint:disable:next magic_numbers_frame
                     .frame(width: 160, height: 160)
 
                 // 主图标容器
@@ -74,13 +75,13 @@ public struct AppEmptyState: View {
                     .font(.system(size: Spacing.iconHuge * 1.5, weight: .light))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.appAccent, .appAccent.opacity(0.6)],
+                            colors: [.appAccent, .appAccent.opacity(DesignSystem.Opacity.dim)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
             }
-            .frame(height: 100)
+            .frame(height: DesignSystem.Metrics.customSize100)
 
             // 文字说明区
             VStack(spacing: Spacing.small) {

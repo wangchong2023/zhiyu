@@ -32,8 +32,8 @@ struct NotebookCard: View {
                 // 1. 图标展示 (根据卡片哈希色计算出来的彩色发光底座，赋予视觉独特性)
                 ZStack {
                     RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
-                        .fill(colorForVault.opacity(0.1))
-                        .frame(width: 44, height: 44)
+                        .fill(colorForVault.opacity(DesignSystem.Opacity.subtle))
+                        .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
                     
                     Text(notebook.icon ?? defaultIcon)
                         .font(.title2)
@@ -59,20 +59,20 @@ struct NotebookCard: View {
                 // 4. 元数据底部说明（采用强类型相对时间表达，保持跨语言的国际化适配）
                 Text("\(L10n.Vault.lastEdited) \(notebook.updatedAt.formatted(.relative(presentation: .numeric)))")
                     .font(.caption2.weight(.medium))
-                    .foregroundStyle(.secondary.opacity(0.6))
+                    .foregroundStyle(.secondary.opacity(DesignSystem.Opacity.dim))
             }
             .padding(.horizontal, DesignSystem.small)
             .padding(.top, DesignSystem.small)
             .padding(.bottom, DesignSystem.small) // 统一收紧内边距，减少卡片内部白边
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 180)
+            .frame(height: DesignSystem.Metrics.customSize180)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
-                    .strokeBorder(.primary.opacity(0.04), lineWidth: 0.5)
+                    .strokeBorder(.primary.opacity(DesignSystem.Opacity.faint), lineWidth: 0.5)
             )
-            .premiumAmbientShadow(color: .primary.opacity(0.08), radius: 10)
+            .premiumAmbientShadow(color: .primary.opacity(DesignSystem.Opacity.light), radius: 10)
             .scaleOnHover()
             // 绑定长按上下文菜单 (ContextMenu)，支持重命名与沙盒物理彻底擦除
             .contextMenu {

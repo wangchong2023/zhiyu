@@ -134,8 +134,8 @@ struct WelcomePathSelectionSection: View {
             Text(L10n.Onboarding.Demo.desc)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-            Button(action: { Task { await store.generateDemoData() } }) {
-                Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
+            Button(action: { Task { await store.generateInitialNotebooks() } }) {
+                Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "testtube.2")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)

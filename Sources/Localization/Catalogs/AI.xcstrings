@@ -1078,13 +1078,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Please configure LLM API Key first"
+            "value": "Please configure AI Model first"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请先配置 LLM API Key"
+            "value": "请先配置大模型"
           }
         }
       }
@@ -2030,13 +2030,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enable LLM Assistant"
+            "value": "Enable AI Assistant"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开启 LLM 助手"
+            "value": "开启 AI 助手"
           }
         }
       }
@@ -2047,13 +2047,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "LLM Error"
+            "value": "AI Model Service Error"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "LLM 服务错误"
+            "value": "大模型服务错误"
           }
         }
       }
@@ -2149,13 +2149,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "LLM not configured. Please enter API Key in Settings."
+            "value": "AI Model is not configured. Please provide API Key in Settings."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "LLM 未配置。请在设置中填写 API Key。"
+            "value": "大模型未配置，请在设置中提供 API 密钥。"
           }
         }
       }

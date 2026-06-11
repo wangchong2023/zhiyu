@@ -1945,13 +1945,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Performance"
+            "value": "Token"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "性能"
+            "value": "Token"
           }
         }
       }
@@ -3804,7 +3804,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "TOKEN 消耗"
+            "value": "Token 消耗"
           }
         }
       }
@@ -5624,6 +5624,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "评估记录"
+          }
+        }
+      }
+    },
+    "insight.dateCalculationFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date calculation failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日期计算失败"
           }
         }
       }

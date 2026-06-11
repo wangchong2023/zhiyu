@@ -23,6 +23,10 @@ public struct UserProfileView: View {
 
     /// 当前编辑的昵称
     @State private var nickname: String = ""
+    /// 当前选择的性别（0:未知, 1:男, 2:女）
+    @State private var gender: Int = 0
+    /// 当前选择的生日
+    @State private var birthday: Date = Date()
     /// 用户通过 PhotosPicker 选中的图片项
     @State private var selectedItem: PhotosPickerItem?
     /// 是否正在上传头像
@@ -33,8 +37,6 @@ public struct UserProfileView: View {
     @State private var toastMessage: String?
     /// 是否显示 Toast
     @State private var showToastOverlay = false
-    /// 是否显示升级 Sheet
-    @State private var isShowingUpgrade = false
 
     // MARK: - 初始化
 
@@ -55,15 +57,10 @@ public struct UserProfileView: View {
 
                         // 2. 基本信息表单
                         infoFormSection
-
-                        // 3. 套餐与额度展示
-                        quotaSection
                     }
                     .padding(DesignSystem.medium)
                 }
 
-                // 4. 保存按钮
-                saveButtonArea
             }
 
             // 提示弹窗（使用正确签名：isLoading + message）
@@ -76,28 +73,35 @@ public struct UserProfileView: View {
         .navigationTitle(L10n.Auth.profileAndQuota)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button(L10n.Common.close) {
-                    dismiss()
+            ToolbarItem(placement: .confirmationAction) {
+                if isSaving {
+                    ProgressView()
+                } else {
+                    Button(L10n.Common.done) {
+                        handleProfileSave()
+                    }
                 }
             }
         }
         .onAppear {
-            // 从当前登录用户初始化昵称
+            // 从当前登录用户初始化昵称、性别、生日
             if let user = authService.currentUser {
                 nickname = user.name
+                gender = user.gender ?? 0
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                
+                if let birthdayString = user.birthday,
+                   let date = formatter.date(from: birthdayString) {
+                    birthday = date
+                }
             }
         }
         .onChange(of: selectedItem) { _, newItem in
             if let item = newItem {
                 handleAvatarUpload(item)
             }
-        }
-        .sheet(isPresented: $isShowingUpgrade) {
-            NavigationStack {
-                SubscriptionUpgradeView()
-            }
-            .environmentObject(themeManager)
         }
     }
 
@@ -116,12 +120,14 @@ public struct UserProfileView: View {
                     } placeholder: {
                         ProgressView()
                     }
+                    // swiftlint:disable:next magic_numbers_frame
                     .frame(width: 88, height: 88)
                     .clipShape(Circle())
                 } else {
                     Image(systemName: DesignSystem.Icons.personCropFill)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        // swiftlint:disable:next magic_numbers_frame
                         .frame(width: 88, height: 88)
                         .foregroundStyle(.appSecondary)
                 }
@@ -129,7 +135,8 @@ public struct UserProfileView: View {
                 // 上传过程中显示遮罩
                 if isUploading {
                     Circle()
-                        .fill(Color.black.opacity(0.4))
+                        .fill(Color.black.opacity(DesignSystem.Opacity.disabled))
+                        // swiftlint:disable:next magic_numbers_frame
                         .frame(width: 88, height: 88)
                     ProgressView()
                         .tint(.white)
@@ -137,7 +144,7 @@ public struct UserProfileView: View {
             }
             .overlay(
                 Circle()
-                    .stroke(Color.appAccent.opacity(0.2), lineWidth: 2)
+                    .stroke(Color.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: 2)
             )
 
             // 打开相册的胶囊按钮
@@ -151,7 +158,7 @@ public struct UserProfileView: View {
                     .foregroundStyle(.appAccent)
                     .padding(.horizontal, DesignSystem.medium)
                     .padding(.vertical, DesignSystem.tiny)
-                    .background(Color.appAccent.opacity(0.1))
+                    .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(Capsule())
             }
             .disabled(isUploading)
@@ -162,132 +169,71 @@ public struct UserProfileView: View {
     /// 昵称修改表单区域
     private var infoFormSection: some View {
         AppCard {
-            VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                Text(L10n.Auth.nickname)
-                    .font(.caption.bold())
-                    .foregroundStyle(.appSecondary)
-
-                // AppTextField 正确参数顺序：placeholder: 在前，text: 在后
-                AppTextField(
-                    placeholder: L10n.Auth.identityPlaceholder,
-                    text: $nickname
-                )
-                .accessibilityIdentifier("nicknameTextField")
-            }
-            .padding(DesignSystem.medium)
-        }
-    }
-
-    /// 配额展示区（金库数、知识页、插件数）
-    private var quotaSection: some View {
-        AppCard {
             VStack(alignment: .leading, spacing: DesignSystem.large) {
-                // 头部：当前套餐类型 + 升级按钮
-                HStack {
-                    VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                        Text(L10n.Auth.currentSubscription)
-                            .font(.caption)
+                // 账号 ID (不可修改)
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    Text(L10n.Auth.accountId)
+                        .font(.caption.bold())
+                        .foregroundStyle(.appSecondary)
+                    Text(authService.currentUser?.id.uuidString ?? "-")
+                        .font(.subheadline)
+                        .foregroundStyle(.appText)
+                        .textSelection(.enabled)
+                }
+                
+                // 手机号（如果通过短信登录则展示，不可修改）
+                if let phone = authService.currentUser?.phone, !phone.isEmpty {
+                    VStack(alignment: .leading, spacing: DesignSystem.small) {
+                        Text(L10n.Auth.phoneLabel)
+                            .font(.caption.bold())
                             .foregroundStyle(.appSecondary)
-
-                        Text(authService.currentUser?.planKey == "pro"
-                             ? L10n.Auth.proPlan
-                             : L10n.Auth.litePlan)
-                            .font(.title3.bold())
+                        Text(phone)
+                            .font(.subheadline)
                             .foregroundStyle(.appText)
                     }
-
-                    Spacer()
-
-                    // 仅 Lite 用户展示升级按钮
-                    if authService.currentUser?.planKey != "pro" {
-                        Button(action: { isShowingUpgrade = true }) {
-                            Text(L10n.Auth.upgradePro)
-                                .font(.caption.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, DesignSystem.medium)
-                                .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic)
-                                .background(Color.appAccent)
-                                .clipShape(Capsule())
-                        }
-                    }
                 }
 
-                AppDivider()
+                // 昵称修改
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    Text(L10n.Auth.nickname)
+                        .font(.caption.bold())
+                        .foregroundStyle(.appSecondary)
 
-                // 1. 金库限额（通过 VaultService.shared 获取，不依赖 AppStore）
-                let vaultsCount = VaultService.shared.vaults.count
-                let vaultsMax = authService.currentUser?.maxVaults ?? 2
-                quotaRow(
-                    title: L10n.Auth.vaultUsage,
-                    current: vaultsCount,
-                    max: vaultsMax
-                )
-
-                // 2. 知识页数限额
-                let pagesCount = VaultService.shared.vaults.reduce(0) { $0 + $1.pageCount }
-                let pagesMax = authService.currentUser?.maxPages ?? 1000
-                quotaRow(
-                    title: L10n.Auth.pagesUsage,
-                    current: pagesCount,
-                    max: pagesMax
-                )
-
-                // 3. 插件限额
-                let pluginsCount = PluginRegistry.shared.plugins.count
-                let pluginsMax = authService.currentUser?.maxPlugins ?? 3
-                quotaRow(
-                    title: L10n.Auth.pluginsUsage,
-                    current: pluginsCount,
-                    max: pluginsMax
-                )
+                    // AppTextField 正确参数顺序：placeholder: 在前，text: 在后
+                    AppTextField(
+                        placeholder: L10n.Auth.nicknamePlaceholder,
+                        text: $nickname
+                    )
+                    .accessibilityIdentifier("nicknameTextField")
+                }
+                
+                // 性别选择
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    Text(L10n.Auth.gender)
+                        .font(.caption.bold())
+                        .foregroundStyle(.appSecondary)
+                    
+                    Picker("", selection: $gender) {
+                        Text(L10n.Auth.genderSecret).tag(0)
+                        Text(L10n.Auth.genderMale).tag(1)
+                        Text(L10n.Auth.genderFemale).tag(2)
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                // 生日选择
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    Text(L10n.Auth.birthday)
+                        .font(.caption.bold())
+                        .foregroundStyle(.appSecondary)
+                    
+                    DatePicker("", selection: $birthday, displayedComponents: .date)
+                        .labelsHidden()
+                        .environment(\.locale, Locale.current)
+                }
             }
             .padding(DesignSystem.medium)
         }
-    }
-
-    /// 配额监控子行：标题 + 当前/上限数字 + 进度条
-    private func quotaRow(title: String, current: Int, max: Int) -> some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            HStack {
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundStyle(.appText)
-                Spacer()
-                Text("\(current) / \(max < 999999 ? "\(max)" : "∞")")
-                    .font(.system(.subheadline, design: .rounded))
-                    .foregroundStyle(.appSecondary)
-            }
-
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.appBorder.opacity(0.5))
-                        .frame(height: 6)
-
-                    let ratio = max > 0 ? CGFloat(current) / CGFloat(max) : 0.0
-                    let fillWidth = max >= 999999 ? 0.0 : min(1.0, ratio) * geo.size.width
-
-                    Capsule()
-                        .fill(ratio >= 1.0 && max < 999999 ? Color.red : Color.appAccent)
-                        .frame(width: max >= 999999 ? geo.size.width : fillWidth, height: 6)
-                }
-            }
-            .frame(height: 6)
-        }
-    }
-
-    /// 底部保存按钮区域
-    private var saveButtonArea: some View {
-        VStack {
-            AppDivider()
-
-            AppPrimaryButton(title: L10n.Auth.saveChanges, isLoading: isSaving) {
-                handleProfileSave()
-            }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-        }
-        .background(Color.appCard.opacity(DesignSystem.glassOpacity))
     }
 
     // MARK: - 业务操作
@@ -316,14 +262,20 @@ public struct UserProfileView: View {
         }
     }
 
-    /// 点击"保存修改"后触发昵称（及现有头像 URL）更新
+    /// 点击"保存修改"后触发昵称（及现有头像 URL）、性别和生日更新
     private func handleProfileSave() {
         Task {
             isSaving = true
             let avatarString = authService.currentUser?.avatarURL?.absoluteString
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let birthdayString = formatter.string(from: birthday)
+            
             let success = await authService.updateUserProfile(
                 nickname: nickname,
-                avatar: avatarString
+                avatar: avatarString,
+                gender: gender,
+                birthday: birthdayString
             )
             isSaving = false
             if success {

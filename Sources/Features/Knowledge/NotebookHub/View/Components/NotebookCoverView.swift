@@ -54,8 +54,8 @@ public struct NotebookCoverView: View {
                     .foregroundColor(.white)
                 Spacer()
                 RoundedRectangle(cornerRadius: 2 /* 装饰微圆角，暂无 DesignSystem token */)
-                    .fill(Color.white.opacity(0.4))
-                    .frame(width: 40, height: 4)
+                    .fill(Color.white.opacity(DesignSystem.Opacity.disabled))
+                    .frame(width: DesignSystem.Metrics.customSize40, height: DesignSystem.tiny)
             }
             
             Spacer()
@@ -70,11 +70,11 @@ public struct NotebookCoverView: View {
                 
                 Text(L10n.Shared.pageCountFormat(pageCount))
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(DesignSystem.Opacity.prominent))
             }
         }
         .padding(DesignSystem.standardPadding)
-        .frame(width: 140, height: 180)
+        .frame(width: DesignSystem.Metrics.customSize140, height: DesignSystem.Metrics.customSize180)
         .background(
             // 根据主题类型绘制背景
             Group {
@@ -96,7 +96,7 @@ public struct NotebookCoverView: View {
             }
         )
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 8, x: 0, y: 4)
         .scaleEffect(isPressed ? 0.95 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
     }

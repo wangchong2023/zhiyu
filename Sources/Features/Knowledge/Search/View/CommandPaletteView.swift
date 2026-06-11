@@ -30,7 +30,7 @@ struct CommandPaletteView: View {
                 Text(L10n.Common.Global.esc)
                     .font(.caption2.weight(.bold))
                     .padding(DesignSystem.tiny)
-                    .background(Color.appBorder.opacity(0.3))
+                    .background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
             }
             .padding()
@@ -77,12 +77,12 @@ struct CommandPaletteView: View {
                 }
             }
             .listStyle(.plain)
-            .frame(height: 300)
+            .frame(height: DesignSystem.Metrics.customSize300)
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        .shadow(color: .black.opacity(0.5), radius: 20)
-        .frame(width: 500)
+        .shadow(color: .black.opacity(DesignSystem.Opacity.soft), radius: 20)
+        .frame(width: DesignSystem.Metrics.customSize500)
         .onAppear { isFocused = true }
     }
 }
@@ -97,7 +97,7 @@ private struct CommandRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: icon)
-                    .frame(width: 20)
+                    .frame(width: DesignSystem.IconSize.small)
                 Text(title)
                     .font(.subheadline)
                 Spacer()

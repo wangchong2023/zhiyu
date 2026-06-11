@@ -52,7 +52,7 @@ public struct AppErrorView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: Color.red.opacity(0.2), radius: 10, x: 0, y: 5)
+                .shadow(color: Color.red.opacity(DesignSystem.Opacity.medium), radius: 10, x: 0, y: 5)
             
             // 标题
             Text(title)
@@ -91,7 +91,7 @@ public struct AppErrorView: View {
                             )
                         )
                         .cornerRadius(20)
-                        .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                        .shadow(color: Color.blue.opacity(DesignSystem.Opacity.shadow), radius: 8, x: 0, y: 4)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.top, 8)

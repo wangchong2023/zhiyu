@@ -64,6 +64,9 @@ extension L10n {
         // MARK: - Ingest 表词条
         public static var title: String { tr("ingest.title") }
         public static var manualEntry: String { tr("ingest.manualEntry") }
+        public static var sourcePrefix: String { Ingest.tr("ingest.sourcePrefix") }
+        public static var urlSourcePrefix: String { Ingest.tr("ingest.urlSourcePrefix") }
+        public static var scrapeTimePrefix: String { Ingest.tr("ingest.scrapeTimePrefix") }
 
         public static var importFailed: String { Ingest.tr("ingest.importFailed") }
         public static var importingFile: String { Ingest.tr("ingest.importingFile") }

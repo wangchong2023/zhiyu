@@ -83,17 +83,17 @@ struct PluginDetailView: View {
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
-                    .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
+                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10, x: 0, y: 5)
             } else {
                 Image(systemName: plugin.icon)
                     .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
                     .foregroundStyle(.white)
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                     .background(
-                        LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
+                        LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.Opacity.prominent)],
                                        startPoint: .topLeading, endPoint: .bottomTrailing))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
-                    .shadow(color: Color.appAccent.opacity(0.3), radius: 10, x: 0, y: 5)
+                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10, x: 0, y: 5)
             }
 
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -108,7 +108,7 @@ struct PluginDetailView: View {
                         .font(.caption2.weight(.semibold))
                         .padding(.horizontal, DesignSystem.small)
                         .padding(.vertical, DesignSystem.atomic * 2)
-                        .background(Color.appAccent.opacity(0.12))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                         .foregroundStyle(.appAccent)
                         .clipShape(Capsule())
                 }
@@ -260,7 +260,7 @@ struct PluginDetailView: View {
                     value: monetizationLabel
                 )
             }
-            .background(Color.appCard.opacity(0.4))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
     }
@@ -271,12 +271,12 @@ struct PluginDetailView: View {
             Image(systemName: icon)
                 .font(.subheadline)
                 .foregroundStyle(.appAccent)
-                .frame(width: 20, alignment: .center)
+                .frame(width: DesignSystem.IconSize.small, alignment: .center)
 
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
-                .frame(width: 80, alignment: .leading)
+                .frame(width: DesignSystem.Metrics.indicatorSize, alignment: .leading)
 
             Spacer()
 
@@ -318,7 +318,7 @@ struct PluginDetailView: View {
                         .foregroundStyle(.appAccent)
                         .padding(.horizontal, DesignSystem.small)
                         .padding(.vertical, DesignSystem.atomic)
-                        .background(Color.appAccent.opacity(0.12))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                         .clipShape(Capsule())
                 }
             }
@@ -330,7 +330,7 @@ struct PluginDetailView: View {
                             Image(systemName: permIcon(for: perm))
                                 .foregroundStyle(permColor(for: perm))
                                 .font(.subheadline)
-                                .frame(width: 20)
+                                .frame(width: DesignSystem.IconSize.small)
 
                             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(L10n.Plugin.permTitle(for: perm))
@@ -343,7 +343,7 @@ struct PluginDetailView: View {
                         }
                         .padding(DesignSystem.medium)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.appCard.opacity(0.4))
+                        .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     }
                 }
@@ -357,7 +357,7 @@ struct PluginDetailView: View {
                 }
                 .padding(DesignSystem.medium)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.appCard.opacity(0.4))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
         }
@@ -392,7 +392,7 @@ struct PluginDetailView: View {
 
             Text(plugin.id)
                 .font(.system(size: 10))
-                .foregroundStyle(.appSecondary.opacity(0.6))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 .padding(.top, DesignSystem.tiny)
         }
         .padding(.top, DesignSystem.medium)
@@ -481,7 +481,7 @@ struct PermissionConfirmationSheet: View {
                         HStack(spacing: DesignSystem.medium) {
                             Image(systemName: permIcon(for: perm))
                                 .foregroundStyle(.appAccent)
-                                .frame(width: 24)
+                                .frame(width: DesignSystem.IconSize.standard)
 
                             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(L10n.Plugin.permTitle(for: perm))
@@ -546,7 +546,7 @@ struct PermissionTag: View {
         .font(.caption2.bold())
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.tiny)
-        .background(color.opacity(0.1))
+        .background(color.opacity(DesignSystem.Opacity.subtle))
         .foregroundStyle(color)
         .clipShape(Capsule())
     }

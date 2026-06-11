@@ -94,11 +94,11 @@ public struct LocalModelManagerView: View {
             .padding(.horizontal, DesignSystem.medium)
             .padding(.vertical, DesignSystem.small)
         }
-        .background(Color.appCard.opacity(0.6))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .overlay(
             Rectangle()
-                .frame(height: 1)
-                .foregroundStyle(Color.appBorder.opacity(0.6)),
+                .frame(height: DesignSystem.Metrics.customSize1)
+                .foregroundStyle(Color.appBorder.opacity(DesignSystem.Opacity.dim)),
             alignment: .bottom
         )
     }
@@ -121,10 +121,10 @@ public struct LocalModelManagerView: View {
                     .foregroundStyle(selectedTab == tab ? .appAccent : .appSecondary)
 
                 Rectangle()
-                    .frame(height: 2)
+                    .frame(height: DesignSystem.atomic)
                     .foregroundStyle(selectedTab == tab ? .appAccent : .clear)
             }
-            .frame(width: 80)
+            .frame(width: DesignSystem.Metrics.customSize80)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

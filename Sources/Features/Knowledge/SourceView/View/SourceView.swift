@@ -64,7 +64,7 @@ struct SourceView: View {
             Spacer()
             Image(systemName: DesignSystem.Icons.quoteOpening)
                 .font(.largeTitle)
-                .foregroundStyle(.appSecondary.opacity(0.3))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.shadow))
             
             Text(L10n.Knowledge.Page.Source.empty)
                 .font(.subheadline)

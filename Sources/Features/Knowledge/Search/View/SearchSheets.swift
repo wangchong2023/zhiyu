@@ -33,7 +33,7 @@ struct PagePreviewSheet: View {
                                 .font(.title)
                                 .foregroundStyle(page.pageType.color)
                                 .padding(DesignSystem.small)
-                                .background(page.pageType.color.opacity(0.15))
+                                .background(page.pageType.color.opacity(DesignSystem.Opacity.glass))
                                 .clipShape(Circle())
                             
                             Spacer()
@@ -45,7 +45,7 @@ struct PagePreviewSheet: View {
                                     .bold()
                                     .padding(.horizontal, DesignSystem.small)
                                     .padding(.vertical, 4)
-                                    .background(page.status.color.opacity(0.15))
+                                    .background(page.status.color.opacity(DesignSystem.Opacity.glass))
                                     .foregroundStyle(page.status.color)
                                     .clipShape(Capsule())
                                 
@@ -54,7 +54,7 @@ struct PagePreviewSheet: View {
                                     .bold()
                                     .padding(.horizontal, DesignSystem.small)
                                     .padding(.vertical, 4)
-                                    .background(page.confidence.color.opacity(0.15))
+                                    .background(page.confidence.color.opacity(DesignSystem.Opacity.glass))
                                     .foregroundStyle(page.confidence.color)
                                     .clipShape(Capsule())
                             }
@@ -72,14 +72,14 @@ struct PagePreviewSheet: View {
                             .foregroundStyle(page.pageType.color)
                             .padding(.horizontal, DesignSystem.small)
                             .padding(.vertical, 2)
-                            .background(page.pageType.color.opacity(0.1))
+                            .background(page.pageType.color.opacity(DesignSystem.Opacity.subtle))
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                     }
                     .padding()
                     .background(
                         LinearGradient(
                             colors: [
-                                page.pageType.color.opacity(0.08),
+                                page.pageType.color.opacity(DesignSystem.Opacity.light),
                                 .clear
                             ],
                             startPoint: .top,
@@ -103,7 +103,7 @@ struct PagePreviewSheet: View {
                                         .bold()
                                         .padding(.horizontal, DesignSystem.small)
                                         .padding(.vertical, 4)
-                                        .background(Color.secondary.opacity(0.1))
+                                        .background(Color.secondary.opacity(DesignSystem.Opacity.subtle))
                                         .foregroundStyle(.secondary)
                                         .clipShape(Capsule())
                                 }
@@ -139,11 +139,10 @@ struct PagePreviewSheet: View {
             .navigationTitle(L10n.Search.base)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(L10n.Common.confirm) {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) {
                         dismiss()
                     }
-                    .bold()
                 }
             }
         }
@@ -176,7 +175,7 @@ struct SearchDiagnosticSheet: View {
                         }
                         
                         Divider()
-                            .background(Color.secondary.opacity(0.2))
+                            .background(Color.secondary.opacity(DesignSystem.Opacity.medium))
                         
                         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                             Text(L10n.Search.Diag.originalQuery)
@@ -189,7 +188,7 @@ struct SearchDiagnosticSheet: View {
                                 .foregroundStyle(.primary)
                                 .padding(DesignSystem.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.secondary.opacity(0.06))
+                                .background(Color.secondary.opacity(DesignSystem.Opacity.subtle))
                                 .cornerRadius(DesignSystem.smallRadius)
                         }
                         
@@ -204,14 +203,14 @@ struct SearchDiagnosticSheet: View {
                                 .foregroundStyle(.purple)
                                 .padding(DesignSystem.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.purple.opacity(0.06))
+                                .background(Color.purple.opacity(DesignSystem.Opacity.subtle))
                                 .cornerRadius(DesignSystem.smallRadius)
                         }
                     }
                     .padding()
                     .background(Color.appCard)
                     .cornerRadius(DesignSystem.cardRadius)
-                    .shadow(color: DesignSystem.shadowColor.opacity(0.03), radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
+                    .shadow(color: DesignSystem.shadowColor.opacity(DesignSystem.Opacity.atomic), radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
                     .padding(.horizontal)
                     
                     // ── 2. 多源召回对比圆环/指标面板 ──
@@ -229,13 +228,13 @@ struct SearchDiagnosticSheet: View {
                             
                             Text("FTS5 SQLite")
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(.blue.opacity(0.8))
+                                .foregroundStyle(.blue.opacity(DesignSystem.Opacity.prominent))
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
                             LinearGradient(
-                                colors: [Color.blue.opacity(0.05), Color.blue.opacity(0.01)],
+                                colors: [Color.blue.opacity(DesignSystem.Opacity.ghost), Color.blue.opacity(DesignSystem.Opacity.atomic)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -243,7 +242,7 @@ struct SearchDiagnosticSheet: View {
                         .cornerRadius(DesignSystem.cardRadius)
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                .stroke(Color.blue.opacity(0.15), lineWidth: 1)
+                                .stroke(Color.blue.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                         )
                         
                         // 向量检索召回卡
@@ -259,13 +258,13 @@ struct SearchDiagnosticSheet: View {
                             
                             Text("HNSW / Vector")
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(.green.opacity(0.8))
+                                .foregroundStyle(.green.opacity(DesignSystem.Opacity.prominent))
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
                             LinearGradient(
-                                colors: [Color.green.opacity(0.05), Color.green.opacity(0.01)],
+                                colors: [Color.green.opacity(DesignSystem.Opacity.ghost), Color.green.opacity(DesignSystem.Opacity.atomic)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -273,7 +272,7 @@ struct SearchDiagnosticSheet: View {
                         .cornerRadius(DesignSystem.cardRadius)
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                .stroke(Color.green.opacity(0.15), lineWidth: 1)
+                                .stroke(Color.green.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                         )
                     }
                     .padding(.horizontal)
@@ -305,8 +304,8 @@ struct SearchDiagnosticSheet: View {
                                             .font(.caption)
                                             .bold()
                                             .foregroundStyle(.orange)
-                                            .frame(width: 24, height: 24)
-                                            .background(Color.orange.opacity(0.1))
+                                            .frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
+                                            .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
                                             .clipShape(Circle())
                                         
                                         VStack(alignment: .leading, spacing: 2) {
@@ -344,7 +343,7 @@ struct SearchDiagnosticSheet: View {
                                             .foregroundStyle(.orange)
                                             .padding(.horizontal, DesignSystem.small)
                                             .padding(.vertical, 4)
-                                            .background(Color.orange.opacity(0.06))
+                                            .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
                                             .cornerRadius(DesignSystem.microRadius)
                                     }
                                     .padding(.vertical, DesignSystem.small)
@@ -352,7 +351,7 @@ struct SearchDiagnosticSheet: View {
                                     
                                     if index < info.rrfTopResults.count - 1 {
                                         Divider()
-                                            .background(Color.secondary.opacity(0.1))
+                                            .background(Color.secondary.opacity(DesignSystem.Opacity.subtle))
                                             .padding(.leading, 48)
                                     }
                                 }
@@ -370,11 +369,10 @@ struct SearchDiagnosticSheet: View {
             .navigationTitle(L10n.Search.Diag.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(L10n.Common.confirm) {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) {
                         dismiss()
                     }
-                    .bold()
                 }
             }
         }

@@ -44,14 +44,14 @@ struct LockOverlayView: View {
             // Animated Background Glows
             ZStack {
                 Circle()
-                    .fill(Color.appAccent.opacity(0.12))
-                    .frame(width: 500, height: 500)
+                    .fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
+                    .frame(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize500)
                     .blur(radius: 100)
                     .offset(x: isAnimating ? 150 : -150, y: isAnimating ? -100 : 100)
                 
                 Circle()
-                    .fill(Color.purple.opacity(0.08))
-                    .frame(width: 400, height: 400)
+                    .fill(Color.purple.opacity(DesignSystem.Opacity.light))
+                    .frame(width: DesignSystem.Metrics.customSize400, height: DesignSystem.Metrics.customSize400)
                     .blur(radius: 80)
                     .offset(x: isAnimating ? -180 : 180, y: isAnimating ? 80 : -80)
             }
@@ -65,19 +65,19 @@ struct LockOverlayView: View {
                     // Rotating decorative rings
                     Circle()
                         .stroke(
-                            LinearGradient(colors: [Color.appAccent.opacity(0.4), .clear], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            LinearGradient(colors: [Color.appAccent.opacity(DesignSystem.Opacity.disabled), .clear], startPoint: .topLeading, endPoint: .bottomTrailing),
                             lineWidth: 1
                         )
-                        .frame(width: 180, height: 180)
+                        .frame(width: DesignSystem.Metrics.customSize180, height: DesignSystem.Metrics.customSize180)
                         .rotationEffect(.degrees(isAnimating ? 360 : 0))
                         .animation(.linear(duration: 20).repeatForever(autoreverses: false), value: isAnimating)
                     
                     Circle()
                         .stroke(
-                            LinearGradient(colors: [.clear, Color.appAccent.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            LinearGradient(colors: [.clear, Color.appAccent.opacity(DesignSystem.Opacity.medium)], startPoint: .topLeading, endPoint: .bottomTrailing),
                             lineWidth: 1
                         )
-                        .frame(width: 220, height: 220)
+                        .frame(width: DesignSystem.Metrics.customSize220, height: DesignSystem.Metrics.customSize220)
                         .rotationEffect(.degrees(isAnimating ? -360 : 0))
                         .animation(.linear(duration: 25).repeatForever(autoreverses: false), value: isAnimating)
 
@@ -86,12 +86,12 @@ struct LockOverlayView: View {
                             .font(.largeTitle.weight(.ultraLight))
                             .foregroundStyle(
                                 LinearGradient(
-                                    colors: [Color.appAccent, Color.appAccent.opacity(0.7)],
+                                    colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.Opacity.overlay)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
-                            .shadow(color: Color.appAccent.opacity(0.4), radius: 30, y: 15)
+                            .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.disabled), radius: 30, y: 15)
                             .symbolEffect(.bounce, options: .repeat(2), value: isAnimating)
                     }
                 }
@@ -133,18 +133,18 @@ struct LockOverlayView: View {
                             Capsule()
                                 .fill(
                                     LinearGradient(
-                                        colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
+                                        colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.Opacity.prominent)],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
                                 )
                             
                             Capsule()
-                                .stroke(.appGloss.opacity(0.4), lineWidth: 0.5)
+                                .stroke(.appGloss.opacity(DesignSystem.Opacity.disabled), lineWidth: 0.5)
                         }
                     }
                     .foregroundStyle(.white)
-                    .shadow(color: Color.appAccent.opacity(0.5), radius: 25, y: 12)
+                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.soft), radius: 25, y: 12)
                 }
                 .buttonStyle(ScaleButtonStyle())
                 .padding(.bottom, 60)

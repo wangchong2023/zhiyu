@@ -319,7 +319,8 @@ struct RAGEvaluationView: View {
     // MARK: - 👍 用户满意度
 
     private var satisfactionSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+        let barHeight: CGFloat = 12
+        return VStack(alignment: .leading, spacing: DesignSystem.medium) {
             infoSectionHeader(id: "satisfactionPhase", title: L10n.Dashboard.stats.userSatisfaction,
                               icon: "hand.thumbsup.fill", color: .blue, tip: L10n.Dashboard.stats.tipUserSatisfaction)
 
@@ -330,13 +331,13 @@ struct RAGEvaluationView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: DesignSystem.atomic)
-                                .fill(Color.appCard).frame(height: 12)
+                                .fill(Color.appCard).frame(height: barHeight)
                             RoundedRectangle(cornerRadius: DesignSystem.atomic)
                                 .fill(satisfactionColor)
-                                .frame(width: geo.size.width * satisfactionRate, height: 12)
+                                .frame(width: geo.size.width * satisfactionRate, height: barHeight)
                         }
                     }
-                    .frame(height: 12)
+                    .frame(height: barHeight)
 
                     Text(String(format: FormatPattern.percentInt, satisfactionRate * 100) + "%")
                         .font(.title3.bold()).foregroundStyle(satisfactionColor)
@@ -430,35 +431,29 @@ struct RAGEvaluationView: View {
     // MARK: - Tooltip
 
     private func infoIcon(id: String, tip: String) -> some View {
-        let isActive = activeTooltip == id
-        return Image(systemName: "info.circle")
-            .font(.caption)
-            .foregroundStyle(isActive ? .appAccent : .appSecondary.opacity(0.5))
-            .frame(width: TooltipVisual.iconHitTarget, height: TooltipVisual.iconHitTarget)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: TooltipVisual.animationDuration)) {
-                    activeTooltip = isActive ? nil : id
-                }
-            }
-            .overlay(alignment: .top) {
-                if isActive {
-                    Text(tip).font(.caption2).foregroundStyle(.appSecondary)
-                        .padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)
-                        .background(.regularMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .shadow(color: .black.opacity(TooltipVisual.shadowOpacity), radius: TooltipVisual.shadowRadius, y: TooltipVisual.shadowOffsetY)
-                        .frame(maxWidth: 260)
-                        .offset(y: TooltipVisual.popupOffsetY)
-                        .zIndex(TooltipVisual.maxZIndex)
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: TooltipVisual.animationDuration)) {
-                                activeTooltip = nil
-                            }
-                        }
-                }
-            }
-            .zIndex(isActive ? TooltipVisual.maxZIndex : 0)
+        let binding = Binding(
+            get: { activeTooltip == id },
+            set: { activeTooltip = $0 ? id : nil }
+        )
+        return Button(action: {
+            HapticFeedback.shared.trigger(.selection)
+            activeTooltip = (activeTooltip == id) ? nil : id
+        }) {
+            Image(systemName: "info.circle")
+                .font(.caption)
+                .foregroundStyle((activeTooltip == id) ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
+                .frame(width: TooltipVisual.iconHitTarget, height: TooltipVisual.iconHitTarget)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .popover(isPresented: binding, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
+            Text(tip)
+                .font(.caption2)
+                .foregroundStyle(.appSecondary)
+                .padding(.horizontal, DesignSystem.medium)
+                .padding(.vertical, DesignSystem.small)
+                .presentationCompactAdaptation(.popover)
+        }
     }
 
     // MARK: - 环形百分比卡片
@@ -592,7 +587,7 @@ struct RAGEvaluationView: View {
             }
         } label: {
             Image(systemName: icon)
-                .font(.caption).foregroundStyle(isActive ? .blue : .appSecondary.opacity(0.4))
+                .font(.caption).foregroundStyle(isActive ? .blue : .appSecondary.opacity(DesignSystem.Opacity.disabled))
         }
         .buttonStyle(.plain)
     }
@@ -601,7 +596,7 @@ struct RAGEvaluationView: View {
         Text(String(format: FormatPattern.score1, score * 100))
             .font(.caption.bold()).foregroundStyle(scoreColor(score))
             .padding(.horizontal, DesignSystem.small).padding(.vertical, DesignSystem.atomic)
-            .background(scoreColor(score).opacity(0.1)).clipShape(Capsule())
+            .background(scoreColor(score).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
     }
 
     private func tagLabel(_ prefix: String, value: Double, inverted: Bool = false) -> some View {
@@ -609,7 +604,7 @@ struct RAGEvaluationView: View {
         return Text("\(prefix):\(String(format: FormatPattern.score2, value))")
             .font(.system(size: FontSize.tag, weight: .medium, design: .monospaced)).foregroundStyle(color)
             .padding(.horizontal, TagVisual.horizontalPadding).padding(.vertical, TagVisual.verticalPadding)
-            .background(color.opacity(0.08)).clipShape(RoundedRectangle(cornerRadius: TagVisual.cornerRadius))
+            .background(color.opacity(DesignSystem.Opacity.light)).clipShape(RoundedRectangle(cornerRadius: TagVisual.cornerRadius))
     }
 
     // MARK: - 评分与颜色

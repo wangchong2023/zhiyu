@@ -251,7 +251,7 @@ extension DesignSystem {
         public static let pullFromCloud = Typography.Icons.pullFromCloud
         public static let bidirectionalSync = Typography.Icons.icloudSync
         public static let clearCloudData = Typography.Icons.trashICloud
-        public static let injectDemoData = Typography.Icons.testtube
+        public static let rebuildInitialNotebooks = Typography.Icons.testtube
         public static let stressTest = Typography.Icons.gauge100
         public static let llmConfig = Typography.Icons.sliderHorizontal
         public static let theme = Typography.Icons.paintbrush

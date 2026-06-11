@@ -100,7 +100,7 @@ final class IngestCoordinator {
         let sourceName = sourceHint.displayName
 
         // rawText 以 Markdown 格式存储，带来源头
-        let rawText = "> 来源：\(sourceName) | \(Date().formatted(date: .numeric, time: .shortened))\n\n\(content)"
+        let rawText = "> \(L10n.Ingest.sourcePrefix)\(sourceName) | \(Date().formatted(date: .numeric, time: .shortened))\n\n\(content)"
         let textPath = fileStore.saveContent(rawText, category: sourceHint, ext: "md")
 
         // OCR：额外保存原始图片文件
@@ -277,7 +277,7 @@ final class IngestCoordinator {
                         let urlString = url.absoluteString
                         let recordID = UUID().uuidString
                         let rawResult = try? await scraper.fetchMarkdown(from: urlString)
-                        let rawBody = rawResult.map { "> 来源链接：\(urlString)\n> 抓取时间：\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
+                        let rawBody = rawResult.map { "> \(L10n.Ingest.urlSourcePrefix)\(urlString)\n> \(L10n.Ingest.scrapeTimePrefix)\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
                         let ocrText = (try? await self.extractImagesFromURL(urlString)) ?? ""
                         let rawMarkdown = rawBody.map { $0 + ocrText }
                         let filePath = rawMarkdown.flatMap { store.saveContent($0, category: .link, ext: "md") }

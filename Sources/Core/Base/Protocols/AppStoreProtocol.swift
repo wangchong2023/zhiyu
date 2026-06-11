@@ -54,7 +54,7 @@ protocol AppStoreProtocol: AnyObject, Observable {
     /// 清除全部开发者调试数据
     func clearAllDeveloperData()
     /// 播种默认示例内容
-    func seedDefaultContent() async
+    func seedDefaultContent(vaultName: String?) async
 
     // ── 建议应用 ──
     /// 应用重构建议

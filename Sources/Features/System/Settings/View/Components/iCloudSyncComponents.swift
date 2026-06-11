@@ -156,7 +156,7 @@ struct SyncInfoRow: View {
             Image(systemName: icon)
                 .font(.caption)
                 .foregroundStyle(.appText)
-                .frame(width: 20)
+                .frame(width: DesignSystem.IconSize.small)
 
             Text(text)
                 .font(.caption)

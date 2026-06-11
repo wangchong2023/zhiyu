@@ -54,9 +54,10 @@ struct PremiumAmbientShadowModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             // 第一层：大范围微弱漫反射阴影，确立环境光底色
+            // swiftlint:disable:next magic_numbers_opacity
             .shadow(color: color.opacity(0.06), radius: radius, x: 0, y: radius * 0.4)
             // 第二层：小范围紧致遮蔽阴影，确立物理接缝立体感
-            .shadow(color: color.opacity(0.04), radius: radius * 0.4, x: 0, y: radius * 0.15)
+            .shadow(color: color.opacity(DesignSystem.Opacity.faint), radius: radius * 0.4, x: 0, y: radius * 0.15)
     }
 }
 
@@ -89,7 +90,7 @@ struct GlowingNeonBorderModifier: ViewModifier {
                         lineWidth: isGlowing ? 1.5 : 0
                     )
                     // 渐变外光圈发光，营造呼吸高亮
-                    .shadow(color: isGlowing ? (gradientColors.first ?? .blue).opacity(0.4) : .clear, radius: isGlowing ? 6 : 0)
+                    .shadow(color: isGlowing ? (gradientColors.first ?? .blue).opacity(DesignSystem.Opacity.disabled) : .clear, radius: isGlowing ? 6 : 0)
                     .animation(.easeInOut(duration: 0.35), value: isGlowing)
             )
     }

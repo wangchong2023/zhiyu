@@ -135,7 +135,7 @@ public struct AppDivider: View {
             }
             Rectangle()
                 .fill(color)
-                .frame(height: 1)
+                .frame(height: DesignSystem.Metrics.customSize1)
         }
     }
 }
@@ -179,7 +179,7 @@ public struct AppIconBox: View {
     public var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: Spacing.small)
-                .fill(color.opacity(0.12))
+                .fill(color.opacity(DesignSystem.Opacity.subtle))
 
             Image(systemName: icon)
                 .font(.system(size: size * 0.45, weight: .medium))

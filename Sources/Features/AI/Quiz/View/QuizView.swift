@@ -115,7 +115,7 @@ struct QuizView: View {
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(Spacing.standardPadding)
-                                    .background(Color.appAccent.opacity(0.05))
+                                    .background(Color.appAccent.opacity(DesignSystem.Opacity.ghost))
                                     .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
                             }
                             .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -136,7 +136,7 @@ struct QuizView: View {
                             .padding(Spacing.standardPadding)
                             .background(Color.appAccent)
                             .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
-                            .shadow(color: .appAccent.opacity(0.3), radius: 10, y: 5)
+                            .shadow(color: .appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10, y: 5)
                     }
                     .padding(Spacing.standardPadding)
                 }

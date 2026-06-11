@@ -241,7 +241,7 @@ struct ConflictDiffView: View {
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                                .stroke(Color.appAccent.opacity(0.3), lineWidth: 1)
+                                .stroke(Color.appAccent.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
                         )
                     }
                 }
@@ -267,8 +267,8 @@ struct ConflictDiffView: View {
                     .padding(DesignSystem.tiny)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(height: 200)
-            .background(Color.appCard.opacity(0.5))
+            .frame(height: DesignSystem.Metrics.sourceCardWidth)
+            .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
     }

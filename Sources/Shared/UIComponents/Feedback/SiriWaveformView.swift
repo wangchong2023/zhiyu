@@ -91,7 +91,7 @@ struct SiriWaveformView: View {
     ZStack {
         Color.black.ignoresSafeArea()
         SiriWaveformView(speedMultiplier: 1.0, amplitudeMultiplier: 1.0)
-            .frame(height: 120)
+            .frame(height: DesignSystem.Metrics.heroValueSize)
             .padding()
     }
 }

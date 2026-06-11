@@ -60,7 +60,7 @@ struct NotebookThemeBackgroundView: View {
                         ForEach(1..<colors.count, id: \.self) { i in
                             Circle()
                                 .fill(colors[i])
-                                .frame(width: 300, height: 300)
+                                .frame(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize300)
                                 .blur(radius: 80)
                                 .offset(
                                     x: CGFloat(sin(Double(config.seed + i)) * 100),

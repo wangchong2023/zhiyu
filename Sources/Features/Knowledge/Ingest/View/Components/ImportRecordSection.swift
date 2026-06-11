@@ -32,8 +32,7 @@ struct ImportRecordSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            Label(L10n.Ingest.importRecords, systemImage: "arrow.down.doc")
-                .font(.headline)
+            AppSectionHeader(title: L10n.Ingest.importRecords, icon: "arrow.down.doc")
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: DesignSystem.small) {

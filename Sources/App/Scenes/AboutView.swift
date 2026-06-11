@@ -23,7 +23,7 @@ struct AboutView: View {
                         RoundedRectangle(cornerRadius: Spacing.giant)
                             .fill(LinearGradient(colors: [.appAccent, .appConcept], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .frame(width: DesignSystem.Domain.About.logoSize, height: DesignSystem.Domain.About.logoSize)
-                            .shadow(color: .appAccent.opacity(0.3), radius: 15, y: 8)
+                            .shadow(color: .appAccent.opacity(DesignSystem.Opacity.shadow), radius: 15, y: 8)
                         
                         Image(systemName: DesignSystem.Icons.sparkles)
                             .font(.system(size: DesignSystem.Domain.About.logoSize / 2))
@@ -51,7 +51,7 @@ struct AboutView: View {
                     Divider().padding(.leading, Spacing.standardPadding)
                     infoRow(title: L10n.Settings.About.version, value: "1.0.0 (20260512)")
                 }
-                .background(Color.appCard.opacity(0.5))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
                 .padding(.horizontal, Spacing.standardPadding)
                 
@@ -69,6 +69,13 @@ struct AboutView: View {
         .navigationTitle(L10n.Settings.Section.about)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(false)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button(L10n.Common.done) {
+                    dismiss()
+                }
+            }
+        }
     }
     
     private func infoRow(title: String, value: String) -> some View {

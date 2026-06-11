@@ -41,7 +41,7 @@ struct LocalPluginDetailView: View {
                             .foregroundStyle(.white)
                             .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                             .background(
-                                LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(0.8)],
+                                LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.Opacity.prominent)],
                                                startPoint: .topLeading, endPoint: .bottomTrailing))
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
                     }
@@ -56,7 +56,7 @@ struct LocalPluginDetailView: View {
                             Text("v\(manifest.version)")
                                 .font(.caption2.weight(.semibold))
                                 .padding(.horizontal, DesignSystem.small).padding(.vertical, DesignSystem.atomic * 2)
-                                .background(Color.appAccent.opacity(0.12)).foregroundStyle(.appAccent)
+                                .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle)).foregroundStyle(.appAccent)
                                 .clipShape(Capsule())
 
                             if isInstalled {
@@ -91,7 +91,7 @@ struct LocalPluginDetailView: View {
                         Divider().padding(.leading, DesignSystem.medium)
                         detailRow(icon: "key.fill", label: "ID", value: manifest.id)
                     }
-                    .background(Color.appCard.opacity(0.4))
+                    .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                 }
 
@@ -106,7 +106,7 @@ struct LocalPluginDetailView: View {
                             Text(L10n.Plugin.permTitle(for: perm)).font(.subheadline).foregroundStyle(.appText)
                         }
                         .padding(DesignSystem.medium).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.appCard.opacity(0.4))
+                        .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
                     }
                 }
@@ -130,8 +130,8 @@ struct LocalPluginDetailView: View {
 
     private func detailRow(icon: String, label: String, value: String) -> some View {
         HStack(spacing: DesignSystem.medium) {
-            Image(systemName: icon).font(.subheadline).foregroundStyle(.appAccent).frame(width: 20)
-            Text(label).font(.subheadline).foregroundStyle(.appSecondary).frame(width: 60, alignment: .leading)
+            Image(systemName: icon).font(.subheadline).foregroundStyle(.appAccent).frame(width: DesignSystem.IconSize.small)
+            Text(label).font(.subheadline).foregroundStyle(.appSecondary).frame(width: DesignSystem.Metrics.progressHeight, alignment: .leading)
             Spacer()
             Text(value).font(.subheadline.weight(.medium)).foregroundStyle(.appText)
         }

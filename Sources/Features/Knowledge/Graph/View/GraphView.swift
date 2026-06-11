@@ -253,7 +253,7 @@ struct GraphContainerView: View {
                 if isTruncatingEdges {
                     Text(L10n.Graph.edgeTruncationHint(maxEdgesPerNode))
                         .font(.system(size: DesignSystem.microFontSize, weight: .regular))
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 }
                 
                 Image(systemName: DesignSystem.Icons.forward)

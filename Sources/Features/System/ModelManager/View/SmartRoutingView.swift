@@ -66,7 +66,7 @@ public struct SmartRoutingView: View {
                 Toggle(L10n.ModelManager.Routing.preferLocal, isOn: .constant(true)).font(.subheadline)
             }
             .padding()
-            .background(Color.appCard.opacity(0.6))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
     }
@@ -86,7 +86,7 @@ public struct SmartRoutingView: View {
                 routingRuleRow(icon: "arrow.triangle.branch", iconColor: .blue, task: L10n.ModelManager.Routing.taskTagGeneration, rule: L10n.ModelManager.Routing.strategySmartRouting)
             }
             .padding()
-            .background(Color.appCard.opacity(0.6))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
     }
@@ -108,7 +108,7 @@ public struct SmartRoutingView: View {
                     Spacer()
                     Text(getCurrentRoutingDecision()).font(.caption.weight(.bold)).foregroundStyle(.appAccent)
                         .padding(.horizontal, DesignSystem.small).padding(.vertical, DesignSystem.atomic)
-                        .background(Color.appAccent.opacity(0.15)).clipShape(Capsule())
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.glass)).clipShape(Capsule())
                 }
                 Divider()
                 statusRow(label: L10n.ModelManager.Routing.networkCurrent, value: "WiFi", status: .healthy)
@@ -116,7 +116,7 @@ public struct SmartRoutingView: View {
                 statusRow(label: L10n.ModelManager.Routing.networkBandwidth, value: L10n.ModelManager.Routing.networkBandwidthExcellent, status: .healthy)
             }
             .padding()
-            .background(Color.appCard.opacity(0.6))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         }
     }
@@ -132,7 +132,7 @@ public struct SmartRoutingView: View {
             Text(rule).font(.caption.weight(.medium)).foregroundStyle(.appAccent)
         }
         .padding(.vertical, DesignSystem.small).padding(.horizontal, DesignSystem.medium)
-        .background(Color.appBackground.opacity(0.5))
+        .background(Color.appBackground.opacity(DesignSystem.Opacity.soft))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 

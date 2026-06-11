@@ -51,7 +51,7 @@ struct PluginStatsSection: View {
                         .padding(.vertical, 10)
                         
                         if index < sortedUsage.count - 1 {
-                            Divider().opacity(0.3)
+                            Divider().opacity(DesignSystem.Opacity.shadow)
                         }
                     }
                 }
@@ -64,8 +64,8 @@ struct PluginStatsSection: View {
     private func statusIcon(for status: PluginRegistry.ResourceUsage.Status) -> some View {
         ZStack {
             Circle()
-                .fill(statusColor(for: status).opacity(0.1))
-                .frame(width: 28, height: 28)
+                .fill(statusColor(for: status).opacity(DesignSystem.Opacity.subtle))
+                .frame(width: DesignSystem.IconSize.medium, height: DesignSystem.IconSize.medium)
             
             Image(systemName: statusImage(for: status))
                 .font(.caption.weight(.bold))

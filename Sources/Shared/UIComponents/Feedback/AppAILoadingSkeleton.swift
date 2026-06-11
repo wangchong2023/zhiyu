@@ -43,7 +43,7 @@ public struct AppAILoadingSkeleton: View {
             // 1. 顶部状态标签
             HStack(spacing: DesignSystem.small) {
                 AppLottieView(name: "ai_thinking")
-                    .frame(width: 24, height: 24)
+                    .frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
                 
                 Text(stageText)
                     .font(.caption2.weight(.bold))
@@ -51,7 +51,7 @@ public struct AppAILoadingSkeleton: View {
             }
             .padding(.horizontal, DesignSystem.small)
             .padding(.vertical, DesignSystem.tiny)
-            .background(stageColor.opacity(0.1))
+            .background(stageColor.opacity(DesignSystem.Opacity.subtle))
             .clipShape(Capsule())
             
             // 2. 多行模拟文本骨架
@@ -66,7 +66,7 @@ public struct AppAILoadingSkeleton: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
-                .stroke(stageColor.opacity(0.1), lineWidth: 1)
+                .stroke(stageColor.opacity(DesignSystem.Opacity.subtle), lineWidth: 1)
         )
     }
     
@@ -76,9 +76,9 @@ public struct AppAILoadingSkeleton: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            stageColor.opacity(0.05),
-                            stageColor.opacity(0.15),
-                            stageColor.opacity(0.05)
+                            stageColor.opacity(DesignSystem.Opacity.ghost),
+                            stageColor.opacity(DesignSystem.Opacity.glass),
+                            stageColor.opacity(DesignSystem.Opacity.ghost)
                         ],
                         startPoint: .leading,
                         endPoint: .trailing
@@ -87,6 +87,6 @@ public struct AppAILoadingSkeleton: View {
                 .frame(width: geo.size.width * widthRatio, height: 12)
                 .shimmerApp()
         }
-        .frame(height: 12)
+        .frame(height: DesignSystem.medium)
     }
 }

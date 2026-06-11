@@ -364,18 +364,18 @@ struct KnowledgePageListContent: View {
                     triggerSearch(query: "")
                 }) {
                     Image(systemName: DesignSystem.Icons.errorCircle)
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, DesignSystem.standardPadding)
         .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
-        .background(Color.appCard.opacity(0.6))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
-                .strokeBorder(Color.appAccent.opacity(0.25), lineWidth: DesignSystem.borderWidth)
+                .strokeBorder(Color.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: DesignSystem.borderWidth)
         )
         .padding(.horizontal, DesignSystem.tiny)
         .padding(.bottom, DesignSystem.tiny)
@@ -401,7 +401,7 @@ struct KnowledgeStatItem: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, DesignSystem.medium)
-        .background(Color.appCard.opacity(0.8))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                 .stroke(.white.opacity(DesignSystem.accentStrokeOpacity), lineWidth: DesignSystem.borderWidth / 2)

@@ -63,5 +63,7 @@ extension L10n {
                 Insight.trf("report.nodeCount", count)
             }
         }
+
+        public static var dateCalculationFailed: String { Insight.tr("insight.dateCalculationFailed") }
     }
 }

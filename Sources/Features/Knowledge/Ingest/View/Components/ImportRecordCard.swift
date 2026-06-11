@@ -29,8 +29,8 @@ struct ImportRecordCard: View {
             Image(systemName: categoryIcon)
                 .font(.title3)
                 .foregroundStyle(categoryColor)
-                .frame(width: 36, height: 36)
-                .background(categoryColor.opacity(0.1))
+                .frame(width: DesignSystem.Metrics.customSize36, height: DesignSystem.Metrics.customSize36)
+                .background(categoryColor.opacity(DesignSystem.Opacity.subtle))
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
@@ -45,7 +45,7 @@ struct ImportRecordCard: View {
                                     .font(.caption2)
                                     .padding(.horizontal, DesignSystem.tightPadding)
                                     .padding(.vertical, 2)
-                                    .background(Capsule().fill(categoryColor.opacity(0.1)))
+                                    .background(Capsule().fill(categoryColor.opacity(DesignSystem.Opacity.subtle)))
                                     .foregroundStyle(categoryColor)
                             }
                         }

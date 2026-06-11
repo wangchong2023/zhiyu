@@ -37,7 +37,7 @@ public struct AppDotPattern: View {
                     let rect = CGRect(x: x, y: y, width: dotSize, height: dotSize)
                     context.fill(
                         Circle().path(in: rect),
-                        with: .color(dotColor.opacity(0.4))
+                        with: .color(dotColor.opacity(DesignSystem.Opacity.disabled))
                     )
                 }
             }

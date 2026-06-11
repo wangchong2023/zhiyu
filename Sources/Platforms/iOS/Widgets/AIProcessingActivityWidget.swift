@@ -50,6 +50,7 @@ struct AIProcessingActivityWidget: Widget {
                     .tint(.purple)
             }
             .padding()
+            // swiftlint:disable:next magic_numbers_opacity
             .activityBackgroundTint(Color.indigo.opacity(0.3))
             .activitySystemActionForegroundColor(.white)
             
@@ -81,6 +82,7 @@ struct AIProcessingActivityWidget: Widget {
                                 .font(.caption.bold())
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
+                                // swiftlint:disable:next magic_numbers_opacity
                                 .background(Capsule().fill(.purple.opacity(0.2)))
                                 .foregroundStyle(.purple)
                             
@@ -130,6 +132,7 @@ struct AIProcessingActivityWidget: Widget {
                 Image(systemName: "sparkles")
                     .symbolRenderingMode(.multicolor)
             }
+            // swiftlint:disable:next magic_numbers_opacity
             .keylineTint(.purple.opacity(0.5))
         }
     }

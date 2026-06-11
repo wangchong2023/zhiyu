@@ -42,9 +42,9 @@ public struct GlassCardModifier: ViewModifier {
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.appBorder.opacity(0.4), lineWidth: 0.5)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.disabled), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .shadow(color: .black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -67,13 +67,13 @@ public extension View {
     func appCardStyle(cornerRadius: CGFloat = Spacing.cardRadius) -> some View {
         self.padding(Spacing.large)
             .background(.ultraThinMaterial)
-            .background(Color.appCard.opacity(0.7))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.overlay))
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.appBorder.opacity(0.4), lineWidth: Spacing.borderWidth)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.disabled), lineWidth: Spacing.borderWidth)
             )
-            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
     }
     
     /// 应用通用页面容器样式
@@ -92,16 +92,17 @@ public extension View {
         self.padding(padding ? Spacing.standardPadding : 0)
             .background(
                 ZStack {
-                    Rectangle().fill(.ultraThinMaterial).opacity(0.4) // 降低材质干扰
+                    Rectangle().fill(.ultraThinMaterial).opacity(DesignSystem.Opacity.disabled) // 降低材质干扰
+                    // swiftlint:disable:next magic_numbers_opacity
                     background.opacity(0.9) // 优化通透度
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(borderColor.opacity(0.25), lineWidth: 0.5) // 稍微增强边框，匹配任务中心
+                    .stroke(borderColor.opacity(DesignSystem.Opacity.medium), lineWidth: 0.5) // 稍微增强边框，匹配任务中心
             )
-            .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.black.opacity(DesignSystem.Opacity.faint), radius: 10, x: 0, y: 5)
     }
     
     /// 仪表盘指标卡片风格 (Metric Card Style)
@@ -114,7 +115,7 @@ public extension View {
         self.background(.ultraThinMaterial)
             .background(
                 ZStack {
-                    Color.appCard.opacity(0.8) // 提高亮度
+                    Color.appCard.opacity(DesignSystem.Opacity.prominent) // 提高亮度
                     LinearGradient(
                         colors: [color.opacity(DesignSystem.Opacity.glass), .clear],
                         startPoint: .topLeading,
@@ -125,9 +126,9 @@ public extension View {
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(color.opacity(0.2), lineWidth: 0.5) // 使用强调色淡边框
+                    .stroke(color.opacity(DesignSystem.Opacity.medium), lineWidth: 0.5) // 使用强调色淡边框
             )
-            .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 4)
+            .shadow(color: Color.black.opacity(DesignSystem.Opacity.atomic), radius: 8, x: 0, y: 4)
     }
 }
 

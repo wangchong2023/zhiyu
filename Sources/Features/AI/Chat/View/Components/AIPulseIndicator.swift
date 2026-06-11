@@ -66,7 +66,7 @@ struct AIPulseIndicator: View {
                 if isActive {
                     // 全新 Siri-like 霓虹正弦波形动效 (SR-12)
                     SiriWaveformView(speedMultiplier: waveformSpeed, amplitudeMultiplier: 0.7)
-                        .frame(width: 48, height: 16)
+                        .frame(width: DesignSystem.IconSize.huge, height: 16)
                 } else {
                     Circle()
                         .fill(pulseColor)

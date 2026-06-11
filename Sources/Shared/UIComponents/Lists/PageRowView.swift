@@ -77,11 +77,11 @@ struct PageRowView: View {
             // 导航箭头（标准 chevron 替代绿点，语义更清晰）
             Image(systemName: DesignSystem.Icons.forward)
                 .font(.caption.weight(.semibold))
-                .foregroundStyle(.appSecondary.opacity(0.4))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.disabled))
         }
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.small)
-        .background(Color.appCard.opacity(0.8))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.smallRadius))
         .contentShape(Rectangle()) // 确保整行可点击
     }

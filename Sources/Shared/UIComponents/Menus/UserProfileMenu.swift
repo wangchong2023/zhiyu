@@ -20,11 +20,12 @@ struct UserProfileMenu: View {
     @State private var showProfile = false
     @State private var showAbout = false
     @State private var showWatchMenu = false
-    @State private var showStats = false
+
     @State private var showPlugins = false
-    @State private var showFeedback = false
+
     @State private var showDeveloper = false
     @State private var showMenuPopover = false
+    @State private var showPlan = false
     
     var body: some View {
         #if os(watchOS)
@@ -37,9 +38,7 @@ struct UserProfileMenu: View {
                 Button(action: { showSettings = true; showWatchMenu = false }) {
                     Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
                 }
-                Button(action: { store.securityService.lock(); showWatchMenu = false }) {
-                    Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
-                }
+
                 Button(role: .destructive, action: { authService.logout(); showWatchMenu = false }) {
                     Label(L10n.Common.logout, systemImage: DesignSystem.Icons.logout)
                 }
@@ -47,89 +46,32 @@ struct UserProfileMenu: View {
         }
         .sheet(isPresented: $showAbout) { aboutStack }
         #else
-        // iOS, iPadOS, macOS (Catalyst) 等非 watch 平台统一使用原生 Menu，提供 0 延迟的即时响应体感
-        Menu {
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    showProfile = true
-                }
-            }) {
-                Label(L10n.Auth.profileAndQuota, systemImage: "person.crop.circle")
-            }
-
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                // 预留 80 毫秒微小延时让系统下拉菜单启动收起动画，规避与 Sheet 弹出转场重叠冲突，实现极速秒开
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    router.isShowingSettingsSheet = true
-                }
-            }) {
-                Label(L10n.Common.settings, systemImage: DesignSystem.Icons.settings)
-            }
-
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    showPlugins = true
-                }
-            }) {
-                Label(L10n.Plugin.title, systemImage: "puzzlepiece.extension.fill")
-            }
-
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                // 同步采用异步微延迟，彻底规避原生动画引擎冲突
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    showStats = true
-                }
-            }) {
-                Label(L10n.Common.usage, systemImage: "chart.bar.fill")
-            }
-            
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    showFeedback = true
-                }
-            }) {
-                Label(L10n.Settings.Feedback.title, systemImage: "bubble.left.and.bubble.right")
-            }
-
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                store.securityService.lock()
-                store.requestRelayout()
-            }) {
-                Label(L10n.Common.lock, systemImage: DesignSystem.Icons.lock)
-            }
-
-            #if DEBUG
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-                    showDeveloper = true
-                }
-            }) {
-                Label(L10n.Settings.Section.developer, systemImage: DesignSystem.Icons.settingsDeveloper)
-            }
-            #endif
-
-            Divider()
-
-            Button(role: .destructive, action: {
-                HapticFeedback.shared.trigger(.selection)
-                authService.logout()
-            }) {
-                Label(L10n.Common.logout, systemImage: DesignSystem.Icons.logout)
-            }
-            .accessibilityIdentifier("logoutButton")
-        } label: {
+        // iOS, iPadOS, macOS (Catalyst) 等非 watch 平台使用定制的高级毛玻璃悬浮菜单 (CustomProfilePopover)
+        Button(action: {
+            HapticFeedback.shared.trigger(.selection)
+            showMenuPopover = true
+        }) {
             profileLabel
         }
-        .menuIndicator(.hidden) // 隐藏 Menu 下拉箭头指示器，消除系统自动添加的额外水平留白
-        .buttonStyle(.plain) // 消除系统在 Toolbar 选项中默认添加的 bordered 灰色背景
+        .buttonStyle(.plain)
         .accessibilityIdentifier("userProfileMenuButton")
+        .popover(isPresented: $showMenuPopover, attachmentAnchor: .point(.bottom), arrowEdge: .top) {
+            CustomProfilePopover(
+                showProfile: $showProfile,
+                showPlan: $showPlan,
+
+                showPlugins: $showPlugins,
+
+                showDeveloper: $showDeveloper,
+                showMenuPopover: $showMenuPopover
+            )
+            .environment(authService)
+            .environment(store)
+            .environment(router)
+            .environmentObject(themeManager)
+            .environmentObject(onboardingService)
+            .presentationCompactAdaptation(.popover)
+        }
         .sheet(isPresented: $showProfile) {
             NavigationStack {
                 UserProfileView()
@@ -137,23 +79,21 @@ struct UserProfileMenu: View {
             .environment(authService)
             .environmentObject(themeManager)
         }
-        .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
-        .sheet(isPresented: $showStats) {
+        .sheet(isPresented: $showPlan) {
             NavigationStack {
-                SystemStatsView()
+                SubscriptionPlanView()
             }
-            .environment(store)
+            .environment(authService)
             .environmentObject(themeManager)
         }
+        .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
+
         .sheet(isPresented: $showPlugins) {
             NavigationStack {
                 PluginCenterView()
             }
         }
-        .sheet(isPresented: $showFeedback) {
-            FeedbackView()
-                .environmentObject(themeManager)
-        }
+
         .sheet(isPresented: $showDeveloper) {
             NavigationStack {
                 DeveloperSettingsView()
@@ -179,7 +119,7 @@ struct UserProfileMenu: View {
             }
         }
         .foregroundStyle(.appAccent)
-        .frame(width: 28, height: 28)
+        .frame(width: DesignSystem.IconSize.medium, height: DesignSystem.IconSize.medium)
         .contentShape(Circle())
     }
     
@@ -189,19 +129,25 @@ struct UserProfileMenu: View {
         }
     }
 }
-
-
 // MARK: - 自定义个人中心悬浮弹窗
 struct CustomProfilePopover: View {
     @Environment(AuthService.self) var authService
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @EnvironmentObject var themeManager: ThemeManager
+    
+    private enum Constants {
+        static let menuWidth: CGFloat = 260
+        static let iconBoxSize: CGFloat = 30
+    }
+    
+    @State private var showSignOutAlert = false
 
     @Binding var showProfile: Bool
-    @Binding var showStats: Bool
+    @Binding var showPlan: Bool
+
     @Binding var showPlugins: Bool
-    @Binding var showFeedback: Bool
+
     @Binding var showDeveloper: Bool
     @Binding var showMenuPopover: Bool
 
@@ -214,19 +160,19 @@ struct CustomProfilePopover: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showProfile = true }
             }) {
                 HStack(spacing: DesignSystem.medium) {
-                    if let avatar = authService.currentUser?.avatar, let url = URL(string: avatar) {
+                    if let url = authService.currentUser?.avatarURL {
                         AsyncImage(url: url) { image in
                             image.resizable().scaledToFill()
                         } placeholder: {
                             Color.appBorder
                         }
-                        .frame(width: 48, height: 48)
+                        .frame(width: DesignSystem.IconSize.huge, height: DesignSystem.IconSize.huge)
                         .clipShape(Circle())
                     } else {
                         Image(systemName: "person.crop.circle.fill")
                             .resizable()
                             .foregroundStyle(.appAccent)
-                            .frame(width: 48, height: 48)
+                            .frame(width: DesignSystem.IconSize.huge, height: DesignSystem.IconSize.huge)
                             .clipShape(Circle())
                     }
                     
@@ -235,7 +181,7 @@ struct CustomProfilePopover: View {
                             .font(.headline)
                             .foregroundStyle(.appText)
                             .lineLimit(1)
-                        if let subText = authService.currentUser?.email ?? authService.currentUser?.phone {
+                        if let subText = authService.currentUser?.email {
                             Text(subText)
                                 .font(.caption)
                                 .foregroundStyle(.appSecondary)
@@ -259,25 +205,14 @@ struct CustomProfilePopover: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { router.isShowingSettingsSheet = true }
                     }
                     
+                    menuRow(icon: "star.fill", color: .yellow, title: L10n.Auth.subscription) {
+                        showMenuPopover = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showPlan = true }
+                    }
+                    
                     menuRow(icon: "puzzlepiece.extension.fill", color: .orange, title: L10n.Plugin.title) {
                         showMenuPopover = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showPlugins = true }
-                    }
-                    
-                    menuRow(icon: "chart.bar.fill", color: .green, title: L10n.Common.usage) {
-                        showMenuPopover = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showStats = true }
-                    }
-                    
-                    menuRow(icon: "bubble.left.and.bubble.right.fill", color: .purple, title: L10n.Settings.Feedback.title) {
-                        showMenuPopover = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showFeedback = true }
-                    }
-                    
-                    menuRow(icon: "lock.fill", color: .teal, title: L10n.Common.lock) {
-                        showMenuPopover = false
-                        store.securityService.lock()
-                        store.requestRelayout()
                     }
                     
                     #if DEBUG
@@ -286,40 +221,26 @@ struct CustomProfilePopover: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { showDeveloper = true }
                     }
                     #endif
+                    
+                    Divider()
+                        .padding(.vertical, DesignSystem.tiny)
+                        .opacity(DesignSystem.Opacity.soft)
+                    
+                    menuRow(icon: DesignSystem.Icons.logout, color: .red, title: L10n.Common.logout, textColor: .red) {
+                        showMenuPopover = false
+                        authService.logout()
+                    }
                 }
                 .padding(DesignSystem.small)
             }
-            
-            AppDivider()
-            
-            // 底部：退出登录
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                showMenuPopover = false
-                authService.logout()
-            }) {
-                HStack {
-                    Spacer()
-                    Text(L10n.Common.logout)
-                        .font(.subheadline.bold())
-                    Spacer()
-                }
-                .padding(.vertical, DesignSystem.medium)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(.red)
-            .background(Color.red.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
-            .padding(DesignSystem.small)
         }
-        .frame(width: 260)
+        .frame(width: Constants.menuWidth)
         .background(
             themeManager.pageBackground().ignoresSafeArea()
         )
     }
     
-    private func menuRow(icon: String, color: Color, title: String, action: @escaping () -> Void) -> some View {
+    private func menuRow(icon: String, color: Color, title: String, textColor: Color = .appText, action: @escaping () -> Void) -> some View {
         Button(action: {
             HapticFeedback.shared.trigger(.selection)
             action()
@@ -327,8 +248,8 @@ struct CustomProfilePopover: View {
             HStack(spacing: DesignSystem.medium) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(color.opacity(0.15))
-                        .frame(width: 30, height: 30)
+                        .fill(color.opacity(DesignSystem.Opacity.glass))
+                        .frame(width: Constants.iconBoxSize, height: Constants.iconBoxSize)
                     Image(systemName: icon)
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(color)
@@ -336,7 +257,7 @@ struct CustomProfilePopover: View {
                 
                 Text(title)
                     .font(.subheadline)
-                    .foregroundStyle(.appText)
+                    .foregroundStyle(textColor)
                 Spacer()
             }
             .padding(.horizontal, DesignSystem.small)

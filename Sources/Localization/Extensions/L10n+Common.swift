@@ -375,4 +375,111 @@ extension L10n {
             public static var bulkDelete: String { Localized.tr("misc.bulkDelete", table: t) }
         }
     }
+
+    public enum InitialNotebook: L10nTableEntry {
+        public static let tableName = "Common"
+        public static var t: String { tableName }
+        
+        public enum PKM {
+            public static var title1: String { Localized.tr("demo.pkm.1.title", table: t) }
+            public static var content1: String { Localized.tr("demo.pkm.1.content", table: t) }
+            public static var title2: String { Localized.tr("demo.pkm.2.title", table: t) }
+            public static var content2: String { Localized.tr("demo.pkm.2.content", table: t) }
+            public static var title3: String { Localized.tr("demo.pkm.3.title", table: t) }
+            public static var content3: String { Localized.tr("demo.pkm.3.content", table: t) }
+            public static var title4: String { Localized.tr("demo.pkm.4.title", table: t) }
+            public static var content4: String { Localized.tr("demo.pkm.4.content", table: t) }
+            public static var title5: String { Localized.tr("demo.pkm.5.title", table: t) }
+            public static var content5: String { Localized.tr("demo.pkm.5.content", table: t) }
+            public static var title6: String { Localized.tr("demo.pkm.6.title", table: t) }
+            public static var content6: String { Localized.tr("demo.pkm.6.content", table: t) }
+            public static var title7: String { Localized.tr("demo.pkm.7.title", table: t) }
+            public static var content7: String { Localized.tr("demo.pkm.7.content", table: t) }
+            public static var title8: String { Localized.tr("demo.pkm.8.title", table: t) }
+            public static var content8: String { Localized.tr("demo.pkm.8.content", table: t) }
+            public static var title9: String { Localized.tr("demo.pkm.9.title", table: t) }
+            public static var content9: String { Localized.tr("demo.pkm.9.content", table: t) }
+            public static var title10: String { Localized.tr("demo.pkm.10.title", table: t) }
+            public static var content10: String { Localized.tr("demo.pkm.10.content", table: t) }
+            public static var title11: String { Localized.tr("demo.pkm.11.title", table: t) }
+            public static var content11: String { Localized.tr("demo.pkm.11.content", table: t) }
+            public static var title12: String { Localized.tr("demo.pkm.12.title", table: t) }
+            public static var content12: String { Localized.tr("demo.pkm.12.content", table: t) }
+            public static var title13: String { Localized.tr("demo.pkm.13.title", table: t) }
+            public static var content13: String { Localized.tr("demo.pkm.13.content", table: t) }
+            public static var title14: String { Localized.tr("demo.pkm.14.title", table: t) }
+            public static var content14: String { Localized.tr("demo.pkm.14.content", table: t) }
+            public static var title15: String { Localized.tr("demo.pkm.15.title", table: t) }
+            public static var content15: String { Localized.tr("demo.pkm.15.content", table: t) }
+            public static var title16: String { Localized.tr("demo.pkm.16.title", table: t) }
+            public static var content16: String { Localized.tr("demo.pkm.16.content", table: t) }
+            public static var title17: String { Localized.tr("demo.pkm.17.title", table: t) }
+            public static var content17: String { Localized.tr("demo.pkm.17.content", table: t) }
+        }
+        
+        public enum Coffee {
+            public static var title1: String { Localized.tr("demo.coffee.1.title", table: t) }
+            public static var content1: String { Localized.tr("demo.coffee.1.content", table: t) }
+            public static var title2: String { Localized.tr("demo.coffee.2.title", table: t) }
+            public static var content2: String { Localized.tr("demo.coffee.2.content", table: t) }
+            public static var title3: String { Localized.tr("demo.coffee.3.title", table: t) }
+            public static var content3: String { Localized.tr("demo.coffee.3.content", table: t) }
+            public static var title4: String { Localized.tr("demo.coffee.4.title", table: t) }
+            public static var content4: String { Localized.tr("demo.coffee.4.content", table: t) }
+            public static var title5: String { Localized.tr("demo.coffee.5.title", table: t) }
+            public static var content5: String { Localized.tr("demo.coffee.5.content", table: t) }
+            public static var title6: String { Localized.tr("demo.coffee.6.title", table: t) }
+            public static var content6: String { Localized.tr("demo.coffee.6.content", table: t) }
+            public static var title7: String { Localized.tr("demo.coffee.7.title", table: t) }
+            public static var content7: String { Localized.tr("demo.coffee.7.content", table: t) }
+            public static var title8: String { Localized.tr("demo.coffee.8.title", table: t) }
+            public static var content8: String { Localized.tr("demo.coffee.8.content", table: t) }
+            public static var title9: String { Localized.tr("demo.coffee.9.title", table: t) }
+            public static var content9: String { Localized.tr("demo.coffee.9.content", table: t) }
+            public static var title10: String { Localized.tr("demo.coffee.10.title", table: t) }
+            public static var content10: String { Localized.tr("demo.coffee.10.content", table: t) }
+        }
+        
+        public enum Tags {
+            public static var knowledgeMgmt: String { Localized.tr("tags.knowledgeMgmt", table: t) }
+            public static var methodology: String { Localized.tr("tags.methodology", table: t) }
+            public static var noteStyles: String { Localized.tr("tags.noteStyles", table: t) }
+            public static var efficiency: String { Localized.tr("tags.efficiency", table: t) }
+            public static var techPrinciple: String { Localized.tr("tags.techPrinciple", table: t) }
+            public static var association: String { Localized.tr("tags.association", table: t) }
+            public static var cognitivePsych: String { Localized.tr("tags.cognitivePsych", table: t) }
+            public static var retrievalTech: String { Localized.tr("tags.retrievalTech", table: t) }
+            public static var brainSci: String { Localized.tr("tags.brainSci", table: t) }
+            public static var learningMethod: String { Localized.tr("tags.learningMethod", table: t) }
+            public static var fileMgmt: String { Localized.tr("tags.fileMgmt", table: t) }
+            public static var productivity: String { Localized.tr("tags.productivity", table: t) }
+            public static var workflow: String { Localized.tr("tags.workflow", table: t) }
+            public static var architectureOrg: String { Localized.tr("tags.architectureOrg", table: t) }
+            public static var readingMethod: String { Localized.tr("tags.readingMethod", table: t) }
+            public static var summary: String { Localized.tr("tags.summary", table: t) }
+            public static var creation: String { Localized.tr("tags.creation", table: t) }
+            public static var output: String { Localized.tr("tags.output", table: t) }
+            public static var biography: String { Localized.tr("tags.biography", table: t) }
+            public static var metaphor: String { Localized.tr("tags.metaphor", table: t) }
+            public static var innovation: String { Localized.tr("tags.innovation", table: t) }
+            
+            public static var competitorAnalysis: String { Localized.tr("tags.competitorAnalysis", table: t) }
+            public static var marketResearch: String { Localized.tr("tags.marketResearch", table: t) }
+            public static var productDesign: String { Localized.tr("tags.productDesign", table: t) }
+            public static var operation: String { Localized.tr("tags.operation", table: t) }
+            public static var userResearch: String { Localized.tr("tags.userResearch", table: t) }
+            public static var infrastructure: String { Localized.tr("tags.infrastructure", table: t) }
+            public static var decoration: String { Localized.tr("tags.decoration", table: t) }
+            public static var finance: String { Localized.tr("tags.finance", table: t) }
+            public static var planning: String { Localized.tr("tags.planning", table: t) }
+            public static var team: String { Localized.tr("tags.team", table: t) }
+            public static var recruitment: String { Localized.tr("tags.recruitment", table: t) }
+            public static var supplyChain: String { Localized.tr("tags.supplyChain", table: t) }
+            public static var materials: String { Localized.tr("tags.materials", table: t) }
+            public static var design: String { Localized.tr("tags.design", table: t) }
+            public static var marketing: String { Localized.tr("tags.marketing", table: t) }
+            public static var growth: String { Localized.tr("tags.growth", table: t) }
+            public static var rd: String { Localized.tr("tags.rd", table: t) }
+        }
+    }
 }

@@ -52,8 +52,8 @@ struct FeedbackView: View {
             .navigationTitle(L10n.Settings.Feedback.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.cancel) { dismiss() }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) { dismiss() }
                 }
             }
             }
@@ -148,7 +148,7 @@ struct FeedbackView: View {
             if history.isEmpty {
                 VStack(spacing: DesignSystem.standardPadding) {
                     Image(systemName: "bubble.left.and.bubble.right")
-                        .font(.largeTitle).foregroundStyle(.secondary.opacity(0.5))
+                        .font(.largeTitle).foregroundStyle(.secondary.opacity(DesignSystem.Opacity.soft))
                     Text(L10n.Settings.Feedback.noHistory)
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
@@ -221,6 +221,7 @@ private struct FeedbackHistoryRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             HStack(spacing: DesignSystem.tightPadding) {
+                // swiftlint:disable:next magic_numbers_frame
                 Circle().fill(categoryColor).frame(width: 8, height: 8)
                 Text(entry.title).font(.subheadline.weight(.medium)).lineLimit(1)
                 Spacer()

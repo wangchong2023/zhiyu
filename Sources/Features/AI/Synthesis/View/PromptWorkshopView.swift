@@ -76,7 +76,7 @@ struct PromptWorkshopView: View {
                             
                             if promptService.userShortcuts.count > 1 {
                                 Image(systemName: DesignSystem.Icons.line3Horizontal)
-                                    .foregroundStyle(.appSecondary.opacity(0.5))
+                                    .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.soft))
                             }
                         }
                     }
@@ -115,7 +115,7 @@ struct PromptWorkshopView: View {
             }
             .scrollContentBackground(.hidden) // 隐藏 Form 默认的白色背景，实现高端毛玻璃穿透
         }
-        .navigationTitle(L10n.AI.Prompt.factory.title)
+        .navigationTitle(L10n.Settings.promptSettings)
 .appNavigationBarTitleDisplayMode(.inline)
         .onDisappear {
             promptService.save()

@@ -25,7 +25,7 @@ struct KnowledgeDashboardView: View {
         ZStack(alignment: .top) {
             // 1. 方案 D 沉浸式高级背景同步
             ZStack {
-                Color.black.overlay(themeManager.pageBackground().opacity(0.4))
+                Color.black.overlay(themeManager.pageBackground().opacity(DesignSystem.Opacity.disabled))
                 MeshGradientView()
                     .blur(radius: 80)
             }
@@ -139,7 +139,7 @@ struct KnowledgeDashboardView: View {
                         )
                         .cornerRadius(DesignSystem.Radius.small)
                         .foregroundStyle(LinearGradient(
-                            colors: [.appAccent, .appAccent.opacity(0.6)],
+                            colors: [.appAccent, .appAccent.opacity(DesignSystem.Opacity.dim)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -150,7 +150,7 @@ struct KnowledgeDashboardView: View {
                         )
                         .cornerRadius(DesignSystem.Radius.small)
                         .foregroundStyle(LinearGradient(
-                            colors: [.purple, .purple.opacity(0.6)],
+                            colors: [.purple, .purple.opacity(DesignSystem.Opacity.dim)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -180,7 +180,7 @@ struct KnowledgeDashboardView: View {
                             HStack(spacing: DesignSystem.atomic) {
                                 Circle()
                                     .fill(Color.appAccent)
-                                    .frame(width: 6, height: 6)
+                                    .frame(width: DesignSystem.IconSize.atomic, height: DesignSystem.IconSize.atomic)
                                 Text(L10n.Dashboard.densityOutbound)
                                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
                                     .foregroundStyle(.appSecondary)
@@ -189,7 +189,7 @@ struct KnowledgeDashboardView: View {
                             HStack(spacing: DesignSystem.atomic) {
                                 Circle()
                                     .fill(Color.purple)
-                                    .frame(width: 6, height: 6)
+                                    .frame(width: DesignSystem.IconSize.atomic, height: DesignSystem.IconSize.atomic)
                                 Text(L10n.Dashboard.densityInbound)
                                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
                                     .foregroundStyle(.appSecondary)
@@ -211,7 +211,7 @@ struct KnowledgeDashboardView: View {
                             
                             Text("")
                                 .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
-                                .foregroundStyle(.appAccent.opacity(0.4))
+                                .foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.disabled))
                             
                             HStack(spacing: DesignSystem.atomic) {
                                 Image(systemName: "arrow.right")
@@ -399,12 +399,12 @@ struct MetricBox: View {
         }
         .padding(DesignSystem.standardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial.opacity(0.8))
+        .background(.ultraThinMaterial.opacity(DesignSystem.Opacity.prominent))
         .background(
             ZStack {
-                Color.appCard.opacity(0.4)
+                Color.appCard.opacity(DesignSystem.Opacity.disabled)
                 LinearGradient(
-                    colors: [color.opacity(0.1), .clear],
+                    colors: [color.opacity(DesignSystem.Opacity.subtle), .clear],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -415,7 +415,7 @@ struct MetricBox: View {
             RoundedRectangle(cornerRadius: DesignSystem.Metrics.dashboardRadius)
                 .stroke(
                     LinearGradient(
-                        colors: [.appBorder.opacity(0.6), .appBorder.opacity(0.1)],
+                        colors: [.appBorder.opacity(DesignSystem.Opacity.dim), .appBorder.opacity(DesignSystem.Opacity.subtle)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
@@ -464,7 +464,7 @@ private var emptyView: some View {
     VStack {
         Image(systemName: DesignSystem.Icons.chartBar)
             .font(.largeTitle)
-            .foregroundColor(.appSecondary.opacity(0.2))
+            .foregroundColor(.appSecondary.opacity(DesignSystem.Opacity.medium))
         Text(L10n.Common.Global.noData)
             .font(.caption)
             .foregroundColor(.appSecondary)

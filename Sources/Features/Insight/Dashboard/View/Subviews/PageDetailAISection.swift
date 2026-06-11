@@ -61,7 +61,7 @@ struct PageDetailAISection: View {
                 
                 if aiStore.isProcessingPageAI {
                     VStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        AppSkeleton(height: 20).frame(width: 200)
+                        AppSkeleton(height: DesignSystem.IconSize.small).frame(width: DesignSystem.Metrics.sourceCardWidth)
                         AppSkeleton(height: 120)
                         AppSkeleton(height: 60)
                     }

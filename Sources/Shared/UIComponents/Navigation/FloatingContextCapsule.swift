@@ -28,12 +28,12 @@ struct FloatingContextCapsule: View {
             } label: {
                 Image(systemName: DesignSystem.Icons.line3Horizontal)
                     .font(.title3.weight(.medium))
-                    .frame(width: 44, height: 44)
+                    .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
             }
             
             Divider()
-                .frame(height: 20)
-                .background(.white.opacity(0.3))
+                .frame(height: DesignSystem.IconSize.small)
+                .background(.white.opacity(DesignSystem.Opacity.shadow))
             
             // 2. 语境标识 (Avenir Next 风格文字)
             if let currentVault = vaultService.currentVault {
@@ -46,7 +46,7 @@ struct FloatingContextCapsule: View {
         .background(
             ZStack {
                 // 方案 D：极高透明度的深色玻璃
-                Capsule().fill(.black.opacity(0.4))
+                Capsule().fill(.black.opacity(DesignSystem.Opacity.disabled))
                 Capsule().fill(.ultraThinMaterial)
             }
         )
@@ -55,17 +55,17 @@ struct FloatingContextCapsule: View {
             Capsule()
                 .stroke(
                     LinearGradient(
-                        colors: [.white.opacity(0.6), .appAccent.opacity(0.4), .clear],
+                        colors: [.white.opacity(DesignSystem.Opacity.dim), .appAccent.opacity(DesignSystem.Opacity.disabled), .clear],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: 1.5
                 )
-                .shadow(color: .appAccent.opacity(0.5), radius: 8, x: 0, y: 0)
+                .shadow(color: .appAccent.opacity(DesignSystem.Opacity.soft), radius: 8, x: 0, y: 0)
         )
         .clipShape(Capsule())
         .foregroundStyle(.white)
-        .shadow(color: .black.opacity(0.3), radius: 20, x: 0, y: 10)
+        .shadow(color: .black.opacity(DesignSystem.Opacity.shadow), radius: 20, x: 0, y: 10)
     }
     
     @ViewBuilder
@@ -104,7 +104,7 @@ struct FloatingContextCapsule: View {
                 
                 Image(systemName: DesignSystem.Icons.down)
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.white.opacity(DesignSystem.Opacity.dim))
             }
             .padding(.trailing, DesignSystem.medium)
             .frame(minHeight: 44)
@@ -119,7 +119,7 @@ struct FloatingContextCapsule: View {
             
             Image(systemName: DesignSystem.Icons.down)
                 .font(.caption.weight(.bold))
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(.white.opacity(DesignSystem.Opacity.dim))
         }
         .padding(.trailing, DesignSystem.medium)
         .frame(minHeight: 44)

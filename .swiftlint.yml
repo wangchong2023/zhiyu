@@ -218,3 +218,16 @@ function_body_length:
 cyclomatic_complexity:
   warning: 10
   error: 16
+# 10. 自定义校验规则 (门禁拦截魔鬼数字与字符串)
+custom_rules:
+  magic_numbers_frame:
+    included: ".*\\.swift"
+    regex: '\.frame\(\s*(width|height):\s*[0-9]+(?:\.[0-9]+)?\s*[,)]'
+    message: "UI 布局禁止直接写死尺寸（魔鬼数字），请使用 DesignSystem.IconSize 或 DesignSystem.Metrics 等标准化常量。"
+    severity: error
+
+  magic_numbers_opacity:
+    included: ".*\\.swift"
+    regex: '\.opacity\([0-9]+\.[0-9]+\)'
+    message: "禁止在 UI 视图中写死透明度浮点数，请使用 DesignSystem.Opacity 对应常量。"
+    severity: error

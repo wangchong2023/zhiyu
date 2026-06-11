@@ -201,8 +201,8 @@ public final class AppStore {
     }
 
     /// seedDefaultContent
-    func seedDefaultContent() async {
-        await knowledgeStore.seedDefaultContent()
+    func seedDefaultContent(vaultName: String? = nil) async {
+        await knowledgeStore.seedDefaultContent(vaultName: vaultName)
     }
 
     // ── 核心业务逻辑 ──
@@ -310,10 +310,10 @@ public final class AppStore {
 extension AppStore: CollaborationDelegate {
     @discardableResult
 
-    /// 生成DemoData
+    /// 生成初始笔记本
     /// - Returns: 数值
-    func generateDemoData() async -> (total: Int, details: [(name: String, count: Int)]) {
-        let result = await maintenanceService.generateDemoData()
+    func generateInitialNotebooks() async -> (total: Int, details: [(name: String, count: Int)]) {
+        let result = await maintenanceService.generateInitialNotebooks()
         if result.total > 0 {
             await refresh()
             AppEventBus.shared.publish(.graphRelayoutRequested)

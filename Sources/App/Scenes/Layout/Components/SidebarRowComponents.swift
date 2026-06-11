@@ -85,14 +85,20 @@ struct CapabilitiesSection: View {
     var body: some View {
         Section {
             SidebarRowWrapper(value: SidebarSelection.tool(.dashboard)) {
-                Label(L10n.Common.Sidebar.dashboard, systemImage: DesignSystem.Icons.dashboard)
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
+                Label {
+                    Text(L10n.Common.Sidebar.dashboard).foregroundStyle(.appText)
+                } icon: {
+                    Image(systemName: DesignSystem.Icons.dashboard).foregroundStyle(.blue)
+                }
+                .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.weeklyReport)) {
-                Label(L10n.Common.Sidebar.weeklyInsight, systemImage: DesignSystem.Icons.weeklyInsight)
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
+                Label {
+                    Text(L10n.Common.Sidebar.weeklyInsight).foregroundStyle(.appText)
+                } icon: {
+                    Image(systemName: DesignSystem.Icons.weeklyInsight).foregroundStyle(.purple)
+                }
+                .contentShape(Rectangle())
             }
             
         }
@@ -210,8 +216,11 @@ struct ToolsSection: View {
         Section {
             SidebarRowWrapper(value: SidebarSelection.tool(.lint)) {
                 HStack {
-                    Label(L10n.Common.Sidebar.healthCheck, systemImage: DesignSystem.Icons.healthCheck)
-                          .foregroundStyle(.appText)
+                    Label {
+                        Text(L10n.Common.Sidebar.healthCheck).foregroundStyle(.appText)
+                    } icon: {
+                        Image(systemName: DesignSystem.Icons.healthCheck).foregroundStyle(.green)
+                    }
                     Spacer()
                     if !appStore.lintIssues.isEmpty {
                         Text("\(appStore.lintIssues.count)")
@@ -226,14 +235,20 @@ struct ToolsSection: View {
                 .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.tagCloud)) {
-                Label(L10n.Common.Sidebar.tagManager, systemImage: DesignSystem.Icons.tag)
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
+                Label {
+                    Text(L10n.Common.Sidebar.tagManager).foregroundStyle(.appText)
+                } icon: {
+                    Image(systemName: DesignSystem.Icons.tag).foregroundStyle(.orange)
+                }
+                .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.taskCenter)) {
                 HStack {
-                    Label(L10n.AI.Task.centerTitle, systemImage: DesignSystem.Icons.refresh)
-                        .foregroundStyle(.appText)
+                    Label {
+                        Text(L10n.AI.Task.centerTitle).foregroundStyle(.appText)
+                    } icon: {
+                        Image(systemName: DesignSystem.Icons.refresh).foregroundStyle(.cyan)
+                    }
                     Spacer()
                     if taskCenter.unreadCount > 0 {
                         Text("\(taskCenter.unreadCount)")
@@ -247,9 +262,12 @@ struct ToolsSection: View {
                 .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.collab)) {
-                Label(L10n.Common.Sidebar.collaboration, systemImage: DesignSystem.Icons.collaborationPeers)
-                    .foregroundStyle(.appText)
-                    .contentShape(Rectangle())
+                Label {
+                    Text(L10n.Common.Sidebar.collaboration).foregroundStyle(.appText)
+                } icon: {
+                    Image(systemName: DesignSystem.Icons.collaborationPeers).foregroundStyle(.teal)
+                }
+                .contentShape(Rectangle())
             }
         } header: {
             Text(L10n.Common.Sidebar.tools)
@@ -285,7 +303,7 @@ struct UniverseNavRow: View {
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(iconColor)
                 .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
-                .background(iconColor.opacity(0.12))
+                .background(iconColor.opacity(DesignSystem.Opacity.subtle))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
             
             // 标题

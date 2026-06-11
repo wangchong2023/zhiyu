@@ -2,6 +2,7 @@ import XCTest
 @testable import ZhiYu
 
 /// KnowledgeIngestPipeline 集成测试（通过 process() 公共接口验证管道流程）
+@MainActor
 final class KnowledgeIngestPipelineTests: XCTestCase {
 
     private let pipeline = KnowledgeIngestPipeline.shared
@@ -35,6 +36,7 @@ final class KnowledgeIngestPipelineTests: XCTestCase {
 
     func testProcess_withoutLLM_indexChunksNotCalled() async throws {
         let content = "不需要 LLM 的简单内容。"
+        let pageID = UUID()
         let result = try await pipeline.process(
             content: content,
             pageID: pageID,
@@ -161,11 +163,21 @@ private final class MockEmbeddingProvider: EmbeddingProvider {
         indexChunksCalled = true
         lastIndexedPageID = pageID
     }
+    
+    func vectorizeChunks(chunks: [String]) async -> [[Float]] { [] }
+    func search(query: String, topK: Int) async -> [(id: UUID, score: Float)] { [] }
+    func multiQuerySearch(query: String, topK: Int) async -> [(chunk: PageChunk, score: Float)] { [] }
+    func hydeSearch(query: String, topK: Int) async -> [(chunk: PageChunk, score: Float)] { [] }
+    func selfReflectionSearch(query: String, candidates: [(chunk: PageChunk, score: Float)]) async -> [(chunk: PageChunk, score: Float)] { [] }
+    func advancedSearch(query: String, topK: Int) async -> [(chunk: PageChunk, score: Float)] { [] }
+    func loadInitialCache() async {}
+    func clearCacheAndReload() async {}
 }
 
 // MARK: - TestMocks convenience
 
 private enum TestMocks {
+    @MainActor
     static func createMockLLMService() -> MockLLMService {
         let mock = MockLLMService()
         return mock

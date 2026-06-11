@@ -40,9 +40,10 @@ struct PageDetailContentSection: View {
                 .foregroundStyle(.appSecondary)
             Text(L10n.Knowledge.Page.emptyHint)
                 .font(.caption)
-                .foregroundStyle(.appAccent.opacity(0.7))
+                .foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.overlay))
                 .padding(.horizontal, DesignSystem.wide)
                 .padding(.vertical, DesignSystem.small)
+                // swiftlint:disable:next magic_numbers_opacity
                 .background(Color.appAccent.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }

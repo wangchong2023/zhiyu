@@ -31,7 +31,7 @@ final class ComponentSnapshots: XCTestCase {
         let store = AppStore()
         let view = AIPulseIndicator()
             .environment(store)
-            .frame(width: 150, height: 60)
+            .frame(width: DesignSystem.Metrics.customSize150, height: DesignSystem.Metrics.progressHeight)
             .background(Color.appBackground)
         
         // 记录/验证 iOS 布局
@@ -64,14 +64,14 @@ final class ComponentSnapshots: XCTestCase {
                 useClustering: false,
                 onSelect: {},
                 heroNamespace: namespace,
-                viewportRect: CGRect(x: 0, y: 0, width: 200, height: 200),
+                viewportRect: CGRect(x: 0, y: 0, width: DesignSystem.Metrics.customSize200, height: DesignSystem.Metrics.customSize200),
                 scale: 1.0
             )
         }
-        .frame(width: 100, height: 100)
+        .frame(width: DesignSystem.Metrics.largeIconBoxSize, height: DesignSystem.Metrics.largeIconBoxSize)
         .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: 100, height: 100)))
+        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize100, height: DesignSystem.Metrics.customSize100)))
     }
     
     /// 测试 AI 助手聊天视图 (ChatView) 的视觉一致性
@@ -97,7 +97,7 @@ final class ComponentSnapshots: XCTestCase {
             .environmentObject(llm)
             .environmentObject(themeManager)
             .environmentObject(onboardingService)
-            .frame(width: 375, height: 812)
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
         
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
@@ -122,7 +122,7 @@ final class ComponentSnapshots: XCTestCase {
         .environment(store)
         .environment(aiStore)
         .environment(router)
-        .frame(width: 375, height: 812)
+        .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
         .background(Color.appBackground)
         
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
@@ -143,7 +143,7 @@ final class ComponentSnapshots: XCTestCase {
             .environment(appEnv)
             .environment(settingsStore)
             .environmentObject(onboarding)
-            .frame(width: 375, height: 812)
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
         
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
@@ -171,10 +171,10 @@ final class ComponentSnapshots: XCTestCase {
             .environmentObject(onboardingService)
             .environmentObject(themeManager)
             .environment(AIWorkflowStore())
-            .frame(width: 300, height: 768)
+            .frame(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize768)
             .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: 300, height: 768)))
+        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize768)))
         
         // 2. 历经所有 AppTab 的 case 分支，榨干 switch-case 覆盖率死角
         for tab in AppTab.allCases {
@@ -199,11 +199,11 @@ final class ComponentSnapshots: XCTestCase {
             .environmentObject(onboardingService)
             .environmentObject(themeManager)
             .environment(AIWorkflowStore())
-            .frame(width: 500, height: 768)
+            .frame(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize768)
             .background(Color.appBackground)
 
             if tab == .knowledge {
-                assertSnapshot(of: detailViewForTab, as: .image(layout: .fixed(width: 500, height: 768)))
+                assertSnapshot(of: detailViewForTab, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize768)))
             } else {
                 let controller = UIHostingController(rootView: detailViewForTab)
                 _ = controller.view
@@ -229,10 +229,10 @@ final class ComponentSnapshots: XCTestCase {
         }
         
         let view = rawBreadcrumbView
-            .frame(width: 375, height: 50)
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)
             .background(Color.appBackground)
             
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: 375, height: 50)))
+        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)))
     }
 
     // MARK: - RAG 质量评估视图快照
@@ -242,7 +242,7 @@ final class ComponentSnapshots: XCTestCase {
         setupMockEnvironment()
 
         let view = RAGEvaluationView()
-            .frame(width: 375, height: 812)
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
 
         assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
@@ -265,10 +265,10 @@ final class ComponentSnapshots: XCTestCase {
         try await store.logTokenUsage(model: "gpt-4o", promptTokens: 1000, completionTokens: 500)
 
         let view = RAGEvaluationView()
-            .frame(width: 375, height: 1200)
+            .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize1200)
             .background(Color.appBackground)
 
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: 375, height: 1200)))
+        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize1200)))
     }
 }
 

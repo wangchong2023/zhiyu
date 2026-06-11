@@ -206,7 +206,7 @@ struct CollaborationViewContent: View {
             .foregroundStyle(.appAccent)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.appAccent.opacity(0.12))
+            .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .disabled(collabService.isSimulator)
@@ -286,7 +286,7 @@ struct CollaborationViewContent: View {
             .foregroundStyle(.red)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.red.opacity(0.08))
+            .background(Color.red.opacity(DesignSystem.Opacity.light))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .accessibilityIdentifier("collab-leave-button")

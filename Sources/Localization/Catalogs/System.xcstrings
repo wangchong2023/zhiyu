@@ -274,19 +274,18 @@
       }
     },
     "auth.avatar": {
-      "comment": "修改头像",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Change Avatar"
+            "value": "Avatar"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "修改头像"
+            "value": "头像"
           }
         }
       }
@@ -345,19 +344,18 @@
       }
     },
     "auth.currentSubscription": {
-      "comment": "当前套餐",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Current Plan"
+            "value": "Current Subscription"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "当前套餐"
+            "value": "当前订阅套餐"
           }
         }
       }
@@ -446,6 +444,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "全量"
+          }
+        }
+      }
+    },
+    "auth.feature.privacySecurity": {
+      "comment": "安全与隐私",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Security & Privacy"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安全与隐私"
+          }
+        }
+      }
+    },
+    "auth.feature.privacySecurityLiteValue": {
+      "comment": "不支持",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "—"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "—"
+          }
+        }
+      }
+    },
+    "auth.feature.privacySecurityProValue": {
+      "comment": "全量",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Full"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ 全量"
           }
         }
       }
@@ -715,19 +767,18 @@
       }
     },
     "auth.litePlan": {
-      "comment": "Lite 基础版",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite"
+            "value": "Lite Free Plan"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite 基础版"
+            "value": "Lite 基础版 (免费)"
           }
         }
       }
@@ -820,7 +871,6 @@
       }
     },
     "auth.nickname": {
-      "comment": "昵称",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -978,31 +1028,29 @@
       }
     },
     "auth.profileAndQuota": {
-      "comment": "个人信息与套餐",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Profile & Plan"
+            "value": "Profile"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "个人信息与套餐"
+            "value": "个人信息"
           }
         }
       }
     },
     "auth.proPlan": {
-      "comment": "Pro 专业版",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pro"
+            "value": "Pro Premium Plan"
           }
         },
         "zh-Hans": {
@@ -1174,7 +1222,6 @@
       }
     },
     "auth.saveChanges": {
-      "comment": "保存修改",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1192,31 +1239,29 @@
       }
     },
     "auth.saveFailed": {
-      "comment": "保存失败，请重试",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Save failed, please try again"
+            "value": "Save failed"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "保存失败，请重试"
+            "value": "保存失败"
           }
         }
       }
     },
     "auth.saveSuccess": {
-      "comment": "保存成功",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saved"
+            "value": "Save succeeded"
           }
         },
         "zh-Hans": {
@@ -1333,7 +1378,6 @@
       }
     },
     "auth.upgradePro": {
-      "comment": "升级 Pro",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1345,55 +1389,52 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级 Pro"
+            "value": "升级 Pro 专业版"
           }
         }
       }
     },
     "auth.upgradeSuccessMessage": {
-      "comment": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Welcome to Pro! Enjoy unlimited storage and AI features."
+            "value": "You have successfully unlocked ZhiYu Pro features!"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。"
+            "value": "您已成功解锁智宇 Pro 专业版特权！"
           }
         }
       }
     },
     "auth.upgradeSuccessTitle": {
-      "comment": "升级成功！",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upgrade Successful!"
+            "value": "Congratulations!"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "升级成功！"
+            "value": "恭喜升级成功！"
           }
         }
       }
     },
     "auth.uploadFailed": {
-      "comment": "头像上传失败",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upload failed"
+            "value": "Avatar upload failed"
           }
         },
         "zh-Hans": {
@@ -1405,7 +1446,6 @@
       }
     },
     "auth.uploadingAvatar": {
-      "comment": "正在上传头像...",
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1423,13 +1463,12 @@
       }
     },
     "auth.uploadSuccess": {
-      "comment": "头像上传成功",
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Avatar uploaded"
+            "value": "Avatar uploaded successfully"
           }
         },
         "zh-Hans": {
@@ -1626,6 +1665,210 @@
           "stringUnit": {
             "state": "translated",
             "value": "清空历史"
+          }
+        }
+      }
+    },
+    "tooltip.createPage.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Page"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新建文档"
+          }
+        }
+      }
+    },
+    "tooltip.createPage.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click here to create your first page and start accumulating knowledge."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击此处创建您的第一篇文档，开始知识积累。"
+          }
+        }
+      }
+    },
+    "tooltip.appLink.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insert Wiki Link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插入双链"
+          }
+        }
+      }
+    },
+    "tooltip.appLink.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type [[ to quickly link other pages and build your knowledge web."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输入 [[ 即可快速关联其他文档，构建知识网络。"
+          }
+        }
+      }
+    },
+    "tooltip.graphFilter.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Graph Filter"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图谱过滤"
+          }
+        }
+      }
+    },
+    "tooltip.graphFilter.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter and refine specific nodes and connections in the knowledge graph."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "筛选和过滤知识图谱中的特定节点与连接关系。"
+          }
+        }
+      }
+    },
+    "tooltip.ingest.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart Ingest"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能导入"
+          }
+        }
+      }
+    },
+    "tooltip.ingest.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supports smart chunking and vector parsing for Markdown, PDF, etc."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持 Markdown、PDF等文档的智能分块与向量解析。"
+          }
+        }
+      }
+    },
+    "tooltip.chat.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Assistant"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 助手"
+          }
+        }
+      }
+    },
+    "tooltip.chat.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG-based Q&A tailored to your vault, supporting deep source citations."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基于您知识库的 RAG 问答，支持深度引用追溯。"
+          }
+        }
+      }
+    },
+    "tooltip.tag.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag Management"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签管理"
+          }
+        }
+      }
+    },
+    "tooltip.tag.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use tags to provide multi-dimensional organization and aggregated views."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过标签为文档提供多维度的组织与聚合视图。"
           }
         }
       }
@@ -3948,13 +4191,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Instantly see what ZhiYu can do"
+            "value": "Rebuild Knowledge Management and Project Research initial notebooks to instantly see what ZhiYu can do."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "一键注入演示数据，立即感受完整功能"
+            "value": "一键重建知识管理与项目调研初始笔记本，立即感受完整功能"
           }
         }
       }
@@ -4543,13 +4786,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Developer"
+            "value": "Developer & Debug"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "开发者"
+            "value": "开发调试"
           }
         }
       }
@@ -5013,6 +5256,23 @@
         }
       }
     },
+    "settings.biometricProtection.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use Face ID / Touch ID to view private documents."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用面容/指纹解锁私密文档。"
+          }
+        }
+      }
+    },
     "settings.build": {
       "extractionState": "manual",
       "localizations": {
@@ -5155,13 +5415,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This will delete all pages without injecting any demo data. Continue?"
+            "value": "This will delete all pages without rebuilding any initial notebooks. Continue?"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这将删除所有页面且不注入任何演示数据。确定继续吗？"
+            "value": "这将删除所有页面且不重建任何初始笔记本。确定继续吗？"
           }
         }
       }
@@ -5212,7 +5472,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "数据注入"
+            "value": "数据生成"
           }
         }
       }
@@ -5569,7 +5829,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "数据注入、压力测试与系统重置"
+            "value": "数据生成、压力测试与系统重置"
           }
         }
       }
@@ -5971,13 +6231,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Send Feedback"
+            "value": "Feedback & Improvement"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "发送反馈"
+            "value": "反馈改进"
           }
         }
       }
@@ -6158,13 +6418,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No demo data generated. Please check the logs."
+            "value": "No initial notebooks generated. Please check the logs."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "未能生成演示数据，请检查日志。"
+            "value": "未能重建初始笔记本，请检查日志。"
           }
         }
       }
@@ -6181,7 +6441,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这将清空当前数据并注入一组预设的演示内容，确认执行吗？"
+            "value": "这将清空当前数据并重建一组预设的初始笔记本，确认执行吗？"
           }
         }
       }
@@ -6192,13 +6452,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inject Demo Data"
+            "value": "Rebuild Initial Notebooks"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "注入演示数据"
+            "value": "重建初始笔记本"
           }
         }
       }
@@ -6215,7 +6475,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "演示数据注入失败，请检查数据库连接。"
+            "value": "重建初始笔记本失败，请检查数据库连接。"
           }
         }
       }
@@ -6232,7 +6492,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已为 %d 个笔记本注入数据："
+            "value": "已为 %d 个笔记本重建数据："
           }
         }
       }
@@ -6283,7 +6543,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "已为 %d 个笔记本注入数据：%2$@"
+            "value": "已为 %d 个笔记本重建数据：%2$@"
           }
         }
       }
@@ -6300,7 +6560,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "成功注入 %d 条演示数据，界面已同步更新。"
+            "value": "成功重建 %d 个初始笔记本，界面已同步更新。"
           }
         }
       }
@@ -6322,19 +6582,19 @@
         }
       }
     },
-    "settings.injectDemoData": {
+    "settings.rebuildInitialNotebooks": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inject Demo Data"
+            "value": "Rebuild Initial Notebooks"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "注入演示数据"
+            "value": "重建初始笔记本"
           }
         }
       }
@@ -6708,7 +6968,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "这将清空当前数据并注入 1000 条包含随机链接的测试节点。确认执行吗？"
+            "value": "这将清空当前数据并生成 1000 条包含随机链接的测试节点。确认执行吗？"
           }
         }
       }
@@ -6770,13 +7030,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Blur content marked with #private"
+            "value": "Hide private documents with blur overlay."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "对标记为 #private 的内容执行高斯模糊"
+            "value": "对私密文档内容进行模糊遮罩保护。"
           }
         }
       }
@@ -6929,7 +7189,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "执行脚本注入"
+            "value": "执行脚本生成"
           }
         }
       }
@@ -8052,6 +8312,890 @@
           "stringUnit": {
             "state": "translated",
             "value": "成功同步 %lld 条待办事项"
+          }
+        }
+      }
+    },
+    "auth.accountId": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account ID"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "账号 ID"
+          }
+        }
+      }
+    },
+    "auth.phoneLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phone"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手机号"
+          }
+        }
+      }
+    },
+    "auth.editNickname": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Nickname"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改昵称"
+          }
+        }
+      }
+    },
+    "auth.proFeatureList": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro Plan Privileges"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro 专业版专属特权"
+          }
+        }
+      }
+    },
+    "auth.subscriptionMonthly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly (¥38/Month)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按月订阅 (¥38/月)"
+          }
+        }
+      }
+    },
+    "auth.subscriptionYearly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yearly (¥368/Year, save 20%)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按年订阅 (¥368/年, 立省20%)"
+          }
+        }
+      }
+    },
+    "auth.selectPaymentChannel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select Payment Method"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择支付方式"
+          }
+        }
+      }
+    },
+    "auth.payNow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pay Now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "立即支付"
+          }
+        }
+      }
+    },
+    "auth.limitReachedTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quota Limit Reached"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "配额达到上限"
+          }
+        }
+      }
+    },
+    "auth.limitReachedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your %1$@ has reached the limit of %2$@ plan. Please upgrade to Pro for unlimited storage."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您的%1$@已达 %2$@ 套餐上限，请升级为 Pro 专业版以解锁无限存储。"
+          }
+        }
+      }
+    },
+    "auth.vaultUsage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaults Limit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本地金库数"
+          }
+        }
+      }
+    },
+    "auth.pagesUsage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Pages Limit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页数"
+          }
+        }
+      }
+    },
+    "auth.pluginsUsage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins Limit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已装插件数"
+          }
+        }
+      }
+    },
+    "auth.proFeature1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Support up to 10 vaults"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支持创建至多 10 个金库"
+          }
+        }
+      }
+    },
+    "auth.proFeature2": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expansion to 50,000 pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "存储扩容至 50,000 页知识节点"
+          }
+        }
+      }
+    },
+    "auth.proFeature3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited plugin installations"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无限制安装与运行插件"
+          }
+        }
+      }
+    },
+    "auth.proFeature4": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local SLM runtime environment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解锁本地端侧 SLM 模型环境"
+          }
+        }
+      }
+    },
+    "auth.proFeature5": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local plugin debugging tool integration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "集成支持本地插件开发调试"
+          }
+        }
+      }
+    },
+    "auth.wechatPay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WeChat Pay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "微信支付"
+          }
+        }
+      }
+    },
+    "auth.alipay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alipay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付宝"
+          }
+        }
+      }
+    },
+    "auth.applePay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "苹果内购"
+          }
+        }
+      }
+    },
+    "auth.thirdparty.apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with Apple"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple 登录"
+          }
+        }
+      }
+    },
+    "auth.thirdparty.google": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with Google"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google 登录"
+          }
+        }
+      }
+    },
+    "auth.thirdparty.github": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with GitHub"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GitHub 登录"
+          }
+        }
+      }
+    },
+    "auth.nicknamePlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter nickname"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入昵称"
+          }
+        }
+      }
+    },
+    "auth.subscription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "套餐管理"
+          }
+        }
+      }
+    },
+    "auth.gender": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gender"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "性别"
+          }
+        }
+      }
+    },
+    "auth.genderMale": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Male"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "男"
+          }
+        }
+      }
+    },
+    "auth.genderFemale": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Female"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "女"
+          }
+        }
+      }
+    },
+    "auth.genderSecret": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secret"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保密"
+          }
+        }
+      }
+    },
+    "auth.birthday": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Birthday"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "出生日期"
+          }
+        }
+      }
+    },
+    "auth.litePlanTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are currently a Lite user"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您当前是 Lite 用户"
+          }
+        }
+      }
+    },
+    "auth.proPlanTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are currently a Pro user"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您当前是 Pro 用户"
+          }
+        }
+      }
+    },
+    "auth.litePlanDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basic quota, upgrade to unlock more. Core features remain functional."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基础配额，升级以解锁更多。目前仍可正常使用核心功能"
+          }
+        }
+      }
+    },
+    "auth.proPlanDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All premium features and exclusive benefits unlocked"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已解锁所有高级特性及专属权益"
+          }
+        }
+      }
+    },
+    "auth.upgradeToPro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "套餐选择"
+          }
+        }
+      }
+    },
+    "auth.unlockEverything": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock Everything"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "解锁所有权限"
+          }
+        }
+      }
+    },
+    "auth.unlimitedVaults": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited Vaults"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无限金库数量"
+          }
+        }
+      }
+    },
+    "auth.unlimitedPages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited Document Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无限知识页数量"
+          }
+        }
+      }
+    },
+    "auth.aiSynthesis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Synthesis & Deep Citation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 深度综合与洞察分析"
+          }
+        }
+      }
+    },
+    "auth.premiumPlugins": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100+ Premium Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100+ 高级扩展插件"
+          }
+        }
+      }
+    },
+    "auth.prioritySupport": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priority Technical Support"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "高级优先技术支持"
+          }
+        }
+      }
+    },
+    "auth.upgradeSuccessMsg": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade Successful! Welcome to Pro."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "您已成功升级为 Pro 用户！"
+          }
+        }
+      }
+    },
+    "auth.save20Percent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save 20%"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "省 20%"
+          }
+        }
+      }
+    },
+    "auth.priceMonthlyPro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "$14.99 / mo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥38 / 月"
+          }
+        }
+      }
+    },
+    "auth.priceYearlyPro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "$149.99 / yr"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥368 / 年"
+          }
+        }
+      }
+    },
+    "auth.priceMonthlyLite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "$0 / mo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥0 / 月"
+          }
+        }
+      }
+    },
+    "auth.priceMonthlyProEquivalent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "$12.49 / mo"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥30.6 / 月"
+          }
+        }
+      }
+    },
+    "auth.upgradeToProYearly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade to Pro for $149.99 / year"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级到专业版 - ¥368 / 年"
+          }
+        }
+      }
+    },
+    "auth.upgradeToProMonthly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade to Pro for $14.99 / month"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级到专业版 - ¥38 / 月"
+          }
+        }
+      }
+    },
+    "settings.promptSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompt Settings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提示词设置"
+          }
+        }
+      }
+    },
+    "auth.phoneVerify": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phone Verification"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手机号验证"
           }
         }
       }

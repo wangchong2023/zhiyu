@@ -63,7 +63,8 @@ struct ChartView: View {
                 )
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.01)],
+                        // swiftlint:disable:next magic_numbers_opacity
+                        colors: [Color.blue.opacity(DesignSystem.Opacity.disabled), Color.blue.opacity(0.01)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -81,7 +82,7 @@ struct ChartView: View {
             
             if let selectedDate {
                 RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
-                    .foregroundStyle(Color.appSecondary.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary.opacity(DesignSystem.Opacity.soft))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
                     .annotation(position: .automatic, alignment: .center, spacing: DesignSystem.tiny) {
                         if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
@@ -125,13 +126,13 @@ struct ChartView: View {
                     y: .value(L10n.Dashboard.chartValue, Double(stat.tokens)),
                     width: .fixed(DesignSystem.small)
                 )
-                .foregroundStyle(themeManager.accentColor.opacity(0.7).gradient)
+                .foregroundStyle(themeManager.accentColor.opacity(DesignSystem.Opacity.overlay).gradient)
                 .cornerRadius(1)
             }
             
             if let selectedDate {
                 RuleMark(x: .value(L10n.Dashboard.chartSelected, selectedDate, unit: .day))
-                    .foregroundStyle(Color.appSecondary.opacity(0.5))
+                    .foregroundStyle(Color.appSecondary.opacity(DesignSystem.Opacity.soft))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [2]))
                     .annotation(position: .automatic, alignment: .center, spacing: DesignSystem.tiny) {
                         if let stat = stats.first(where: { Calendar.current.isDate($0.date, inSameDayAs: selectedDate) }) {
@@ -164,7 +165,7 @@ struct ChartView: View {
     @AxisContentBuilder
     private var yAxisMarks: some AxisContent {
         AxisMarks(position: .leading, values: .automatic(desiredCount: 3)) { value in
-            AxisGridLine().foregroundStyle(.appBorder.opacity(0.5))
+            AxisGridLine().foregroundStyle(.appBorder.opacity(DesignSystem.Opacity.soft))
             AxisValueLabel {
                 if let intValue = value.as(Int.self) {
                     Text("\(intValue)")

@@ -39,11 +39,11 @@ struct MedalCard: View {
             }
             
             VStack(spacing: DesignSystem.tiny) {
-                Text(L10n.Coachmark.tr(medal.titleKey))
+                Text(L10n.Insight.tr(medal.titleKey))
                     .font(.system(size: DesignSystem.subheadlineFontSize, weight: .bold))
                     .foregroundStyle(isEarned ? .appText : .appSecondary)
                 
-                Text(L10n.Coachmark.tr(medal.descKey))
+                Text(L10n.Insight.tr(medal.descKey))
                     .font(.system(size: DesignSystem.microFontSize))
                     .foregroundStyle(.appSecondary)
                     .multilineTextAlignment(.center)
@@ -91,7 +91,7 @@ struct MedalRewardPopup: View {
                         .font(.system(size: DesignSystem.Gallery.mainIconSize, weight: .black))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [baseColor, baseColor.opacity(0.6)],
+                                colors: [baseColor, baseColor.opacity(DesignSystem.Opacity.dim)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -107,11 +107,11 @@ struct MedalRewardPopup: View {
                         .foregroundStyle(.appAccent)
                         .kerning(2)
                     
-                    Text(L10n.Coachmark.tr(medal.titleKey))
+                    Text(L10n.Insight.tr(medal.titleKey))
                         .font(.title.bold())
                         .foregroundStyle(.appText)
                     
-                    Text(L10n.Coachmark.tr(medal.descKey))
+                    Text(L10n.Insight.tr(medal.descKey))
                         .font(.body)
                         .foregroundStyle(.appSecondary)
                         .multilineTextAlignment(.center)

@@ -61,7 +61,7 @@ actor KnowledgeInsightService {
         guard let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now),
               let longTermMin = calendar.date(byAdding: .day, value: -90, to: now),
               let longTermMax = calendar.date(byAdding: .day, value: -30, to: now) else {
-            throw AppError.insight("日期计算失败", code: -2)
+            throw AppError.insight(L10n.Insight.dateCalculationFailed, code: -2)
         }
 
         let recentPages = pages.filter { $0.updatedAt >= recentThreshold }

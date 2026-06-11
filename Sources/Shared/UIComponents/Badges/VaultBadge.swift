@@ -68,7 +68,7 @@ struct VaultBadge: View {
             if platformEnv.interactionStyle != InteractionStyle.crown {
                 Image(systemName: DesignSystem.Icons.chevronUpDown)
                     .imageScale(.small)
-                    .foregroundStyle(.primary.opacity(0.4))
+                    .foregroundStyle(.primary.opacity(DesignSystem.Opacity.disabled))
             }
         }
         .padding(.vertical, DesignSystem.tightPadding)

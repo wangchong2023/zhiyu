@@ -12,6 +12,7 @@ import SwiftUI
 
 /// 插件中心 (Stub: 为未来生态预留位置)
 struct PluginCenterView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(Router.self) var router
     @StateObject private var registry = PluginRegistry.shared
     @StateObject private var marketService = PluginMarketService()
@@ -74,6 +75,13 @@ struct PluginCenterView: View {
         } message: {
             Text(L10n.Plugin.safeModeWarningMessage)
         }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button(L10n.Common.done) {
+                    dismiss()
+                }
+            }
+        }
     }
     
     private var headerSection: some View {
@@ -91,12 +99,16 @@ struct PluginCenterView: View {
             .overlay(RoundedRectangle(cornerRadius: DesignSystem.cardRadius).stroke(Color.appBorder.opacity(DesignSystem.glassOpacity * 3), lineWidth: DesignSystem.borderWidth / 2))
             
             // 安全模式与加载按钮：对齐全局 Action 规范（移除冗余背景，采用轻量化风格）
-            HStack(spacing: DesignSystem.wide) {
+            HStack(spacing: DesignSystem.large) {
                 // 安全模式切换
                 HStack(spacing: DesignSystem.small) {
-                    Label(L10n.Plugin.safeModeTitle, systemImage: isSafeModeOn ? DesignSystem.Icons.shieldFill : DesignSystem.Icons.shieldSlash)
+                    Image(systemName: isSafeModeOn ? DesignSystem.Icons.shieldFill : DesignSystem.Icons.shieldSlash)
                         .font(.subheadline.bold())
                         .foregroundStyle(isSafeModeOn ? .green : .orange)
+                    
+                    Text(L10n.Plugin.safeModeTitle)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appText)
                     
                     Toggle("", isOn: Binding(
                         get: { isSafeModeOn },
@@ -113,7 +125,7 @@ struct PluginCenterView: View {
                     .tint(.appAccent)
                 }
                 
-                Spacer()
+                // 移除原有的占据全屏的 Spacer()
                 
                 // 加载本地插件 Action
                 Button(action: {
@@ -124,7 +136,8 @@ struct PluginCenterView: View {
                         .font(.subheadline.bold())
                         .foregroundStyle(.appAccent)
                 }
-
+                
+                Spacer() // 靠左对齐
             }
             .padding(.top, DesignSystem.tiny)
         }
@@ -232,7 +245,7 @@ struct PluginCard: View {
                     if let src = source {
                         Text(sourceLabel(src)).font(.system(size: DesignSystem.microFontSize, weight: .medium))
                             .padding(.horizontal, DesignSystem.tiny).padding(.vertical, DesignSystem.atomic)
-                            .background(sourceColor(src).opacity(0.12)).clipShape(Capsule())
+                            .background(sourceColor(src).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
                             .foregroundStyle(sourceColor(src))
                     }
                     if let author = author {

@@ -55,7 +55,7 @@ struct VisionProSpatialView: View {
         .navigationTitle(L10n.Common.Spatial.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button(L10n.Common.done) { dismiss() }
             }
         }
@@ -85,8 +85,8 @@ struct SpatialFeatureRow: View {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundStyle(.appAccent)
-                .frame(width: 44, height: 44)
-                .background(Color.appAccent.opacity(0.1))
+                .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                 .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: DesignSystem.atomic) {

@@ -239,25 +239,9 @@ public actor SQLiteStore: AnyPageStoreCapabilities {
         try await writer.write { db in try block(db) }
     }
     
-    /// 填充默认引导内容
+    /// 填充默认引导内容 (Obsolete)
     public func seedDefaultContent(logger: @escaping @Sendable (LogAction, String, String) -> Void) async {
-        struct PageSeed {
-            let title: String
-            let type: PageType
-            let content: String
-            let tags: [String]
-        }
-        let pagesToCreate: [PageSeed] = [
-            PageSeed(title: L10n.Common.Demo.Welcome.title, type: .concept, content: L10n.Common.Demo.Welcome.content, tags: [L10n.Common.Demo.Welcome.tag1, L10n.Common.Demo.Welcome.tag2, L10n.Common.Demo.Welcome.tag3]),
-            PageSeed(title: L10n.Common.Demo.aiAgent.title, type: .concept, content: L10n.Common.Demo.aiAgent.content, tags: ["AI", "Agent"]),
-            PageSeed(title: L10n.Common.Demo.planning.title, type: .concept, content: L10n.Common.Demo.planning.content, tags: ["AI", "Planning"]),
-            PageSeed(title: L10n.Common.Demo.memory.title, type: .concept, content: L10n.Common.Demo.memory.content, tags: ["AI", "Memory", "RAG"])
-        ]
-        
-        for seed in pagesToCreate {
-            _ = try? await createPage(title: seed.title, pageType: seed.type, content: seed.content, tags: seed.tags)
-            logger(.create, seed.title, "Seeded_default_content")
-        }
+        // Obsolete: Content generation is now fully handled by InitialNotebookGenerator and MaintenanceService
     }
 
     /// 替换AllPages

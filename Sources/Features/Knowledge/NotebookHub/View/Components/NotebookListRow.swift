@@ -33,8 +33,8 @@ struct NotebookListRow: View {
                 // 1. 图标展示（圆形背景与 Emoji 图标）
                 ZStack {
                     Circle()
-                        .fill(Color.appAccent.opacity(0.1))
-                        .frame(width: 44, height: 44)
+                        .fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
+                        .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
                     
                     Text(notebook.icon ?? defaultIcon)
                         .font(.title2)
@@ -65,7 +65,7 @@ struct NotebookListRow: View {
                     
                     Text(L10n.Vault.pageCountSuffix)
                         .font(.caption2.weight(.medium))
-                        .foregroundStyle(.appSecondary.opacity(0.6))
+                        .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 }
             }
             .padding(DesignSystem.medium)

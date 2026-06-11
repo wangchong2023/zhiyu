@@ -149,33 +149,33 @@ struct PageDetailView: View {
                 .padding(.vertical, DesignSystem.small)
                 .background(
                     LinearGradient(
-                        colors: [.appAccent, .appAccent.opacity(0.8)],
+                        colors: [.appAccent, .appAccent.opacity(DesignSystem.Opacity.prominent)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
                 .clipShape(Capsule())
-                .shadow(color: .appAccent.opacity(0.3), radius: 5, x: 0, y: 3)
+                .shadow(color: .appAccent.opacity(DesignSystem.Opacity.shadow), radius: 5, x: 0, y: 3)
             }
             .buttonStyle(ScaleButtonStyle())
         }
         .padding(DesignSystem.standardPadding)
         .background(
             RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
-                .fill(Color.appCard.opacity(0.6))
+                .fill(Color.appCard.opacity(DesignSystem.Opacity.dim))
         )
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.Radius.card)
                 .stroke(
                     LinearGradient(
-                        colors: [.appAccent.opacity(0.4), .orange.opacity(0.2)],
+                        colors: [.appAccent.opacity(DesignSystem.Opacity.disabled), .orange.opacity(DesignSystem.Opacity.medium)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: 1
                 )
         )
-        .shadow(color: .primary.opacity(0.05), radius: 10, x: 0, y: 5)
+        .shadow(color: .primary.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
         .padding(.vertical, DesignSystem.medium)
     }
     
@@ -184,7 +184,7 @@ struct PageDetailView: View {
         ScrollViewReader { _ in
             ScrollView {
                 VStack(spacing: 0) {
-                    Color.clear.frame(height: 10)
+                    Color.clear.frame(height: DesignSystem.mediumRadius)
                     
                     VStack(alignment: .leading, spacing: 0) {
                         PageDetailAISection(pageTitle: coordinator.page.title, onLinkTap: navigateToPage)
@@ -329,7 +329,7 @@ struct PageDetailView: View {
             }
         }
         .padding(DesignSystem.medium)
-        .background(Color.appCard.opacity(0.5))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         .padding(.vertical, DesignSystem.tightPadding)
     }

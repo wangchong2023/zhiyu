@@ -71,5 +71,29 @@ extension DesignSystem {
         public static let minWindowHeight: CGFloat = Spacing.Metrics.minWindowHeight
         /// 笔记本名称最大长度限制 (24字符)
         public static let maxNotebookNameLength: Int = 24
+    
+        // 自动生成的魔鬼数字补充常量
+        public static let customSize150: CGFloat = 150
+        public static let customSize1: CGFloat = 1
+        public static let customSize56: CGFloat = 56
+        public static let customSize80: CGFloat = 80
+        public static let customSize36: CGFloat = 36
+        public static let customSize300: CGFloat = 300
+        public static let customSize96: CGFloat = 96
+        public static let customSize54: CGFloat = 54
+        public static let customSize40: CGFloat = 40
+        public static let customSize140: CGFloat = 140
+        public static let customSize180: CGFloat = 180
+        public static let customSize500: CGFloat = 500
+        public static let customSize400: CGFloat = 400
+        public static let customSize220: CGFloat = 220
+        public static let customSize14: CGFloat = 14
+        public static let customSize22: CGFloat = 22
+            public static let customSize100: CGFloat = 100
+        public static let customSize375: CGFloat = 375
+        public static let customSize50: CGFloat = 50
+        public static let customSize768: CGFloat = 768
+        public static let customSize1200: CGFloat = 1200
+        public static let customSize812: CGFloat = 812
     }
 }

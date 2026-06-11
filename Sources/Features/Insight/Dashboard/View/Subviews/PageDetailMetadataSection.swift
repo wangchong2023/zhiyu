@@ -62,7 +62,7 @@ struct PageDetailMetadataSection: View {
                 VStack(alignment: .leading, spacing: DesignSystem.medium) {
                     HStack(spacing: DesignSystem.small) {
                         ZStack {
-                            Circle().fill(Color.appAccent.opacity(0.1)).frame(width: 24, height: 24)
+                            Circle().fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle)).frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
                             Image(systemName: DesignSystem.Icons.sparkles).font(.system(size: DesignSystem.iconTiny)).foregroundStyle(.appAccent)
                         }
                         
@@ -80,8 +80,8 @@ struct PageDetailMetadataSection: View {
                     }
                 }
                 .padding()
-                .background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(0.03)))
-                .overlay(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).stroke(LinearGradient(colors: [.appAccent.opacity(0.2), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+                .background(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).fill(Color.appAccent.opacity(DesignSystem.Opacity.atomic)))
+                .overlay(RoundedRectangle(cornerRadius: DesignSystem.largeRadius).stroke(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.medium), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
                 .padding()
             }
         }
@@ -102,7 +102,7 @@ struct PageDetailMetadataSection: View {
             .padding(DesignSystem.medium)
             .background(Color.appCard)
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.tightPadding))
-            .overlay(RoundedRectangle(cornerRadius: DesignSystem.tightPadding).stroke(LinearGradient(colors: [.appAccent.opacity(0.3), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: DesignSystem.tightPadding).stroke(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.shadow), .clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1))
         }
         .buttonStyle(.plain)
     }
@@ -121,7 +121,7 @@ struct PageDetailMetadataSection: View {
                 ForEach(backlinks) { linkedPage in
                     NavigationLink(value: AppRoute.pageDetail(id: linkedPage.id)) {
                         HStack(spacing: DesignSystem.medium) {
-                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.pageType.colorName)).frame(width: 28, height: 28).background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
+                            Image(systemName: linkedPage.displayIcon).foregroundStyle(Color.fromModelColorName(linkedPage.pageType.colorName)).frame(width: DesignSystem.IconSize.medium, height: DesignSystem.IconSize.medium).background(Color.fromModelColorName(linkedPage.pageType.colorName).opacity(DesignSystem.Opacity.glass)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                             Text(linkedPage.title).font(.subheadline).foregroundStyle(.appText)
                             Spacer()
                             Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)

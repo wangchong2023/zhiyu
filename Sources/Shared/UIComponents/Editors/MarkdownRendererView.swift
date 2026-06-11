@@ -167,7 +167,7 @@ struct MarkdownRendererView: View {
                         Text("\(index + 1).")
                             .font(.system(.body, design: .rounded).weight(.bold))
                             .foregroundStyle(.appAccent)
-                            .frame(width: 24, alignment: .trailing)
+                            .frame(width: DesignSystem.IconSize.standard, alignment: .trailing)
                     } else {
                         Text("")
                             .foregroundStyle(.appAccent)
@@ -263,16 +263,16 @@ struct MarkdownRendererView: View {
                                 .padding(.vertical, DesignSystem.tightPadding)
                                 .frame(minWidth: 80, maxWidth: 180, alignment: .leading)
                         }
-                        .background(Color.appAccent.opacity(0.1))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                         // 列间分割线（最后一列不加）
                         if index < headers.count - 1 {
                             Divider()
                                 .frame(maxHeight: 36)
-                                .background(Color.appBorder.opacity(0.3))
+                                .background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                         }
                     }
                 }
-                Divider().background(Color.appBorder.opacity(0.4))
+                Divider().background(Color.appBorder.opacity(DesignSystem.Opacity.disabled))
                 // 数据行
                 ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
                     GridRow {
@@ -286,22 +286,22 @@ struct MarkdownRendererView: View {
                                     .frame(minWidth: 80, maxWidth: 180, alignment: .leading)
                                     .fixedSize(horizontal: false, vertical: true)
                             }
-                            .background(rowIndex % 2 != 0 ? Color.appCard.opacity(0.3) : Color.clear)
+                            .background(rowIndex % 2 != 0 ? Color.appCard.opacity(DesignSystem.Opacity.shadow) : Color.clear)
                             if colIndex < row.count - 1 {
                                 Divider()
-                                    .background(Color.appBorder.opacity(0.3))
+                                    .background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                             }
                         }
                     }
                     if rowIndex < rows.count - 1 {
-                        Divider().background(Color.appBorder.opacity(0.3))
+                        Divider().background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
                     }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                    .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.shadow), lineWidth: 0.5)
             )
         }
         .padding(.vertical, DesignSystem.tiny)

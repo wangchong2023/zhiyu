@@ -132,7 +132,7 @@ struct PluginExtensionsSection: View {
                         HStack {
                             Image(systemName: DesignSystem.Icons.puzzlepieceExtension)
                                 .foregroundStyle(.appAccent)
-                                .frame(width: 24)
+                                .frame(width: DesignSystem.IconSize.standard)
                             Text(tab.name)
                                 .foregroundStyle(.appText)
                             Spacer()

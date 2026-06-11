@@ -66,12 +66,12 @@ struct NotebookFormSheet: View {
                         VStack(spacing: DesignSystem.medium) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.appAccent.opacity(0.1))
+                                    .fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                                     .overlay(
                                         Circle()
-                                            .strokeBorder(Color.appAccent.opacity(0.3), lineWidth: 2)
+                                            .strokeBorder(Color.appAccent.opacity(DesignSystem.Opacity.shadow), lineWidth: 2)
                                     )
-                                    .frame(width: 96, height: 96)
+                                    .frame(width: DesignSystem.Metrics.customSize96, height: DesignSystem.Metrics.customSize96)
 
                                 Text(icon.isEmpty ? "" : icon)
                                     .font(.largeTitle)
@@ -90,8 +90,8 @@ struct NotebookFormSheet: View {
                                         } label: {
                                             Text(item)
                                                 .font(.title)
-                                                .frame(width: 54, height: 54)
-                                                .background(icon == item ? Color.appAccent.opacity(0.2) : Color.primary.opacity(0.05))
+                                                .frame(width: DesignSystem.Metrics.customSize54, height: DesignSystem.Metrics.customSize54)
+                                                .background(icon == item ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.primary.opacity(DesignSystem.Opacity.ghost))
                                                 .clipShape(Circle())
                                                 .overlay(
                                                     Circle()

@@ -17,6 +17,7 @@ struct SynthesisView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @Environment(SynthesisStore.self) var synthesisStore
+    @EnvironmentObject var llmService: LLMService
     @ObservedObject var taskCenter = TaskCenter.shared
     @State private var showOutput = false
     @State private var outputType: SynthesisStore.SynthesisType = .mindmap
@@ -89,6 +90,14 @@ struct SynthesisView: View {
 
     private var mainList: some View {
         List {
+            if !llmService.isEnabled || llmService.apiKey.isEmpty {
+                llmWarningSection
+                    #if !os(watchOS)
+                    .listRowSeparator(.hidden)
+                    #endif
+                    .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.small, trailing: DesignSystem.standardPadding))
+                    .listRowBackground(Color.clear)
+            }
             entrySection
             runningTasksContainer
             mainContentSection
@@ -126,6 +135,20 @@ struct SynthesisView: View {
         #endif
         .listRowInsets(EdgeInsets(top: 0, leading: DesignSystem.standardPadding, bottom: DesignSystem.loosePadding, trailing: DesignSystem.standardPadding))
         .listRowBackground(Color.clear)
+    }
+
+    private var llmWarningSection: some View {
+        NavigationLink(value: AppRoute.settings) {
+            HStack(spacing: DesignSystem.medium) {
+                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
+                Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
+                Spacer()
+                Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
+            }
+            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+        }
+        .buttonStyle(.plain)
     }
 
     private var mainContentSection: some View {
@@ -388,7 +411,7 @@ struct SynthesisView: View {
                             }
                             .padding(.horizontal, DesignSystem.small)
                             .padding(.vertical, DesignSystem.tightPadding)
-                            .background(Capsule().fill(Color.appAccent.opacity(0.1)))
+                            .background(Capsule().fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle)))
                             .foregroundStyle(.appAccent)
                         }
                     }

@@ -111,7 +111,7 @@ struct IngestView: View {
                         .font(.system(size: DesignSystem.captionFontSize, weight: .bold, design: .monospaced))
                         .padding(.horizontal, DesignSystem.small)
                         .padding(.vertical, DesignSystem.tiny)
-                        .background(Color.appAccent.opacity(0.15))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
                         .foregroundStyle(Color.appAccent)
                         .clipShape(Capsule())
                 }
@@ -124,9 +124,9 @@ struct IngestView: View {
             .appContainer(padding: true)
             .background(
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                    .stroke(Color.appAccent.opacity(0.3), lineWidth: 1)
+                    .stroke(Color.appAccent.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
             )
-            .shadow(color: Color.appAccent.opacity(0.1), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.subtle), radius: 10, x: 0, y: 5)
         )
     }
 
@@ -138,7 +138,8 @@ struct IngestView: View {
                 Spacer()
                 Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
             }
-            .padding().background(Color.orange.opacity(DesignSystem.glassOpacity))
+            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .buttonStyle(.plain)
     }
@@ -208,10 +209,10 @@ struct IngestView: View {
                                     Button(action: { HapticFeedback.shared.trigger(.selection); withAnimation(.spring(response: 0.3)) { coordinator.newType = type } }) {
                                         HStack(spacing: DesignSystem.tightPadding) { Image(systemName: type.icon); Text(type.displayName) }
                                         .font(.subheadline.weight(coordinator.newType == type ? .bold : .medium)).padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)
-                                        .background(coordinator.newType == type ? Color.fromModelColorName(type.colorName).opacity(0.2) : Color.appCard.opacity(0.8))
+                                        .background(coordinator.newType == type ? Color.fromModelColorName(type.colorName).opacity(DesignSystem.Opacity.medium) : Color.appCard.opacity(DesignSystem.Opacity.prominent))
                                         .foregroundStyle(coordinator.newType == type ? Color.fromModelColorName(type.colorName) : .appSecondary)
                                         .clipShape(Capsule())
-                                        .overlay(Capsule().stroke(coordinator.newType == type ? Color.fromModelColorName(type.colorName).opacity(0.3) : Color.appBorder, lineWidth: 1))
+                                        .overlay(Capsule().stroke(coordinator.newType == type ? Color.fromModelColorName(type.colorName).opacity(DesignSystem.Opacity.shadow) : Color.appBorder, lineWidth: 1))
                                     }.buttonStyle(.plain)
                                 }
                             }.padding(.horizontal, 1)
@@ -221,7 +222,7 @@ struct IngestView: View {
                         HStack {
                             Label(L10n.Creation.customIcon, systemImage: DesignSystem.Icons.starSquareFill)
                             Spacer()
-                            if let icon = coordinator.newCustomIcon { Image(systemName: icon).font(.title3).foregroundStyle(.appAccent).padding(DesignSystem.tiny).background(Color.appAccent.opacity(0.1)).clipShape(Circle())
+                            if let icon = coordinator.newCustomIcon { Image(systemName: icon).font(.title3).foregroundStyle(.appAccent).padding(DesignSystem.tiny).background(Color.appAccent.opacity(DesignSystem.Opacity.subtle)).clipShape(Circle())
                             } else { Text(L10n.Common.none).foregroundColor(.appSecondary).font(.subheadline) }
                         }
                     }

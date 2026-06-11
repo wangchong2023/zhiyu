@@ -49,7 +49,7 @@ public final class VaultService: VaultServiceProtocol {
     
     /// 私有化单例构造方法，防止外部直接实例化。
     private init() {
-        // 单测环境下禁用自动异步加载演示数据，避免跨用例的 DI 容器重置竞态崩溃
+        // 单测环境下禁用自动异步加载初始笔记本，避免跨用例的 DI 容器重置竞态崩溃
         if NSClassFromString("XCTestCase") == nil {
             loadVaults()
         }
@@ -76,7 +76,7 @@ public final class VaultService: VaultServiceProtocol {
     
     /// 加载所有笔记本元数据。
     /// 异步载入所有已注册的笔记本元数据列表。
-    /// 若全局配置表为空，则冷启动触发系统预置的演示数据（“我的知识库”与“项目调研”），
+    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（“我的知识库”与“项目调研”），
     /// 该预置演示库支持 100% 国际化多语言翻译适配，自动持久化至全局库中，并安全恢复最近一次激活的物理库。
     private func loadVaults() {
         Task {
@@ -330,6 +330,10 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         vaults.append(newVault)
         do {
             try saveVaultToDatabase(newVault)
+            // MARK: - Bugfix
+            // 手动新建的笔记本不需要被注入冷启动引导数据，
+            // 故在此立刻置位 seeded_vault_{id} = true 以规避 KnowledgeStore 的二次注入
+            UserDefaults.standard.set(true, forKey: "seeded_vault_\(newVault.id.uuidString)")
         } catch {
             Logger.shared.error(" [VaultService]" + " Failed to" + " write new" + " notebook to" + " database: \(error)", error: error)
         }

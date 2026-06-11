@@ -43,7 +43,7 @@ struct SourceRow: View {
                         .foregroundStyle(.appSecondary)
                         .padding(.horizontal, DesignSystem.tightPadding)
                         .padding(.vertical, DesignSystem.atomic)
-                        .background(Color.appAccent.opacity(0.1))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                         .clipShape(Capsule())
                 }
                 
@@ -58,7 +58,7 @@ struct SourceRow: View {
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                    .stroke(Color.appBorder.opacity(0.3), lineWidth: 0.5)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.shadow), lineWidth: 0.5)
             )
         }
         .buttonStyle(.plain)

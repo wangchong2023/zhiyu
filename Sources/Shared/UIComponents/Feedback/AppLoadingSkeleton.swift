@@ -40,24 +40,25 @@ public struct AppLoadingSkeleton: View {
             switch type {
             case .textRow:
                 skeletonRectangle()
-                    .frame(height: 16)
+                    .frame(height: DesignSystem.IconSize.micro)
                 
             case .paragraph:
                 VStack(alignment: .leading, spacing: 10) {
-                    skeletonRectangle().frame(height: 16).frame(maxWidth: .infinity)
-                    skeletonRectangle().frame(height: 16).frame(maxWidth: .infinity)
-                    skeletonRectangle().frame(height: 16).frame(width: 200)
+                    skeletonRectangle().frame(height: DesignSystem.IconSize.micro).frame(maxWidth: .infinity)
+                    skeletonRectangle().frame(height: DesignSystem.IconSize.micro).frame(maxWidth: .infinity)
+                    skeletonRectangle().frame(height: DesignSystem.IconSize.micro).frame(width: DesignSystem.Metrics.sourceCardWidth)
                 }
                 
             case .cardBlock:
                 VStack(alignment: .leading, spacing: 12) {
                     skeletonRectangle()
-                        .frame(height: 120)
+                        .frame(height: DesignSystem.Metrics.heroValueSize)
                     HStack(spacing: 8) {
-                        skeletonRectangle().frame(width: 40, height: 40).clipShape(Circle())
+                        skeletonRectangle().frame(width: DesignSystem.Metrics.customSize40, height: DesignSystem.Metrics.customSize40).clipShape(Circle())
+
                         VStack(alignment: .leading, spacing: 6) {
-                            skeletonRectangle().frame(height: 14).frame(width: 120)
-                            skeletonRectangle().frame(height: 10).frame(width: 80)
+                            skeletonRectangle().frame(height: DesignSystem.Metrics.customSize14).frame(width: 120) // swiftlint:disable:this magic_numbers_frame
+                            skeletonRectangle().frame(height: DesignSystem.mediumRadius).frame(width: DesignSystem.Metrics.customSize80)
                         }
                     }
                 }
@@ -76,8 +77,8 @@ public struct AppLoadingSkeleton: View {
     
     /// 构建骨架屏基础灰色微动画圆角矩形
     private func skeletonRectangle() -> some View {
-        RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius)
-            .fill(Color.secondary.opacity(0.12))
+        RoundedRectangle(cornerRadius: DesignSystem.chipRadius)
+            .fill(Color.secondary.opacity(Colors.subtleOpacity))
             .opacity(animateOpacity)
     }
 }

@@ -67,8 +67,8 @@ struct CreateNotebookButton: View {
                 
                 ZStack {
                     Circle()
-                        .fill(Color.appAccent.opacity(0.12))
-                        .frame(width: 56, height: 56)
+                        .fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
+                        .frame(width: DesignSystem.Metrics.customSize56, height: DesignSystem.Metrics.customSize56)
                     
                     Image(systemName: DesignSystem.Icons.plus)
                         .font(.title.weight(.bold))
@@ -82,13 +82,13 @@ struct CreateNotebookButton: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 180)
+            .frame(height: DesignSystem.Metrics.customSize180)
             .background(Color.appCard.opacity(DesignSystem.subtleFillOpacity))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
                     .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
-                    .foregroundStyle(.appAccent.opacity(0.2))
+                    .foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.medium))
             )
         }
         .buttonStyle(.plain)

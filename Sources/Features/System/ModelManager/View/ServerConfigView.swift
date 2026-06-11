@@ -62,7 +62,7 @@ public struct ServerConfigView: View {
         VStack(spacing: DesignSystem.large) {
             Image(systemName: "server.rack")
                 .font(.system(size: 64))
-                .foregroundStyle(.appSecondary.opacity(0.6))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
 
             Text(L10n.ModelManager.Server.emptyTitleAlt)
                 .font(.headline)
@@ -177,7 +177,7 @@ public struct ServerConfigView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
-                .stroke(server.isDefault ? Color.appAccent : Color.appBorder.opacity(0.3), lineWidth: server.isDefault ? 2 : 1)
+                .stroke(server.isDefault ? Color.appAccent : Color.appBorder.opacity(DesignSystem.Opacity.shadow), lineWidth: server.isDefault ? 2 : 1)
         )
     }
 
@@ -185,7 +185,7 @@ public struct ServerConfigView: View {
     private func statusIndicator(for server: MockServerConfig) -> some View {
         Circle()
             .fill(server.isHealthy ? Color.green : Color.red)
-            .frame(width: 12, height: 12)
+            .frame(width: DesignSystem.medium, height: DesignSystem.medium)
     }
 
     /// 添加按钮
@@ -194,10 +194,10 @@ public struct ServerConfigView: View {
             Image(systemName: "plus")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
-                .frame(width: 56, height: 56)
+                .frame(width: DesignSystem.Metrics.customSize56, height: DesignSystem.Metrics.customSize56)
                 .background(Color.appAccent)
                 .clipShape(Circle())
-                .shadow(color: .primary.opacity(0.2), radius: 8, y: 4)
+                .shadow(color: .primary.opacity(DesignSystem.Opacity.medium), radius: 8, y: 4)
         }
         .padding(DesignSystem.large)
     }

@@ -30,7 +30,7 @@ struct DeveloperSettingsView: View {
             Section {
                 Button(action: { showInjectConfirmation = true }) {
                     HStack {
-                        Label(L10n.Settings.injectDemoData, systemImage: "testtube.2")
+                        Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "testtube.2")
                         Spacer()
                         if isInjecting {
                             ProgressView()
@@ -42,7 +42,7 @@ struct DeveloperSettingsView: View {
                     Button(L10n.Common.confirm) {
                         Task {
                             isInjecting = true
-                            let result = await store.generateDemoData()
+                            let result = await store.generateInitialNotebooks()
                             isInjecting = false
 
                             try? await Task.sleep(nanoseconds: 300_000_000)
@@ -161,7 +161,7 @@ struct DeveloperSettingsView: View {
             .navigationTitle(L10n.Settings.Section.developer)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button(L10n.Common.done) {
                         dismiss()
                     }
@@ -197,7 +197,7 @@ struct DeveloperSettingsView: View {
         for vault in vaultService.vaults where demoVaultNames.contains(vault.name) {
             do {
                 try await vaultService.selectVaultAndWait(vault)
-                let count = (try? await DemoDataGenerator.generateStressTest(in: store.pageStore, count: targetCount)) ?? 0
+                let count = (try? await InitialNotebookGenerator.generateStressTestNotebooks(in: store.pageStore, count: targetCount)) ?? 0
                 totalCount += count
             } catch {
                 // 数据库切换失败时跳过该笔记本

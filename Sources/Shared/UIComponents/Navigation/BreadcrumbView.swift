@@ -50,7 +50,7 @@ struct BreadcrumbView: View {
             .padding(.vertical, DesignSystem.small)
         }
         .accessibilityIdentifier("BreadcrumbNavigation")
-        .background(Color.appBackground.opacity(0.8))
+        .background(Color.appBackground.opacity(DesignSystem.Opacity.prominent))
         .background(.ultraThinMaterial)
     }
 

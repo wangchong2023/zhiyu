@@ -26,7 +26,7 @@ struct TagCapsule: View {
                 .font(.caption2)
                 .padding(.horizontal, DesignSystem.tightPadding)
                 .padding(.vertical, DesignSystem.atomic)
-                .background(Color.appAccent.opacity(0.2))
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.medium))
                 .clipShape(Capsule())
         }
         .padding(.horizontal, DesignSystem.medium)

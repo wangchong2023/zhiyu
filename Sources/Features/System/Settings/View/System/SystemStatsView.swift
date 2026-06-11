@@ -151,8 +151,8 @@ struct SystemStatsView: View {
                         
                         ZStack {
                             Circle()
-                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(0.1))
-                                .frame(width: 44, height: 44)
+                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(DesignSystem.Opacity.subtle))
+                                .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
                             Image(systemName: DesignSystem.Icons.timer)
                                 .font(.title3.bold())
                                 .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
@@ -265,8 +265,8 @@ struct SystemStatsView: View {
                             // 笔记本专属图标
                             ZStack {
                                 Circle()
-                                    .fill(Color.appAccent.opacity(0.1))
-                                    .frame(width: 32, height: 32)
+                                    .fill(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
+                                    .frame(width: DesignSystem.IconSize.large, height: DesignSystem.IconSize.large)
                                 Image(systemName: item.icon.isEmpty ? "books.vertical.fill" : item.icon)
                                     .font(.system(size: DesignSystem.captionFontSize))
                                     .foregroundStyle(.appAccent)
@@ -411,7 +411,7 @@ struct SystemStatsView: View {
     
     private var divider: some View {
         Divider()
-            .frame(height: 16)
+            .frame(height: DesignSystem.IconSize.micro)
             .padding(.horizontal, DesignSystem.tiny)
     }
 }

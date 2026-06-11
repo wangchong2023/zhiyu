@@ -36,7 +36,7 @@ extension L10n {
         /// - Returns: 本地化格式化文案
         public static func iCloudLastSyncFormat(_ date: String) -> String { Settings.trf("icloud.lastSyncFormat", date) }
 
-        public static var title: String { tr("settings") }
+        public static var title: String { tr("settings.section.system") }
         public static var systemTheme: String { tr("settings.systemTheme") }
         public static var languageEnglish: String { tr("language.english") }
         public static var languageChinese: String { tr("language.chinese") }
@@ -44,15 +44,17 @@ extension L10n {
         public static var languageSystem: String { tr("language.system") }
         public static var llmSettings: String { tr("llmSettings") }
         public static var smartRouting: String { tr("settings.smartRouting") }
-        public static var promptLab: String { tr("promptLab") }
+        public static var promptSettings: String { tr("settings.promptSettings") }
         public static var onDeviceLLM: String { tr("settings.onDeviceLLM") }
         public static var localModelManager: String { tr("settings.localModelManager") }
         public static var iCloudSync: String { Localized.tr("settings.iCloudSync", table: t) }
         public static var backupRestore: String { Localized.tr("backup.restore", table: "Transfer") }
         public static var operationLog: String { Localized.tr("settings.operationLog", table: t) }
         public static var privacyMode: String { tr("privacyMode") }
+        public static var privacyModeDesc: String { Localized.tr("settings.privacyMode.desc", table: t) }
         public static var biometricProtection: String { tr("biometricProtection") }
-        public static var injectDemoData: String { Localized.tr("settings.injectDemoData", table: t) }
+        public static var biometricProtectionDesc: String { Localized.tr("settings.biometricProtection.desc", table: t) }
+        public static var rebuildInitialNotebooks: String { Localized.tr("settings.rebuildInitialNotebooks", table: t) }
         public static var resetData: String { tr("resetData") }
         public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: t) }
         public static var about: String { tr("aboutApp") }

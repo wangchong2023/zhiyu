@@ -27,8 +27,8 @@ struct AIProcessingStatusBanner: View {
                     // 1. 动态 AI 思考图标
                     ZStack {
                         Circle()
-                            .fill(LinearGradient(colors: [.appAccent.opacity(0.2), .purple.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: 32, height: 32)
+                            .fill(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.medium), .purple.opacity(DesignSystem.Opacity.medium)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .frame(width: DesignSystem.IconSize.large, height: DesignSystem.IconSize.large)
                         
                         Image(systemName: DesignSystem.Icons.sparkles)
                             .font(.subheadline.weight(.bold))
@@ -59,14 +59,14 @@ struct AIProcessingStatusBanner: View {
                 }
                 .padding(.horizontal, DesignSystem.medium)
                 .padding(.vertical, 10)
-                .background(Color.appCard.opacity(0.8))
+                .background(Color.appCard.opacity(DesignSystem.Opacity.prominent))
                 .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous)
-                        .strokeBorder(LinearGradient(colors: [.appAccent.opacity(0.3), .purple.opacity(0.1)], startPoint: .leading, endPoint: .trailing), lineWidth: 1)
+                        .strokeBorder(LinearGradient(colors: [.appAccent.opacity(DesignSystem.Opacity.shadow), .purple.opacity(DesignSystem.Opacity.subtle)], startPoint: .leading, endPoint: .trailing), lineWidth: 1)
                 )
-                .shadow(color: .black.opacity(0.05), radius: 10, y: 5)
+                .shadow(color: .black.opacity(DesignSystem.Opacity.ghost), radius: 10, y: 5)
             }
             .transition(.move(edge: .top).combined(with: .opacity))
             .onAppear {

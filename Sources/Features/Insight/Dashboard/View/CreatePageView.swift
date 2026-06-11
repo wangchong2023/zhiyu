@@ -39,11 +39,8 @@ struct CreatePageView: View {
             .navigationTitle(L10n.Creation.title)
             .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.cancel) { dismiss() }
-                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(L10n.Creation.create) { createPage() }
+                    Button(L10n.Common.done) { createPage() }
                         .disabled(title.isEmpty)
                         .fontWeight(.semibold)
                 }
@@ -70,7 +67,7 @@ struct CreatePageView: View {
                             .padding(.horizontal, DesignSystem.medium)
                             .padding(.vertical, DesignSystem.small)
                             .background(type == pageType
-                                ? Color.fromModelColorName(pageType.colorName).opacity(0.25)
+                                ? Color.fromModelColorName(pageType.colorName).opacity(DesignSystem.Opacity.medium)
                                 : Color.appCard)
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                             .foregroundStyle(type == pageType
@@ -79,7 +76,7 @@ struct CreatePageView: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                                     .stroke(type == pageType
-                                        ? Color.fromModelColorName(pageType.colorName).opacity(0.5)
+                                        ? Color.fromModelColorName(pageType.colorName).opacity(DesignSystem.Opacity.soft)
                                         : Color.clear, lineWidth: 1)
                             )
                         }
@@ -252,7 +249,7 @@ struct CreatePageView: View {
                     if text.wrappedValue.isEmpty {
                         Text(hint)
                             .font(.body)
-                            .foregroundStyle(.appSecondary.opacity(0.4))
+                            .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.disabled))
                             .padding(.top, 8).padding(.leading, 4)
                             .allowsHitTesting(false)
                     }
@@ -281,7 +278,7 @@ struct CreatePageView: View {
                 }
                 Spacer()
                 Image(systemName: DesignSystem.Icons.forward)
-                    .font(.caption).foregroundStyle(.appSecondary.opacity(0.4))
+                    .font(.caption).foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.disabled))
             }
             .padding(.vertical, DesignSystem.tiny)
             .contentShape(Rectangle())

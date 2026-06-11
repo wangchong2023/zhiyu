@@ -157,11 +157,11 @@ struct TimingRowView: View {
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(.appText)
-                .frame(width: 100, alignment: .leading)
+                .frame(width: DesignSystem.Metrics.largeIconBoxSize, alignment: .leading)
             
             GeometryReader { geo in
                 RoundedRectangle(cornerRadius: DesignSystem.microRadius)
-                    .fill(color.opacity(0.3))
+                    .fill(color.opacity(DesignSystem.Opacity.shadow))
                     .frame(width: geo.size.width, height: DesignSystem.small)
                     .overlay(alignment: .leading) {
                         RoundedRectangle(cornerRadius: DesignSystem.microRadius)
@@ -174,7 +174,7 @@ struct TimingRowView: View {
             Text(String(format: "%.3fs", duration))
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.appSecondary)
-                .frame(width: 60, alignment: .trailing)
+                .frame(width: DesignSystem.Metrics.progressHeight, alignment: .trailing)
         }
     }
 }

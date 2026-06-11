@@ -128,7 +128,7 @@ public struct OnDeviceLLMSettingsView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: Color.appAccent.opacity(0.3), radius: 8, y: 4)
+                .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 8, y: 4)
             
             Text(L10n.AI.OnDevice.subtitle)
                 .font(.subheadline)
@@ -232,11 +232,12 @@ public struct OnDeviceLLMSettingsView: View {
                             .foregroundStyle(.red)
                             .padding(.horizontal, 10)
                             .padding(.vertical, DesignSystem.tightPadding)
-                            .background(Color.red.opacity(0.12))
+                            .background(Color.red.opacity(DesignSystem.Opacity.subtle))
                             .clipShape(Capsule())
                     }
                 }
                 .padding()
+                // swiftlint:disable:next magic_numbers_opacity
                 .background(Color.appAccent.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             } else {
@@ -270,7 +271,7 @@ public struct OnDeviceLLMSettingsView: View {
                 .foregroundStyle(.appAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 11)
-                .background(Color.appAccent.opacity(0.12))
+                .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             }
             #if !os(watchOS)
@@ -322,7 +323,7 @@ public struct OnDeviceLLMSettingsView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DesignSystem.medium)
-                .background(onDeviceService.isModelLoaded ? Color.green : Color.gray.opacity(0.6))
+                .background(onDeviceService.isModelLoaded ? Color.green : Color.gray.opacity(DesignSystem.Opacity.dim))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             }
             .disabled(!onDeviceService.isModelLoaded)

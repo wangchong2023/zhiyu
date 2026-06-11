@@ -987,6 +987,23 @@
         }
       }
     },
+    "action.export": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出"
+          }
+        }
+      }
+    },
     "action.createPage": {
       "extractionState": "manual",
       "localizations": {
@@ -3375,13 +3392,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lock"
+            "value": "Lock Immediately"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "锁定"
+            "value": "立即锁定"
           }
         }
       }
@@ -3953,13 +3970,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Logout"
+            "value": "Log Out"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "退出"
+            "value": "退出登录"
           }
         }
       }
@@ -3970,13 +3987,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Usage"
+            "value": "Usage Monitor"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "用量"
+            "value": "当前用量"
           }
         }
       }
@@ -6798,13 +6815,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Settings"
+            "value": "System Settings"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "设置"
+            "value": "系统设置"
           }
         }
       }
@@ -7026,6 +7043,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识库统计：总页面 %d，总字数 %d，实体 %d，概念 %d，占位 %d"
+          }
+        }
+      }
+    },
+    "sidebar.left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle Sidebar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起侧边栏"
           }
         }
       }
@@ -9830,7 +9864,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "任务规划"
+            "value": "规划"
           }
         }
       }
@@ -10052,6 +10086,1553 @@
           "stringUnit": {
             "state": "translated",
             "value": "筛选标签..."
+          }
+        }
+      }
+    },
+    "demo.pkm.1.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal Knowledge Management"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人知识管理"
+          }
+        }
+      }
+    },
+    "demo.pkm.1.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal Knowledge Management (PKM) is not just bookmarking webpages, but building a personal external brain. This usually relies on [[Zettelkasten]] and [[Bidirectional Links]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人知识管理（PKM）不仅是收藏网页，而是建立个人的外脑体系。这通常需要依赖[[卡片盒笔记法]]与[[双向链接]]机制。"
+          }
+        }
+      }
+    },
+    "demo.pkm.2.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zettelkasten"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卡片盒笔记法"
+          }
+        }
+      }
+    },
+    "demo.pkm.2.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zettelkasten is a note-taking method invented by sociologist Niklas Luhmann. It emphasizes breaking knowledge into atomic cards and building a complex network structure through [[Bidirectional Links]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zettelkasten 是由社会学家卢曼发明的记笔记方法，强调将知识打碎成原子化的卡片，通过[[双向链接]]建立复杂的网状结构。"
+          }
+        }
+      }
+    },
+    "demo.pkm.3.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bidirectional Links"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双向链接"
+          }
+        }
+      }
+    },
+    "demo.pkm.3.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlike traditional folder hierarchies, bidirectional links allow two unrelated notes to have a wonderful chemical reaction in a specific [[Context]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "区别于传统的文件夹层级结构，双向链接能够让两篇毫无关联的笔记在特定的[[上下文]]中产生奇妙的化学反应。"
+          }
+        }
+      }
+    },
+    "demo.pkm.4.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Context"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上下文"
+          }
+        }
+      }
+    },
+    "demo.pkm.4.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Context is the core of knowledge association. Only notes that are no longer islands form a truly useful network knowledge system. This also puts higher demands on [[Knowledge Retrieval]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Context 是知识产生关联的核心。只有脱离了孤岛的笔记，才是真正有用的网状知识体系。这也对[[知识检索]]提出了更高的要求。"
+          }
+        }
+      }
+    },
+    "demo.pkm.5.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Retrieval"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识检索"
+          }
+        }
+      }
+    },
+    "demo.pkm.5.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good knowledge management relies on efficient full-text search and tag filtering to help us instantly awaken sleeping [[Memory]] when needed."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "良好的知识管理离不开高效的全文检索与标签过滤，帮助我们在需要的时候瞬间唤醒沉睡的[[记忆]]。"
+          }
+        }
+      }
+    },
+    "demo.pkm.6.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memory"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "记忆"
+          }
+        }
+      }
+    },
+    "demo.pkm.6.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Ebbinghaus forgetting curve tells us that the human brain is not good at rote memorization. Using the [[Spaced Repetition]] algorithm, we can review knowledge more scientifically."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "艾宾浩斯遗忘曲线告诉我们，人脑是不擅长死记硬背的。利用[[间隔重复]]算法，我们可以更科学地复习知识。"
+          }
+        }
+      }
+    },
+    "demo.pkm.7.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spaced Repetition"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "间隔重复"
+          }
+        }
+      }
+    },
+    "demo.pkm.7.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spaced Repetition System (SRS) can maximize knowledge retention rate, which requires deep integration with our [[Personal Knowledge Management]] system."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spaced Repetition System (SRS) 可以最大化知识的留存率，这需要与我们的[[个人知识管理]]体系深度结合。"
+          }
+        }
+      }
+    },
+    "demo.pkm.8.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PARA Method"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PARA 方法"
+          }
+        }
+      }
+    },
+    "demo.pkm.8.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proposed by Tiago Forte, classifying information into Projects, Areas, Resources, and Archives. It is a practical file categorization method for building a [[Second Brain]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由 Tiago Forte 提出，将信息分为 Projects, Areas, Resources, Archives，是构建[[个人外脑]]的实用文件归类法。"
+          }
+        }
+      }
+    },
+    "demo.pkm.9.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second Brain"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人外脑"
+          }
+        }
+      }
+    },
+    "demo.pkm.9.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The significance of a Second Brain is to release the brain's storage pressure, allowing it to focus on thinking and creation rather than simple memorization. We can learn from the [[PARA Method]] to build one."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second Brain 的意义在于释放大脑的存储压力，让大脑专注于思考和创造，而不是单纯的记忆。我们可以借鉴[[PARA 方法]]进行构建。"
+          }
+        }
+      }
+    },
+    "demo.pkm.10.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading Workflow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "阅读工作流"
+          }
+        }
+      }
+    },
+    "demo.pkm.10.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragmented information collected every day is uniformly put into the Inbox. Digestion and extraction are regularly performed on weekends to form permanent [[Zettelkasten]] cards."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每天收集到的碎片信息，统一放入 Inbox。周末定期进行消化与提炼，形成永久的[[卡片盒笔记法]]卡片。"
+          }
+        }
+      }
+    },
+    "demo.pkm.11.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags and Folders"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签与分类"
+          }
+        }
+      }
+    },
+    "demo.pkm.11.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags provide a horizontal dimension for organizing knowledge, while categorization (such as folders) is vertical. In a [[Second Brain]], a flat structure with light folders and heavy tags is more recommended."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "标签提供了一种横向组织知识的维度，而分类（如文件夹）则是纵向的。在[[个人外脑]]中，更推荐轻文件夹、重标签的扁平化结构。"
+          }
+        }
+      }
+    },
+    "demo.pkm.12.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progressive Summarization"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "渐进式总结"
+          }
+        }
+      }
+    },
+    "demo.pkm.12.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progressive Summarization extracts the most core sentences in an article through multiple readings and gradual bolding and highlighting, facilitating future [[Knowledge Retrieval]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progressive Summarization，通过多遍阅读并逐步加粗、高亮，提取出文章中最核心的几句话，便于日后的[[知识检索]]。"
+          }
+        }
+      }
+    },
+    "demo.pkm.13.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Output Forces Input"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输出倒逼输入"
+          }
+        }
+      }
+    },
+    "demo.pkm.13.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The ultimate goal of knowledge management should be output (writing, sharing). Only when we output will we discover the loopholes in our cognitive network, prompting us to establish more [[Bidirectional Links]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识管理的最终目的应该是输出（写作、分享）。只有当我们在输出时，才会发现自己认知网络中的漏洞，促使我们建立更多的[[双向链接]]。"
+          }
+        }
+      }
+    },
+    "demo.pkm.14.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niklas Luhmann"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卢曼"
+          }
+        }
+      }
+    },
+    "demo.pkm.14.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niklas Luhmann, a German sociologist and the founder of the [[Zettelkasten]]. He published over 70 monographs using his card box."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "尼克拉斯·卢曼，德国社会学家，[[卡片盒笔记法]]的创立者。他一生凭借卡片盒发表了 70 多部专著。"
+          }
+        }
+      }
+    },
+    "demo.pkm.15.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feynman Technique"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "费曼技巧"
+          }
+        }
+      }
+    },
+    "demo.pkm.15.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testing whether you truly master the knowledge by explaining a concept to a layman in the simplest language. It is very suitable for use when writing a [[Progressive Summarization]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过用最简单的语言将一个概念讲给外行听，来检验自己是否真正掌握了该知识。非常适合在撰写[[渐进式总结]]时使用。"
+          }
+        }
+      }
+    },
+    "demo.pkm.16.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Island"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识孤岛"
+          }
+        }
+      }
+    },
+    "demo.pkm.16.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes lacking associations are islands. We must break the islands through [[Zettelkasten]] to let knowledge flow."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "缺乏关联的笔记就是孤岛。我们要通过[[卡片盒笔记法]]打破孤岛，让知识流动起来。"
+          }
+        }
+      }
+    },
+    "demo.pkm.17.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Creation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识创造"
+          }
+        }
+      }
+    },
+    "demo.pkm.17.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is the highest realm of knowledge management. When we combine enough atomic cards of [[Zettelkasten]], we can create a new ideological system."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是知识管理的最高境界。当我们把足够多的[[卡片盒笔记法]]原子卡片组合在一起时，就能创造出新的思想体系。"
+          }
+        }
+      }
+    },
+    "demo.coffee.1.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Competitor Analysis: Luckin vs Starbucks"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竞品分析：瑞幸 vs 星巴克"
+          }
+        }
+      }
+    },
+    "demo.coffee.1.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luckin focuses on extreme fast-pickup and high cost-effectiveness, while Starbucks focuses on the 'third space' for business social networking. Our independent coffee shop needs to avoid direct competition, focusing on community integration and [[Specialty Coffee Experience]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。"
+          }
+        }
+      }
+    },
+    "demo.coffee.2.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Specialty Coffee Experience"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "精品咖啡体验"
+          }
+        }
+      }
+    },
+    "demo.coffee.2.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandon fully automatic machines, adopt a dual-track system of semi-automatic espresso machines and pour-over bars. Hold regular cupping events to enhance community stickiness, which is highly consistent with our [[Target Audience Analysis]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "放弃全自动机器，采用半自动意式机与手冲吧台双轨制。定期举办杯测活动，增强社区黏性，这与我们的[[目标客群分析]]高度吻合。"
+          }
+        }
+      }
+    },
+    "demo.coffee.3.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target Audience Analysis"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标客群分析"
+          }
+        }
+      }
+    },
+    "demo.coffee.3.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collected 200 street questionnaires this month. The core customer base is locked on 25-35 year old freelancers, self-media professionals, and nearby white-collar workers. They have high requirements for spatial comfort and are extremely dependent on [[High-Quality Network and Power]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。"
+          }
+        }
+      }
+    },
+    "demo.coffee.4.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "High-Quality Network and Power"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "高品质网络与供电"
+          }
+        }
+      }
+    },
+    "demo.coffee.4.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deploy commercial-grade Wi-Fi 6 routers to ensure dead-zone-free coverage throughout the store. The booth area must have 'one socket per table', which is the core infrastructure to retain digital nomads. This part of the transformation cost has been included in the [[Financial Budget Model]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "部署商用级 Wi-Fi 6 路由器，确保全店无死角覆盖。卡座区必须做到“一桌一插座”，这是留住数字游民的核心基建。这部分改造费用已列入[[财务预算模型]]。"
+          }
+        }
+      }
+    },
+    "demo.coffee.5.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Financial Budget Model"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "财务预算模型"
+          }
+        }
+      }
+    },
+    "demo.coffee.5.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "- Store rent and transfer fee: 250k\n- Space hard & soft furnishing: 180k\n- Core equipment (La Marzocco, Mahlkönig, etc.): 120k\n- Initial working capital: 150k\nThe total budget for the first phase is about 700k, with a funding gap of 300k, requiring immediate activation of the [[Partner Recruitment Plan]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "- 店面租金与转让费：25万\n- 空间硬装与软装：18万\n- 核心设备（辣妈咖啡机、迈赫迪磨豆机等）：12万\n- 初期流动资金：15万\n首期总预算约 70 万，资金缺口 30 万，需尽快启动[[合伙人招募计划]]。"
+          }
+        }
+      }
+    },
+    "demo.coffee.6.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partner Recruitment Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合伙人招募计划"
+          }
+        }
+      }
+    },
+    "demo.coffee.6.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ideal partner persona: Possess mature specialty coffee shop manager experience, able to independently control bean roasting quality and supply chain, complementary to me. Together, we will build the ultimate [[Specialty Coffee Experience]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "理想的合伙人画像：具备成熟的精品咖啡馆店长经验，能独立把控豆子烘焙质量与供应链，与我互补。共同打造极致的[[精品咖啡体验]]。"
+          }
+        }
+      }
+    },
+    "demo.coffee.7.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coffee Bean Supply Chain Selection"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "咖啡豆供应链选型"
+          }
+        }
+      }
+    },
+    "demo.coffee.7.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compared three roasteries: Factory A's Ethiopian beans have bright flavor but unstable batches; Factory B's Yunnan beans have high cost-effectiveness and a rural assistance story; Factory C's Colombian blend is the most balanced. Initially decided to mainly use Factory B to strictly control material costs in the [[Financial Budget Model]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对比了三家烘焙厂：A厂埃塞豆风味明亮但批次不稳定；B厂云南豆性价比极高且有助农故事；C厂哥伦比亚拼配最均衡。初期决定以 B 厂为主，严格控制[[财务预算模型]]中的物料成本。"
+          }
+        }
+      }
+    },
+    "demo.coffee.8.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space Visual and Decor Intention"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "空间视觉与装修意向"
+          }
+        }
+      }
+    },
+    "demo.coffee.8.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adopting a combination of micro-cement wabi-sabi style and warm log texture. Abandon the traditional cramped internet-famous photo wall, using large areas of blank space paired with broadleaf green plants like Monstera. Lighting needs to use 3000K warm color temperature to cater to the aesthetic preferences in the [[Target Audience Analysis]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "采用微水泥侘寂风与温润原木结合。摒弃传统局促的网红打卡墙，大面积留白搭配龟背竹等阔叶绿植。灯光需采用 3000K 暖色温，迎合[[目标客群分析]]中的审美偏好。"
+          }
+        }
+      }
+    },
+    "demo.coffee.9.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opening Marketing Plan"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开业营销策划"
+          }
+        }
+      }
+    },
+    "demo.coffee.9.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No discounts during soft opening, but buy coffee get a customized canvas bag. During the first week of official opening, invite local Xiaohongshu shop-visiting bloggers for content seeding. We will promote the differentiated [[Signature Menu R&D]] as the explosive traffic driver."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "试营业期间不打折，但买咖啡送定制帆布袋。正式开业首周，邀请本地小红书探店博主进行内容种草。我们将主推具有差异化的[[特调菜单研发]]作为引流爆款。"
+          }
+        }
+      }
+    },
+    "demo.coffee.10.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signature Menu R&D"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "特调菜单研发"
+          }
+        }
+      }
+    },
+    "demo.coffee.10.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The two highest-rated items in internal testing so far: 1. Osmanthus Rice Wine Latte (Autumn Limited) 2. Clarified Tomato Sparkling Americano. These two signature drinks not only have high visual appeal but also unique tastes, and are the core weapons supporting the [[Opening Marketing Plan]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前内测评分最高的两款：1. 桂花酒酿拿铁（秋季限定） 2. 澄清番茄气泡美式。这两款特调不仅视觉出片率高，且口味独特，是支持[[开业营销策划]]的核心武器。"
+          }
+        }
+      }
+    },
+    "tags.knowledgeMgmt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Mgmt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识管理"
+          }
+        }
+      }
+    },
+    "tags.methodology": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Methodology"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "方法论"
+          }
+        }
+      }
+    },
+    "tags.noteStyles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note Styles"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "笔记流派"
+          }
+        }
+      }
+    },
+    "tags.efficiency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Efficiency"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "效率"
+          }
+        }
+      }
+    },
+    "tags.techPrinciple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Principle"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "技术原理"
+          }
+        }
+      }
+    },
+    "tags.association": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Association"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关联"
+          }
+        }
+      }
+    },
+    "tags.cognitivePsych": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Psychology"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "认知心理"
+          }
+        }
+      }
+    },
+    "tags.retrievalTech": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retrieval"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索技术"
+          }
+        }
+      }
+    },
+    "tags.brainSci": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brain Science"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "脑科学"
+          }
+        }
+      }
+    },
+    "tags.learningMethod": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Learning"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学习方法"
+          }
+        }
+      }
+    },
+    "tags.fileMgmt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Mgmt"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件管理"
+          }
+        }
+      }
+    },
+    "tags.productivity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Productivity"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生产力"
+          }
+        }
+      }
+    },
+    "tags.workflow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workflow"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "工作流"
+          }
+        }
+      }
+    },
+    "tags.architectureOrg": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organization"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "组织架构"
+          }
+        }
+      }
+    },
+    "tags.readingMethod": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "阅读法"
+          }
+        }
+      }
+    },
+    "tags.summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "总结"
+          }
+        }
+      }
+    },
+    "tags.creation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创作"
+          }
+        }
+      }
+    },
+    "tags.output": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Output"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "输出"
+          }
+        }
+      }
+    },
+    "tags.biography": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biography"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "人物传记"
+          }
+        }
+      }
+    },
+    "tags.metaphor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metaphor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐喻"
+          }
+        }
+      }
+    },
+    "tags.innovation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Innovation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创新"
+          }
+        }
+      }
+    },
+    "tags.competitorAnalysis": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Competitor"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "竞品分析"
+          }
+        }
+      }
+    },
+    "tags.marketResearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Market Research"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "市场调研"
+          }
+        }
+      }
+    },
+    "tags.productDesign": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Product Design"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "产品设计"
+          }
+        }
+      }
+    },
+    "tags.operation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Operation"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "运营"
+          }
+        }
+      }
+    },
+    "tags.userResearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User Research"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用户调研"
+          }
+        }
+      }
+    },
+    "tags.infrastructure": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Infrastructure"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基础设施"
+          }
+        }
+      }
+    },
+    "tags.decoration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decoration"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "装修"
+          }
+        }
+      }
+    },
+    "tags.finance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finance"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "财务"
+          }
+        }
+      }
+    },
+    "tags.team": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Team"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "团队"
+          }
+        }
+      }
+    },
+    "tags.recruitment": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recruitment"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "招聘"
+          }
+        }
+      }
+    },
+    "tags.supplyChain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supply Chain"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "供应链"
+          }
+        }
+      }
+    },
+    "tags.materials": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Materials"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "物料"
+          }
+        }
+      }
+    },
+    "tags.design": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Design"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设计"
+          }
+        }
+      }
+    },
+    "tags.marketing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marketing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "营销"
+          }
+        }
+      }
+    },
+    "tags.growth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Growth"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "增长"
+          }
+        }
+      }
+    },
+    "tags.rd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "R&D"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "研发"
           }
         }
       }

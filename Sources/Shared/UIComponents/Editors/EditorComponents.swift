@@ -67,7 +67,7 @@ struct PageLinkPickerSheet: View {
                         Image(systemName: p.pageType.icon)
                             .foregroundStyle(Color.fromModelColorName(p.pageType.colorName))
                             .frame(width: DesignSystem.Gallery.iconSize, height: DesignSystem.Gallery.iconSize)
-                            .background(Color.fromModelColorName(p.pageType.colorName).opacity(0.12))
+                            .background(Color.fromModelColorName(p.pageType.colorName).opacity(DesignSystem.Opacity.subtle))
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
                         
                         VStack(alignment: .leading, spacing: DesignSystem.atomic) {
@@ -110,7 +110,7 @@ struct EditorToolbarButton: View {
                     .font(.caption2)
             }
             .foregroundStyle(Color.appSecondary)
-            .frame(width: 44, height: 36)
+            .frame(width: DesignSystem.IconSize.xlarge, height: 36)
             .background(Color.appBorder.opacity(DesignSystem.Opacity.glass))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.microRadius))
         }
@@ -138,7 +138,7 @@ struct TagChip: View {
         }
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.tiny)
-        .background(Color.appAccent.opacity(0.12))
+        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
         .clipShape(Capsule())
     }
 }
@@ -162,7 +162,7 @@ struct AliasChip: View {
         }
         .padding(.horizontal, DesignSystem.small)
         .padding(.vertical, DesignSystem.tiny)
-        .background(Color.appSource.opacity(0.12))
+        .background(Color.appSource.opacity(DesignSystem.Opacity.subtle))
         .clipShape(Capsule())
     }
 }

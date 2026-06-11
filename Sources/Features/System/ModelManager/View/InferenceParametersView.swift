@@ -187,7 +187,7 @@ public struct InferenceParametersView: View {
             }
         }
         .padding()
-        .background(Color.appCard.opacity(0.6))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
@@ -248,7 +248,7 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(.appText)
                 Image(systemName: "info.circle")
                     .font(.caption)
-                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
+                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
             }
             .onHover { hovering in hoveredTitle = hovering ? title : nil }
             .onTapGesture { hoveredTitle = isHovered ? nil : title }
@@ -286,7 +286,7 @@ public struct InferenceParametersView: View {
             }
         }
         .padding()
-        .background(Color.appCard.opacity(0.6))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
@@ -301,7 +301,7 @@ public struct InferenceParametersView: View {
                     .foregroundStyle(.appText)
                 Image(systemName: "info.circle")
                     .font(.caption)
-                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(0.5))
+                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
             }
             .onHover { hovering in hoveredTitle = hovering ? title : nil }
             .onTapGesture { hoveredTitle = isHovered ? nil : title }
@@ -334,7 +334,7 @@ public struct InferenceParametersView: View {
             }
         }
         .padding()
-        .background(Color.appCard.opacity(0.6))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 

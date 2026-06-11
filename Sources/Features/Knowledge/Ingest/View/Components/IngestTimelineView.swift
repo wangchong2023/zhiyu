@@ -39,23 +39,23 @@ struct IngestTimelineView: View {
                     VStack(spacing: 0) {
                         ZStack {
                             Circle()
-                                .fill(isCompleted(stage.id) ? stage.color : (isActive(stage.id) ? stage.color.opacity(0.2) : Color.appCard))
-                                .frame(width: 24, height: 24)
+                                .fill(isCompleted(stage.id) ? stage.color : (isActive(stage.id) ? stage.color.opacity(DesignSystem.Opacity.medium) : Color.appCard))
+                                .frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
                             
                             if isActive(stage.id) {
                                 AppLottieView(name: "ingest_processing")
-                                    .frame(width: 32, height: 32)
+                                    .frame(width: DesignSystem.IconSize.large, height: DesignSystem.IconSize.large)
                             }
                             
                             Image(systemName: isCompleted(stage.id) ? "checkmark" : stage.icon)
                                 .font(.system(size: 10, weight: .bold))
-                                .foregroundStyle(isCompleted(stage.id) ? .white : (isActive(stage.id) ? stage.color : .appSecondary.opacity(0.5)))
+                                .foregroundStyle(isCompleted(stage.id) ? .white : (isActive(stage.id) ? stage.color : .appSecondary.opacity(DesignSystem.Opacity.soft)))
                         }
                         
                         if index < stages.count - 1 {
                             Rectangle()
                                 .fill(isCompleted(stage.id) ? stage.color : Color.appBorder)
-                                .frame(width: 2)
+                                .frame(width: DesignSystem.atomic)
                                 .frame(minHeight: isActive(stage.id) ? 30 : 16)
                                 .padding(.vertical, 2)
                         }
@@ -65,7 +65,7 @@ struct IngestTimelineView: View {
                     VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                         Text(stage.title)
                             .font(.subheadline.weight(isActive(stage.id) ? .bold : .medium))
-                            .foregroundStyle(isActive(stage.id) ? stage.color : (isCompleted(stage.id) ? .appText : .appSecondary.opacity(0.5)))
+                            .foregroundStyle(isActive(stage.id) ? stage.color : (isCompleted(stage.id) ? .appText : .appSecondary.opacity(DesignSystem.Opacity.soft)))
                             .padding(.top, 2)
                         
                         // 只在当前活跃阶段显示最新的子日志

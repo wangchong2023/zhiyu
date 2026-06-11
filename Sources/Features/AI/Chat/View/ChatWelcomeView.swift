@@ -77,7 +77,7 @@ struct SuggestionGroupView: View {
                     Spacer()
                     Image(systemName: DesignSystem.Icons.promptLibrary)
                         .font(.system(size: DesignSystem.Metrics.heroValueSize * 0.38))
-                        .opacity(0.5)
+                        .opacity(DesignSystem.Opacity.soft)
                 }
                 .foregroundStyle(color)
                 .padding(.leading, DesignSystem.atomic * 2)
@@ -94,7 +94,7 @@ struct SuggestionGroupView: View {
                     HStack {
                         Text(query).font(.subheadline).foregroundStyle(.appText).multilineTextAlignment(.leading)
                         Spacer()
-                        Image(systemName: DesignSystem.Icons.arrowUpRight).font(.caption2).foregroundStyle(.appAccent.opacity(0.7))
+                        Image(systemName: DesignSystem.Icons.arrowUpRight).font(.caption2).foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.overlay))
                     }
                     .padding()
                     .background(Color.appCard)

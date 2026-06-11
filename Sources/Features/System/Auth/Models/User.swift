@@ -21,8 +21,14 @@ public struct User: Codable, Identifiable, Sendable {
     public let name: String
     /// 电子邮箱
     public let email: String
+    /// 手机号（通过短信登录时存在）
+    public let phone: String?
     /// 头像远端 URL（可选）
     public var avatarURL: URL?
+    /// 性别（0:未知, 1:男, 2:女）
+    public var gender: Int?
+    /// 生日（YYYY-MM-DD格式）
+    public var birthday: String?
 
     // MARK: - 订阅套餐信息
 
@@ -34,6 +40,18 @@ public struct User: Codable, Identifiable, Sendable {
     public var maxPages: Int
     /// 套餐允许的最大插件安装数量
     public var maxPlugins: Int
+    /// 当前套餐包含的特性列表 (例如: "local_slm", "privacy_security" 等)
+    public var features: [String]
+
+    public struct DefaultQuotas {
+        public static let liteMaxVaults = 4
+        public static let liteMaxPages = 1000
+        public static let liteMaxPlugins = 3
+        
+        public static let proMaxVaults = 10
+        public static let proMaxPages = 50000
+        public static let proMaxPlugins = 999999
+    }
 
     // MARK: - 初始化
 
@@ -42,20 +60,28 @@ public struct User: Codable, Identifiable, Sendable {
         id: UUID = UUID(),
         name: String,
         email: String,
+        phone: String? = nil,
         avatarURL: URL? = nil,
         planKey: String? = "free",
-        maxVaults: Int = 2,
-        maxPages: Int = 1000,
-        maxPlugins: Int = 3
+        maxVaults: Int = DefaultQuotas.liteMaxVaults,
+        maxPages: Int = DefaultQuotas.liteMaxPages,
+        maxPlugins: Int = DefaultQuotas.liteMaxPlugins,
+        features: [String] = [],
+        gender: Int? = nil,
+        birthday: String? = nil
     ) {
         self.id = id
         self.name = name
         self.email = email
+        self.phone = phone
         self.avatarURL = avatarURL
         self.planKey = planKey
         self.maxVaults = maxVaults
         self.maxPages = maxPages
         self.maxPlugins = maxPlugins
+        self.features = features
+        self.gender = gender
+        self.birthday = birthday
     }
 
     // MARK: - 便捷属性
@@ -63,5 +89,10 @@ public struct User: Codable, Identifiable, Sendable {
     /// 是否为 Pro 专业版用户
     public var isPro: Bool {
         planKey == "pro"
+    }
+    
+    /// 是否具有隐私安全特性权限（Pro 或 features 中包含 privacy_security）
+    public var hasPrivacySecurity: Bool {
+        return features.contains("privacy_security") || isPro
     }
 }

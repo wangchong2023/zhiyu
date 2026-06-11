@@ -21,6 +21,7 @@ extension L10n {
         public static var register: String { tr("register") }
         public static var logout: String { tr("logout") }
         public static var identityPlaceholder: String { tr("identity.placeholder") }
+        public static var nicknamePlaceholder: String { tr("auth.nicknamePlaceholder") }
         public static var phonePlaceholder: String { Localized.tr("auth.phone.placeholder", table: t) }
         public static var setPasswordPlaceholder: String { Localized.tr("auth.setPassword.placeholder", table: t) }
         public static var passwordPlaceholder: String { tr("password.placeholder") }
@@ -47,6 +48,7 @@ extension L10n {
         
         // MARK: - 一键登录相关
         public static var oneClickLogin: String { tr("auth.oneClickLogin") }
+        public static var phoneVerify: String { tr("auth.phoneVerify") }
         public static var agreementText: String { tr("auth.agreementText") }
         public static var pleaseCheckAgreement: String { tr("auth.pleaseCheckAgreement") }
         public static var moreLoginMethods: String { tr("auth.moreLoginMethods") }
@@ -61,10 +63,30 @@ extension L10n {
         // MARK: - 个人资料与套餐页面
         public static var profileAndQuota: String { tr("auth.profileAndQuota") }
         public static var currentSubscription: String { tr("auth.currentSubscription") }
+        public static var subscription: String { tr("auth.subscription") }
         public static var litePlan: String { tr("auth.litePlan") }
         public static var proPlan: String { tr("auth.proPlan") }
+        public static var litePlanTitle: String { tr("auth.litePlanTitle") }
+        public static var proPlanTitle: String { tr("auth.proPlanTitle") }
+        public static var litePlanDesc: String { tr("auth.litePlanDesc") }
+        public static var proPlanDesc: String { tr("auth.proPlanDesc") }
+        public static var upgradeToPro: String { tr("auth.upgradeToPro") }
+        public static var unlockEverything: String { tr("auth.unlockEverything") }
+        public static var unlimitedVaults: String { tr("auth.unlimitedVaults") }
+        public static var unlimitedPages: String { tr("auth.unlimitedPages") }
+        public static var aiSynthesis: String { tr("auth.aiSynthesis") }
+        public static var premiumPlugins: String { tr("auth.premiumPlugins") }
+        public static var prioritySupport: String { tr("auth.prioritySupport") }
+        public static var upgradeSuccessMsg: String { tr("auth.upgradeSuccessMsg") }
         public static var upgradePro: String { tr("auth.upgradePro") }
         public static var nickname: String { tr("auth.nickname") }
+        public static var birthday: String { tr("auth.birthday") }
+        public static var gender: String { tr("auth.gender") }
+        public static var genderMale: String { tr("auth.genderMale") }
+        public static var genderFemale: String { tr("auth.genderFemale") }
+        public static var genderSecret: String { tr("auth.genderSecret") }
+        public static var accountId: String { tr("auth.accountId") }
+        public static var phoneLabel: String { tr("auth.phoneLabel") }
         public static var avatar: String { tr("auth.avatar") }
         public static var saveChanges: String { tr("auth.saveChanges") }
         public static var saveSuccess: String { tr("auth.saveSuccess") }
@@ -85,6 +107,13 @@ extension L10n {
         public static var yearly: String { tr("auth.yearly") }
         public static var monthlyPrice: String { tr("auth.monthlyPrice") }
         public static var yearlyPrice: String { tr("auth.yearlyPrice") }
+        public static var save20Percent: String { tr("auth.save20Percent") }
+        public static var priceMonthlyPro: String { tr("auth.priceMonthlyPro") }
+        public static var priceYearlyPro: String { tr("auth.priceYearlyPro") }
+        public static var priceMonthlyLite: String { tr("auth.priceMonthlyLite") }
+        public static var priceMonthlyProEquivalent: String { tr("auth.priceMonthlyProEquivalent") }
+        public static var upgradeToProYearly: String { tr("auth.upgradeToProYearly") }
+        public static var upgradeToProMonthly: String { tr("auth.upgradeToProMonthly") }
         public static var bestValue: String { tr("auth.bestValue") }
         public static var selectPayment: String { tr("auth.selectPayment") }
         public static var confirmPurchase: String { tr("auth.confirmPurchase") }
@@ -103,6 +132,7 @@ extension L10n {
             public static var pages: String { Localized.tr("auth.feature.pages", table: Auth.t) }
             public static var plugins: String { Localized.tr("auth.feature.plugins", table: Auth.t) }
             public static var aiSynth: String { Localized.tr("auth.feature.aiSynth", table: Auth.t) }
+            public static var privacySecurity: String { Localized.tr("auth.feature.privacySecurity", table: Auth.t) }
             public static var vaultsLiteValue: String { Localized.tr("auth.feature.vaultsLiteValue", table: Auth.t) }
             public static var vaultsProValue: String { Localized.tr("auth.feature.vaultsProValue", table: Auth.t) }
             public static var pagesLiteValue: String { Localized.tr("auth.feature.pagesLiteValue", table: Auth.t) }
@@ -111,6 +141,8 @@ extension L10n {
             public static var pluginsProValue: String { Localized.tr("auth.feature.pluginsProValue", table: Auth.t) }
             public static var aiSynthLiteValue: String { Localized.tr("auth.feature.aiSynthLiteValue", table: Auth.t) }
             public static var aiSynthProValue: String { Localized.tr("auth.feature.aiSynthProValue", table: Auth.t) }
+            public static var privacySecurityLiteValue: String { Localized.tr("auth.feature.privacySecurityLiteValue", table: Auth.t) }
+            public static var privacySecurityProValue: String { Localized.tr("auth.feature.privacySecurityProValue", table: Auth.t) }
         }
 
         // MARK: - 支付渠道子结构

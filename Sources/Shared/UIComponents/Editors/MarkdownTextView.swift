@@ -226,7 +226,7 @@ struct MarkdownEditorToolbar: View {
                     onInsert("### ", nil)
                 }
 
-                Divider().frame(height: 24).background(Color.appBorder)
+                Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                 EditorToolbarButton(title: L10n.Editor.bold, icon: "bold") {
                     onWrap("**")
@@ -238,7 +238,7 @@ struct MarkdownEditorToolbar: View {
                     onWrap("`")
                 }
 
-                Divider().frame(height: 24).background(Color.appBorder)
+                Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                 EditorToolbarButton(title: L10n.Editor.link, icon: "link") {
                     onInsert("[[", "]]")
@@ -256,13 +256,13 @@ struct MarkdownEditorToolbar: View {
                     onInsertMultiline("\n---\n")
                 }
 
-                Divider().frame(height: 24).background(Color.appBorder)
+                Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                 EditorToolbarButton(title: L10n.Editor.knowledgeLink, icon: "link.circle.fill") {
                     onShowLinkPicker()
                 }
 
-                Divider().frame(height: 24).background(Color.appBorder)
+                Divider().frame(height: DesignSystem.IconSize.standard).background(Color.appBorder)
 
                 EditorToolbarButton(title: L10n.Editor.ocrScan, icon: "text.viewfinder") {
                     onOCR()

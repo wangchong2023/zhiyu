@@ -85,8 +85,8 @@ public enum Colors {
         public static let accentStrokeOpacity: Double = Colors.accentStrokeOpacity
         
         public static var shadowColor: Color { Colors.shadowColor }
-        public static var glassShadowColor: Color { Color.black.opacity(0.05) }
-        public static var deepShadowColor: Color { Color.black.opacity(0.12) }
+        public static var glassShadowColor: Color { Color.black.opacity(DesignSystem.Opacity.ghost) }
+        public static var deepShadowColor: Color { Color.black.opacity(DesignSystem.Opacity.subtle) }
     }
     
     /// 标准容器背景色
@@ -94,7 +94,7 @@ public enum Colors {
     /// 标准容器边框色
     public static var containerBorder: Color { Color.appBorder }
     /// 标准阴影颜色
-    public static var shadowColor: Color { Color.black.opacity(0.06) }
+    public static var shadowColor: Color { Color.black.opacity(0.06) } // swiftlint:disable:this magic_numbers_opacity
 }
 
 // MARK: - Color 扩展 (Semantic Colors)
@@ -132,7 +132,7 @@ extension Color {
     }
     
     /// 玻璃拟态高亮色/光泽色
-    public static var appGloss: Color { Color(light: Color.white, dark: Color.white.opacity(0.6)) }
+    public static var appGloss: Color { Color(light: Color.white, dark: Color.white.opacity(DesignSystem.Opacity.dim)) }
     
     // MARK: - 知识分类语义颜色
     

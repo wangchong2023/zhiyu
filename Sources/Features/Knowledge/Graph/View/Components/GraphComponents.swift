@@ -103,6 +103,7 @@ struct GraphNodeView: View {
             Circle()
                 .fill(
                     LinearGradient(
+                        // swiftlint:disable:next magic_numbers_opacity
                         colors: [nodeBaseColor.opacity(0.85), nodeBaseColor],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -328,6 +329,6 @@ struct GraphZoomControls: View {
             .accessibilityHint(L10n.Graph.accessibility.threeDHint)
         }
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
-        .shadow(color: .black.opacity(0.05), radius: 5, y: 2)
+        .shadow(color: .black.opacity(DesignSystem.Opacity.ghost), radius: 5, y: 2)
     }
 }

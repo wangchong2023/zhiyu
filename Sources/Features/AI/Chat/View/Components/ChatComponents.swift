@@ -62,23 +62,24 @@ struct ChatBubbleView: View {
                     .padding(.vertical, Spacing.medium)
                     .background(
                         LinearGradient(
+                            // swiftlint:disable:next magic_numbers_opacity
                             colors: [.appAccent, .appAccent.opacity(0.85)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Domain.AI.Chat.bubbleCornerRadius))
-                    .shadow(color: Color.appAccent.opacity(0.12), radius: 8, x: 0, y: 4)
+                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.subtle), radius: 8, x: 0, y: 4)
                 
                 Image(systemName: DesignSystem.Icons.personCircle)
                     .font(.title3)
-                    .foregroundStyle(.appAccent.opacity(0.6))
+                    .foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.dim))
                     .padding(.top, DesignSystem.tiny)
             }
             
             Text(timestampString)
                 .font(.system(size: DesignSystem.caption2FontSize))
-                .foregroundStyle(.appSecondary.opacity(0.6))
+                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 .padding(.trailing, DesignSystem.small + DesignSystem.tiny + DesignSystem.tiny)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -106,7 +107,7 @@ struct ChatBubbleView: View {
                 
                 Text(timestampString)
                     .font(.system(size: DesignSystem.caption2FontSize))
-                    .foregroundStyle(.appSecondary.opacity(0.6))
+                    .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
             }
             .padding(.horizontal, Spacing.tiny)
             .padding(.bottom, DesignSystem.atomic)
@@ -140,7 +141,7 @@ struct ChatBubbleView: View {
                     }
                     .padding(.horizontal, DesignSystem.small)
                     .padding(.vertical, DesignSystem.tiny)
-                    .background(Color.appAccent.opacity(0.1))
+                    .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                     .foregroundStyle(.appAccent)
                     .clipShape(Capsule())
                 }
@@ -172,7 +173,7 @@ struct ChatBubbleView: View {
                         .foregroundStyle(.appAccent)
                         .padding(.horizontal, DesignSystem.small)
                         .padding(.vertical, DesignSystem.atomic)
-                        .background(Color.appAccent.opacity(0.1))
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
                         .clipShape(Capsule())
                 }
                 .contentShape(Rectangle())
