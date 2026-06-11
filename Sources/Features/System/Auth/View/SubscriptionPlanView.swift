@@ -373,8 +373,8 @@ public struct SubscriptionPlanView: View {
                     .foregroundStyle(.appSecondary)
                     .lineLimit(2)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(DesignSystem.medium)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .overlay(
@@ -421,8 +421,8 @@ public struct SubscriptionPlanView: View {
                     .foregroundStyle(.appSecondary)
                     .lineLimit(2)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(DesignSystem.medium)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 3))
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .overlay(
@@ -435,6 +435,7 @@ public struct SubscriptionPlanView: View {
             )
             .shadow(color: .purple.opacity(DesignSystem.Opacity.shadow), radius: 8, x: 0, y: 0)
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     // MARK: - 对比格栅 (列右对齐，中间包含垂线分割)
@@ -449,6 +450,7 @@ public struct SubscriptionPlanView: View {
                     
                     Text(L10n.Auth.litePlan)
                         .font(.subheadline.bold())
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center) // 居中
                         .foregroundStyle(.appSecondary)
                     
@@ -461,6 +463,7 @@ public struct SubscriptionPlanView: View {
                     
                     Text(L10n.Auth.proPlan)
                         .font(.subheadline.bold())
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center) // 居中
                         .foregroundStyle(.appAccent)
                 }

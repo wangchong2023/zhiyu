@@ -772,13 +772,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite Free Plan"
+            "value": "Lite\n(Free)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite 基础版 (免费)"
+            "value": "Lite 版\n(免费)"
           }
         }
       }
@@ -9104,13 +9104,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "$0 / mo"
+            "value": "Free"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "¥0 / 月"
+            "value": "免费"
           }
         }
       }
