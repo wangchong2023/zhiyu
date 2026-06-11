@@ -52,6 +52,67 @@ public actor NetworkClient {
         return try await performRequest(path: path, method: method, body: dummyBody, requiresAuth: requiresAuth, isRetry: false)
     }
     
+    // MARK: - Multipart 文件上传
+
+    /// 发起 multipart/form-data 文件上传请求，返回后端回传的资源字符串（通常为文件 URL）
+    /// - Parameters:
+    ///   - path: 请求路径
+    ///   - fileData: 文件二进制数据
+    ///   - fileName: 文件名（含扩展名）
+    ///   - mimeType: MIME 类型，推荐使用 AppConstants.Network.mimeTypePNG / mimeTypeJPEG
+    ///   - requiresAuth: 是否需要携带 Bearer Token
+    public func uploadFile(
+        path: String,
+        fileData: Data,
+        fileName: String,
+        mimeType: String,
+        requiresAuth: Bool = true
+    ) async throws -> String {
+        guard let url = URL(string: AppConfig.backendBaseURL + path) else {
+            throw NetworkError.invalidURL
+        }
+
+        // 生成唯一 boundary 分隔符
+        let boundary = AppConstants.Network.multipartBoundaryPrefix + UUID().uuidString
+        let crlf = AppConstants.Network.crlf
+
+        var request = URLRequest(url: url)
+        request.httpMethod = AppConstants.Network.methodPOST
+        request.addValue(
+            AppConstants.Network.contentTypeMultipartPrefix + boundary,
+            forHTTPHeaderField: AppConstants.Network.headerContentType
+        )
+        if requiresAuth, let token = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
+            request.addValue(
+                AppConstants.Network.bearerPrefix + token,
+                forHTTPHeaderField: AppConstants.Network.headerAuthorization
+            )
+        }
+
+        // 构造 multipart body
+        var body = Data()
+        // swiftlint:disable:next force_unwrapping
+        body.append(("--\(boundary)" + crlf).data(using: .utf8)!)
+        // swiftlint:disable:next force_unwrapping
+        body.append(("Content-Disposition: form-data; name=\"\(AppConstants.Network.multipartFieldName)\"; filename=\"\(fileName)\"" + crlf).data(using: .utf8)!)
+        // swiftlint:disable:next force_unwrapping
+        body.append(("Content-Type: \(mimeType)" + crlf + crlf).data(using: .utf8)!)
+        body.append(fileData)
+        // swiftlint:disable:next force_unwrapping
+        body.append((crlf + "--\(boundary)--" + crlf).data(using: .utf8)!)
+        request.httpBody = body
+
+        let (data, response) = try await session.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
+        }
+        let apiResponse: ApiResponse<String> = try decodeResponse(data)
+        if apiResponse.isSuccess {
+            return try extractPayload(apiResponse)
+        }
+        throw NetworkError.serverError(apiResponse.code, apiResponse.message)
+    }
+
     // MARK: - 内部请求与拦截逻辑
     
     private func performRequest<T: Codable, Body: Encodable>(
@@ -92,7 +153,7 @@ public actor NetworkClient {
         request.httpMethod = method
         request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
         if requiresAuth, let token = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey) {
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.addValue(AppConstants.Network.bearerPrefix + token, forHTTPHeaderField: AppConstants.Network.headerAuthorization)
         }
         if let body = body {
             request.httpBody = try encoder.encode(body)

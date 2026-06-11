@@ -301,9 +301,9 @@ struct PageDetailView: View {
             HStack(spacing: DesignSystem.medium) {
                 if let url = coordinator.page.sourceURL {
                     Button(action: {
-                        guard let u = URL(string: url) else { return }
+                        guard let urlObject = URL(string: url) else { return }
                         #if os(iOS)
-                        UIApplication.shared.open(u)
+                        UIApplication.shared.open(urlObject)
                         #endif
                     }) {
                         HStack(spacing: DesignSystem.tiny) {

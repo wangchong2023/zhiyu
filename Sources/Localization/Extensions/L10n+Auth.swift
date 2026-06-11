@@ -53,5 +53,67 @@ extension L10n {
         public static var smsDeveloping: String { tr("auth.smsDeveloping") }
         public static var githubDeveloping: String { tr("auth.githubDeveloping") }
         public static var agreementRequired: String { tr("auth.agreementRequired") }
+
+        // MARK: - 个人资料与套餐页面
+        public static var profileAndQuota: String { tr("auth.profileAndQuota") }
+        public static var currentSubscription: String { tr("auth.currentSubscription") }
+        public static var litePlan: String { tr("auth.litePlan") }
+        public static var proPlan: String { tr("auth.proPlan") }
+        public static var upgradePro: String { tr("auth.upgradePro") }
+        public static var nickname: String { tr("auth.nickname") }
+        public static var avatar: String { tr("auth.avatar") }
+        public static var saveChanges: String { tr("auth.saveChanges") }
+        public static var saveSuccess: String { tr("auth.saveSuccess") }
+        public static var saveFailed: String { tr("auth.saveFailed") }
+        public static var uploadingAvatar: String { tr("auth.uploadingAvatar") }
+        public static var uploadSuccess: String { tr("auth.uploadSuccess") }
+        public static var uploadFailed: String { tr("auth.uploadFailed") }
+
+        // MARK: - 配额展示
+        public static var vaultUsage: String { tr("auth.quota.vaultUsage") }
+        public static var pagesUsage: String { tr("auth.quota.pagesUsage") }
+        public static var pluginsUsage: String { tr("auth.quota.pluginsUsage") }
+
+        // MARK: - 升级收银台
+        public static var purchasing: String { tr("auth.purchasing") }
+        public static var selectCycle: String { tr("auth.selectCycle") }
+        public static var monthly: String { tr("auth.monthly") }
+        public static var yearly: String { tr("auth.yearly") }
+        public static var monthlyPrice: String { tr("auth.monthlyPrice") }
+        public static var yearlyPrice: String { tr("auth.yearlyPrice") }
+        public static var bestValue: String { tr("auth.bestValue") }
+        public static var selectPayment: String { tr("auth.selectPayment") }
+        public static var confirmPurchase: String { tr("auth.confirmPurchase") }
+        public static var purchaseDisclaimer: String { tr("auth.purchaseDisclaimer") }
+        public static var purchasePending: String { tr("auth.purchasePending") }
+        public static var purchaseFailed: String { tr("auth.purchaseFailed") }
+        public static var verifyFailed: String { tr("auth.verifyFailed") }
+        public static var productNotFound: String { tr("auth.productNotFound") }
+        public static var upgradeSuccessTitle: String { tr("auth.upgradeSuccessTitle") }
+        public static var upgradeSuccessMessage: String { tr("auth.upgradeSuccessMessage") }
+        public static var startUsingPro: String { tr("auth.startUsingPro") }
+
+        // MARK: - 套餐权益对比子结构
+        public struct Feature {
+            public static var vaults: String { Localized.tr("auth.feature.vaults", table: Auth.t) }
+            public static var pages: String { Localized.tr("auth.feature.pages", table: Auth.t) }
+            public static var plugins: String { Localized.tr("auth.feature.plugins", table: Auth.t) }
+            public static var aiSynth: String { Localized.tr("auth.feature.aiSynth", table: Auth.t) }
+            public static var vaultsLiteValue: String { Localized.tr("auth.feature.vaultsLiteValue", table: Auth.t) }
+            public static var vaultsProValue: String { Localized.tr("auth.feature.vaultsProValue", table: Auth.t) }
+            public static var pagesLiteValue: String { Localized.tr("auth.feature.pagesLiteValue", table: Auth.t) }
+            public static var pagesProValue: String { Localized.tr("auth.feature.pagesProValue", table: Auth.t) }
+            public static var pluginsLiteValue: String { Localized.tr("auth.feature.pluginsLiteValue", table: Auth.t) }
+            public static var pluginsProValue: String { Localized.tr("auth.feature.pluginsProValue", table: Auth.t) }
+            public static var aiSynthLiteValue: String { Localized.tr("auth.feature.aiSynthLiteValue", table: Auth.t) }
+            public static var aiSynthProValue: String { Localized.tr("auth.feature.aiSynthProValue", table: Auth.t) }
+        }
+
+        // MARK: - 支付渠道子结构
+        public struct Payment {
+            public static var apple: String { Localized.tr("auth.payment.apple", table: Auth.t) }
+            public static var wechat: String { Localized.tr("auth.payment.wechat", table: Auth.t) }
+            public static var alipay: String { Localized.tr("auth.payment.alipay", table: Auth.t) }
+        }
     }
 }

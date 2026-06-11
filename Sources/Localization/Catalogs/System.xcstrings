@@ -7157,6 +7157,822 @@
           }
         }
       }
+    },
+    "auth.profileAndQuota": {
+      "comment": "个人信息与套餐",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人信息与套餐"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile & Plan"
+          }
+        }
+      }
+    },
+    "auth.currentSubscription": {
+      "comment": "当前套餐",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前套餐"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current Plan"
+          }
+        }
+      }
+    },
+    "auth.litePlan": {
+      "comment": "Lite 基础版",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite 基础版"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite"
+          }
+        }
+      }
+    },
+    "auth.proPlan": {
+      "comment": "Pro 专业版",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro 专业版"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro"
+          }
+        }
+      }
+    },
+    "auth.upgradePro": {
+      "comment": "升级 Pro",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级 Pro"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade to Pro"
+          }
+        }
+      }
+    },
+    "auth.nickname": {
+      "comment": "昵称",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "昵称"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nickname"
+          }
+        }
+      }
+    },
+    "auth.avatar": {
+      "comment": "修改头像",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修改头像"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change Avatar"
+          }
+        }
+      }
+    },
+    "auth.saveChanges": {
+      "comment": "保存修改",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存修改"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "auth.saveSuccess": {
+      "comment": "保存成功",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存成功"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved"
+          }
+        }
+      }
+    },
+    "auth.saveFailed": {
+      "comment": "保存失败，请重试",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存失败，请重试"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save failed, please try again"
+          }
+        }
+      }
+    },
+    "auth.uploadingAvatar": {
+      "comment": "正在上传头像...",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在上传头像..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploading avatar..."
+          }
+        }
+      }
+    },
+    "auth.uploadSuccess": {
+      "comment": "头像上传成功",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "头像上传成功"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avatar uploaded"
+          }
+        }
+      }
+    },
+    "auth.uploadFailed": {
+      "comment": "头像上传失败",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "头像上传失败"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload failed"
+          }
+        }
+      }
+    },
+    "auth.quota.vaultUsage": {
+      "comment": "金库",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金库"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaults"
+          }
+        }
+      }
+    },
+    "auth.quota.pagesUsage": {
+      "comment": "知识页",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages"
+          }
+        }
+      }
+    },
+    "auth.quota.pluginsUsage": {
+      "comment": "插件",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        }
+      }
+    },
+    "auth.purchasing": {
+      "comment": "正在处理支付...",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在处理支付..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Processing payment..."
+          }
+        }
+      }
+    },
+    "auth.selectCycle": {
+      "comment": "选择订阅周期",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择订阅周期"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Billing Cycle"
+          }
+        }
+      }
+    },
+    "auth.monthly": {
+      "comment": "月付",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "月付"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monthly"
+          }
+        }
+      }
+    },
+    "auth.yearly": {
+      "comment": "年付",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "年付"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yearly"
+          }
+        }
+      }
+    },
+    "auth.monthlyPrice": {
+      "comment": "¥38/月",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥38/月"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥38/mo"
+          }
+        }
+      }
+    },
+    "auth.yearlyPrice": {
+      "comment": "¥368/年",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥368/年"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¥368/yr"
+          }
+        }
+      }
+    },
+    "auth.bestValue": {
+      "comment": "最划算",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最划算"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best Value"
+          }
+        }
+      }
+    },
+    "auth.selectPayment": {
+      "comment": "选择支付方式",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择支付方式"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment Method"
+          }
+        }
+      }
+    },
+    "auth.confirmPurchase": {
+      "comment": "确认升级",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "确认升级"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm Upgrade"
+          }
+        }
+      }
+    },
+    "auth.purchaseDisclaimer": {
+      "comment": "订阅将通过 App Store 账户扣款，可随时在设置中取消。",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "订阅将通过 App Store 账户扣款，可随时在设置中取消。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription billed via App Store. Cancel anytime in Settings."
+          }
+        }
+      }
+    },
+    "auth.purchasePending": {
+      "comment": "支付审核中，请稍后查看",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付审核中，请稍后查看"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment pending, check back later"
+          }
+        }
+      }
+    },
+    "auth.purchaseFailed": {
+      "comment": "支付失败，请重试",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付失败，请重试"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payment failed, please try again"
+          }
+        }
+      }
+    },
+    "auth.verifyFailed": {
+      "comment": "凭证校验失败，请联系客服",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "凭证校验失败，请联系客服"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verification failed, please contact support"
+          }
+        }
+      }
+    },
+    "auth.productNotFound": {
+      "comment": "未找到该商品，请稍后重试",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未找到该商品，请稍后重试"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Product not found, please try again"
+          }
+        }
+      }
+    },
+    "auth.upgradeSuccessTitle": {
+      "comment": "升级成功！",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "升级成功！"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upgrade Successful!"
+          }
+        }
+      }
+    },
+    "auth.upgradeSuccessMessage": {
+      "comment": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎加入 Pro 专业版，尽享无限知识空间与 AI 特权。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Pro! Enjoy unlimited storage and AI features."
+          }
+        }
+      }
+    },
+    "auth.startUsingPro": {
+      "comment": "开始使用 Pro",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始使用 Pro"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Using Pro"
+          }
+        }
+      }
+    },
+    "auth.feature.vaults": {
+      "comment": "金库数量",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "金库数量"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaults"
+          }
+        }
+      }
+    },
+    "auth.feature.pages": {
+      "comment": "知识页上限",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识页上限"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages Limit"
+          }
+        }
+      }
+    },
+    "auth.feature.plugins": {
+      "comment": "插件数量",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件数量"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynth": {
+      "comment": "AI 合成能力",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 合成能力"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Synthesis"
+          }
+        }
+      }
+    },
+    "auth.feature.vaultsLiteValue": {
+      "comment": "2 个",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 个"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2"
+          }
+        }
+      }
+    },
+    "auth.feature.vaultsProValue": {
+      "comment": "10 个",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 个"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10"
+          }
+        }
+      }
+    },
+    "auth.feature.pagesLiteValue": {
+      "comment": "1,000 页",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1,000 页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1,000"
+          }
+        }
+      }
+    },
+    "auth.feature.pagesProValue": {
+      "comment": "50,000 页",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50,000 页"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50,000"
+          }
+        }
+      }
+    },
+    "auth.feature.pluginsLiteValue": {
+      "comment": "3 个",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 个"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3"
+          }
+        }
+      }
+    },
+    "auth.feature.pluginsProValue": {
+      "comment": "不限",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不限"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynthLiteValue": {
+      "comment": "基础",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "基础"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basic"
+          }
+        }
+      }
+    },
+    "auth.feature.aiSynthProValue": {
+      "comment": "全量",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全量"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full"
+          }
+        }
+      }
+    },
+    "auth.payment.apple": {
+      "comment": "Apple Pay / 内购",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay / 内购"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Pay / In-App"
+          }
+        }
+      }
+    },
+    "auth.payment.wechat": {
+      "comment": "微信支付",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "微信支付"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WeChat Pay"
+          }
+        }
+      }
+    },
+    "auth.payment.alipay": {
+      "comment": "支付宝",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "支付宝"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alipay"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -261,7 +261,8 @@ def check_file(file_path):
                 "·",
                 "•",
                 "⌘K",
-                "⌘"
+                "⌘",
+                " [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close."
             } or "Stress Test Page #" in s:
                 continue
             

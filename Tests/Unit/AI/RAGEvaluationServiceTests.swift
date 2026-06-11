@@ -766,10 +766,15 @@ final class RAGEvaluationServiceTests: XCTestCase {
     /// 验证 calculateTokenEfficiency 正确计算 Token 摘要与成本
     func testCalculateTokenEfficiency() async throws {
         // 写入 3 条 Token 使用记录
-        let records: [(model: String, prompt: Int, completion: Int)] = [
-            ("test", 1000, 500),   // 1500 total
-            ("test", 2000, 1000),  // 3000 total
-            ("test", 500, 200)     // 700 total
+        struct TokenRecord {
+            let model: String
+            let prompt: Int
+            let completion: Int
+        }
+        let records: [TokenRecord] = [
+            TokenRecord(model: "test", prompt: 1000, completion: 500),   // 1500 total
+            TokenRecord(model: "test", prompt: 2000, completion: 1000),  // 3000 total
+            TokenRecord(model: "test", prompt: 500, completion: 200)     // 700 total
         ]
         for record in records {
             try await governanceStore.logTokenUsage(model: record.model, promptTokens: record.prompt, completionTokens: record.completion)

@@ -121,7 +121,7 @@ final class ImportSynthesisE2ETests: XCTestCase {
         let pages = [
             await store.ingestService.ingestRawContent(title: "S1", content: "C1", pageStore: sqliteStore),
             await store.ingestService.ingestRawContent(title: "S2", content: "C2", pageStore: sqliteStore),
-            await store.ingestService.ingestRawContent(title: "S3", content: "C3", pageStore: sqliteStore),
+            await store.ingestService.ingestRawContent(title: "S3", content: "C3", pageStore: sqliteStore)
         ]
         let sourceIDs = pages.map(\.id)
         XCTAssertEqual(sourceIDs.count, 3)

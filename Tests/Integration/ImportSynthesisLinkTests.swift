@@ -113,10 +113,14 @@ final class ImportSynthesisLinkTests: XCTestCase {
         XCTAssertTrue(combined.contains("---"))
     }
 
-    private func buildSynthesisInput(title: String, content: String,
-                                      sourceURL: String?, kind: String?) -> String {
+    private func buildSynthesisInput(
+        title: String,
+        content: String,
+        sourceURL: String?,
+        kind: String?
+    ) -> String {
         var meta = ""
-        if let u = sourceURL { meta += "> 来源: \(u)\n" }
+        if let url = sourceURL { meta += "> 来源: \(url)\n" }
         if let k = kind { meta += "> 类型: \(k)\n" }
         let header = meta.isEmpty ? "" : "\(meta)\n"
         return "# \(title)\n\(header)\(content)"

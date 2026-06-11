@@ -86,8 +86,8 @@ final class ImportRecordBatchTests: XCTestCase {
     func testInvalidURLNoScheme() {
         let url = URL(string: "example.com")
         // URL(string:) may succeed but scheme will be nil
-        if let u = url {
-            XCTAssertFalse(u.scheme == "http" || u.scheme == "https")
+        if let validURL = url {
+            XCTAssertFalse(validURL.scheme == "http" || validURL.scheme == "https")
         }
     }
 
@@ -112,7 +112,7 @@ final class ImportRecordBatchTests: XCTestCase {
     }
 
     func testMax10Limit() {
-        let urls = (1...15).map { URL(string: "https://example\($0).com")! }
+        let urls = (1...15).compactMap { URL(string: "https://example\($0).com") }
         let limited = Array(urls.prefix(10))
         XCTAssertEqual(limited.count, 10)
     }
@@ -148,12 +148,16 @@ final class ImportRecordBatchTests: XCTestCase {
 
     // MARK: - JSON 解析
 
-    func testExtractJSONFromLLMResponse() {
+    func testExtractJSONFromLLMResponse() throws {
         let response = "prefix text\n{\"aliasTitle\": \"智宇产品手册\", \"tags\": [\"技术文档\", \"AI\"]}\nsuffix"
         guard let start = response.firstIndex(of: "{"),
-              let end = response.lastIndex(of: "}") else { XCTFail(); return }
+              let end = response.lastIndex(of: "}") else {
+            XCTFail("Failed to locate JSON brackets")
+            return
+        }
         let jsonStr = String(response[start...end])
-        let obj = try? JSONSerialization.jsonObject(with: jsonStr.data(using: .utf8)!) as? [String: Any]
+        let data = try XCTUnwrap(jsonStr.data(using: .utf8))
+        let obj = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         XCTAssertEqual(obj?["aliasTitle"] as? String, "智宇产品手册")
         XCTAssertEqual(obj?["tags"] as? [String], ["技术文档", "AI"])
     }

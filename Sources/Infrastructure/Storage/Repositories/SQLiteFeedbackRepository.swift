@@ -16,8 +16,8 @@ final class SQLiteFeedbackRepository: FeedbackRepository, DatabaseWriterProvider
     func save(_ entry: FeedbackEntry) async throws {
         let writer = await dbWriter
         try await writer.write { db in
-            var e = entry
-            try e.save(db)
+            var mutatedEntry = entry
+            try mutatedEntry.save(db)
         }
     }
 

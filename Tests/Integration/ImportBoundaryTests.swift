@@ -145,7 +145,7 @@ final class ImportBoundaryTests: XCTestCase {
         let urls = [
             "https://example.com",
             "http://example.com/path?q=1",
-            "https://sub.domain.com/path/to/page#anchor",
+            "https://sub.domain.com/path/to/page#anchor"
         ]
         for urlStr in urls {
             let url = URL(string: urlStr)
@@ -161,7 +161,7 @@ final class ImportBoundaryTests: XCTestCase {
             "ftp://files.com",
             "file:///local/path",
             "",
-            "   ",
+            "   "
         ]
         for urlStr in invalid {
             let url = URL(string: urlStr)

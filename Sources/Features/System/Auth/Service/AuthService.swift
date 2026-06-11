@@ -322,6 +322,215 @@ public final class AuthService: AuthServiceProtocol {
         UserDefaults.standard.set(isAuthenticated, forKey: AppConstants.Keys.Storage.authIsAuthenticated)
         UserDefaults.standard.set(isGuest, forKey: AppConstants.Keys.Storage.authIsGuest)
     }
+    
+    // MARK: - 新增的个人信息修改与支付校验方法
+    
+    /// 更新个人资料
+    /// - Parameters:
+    ///   - nickname: 昵称
+    ///   - avatar: 头像地址（URL字符串）
+    /// - Returns: 是否更新成功
+    public func updateUserProfile(nickname: String, avatar: String?) async -> Bool {
+        #if DEBUG
+        if isMockBackend {
+            // Mock 模式：直接更新本地缓存，不调用网络
+            if let user = AuthSession.shared.currentUser {
+                let updated = User(
+                    id: user.id,
+                    name: nickname,
+                    email: user.email,
+                    avatarURL: avatar.flatMap { URL(string: $0) } ?? user.avatarURL,
+                    planKey: user.planKey,
+                    maxVaults: user.maxVaults,
+                    maxPages: user.maxPages,
+                    maxPlugins: user.maxPlugins
+                )
+                AuthSession.shared.update(user: updated)
+                return true
+            }
+            return false
+        }
+        #endif
+        
+        // 实际请求后端 PUT /api/v1/user/profile 更新昵称和头像
+        struct ProfileUpdateRequest: Codable {
+            let nick: String
+            let avatar: String?
+        }
+        
+        struct ProfileUpdateResponse: Codable {
+            let userId: Int64
+            let username: String
+            let nick: String
+            let avatar: String?
+            let email: String?
+            let mobile: String?
+        }
+        
+        let body = ProfileUpdateRequest(nick: nickname, avatar: avatar)
+        do {
+            let response: ProfileUpdateResponse = try await NetworkClient.shared.request(
+                path: "/api/v1/user/profile",
+                method: "PUT",
+                body: body,
+                requiresAuth: true
+            )
+            // 同步更新本地 User 缓存
+            if let user = AuthSession.shared.currentUser {
+                let updated = User(
+                    id: user.id,
+                    name: response.nick,
+                    email: response.email ?? user.email,
+                    avatarURL: response.avatar.flatMap { URL(string: $0) },
+                    planKey: user.planKey,
+                    maxVaults: user.maxVaults,
+                    maxPages: user.maxPages,
+                    maxPlugins: user.maxPlugins
+                )
+                AuthSession.shared.update(user: updated)
+            }
+            return true
+        } catch {
+            Logger.shared.error("[AuthService] 更新个人资料失败: ", error: error)
+            return false
+        }
+    }
+    
+    /// 上传头像图片到后端 OSS
+    /// - Parameter imageData: 图片的二进制数据（PNG/JPEG）
+    /// - Returns: 上传成功后返回的头像 URL 字符串，失败返回 nil
+    public func uploadAvatar(imageData: Data) async -> String? {
+        #if DEBUG
+        if isMockBackend {
+            // Mock 模式：返回随机头像 URL
+            return "https://api.multiavatar.com/\(UUID().uuidString).png"
+        }
+        #endif
+        
+        do {
+            // 调用 NetworkClient 的 multipart 上传接口
+            let avatarUrl: String = try await NetworkClient.shared.uploadFile(
+                path: "/api/v1/user/profile/avatar",
+                fileData: imageData,
+                fileName: "avatar.png",
+                mimeType: "image/png",
+                requiresAuth: true
+            )
+            return avatarUrl
+        } catch {
+            Logger.shared.error("[AuthService] 上传头像失败: ", error: error)
+            return nil
+        }
+    }
+    
+    /// 向后端验证 Apple 内购收据并激活 Pro 权益
+    /// - Parameters:
+    ///   - productId: App Store 商品 ID
+    ///   - receiptData: StoreKit 返回的 Base64 编码收据
+    ///   - orderNo: 发起购买前系统生成的订单号（可选）
+    /// - Returns: 验证并激活成功返回 true
+    public func verifyApplePurchase(productId: String, receiptData: String, orderNo: String?) async -> Bool {
+        #if DEBUG
+        if isMockBackend {
+            // Mock 模式：直接本地激活 Pro
+            if let user = AuthSession.shared.currentUser {
+                let updated = User(
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    avatarURL: user.avatarURL,
+                    planKey: "pro",
+                    maxVaults: 10,
+                    maxPages: 50000,
+                    maxPlugins: 999999
+                )
+                AuthSession.shared.update(user: updated)
+                return true
+            }
+            return false
+        }
+        #endif
+        
+        struct VerifyRequest: Codable {
+            let productId: String
+            let receiptData: String
+            let orderNo: String?
+        }
+        
+        struct VerifyResponse: Codable {
+            let orderNo: String
+            let status: String
+            let planKey: String?
+        }
+        
+        let body = VerifyRequest(productId: productId, receiptData: receiptData, orderNo: orderNo)
+        do {
+            let _: VerifyResponse = try await NetworkClient.shared.request(
+                path: "/api/v1/subscriptions/apple/verify",
+                method: "POST",
+                body: body,
+                requiresAuth: true
+            )
+            // 校验成功后，重新拉取最新用户资料（含套餐限额）
+            try await refreshUserProfile()
+            return true
+        } catch {
+            Logger.shared.error("[AuthService] 验证苹果支付凭证失败: ", error: error)
+            return false
+        }
+    }
+    
+    /// 从后端拉取最新个人资料并更新本地 User 缓存
+    /// 在登录成功或支付激活后调用，保证本地数据与后端同步
+    public func refreshUserProfile() async throws {
+        // 1. 拉取个人基本信息
+        struct ProfileResponse: Codable {
+            let userId: Int64
+            let username: String
+            let nick: String
+            let avatar: String?
+            let email: String?
+        }
+        
+        let profile: ProfileResponse = try await NetworkClient.shared.request(
+            path: "/api/v1/user/profile",
+            method: "GET",
+            requiresAuth: true
+        )
+        
+        // 2. 拉取当前订阅套餐信息
+        struct SubscriptionResponse: Codable {
+            let planKey: String?
+            let quotasJson: String?
+        }
+        
+        var currentPlanKey: String? = "free"
+        do {
+            let sub: SubscriptionResponse = try await NetworkClient.shared.request(
+                path: "/api/v1/subscriptions/me",
+                method: "GET",
+                requiresAuth: true
+            )
+            currentPlanKey = sub.planKey ?? "free"
+        } catch {
+            Logger.shared.warning("[AuthService] 获取当前订阅信息失败，将使用默认配置: \(error)")
+        }
+        
+        // 3. 合并更新本地 User 对象
+        if let user = AuthSession.shared.currentUser {
+            let updated = User(
+                id: user.id,
+                name: profile.nick,
+                email: profile.email ?? user.email,
+                avatarURL: profile.avatar.flatMap { URL(string: $0) },
+                planKey: currentPlanKey,
+                maxVaults: currentPlanKey == "pro" ? 10 : 2,
+                maxPages: currentPlanKey == "pro" ? 50000 : 1000,
+                maxPlugins: currentPlanKey == "pro" ? 999999 : 3
+            )
+            AuthSession.shared.update(user: updated)
+        }
+    }
 }
 
 // MARK: - 数据模型

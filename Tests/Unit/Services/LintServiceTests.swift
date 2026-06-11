@@ -158,18 +158,24 @@ final class LintServiceHealthCheckTests: XCTestCase {
     }
 
     func testCalculateHealthMetrics_levelThresholds() {
-        let testCases: [(errorCount: Int, warningCount: Int, expectedScore: Int, expectedLevel: LintService.HealthLevel)] = [
-            (0, 0, 100, .excellent),
-            (1, 0, 90, .excellent),
-            (2, 0, 80, .good),
-            (3, 0, 70, .fair),
-            (4, 0, 60, .fair),
-            (5, 0, 50, .fair),
-            (6, 0, 40, .poor),
-            (0, 5, 75, .good),
-            (0, 6, 70, .fair),
-            (0, 10, 50, .fair),
-            (0, 11, 45, .poor)
+        struct TestCase {
+            let errorCount: Int
+            let warningCount: Int
+            let expectedScore: Int
+            let expectedLevel: LintService.HealthLevel
+        }
+        let testCases: [TestCase] = [
+            TestCase(errorCount: 0, warningCount: 0, expectedScore: 100, expectedLevel: .excellent),
+            TestCase(errorCount: 1, warningCount: 0, expectedScore: 90, expectedLevel: .excellent),
+            TestCase(errorCount: 2, warningCount: 0, expectedScore: 80, expectedLevel: .good),
+            TestCase(errorCount: 3, warningCount: 0, expectedScore: 70, expectedLevel: .fair),
+            TestCase(errorCount: 4, warningCount: 0, expectedScore: 60, expectedLevel: .fair),
+            TestCase(errorCount: 5, warningCount: 0, expectedScore: 50, expectedLevel: .fair),
+            TestCase(errorCount: 6, warningCount: 0, expectedScore: 40, expectedLevel: .poor),
+            TestCase(errorCount: 0, warningCount: 5, expectedScore: 75, expectedLevel: .good),
+            TestCase(errorCount: 0, warningCount: 6, expectedScore: 70, expectedLevel: .fair),
+            TestCase(errorCount: 0, warningCount: 10, expectedScore: 50, expectedLevel: .fair),
+            TestCase(errorCount: 0, warningCount: 11, expectedScore: 45, expectedLevel: .poor)
         ]
         for tc in testCases {
             var issues: [LintIssue] = []

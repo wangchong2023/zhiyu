@@ -68,7 +68,7 @@ final class QuizProcessorTests: XCTestCase {
 
     // MARK: - convertJSONToMarkdown
 
-    func testConvertJSONToMarkdown_basicConversion() {
+    func testConvertJSONToMarkdown_basicConversion() throws {
         let json = """
         {
             "title": "历史测验",
@@ -82,15 +82,14 @@ final class QuizProcessorTests: XCTestCase {
             ]
         }
         """
-        let result = QuizProcessor.convertJSONToMarkdown(json)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.contains("历史测验"))
-        XCTAssertTrue(result!.contains("哪一年？"))
-        XCTAssertTrue(result!.contains("1911"))
-        XCTAssertTrue(result!.contains("1949年建国"))
+        let result = try XCTUnwrap(QuizProcessor.convertJSONToMarkdown(json))
+        XCTAssertTrue(result.contains("历史测验"))
+        XCTAssertTrue(result.contains("哪一年？"))
+        XCTAssertTrue(result.contains("1911"))
+        XCTAssertTrue(result.contains("1949年建国"))
     }
 
-    func testConvertJSONToMarkdown_withStringAnswer() {
+    func testConvertJSONToMarkdown_withStringAnswer() throws {
         let json = """
         {
             "title": "Quiz",
@@ -103,12 +102,11 @@ final class QuizProcessorTests: XCTestCase {
             ]
         }
         """
-        let result = QuizProcessor.convertJSONToMarkdown(json)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.contains(L10n.Quiz.correctAnswer))
+        let result = try XCTUnwrap(QuizProcessor.convertJSONToMarkdown(json))
+        XCTAssertTrue(result.contains(L10n.Quiz.correctAnswer))
     }
 
-    func testConvertJSONToMarkdown_multipleQuestions() {
+    func testConvertJSONToMarkdown_multipleQuestions() throws {
         let json = """
         {
             "title": "Multi",
@@ -118,13 +116,12 @@ final class QuizProcessorTests: XCTestCase {
             ]
         }
         """
-        let result = QuizProcessor.convertJSONToMarkdown(json)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.contains("Q1"))
-        XCTAssertTrue(result!.contains("Q2"))
+        let result = try XCTUnwrap(QuizProcessor.convertJSONToMarkdown(json))
+        XCTAssertTrue(result.contains("Q1"))
+        XCTAssertTrue(result.contains("Q2"))
     }
 
-    func testConvertJSONToMarkdown_withMarkdownFence() {
+    func testConvertJSONToMarkdown_withMarkdownFence() throws {
         let json = """
         ```json
         {
@@ -133,9 +130,8 @@ final class QuizProcessorTests: XCTestCase {
         }
         ```
         """
-        let result = QuizProcessor.convertJSONToMarkdown(json)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.contains("Fenced"))
+        let result = try XCTUnwrap(QuizProcessor.convertJSONToMarkdown(json))
+        XCTAssertTrue(result.contains("Fenced"))
     }
 
     func testConvertJSONToMarkdown_invalidJSON_returnsNil() {
@@ -148,14 +144,13 @@ final class QuizProcessorTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func testConvertJSONToMarkdown_noTitle() {
+    func testConvertJSONToMarkdown_noTitle() throws {
         let json = """
         {
             "questions": [{"text": "Q", "options": ["A"], "answer": 0}]
         }
         """
-        let result = QuizProcessor.convertJSONToMarkdown(json)
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.contains(L10n.Quiz.title))
+        let result = try XCTUnwrap(QuizProcessor.convertJSONToMarkdown(json))
+        XCTAssertTrue(result.contains(L10n.Quiz.title))
     }
 }

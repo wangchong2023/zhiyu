@@ -17,6 +17,7 @@ struct UserProfileMenu: View {
     @EnvironmentObject var onboardingService: OnboardingService
     @EnvironmentObject var themeManager: ThemeManager
     
+    @State private var showProfile = false
     @State private var showAbout = false
     @State private var showWatchMenu = false
     @State private var showStats = false
@@ -47,6 +48,15 @@ struct UserProfileMenu: View {
         #else
         // iOS, iPadOS, macOS (Catalyst) 等非 watch 平台统一使用原生 Menu，提供 0 延迟的即时响应体感
         Menu {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    showProfile = true
+                }
+            }) {
+                Label(L10n.Auth.profileAndQuota, systemImage: "person.crop.circle")
+            }
+
             Button(action: {
                 HapticFeedback.shared.trigger(.selection)
                 // 预留 80 毫秒微小延时让系统下拉菜单启动收起动画，规避与 Sheet 弹出转场重叠冲突，实现极速秒开
@@ -119,6 +129,13 @@ struct UserProfileMenu: View {
         .menuIndicator(.hidden) // 隐藏 Menu 下拉箭头指示器，消除系统自动添加的额外水平留白
         .buttonStyle(.plain) // 消除系统在 Toolbar 选项中默认添加的 bordered 灰色背景
         .accessibilityIdentifier("userProfileMenuButton")
+        .sheet(isPresented: $showProfile) {
+            NavigationStack {
+                UserProfileView()
+            }
+            .environment(authService)
+            .environmentObject(themeManager)
+        }
         .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
         .sheet(isPresented: $showStats) {
             NavigationStack {

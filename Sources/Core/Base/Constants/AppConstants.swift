@@ -15,10 +15,46 @@ public struct AppConstants {
     
     // MARK: - Network
     public struct Network {
+        // MARK: - Token 与超时
+        /// Keychain 中存储 JWT access token 的 key
         public static let jwtTokenKey = "jwt_token_key"
+        /// 单次请求超时时长（秒）
         public static let requestTimeout: TimeInterval = 30.0
-        public static let contentTypeJSON = "application/json"
+
+        // MARK: - Header 键名
+        /// Content-Type 请求头字段名
         public static let headerContentType = "Content-Type"
+        /// Authorization 请求头字段名
+        public static let headerAuthorization = "Authorization"
+
+        // MARK: - Content-Type 值
+        /// JSON 请求体 MIME 类型
+        public static let contentTypeJSON = "application/json"
+        /// multipart/form-data 前缀（boundary 拼接后缀）
+        public static let contentTypeMultipartPrefix = "multipart/form-data; boundary="
+        /// 图片 PNG MIME 类型
+        public static let mimeTypePNG = "image/png"
+        /// 图片 JPEG MIME 类型
+        public static let mimeTypeJPEG = "image/jpeg"
+
+        // MARK: - HTTP 方法
+        public static let methodGET = "GET"
+        public static let methodPOST = "POST"
+        public static let methodPUT = "PUT"
+        public static let methodDELETE = "DELETE"
+        public static let methodPATCH = "PATCH"
+
+        // MARK: - Multipart 构造字符
+        /// multipart boundary 分隔符前缀
+        public static let multipartBoundaryPrefix = "Boundary-"
+        /// multipart body 字段名（文件表单 field name）
+        public static let multipartFieldName = "file"
+        /// HTTP 换行符
+        public static let crlf = "\r\n"
+
+        // MARK: - Bearer Token 格式
+        /// Authorization header 中 Bearer 前缀
+        public static let bearerPrefix = "Bearer "
     }
     
     // MARK: - 存储与基础配置

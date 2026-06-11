@@ -116,8 +116,7 @@ struct FeedbackView: View {
                 Button(action: submit) {
                     HStack {
                         Spacer()
-                        if isSubmitting { ProgressView() }
-                        else { Text(L10n.Settings.Feedback.submit).bold() }
+                        if isSubmitting { ProgressView() } else { Text(L10n.Settings.Feedback.submit).bold() }
                         Spacer()
                     }
                 }

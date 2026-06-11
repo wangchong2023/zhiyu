@@ -139,8 +139,7 @@ private final class MockPDFService: PDFServiceProtocol {
         return [
             Data(repeating: 0xFF, count: 1000),
             Data(repeating: 0xAA, count: 2000),
-            Data(repeating: 0xBB, count: 1500),
+            Data(repeating: 0xBB, count: 1500)
         ]
     }
 }
-
