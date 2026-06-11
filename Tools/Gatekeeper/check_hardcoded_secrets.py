@@ -80,6 +80,7 @@ SAFE_FILE_PATTERNS = [
     r'LLMModels\.swift',        # LLM 端点配置
     r'AppConfig',               # 应用配置文件
     r'WebScraperProcessor\.swift',  # UA 字符串
+    r'InitialNotebookGenerator\.swift', # 初始/测试演示数据文件，包含公开引用源 URL
 ]
 
 

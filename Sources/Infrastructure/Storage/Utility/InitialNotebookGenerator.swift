@@ -6,29 +6,64 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L1] 基础设施层
-//  核心职责：持久化引擎：GRDB/SQLite 仓库、同步、加密、数据库管理。
+//  核心职责：提供项目启动时的初始演示/测试笔记本（Initial Notebook）数据生成器。
+//           支持为页面填充溯源元数据（sourceURL、rawTextSnippet、sourceType 等），
+//           以保证详情页能够正确渲染引用源（Provenance）追溯视图。
 //
+
 import Foundation
 @preconcurrency import GRDB
 
 /// 演示数据生成器
 ///
-/// 职责：用于快速填充知识库，展示图谱、检索及 AI 分析能力。
-/// 该类仅用于 Demo 或开发测试阶段，不应包含任何核心业务逻辑。
+/// 职责：用于快速填充知识库，展示图谱、检索、AI 分析及引用溯源（Provenance）能力。
 struct InitialNotebookGenerator {
     
-    /// 执行演示数据生成
-    /// - Parameter store: 目标存储对象
-    /// - Returns: 生成的页面数量
-    /// 执行演示数据生成
+    /// 统一的演示数据种子结构，支持溯源元数据
+    struct PageSeed {
+        let title: String
+        let type: PageType
+        let content: String
+        let tags: [String]
+        let sourceURL: String?
+        let rawTextSnippet: String?
+        let sourceType: String?
+        
+        init(
+            title: String,
+            type: PageType,
+            content: String,
+            tags: [String],
+            sourceURL: String? = nil,
+            rawTextSnippet: String? = nil,
+            sourceType: String? = nil
+        ) {
+            self.title = title
+            self.type = type
+            self.content = content
+            self.tags = tags
+            self.sourceURL = sourceURL
+            self.rawTextSnippet = rawTextSnippet
+            self.sourceType = sourceType
+        }
+    }
+    
+    /// 执行默认 PKM（个人知识管理）演示数据生成
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("InitialNotebook_Starting")
 
-        struct PageSeed { let title: String; let type: PageType; let content: String; let tags: [String] }
         let pagesToCreate: [PageSeed] = [
-            PageSeed(title: L10n.InitialNotebook.PKM.title1, type: .concept, content: L10n.InitialNotebook.PKM.content1, tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology]),
+            PageSeed(
+                title: L10n.InitialNotebook.PKM.title1,
+                type: .concept,
+                content: L10n.InitialNotebook.PKM.content1,
+                tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
+                sourceURL: "https://karpathy.github.io/",
+                rawTextSnippet: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines.",
+                sourceType: "web"
+            ),
             PageSeed(title: L10n.InitialNotebook.PKM.title2, type: .concept, content: L10n.InitialNotebook.PKM.content2, tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency]),
             PageSeed(title: L10n.InitialNotebook.PKM.title3, type: .concept, content: L10n.InitialNotebook.PKM.content3, tags: [L10n.InitialNotebook.Tags.techPrinciple, L10n.InitialNotebook.Tags.association]),
             PageSeed(title: L10n.InitialNotebook.PKM.title4, type: .concept, content: L10n.InitialNotebook.PKM.content4, tags: [L10n.InitialNotebook.Tags.cognitivePsych]),
@@ -37,7 +72,15 @@ struct InitialNotebookGenerator {
             PageSeed(title: L10n.InitialNotebook.PKM.title7, type: .concept, content: L10n.InitialNotebook.PKM.content7, tags: [L10n.InitialNotebook.Tags.learningMethod]),
             PageSeed(title: L10n.InitialNotebook.PKM.title8, type: .concept, content: L10n.InitialNotebook.PKM.content8, tags: [L10n.InitialNotebook.Tags.fileMgmt]),
             PageSeed(title: L10n.InitialNotebook.PKM.title9, type: .concept, content: L10n.InitialNotebook.PKM.content9, tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.productivity]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title10, type: .source, content: L10n.InitialNotebook.PKM.content10, tags: [L10n.InitialNotebook.Tags.workflow]),
+            PageSeed(
+                title: L10n.InitialNotebook.PKM.title10,
+                type: .source,
+                content: L10n.InitialNotebook.PKM.content10,
+                tags: [L10n.InitialNotebook.Tags.workflow],
+                sourceURL: "file:///Users/constantine/Documents/work/pkm_workflow.md",
+                rawTextSnippet: "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop.",
+                sourceType: "markdown"
+            ),
             PageSeed(title: L10n.InitialNotebook.PKM.title11, type: .map, content: L10n.InitialNotebook.PKM.content11, tags: [L10n.InitialNotebook.Tags.architectureOrg]),
             PageSeed(title: L10n.InitialNotebook.PKM.title12, type: .concept, content: L10n.InitialNotebook.PKM.content12, tags: [L10n.InitialNotebook.Tags.readingMethod, L10n.InitialNotebook.Tags.summary]),
             PageSeed(title: L10n.InitialNotebook.PKM.title13, type: .concept, content: L10n.InitialNotebook.PKM.content13, tags: [L10n.InitialNotebook.Tags.creation, L10n.InitialNotebook.Tags.output]),
@@ -53,7 +96,15 @@ struct InitialNotebookGenerator {
             try LLMCallLog.deleteAll(db)
 
             for seed in pagesToCreate {
-                let page = KnowledgePage(title: seed.title, pageType: seed.type, content: seed.content, tags: seed.tags)
+                let page = KnowledgePage(
+                    title: seed.title,
+                    pageType: seed.type,
+                    content: seed.content,
+                    tags: seed.tags,
+                    sourceURL: seed.sourceURL,
+                    rawTextSnippet: seed.rawTextSnippet,
+                    sourceType: seed.sourceType
+                )
                 try page.save(db)
             }
             
@@ -61,7 +112,7 @@ struct InitialNotebookGenerator {
             let models = ["GPT-4o", "Claude-3.5-Sonnet", "DeepSeek-V3"]
             let calendar = Calendar.current
             
-            // 2. 注入 AI 调用日志 (LLM Call Logs) - 模拟最近 50 次请求
+            // 注入 AI 调用日志 (LLM Call Logs) - 模拟最近 50 次请求
             for _ in 0..<50 {
                 let model = models.randomElement() ?? "GPT-4o"
                 let prompt = Int.random(in: 200...1000)
@@ -93,17 +144,32 @@ struct InitialNotebookGenerator {
         return pagesToCreate.count
     }
     
-    /// 执行项目调研演示数据生成
+    /// 执行项目调研（Research）演示数据生成
     /// - Parameter store: 目标存储对象
     /// - Returns: 生成的页面数量
     static func generateResearchNotebook(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("ResearchInitialNotebook_Starting")
 
-        struct PageSeed { let title: String; let type: PageType; let content: String; let tags: [String] }
         let pagesToCreate: [PageSeed] = [
-            PageSeed(title: "竞品分析：瑞幸 vs 星巴克", type: .comparison, content: "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。", tags: ["竞品分析", "市场调研"]),
+            PageSeed(
+                title: "竞品分析：瑞幸 vs 星巴克",
+                type: .comparison,
+                content: "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。",
+                tags: ["竞品分析", "市场调研"],
+                sourceURL: "https://finance.yahoo.com/quote/LKNCY",
+                rawTextSnippet: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience.",
+                sourceType: "web"
+            ),
             PageSeed(title: "精品咖啡体验", type: .concept, content: "放弃全自动机器，采用半自动意式机与手冲吧台双轨制。定期举办杯测活动，增强社区黏性，这与我们的[[目标客群分析]]高度吻合。", tags: ["产品设计", "运营"]),
-            PageSeed(title: "目标客群分析", type: .source, content: "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。", tags: ["用户调研"]),
+            PageSeed(
+                title: "目标客群分析",
+                type: .source,
+                content: "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。",
+                tags: ["用户调研"],
+                sourceURL: "file:///Users/constantine/Downloads/survey_202606.pdf",
+                rawTextSnippet: "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff who are heavy internet and power outlet users.",
+                sourceType: "pdf"
+            ),
             PageSeed(title: "高品质网络与供电", type: .concept, content: "部署商用级 Wi-Fi 6 路由器，确保全店无死角覆盖。卡座区必须做到“一桌一插座”，这是留住数字游民的核心基建。这部分改造费用已列入[[财务预算模型]]。", tags: ["基础设施", "装修"]),
             PageSeed(title: "财务预算模型", type: .map, content: "- 店面租金与转让费：25万\n- 空间硬装与软装：18万\n- 核心设备（辣妈咖啡机、迈赫迪磨豆机等）：12万\n- 初期流动资金：15万\n首期总预算约 70 万，资金缺口 30 万，需尽快启动[[合伙人招募计划]]。", tags: ["财务", "规划"]),
             PageSeed(title: "合伙人招募计划", type: .entity, content: "理想的合伙人画像：具备成熟的精品咖啡馆店长经验，能独立把控豆子烘焙质量与供应链，与我互补。共同打造极致的[[精品咖啡体验]]。", tags: ["团队", "招聘"]),
@@ -119,7 +185,15 @@ struct InitialNotebookGenerator {
             try LLMCallLog.deleteAll(db)
 
             for seed in pagesToCreate {
-                let page = KnowledgePage(title: seed.title, pageType: seed.type, content: seed.content, tags: seed.tags)
+                let page = KnowledgePage(
+                    title: seed.title,
+                    pageType: seed.type,
+                    content: seed.content,
+                    tags: seed.tags,
+                    sourceURL: seed.sourceURL,
+                    rawTextSnippet: seed.rawTextSnippet,
+                    sourceType: seed.sourceType
+                )
                 try page.save(db)
             }
             
@@ -157,6 +231,7 @@ struct InitialNotebookGenerator {
         Logger.shared.info("ResearchInitialNotebook_Finished")
         return pagesToCreate.count
     }
+    
     /// 执行图谱压力测试数据生成
     /// - Parameters:
     ///   - store: 目标存储对象
