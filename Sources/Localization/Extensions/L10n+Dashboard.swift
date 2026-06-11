@@ -221,6 +221,14 @@ extension L10n {
             public static var tipLatency: String { Localized.tr("dashboard.stats.tipLatency", table: t) }
             /// Token 效率说明
             public static var tipTokenEfficiency: String { Localized.tr("dashboard.stats.tipTokenEfficiency", table: t) }
+            public static var tipContextSufficiency: String { Localized.tr("dashboard.stats.tipContextSufficiency", table: t) }
+            public static var tipUserSatisfaction: String { Localized.tr("dashboard.stats.tipUserSatisfaction", table: t) }
+
+            public static var contextSufficiency: String { Localized.tr("dashboard.stats.contextSufficiency", table: t) }
+            public static var contextSufficiencyDesc: String { Localized.tr("dashboard.stats.contextSufficiencyDesc", table: t) }
+            public static var userSatisfaction: String { Localized.tr("dashboard.stats.userSatisfaction", table: t) }
+            public static var noRatings: String { Localized.tr("dashboard.stats.noRatings", table: t) }
+            public static var ratingTotal: String { Localized.tr("dashboard.stats.ratingTotal", table: t) }
 
             public static var evaluation: String { Localized.tr("dashboard.stats.evaluation", table: t) }
             public static var overview: String { Localized.tr("dashboard.stats.overview", table: t) }

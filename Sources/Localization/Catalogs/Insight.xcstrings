@@ -4905,6 +4905,55 @@
         "zh-Hans": { "stringUnit": { "state": "translated", "value": "总 Token 消耗、查询次数、每次查询的 Token 均值，以及基于 GPT-4o 定价的估算美元成本。" } }
       }
     },
+    "dashboard.stats.tipContextSufficiency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Whether the retrieved context documents contain enough information to fully answer the query. Low scores suggest retrieval gaps." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "检索到的上下文文档是否包含足够信息来完整回答问题。低分表示可能存在检索遗漏。" } }
+      }
+    },
+    "dashboard.stats.tipUserSatisfaction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Aggregated thumbs-up/down ratings from real users on AI-generated answers. Provides human calibration for automated evaluation scores." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "真实用户对 AI 生成回答的好评/差评汇总。为自动化评估分数提供人工校准参考。" } }
+      }
+    },
+    "dashboard.stats.contextSufficiency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Context Suf." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "上下文充分性" } }
+      }
+    },
+    "dashboard.stats.contextSufficiencyDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Retrieval Adequacy" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "检索充足度" } }
+      }
+    },
+    "dashboard.stats.userSatisfaction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "User Satisfaction" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "用户满意度" } }
+      }
+    },
+    "dashboard.stats.noRatings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "No ratings yet. Ask users to rate answers in Chat." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "暂无用户评价。可在 AI 对话中对回答进行好评/差评。" } }
+      }
+    },
+    "dashboard.stats.ratingTotal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "ratings" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "次评价" } }
+      }
+    },
     "common.requests": {
       "extractionState": "manual",
       "localizations": {

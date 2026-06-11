@@ -68,6 +68,10 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
     public var citationAccuracy: Double
     /// 答案正确性 (0-1)，基于黄金标准答案或 LLM 判定的事实性评估。越高越好。
     public var answerCorrectness: Double
+    /// 上下文充分性 (0-1)，检索到的上下文文档是否足以支撑回答。越高越好。
+    public var contextSufficiency: Double
+    /// 用户满意度评分（nil=未评价，1=差评，2=好评）
+    public var userRating: Int?
     public var evaluatorModel: String
     public var createdAt: Date
 
@@ -81,6 +85,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         case hallucinationRate = "hallucination_rate"
         case citationAccuracy = "citation_accuracy"
         case answerCorrectness = "answer_correctness"
+        case contextSufficiency = "context_sufficiency"
+        case userRating = "user_rating"
         case evaluatorModel = "evaluator_model"
         case createdAt = "created_at"
     }
@@ -95,6 +101,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         static let hallucinationRate = Column(CodingKeys.hallucinationRate)
         static let citationAccuracy = Column(CodingKeys.citationAccuracy)
         static let answerCorrectness = Column(CodingKeys.answerCorrectness)
+        static let contextSufficiency = Column(CodingKeys.contextSufficiency)
+        static let userRating = Column(CodingKeys.userRating)
         static let evaluatorModel = Column(CodingKeys.evaluatorModel)
         static let createdAt = Column(CodingKeys.createdAt)
     }
@@ -109,6 +117,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         hallucinationRate: Double = 0.0,
         citationAccuracy: Double = 0.0,
         answerCorrectness: Double = 0.0,
+        contextSufficiency: Double = 0.0,
+        userRating: Int? = nil,
         evaluatorModel: String,
         createdAt: Date = Date()
     ) {
@@ -121,6 +131,8 @@ public struct RAGEvaluation: Identifiable, Codable, FetchableRecord, MutablePers
         self.hallucinationRate = hallucinationRate
         self.citationAccuracy = citationAccuracy
         self.answerCorrectness = answerCorrectness
+        self.contextSufficiency = contextSufficiency
+        self.userRating = userRating
         self.evaluatorModel = evaluatorModel
         self.createdAt = createdAt
     }

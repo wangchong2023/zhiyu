@@ -87,6 +87,11 @@ public protocol RAGGovernanceRepository: Sendable {
 
     /// 计算指定天数内的 Token 效率与成本摘要
     func calculateTokenEfficiency(days: Int) async throws -> TokenEfficiency
+
+    // MARK: - 用户反馈
+
+    /// 更新评估记录的用户满意度评分（1=差评，2=好评）
+    func updateUserRating(evaluationID: Int64, rating: Int) async throws
 }
 
 /// Token 统计数据
@@ -115,7 +120,7 @@ public struct DailyAIStat: Sendable, Equatable {
     }
 }
 
-/// 平均 RAG 评分（含幻觉率、引用准确度与答案正确性）
+/// 平均 RAG 评分（七维：含幻觉率、引用准确度、答案正确性、上下文充分性）
 public struct AverageRAGScores: Sendable, Equatable {
     public let faithfulness: Double
     public let relevance: Double
@@ -123,14 +128,16 @@ public struct AverageRAGScores: Sendable, Equatable {
     public let hallucinationRate: Double
     public let citationAccuracy: Double
     public let answerCorrectness: Double
+    public let contextSufficiency: Double
 
-    public init(faithfulness: Double, relevance: Double, precision: Double, hallucinationRate: Double, citationAccuracy: Double, answerCorrectness: Double = 0.0) {
+    public init(faithfulness: Double, relevance: Double, precision: Double, hallucinationRate: Double, citationAccuracy: Double, answerCorrectness: Double = 0.0, contextSufficiency: Double = 0.0) {
         self.faithfulness = faithfulness
         self.relevance = relevance
         self.precision = precision
         self.hallucinationRate = hallucinationRate
         self.citationAccuracy = citationAccuracy
         self.answerCorrectness = answerCorrectness
+        self.contextSufficiency = contextSufficiency
     }
 }
 

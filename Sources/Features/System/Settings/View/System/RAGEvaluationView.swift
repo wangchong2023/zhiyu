@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层
-//  核心职责：RAG 质量评估详情页 — 按管线阶段排列（检索 → 生成 → 成本） + 段级/指标级信息说明
+//  核心职责：RAG 质量评估详情页 — 检索 → 生成 → 满意度 → 成本 → 记录
 
 import SwiftUI
 
@@ -15,13 +15,9 @@ import SwiftUI
 private enum ScoreThreshold {
     static let excellent: Double = 0.8
     static let fair: Double = 0.6
-    /// 反向指标（幻觉率等）优秀上限
     static let invertedExcellent: Double = 0.2
-    /// 反向指标一般上限
     static let invertedFair: Double = 0.4
 }
-
-// MARK: - 延迟与成本阈值
 
 private enum LatencyThreshold {
     static let low: Int = 500
@@ -32,16 +28,30 @@ private enum CostThreshold {
     static let low: Double = 0.50
 }
 
-// MARK: - 评估记录显示参数
+// MARK: - 显示参数
 
 private enum EvalDisplay {
     static let queryPreviewChars: Int = 50
     static let fetchLimit: Int = 50
     static let displayLimit: Int = 20
     static let hallucinationPenaltyWeight: Double = 0.3
+    /// 综合评分中正向指标的数量（faithfulness + relevance + precision + citation + correctness + contextSufficiency）
+    static let positiveMetricCount: Double = 6.0
 }
 
-// MARK: - 环形图视觉参数
+// MARK: - 用户评分常量
+
+private enum UserRating {
+    static let thumbsDown = 1
+    static let thumbsUp = 2
+}
+
+// MARK: - SF Symbol 图标名
+
+private enum RatingIcon {
+    static let thumbsUp = "hand.thumbsup.fill"
+    static let thumbsDown = "hand.thumbsdown.fill"
+}
 
 private enum RingStyle {
     static let size: CGFloat = 64
@@ -50,15 +60,11 @@ private enum RingStyle {
     static let rotationDegrees: Double = -90
 }
 
-// MARK: - 通用卡片视觉参数
-
 private enum CardVisual {
     static let metricBgOpacity: Double = 0.06
     static let tokenBgOpacity: Double = 0.04
     static let percentAuxOpacity: Double = 0.70
 }
-
-// MARK: - 标签（tagLabel）视觉参数
 
 private enum TagVisual {
     static let horizontalPadding: CGFloat = 4
@@ -67,7 +73,7 @@ private enum TagVisual {
     static let fontSize: CGFloat = 10
 }
 
-// MARK: - 评估维度标签缩写
+// MARK: - 标签缩写
 
 private enum MetricTag {
     static let faithfulness = "F"
@@ -75,10 +81,9 @@ private enum MetricTag {
     static let hallucination = "H"
     static let precision = "P"
     static let citation = "C"
-    static let answerCorrectness = "A"
+    static let correctness = "A"
+    static let contextSufficiency = "S"
 }
-
-// MARK: - 统一字号
 
 private enum FontSize {
     static let metricValue: CGFloat = 22
@@ -89,8 +94,6 @@ private enum FontSize {
     static let ringPercentSign: CGFloat = 8
 }
 
-// MARK: - 数值格式化模板
-
 private enum FormatPattern {
     static let percentInt = "%.0f"
     static let score2 = "%.2f"
@@ -98,8 +101,6 @@ private enum FormatPattern {
     static let costUSD = "$%.4f"
     static let tokenAvg = "%.0f"
 }
-
-// MARK: - 布局标题工具函数
 
 private enum MetricTitle {
     static func hitRate(_ k: Int) -> String { "Hit@\(k)" }
@@ -113,24 +114,28 @@ private enum MetricTitle {
 struct RAGEvaluationView: View {
     @Inject private var governance: any RAGGovernanceRepository
 
-    // MARK: 生成质量指标
+    // 生成质量（七维）
     @State private var avgScores = AverageRAGScores(
-        faithfulness: 0, relevance: 0, precision: 0,
-        hallucinationRate: 0, citationAccuracy: 0, answerCorrectness: 0
+        faithfulness: 0, relevance: 0, precision: 0, hallucinationRate: 0,
+        citationAccuracy: 0, answerCorrectness: 0, contextSufficiency: 0
     )
-    // MARK: 检索质量 — 排名类
+    // 检索 — 排名
     @State private var hitRate: Double = 0
     @State private var mrr: Double = 0
     @State private var ndcg: Double = 0
-    // MARK: 检索质量 — 覆盖类
+    // 检索 — 覆盖
     @State private var recall: Double = 0
     @State private var f1Score: Double = 0
     @State private var mapScore: Double = 0
-    // MARK: 性能
+    // 性能
     @State private var latency = LatencyPercentiles(p50: 0, p95: 0, p99: 0, sampleCount: 0)
-    // MARK: 成本
+    // 成本
     @State private var tokenEfficiency = TokenEfficiency(totalTokens: 0, queryCount: 0, avgTokensPerQuery: 0, estimatedCostUSD: 0)
-    // MARK: 历史与 UI
+    // 满意度
+    @State private var satisfactionRate: Double = 0
+    @State private var satisfactionThumbsUp: Int = 0
+    @State private var satisfactionThumbsDown: Int = 0
+    // 历史
     @State private var recentEvaluations: [RAGEvaluation] = []
     @State private var selectedDays = 30
     @State private var isLoading = true
@@ -148,6 +153,7 @@ struct RAGEvaluationView: View {
                         timeRangePicker
                         retrievalSection
                         generationSection
+                        satisfactionSection
                         costSection
                         evaluationHistorySection
                     }
@@ -161,7 +167,7 @@ struct RAGEvaluationView: View {
         .onChange(of: selectedDays) { _, _ in Task { await loadData() } }
     }
 
-    // MARK: - 时间范围选择
+    // MARK: - 时间范围
 
     private var timeRangePicker: some View {
         HStack(spacing: DesignSystem.tightPadding) {
@@ -184,50 +190,39 @@ struct RAGEvaluationView: View {
 
     private var retrievalSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            infoSectionHeader(
-                id: "retrievalPhase",
-                title: L10n.Dashboard.stats.retrievalQuality,
-                icon: "magnifyingglass.circle.fill",
-                color: .teal,
-                tip: L10n.Dashboard.stats.tipRetrievalPhase
-            )
+            infoSectionHeader(id: "retrievalPhase", title: L10n.Dashboard.stats.retrievalQuality,
+                              icon: "magnifyingglass.circle.fill", color: .teal, tip: L10n.Dashboard.stats.tipRetrievalPhase)
 
-            // 排名精度
-            subSectionLabel(" Ranking Quality", icon: "list.number")
+            subSectionLabel("Ranking Quality", icon: "list.number")
             HStack(spacing: DesignSystem.medium) {
-                retrievalMetricCard(
-                    id: "hitRate", title: MetricTitle.hitRate(AppConfig.AI.evaluationHitK),
-                    score: hitRate, detail: L10n.Dashboard.stats.hitRateDesc, tip: L10n.Dashboard.stats.tipHitRate
-                )
-                retrievalMetricCard(
-                    id: "mrr", title: L10n.Dashboard.stats.mrrTitle,
-                    score: mrr, detail: L10n.Dashboard.stats.mrrDesc, tip: L10n.Dashboard.stats.tipMRR
-                )
-                retrievalMetricCard(
-                    id: "ndcg", title: MetricTitle.ndcg(AppConfig.AI.evaluationNDCGK),
-                    score: ndcg, detail: L10n.Dashboard.stats.ndcgDesc, tip: L10n.Dashboard.stats.tipNDCG
-                )
+                retrievalMetricCard(id: "hitRate", title: MetricTitle.hitRate(AppConfig.AI.evaluationHitK),
+                                    score: hitRate, detail: L10n.Dashboard.stats.hitRateDesc, tip: L10n.Dashboard.stats.tipHitRate)
+                retrievalMetricCard(id: "mrr", title: L10n.Dashboard.stats.mrrTitle,
+                                    score: mrr, detail: L10n.Dashboard.stats.mrrDesc, tip: L10n.Dashboard.stats.tipMRR)
+                retrievalMetricCard(id: "ndcg", title: MetricTitle.ndcg(AppConfig.AI.evaluationNDCGK),
+                                    score: ndcg, detail: L10n.Dashboard.stats.ndcgDesc, tip: L10n.Dashboard.stats.tipNDCG)
             }
 
-            // 覆盖完整度
-            subSectionLabel(" Coverage", icon: "chart.pie.fill")
+            subSectionLabel("Coverage", icon: "chart.pie.fill")
             HStack(spacing: DesignSystem.medium) {
-                retrievalMetricCard(
-                    id: "recall", title: L10n.Dashboard.stats.recallAtK,
-                    score: recall, detail: L10n.Dashboard.stats.recallDesc, tip: L10n.Dashboard.stats.tipRecall
-                )
-                retrievalMetricCard(
-                    id: "f1", title: L10n.Dashboard.stats.f1AtK,
-                    score: f1Score, detail: L10n.Dashboard.stats.f1Desc, tip: L10n.Dashboard.stats.tipF1
-                )
-                retrievalMetricCard(
-                    id: "map", title: L10n.Dashboard.stats.mapTitle,
-                    score: mapScore, detail: L10n.Dashboard.stats.mapDesc, tip: L10n.Dashboard.stats.tipMAP
-                )
+                retrievalMetricCard(id: "recall", title: L10n.Dashboard.stats.recallAtK,
+                                    score: recall, detail: L10n.Dashboard.stats.recallDesc, tip: L10n.Dashboard.stats.tipRecall)
+                retrievalMetricCard(id: "f1", title: L10n.Dashboard.stats.f1AtK,
+                                    score: f1Score, detail: L10n.Dashboard.stats.f1Desc, tip: L10n.Dashboard.stats.tipF1)
+                retrievalMetricCard(id: "map", title: L10n.Dashboard.stats.mapTitle,
+                                    score: mapScore, detail: L10n.Dashboard.stats.mapDesc, tip: L10n.Dashboard.stats.tipMAP)
             }
 
-            // 响应延迟
-            subSectionLabel(" Response Latency", icon: "stopwatch")
+            subSectionLabel("Context Fidelity", icon: "scope")
+            HStack(spacing: DesignSystem.medium) {
+                scoreCardMedium(id: "precision", title: L10n.Dashboard.stats.precision,
+                                score: avgScores.precision, tip: L10n.Dashboard.stats.tipPrecision)
+                scoreCardMedium(id: "citation", title: L10n.Dashboard.stats.citationAccuracy,
+                                score: avgScores.citationAccuracy, tip: L10n.Dashboard.stats.tipCitation)
+                Color.clear.frame(maxWidth: .infinity)
+            }
+
+            subSectionLabel("Response Latency", icon: "stopwatch")
             latencyGrid
         }
         .appCardStyle()
@@ -253,69 +248,95 @@ struct RAGEvaluationView: View {
 
     private var generationSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            infoSectionHeader(
-                id: "generationPhase",
-                title: L10n.Dashboard.stats.generationQuality,
-                icon: "text.bubble.fill",
-                color: .appAccent,
-                tip: L10n.Dashboard.stats.tipGenerationPhase
-            )
-
+            infoSectionHeader(id: "generationPhase", title: L10n.Dashboard.stats.generationQuality,
+                              icon: "text.bubble.fill", color: .appAccent, tip: L10n.Dashboard.stats.tipGenerationPhase)
             VStack(spacing: DesignSystem.small) {
                 HStack(spacing: DesignSystem.medium) {
                     scoreCard(id: "faithfulness", title: L10n.Dashboard.stats.faithfulness,
-                              score: avgScores.faithfulness, icon: "checkmark.shield",
-                              tip: L10n.Dashboard.stats.tipFaithfulness)
+                              score: avgScores.faithfulness, icon: "checkmark.shield", tip: L10n.Dashboard.stats.tipFaithfulness)
                     scoreCard(id: "relevance", title: L10n.Dashboard.stats.relevance,
-                              score: avgScores.relevance, icon: "target",
-                              tip: L10n.Dashboard.stats.tipRelevance)
+                              score: avgScores.relevance, icon: "target", tip: L10n.Dashboard.stats.tipRelevance)
                     scoreCard(id: "hallucination", title: L10n.Dashboard.stats.hallucinationRate,
                               score: avgScores.hallucinationRate, icon: "exclamationmark.bubble",
                               inverted: true, tip: L10n.Dashboard.stats.tipHallucination)
                 }
                 HStack(spacing: DesignSystem.medium) {
-                    scoreCard(id: "precision", title: L10n.Dashboard.stats.precision,
-                              score: avgScores.precision, icon: "scope",
-                              tip: L10n.Dashboard.stats.tipPrecision)
-                    scoreCard(id: "citation", title: L10n.Dashboard.stats.citationAccuracy,
-                              score: avgScores.citationAccuracy, icon: "quote.bubble",
-                              tip: L10n.Dashboard.stats.tipCitation)
                     scoreCard(id: "correctness", title: L10n.Dashboard.stats.answerCorrectness,
-                              score: avgScores.answerCorrectness, icon: "checkmark.seal",
-                              tip: L10n.Dashboard.stats.tipCorrectness)
+                              score: avgScores.answerCorrectness, icon: "checkmark.seal", tip: L10n.Dashboard.stats.tipCorrectness)
+                    scoreCard(id: "contextSufficiency", title: L10n.Dashboard.stats.contextSufficiency,
+                              score: avgScores.contextSufficiency, icon: "books.vertical.fill", tip: L10n.Dashboard.stats.tipContextSufficiency)
+                    Color.clear.frame(maxWidth: .infinity)
                 }
             }
         }
         .appCardStyle()
     }
 
+    // MARK: - 👍 用户满意度
+
+    private var satisfactionSection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+            infoSectionHeader(id: "satisfactionPhase", title: L10n.Dashboard.stats.userSatisfaction,
+                              icon: "hand.thumbsup.fill", color: .blue, tip: L10n.Dashboard.stats.tipUserSatisfaction)
+
+            let total = satisfactionThumbsUp + satisfactionThumbsDown
+            if total > 0 {
+                HStack(spacing: DesignSystem.medium) {
+                    // 进度条
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: DesignSystem.atomic)
+                                .fill(Color.appCard).frame(height: 12)
+                            RoundedRectangle(cornerRadius: DesignSystem.atomic)
+                                .fill(satisfactionColor)
+                                .frame(width: geo.size.width * satisfactionRate, height: 12)
+                        }
+                    }
+                    .frame(height: 12)
+
+                    Text(String(format: FormatPattern.percentInt, satisfactionRate * 100) + "%")
+                        .font(.title3.bold()).foregroundStyle(satisfactionColor)
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("\(satisfactionThumbsUp) 👍  \(satisfactionThumbsDown) 👎")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Text("\(total) \(L10n.Dashboard.stats.ratingTotal)")
+                            .font(.caption2).foregroundStyle(.tertiary)
+                    }
+                }
+            } else {
+                Text(L10n.Dashboard.stats.noRatings)
+                    .font(.subheadline).foregroundStyle(.secondary)
+                    .padding(.vertical, DesignSystem.small).frame(maxWidth: .infinity)
+            }
+        }
+        .appCardStyle()
+    }
+
+    private var satisfactionColor: Color {
+        if satisfactionRate >= ScoreThreshold.excellent { return .green }
+        if satisfactionRate >= ScoreThreshold.fair { return .orange }
+        return .red
+    }
+
     // MARK: - 💰 资源消耗
 
     private var costSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
-            infoSectionHeader(
-                id: "costPhase",
-                title: L10n.Dashboard.stats.tokenEfficiency,
-                icon: "dollarsign.circle",
-                color: .green,
-                tip: L10n.Dashboard.stats.tipCostPhase
-            )
-
+            infoSectionHeader(id: "costPhase", title: L10n.Dashboard.stats.tokenEfficiency,
+                              icon: "dollarsign.circle", color: .green, tip: L10n.Dashboard.stats.tipCostPhase)
             HStack(spacing: DesignSystem.medium) {
                 tokenMetricCard(id: "totalTokens", title: L10n.Dashboard.stats.totalTokens,
                                 value: tokenEfficiency.totalTokens.formatted(.number.notation(.compactName)),
                                 tip: L10n.Dashboard.stats.tipTokenEfficiency)
                 tokenMetricCard(id: "queryCount", title: L10n.Dashboard.stats.queryCount,
-                                value: String(tokenEfficiency.queryCount),
-                                tip: L10n.Dashboard.stats.tipTokenEfficiency)
+                                value: String(tokenEfficiency.queryCount), tip: L10n.Dashboard.stats.tipTokenEfficiency)
                 tokenMetricCard(id: "avgTokens", title: L10n.Dashboard.stats.avgTokensPerQuery,
                                 value: String(format: FormatPattern.tokenAvg, tokenEfficiency.avgTokensPerQuery),
                                 tip: L10n.Dashboard.stats.tipTokenEfficiency)
             }
-
             HStack {
-                Text(L10n.Dashboard.stats.estimatedCost)
-                    .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                Text(L10n.Dashboard.stats.estimatedCost).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                 Spacer()
                 Text(String(format: FormatPattern.costUSD, tokenEfficiency.estimatedCostUSD))
                     .font(.system(size: FontSize.tokenValue, weight: .bold, design: .monospaced))
@@ -351,7 +372,6 @@ struct RAGEvaluationView: View {
         Label(title, systemImage: icon).font(.headline).foregroundStyle(color)
     }
 
-    /// 带信息图标的段标题
     private func infoSectionHeader(id: String, title: String, icon: String, color: Color, tip: String) -> some View {
         HStack(spacing: DesignSystem.small) {
             Label(title, systemImage: icon).font(.headline).foregroundStyle(color)
@@ -359,15 +379,12 @@ struct RAGEvaluationView: View {
         }
     }
 
-    /// 子区域标签（位于 section 内分组之间）
     private func subSectionLabel(_ text: LocalizedStringKey, icon: String) -> some View {
-        Label(text, systemImage: icon)
-            .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+        Label(text, systemImage: icon).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
     }
 
-    // MARK: - Tooltip 组件
+    // MARK: - Tooltip
 
-    /// 信息图标 + 点击/悬停展示的 tooltip overlay
     private func infoIcon(id: String, tip: String) -> some View {
         let isActive = activeTooltip == id
         return Image(systemName: "info.circle")
@@ -376,14 +393,11 @@ struct RAGEvaluationView: View {
             .onTapGesture { activeTooltip = isActive ? nil : id }
             .overlay(alignment: .top) {
                 if isActive {
-                    Text(tip)
-                        .font(.caption2).foregroundStyle(.appSecondary)
-                        .padding(.horizontal, DesignSystem.medium)
-                        .padding(.vertical, DesignSystem.small)
+                    Text(tip).font(.caption2).foregroundStyle(.appSecondary)
+                        .padding(.horizontal, DesignSystem.medium).padding(.vertical, DesignSystem.small)
                         .background(.regularMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .frame(maxWidth: 260)
-                        .offset(y: -DesignSystem.largeIconSize)
+                        .frame(maxWidth: 260).offset(y: -DesignSystem.largeIconSize)
                         .onTapGesture { activeTooltip = nil }
                 }
             }
@@ -391,12 +405,12 @@ struct RAGEvaluationView: View {
 
     // MARK: - 环形百分比卡片
 
-    private func scoreCard(id: String, title: String, score: Double, icon: String, inverted: Bool = false, tip: String) -> some View {
+    private func scoreCard(id: String, title: String, score: Double, icon: String,
+                           inverted: Bool = false, tip: String) -> some View {
         let color = inverted ? invertedScoreColor(score) : scoreColor(score)
         return VStack(spacing: DesignSystem.tightPadding) {
             ZStack {
-                Circle()
-                    .stroke(color.opacity(RingStyle.backgroundOpacity), lineWidth: RingStyle.lineWidth)
+                Circle().stroke(color.opacity(RingStyle.backgroundOpacity), lineWidth: RingStyle.lineWidth)
                     .frame(width: RingStyle.size, height: RingStyle.size)
                 Circle()
                     .trim(from: 0, to: score)
@@ -407,8 +421,7 @@ struct RAGEvaluationView: View {
                 VStack(spacing: 0) {
                     Text(String(format: FormatPattern.percentInt, score * 100))
                         .font(.system(size: FontSize.ringPercent, weight: .bold, design: .rounded)).foregroundStyle(color)
-                    Text("%")
-                        .font(.system(size: FontSize.ringPercentSign, weight: .medium))
+                    Text("%").font(.system(size: FontSize.ringPercentSign, weight: .medium))
                         .foregroundStyle(color.opacity(CardVisual.percentAuxOpacity))
                 }
             }
@@ -421,7 +434,23 @@ struct RAGEvaluationView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - 检索指标迷你卡片
+    /// 无环形图的中型评分卡片（用于检索保真区）
+    private func scoreCardMedium(id: String, title: String, score: Double, tip: String) -> some View {
+        let color = scoreColor(score)
+        return VStack(spacing: DesignSystem.tightPadding) {
+            HStack(spacing: 2) {
+                Text(title).font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                infoIcon(id: id, tip: tip)
+            }
+            Text(String(format: FormatPattern.score2, score))
+                .font(.system(size: FontSize.metricValue, weight: .bold, design: .rounded)).foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity).padding(.vertical, DesignSystem.small)
+        .background(color.opacity(CardVisual.metricBgOpacity))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+    }
+
+    // MARK: - 检索指标卡片
 
     private func retrievalMetricCard(id: String, title: String, score: Double, detail: String, tip: String) -> some View {
         let color = scoreColor(score)
@@ -439,8 +468,6 @@ struct RAGEvaluationView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 
-    // MARK: - 延迟卡片
-
     private func latencyCard(id: String, label: String, value: Int) -> some View {
         let color = latencyColor(value)
         return VStack(spacing: DesignSystem.tightPadding) {
@@ -449,18 +476,13 @@ struct RAGEvaluationView: View {
                 infoIcon(id: id, tip: L10n.Dashboard.stats.tipLatency)
             }
             HStack(alignment: .bottom, spacing: 2) {
-                Text("\(value)")
-                    .font(.system(size: FontSize.metricValue, weight: .bold, design: .rounded)).foregroundStyle(color)
-                Text(L10n.Dashboard.stats.latencyUnitMS)
-                    .font(.system(size: FontSize.tag, weight: .medium)).foregroundStyle(.tertiary)
+                Text("\(value)").font(.system(size: FontSize.metricValue, weight: .bold, design: .rounded)).foregroundStyle(color)
+                Text(L10n.Dashboard.stats.latencyUnitMS).font(.system(size: FontSize.tag, weight: .medium)).foregroundStyle(.tertiary)
             }
         }
         .frame(maxWidth: .infinity).padding(.vertical, DesignSystem.small)
-        .background(color.opacity(CardVisual.metricBgOpacity))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .background(color.opacity(CardVisual.metricBgOpacity)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
-
-    // MARK: - Token 卡片
 
     private func tokenMetricCard(id: String, title: String, value: String, tip: String) -> some View {
         VStack(spacing: DesignSystem.tightPadding) {
@@ -471,11 +493,10 @@ struct RAGEvaluationView: View {
             }
         }
         .frame(maxWidth: .infinity).padding(.vertical, DesignSystem.small)
-        .background(Color.green.opacity(CardVisual.tokenBgOpacity))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .background(Color.green.opacity(CardVisual.tokenBgOpacity)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 
-    // MARK: - 评估记录行
+    // MARK: - 评估记录行（含 👍👎）
 
     private func evaluationRow(_ eval: RAGEvaluation) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
@@ -485,6 +506,9 @@ struct RAGEvaluationView: View {
                     .font(.subheadline.bold()).lineLimit(1)
                 Spacer()
                 scoreBadge(overallScore(eval))
+                // 👍👎 按钮
+                ratingButton(eval: eval, rating: UserRating.thumbsUp, icon: RatingIcon.thumbsUp, isActive: eval.userRating == UserRating.thumbsUp)
+                ratingButton(eval: eval, rating: UserRating.thumbsDown, icon: RatingIcon.thumbsDown, isActive: eval.userRating == UserRating.thumbsDown)
             }
             HStack(spacing: DesignSystem.small) {
                 tagLabel(MetricTag.faithfulness, value: eval.faithfulness)
@@ -492,13 +516,27 @@ struct RAGEvaluationView: View {
                 tagLabel(MetricTag.hallucination, value: eval.hallucinationRate, inverted: true)
             }
             HStack(spacing: DesignSystem.small) {
-                tagLabel(MetricTag.precision, value: eval.precision)
+                tagLabel(MetricTag.correctness, value: eval.answerCorrectness)
                 tagLabel(MetricTag.citation, value: eval.citationAccuracy)
-                tagLabel(MetricTag.answerCorrectness, value: eval.answerCorrectness)
+                tagLabel(MetricTag.contextSufficiency, value: eval.contextSufficiency)
             }
             Text(eval.evaluatorModel).font(.caption2).foregroundStyle(.tertiary)
         }
         .padding(.vertical, DesignSystem.tiny)
+    }
+
+    private func ratingButton(eval: RAGEvaluation, rating: Int, icon: String, isActive: Bool) -> some View {
+        Button {
+            guard let evalID = eval.id else { return }
+            Task {
+                try? await governance.updateUserRating(evaluationID: evalID, rating: rating)
+                await loadData()
+            }
+        } label: {
+            Image(systemName: icon)
+                .font(.caption).foregroundStyle(isActive ? .blue : .appSecondary.opacity(0.4))
+        }
+        .buttonStyle(.plain)
     }
 
     private func scoreBadge(_ score: Double) -> some View {
@@ -516,11 +554,12 @@ struct RAGEvaluationView: View {
             .background(color.opacity(0.08)).clipShape(RoundedRectangle(cornerRadius: TagVisual.cornerRadius))
     }
 
-    // MARK: - 评分
+    // MARK: - 评分与颜色
 
     private func overallScore(_ eval: RAGEvaluation) -> Double {
         let positiveMean = (eval.faithfulness + eval.relevance + eval.precision
-                            + eval.citationAccuracy + eval.answerCorrectness) / 5.0
+                            + eval.citationAccuracy + eval.answerCorrectness
+                            + eval.contextSufficiency) / EvalDisplay.positiveMetricCount
         let penalty = eval.hallucinationRate * EvalDisplay.hallucinationPenaltyWeight
         return max(0, positiveMean - penalty)
     }
@@ -564,7 +603,8 @@ struct RAGEvaluationView: View {
             async let tokEff = governance.calculateTokenEfficiency(days: selectedDays)
 
             avgScores = try await scores
-            recentEvaluations = try await evals
+            let evaluationList = try await evals
+            recentEvaluations = evaluationList
             hitRate = (try? await hr) ?? 0
             mrr = (try? await meanRR) ?? 0
             ndcg = (try? await n) ?? 0
@@ -573,6 +613,13 @@ struct RAGEvaluationView: View {
             mapScore = (try? await map) ?? 0
             latency = (try? await lat) ?? LatencyPercentiles(p50: 0, p95: 0, p99: 0, sampleCount: 0)
             tokenEfficiency = (try? await tokEff) ?? TokenEfficiency(totalTokens: 0, queryCount: 0, avgTokensPerQuery: 0, estimatedCostUSD: 0)
+
+            // 满意度统计
+            let rated = evaluationList.filter { $0.userRating != nil }
+            satisfactionThumbsUp = rated.filter { $0.userRating == UserRating.thumbsUp }.count
+            satisfactionThumbsDown = rated.filter { $0.userRating == UserRating.thumbsDown }.count
+            let total = satisfactionThumbsUp + satisfactionThumbsDown
+            satisfactionRate = total > 0 ? Double(satisfactionThumbsUp) / Double(total) : 0
         } catch {
             Logger.shared.error("[RAG] Evaluation load failed", error: error)
         }

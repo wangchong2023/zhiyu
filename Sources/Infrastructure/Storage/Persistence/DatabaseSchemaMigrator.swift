@@ -298,6 +298,26 @@ extension DatabaseManager {
             }
         }
 
+        // V11: RAG 评估新增上下文充分性维度（幂等）
+        migrator.registerMigration("v11_rag_context_sufficiency") { db in
+            let columns = try db.columns(in: RAGEvaluation.databaseTableName)
+            if !columns.contains(where: { $0.name == RAGEvaluation.Columns.contextSufficiency.name }) {
+                try db.alter(table: RAGEvaluation.databaseTableName) { t in
+                    t.add(column: RAGEvaluation.Columns.contextSufficiency.name, .double).notNull().defaults(to: 0.0)
+                }
+            }
+        }
+
+        // V12: RAG 评估新增用户满意度评分（幂等）
+        migrator.registerMigration("v12_rag_user_rating") { db in
+            let columns = try db.columns(in: RAGEvaluation.databaseTableName)
+            if !columns.contains(where: { $0.name == RAGEvaluation.Columns.userRating.name }) {
+                try db.alter(table: RAGEvaluation.databaseTableName) { t in
+                    t.add(column: RAGEvaluation.Columns.userRating.name, .integer)
+                }
+            }
+        }
+
         return migrator
     }
 

@@ -528,4 +528,291 @@ final class RAGEvaluationServiceTests: XCTestCase {
         XCTAssertEqual(report.faithfulness, 0.85)
         // 无快照记录（向后兼容）
     }
+
+    // MARK: - 六维评分测试（含 answerCorrectness）
+
+    /// 验证 calculateAverageRAGScores 包含六维均值的正确性
+    func testCalculateAverageRAGScoresSevenDimensional() async throws {
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "Q1", answer: "A1",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.9, answerCorrectness: 0.85,
+            contextSufficiency: 0.75, evaluatorModel: "test-model"
+        ))
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "Q2", answer: "A2",
+            faithfulness: 0.7, relevance: 0.6, precision: 0.5,
+            hallucinationRate: 0.3, citationAccuracy: 0.7, answerCorrectness: 0.55,
+            contextSufficiency: 0.65, evaluatorModel: "test-model"
+        ))
+
+        let avg = try await governanceStore.calculateAverageRAGScores(days: 365)
+
+        XCTAssertEqual(avg.faithfulness, 0.8, accuracy: 0.001)
+        XCTAssertEqual(avg.relevance, 0.7, accuracy: 0.001)
+        XCTAssertEqual(avg.precision, 0.6, accuracy: 0.001)
+        XCTAssertEqual(avg.hallucinationRate, 0.2, accuracy: 0.001)
+        XCTAssertEqual(avg.citationAccuracy, 0.8, accuracy: 0.001)
+        XCTAssertEqual(avg.answerCorrectness, 0.7, accuracy: 0.001)
+        // (0.75 + 0.65) / 2 = 0.7
+        XCTAssertEqual(avg.contextSufficiency, 0.7, accuracy: 0.001)
+    }
+
+    /// 空数据库时七维评分返回全 0
+    func testCalculateAverageRAGScoresSevenDimensionalEmpty() async throws {
+        let avg = try await governanceStore.calculateAverageRAGScores(days: 30)
+        XCTAssertEqual(avg.answerCorrectness, 0.0)
+        XCTAssertEqual(avg.contextSufficiency, 0.0)
+    }
+
+    // MARK: - userRating 更新测试
+
+    /// 验证用户评分可正常写入和读取
+    func testUpdateUserRating() async throws {
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "评分测试", answer: "A",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.85, answerCorrectness: 0.8,
+            evaluatorModel: "test"
+        ))
+        let evals = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        let evalID = try XCTUnwrap(evals.first?.id)
+
+        // 初始无评分
+        XCTAssertNil(evals.first?.userRating)
+
+        // 好评
+        try await governanceStore.updateUserRating(evaluationID: evalID, rating: 2)
+        let afterUp = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        XCTAssertEqual(afterUp.first?.userRating, 2)
+
+        // 改为差评
+        try await governanceStore.updateUserRating(evaluationID: evalID, rating: 1)
+        let afterDown = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        XCTAssertEqual(afterDown.first?.userRating, 1)
+    }
+
+    // MARK: - Recall 计算
+
+    /// 验证 Recall@K：相关文档中被 Top-K 覆盖的比例
+    func testCalculateRecall() async throws {
+        // 创建评估
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "Recall测试", answer: "A",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.85, answerCorrectness: 0.8,
+            evaluatorModel: "test"
+        ))
+        let savedEvals = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        let evalID = try XCTUnwrap(savedEvals.first?.id)
+
+        let s0 = UUID().uuidString  // 相关
+        let s1 = UUID().uuidString  // 相关
+        let s2 = UUID().uuidString  // 无关
+        let s3 = UUID().uuidString  // 相关但不在检索结果中
+
+        // Top-3 检索快照（只含 s0, s1, s2）
+        try await governanceStore.saveRetrievalSnapshots([
+            RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: s0, pageTitle: "P0", snippet: "-", score: 0.9),
+            RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: s1, pageTitle: "P1", snippet: "-", score: 0.8),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.5)
+        ])
+
+        // 4 个相关文档（s3 未出现在检索结果中）
+        let qHash = "recall_test_hash"
+        try await governanceStore.saveRelevanceJudgments([
+            RelevanceJudgment(queryHash: qHash, query: "Recall测试", sourceID: s0, relevanceLevel: 2, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "Recall测试", sourceID: s1, relevanceLevel: 2, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "Recall测试", sourceID: s2, relevanceLevel: 0, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "Recall测试", sourceID: s3, relevanceLevel: 2, evaluationID: evalID)
+        ])
+
+        // Recall@3: 2 个相关被检索到 / 3 个实际相关 = 2/3 ≈ 0.667
+        let recall = try await governanceStore.calculateRecall(days: 365, k: 3)
+        XCTAssertEqual(recall, 2.0 / 3.0, accuracy: 0.001)
+
+        // Recall@2: 2 个相关被检索到 / 3 个实际相关 = 2/3 ≈ 0.667
+        let recall2 = try await governanceStore.calculateRecall(days: 365, k: 2)
+        XCTAssertEqual(recall2, 2.0 / 3.0, accuracy: 0.001)
+
+        // Recall@1: 1 个相关被检索到 / 3 个实际相关 = 1/3
+        let recall1 = try await governanceStore.calculateRecall(days: 365, k: 1)
+        XCTAssertEqual(recall1, 1.0 / 3.0, accuracy: 0.001)
+    }
+
+    /// 空数据集时 Recall 返回 0
+    func testCalculateRecallEmpty() async throws {
+        let r = try await governanceStore.calculateRecall(days: 30, k: 5)
+        XCTAssertEqual(r, 0.0)
+    }
+
+    // MARK: - F1 Score 计算
+
+    /// 验证 F1@K 的正确计算
+    func testCalculateF1Score() async throws {
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "F1测试", answer: "A",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.85, answerCorrectness: 0.8,
+            evaluatorModel: "test"
+        ))
+        let savedEvals = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        let evalID = try XCTUnwrap(savedEvals.first?.id)
+
+        let s0 = UUID().uuidString
+        let s1 = UUID().uuidString
+        let s2 = UUID().uuidString
+
+        try await governanceStore.saveRetrievalSnapshots([
+            RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: s0, pageTitle: "P0", snippet: "-", score: 0.9),
+            RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: s1, pageTitle: "P1", snippet: "-", score: 0.7)
+        ])
+
+        let qHash = "f1_test_hash"
+        try await governanceStore.saveRelevanceJudgments([
+            RelevanceJudgment(queryHash: qHash, query: "F1测试", sourceID: s0, relevanceLevel: 2, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "F1测试", sourceID: s1, relevanceLevel: 0, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "F1测试", sourceID: s2, relevanceLevel: 2, evaluationID: evalID)
+        ])
+
+        // Precision@2 = 1/2 = 0.5, Recall@2 = 1/2 = 0.5
+        // F1 = 2 * 0.5 * 0.5 / (0.5 + 0.5) = 0.5
+        let f1 = try await governanceStore.calculateF1Score(days: 365, k: 2)
+        XCTAssertEqual(f1, 0.5, accuracy: 0.001)
+    }
+
+    /// 空数据集时 F1 返回 0
+    func testCalculateF1ScoreEmpty() async throws {
+        let f1 = try await governanceStore.calculateF1Score(days: 30, k: 5)
+        XCTAssertEqual(f1, 0.0)
+    }
+
+    // MARK: - MAP 计算
+
+    /// 验证 MAP 的正确计算
+    func testCalculateMAP() async throws {
+        try await governanceStore.saveRAGEvaluation(RAGEvaluation(
+            query: "MAP测试", answer: "A",
+            faithfulness: 0.9, relevance: 0.8, precision: 0.7,
+            hallucinationRate: 0.1, citationAccuracy: 0.85, answerCorrectness: 0.8,
+            evaluatorModel: "test"
+        ))
+        let savedEvals = try await governanceStore.fetchRAGEvaluations(limit: 1)
+        let evalID = try XCTUnwrap(savedEvals.first?.id)
+
+        let s0 = UUID().uuidString  // 相关（rank 1）
+        let s1 = UUID().uuidString  // 无关
+        let s2 = UUID().uuidString  // 相关（rank 3）
+
+        try await governanceStore.saveRetrievalSnapshots([
+            RetrievalSnapshot(evaluationID: evalID, rank: 1, sourceID: s0, pageTitle: "P0", snippet: "-", score: 0.9),
+            RetrievalSnapshot(evaluationID: evalID, rank: 2, sourceID: s1, pageTitle: "P1", snippet: "-", score: 0.8),
+            RetrievalSnapshot(evaluationID: evalID, rank: 3, sourceID: s2, pageTitle: "P2", snippet: "-", score: 0.7)
+        ])
+
+        let qHash = "map_test_hash"
+        try await governanceStore.saveRelevanceJudgments([
+            RelevanceJudgment(queryHash: qHash, query: "MAP测试", sourceID: s0, relevanceLevel: 2, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "MAP测试", sourceID: s1, relevanceLevel: 0, evaluationID: evalID),
+            RelevanceJudgment(queryHash: qHash, query: "MAP测试", sourceID: s2, relevanceLevel: 2, evaluationID: evalID)
+        ])
+
+        // P@1 = 1/1=1, P@3 = 2/3≈0.667
+        // AP = (1 + 0.667) / 2 = 0.8333
+        let map = try await governanceStore.calculateMAP(days: 365)
+        XCTAssertEqual(map, (1.0 + 2.0/3.0) / 2.0, accuracy: 0.001)
+    }
+
+    /// 空数据集时 MAP 返回 0
+    func testCalculateMAPEmpty() async throws {
+        let map = try await governanceStore.calculateMAP(days: 30)
+        XCTAssertEqual(map, 0.0)
+    }
+
+    // MARK: - 检索延迟计算
+
+    /// 验证 calculateRetrievalLatency 返回正确的百分位分布
+    func testCalculateRetrievalLatency() async throws {
+        // 通过 logCall 写入模拟延迟数据
+        /// 10 条调用日志，延迟分别为 100, 200, ..., 1000 ms
+        let latencies = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+        for ms in latencies {
+            try await governanceStore.logCall(model: "test-model", promptTokens: 100, completionTokens: 50, latencyMS: ms, status: "success")
+        }
+
+        let result = try await governanceStore.calculateRetrievalLatency(days: 30)
+
+        XCTAssertEqual(result.sampleCount, 10)
+        // 排序后: [100,200,300,400,500,600,700,800,900,1000]
+        // p50: index = round((10-1)*0.5) = 4 → 500
+        XCTAssertEqual(result.p50, 500)
+        // p95: index = round((10-1)*0.95) = 9 → 1000
+        XCTAssertEqual(result.p95, 1000)
+        // p99: index = round((10-1)*0.99) = 9 → 1000
+        XCTAssertEqual(result.p99, 1000)
+    }
+
+    /// 空日志时延迟返回全 0
+    func testCalculateRetrievalLatencyEmpty() async throws {
+        let result = try await governanceStore.calculateRetrievalLatency(days: 7)
+        XCTAssertEqual(result.sampleCount, 0)
+        XCTAssertEqual(result.p50, 0)
+        XCTAssertEqual(result.p95, 0)
+        XCTAssertEqual(result.p99, 0)
+    }
+
+    // MARK: - Token 效率计算
+
+    /// 验证 calculateTokenEfficiency 正确计算 Token 摘要与成本
+    func testCalculateTokenEfficiency() async throws {
+        // 写入 3 条 Token 使用记录
+        let records: [(model: String, prompt: Int, completion: Int)] = [
+            ("test", 1000, 500),   // 1500 total
+            ("test", 2000, 1000),  // 3000 total
+            ("test", 500, 200)     // 700 total
+        ]
+        for record in records {
+            try await governanceStore.logTokenUsage(model: record.model, promptTokens: record.prompt, completionTokens: record.completion)
+        }
+
+        let eff = try await governanceStore.calculateTokenEfficiency(days: 30)
+
+        // 总 Token: 1500 + 3000 + 700 = 5200
+        XCTAssertEqual(eff.totalTokens, 5200)
+        // 查询次数: 3
+        XCTAssertEqual(eff.queryCount, 3)
+        // 平均每次: 5200 / 3 ≈ 1733.33
+        XCTAssertEqual(eff.avgTokensPerQuery, 5200.0 / 3.0, accuracy: 1.0)
+        // 总 prompt: 3500, 总 completion: 1700
+        // prompt 成本: 3500/1M * 2.50 = 0.00875
+        // completion 成本: 1700/1M * 10.00 = 0.017
+        // 总成本 ≈ 0.02575
+        XCTAssertEqual(eff.estimatedCostUSD, 0.02575, accuracy: 0.0001)
+    }
+
+    /// 空数据时 Token 效率返回全 0
+    func testCalculateTokenEfficiencyEmpty() async throws {
+        let eff = try await governanceStore.calculateTokenEfficiency(days: 7)
+        XCTAssertEqual(eff.totalTokens, 0)
+        XCTAssertEqual(eff.queryCount, 0)
+        XCTAssertEqual(eff.avgTokensPerQuery, 0)
+        XCTAssertEqual(eff.estimatedCostUSD, 0)
+    }
+
+    // MARK: - 新指标空数据集边界测试
+
+    /// 空数据集时所有新增检索指标返回 0
+    func testNewRetrievalMetricsAllEmpty() async throws {
+        let recall = try await governanceStore.calculateRecall(days: 30, k: 5)
+        let f1 = try await governanceStore.calculateF1Score(days: 30, k: 5)
+        let map = try await governanceStore.calculateMAP(days: 30)
+        let lat = try await governanceStore.calculateRetrievalLatency(days: 30)
+        let tok = try await governanceStore.calculateTokenEfficiency(days: 30)
+
+        XCTAssertEqual(recall, 0.0)
+        XCTAssertEqual(f1, 0.0)
+        XCTAssertEqual(map, 0.0)
+        XCTAssertEqual(lat.sampleCount, 0)
+        XCTAssertEqual(tok.totalTokens, 0)
+    }
 }

@@ -186,7 +186,8 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
                     average(RAGEvaluation.Columns.precision),
                     average(RAGEvaluation.Columns.hallucinationRate),
                     average(RAGEvaluation.Columns.citationAccuracy),
-                    average(RAGEvaluation.Columns.answerCorrectness)
+                    average(RAGEvaluation.Columns.answerCorrectness),
+                    average(RAGEvaluation.Columns.contextSufficiency)
                 )
 
             if let row = try Row.fetchOne(db, request) {
@@ -196,10 +197,11 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
                     precision: row[2] ?? 0.0,
                     hallucinationRate: row[3] ?? 0.0,
                     citationAccuracy: row[4] ?? 0.0,
-                    answerCorrectness: row[5] ?? 0.0
+                    answerCorrectness: row[5] ?? 0.0,
+                    contextSufficiency: row[6] ?? 0.0
                 )
             }
-            return AverageRAGScores(faithfulness: 0.0, relevance: 0.0, precision: 0.0, hallucinationRate: 0.0, citationAccuracy: 0.0, answerCorrectness: 0.0)
+            return AverageRAGScores(faithfulness: 0.0, relevance: 0.0, precision: 0.0, hallucinationRate: 0.0, citationAccuracy: 0.0, answerCorrectness: 0.0, contextSufficiency: 0.0)
         }
     }
 
@@ -468,9 +470,10 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
             let latencies = logs.map(\.latencyMS)
             guard !latencies.isEmpty else { return LatencyPercentiles(p50: 0, p95: 0, p99: 0, sampleCount: 0) }
             let count = latencies.count
+            /// nearest-rank 法：rank = ceil(N * p / 100)，索引 = rank - 1
             func percentile(_ p: Double) -> Int {
-                let index = Int((Double(count - 1) * p / 100.0).rounded())
-                return latencies[max(0, min(index, count - 1))]
+                let rank = Int((Double(count) * p / 100.0).rounded(.up))
+                return latencies[max(0, min(rank - 1, count - 1))]
             }
             return LatencyPercentiles(p50: percentile(50), p95: percentile(95), p99: percentile(99), sampleCount: count)
         }
@@ -498,6 +501,18 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
             let completionCost = Double(completionTokens) / 1_000_000.0 * AppConfig.AI.pricingCompletionPer1M
             return TokenEfficiency(totalTokens: totalTokens, queryCount: queryCount,
                                    avgTokensPerQuery: avgTokensPerQuery, estimatedCostUSD: promptCost + completionCost)
+        }
+    }
+
+    // MARK: - 用户反馈
+
+    /// 更新评估记录的用户满意度评分
+    func updateUserRating(evaluationID: Int64, rating: Int) async throws {
+        let writer = await dbWriter
+        try await writer.write { db in
+            guard var evaluation = try RAGEvaluation.fetchOne(db, key: evaluationID) else { return }
+            evaluation.userRating = rating
+            try evaluation.update(db)
         }
     }
 }

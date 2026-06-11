@@ -234,6 +234,42 @@ final class ComponentSnapshots: XCTestCase {
             
         assertSnapshot(of: view, as: .image(layout: .fixed(width: 375, height: 50)))
     }
+
+    // MARK: - RAG 质量评估视图快照
+
+    /// 测试 RAGEvaluationView 加载状态的视觉一致性
+    func testRAGEvaluationViewLoading() {
+        setupMockEnvironment()
+
+        let view = RAGEvaluationView()
+            .frame(width: 375, height: 812)
+            .background(Color.appBackground)
+
+        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+    }
+
+    /// 测试 RAGEvaluationView 数据就绪后的完整展示
+    func testRAGEvaluationViewWithData() async throws {
+        setupMockEnvironment()
+        let store = ServiceContainer.shared.resolve((any RAGGovernanceRepository).self)
+
+        // 预写入评估、延迟、Token 数据以覆盖全部展示区域
+        try await store.saveRAGEvaluation(RAGEvaluation(
+            query: "What is quantum entanglement?",
+            answer: "Quantum entanglement is a physical phenomenon...",
+            faithfulness: 0.92, relevance: 0.88, precision: 0.85,
+            hallucinationRate: 0.08, citationAccuracy: 0.90, answerCorrectness: 0.87,
+            evaluatorModel: "gpt-4o"
+        ))
+        try await store.logCall(model: "gpt-4o", promptTokens: 1000, completionTokens: 500, latencyMS: 320, status: "success")
+        try await store.logTokenUsage(model: "gpt-4o", promptTokens: 1000, completionTokens: 500)
+
+        let view = RAGEvaluationView()
+            .frame(width: 375, height: 1200)
+            .background(Color.appBackground)
+
+        assertSnapshot(of: view, as: .image(layout: .fixed(width: 375, height: 1200)))
+    }
 }
 
 // MARK: - Snapshot Helpers
