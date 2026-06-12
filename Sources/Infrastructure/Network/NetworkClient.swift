@@ -206,20 +206,22 @@ public actor NetworkClient {
             
             // 发起刷新请求
             let req = RefreshRequest(refreshToken: refreshToken)
-            let refreshURL = AppConfig.backendBaseURL + "/api/auth/refresh"
+            let refreshURL = AppConfig.backendBaseURL + AppConstants.Network.refreshPath
             var request = URLRequest(url: URL(string: refreshURL) ?? URL(string: "about:blank")!)
-            request.httpMethod = "POST"
+            request.httpMethod = AppConstants.Network.methodPOST
             request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
             request.httpBody = try encoder.encode(req)
             
             let (data, _) = try await session.data(for: request)
-            let response = try decoder.decode(ApiResponse<RefreshResponse>.self, from: data)
+            let response = try decoder.decode(ApiResponse<LoginResponse>.self, from: data)
             
-            if response.isSuccess, let newTokens = response.data {
+            if response.isSuccess, let loginData = response.data {
                 // 更新 Keychain
-                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: newTokens.accessToken)
-                try KeychainService.shared.store(key: "refresh_token", value: newTokens.refreshToken)
-                return newTokens.accessToken
+                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.tokens.accessToken)
+                if let newRefresh = loginData.tokens.refreshToken {
+                    try KeychainService.shared.store(key: "refresh_token", value: newRefresh)
+                }
+                return loginData.tokens.accessToken
             } else {
                 // 刷新失败（如重放攻击 40103，或者已过期），强制退登
                 try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)

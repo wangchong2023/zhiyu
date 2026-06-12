@@ -42,6 +42,10 @@ public protocol AuthServiceProtocol {
     
     /// 退出登录
     func logout()
+    
+    /// 自动静默登录验证
+    /// - Returns: 是否成功恢复会话
+    func tryAutoLogin() async -> Bool
 }
 
 /// 笔记本/库管理服务协议

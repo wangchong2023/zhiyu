@@ -101,7 +101,20 @@ struct ContentView: View {
                 dbState = DatabaseManager.shared.state
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .userAuthExpired)) { _ in
+            // 收到 Token 彻底过期失效广播，安全强制登出并清空本地状态，平滑切回登录页
+            authService.logout()
+        }
         .onAppear {
+            // 🎬 正常应用启动时，若处于未登录状态且非游客模式且非 UI 测试环境，自动尝试恢复本地 KeyChain Token 并登录
+            let isTesting = ProcessInfo.processInfo.environment["UITesting"] == "true" ||
+                            ProcessInfo.processInfo.arguments.contains("--uitesting")
+            if !authSession.isLoggedIn && !authSession.isGuest && !isTesting {
+                Task {
+                    _ = await authService.tryAutoLogin()
+                }
+            }
+            
             #if targetEnvironment(macCatalyst)
             for scene in UIApplication.shared.connectedScenes {
                 if let windowScene = scene as? UIWindowScene {

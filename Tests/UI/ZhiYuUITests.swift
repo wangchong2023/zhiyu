@@ -105,15 +105,16 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(dailyRecapHeader.waitForExistence(timeout: 5), "每日灵感标题应该存在并渲染")
 
-        var recapCard = app.buttons["DailyRecapCard"]
-        if !recapCard.waitForExistence(timeout: 5) {
-            recapCard = app.buttons.element(boundBy: 0)
-        }
-        XCTAssertTrue(recapCard.exists, "每日灵感推荐卡片应该存在")
+        // 增加等待超时时间至 20 秒，以防慢速测试机或首次冷启动下异步数据播种写入延迟
+        let recapCard = app.buttons["DailyRecapCard"]
+        XCTAssertTrue(recapCard.waitForExistence(timeout: 20), "每日灵感推荐卡片在 20 秒内应该加载并存在")
+        
+        // 物理点击推荐卡片以跳转至笔记详情页
         recapCard.tap()
-
+        
+        // 校验笔记详情页的置顶 (pin) 按钮渲染就绪
         let pinButton = app.buttons["pin"]
-        XCTAssertTrue(pinButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(pinButton.waitForExistence(timeout: 10), "详情页置顶按钮应当存在并正确渲染")
     }
 
     /// 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页

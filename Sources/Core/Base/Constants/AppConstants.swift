@@ -55,6 +55,12 @@ public struct AppConstants {
         // MARK: - Bearer Token 格式
         /// Authorization header 中 Bearer 前缀
         public static let bearerPrefix = "Bearer "
+        
+        // MARK: - API 路径
+        /// Token 刷新接口路径
+        public static let refreshPath = "/api/v1/auth/refresh"
+        /// 用户资料接口路径
+        public static let userProfilePath = "/api/v1/user/profile"
     }
     
     // MARK: - 存储与基础配置

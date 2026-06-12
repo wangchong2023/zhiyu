@@ -65,6 +65,55 @@ public final class AuthService: AuthServiceProtocol {
 
     // MARK: - 核心操作
     
+    /// 自动静默登录验证，利用 Keychain 本地缓存的 token 进行登录态恢复
+    /// - Returns: 是否登录恢复成功
+    public func tryAutoLogin() async -> Bool {
+        #if DEBUG
+        if isMockBackend {
+            // Mock 模式：检测到 Mock 环境则直接构造并注入假登录用户态
+            let mockUser = User(
+                id: UUID(),
+                name: "Mock Autologin User",
+                email: "mock_autologin@example.com",
+                phone: "13800000000",
+                avatarURL: nil
+            )
+            AuthSession.shared.update(user: mockUser)
+            saveState()
+            return true
+        }
+        #endif
+        
+        // 1. 尝试从安全区 Keychain 提取现存的 Token
+        guard (try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)) != nil else {
+            return false
+        }
+        
+        do {
+            // 2. 发起 GET 请求拉取服务器上用户的最新 Profile 资料
+            let response: UserProfileResponse = try await NetworkClient.shared.request(
+                path: AppConstants.Network.userProfilePath,
+                method: AppConstants.Network.methodGET,
+                requiresAuth: true
+            )
+            
+            // 3. 构造本地 User 模型并更新状态树
+            let user = User(
+                id: UUID(uuidString: String(response.userId)) ?? UUID(),
+                name: response.nick,
+                email: response.email ?? "",
+                phone: response.mobile,
+                avatarURL: response.avatar.flatMap { URL(string: $0) }
+            )
+            AuthSession.shared.update(user: user)
+            saveState()
+            return true
+        } catch {
+            Logger.shared.error("[AuthService] 自动静默登录拉取 Profile 失败: ", error: error)
+            return false
+        }
+    }
+    
     /// 以游客身份进入系统
     public func continueAsGuest() {
         AuthSession.shared.update(user: nil)
@@ -365,20 +414,9 @@ public final class AuthService: AuthServiceProtocol {
             let birthday: String?
         }
         
-        struct ProfileUpdateResponse: Codable {
-            let userId: Int64
-            let username: String
-            let nick: String
-            let avatar: String?
-            let email: String?
-            let mobile: String?
-            let gender: Int?
-            let birthday: String?
-        }
-        
         let req = ProfileUpdateRequest(nick: nickname, avatar: avatar, gender: gender, birthday: birthday)
         do {
-            let response: ProfileUpdateResponse = try await NetworkClient.shared.request(
+            let response: UserProfileResponse = try await NetworkClient.shared.request(
                 path: "/api/v1/user/profile",
                 method: "PUT",
                 body: req,

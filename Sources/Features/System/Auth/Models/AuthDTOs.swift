@@ -177,3 +177,28 @@ public struct RefreshResponse: Codable {
     public let expiresIn: Int
     public let tokenType: String
 }
+
+// MARK: - 用户个人资料数据传输对象
+
+/// 个人资料响应数据模型，对应后端 UserProfileResp.java DTO
+public struct UserProfileResponse: Codable, Sendable {
+    public let userId: Int64
+    public let username: String
+    public let nick: String
+    public let avatar: String?
+    public let email: String?
+    public let mobile: String?
+    public let gender: Int?
+    public let birthday: String?
+    
+    public init(userId: Int64, username: String, nick: String, avatar: String?, email: String?, mobile: String?, gender: Int?, birthday: String?) {
+        self.userId = userId
+        self.username = username
+        self.nick = nick
+        self.avatar = avatar
+        self.email = email
+        self.mobile = mobile
+        self.gender = gender
+        self.birthday = birthday
+    }
+}
