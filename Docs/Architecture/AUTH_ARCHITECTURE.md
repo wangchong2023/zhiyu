@@ -1,361 +1,171 @@
 # 多认证系统前后端整体和分层架构
 
-> 更新时间: 2026-05-10
+> 更新时间: 2026-06-12 (基于“记住登录与 Nacos 动态超时”特性重构)
 
 ## 一、系统架构概览
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │                        客户端层 Client Layer                          │
-│   iOS App (SwiftUI)  │  Android App (Compose)  │  Web App (React/Vue) │
+│                iOS / macOS / watchOS App (SwiftUI)                    │
 └──────────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                    网关层 API Gateway                                 │
-│              Kong / Nginx  +  Auth Service                            │
+│                    网关与鉴权层 API Gateway                           │
+│           Spring Cloud Gateway  +  UFP Auth 认证拦截                  │
 └──────────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                      业务服务层 Business Layer                        │
-│  User Service  │  Notebook Service  │  AI Service  │  Storage Service  │
+│  zhiyu-app-service  │  zhiyu-auth  │  zhiyu-subscription  │  ufp-auth │
 └──────────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────────┐
 │                        数据层 Data Layer                             │
-│   PostgreSQL (主数据库)  │  Redis (缓存)  │  OSS/COS (文件存储)  │  iCloud  │
+│       MySQL 8.0 (持久化)  │  Redis 7 (Token黑名单与短信验证码缓存)     │
 └──────────────────────────────────────────────────────────────────────┘
                                   │
                                   ▼
 ┌──────────────────────────────────────────────────────────────────────┐
-│                外部认证服务: WeChat · QQ · Google · Apple · 短信网关  │
+│  外部认证服务: WeChat OAuth · Google OAuth · Apple Sign-In · 运营商网关  │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 二、前端分层架构 (SwiftUI)
+## 二、前端分层架构 (SwiftUI 客户端)
 
-### 2.1 表现层 Presentation Layer
+### 2.1 表现层 Presentation Layer [L3]
 
-| 视图组件 | 功能描述 |
-|---------|---------|
-| `LoginView` | 登录注册页面，包含OAuth登录按钮、手机验证码登录 |
-| `NotebookHubView` | 笔记本工作台，展示所有笔记本卡片 |
-| `NotebookView` | 笔记本内容页，管理wiki、小程序、AI助手 |
-| `SettingsView` | 个人设置页，账户管理、偏好设置 |
+| 视图组件 | 职责 / 调用方式 |
+|---------|---------------|
+| `AuthView` | 多渠道登录面板（支持手机号验证码、密码、Apple、Google、GitHub 及游客一键登录） |
+| `ContentView` | 应用程序根视图，挂载全局状态。在 `onAppear` 触发自动登录验证，并监听全局 `.userAuthExpired` 广播以处理会话退登 |
+| `UserProfileView` | 用户个人资料设置页，支持更新昵称、性别、生日及模拟上传头像 |
 
-### 2.2 视图模型层 ViewModel Layer
+### 2.2 领域与服务层 Service & Domain [L1.5 - L2]
 
-| ViewModel | 职责 |
-|----------|-----|
-| `AuthViewModel` | 管理登录状态、OAuth流程、Token刷新 |
-| `NotebookHubViewModel` | 笔记本列表加载、创建、删除、排序 |
-| `NotebookViewModel` | 笔记本内容管理、Tab切换 |
+| 组件 | 职责 |
+|------|------|
+| `AuthService` | 实现 `AuthServiceProtocol`，统一封装密码登录、OAuth 登录、自动登录 `tryAutoLogin()`、修改资料及安全退登逻辑 |
+| `AuthSession` | 基于 Swift 6 `@Observable` 宏构建的全局会话，提供响应式的 `currentUser` 属性以供视图层决定渲染流分支 |
+| `KeychainService` | 底层安全加密存储，负责将 Access Token 及长效 Refresh Token 存储于硬件物理沙盒密钥区 |
+| `NetworkClient` | 网络客户端，负责 Header Authorization Token 的自动拦截注入、并在捕获 401 时发起 Token 刷新重试 |
 
-### 2.3 服务层 Service Layer
+### 2.3 物理代码结构归位对齐
 
-| Service | 职责 |
-|---------|-----|
-| `AuthService` | 统一认证接口，封装登录/注册/登出逻辑 |
-| `OAuthProvider` | 各平台OAuth SDK封装（WeChat/QQ/Google/Apple） |
-| `APIClient` | 网络请求封装，Token自动注入、错误处理 |
-| `NetworkService` | 底层网络通信，HTTPS、证书校验 |
-
-### 2.4 管理器层 Manager Layer
-
-| Manager | 职责 |
-|---------|-----|
-| `UserManager` | 用户信息全局状态，单例模式 |
-| `TokenManager` | AccessToken/RefreshToken存储与刷新 |
-| `SyncManager` | 多端数据同步协调 |
-| `iCloudManager` | iCloud备份与恢复 |
-
-### 2.5 前端核心代码结构
+项目采用垂直化功能架构 (Vertical Slices)，代码不再放在 Shared 目录下，而是按照职责深度物理归位：
 
 ```
 Sources/
 ├── App/
-│   └── ZhiYuApp.swift              # 入口，初始化Managers
+│   └── Scenes/
+│       └── ContentView.swift        # 监听 .userAuthExpired 并在启动时调用 tryAutoLogin
+├── Core/
+│   ├── Base/
+│   │   └── Constants/
+│   │       └── AppConstants.swift   # 定义网络接口路径与 Key 等静态常量
+│   └── System/
+│       └── Security/
+│           └── KeychainService.swift # 物理 Keychain 强加密安全存储层
+├── Domain/
+│   └── Protocols/
+│       └── FeatureProtocols.swift   # 定义 AuthServiceProtocol 等契约
 ├── Features/
-│   ├── Auth/
-│   │   ├── Views/
-│   │   │   ├── LoginView.swift
-│   │   │   └── PhoneVerifyView.swift
-│   │   ├── ViewModels/
-│   │   │   └── AuthViewModel.swift
-│   │   └── Services/
-│   │       ├── AuthService.swift
-│   │       └── OAuthProvider.swift
-│   ├── NotebookHub/
-│   │   ├── Views/
-│   │   │   └── NotebookHubView.swift
-│   │   └── ViewModels/
-│   │       └── NotebookHubViewModel.swift
-│   └── Notebook/
-│       ├── Views/
-│       │   └── NotebookView.swift
-│       └── ViewModels/
-│           └── NotebookViewModel.swift
-└── Shared/
-    └── Managers/
-        ├── UserManager.swift
-        ├── TokenManager.swift
-        └── iCloudManager.swift
+│   └── System/
+│       ├── Auth/
+│       │   ├── Models/
+│       │   │   ├── AuthDTOs.swift   # 存放 UserProfileResponse, LoginResponse 等 DTO
+│       │   │   └── AuthSession.swift # 存放 @Observable AuthSession 全局会话状态
+│       │   ├── Service/
+│       │   │   └── AuthService.swift # 提供 tryAutoLogin(), login(), logout() 核心服务
+│       │   └── View/
+│       │       ├── AuthView.swift   # 多端登录控制视图
+│       │       └── UserProfileView.swift # 个人信息修改视图
+└── Infrastructure/
+    └── Network/
+        └── NetworkClient.swift      # 拦截 401 并使用 /api/v1/auth/refresh 换取新 Token
 ```
 
 ---
 
-## 三、后端分层架构 (Node.js/Express 或 Go)
+## 三、后端分层架构 (Java / Spring Boot)
 
 ### 3.1 网关层 Gateway Layer
+* **Spring Cloud Gateway**：统一路由分发、API 限流（整合 Sentinel）与 JWT 验签拦截。
 
-| 组件 | 职责 |
-|-----|-----|
-| `Kong / Nginx` | 负载均衡、SSL终端、请求日志 |
-| `API Gateway` | 路由分发、限流熔断、JWT鉴权 |
+### 3.2 认证与安全层 Security Layer (`ufp-auth` & `zhiyu-auth`)
+* **JwtService**：基于 RS256 非对称算法（使用私钥签名，公钥验签）签发与解密 Token。
+* **JwtProperties**：标注 `@RefreshScope`，与 Nacos 全局配置中心连通，支持不重启服务的情况下动态更新超时时间。
+* **TokenBlacklist**：通过 Redis 7 缓存已退登或废弃的 Access/Refresh Token，防范 Token 窃取与重放攻击。
 
-### 3.2 服务层 Service Layer
+---
 
-| Service | 职责 |
-|---------|-----|
-| `Auth Service` | OAuth认证流程、Token签发与刷新、策略模式处理各平台登录 |
-| `User Service` | 用户注册、信息更新、身份联合管理 |
-| `Notebook Service` | 笔记本CRUD、分享与协作 |
+## 四、接口 API 设计
 
-### 3.3 业务逻辑层 Business Logic Layer
+所有 Auth 相关的 API 均使用 `/api/v1` 进行版本化修饰：
 
-| 组件 | 职责 |
-|-----|-----|
-| `OAuth Strategy` | 策略模式实现，支持微信/QQ/Google/Apple各平台OAuth |
-| `SMS Validator` | 短信验证码生成、校验、60秒防刷 |
-| `Permission Service` | RBAC权限控制，角色与资源绑定 |
+| 方法 | 路径 | 鉴权要求 | 说明 |
+|-----|-----|---------|-----|
+| `POST` | `/api/v1/auth/login` | 免鉴权 | 统一登录接口（支持密码及短信验证码形式） |
+| `POST` | `/api/v1/auth/carrier` | 免鉴权 | 运营商一键免密登录（首次登录自动注册） |
+| `POST` | `/api/v1/auth/refresh` | 免鉴权 | 使用 RefreshToken 换取新令牌对（旧 RefreshToken 作废） |
+| `POST` | `/api/v1/auth/logout` | 需 Bearer | 退出登录，并主动拉黑当前使用的 Token 对 |
+| `GET` | `/api/v1/user/profile` | 需 Bearer | 拉取当前登录用户的完整个人资料（用于冷启动自动登录） |
+| `PUT` | `/api/v1/user/profile` | 需 Bearer | 更新当前用户的个人资料（昵称、头像、性别等） |
 
-### 3.4 数据访问层 Data Access Layer
+---
 
-| 组件 | 职责 |
-|-----|-----|
-| `User Repository` | 用户数据CRUD操作 |
-| `Notebook Repository` | 笔记本数据CRUD操作 |
-| `Redis Cache` | Session缓存、Token黑名单、接口限流计数 |
-| `ORM (Prisma/TypeORM)` | 数据库ORM映射 |
+## 五、核心时序流程
 
-### 3.5 后端核心代码结构
+### 5.1 冷启动自动静默登录流程
 
-```
-backend/
-├── src/
-│   ├── gateway/
-│   │   ├── routes.ts               # 路由定义
-│   │   ├── middleware/
-│   │   │   ├── auth.ts             # JWT鉴权中间件
-│   │   │   └── rateLimit.ts        # 限流中间件
-│   │   └── kong.ts                # Kong配置
-│   ├── services/
-│   │   ├── auth/
-│   │   │   ├── AuthService.ts
-│   │   │   └── strategies/
-│   │   │       ├── WeChatStrategy.ts
-│   │   │       ├── QQStrategy.ts
-│   │   │       ├── GoogleStrategy.ts
-│   │   │       └── AppleStrategy.ts
-│   │   ├── user/
-│   │   │   └── UserService.ts
-│   │   └── notebook/
-│   │       └── NotebookService.ts
-│   ├── models/
-│   │   ├── User.ts
-│   │   ├── UserIdentity.ts
-│   │   ├── Notebook.ts
-│   │   └── Session.ts
-│   └── repositories/
-│       ├── UserRepository.ts
-│       └── NotebookRepository.ts
-└── prisma/
-    └── schema.prisma               # 数据库Schema
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 用户
+    participant App as 客户端 (SwiftUI)
+    participant Keychain as 安全存储 (Keychain)
+    participant Backend as 智宇后端 (Java)
+
+    User->>App: 重新打开应用 (冷启动)
+    App->>Keychain: 查询 jwt_token_key (Access Token)
+    alt 不存在 Token
+        App-->>User: 展开登录视图 (AuthView)
+    else 存在 Token
+        App->>Backend: 发送 GET /api/v1/user/profile (携带 Authorization 头)
+        alt Access Token 有效
+            Backend-->>App: 返回 200 OK & UserProfileResponse
+            App->>App: 恢复会话 AuthSession.shared.update(user)
+            App-->>User: 直接进入笔记本主界面
+        else Access Token 已过期 (401)
+            App->>App: 捕获 401 触发 NetworkClient 刷新重试机制
+            App->>Keychain: 获取已存的 refresh_token
+            App->>Backend: 发送 POST /api/v1/auth/refresh (携带 RefreshToken)
+            alt Refresh Token 有效
+                Backend-->>App: 返回 200 OK & ApiResponse<LoginResponse>
+                App->>Keychain: 覆盖存储新 Access/Refresh Token
+                App->>Backend: 自动重试 GET /api/v1/user/profile 请求
+                Backend-->>App: 返回 200 OK & UserProfileResponse
+                App->>App: 恢复会话并进入笔记本主界面
+            else Refresh Token 也失效 (401)
+                Backend-->>App: 返回 401 失败
+                App->>Keychain: 清空 Keychain 缓存
+                App->>App: 广播发送 .userAuthExpired 通知
+                App-->>User: 退回至登录界面 (AuthView)
+            end
+        end
+    end
 ```
 
 ---
 
-## 四、数据库设计
+## 六、安全设计
 
-### 4.1 ER图
-
-```erDiagram
-User ||--o{ UserIdentity : has
-User ||--o{ Notebook : owns
-User ||--o{ Session : has
-Notebook ||--o{ NotebookMember : has
-
-User {
-    uuid id PK
-    string email
-    string phone
-    string name
-    string avatar
-    datetime createdAt
-    datetime updatedAt
-}
-UserIdentity {
-    uuid id PK
-    uuid userId FK
-    enum provider "wechat|qq|google|apple|phone"
-    string providerUserId
-    string accessToken
-    string refreshToken
-    datetime tokenExpireAt
-    datetime createdAt
-}
-Notebook {
-    uuid id PK
-    uuid ownerId FK
-    string name
-    string description
-    string coverColor
-    json settings
-    datetime createdAt
-    datetime updatedAt
-}
-NotebookMember {
-    uuid id PK
-    uuid notebookId FK
-    uuid userId FK
-    enum role "owner|editor|viewer"
-    datetime createdAt
-}
-Session {
-    uuid id PK
-    uuid userId FK
-    string accessToken
-    string refreshToken
-    datetime accessExpireAt
-    datetime refreshExpireAt
-    string deviceInfo
-    datetime createdAt
-}
-```
-
-### 4.2 核心表结构
-
-| 表名 | 说明 |
-|-----|-----|
-| `users` | 用户主表，存储基本信息 |
-| `user_identities` | 身份联合表，一个用户可绑定多个登录方式 |
-| `notebooks` | 笔记本主表 |
-| `notebook_members` | 笔记本成员表，支持协作 |
-| `sessions` | 会话表，管理Token和设备信息 |
-
----
-
-## 五、API设计
-
-### 5.1 认证相关API
-
-| 方法 | 路径 | 说明 |
-|-----|-----|-----|
-| `POST` | `/api/auth/register/phone` | 手机号注册 |
-| `POST` | `/api/auth/login/phone` | 手机号登录 |
-| `POST` | `/api/auth/send-code` | 发送短信验证码 |
-| `POST` | `/api/auth/wechat` | 微信OAuth登录/注册 |
-| `POST` | `/api/auth/qq` | QQ OAuth登录/注册 |
-| `POST` | `/api/auth/google` | Google OAuth登录/注册 |
-| `POST` | `/api/auth/apple` | Apple登录/注册 |
-| `POST` | `/api/auth/refresh` | 刷新AccessToken |
-| `POST` | `/api/auth/logout` | 登出 |
-| `GET` | `/api/auth/me` | 获取当前用户信息 |
-
-### 5.2 请求/响应示例
-
-#### 手机号登录请求
-```json
-POST /api/auth/login/phone
-{
-    "phone": "+86-13800138000",
-    "code": "123456"
-}
-```
-
-#### 登录成功响应
-```json
-{
-    "code": 0,
-    "data": {
-        "user": {
-            "id": "uuid-xxx",
-            "name": "张三",
-            "phone": "+86-13800138000",
-            "avatar": "https://..."
-        },
-        "tokens": {
-            "accessToken": "eyJhbGciOiJIUzI1NiIs...",
-            "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
-            "accessExpireAt": 1699999999,
-            "refreshExpireAt": 1702591999
-        }
-    }
-}
-```
-
----
-
-## 六、认证流程图
-
-### 6.1 OAuth第三方登录流程
-
-```
-┌────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐
-│  User  │────▶│  App    │────▶│ OAuth   │────▶│ Provider│────▶│ Backend │
-│        │◀────│         │◀────│ Server  │◀────│  API    │◀────│  Auth   │
-└────────┘     └─────────┘     └─────────┘     └─────────┘     └─────────┘
-                                                                        │
-                                     ┌─────────────────────────────────┘
-                                     ▼
-                               ┌─────────┐
-                               │ Database│
-                               │(User ID)│
-                               └─────────┘
-```
-
-### 6.2 JWT Token刷新流程
-
-```
-┌────────┐     ┌─────────┐     ┌─────────┐     ┌─────────┐
-│  App   │────▶│ Backend │────▶│  Redis  │────▶│ Validate│
-│        │◀────│  Auth   │◀────│  Cache  │◀────│ Check   │
-└────────┘     └─────────┘     └─────────┘     └─────────┘
-```
-
----
-
-## 七、技术选型汇总
-
-| 层级 | 技术选型 | 说明 |
-|-----|--------|-----|
-| **前端iOS** | SwiftUI + Combine | 响应式编程，声明式UI |
-| **前端Android** | Jetpack Compose | Google官方UI框架 |
-| **前端Web** | React 18 / Vue 3 | 跨平台Web应用 |
-| **后端框架** | Node.js (Express/Koa) 或 Go | 高性能微服务 |
-| **数据库** | PostgreSQL | 主数据存储 |
-| **缓存** | Redis | Session缓存、Token管理 |
-| **ORM** | Prisma / TypeORM | 数据库ORM |
-| **文件存储** | OSS / COS | 媒体文件存储 |
-| **API网关** | Kong / Nginx | 负载均衡、限流、鉴权 |
-| **认证协议** | OAuth 2.0 + JWT | 标准认证协议 |
-
----
-
-## 八、安全设计
-
-| 安全措施 | 实现方式 |
-|---------|---------|
-| **Token安全** | AccessToken短期(1h) + RefreshToken长期(30d) |
-| **传输加密** | HTTPS强制，TLS 1.3 |
-| **防刷机制** | 短信验证码60秒防刷，5次错误锁定 |
-| **数据隔离** | 用户数据按user_id逻辑隔离 |
-| **审计日志** | 所有认证操作记录日志 |
-
----
-
-*本文档持续更新中，如有问题请联系技术团队*
+* **双 Token 寿命与动态刷新**：系统签发的普通用户 Access Token 默认在 `15分钟 ~ 2小时` 后失效，长效 Refresh Token 默认 `30天` 失效。超时时间支持在 **Nacos 配置中心** 动态调节并实时热生效。
+* **一次性 Refresh Token (Rotation)**：每次刷新操作完成后，旧的 Refresh Token 均会被拉入 Redis 黑名单作废，降低拦截重放风险。
+* **传输安全 (TLS 1.3)**：强制 HTTPS 协议加密传输。
+* **凭证隔离**：将凭证托管于系统级的 Apple Keychain 沙盒，隔绝其它应用越界读取。
