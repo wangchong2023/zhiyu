@@ -204,18 +204,30 @@ extension KnowledgePage {
     public var displaySourceName: String {
         guard let urlStr = sourceURL else { return "" }
         if isLocalFileSource {
-            // 如果是本地文件，尝试获取文件名
+            // 尝试将字符串解析为标准 URL，并提取最后的文件名组件
             if let url = URL(string: urlStr) {
-                return url.lastPathComponent
+                let lastComp = url.lastPathComponent
+                // 当提取的组件非空且非根路径时直接返回
+                if !lastComp.isEmpty && lastComp != "/" {
+                    return lastComp
+                }
             }
-            // 兜底：如果 URL 解析失败，从字符串切片中提取最后一部分
+            // 兜底：若 URL 解析出的组件为空，通过 '/' 字符切片提取文件名组件
+            // 必须排除 file:// 协议头中的斜杠（限制索引大于协议前缀末尾位置 6）
             if let lastSlash = urlStr.lastIndex(of: "/") {
-                let index = urlStr.index(after: lastSlash)
-                return String(urlStr[index...])
+                let prefixLimit = urlStr.index(urlStr.startIndex, offsetBy: 6, limitedBy: urlStr.endIndex) ?? urlStr.endIndex
+                if lastSlash > prefixLimit {
+                    let index = urlStr.index(after: lastSlash)
+                    let sliceStr = String(urlStr[index...])
+                    if !sliceStr.isEmpty {
+                        return sliceStr
+                    }
+                }
             }
+            // 最终兜底：返回原始 URL 字符串
             return urlStr
         } else {
-            // 如果是网页，尝试获取 host
+            // 如果是网页，尝试获取其主机域名(Host)
             if let url = URL(string: urlStr), let host = url.host {
                 return host
             }
