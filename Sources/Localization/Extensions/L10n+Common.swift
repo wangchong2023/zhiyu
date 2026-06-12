@@ -415,6 +415,8 @@ extension L10n {
             public static var content16: String { Localized.tr("demo.pkm.16.content", table: t) }
             public static var title17: String { Localized.tr("demo.pkm.17.title", table: t) }
             public static var content17: String { Localized.tr("demo.pkm.17.content", table: t) }
+            public static var title18: String { Localized.tr("demo.pkm.18.title", table: t) }
+            public static var content18: String { Localized.tr("demo.pkm.18.content", table: t) }
         }
         
         public enum Coffee {
@@ -438,6 +440,8 @@ extension L10n {
             public static var content9: String { Localized.tr("demo.coffee.9.content", table: t) }
             public static var title10: String { Localized.tr("demo.coffee.10.title", table: t) }
             public static var content10: String { Localized.tr("demo.coffee.10.content", table: t) }
+            public static var title11: String { Localized.tr("demo.coffee.11.title", table: t) }
+            public static var content11: String { Localized.tr("demo.coffee.11.content", table: t) }
         }
         
         public enum Tags {

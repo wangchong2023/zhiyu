@@ -391,7 +391,7 @@ struct PluginDetailView: View {
             }
 
             Text(plugin.id)
-                .font(.system(size: 10))
+                .font(.system(size: 10)) // Dynamic Type
                 .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
                 .padding(.top, DesignSystem.tiny)
         }

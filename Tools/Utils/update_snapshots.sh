@@ -30,7 +30,7 @@ echo "=================================================================="
 echo "🔍 正在扫描系统中的 iOS 模拟器列表，查找 'iPhone 17 Pro'..."
 
 # 获取所有包含 'iPhone 17 Pro' 的模拟器行
-DEVICES_LIST=$(xcrun simctl list devices | grep "iPhone 17 Pro" || true)
+DEVICES_LIST=$(xcrun simctl list devices | grep "iPhone 17 Pro" | grep -v "unavailable" || true)
 
 if [ -z "${DEVICES_LIST}" ]; then
     echo "❌ 错误: 未能在系统中找到任何名为 'iPhone 17 Pro' 的 iOS 模拟器。"
@@ -72,9 +72,9 @@ if [ -z "${STATUS}" ]; then
 else
     echo "✅ 目标模拟器已处于运行中状态。"
 fi
-# 注入模拟器系统级全局环境变量 RECORD_MODE=1，确保模拟器内部沙盒 App 能完美读取此标识以激活录制模式
+# 注入模拟器系统级全局环境变量 RECORD_SNAPSHOTS=1，确保模拟器内部沙盒 App 能完美读取此标识以激活录制模式
 echo "🚀 正在向模拟器 [${UDID}] 注入录制模式全局环境变量..."
-xcrun simctl spawn "${UDID}" launchctl setenv RECORD_MODE 1
+xcrun simctl spawn "${UDID}" launchctl setenv RECORD_SNAPSHOTS 1
 
 # ------------------------------------------------------------------------------
 # 阶段 3: 清理旧缓存与开启快照录制模式执行测试
@@ -96,7 +96,7 @@ echo "📊 录制输出日志将实时记录至: ${LOG_FILE}"
 # 在录制模式下仅执行快照测试套件 ComponentSnapshots
 set +e
 
-xcodebuild test \
+RECORD_SNAPSHOTS=1 xcodebuild test \
   -project ZhiYu.xcodeproj \
   -scheme ZhiYu \
   -destination "platform=iOS Simulator,id=${UDID}" \
@@ -109,7 +109,7 @@ TEST_EXIT_CODE=${PIPESTATUS[0]}
 
 # 清除模拟器全局环境变量，防止干扰后继的日常校验测试
 echo "🧹 正在恢复模拟器 [${UDID}] 环境变量状态..."
-xcrun simctl spawn "${UDID}" launchctl setenv RECORD_MODE 0
+xcrun simctl spawn "${UDID}" launchctl setenv RECORD_SNAPSHOTS 0
 
 # ------------------------------------------------------------------------------
 # 阶段 4: 结果分析

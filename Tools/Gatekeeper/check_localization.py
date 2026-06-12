@@ -31,7 +31,8 @@ ALLOW_NON_ASCII_FILES = {
     'DesignSystem+Icons.swift',
     'InitialNotebookGenerator.swift',
     'AIContentEnricher.swift',
-    'RAGEvaluationService.swift'  # RAG 评价服务的中文硬编码 Prompt
+    'RAGEvaluationService.swift',  # RAG 评价服务的中文硬编码 Prompt
+    'ModelLabManager.swift'        # 大模型测试实验室的模拟推理输出数据源
 }
 
 # 匹配模式： " ... " 字符串字面量

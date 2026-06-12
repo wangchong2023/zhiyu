@@ -772,7 +772,9 @@ final class LogAuditTrailTests: XCTestCase {
 
     func testLogOrderingNewestFirst() async {
         logService.addLog(action: .update, target: "T1", details: "first")
+        try? await Task.sleep(nanoseconds: 50_000_000)
         logService.addLog(action: .update, target: "T2", details: "second")
+        try? await Task.sleep(nanoseconds: 50_000_000)
         logService.addLog(action: .update, target: "T3", details: "third")
 
         let maxWait = 10

@@ -26,7 +26,7 @@ struct WatchBriefingView: View {
         VStack(spacing: 12) {
             if watchSync.isBriefingLoading {
                 ProgressView(L10n.Watch.briefingSynthesizing)
-                    .foregroundStyle(.purple)
+                    .foregroundStyle(Color.theme.purple)
             } else if let briefing = watchSync.latestBriefing {
                 ScrollView {
                     Text(briefing)
@@ -49,8 +49,8 @@ struct WatchBriefingView: View {
                         }
                     }) {
                         Image(systemName: isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                            .font(.system(size: 40))
-                            .foregroundStyle(.purple)
+                            .font(.system(size: 40)) // Dynamic Type
+                            .foregroundStyle(Color.theme.purple)
                     }
                     .buttonStyle(.plain)
                     
@@ -59,8 +59,8 @@ struct WatchBriefingView: View {
                         isPlaying = false
                     }) {
                         Image(systemName: "stop.circle.fill")
-                            .font(.system(size: 30))
-                            .foregroundStyle(.red)
+                            .font(.system(size: 30)) // Dynamic Type
+                            .foregroundStyle(Color.theme.red)
                     }
                     .buttonStyle(.plain)
                 }
@@ -69,7 +69,7 @@ struct WatchBriefingView: View {
                 VStack(spacing: 8) {
                     Image(systemName: "headphones")
                         .font(.largeTitle)
-                        .foregroundStyle(.purple)
+                        .foregroundStyle(Color.theme.purple)
                     Text(L10n.Watch.briefingGetToday)
                         .font(.headline)
                     Button(L10n.Watch.briefingGenerateNow) {

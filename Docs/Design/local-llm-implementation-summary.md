@@ -28,7 +28,7 @@
 - ✅ 下载管理详情页
 - ✅ 设计规范摘要（颜色语义、交互反馈、动画时序）
 
-**文档位置**: `/Users/constantine/Documents/work/code/projects/ZhiYu/Docs/design/`
+**文档位置**: `Docs/design/`
 
 ---
 
@@ -46,7 +46,7 @@
 | `SmartRoutingView.swift` | 智能路由配置界面 | ✅ 完成 |
 | `L10n+ModelManager.swift` | 国际化词条扩展 | ✅ 完成 |
 
-**文件位置**: `/Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Features/System/ModelManager/View/`
+**文件位置**: `Sources/Features/System/ModelManager/View/`
 
 #### **更新的文件**
 

@@ -31,6 +31,8 @@ Tools/
 | `check_storage_constants.py` | 数据库物理表名/字段名硬编码拦截 |
 | `check_magic_numbers_v2.py` | 魔鬼数字扫描（颜色/尺寸/数值） |
 | `check_hardcoded_secrets.py` | 硬编码密钥/Token/IP 扫描 |
+| `check_hig_compliance.py` | HIG 视觉与无障碍规范（字号下限、空 hint、动画触发器、系统硬编码颜色）校验 |
+| `check_appstore_readiness.py` | App Store 提审就绪度（Info.plist、ATS 豁免、版本号格式、fatalError、隐私清单）校验 |
 
 ---
 

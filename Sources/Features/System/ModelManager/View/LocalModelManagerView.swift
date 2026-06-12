@@ -33,6 +33,7 @@ public struct LocalModelManagerView: View {
     private enum Tab: Int, CaseIterable {
         case store = 0
         case parameters = 1
+        case laboratory = 2
 
         var title: String {
             switch self {
@@ -40,6 +41,8 @@ public struct LocalModelManagerView: View {
                 return L10n.ModelManager.storeTitle
             case .parameters:
                 return L10n.ModelManager.parametersTitle
+            case .laboratory:
+                return L10n.ModelManager.laboratoryTitle
             }
         }
 
@@ -49,6 +52,8 @@ public struct LocalModelManagerView: View {
                 return "square.stack.3d.up.fill"
             case .parameters:
                 return "slider.horizontal.3"
+            case .laboratory:
+                return "flask.fill"
             }
         }
     }
@@ -71,6 +76,13 @@ public struct LocalModelManagerView: View {
 
                     InferenceParametersView()
                         .tag(Tab.parameters)
+
+                    ModelLabView(onGoToStore: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            selectedTab = .store
+                        }
+                    })
+                    .tag(Tab.laboratory)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
@@ -113,7 +125,7 @@ public struct LocalModelManagerView: View {
         }) {
             VStack(spacing: 4) {
                 Image(systemName: tab.icon)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 16, weight: .medium)) // Dynamic Type
                     .foregroundStyle(selectedTab == tab ? .appAccent : .appSecondary)
 
                 Text(tab.title)

@@ -19,6 +19,7 @@ struct ChatBubbleView: View {
     @Environment(AppStore.self) var store
     @Environment(Router.self) var router
     @State private var referencesExpanded = false
+    @State private var messageRating: Int? // 1: thumbs up, 2: thumbs down
     @Binding var selectedTab: AppTab
     
     var isSelectionMode: Bool = false
@@ -127,28 +128,71 @@ struct ChatBubbleView: View {
                     .padding(.top, DesignSystem.tiny)
             }
             
-            // 一键重新生成 (Regenerate)
-            if let onRegenerate = onRegenerate {
+            // 操作按钮栏：点赞、贬低、复制、重新生成
+            HStack(spacing: DesignSystem.medium) {
+                // 点赞按钮
                 Button(action: {
                     HapticFeedback.shared.trigger(.selection)
-                    onRegenerate()
+                    messageRating = messageRating == 1 ? nil : 1
                 }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: DesignSystem.Icons.arrowClockwise)
-                            .font(.caption2)
-                        Text(L10n.Chat.regenerate)
-                            .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
-                    }
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.tiny)
-                    .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
-                    .foregroundStyle(.appAccent)
-                    .clipShape(Capsule())
+                    Image(systemName: messageRating == 1 ? "hand.thumbsup.fill" : "hand.thumbsup")
+                        .font(.caption)
+                        .foregroundStyle(messageRating == 1 ? Color.theme.blue : .appSecondary)
                 }
                 .buttonStyle(.plain)
-                .padding(.top, DesignSystem.tiny)
-                .padding(.leading, Spacing.tiny)
+                
+                // 贬低按钮
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    messageRating = messageRating == 2 ? nil : 2
+                }) {
+                    Image(systemName: messageRating == 2 ? "hand.thumbsdown.fill" : "hand.thumbsdown")
+                        .font(.caption)
+                        .foregroundStyle(messageRating == 2 ? Color.theme.red : .appSecondary)
+                }
+                .buttonStyle(.plain)
+                
+                // 复制按钮
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    #if os(iOS)
+                    UIPasteboard.general.string = message.content
+                    #elseif os(macOS)
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.declareTypes([.string], owner: nil)
+                    pasteboard.setString(message.content, forType: .string)
+                    #endif
+                    ToastManager.shared.show(type: .success, message: L10n.Chat.copied)
+                }) {
+                    Image(systemName: "doc.on.doc")
+                        .font(.caption)
+                        .foregroundStyle(.appSecondary)
+                }
+                .buttonStyle(.plain)
+                
+                // 一键重新生成 (Regenerate)
+                if let onRegenerate = onRegenerate {
+                    Button(action: {
+                        HapticFeedback.shared.trigger(.selection)
+                        onRegenerate()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: DesignSystem.Icons.arrowClockwise)
+                                .font(.caption2)
+                            Text(L10n.Chat.regenerate)
+                                .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
+                        }
+                        .padding(.horizontal, DesignSystem.small)
+                        .padding(.vertical, DesignSystem.tiny)
+                        .background(Color.appAccent.opacity(DesignSystem.Opacity.subtle))
+                        .foregroundStyle(.appAccent)
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+            .padding(.top, DesignSystem.tiny)
+            .padding(.leading, Spacing.tiny)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, Spacing.standardPadding)

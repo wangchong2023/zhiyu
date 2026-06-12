@@ -39,6 +39,7 @@ public final class KnowledgeStore {
     
     /// [L1.5] 知识库领域仓储 — 遵循 DIP，L2 不再直接依赖 L1 SQLiteStore
     @ObservationIgnored @Inject private var knowledgeRepository: any KnowledgeRepository
+    @ObservationIgnored @Inject private var pageStore: any AnyPageStoreCapabilities
     @ObservationIgnored @Inject private var pageManager: KnowledgePageManager
     @ObservationIgnored @Inject private var maintenanceService: MaintenanceService
     @ObservationIgnored @Inject private var performanceService: PerformanceService
@@ -94,8 +95,9 @@ public final class KnowledgeStore {
                     // 🎬 RAG 冷启动魔法时刻 (Aha Moment)：
                     // 在新建金库首次切换进入时，如果数据库为空且未播种过，则自动注入欢迎与引导数据
                     if let vaultID = notification.userInfo?["vaultID"] as? UUID {
+                        let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
                         let seedKey = "seeded_vault_\(vaultID.uuidString)"
-                        if !UserDefaults.standard.bool(forKey: seedKey) {
+                        if !UserDefaults.standard.bool(forKey: seedKey) || isTesting {
                             Logger.shared.info(" [KnowledgeStore] Seeding guide data for vault \(vaultID.uuidString)...")
                             let vaultName = VaultService.shared.vaults.first(where: { $0.id == vaultID })?.name
                             await self.seedDefaultContent(vaultName: vaultName)
@@ -127,6 +129,11 @@ public final class KnowledgeStore {
     /// 刷新内存镜像
     public func refresh() async {
         let startTime = Date()
+        
+        // 🚨 强制同步底层物理缓存：确保 pageStore (SQLiteStore) 内部内存镜像与磁盘完成重载
+        // 这对于直接通过 DB 裸物理连接写入数据（如 Demo 演示数据播种写入）后的数据一致性至关重要
+        await pageStore.reloadFromDisk()
+        
         self.pages = (try? await knowledgeRepository.fetchAll()) ?? []
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }

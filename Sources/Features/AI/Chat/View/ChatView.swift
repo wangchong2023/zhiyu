@@ -136,14 +136,18 @@ struct ChatViewContent: View {
     }
     
     private var notConfiguredBanner: some View {
-        NavigationLink(value: AppRoute.settings) {
+        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失及黑屏警告。
+        Button {
+            HapticFeedback.shared.trigger(.selection)
+            router.isShowingSettingsSheet = true
+        } label: {
             HStack(spacing: DesignSystem.small + DesignSystem.atomic) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
+                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
                 Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
                 Spacer()
                 Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
             }
-            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
+            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
         }
         .buttonStyle(.plain)
     }
@@ -253,14 +257,14 @@ struct ChatViewContent: View {
                 }) {
                     HStack(spacing: DesignSystem.atomic) {
                         Image(systemName: DesignSystem.Icons.stopFill)
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 11, weight: .bold)) // Dynamic Type
                         Text(L10n.Common.cancel)
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: 11, weight: .semibold)) // Dynamic Type
                     }
                     .padding(.horizontal, DesignSystem.tiny * 1.5)
                     .padding(.vertical, DesignSystem.tiny * 0.6)
-                    .foregroundStyle(.red)
-                    .background(Color.red.opacity(DesignSystem.Opacity.glass))
+                    .foregroundStyle(Color.theme.red)
+                    .background(Color.theme.red.opacity(DesignSystem.Opacity.glass))
                     .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)

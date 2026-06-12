@@ -131,14 +131,18 @@ struct IngestView: View {
     }
 
     private var llmWarningSection: some View {
-        NavigationLink(value: AppRoute.settings) {
+        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失及黑屏警告。
+        Button {
+            HapticFeedback.shared.trigger(.selection)
+            router.isShowingSettingsSheet = true
+        } label: {
             HStack(spacing: DesignSystem.medium) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
+                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
                 Text(L10n.Ingest.llmRequired).font(.subheadline).foregroundStyle(.appText)
                 Spacer()
                 Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
             }
-            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
+            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .buttonStyle(.plain)

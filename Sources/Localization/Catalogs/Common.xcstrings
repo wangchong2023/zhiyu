@@ -3993,7 +3993,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "当前用量"
+            "value": "用量统计"
           }
         }
       }
@@ -5326,6 +5326,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "在新窗口中打开"
+          }
+        }
+      }
+    },
+    "pageList.mapCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d maps"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个地图"
+          }
+        }
+      }
+    },
+    "pageList.rawCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d raws"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个原始"
           }
         }
       }
@@ -11633,6 +11667,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "研发"
+          }
+        }
+      }
+    },
+    "demo.pkm.18.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pkm_methodology.md"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pkm_methodology.md"
+          }
+        }
+      }
+    },
+    "demo.pkm.18.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的方法论，强调语义分块和 RAG 管道，来源于本地 markdown 文件。"
+          }
+        }
+      }
+    },
+    "demo.coffee.11.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "luckin_vs_starbucks_report.pdf"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "luckin_vs_starbucks_report.pdf"
+          }
+        }
+      }
+    },
+    "demo.coffee.11.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "瑞幸与星巴克竞品格局分析报告。深入对比了瑞幸咖啡极简快取与星巴克“第三空间”的商业定位差异。"
           }
         }
       }

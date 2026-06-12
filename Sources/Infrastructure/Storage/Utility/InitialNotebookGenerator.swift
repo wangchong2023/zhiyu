@@ -7,8 +7,8 @@
 //
 //  系统层级：[L1] 基础设施层
 //  核心职责：提供项目启动时的初始演示/测试笔记本（Initial Notebook）数据生成器。
-//           支持为页面填充溯源元数据（sourceURL、rawTextSnippet、sourceType 等），
-//           以保证详情页能够正确渲染引用源（Provenance）追溯视图。
+//           支持为页面填充物理溯源文件（在 sandbox 中的 Imports 文件夹下真实写入文件），
+//           以保证详情页能够正确渲染引用源（Provenance）追溯视图，且与用户手工导入文件保持绝对一致。
 //
 
 import Foundation
@@ -16,7 +16,7 @@ import Foundation
 
 /// 演示数据生成器
 ///
-/// 职责：用于快速填充知识库，展示图谱、检索、AI 分析及引用溯源（Provenance）能力。
+/// 职责：用于快速填充知识库，展示图谱、检索、AI 分析及引用物理文件溯源能力。
 struct InitialNotebookGenerator {
     
     /// 统一的演示数据种子结构，支持溯源元数据
@@ -54,14 +54,42 @@ struct InitialNotebookGenerator {
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("InitialNotebook_Starting")
 
+        // 1. 获取专属金库沙盒目录下的物理 Imports 文件夹，并将演示文档内容真实写入，以保持与用户物理导入文件一致
+        let importsFolder: URL? = await MainActor.run {
+            if let dbURL = DatabaseManager.shared.dbURL {
+                let folder = dbURL.deletingLastPathComponent().appendingPathComponent("Imports")
+                try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                return folder
+            }
+            return nil
+        }
+        
+        let pkmMethodologyURL: String
+        let pkmWorkflowURL: String
+        if let folder = importsFolder {
+            pkmMethodologyURL = copyOrWriteDemoFile(
+                named: "pkm_methodology.md",
+                to: folder,
+                fallbackText: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
+            )
+            pkmWorkflowURL = copyOrWriteDemoFile(
+                named: "pkm_workflow.md",
+                to: folder,
+                fallbackText: "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop."
+            )
+        } else {
+            pkmMethodologyURL = "file:///demo/pkm_methodology.md"
+            pkmWorkflowURL = "file:///demo/pkm_workflow.md"
+        }
+
         let pagesToCreate: [PageSeed] = [
-            // 首个页面节点：PKM 方法论，使用本地 Markdown 文件作为引用溯源
+            // 首个页面节点：PKM 方法论，使用本地 Markdown 文件作为引用物理溯源
             PageSeed(
                 title: L10n.InitialNotebook.PKM.title1,
                 type: .concept,
                 content: L10n.InitialNotebook.PKM.content1,
                 tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
-                sourceURL: "file:///Users/constantine/Documents/work/pkm_methodology.md",
+                sourceURL: pkmMethodologyURL,
                 rawTextSnippet: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file.",
                 sourceType: "markdown"
             ),
@@ -78,7 +106,7 @@ struct InitialNotebookGenerator {
                 type: .source,
                 content: L10n.InitialNotebook.PKM.content10,
                 tags: [L10n.InitialNotebook.Tags.workflow],
-                sourceURL: "file:///Users/constantine/Documents/work/pkm_workflow.md",
+                sourceURL: pkmWorkflowURL,
                 rawTextSnippet: "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop.",
                 sourceType: "markdown"
             ),
@@ -88,9 +116,18 @@ struct InitialNotebookGenerator {
             PageSeed(title: L10n.InitialNotebook.PKM.title14, type: .entity, content: L10n.InitialNotebook.PKM.content14, tags: [L10n.InitialNotebook.Tags.biography]),
             PageSeed(title: L10n.InitialNotebook.PKM.title15, type: .concept, content: L10n.InitialNotebook.PKM.content15, tags: ["学习法"]),
             PageSeed(title: L10n.InitialNotebook.PKM.title16, type: .concept, content: L10n.InitialNotebook.PKM.content16, tags: [L10n.InitialNotebook.Tags.metaphor]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title17, type: .concept, content: L10n.InitialNotebook.PKM.content17, tags: [L10n.InitialNotebook.Tags.innovation, L10n.InitialNotebook.Tags.summary])
+            PageSeed(title: L10n.InitialNotebook.PKM.title17, type: .concept, content: L10n.InitialNotebook.PKM.content17, tags: [L10n.InitialNotebook.Tags.innovation, L10n.InitialNotebook.Tags.summary]),
+            PageSeed(
+                title: L10n.InitialNotebook.PKM.title18,
+                type: .source,
+                content: L10n.InitialNotebook.PKM.content18,
+                tags: [L10n.InitialNotebook.Tags.workflow],
+                sourceURL: pkmMethodologyURL,
+                rawTextSnippet: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file.",
+                sourceType: "markdown"
+            )
         ]
-
+        
         try await store.performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
             try TokenUsage.deleteAll(db)
@@ -151,14 +188,42 @@ struct InitialNotebookGenerator {
     static func generateResearchNotebook(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("ResearchInitialNotebook_Starting")
 
+        // 1. 获取专属金库沙盒目录下的物理 Imports 文件夹，并将演示文档内容真实写入，以保持与用户物理导入文件一致
+        let importsFolder: URL? = await MainActor.run {
+            if let dbURL = DatabaseManager.shared.dbURL {
+                let folder = dbURL.deletingLastPathComponent().appendingPathComponent("Imports")
+                try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                return folder
+            }
+            return nil
+        }
+        
+        let luckinURL: String
+        let surveyURL: String
+        if let folder = importsFolder {
+            luckinURL = copyOrWriteDemoFile(
+                named: "luckin_vs_starbucks_report.pdf",
+                to: folder,
+                fallbackText: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report."
+            )
+            surveyURL = copyOrWriteDemoFile(
+                named: "survey_202606.pdf",
+                to: folder,
+                fallbackText: "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff who are heavy internet and power outlet users."
+            )
+        } else {
+            luckinURL = "file:///demo/luckin_vs_starbucks_report.pdf"
+            surveyURL = "file:///demo/survey_202606.pdf"
+        }
+
         let pagesToCreate: [PageSeed] = [
-            // 竞品分析页面节点：瑞幸与星巴克对比，使用本地 PDF 报告作为引用溯源
+            // 竞品分析页面节点：瑞幸与星巴克对比，使用本地 PDF 报告作为引用物理溯源
             PageSeed(
                 title: "竞品分析：瑞幸 vs 星巴克",
                 type: .comparison,
                 content: "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。",
                 tags: ["竞品分析", "市场调研"],
-                sourceURL: "file:///Users/constantine/Downloads/luckin_vs_starbucks_report.pdf",
+                sourceURL: luckinURL,
                 rawTextSnippet: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report.",
                 sourceType: "pdf"
             ),
@@ -168,7 +233,7 @@ struct InitialNotebookGenerator {
                 type: .source,
                 content: "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。",
                 tags: ["用户调研"],
-                sourceURL: "file:///Users/constantine/Downloads/survey_202606.pdf",
+                sourceURL: surveyURL,
                 rawTextSnippet: "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff who are heavy internet and power outlet users.",
                 sourceType: "pdf"
             ),
@@ -178,7 +243,16 @@ struct InitialNotebookGenerator {
             PageSeed(title: "咖啡豆供应链选型", type: .comparison, content: "对比了三家烘焙厂：A厂埃塞豆风味明亮但批次不稳定；B厂云南豆性价比极高且有助农故事；C厂哥伦比亚拼配最均衡。初期决定以 B 厂为主，严格控制[[财务预算模型]]中的物料成本。", tags: ["供应链", "物料"]),
             PageSeed(title: "空间视觉与装修意向", type: .map, content: "采用微水泥侘寂风与温润原木结合。摒弃传统局促的网红打卡墙，大面积留白搭配龟背竹等阔叶绿植。灯光需采用 3000K 暖色温，迎合[[目标客群分析]]中的审美偏好。", tags: ["设计", "装修"]),
             PageSeed(title: "开业营销策划", type: .concept, content: "试营业期间不打折，但买咖啡送定制帆布袋。正式开业首周，邀请本地小红书探店博主进行内容种草。我们将主推具有差异化的[[特调菜单研发]]作为引流爆款。", tags: ["营销", "增长"]),
-            PageSeed(title: "特调菜单研发", type: .entity, content: "目前内测评分最高的两款：1. 桂花酒酿拿铁（秋季限定） 2. 澄清番茄气泡美式。这两款特调不仅视觉出片率高，且口味独特，是支持[[开业营销策划]]的核心武器。", tags: ["产品设计", "研发"])
+            PageSeed(title: "特调菜单研发", type: .entity, content: "目前内测评分最高的两款：1. 桂花酒酿拿铁（秋季限定） 2. 澄清番茄气泡美式。这两款特调不仅视觉出片率高，且口味独特，是支持[[开业营销策划]]的核心武器。", tags: ["产品设计", "研发"]),
+            PageSeed(
+                title: L10n.InitialNotebook.Coffee.title11,
+                type: .source,
+                content: L10n.InitialNotebook.Coffee.content11,
+                tags: ["市场调研", "竞品分析"],
+                sourceURL: luckinURL,
+                rawTextSnippet: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report.",
+                sourceType: "pdf"
+            )
         ]
 
         try await store.performBatchWrite { db in
@@ -199,7 +273,7 @@ struct InitialNotebookGenerator {
                 try page.save(db)
             }
             
-            // 模拟注入 AI 时延与 Token 记录，方便资源监控页面演示
+            // 2. 模拟注入 AI 时延与 Token 记录，方便资源监控页面演示
             let models = ["GPT-4o", "Claude-3.5-Sonnet"]
             let calendar = Calendar.current
             
@@ -300,5 +374,40 @@ struct InitialNotebookGenerator {
         
         Logger.shared.debug("")
         return targetCount
+    }
+    
+    /// 从应用 Bundle 中物理拷贝演示文件至 Imports 沙盒，如果不存在则写入 fallback 文本
+    /// - Parameters:
+    ///   - fileName: 文件名（含后缀）
+    ///   - folder: 目标沙盒 Imports 路径
+    ///   - fallbackText: 降级写入的文本
+    private static func copyOrWriteDemoFile(named fileName: String, to folder: URL, fallbackText: String) -> String {
+        let fileURL = folder.appendingPathComponent(fileName)
+        
+        // 尝试先物理清理旧文件，防止 copyItem 报 FileExists 错误
+        try? FileManager.default.removeItem(at: fileURL)
+        
+        let fileParts = fileName.split(separator: ".")
+        if fileParts.count == 2,
+           let resourceName = fileParts.first.map(String.init),
+           let resourceExt = fileParts.last.map(String.init),
+           let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: resourceExt) {
+            do {
+                try FileManager.default.copyItem(at: bundleURL, to: fileURL)
+                Logger.shared.info("InitialNotebook_CopiedResource: \(fileName)")
+                return fileURL.absoluteString
+            } catch {
+                Logger.shared.error("InitialNotebook_CopyFailed: \(fileName), error: \(error)")
+            }
+        }
+        
+        // Fallback: 写入硬编码文本
+        do {
+            try fallbackText.write(to: fileURL, atomically: true, encoding: .utf8)
+            Logger.shared.info("InitialNotebook_WroteFallback: \(fileName)")
+        } catch {
+            Logger.shared.error("InitialNotebook_WriteFallbackFailed: \(fileName), error: \(error)")
+        }
+        return fileURL.absoluteString
     }
 }

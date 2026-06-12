@@ -244,9 +244,8 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(initialPages.first?.title, oldPageTitle, "旧页面的标题应当一致")
         
         // 2. InitialNotebookGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
-        print("🎬 调用 InitialNotebookGenerator 注入演示数据")
         let generatedCount = try await InitialNotebookGenerator.generate(in: store)
-        let expectedCount = 17
+        let expectedCount = 18
         XCTAssertEqual(generatedCount, expectedCount,
                        "应生成 \(expectedCount) 个演示页面")
 
@@ -259,8 +258,8 @@ final class VaultDataIsolationTests: XCTestCase {
         let ksTitles = ks.pages.map(\.title)
         XCTAssertEqual(ks.pages.count, expectedCount,
                        "KnowledgeStore 应为恰好 \(expectedCount) 页")
-        XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.aiAgent.title), "应包含 AI Agent 页面")
-        XCTAssertTrue(ksTitles.contains(L10n.Common.Demo.llm.title), "应包含 LLM 页面")
+        XCTAssertTrue(ksTitles.contains(L10n.InitialNotebook.PKM.title1), "应包含第一个 PKM 页面")
+        XCTAssertTrue(ksTitles.contains(L10n.InitialNotebook.PKM.title10), "应包含第十个 PKM 页面")
         // 验证标签不为空（演示数据应有关联标签）
         let taggedPages = ks.pages.filter { !$0.tags.isEmpty }
         XCTAssertEqual(taggedPages.count, expectedCount,

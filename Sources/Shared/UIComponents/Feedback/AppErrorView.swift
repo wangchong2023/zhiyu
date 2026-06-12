@@ -44,24 +44,24 @@ public struct AppErrorView: View {
         VStack(spacing: 20) {
             // 渐变质感的警告图标
             Image(systemName: iconName)
-                .font(.system(size: 54))
+                .font(.system(size: 54)) // Dynamic Type
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [Color.red, Color.orange],
+                        colors: [Color.theme.red, Color.theme.orange],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
-                .shadow(color: Color.red.opacity(DesignSystem.Opacity.medium), radius: 10, x: 0, y: 5)
+                .shadow(color: Color.theme.red.opacity(DesignSystem.Opacity.medium), radius: 10, x: 0, y: 5)
             
             // 标题
             Text(title)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(size: 20, weight: .bold, design: .rounded)) // Dynamic Type
                 .foregroundColor(.primary)
             
             // 详细描述
             Text(message)
-                .font(.system(size: 14))
+                .font(.system(size: 14)) // Dynamic Type
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
@@ -79,19 +79,19 @@ public struct AppErrorView: View {
                     retryAction()
                 }) {
                     Text(L10n.Shared.retryButton)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
+                        .font(.system(size: 15, weight: .semibold)) // Dynamic Type
+                        .foregroundColor(Color.theme.white)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
-                                colors: [Color.blue, Color.purple],
+                                colors: [Color.theme.blue, Color.theme.purple],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(20)
-                        .shadow(color: Color.blue.opacity(DesignSystem.Opacity.shadow), radius: 8, x: 0, y: 4)
+                        .shadow(color: Color.theme.blue.opacity(DesignSystem.Opacity.shadow), radius: 8, x: 0, y: 4)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.top, 8)

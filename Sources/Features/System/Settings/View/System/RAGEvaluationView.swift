@@ -546,7 +546,7 @@ struct RAGEvaluationView: View {
             }
         }
         .frame(maxWidth: .infinity).padding(.vertical, DesignSystem.small)
-        .background(Color.green.opacity(CardVisual.tokenBgOpacity)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        .background(Color.theme.green.opacity(CardVisual.tokenBgOpacity)).clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
     }
 
     // MARK: - 评估记录行（含 👍👎）

@@ -18,10 +18,11 @@ public enum Typography {
     // MARK: @PR-03: 层次化排版规范，优化文本渲染开销
     
     /// 标题等级枚举
+    /// 字号使用 Dynamic Type 语义样式，确保随用户辅助功能字号设置自动缩放
     public enum HeadingLevel: Int {
         case h1 = 1, h2, h3, h4, h5, h6
         
-        /// 字号映射
+        /// 参考字号（仅用于布局计算，不直接用于字体渲染）
         public var size: CGFloat {
             switch self {
             case .h1: return 28
@@ -33,7 +34,20 @@ public enum Typography {
             }
         }
         
-        /// 字重映射
+        /// Dynamic Type 字体映射
+        /// 遵循 HIG: 使用语义化样式以支持辅助功能字号缩放
+        public var font: Font {
+            switch self {
+            case .h1: return .title.bold()
+            case .h2: return .title2.bold()
+            case .h3: return .title3.bold()
+            case .h4: return .headline
+            case .h5: return .subheadline.weight(.semibold)
+            case .h6: return .footnote.weight(.medium)
+            }
+        }
+        
+        /// 字重映射（用于自定义渲染场景）
         public var weight: Font.Weight {
             switch self {
             case .h1, .h2, .h3: return .bold
@@ -56,8 +70,8 @@ public enum Typography {
     
     // MARK: - 2. 原子字号 (Atomic Font Sizes)
     
-    /// 微型字号 (10px)
-    public static let microFontSize: CGFloat = 10
+    /// 微型字号 (11pt) — 对齐 HIG 最小可读字号（Caption 2 基准）
+    public static let microFontSize: CGFloat = 11
     /// 脚注字号 (12px)
     public static let captionFontSize: CGFloat = 12
     /// 次级脚注字号 (11px)
@@ -76,15 +90,16 @@ public enum Typography {
     public static let displayFontSize: CGFloat = 32
     
     // MARK: - 3. 字体快捷访问 (Font Shortcuts)
+    // 遵循 HIG：使用 Dynamic Type 语义样式，支持辅助功能字号自动缩放
     
-    /// 标准脚注字体
-    public static var captionFont: Font { .system(size: captionFontSize) }
-    /// 次级脚注字体 (Medium 字重)
-    public static var caption2Font: Font { .system(size: caption2FontSize, weight: .medium) }
-    /// 标准二级辅助字体
-    public static var secondaryFont: Font { .system(size: subheadlineFontSize) }
-    /// 标准大标题粗体
-    public static var titleFont: Font { .system(size: titleFontSize, weight: .bold) }
+    /// 标准脚注字体（Dynamic Type: .caption）
+    public static var captionFont: Font { .caption }
+    /// 次级脚注字体（Dynamic Type: .caption2 Medium）
+    public static var caption2Font: Font { .caption2.weight(.medium) }
+    /// 标准二级辅助字体（Dynamic Type: .subheadline）
+    public static var secondaryFont: Font { .subheadline }
+    /// 标准大标题粗体（Dynamic Type: .title2 Bold）
+    public static var titleFont: Font { .title2.bold() }
     
     // MARK: - 4. 系统图标映射 (Icons)
     
@@ -210,6 +225,8 @@ public enum Typography {
         public static let concept = "lightbulb.fill"
         public static let source = "doc.richtext.fill"
         public static let comparison = "arrow.left.and.right.righttriangle.left.righttriangle.right.fill"
+        public static let map = "map.fill"
+        public static let raw = "doc.plaintext.fill"
         
         // ── 额外系统图标 ──
         public static let trashSlash = "trash.slash.fill"

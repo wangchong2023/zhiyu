@@ -89,5 +89,8 @@ extension L10n {
 
         /// 重新生成最后一次回复
         public static var regenerate: String { Chat.tr("action.regenerate") }
+
+        /// 已复制到剪切板
+        public static var copied: String { Chat.tr("chat.copied") }
     }
 }

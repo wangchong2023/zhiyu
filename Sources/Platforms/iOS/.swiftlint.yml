@@ -1,4 +1,5 @@
 # Sources/Platforms/iOS/.swiftlint.yml
 # iOS 平台文件中 type_name 规则不适用 — Apple 官方代码中也广泛使用 iOS 前缀（小写 i）
 # Swift 社区惯例：UI 前缀用大写（UIKit），但平台标识 iOS/macOS/tvOS/watchOS 用官方拼写
-type_name: disabled
+disabled_rules:
+  - type_name

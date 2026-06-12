@@ -232,7 +232,7 @@ public struct OnDeviceLLMSettingsView: View {
                             .foregroundStyle(.red)
                             .padding(.horizontal, 10)
                             .padding(.vertical, DesignSystem.tightPadding)
-                            .background(Color.red.opacity(DesignSystem.Opacity.subtle))
+                            .background(Color.theme.red.opacity(DesignSystem.Opacity.subtle))
                             .clipShape(Capsule())
                     }
                 }
@@ -255,7 +255,7 @@ public struct OnDeviceLLMSettingsView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignSystem.medium)
-                    .background(onDeviceService.selectedModelID.isEmpty ? Color.gray : Color.appAccent)
+                    .background(onDeviceService.selectedModelID.isEmpty ? Color.theme.gray : Color.appAccent)
                     .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
                 }
                 .disabled(onDeviceService.selectedModelID.isEmpty || onDeviceService.isGenerating)
@@ -323,7 +323,7 @@ public struct OnDeviceLLMSettingsView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DesignSystem.medium)
-                .background(onDeviceService.isModelLoaded ? Color.green : Color.gray.opacity(DesignSystem.Opacity.dim))
+                .background(onDeviceService.isModelLoaded ? Color.theme.green : Color.theme.gray.opacity(DesignSystem.Opacity.dim))
                 .clipShape(RoundedRectangle(cornerRadius: Spacing.cardRadius))
             }
             .disabled(!onDeviceService.isModelLoaded)

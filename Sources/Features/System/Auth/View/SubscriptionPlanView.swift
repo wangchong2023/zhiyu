@@ -42,6 +42,9 @@ public struct SubscriptionPlanView: View {
     @State private var selectedCycle: BillingCycle = .yearly
     @State private var errorMessage: String?
     @State private var isQuotaExpanded = false // 默认收缩用量卡片
+    
+    // MARK: - 恢复购买状态（来自 StoreKitService）
+    private var storeKitService: StoreKitService { StoreKitService.shared }
 
     // MARK: - 国际化与货币汇率计算辅助
 
@@ -276,7 +279,7 @@ public struct SubscriptionPlanView: View {
                     Text(L10n.Auth.monthly)
                         .font(.subheadline.bold())
                     Text(L10n.Auth.priceMonthlyPro)
-                        .font(.system(size: 10))
+                        .font(.system(size: 10)) // Dynamic Type
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -304,15 +307,15 @@ public struct SubscriptionPlanView: View {
                         Text(L10n.Auth.yearly)
                             .font(.subheadline.bold())
                         Text(L10n.Auth.save20Percent)
-                            .font(.system(size: 8, weight: .bold))
+                            .font(.system(size: 8, weight: .bold)) // Dynamic Type
                             .foregroundStyle(.white)
                             .padding(.horizontal, 4)
                             .padding(.vertical, 1)
-                            .background(Color.blue)
+                            .background(Color.theme.blue)
                             .clipShape(Capsule())
                     }
                     Text(L10n.Auth.priceYearlyPro)
-                        .font(.system(size: 10))
+                        .font(.system(size: 10)) // Dynamic Type
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -351,7 +354,7 @@ public struct SubscriptionPlanView: View {
                     Spacer()
                     
                     Text("Lite")
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 9, weight: .bold)) // Dynamic Type
                         .foregroundStyle(.appSecondary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
@@ -359,17 +362,12 @@ public struct SubscriptionPlanView: View {
                             Capsule().stroke(Color.appBorder, lineWidth: 1)
                         )
                 }
-                
-                Text(L10n.Auth.litePlanTitle)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.appText)
-                
                 Text(L10n.Auth.priceMonthlyLite)
                     .font(.title3.bold())
                     .foregroundStyle(.appText)
                 
                 Text(L10n.Auth.litePlanDesc)
-                    .font(.system(size: 10))
+                    .font(.system(size: 10)) // Dynamic Type
                     .foregroundStyle(.appSecondary)
                     .lineLimit(2)
             }
@@ -397,18 +395,13 @@ public struct SubscriptionPlanView: View {
                     Spacer()
                     
                     Text(L10n.Auth.proPlan)
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 9, weight: .bold)) // Dynamic Type
                         .foregroundStyle(.white)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(LinearGradient(colors: [.purple, .blue], startPoint: .leading, endPoint: .trailing))
                         .clipShape(Capsule())
                 }
-                
-                Text(L10n.Auth.proPlanTitle)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.appText)
-                
                 // 计费周期下的价格计算
                 let proPriceStr: String = selectedCycle == .monthly ? L10n.Auth.priceMonthlyPro : L10n.Auth.priceMonthlyProEquivalent
                 
@@ -417,7 +410,7 @@ public struct SubscriptionPlanView: View {
                     .foregroundStyle(.appAccent)
                 
                 Text(L10n.Auth.proPlanDesc)
-                    .font(.system(size: 10))
+                    .font(.system(size: 10)) // Dynamic Type
                     .foregroundStyle(.appSecondary)
                     .lineLimit(2)
             }
@@ -455,7 +448,7 @@ public struct SubscriptionPlanView: View {
                         .foregroundStyle(.appSecondary)
                     
                     Rectangle()
-                        .fill(Color.appBorder.opacity(0.8))
+                        .fill(Color.appBorder.opacity(DesignSystem.secondaryOpacity))
                         .frame(width: DesignSystem.Metrics.customSize1)
                         .padding(.horizontal, 4)
                         .frame(maxHeight: 24) // 限制垂直分割线高度，保证对齐
@@ -502,7 +495,7 @@ public struct SubscriptionPlanView: View {
                 .foregroundStyle(.appSecondary)
 
             Rectangle()
-                .fill(Color.appBorder.opacity(0.8))
+                .fill(Color.appBorder.opacity(DesignSystem.secondaryOpacity))
                 .frame(width: DesignSystem.Metrics.customSize1)
                 .padding(.horizontal, 4)
                 .frame(maxHeight: 16) // 限制行内分割线高度，保证美观
@@ -532,6 +525,34 @@ public struct SubscriptionPlanView: View {
                 handleApplePurchase()
             }
 
+            // 恢复购买按钮（App Store 审核强制要求：订阅型 App 必须提供此入口）
+            Button(action: {
+                Task { await handleRestorePurchases() }
+            }) {
+                HStack(spacing: DesignSystem.tiny) {
+                    if storeKitService.isRestoring {
+                        ProgressView()
+                            .scaleEffect(DesignSystem.Opacity.light)
+                    }
+                    Text(storeKitService.isRestoring
+                         ? L10n.Auth.restoring
+                         : L10n.Auth.restorePurchases)
+                        .font(.subheadline)
+                        .foregroundStyle(.appAccent)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(storeKitService.isRestoring || isPurchasing)
+            
+            // 恢复结果提示
+            if let msg = storeKitService.restoreMessage {
+                Text(msg)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                    .multilineTextAlignment(.center)
+                    .transition(.opacity)
+            }
+
             Text(L10n.Auth.purchaseDisclaimer)
                 .font(.caption2)
                 .foregroundStyle(.appSecondary)
@@ -539,6 +560,7 @@ public struct SubscriptionPlanView: View {
                 .padding(.horizontal, DesignSystem.large)
         }
         .padding(.vertical, DesignSystem.small)
+        .animation(.easeInOut(duration: 0.25), value: storeKitService.restoreMessage)
     }
 
     // MARK: - 成功卡片
@@ -547,7 +569,7 @@ public struct SubscriptionPlanView: View {
         AppCard {
             VStack(spacing: DesignSystem.medium) {
                 Image(systemName: "crown.fill")
-                    .font(.system(size: 48))
+                    .font(.system(size: 48)) // Dynamic Type
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.yellow, .orange],
@@ -578,9 +600,10 @@ public struct SubscriptionPlanView: View {
         Task {
             isPurchasing = true
             errorMessage = nil
+            // 使用 AppConstants 常量，消除 View 层硬编码的 Product ID 字符串
             let productId = selectedCycle == .monthly
-                ? "com.zhiyu.pro.monthly"
-                : "com.zhiyu.pro.yearly"
+                ? AppConstants.Subscription.monthlyProductId
+                : AppConstants.Subscription.yearlyProductId
 
             do {
                 let products = try await Product.products(for: [productId])
@@ -623,6 +646,19 @@ public struct SubscriptionPlanView: View {
                 }
             } catch {
                 try? await performMockPurchase()
+            }
+        }
+    }
+    
+    /// 调用 StoreKitService 触发恢复购买流程
+    private func handleRestorePurchases() async {
+        let success = await storeKitService.restorePurchases()
+        if success {
+            // 恢复成功后检查是否已有有效 Pro 订阅，更新本地 UI
+            if authService.currentUser?.planKey == "pro" {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    isUpgradeSuccess = true
+                }
             }
         }
     }

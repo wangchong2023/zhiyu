@@ -28,7 +28,7 @@ public struct AppLoadingOverlay: View {
         isLoading: Bool,
         message: String? = nil,
         // swiftlint:disable:next magic_numbers_opacity
-        backgroundColor: Color = Color.black.opacity(0.35),
+        backgroundColor: Color = Color.theme.black.opacity(0.35),
         foregroundColor: Color = .appAccent
     ) {
         self.isLoading = isLoading
@@ -54,7 +54,7 @@ public struct AppLoadingOverlay: View {
                     if let message = message {
                         Text(message)
                             .font(.subheadline)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.theme.white)
                             .multilineTextAlignment(.center)
                     }
                 }
@@ -85,14 +85,14 @@ struct LoadingButtonModifier: ViewModifier {
                 if isLoading {
                     HStack(spacing: DesignSystem.tightPadding) {
                         ProgressView()
-                            .tint(.white)
+                            .tint(Color.theme.white)
                             .scaleEffect(0.8)
                         if let loadingText = loadingText {
                             Text(loadingText)
                         }
                     }
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.theme.white)
                 }
             }
     }

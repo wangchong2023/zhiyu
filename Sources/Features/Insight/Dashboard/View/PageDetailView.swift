@@ -18,7 +18,7 @@ struct PageDetailView: View {
     @Environment(AIWorkflowStore.self) var aiStore
     @Environment(Router.self) var router
     @State private var recommendations: [KnowledgePage] = []
-    @State private var copiedUrl: String? = nil
+    @State private var copiedUrl: String?
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
         self.heroNamespace = heroNamespace

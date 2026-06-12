@@ -43,11 +43,17 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
     /// 模型支持与最擅长的核心任务类型 (如: ["TextSynthesis", "PageTagging", "OfflineRetrieval"])
     public let supportedTasks: [String]
     
-    /// 模型的特定描述和应用场景建议
+    /// 模型的特定描述 and 应用场景建议
     public let description: String
     
     /// 默认推理超参数配置
     public let defaultParameters: InferenceParameters
+    
+    /// 备用 HuggingFace 下载源（国外首选）
+    public let huggingfaceURLString: String?
+    
+    /// 备用 ModelScope (魔搭社区) 下载源（国内首选）
+    public let modelscopeURLString: String?
     
     public init(
         modelId: String,
@@ -60,7 +66,9 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
         parameterCount: String,
         supportedTasks: [String] = [],
         description: String,
-        defaultParameters: InferenceParameters
+        defaultParameters: InferenceParameters,
+        huggingfaceURLString: String? = nil,
+        modelscopeURLString: String? = nil
     ) {
         self.modelId = modelId
         self.displayName = displayName
@@ -73,6 +81,8 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
         self.supportedTasks = supportedTasks
         self.description = description
         self.defaultParameters = defaultParameters
+        self.huggingfaceURLString = huggingfaceURLString
+        self.modelscopeURLString = modelscopeURLString
     }
 }
 

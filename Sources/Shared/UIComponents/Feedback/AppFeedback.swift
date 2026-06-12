@@ -92,7 +92,7 @@ public struct ShimmerModifier: ViewModifier {
                     LinearGradient(
                         colors: [
                             .clear,
-                            Color.white.opacity(DesignSystem.Opacity.medium),
+                            Color.theme.white.opacity(DesignSystem.Opacity.medium),
                             .clear
                         ],
                         startPoint: .leading,
@@ -151,14 +151,14 @@ public struct AppSuccessBanner: View {
     public var body: some View {
         HStack(spacing: Spacing.tiny + Spacing.atomic) { // 6
             Image(systemName: DesignSystem.Icons.checkCircle)
-                .foregroundStyle(.green)
+                .foregroundStyle(Color.theme.green)
             Text(message)
                 .font(bannerFont)
-                .foregroundStyle(.green)
+                .foregroundStyle(Color.theme.green)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.green.opacity(Colors.glassOpacity))
+        .background(Color.theme.green.opacity(Colors.glassOpacity))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.standardRadius))
     }
 }

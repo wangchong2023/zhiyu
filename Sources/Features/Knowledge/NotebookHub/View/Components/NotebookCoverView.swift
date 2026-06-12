@@ -50,11 +50,11 @@ public struct NotebookCoverView: View {
             // 图标与装饰条
             HStack {
                 Image(systemName: icon)
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(.system(size: 24, weight: .bold)) // Dynamic Type
+                    .foregroundColor(.theme.white)
                 Spacer()
                 RoundedRectangle(cornerRadius: 2 /* 装饰微圆角，暂无 DesignSystem token */)
-                    .fill(Color.white.opacity(DesignSystem.Opacity.disabled))
+                    .fill(Color.theme.white.opacity(DesignSystem.Opacity.disabled))
                     .frame(width: DesignSystem.Metrics.customSize40, height: DesignSystem.tiny)
             }
             
@@ -63,14 +63,14 @@ public struct NotebookCoverView: View {
             // 标题与统计元数据
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 18, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
+                    .font(.system(size: 18, weight: .black, design: .rounded)) // Dynamic Type
+                    .foregroundColor(.theme.white)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
                 Text(L10n.Shared.pageCountFormat(pageCount))
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.white.opacity(DesignSystem.Opacity.prominent))
+                    .font(.system(size: 12, weight: .medium)) // Dynamic Type
+                    .foregroundColor(Color.theme.white.opacity(DesignSystem.Opacity.prominent))
             }
         }
         .padding(DesignSystem.standardPadding)
@@ -96,7 +96,7 @@ public struct NotebookCoverView: View {
             }
         )
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.glass), radius: 8, x: 0, y: 4)
         .scaleEffect(isPressed ? 0.95 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
     }
@@ -104,7 +104,7 @@ public struct NotebookCoverView: View {
     /// 将 16 进制颜色字符串数组解析为 SwiftUI Color 数组
     private func parsedColors() -> [Color] {
         if config.colors.isEmpty {
-            return [Color.blue, Color.purple] // 兜底颜色
+            return [Color.theme.blue, Color.theme.purple] // 兜底颜色
         }
         
         // 1. 尝试遍历解析所有的十六进制颜色码

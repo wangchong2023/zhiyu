@@ -407,3 +407,51 @@ public struct MockPage: KnowledgePageRepresentable, Hashable {
         self.pageType = pageType
     }
 }
+
+// MARK: - Mock URL Protocol
+/// 单元测试专用：网络拦截服务协议，拦截全局 URLRequest 并返回自定义响应数据与 HTTP 状态码
+public final class TestMockURLProtocol: URLProtocol, @unchecked Sendable {
+    /// 模拟请求处理器，返回 HTTP 响应头与可选的 Body 载荷
+    public static nonisolated(unsafe) var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data?))?
+    
+    /// 决定当前 Protocol 是否可以处理指定的请求
+    /// - Parameter request: 待决策的 URLRequest
+    /// - Returns: 是否拦截
+    public override class func canInit(with request: URLRequest) -> Bool {
+        return true
+    }
+    
+    /// 返回指定请求的规范版本，用于缓存识别等
+    /// - Parameter request: 原 URLRequest
+    /// - Returns: 规范 URLRequest
+    public override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        return request
+    }
+    
+    /// 开始加载请求
+    public override func startLoading() {
+        guard let handler = Self.requestHandler else {
+            // 没有配置 handler 时，抛出错误
+            client?.urlProtocol(self, didFailWithError: NSError(domain: "TestMockURLProtocol", code: -1, userInfo: [NSLocalizedDescriptionKey: "requestHandler is nil"]))
+            return
+        }
+        
+        do {
+            let (response, data) = try handler(request)
+            // 1. 通知客户端接收了响应
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            // 2. 如果有 Body 数据，通知客户端加载数据
+            if let data = data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+            // 3. 标记加载完成
+            client?.urlProtocolDidFinishLoading(self)
+        } catch {
+            // 拦截发生异常，回调失败
+            client?.urlProtocol(self, didFailWithError: error)
+        }
+    }
+    
+    /// 停止加载请求
+    public override func stopLoading() {}
+}

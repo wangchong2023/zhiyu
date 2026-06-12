@@ -138,14 +138,19 @@ struct SynthesisView: View {
     }
 
     private var llmWarningSection: some View {
-        NavigationLink(value: AppRoute.settings) {
+        // 使用 Button 触发全局路由设置 Sheet 弹窗，防止在分栏布局中 NavigationLink 发生环境丢失、点击无响应。
+        // 同时利用 Button 替换 NavigationLink，彻底消除 List 行尾自动添加冗余系统 Chevron（>）的渲染缺陷。
+        Button {
+            HapticFeedback.shared.trigger(.selection)
+            router.isShowingSettingsSheet = true
+        } label: {
             HStack(spacing: DesignSystem.medium) {
-                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(.orange)
+                Image(systemName: DesignSystem.Icons.warning).foregroundStyle(Color.theme.orange)
                 Text(L10n.Chat.configureFirst).font(.subheadline).foregroundStyle(.appText)
                 Spacer()
                 Image(systemName: DesignSystem.Icons.forward).font(.caption).foregroundStyle(.appSecondary)
             }
-            .padding().background(Color.orange.opacity(DesignSystem.Opacity.glass))
+            .padding().background(Color.theme.orange.opacity(DesignSystem.Opacity.glass))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .buttonStyle(.plain)

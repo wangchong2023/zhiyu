@@ -135,7 +135,7 @@ public struct UserProfileView: View {
                 // 上传过程中显示遮罩
                 if isUploading {
                     Circle()
-                        .fill(Color.black.opacity(DesignSystem.Opacity.disabled))
+                        .fill(Color.theme.black.opacity(DesignSystem.Opacity.disabled))
                         // swiftlint:disable:next magic_numbers_frame
                         .frame(width: 88, height: 88)
                     ProgressView()

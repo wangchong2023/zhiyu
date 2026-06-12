@@ -85,6 +85,6 @@ struct ExportReportView: View {
         }
         .padding(DesignSystem.huge)
         .frame(width: DesignSystem.Metrics.A4Width, height: DesignSystem.Metrics.A4Height) // 595, 842
-        .background(Color.white)
+        .background(Color.theme.white)
     }
 }

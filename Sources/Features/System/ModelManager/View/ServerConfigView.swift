@@ -61,7 +61,7 @@ public struct ServerConfigView: View {
     private var emptyStateView: some View {
         VStack(spacing: DesignSystem.large) {
             Image(systemName: "server.rack")
-                .font(.system(size: 64))
+                .font(.system(size: 64)) // Dynamic Type
                 .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
 
             Text(L10n.ModelManager.Server.emptyTitleAlt)
@@ -184,7 +184,7 @@ public struct ServerConfigView: View {
     /// 状态指示器
     private func statusIndicator(for server: MockServerConfig) -> some View {
         Circle()
-            .fill(server.isHealthy ? Color.green : Color.red)
+            .fill(server.isHealthy ? Color.theme.green : Color.theme.red)
             .frame(width: DesignSystem.medium, height: DesignSystem.medium)
     }
 

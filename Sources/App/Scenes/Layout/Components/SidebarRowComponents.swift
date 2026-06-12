@@ -85,24 +85,22 @@ struct CapabilitiesSection: View {
     var body: some View {
         Section {
             SidebarRowWrapper(value: SidebarSelection.tool(.dashboard)) {
-                Label {
-                    Text(L10n.Common.Sidebar.dashboard).foregroundStyle(.appText)
-                } icon: {
-                    Image(systemName: DesignSystem.Icons.dashboard).foregroundStyle(.blue)
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.dashboard,
+                    color: .blue,
+                    title: L10n.Common.Sidebar.dashboard
+                )
                 .contentShape(Rectangle())
             }
             SidebarRowWrapper(value: SidebarSelection.tool(.weeklyReport)) {
-                Label {
-                    Text(L10n.Common.Sidebar.weeklyInsight).foregroundStyle(.appText)
-                } icon: {
-                    Image(systemName: DesignSystem.Icons.weeklyInsight).foregroundStyle(.purple)
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.weeklyInsight,
+                    color: .purple,
+                    title: L10n.Common.Sidebar.weeklyInsight
+                )
                 .contentShape(Rectangle())
             }
-            
-        }
- header: {
+        } header: {
             Text(L10n.Common.Sidebar.capabilities)
         }
         .listRowBackground(SidebarRowBackground())
@@ -214,59 +212,43 @@ struct ToolsSection: View {
     
     var body: some View {
         Section {
+            // 健康检查（带 lint 问题数量角标）
             SidebarRowWrapper(value: SidebarSelection.tool(.lint)) {
-                HStack {
-                    Label {
-                        Text(L10n.Common.Sidebar.healthCheck).foregroundStyle(.appText)
-                    } icon: {
-                        Image(systemName: DesignSystem.Icons.healthCheck).foregroundStyle(.green)
-                    }
-                    Spacer()
-                    if !appStore.lintIssues.isEmpty {
-                        Text("\(appStore.lintIssues.count)")
-                            .font(DesignSystem.caption2Font)
-                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
-                            .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                            .background(Color.appAccent.opacity(DesignSystem.subtleFillOpacity))
-                            .clipShape(Capsule())
-                            .foregroundStyle(.appAccent)
-                    }
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.healthCheck,
+                    color: .green,
+                    title: L10n.Common.Sidebar.healthCheck,
+                    badge: appStore.lintIssues.count
+                )
                 .contentShape(Rectangle())
             }
+            // 标签管理
             SidebarRowWrapper(value: SidebarSelection.tool(.tagCloud)) {
-                Label {
-                    Text(L10n.Common.Sidebar.tagManager).foregroundStyle(.appText)
-                } icon: {
-                    Image(systemName: DesignSystem.Icons.tag).foregroundStyle(.orange)
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.tag,
+                    color: .orange,
+                    title: L10n.Common.Sidebar.tagManager
+                )
                 .contentShape(Rectangle())
             }
+            // 任务中心（带未读数量角标，使用填充橙色高亮）
             SidebarRowWrapper(value: SidebarSelection.tool(.taskCenter)) {
-                HStack {
-                    Label {
-                        Text(L10n.AI.Task.centerTitle).foregroundStyle(.appText)
-                    } icon: {
-                        Image(systemName: DesignSystem.Icons.refresh).foregroundStyle(.cyan)
-                    }
-                    Spacer()
-                    if taskCenter.unreadCount > 0 {
-                        Text("\(taskCenter.unreadCount)")
-                            .font(.system(size: DesignSystem.caption2FontSize, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
-                            .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                            .background(Capsule().fill(Color.orange))
-                    }
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.refresh,
+                    color: .cyan,
+                    title: L10n.AI.Task.centerTitle,
+                    badge: taskCenter.unreadCount,
+                    badgeFilled: true
+                )
                 .contentShape(Rectangle())
             }
+            // 协作
             SidebarRowWrapper(value: SidebarSelection.tool(.collab)) {
-                Label {
-                    Text(L10n.Common.Sidebar.collaboration).foregroundStyle(.appText)
-                } icon: {
-                    Image(systemName: DesignSystem.Icons.collaborationPeers).foregroundStyle(.teal)
-                }
+                SidebarIconRow(
+                    icon: DesignSystem.Icons.collaborationPeers,
+                    color: .teal,
+                    title: L10n.Common.Sidebar.collaboration
+                )
                 .contentShape(Rectangle())
             }
         } header: {
@@ -282,6 +264,57 @@ struct SidebarRowBackground: View {
     var body: some View {
         Color.appCard.opacity(DesignSystem.subtleOpacity)
             .background(.ultraThinMaterial)
+    }
+}
+
+// MARK: - 通用侧边栏图标行
+
+/// 通用侧边栏图标行
+/// 图标带彩色圆角背景框，与知识宇宙分区视觉风格保持一致。
+/// - Parameters:
+///   - icon: SF Symbol 图标名称
+///   - color: 图标与背景的主题色
+///   - title: 行标题
+///   - badge: 角标数值，0 时不显示
+///   - badgeFilled: true 时角标使用填充背景（橙色），适用于紧急未读计数
+struct SidebarIconRow: View {
+    let icon: String
+    let color: Color
+    let title: String
+    var badge: Int = 0
+    var badgeFilled: Bool = false
+    
+    var body: some View {
+        HStack(spacing: DesignSystem.medium) {
+            // 彩色圆角图标框（与知识宇宙风格统一）
+            Image(systemName: icon)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(color)
+                .frame(width: DesignSystem.largeIconSize, height: DesignSystem.largeIconSize)
+                .background(color.opacity(DesignSystem.Opacity.subtle))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
+            
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.appText)
+            
+            Spacer()
+            
+            // 角标：badgeFilled = true 时使用填充橙色（任务中心未读提醒）
+            if badge > 0 {
+                Text("\(badge)")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(badgeFilled ? .white : color)
+                    .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
+                    .padding(.vertical, DesignSystem.Chip.verticalPadding)
+                    .background(
+                        Capsule().fill(
+                            badgeFilled ? Color.theme.orange : color.opacity(DesignSystem.subtleFillOpacity)
+                        )
+                    )
+            }
+        }
+        .padding(.vertical, DesignSystem.atomic)
     }
 }
 

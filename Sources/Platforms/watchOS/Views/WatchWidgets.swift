@@ -91,8 +91,8 @@ struct WatchWidgetView: View {
                 Circle()
                     .fill(Color.appAccent.gradient)
                 Image(systemName: DesignSystem.Icons.micFill)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 20, weight: .bold)) // Dynamic Type
+                    .foregroundStyle(Color.theme.white)
             }
         }
         .containerBackground(Color.appAccent.gradient, for: .widget)

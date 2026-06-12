@@ -12,7 +12,7 @@ import SwiftUI
 
 // MARK: - 手表端专用颜色
 private extension Color {
-    static let watchAccent = Color.blue
+    static let watchAccent = Color.theme.blue
     static let watchText = Color.primary
     static let watchSecondary = Color.secondary
 }

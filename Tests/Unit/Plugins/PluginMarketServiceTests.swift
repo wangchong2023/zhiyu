@@ -98,15 +98,68 @@ final class PluginMarketServiceTests: XCTestCase {
         XCTAssertNil(service.errorMessage)
     }
     
-    func testFetchPluginsFailure() async throws {
+    func testFetchPluginsFailureFallbackToStaticPlugins() async throws {
         MockURLProtocol.requestHandler = { _ in
             throw URLError(.notConnectedToInternet)
         }
 
+        XCTAssertTrue(service.availablePlugins.isEmpty)
+
         await service.fetchPlugins()
 
-        XCTAssertTrue(service.availablePlugins.isEmpty)
+        // 验证失败后，availablePlugins 包含 7 个兜底示例插件，且 errorMessage 不为 nil
+        XCTAssertEqual(service.availablePlugins.count, 7)
+        XCTAssertEqual(service.availablePlugins.first?.id, "toc-generator-local")
         XCTAssertNotNil(service.errorMessage)
+    }
+
+    func testDownloadPluginLocalFallback() async throws {
+        // 在当前测试工作目录创建虚拟物理文件供拷贝测试，避免脱网沙盒下路径找不到
+        let fileManager = FileManager.default
+        let testDir = "Tools/Plugins"
+        let testFile = "\(testDir)/smart-cleaner.zyplugin"
+        
+        try? fileManager.createDirectory(atPath: testDir, withIntermediateDirectories: true)
+        fileManager.createFile(atPath: testFile, contents: Data("mock-plugin-data".utf8))
+        
+        defer {
+            // 测试结束清理临时测试文件
+            try? fileManager.removeItem(atPath: testFile)
+        }
+        
+        // 创建一个没有下载链接的 Mock 插件（触发本地拷贝安装）
+        let plugin = MarketPlugin(
+            from: CommunityPluginEntry(
+                id: "smart-cleaner",
+                name: "Markdown Beautifier",
+                author: "ZhiYu Team",
+                description: "Desc",
+                repo: "wangchong2023/zhiyu-releases"
+            ),
+            downloadBase: URL(string: "http://localhost/plugins")!
+        )
+        
+        // 我们需要把 downloadURL 设为 nil 模拟没有下载链接的情形，或者给一个无法访问的 url 模拟网络下载失败的情形
+        let mockPluginNoURL = MarketPlugin(
+            id: plugin.id,
+            version: plugin.version,
+            author: plugin.author,
+            downloads: plugin.downloads,
+            rating: plugin.rating,
+            icon: plugin.icon,
+            downloadURL: nil,
+            minAppVersion: plugin.minAppVersion,
+            requiredPermissions: plugin.requiredPermissions,
+            monetization: plugin.monetization,
+            reviewCount: plugin.reviewCount,
+            category: plugin.category,
+            source: plugin.source,
+            names: plugin.names,
+            descriptions: plugin.descriptions
+        )
+        
+        let success = await service.downloadPlugin(mockPluginNoURL)
+        XCTAssertTrue(success, "没有下载 URL 的本地示例插件应通过本地拷贝兜底安装成功")
     }
 
     // MARK: - community-plugins.json 格式测试

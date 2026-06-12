@@ -100,7 +100,7 @@ struct QuizView: View {
                             VStack(alignment: .leading, spacing: DesignSystem.medium) {
                                 HStack {
                                     Image(systemName: selectedOption == correctIdx ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.errorCircle)
-                                        .foregroundStyle(selectedOption == correctIdx ? .green : .red)
+                                        .foregroundStyle(selectedOption == correctIdx ? Color.theme.green : Color.theme.red)
                                     Text(selectedOption == correctIdx ? L10n.Common.Misc.correct : L10n.Common.Misc.incorrect)
                                         .font(.subheadline.bold())
                                 }
@@ -246,10 +246,10 @@ private struct OptionRow: View {
                 if showResult {
                     if isCorrect {
                         Image(systemName: DesignSystem.Icons.checkCircle)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color.theme.green)
                     } else if isSelected {
                         Image(systemName: DesignSystem.Icons.errorCircle)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.theme.red)
                     }
                 } else if isSelected {
                     Image(systemName: DesignSystem.Icons.checkCircle)
@@ -269,8 +269,8 @@ private struct OptionRow: View {
         if !showResult {
             return isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity / 1.5) : Color.appCard
         }
-        if isCorrect { return Color.green.opacity(DesignSystem.glassOpacity / 1.5) }
-        if isSelected { return Color.red.opacity(DesignSystem.glassOpacity / 1.5) }
+        if isCorrect { return Color.theme.green.opacity(DesignSystem.glassOpacity / 1.5) }
+        if isSelected { return Color.theme.red.opacity(DesignSystem.glassOpacity / 1.5) }
         return Color.appCard
     }
     
@@ -278,8 +278,8 @@ private struct OptionRow: View {
         if !showResult {
             return isSelected ? .appAccent : .clear
         }
-        if isCorrect { return .green }
-        if isSelected { return .red }
+        if isCorrect { return Color.theme.green }
+        if isSelected { return Color.theme.red }
         return .clear
     }
 }

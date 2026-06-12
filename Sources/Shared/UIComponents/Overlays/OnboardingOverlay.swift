@@ -19,7 +19,7 @@ struct OnboardingOverlay: View {
     var body: some View {
         if let step = service.currentStep {
             ZStack {
-                Color.black.opacity(Colors.Opacity.secondaryOpacity * 0.875) // 0.7
+                Color.theme.black.opacity(Colors.Opacity.secondaryOpacity * 0.875) // 0.7
                     .ignoresSafeArea()
                     .onTapGesture { 
                         withAnimation {
@@ -48,7 +48,7 @@ struct OnboardingOverlay: View {
                     }) {
                         Text(step == .vault ? L10n.Onboarding.Action.start : L10n.Onboarding.Action.next)
                             .font(.headline)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.theme.white)
                             .padding(.horizontal, Spacing.huge * 1.25) // 40
                             .padding(.vertical, Spacing.medium) // 12
                             .background(Color.appAccent)

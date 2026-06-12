@@ -75,7 +75,7 @@ struct URLImportSheet: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                             .stroke(
-                                firstInvalidLine != nil ? Color.red.opacity(DesignSystem.Opacity.soft) : Color.appAccent.opacity(DesignSystem.Opacity.glass * 2),
+                                firstInvalidLine != nil ? Color.theme.red.opacity(DesignSystem.Opacity.soft) : Color.appAccent.opacity(DesignSystem.Opacity.glass * 2),
                                 lineWidth: DesignSystem.borderWidth
                             )
                     )
@@ -86,7 +86,7 @@ struct URLImportSheet: View {
                     if let line = firstInvalidLine {
                         Label(String(format: L10n.Ingest.invalidURLAtLine(line)), systemImage: "exclamationmark.triangle.fill")
                             .font(.caption2)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.theme.red)
                     }
                     Label(String(format: L10n.Ingest.validURLCount(validURLs.count, maxURLCount)), systemImage: "link")
                         .font(.caption2)

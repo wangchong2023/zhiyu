@@ -64,8 +64,8 @@ public struct AIRainbowGlowBadge: View {
         let isDownloading = isCurrentlyDownloading
         
         // 色彩配置：本地就绪采用极客霓虹绿，云端提权采用极客梦幻蓝紫，正在下载采用炫彩旋转
-        let mainColor: Color = isLocalReady ? .green : (modelManager.isCloudEscalationEnabled ? .purple : .appAccent)
-        let glowColor: Color = isLocalReady ? .green.opacity(DesignSystem.Opacity.prominent) : .appAccent.opacity(DesignSystem.Opacity.prominent)
+        let mainColor: Color = isLocalReady ? Color.theme.green : (modelManager.isCloudEscalationEnabled ? Color.theme.purple : .appAccent)
+        let glowColor: Color = isLocalReady ? Color.theme.green.opacity(DesignSystem.Opacity.prominent) : .appAccent.opacity(DesignSystem.Opacity.prominent)
         
         return ZStack {
             // 1. 底层呼吸发光光晕 (Rainbow Glow Effect)
@@ -134,7 +134,7 @@ public struct AIRainbowGlowBadge: View {
                 Button(action: { isShowingPopover = false }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
-                        .font(.system(size: 20))
+                        .font(.system(size: 20)) // Dynamic Type
                 }
                 .buttonStyle(.plain)
             }
@@ -150,7 +150,7 @@ public struct AIRainbowGlowBadge: View {
                 
                 HStack(spacing: DesignSystem.small) {
                     Image(systemName: modelManager.isModelLocalReady(for: modelManager.activeModelId) ? "checkmark.shield.fill" : "network")
-                        .foregroundStyle(modelManager.isModelLocalReady(for: modelManager.activeModelId) ? .green : .appAccent)
+                        .foregroundStyle(modelManager.isModelLocalReady(for: modelManager.activeModelId) ? Color.theme.green : .appAccent)
                         .font(.title3)
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -191,7 +191,7 @@ public struct AIRainbowGlowBadge: View {
             let memInGb = Double(modelManager.physicalMemory) / (1024 * 1024 * 1024)
             HStack {
                 Image(systemName: "shield.checkered")
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color.theme.green)
                 Text(L10n.Common.unknown)
                     .font(.caption)
                     .foregroundStyle(.appText)
@@ -201,7 +201,7 @@ public struct AIRainbowGlowBadge: View {
                     .foregroundStyle(.appSecondary)
             }
             .padding(DesignSystem.tiny)
-            .background(Color.green.opacity(DesignSystem.Opacity.subtle))
+            .background(Color.theme.green.opacity(DesignSystem.Opacity.subtle))
             .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
             
             Divider()
@@ -222,7 +222,7 @@ public struct AIRainbowGlowBadge: View {
                 .font(.subheadline.bold())
                 .padding()
                 .background(Color.appAccent)
-                .foregroundStyle(.white)
+                .foregroundStyle(Color.theme.white)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
             .buttonStyle(.plain)

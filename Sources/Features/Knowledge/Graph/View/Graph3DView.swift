@@ -107,7 +107,7 @@ struct Graph3DView: View {
             HStack {
                 HStack(spacing: DesignSystem.tiny) {
                     Circle()
-                        .fill(fps > 30 ? Color.green : (fps > 15 ? Color.orange : Color.red))
+                        .fill(fps > 30 ? Color.theme.green : (fps > 15 ? Color.theme.orange : Color.theme.red))
                         .frame(width: DesignSystem.tiny + 2, height: DesignSystem.tiny + 2)
                     Text("FPS: \(Int(fps))")
                         .font(.caption2)
@@ -169,7 +169,7 @@ struct Graph3DView: View {
     
     private func buildScene() {
         let newScene = SCNScene()
-        newScene.background.contents = isFullScreen ? UIColor.black : nil
+        newScene.background.contents = isFullScreen ? UIColor.theme.black : nil
         addStarfield(to: newScene)
         setupLighting(scene: newScene)
         setupCamera(scene: newScene)
@@ -273,7 +273,7 @@ struct Graph3DView: View {
             let opacity: CGFloat = isDimmed ? DesignSystem.dimmedOpacity : DesignSystem.fullOpacity
             
             geometry.firstMaterial?.diffuse.contents = uiColor.withAlphaComponent(opacity)
-            geometry.firstMaterial?.specular.contents = UIColor.white.withAlphaComponent(opacity)
+            geometry.firstMaterial?.specular.contents = UIColor.theme.white.withAlphaComponent(opacity)
             geometry.firstMaterial?.emission.contents = isDimmed ? uiColor.withAlphaComponent(DesignSystem.ghostOpacity * 10) : uiColor.withAlphaComponent(DesignSystem.softOpacity)
 
             let node = SCNNode(geometry: geometry)
@@ -332,8 +332,8 @@ struct Graph3DView: View {
         textNode.position = SCNVector3(Float(nodeSize + CGFloat(DesignSystem.Graph.ThreeD.labelOffset)), 0, 0)
         let labelScale = DesignSystem.Graph.ThreeD.labelScale
         textNode.scale = SCNVector3(labelScale, labelScale, labelScale)
-        textNode.geometry?.firstMaterial?.diffuse.contents = UIColor.white
-        textNode.geometry?.firstMaterial?.emission.contents = UIColor.white.withAlphaComponent(0.3)
+        textNode.geometry?.firstMaterial?.diffuse.contents = UIColor.theme.white
+        textNode.geometry?.firstMaterial?.emission.contents = UIColor.theme.white.withAlphaComponent(0.3)
 
         let billboard = SCNBillboardConstraint()
         billboard.freeAxes = .all

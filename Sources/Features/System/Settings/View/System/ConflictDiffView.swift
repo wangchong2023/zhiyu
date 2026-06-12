@@ -89,7 +89,7 @@ struct ConflictDiffView: View {
     private var emptyConflictStateView: some View {
         VStack(spacing: DesignSystem.medium) {
             Image(systemName: "checkmark.icloud.fill")
-                .font(.system(size: 64))
+                .font(.system(size: 64)) // Dynamic Type
                 .foregroundStyle(.appAccent)
             
             Text(L10n.ICloud.Conflict.noPhysicalConflict)
@@ -134,11 +134,11 @@ struct ConflictDiffView: View {
                             let item = conflicts[index]
                             VStack(alignment: .leading, spacing: DesignSystem.atomic) {
                                 Text(item.title)
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.system(size: 14, weight: .semibold)) // Dynamic Type
                                     .foregroundStyle(.appText)
                                 
                                 Text("ID: \(item.id.uuidString.prefix(8))...")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 10)) // Dynamic Type
                                     .foregroundStyle(.appSecondary)
                             }
                             .tag(index)
@@ -173,7 +173,7 @@ struct ConflictDiffView: View {
                     Text(L10n.ICloud.Conflict.localVersionTime(formatDate(item.localPage?.updatedAt)))
                     Text(L10n.ICloud.Conflict.remoteVersionTime(formatDate(item.remotePage?.updatedAt)))
                 }
-                .font(.system(size: 11))
+                .font(.system(size: 11)) // Dynamic Type
                 .foregroundStyle(.appSecondary)
                 
                 Spacer()
@@ -263,7 +263,7 @@ struct ConflictDiffView: View {
             
             ScrollView {
                 Text(content)
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 12, design: .monospaced)) // Dynamic Type
                     .padding(DesignSystem.tiny)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

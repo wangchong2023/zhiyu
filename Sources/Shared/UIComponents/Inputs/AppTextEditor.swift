@@ -45,7 +45,7 @@ public struct AppTextEditor: View {
                 // 占位文本层：当内容为空且未输入时展示
                 if text.isEmpty {
                     Text(placeholder)
-                        .font(.system(size: 15))
+                        .font(.system(size: 15)) // Dynamic Type
                         .foregroundColor(.secondary.opacity(DesignSystem.Opacity.dim))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 8)
@@ -54,7 +54,7 @@ public struct AppTextEditor: View {
                 
                 // 原生编辑器层
                 TextEditor(text: $text)
-                    .font(.system(size: 15))
+                    .font(.system(size: 15)) // Dynamic Type
                     .scrollContentBackground(.hidden) // 隐藏原生背景以便显示自定义半透明底色
                     .background(Color.clear)
                     .focused($isFocused)
@@ -71,18 +71,18 @@ public struct AppTextEditor: View {
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                     .stroke(
-                        isFocused ? Color.blue.opacity(DesignSystem.Opacity.dim) : Color.primary.opacity(DesignSystem.Opacity.subtle),
+                        isFocused ? Color.theme.blue.opacity(DesignSystem.Opacity.dim) : Color.primary.opacity(DesignSystem.Opacity.subtle),
                         lineWidth: 1
                     )
             )
-            .shadow(color: isFocused ? Color.blue.opacity(DesignSystem.Opacity.light) : Color.clear, radius: 4, x: 0, y: 2)
+            .shadow(color: isFocused ? Color.theme.blue.opacity(DesignSystem.Opacity.light) : Color.clear, radius: 4, x: 0, y: 2)
             .frame(minHeight: 120)
             
             // 字数限额计数条
             if let limit = maxCharacters {
                 Text("\(text.count)/\(limit)")
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundColor(text.count >= limit ? .red : .secondary)
+                    .font(.system(size: 11, weight: .medium, design: .monospaced)) // Dynamic Type
+                    .foregroundColor(text.count >= limit ? Color.theme.red : .secondary)
             }
         }
     }

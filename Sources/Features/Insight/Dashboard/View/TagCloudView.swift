@@ -242,7 +242,7 @@ struct TagCloudViewContent: View {
                 Text(L10n.Common.Misc.bulkDelete)
                     .padding(.horizontal, DesignSystem.large)
                     .padding(.vertical, DesignSystem.small - DesignSystem.atomic) // 6
-                    .background(Color.red)
+                    .background(Color.theme.red)
                     .clipShape(Capsule())
                     .foregroundStyle(.white)
             }

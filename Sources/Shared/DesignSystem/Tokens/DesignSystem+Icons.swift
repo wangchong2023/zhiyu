@@ -228,6 +228,8 @@ extension DesignSystem {
         public static let concept = Typography.Icons.concept
         public static let source = Typography.Icons.source
         public static let comparison = Typography.Icons.comparison
+        public static let map = Typography.Icons.map
+        public static let raw = Typography.Icons.raw
         
         // ── 扩展映射 ──
         public static let photoAlbum = Typography.Icons.photoAlbum

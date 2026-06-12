@@ -772,13 +772,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite\n(Free)"
+            "value": "Lite"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lite 版\n(免费)"
+            "value": "Lite版"
           }
         }
       }
@@ -5273,6 +5273,23 @@
         }
       }
     },
+    "settings.privacyCombined.desc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled, private documents will be blurred and require Face ID / Touch ID to unlock."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开启后，私密文档内容将被模糊遮罩并需要面容/指纹解锁。"
+          }
+        }
+      }
+    },
     "settings.build": {
       "extractionState": "manual",
       "localizations": {
@@ -9196,6 +9213,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "手机号验证"
+          }
+        }
+      }
+    },
+    "auth.restorePurchases": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复购买"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore Purchases"
+          }
+        }
+      }
+    },
+    "auth.restoreSuccess": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复购买成功，权益已激活"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purchases restored successfully"
+          }
+        }
+      }
+    },
+    "auth.restoreFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复购买失败，请稍后重试"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore failed. Please try again later."
+          }
+        }
+      }
+    },
+    "auth.restoring": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复中..."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restoring..."
           }
         }
       }

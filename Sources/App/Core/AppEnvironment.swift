@@ -131,6 +131,9 @@ final class AppEnvironment {
         
         // 5. 异步触发数据种子化 (确保所有 DI 注册已完成且主线程已释放)
         Task {
+            // 5.1 启动 StoreKit 2 Transaction 持久监听（审核必须项：家庭共享、订阅续费、恢复购买均依赖此监听）
+            StoreKitService.shared.startListening()
+            
             await self.store.seedDefaultContent()
             // 🎬 异步安全触发数据同步编排，此时所有底层注册和上层 Store 均已彻底就绪，避免时序闪退
             ServiceContainer.shared.resolve(DataCoordinator.self).sync()

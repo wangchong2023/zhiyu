@@ -23,17 +23,10 @@ echo "========================================="
 echo "测试 1: Mock 服务器状态检查"
 echo "========================================="
 
-if curl -s http://localhost:9091/api/plugins > /dev/null; then
-    print_success "插件市场 Mock 服务器运行正常"
-else
-    print_info "插件市场 Mock 服务器未运行，跳过网络测试"
-    SKIP_NETWORK=1
-fi
-
-if [ "${SKIP_NETWORK:-0}" -eq 0 ] && curl -s http://localhost:8080/api/models > /dev/null; then
+if curl -s http://localhost:8080/api/models > /dev/null; then
     print_success "模型商店 Mock 服务器运行正常"
 else
-    print_info "模型商店 Mock 服务器未运行"
+    print_info "模型商店 Mock 服务器未运行，跳过网络 API 测试"
     SKIP_NETWORK=1
 fi
 

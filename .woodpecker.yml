@@ -29,6 +29,12 @@ steps:
       - bash Tools/Lint/lint_layer_markers.sh
       - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
+      - echo "===> Running Document Integrity Check..."
+      - python3 Tools/Gatekeeper/check_docs_integrity.py
+      - echo "===> Running Config and Script Health Check..."
+      - python3 Tools/Gatekeeper/check_configs_integrity.py
+      - echo "===> Running ShellCheck for Tools..."
+      - if which shellcheck >/dev/null; then shellcheck -x -S warning Tools/CI/*.sh; else echo "warning: shellcheck not installed"; fi
 
   swiftlint:
     depends_on: [clone-repo]
@@ -88,8 +94,7 @@ steps:
     commands:
       - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-      - echo "===> Running Unit Tests..."
-      - set -o pipefail && xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO -enableCodeCoverage YES -parallel-testing-enabled YES -parallel-testing-worker-count 4 -skip-testing:ZhiYuUITests/ZhiYuUITests/testChatAISkeletonLoadingState -skip-testing:ZhiYuUITests/IngestTests/testManualEntrySectionExists -skip-testing:ZhiYuUITests/IngestTests/testURLImportButton -skip-testing:ZhiYuTests/ComponentSnapshots/testAdaptiveSidebarView -skip-testing:ZhiYuUITests/ZhiYuMonkeyTests/testWildMonkeyClickTraversal -skip-testing:ZhiYuTests/AuthServiceTests/testLogoutClearsGuestFlag -skip-testing:ZhiYuTests/AuthServiceTests/testLogoutClearsState -skip-testing:ZhiYuTests/KnowledgeStorePerformanceTests/testOneHundredThousandNodesFTSRetrievalLatency 2>&1 | tee build/test_raw.log | Tools/CI/ci-test-progress.sh | xcbeautify --report junit --report-path build/test_report.junit
+      - ./Tools/CI/run_unit_tests.sh --ci
       - echo "===> All Tests passed."
       - echo "===> Checking code coverage..."
       - python3 Tools/CI/check_coverage.py

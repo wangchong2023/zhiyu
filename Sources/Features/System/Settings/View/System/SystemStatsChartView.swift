@@ -64,7 +64,7 @@ struct ChartView: View {
                 .foregroundStyle(
                     LinearGradient(
                         // swiftlint:disable:next magic_numbers_opacity
-                        colors: [Color.blue.opacity(DesignSystem.Opacity.disabled), Color.blue.opacity(0.01)],
+                        colors: [Color.theme.blue.opacity(DesignSystem.Opacity.disabled), Color.theme.blue.opacity(0.01)],
                         startPoint: .top,
                         endPoint: .bottom
                     )

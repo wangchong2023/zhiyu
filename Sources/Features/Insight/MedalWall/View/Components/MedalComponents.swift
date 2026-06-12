@@ -73,7 +73,7 @@ struct MedalRewardPopup: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(DesignSystem.disabledOpacity + 0.1) // 0.4
+            Color.theme.black.opacity(DesignSystem.disabledOpacity + 0.1) // 0.4
                 .ignoresSafeArea()
                 .onTapGesture(perform: onDismiss)
             

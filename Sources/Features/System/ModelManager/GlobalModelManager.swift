@@ -46,13 +46,28 @@ public final class GlobalModelManager {
     /// 物理硬件运存防爆评估拦截服务
     @ObservationIgnored private let hardwareGuard: DeviceHardwareGuard
     
+    /// 单元测试专用：允许手动模拟国内/国外环境
+    internal var isChinaRegionOverride: Bool?
+
+    /// 判断当前是否处于中国大陆地区，用于决定大模型下载源路由
+    private var isChinaRegion: Bool {
+        if let override = isChinaRegionOverride {
+            return override
+        }
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+            return Locale.current.region?.identifier == "CN"
+        } else {
+            return Locale.current.identifier.contains("zh-Hans") || Locale.current.identifier.contains("_CN")
+        }
+    }
+    
     // MARK: - 持久化设置属性
     
-    /// 用户当前选中的本地活跃大模型 ID (例如: "gemma-2b-it")
+    /// 用户当前选中的本地活跃大模型 ID (例如: "gemma-4-e2b-it")
     public var activeModelId: String {
         get {
             access(keyPath: \.activeModelId)
-            return UserDefaults.standard.string(forKey: "ZhiYu.ActiveModelId") ?? "gemma-2b-it"
+            return UserDefaults.standard.string(forKey: "ZhiYu.ActiveModelId") ?? "gemma-4-e2b-it"
         }
         set {
             withMutation(keyPath: \.activeModelId) {
@@ -154,7 +169,16 @@ public final class GlobalModelManager {
     /// 发起大模型权重文件后台静默下载
     /// - Parameter manifest: 期望下载的白名单大模型规格元数据
     public func startDownload(for manifest: LLMManifest) {
-        guard let url = URL(string: manifest.remoteURLString) else { return }
+        let downloadURLString: String
+        if isChinaRegion {
+            downloadURLString = manifest.modelscopeURLString ?? manifest.remoteURLString
+            Logger.shared.info("[GlobalModelManager] China region detected, routing download to ModelScope: \(downloadURLString)")
+        } else {
+            downloadURLString = manifest.huggingfaceURLString ?? manifest.remoteURLString
+            Logger.shared.info("[GlobalModelManager] Non-China region detected, routing download to HuggingFace: \(downloadURLString)")
+        }
+        
+        guard let url = URL(string: downloadURLString) else { return }
         let modelId = manifest.modelId
         
         // 1. 如果该模型不支持该硬件物理内存 (restricted)，强力拦截，杜绝 OOM 爆内存

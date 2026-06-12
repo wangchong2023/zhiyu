@@ -34,8 +34,18 @@ actor KnowledgeInsightService {
     func generateDailyRecap(pages: [KnowledgePage], llmService: any LLMServiceProtocol, forceRefresh: Bool = false) async throws -> DailyRecap {
         guard !pages.isEmpty else { throw AppError.insight(L10n.Dashboard.insight.addPagesFirst) }
 
+        // 是否处于自动化 UI 测试模式
+        let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
+
+        // 优先从磁盘加载缓存的见解。若在 UI 自动化测试中，必须校验该缓存所指向的页面 targetPageID 是否确实存在于当前笔记本中，防止跨用例、跨笔记本金库热切换时读取了脏缓存。
+        if !forceRefresh, let cached = loadCachedDailyRecap() {
+            if !isTesting || pages.contains(where: { $0.id == cached.targetPageID }) {
+                return cached
+            }
+        }
+
         // UI 自动化测试靶场下的智能自愈：直接返回本地 Mock 保证 100% 绿通，免除外部大语言模型网络的依赖与波动
-        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+        if isTesting {
             guard let target = pages.first else {
                 throw AppError.insight(L10n.Dashboard.insight.addPagesFirst)
             }
@@ -47,10 +57,6 @@ actor KnowledgeInsightService {
             )
             saveCachedDailyRecap(recap)
             return recap
-        }
-
-        if !forceRefresh, let cached = loadCachedDailyRecap() {
-            return cached
         }
 
         updateStatus(L10n.AI.Status.extracting)

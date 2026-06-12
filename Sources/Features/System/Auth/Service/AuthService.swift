@@ -569,7 +569,7 @@ public final class AuthService: AuthServiceProtocol {
         }
         
         var currentPlanKey: String? = "free"
-        var parsedQuotas: PlanQuotas? = nil
+        var parsedQuotas: PlanQuotas?
         var parsedFeatures: [String] = []
         
         do {

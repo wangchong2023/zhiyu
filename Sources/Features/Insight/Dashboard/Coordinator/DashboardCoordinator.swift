@@ -20,9 +20,11 @@ final class DashboardCoordinator {
     var densityData: [DensityInfo] = []
     var isCalculating = false
     
-    // ── AI 洞察状态转发 ──
-    var isGeneratingInsights: Bool { aiStore.isGeneratingDailyRecap }
-    var dailyRecap: KnowledgeInsightService.DailyRecap? { aiStore.dailyRecap }
+    // ── AI 洞察状态（由 Observable 追踪，确保 UI 响应式更新） ──
+    /// 是否正在生成每日灵感见解
+    var isGeneratingInsights = false
+    /// 当前缓存在内存中的每日灵感数据
+    var dailyRecap: KnowledgeInsightService.DailyRecap?
     
     // ── 基础设施依赖 ──
     @ObservationIgnored @Inject private var store: AppStore
@@ -42,9 +44,17 @@ final class DashboardCoordinator {
         isCalculating = false
     }
 
-    /// 仅触发 AI 洞察刷新
+    /// 仅触发 AI 洞察刷新并同步追踪状态
     func refreshInsights() async {
+        // 同步启动生成状态
+        self.isGeneratingInsights = true
+        
+        // 异步调用底层 AI 洞察商店的生成动作
         await aiStore.generateDailyRecap(forceRefresh: false)
+        
+        // 将底层状态实时同步至本地追踪属性，触发 UI 重新渲染
+        self.dailyRecap = aiStore.dailyRecap
+        self.isGeneratingInsights = aiStore.isGeneratingDailyRecap
     }
 
     /// 计算知识库核心统计指标（反链、密度等）
@@ -67,14 +77,14 @@ final class DashboardCoordinator {
         // 2. 计算总链接数
         let links = pages.reduce(0) { $0 + $1.outgoingLinks.count }
         
-        // 3. 计算重要度 (In + Out) Top 10 密度数据
+        // 3. 计算重要度 (In + Out) Top 5 密度数据
         let density = pages.map { page in
             let inbound = backlinkMap[page.title, default: 0]
             let outbound = page.outgoingLinks.count
             return DensityInfo(name: page.title, inbound: Double(inbound), outbound: Double(outbound))
         }
         .sorted { ($0.inbound + $0.outbound) > ($1.inbound + $1.outbound) }
-        .prefix(10)
+        .prefix(5)
         .map { $0 }
         
         // 更新状态

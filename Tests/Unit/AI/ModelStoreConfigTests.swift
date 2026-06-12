@@ -121,4 +121,88 @@ final class ModelStoreConfigTests: XCTestCase {
         let hexHash = digest.map { String(format: "%02hhx", $0) }.joined()
         return hexHash.lowercased() == expectedHash.lowercased()
     }
+    
+    // MARK: - 4. 测试国内使用魔搭，国外使用 HuggingFace 分流下载源
+    
+    @MainActor
+    func testChinaRegionSelectsModelScopeSource() async throws {
+        let manager = GlobalModelManager()
+        manager.isChinaRegionOverride = true
+        
+        let manifest = LLMManifest(
+            modelId: "gemma-2b-it-test",
+            displayName: "Gemma-Test",
+            vendor: "Google",
+            fileSizeInBytes: 1000,
+            minDeviceMemoryInGb: 4.0,
+            remoteURLString: "https://cdn.zhiyu.app/models/gemma-test.bin",
+            sha256Checksum: "checksum123",
+            parameterCount: "2B",
+            supportedTasks: ["chat"],
+            description: "Desc",
+            defaultParameters: InferenceParameters(),
+            huggingfaceURLString: "https://huggingface.co/google/gemma-test/resolve/main/gemma-test.bin",
+            modelscopeURLString: "https://modelscope.cn/api/v1/models/LLM-Research/gemma-test/repo?Revision=master&FilePath=gemma-test.bin"
+        )
+        
+        let fakeDownloadManager = FakeModelDownloadManager()
+        ServiceContainer.shared.register(fakeDownloadManager as any ModelDownloadCapabilities, for: (any ModelDownloadCapabilities).self)
+        
+        manager.startDownload(for: manifest)
+        
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        
+        XCTAssertEqual(fakeDownloadManager.lastRemoteURL?.absoluteString, manifest.modelscopeURLString)
+    }
+    
+    @MainActor
+    func testNonChinaRegionSelectsHuggingFaceSource() async throws {
+        let manager = GlobalModelManager()
+        manager.isChinaRegionOverride = false
+        
+        let manifest = LLMManifest(
+            modelId: "gemma-2b-it-test",
+            displayName: "Gemma-Test",
+            vendor: "Google",
+            fileSizeInBytes: 1000,
+            minDeviceMemoryInGb: 4.0,
+            remoteURLString: "https://cdn.zhiyu.app/models/gemma-test.bin",
+            sha256Checksum: "checksum123",
+            parameterCount: "2B",
+            supportedTasks: ["chat"],
+            description: "Desc",
+            defaultParameters: InferenceParameters(),
+            huggingfaceURLString: "https://huggingface.co/google/gemma-test/resolve/main/gemma-test.bin",
+            modelscopeURLString: "https://modelscope.cn/api/v1/models/LLM-Research/gemma-test/repo?Revision=master&FilePath=gemma-test.bin"
+        )
+        
+        let fakeDownloadManager = FakeModelDownloadManager()
+        ServiceContainer.shared.register(fakeDownloadManager as any ModelDownloadCapabilities, for: (any ModelDownloadCapabilities).self)
+        
+        manager.startDownload(for: manifest)
+        
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        
+        XCTAssertEqual(fakeDownloadManager.lastRemoteURL?.absoluteString, manifest.huggingfaceURLString)
+    }
+}
+
+final class FakeModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {
+    var lastModelId: String?
+    var lastRemoteURL: URL?
+    
+    func startDownload(modelId: String, remoteURL: URL) async throws {
+        lastModelId = modelId
+        lastRemoteURL = remoteURL
+    }
+    
+    func pauseDownload(modelId: String) async throws {}
+    func resumeDownload(modelId: String) async throws {}
+    func cancelDownload(modelId: String) async throws {}
+    
+    func observeDownloadState(for modelId: String) async -> AsyncStream<DownloadState> {
+        return AsyncStream { continuation in
+            continuation.finish()
+        }
+    }
 }

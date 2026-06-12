@@ -269,7 +269,7 @@ struct PluginCard: View {
         .padding()
         .background(Color.appCard.opacity(DesignSystem.glassOpacity * 4))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius))
-        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius).stroke(Color.white.opacity(DesignSystem.glassOpacity / 3), lineWidth: DesignSystem.borderWidth))
+        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius).stroke(Color.theme.white.opacity(DesignSystem.glassOpacity / 3), lineWidth: DesignSystem.borderWidth))
         .task {
             if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())

@@ -13,10 +13,11 @@ import SwiftUI
 // MARK: - View Extension for Accessibility
 extension View {
     /// 为视图添加标准的无障碍标签、提示和特征
+    /// - Note: 遵循 HIG：hint 为 nil 时不设置，避免空字符串被 VoiceOver 播报为停顿
     func appAccessibility(label: String, hint: String? = nil, traits: AccessibilityTraits = .isStaticText) -> some View {
         self
             .accessibilityLabel(label)
-            .accessibilityHint(hint ?? "")
+            .modifier(OptionalHintModifier(hint: hint))
             .accessibilityAddTraits(traits)
     }
     
@@ -44,6 +45,22 @@ extension View {
     }
 }
 
+// MARK: - Optional Hint Modifier
+
+/// 可选无障碍提示修饰符
+/// 遵循 HIG：hint 为 nil 时不调用 accessibilityHint()，避免空字符串导致 VoiceOver 停顿
+private struct OptionalHintModifier: ViewModifier {
+    let hint: String?
+    
+    func body(content: Content) -> some View {
+        if let hint {
+            content.accessibilityHint(hint)
+        } else {
+            content
+        }
+    }
+}
+
 // MARK: - Dependency for Reduce Motion
 struct AccessibilityReduceMotionKey: EnvironmentKey {
     static let defaultValue = false
@@ -68,8 +85,9 @@ struct ConditionalAnimationModifier: ViewModifier {
     /// - Parameter content: content
     /// - Returns: 返回值
     func body(content: Content) -> some View {
-        // 使用一个始终变化的 value (UUID) 来确保动画能被触发
-        content.animation(reduceMotion ? .none : animation, value: UUID())
+        // 遵循 HIG: 以 reduceMotion 状态作为动画触发值
+        // 避免使用 UUID() 每次渲染都生成新值而意外重复触发动画
+        content.animation(reduceMotion ? .none : animation, value: reduceMotion)
     }
 }
 

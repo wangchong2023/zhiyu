@@ -56,3 +56,11 @@
 - **输入清洗**：所有传入 LLM 的用户输入均经过正则过滤，移除潜在的系统指令劫持关键词（如 "Ignore all previous instructions"）。
 - **隔离执行**：AI 任务（如 Summary, Quiz）在独立进程/上下文中执行，且无权修改核心数据库状态，除非经过 `AppStore` 显式写入。
 - **元数据阻断**：AI 无法获取标记为 `#private` 且未通过生物识别验证的内容。
+
+---
+
+## 6. 会话安全与令牌存储 (Session Security & Keychain Storage)
+
+- **物理沙盒托管**：普通用户的登录凭据（Access Token 与长效 Refresh Token）完全托管于 iOS/macOS 物理系统安全区 Keychain 中，严禁落入冷存储数据库或 UserDefaults，杜绝应用沙盒泄漏导致的会话失窃。
+- **Token 轮转刷新 (Rotation)**：每次刷新操作完成后，旧的 Refresh Token 均会被拉入 Redis 黑名单作废，降低拦截重放风险。
+- **无感自动校验**：冷启动时，应用使用安全区内的 Token 自动校验本地 Session。若发生 401 鉴权失效，系统将通过 Refresh Token 完成静默换取新令牌；一旦彻底失效，立即清空本地 Keychain 安全凭据并退回到登录面板，保障本地终端会话安全。

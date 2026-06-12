@@ -50,7 +50,7 @@ struct LockOverlayView: View {
                     .offset(x: isAnimating ? 150 : -150, y: isAnimating ? -100 : 100)
                 
                 Circle()
-                    .fill(Color.purple.opacity(DesignSystem.Opacity.light))
+                    .fill(Color.theme.purple.opacity(DesignSystem.Opacity.light))
                     .frame(width: DesignSystem.Metrics.customSize400, height: DesignSystem.Metrics.customSize400)
                     .blur(radius: 80)
                     .offset(x: isAnimating ? -180 : 180, y: isAnimating ? 80 : -80)
@@ -143,7 +143,7 @@ struct LockOverlayView: View {
                                 .stroke(.appGloss.opacity(DesignSystem.Opacity.disabled), lineWidth: 0.5)
                         }
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.theme.white)
                     .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.soft), radius: 25, y: 12)
                 }
                 .buttonStyle(ScaleButtonStyle())

@@ -589,11 +589,11 @@ struct LintIssueRow: View {
                 Text(suggestion)
                     .font(.caption)
                     .padding(DesignSystem.small)
-                    .background(Color.purple.opacity(DesignSystem.Opacity.subtle))
+                    .background(Color.theme.purple.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                            .stroke(Color.purple.opacity(DesignSystem.Opacity.medium), lineWidth: 1)
+                            .stroke(Color.theme.purple.opacity(DesignSystem.Opacity.medium), lineWidth: 1)
                     )
                     .padding(.leading, DesignSystem.giant)
                     .transition(.move(edge: .top).combined(with: .opacity))

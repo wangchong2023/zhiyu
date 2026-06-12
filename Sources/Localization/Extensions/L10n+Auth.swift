@@ -125,6 +125,17 @@ extension L10n {
         public static var upgradeSuccessTitle: String { tr("auth.upgradeSuccessTitle") }
         public static var upgradeSuccessMessage: String { tr("auth.upgradeSuccessMessage") }
         public static var startUsingPro: String { tr("auth.startUsingPro") }
+        
+        // MARK: - 恢复购买（App Store 审核强制要求）
+        /// 「恢复购买」按钮文案
+        public static var restorePurchases: String { tr("auth.restorePurchases") }
+        /// 恢复购买成功提示
+        public static var restoreSuccess: String { tr("auth.restoreSuccess") }
+        /// 恢复购买失败提示
+        public static var restoreFailed: String { tr("auth.restoreFailed") }
+        /// 恢复中 Loading 提示
+        public static var restoring: String { tr("auth.restoring") }
+
 
         // MARK: - 套餐权益对比子结构
         public struct Feature {

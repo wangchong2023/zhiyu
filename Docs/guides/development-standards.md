@@ -14,6 +14,6 @@
 
 ## 参考
 
-- [swift-coding-style.md](../guides/swift-coding-style.md)
-- [config-conventions.md](../guides/config-conventions.md)
-- [implementation-patterns.md](../guides/implementation-patterns.md)
+- [swift-coding-style.md](../Guides/swift-coding-style.md)
+- [config-conventions.md](../Guides/config-conventions.md)
+- [implementation-patterns.md](../Guides/implementation-patterns.md)

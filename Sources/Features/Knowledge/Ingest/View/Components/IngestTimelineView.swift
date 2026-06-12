@@ -48,7 +48,7 @@ struct IngestTimelineView: View {
                             }
                             
                             Image(systemName: isCompleted(stage.id) ? "checkmark" : stage.icon)
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 10, weight: .bold)) // Dynamic Type
                                 .foregroundStyle(isCompleted(stage.id) ? .white : (isActive(stage.id) ? stage.color : .appSecondary.opacity(DesignSystem.Opacity.soft)))
                         }
                         

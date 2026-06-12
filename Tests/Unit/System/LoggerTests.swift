@@ -64,6 +64,7 @@ final class SystemLoggerTests: XCTestCase {
         // 1. 高频写入 510 条记录，超出 500 条上限
         for i in 1...510 {
             logger.addLog(action: .create, target: "Page_\(i)", details: "高频测试批量写入")
+            try? await Task.sleep(nanoseconds: 1_000_000)
         }
 
         // 2. 轮询等待所有非结构化 addLog Task 完成并触发截断

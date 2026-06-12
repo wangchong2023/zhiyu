@@ -130,7 +130,7 @@ struct ContentView: View {
     
     @ViewBuilder
     private var sidebarOverlayLayer: some View {
-        Color.black.opacity(DesignSystem.dimmedOpacity)
+        Color.theme.black.opacity(DesignSystem.dimmedOpacity)
             .ignoresSafeArea()
             .onTapGesture {
                 withAnimation(DesignSystem.Animation.Config.prominentSpring) {
@@ -232,7 +232,7 @@ struct DatabaseCorruptedBanner: View {
                 // 安全警告图标
                 Image(systemName: DesignSystem.Icons.exclamationShieldFill)
                     .font(.title3)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.theme.orange)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     // 主警告文案 (从强类型本地化 L10n 中拉取)
@@ -247,7 +247,7 @@ struct DatabaseCorruptedBanner: View {
                     if showDetail {
                         Text(errorMessage)
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(.theme.red)
                             .padding(.top, 2)
                             .multilineTextAlignment(.leading)
                     }
@@ -281,8 +281,8 @@ struct DatabaseCorruptedBanner: View {
                                 .fontWeight(.semibold)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(Capsule().fill(Color.orange))
-                                .foregroundColor(.white)
+                                .background(Capsule().fill(Color.theme.orange))
+                                .foregroundColor(.theme.white)
                         }
                     }
                     .disabled(isRetrying)
@@ -295,7 +295,7 @@ struct DatabaseCorruptedBanner: View {
             .shadow(color: .primary.opacity(DesignSystem.Opacity.subtle), radius: 6, x: 0, y: 3)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                    .stroke(Color.orange.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
+                    .stroke(Color.theme.orange.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
             )
         }
         .padding(.horizontal, 16)

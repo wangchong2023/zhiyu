@@ -10,6 +10,7 @@ final class KnowledgeIngestPipelineTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        setupFullMockEnvironment()
         mockEmbedding = MockEmbeddingProvider()
     }
 

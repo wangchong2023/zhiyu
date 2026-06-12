@@ -203,7 +203,7 @@ struct SearchDiagnosticSheet: View {
                                 .foregroundStyle(.purple)
                                 .padding(DesignSystem.small)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.purple.opacity(DesignSystem.Opacity.subtle))
+                                .background(Color.theme.purple.opacity(DesignSystem.Opacity.subtle))
                                 .cornerRadius(DesignSystem.smallRadius)
                         }
                     }
@@ -223,18 +223,18 @@ struct SearchDiagnosticSheet: View {
                                 .foregroundStyle(.secondary)
                             
                             Text("\(info.ftsCount)")
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
-                                .foregroundStyle(.blue)
+                                .font(.system(size: 36, weight: .bold, design: .rounded)) // Dynamic Type
+                                .foregroundStyle(Color.theme.blue)
                             
                             Text("FTS5 SQLite")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 10, weight: .bold)) // Dynamic Type
                                 .foregroundStyle(.blue.opacity(DesignSystem.Opacity.prominent))
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
                             LinearGradient(
-                                colors: [Color.blue.opacity(DesignSystem.Opacity.ghost), Color.blue.opacity(DesignSystem.Opacity.atomic)],
+                                colors: [Color.theme.blue.opacity(DesignSystem.Opacity.ghost), Color.theme.blue.opacity(DesignSystem.Opacity.atomic)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -242,7 +242,7 @@ struct SearchDiagnosticSheet: View {
                         .cornerRadius(DesignSystem.cardRadius)
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                .stroke(Color.blue.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
+                                .stroke(Color.theme.blue.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                         )
                         
                         // 向量检索召回卡
@@ -253,18 +253,18 @@ struct SearchDiagnosticSheet: View {
                                 .foregroundStyle(.secondary)
                             
                             Text("\(info.vectorCount)")
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
-                                .foregroundStyle(.green)
+                                .font(.system(size: 36, weight: .bold, design: .rounded)) // Dynamic Type
+                                .foregroundStyle(Color.theme.green)
                             
                             Text("HNSW / Vector")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 10, weight: .bold)) // Dynamic Type
                                 .foregroundStyle(.green.opacity(DesignSystem.Opacity.prominent))
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(
                             LinearGradient(
-                                colors: [Color.green.opacity(DesignSystem.Opacity.ghost), Color.green.opacity(DesignSystem.Opacity.atomic)],
+                                colors: [Color.theme.green.opacity(DesignSystem.Opacity.ghost), Color.theme.green.opacity(DesignSystem.Opacity.atomic)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -272,7 +272,7 @@ struct SearchDiagnosticSheet: View {
                         .cornerRadius(DesignSystem.cardRadius)
                         .overlay(
                             RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
-                                .stroke(Color.green.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
+                                .stroke(Color.theme.green.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
                         )
                     }
                     .padding(.horizontal)
@@ -303,9 +303,9 @@ struct SearchDiagnosticSheet: View {
                                         Text("\(index + 1)")
                                             .font(.caption)
                                             .bold()
-                                            .foregroundStyle(.orange)
+                                            .foregroundStyle(Color.theme.orange)
                                             .frame(width: DesignSystem.IconSize.standard, height: DesignSystem.IconSize.standard)
-                                            .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
+                                            .background(Color.theme.orange.opacity(DesignSystem.Opacity.subtle))
                                             .clipShape(Circle())
                                         
                                         VStack(alignment: .leading, spacing: 2) {
@@ -321,16 +321,16 @@ struct SearchDiagnosticSheet: View {
                                                     Text("FTS:")
                                                     Text(item.ftsRank > 0 ? "#\(item.ftsRank)" : L10n.Search.Diag.miss)
                                                 }
-                                                .font(.system(size: 10))
-                                                .foregroundStyle(item.ftsRank > 0 ? Color.blue : Color.secondary)
+                                                .font(.system(size: 10)) // Dynamic Type
+                                                .foregroundStyle(item.ftsRank > 0 ? Color.theme.blue : Color.secondary)
                                                 
                                                 // 向量排位
                                                 HStack(spacing: 2) {
                                                     Text("Vec:")
                                                     Text(item.vectorRank > 0 ? "#\(item.vectorRank)" : L10n.Search.Diag.miss)
                                                 }
-                                                .font(.system(size: 10))
-                                                .foregroundStyle(item.vectorRank > 0 ? Color.green : Color.secondary)
+                                                .font(.system(size: 10)) // Dynamic Type
+                                                .foregroundStyle(item.vectorRank > 0 ? Color.theme.green : Color.secondary)
                                             }
                                         }
                                         
@@ -340,10 +340,10 @@ struct SearchDiagnosticSheet: View {
                                         Text(String(format: L10n.Search.Diag.scoreFormat, item.finalScore))
                                             .font(.system(.subheadline, design: .monospaced))
                                             .bold()
-                                            .foregroundStyle(.orange)
+                                            .foregroundStyle(Color.theme.orange)
                                             .padding(.horizontal, DesignSystem.small)
                                             .padding(.vertical, 4)
-                                            .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
+                                            .background(Color.theme.orange.opacity(DesignSystem.Opacity.subtle))
                                             .cornerRadius(DesignSystem.microRadius)
                                     }
                                     .padding(.vertical, DesignSystem.small)

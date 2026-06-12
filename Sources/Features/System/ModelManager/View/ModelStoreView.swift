@@ -127,8 +127,8 @@ public struct ModelStoreView: View {
         
         // 卡片背景：复用项目设计令牌，浅色/深色自动适配
         let cardBackground = Color.appCard.opacity(eligibility == .restricted ? 0.4 : 0.8)
-        let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.red.opacity(DesignSystem.Opacity.disabled) : Color.appBorder.opacity(DesignSystem.Opacity.prominent))
-        let shadowColor = isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.black.opacity(DesignSystem.Opacity.ghost)
+        let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.theme.red.opacity(DesignSystem.Opacity.disabled) : Color.appBorder.opacity(DesignSystem.Opacity.prominent))
+        let shadowColor = isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.theme.black.opacity(DesignSystem.Opacity.ghost)
         
         return VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -141,7 +141,7 @@ public struct ModelStoreView: View {
                             .foregroundStyle(eligibility == .restricted ? .appSecondary : .appText)
                         
                         Text(manifest.parameterCount)
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .font(.system(size: 10, weight: .bold, design: .monospaced)) // Dynamic Type
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
@@ -300,7 +300,7 @@ public struct ModelStoreView: View {
                     .frame(width: DesignSystem.Metrics.indicatorSize)
                 
                 Text("\(Int(progress * 100))%")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced)) // Dynamic Type
                     .foregroundStyle(.appAccent)
             }
         case .paused:
@@ -342,7 +342,7 @@ public struct ModelStoreView: View {
                 .font(.subheadline.bold())
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(Color.red.opacity(DesignSystem.Opacity.glass))
+                .background(Color.theme.red.opacity(DesignSystem.Opacity.glass))
                 .foregroundStyle(.red)
                 .clipShape(Capsule())
             }
@@ -376,7 +376,7 @@ public struct ModelStoreView: View {
                         .background(Color.appBackground)
                         .foregroundStyle(.orange)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.orange, lineWidth: 1))
+                        .overlay(Circle().stroke(Color.theme.orange, lineWidth: 1))
                 }
             case .paused:
                 HStack(spacing: DesignSystem.small) {
@@ -425,12 +425,12 @@ public struct ModelStoreView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .foregroundStyle(.red)
             Text(" \(String(format: "%.1f", manifest.minDeviceMemoryInGb)) GB  OOM")
-                .font(.system(size: 10))
+                .font(.system(size: 10)) // Dynamic Type
                 .foregroundStyle(.red)
             Spacer()
         }
         .padding(DesignSystem.tightPadding)
-        .background(Color.red.opacity(DesignSystem.Opacity.subtle))
+        .background(Color.theme.red.opacity(DesignSystem.Opacity.subtle))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     
@@ -440,12 +440,12 @@ public struct ModelStoreView: View {
             Image(systemName: "exclamationmark.circle.fill")
                 .foregroundStyle(.orange)
             Text("")
-                .font(.system(size: 10))
+                .font(.system(size: 10)) // Dynamic Type
                 .foregroundStyle(.orange)
             Spacer()
         }
         .padding(DesignSystem.tightPadding)
-        .background(Color.orange.opacity(DesignSystem.Opacity.subtle))
+        .background(Color.theme.orange.opacity(DesignSystem.Opacity.subtle))
         .clipShape(RoundedRectangle(cornerRadius: Spacing.Chip.cornerRadius))
     }
     

@@ -52,6 +52,8 @@ struct VaultInsightsPanel: View {
                         BarItem(label: L10n.Dashboard.stats.short.concept, value: 0.8, color: .appConcept)
                         BarItem(label: L10n.Dashboard.stats.short.source, value: 0.4, color: .appSource)
                         BarItem(label: L10n.Dashboard.stats.short.comparison, value: 0.2, color: .appComparison)
+                        BarItem(label: L10n.Dashboard.stats.short.map, value: 0.1, color: .appMap)
+                        BarItem(label: L10n.Dashboard.stats.short.raw, value: 0.05, color: .gray)
                     }
                     .frame(height: DesignSystem.Metrics.chartHeight)
                 }

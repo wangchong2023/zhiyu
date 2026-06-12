@@ -153,7 +153,7 @@ final class iOSPDFService: PDFServiceProtocol {
 
             let renderer = UIGraphicsImageRenderer(size: size)
             let image = renderer.image { ctx in
-                UIColor.white.setFill()
+                UIColor.theme.white.setFill()
                 ctx.fill(CGRect(origin: .zero, size: size))
                 ctx.cgContext.scaleBy(x: scale, y: scale)
                 page.draw(with: .mediaBox, to: ctx.cgContext)

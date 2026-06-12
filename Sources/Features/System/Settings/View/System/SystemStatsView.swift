@@ -151,11 +151,11 @@ struct SystemStatsView: View {
                         
                         ZStack {
                             Circle()
-                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : Color.appAccent).opacity(DesignSystem.Opacity.subtle))
+                                .fill((coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.theme.orange : Color.appAccent).opacity(DesignSystem.Opacity.subtle))
                                 .frame(width: DesignSystem.IconSize.xlarge, height: DesignSystem.IconSize.xlarge)
                             Image(systemName: DesignSystem.Icons.timer)
                                 .font(.title3.bold())
-                                .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.orange : .appAccent)
+                                .foregroundColor(coordinator.avgLatency > AppConstants.Performance.latencyWarningThreshold ? Color.theme.orange : .appAccent)
                         }
                     }
                     
@@ -281,7 +281,7 @@ struct SystemStatsView: View {
                                 if item.id == VaultService.shared.selectedVaultID {
                                     Text(L10n.Dashboard.stats.activeVaultStatus)
                                         .font(.caption2)
-                                        .foregroundStyle(Color.green)
+                                        .foregroundStyle(Color.theme.green)
                                 } else {
                                     Text(L10n.Dashboard.stats.inactiveVaultStatus)
                                         .font(.caption2)
@@ -331,7 +331,7 @@ struct SystemStatsView: View {
                     if let count = coordinator.cleanedCount {
                         Text("\(L10n.Dashboard.cleanedPrefix) \(count) \(L10n.Dashboard.cleanedSuffix)")
                             .font(.caption)
-                            .foregroundColor(Color.green)
+                            .foregroundColor(Color.theme.green)
                     }
                 }
                 .padding(Spacing.medium)

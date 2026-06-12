@@ -25,7 +25,7 @@ struct KnowledgeDashboardView: View {
         ZStack(alignment: .top) {
             // 1. 方案 D 沉浸式高级背景同步
             ZStack {
-                Color.black.overlay(themeManager.pageBackground().opacity(DesignSystem.Opacity.disabled))
+                Color.theme.black.overlay(themeManager.pageBackground().opacity(DesignSystem.Opacity.disabled))
                 MeshGradientView()
                     .blur(radius: 80)
             }
@@ -188,7 +188,7 @@ struct KnowledgeDashboardView: View {
                             
                             HStack(spacing: DesignSystem.atomic) {
                                 Circle()
-                                    .fill(Color.purple)
+                                    .fill(Color.theme.purple)
                                     .frame(width: DesignSystem.IconSize.atomic, height: DesignSystem.IconSize.atomic)
                                 Text(L10n.Dashboard.densityInbound)
                                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
@@ -287,7 +287,7 @@ struct KnowledgeDashboardView: View {
                                 HStack(alignment: .top, spacing: DesignSystem.tiny) {
                                     Image(systemName: DesignSystem.Icons.concept)
                                         .font(.system(size: DesignSystem.caption2FontSize))
-                                        .foregroundColor(.orange)
+                                        .foregroundColor(.theme.orange)
                                     Text(recap.suggestedConnection)
                                         .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
                                         .foregroundColor(.appSecondary)
@@ -371,10 +371,10 @@ struct MetricBox: View {
                         Text(trend)
                     }
                     .font(.system(size: DesignSystem.caption2FontSize, weight: .bold, design: .rounded))
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color.theme.green)
                     .padding(.horizontal, DesignSystem.Chip.horizontalPadding)
                     .padding(.vertical, DesignSystem.Chip.verticalPadding)
-                    .background(Color.green.opacity(DesignSystem.glassOpacity))
+                    .background(Color.theme.green.opacity(DesignSystem.glassOpacity))
                     .clipShape(Capsule())
                 }
             }

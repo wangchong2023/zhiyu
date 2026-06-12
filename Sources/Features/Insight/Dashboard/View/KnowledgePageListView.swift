@@ -199,6 +199,14 @@ struct KnowledgePageListContent: View {
                 if filterType == nil || filterType == .comparison {
                     comparisonSection
                 }
+
+                if filterType == nil || filterType == .map {
+                    mapSection
+                }
+
+                if filterType == nil || filterType == .raw {
+                    rawSection
+                }
             } else {
                 AppEmptyState.simple(
                     icon: DesignSystem.Icons.weeklyInsight,
@@ -332,6 +340,58 @@ struct KnowledgePageListContent: View {
                     Label(L10n.Dashboard.pageList.comparisonCount(comparisons.count), systemImage: DesignSystem.Icons.comparison)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appComparison)
+                    Spacer()
+                }
+                .padding(.vertical, DesignSystem.tiny)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var mapSection: some View {
+        let maps = filteredPages(for: .map)
+        if !maps.isEmpty {
+            Section {
+                VStack(spacing: DesignSystem.medium) {
+                    ForEach(maps) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .accessibilityIdentifier("PageRow_Item")
+                        .buttonStyle(AppPressButtonStyle())
+                    }
+                }
+            } header: {
+                HStack {
+                    Label(L10n.Dashboard.pageList.mapCount(maps.count), systemImage: DesignSystem.Icons.map)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.appMap)
+                    Spacer()
+                }
+                .padding(.vertical, DesignSystem.tiny)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var rawSection: some View {
+        let raws = filteredPages(for: .raw)
+        if !raws.isEmpty {
+            Section {
+                VStack(spacing: DesignSystem.medium) {
+                    ForEach(raws) { page in
+                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                            PageRowView(page: page)
+                        }
+                        .accessibilityIdentifier("PageRow_Item")
+                        .buttonStyle(AppPressButtonStyle())
+                    }
+                }
+            } header: {
+                HStack {
+                    Label(L10n.Dashboard.pageList.rawCount(raws.count), systemImage: DesignSystem.Icons.raw)
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.gray)
                     Spacer()
                 }
                 .padding(.vertical, DesignSystem.tiny)

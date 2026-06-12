@@ -18,6 +18,26 @@ public actor NetworkClient {
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     
+    #if DEBUG
+    /// 单元测试专用：测试专用的 URLSession，允许拦截和 Mock HTTP 请求
+    private var testSession: URLSession?
+    
+    /// 单元测试专用：设置测试专用的 URLSession
+    /// - Parameter session: 测试专用的 URLSession 实例
+    public func setTestSession(_ session: URLSession?) {
+        self.testSession = session
+    }
+    #endif
+    
+    /// 当前活跃的 URLSession 实例
+    private var activeSession: URLSession {
+        #if DEBUG
+        return testSession ?? session
+        #else
+        return session
+        #endif
+    }
+    
     // 无感刷新防并发控制
     private var isRefreshing = false
     private var refreshTask: Task<String, Error>?
@@ -102,7 +122,7 @@ public actor NetworkClient {
         body.append((crlf + "--\(boundary)--" + crlf).data(using: .utf8)!)
         request.httpBody = body
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await activeSession.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
         }
@@ -124,7 +144,7 @@ public actor NetworkClient {
     ) async throws -> T {
         await waitForTokenRefreshIfNeeded(requiresAuth: requiresAuth, isRetry: isRetry)
         let request = try buildURLRequest(path: path, method: method, body: body, requiresAuth: requiresAuth)
-        let (data, response) = try await session.data(for: request)
+        let (data, response) = try await activeSession.data(for: request)
         guard response is HTTPURLResponse else {
             throw NetworkError.unexpected(L10n.Network.invalidHTTPResponse)
         }
@@ -212,7 +232,7 @@ public actor NetworkClient {
             request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
             request.httpBody = try encoder.encode(req)
             
-            let (data, _) = try await session.data(for: request)
+            let (data, _) = try await activeSession.data(for: request)
             let response = try decoder.decode(ApiResponse<LoginResponse>.self, from: data)
             
             if response.isSuccess, let loginData = response.data {

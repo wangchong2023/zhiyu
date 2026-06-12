@@ -33,9 +33,12 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
 
         // 2. 自动点击返回按钮 pop 回根视图，解决测试悬挂于详情页或列表页的情况
-        let backButtonPredicate = NSPredicate(format: "label CONTAINS '返回' OR label CONTAINS 'Back' OR identifier == 'Back'")
         for _ in 0..<5 {
-            let backButton = app.navigationBars.buttons.matching(backButtonPredicate).element(boundBy: 0)
+            var backButton = app.buttons["BackButton"]
+            if !backButton.exists {
+                let backButtonPredicate = NSPredicate(format: "label CONTAINS '返回' OR label CONTAINS 'Back' OR identifier CONTAINS 'Back' OR identifier == 'BackButton'")
+                backButton = app.navigationBars.buttons.matching(backButtonPredicate).element(boundBy: 0)
+            }
             if backButton.exists && backButton.isHittable {
                 backButton.tap()
                 try? Thread.sleep(forTimeInterval: 0.5)
@@ -81,10 +84,49 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     func testDashboardNavigationFlow() throws {
         ensureAppIsLoggedInAndInVault()
 
+        // 智能自愈防卫：先在所有页面列表中等待种子数据注入落地完成，避免进入 Dashboard 后抛出 addPagesFirst 异常
+        let listPredicate = NSPredicate(format: "label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'")
+        var pageListRow = app.buttons.matching(listPredicate).element(boundBy: 0)
+
+        if !pageListRow.waitForExistence(timeout: 5) {
+            pageListRow = app.cells.matching(listPredicate).element(boundBy: 0)
+        }
+        if !pageListRow.exists {
+            pageListRow = app.cells.containing(listPredicate).element(boundBy: 0)
+        }
+        if !pageListRow.exists {
+            pageListRow = app.buttons.containing(listPredicate).element(boundBy: 0)
+        }
+
+        if pageListRow.exists {
+            pageListRow.tap()
+        }
+
+        let firstPage = app.buttons.matching(identifier: "PageRow_Item").element(boundBy: 0)
+        XCTAssertTrue(firstPage.waitForExistence(timeout: 20), "知识库列表首个文档项在 20 秒内未加载完成，说明冷启动数据种子化超时")
+
+        // 种子化就绪后，点击返回按钮退回到 Knowledge 根主页，以便点击工作台入口
+        var backButton = app.buttons["BackButton"]
+        if !backButton.exists {
+            let backButtonPredicate = NSPredicate(format: "label CONTAINS '返回' OR label CONTAINS 'Back' OR identifier CONTAINS 'Back' OR identifier == 'BackButton'")
+            backButton = app.navigationBars.buttons.matching(backButtonPredicate).element(boundBy: 0)
+        }
+        if backButton.waitForExistence(timeout: 5) && backButton.isHittable {
+            backButton.tap()
+            // 稍作等待以完成转场
+            try? Thread.sleep(forTimeInterval: 0.8)
+        }
+
         let predicate = NSPredicate(format: "label CONTAINS '工作台' OR label CONTAINS '仪表盘' OR label CONTAINS 'Dashboard' OR label CONTAINS '知识仪表'")
         var dashboardRow = app.buttons.matching(predicate).element(boundBy: 0)
 
-        if !dashboardRow.waitForExistence(timeout: 5) {
+        // 强力等待工作台入口在屏幕上确实存在，标志着返回主页转场已百分之百完成
+        XCTAssertTrue(dashboardRow.waitForExistence(timeout: 10), "工作台入口行应该在返回主页后存在")
+        
+        // 额外提供 1.5 秒的转场缓冲，让 SwiftUI 导航堆栈状态完全稳定，规避 UIKit pop 转场未完全结束就抢跑 push 导致的动作忽略
+        try? Thread.sleep(forTimeInterval: 1.5)
+
+        if !dashboardRow.exists {
             dashboardRow = app.cells.matching(predicate).element(boundBy: 0)
         }
         if !dashboardRow.exists {
@@ -93,8 +135,12 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         if !dashboardRow.exists {
             dashboardRow = app.buttons.containing(predicate).element(boundBy: 0)
         }
-        XCTAssertTrue(dashboardRow.exists, "工作台入口行应该存在")
+        
+        XCTAssertTrue(dashboardRow.exists, "工作台入口行应该存在并可点击")
         dashboardRow.tap()
+        
+        // 点击进入工作台后，等待工作台加载完成的转场缓冲
+        try? Thread.sleep(forTimeInterval: 1.0)
 
         var dailyRecapHeader = app.staticTexts["每日灵感"]
         if !dailyRecapHeader.exists {

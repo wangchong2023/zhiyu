@@ -21,7 +21,7 @@ struct CoachMarkOverlay: View {
     var body: some View {
         ZStack {
             // 半透明背景
-            Color.black.opacity(DesignSystem.coachMarkBackgroundOpacity)
+            Color.theme.black.opacity(DesignSystem.coachMarkBackgroundOpacity)
                 .ignoresSafeArea()
                 .onTapGesture { dismissWithAnimation() }
             

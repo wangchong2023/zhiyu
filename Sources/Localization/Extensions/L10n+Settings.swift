@@ -54,6 +54,8 @@ extension L10n {
         public static var privacyModeDesc: String { Localized.tr("settings.privacyMode.desc", table: t) }
         public static var biometricProtection: String { tr("biometricProtection") }
         public static var biometricProtectionDesc: String { Localized.tr("settings.biometricProtection.desc", table: t) }
+        /// 隐私与生物识别合并后的描述文案
+        public static var privacyCombinedDesc: String { Localized.tr("settings.privacyCombined.desc", table: t) }
         public static var rebuildInitialNotebooks: String { Localized.tr("settings.rebuildInitialNotebooks", table: t) }
         public static var resetData: String { tr("resetData") }
         public static var advancedMaintenance: String { Localized.tr("settings.advancedMaintenance", table: t) }

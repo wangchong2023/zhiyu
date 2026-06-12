@@ -110,7 +110,7 @@ struct CollaborationViewContent: View {
                 .foregroundStyle(.appSecondary)
         }
         .padding()
-        .background(Color.orange.opacity(DesignSystem.glassOpacity * 0.53)) // 0.08
+        .background(Color.theme.orange.opacity(DesignSystem.glassOpacity * 0.53)) // 0.08
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
     
@@ -286,7 +286,7 @@ struct CollaborationViewContent: View {
             .foregroundStyle(.red)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.red.opacity(DesignSystem.Opacity.light))
+            .background(Color.theme.red.opacity(DesignSystem.Opacity.light))
             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
         }
         .accessibilityIdentifier("collab-leave-button")

@@ -248,12 +248,22 @@ final class LLMConfigStore: ObservableObject {
         }
     }
 
+    /// 从安全的 Keychain 或硬件芯片解密加载特定 LLM 提供商的 API 密钥
+    /// - Parameter provider: 大模型提供商类型
+    /// - Returns: 解密后的 API 密钥。如果失败，支持降级至已加密的本地备份，否则返回空字符串。
     private func loadAPIKey(for provider: LLMProvider) -> String {
         let key = keychainKey(for: provider)
-        if let encryptedValue = try? KeychainService.shared.retrieve(key: key) {
-            if let decrypted = try? SecureEnclaveCryptoService.shared.decrypt(encryptedValue) {
-                return decrypted
+        
+        do {
+            if let encryptedValue = try KeychainService.shared.retrieve(key: key) {
+                if let decrypted = try? SecureEnclaveCryptoService.shared.decrypt(encryptedValue) {
+                    return decrypted
+                } else {
+                    Logger.shared.warning("[LLMConfigStore] 硬件解密 API 密钥失败，可能由于硬件私钥更新。")
+                }
             }
+        } catch {
+            Logger.shared.error("[LLMConfigStore] 从钥匙串读取 API 密钥失败", error: error)
         }
         
         // 迁移逻辑：如果新版分提供商 Key 不存在，尝试读取旧版全局 Key
@@ -265,18 +275,44 @@ final class LLMConfigStore: ObservableObject {
             return legacyValue
         }
 
+        // 软件级加密兜底：在钥匙串存取受限（如未签名、沙盒受限环境）下，读取经应用级 AES-GCM 加密后的本地备份，避免直接暴露明文
+        let fallbackKey = "zhiyu_llm_api_key_fallback_\(provider.rawValue)"
+        if let fallbackEncrypted = UserDefaults.standard.string(forKey: fallbackKey) {
+            if let decrypted = try? SecurityManager.shared.decrypt(fallbackEncrypted) {
+                Logger.shared.debug("[LLMConfigStore] 已启用本地加密备份的 API 密钥兜底。")
+                return decrypted
+            }
+        }
+
         return ""
     }
 
+    /// 将特定 LLM 提供商的 API 密钥物理加密并安全存储到钥匙串
+    /// - Parameter provider: 大模型提供商类型
     private func saveAPIKey(for provider: LLMProvider) {
         let key = keychainKey(for: provider)
+        
+        // 软件级加密备份：将 API 密钥通过应用级 AES-GCM 软件加密，备份在 UserDefaults，防范 Keychain 写入限制
+        let fallbackKey = "zhiyu_llm_api_key_fallback_\(provider.rawValue)"
+        if apiKey.isEmpty {
+            UserDefaults.standard.removeObject(forKey: fallbackKey)
+        } else {
+            if let encryptedFallback = try? SecurityManager.shared.encrypt(apiKey) {
+                UserDefaults.standard.set(encryptedFallback, forKey: fallbackKey)
+            }
+        }
+
         guard !apiKey.isEmpty else {
             try? KeychainService.shared.delete(key: key)
             return
         }
-        // 引入 Secure Enclave 硬件安全芯片物理级锁定
-        if let encrypted = try? SecureEnclaveCryptoService.shared.encrypt(apiKey) {
-            try? KeychainService.shared.store(key: key, value: encrypted)
+        
+        do {
+            // 引入 Secure Enclave 硬件安全芯片物理级锁定
+            let encrypted = try SecureEnclaveCryptoService.shared.encrypt(apiKey)
+            try KeychainService.shared.store(key: key, value: encrypted)
+        } catch {
+            Logger.shared.error("[LLMConfigStore] 写入加密的 API 密钥至钥匙串失败", error: error)
         }
     }
 }

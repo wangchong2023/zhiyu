@@ -44,7 +44,7 @@ public struct GlassCardModifier: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.appBorder.opacity(DesignSystem.Opacity.disabled), lineWidth: 0.5)
             )
-            .shadow(color: .black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -73,7 +73,7 @@ public extension View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.appBorder.opacity(DesignSystem.Opacity.disabled), lineWidth: Spacing.borderWidth)
             )
-            .shadow(color: Color.black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.ghost), radius: 10, x: 0, y: 5)
     }
     
     /// 应用通用页面容器样式
@@ -102,7 +102,7 @@ public extension View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(borderColor.opacity(DesignSystem.Opacity.medium), lineWidth: 0.5) // 稍微增强边框，匹配任务中心
             )
-            .shadow(color: Color.black.opacity(DesignSystem.Opacity.faint), radius: 10, x: 0, y: 5)
+            .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.faint), radius: 10, x: 0, y: 5)
     }
     
     /// 仪表盘指标卡片风格 (Metric Card Style)
@@ -128,7 +128,7 @@ public extension View {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(color.opacity(DesignSystem.Opacity.medium), lineWidth: 0.5) // 使用强调色淡边框
             )
-            .shadow(color: Color.black.opacity(DesignSystem.Opacity.atomic), radius: 8, x: 0, y: 4)
+            .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.atomic), radius: 8, x: 0, y: 4)
     }
 }
 

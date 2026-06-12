@@ -261,7 +261,7 @@ struct TaskCenterView: View {
         .padding(.vertical, DesignSystem.standardPadding)
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
         .padding(.vertical, DesignSystem.tiny)
-        .shadow(color: Color.black.opacity(DesignSystem.shadowOpacity / 5), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
+        .shadow(color: Color.theme.black.opacity(DesignSystem.shadowOpacity / 5), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
     }
     
     private var emptyState: some View {
@@ -352,7 +352,7 @@ private struct TaskRow: View {
             // 类型图标与状态
             ZStack(alignment: .bottomTrailing) {
                 Circle()
-                    .fill(task.type == .ai ? Color.purple.opacity(DesignSystem.glassOpacity / 2) : Color.appAccent.opacity(DesignSystem.glassOpacity / 2))
+                    .fill(task.type == .ai ? Color.theme.purple.opacity(DesignSystem.glassOpacity / 2) : Color.appAccent.opacity(DesignSystem.glassOpacity / 2))
                     .frame(width: DesignSystem.Task.iconBoxSize, height: DesignSystem.Task.iconBoxSize)
                 
                 Image(systemName: task.type.icon)

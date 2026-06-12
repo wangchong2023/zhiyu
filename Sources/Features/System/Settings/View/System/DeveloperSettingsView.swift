@@ -107,7 +107,7 @@ struct DeveloperSettingsView: View {
                 if let count = stressTestCount {
                     Text(L10n.Settings.developer.stressTest.success(count))
                         .font(.caption)
-                        .foregroundColor(.orange)
+                        .foregroundStyle(Color.theme.orange)
                 }
             }
             .appListRowBackground()

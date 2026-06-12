@@ -58,6 +58,9 @@ targets:
         NSSupportsLiveActivities: YES
         SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
     preBuildScripts:
+      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
+        name: "[Gatekeeper] SwiftLint Quality Audit"
+        basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
@@ -72,6 +75,15 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_hardcoded_secrets.py"
         name: "[Gatekeeper] Hardcoded Secrets Audit"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_hig_compliance.py"
+        name: "[Gatekeeper] HIG Compliance Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_appstore_readiness.py"
+        name: "[Gatekeeper] App Store Readiness Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
+        name: "[Gatekeeper] Architecture Dependency Check"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -110,6 +122,9 @@ targets:
         Release:
           CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     preBuildScripts:
+      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
+        name: "[Gatekeeper] SwiftLint Quality Audit"
+        basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
         name: "[Gatekeeper] Domain Purity Check"
         basedOnDependencyAnalysis: false
@@ -118,6 +133,15 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_hig_compliance.py"
+        name: "[Gatekeeper] HIG Compliance Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_appstore_readiness.py"
+        name: "[Gatekeeper] App Store Readiness Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
+        name: "[Gatekeeper] Architecture Dependency Check"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -188,6 +212,12 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_storage_constants.py"
         name: "[Gatekeeper] Storage Constants Audit"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_hig_compliance.py"
+        name: "[Gatekeeper] HIG Compliance Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
+        name: "[Gatekeeper] Architecture Dependency Check"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB

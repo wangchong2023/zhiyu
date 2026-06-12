@@ -491,5 +491,83 @@ extension L10n {
                 ModelManager.tr("model_manager.status.paused")
             }
         }
+
+        // MARK: - 测试实验室
+
+        public static var laboratoryTitle: String {
+            ModelManager.tr("model_manager.laboratory.title")
+        }
+
+        public enum Lab {
+            public static var noActiveModelTitle: String { ModelManager.tr("model_manager.lab.no_active_model.title") }
+            public static var noActiveModelSubtitle: String { ModelManager.tr("model_manager.lab.no_active_model.subtitle") }
+            public static var goToStore: String { ModelManager.tr("model_manager.lab.go_to_store") }
+            public static var unsupportedUseCase: String { ModelManager.tr("model_manager.lab.unsupported_use_case") }
+            
+            // 用例名称
+            public static var useCaseAskImage: String { ModelManager.tr("model_manager.lab.use_case.ask_image") }
+            public static var useCaseAudioScribe: String { ModelManager.tr("model_manager.lab.use_case.audio_scribe") }
+            public static var useCaseChat: String { ModelManager.tr("model_manager.lab.use_case.chat") }
+            public static var useCaseAgentSkills: String { ModelManager.tr("model_manager.lab.use_case.agent_skills") }
+            public static var useCasePromptLab: String { ModelManager.tr("model_manager.lab.use_case.prompt_lab") }
+            public static var useCaseTinyGarden: String { ModelManager.tr("model_manager.lab.use_case.tiny_garden") }
+            public static var useCaseMobileActions: String { ModelManager.tr("model_manager.lab.use_case.mobile_actions") }
+
+            // 用例副标题描述
+            public static var descAskImage: String { ModelManager.tr("model_manager.lab.desc.ask_image") }
+            public static var descAudioScribe: String { ModelManager.tr("model_manager.lab.desc.audio_scribe") }
+            public static var descChat: String { ModelManager.tr("model_manager.lab.desc.chat") }
+            public static var descAgentSkills: String { ModelManager.tr("model_manager.lab.desc.agent_skills") }
+            public static var descPromptLab: String { ModelManager.tr("model_manager.lab.desc.prompt_lab") }
+            public static var descTinyGarden: String { ModelManager.tr("model_manager.lab.desc.tiny_garden") }
+            public static var descMobileActions: String { ModelManager.tr("model_manager.lab.desc.mobile_actions") }
+
+            // 性能指标与监控
+            public static var performanceMetrics: String { ModelManager.tr("model_manager.lab.metrics.title") }
+            public static var speed: String { ModelManager.tr("model_manager.lab.metrics.speed") }
+            public static var prefillLatency: String { ModelManager.tr("model_manager.lab.metrics.prefill_latency") }
+            public static var firstTokenLatency: String { ModelManager.tr("model_manager.lab.metrics.first_token_latency") }
+            public static var memoryUsage: String { ModelManager.tr("model_manager.lab.metrics.memory_usage") }
+            
+            // 交互区
+            public static var runTest: String { ModelManager.tr("model_manager.lab.run_test") }
+            public static var testing: String { ModelManager.tr("model_manager.lab.testing") }
+            public static var placeholderInput: String { ModelManager.tr("model_manager.lab.placeholder_input") }
+            public static var selectImage: String { ModelManager.tr("model_manager.lab.select_image") }
+            public static var recordAudio: String { ModelManager.tr("model_manager.lab.record_audio") }
+            
+            public static var exploreOther: String { ModelManager.tr("model_manager.lab.explore_other") }
+            public static var audioReady: String { ModelManager.tr("model_manager.lab.audio_ready") }
+            public static var unsupported: String { ModelManager.tr("model_manager.lab.unsupported") }
+            public static var back: String { ModelManager.tr("model_manager.lab.back") }
+            public static var configureInputs: String { ModelManager.tr("model_manager.lab.configure_inputs") }
+            public static var stopInference: String { ModelManager.tr("model_manager.lab.stop_inference") }
+            public static var visualParams: String { ModelManager.tr("model_manager.lab.visual_params") }
+            public static var visualDesc: String { ModelManager.tr("model_manager.lab.visual_desc") }
+            public static var stopRecording: String { ModelManager.tr("model_manager.lab.stop_recording") }
+            public static var audioCompleted: String { ModelManager.tr("model_manager.lab.audio_completed") }
+            public static var outputResult: String { ModelManager.tr("model_manager.lab.output_result") }
+            
+            // 参数配置 Sheet
+            public static var configurations: String { ModelManager.tr("model_manager.lab.configurations") }
+            public static var modelConfigs: String { ModelManager.tr("model_manager.lab.model_configs") }
+            public static var systemPrompt: String { ModelManager.tr("model_manager.lab.system_prompt") }
+            public static var enableThinking: String { ModelManager.tr("model_manager.lab.enable_thinking") }
+            public static var enableSpeculativeDecoding: String { ModelManager.tr("model_manager.lab.enable_speculative_decoding") }
+            public static var accelerator: String { ModelManager.tr("model_manager.lab.accelerator") }
+            public static var selectModel: String { ModelManager.tr("model_manager.lab.select_model") }
+            public static var chatInputPlaceholder: String { ModelManager.tr("model_manager.lab.chat_input_placeholder") }
+            public static var send: String { ModelManager.tr("model_manager.lab.send") }
+            
+            public enum Prompt {
+                public static var askImage: String { ModelManager.tr("model_manager.lab.prompt.ask_image") }
+                public static var chat: String { ModelManager.tr("model_manager.lab.prompt.chat") }
+                public static var agentSkills: String { ModelManager.tr("model_manager.lab.prompt.agent_skills") }
+                public static var promptLab: String { ModelManager.tr("model_manager.lab.prompt.prompt_lab") }
+                public static var tinyGarden: String { ModelManager.tr("model_manager.lab.prompt.tiny_garden") }
+                public static var mobileActions: String { ModelManager.tr("model_manager.lab.prompt.mobile_actions") }
+            }
+        }
     }
 }
+

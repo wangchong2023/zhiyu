@@ -307,6 +307,20 @@ public struct AppConstants {
     }
 }
 
+// MARK: - App Store 订阅产品 ID 常量
+
+extension AppConstants {
+    /// App Store 订阅相关常量
+    public struct Subscription {
+        /// 月付 Pro 套餐商品 ID（对应 App Store Connect 配置）
+        public static let monthlyProductId = "com.zhiyu.pro.monthly"
+        /// 年付 Pro 套餐商品 ID（对应 App Store Connect 配置）
+        public static let yearlyProductId  = "com.zhiyu.pro.yearly"
+        /// 所有内购商品 ID 集合（用于批量拉取）
+        public static let allProductIds: Set<String> = [monthlyProductId, yearlyProductId]
+    }
+}
+
 /// 支持的 AI 模型枚举 (技术层标识)
 public enum AppModel: String, CaseIterable, Sendable {
     case gpt4o = "gpt-4o"

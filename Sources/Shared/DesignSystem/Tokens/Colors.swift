@@ -215,3 +215,66 @@ extension EnvironmentValues {
         set { self[AppAccentColorKey.self] = newValue }
     }
 }
+
+// MARK: - HIG Compliance Color.theme & UIColor.theme Extensions
+
+extension Color {
+    /// 全局人机交互指南 (HIG) 合规主题颜色映射网关
+    public static let theme = ColorTheme()
+}
+
+/// 语义化颜色设计系统结构体
+public struct ColorTheme: Sendable {
+    /// 强调色
+    public var accent: Color { .appAccent }
+    /// 背景色
+    public var background: Color { .appBackground }
+    /// 卡片底色
+    public var card: Color { .appCard }
+    /// 正文字体颜色
+    public var text: Color { .appText }
+    /// 次要字体颜色
+    public var secondaryText: Color { .appSecondary }
+    /// 边框与分割线颜色
+    public var border: Color { .appBorder }
+    
+    // MARK: - HIG 推荐的非硬编码语义适配颜色（亮/暗模式）
+    
+    /// 警告/警示（橙色）
+    public var orange: Color { Color(light: Color(hex: "FF9500"), dark: Color(hex: "FF9F0A")) }
+    /// 录音/错误/删除（红色）
+    public var red: Color { Color(light: Color(hex: "FF3B30"), dark: Color(hex: "FF453A")) }
+    /// 成功/完成/在线（绿色）
+    public var green: Color { Color(light: Color(hex: "34C759"), dark: Color(hex: "30D158")) }
+    /// 标签/特定逻辑（紫色）
+    public var purple: Color { Color(light: Color(hex: "AF52DE"), dark: Color(hex: "BF5AF2")) }
+    /// 链接/特定标识（蓝色）
+    public var blue: Color { Color(light: Color(hex: "007AFF"), dark: Color(hex: "0A84FF")) }
+    /// 阴影与基础色（黑色）
+    public var black: Color { Color(light: Color(hex: "000000"), dark: Color(hex: "000000")) }
+    /// 阴影与基础色（白色）
+    public var white: Color { Color(light: Color(hex: "FFFFFF"), dark: Color(hex: "FFFFFF")) }
+    /// 幽灵填充色/失效（灰色）
+    public var gray: Color { Color(light: Color(hex: "8E8E93"), dark: Color(hex: "8E8E93")) }
+    /// 测试/多用例特定颜色（青色）
+    public var cyan: Color { Color.cyan }
+}
+
+#if canImport(UIKit)
+extension UIColor {
+    /// 全局人机交互指南 (HIG) 合规主题颜色映射网关 (UIColor 桥接)
+    public static let theme = UIColorTheme()
+}
+
+/// 语义化 UI 颜色设计系统结构体 (UIColor 桥接)
+public struct UIColorTheme: Sendable {
+    /// 阴影与基础色（黑色）
+    public var black: UIColor { UIColor(Color.theme.black) }
+    /// 阴影与基础色（白色）
+    public var white: UIColor { UIColor(Color.theme.white) }
+    /// 成功/完成/在线（绿色）
+    public var green: UIColor { UIColor(Color.theme.green) }
+    /// 录音/错误/删除（红色）
+    public var red: UIColor { UIColor(Color.theme.red) }
+}
+#endif

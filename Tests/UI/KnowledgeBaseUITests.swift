@@ -65,7 +65,8 @@ class KnowledgeBaseUITests: XCTestCase {
                     let nameField = app.textFields["notebook_name_textfield"]
                     if nameField.waitForExistence(timeout: 3.0) {
                         nameField.tap()
-                        nameField.typeText("测试笔记本")
+                        // 使用 "项目调研"（L10n.Vault.researchName 的中文物理值）以确保新建金库后能自动触发 MaintenanceService.seedDefaultContent 演示数据播种
+                        nameField.typeText("项目调研")
                         
                         let submitBtn = app.buttons["notebook_submit_button"]
                         if submitBtn.exists {
@@ -181,7 +182,8 @@ class KnowledgeBaseUITests: XCTestCase {
             let nameField = app.textFields["notebook_name_textfield"]
             if nameField.waitForExistence(timeout: 3.0) {
                 nameField.tap()
-                nameField.typeText("测试笔记本")
+                // 使用 "项目调研"（L10n.Vault.researchName 的中文物理值）以确保新建金库后能自动触发 MaintenanceService.seedDefaultContent 演示数据播种
+                nameField.typeText("项目调研")
                 
                 let submitBtn = app.buttons["notebook_submit_button"]
                 if submitBtn.exists {

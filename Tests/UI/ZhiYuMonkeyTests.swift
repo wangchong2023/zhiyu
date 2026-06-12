@@ -86,7 +86,10 @@ final class ZhiYuMonkeyTests: XCTestCase {
                     
                     let isDestructiveId = identifier.contains("delete") || identifier.contains("logout") || identifier.contains("reset")
                     
-                    if !isDestructive && !isDestructiveId {
+                    // 避让水平 ScrollView 中易被遮挡不可点击的图标选择按钮，避免 XCTest 物理点击挂起
+                    let isIconOption = ["📚", "🔬", "📓", "📖", "📝", "🗂️", "📊", "🧪", "💡", "🎯", "🚀", "⭐", "🔧", "🎨", "📐", "🧠"].contains(targetElement.label)
+                    
+                    if !isDestructive && !isDestructiveId && !isIconOption {
                         print("[MONKEY] 第 \(step)/\(maxIterations) 步：拟真操作 -> 元素类型: \(targetElement.elementType)，文本标签: '\(targetElement.label)'")
                         
                         // 执行防护式点击，捕捉极端动效竞争异常

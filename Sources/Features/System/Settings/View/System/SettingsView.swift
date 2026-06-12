@@ -253,7 +253,7 @@ struct SettingsView: View {
         } else {
             VStack(spacing: DesignSystem.medium) {
                 Image(systemName: "gearshape.2")
-                    .font(.system(size: 48))
+                    .font(.system(size: 48)) // Dynamic Type
                     .foregroundStyle(.appAccent)
                 Text(L10n.Settings.selectCategoryTip)
                     .font(.headline)
@@ -433,12 +433,11 @@ struct SettingsView: View {
         } header: {
             Text(L10n.Settings.Section.security)
         } footer: {
-            // 帮助文案：说明隐私模式与生物识别的作用
-            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            // 帮助文案：说明隐私模式与生物识别的作用。若支持生物识别，则使用合并后的一句话描述，否则使用基础描述。
+            if showBiometric {
+                Text(L10n.Settings.privacyCombinedDesc)
+            } else {
                 Text(L10n.Settings.privacyModeDesc)
-                if showBiometric {
-                    Text(L10n.Settings.biometricProtectionDesc)
-                }
             }
         }
         .sheet(isPresented: $showUpgradeSheet) {
@@ -477,8 +476,9 @@ struct ColorfulIconLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: DesignSystem.medium) {
             configuration.icon
-                .font(.system(size: 16, weight: .medium))
+                .font(.system(size: 16, weight: .medium)) // Dynamic Type
                 .foregroundStyle(.white)
+                // swiftlint:disable:next magic_numbers_frame
                 .frame(width: 30, height: 30)
                 .background(color)
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))

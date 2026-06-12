@@ -163,11 +163,11 @@ private struct LogEntryRow: View {
 
     private var statusBackgroundColor: Color {
         guard let status = entry.status else { return .clear }
-        return status == .success ? Color.green.opacity(statusBgOpacity) : Color.red.opacity(statusBgOpacity)
+        return status == .success ? Color.theme.green.opacity(statusBgOpacity) : Color.theme.red.opacity(statusBgOpacity)
     }
     private var statusForegroundColor: Color {
         guard let status = entry.status else { return .clear }
-        return status == .success ? .green : .red
+        return status == .success ? Color.theme.green : Color.theme.red
     }
     private var startFormattedString: String {
         entry.startTime?.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: Localized.currentLocale)) ?? ""
@@ -328,7 +328,7 @@ private struct LogEntryRow: View {
                 }
                 .padding(DesignSystem.Timeline.detailHorizontalPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.red.opacity(failureBgOpacity))
+                .background(Color.theme.red.opacity(failureBgOpacity))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
             }
 

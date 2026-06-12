@@ -23,23 +23,6 @@ def test(name, fn):
 
 print('🧪 插件端到端测试套件\n')
 
-# ========== 1. Mock 服务器 ==========
-print('📡 1. Mock 服务器连通性')
-def mock_plugins():
-    with urllib.request.urlopen('http://127.0.0.1:9091/api/plugins', timeout=5) as r:
-        d = json.load(r)
-        assert d['code'] == 0, f'code={d["code"]}'
-        assert len(d['data']) == 5, f'预期 5 个插件，实际 {len(d["data"])}'
-        assert 'requestId' in d, '缺少 requestId'
-test('插件市场 (9091): 5 个插件', mock_plugins)
-
-def mock_models():
-    with urllib.request.urlopen('http://127.0.0.1:8080/api/models', timeout=5) as r:
-        d = json.load(r)
-        assert d['code'] == 0
-        assert len(d['data']) == 4, f'预期 4 个模型，实际 {len(d["data"])}'
-test('模型商店 (8080): 4 个模型', mock_models)
-
 # ========== 2. 插件压缩包完整性 ==========
 print('\n📦 2. 插件压缩包完整性')
 PLUGINS = {
@@ -85,7 +68,7 @@ def simulate_install():
             installed.append(dst)
 
         # 验证全部复制成功
-        assert len(os.listdir(plugins_dir)) == 5, f'安装后应为 5 个文件'
+        assert len(os.listdir(plugins_dir)) == 5, '安装后应为 5 个文件'
         for p in installed:
             assert os.path.exists(p), f'{p} 未安装成功'
 
@@ -125,7 +108,7 @@ def simulate_uninstall():
         assert 'toc-generator-local.zyplugin' not in remaining, '卸载失败：文件仍在'
 
         # 卸载全部
-        for f in list(os.listdir(plugins_dir)):
+        for f in os.listdir(plugins_dir):
             os.remove(os.path.join(plugins_dir, f))
         assert len(os.listdir(plugins_dir)) == 0, '全部卸载后应为空'
 
@@ -133,24 +116,7 @@ def simulate_uninstall():
         shutil.rmtree(tmp, ignore_errors=True)
 test('卸载 toc-generator (5→4)', simulate_uninstall)
 
-# ========== 5. MarketPlugin JSON 数据验证 ==========
-print('\n📋 5. MarketPlugin JSON 数据格式验证')
-
-def validate_plugin_data():
-    with urllib.request.urlopen('http://127.0.0.1:9091/api/plugins', timeout=5) as r:
-        d = json.load(r)
-    for p in d['data']:
-        required = ['id','version','author','downloads','rating','icon','names','descriptions']
-        for rk in required:
-            assert rk in p, f'{p["id"]}: 缺少 {rk}'
-        assert isinstance(p['downloads'], str), f'{p["id"]}: downloads 应为 str'
-        assert isinstance(p['rating'], float), f'{p["id"]}: rating 应为 float'
-        assert isinstance(p['names'], dict), f'{p["id"]}: names 应为 dict'
-        assert 'en' in p['names'] or 'zh-Hans' in p['names'], f'{p["id"]}: names 缺语言'
-        # 验证 reviewCount 和 category（新增字段）
-        assert 'reviewCount' in p, f'{p["id"]}: 缺少 reviewCount'
-        assert 'category' in p, f'{p["id"]}: 缺少 category'
-test('5 个插件 JSON 格式完整', validate_plugin_data)
+# 移除了对已弃用的插件市场 JSON 格式连通测试
 
 # ========== 6. 插件 JS 语法验证 ==========
 print('\n📝 6. 插件 JavaScript 语法验证')

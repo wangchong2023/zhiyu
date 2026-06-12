@@ -18,8 +18,16 @@ import JavaScriptCore
 @MainActor
 final class PluginLoadUnloadTests: XCTestCase {
 
-    /// 项目根目录：XCTest 在模拟器中运行，需用绝对路径
-    private static let projectRoot = "/Users/constantine/Documents/work/code/projects/ZhiYu"
+    /// 项目根目录：通过编译期路径自适应解析，防止硬编码个人物理路径
+    private static let projectRoot: String = {
+        let currentFile = #filePath
+        let url = URL(fileURLWithPath: currentFile)
+            .deletingLastPathComponent() // Plugins
+            .deletingLastPathComponent() // Unit
+            .deletingLastPathComponent() // Tests
+            .deletingLastPathComponent() // projectRoot
+        return url.path
+    }()
 
     /// 读取插件 JS 源码
     private func readJS(_ relativePath: String) -> String? {

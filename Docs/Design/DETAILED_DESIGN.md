@@ -421,12 +421,12 @@ stateDiagram-v2
 随着近期统一认证、iCloud 冲突解决、LLM 服务解耦、沙箱升级和竞品对比功能的演进，系统架构在以下几项设计细节上仍待进一步的补充或进行文档/时序图对齐：
 
 ### 12.1 插件沙箱池化隔离与熔断机制补充
-*   **物理实现状态**：🟢 **已完成物理重构**。已新建 [PluginEnginePool](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Infrastructure/Plugins/Sandbox/PluginEnginePool.swift) 对宿主 JSContext 实现最大并发为 4 的隔离保护，并向 `JavaScriptPlugin` 注入了 0.5s Watchdog 物理 CPU 熔断器及 DLP API 审计拦截网关。
-*   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 3 章中，补充此套并发池化机制与 CPU 熔断的并发安全时序图。
+*   **物理实现状态**：🟢 **已完成物理重构**。已新建 [PluginEnginePool](../../Sources/Infrastructure/Plugins/PluginEnginePool.swift) 对宿主 JSContext 实现最大并发为 4 的隔离保护，并向 `JavaScriptPlugin` 注入了 0.5s Watchdog 物理 CPU 熔断器及 DLP API 审计拦截网关。
+*   **设计文档待办**：后续需在 [详细设计文档](DETAILED_DESIGN.md) 的第 3 章中，补充此套并发池化机制与 CPU 熔断的并发安全时序图。
 
 ### 12.2 金库防篡改指纹在调试阶段的自动签名对齐
-*   **物理实现状态**：🟢 **已完成物理重构**。已在 [DatabaseManager](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Sources/Infrastructure/Storage/Persistence/DatabaseManager.swift) 中实现：在数据库关闭释放 WAL 连接时，自动同步重写 HMAC 防篡改指纹签名；同时，在 `DEBUG` 编译宏下，若指纹由于沙盒目录漂移等非篡改因素校验不符，系统会打印调试警告并自动进行重签名对齐，在 Release 包下依然严格保留 403 阻断并降级至只读模式。
-*   **设计文档待办**：后续需在 [详细设计文档](file:///Users/constantine/Documents/work/code/projects/ZhiYu/Docs/Design/DETAILED_DESIGN.md) 的第 6 章中，补充 WAL 离线同步期间 HMAC 动态签名的详细算法流程。
+*   **物理实现状态**：🟢 **已完成物理重构**。已在 [DatabaseManager](../../Sources/Infrastructure/Storage/Persistence/DatabaseManager.swift) 中实现：在数据库关闭释放 WAL 连接时，自动同步重写 HMAC 防篡改指纹签名；同时，在 `DEBUG` 编译宏下，若指纹由于沙盒目录漂移等非篡改因素校验不符，系统会打印调试警告并自动进行重签名对齐，在 Release 包下依然严格保留 403 阻断并降级至只读模式。
+*   **设计文档待办**：后续需在 [详细设计文档](DETAILED_DESIGN.md) 的第 6 章中，补充 WAL 离线同步期间 HMAC 动态签名的详细算法流程。
 
 ### 12.3 信号量同步阻塞消除时序 (异步 `switchDatabase`/`setup`)
 *   **物理实现状态**：🟢 **已完成物理重构**。`DatabaseManager.swift` 中已彻底移除所有 `semaphore.wait()` 机制。通过 Swift Structured Concurrency，`switchDatabase` 与热切换均已重构为纯 `async throws`。使用 `Task.sleep` 优雅异步排空活跃连接池事务，完全消除了主线程死锁隐患。

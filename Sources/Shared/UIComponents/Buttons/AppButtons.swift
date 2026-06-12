@@ -114,27 +114,46 @@ public struct AppBorderedButton: View {
 
 // MARK: - App Capsule Button
 
-/// 胶囊形展示组件 (View)
-/// 适用于预览视图、详情页操作 or 辅助性质的功能标识。
+/// 胶囊形组件
+/// - 无 action 时：纯展示标签，适用于状态徽章、功能标识。
+/// - 有 action 时：可交互按钮，自动携带 VoiceOver `.isButton` 无障碍特征（符合 HIG）。
 public struct AppCapsuleButton: View {
     public let title: String
     public var icon: String?
     public var isPrimary: Bool = true
     public var color: Color = .appAccent
+    /// 可选操作闭包；提供时视图包装为 Button，自动获得 .isButton 无障碍特征
+    public var action: (() -> Void)?
 
     public init(
         title: String,
         icon: String? = nil,
         isPrimary: Bool = true,
-        color: Color = .appAccent
+        color: Color = .appAccent,
+        action: (() -> Void)? = nil
     ) {
         self.title = title
         self.icon = icon
         self.isPrimary = isPrimary
         self.color = color
+        self.action = action
     }
 
     public var body: some View {
+        if let action {
+            // 有操作时使用 Button，VoiceOver 自动识别为可点击控件
+            Button(action: action) {
+                capsuleLabel
+            }
+            .buttonStyle(.plain)
+        } else {
+            // 纯展示时保持普通 View，不干扰无障碍树
+            capsuleLabel
+        }
+    }
+    
+    // MARK: - 胶囊样式内容
+    private var capsuleLabel: some View {
         HStack(spacing: Spacing.tiny) {
             if let icon = icon {
                 Image(systemName: icon)

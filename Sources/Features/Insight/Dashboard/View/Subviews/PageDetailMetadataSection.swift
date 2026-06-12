@@ -16,7 +16,7 @@ struct PageDetailMetadataSection: View {
     let backlinks: [KnowledgePage]
     let recommendations: [KnowledgePage]
     
-    @State private var copiedUrl: String? = nil
+    @State private var copiedUrl: String?
     
     var body: some View {
         VStack(spacing: 0) {
