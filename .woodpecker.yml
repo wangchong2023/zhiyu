@@ -34,7 +34,7 @@ steps:
       - echo "===> Running Config and Script Health Check..."
       - python3 Tools/Gatekeeper/check_configs_integrity.py
       - echo "===> Running ShellCheck for Tools..."
-      - if which shellcheck >/dev/null; then shellcheck -x -S warning Tools/CI/*.sh; else echo "warning: shellcheck not installed"; fi
+      - bash Tools/CI/run_shellcheck.sh
 
   swiftlint:
     depends_on: [clone-repo]
