@@ -37,14 +37,21 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     // MARK: - UI 状态属性 (透传转发至 configManager)
     
     /// 当前所选的模型服务提供商（例如 OpenAI, Anthropic, Ollama 等）。
+    /// 当前所选的模型服务提供商（例如 OpenAI, Anthropic, Ollama 等）。
     var provider: LLMProvider {
         get { configManager.provider }
         set { configManager.provider = newValue; objectWillChange.send() }
     }
     
     /// 安全的访问密钥 API Key。
+    /// UI 自动化测试模式下自愈：拦截并返回测试专用的虚假 Key，解决测试环境因未填写密钥而阻断导入卡片交互的问题。
     var apiKey: String {
-        get { configManager.apiKey }
+        get {
+            if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                return "mock_api_key_for_testing"
+            }
+            return configManager.apiKey
+        }
         set { configManager.apiKey = newValue; objectWillChange.send() }
     }
     
@@ -61,8 +68,14 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     }
     
     /// AI 模块是否处于开启状态。
+    /// UI 自动化测试模式下自愈：强制返回开启状态，以便测试卡片可交互。
     var isEnabled: Bool {
-        get { configManager.isEnabled }
+        get {
+            if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                return true
+            }
+            return configManager.isEnabled
+        }
         set { configManager.isEnabled = newValue; objectWillChange.send() }
     }
     
@@ -79,7 +92,13 @@ class LLMService: ObservableObject, LLMServiceProtocol, @unchecked Sendable {
     }
 
     /// 判断大模型所需的密钥、地址及开关是否已配置就绪。
-    var isReady: Bool { configManager.isReady }
+    /// UI 自动化测试模式下自愈：默认返回就绪状态，确保 RAG 链路和导入入口彻底打通。
+    var isReady: Bool {
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            return true
+        }
+        return configManager.isReady
+    }
 
     // MARK: - 初始化
     

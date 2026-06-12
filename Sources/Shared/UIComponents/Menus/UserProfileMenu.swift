@@ -230,6 +230,7 @@ struct CustomProfilePopover: View {
                         showMenuPopover = false
                         authService.logout()
                     }
+                    .accessibilityIdentifier("logoutButton")
                 }
                 .padding(DesignSystem.small)
             }

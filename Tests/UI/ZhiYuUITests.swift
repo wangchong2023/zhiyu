@@ -32,6 +32,19 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
             guestButton.tap()
         }
 
+        // 2. 自动点击返回按钮 pop 回根视图，解决测试悬挂于详情页或列表页的情况
+        let backButtonPredicate = NSPredicate(format: "label CONTAINS '返回' OR label CONTAINS 'Back' OR identifier == 'Back'")
+        for _ in 0..<5 {
+            let backButton = app.navigationBars.buttons.matching(backButtonPredicate).element(boundBy: 0)
+            if backButton.exists && backButton.isHittable {
+                backButton.tap()
+                try? Thread.sleep(forTimeInterval: 0.5)
+            } else {
+                break
+            }
+        }
+
+        // 3. 此时若处于 NotebookHubView (金库列表/选择页)，则需要点击进入默认金库
         var hubView = app.scrollViews["NotebookHubView"]
         var isHubVisible = hubView.waitForExistence(timeout: 3)
         if !isHubVisible {
@@ -51,23 +64,14 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
 
             if anyCard.exists {
                 anyCard.tap()
-
-                let tabButton = app.tabBars.buttons["Knowledge"].exists ? app.tabBars.buttons["Knowledge"] : app.buttons["Knowledge"]
-                if tabButton.waitForExistence(timeout: 5) {
-                    tabButton.tap()
-
-                    let listPredicate = NSPredicate(format: "label CONTAINS '所有' OR label CONTAINS '页面' OR label CONTAINS 'Pages'")
-                    var pageListRow = app.buttons.matching(listPredicate).element(boundBy: 0)
-                    if !pageListRow.waitForExistence(timeout: 5) {
-                        pageListRow = app.cells.matching(listPredicate).element(boundBy: 0)
-                    }
-                    if pageListRow.exists {
-                        pageListRow.tap()
-                        let firstCell = app.cells.element(boundBy: 0)
-                        _ = firstCell.waitForExistence(timeout: 15)
-                    }
-                }
+                try? Thread.sleep(forTimeInterval: 1.0)
             }
+        }
+
+        // 4. 确保在主金库内时，切换到根 Knowledge Tab 视图
+        let tabButton = app.tabBars.buttons["Knowledge"].exists ? app.tabBars.buttons["Knowledge"] : app.buttons["Knowledge"]
+        if tabButton.waitForExistence(timeout: 5) {
+            tabButton.tap()
         }
     }
 

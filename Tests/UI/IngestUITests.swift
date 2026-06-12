@@ -203,23 +203,31 @@ final class IngestTests: KnowledgeBaseUITests {
         safeTap(urlButton)
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
-        // 智能模糊检验 URL 导入弹窗
-        let urlImportTitle = app.navigationBars["网页导入"].exists
-            || app.navigationBars["URL Import"].exists
-            || app.navigationBars.firstMatch.identifier.contains("URL")
+        // 优先使用特定测试标识符检查弹窗是否展开，若不支持则进行多重后备文本模糊匹配
+        let urlImportTitle = app.otherElements["urlImportSheet"].waitForExistence(timeout: 5.0)
+            || app.buttons["urlImportCancelButton"].exists
+            || app.navigationBars["批量导入 URL"].exists
+            || app.navigationBars["Batch Import URLs"].exists
+            || app.staticTexts["批量导入 URL"].exists
+            || app.staticTexts["Batch Import URLs"].exists
             || app.buttons["取消"].exists
             || app.buttons["Cancel"].exists
         XCTAssertTrue(urlImportTitle, "网页导入 Sheet 应该成功展开")
 
-        // 点击取消释放交互链路树
-        let cancelButton = app.buttons["取消"]
-        if !cancelButton.exists {
-            let altCancel = app.buttons["Cancel"]
-            if altCancel.exists {
-                safeTap(altCancel)
-            }
-        } else {
+        // 优先点击带测试标识符的取消按钮，否则尝试本地化文本进行后备点击
+        let cancelButton = app.buttons["urlImportCancelButton"]
+        if cancelButton.exists {
             safeTap(cancelButton)
+        } else {
+            let fallbackCancel = app.buttons["取消"]
+            if !fallbackCancel.exists {
+                let altCancel = app.buttons["Cancel"]
+                if altCancel.exists {
+                    safeTap(altCancel)
+                }
+            } else {
+                safeTap(fallbackCancel)
+            }
         }
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
     }

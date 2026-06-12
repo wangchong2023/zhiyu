@@ -30,6 +30,7 @@ struct PageDetailView: View {
             Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pinFill : DesignSystem.Icons.pin)
                 .foregroundStyle(coordinator.page.isPinned ? .orange : .appSecondary)
         }
+        .accessibilityIdentifier("pin")
     }
     
     private var backlinksButton: some View {

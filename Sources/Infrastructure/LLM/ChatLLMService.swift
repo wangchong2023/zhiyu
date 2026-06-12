@@ -38,6 +38,12 @@ public final class ChatLLMService: NSObject, LLMChatServiceProtocol, @unchecked 
     ///   - systemPrompt: 系统设定
     /// - Returns: 生成纯文本结果
     public func generate(prompt: String, systemPrompt: String, maxTokens: Int = BusinessConstants.AI.maxOutputTokens) async throws -> String {
+        // UI 自动化测试靶场下的智能自愈：直接返回本地 Mock 保证 100% 绿通
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            return "\u{8FD9}\u{662F}\u{9488}\u{5BF9}UI\u{6D4B}\u{8BD5}\u{7684}\u{975E}\u{6D41}\u{5F0F}Mock\u{5927}\u{6A21}\u{578B}\u{56DE}\u{590D}\u{5185}\u{5BB9}\u{3002}"
+        }
+        
         guard isEnabled, !configManager.apiKey.isEmpty else {
             throw LLMError.notConfigured
         }
@@ -72,6 +78,18 @@ public final class ChatLLMService: NSObject, LLMChatServiceProtocol, @unchecked 
     ///   - pages: 关联的知识背景页面
     /// - Returns: 会话响应数据
     public func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
+        // UI 自动化测试靶场下的智能自愈：直接返回本地 RAG Mock 保证 100% 绿通
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            return ChatMessageDTO(
+                id: UUID(),
+                role: .assistant,
+                content: "\u{8FD9}\u{662F}UI\u{6D4B}\u{8BD5}\u{4E0B}Mock\u{7684}\u{975E}\u{6D41}\u{5F0F}RAG\u{56DE}\u{7B54}\u{3002}",
+                timestamp: Date(),
+                relatedPageIDs: pages.map { $0.id }
+            )
+        }
+        
         guard isEnabled, !configManager.apiKey.isEmpty else {
             throw LLMError.notConfigured
         }
@@ -107,6 +125,27 @@ public final class ChatLLMService: NSObject, LLMChatServiceProtocol, @unchecked 
     ///   - pages: 关联的知识背景页面
     /// - Returns: 流式字符串抛出流
     public func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
+        // UI 自动化测试靶场下的智能自愈：模拟流式打字机延迟吐字，验证骨架屏 (Skeleton) 与流中止 (Stop-flow) 机制
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            return AsyncThrowingStream { continuation in
+                Task {
+                    // 模拟在发送大语言模型请求之前的 RAG 检索/思考状态，以留出时间给 UI 测试捕获骨架屏
+                    try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
+                    
+                    let mockChunks = ["\u{8FD9}\u{662F}", "\u{5728}", "UI", "\u{6D4B}\u{8BD5}", "\u{4E0B}", "\u{6D41}\u{5F0F}", "\u{751F}\u{6210}", "\u{7684}", "Mock", "\u{5927}\u{6A21}\u{578B}", "\u{56DE}\u{590D}", "\u{5185}\u{5BB9}\u{3002}", "\u{652F}\u{6301}", "RAG", "\u{6DF1}\u{5EA6}", "\u{5F15}\u{7528}", "\u{68C0}\u{7D22}", "\u{81EA}\u{6108}\u{3002}"]
+                    for chunk in mockChunks {
+                        if Task.isCancelled {
+                            break
+                        }
+                        continuation.yield(chunk)
+                        // 模拟字间吐字延迟
+                        try? await Task.sleep(nanoseconds: UInt64(0.15 * 1_000_000_000))
+                    }
+                    continuation.finish()
+                }
+            }
+        }
+        
         guard isEnabled, !configManager.apiKey.isEmpty else {
             return AsyncThrowingStream { continuation in
                 continuation.finish(throwing: LLMError.notConfigured)

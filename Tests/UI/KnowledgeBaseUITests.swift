@@ -201,9 +201,9 @@ class KnowledgeBaseUITests: XCTestCase {
         let fallbackMapping: [String: String] = [
             "设置": "Settings", "知识": "Knowledge", "主页": "Knowledge",
             "图谱": "Graph", "搜索": "Search", "检索": "Search",
-            "导入": "Ingest", "对话": "Chat", "聊天": "Chat",
+            "导入": "Ingest", "来源": "Ingest", "对话": "Chat", "聊天": "Chat",
             "合成": "Synthesis", "Settings": "设置", "Knowledge": "知识",
-            "Graph": "图谱", "Search": "搜索", "Ingest": "导入",
+            "Graph": "图谱", "Search": "搜索", "Ingest": "来源",
             "Chat": "对话", "Synthesis": "合成"
         ]
         

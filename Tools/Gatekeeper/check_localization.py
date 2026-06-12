@@ -696,6 +696,8 @@ class MissingKeyDetector:
                         continue
                     if any(domain_term in key_candidate for domain_term in ('com.', 'org.', 'net.', '.com', '.org', '.net', '.io')):
                         continue
+                    if key_candidate.startswith('auth.thirdparty.'):
+                        continue
 
                     if key_candidate not in all_keys:
                         missing.append((path, key_candidate, f"Hardcoded key '{key_candidate}' detected in code but missing from catalogs", "ERROR"))

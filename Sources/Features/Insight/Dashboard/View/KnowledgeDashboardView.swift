@@ -52,7 +52,7 @@ struct KnowledgeDashboardView: View {
             await coordinator.refreshAll()
         }
         .task(id: store.pages.count) {
-            await coordinator.calculateStats()
+            await coordinator.refreshAll()
         }
     }
     

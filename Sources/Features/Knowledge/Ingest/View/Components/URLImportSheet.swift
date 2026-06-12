@@ -101,15 +101,18 @@ struct URLImportSheet: View {
                         onImport(urls)
                     }
                     .disabled(validURLs.isEmpty)
+                    .accessibilityIdentifier("urlImportSubmitButton") // 添加导入按钮测试标识符
                 }
                 .padding()
                 .background(Color.appCard)
             }
+            .accessibilityIdentifier("urlImportSheet") // 添加弹窗主面板测试标识符
             .navigationTitle(L10n.Ingest.batchURLTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(L10n.Common.cancel) { dismiss() }
+                        .accessibilityIdentifier("urlImportCancelButton") // 添加取消按钮测试标识符
                 }
             }
             .background(PageBackgroundView(accentColor: .appAccent))

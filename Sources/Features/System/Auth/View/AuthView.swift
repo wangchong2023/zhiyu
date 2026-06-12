@@ -17,7 +17,7 @@ struct AuthView: View {
     
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    @State private var isAgreementChecked: Bool = true
+    @State private var isAgreementChecked: Bool = false
     @State private var showPrivacySheet: Bool = false
     
     var body: some View {
@@ -193,16 +193,12 @@ struct AuthView: View {
                 Rectangle().fill(Color.appBorder.opacity(DesignSystem.Opacity.shadow)).frame(height: DesignSystem.borderWidth)
             }
             
-            HStack(spacing: Spacing.large) { // 屏蔽了微信和短信，调整了间距
-                /* 暂时屏蔽微信登录
-                ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) {
-                    if authService.isMockMode {
+            HStack(spacing: Spacing.large) {
+                if authService.isMockMode {
+                    ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) {
                         handleThirdPartyLogin(using: WeChatAuthStrategy())
-                    } else {
-                        ToastManager.shared.show(type: .info, message: L10n.Auth.wechatDeveloping)
                     }
                 }
-                */
                 ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
                     handleThirdPartyLogin(using: AppleAuthStrategy())
                 }
@@ -220,15 +216,11 @@ struct AuthView: View {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
                     }
                 }
-                /* 暂时屏蔽手机短信登录
-                ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) {
-                    if authService.isMockMode {
+                if authService.isMockMode {
+                    ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) {
                         handleThirdPartyLogin(using: CarrierAuthStrategy())
-                    } else {
-                        ToastManager.shared.show(type: .info, message: L10n.Auth.smsDeveloping)
                     }
                 }
-                */
             }
         }
     }
