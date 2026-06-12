@@ -62,5 +62,8 @@ env/
 # 第三方 AI 助手遗留
 .workbuddy/
 
+# Python 缓存
+__pycache__/
+
 # 临时测试数据目录
 Configs/
