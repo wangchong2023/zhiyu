@@ -34,17 +34,14 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
 
     // MARK: - generateInsightfulQuestions 空输入防护
 
+    /// 验证当传入空页面列表时，AI 合成服务应返回空数组而不抛出异常。
+    /// 使用原生 async/await 测试，避免在 @MainActor 上阻塞主线程（防止死锁与 SIGABRT）。
     @MainActor
-    func testGenerateInsightfulQuestions_emptyPages() throws {
-        let expectation = XCTestExpectation()
+    func testGenerateInsightfulQuestions_emptyPages() async throws {
         let service = AISynthesisService.shared
-        let test = Task {
-            let result = try await service.generateInsightfulQuestions(pages: [])
-            XCTAssertTrue(result.isEmpty, "空页面列表应返回空数组")
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: 5)
-        test.cancel()
+        // 直接 await，Swift 6 结构化并发下安全可靠
+        let result = try await service.generateInsightfulQuestions(pages: [])
+        XCTAssertTrue(result.isEmpty, "空页面列表应返回空数组")
     }
 }
 
