@@ -205,6 +205,10 @@ public final class AuthService: AuthServiceProtocol {
         }
     }
     
+    /// 用于测试的后台注销任务追踪
+    @available(*, deprecated, message: "For testing only")
+    public var testLogoutTask: Task<Void, Never>?
+    
     /// 退出登录
     @MainActor
 
@@ -214,7 +218,7 @@ public final class AuthService: AuthServiceProtocol {
         VaultService.shared.exitVault()
         saveState()
         
-        Task {
+        testLogoutTask = Task {
             // 尝试通知后端登出并吊销 RefreshToken
             if let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") {
                 let req = RefreshRequest(refreshToken: refreshToken)

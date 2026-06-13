@@ -33,6 +33,7 @@ final class AuthServiceTests: XCTestCase {
 
     override func tearDown() async throws {
         AuthSession.shared.logout()
+        await AuthService.shared.testLogoutTask?.value
         await NetworkClient.shared.setTestSession(nil)
         TestMockURLProtocol.requestHandler = nil
         try await super.tearDown()
@@ -264,6 +265,7 @@ final class AuthServiceTests: XCTestCase {
         // 4. 等待
         await fulfillment(of: [expectation], timeout: 2.0)
         NotificationCenter.default.removeObserver(observer)
+        await AuthService.shared.testLogoutTask?.value
 
         // 5. 验证退登
         XCTAssertFalse(AuthService.shared.isAuthenticated)
@@ -294,19 +296,8 @@ final class AuthServiceTests: XCTestCase {
         // 3. 执行退出
         AuthService.shared.logout()
 
-        // 4. 延迟等待异步任务完成以检查物理擦除
-        let expectation = XCTestExpectation(description: "等待退出物理擦除 Keychain")
-        for _ in 0..<20 {
-            let access = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
-            let refresh = try? KeychainService.shared.retrieve(key: "refresh_token")
-            if access == nil && refresh == nil {
-                expectation.fulfill()
-                break
-            }
-            try await Task.sleep(nanoseconds: 50_000_000) // 等待 50ms
-        }
-
-        await fulfillment(of: [expectation], timeout: 2.0)
+        // 4. 等待后台注销任务完成以检查物理擦除
+        await AuthService.shared.testLogoutTask?.value
 
         // 5. 最终验证
         XCTAssertFalse(AuthService.shared.isAuthenticated)
@@ -345,7 +336,8 @@ final class AuthServiceTests: XCTestCase {
         // 3. 触发退出
         AuthService.shared.logout()
 
-        // 4. 等待拦截断言
+        // 4. 等待后台请求发送并被拦截断言
+        await AuthService.shared.testLogoutTask?.value
         await fulfillment(of: [expectation], timeout: 2.0)
     }
 }

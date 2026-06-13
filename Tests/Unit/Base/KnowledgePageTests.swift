@@ -248,4 +248,3 @@ final class KnowledgePageTests: XCTestCase {
         XCTAssertEqual(pageOtherWeb.displaySourceIcon, "safari", "其他类型的 Web 页面，应返回 safari 兜底")
     }
 }
-
