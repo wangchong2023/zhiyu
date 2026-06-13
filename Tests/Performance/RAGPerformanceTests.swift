@@ -59,11 +59,13 @@ final class RAGPerformanceTests: XCTestCase {
         
         self.measure {
             let expectation = XCTestExpectation(description: "Rerank Computation")
+            let service = self.llmService!
+            let candidates = self.largeCandidates
             
-            Task {
+            Task { [service, candidates] in
                 // 执行检索与重排
                 do {
-                    _ = try await llmService.rerank(query: query, candidates: self.largeCandidates)
+                    _ = try await service.rerank(query: query, candidates: candidates)
                 } catch {
                     XCTFail("重排过程发生错误: \(error)")
                 }

@@ -218,6 +218,7 @@ public final class AuthService: AuthServiceProtocol {
         VaultService.shared.exitVault()
         saveState()
         
+        testLogoutTask?.cancel()
         testLogoutTask = Task {
             // 尝试通知后端登出并吊销 RefreshToken
             if let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") {
