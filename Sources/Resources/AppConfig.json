@@ -1,9 +1,9 @@
 {
   "network": {
-    "backend_base_url": "http://10.211.55.4:30080",
+    "backend_base_url": "https://10.211.55.4:30443",
     "plugin_market_production": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json",
     "plugin_market_debug": "http://localhost:9091/api/plugins",
-    "model_store_production": "http://10.211.55.4:30080/api/ai/models/allowlist",
+    "model_store_production": "https://10.211.55.4:30443/api/ai/models/allowlist",
     "model_store_debug": "http://localhost:8080/api/models",
     "jina_reader_base": "https://r.jina.ai/",
     "ollama_base": "http://localhost:11434",

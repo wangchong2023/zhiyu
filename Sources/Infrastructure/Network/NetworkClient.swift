@@ -11,6 +11,24 @@
 
 import Foundation
 
+#if DEBUG
+/// 仅用于开发环境的自签名证书信任代理
+final class TrustAllSessionDelegate: NSObject, URLSessionDelegate, @unchecked Sendable {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        // 开发环境下无条件信任所有证书（包括自签名）
+        if let serverTrust = challenge.protectionSpace.serverTrust {
+            completionHandler(.useCredential, URLCredential(trust: serverTrust))
+        } else {
+            completionHandler(.performDefaultHandling, nil)
+        }
+    }
+}
+#endif
+
 public actor NetworkClient {
     public static let shared = NetworkClient()
     
@@ -46,7 +64,14 @@ public actor NetworkClient {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = AppConstants.Network.requestTimeout
         config.timeoutIntervalForResource = 30.0
+        
+        #if DEBUG
+        // DEBUG 模式下允许自签名 HTTPS 证书
+        let delegate = TrustAllSessionDelegate()
+        self.session = URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
+        #else
         self.session = URLSession(configuration: config)
+        #endif
         
         self.decoder = JSONDecoder()
         self.encoder = JSONEncoder()

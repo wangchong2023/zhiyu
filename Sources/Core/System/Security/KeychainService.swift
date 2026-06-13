@@ -96,12 +96,13 @@ final class KeychainService: Sendable {
             kSecAttrAccount as String: key
         ]
         let status = SecItemDelete(query as CFDictionary)
+        #if DEBUG
+        // 在 DEBUG 模式下，无论 Keychain 删除结果如何，都同步清理 UserDefaults 回退缓存
+        UserDefaults.standard.removeObject(forKey: key)
+        #endif
         guard status == errSecSuccess || status == errSecItemNotFound else {
             if status == errSecMissingEntitlement {
-                #if DEBUG
-                UserDefaults.standard.removeObject(forKey: key)
                 return
-                #endif
             }
             throw KeychainError.deleteFailed(status)
         }
