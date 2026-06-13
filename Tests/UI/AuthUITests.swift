@@ -30,7 +30,7 @@ final class AuthUITests: XCTestCase {
         app = XCUIApplication()
         // --reset-auth-state: 强制从登录页开始，不走自动游客路径
         // --skip-onboarding: 跳过新手引导以免遮挡登录按钮
-        app.launchArguments = ["--reset-auth-state", "--skip-onboarding", "--uitesting", "-UITest_MockData"]
+        app.launchArguments = ["--reset-auth-state", "--skip-onboarding", "--uitesting"]
         app.launch()
     }
 

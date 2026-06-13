@@ -289,15 +289,23 @@ public final class AuthService: AuthServiceProtocol {
         let body: Any
     }
 
+    /// 根据身份凭证解析后端 API 请求路径与请求体
+    /// - Parameter cred: 客户端获取的 OAuth/一键登录身份凭证
+    /// - Returns: 包含请求路径及请求体数据的结构体
     private func resolveAuthRequestInfo(_ cred: AuthCredential) -> AuthRequestInfo {
         switch cred.identityType {
-        case "apple": return AuthRequestInfo(path: "/api/v1/auth/apple", body: OAuthAppleRequest(code: cred.credential, state: cred.extraInfo?["state"], idToken: cred.extraInfo?["idToken"]))
-        case "wechat": return AuthRequestInfo(path: "/api/v1/auth/wechat", body: OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"]))
-        case "google": return AuthRequestInfo(path: "/api/v1/auth/google", body: OAuthGoogleRequest(idToken: cred.extraInfo?["idToken"] ?? ""))
-        case "github": return AuthRequestInfo(path: "/api/v1/auth/github", body: OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"]))
+        // 苹果登录：后端 API 路径为 /api/v1/auth/oauth/apple
+        case "apple": return AuthRequestInfo(path: "/api/v1/auth/oauth/apple", body: OAuthAppleRequest(code: cred.credential, state: cred.extraInfo?["state"], idToken: cred.extraInfo?["idToken"]))
+        // 微信登录：后端 API 路径为 /api/v1/auth/oauth/wechat
+        case "wechat": return AuthRequestInfo(path: "/api/v1/auth/oauth/wechat", body: OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"]))
+        // 谷歌登录：后端 API 路径为 /api/v1/auth/oauth/google
+        case "google": return AuthRequestInfo(path: "/api/v1/auth/oauth/google", body: OAuthGoogleRequest(idToken: cred.extraInfo?["idToken"] ?? ""))
+        // GitHub 登录：后端 API 路径为 /api/v1/auth/oauth/github
+        case "github": return AuthRequestInfo(path: "/api/v1/auth/oauth/github", body: OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"]))
+        // 运营商一键免密登录：后端 API 路径为 /api/v1/auth/carrier
         case "carrier": return AuthRequestInfo(path: "/api/v1/auth/carrier", body: CarrierAuthRequest(carrierToken: cred.extraInfo?["carrierToken"] ?? "", appKey: cred.extraInfo?["appKey"] ?? "", privacyConsent: cred.extraInfo?["privacyConsent"] == "true"))
         default:
-            Logger.shared.error(": \(cred.identityType)")
+            Logger.shared.error("未支持的登录渠道类型: \(cred.identityType)")
             return AuthRequestInfo(path: "", body: "")
         }
     }

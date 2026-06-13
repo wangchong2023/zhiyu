@@ -41,21 +41,22 @@ public final class GoogleAuthStrategy: AuthStrategy {
         let clientID = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String ?? GIDSignIn.sharedInstance.configuration?.clientID
         if clientID == nil || clientID == "YOUR_GOOGLE_CLIENT_ID" || clientID?.isEmpty == true {
             #if DEBUG
-            // 物理自愈与降级：若在本地开发/测试环境下未配置 ClientID，直接返回 Mock 凭证以防 coredump，保证流程能走通
-            let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
-            return AuthCredential(
-                identityType: identityType,
-                identifier: "mock_google_user_id",
-                credential: "",
-                extraInfo: [
-                    "idToken": mockIDToken,
-                    "email": "mock_google_user@gmail.com",
-                    "nickname": "Google Mock User"
-                ]
-            )
-            #else
-            throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: L10n.Auth.googleSdkNotConfigured)
+            // 物理自愈与降级：若在 UI 自动化测试运行中未配置 ClientID，降级返回 Mock
+            if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
+                return AuthCredential(
+                    identityType: identityType,
+                    identifier: "mock_google_user_id",
+                    credential: "",
+                    extraInfo: [
+                        "idToken": mockIDToken,
+                        "email": "mock_google_user@gmail.com",
+                        "nickname": "Google Mock User"
+                    ]
+                )
+            }
             #endif
+            throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: L10n.Auth.googleSdkNotConfigured)
         }
         
         let activeScene = UIApplication.shared.connectedScenes
@@ -83,20 +84,21 @@ public final class GoogleAuthStrategy: AuthStrategy {
         )
         #else
         #if DEBUG
-        let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
-        return AuthCredential(
-            identityType: identityType,
-            identifier: "mock_google_user_id",
-            credential: "",
-            extraInfo: [
-                "idToken": mockIDToken,
-                "email": "mock_google_user@gmail.com",
-                "nickname": "Google Mock User"
-            ]
-        )
-        #else
-        throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: "Google SDK ")
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
+            return AuthCredential(
+                identityType: identityType,
+                identifier: "mock_google_user_id",
+                credential: "",
+                extraInfo: [
+                    "idToken": mockIDToken,
+                    "email": "mock_google_user@gmail.com",
+                    "nickname": "Google Mock User"
+                ]
+            )
+        }
         #endif
+        throw AppError.auth(domain: "GoogleAuthStrategy", code: -99, description: "Google SDK not compiled in watchOS or simulator without framework")
         #endif
     }
 }

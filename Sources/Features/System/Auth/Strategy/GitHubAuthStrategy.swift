@@ -34,22 +34,23 @@ public final class GitHubAuthStrategy: NSObject, AuthStrategy {
         return try await withCheckedThrowingContinuation { continuation in
             let state = UUID().uuidString
             
-            // 1. 防御性检查：验证 clientId 是否被正确配置，若为占位符且在 DEBUG 下，降级返回 Mock 凭证，避免弹出错误网页
+            // 1. 防御性检查：验证 clientId 是否被正确配置，若在 UI 自动化测试且 DEBUG 下，降级返回 Mock 凭证，避免弹出错误网页
             if clientId.isEmpty {
                 #if DEBUG
-                let mockCode = "mock_github_code_\(UUID().uuidString)"
-                let cred = AuthCredential(
-                    identityType: identityType,
-                    identifier: "mock_github_user_id",
-                    credential: mockCode,
-                    extraInfo: ["state": state, "nickname": "GitHub Mock User"]
-                )
-                continuation.resume(returning: cred)
-                return
-                #else
-                continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -99, description: L10n.Auth.githubUrlError))
-                return
+                if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+                    let mockCode = "mock_github_code_\(UUID().uuidString)"
+                    let cred = AuthCredential(
+                        identityType: identityType,
+                        identifier: "mock_github_user_id",
+                        credential: mockCode,
+                        extraInfo: ["state": state, "nickname": "GitHub Mock User"]
+                    )
+                    continuation.resume(returning: cred)
+                    return
+                }
                 #endif
+                continuation.resume(throwing: AppError.auth(domain: "GitHubAuthStrategy", code: -99, description: L10n.Auth.authFailed))
+                return
             }
             
             let urlString = "https://github.com/login/oauth/authorize?client_id=\(clientId)&state=\(state)&scope=read:user,user:email"

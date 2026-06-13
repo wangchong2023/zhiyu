@@ -244,7 +244,9 @@
       "Bash(SNAPSHOT_TESTING_RECORD=all RECORD_SNAPSHOTS=1 xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:ZhiYuTests/ComponentSnapshots/testAdaptiveSidebarView)",
       "Bash(grep -E \"\\\\.swift$\")",
       "Bash(echo \"RAG errors: $?\")",
-      "Bash(security find-identity *)"
+      "Bash(security find-identity *)",
+      "Bash(chmod +x *)",
+      "Bash(awk '{printf \"%-20s %s\\\\n\", $2, $NF}')"
     ]
   }
 }

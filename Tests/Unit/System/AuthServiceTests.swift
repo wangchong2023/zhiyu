@@ -252,7 +252,7 @@ final class AuthServiceTests: XCTestCase {
         let observer = NotificationCenter.default.addObserver(
             forName: .userAuthExpired,
             object: nil,
-            queue: .main
+            queue: nil
         ) { _ in
             AuthService.shared.logout()
             expectation.fulfill()

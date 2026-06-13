@@ -194,7 +194,13 @@ struct AuthView: View {
             }
             
             HStack(spacing: Spacing.large) {
-                if authService.isMockMode {
+                #if DEBUG
+                let forceShowAll = true
+                #else
+                let forceShowAll = authService.isMockMode
+                #endif
+                
+                if forceShowAll {
                     ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) {
                         handleThirdPartyLogin(using: WeChatAuthStrategy())
                     }
@@ -203,20 +209,28 @@ struct AuthView: View {
                     handleThirdPartyLogin(using: AppleAuthStrategy())
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.google", icon: "GoogleLogo", isSystem: false, color: .blue) { // Google登录
+                    #if DEBUG
+                    handleThirdPartyLogin(using: GoogleAuthStrategy())
+                    #else
                     if authService.isMockMode {
                         handleThirdPartyLogin(using: GoogleAuthStrategy())
                     } else {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.googleDeveloping)
                     }
+                    #endif
                 }
                 ThirdPartyIconButton(id: "auth.thirdparty.github", icon: "GithubLogo", isSystem: false, color: .primary) { // Github登录
+                    #if DEBUG
+                    handleThirdPartyLogin(using: GitHubAuthStrategy())
+                    #else
                     if authService.isMockMode {
                         handleThirdPartyLogin(using: GitHubAuthStrategy())
                     } else {
                         ToastManager.shared.show(type: .info, message: L10n.Auth.githubDeveloping)
                     }
+                    #endif
                 }
-                if authService.isMockMode {
+                if forceShowAll {
                     ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) {
                         handleThirdPartyLogin(using: CarrierAuthStrategy())
                     }
