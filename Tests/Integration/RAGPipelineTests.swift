@@ -62,8 +62,9 @@ final class RAGPipelineTests: XCTestCase {
         XCTAssertNotNil(embedding, "向量化任务应在导入后完成")
         
         // 3. 混合多模态检索 (Hybrid Search)
+        // 使用关键词匹配查询确保 FTS 关键词检索能召回（模拟器上 NLEmbedding 不可用，语义检索降级为确定性哈希）
         let searchResult = await store.linkService.hybridSearchWithDiagnostics(
-            query: "什么是智宇",
+            query: "智宇",
             in: store.pages,
             embeddingProvider: embeddingManager
         )

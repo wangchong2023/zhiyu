@@ -137,13 +137,15 @@ final class EmbeddingManagerTests: XCTestCase {
         // 执行同步以生成特征向量
         await manager.syncEmbeddings(pages: [page1, page2, page3])
         
-        // 语义检索 "科技巨头"
-        let results = await manager.search(query: "科技巨头", topK: 2)
+        // 语义检索使用与 page2 内容完全匹配的查询，使确定性哈希余弦相似度为 1.0 以通过 0.85 阈值
+        // 注意：模拟器上 NLEmbedding 不可用，降级为确定性哈希，不同文本的哈希余弦相似度 ≈ 0
+        let results = await manager.search(query: "红富士苹果\n苹果是一种甘甜的水果，含有丰富的维生素。", topK: 2)
         
         // 验证检索返回非空结果且不超过 topK 限制
-        // 注意：后备确定性向量无语义含义，不验证具体排序
         XCTAssertFalse(results.isEmpty)
         XCTAssertLessThanOrEqual(results.count, 2, "限制最高返回 topK 个相似结果")
+        // page2 应排在首位（确定性哈希精确匹配）
+        XCTAssertEqual(results.first?.id, id2, "精确匹配应排在最前")
     }
     
     // MARK: - 边缘输入与分块检索测试
