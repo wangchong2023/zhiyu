@@ -1554,13 +1554,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Quick Actions"
+            "value": "Source Import"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "快捷操作"
+            "value": "来源导入"
           }
         }
       }
@@ -3135,13 +3135,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Import History"
+            "value": "Imported Sources"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "导入原始内容"
+            "value": "已导入来源"
           }
         }
       }

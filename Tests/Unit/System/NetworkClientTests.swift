@@ -85,8 +85,10 @@ final class NetworkClientTests: XCTestCase {
                 }
                 
                 let responseDTO = LoginResponse(
-                    user: UserDTO(id: "1001", name: "User", phone: nil, email: nil, avatar: nil, gender: nil, birthday: nil),
-                    tokens: TokenDTO(accessToken: "new_access_token", refreshToken: "new_refresh_token", accessExpireAt: 0, refreshExpireAt: 0),
+                    accessToken: "new_access_token",
+                    refreshToken: "new_refresh_token",
+                    expiresIn: 3600,
+                    tokenType: "Bearer",
                     isNewUser: false,
                     totpRequired: false
                 )
