@@ -132,13 +132,14 @@ public final class AuthService: AuthServiceProtocol {
         #if DEBUG
         if isMockBackend {
             let response = LoginResponse(
-                user: UserDTO(id: UUID().uuidString, name: identity, phone: identity, email: nil, avatar: nil, gender: nil, birthday: nil),
-                tokens: TokenDTO(accessToken: "mock_jwt_access_token", refreshToken: "mock_jwt_refresh_token", accessExpireAt: 0, refreshExpireAt: 0),
+                accessToken: "mock_jwt_access_token",
+                refreshToken: "mock_jwt_refresh_token",
+                expiresIn: 3600,
+                tokenType: "Bearer",
                 isNewUser: false,
                 totpRequired: false
             )
-            // mock 路径：handleSuccessfulLogin 是同步函数，无需 await
-            return handleSuccessfulLogin(response: response, identity: identity)
+            return await handleSuccessfulLogin(response: response, identity: identity)
         }
         #endif
         let req = LoginRequest.password(username: identity, password: password)
@@ -150,7 +151,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return handleSuccessfulLogin(response: response, identity: identity)
+            return await handleSuccessfulLogin(response: response, identity: identity)
         } catch {
             Logger.shared.error("[AuthService] ", error: error)
             return false
@@ -198,7 +199,7 @@ public final class AuthService: AuthServiceProtocol {
                 requiresAuth: false
             )
             
-            return handleSuccessfulLogin(response: response, identity: phone)
+            return await handleSuccessfulLogin(response: response, identity: phone)
         } catch {
             Logger.shared.error("[AuthService] ", error: error)
             return false
@@ -264,26 +265,28 @@ public final class AuthService: AuthServiceProtocol {
     
     private func sendAuthRequestToBackend(_ cred: AuthCredential) async throws -> Bool {
         #if DEBUG
-        if let result = tryMockAuthRequest(cred) { return result }
+        if let result = await tryMockAuthRequest(cred) { return result }
         #endif
 
         let info = resolveAuthRequestInfo(cred)
         let response = try await sendOAuthRequest(path: info.path, reqBody: info.body)
         let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
-        return handleSuccessfulLogin(response: response, identity: name)
+        return await handleSuccessfulLogin(response: response, identity: name)
     }
 
     #if DEBUG
-    private func tryMockAuthRequest(_ cred: AuthCredential) -> Bool? {
+    private func tryMockAuthRequest(_ cred: AuthCredential) async -> Bool? {
         guard isMockBackend else { return nil }
         let name = cred.extraInfo?["nickname"] ?? "ZhiYu User"
         let response = LoginResponse(
-            user: UserDTO(id: UUID().uuidString, name: name, phone: nil, email: cred.extraInfo?["email"], avatar: nil, gender: nil, birthday: nil),
-            tokens: TokenDTO(accessToken: "mock_jwt_access_token_\(UUID().uuidString)", refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)", accessExpireAt: Int(Date().timeIntervalSince1970) + 3600, refreshExpireAt: Int(Date().timeIntervalSince1970) + 2592000),
+            accessToken: "mock_jwt_access_token_\(UUID().uuidString)",
+            refreshToken: "mock_jwt_refresh_token_\(UUID().uuidString)",
+            expiresIn: 3600,
+            tokenType: "Bearer",
             isNewUser: false,
             totpRequired: false
         )
-        return handleSuccessfulLogin(response: response, identity: name)
+        return await handleSuccessfulLogin(response: response, identity: name)
     }
     #endif
 
@@ -335,11 +338,11 @@ public final class AuthService: AuthServiceProtocol {
     // MARK: - 私有辅助方法
     
     @MainActor
-    private func handleSuccessfulLogin(response: LoginResponse, identity: String) -> Bool {
+    private func handleSuccessfulLogin(response: LoginResponse, identity: String) async -> Bool {
         do {
             // 写入本地安全区
-            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: response.tokens.accessToken)
-            if let refresh = response.tokens.refreshToken {
+            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: response.accessToken)
+            if let refresh = response.refreshToken {
                 try KeychainService.shared.store(key: "refresh_token", value: refresh)
             }
         } catch {
@@ -355,18 +358,42 @@ public final class AuthService: AuthServiceProtocol {
             #endif
         }
         
-        // 根据后端返回的数据构造本地 User
-        let user = User(
-            id: UUID(uuidString: response.user.id) ?? UUID(),
-            name: response.user.name,
-            email: response.user.email ?? "",
-            phone: response.user.phone,
-            avatarURL: response.user.avatar.flatMap { URL(string: $0) }
-        )
-        AuthSession.shared.update(user: user)
-        
-        saveState()
-        return true
+        #if DEBUG
+        if isMockBackend {
+            let mockUser = User(
+                id: UUID(),
+                name: identity,
+                email: "",
+                phone: nil,
+                avatarURL: nil
+            )
+            AuthSession.shared.update(user: mockUser)
+            saveState()
+            return true
+        }
+        #endif
+
+        do {
+            let profileResponse: UserProfileResponse = try await NetworkClient.shared.request(
+                path: AppConstants.Network.userProfilePath,
+                method: AppConstants.Network.methodGET,
+                requiresAuth: true
+            )
+            
+            let user = User(
+                id: UUID(uuidString: String(profileResponse.userId)) ?? UUID(),
+                name: profileResponse.nick,
+                email: profileResponse.email ?? "",
+                phone: profileResponse.mobile,
+                avatarURL: profileResponse.avatar.flatMap { URL(string: $0) }
+            )
+            AuthSession.shared.update(user: user)
+            saveState()
+            return true
+        } catch {
+            Logger.shared.error("[AuthService] 拉取用户配置失败: ", error: error)
+            return false
+        }
     }
     
     private func getDeviceId() -> String {

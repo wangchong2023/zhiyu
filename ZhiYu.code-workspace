@@ -1,13 +1,14 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"path": "../ZhiYu-Backend"
-	}
-],
+    {
+      "path": ".",
+    },
+    {
+      "path": "../ZhiYu-Backend",
+    },
+  ],
   "settings": {
-    "java.compile.nullAnalysis.mode": "automatic"
-  }
+    "java.compile.nullAnalysis.mode": "automatic",
+    "git.ignoreLimitWarning": true,
+  },
 }

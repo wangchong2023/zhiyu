@@ -157,8 +157,10 @@ public struct UserDTO: Codable, Sendable {
 
 /// 登录统一响应封装
 public struct LoginResponse: Codable, Sendable {
-    public let user: UserDTO
-    public let tokens: TokenDTO
+    public let accessToken: String
+    public let refreshToken: String?
+    public let expiresIn: Int?
+    public let tokenType: String?
     public let isNewUser: Bool?
     public let totpRequired: Bool?
 }

@@ -237,11 +237,11 @@ public actor NetworkClient {
             
             if response.isSuccess, let loginData = response.data {
                 // 更新 Keychain
-                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.tokens.accessToken)
-                if let newRefresh = loginData.tokens.refreshToken {
+                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.accessToken)
+                if let newRefresh = loginData.refreshToken {
                     try KeychainService.shared.store(key: "refresh_token", value: newRefresh)
                 }
-                return loginData.tokens.accessToken
+                return loginData.accessToken
             } else {
                 // 刷新失败（如重放攻击 40103，或者已过期），强制退登
                 try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)

@@ -186,8 +186,9 @@ struct TaskCenterView: View {
             }
         }
         .navigationTitle(L10n.AI.Task.centerTitle)
-.appNavigationBarTitleDisplayMode(.inline)
-        .background(themeManager.pageBackground())
+        .appNavigationBarTitleDisplayMode(.inline)
+        .scrollContentBackground(.hidden)
+        .background(PageBackgroundView(accentColor: .appAccent))
         .onAppear {
             taskCenter.markAllAsRead()
         }
