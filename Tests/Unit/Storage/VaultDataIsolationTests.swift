@@ -282,6 +282,9 @@ final class VaultDataIsolationTests: XCTestCase {
             }
         AppEventBus.shared.publish(.graphRelayoutRequested)
         
+        // 等待异步分发的事件到达
+        try await Task.sleep(nanoseconds: 50_000_000)
+        
         // 验证同步触发
         XCTAssertTrue(eventReceived, "graphRelayoutRequested 事件应可达")
         _ = cancellable

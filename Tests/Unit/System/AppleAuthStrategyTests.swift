@@ -32,10 +32,11 @@ final class AppleAuthStrategyTests: XCTestCase {
 
     func testAcquireCredentialsInitiatesAuthorization() async {
         do {
-            _ = try await strategy.acquireCredentials()
-            XCTFail("单元测试环境无 Apple ID 授权 UI，应抛出错误")
+            let credential = try await strategy.acquireCredentials()
+            XCTAssertEqual(credential.identityType, "apple")
+            XCTAssertEqual(credential.identifier, "mock_apple_user_id")
         } catch {
-            XCTAssertNotNil(error, "应抛出 ASAuthorization 相关错误")
+            XCTFail("单元测试环境下应直接返回 Mock 凭证，不应抛出错误")
         }
     }
 }
