@@ -206,7 +206,6 @@ public final class AuthService: AuthServiceProtocol {
     }
     
     /// 用于测试的后台注销任务追踪
-    @available(*, deprecated, message: "For testing only")
     public var testLogoutTask: Task<Void, Never>?
     
     /// 退出登录
