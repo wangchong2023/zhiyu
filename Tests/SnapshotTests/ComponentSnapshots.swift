@@ -41,6 +41,12 @@ final class ComponentSnapshots: XCTestCase {
     private func setupMockEnvironment() {
         setupFullMockEnvironment()
         isRecording = isRecordModeEnabled
+        
+        // 清理聊天历史，防止其他测试（如 UI 测试）的残留数据污染快照测试
+        ChatService.shared.clearHistory()
+        
+        // 重置提示词服务到默认状态，防止设置修改污染快照
+        PromptService.shared.reset()
     }
     
     /// 测试图谱节点的视觉一致性
