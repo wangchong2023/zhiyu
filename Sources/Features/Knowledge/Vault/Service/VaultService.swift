@@ -10,6 +10,7 @@
 //
 import Foundation
 import Observation
+@preconcurrency import GRDB
 
 /// 知识笔记本/金库中枢服务（VaultService）。
 /// 它是业务功能层中负责维护多笔记本租户（Multi-Vault）生命周期的大脑门面，
@@ -236,6 +237,25 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
             } catch {
                 Logger.shared.warning("[VaultService] refreshPageCount failed for \(vault.name): \(error.localizedDescription)")
             }
+        }
+        // 兜底：vault 专属数据库文件不存在时，从主数据库 App.sqlite 读取全局页面计数
+        await refreshPageCountsFromMainDB()
+    }
+
+    /// 从主数据库（App.sqlite）读取页面计数，赋值给所有 vault。
+    /// 当前架构尚未实现多 vault 物理隔离，所有页面共享同一个 App.sqlite，
+    /// 因此将同一计数赋值给全部 vault 以修正列表页数显示为 0 的问题。
+    private func refreshPageCountsFromMainDB() async {
+        guard let writer = DatabaseManager.shared.dbWriter else { return }
+        do {
+            let count = try await writer.read { db in
+                try KnowledgePage.fetchCount(db)
+            }
+            for i in self.vaults.indices {
+                self.vaults[i].pageCount = count
+            }
+        } catch {
+            Logger.shared.error("[VaultService] refreshPageCountsFromMainDB failed", error: error)
         }
     }
 

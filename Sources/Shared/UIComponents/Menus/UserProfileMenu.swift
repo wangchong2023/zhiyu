@@ -265,6 +265,7 @@ struct CustomProfilePopover: View {
                     .foregroundStyle(textColor)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DesignSystem.small)
             .padding(.vertical, 6)
             .contentShape(Rectangle())
