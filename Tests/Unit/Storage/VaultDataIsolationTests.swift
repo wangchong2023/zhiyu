@@ -273,20 +273,19 @@ final class VaultDataIsolationTests: XCTestCase {
                        "旧页面应已被清理")
 
         // 6. 验证事件发布（模拟 AppStore.generateDemoData 的行为）
-        var eventReceived = false
+        let expectation = XCTestExpectation(description: "等待 graphRelayoutRequested 事件")
         let cancellable = AppEventBus.shared.subscribe()
             .sink { event in
                 if case .graphRelayoutRequested = event {
-                    eventReceived = true
+                    expectation.fulfill()
                 }
             }
         AppEventBus.shared.publish(.graphRelayoutRequested)
         
         // 等待异步分发的事件到达
-        try await Task.sleep(nanoseconds: 50_000_000)
+        await fulfillment(of: [expectation], timeout: 1.0)
         
         // 验证同步触发
-        XCTAssertTrue(eventReceived, "graphRelayoutRequested 事件应可达")
         _ = cancellable
 
         print("✅ 【Success】完整链路：DB写入 → KnowledgeStore同步 → 4标题+标签 → 事件发布 全通过！")
