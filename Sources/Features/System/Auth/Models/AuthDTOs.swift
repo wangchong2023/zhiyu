@@ -101,9 +101,11 @@ public struct OAuthWeChatRequest: Encodable, Sendable {
 }
 
 public struct OAuthGoogleRequest: Encodable, Sendable {
+    public let code: String
     public let idToken: String
     
-    public init(idToken: String) {
+    public init(code: String, idToken: String) {
+        self.code = code
         self.idToken = idToken
     }
 }

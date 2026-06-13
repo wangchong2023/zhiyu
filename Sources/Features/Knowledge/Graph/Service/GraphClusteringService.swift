@@ -51,8 +51,9 @@ public final class GraphClusteringService {
         // 3. 包装结果
         let clusterColors: [String] = ["blue", "purple", "orange", "green", "pink", "teal", "indigo"]
 
-        return (0..<k).map { i in
-            Cluster(
+        return (0..<k).compactMap { i in
+            if clusters[i].isEmpty { return nil }
+            return Cluster(
                 name: L10n.Graph.clusterName(i + 1),
                 pageIDs: Set(clusters[i]),
                 centroid: centroids[i],

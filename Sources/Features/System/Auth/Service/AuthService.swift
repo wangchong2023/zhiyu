@@ -303,7 +303,7 @@ public final class AuthService: AuthServiceProtocol {
         // 微信登录：后端 API 路径为 /api/v1/auth/oauth/wechat
         case "wechat": return AuthRequestInfo(path: "/api/v1/auth/oauth/wechat", body: OAuthWeChatRequest(code: cred.credential, state: cred.extraInfo?["state"]))
         // 谷歌登录：后端 API 路径为 /api/v1/auth/oauth/google
-        case "google": return AuthRequestInfo(path: "/api/v1/auth/oauth/google", body: OAuthGoogleRequest(idToken: cred.extraInfo?["idToken"] ?? ""))
+        case "google": return AuthRequestInfo(path: "/api/v1/auth/oauth/google", body: OAuthGoogleRequest(code: cred.credential, idToken: cred.extraInfo?["idToken"] ?? ""))
         // GitHub 登录：后端 API 路径为 /api/v1/auth/oauth/github
         case "github": return AuthRequestInfo(path: "/api/v1/auth/oauth/github", body: OAuthGitHubRequest(code: cred.credential, state: cred.extraInfo?["state"]))
         // 运营商一键免密登录：后端 API 路径为 /api/v1/auth/carrier

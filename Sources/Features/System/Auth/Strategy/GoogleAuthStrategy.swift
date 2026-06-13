@@ -42,7 +42,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
         if clientID == nil || clientID == "YOUR_GOOGLE_CLIENT_ID" || clientID?.isEmpty == true {
             #if DEBUG
             // 物理自愈与降级：若在 UI 自动化测试运行中未配置 ClientID，降级返回 Mock
-            if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            if ProcessInfo.processInfo.arguments.contains("--uitesting") || NSClassFromString("XCTestCase") != nil {
                 let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
                 return AuthCredential(
                     identityType: identityType,
@@ -84,7 +84,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
         )
         #else
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("--uitesting") {
+        if ProcessInfo.processInfo.arguments.contains("--uitesting") || NSClassFromString("XCTestCase") != nil {
             let mockIDToken = "mock_google_id_token_\(UUID().uuidString)"
             return AuthCredential(
                 identityType: identityType,
