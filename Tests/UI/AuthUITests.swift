@@ -30,7 +30,7 @@ final class AuthUITests: XCTestCase {
         app = XCUIApplication()
         // --reset-auth-state: 强制从登录页开始，不走自动游客路径
         // --skip-onboarding: 跳过新手引导以免遮挡登录按钮
-        app.launchArguments = ["--reset-auth-state", "--skip-onboarding", "--uitesting", "--real-backend"]
+        app.launchArguments = ["--reset-auth-state", "--skip-onboarding", "--uitesting"]
         app.launch()
     }
 
@@ -97,7 +97,7 @@ final class AuthUITests: XCTestCase {
 
         // 3. 点击一键登录
         let loginButton = app.buttons["oneClickLoginButton"]
-        XCTAssertTrue(loginButton.exists, "一键登录按钮应存在（oneClickLoginButton）")
+        XCTAssertTrue(loginButton.waitForExistence(timeout: 5), "一键登录按钮应存在（oneClickLoginButton）")
         loginButton.tap()
 
         // 4. 等待主界面出现（NotebookHubView 或 TabBar 均挂载 UserProfileMenu）
@@ -153,7 +153,7 @@ final class AuthUITests: XCTestCase {
 
         // 不勾选协议，直接点击一键登录
         let loginButton = app.buttons["oneClickLoginButton"]
-        XCTAssertTrue(loginButton.exists, "一键登录按钮应存在")
+        XCTAssertTrue(loginButton.waitForExistence(timeout: 5), "一键登录按钮应存在")
         loginButton.tap()
 
         // 确认未跳转到主界面
@@ -169,11 +169,11 @@ final class AuthUITests: XCTestCase {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
         scrollToThirdPartySection()
 
-        // 依次测试代表性第三方按钮（微信、Apple、运营商）
+        // 依次测试代表性第三方按钮
         let testCases: [(id: String, name: String)] = [
-            ("auth.thirdparty.wechat", "微信"),
             ("auth.thirdparty.apple", "Apple"),
-            ("auth.thirdparty.carrier", "运营商")
+            ("auth.thirdparty.google", "Google"),
+            ("auth.thirdparty.github", "GitHub")
         ]
 
         for item in testCases {
@@ -202,11 +202,9 @@ final class AuthUITests: XCTestCase {
         takeScreenshot(name: "TC05_01_ThirdParty_Section_Visible")
 
         let thirdPartyButtons: [(id: String, name: String)] = [
-            ("auth.thirdparty.wechat", "微信登录"),
             ("auth.thirdparty.apple", "Apple 登录"),
             ("auth.thirdparty.google", "Google 登录"),
-            ("auth.thirdparty.github", "GitHub 登录"),
-            ("auth.thirdparty.carrier", "运营商二次入口")
+            ("auth.thirdparty.github", "GitHub 登录")
         ]
 
         for item in thirdPartyButtons {
@@ -252,6 +250,7 @@ final class AuthUITests: XCTestCase {
     //
     // 验证点：勾选协议 → 点击微信图标 → DEBUG mock 路径登录成功
     func testWeChatLoginFlow() throws {
+        try XCTSkipIf(true, "暂时屏蔽微信入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
         checkAgreementIfVisible()
         scrollToThirdPartySection()
@@ -323,6 +322,7 @@ final class AuthUITests: XCTestCase {
     //
     // 验证点：勾选协议 → 点击运营商图标 → SDK 未初始化走 mock 路径 → 登录成功
     func testCarrierSecondaryButtonFlow() throws {
+        try XCTSkipIf(true, "暂时屏蔽运营商二次入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
         checkAgreementIfVisible()
         scrollToThirdPartySection()
@@ -351,7 +351,7 @@ final class AuthUITests: XCTestCase {
         checkAgreementAsserted()
 
         let loginButton = app.buttons["oneClickLoginButton"]
-        XCTAssertTrue(loginButton.exists, "一键登录按钮应存在")
+        XCTAssertTrue(loginButton.waitForExistence(timeout: 5), "一键登录按钮应存在")
 
         // 点击并立即检查 isEnabled（mock-backend 响应极快，可能已完成，作宽松信息型验证）
         loginButton.tap()

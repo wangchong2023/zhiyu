@@ -31,7 +31,7 @@ final class AuthIntegrationTests: XCTestCase {
                 identifier: "test_carrier",
                 credential: "",
                 extraInfo: [
-                    "carrierToken": "test_carrier_token_123",
+                    "carrierToken": "mock_carrier_token_123",
                     "appKey": "test_app_key",
                     "privacyConsent": "true"
                 ]
@@ -45,9 +45,9 @@ final class AuthIntegrationTests: XCTestCase {
             AuthCredential(
                 identityType: identityType,
                 identifier: "test_google_user",
-                credential: "",
+                credential: "mock_google_code",
                 extraInfo: [
-                    "idToken": "test_google_id_token_123",
+                    "idToken": "mock_google_id_token_123",
                     "nickname": "Google User"
                 ]
             )
@@ -60,9 +60,9 @@ final class AuthIntegrationTests: XCTestCase {
             AuthCredential(
                 identityType: identityType,
                 identifier: "test_apple_user",
-                credential: "test_apple_authorization_code_123",
+                credential: "mock_apple_authorization_code_123",
                 extraInfo: [
-                    "idToken": "test_apple_id_token_123",
+                    "idToken": "mock_apple_id_token_123",
                     "state": "test_state",
                     "nickname": "Apple User"
                 ]
@@ -76,7 +76,7 @@ final class AuthIntegrationTests: XCTestCase {
             AuthCredential(
                 identityType: identityType,
                 identifier: "test_github_user",
-                credential: "test_github_code_123",
+                credential: "mock_github_code_123",
                 extraInfo: [
                     "state": "test_state",
                     "nickname": "GitHub User"

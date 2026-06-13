@@ -41,6 +41,12 @@ final class KeychainService: Sendable {
         ]
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
+            if status == errSecMissingEntitlement {
+                #if DEBUG
+                UserDefaults.standard.set(value, forKey: key)
+                return
+                #endif
+            }
             Logger.shared.error(" [KeychainService]  (\(key)): \(status)")
             throw KeychainError.storeFailed(status)
         }
@@ -70,6 +76,13 @@ final class KeychainService: Sendable {
         case errSecItemNotFound:
             return nil
         default:
+            if status == errSecMissingEntitlement {
+                #if DEBUG
+                if let val = UserDefaults.standard.string(forKey: key) {
+                    return val
+                }
+                #endif
+            }
             throw KeychainError.retrieveFailed(status)
         }
     }
@@ -84,6 +97,12 @@ final class KeychainService: Sendable {
         ]
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
+            if status == errSecMissingEntitlement {
+                #if DEBUG
+                UserDefaults.standard.removeObject(forKey: key)
+                return
+                #endif
+            }
             throw KeychainError.deleteFailed(status)
         }
     }

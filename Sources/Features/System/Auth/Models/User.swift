@@ -95,4 +95,63 @@ public struct User: Codable, Identifiable, Sendable {
     public var hasPrivacySecurity: Bool {
         return features.contains("privacy_security") || isPro
     }
+
+    // MARK: - Codable 适配后端 UserProfileResp
+    
+    private enum CodingKeys: String, CodingKey {
+        case id = "userId"
+        case name = "nick"
+        case email
+        case phone = "mobile"
+        case avatarURL = "avatar"
+        case gender
+        case birthday
+        case planKey = "plan_key"
+        case maxVaults = "max_vaults"
+        case maxPages = "max_pages"
+        case maxPlugins = "max_plugins"
+        case features
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // 解析 ID (后端返回的是 Long 的 userId)
+        if let idLong = try? container.decode(Int64.self, forKey: .id) {
+            let uuidString = String(format: "00000000-0000-0000-0000-%012x", idLong)
+            self.id = UUID(uuidString: uuidString) ?? UUID()
+        } else if let idString = try? container.decode(String.self, forKey: .id), let parsedId = UUID(uuidString: idString) {
+            self.id = parsedId
+        } else {
+            self.id = UUID()
+        }
+        
+        
+        enum AlternateKeys: String, CodingKey {
+            case username
+        }
+        let altContainer = try? decoder.container(keyedBy: AlternateKeys.self)
+        
+        self.name = (try? container.decodeIfPresent(String.self, forKey: .name)) ??
+                    (try? altContainer?.decodeIfPresent(String.self, forKey: .username)) ?? "Guest"
+        
+        self.email = (try? container.decodeIfPresent(String.self, forKey: .email)) ?? ""
+        self.phone = try? container.decodeIfPresent(String.self, forKey: .phone)
+        
+        if let avatarStr = try? container.decodeIfPresent(String.self, forKey: .avatarURL) {
+            self.avatarURL = URL(string: avatarStr)
+        } else {
+            self.avatarURL = nil
+        }
+        
+        self.gender = try? container.decodeIfPresent(Int.self, forKey: .gender)
+        self.birthday = try? container.decodeIfPresent(String.self, forKey: .birthday)
+        
+        // 赋予默认套餐属性（因为后端目前暂无此字段）
+        self.planKey = (try? container.decodeIfPresent(String.self, forKey: .planKey)) ?? "free"
+        self.maxVaults = (try? container.decodeIfPresent(Int.self, forKey: .maxVaults)) ?? DefaultQuotas.liteMaxVaults
+        self.maxPages = (try? container.decodeIfPresent(Int.self, forKey: .maxPages)) ?? DefaultQuotas.liteMaxPages
+        self.maxPlugins = (try? container.decodeIfPresent(Int.self, forKey: .maxPlugins)) ?? DefaultQuotas.liteMaxPlugins
+        self.features = (try? container.decodeIfPresent([String].self, forKey: .features)) ?? []
+    }
 }

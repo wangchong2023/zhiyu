@@ -40,7 +40,7 @@ public actor NetworkClient {
     
     // 无感刷新防并发控制
     private var isRefreshing = false
-    private var refreshTask: Task<String, Error>?
+    private var refreshTask: Task<Result<String, Error>, Never>?
     
     private init() {
         let config = URLSessionConfiguration.default
@@ -207,12 +207,17 @@ public actor NetworkClient {
     ) async throws -> T {
         // 防止多个并发请求同时触发刷新
         if isRefreshing, let existingTask = refreshTask {
-            _ = try await existingTask.value
-            return try await performRequest(path: path, method: method, body: body, requiresAuth: true, isRetry: true)
+            let result = await existingTask.value
+            switch result {
+            case .success:
+                return try await performRequest(path: path, method: method, body: body, requiresAuth: true, isRetry: true)
+            case .failure(let error):
+                throw error
+            }
         }
         
         isRefreshing = true
-        refreshTask = Task {
+        let task = Task<Result<String, Error>, Never> {
             defer {
                 self.isRefreshing = false
                 self.refreshTask = nil
@@ -221,7 +226,7 @@ public actor NetworkClient {
             // 拿到长效 Refresh Token
             guard let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") else {
                 NotificationCenter.default.post(name: .userAuthExpired, object: nil)
-                throw NetworkError.unauthorized(L10n.Network.missingRefreshToken)
+                return .failure(NetworkError.unauthorized(L10n.Network.missingRefreshToken))
             }
             
             // 发起刷新请求
@@ -230,31 +235,41 @@ public actor NetworkClient {
             var request = URLRequest(url: URL(string: refreshURL) ?? URL(string: "about:blank")!)
             request.httpMethod = AppConstants.Network.methodPOST
             request.addValue(AppConstants.Network.contentTypeJSON, forHTTPHeaderField: AppConstants.Network.headerContentType)
-            request.httpBody = try encoder.encode(req)
             
-            let (data, _) = try await activeSession.data(for: request)
-            let response = try decoder.decode(ApiResponse<LoginResponse>.self, from: data)
-            
-            if response.isSuccess, let loginData = response.data {
-                // 更新 Keychain
-                try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.accessToken)
-                if let newRefresh = loginData.refreshToken {
-                    try KeychainService.shared.store(key: "refresh_token", value: newRefresh)
+            do {
+                request.httpBody = try encoder.encode(req)
+                let (data, _) = try await activeSession.data(for: request)
+                let response = try decoder.decode(ApiResponse<LoginResponse>.self, from: data)
+                
+                if response.isSuccess, let loginData = response.data {
+                    // 更新 Keychain
+                    try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.accessToken)
+                    if let newRefresh = loginData.refreshToken {
+                        try KeychainService.shared.store(key: "refresh_token", value: newRefresh)
+                    }
+                    return .success(loginData.accessToken)
+                } else {
+                    // 刷新失败（如重放攻击 40103，或者已过期），强制退登
+                    try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
+                    try? KeychainService.shared.delete(key: "refresh_token")
+                    NotificationCenter.default.post(name: .userAuthExpired, object: nil)
+                    return .failure(NetworkError.unauthorized(L10n.Network.sessionInvalidated))
                 }
-                return loginData.accessToken
-            } else {
-                // 刷新失败（如重放攻击 40103，或者已过期），强制退登
-                try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
-                try? KeychainService.shared.delete(key: "refresh_token")
-                NotificationCenter.default.post(name: .userAuthExpired, object: nil)
-                throw NetworkError.unauthorized(L10n.Network.sessionInvalidated)
+            } catch {
+                return .failure(error)
             }
         }
+        refreshTask = task
         
         // 等待刷新完成并重试原请求
 // swiftlint:disable:next force_unwrapping
-        _ = try await refreshTask!.value
-        return try await performRequest(path: path, method: method, body: body, requiresAuth: true, isRetry: true)
+        let result = await refreshTask!.value
+        switch result {
+        case .success:
+            return try await performRequest(path: path, method: method, body: body, requiresAuth: true, isRetry: true)
+        case .failure(let error):
+            throw error
+        }
     }
 }
 

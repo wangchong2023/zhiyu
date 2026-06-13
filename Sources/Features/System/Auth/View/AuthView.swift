@@ -200,11 +200,13 @@ struct AuthView: View {
                 let forceShowAll = authService.isMockMode
                 #endif
                 
+                /* 暂时屏蔽 WeChat
                 if forceShowAll {
                     ThirdPartyIconButton(id: "auth.thirdparty.wechat", icon: "WechatLogo", isSystem: false, color: .green) {
                         handleThirdPartyLogin(using: WeChatAuthStrategy())
                     }
                 }
+                */
                 ThirdPartyIconButton(id: "auth.thirdparty.apple", icon: "apple.logo", isSystem: true, color: .primary) { // Apple登录
                     handleThirdPartyLogin(using: AppleAuthStrategy())
                 }
@@ -230,11 +232,13 @@ struct AuthView: View {
                     }
                     #endif
                 }
+                /* 暂时屏蔽 运营商二次入口
                 if forceShowAll {
                     ThirdPartyIconButton(id: "auth.thirdparty.carrier", icon: "iphone.gen1", isSystem: true, color: .appAccent) {
                         handleThirdPartyLogin(using: CarrierAuthStrategy())
                     }
                 }
+                */
             }
         }
     }

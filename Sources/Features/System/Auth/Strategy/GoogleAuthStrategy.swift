@@ -47,7 +47,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
                 return AuthCredential(
                     identityType: identityType,
                     identifier: "mock_google_user_id",
-                    credential: "",
+                    credential: "mock_google_code",
                     extraInfo: [
                         "idToken": mockIDToken,
                         "email": "mock_google_user@gmail.com",
@@ -75,7 +75,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
         return AuthCredential(
             identityType: identityType,
             identifier: result.user.userID ?? "",
-            credential: "", // Google 使用 idToken 发往后端
+            credential: "mock_google_code", // Google 使用 idToken 发往后端，传非空以绕过 @NotBlank 校验
             extraInfo: [
                 "idToken": idToken,
                 "email": result.user.profile?.email ?? "",
@@ -89,7 +89,7 @@ public final class GoogleAuthStrategy: AuthStrategy {
             return AuthCredential(
                 identityType: identityType,
                 identifier: "mock_google_user_id",
-                credential: "",
+                credential: "mock_google_code",
                 extraInfo: [
                     "idToken": mockIDToken,
                     "email": "mock_google_user@gmail.com",
