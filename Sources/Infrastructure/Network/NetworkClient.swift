@@ -186,7 +186,7 @@ public actor NetworkClient {
     private func waitForTokenRefreshIfNeeded(requiresAuth: Bool, isRetry: Bool) async {
         guard requiresAuth && isRefreshing && !isRetry else { return }
         if let refreshTask = self.refreshTask {
-            _ = try? await refreshTask.value
+            _ = await refreshTask.value
         }
     }
 

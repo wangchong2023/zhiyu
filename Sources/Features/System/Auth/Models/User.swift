@@ -126,7 +126,6 @@ public struct User: Codable, Identifiable, Sendable {
             self.id = UUID()
         }
         
-        
         enum AlternateKeys: String, CodingKey {
             case username
         }
