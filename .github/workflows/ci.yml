@@ -76,6 +76,15 @@ jobs:
       - name: Check Test DI Setup
         run: python3 Tools/Gatekeeper/check_test_di_setup.py
 
+      - name: Verify Commit Signature
+        run: |
+          if git log --show-signature -1 | grep -q "Good signature"; then
+            echo "✅ Commit signed"
+          else
+            echo "⚠️  Commit NOT signed — 请配置 GPG"
+          fi
+        continue-on-error: true
+
       - name: Verify SPM Integrity
         run: bash Tools/CI/verify_spm_integrity.sh
 

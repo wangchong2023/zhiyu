@@ -60,6 +60,19 @@ steps:
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
     failure: ignore
 
+  signature-check:
+    depends_on: [clone-repo]
+    image: bash
+    commands:
+      - echo "===> Verifying commit signature..."
+      - |
+        if git log --show-signature -1 | grep -q "Good signature"; then
+          echo "✅ Commit signed"
+        else
+          echo "⚠️  Commit NOT signed — 请配置 GPG: git config commit.gpgsign true"
+        fi
+    failure: ignore
+
   secret-scan:
     depends_on: [clone-repo]
     image: bash
