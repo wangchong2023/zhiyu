@@ -130,83 +130,31 @@ final class PluginMarketService: ObservableObject {
         return registryGitHub
     }
 
-    /// 本地静态 Fallback 示例插件列表数据，在无法连接云端时使用
+    /// 从本地资源包加载静态 Fallback 示例插件列表数据，在无法连接云端时使用。
+    /// - Returns: 解析后的 MarketPlugin 列表。
     private var staticFallbackPlugins: [MarketPlugin] {
-        guard let downloadBase = URL(string: "http://localhost/plugins") else {
+        // 查找主 Bundle 或者是当前类所在的 Bundle（确保单测环境也能正常访问）
+        let bundle = Bundle(for: PluginMarketService.self)
+        guard let url = Bundle.main.url(forResource: "fallback-plugins", withExtension: "json") ??
+                        bundle.url(forResource: "fallback-plugins", withExtension: "json") else {
+            Logger.shared.error("[PluginMarket] 本地 Fallback 插件配置文件 fallback-plugins.json 未找到。")
             return []
         }
-        return [
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "toc-generator-local",
-                    name: "TOC Generator",
-                    author: "ZhiYu Team",
-                    description: "Auto-generate TOC for documents.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "word-counter-local",
-                    name: "Word Counter",
-                    author: "ZhiYu Team",
-                    description: "Count words and characters in editor.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "smart-cleaner",
-                    name: "Markdown Beautifier",
-                    author: "ZhiYu Team",
-                    description: "Auto format and beautify Markdown documents.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "ai-translator-remote",
-                    name: "AI Translator",
-                    author: "ZhiYu Remote Team",
-                    description: "Auto translate text using AI with multi-language support.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "link-preview-remote",
-                    name: "Link Preview",
-                    author: "ZhiYu Remote Team",
-                    description: "Auto fetches URL meta and generates rich preview cards.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "ai-summary",
-                    name: "AI Summary Generator",
-                    author: "Community",
-                    description: "Extract key points and generate structured summaries.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            ),
-            MarketPlugin(
-                from: CommunityPluginEntry(
-                    id: "code-highlighter",
-                    name: "Code Highlighter",
-                    author: "DevTools",
-                    description: "Add syntax highlighting and line numbers to code blocks.",
-                    repo: "wangchong2023/zhiyu-releases"
-                ),
-                downloadBase: downloadBase
-            )
-        ]
+        
+        do {
+            // 读取本地 JSON 文件数据
+            let data = try Data(contentsOf: url)
+            
+            // 使用 JSONDecoder 反序列化 MarketPlugin 数组
+            let decoder = JSONDecoder()
+            let plugins = try decoder.decode([MarketPlugin].self, from: data)
+            
+            Logger.shared.info("[PluginMarket] 成功从本地加载并反序列化了 \(plugins.count) 个 Fallback 插件。")
+            return plugins
+        } catch {
+            Logger.shared.error("[PluginMarket] 解析 fallback-plugins.json 失败", error: error)
+            return []
+        }
     }
 
     /// 拉取云端插件市场的最新插件列表（统一从 GitHub 拉取，支持断网本地静态 Fallback）

@@ -306,6 +306,7 @@
 		2A6C6A469A9FC8CF27332530 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04586EDD76C8BE702826E3C /* FlowLayout.swift */; };
 		2AA0538D0AEBC3521CEA68A3 /* SQLiteVaultRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1427E7628E9563C93D0D636E /* SQLiteVaultRepository.swift */; };
 		2ABCBC8999BC528E4BC2F265 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E166036D4330093EF612CC12 /* SettingsStore.swift */; };
+		2AC4EB4582A9DB0C79B68C1B /* fallback-plugins.json in Resources */ = {isa = PBXBuildFile; fileRef = EE6077AC5D8142B13C90B0A1 /* fallback-plugins.json */; };
 		2AE34BF033F9E62CBFB3E7BB /* StubLinkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737560E5B201E48B5B07B1C6 /* StubLinkService.swift */; };
 		2AF1DA4D441B0A66E5D72BF8 /* MacHapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0139F64CD1544279326E3B93 /* MacHapticService.swift */; };
 		2B054A107AB3A88C7E8A72BD /* DesignSystem+ZIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF7B1556D14A0F06E8CA0D8 /* DesignSystem+ZIndex.swift */; };
@@ -955,6 +956,7 @@
 		85A780E147A77D8377F2CAB8 /* FeedbackRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FFC78A6A642EDBF8188FE1 /* FeedbackRepository.swift */; };
 		85BFE378EC362BFB4DFBFC53 /* GuideStepRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CE6B0A2892569834C0D8D7 /* GuideStepRow.swift */; };
 		8619A8A056BBDDAAC7D9C170 /* InsightViewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8651D19C274ECBB5839A00 /* InsightViewProvider.swift */; };
+		861C4EBE6DCE6C033E9F7EA8 /* fallback-plugins.json in Resources */ = {isa = PBXBuildFile; fileRef = EE6077AC5D8142B13C90B0A1 /* fallback-plugins.json */; };
 		86293BBFAB292AC7028A5115 /* L10n+Workflow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F4DB2B9A4A056F95ED1FF9 /* L10n+Workflow.swift */; };
 		86622785BC8AFBBBE70C7568 /* DesignSystem+Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 487AD4215D5D4698E152AD1B /* DesignSystem+Task.swift */; };
 		866B8882A638159FFA0B976D /* PDFKitRepresentedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E096EA59DDF40BA7B1B919C /* PDFKitRepresentedView.swift */; };
@@ -1106,6 +1108,7 @@
 		9B1B27B8F85F1A20C7D38A38 /* AppSyncOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 921DC7189A6BEF38CBB3A542 /* AppSyncOrchestrator.swift */; };
 		9B59C583AE094CDDDC810AA7 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB96971049540A59EAC1358 /* AppConfig.swift */; };
 		9B5CDDD7847290B712FB7023 /* ModelColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84175488FDEAC7541758F67 /* ModelColorView.swift */; };
+		9B69D1B02D0B453A6F595D5B /* fallback-plugins.json in Resources */ = {isa = PBXBuildFile; fileRef = EE6077AC5D8142B13C90B0A1 /* fallback-plugins.json */; };
 		9B6D87822AE606E88A062861 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C651F6DAC19BB01BFE3D /* SplashView.swift */; };
 		9B87D2960F97B32AA7462A31 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF0C4359CBAF3D73CE7C122E /* Localizable.strings */; };
 		9BA87147E2CB4D902A12528A /* XlsxStringsProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 458229A1EDF1FFDEB91F01F9 /* XlsxStringsProcessor.swift */; };
@@ -2603,6 +2606,7 @@
 		ED4A2CBCDA7C0760182BAD17 /* SynthesisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SynthesisView.swift; sourceTree = "<group>"; };
 		EDA65555329C4C9A9318EB91 /* CollaborationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaborationView.swift; sourceTree = "<group>"; };
 		EE32A29F62E3C52A21DEB0CD /* WatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchWidgets.swift; sourceTree = "<group>"; };
+		EE6077AC5D8142B13C90B0A1 /* fallback-plugins.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "fallback-plugins.json"; sourceTree = "<group>"; };
 		EE732DB2FC21219974658761 /* WeChatAuthStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeChatAuthStrategy.swift; sourceTree = "<group>"; };
 		EEF69B058B5BF74CED1AECF9 /* CreateNotebookButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNotebookButton.swift; sourceTree = "<group>"; };
 		EF76635B437548E4513D9044 /* IngestTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngestTimelineView.swift; sourceTree = "<group>"; };
@@ -4249,6 +4253,7 @@
 		A783CBFB7BB4675B0F34EC16 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				EE6077AC5D8142B13C90B0A1 /* fallback-plugins.json */,
 				8F209758E541D5424A0943C8 /* JavaScriptPlugin.swift */,
 				14D48188E888F2528439D834 /* PluginDataStore.swift */,
 				371FCB95A47FEF84D9117F1D /* PluginEnginePool.swift */,
@@ -5579,6 +5584,7 @@
 				A57E48DC1714A13C56A713A6 /* Transfer.xcstrings in Resources */,
 				75E96242E3C8D1DCA98A6C21 /* Welcome_To_ZhiYu.md in Resources */,
 				D8DAFBEE594FC27752E64CB1 /* Widget.xcstrings in Resources */,
+				861C4EBE6DCE6C033E9F7EA8 /* fallback-plugins.json in Resources */,
 				99450232F3E0722B07E45645 /* global_schema.sql in Resources */,
 				8DB9AA3C2E45EFB720B77E5C /* init_schema.sql in Resources */,
 				1B829BEBD88BAD84FC38EAD3 /* luckin_vs_starbucks_report.pdf in Resources */,
@@ -5619,6 +5625,7 @@
 				883B9E92B070B4804D5F2210 /* Transfer.xcstrings in Resources */,
 				653E3FA891F34655C6E66B9F /* Welcome_To_ZhiYu.md in Resources */,
 				7750ED53243E59FB3DF58B58 /* Widget.xcstrings in Resources */,
+				9B69D1B02D0B453A6F595D5B /* fallback-plugins.json in Resources */,
 				79F3994725F51CDD793BAA7F /* global_schema.sql in Resources */,
 				6AE85881910ED71FC46A20D8 /* init_schema.sql in Resources */,
 				10E36179F8DA0D59CA78DF7D /* luckin_vs_starbucks_report.pdf in Resources */,
@@ -5662,6 +5669,7 @@
 				1D0A05345CE309BCE31340E5 /* Transfer.xcstrings in Resources */,
 				05BBBC82CB977A4EE7450F23 /* Welcome_To_ZhiYu.md in Resources */,
 				D401A0DFE4AE6F154E9BD9F1 /* Widget.xcstrings in Resources */,
+				2AC4EB4582A9DB0C79B68C1B /* fallback-plugins.json in Resources */,
 				38A14843A0DCD00D5DA5788F /* global_schema.sql in Resources */,
 				8D2A5EB19AA10D3F528292FB /* init_schema.sql in Resources */,
 				8DED1CD508E3B2FDD7E1FA3B /* luckin_vs_starbucks_report.pdf in Resources */,
