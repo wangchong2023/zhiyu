@@ -85,21 +85,20 @@ final class LocalizationTests: XCTestCase {
         let modules: [ModuleEntry] = [
             ModuleEntry(name: "Common", table: "Common", keys: ["ok", "cancel", "done"]),
             ModuleEntry(name: "Settings", table: "Settings", keys: ["aboutApp", "version", "section.about"]),
-            ModuleEntry(name: "Chat", table: "Chat", keys: ["chat.title", "inputPlaceholder"]),
+            ModuleEntry(name: "Chat", table: "AI", keys: ["chat.title", "chat.inputPlaceholder"]),
             ModuleEntry(name: "Ingest", table: "Ingest", keys: ["ingest.title", "ingest.manualEntry"]),
             ModuleEntry(name: "AITasks", table: "AITasks", keys: ["aitask.center.title", "aitask.status.thinking"]),
             ModuleEntry(name: "Auth", table: "Auth", keys: ["guestMode", "login"]),
             ModuleEntry(name: "Coachmark", table: "Coachmark", keys: ["onboarding.action.next"]),
             ModuleEntry(name: "Collaboration", table: "Collaboration", keys: ["collab.title"]),
             ModuleEntry(name: "Creation", table: "Creation", keys: ["pageTitle", "content"]),
-            ModuleEntry(name: "Dashboard", table: "Dashboard", keys: ["hotTopics", "density"]),
+            ModuleEntry(name: "Dashboard", table: "Insight", keys: ["dashboard.hotTopics", "dashboard.density"]),
             ModuleEntry(name: "Graph", table: "Graph", keys: ["title"]),
             ModuleEntry(name: "Lint", table: "Lint", keys: ["noIssues", "noIssuesHint"]),
             ModuleEntry(name: "Plugin", table: "Plugin", keys: ["section.rag"]),
             ModuleEntry(name: "Vault", table: "Vault", keys: ["vault.label"]),
             ModuleEntry(name: "Watch", table: "Watch", keys: ["watch.capture"]),
-            ModuleEntry(name: "Widget", table: "Widget", keys: ["widget.title"]),
-            ModuleEntry(name: "Localizable", table: "Localizable", keys: ["misc.ok", "misc.cancel", "misc.done"])
+            ModuleEntry(name: "Widget", table: "Widget", keys: ["widget.title"])
         ]
         
         var missingKeys: [String] = []
