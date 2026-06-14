@@ -52,7 +52,7 @@ steps:
     depends_on: [prepare]
     image: bash
     commands:
-      - bash Tools/CI/build_platform.sh Zhiyu 'generic/platform=iOS Simulator' ios
+      - bash Tools/CI/build_platform.sh ZhiYu 'generic/platform=iOS Simulator' ios
 
   build-macos:
     depends_on: [prepare]
