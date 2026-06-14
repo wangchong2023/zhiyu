@@ -263,7 +263,8 @@
       "Bash(grep -n \"^    }$\" Sources/Features/Knowledge/Ingest/Coordinator/IngestCoordinator.swift)",
       "Bash(awk NR>=180 && NR<=195 {printf \"%4d: %s\\\\n\", NR, $0} *)",
       "Bash(awk NR>=180 && NR<=192 {printf \"%4d: %s\\\\n\", NR, $0} *)",
-      "Bash(swiftlint --strict --quiet)"
+      "Bash(swiftlint --strict --quiet)",
+      "Bash(xcodegen --version)"
     ]
   }
 }
