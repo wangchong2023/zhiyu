@@ -1,0 +1,30 @@
+# ZhiYu 代码所有权分配
+# 最后更新: 2026-06-14
+# 规则: 最后匹配优先; * 为默认兜底
+
+# CI / 基础设施
+.github/workflows/                      @wangchong2023
+.woodpecker.yml                         @wangchong2023
+project.yml                             @wangchong2023
+Tools/                                  @wangchong2023
+
+# 核心 DI 容器 — 任何变更需额外审查
+Sources/Core/Base/ServiceContainer.swift @wangchong2023
+
+# 存储层
+Sources/Infrastructure/Storage/         @wangchong2023
+
+# 安全相关
+Sources/Infrastructure/Storage/Persistence/DatabaseManager.swift @wangchong2023
+Sources/Core/System/Security/           @wangchong2023
+
+# 功能域
+Sources/Features/Knowledge/             @wangchong2023
+Sources/Features/AI/                    @wangchong2023
+Sources/Features/System/                @wangchong2023
+
+# 测试
+Tests/                                  @wangchong2023
+
+# 默认兜底
+*                                       @wangchong2023
