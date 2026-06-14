@@ -3,9 +3,6 @@ labels:
 
 skip_clone: true
 
-# 禁止新推送中断已在执行的流水线
-cancel_previous_pipeline_events: []
-
 steps:
   clone-repo:
     image: bash
@@ -14,93 +11,115 @@ steps:
       - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's|http://[^/]*:3000|http://localhost:3000|g')
       - |
         if git rev-parse --git-dir > /dev/null 2>&1; then
-          echo "📦 已有仓库，增量 fetch..."
+          echo "===> Incremental fetch"
           git fetch origin
           git reset --hard $CI_COMMIT_SHA
         else
-          echo "📥 首次克隆..."
+          echo "===> Fresh clone"
           find . -maxdepth 1 -not -name '.' -exec rm -rf {} \; 2>/dev/null || true
           git clone $CLONE_URL .
           git checkout $CI_COMMIT_SHA
         fi
 
-  # ── Stage 1: 并行（静态分析 ∥ Lint ∥ 安全 ∥ 构建准备）──
   static-analysis:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Running Static Analysis..."
+      - echo "===> [1/10] Architecture Dependency (L0-L3)"
+      - python3 Tools/Gatekeeper/check_architecture_dependency.py
+      - echo "===> [2/10] Domain Purity"
       - python3 Tools/Gatekeeper/check_domain_purity.py
+      - echo "===> [3/10] DI Test Setup Audit"
       - python3 Tools/Gatekeeper/check_test_di_setup.py
+      - echo "===> [4/10] Root Hygiene (temp files + structure)"
+      - python3 Tools/Gatekeeper/check_root_hygiene.py
+      - echo "===> [5/10] Magic Numbers / Strings"
+      - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
+      - echo "===> [6/10] Layer Markers"
       - bash Tools/Lint/lint_layer_markers.sh
-      - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
+      - echo "===> [7/10] Unsafe String.Index Scan"
       - python3 Tools/Lint/scan_unsafe_string_index.py
-      - echo "===> Running Document Integrity Check..."
+      - echo "===> [8/10] Docs + Config Integrity + ShellCheck"
       - python3 Tools/Gatekeeper/check_docs_integrity.py
-      - echo "===> Running Config and Script Health Check..."
       - python3 Tools/Gatekeeper/check_configs_integrity.py
-      - echo "===> Running ShellCheck for Tools..."
       - bash Tools/CI/run_shellcheck.sh
+      - echo "===> [9/10] SPM Integrity"
+      - bash Tools/CI/verify_spm_integrity.sh
+      - echo "===> [10/10] SBOM Generation"
+      - python3 Tools/CI/generate_sbom.py
+      - brew install syft 2>/dev/null || true
+      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft not available, skipping"
+      - python3 Tools/CI/merge_sbom.py
 
   swiftlint:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Running SwiftLint..."
+      - echo "===> SwiftLint"
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
+    failure: ignore
+
+  signature-check:
+    depends_on: [clone-repo]
+    image: bash
+    commands:
+      - echo "===> Commit Signature"
+      - |
+        if git log --show-signature -1 | grep -q "Good signature"; then
+          echo "  Signed: YES"
+        else
+          echo "  Signed: NO (not blocking)"
+        fi
     failure: ignore
 
   secret-scan:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Scanning for hardcoded secrets..."
+      - echo "===> Hardcoded Secrets"
       - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Generating Xcode project..."
+      - echo "===> xcodegen generate"
       - xcodegen generate
-      - echo "===> Preparing build environment + dependencies..."
+      - echo "===> Build-for-testing (SPM + compile)"
       - mkdir -p build /Users/constantine/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo "===> Preparation complete."
 
-  # ── Stage 3: 三平台并行编译 ──
   build-ios:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building iOS app..."
+      - echo "===> Build iOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "===> iOS Build completed."
+      - echo "===> Reproducible Build Check"
+      - bash Tools/CI/verify_reproducible_build.sh
 
   build-macos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building macOS (Catalyst) app..."
+      - echo "===> Build macOS (Catalyst)"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
-      - echo "===> macOS Build completed."
 
   build-watchos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building watchOS app..."
+      - echo "===> Build watchOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
-      - echo "===> watchOS Build completed."
 
-  # ── Stage 4: 测试 + 覆盖率 ──
   test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "===> Counting test cases..."
+      - echo "===> Count Test Cases"
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
+      - cat build/.test_count | xargs echo "  Total:"
+      - echo "===> Run Unit Tests"
       - ./Tools/CI/run_unit_tests.sh --ci
-      - echo "===> All Tests passed."
-      - echo "===> Checking code coverage..."
+      - echo "===> Code Coverage Check"
       - python3 Tools/CI/check_coverage.py
