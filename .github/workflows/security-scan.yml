@@ -88,6 +88,20 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             2>&1 | tail -5
 
+      - name: Build with Warnings as Errors (trial)
+        run: |
+          echo "🔨 严格编译模式 (warnings-as-errors)..."
+          xcodebuild build \
+            -project ZhiYu.xcodeproj \
+            -scheme ZhiYu \
+            -destination 'generic/platform=iOS Simulator' \
+            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build/warnings_as_errors.log || true
+          echo "警告数 (trial, not blocking): $(grep -c 'warning:' build/warnings_as_errors.log 2>/dev/null || echo 0)"
+        continue-on-error: true
+
       - name: Security Audit Complete
         run: |
           echo "✅ 纵深安全扫描全部通过"

@@ -11,12 +11,23 @@ steps:
     image: bash
     commands:
       - echo "machine localhost login $CI_NETRC_USERNAME password $CI_NETRC_PASSWORD" > ~/.netrc
-      # 将 Docker 内部主机名替换为 localhost，确保本地 agent 可访问 Gitea
       - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's|http://[^/]*:3000|http://localhost:3000|g')
-      # 清理持久化工作空间残留文件，避免 git clone 因目录非空而失败
-      - find . -maxdepth 1 -not -name '.' -exec rm -rf {} \; 2>/dev/null || true
-      - git clone $CLONE_URL .
-      - git checkout $CI_COMMIT_SHA
+      - |
+        if git rev-parse --git-dir > /dev/null 2>&1; then
+          echo "📦 已有仓库，增量 fetch..."
+          git fetch origin
+          git reset --hard $CI_COMMIT_SHA
+        else
+          echo "📥 首次克隆..."
+          find . -maxdepth 1 -not -name '.' -exec rm -rf {} \; 2>/dev/null || true
+          git clone $CLONE_URL .
+          git checkout $CI_COMMIT_SHA
+        fi
+      - |
+        if git diff --name-only HEAD~1 2>/dev/null | grep -qE "project.yml|Package.resolved"; then
+          echo "🧹 依赖配置变更，清空 DerivedData..."
+          rm -rf build/DerivedData-*
+        fi
 
   # ── Stage 1: 并行（静态分析 ∥ Lint ∥ 安全 ∥ 构建准备）──
   static-analysis:
