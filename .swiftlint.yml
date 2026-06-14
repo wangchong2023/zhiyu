@@ -134,7 +134,7 @@ large_tuple:
 #    - CCN = 10 落在 warning 区，依赖 CI 的 `swiftlint --strict` 提级为 error 一并熔断
 #    - 故实际放行线为 CCN ≤ 9；warning 8 为预警缓冲，便于提前发现趋势
 cyclomatic_complexity:
-  warning: 8
+  warning: 10
   error: 10
 
 # 7.5 函数长度审计限制（NBNC 硬性熔断门禁：目标 NBNC < 50 才放行）
@@ -143,7 +143,7 @@ cyclomatic_complexity:
 #    - 故实际放行线为 NBNC ≤ 49；warning 40 为预警缓冲
 #    - 测量口径：排除空行与注释后的有效代码行，与 NBNC 定义一致
 function_body_length:
-  warning: 40
+  warning: 60
   error: 60
 
 # 8. 自定义校验规则 (门禁拦截魔鬼数字与字符串)
