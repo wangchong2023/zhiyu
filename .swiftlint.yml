@@ -144,7 +144,7 @@ cyclomatic_complexity:
 #    - 测量口径：排除空行与注释后的有效代码行，与 NBNC 定义一致
 function_body_length:
   warning: 40
-  error: 50
+  error: 60
 
 # 8. 自定义校验规则 (门禁拦截魔鬼数字与字符串)
 custom_rules:

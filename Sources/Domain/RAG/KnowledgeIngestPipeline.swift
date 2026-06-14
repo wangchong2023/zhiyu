@@ -183,28 +183,39 @@ actor KnowledgeIngestPipeline {
         }
 
         // 3. 反向提问 (Reverse Q&A)
-        if let llm = llm, !Task.isCancelled {
-            let qaPrompt = PromptRegistry.Ingest.reverseQA(content: pChunk.text)
-            if let qaResponse = try? await llm.generate(prompt: qaPrompt, systemPrompt: L10n.AI.Prompt.ingestDiscoveryAssistant), !Task.isCancelled {
-                let questions = qaResponse.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-                for (qIndex, question) in questions.prefix(3).enumerated() {
-                    let qaRecord = PageChunk(
-                        id: "qa_\(parentChunkID)_\(qIndex)",
-                        pageID: pageID,
-                        parentID: parentChunkID,
-                        chunkType: "qa_pair",
-                        content: question,
-                        index: qIndex,
-                        startIndex: pChunk.startIndex,
-                        embedding: nil,
-                        createdAt: Date(),
-                        updatedAt: Date()
-                    )
-                    chunkBatch.append(qaRecord)
-                }
-            }
-        }
+        await appendReverseQA(to: &chunkBatch, parentChunkID: parentChunkID, pageID: pageID, pChunk: pChunk, llm: llm)
 
         return chunkBatch
+    }
+
+    /// 为父块生成反向 Q&A 子块，追加到 chunkBatch 中
+    private func appendReverseQA(
+        to chunkBatch: inout [PageChunk],
+        parentChunkID: String,
+        pageID: UUID,
+        pChunk: TextChunkerProcessor.Chunk,
+        llm: (any LLMServiceProtocol)?
+    ) async {
+        guard let llm = llm, !Task.isCancelled else { return }
+        let qaPrompt = PromptRegistry.Ingest.reverseQA(content: pChunk.text)
+        guard let qaResponse = try? await llm.generate(
+            prompt: qaPrompt, systemPrompt: L10n.AI.Prompt.ingestDiscoveryAssistant
+        ), !Task.isCancelled else { return }
+        let questions = qaResponse.components(separatedBy: .newlines)
+            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        for (qIndex, question) in questions.prefix(3).enumerated() {
+            chunkBatch.append(PageChunk(
+                id: "qa_\(parentChunkID)_\(qIndex)",
+                pageID: pageID,
+                parentID: parentChunkID,
+                chunkType: "qa_pair",
+                content: question,
+                index: qIndex,
+                startIndex: pChunk.startIndex,
+                embedding: nil,
+                createdAt: Date(),
+                updatedAt: Date()
+            ))
+        }
     }
 }

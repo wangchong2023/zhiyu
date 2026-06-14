@@ -127,15 +127,40 @@ clone-repo ──┬─→ static-analysis (12 项并发)
 
 ## 3. Build Phase 编译门禁 (Gatekeeper)
 
-Xcode Build Phases 中为每个 target 配置的 `preBuildScripts`（定义于 `project.yml`）：
+Xcode Build Phases 中为每个 target 配置的 `preBuildScripts`（定义于 `project.yml`）。所有脚本均设 `basedOnDependencyAnalysis: false`，即每次构建必跑。任一脚本非零退出即阻断编译。
 
-| 脚本 | 功能 | 阻断 |
-|------|------|------|
-| `Tools/Gatekeeper/check_domain_purity.py` | 领域层纯净度 | ERROR |
-| `Tools/Gatekeeper/check_localization.py` | 硬编码中文 + 违规 tr() 调用 | ERROR |
-| `Tools/Gatekeeper/check_storage_constants.py` | 数据库物理字段硬编码 | ERROR |
-| `Tools/Gatekeeper/check_magic_numbers_v2.py` | 魔鬼数字检测 | ERROR |
-| `Tools/Gatekeeper/check_hardcoded_secrets.py` | 密钥/Token/IP 扫描 | ERROR |
+### 各 target 门禁配置
+
+| Gatekeeper 脚本 | ZhiYu (iOS) | ZhiYuMac | ZhiYuWatch | ZhiYuWidgets | ZhiYuTests |
+|------|:---:|:---:|:---:|:---:|:---:|
+| `swiftlint lint --strict` | ✅ | ✅ | ❌ | ❌ | ❌ |
+| `check_domain_purity.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `check_localization.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `check_storage_constants.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `check_magic_numbers_v2.py` | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `check_hardcoded_secrets.py` | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `check_hig_compliance.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `check_appstore_readiness.py` | ✅ | ✅ | ❌ | ❌ | ❌ |
+| `check_architecture_dependency.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `check_scripts_quality.py` | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **合计** | **10** | **8** | **6** | **0** | **0** |
+
+### 各脚本职责
+
+| 脚本 | 功能 | 阻断级别 |
+|------|------|---------|
+| `swiftlint lint --strict` | 圈复杂度 (<10) / 函数长度 (NBNC<50) / 编码规范硬熔断 | ERROR |
+| `check_domain_purity.py` | 领域层纯净度（禁止跨域直接依赖） | ERROR |
+| `check_localization.py` | 硬编码中文 + 违规 `.tr()` 调用 + 翻译占位符 | ERROR |
+| `check_storage_constants.py` | 数据库物理表名/字段名硬编码 | ERROR |
+| `check_magic_numbers_v2.py` | UI 与业务逻辑魔鬼数字检测 | ERROR |
+| `check_hardcoded_secrets.py` | 密钥/Token/内网 IP 扫描 | ERROR |
+| `check_hig_compliance.py` | Apple HIG 人机交互指南合规性 | ERROR |
+| `check_appstore_readiness.py` | App Store 提审前上架就绪度 | ERROR |
+| `check_architecture_dependency.py` | L0–L3 分层依赖方向审计 | ERROR |
+| `check_scripts_quality.py` | Tools 目录 Python/Shell 脚本质量（含 ShellCheck） | ERROR |
+
+> **设计说明**：`ZhiYuWidgets` 与 `ZhiYuTests` 不配 Gatekeeper，因为 Widget 扩展只依赖设计令牌与少量模型、测试 target 不发布。SwiftLint 未在 `ZhiYuWatch` 的 Build Phase 单独配置，watchOS 代码规范由主 target 的 lint 覆盖（`Sources/` 全局扫描）。
 
 ---
 
@@ -176,38 +201,65 @@ Xcode Build Phases 中为每个 target 配置的 `preBuildScripts`（定义于 `
 
 ```
 Tools/
-├── Gatekeeper/          # 编译门禁 (project.yml preBuildScripts)
-│   ├── check_domain_purity.py
-│   ├── check_localization.py
-│   ├── check_storage_constants.py
-│   ├── check_magic_numbers_v2.py
-│   └── check_hardcoded_secrets.py
-├── CI/                  # CI 流水线脚本
-│   ├── audit_spm_dependencies.py
-│   ├── check_coverage.py
-│   └── ci-test-progress.sh
-├── Lint/                # 手动代码质量检查
-│   ├── audit_l10n.py
-│   ├── lint_layer_markers.sh
-│   └── scan_unsafe_string_index.py
-├── Mock/                # Mock 服务器 + E2E 测试
+├── Gatekeeper/                          # 编译门禁 (project.yml preBuildScripts)
+│   ├── check_domain_purity.py           # 领域层纯净度
+│   ├── check_localization.py            # 硬编码中文 + 违规 tr() 调用
+│   ├── check_storage_constants.py       # 数据库物理字段硬编码
+│   ├── check_magic_numbers_v2.py        # 魔鬼数字检测
+│   ├── check_hardcoded_secrets.py       # 密钥/Token/IP 扫描
+│   ├── check_hig_compliance.py          # Apple HIG 合规性
+│   ├── check_appstore_readiness.py      # App Store 上架就绪度
+│   ├── check_architecture_dependency.py # L0-L3 分层依赖审计
+│   ├── check_root_hygiene.py            # 根目录卫生 (临时文件+结构)
+│   ├── check_scripts_quality.py         # Tools 脚本质量 (Python/Shell + ShellCheck)
+│   ├── check_swift_comments.py          # Swift 函数长度与注释完备性
+│   ├── check_test_di_setup.py           # 测试环境 DI 完整性
+│   ├── check_docs_and_configs.py        # 文档完整性 + 死链 + 配置一致性
+│   └── check_coverage.py                # 覆盖率红线 (Domain 层, 85%)
+├── CI/                                  # CI 流水线脚本
+│   ├── run_static_analysis.sh           # 并发调度 12 项静态分析
+│   ├── prepare_build_environment.sh     # xcodegen generate 等构建前准备
+│   ├── build_platform.sh                # 单平台 xcodebuild 构建封装
+│   ├── build_multi_platform.sh          # 多平台矩阵构建封装
+│   ├── run_tests_and_coverage.sh        # xcodebuild test + 覆盖率红线
+│   ├── run_unit_tests.sh                # 单元测试 (CI 侧)
+│   ├── run_ui_tests.sh                  # UI 测试 (跳过 Monkey)
+│   ├── check_coverage.py                # 覆盖率红线 (与 Gatekeeper 版不同, 见 §8)
+│   ├── check_perf_regression.py         # 性能回归分析
+│   ├── update_perf_baseline.sh          # 性能基线更新
+│   ├── collect_flaky_tests.sh           # Flaky 测试收集
+│   ├── ci-test-progress.sh              # 测试用例数统计
+│   ├── audit_spm_dependencies.py        # SPM 依赖漏洞审计
+│   ├── verify_spm_integrity.sh          # SPM 包完整性校验
+│   ├── verify_commit_signature.sh       # GPG 提交签名校验
+│   ├── verify_reproducible_build.sh     # 确定性构建验证
+│   ├── generate_sbom.py                 # SPDX 2.3 SBOM 生成
+│   ├── merge_sbom.py                    # SPDX + CycloneDX SBOM 合并
+│   └── notify_feishu.sh                 # 飞鱼 CI 通知
+├── Lint/                                # 手动代码质量检查
+│   ├── audit_l10n.py                    # 本地化深度审计
+│   ├── lint_layer_markers.sh            # 分层标记审计
+│   └── scan_unsafe_string_index.py      # Unsafe String.Index 越界扫描
+├── Mock/                                # Mock 服务器 + E2E 测试
 │   ├── mock_llm_server.py
 │   ├── mock_model_server.py
 │   ├── mock_plugin_market.py
 │   ├── test_mock_api.py
 │   ├── test_plugin_e2e.py
 │   └── MockServer/
-├── Plugins/             # 插件 SDK + 源文件 + 测试
+├── Plugins/                             # 插件 SDK + 源文件 + 测试
 │   ├── copy_plugins_to_sim.sh
 │   ├── validate_plugin.py
 │   ├── test_plugin_and_model_features.sh
 │   └── Local/ Remote/ community/ smart-cleaner/
-├── Utils/               # 辅助脚本
+├── Utils/                               # 辅助脚本
 │   ├── run_tests.sh
 │   ├── sync_sql.py
 │   └── update_snapshots.sh
 └── README.md
 ```
+
+> **注意**：`Tools/CI/check_coverage.py` 与 `Tools/Gatekeeper/check_coverage.py` 同名但实现不同（CI 版用于 Woodpecker/GitHub 流水线，Gatekeeper 版预留 Build Phase 调用）。修改时注意区分，建议未来重命名消除歧义。
 
 ---
 

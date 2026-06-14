@@ -107,78 +107,34 @@ final class MarkdownProcessor: Sendable {
         var blocks: [BlockType] = []
         var i = 0
 
-        // 逐行进行段落流状态扫描与物理块组装
         while i < lines.count {
             let trimmed = lines[i].trimmingCharacters(in: .whitespaces)
-
-            // 1. 自动忽略并跳过空白行
-            if trimmed.isEmpty {
+            if let (block, nextIndex) = parseNextBlock(lines: lines, currentIndex: i, trimmed: trimmed) {
+                blocks.append(block)
+                i = nextIndex
+            } else {
+                blocks.append(.paragraph(text: trimmed))
                 i += 1
-                continue
             }
-
-            // 2. 依次测试细节折叠块解析器
-            if let result = parseDetailsBlock(lines: lines, startIndex: i) {
-                blocks.append(result.block)
-                i = result.nextIndex
-                continue
-            }
-
-            // 3. 测试标准多行代码块解析器
-            if let result = parseCodeBlock(lines: lines, startIndex: i) {
-                blocks.append(result.block)
-                i = result.nextIndex
-                continue
-            }
-
-            // 4. 测试 H1-H6 标题解析器
-            if let result = parseHeading(trimmed) {
-                blocks.append(result)
-                i += 1
-                continue
-            }
-
-            // 5. 测试水平线分割符解析器
-            if let result = parseHorizontalRule(trimmed) {
-                blocks.append(result)
-                i += 1
-                continue
-            }
-
-            // 6. 测试任务列表解析器
-            if let result = parseTaskList(lines: lines, startIndex: i) {
-                blocks.append(result.block)
-                i = result.nextIndex
-                continue
-            }
-
-            // 7. 测试无序及有序列表解析器
-            if let result = parseBulletList(lines: lines, startIndex: i) {
-                blocks.append(result.block)
-                i = result.nextIndex
-                continue
-            }
-
-            // 8. 测试块引用解析器
-            if let result = parseBlockquote(trimmed) {
-                blocks.append(result)
-                i += 1
-                continue
-            }
-
-            // 9. 测试表格排版解析器
-            if let result = parseTable(lines: lines, startIndex: i) {
-                blocks.append(result.block)
-                i = result.nextIndex
-                continue
-            }
-
-            // 10. 均不匹配时，降级识别为普通文本段落
-            blocks.append(.paragraph(text: trimmed))
-            i += 1
         }
 
         return blocks
+    }
+
+    /// 按优先级依次尝试各解析器，返回匹配到的块及下一扫描位置；若无匹配返回 nil
+    private func parseNextBlock(lines: [String], currentIndex i: Int, trimmed: String) -> (BlockType, Int)? {
+        if trimmed.isEmpty { return (.paragraph(text: ""), i + 1) }
+
+        if let result = parseDetailsBlock(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
+        if let result = parseCodeBlock(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
+        if let result = parseHeading(trimmed) { return (result, i + 1) }
+        if let result = parseHorizontalRule(trimmed) { return (result, i + 1) }
+        if let result = parseTaskList(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
+        if let result = parseBulletList(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
+        if let result = parseBlockquote(trimmed) { return (result, i + 1) }
+        if let result = parseTable(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
+
+        return nil
     }
 
     // MARK: - 行内解析（核心两阶段解析算法）

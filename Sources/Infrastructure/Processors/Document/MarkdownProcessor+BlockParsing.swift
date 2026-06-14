@@ -180,18 +180,8 @@ extension MarkdownProcessor {
     func parseBulletList(lines: [String], startIndex: Int) -> (block: BlockType, nextIndex: Int)? {
         let startLine = lines[startIndex]
         let trimmedStart = startLine.trimmingCharacters(in: .whitespaces)
-
-        // 识别无序列表前缀
         let isBulletList = trimmedStart.hasPrefix("- ") || trimmedStart.hasPrefix("* ")
-        // 识别有序列表前缀（如 "1. " 或 "1.[[" 等数字加上点号的情况）
-        let isNumberedList: Bool
-        let maxDotPos = min(4, trimmedStart.count)
-        if let dotIndex = trimmedStart.firstIndex(of: "."), dotIndex < trimmedStart.index(trimmedStart.startIndex, offsetBy: maxDotPos) {
-            let prefix = trimmedStart[..<dotIndex]
-            isNumberedList = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
-        } else {
-            isNumberedList = false
-        }
+        let isNumberedList = isNumberedLine(trimmedStart)
 
         guard isBulletList || isNumberedList else { return nil }
 
@@ -199,28 +189,17 @@ extension MarkdownProcessor {
         var items: [String] = []
         var i = startIndex
 
-        // 开启循环，收纳缩进一致的连续项
         while i < lines.count {
             let line = lines[i]
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             let indent = getIndentLevel(line)
 
-            if trimmed.isEmpty {
-                break
-            }
+            if trimmed.isEmpty { break }
 
             let isItem = trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")
-            let isNumItem: Bool
-            let maxDot = min(4, trimmed.count)
-            if let dotIndex = trimmed.firstIndex(of: "."), maxDot > 0, dotIndex < trimmed.index(trimmed.startIndex, offsetBy: maxDot) {
-                let prefix = trimmed[..<dotIndex]
-                isNumItem = prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
-            } else {
-                isNumItem = false
-            }
+            let isNumItem = isNumberedLine(trimmed)
 
             if isItem || isNumItem {
-                // 如果发现当前行的缩进与列表起点完全对齐，则是同级兄弟节点
                 if indent == startIndent {
                     if isBulletList && isItem {
                         items.append(String(trimmed.dropFirst(2)))
@@ -231,9 +210,7 @@ extension MarkdownProcessor {
                         break
                     }
                 } else if indent < startIndent {
-                    break // 缩进减小，说明当前列表物理终结，退出扫描
-                } else {
-                    // 缩进更大说明是嵌套的子列表，在当前平铺列表扫描中忽略子节点正文，仅跳过并继续合并父级
+                    break
                 }
             } else {
                 break
@@ -242,6 +219,16 @@ extension MarkdownProcessor {
         }
 
         return (.bulletList(items: items, indent: isNumberedList ? -1 : startIndent), i)
+    }
+
+    /// 判断一行是否为编号列表项（如 "1. " 或 "12.xx"）
+    private func isNumberedLine(_ trimmed: String) -> Bool {
+        let maxDotPos = min(4, trimmed.count)
+        guard maxDotPos > 0,
+              let dotIndex = trimmed.firstIndex(of: "."),
+              dotIndex < trimmed.index(trimmed.startIndex, offsetBy: maxDotPos) else { return false }
+        let prefix = trimmed[..<dotIndex]
+        return prefix.allSatisfy { $0.isNumber } && !prefix.isEmpty
     }
 
     /// 尝试解析引用块。

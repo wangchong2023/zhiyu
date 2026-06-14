@@ -106,30 +106,7 @@ actor LinkService {
     func hybridSearchWithDiagnostics(query: String, in pages: [KnowledgePage], embeddingProvider: any EmbeddingProvider) async -> SearchResult {
         let keywordResults = search(query: query, in: pages)
         let semanticScored = await embeddingProvider.search(query: query, topK: 50)
-
-        // 动态门槛：对于短查询，语义门槛要极高，否则噪音太大
-        let similarityThreshold: Float = query.count < BusinessConstants.RAG.shortQueryThreshold 
-            ? BusinessConstants.RAG.semanticThresholdShort 
-            : BusinessConstants.RAG.semanticThresholdLong
-
-        let semanticResults = semanticScored
-            .filter { res -> Bool in
-                // 动态门槛：对于短查询，语义门槛要极高
-                if query.count < BusinessConstants.RAG.shortQueryThreshold {
-                    // 对于短词，如果语义得分不足高信度阈值，则必须包含关键词
-                    if res.score > BusinessConstants.RAG.semanticShortHighConfidence { return true }
-                    if let page = pages.first(where: { $0.id == res.id }) {
-                        let lowerTitle = page.title.lowercased()
-                        let lowerQuery = query.lowercased()
-                        return lowerTitle.contains(lowerQuery)
-                    }
-                    return false
-                }
-                return res.score > similarityThreshold
-            }
-            .compactMap { res -> KnowledgePage? in
-                pages.first { $0.id == res.id }
-            }
+        let semanticResults = filterSemanticResults(semanticScored, query: query, pages: pages)
 
         let k = BusinessConstants.RAG.rrfK
         var scores: [UUID: Double] = [:]
@@ -173,6 +150,29 @@ actor LinkService {
         )
 
         return SearchResult(results: results, diagnostic: diagnosticInfo)
+    }
+
+    /// 按动态相似度门禁过滤语义搜索结果，短查询使用更高门槛以减少噪音
+    private func filterSemanticResults(
+        _ scored: [(id: UUID, score: Float)],
+        query: String,
+        pages: [KnowledgePage]
+    ) -> [KnowledgePage] {
+        let similarityThreshold: Float = query.count < BusinessConstants.RAG.shortQueryThreshold
+            ? BusinessConstants.RAG.semanticThresholdShort
+            : BusinessConstants.RAG.semanticThresholdLong
+        return scored
+            .filter { res in
+                if query.count < BusinessConstants.RAG.shortQueryThreshold {
+                    if res.score > BusinessConstants.RAG.semanticShortHighConfidence { return true }
+                    if let page = pages.first(where: { $0.id == res.id }) {
+                        return page.title.lowercased().contains(query.lowercased())
+                    }
+                    return false
+                }
+                return res.score > similarityThreshold
+            }
+            .compactMap { res in pages.first(where: { $0.id == res.id }) }
     }
 
     /// Reciprocal Rank Fusion (RRF) 算法
