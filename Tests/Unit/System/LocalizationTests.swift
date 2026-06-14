@@ -81,28 +81,41 @@ final class LocalizationTests: XCTestCase {
     
     /// 自动化全量审计：动态遍历所有 L10n 模块并验证 Key 的存在性
     func testComprehensiveLocalizationAudit() {
+        // 架构说明：每个条目的 table 字段必须与实际的 .xcstrings 文件名完全一致（区分大小写），
+        // key 字段必须与 xcstrings 中的 string key 完全一致（注意：各模块 L10n 扩展内部
+        // 的 tr() 辅助函数会根据 tableName 路由，key 在文件中均为无前缀的原始 key）。
         struct ModuleEntry { let name: String; let table: String; let keys: [String] }
         let modules: [ModuleEntry] = [
+            // Common 表：misc 系列 key
             ModuleEntry(name: "Common", table: "Common", keys: ["ok", "cancel", "done"]),
-            ModuleEntry(name: "Settings", table: "Settings", keys: ["aboutApp", "version", "section.about"]),
+            // Settings/Auth/Lint/Coachmark 均路由到 System 表
+            ModuleEntry(name: "Settings", table: "System", keys: ["aboutApp", "version", "section.about"]),
+            ModuleEntry(name: "Auth", table: "System", keys: ["guestMode", "login"]),
+            ModuleEntry(name: "Lint", table: "System", keys: ["noIssues", "noIssuesHint"]),
+            ModuleEntry(name: "Coachmark", table: "System", keys: ["onboarding.action.next"]),
+            // AI 表：Chat 和 AITask 共用
             ModuleEntry(name: "Chat", table: "AI", keys: ["chat.title", "chat.inputPlaceholder"]),
+            ModuleEntry(name: "AITasks", table: "AI", keys: ["aitask.center.title", "aitask.status.thinking"]),
+            // Ingest 单独一张表
             ModuleEntry(name: "Ingest", table: "Ingest", keys: ["ingest.title", "ingest.manualEntry"]),
-            ModuleEntry(name: "AITasks", table: "AITasks", keys: ["aitask.center.title", "aitask.status.thinking"]),
-            ModuleEntry(name: "Auth", table: "Auth", keys: ["guestMode", "login"]),
-            ModuleEntry(name: "Coachmark", table: "Coachmark", keys: ["onboarding.action.next"]),
-            ModuleEntry(name: "Collaboration", table: "Collaboration", keys: ["collab.title"]),
-            ModuleEntry(name: "Creation", table: "Creation", keys: ["pageTitle", "content"]),
-            ModuleEntry(name: "Dashboard", table: "Insight", keys: ["dashboard.hotTopics", "dashboard.density"]),
-            ModuleEntry(name: "Graph", table: "Graph", keys: ["title"]),
-            ModuleEntry(name: "Lint", table: "Lint", keys: ["noIssues", "noIssuesHint"]),
+            // Plugin 表：Collaboration 路由到此
+            ModuleEntry(name: "Collaboration", table: "Plugin", keys: ["collab.title"]),
             ModuleEntry(name: "Plugin", table: "Plugin", keys: ["section.rag"]),
-            ModuleEntry(name: "Vault", table: "Vault", keys: ["vault.label"]),
-            ModuleEntry(name: "Watch", table: "Watch", keys: ["watch.capture"]),
-            ModuleEntry(name: "Widget", table: "Widget", keys: ["widget.title"])
+            // Knowledge 表：Creation/Vault 路由到此
+            ModuleEntry(name: "Creation", table: "Knowledge", keys: ["pageTitle", "content"]),
+            ModuleEntry(name: "Vault", table: "Knowledge", keys: ["vault.label"]),
+            // Insight 表：Dashboard/Graph 路由到此
+            // 注意：Graph 模块的 tr() 辅助函数会给 key 添加 "graph." 前缀，
+            // 因此 xcstrings 中真实 key 为 "graph.title"。
+            ModuleEntry(name: "Dashboard", table: "Insight", keys: ["dashboard.hotTopics", "dashboard.density"]),
+            ModuleEntry(name: "Graph", table: "Insight", keys: ["graph.title"]),
+            // Platform 表：Watch/Widget 路由到此
+            ModuleEntry(name: "Watch", table: "Platform", keys: ["watch.capture"]),
+            ModuleEntry(name: "Widget", table: "Platform", keys: ["widget.title"])
         ]
-        
+
         var missingKeys: [String] = []
-        
+
         for module in modules {
             for key in module.keys {
                 let translated = Localized.tr(key, table: module.table)
@@ -112,7 +125,7 @@ final class LocalizationTests: XCTestCase {
                 }
             }
         }
-        
+
         XCTAssertTrue(missingKeys.isEmpty, "以下本地化 Key 缺失或未在对应的表中定义: \n\(missingKeys.joined(separator: "\n"))")
     }
 }

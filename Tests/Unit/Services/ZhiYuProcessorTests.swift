@@ -65,7 +65,10 @@ final class MarkdownProcessorTests: XCTestCase {
     
     override func tearDown() async throws {
         parser = nil
-        try await super.setUp()
+        // 注意：此处必须调用 super.tearDown() 而非 super.setUp()，
+        // 错误调用 setUp() 会破坏 Swift Concurrency 的 async 任务生命周期，
+        // 导致 _swift_task_dealloc_specific 触发 SIGABRT 崩溃。
+        try await super.tearDown()
     }
     
     /// 验证对多级 Markdown 标题语法的精准提取与层级标定
