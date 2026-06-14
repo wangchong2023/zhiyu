@@ -9,17 +9,8 @@ steps:
     commands:
       - echo "machine localhost login $CI_NETRC_USERNAME password $CI_NETRC_PASSWORD" > ~/.netrc
       - export CLONE_URL=$(echo $CI_REPO_CLONE_URL | sed 's|http://[^/]*:3000|http://localhost:3000|g')
-      - |
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-          echo "===> Incremental fetch"
-          git fetch origin
-          git reset --hard $CI_COMMIT_SHA
-        else
-          echo "===> Fresh clone"
-          find . -maxdepth 1 -not -name '.' -exec rm -rf {} \; 2>/dev/null || true
-          git clone $CLONE_URL .
-          git checkout $CI_COMMIT_SHA
-        fi
+      - git init && git remote add origin $CLONE_URL 2>/dev/null || true
+      - git fetch origin $CI_COMMIT_SHA && git reset --hard FETCH_HEAD
 
   static-analysis:
     depends_on: [clone-repo]
