@@ -88,6 +88,23 @@ if [ ${TEST_EXIT_CODE} -eq 0 ]; then
     echo "✓ 所有单元测试通过！"
     exit 0
 else
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "❌ 单元测试执行失败 (错误码: ${TEST_EXIT_CODE})"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "  编译错误:"
+    grep -E "^.*:[0-9]+:[0-9]+: error:" build/test_raw.log | sort -t: -k1,1 -k2,2n -u || echo "  (none)"
+    echo ""
+    echo "  致命错误:"
+    grep -i "fatal error" build/test_raw.log || echo "  (none)"
+    echo ""
+    echo "  失败测试:"
+    grep -E "Test case.*failed|Test Suite.*failed" build/test_raw.log | tail -20 || echo "  (none)"
+    echo ""
+    echo "  日志尾部:"
+    tail -15 build/test_raw.log
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "  完整日志: build/test_raw.log"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     exit ${TEST_EXIT_CODE}
 fi

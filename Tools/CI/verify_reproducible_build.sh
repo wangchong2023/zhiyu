@@ -1,12 +1,10 @@
 #!/bin/bash
-#
-# 版权所有 (c) 2026 ZhiYu。保留所有权利。
-#
-# 职责说明:
-# 本脚本用于验证 ZhiYu iOS 应用在相同提交版本下的构建可重复性/确定性（Reproducible Builds）。
-# 脚本使用 git 提交的时间戳设置 SOURCE_DATE_EPOCH 环境变量，并启动两次独立的 xcodebuild。
-# 随后比对两次生成的目标文件二进制 Hash，以此确保没有任何不受控的时间戳或环境随机性污染二进制文件。
-#
+# ==============================================================================
+# 项目名称: ZhiYu (智宇 iOS 客户端)
+# 脚本名称: verify_reproducible_build.sh
+# 脚本功能: 验证相同提交下两次构建产物的可重复性（Reproducible Builds）。
+#           构建失败时自动保存完整日志并汇总错误。
+# ==============================================================================
 
 set -euo pipefail
 
@@ -14,14 +12,19 @@ PROJECT="ZhiYu.xcodeproj"
 SCHEME="ZhiYu"
 DEST="generic/platform=iOS Simulator"
 BUILD_DIR="build/reproducible_test"
+LOG_DIR="build/reproducible_logs"
 
 echo "====> 确定性构建验证 (L1+L2) <===="
 SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
 export SOURCE_DATE_EPOCH
-mkdir -p "$BUILD_DIR"
+mkdir -p "$BUILD_DIR" "$LOG_DIR"
 
 for i in 1 2; do
     echo "  --- 构建 #${i} ---"
+    LOG_FILE="$LOG_DIR/build${i}.log"
+
+    set +e
+    set -o pipefail
     xcodebuild build \
         -project "$PROJECT" \
         -scheme "$SCHEME" \
@@ -29,7 +32,26 @@ for i in 1 2; do
         -derivedDataPath "$BUILD_DIR/build${i}" \
         CODE_SIGNING_ALLOWED=NO \
         CODE_SIGNING_REQUIRED=NO \
-        2>&1 | tail -3
+        2>&1 | tee "$LOG_FILE"
+    EXIT_CODE=${PIPESTATUS[0]}
+    set -e
+
+    if [ $EXIT_CODE -ne 0 ]; then
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "❌ 确定性构建 #${i} 失败 (exit=${EXIT_CODE})"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  编译错误:"
+        grep -E "^.*:[0-9]+:[0-9]+: error:" "$LOG_FILE" | sort -t: -k1,1 -k2,2n -u || echo "  (未找到)"
+        echo ""
+        echo "  日志尾部:"
+        tail -15 "$LOG_FILE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  完整日志: ${LOG_FILE}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        exit $EXIT_CODE
+    fi
+    echo "  ✅ 构建 #${i} 成功"
 done
 
 BIN1=$(find "$BUILD_DIR/build1" -name "ZhiYu" -type f -not -path "*.dSYM/*" | head -1)
