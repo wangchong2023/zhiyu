@@ -481,7 +481,7 @@ struct ColorfulIconLabelStyle: LabelStyle {
                 // swiftlint:disable:next magic_numbers_frame
                 .frame(width: 30, height: 30)
                 .background(color)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
             
             configuration.title
         }

@@ -252,7 +252,7 @@ struct CustomProfilePopover: View {
         }) {
             HStack(spacing: DesignSystem.medium) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
                         .fill(color.opacity(DesignSystem.Opacity.glass))
                         .frame(width: Constants.iconBoxSize, height: Constants.iconBoxSize)
                     Image(systemName: icon)

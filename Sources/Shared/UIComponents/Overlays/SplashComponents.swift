@@ -53,16 +53,16 @@ struct SplashBackgroundView: View {
 
     var body: some View {
         ZStack {
-            // 基底渐变：深靛蓝 → 深海军蓝 → 底部暖琥珀光
+            // MARK: DesignSystem — splash gradient (深靛蓝→海军蓝→暖琥珀光，设计意图明确)
             LinearGradient(
                 stops: [
-                    .init(color: Color(red: 0.04, green: 0.04, blue: 0.12), location: 0.0),
-                    .init(color: Color(red: 0.06, green: 0.08, blue: 0.22), location: 0.3),
-                    .init(color: Color(red: 0.08, green: 0.10, blue: 0.28), location: 0.55),
-                    .init(color: Color(red: 0.10, green: 0.12, blue: 0.30), location: 0.7),
-                    .init(color: Color(red: 0.12, green: 0.10, blue: 0.22), location: 0.85),
-                    .init(color: Color(red: 0.18, green: 0.12, blue: 0.15), location: 0.95),
-                    .init(color: Color(red: 0.25, green: 0.15, blue: 0.10), location: 1.0)
+                    .init(color: Colors.Splash.bgStep1, location: 0.0),
+                    .init(color: Colors.Splash.bgStep2, location: 0.3),
+                    .init(color: Colors.Splash.bgStep3, location: 0.55),
+                    .init(color: Colors.Splash.bgStep4, location: 0.7),
+                    .init(color: Colors.Splash.bgStep5, location: 0.85),
+                    .init(color: Colors.Splash.bgStep6, location: 0.95),
+                    .init(color: Colors.Splash.bgStep7, location: 1.0)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -150,14 +150,14 @@ struct SplashBackgroundView: View {
                 }
             }
 
-            // 书本光芒 — 底部中央的暖光
+            // 书本光芒 — 底部中央的暖光 (暖琥珀渐变，设计意图明确)
             VStack {
                 Spacer()
                 RadialGradient(
                     colors: [
-                        Color(red: 1.0, green: 0.85, blue: 0.5).opacity(DesignSystem.glassOpacity * 2.5), // 0.25
-                        Color(red: 0.9, green: 0.65, blue: 0.3).opacity(DesignSystem.glassOpacity * 1.2), // 0.12
-                        Color(red: 0.7, green: 0.4, blue: 0.2).opacity(DesignSystem.shadowOpacity / 2), // 0.05
+                        Colors.Splash.glow1.opacity(DesignSystem.glassOpacity * 2.5), // 0.25
+                        Colors.Splash.glow2.opacity(DesignSystem.glassOpacity * 1.2), // 0.12
+                        Colors.Splash.glow3.opacity(DesignSystem.shadowOpacity / 2), // 0.05
                         .clear
                     ],
                     center: .center,

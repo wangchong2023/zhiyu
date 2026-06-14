@@ -256,7 +256,7 @@ struct WelcomeBannerView: View {
                 Image(systemName: "xmark")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
-                    .padding(6)
+                    .padding(DesignSystem.tightPadding)
                     .background(Color.secondary.opacity(DesignSystem.Opacity.subtle))
                     .clipShape(Circle())
             }

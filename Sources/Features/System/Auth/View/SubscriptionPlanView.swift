@@ -256,7 +256,7 @@ public struct SubscriptionPlanView: View {
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: isDanger ? [.red, .orange] : [Color(hex: "4facfe"), Color(hex: "00f2fe")],
+                                colors: isDanger ? [.red, .orange] : [Color.theme.blue, Color.theme.cyan],
                                 startPoint: .leading, endPoint: .trailing
                             )
                         )
@@ -287,9 +287,9 @@ public struct SubscriptionPlanView: View {
             }
             .buttonStyle(.plain)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                     .stroke(
                         selectedCycle == .monthly
                             ? AnyShapeStyle(LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -323,9 +323,9 @@ public struct SubscriptionPlanView: View {
             }
             .buttonStyle(.plain)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: DesignSystem.cardRadius)
                     .stroke(
                         selectedCycle == .yearly
                             ? AnyShapeStyle(LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -374,13 +374,13 @@ public struct SubscriptionPlanView: View {
             .padding(DesignSystem.medium)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 2))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                     // 强化外框：更明显显眼
                     .stroke(Color.appBorder.opacity(DesignSystem.Opacity.prominent), lineWidth: 1.5)
             )
-            
+
             // Pro Card
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -417,9 +417,9 @@ public struct SubscriptionPlanView: View {
             .padding(DesignSystem.medium)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.appCard.opacity(DesignSystem.glassOpacity * 3))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: DesignSystem.largeRadius)
                     // 强化 Pro 外框加粗并高光发光
                     .stroke(
                         LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing),

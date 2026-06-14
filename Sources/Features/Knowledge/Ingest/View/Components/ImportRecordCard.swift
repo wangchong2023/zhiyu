@@ -31,7 +31,7 @@ struct ImportRecordCard: View {
                 .foregroundStyle(categoryColor)
                 .frame(width: DesignSystem.Metrics.customSize36, height: DesignSystem.Metrics.customSize36)
                 .background(categoryColor.opacity(DesignSystem.Opacity.subtle))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
 
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                 Text(record.title)

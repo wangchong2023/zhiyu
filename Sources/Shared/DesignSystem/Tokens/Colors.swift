@@ -95,6 +95,21 @@ public enum Colors {
     public static var containerBorder: Color { Color.appBorder }
     /// 标准阴影颜色
     public static var shadowColor: Color { Color.black.opacity(0.06) } // swiftlint:disable:this magic_numbers_opacity
+
+    // MARK: - 3. 启动页 (Splash) 专有色彩令牌
+    public enum Splash {
+        public static let bgStep1 = Color(red: 0.04, green: 0.04, blue: 0.12)
+        public static let bgStep2 = Color(red: 0.06, green: 0.08, blue: 0.22)
+        public static let bgStep3 = Color(red: 0.08, green: 0.10, blue: 0.28)
+        public static let bgStep4 = Color(red: 0.10, green: 0.12, blue: 0.30)
+        public static let bgStep5 = Color(red: 0.12, green: 0.10, blue: 0.22)
+        public static let bgStep6 = Color(red: 0.18, green: 0.12, blue: 0.15)
+        public static let bgStep7 = Color(red: 0.25, green: 0.15, blue: 0.10)
+        
+        public static let glow1 = Color(red: 1.0, green: 0.85, blue: 0.5)
+        public static let glow2 = Color(red: 0.9, green: 0.65, blue: 0.3)
+        public static let glow3 = Color(red: 0.7, green: 0.4, blue: 0.2)
+    }
 }
 
 // MARK: - Color 扩展 (Semantic Colors)
