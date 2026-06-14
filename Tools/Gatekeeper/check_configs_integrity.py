@@ -124,9 +124,6 @@ def check_yaml_files(workspace):
         if audit_single_yaml_file(workspace, yml_file):
             has_error = True
                 
-    if not HAVE_YAML:
-        print("  ⚠️ 提示: 本地环境未检测到 'pyyaml' 模块，已自动切换为制表符与格式防空健壮性 Fallback 校验。")
-        
     return not has_error
 
 def check_garbage_files(workspace):
