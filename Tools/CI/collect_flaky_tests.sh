@@ -28,8 +28,8 @@ while IFS= read -r file; do
     # 从文件中提取 @flaky 标记的测试方法（取 @flaky 行后紧跟的 func test 行）
     while IFS= read -r func_name; do
         [ -n "$func_name" ] && FLAKY_TESTS+=("${target}/${class_name}/${func_name}")
-    done < <(grep -A1 '@flaky:' "$file" | grep -o 'func test[A-Za-z0-9_]*' | sed 's/^func //')
-done < <(grep -rl '@flaky:' "$TESTS_DIR" --include="*.swift")
+    done < <(grep -A1 '@flaky:' "$file" | grep -o 'func test[A-Za-z0-9_]*' | sed 's/^func //' || true)
+done < <(grep -rl '@flaky:' "$TESTS_DIR" --include="*.swift" || true)
 
 # 输出到文件
 if [ ${#FLAKY_TESTS[@]} -eq 0 ]; then
@@ -47,3 +47,5 @@ fi
 while IFS= read -r test_id; do
     [ -n "$test_id" ] && echo "-skip-testing:${test_id}"
 done < "$OUTPUT_FILE"
+
+exit 0
