@@ -43,9 +43,8 @@ EXCLUDE_PATH_FRAGMENTS = [
     "Sources/Platforms/iOS/Widgets",
 ]
 
-# ==============================================================================
-# MARK: - 正则表达式规则定义
-# ==============================================================================
+# HIG 推荐最低无障碍系统字号
+MIN_RECOMMENDED_FONT_SIZE = 11.0
 
 # 匹配 SwiftUI / UIKit 的系统字号调用，例如 .system(size: 14) 或 systemFont(ofSize: 12)
 FONT_SIZE_PATTERNS = [
@@ -95,6 +94,67 @@ def should_skip_file(file_path):
     return False
 
 
+def _check_font_size(clean_line, is_exempt, issues):
+    """
+    辅助审计：检查字号是否为固定硬编码字号，是否低于 HIG 最低可读阈值。
+    """
+    for pattern in FONT_SIZE_PATTERNS:
+        match = pattern.search(clean_line)
+        if match:
+            try:
+                size_val = float(match.group(1))
+                if size_val < MIN_RECOMMENDED_FONT_SIZE:
+                    if not is_exempt:
+                        issues.append({
+                            "type": "error",
+                            "message": f"字号硬编码 {size_val}pt 低于 HIG 推荐的最低可读字号 11pt。请使用 Typography 语义样式，或在行尾添加 '// Dynamic Type' 进行豁免。"
+                        })
+                else:
+                    if not is_exempt:
+                        issues.append({
+                            "type": "warning",
+                            "message": f"检测到硬编码字号 {size_val}pt。建议使用 Typography 语义字体样式以适配无障碍放大，或在行尾添加 '// Dynamic Type' 忽略此警告。"
+                        })
+            except ValueError:
+                pass
+
+
+def _check_empty_accessibility_hint(clean_line, issues):
+    """
+    辅助审计：检查是否使用空的 accessibilityHint。
+    """
+    if EMPTY_ACC_HINT_PATTERN.search(clean_line):
+        issues.append({
+            "type": "error",
+            "message": "检测到空的 accessibilityHint 描述。空 hint 会干扰旁白 (VoiceOver) 的朗读，请传入有实际意义的本地化字符串，或直接省略该修饰器。"
+        })
+
+
+def _check_uuid_animation(clean_line, issues):
+    """
+    辅助审计：检查是否使用 UUID() 作为动画触发值。
+    """
+    if UUID_ANIMATION_PATTERN.search(clean_line):
+        issues.append({
+            "type": "error",
+            "message": "检测到使用 UUID() 作为动画的 trigger value。这会导致每次 View 重绘时都触发无意义的动画，严重影响 UI 帧率。请使用稳定的 @State 绑定状态值。"
+        })
+
+
+def _check_hardcoded_colors(clean_line, issues):
+    """
+    辅助审计：检查是否使用了硬编码系统颜色。
+    """
+    for pattern in HARDCODED_COLOR_PATTERNS:
+        match = pattern.search(clean_line)
+        if match:
+            issues.append({
+                "type": "warning",
+                "message": f"检测到硬编码系统颜色 '{match.group(0)}'。为保证深色模式/自定义主题的完美适配，建议使用 Color.theme 语义 Token。"
+            })
+            break
+
+
 def check_swift_line(line_content, line_no, file_path):
     """
     对 Swift 源代码的单行进行 HIG 规则匹配。
@@ -110,71 +170,61 @@ def check_swift_line(line_content, line_no, file_path):
     issues = []
     
     # 1. 过滤和识别注释豁免
-    # 检查该行是否包含豁免注释 '// Dynamic Type'
     is_exempt = '// Dynamic Type' in line_content
     
     # 移除行内普通注释以防误判，但要保留代码前部
     clean_line = line_content
     if '//' in clean_line:
         # 如果不是 '// Dynamic Type'，就把注释部分切掉
-        if not is_exempt:
-            clean_line = clean_line.split('//')[0]
-        else:
-            # 即使豁免，在匹配其他规则（如空 hint）时也应只看代码部分，所以切分出代码
-            clean_line = clean_line.split('//')[0]
+        clean_line = clean_line.split('//')[0]
             
     clean_line = clean_line.strip()
     if not clean_line:
         return issues
 
     # 2. 规则检测: 固定字号与字号下限
-    for pattern in FONT_SIZE_PATTERNS:
-        match = pattern.search(clean_line)
-        if match:
-            try:
-                size_val = float(match.group(1))
-                # HIG 规范：正文字号或小标题建议不低于 11pt，除非特殊标记豁免
-                if size_val < 11.0:
-                    if not is_exempt:
-                        issues.append({
-                            "type": "error",
-                            "message": f"字号硬编码 {size_val}pt 低于 HIG 推荐的最低可读字号 11pt。请使用 Typography 语义样式，或在行尾添加 '// Dynamic Type' 进行豁免。"
-                        })
-                else:
-                    # 对于大于等于 11pt 的固定字号，如果没有豁免，则抛出警告建议使用语义样式
-                    if not is_exempt:
-                        issues.append({
-                            "type": "warning",
-                            "message": f"检测到硬编码字号 {size_val}pt。建议使用 Typography 语义字体样式以适配无障碍放大，或在行尾添加 '// Dynamic Type' 忽略此警告。"
-                        })
-            except ValueError:
-                pass
+    _check_font_size(clean_line, is_exempt, issues)
 
     # 3. 规则检测: 空 accessibilityHint 检查
-    if EMPTY_ACC_HINT_PATTERN.search(clean_line):
-        issues.append({
-            "type": "error",
-            "message": "检测到空的 accessibilityHint 描述。空 hint 会干扰旁白 (VoiceOver) 的朗读，请传入有实际意义的本地化字符串，或直接省略该修饰器。"
-        })
+    _check_empty_accessibility_hint(clean_line, issues)
 
     # 4. 规则检测: UUID() 作为动画触发器检查
-    if UUID_ANIMATION_PATTERN.search(clean_line):
-        issues.append({
-            "type": "error",
-            "message": "检测到使用 UUID() 作为动画的 trigger value。这会导致每次 View 重绘时都触发无意义的动画，严重影响 UI 帧率。请使用稳定的 @State 绑定状态值。"
-        })
+    _check_uuid_animation(clean_line, issues)
 
     # 5. 规则检测: 硬编码系统颜色检查
-    for pattern in HARDCODED_COLOR_PATTERNS:
-        match = pattern.search(clean_line)
-        if match:
-            issues.append({
-                "type": "warning",
-                "message": f"检测到硬编码系统颜色 '{match.group(0)}'。为保证深色模式/自定义主题的完美适配，建议使用 Color.theme 语义 Token。"
-            })
-            break # 一行只报一次颜色警告
+    _check_hardcoded_colors(clean_line, issues)
 
     return issues
+
+
+def _audit_file_hig(file_path):
+    """
+    审计单个 Swift 文件并返回包含的 (errors, warnings) 计数。
+    """
+    errors = 0
+    warnings = 0
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception as e:
+        # 文件读取失败时，输出编译错误阻断
+        print(f"{file_path}:1: error: [HIG Compliance] 无法读取文件进行静态审计: {str(e)}", file=sys.stderr)
+        return 1, 0
+
+    for index, line in enumerate(lines, 1):
+        line_issues = check_swift_line(line, index, file_path)
+        for issue in line_issues:
+            # 格式化输出为符合 Xcode 诊断格式的报错/警告行
+            log_type = issue["type"]
+            log_msg = f"{file_path}:{index}: {log_type}: [HIG Compliance] {issue['message']}"
+            
+            if log_type == "error":
+                print(log_msg, file=sys.stderr)
+                errors += 1
+            else:
+                print(log_msg)
+                warnings += 1
+    return errors, warnings
 
 
 def scan_files():
@@ -207,34 +257,15 @@ def scan_files():
                     
                 scanned_files_count += 1
                 
-                try:
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        lines = f.readlines()
-                except Exception as e:
-                    # 文件读取失败时，输出编译错误阻断
-                    print(f"{file_path}:1: error: [HIG Compliance] 无法读取文件进行静态审计: {str(e)}", file=sys.stderr)
-                    total_errors += 1
-                    continue
-
-                for index, line in enumerate(lines, 1):
-                    line_issues = check_swift_line(line, index, file_path)
-                    for issue in line_issues:
-                        # 格式化输出为符合 Xcode 诊断格式的报错/警告行
-                        # 格式：<filename>:<line>:<type>: [HIG Compliance] <message>
-                        log_type = issue["type"]
-                        log_msg = f"{file_path}:{index}: {log_type}: [HIG Compliance] {issue['message']}"
-                        
-                        if log_type == "error":
-                            print(log_msg, file=sys.stderr)
-                            total_errors += 1
-                        else:
-                            print(log_msg)
-                            total_warnings += 1
+                f_errors, f_warnings = _audit_file_hig(file_path)
+                total_errors += f_errors
+                total_warnings += f_warnings
 
     print(f"📊 [HIG Compliance] 审计完成。共扫描了 {scanned_files_count} 个 Swift 文件。")
     print(f"📊 [HIG Compliance] 结果汇总: {total_errors} 个错误，{total_warnings} 个警告。")
     
     return total_errors, total_warnings
+
 
 
 # ==============================================================================

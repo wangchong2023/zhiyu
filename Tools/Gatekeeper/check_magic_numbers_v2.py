@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明: 本脚本用于对 Sources/ 目录以及 Tools/Mock/ 目录下的 Swift 和 Python 代码
+# 进行魔鬼数字和硬编码常量（如 padding，cornerRadius，port，以及硬编码 Hex 颜色等）的精确扫描审计。
+#
+
 """精确扫描：排除 DesignSystem 定义文件和合法用法"""
 
 import os, re, sys
@@ -9,6 +17,11 @@ TOKEN_FILES_PY = {'mock_constants.py'}
 
 SWIFT_EXT = {'.swift'}
 PY_EXT = {'.py'}
+
+# 诊断输出时代码行内容的最大截断长度
+MAX_LINE_PREVIEW_LEN = 90
+# 每个文件最多展示的缺陷实例数量
+MAX_DISPLAY_LIMIT = 5
 
 def scan_file(path, ext):
     issues = []
@@ -26,34 +39,42 @@ def scan_file(path, ext):
 
 
 def check_swift_line(path, line_no, s, raw):
+    """
+    检查 Swift 单行代码中是否包含硬编码的 UI 参数，
+    例如硬编码的 RGB Color 构造、Hex Color 字符串、硬编码的 padding 或 cornerRadius。
+    """
     results = []
     if re.search(r'Color\(red:', raw) and 'DesignSystem' not in raw:
-        results.append(('Color(red:)', path, line_no, s[:90]))
+        results.append(('Color(red:)', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     m = re.search(r'Color\(hex:\s*"([^"]+)"', raw)
     if m:
-        results.append(('Color(hex:"...")', path, line_no, s[:90]))
+        results.append(('Color(hex:"...")', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     m = re.search(r'\.padding\(\s*(\d+)\s*\)', raw)
     if m and 'DesignSystem' not in raw:
-        results.append(('hardcoded padding', path, line_no, s[:90]))
+        results.append(('hardcoded padding', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     m = re.search(r'cornerRadius:\s*(\d+)\s*[),]', raw)
     if m and 'DesignSystem' not in raw and 'Spacing' not in raw:
-        results.append(('hardcoded cornerRadius', path, line_no, s[:90]))
+        results.append(('hardcoded cornerRadius', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     return results
 
 
 def check_python_line(path, line_no, s, raw):
+    """
+    检查 Python 单行代码中是否包含硬编码的常数或敏感配置，
+    例如未定义为常量的硬编码 Port 端口号，或可能硬编码的版本号信息。
+    """
     results = []
     if 'mock_constants' in path:
         return results
     if re.search(r'port\s*=\s*\d{4,5}\b', raw) and 'PORT' not in raw:
-        results.append(('硬编码端口号', path, line_no, s[:90]))
+        results.append(('硬编码端口号', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     if re.match(r'^[A-Z][A-Z_]*\s*=', s):
         return results
     m = re.search(r'["\'](\d+\.\d+\.\d+)["\']', raw)
     if m and m.group(1) not in ('',):
         if 'version' in raw.lower():
             if 'version=' not in raw:
-                results.append(('硬编码版本号', path, line_no, s[:90]))
+                results.append(('硬编码版本号', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     return results
 
 
@@ -93,10 +114,10 @@ print(f"高优先级文件（非 Widget）: {len(priority_files)} 个\n")
 for fpath, issues in sorted(priority_files.items()):
     count = len(issues)
     print(f"  {fpath} ({count} 处)")
-    for typ, line_no, code in issues[:5]:
+    for typ, line_no, code in issues[:MAX_DISPLAY_LIMIT]:
         print(f"     L{line_no}: [{typ}] {code}")
-    if count > 5:
-        print(f"     ... 还有 {count - 5} 处")
+    if count > MAX_DISPLAY_LIMIT:
+        print(f"     ... 还有 {count - MAX_DISPLAY_LIMIT} 处")
     print()
 
 if priority_files:

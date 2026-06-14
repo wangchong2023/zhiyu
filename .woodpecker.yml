@@ -16,7 +16,7 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Static Analysis (10 checks)"
+      - echo "===> Static Analysis (11 checks)"
       - bash Tools/CI/run_static_analysis.sh
 
   swiftlint:

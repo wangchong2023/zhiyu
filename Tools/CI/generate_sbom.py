@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明: 本脚本用于从 Package.resolved 生成符合 SPDX 2.3 规范的 JSON SBOM 软件物料清单。
+# 该文件用于记录项目的第三方 SPM 依赖信息，以供合规性和安全审计使用。
+#
+
 """从 Package.resolved 生成 SPDX 2.3 JSON SBOM."""
 import json, os, sys
 from datetime import datetime, timezone
@@ -64,7 +72,13 @@ def make_spdx(packages: list[dict]) -> dict:
         } for p in packages]
     }
 
+REVISION_SHORT_LEN = 12
+
 def main():
+    """
+    主入口函数。查找项目的 Package.resolved 文件，解析其 pins 依赖项，
+    生成符合 SPDX 2.3 标准的 SBOM 字典，并输出保存为 JSON 文件。
+    """
     resolved_path = find_resolved()
     print(f"📦 解析 Package.resolved: {resolved_path}", file=sys.stderr)
     with open(resolved_path) as f:
@@ -74,7 +88,7 @@ def main():
         packages.append({
             "name": pin.get("identity", "unknown"),
             "version": pin.get("state", {}).get("version", "unknown"),
-            "revision": pin.get("state", {}).get("revision", "")[:12],
+            "revision": pin.get("state", {}).get("revision", "")[:REVISION_SHORT_LEN],
             "repository_url": pin.get("location", ""),
             "license": "NOASSERTION"
         })

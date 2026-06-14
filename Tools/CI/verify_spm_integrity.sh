@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明:
+# 本脚本用于校验 ZhiYu 项目中所使用的 Swift Package Manager (SPM) 依赖项的完整性。
+# 脚本会搜索 Package.resolved 文件的位置，读取并解析其中记录的每个 Pin 的 identity 以及 Git commit revision，
+# 确认每个 SPM 依赖包都具有确定的、处于追踪状态的版本签名，以保障依赖体系在构建过程中的一致性与可追溯性。
+#
+
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"

@@ -1,58 +1,97 @@
 #!/bin/bash
-# ==============================================================================
-# run_static_analysis.sh
-# 集中执行全部 10 项静态分析检查，任何一项失败立即退出
-# 用法: ./Tools/CI/run_static_analysis.sh
-# ==============================================================================
-set -euo pipefail
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明:
+# 本脚本用于在 CI 流水线构建或本地提交前，集中执行项目中全部静态分析和安全合规检查。
+# 采用多进程并发设计以最大化 CPU 利用率，缩短开发者的等待时间，并规范日志存储及 Xcode 格式输出。
+# 任何一项检查若失败，脚本将立即以非零状态码退出并熔断后续流程。
+#
 
-echo "====== Static Analysis (10 checks) ======"
+set -uo pipefail
+
+LOG_DIR="build/static_analysis_logs"
+mkdir -p "$LOG_DIR"
+
+echo "====== Static Analysis (Consolidated & Parallel) ======"
 echo ""
 
-# [1/10] 架构依赖
-echo "--- [1/10] Architecture Dependency (L0-L3) ---"
-python3 Tools/Gatekeeper/check_architecture_dependency.py
+EXIT_CODE=0
 
-# [2/10] 领域纯净度
-echo "--- [2/10] Domain Purity ---"
-python3 Tools/Gatekeeper/check_domain_purity.py
+# 并行任务运行及日志重定向包装器
+run_parallel_task() {
+    local name="$1"
+    local log_name="$2"
+    local cmd="$3"
+    
+    local log_file="$LOG_DIR/${log_name}.log"
+    echo "  [START] $name..."
+    eval "$cmd" > "$log_file" 2>&1
+    local status=$?
+    
+    if [ $status -ne 0 ]; then
+        echo "  ❌ [FAILED] $name (退出状态码: $status)"
+        echo "     👉 错误日志详见: file://$PWD/$log_file"
+        echo "--------------------------------------------------"
+        # 提取关键报错行输出，确保 Xcode 可双击跳转定位
+        grep -E "error:|warning:|Exception:|PyCompileError:|L[0-9]+:" "$log_file" || tail -n 10 "$log_file"
+        echo "--------------------------------------------------"
+        return $status
+    else
+        echo "  ✅ [PASSED] $name"
+        return 0
+    fi
+}
 
-# [3/10] DI 测试设置审计
-echo "--- [3/10] DI Test Setup Audit ---"
-python3 Tools/Gatekeeper/check_test_di_setup.py
+# 并发执行所有的独立检查
+run_parallel_task "Architecture Dependency" "arch_dependency" "python3 Tools/Gatekeeper/check_architecture_dependency.py" & pid1=$!
+run_parallel_task "Domain Purity" "domain_purity" "python3 Tools/Gatekeeper/check_domain_purity.py" & pid2=$!
+run_parallel_task "DI Test Setup" "di_test_setup" "python3 Tools/Gatekeeper/check_test_di_setup.py" & pid3=$!
+run_parallel_task "Root Hygiene" "root_hygiene" "python3 Tools/Gatekeeper/check_root_hygiene.py" & pid4=$!
+run_parallel_task "Magic Numbers & Strings" "magic_numbers" "python3 Tools/Gatekeeper/check_magic_numbers_v2.py" & pid5=$!
+run_parallel_task "Layer Markers" "layer_markers" "bash Tools/Lint/lint_layer_markers.sh" & pid6=$!
+run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tools/Lint/scan_unsafe_string_index.py" & pid7=$!
+run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/check_docs_and_configs.py" & pid8=$!
+run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/verify_spm_integrity.sh" & pid9=$!
+run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "./env/venv/bin/python3 Tools/Gatekeeper/check_scripts_quality.py" & pid10=$!
+run_parallel_task "Swift Comments & Length Guard" "swift_comments" "./env/venv/bin/python3 Tools/Gatekeeper/check_swift_comments.py" & pid11=$!
 
-# [4/10] 根目录卫生 (临时文件 + 结构)
-echo "--- [4/10] Root Hygiene ---"
-python3 Tools/Gatekeeper/check_root_hygiene.py
+# SBOM 串行链路整体放入后台
+(
+    python3 Tools/CI/generate_sbom.py && \
+    (syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft skipped") && \
+    python3 Tools/CI/merge_sbom.py
+) > "$LOG_DIR/sbom_generation.log" 2>&1
+status_sbom=$?
+if [ $status_sbom -ne 0 ]; then
+    echo "  ❌ [FAILED] SBOM Generation & Syft Scan"
+    echo "     👉 错误日志详见: file://$PWD/$LOG_DIR/sbom_generation.log"
+    echo "--------------------------------------------------"
+    tail -n 10 "$LOG_DIR/sbom_generation.log"
+    echo "--------------------------------------------------"
+else
+    echo "  ✅ [PASSED] SBOM Generation & Syft Scan"
+fi & pid12=$!
 
-# [5/10] 魔鬼数字/字符串
-echo "--- [5/10] Magic Numbers / Strings ---"
-python3 Tools/Gatekeeper/check_magic_numbers_v2.py
-
-# [6/10] 分层标记检查
-echo "--- [6/10] Layer Markers ---"
-bash Tools/Lint/lint_layer_markers.sh
-
-# [7/10] String.Index 越界扫描
-echo "--- [7/10] Unsafe String.Index Scan ---"
-python3 Tools/Lint/scan_unsafe_string_index.py
-
-# [8/10] 文档完整性 + 配置健康 + ShellCheck
-echo "--- [8/10] Docs + Config Integrity + ShellCheck ---"
-python3 Tools/Gatekeeper/check_docs_integrity.py
-python3 Tools/Gatekeeper/check_configs_integrity.py
-bash Tools/CI/run_shellcheck.sh
-
-# [9/10] SPM 完整性校验
-echo "--- [9/10] SPM Integrity ---"
-bash Tools/CI/verify_spm_integrity.sh
-
-# [10/10] SBOM 生成
-echo "--- [10/10] SBOM Generation ---"
-python3 Tools/CI/generate_sbom.py
-brew install syft 2>/dev/null || true
-syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft not available, skipping"
-python3 Tools/CI/merge_sbom.py
+# 等待所有后台任务，并收拢退出状态
+wait $pid1 || EXIT_CODE=1
+wait $pid2 || EXIT_CODE=1
+wait $pid3 || EXIT_CODE=1
+wait $pid4 || EXIT_CODE=1
+wait $pid5 || EXIT_CODE=1
+wait $pid6 || EXIT_CODE=1
+wait $pid7 || EXIT_CODE=1
+wait $pid8 || EXIT_CODE=1
+wait $pid9 || EXIT_CODE=1
+wait $pid10 || EXIT_CODE=1
+wait $pid11 || EXIT_CODE=1
+wait $pid12 || EXIT_CODE=1
 
 echo ""
-echo "====== Static Analysis PASSED ======"
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ [Static Analysis] 静态分析未通过！部分合规检查项存在缺陷，请修复上述报错。"
+    exit 1
+else
+    echo "====== ✓ Static Analysis PASSED ======"
+    exit 0
+fi

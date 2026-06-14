@@ -11,7 +11,6 @@
 import os
 import sys
 
-
 PROJECT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 # ── 只拦截这些明确的垃圾 ──────────────────────────────────────────
@@ -22,9 +21,8 @@ SKIP_DIRS = {".git", "build", "DerivedData", ".build", "Frameworks", "env", "__p
              ".claude", ".codegraph", ".remember", ".superpowers", ".VSCodeCounter",
              ".woodpecker", ".workbuddy"}
 
-# ── 不需要硬编码白名单 ─────────────────────────────────────────────
-# 根目录能存在什么东西，由 .gitignore 和开发者自行管理。
-# 此脚本只负责拦截明确的垃圾（临时文件、编辑器残留），不做"非预期目录"判断。
+# 终端打印分割线长度
+DIVIDER_LENGTH = 60
 
 
 def load_gitignore_patterns(root_dir: str) -> set[str]:
@@ -49,6 +47,20 @@ def load_gitignore_patterns(root_dir: str) -> set[str]:
     return patterns
 
 
+def _check_directory_files(filenames: list[str], rel_dir: str, issues: list[str]):
+    """校验目录下的各文件是否属于垃圾或临时文件。"""
+    for filename in filenames:
+        # 编辑器临时文件
+        _, ext = os.path.splitext(filename)
+        if ext.lower() in TEMP_EXTENSIONS or filename.endswith("~"):
+            filepath = os.path.join(rel_dir, filename) if rel_dir != "." else filename
+            issues.append(f"[TEMP_FILE] {filepath}")
+
+        # .DS_Store 在根目录可接受，子目录下应删除
+        if filename == ".DS_Store" and rel_dir != ".":
+            issues.append(f"[TEMP_FILE] {os.path.join(rel_dir, filename)}")
+
+
 def find_temp_files(root_dir: str) -> list[str]:
     """递归扫描临时文件（不含 .DS_Store — macOS 正常行为）."""
     issues = []
@@ -61,18 +73,10 @@ def find_temp_files(root_dir: str) -> list[str]:
             issues.append(f"[TEMP_DIR] Python 缓存目录应清理: {rel_dir}/")
             continue
 
-        for filename in filenames:
-            # 编辑器临时文件
-            _, ext = os.path.splitext(filename)
-            if ext.lower() in TEMP_EXTENSIONS or filename.endswith("~"):
-                filepath = os.path.join(rel_dir, filename) if rel_dir != "." else filename
-                issues.append(f"[TEMP_FILE] {filepath}")
-
-            # .DS_Store 在根目录可接受，子目录下应删除
-            if filename == ".DS_Store" and rel_dir != ".":
-                issues.append(f"[TEMP_FILE] {os.path.join(rel_dir, filename)}")
+        _check_directory_files(filenames, rel_dir, issues)
 
     return issues
+
 
 
 def check_root_unknown_items(root_dir: str) -> list[str]:
@@ -108,9 +112,13 @@ def check_root_unknown_items(root_dir: str) -> list[str]:
 
 
 def main() -> int:
-    print("=" * 60)
+    """
+    主程序入口。依次执行垃圾临时文件扫描和根目录未知条目扫描。
+    如果发现任何明确的临时/垃圾残留文件，将以 1 退出，否则以 0 成功退出。
+    """
+    print("=" * DIVIDER_LENGTH)
     print("🧹 根目录卫生检查 (Root Hygiene Check)")
-    print("=" * 60)
+    print("=" * DIVIDER_LENGTH)
 
     exit_code = 0
 
@@ -135,12 +143,12 @@ def main() -> int:
         print("  ✅ 所有根目录条目均已识别")
 
     # ──
-    print("\n" + "=" * 60)
+    print("\n" + "=" * DIVIDER_LENGTH)
     if exit_code == 1:
         print("❌ 发现垃圾文件，请清理后重新提交。")
     else:
         print("✅ 根目录卫生检查通过！")
-    print("=" * 60)
+    print("=" * DIVIDER_LENGTH)
     return exit_code
 
 

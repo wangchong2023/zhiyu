@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明:
+# 本脚本用于验证 ZhiYu iOS 应用在相同提交版本下的构建可重复性/确定性（Reproducible Builds）。
+# 脚本使用 git 提交的时间戳设置 SOURCE_DATE_EPOCH 环境变量，并启动两次独立的 xcodebuild。
+# 随后比对两次生成的目标文件二进制 Hash，以此确保没有任何不受控的时间戳或环境随机性污染二进制文件。
+#
+
 set -euo pipefail
 
 PROJECT="ZhiYu.xcodeproj"

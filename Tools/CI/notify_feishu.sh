@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明:
+# 本脚本用于在 CI/CD 流水线运行结束（成功、失败或状态发生变更）时，
+# 通过 Webhook 机器人向指定的飞书群组发送通知卡片。
+# 脚本会检测流水线状态变化，避免在状态未变化时进行重复的通知发送。
+#
+
 set -euo pipefail
 
 STATUS="${CI_PIPELINE_STATUS:-unknown}"

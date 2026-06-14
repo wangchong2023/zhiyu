@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# 版权所有 (c) 2026 ZhiYu。保留所有权利。
+#
+# 职责说明: 本脚本用于对 ZhiYu 单元测试环境中的依赖注入（DI）完整性进行静态防线审计。
+# 分为两阶段防护：
+# 1. 检查测试用例的 setUp 方法中直接使用高风险单例时，是否调用了 Mock 环境初始化方法；
+# 2. 检查 Mock 场景初始化方法 setupFullMockEnvironment 中，是否完整注册了 Sources 依赖项中 @Inject 的属性。
+#
+
 """
 Gatekeeper: 检查测试 DI 依赖注册完整性（两层防护）。
 
@@ -27,10 +37,41 @@ DI_SETUP_MARKERS = [
     r"ServiceContainer\.shared\.register\(.+for:",
 ]
 
+# 终端打印输出分割线长度
+DIVIDER_LENGTH = 72
+
+
+def _find_closure_end(content: str, start_index: int) -> int:
+    """
+    匹配 Swift 代码中成对的大括号，找到闭合括号的结束位置索引。
+    
+    参数:
+        content (str): 源文件字符串
+        start_index (int): 大括号开始位置后的第一个字符索引
+        
+    返回:
+        int: 闭合大括号的字符索引（若未找到匹配的闭合则返回 -1）
+    """
+    depth = 1
+    i = start_index
+    length = len(content)
+    while i < length and depth > 0:
+        char = content[i]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+        i += 1
+    return i - 1 if depth == 0 else -1
+
 
 # ── Phase 1: 测试端检查 ──────────────────────────────────────
 
 def extract_setup_block(content: str) -> str:
+    """
+    从 Swift 源文件内容中提取出 override func setUp() 块的内部代码。
+    通过匹配大括号层级来圈定函数体的边界。
+    """
     pattern = r"override\s+func\s+setUp\s*\([^)]*\)\s*(?:async\s+)?throws\s*\{"
     matches = list(re.finditer(pattern, content))
     if not matches:
@@ -38,16 +79,9 @@ def extract_setup_block(content: str) -> str:
     blocks = []
     for m in matches:
         start = m.end()
-        depth = 1
-        i = start
-        while i < len(content) and depth > 0:
-            if content[i] == "{":
-                depth += 1
-            elif content[i] == "}":
-                depth -= 1
-            i += 1
-        if depth == 0:
-            blocks.append(content[start:i-1])
+        end_idx = _find_closure_end(content, start)
+        if end_idx != -1:
+            blocks.append(content[start:end_idx])
     return "\n".join(blocks)
 
 
@@ -99,7 +133,6 @@ def scan_inject_deps() -> dict[str, set[str]]:
     返回 {类名: {依赖类型集合}}。
     """
     deps: dict[str, set[str]] = {}
-    # 匹配 class/actor 声明后的 @Inject 属性
     class_pattern = re.compile(
         r"(?:class|actor)\s+(\w+).*?\{", re.DOTALL
     )
@@ -113,27 +146,16 @@ def scan_inject_deps() -> dict[str, set[str]]:
         except Exception:
             continue
 
-        # 找每个类声明
         for cm in re.finditer(class_pattern, content):
             class_name = cm.group(1)
-            # 提取类体（简化：到下一个 class/extension 或文件末尾）
             body_start = cm.end()
-            depth = 1
-            i = body_start
-            while i < len(content) and depth > 0:
-                if content[i] == "{":
-                    depth += 1
-                elif content[i] == "}":
-                    depth -= 1
-                i += 1
-            if depth != 0:
+            end_idx = _find_closure_end(content, body_start)
+            if end_idx == -1:
                 continue
-            body = content[body_start:i-1]
+            body = content[body_start:end_idx]
 
-            # 找 @Inject 依赖
             for im in inject_pattern.finditer(body):
                 dep_type = im.group(1)
-                # 去掉 any/Some 前缀和协议限定
                 dep_type = re.sub(r"^\s*any\s+", "", dep_type)
                 if class_name not in deps:
                     deps[class_name] = set()
@@ -148,8 +170,6 @@ def scan_shared_singletons() -> dict[str, str]:
     """
     inject_deps = scan_inject_deps()
     shared_map: dict[str, str] = {}
-
-    # 找 class ClassName ... { ... static let shared = ClassName() ... }
     shared_pat = re.compile(r"static\s+let\s+shared\s*=\s*(\w+)\(\)")
 
     for fp in SOURCES_DIR.rglob("*.swift"):
@@ -158,30 +178,20 @@ def scan_shared_singletons() -> dict[str, str]:
         except Exception:
             continue
 
-        # 找每个类声明
         for cm in re.finditer(r"(?:class|actor)\s+(\w+).*?\{", content, re.DOTALL):
             class_name = cm.group(1)
-            # 提取类体
             body_start = cm.end()
-            depth = 1
-            i = body_start
-            while i < len(content) and depth > 0:
-                if content[i] == "{":
-                    depth += 1
-                elif content[i] == "}":
-                    depth -= 1
-                i += 1
-            if depth != 0:
+            end_idx = _find_closure_end(content, body_start)
+            if end_idx == -1:
                 continue
-            body = content[body_start:i-1]
+            body = content[body_start:end_idx]
 
-            # 检查类体内是否有 static let shared = ClassName()
             for sm in shared_pat.finditer(body):
                 if sm.group(1) == class_name:
                     deps = inject_deps.get(class_name, set())
-                    if deps:  # 只有有 @Inject 依赖的才报告
+                    if deps:
                         shared_map[class_name] = str(fp.relative_to(SOURCES_DIR))
-                    break  # 找到即停止
+                    break
 
     return shared_map
 
@@ -193,31 +203,21 @@ def scan_mock_registrations() -> set[str]:
 
     content = MOCK_FILE.read_text(encoding="utf-8")
 
-    # 提取 setupFullMockEnvironment() 函数体
     m = re.search(r"func\s+setupFullMockEnvironment\s*\(\s*\)\s*\{", content)
     if not m:
         return set()
 
     start = m.end()
-    depth = 1
-    i = start
-    while i < len(content) and depth > 0:
-        if content[i] == "{":
-            depth += 1
-        elif content[i] == "}":
-            depth -= 1
-        i += 1
-    body = content[start:i-1]
+    end_idx = _find_closure_end(content, start)
+    if end_idx == -1:
+        return set()
+    body = content[start:end_idx]
 
-    # 匹配 register(xxx as any ProtocolType, for: ...)
     registered: set[str] = set()
-    # 模式1: register(... as any ProtocolType, for: (any ProtocolType).self)
     for m in re.finditer(r"register\(.+?\bas\s+(?:any\s+)?(\w+)\s*[,\)]", body):
         registered.add(m.group(1))
-    # 模式2: register(xxx, for: ConcreteType.self)
     for m in re.finditer(r"register\(.+?,\s*for:\s*(\w+)\.self\)", body):
         registered.add(m.group(1))
-    # 模式3: register(xxx, for: (any ProtocolType).self)
     for m in re.finditer(r"for:\s*\(\s*any\s+(\w+)\s*\)", body):
         registered.add(m.group(1))
 
@@ -244,7 +244,6 @@ def phase2_check() -> list[str]:
     registered = scan_mock_registrations()
 
     for class_name, filename in shared_map.items():
-        # 跳过从未在任何测试中被访问的 shared 单例
         if not is_shared_used_in_tests(class_name):
             continue
 
@@ -263,14 +262,18 @@ def phase2_check() -> list[str]:
 # ── 主入口 ────────────────────────────────────────────────────
 
 def main() -> int:
+    """
+    主入口函数。执行 Phase 1 (测试用例设置检查) 和 Phase 2 (Mock 环境依赖注册完整性检查)。
+    若任一检查发现遗漏或违规，将输出详细错误信息并返回非零错误码。
+    """
     exit_code = 0
 
     # Phase 1
     p1 = phase1_check()
     if p1:
-        print("=" * 72)
+        print("=" * DIVIDER_LENGTH)
         print("❌ Phase 1: 测试文件 setUp() 缺少 DI 注册调用")
-        print("=" * 72)
+        print("=" * DIVIDER_LENGTH)
         for v in p1:
             print(v)
         print()
@@ -281,16 +284,16 @@ def main() -> int:
     # Phase 2
     p2 = phase2_check()
     if p2:
-        print("=" * 72)
+        print("=" * DIVIDER_LENGTH)
         print("❌ Phase 2: setupFullMockEnvironment() 缺少 @Inject 依赖注册")
-        print("=" * 72)
+        print("=" * DIVIDER_LENGTH)
         print("以下 shared 单例的 @Inject 依赖未在 Mock 环境中注册：")
         print()
         for v in p2:
             print(v)
         print()
         print("⚠️  测试 setUp 调用 setupFullMockEnvironment() 后仍会 fatalError。")
-        print("=" * 72)
+        print("=" * DIVIDER_LENGTH)
         exit_code = 1
     else:
         print("✅ Phase 2: setupFullMockEnvironment() 所有 @Inject 依赖已注册")

@@ -70,6 +70,34 @@ COMMON_KEYWORDS = {
 # MARK: - 实体提取逻辑
 # ==============================================================================
 
+def _extract_file_entities(file_path, patterns):
+    """
+    从单个 Swift 文件内容中解析并提取实体名称。
+    """
+    file_entities = set()
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+    except Exception:
+        return file_entities
+
+    # 移除多行注释以防提取到注释中的单词
+    clean_content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+    # 逐行处理以剥离单行注释
+    lines = clean_content.split("\n")
+    
+    for line in lines:
+        # 去除行内注释
+        line = line.split("//")[0].strip()
+        for pattern in patterns:
+            for match in pattern.finditer(line):
+                name = match.group(1)
+                # 过滤通用关键字和极短的词
+                if name not in COMMON_KEYWORDS and len(name) > 2:
+                    file_entities.add(name)
+    return file_entities
+
+
 def extract_entities_from_dir(dir_path):
     """
     扫描指定目录下的 Swift 源码，通过正则提取其中定义的所有类、结构体、协议、枚举与 Actor 的名称。
@@ -98,26 +126,7 @@ def extract_entities_from_dir(dir_path):
         for file in files:
             if file.endswith(".swift"):
                 file_path = os.path.join(root, file)
-                try:
-                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                        content = f.read()
-                except Exception:
-                    continue
-                
-                # 移除多行注释以防提取到注释中的单词
-                clean_content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
-                # 逐行处理以剥离单行注释
-                lines = clean_content.split("\n")
-                
-                for line in lines:
-                    # 去除行内注释
-                    line = line.split("//")[0].strip()
-                    for pattern in patterns:
-                        for match in pattern.finditer(line):
-                            name = match.group(1)
-                            # 过滤通用关键字和极短的词
-                            if name not in COMMON_KEYWORDS and len(name) > 2:
-                                entities.add(name)
+                entities.update(_extract_file_entities(file_path, patterns))
                                 
     return entities
 
@@ -176,6 +185,28 @@ def check_file_dependencies(file_path, forbidden_entities, layer_name):
     return errors
 
 
+def _audit_layer_directory(dir_path, forbidden_set, layer_name):
+    """
+    辅助审计单个分层物理目录，输出 Xcode 报错并返回越级依赖违规总数。
+    """
+    violations = 0
+    for root, dirs, files in os.walk(dir_path):
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+        for file in files:
+            if file.endswith(".swift"):
+                if file in EXCLUDE_FILES:
+                    continue
+                file_path = os.path.join(root, file)
+                
+                # 检查是否有越级依赖违规
+                file_errors = check_file_dependencies(file_path, forbidden_set, layer_name)
+                for err in file_errors:
+                    # 格式化输出为符合 Xcode 报错标准诊断行
+                    print(f"{file_path}:{err['line']}: error: [Arch Dependency Violation] {err['message']}", file=sys.stderr)
+                    violations += 1
+    return violations
+
+
 def run_architecture_audit():
     """
     执行完整的分层架构依赖静态审计。
@@ -232,23 +263,10 @@ def run_architecture_audit():
             continue
             
         print(f"🔍 [Arch Dependency] 正在审计 [{layer_name}] 层...")
-        
-        for root, dirs, files in os.walk(dir_path):
-            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
-            for file in files:
-                if file.endswith(".swift"):
-                    if file in EXCLUDE_FILES:
-                        continue
-                    file_path = os.path.join(root, file)
-                    
-                    # 检查是否有越级依赖违规
-                    file_errors = check_file_dependencies(file_path, forbidden_set, layer_name)
-                    for err in file_errors:
-                        # 格式化输出为符合 Xcode 报错标准诊断行
-                        print(f"{file_path}:{err['line']}: error: [Arch Dependency Violation] {err['message']}", file=sys.stderr)
-                        total_violations += 1
+        total_violations += _audit_layer_directory(dir_path, forbidden_set, layer_name)
 
     return total_violations
+
 
 # ==============================================================================
 # MARK: - 程序主入口

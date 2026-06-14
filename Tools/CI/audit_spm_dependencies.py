@@ -86,14 +86,11 @@ def check_vulnerability(identity: str, version: str) -> Tuple[bool, str]:
 # 3. 主控制流程
 # ==============================================================================
 
-def main():
-    print(DIVIDER)
-    print("🛡️  智宇 (ZhiYu) SPM 依赖安全指纹审计门禁启动中...")
-    print(DIVIDER)
-    
-    # 物理定位 Package.resolved 路径
-    workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    resolved_path = os.path.join(
+def _find_resolved_path(workspace_root: str) -> str:
+    """
+    定位并返回 Package.resolved 的物理路径。
+    """
+    return os.path.join(
         workspace_root, 
         "ZhiYu.xcodeproj", 
         "project.xcworkspace", 
@@ -101,32 +98,25 @@ def main():
         "swiftpm", 
         "Package.resolved"
     )
-    
-    if not os.path.exists(resolved_path):
-        print(f"❌ 警告: 未在物理路径找到 Package.resolved: {resolved_path}")
-        print("💡 提示: 请先运行 xcodegen generate 并打开 Xcode 进行依赖拉取和编译。")
-        # 宽容处理，避免环境初次初始化时阻断，但提供严重警告
-        sys.exit(0)
-        
-    print(f"ℹ️  正在物理读取并解析: {resolved_path}")
-    
+
+def _parse_resolved_file(path: str) -> dict:
+    """
+    物理读取并解析 Package.resolved 文件内容为 JSON。
+    """
     try:
-        with open(resolved_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
     except Exception as e:
         print(f"❌ 错误: 无法解析 Package.resolved JSON 内容: {e}")
         sys.exit(1)
-        
-    pins = data.get("pins", [])
-    version = data.get("version", 1)
-    print(f"✅ 成功加载 Package.resolved (规范版本: {version})，共检测到 {len(pins)} 个第三方直接/间接依赖。")
-    print("-------------------------------------------------------")
-    
-    vulnerabilities_found = []
+
+def _audit_pins(pins: list) -> Tuple[int, List[Tuple[str, str, str]]]:
+    """
+    逐个审计第三方依赖包的版本是否安全。
+    """
+    vulnerabilities = []
     audited_count = 0
-    
     for pin in pins:
-        # 支持 version 2 和 3 的 pins 结构规范解析
         identity = pin.get("identity") or pin.get("package")
         state = pin.get("state", {})
         version_str = state.get("version")
@@ -141,14 +131,19 @@ def main():
         is_vuln, desc = check_vulnerability(identity, version_str)
         if is_vuln:
             print(f"   🛑 [中高危] 检测到安全缺陷: {desc}")
-            vulnerabilities_found.append((identity, version_str, desc))
+            vulnerabilities.append((identity, version_str, desc))
         else:
             print("   🟢 [安全] 未匹配到已知安全缺陷")
-            
+    return audited_count, vulnerabilities
+
+def _report_results(vulnerabilities: list, audited_count: int):
+    """
+    汇报审计结果并以特定退出码退出程序。
+    """
     print("-------------------------------------------------------")
-    if vulnerabilities_found:
-        print(f"❌ 依赖安全指纹冲突碰撞失败！共发现 {len(vulnerabilities_found)} 处第三方依赖漏洞风险：")
-        for idx, (ident, ver, desc) in enumerate(vulnerabilities_found, 1):
+    if vulnerabilities:
+        print(f"❌ 依赖安全指纹冲突碰撞失败！共发现 {len(vulnerabilities)} 处第三方依赖漏洞风险：")
+        for idx, (ident, ver, desc) in enumerate(vulnerabilities, 1):
             print(f"   {idx}. 库名: {ident} | 版本: {ver}")
             print(f"      漏洞详情: {desc}")
         print("\n💥 漏洞审计红线阻断！请升级上述受威胁依赖包至最新安全版本。")
@@ -158,6 +153,33 @@ def main():
         print(f"🎉 依赖安全审查通过！共完美审计了 {audited_count} 个第三方包，100% 符合发布供应链安全规范。")
         print(DIVIDER)
         sys.exit(0)
+
+def main():
+    """
+    主控执行流程入口，读取 Package.resolved 并与漏洞指纹库比对。
+    """
+    print(DIVIDER)
+    print("🛡️  智宇 (ZhiYu) SPM 依赖安全指纹审计门禁启动中...")
+    print(DIVIDER)
+    
+    workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    resolved_path = _find_resolved_path(workspace_root)
+    
+    if not os.path.exists(resolved_path):
+        print(f"❌ 警告: 未在物理路径找到 Package.resolved: {resolved_path}")
+        print("💡 提示: 请先运行 xcodegen generate 并打开 Xcode 进行依赖拉取和编译。")
+        sys.exit(0)
+        
+    print(f"ℹ️  正在物理读取并解析: {resolved_path}")
+    data = _parse_resolved_file(resolved_path)
+    
+    pins = data.get("pins", [])
+    version = data.get("version", 1)
+    print(f"✅ 成功加载 Package.resolved (规范版本: {version})，共检测到 {len(pins)} 个第三方直接/间接依赖。")
+    print("-------------------------------------------------------")
+    
+    audited_count, vulnerabilities_found = _audit_pins(pins)
+    _report_results(vulnerabilities_found, audited_count)
 
 
 if __name__ == "__main__":

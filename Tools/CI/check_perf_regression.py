@@ -21,6 +21,9 @@ XCRESULT_DIR = os.path.join(PROJECT_DIR, "build", "DerivedData-ios", "Logs", "Te
 TEMP_JSON = os.path.join(PROJECT_DIR, "build", "xcresult_check_raw.json")
 DETAIL_JSON = os.path.join(PROJECT_DIR, "build", "xcresult_check_detail.json")
 
+MS_PER_SECOND = 1000.0
+PERCENT_CONVERSION = 100.0
+
 
 def find_latest_xcresult():
     """在测试日志目录中检索最新的 xcresult 报告文件包."""
@@ -86,7 +89,7 @@ def parse_metadata(node, current_runs):
         duration = node.get('duration', {}).get('_value', '')
         if name and duration:
             clean_name = name.split('()')[0]
-            current_runs[clean_name] = float(duration) * 1000.0  # 转为毫秒
+            current_runs[clean_name] = float(duration) * MS_PER_SECOND  # 转为毫秒
     for _, val in node.items():
         if isinstance(val, dict):
             parse_metadata(val, current_runs)
@@ -133,13 +136,13 @@ def check_baseline_regression(current_runs):
             
         base_ms = baseline["baseline_ms"]
         tolerance = baseline["tolerance_pct"]
-        max_allowed_ms = base_ms * (1 + tolerance / 100.0)
+        max_allowed_ms = base_ms * (1 + tolerance / PERCENT_CONVERSION)
         checked_count += 1
         
         # 性能是否倒退判断
         if current_ms > max_allowed_ms:
             diff_ms = current_ms - base_ms
-            diff_pct = (diff_ms / base_ms) * 100
+            diff_pct = (diff_ms / base_ms) * PERCENT_CONVERSION
             print(f"  ❌ 性能倒退: {test_name}")
             print(f"     当前: {current_ms:.2f} ms | 基线: {base_ms:.2f} ms")
             print(f"     超出阈值: {diff_pct:.2f}% (容忍比例: {tolerance}%)")
@@ -151,6 +154,9 @@ def check_baseline_regression(current_runs):
 
 
 def main():
+    """
+    主程序，通过比较当前运行耗时与基线数据，执行性能回归测试校验与拦截。
+    """
     # 1. 确认性能基线目录已初始化且不为空
     if not os.path.isdir(BASELINE_DIR) or not os.listdir(BASELINE_DIR):
         print("⚠️  [Performance] 无性能基线数据，跳过比对检测。")

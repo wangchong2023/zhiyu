@@ -25,6 +25,9 @@ import json
 # 排除扫描的路径
 EXCLUDE_DIRS = ['Localization/Catalogs', 'Tests', '.git', 'env', 'build', 'Frameworks', 'Resources']
 
+# 启发式英文句子的最小长度判定
+MIN_NATURAL_LANG_LEN = 4
+
 # 允许包含非 ASCII 字符（汉字）的文件白名单（例如内置 Guide 生成、图标、AI 评测 Prompt 模板等）
 ALLOW_NON_ASCII_FILES = {
     'IconTokens.swift',
@@ -32,13 +35,13 @@ ALLOW_NON_ASCII_FILES = {
     'InitialNotebookGenerator.swift',
     'AIContentEnricher.swift',
     'RAGEvaluationService.swift',  # RAG 评价服务的中文硬编码 Prompt
-    'ModelLabManager.swift'        # 大模型测试实验室的模拟推理输出数据源
+    'ModelLabManager.swift'        # 大模型测试实验室的模拟推理输出 data 源
 }
 
 # 匹配模式： " ... " 字符串字面量
 STRING_PATTERN = re.compile(r'"([^"\\]*(?:\\.[^"\\]*)*)"')
 
-# 强类型检查模式：禁止在 UI / 业务层直接调用 .tr("...") 或 .trf("...", ...)
+# 强类型检查模式：静态拦截在 UI / 业务层直接调用 .tr("...") 或 .trf("...", ...)
 DIRECT_TR_PATTERN = re.compile(r'\.tr\("|\.trf\("')
 
 # UI 组件关键字及常见赋值触发词（当所在行包含以下词且含有英文自然语言句子时，判定为 UI 硬编码）
@@ -138,7 +141,7 @@ class TextUtil:
         :param text: 待分析字符串
         :return: 符合英文句子特征则返回 True
         """
-        if not text or len(text) < 4:
+        if not text or len(text) < MIN_NATURAL_LANG_LEN:
             return False
         words = [w.lower().strip('.,!?()[]{}') for w in text.split()]
         if len(words) > 1:
@@ -162,7 +165,7 @@ class TextUtil:
             return False
         if not re.search(r'[a-z][A-Z]|[A-Z]{2,}[a-z]', text):
             return False
-        if len(text) <= 4:
+        if len(text) <= MIN_NATURAL_LANG_LEN:
             return False
         if text in KNOWN_PROPER_NAMES:
             return False
@@ -191,6 +194,114 @@ class XCStringsAuditor:
     def __init__(self, catalogs_dir='Sources/Localization/Catalogs'):
         self.catalogs_dir = catalogs_dir
 
+    def _is_whitespace_exempt(self, text):
+        """
+        判定是否属于豁免检测的换行/技术空格占位文本。
+        """
+        return any(x in text for x in ["\n", "\t"])
+
+    def _is_self_value_exempt(self, k, v):
+        """
+        判定是否属于可以豁免自键名占位符校验的情形。
+        """
+        return v.startswith('%') or v.startswith('http') or v in ('sk-...',) or TextUtil.is_chinese(k)
+
+    def _check_key_placeholder(self, file, key, en_trimmed, zh_trimmed, issues):
+        """
+        检查翻译中是否包含了未填充的 Key 占位符本身。
+        """
+        if en_trimmed and '.' in key and en_trimmed == key and not self._is_self_value_exempt(key, en_trimmed):
+            issues.append((file, key, f'English value matches key itself: "{en_trimmed}" (unfilled placeholder)', "ERROR"))
+        if zh_trimmed and '.' in key and zh_trimmed == key and not self._is_self_value_exempt(key, zh_trimmed):
+            issues.append((file, key, f'zh-Hans value matches key itself: "{zh_trimmed}" (unfilled placeholder)', "ERROR"))
+
+    def _check_key_format(self, file, key, en_trimmed, zh_trimmed, issues):
+        """
+        检查翻译值中是否错误地包含了 key 格式的字符串。
+        """
+        key_pattern = re.compile(r'^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$')
+        if key_pattern.match(en_trimmed):
+            issues.append((file, key, f'English value is formatted like a key: "{en_trimmed}"', "ERROR"))
+        if key_pattern.match(zh_trimmed):
+            issues.append((file, key, f'zh-Hans value is formatted like a key: "{zh_trimmed}"', "ERROR"))
+
+    def _check_key_whitespace(self, file, key, en_val, zh_val, en_trimmed, zh_trimmed, issues):
+        """
+        检查翻译值首尾多余空格的情况。
+        """
+        if en_val != en_trimmed and not self._is_whitespace_exempt(en_val):
+            issues.append((file, key, f'English value has trailing/leading whitespace: "{repr(en_val)}"', "WARNING"))
+        if zh_val != zh_trimmed and not self._is_whitespace_exempt(zh_val):
+            issues.append((file, key, f'zh-Hans value has trailing/leading whitespace: "{repr(zh_val)}"', "WARNING"))
+
+    def _check_identical_translation(self, file, key, en_trimmed, zh_trimmed, issues):
+        """
+        辅助审计：检查中英文完全相同的假翻译情况。
+        """
+        if en_trimmed == zh_trimmed and not TextUtil.is_chinese(en_trimmed) and en_trimmed != '':
+            if not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', en_trimmed):
+                if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
+                    return
+                if TextUtil.is_natural_language_sentence(en_trimmed):
+                    issues.append((file, key, f'Potential fake translation (zh is same as en sentence): "{en_trimmed}"', "ERROR"))
+                else:
+                    issues.append((file, key, f'Identical zh/en detected: "{en_trimmed}"', "WARNING"))
+
+    def _check_key_translation(self, file, key, locs, en_val, zh_val, en_trimmed, zh_trimmed, issues):
+        """
+        检查中英文翻译的内容一致性与有效性。
+        """
+        if 'zh-Hans' not in locs:
+            if key.strip() and not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', key):
+                issues.append((file, key, "Missing zh-Hans translation", "ERROR"))
+        elif TextUtil.is_chinese(en_val) and not TextUtil.is_chinese(zh_val):
+            issues.append((file, key, f'English translation field contains Chinese characters: "{en_val}"', "ERROR"))
+        else:
+            self._check_identical_translation(file, key, en_trimmed, zh_trimmed, issues)
+
+    def _check_key_state(self, file, key, value, en_val, zh_val, locs, issues):
+        """
+        检查翻译状态（stale 标志以及是否为空等）。
+        """
+        zh_loc = locs.get('zh-Hans', {}).get('stringUnit', {})
+        zh_state = zh_loc.get('state', '')
+        if zh_state and zh_state != 'translated':
+            issues.append((file, key, f'zh-Hans translation state is "{zh_state}"', "WARNING"))
+
+        extraction_state = value.get('extractionState', '')
+        if extraction_state == 'stale':
+            issues.append((file, key, "Key extractionState is 'stale' (will not compile)", "CRITICAL"))
+
+        if not en_val:
+            issues.append((file, key, "English value is empty", "ERROR"))
+        elif not en_val.strip() and not self._is_whitespace_exempt(en_val):
+            issues.append((file, key, "English value is whitespace only", "WARNING"))
+        if not zh_val:
+            issues.append((file, key, "zh-Hans value is empty", "ERROR"))
+        elif not zh_val.strip() and not self._is_whitespace_exempt(zh_val):
+            issues.append((file, key, "zh-Hans value is whitespace only", "WARNING"))
+
+    def _audit_single_key(self, file, key, value, locs, issues):
+        """
+        审计单个本地化键值对单元的合规性。
+        """
+        en_loc = locs.get('en', {}).get('stringUnit', {})
+        zh_loc = locs.get('zh-Hans', {}).get('stringUnit', {})
+
+        en_val = en_loc.get('value', '')
+        zh_val = zh_loc.get('value', '')
+
+        en_trimmed = en_val.strip()
+        zh_trimmed = zh_val.strip()
+
+        self._check_key_placeholder(file, key, en_trimmed, zh_trimmed, issues)
+        self._check_key_format(file, key, en_trimmed, zh_trimmed, issues)
+        self._check_key_whitespace(file, key, en_val, zh_val, en_trimmed, zh_trimmed, issues)
+        if TextUtil.is_compound_pascal_case(en_val):
+            issues.append((file, key, f'English value is a compound PascalCase code placeholder: "{en_val}"', "ERROR"))
+        self._check_key_translation(file, key, locs, en_val, zh_val, en_trimmed, zh_trimmed, issues)
+        self._check_key_state(file, key, value, en_val, zh_val, locs, issues)
+
     def audit(self):
         """
         执行 Catalog 全量审计。
@@ -215,74 +326,7 @@ class XCStringsAuditor:
             strings = data.get('strings', {})
             for key, value in strings.items():
                 locs = value.get('localizations', {})
-                en_loc = locs.get('en', {}).get('stringUnit', {})
-                zh_loc = locs.get('zh-Hans', {}).get('stringUnit', {})
-
-                en_val = en_loc.get('value', '')
-                zh_val = zh_loc.get('value', '')
-                zh_state = zh_loc.get('state', '')
-
-                en_trimmed = en_val.strip()
-                zh_trimmed = zh_val.strip()
-
-                def is_self_value_exempt(k, v):
-                    if v.startswith('%'): return True
-                    if v.startswith('http'): return True
-                    if v in ('sk-...',): return True
-                    if TextUtil.is_chinese(k): return True
-                    return False
-
-                if en_trimmed and '.' in key and en_trimmed == key and not is_self_value_exempt(key, en_trimmed):
-                    issues.append((file, key, f'English value matches key itself: "{en_trimmed}" (unfilled placeholder)', "ERROR"))
-                if zh_trimmed and '.' in key and zh_trimmed == key and not is_self_value_exempt(key, zh_trimmed):
-                    issues.append((file, key, f'zh-Hans value matches key itself: "{zh_trimmed}" (unfilled placeholder)', "ERROR"))
-
-                key_pattern = re.compile(r'^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$')
-                if key_pattern.match(en_trimmed):
-                    issues.append((file, key, f'English value is formatted like a key: "{en_trimmed}"', "ERROR"))
-                if key_pattern.match(zh_trimmed):
-                    issues.append((file, key, f'zh-Hans value is formatted like a key: "{zh_trimmed}"', "ERROR"))
-
-                if en_val != en_trimmed:
-                    issues.append((file, key, f'English value has trailing/leading whitespace: "{repr(en_val)}"', "WARNING"))
-                if zh_val != zh_trimmed:
-                    issues.append((file, key, f'zh-Hans value has trailing/leading whitespace: "{repr(zh_val)}"', "WARNING"))
-
-                if TextUtil.is_compound_pascal_case(en_val):
-                    issues.append((file, key, f'English value is a compound PascalCase code placeholder: "{en_val}"', "ERROR"))
-
-                if 'zh-Hans' not in locs:
-                    if key.strip() and not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', key):
-                        issues.append((file, key, "Missing zh-Hans translation", "ERROR"))
-                elif TextUtil.is_chinese(en_val) and not TextUtil.is_chinese(zh_val):
-                    issues.append((file, key, f'English translation field contains Chinese characters: "{en_val}"', "ERROR"))
-                elif en_trimmed == zh_trimmed and not TextUtil.is_chinese(en_trimmed) and en_trimmed != '':
-                    if not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', en_trimmed):
-                        if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
-                            pass
-                        elif TextUtil.is_natural_language_sentence(en_trimmed):
-                            issues.append((file, key, f'Potential fake translation (zh is same as en sentence): "{en_trimmed}"', "ERROR"))
-                        else:
-                            issues.append((file, key, f'Identical zh/en detected: "{en_trimmed}"', "WARNING"))
-                
-                elif re.search(r'(\(zh\)|\[译\])$', zh_val.strip()):
-                    issues.append((file, key, f'Unresolved auto-generated translation placeholder: "{zh_val}"', "ERROR"))
-
-                elif zh_state and zh_state != 'translated':
-                    issues.append((file, key, f'zh-Hans translation state is "{zh_state}"', "WARNING"))
-
-                extraction_state = value.get('extractionState', '')
-                if extraction_state == 'stale':
-                    issues.append((file, key, "Key extractionState is 'stale' (will not compile)", "CRITICAL"))
-
-                if not en_val:
-                    issues.append((file, key, "English value is empty", "ERROR"))
-                elif not en_val.strip():
-                    issues.append((file, key, "English value is whitespace only", "WARNING"))
-                if not zh_val:
-                    issues.append((file, key, "zh-Hans value is empty", "ERROR"))
-                elif not zh_val.strip():
-                    issues.append((file, key, "zh-Hans value is whitespace only", "WARNING"))
+                self._audit_single_key(file, key, value, locs, issues)
 
         return issues
 
@@ -329,6 +373,28 @@ class SourceCodeAuditor:
             " [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close."
         }
 
+    def _audit_literal(self, s, line, line_no, is_allow_non_ascii, is_view, is_logger, issues):
+        """
+        辅助审计：对代码行中的单字面量进行硬编码中文或UI英文的特征校验。
+        """
+        if s in self.exempt_strings or "Stress Test Page #" in s:
+            return
+
+        if TextUtil.is_chinese(s):
+            if not is_allow_non_ascii:
+                severity = "WARNING" if is_logger else "ERROR"
+                issues.append((line_no, s, "Hardcoded non-ASCII string detected.", severity))
+        else:
+            is_ui_trigger = any(trigger in line for trigger in UI_TRIGGERS)
+            is_sentence = TextUtil.is_natural_language_sentence(s)
+
+            if is_sentence:
+                if is_view and is_ui_trigger:
+                    severity = "WARNING" if is_logger else "ERROR"
+                    issues.append((line_no, s, "Hardcoded English sentence in UI context.", severity))
+                else:
+                    issues.append((line_no, s, "Hardcoded English sentence detected in logic file.", "WARNING"))
+
     def check_file(self, file_path):
         """
         审计单个 Swift 文件的内容。
@@ -363,26 +429,9 @@ class SourceCodeAuditor:
                 issues.append((line_no, line.strip(), "Direct .tr()/.trf() call detected. MUST use L10n property.", "ERROR"))
 
             literals = STRING_PATTERN.findall(line)
+            is_logger = bool(self.logger_re.search(line))
             for s in literals:
-                if s in self.exempt_strings or "Stress Test Page #" in s:
-                    continue
-
-                is_logger = bool(self.logger_re.search(line))
-
-                if TextUtil.is_chinese(s):
-                    if not is_allow_non_ascii:
-                        severity = "WARNING" if is_logger else "ERROR"
-                        issues.append((line_no, s, "Hardcoded non-ASCII string detected.", severity))
-                else:
-                    is_ui_trigger = any(trigger in line for trigger in UI_TRIGGERS)
-                    is_sentence = TextUtil.is_natural_language_sentence(s)
-
-                    if is_sentence:
-                        if is_view and is_ui_trigger:
-                            severity = "WARNING" if is_logger else "ERROR"
-                            issues.append((line_no, s, "Hardcoded English sentence in UI context.", severity))
-                        else:
-                            issues.append((line_no, s, "Hardcoded English sentence detected in logic file.", "WARNING"))
+                self._audit_literal(s, line, line_no, is_allow_non_ascii, is_view, is_logger, issues)
 
         return issues
 
@@ -440,7 +489,7 @@ class MissingKeyDetector:
         # 5. 扫描所有 Swift 文件，提取变量到 Key 的动态映射进行变量溯源
         var_to_keys = self._trace_variable_assignments(all_keys)
 
-        # 6. 利用变量追踪校验带变量参数的 L10n.Module.tr() 跨表一致性
+        # 6. 利用变量追踪校验带变量参数 of L10n.Module.tr() 跨表一致性
         self._check_l10n_tr_calls_with_vars(all_keys, table_keys, var_to_keys, missing)
 
         # 7. 全局静态字面量硬编码 Key 命名审计
@@ -470,13 +519,32 @@ class MissingKeyDetector:
                         continue
         return all_keys, table_keys
 
+    def _audit_extension_line_keys(self, line, declared_table, all_keys, table_keys, path, missing, tr_pattern, tr_func_pattern, l_tr_pattern):
+        """
+        辅助审计：检查 Extension 单行中的 L10n 键是否存在或表匹配正确。
+        """
+        keys = set(tr_pattern.findall(line) + tr_func_pattern.findall(line) + l_tr_pattern.findall(line))
+        for key in keys:
+            table_match = re.search(r'table\s*:\s*"([^"]+)"', line)
+            target_table = declared_table
+            if table_match:
+                logical_table = table_match.group(1)
+                target_table = self.domain_map.get(logical_table, logical_table)
+
+            if key not in all_keys:
+                missing.append((path, key, f"Key used in L10n extension but missing from ALL .xcstrings files", "ERROR"))
+            elif target_table in table_keys:
+                if key not in table_keys[target_table]:
+                    actual_files = [t for t, ks in table_keys.items() if key in ks]
+                    missing.append((path, key, f"Table mismatch: key in extension (table=\"{target_table}\") but key resides in {actual_files}", "ERROR"))
+
     def _check_extension_keys(self, all_keys, table_keys, missing):
         """
         检测本地化 Extension 中硬编码 tr(...) 调用的键是否缺失或跨表错配。
         """
         table_pattern = re.compile(r'static (?:let t|let tableName)\s*=\s*"([^"]+)"')
         tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"')
-        tr_func_pattern = re.compile(r'trf?\(\s*"([^"]+)"')
+        tr_func_pattern = re.compile(r'\btrf?\(\s*"([^"]+)"')
         l_tr_pattern = re.compile(r'L\.trf?\(\s*"([^"]+)"')
 
         if not os.path.exists(self.extensions_dir):
@@ -494,14 +562,9 @@ class MissingKeyDetector:
                 continue
             declared_table = tables[0]
 
-            keys = set(tr_pattern.findall(content) + tr_func_pattern.findall(content) + l_tr_pattern.findall(content))
-            for key in keys:
-                if key not in all_keys:
-                    missing.append((path, key, f"Key used in L10n extension but missing from ALL .xcstrings files", "ERROR"))
-                elif declared_table in table_keys:
-                    if key not in table_keys[declared_table]:
-                        actual_files = [t for t, ks in table_keys.items() if key in ks]
-                        missing.append((path, key, f"Table mismatch: key in extension (table=\"{declared_table}\") but key resides in {actual_files}", "ERROR"))
+            lines = content.split('\n')
+            for line in lines:
+                self._audit_extension_line_keys(line, declared_table, all_keys, table_keys, path, missing, tr_pattern, tr_func_pattern, l_tr_pattern)
 
     def _check_raw_tr_calls(self, all_keys, missing):
         """
@@ -534,20 +597,28 @@ class MissingKeyDetector:
             tables = table_pattern.findall(content)
             declared_table = tables[0] if tables else "Common"
             if declared_table == "Common": continue
-            for key in set(tr_pattern.findall(content)):
-                if key in all_keys and key not in table_keys.get(declared_table, set()):
-                    actual = [t for t, ks in table_keys.items() if key in ks]
-                    if declared_table not in actual:
-                        mod = file.replace('L10n+', '').replace('.swift', '')
-                        missing.append((path, key, f"Implicit Localized.tr() in L10n+{mod} (declared table is {declared_table}) but key is only in {actual}", "ERROR"))
 
-    def _check_l10n_modules_exist(self, missing):
+            lines = content.split('\n')
+            for line in lines:
+                for key in set(tr_pattern.findall(line)):
+                    # 如果这行含有显式的 table: "xxx"，属于显式调用，由显式检查覆盖，隐式检查跳过
+                    if re.search(r'table\s*:\s*"([^"]+)"', line):
+                        continue
+                    if key in all_keys and key not in table_keys.get(declared_table, set()):
+                        actual = [t for t, ks in table_keys.items() if key in ks]
+                        if declared_table not in actual:
+                            mod = file.replace('L10n+', '').replace('.swift', '')
+                            missing.append((path, key, f"Implicit Localized.tr() in L10n+{mod} (declared table is {declared_table}) but key is only in {actual}", "ERROR"))
+
+    def _load_existing_l10n_modules(self):
         """
-        验证调用的 L10n.Module.* 语法是否对应真实的扩展文件。
+        加载并缓存当前扩展目录中定义的所有本地化模块结构名称。
         """
-        l10n_module_pattern = re.compile(r'L10n\.([A-Z][a-zA-Z]*)\.')
         existing_modules = set()
         l10n_decl_pattern = re.compile(r'(?:public\s+)?(?:struct|enum|class)\s+([A-Z][a-zA-Z0-9_]*)\s*(?::|{)')
+        if not os.path.exists(self.extensions_dir):
+            return existing_modules
+
         for f in os.listdir(self.extensions_dir):
             if f.startswith('L10n+') and f.endswith('.swift'):
                 existing_modules.add(f.replace('L10n+', '').replace('.swift', ''))
@@ -555,6 +626,14 @@ class MissingKeyDetector:
                     content = fh.read()
                 for mod in l10n_decl_pattern.findall(content):
                     existing_modules.add(mod)
+        return existing_modules
+
+    def _check_l10n_modules_exist(self, missing):
+        """
+        验证调用的 L10n.Module.* 语法是否对应真实的扩展文件。
+        """
+        l10n_module_pattern = re.compile(r'L10n\.([A-Z][a-zA-Z]*)\.')
+        existing_modules = self._load_existing_l10n_modules()
 
         for root, dirs, files in os.walk('Sources'):
             dirs[:] = [d for d in dirs if d not in ('.git', 'Localization') and not d.startswith('.')]
@@ -566,6 +645,38 @@ class MissingKeyDetector:
                 for module in set(l10n_module_pattern.findall(content)):
                     if module not in existing_modules:
                         missing.append((path, module, f"L10n.{module}.* referenced in code but extension structure not found", "ERROR"))
+
+    def _record_traced_var_key(self, var_name, loc_key, current_container, all_keys, var_to_keys):
+        """
+        辅助审计：如果发现匹配的本地化键值分配，记录变量与键的映射关系。
+        """
+        if '/' in loc_key or loc_key.startswith('http') or ' ' in loc_key:
+            return
+        if loc_key in all_keys:
+            if var_name not in var_to_keys:
+                var_to_keys[var_name] = set()
+            var_to_keys[var_name].add(loc_key)
+            
+            if current_container:
+                full_var = f"{current_container}.{var_name}"
+                if full_var not in var_to_keys:
+                    var_to_keys[full_var] = set()
+                var_to_keys[full_var].add(loc_key)
+
+    def _trace_lines_variables(self, lines, var_assign_pattern, all_keys, var_to_keys):
+        """
+        辅助审计：逐行分析 Swift 代码寻找变量分配并进行 Key 追踪。
+        """
+        container_pattern = re.compile(r'\b(?:struct|class|enum)\s+([A-Z]\w*)')
+        current_container = None
+        
+        for line in lines:
+            container_match = container_pattern.search(line)
+            if container_match:
+                current_container = container_match.group(1)
+                
+            for var_name, loc_key in var_assign_pattern.findall(line):
+                self._record_traced_var_key(var_name, loc_key, current_container, all_keys, var_to_keys)
 
     def _trace_variable_assignments(self, all_keys):
         """
@@ -584,29 +695,56 @@ class MissingKeyDetector:
                     
                 content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
                 lines = [line.split('//')[0] if '//' in line else line for line in content.split('\n')]
-                
-                container_pattern = re.compile(r'\b(?:struct|class|enum)\s+([A-Z]\w*)')
-                current_container = None
-                
-                for line in lines:
-                    container_match = container_pattern.search(line)
-                    if container_match:
-                        current_container = container_match.group(1)
-                        
-                    for var_name, loc_key in var_assign_pattern.findall(line):
-                        if '/' in loc_key or loc_key.startswith('http') or ' ' in loc_key:
-                            continue
-                        if loc_key in all_keys:
-                            if var_name not in var_to_keys:
-                                var_to_keys[var_name] = set()
-                            var_to_keys[var_name].add(loc_key)
-                            
-                            if current_container:
-                                full_var = f"{current_container}.{var_name}"
-                                if full_var not in var_to_keys:
-                                    var_to_keys[full_var] = set()
-                                var_to_keys[full_var].add(loc_key)
+                self._trace_lines_variables(lines, var_assign_pattern, all_keys, var_to_keys)
         return var_to_keys
+
+    def _filter_module_resolved_keys(self, module, resolved_keys):
+        """
+        根据不同的国际化 module，对解析到的 key 进行相关的前缀和规则过滤。
+        """
+        module_prefixes = {
+            'Coachmark': ('tooltip.', 'coachmark.'),
+            'Insight': ('medal.', 'weekly.', 'report.', 'insight.'),
+            'Settings': ('settings.',)
+        }
+        if module not in module_prefixes:
+            return resolved_keys
+
+        prefixes = module_prefixes[module]
+        return {rk for rk in resolved_keys if rk.startswith(prefixes)}
+
+    def _resolve_variable_keys(self, param, content_str, var_to_keys):
+        """
+        根据参数和已收集的变量映射，解析出可能对应的本地化键集合。
+        """
+        if param.startswith('"') and param.endswith('"'):
+            return {param.strip('"')}
+        if param.startswith("'") and param.endswith("'"):
+            return {param.strip("'")}
+
+        resolved = set()
+        if param in var_to_keys:
+            resolved.update(var_to_keys[param])
+            
+        pattern = re.compile(rf'\b{re.escape(param)}\b\s*[:=]\s*"([a-z0-9_]+(?:\.[a-z0-9_.-]+)+)"')
+        for match in pattern.findall(content_str):
+            resolved.add(match)
+
+        return resolved
+
+    def _validate_resolved_tr_keys(self, resolved_keys, target_table, all_keys, table_keys, path, module, param, missing):
+        """
+        辅助审计：验证解析出的 L10n 键物理表映射是否正确。
+        """
+        for rkey in resolved_keys:
+            if rkey not in all_keys:
+                continue
+                
+            actual_tables = [t for t, ks in table_keys.items() if rkey in ks]
+            if target_table not in actual_tables and 'Common' not in actual_tables:
+                missing.append((path, rkey,
+                    f"Table mismatch: L10n.{module}.tr({param}) resolves to table '{target_table}', "
+                    f"but key '{rkey}' only exists in {actual_tables}", "ERROR"))
 
     def _check_l10n_tr_calls_with_vars(self, all_keys, table_keys, var_to_keys, missing):
         """
@@ -631,46 +769,26 @@ class MissingKeyDetector:
                         if not target_table:
                             continue
                             
-                        resolved_keys = set()
-                        str_match = re.match(r'^"([^"]+)"$', param)
-                        if str_match:
-                            resolved_keys.add(str_match.group(1))
-                        else:
-                            var_id = param.split('.')[-1].strip()
-                            var_prefix = param.split('.')[0].strip() if '.' in param else ""
-                            
-                            declared_type = None
-                            if var_prefix:
-                                type_decl_pattern = re.compile(rf'\b{var_prefix}\s*:\s*([A-Za-z0-9_.]+)')
-                                type_matches = type_decl_pattern.findall(content_str)
-                                if type_matches:
-                                    declared_type = type_matches[0].split('.')[-1].strip()
-                                    
-                            type_key = f"{declared_type}.{var_id}" if declared_type else None
-                            if type_key and type_key in var_to_keys:
-                                resolved_keys.update(var_to_keys[type_key])
-                            elif var_id in var_to_keys:
-                                raw_keys = var_to_keys[var_id]
-                                filtered_keys = set()
-                                for rk in raw_keys:
-                                    if module == 'Coachmark' and not (rk.startswith('tooltip.') or rk.startswith('coachmark.')):
-                                        continue
-                                    if module == 'Insight' and not (rk.startswith('medal.') or rk.startswith('weekly.') or rk.startswith('report.') or rk.startswith('insight.')):
-                                        continue
-                                    if module == 'Settings' and not rk.startswith('settings.'):
-                                        continue
-                                    filtered_keys.add(rk)
-                                resolved_keys.update(filtered_keys)
-                                
-                        for rkey in resolved_keys:
-                            if rkey not in all_keys:
-                                continue
-                                
-                            actual_tables = [t for t, ks in table_keys.items() if rkey in ks]
-                            if target_table not in actual_tables and 'Common' not in actual_tables:
-                                missing.append((path, rkey,
-                                    f"Table mismatch: L10n.{module}.tr({param}) resolves to table '{target_table}', "
-                                    f"but key '{rkey}' only exists in {actual_tables}", "ERROR"))
+                        resolved_keys = self._resolve_variable_keys(param, content_str, var_to_keys)
+                        resolved_keys = self._filter_module_resolved_keys(module, resolved_keys)
+                        self._validate_resolved_tr_keys(resolved_keys, target_table, all_keys, table_keys, path, module, param, missing)
+
+    def _is_exempt_key_candidate(self, key_candidate):
+        """
+        判定某个字面量是否应该豁免全局静态键检测。
+        """
+        parts = key_candidate.split('.')
+        if not parts or parts[0] not in ALLOWED_KEY_PREFIXES:
+            return True
+        if '/' in key_candidate or key_candidate.startswith('http') or ' ' in key_candidate:
+            return True
+        if any(key_candidate.endswith(ext) for ext in ('.swift', '.json', '.js', '.css', '.png', '.jpg', '.jpeg', '.txt', '.db', '.zip', '.html', '.md')):
+            return True
+        if any(dt in key_candidate for dt in ('com.', 'org.', 'net.', '.com', '.org', '.net', '.io')):
+            return True
+        if key_candidate.startswith('auth.thirdparty.'):
+            return True
+        return False
 
     def _check_global_key_candidates(self, all_keys, missing):
         """
@@ -688,18 +806,8 @@ class MissingKeyDetector:
                 content = '\n'.join([line.split('//')[0] if '//' in line else line for line in content.split('\n')])
                 
                 for key_candidate in key_candidate_pattern.findall(content):
-                    parts = key_candidate.split('.')
-                    if not parts or parts[0] not in ALLOWED_KEY_PREFIXES:
+                    if self._is_exempt_key_candidate(key_candidate):
                         continue
-                    if '/' in key_candidate or key_candidate.startswith('http') or ' ' in key_candidate:
-                        continue
-                    if any(key_candidate.endswith(ext) for ext in ('.swift', '.json', '.js', '.css', '.png', '.jpg', '.jpeg', '.txt', '.db', '.zip', '.html', '.md')):
-                        continue
-                    if any(domain_term in key_candidate for domain_term in ('com.', 'org.', 'net.', '.com', '.org', '.net', '.io')):
-                        continue
-                    if key_candidate.startswith('auth.thirdparty.'):
-                        continue
-
                     if key_candidate not in all_keys:
                         missing.append((path, key_candidate, f"Hardcoded key '{key_candidate}' detected in code but missing from catalogs", "ERROR"))
 
@@ -768,73 +876,11 @@ class ObsoleteKeyDetector:
         
         :return: 异常列表，元素为 (file, key, message, severity)
         """
-        key_to_tables = {}
-        all_keys_with_table = {}
-        
-        for file in os.listdir(self.catalogs_dir):
-            if file.endswith('.xcstrings'):
-                table = file.replace('.xcstrings', '')
-                with open(os.path.join(self.catalogs_dir, file), 'r', encoding='utf-8') as f:
-                    try:
-                        data = json.load(f)
-                    except Exception:
-                        continue
-                    strings = data.get('strings', {})
-                    for key in strings.keys():
-                        if key not in key_to_tables:
-                            key_to_tables[key] = set()
-                        key_to_tables[key].add(table)
-                        all_keys_with_table[f"{key}@{table}"] = (key, file)
-
+        key_to_tables, all_keys_with_table = self._load_catalog_keys()
         used_keys_with_table = set()
-        table_pattern = re.compile(r'static (?:let t|let tableName)\s*=\s*"([^"]+)"')
         
-        if os.path.exists(self.extensions_dir):
-            for file in os.listdir(self.extensions_dir):
-                if not file.endswith('.swift'):
-                    continue
-                path = os.path.join(self.extensions_dir, file)
-                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
-                    
-                tables = table_pattern.findall(content)
-                declared_table = tables[0] if tables else "Common"
-                
-                content_clean = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
-                lines = [line.split('//')[0] for line in content_clean.split('\n')]
-                
-                for line in lines:
-                    literals = STRING_PATTERN.findall(line)
-                    for lit in literals:
-                        if lit in key_to_tables:
-                            table_match = re.search(r'table\s*:\s*"([^"]+)"', line)
-                            if table_match:
-                                used_keys_with_table.add(f"{lit}@{table_match.group(1)}")
-                            else:
-                                used_keys_with_table.add(f"{lit}@{declared_table}")
-
-        for root, dirs, files in os.walk('Sources'):
-            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and not d.startswith('.')]
-            for f in files:
-                if not f.endswith('.swift') or 'Extensions' in root:
-                    continue
-                path = os.path.join(root, f)
-                with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
-                    content = fh.read()
-                
-                content_clean = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
-                lines = [line.split('//')[0] for line in content_clean.split('\n')]
-                
-                for line in lines:
-                    literals = STRING_PATTERN.findall(line)
-                    for lit in literals:
-                        if lit in key_to_tables:
-                            table_match = re.search(r'table\s*:\s*"([^"]+)"', line)
-                            if table_match:
-                                used_keys_with_table.add(f"{lit}@{table_match.group(1)}")
-                            else:
-                                for t in key_to_tables[lit]:
-                                    used_keys_with_table.add(f"{lit}@{t}")
+        self._scan_extension_files(key_to_tables, used_keys_with_table)
+        self._scan_source_files(key_to_tables, used_keys_with_table)
 
         dynamic_prefixes = (
             'plugin.perm.',
@@ -859,10 +905,172 @@ class ObsoleteKeyDetector:
             
         return unused_issues
 
+    def _load_catalog_keys(self):
+        """读取 catalogs 中的所有国际化 key。"""
+        key_to_tables = {}
+        all_keys_with_table = {}
+        for file in os.listdir(self.catalogs_dir):
+            if file.endswith('.xcstrings'):
+                table = file.replace('.xcstrings', '')
+                with open(os.path.join(self.catalogs_dir, file), 'r', encoding='utf-8') as f:
+                    try:
+                        data = json.load(f)
+                        strings = data.get('strings', {})
+                        for key in strings.keys():
+                            if key not in key_to_tables:
+                                key_to_tables[key] = set()
+                            key_to_tables[key].add(table)
+                            all_keys_with_table[f"{key}@{table}"] = (key, file)
+                    except Exception:
+                        continue
+        return key_to_tables, all_keys_with_table
+
+    def _scan_extension_files(self, key_to_tables, used_keys_with_table):
+        """扫描所有 Extensions 扩展文件中的本地化键使用。"""
+        table_pattern = re.compile(r'static (?:let t|let tableName)\s*=\s*"([^"]+)"')
+        if os.path.exists(self.extensions_dir):
+            for file in os.listdir(self.extensions_dir):
+                if not file.endswith('.swift'):
+                    continue
+                path = os.path.join(self.extensions_dir, file)
+                with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    
+                tables = table_pattern.findall(content)
+                declared_table = tables[0] if tables else "Common"
+                
+                content_clean = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+                lines = [line.split('//')[0] for line in content_clean.split('\n')]
+                
+                for line in lines:
+                    literals = STRING_PATTERN.findall(line)
+                    for lit in literals:
+                        if lit in key_to_tables:
+                            table_match = re.search(r'table\s*:\s*"([^"]+)"', line)
+                            if table_match:
+                                used_keys_with_table.add(f"{lit}@{table_match.group(1)}")
+                            else:
+                                used_keys_with_table.add(f"{lit}@{declared_table}")
+
+    def _audit_source_line_literals(self, line, key_to_tables, used_keys_with_table):
+        """
+        辅助审计：检查并记录业务源文件某行中用到的本地化键物理表关联。
+        """
+        literals = STRING_PATTERN.findall(line)
+        for lit in literals:
+            if lit in key_to_tables:
+                table_match = re.search(r'table\s*:\s*"([^"]+)"', line)
+                if table_match:
+                    used_keys_with_table.add(f"{lit}@{table_match.group(1)}")
+                else:
+                    for t in key_to_tables[lit]:
+                        used_keys_with_table.add(f"{lit}@{t}")
+
+    def _scan_source_files(self, key_to_tables, used_keys_with_table):
+        """扫描 Sources 业务源码中的本地化键使用。"""
+        for root, dirs, files in os.walk('Sources'):
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and not d.startswith('.')]
+            for f in files:
+                if not f.endswith('.swift') or 'Extensions' in root:
+                    continue
+                path = os.path.join(root, f)
+                with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
+                    content = fh.read()
+                
+                content_clean = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+                lines = [line.split('//')[0] if '//' in line else line for line in content_clean.split('\n')]
+                
+                for line in lines:
+                    self._audit_source_line_literals(line, key_to_tables, used_keys_with_table)
+
 
 # ==============================================================================
 # MARK: - 报告输出与执行入口 (main)
 # ==============================================================================
+
+def _format_cross_file_issues(issues_list, output_lines):
+    """格式化跨文件冲突缺陷。"""
+    has_critical = False
+    for key, sources, msg, level in issues_list:
+        icon = "🚨" if level == "ERROR" else "⚠️"
+        if level == "ERROR":
+            has_critical = True
+        output_lines.append(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
+        for file, val in sources.items():
+            output_lines.append(f"    {file}: \"{val}\"")
+    return has_critical
+
+
+def _format_show_key_issues(issues_list, output_lines):
+    """格式化展示 Key 的 Catalogs/Missing Keys 缺陷。"""
+    has_critical = False
+    current_file = ""
+    for file, key, msg, level in issues_list:
+        if file != current_file:
+            output_lines.append(f"\n📂 {file}")
+            current_file = file
+        icon = "🚨" if level in ("ERROR", "CRITICAL") else "⚠️"
+        if level in ("ERROR", "CRITICAL"):
+            has_critical = True
+        output_lines.append(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
+    return has_critical
+
+
+def _format_source_code_issues(issues_list, output_lines):
+    """格式化 Swift 源码硬编码字面量缺陷。"""
+    has_critical = False
+    for file_path, issues in sorted(issues_list.items()):
+        output_lines.append(f"\n📂 {file_path}")
+        for line_no, content, msg, level in issues:
+            icon = "🚨" if level in ("ERROR", "CRITICAL") else "⚠️"
+            if level in ("ERROR", "CRITICAL"):
+                has_critical = True
+            output_lines.append(f"  L{line_no}: {icon} [{msg}] \"{content}\"")
+    return has_critical
+
+
+def _format_audit_issues(title, issues_list, show_key=False, is_cross_file=False):
+    """
+    格式化打印各类缺陷，并计算是否存在阻断级（ERROR/CRITICAL）缺陷。
+    
+    :return: (has_critical, list_output)
+    """
+    if not issues_list:
+        return False, []
+
+    output_lines = [f"\n❌ {title}:"]
+    
+    if is_cross_file:
+        has_critical = _format_cross_file_issues(issues_list, output_lines)
+    elif show_key:
+        has_critical = _format_show_key_issues(issues_list, output_lines)
+    else:
+        has_critical = _format_source_code_issues(issues_list, output_lines)
+
+    return has_critical, output_lines
+
+
+def _print_obsolete_issues(unused_key_issues):
+    """打印 Unused Keys 警告。"""
+    if unused_key_issues:
+        print("\n⚠️ [L10n Audit] Unused Keys in Catalogs:")
+        for file, key, msg, level in sorted(unused_key_issues):
+            print(f"  Key: \"{key}\" - ⚠️ [{level}] {msg}")
+
+
+def _exit_audit(has_critical, has_any_issues):
+    """根据审计结果决定以什么状态码退出系统。"""
+    if not has_any_issues:
+        print("\n✅ [L10n Audit] Localization quality standards met.")
+        sys.exit(0)
+    
+    if has_critical:
+        print("\n[L10n Audit] CRITICAL VIOLATIONS. Build blocked.")
+        sys.exit(1)
+    else:
+        print("\n[L10n Audit] Suggestions for cleanup found. Build permitted.")
+        sys.exit(0)
+
 
 def main():
     """本地化守卫网关的执行总入口。"""
@@ -879,63 +1087,21 @@ def main():
     cross_file_issues = inconsistency_detector.detect()
     unused_key_issues = obsolete_detector.detect()
 
-    has_critical = False
-
-    if all_source_issues:
-        print("❌ [L10n Audit] Source Code Violations:")
-        for file_path, issues in sorted(all_source_issues.items()):
-            print(f"\n📂 {file_path}")
-            for line_no, content, msg, level in issues:
-                icon = "🚨" if level == "ERROR" or level == "CRITICAL" else "⚠️"
-                if level == "ERROR" or level == "CRITICAL":
-                    has_critical = True
-                print(f"  L{line_no}: {icon} [{msg}] \"{content}\"")
-
-    if xcstrings_issues:
-        print("\n❌ [L10n Audit] .xcstrings Catalog Issues:")
-        current_file = ""
-        for file, key, msg, level in xcstrings_issues:
-            if file != current_file:
-                print(f"\n📂 {file}")
-                current_file = file
-            icon = "🚨" if level == "ERROR" or level == "CRITICAL" else "⚠️"
-            if level == "ERROR" or level == "CRITICAL":
-                has_critical = True
-            print(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
-
-    if missing_key_issues:
-        print("\n❌ [L10n Audit] Missing Keys in Catalogs:")
-        for file, key, msg, level in missing_key_issues:
-            icon = "🚨"
-            has_critical = True
-            print(f"  📂 {file}")
-            print(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
-            
-    if cross_file_issues:
-        print("\n❌ [L10n Audit] Cross-File Key Inconsistencies:")
-        for key, sources, msg, level in cross_file_issues:
-            icon = "🚨" if level == "ERROR" else "⚠️"
-            if level == "ERROR":
-                has_critical = True
-            print(f"  Key: \"{key}\" - {icon} [{level}] {msg}")
-            for file, val in sources.items():
-                print(f"    {file}: \"{val}\"")
-
-    if unused_key_issues:
-        print("\n⚠️ [L10n Audit] Unused Keys in Catalogs:")
-        for file, key, msg, level in sorted(unused_key_issues):
-            print(f"  Key: \"{key}\" - ⚠️ [{level}] {msg}")
-
-    if not all_source_issues and not xcstrings_issues and not missing_key_issues and not cross_file_issues and not unused_key_issues:
-        print("\n✅ [L10n Audit] Localization quality standards met.")
-        sys.exit(0)
+    # 格式化并打印各类错误
+    c1, lines1 = _format_audit_issues("[L10n Audit] Source Code Violations", all_source_issues)
+    c2, lines2 = _format_audit_issues("[L10n Audit] .xcstrings Catalog Issues", xcstrings_issues, show_key=True)
+    c3, lines3 = _format_audit_issues("[L10n Audit] Missing Keys in Catalogs", missing_key_issues, show_key=True)
+    c4, lines4 = _format_audit_issues("[L10n Audit] Cross-File Key Inconsistencies", cross_file_issues, is_cross_file=True)
     
-    if has_critical:
-        print("\n[L10n Audit] CRITICAL VIOLATIONS. Build blocked.")
-        sys.exit(1)
-    else:
-        print("\n[L10n Audit] Suggestions for cleanup found. Build permitted.")
-        sys.exit(0)
+    has_critical = c1 or c2 or c3 or c4
+    
+    for line in (lines1 + lines2 + lines3 + lines4):
+        print(line)
+
+    _print_obsolete_issues(unused_key_issues)
+    
+    has_any_issues = bool(all_source_issues or xcstrings_issues or missing_key_issues or cross_file_issues or unused_key_issues)
+    _exit_audit(has_critical, has_any_issues)
 
 
 if __name__ == '__main__':

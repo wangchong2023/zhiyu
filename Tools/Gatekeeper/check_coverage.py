@@ -31,6 +31,18 @@ COVERAGE_THRESHOLDS = {
     "Overall": 0.60         # 整体项目覆盖率必须 >= 60%
 }
 
+# 百分比换算乘数
+PERCENT_MULTIPLIER = 100
+
+# 模拟测试数据专用的行数和覆盖行数常量
+MOCK_DOMAIN_LINES = 100
+MOCK_DOMAIN_COVERED = 85
+MOCK_CORE_LINES = 100
+MOCK_CORE_COVERED = 70
+MOCK_INFRA_LINES = 200
+MOCK_INFRA_COVERED = 160
+MOCK_FEATURE_LINES = 15
+
 # 物理模块分类的匹配标识（基于文件绝对路径片段识别）
 LAYER_FRAGMENTS = {
     "Domain": "Sources/Domain",
@@ -78,13 +90,13 @@ def get_mock_data():
                 "name": "ZhiYu",
                 "files": [
                     # Domain 示例：共 100 行，覆盖 85 行 -> 85%（达标）
-                    {"path": "/Users/test/Sources/Domain/Models/Page.swift", "executableLines": 100, "coveredLines": 85},
+                    {"path": "/Users/test/Sources/Domain/Models/Page.swift", "executableLines": MOCK_DOMAIN_LINES, "coveredLines": MOCK_DOMAIN_COVERED},
                     # Core 示例：共 100 行，覆盖 70 行 -> 70%（低于 75%，应拦截）
-                    {"path": "/Users/test/Sources/Core/Base/ServiceContainer.swift", "executableLines": 100, "coveredLines": 70},
+                    {"path": "/Users/test/Sources/Core/Base/ServiceContainer.swift", "executableLines": MOCK_CORE_LINES, "coveredLines": MOCK_CORE_COVERED},
                     # Infrastructure 示例：共 200 行，覆盖 160 行 -> 80%（达标）
-                    {"path": "/Users/test/Sources/Infrastructure/Storage/SQLiteStore.swift", "executableLines": 200, "coveredLines": 160},
+                    {"path": "/Users/test/Sources/Infrastructure/Storage/SQLiteStore.swift", "executableLines": MOCK_INFRA_LINES, "coveredLines": MOCK_INFRA_COVERED},
                     # 表现层/其他：不设具体线，只计入整体 -> 76% (315/415)，低于 60% 则整体拦截
-                    {"path": "/Users/test/Sources/Features/AI/ChatView.swift", "executableLines": 15, "coveredLines": 0}
+                    {"path": "/Users/test/Sources/Features/AI/ChatView.swift", "executableLines": MOCK_FEATURE_LINES, "coveredLines": 0}
                 ]
             }
         ]
@@ -188,8 +200,8 @@ def main():
     for layer, threshold in COVERAGE_THRESHOLDS.items():
         data = metrics[layer]
         rate = data["rate"]
-        percent = rate * 100
-        threshold_percent = threshold * 100
+        percent = rate * PERCENT_MULTIPLIER
+        threshold_percent = threshold * PERCENT_MULTIPLIER
         
         status_symbol = "🟢 [PASS]"
         is_violation = rate < threshold

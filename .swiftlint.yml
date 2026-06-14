@@ -23,7 +23,6 @@ disabled_rules:
   - static_over_final_class   # 测试文件中的 class var 有意图
   - implicit_getter           # getter 显式声明增强可读性
   - unused_setter_value       # 平台兼容预留 setter
-  - function_body_length      # 长函数拆分由 Code Review 把控
 
 opt_in_rules:
   - force_unwrapping          # 提示杜绝非必要强解包，促进安全编码
@@ -128,6 +127,11 @@ large_tuple:
 cyclomatic_complexity:
   warning: 10
   error: 16
+
+# 7.5 函数长度审计限制
+function_body_length:
+  warning: 60
+  error: 120
 
 # 8. 自定义校验规则 (门禁拦截魔鬼数字与字符串)
 custom_rules:

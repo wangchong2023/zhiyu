@@ -31,6 +31,8 @@ PLIST_FILES = [
     os.path.join(SOURCES_DIR, "MacInfo.plist")
 ]
 
+MIN_DESC_LENGTH = 10
+
 # 排除扫描 fatalError 的文件夹
 EXCLUDE_DIRS = {'.git', 'build', 'DerivedData', '.build', 'Frameworks', 'Tests', 'env', '__pycache__'}
 
@@ -54,6 +56,85 @@ FATAL_ERROR_WHITELIST = {
 # ==============================================================================
 # MARK: - 核心检查函数
 # ==============================================================================
+
+def _check_plist_usage_descriptions(plist_data, issues):
+    """
+    检查 Plist 中的敏感权限使用说明 (NS*UsageDescription) 是否合规。
+
+    :param plist_data: plist 解析出的字典数据
+    :param issues: 收集问题的列表
+    """
+    for key, value in plist_data.items():
+        if key.endswith("UsageDescription") and key.startswith("NS"):
+            if not isinstance(value, str):
+                issues.append({
+                    "type": "error",
+                    "message": f"权限描述键 '{key}' 的值类型必须为 String 字符串。"
+                })
+                continue
+                
+            val_strip = value.strip()
+            # 检查是否为空或文字过短，Apple 提审要求描述清晰
+            if not val_strip:
+                issues.append({
+                    "type": "error",
+                    "message": f"权限描述键 '{key}' 的描述内容为空。提审会被直接拒绝。"
+                })
+            elif len(val_strip) < MIN_DESC_LENGTH:
+                issues.append({
+                    "type": "error",
+                    "message": f"权限描述键 '{key}' 的描述内容过短（'{val_strip}'，小于 {MIN_DESC_LENGTH} 个字符），未明确告知用户用途，面临提审被拒风险。"
+                })
+            elif re.search(r'\b(test|placeholder|todo|xxx)\b', val_strip.lower()):
+                # 含有 test / todo 等测试占位字眼会被拒绝
+                issues.append({
+                    "type": "error",
+                    "message": f"权限描述键 '{key}' 中包含非法测试占位词（如 test/todo/placeholder/xxx），内容为: '{val_strip}'。请提供真实用途说明。"
+                })
+
+
+def _check_plist_version_strings(plist_data, issues):
+    """
+    检查 CFBundleVersion 与 CFBundleShortVersionString 的格式规范。
+
+    :param plist_data: plist 解析出的字典数据
+    :param issues: 收集问题的列表
+    """
+    # CFBundleShortVersionString (如 1.0.0)
+    version_string = plist_data.get("CFBundleShortVersionString")
+    if version_string:
+        if not re.match(r'^\d+(\.\d+){1,2}$', str(version_string)):
+            issues.append({
+                "type": "error",
+                "message": f"CFBundleShortVersionString 格式不规范（当前值: '{version_string}'）。必须为点分纯数字（如 1.0 或 1.0.0）。"
+            })
+            
+    # CFBundleVersion (如 1)
+    bundle_version = plist_data.get("CFBundleVersion")
+    if bundle_version:
+        if not re.match(r'^\d+(\.\d+)*$', str(bundle_version)):
+            issues.append({
+                "type": "error",
+                "message": f"CFBundleVersion 格式不规范（当前值: '{bundle_version}'）。必须为纯数字或点分纯数字。"
+            })
+
+
+def _check_plist_ats(plist_data, issues):
+    """
+    检查 ATS (App Transport Security) 任意加载设置。
+
+    :param plist_data: plist 解析出的字典数据
+    :param issues: 收集问题的列表
+    """
+    ats_dict = plist_data.get("NSAppTransportSecurity")
+    if isinstance(ats_dict, dict):
+        allows_arbitrary = ats_dict.get("NSAllowsArbitraryLoads")
+        if allows_arbitrary is True:
+            issues.append({
+                "type": "warning",
+                "message": "检测到 NSAllowsArbitraryLoads 开启。这允许 App 绕过 HTTPS 访问任意不安全网络。提审时 Apple 会要求提供合理解释，建议仅在本地联调时开启，生产发布需移除此豁免。"
+            })
+
 
 def check_plist_compliance(plist_path):
     """
@@ -85,62 +166,13 @@ def check_plist_compliance(plist_path):
         return issues
 
     # 1. 检查权限描述合规性 (NS*UsageDescription)
-    for key, value in plist_data.items():
-        if key.endswith("UsageDescription") and key.startswith("NS"):
-            if not isinstance(value, str):
-                issues.append({
-                    "type": "error",
-                    "message": f"权限描述键 '{key}' 的值类型必须为 String 字符串。"
-                })
-                continue
-                
-            val_strip = value.strip()
-            # 检查是否为空或文字过短，Apple 提审要求描述清晰
-            if not val_strip:
-                issues.append({
-                    "type": "error",
-                    "message": f"权限描述键 '{key}' 的描述内容为空。提审会被直接拒绝。"
-                })
-            elif len(val_strip) < 10:
-                issues.append({
-                    "type": "error",
-                    "message": f"权限描述键 '{key}' 的描述内容过短（'{val_strip}'，小于 10 个字符），未明确告知用户用途，面临提审被拒风险。"
-                })
-            elif re.search(r'\b(test|placeholder|todo|xxx)\b', val_strip.lower()):
-                # 含有 test / todo 等测试占位字眼会被拒绝
-                issues.append({
-                    "type": "error",
-                    "message": f"权限描述键 '{key}' 中包含非法测试占位词（如 test/todo/placeholder/xxx），内容为: '{val_strip}'。请提供真实用途说明。"
-                })
+    _check_plist_usage_descriptions(plist_data, issues)
 
     # 2. 检查 CFBundleVersion 与 CFBundleShortVersionString 格式
-    # CFBundleShortVersionString (如 1.0.0)
-    version_string = plist_data.get("CFBundleShortVersionString")
-    if version_string:
-        if not re.match(r'^\d+(\.\d+){1,2}$', str(version_string)):
-            issues.append({
-                "type": "error",
-                "message": f"CFBundleShortVersionString 格式不规范（当前值: '{version_string}'）。必须为点分纯数字（如 1.0 或 1.0.0）。"
-            })
-            
-    # CFBundleVersion (如 1)
-    bundle_version = plist_data.get("CFBundleVersion")
-    if bundle_version:
-        if not re.match(r'^\d+(\.\d+)*$', str(bundle_version)):
-            issues.append({
-                "type": "error",
-                "message": f"CFBundleVersion 格式不规范（当前值: '{bundle_version}'）。必须为纯数字或点分纯数字。"
-            })
+    _check_plist_version_strings(plist_data, issues)
 
     # 3. 检查 ATS (App Transport Security) 任意加载设置
-    ats_dict = plist_data.get("NSAppTransportSecurity")
-    if isinstance(ats_dict, dict):
-        allows_arbitrary = ats_dict.get("NSAllowsArbitraryLoads")
-        if allows_arbitrary is True:
-            issues.append({
-                "type": "warning",
-                "message": "检测到 NSAllowsArbitraryLoads 开启。这允许 App 绕过 HTTPS 访问任意不安全网络。提审时 Apple 会要求提供合理解释，建议仅在本地联调时开启，生产发布需移除此豁免。"
-            })
+    _check_plist_ats(plist_data, issues)
 
     return issues
 
