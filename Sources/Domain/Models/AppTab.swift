@@ -2,6 +2,9 @@
 //  AppTab.swift
 //  ZhiYu
 //
+//  系统层级：[Domain] 领域模型层
+//  核心职责：定义应用底座全局主标签页枚举（AppTab），包含标题及 SF Symbols 图标绑定。
+//
 
 import Foundation
 

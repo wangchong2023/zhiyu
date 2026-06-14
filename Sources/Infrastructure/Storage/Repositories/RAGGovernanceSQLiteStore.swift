@@ -310,6 +310,12 @@ final class RAGGovernanceSQLiteStore: RAGGovernanceRepository, DatabaseWriterPro
         }
     }
 
+    /// 计算归一化折扣累积增益 (NDCG@K)，衡量检索结果排序质量。
+    /// 算法：DCG@K = Σ (2^rel_i - 1) / log2(rank_i + 1)，NDCG = DCG / IDCG（理想排序下的最大 DCG）。
+    /// NDCG 值域为 [0, 1]，越高表示排序质量越好。
+    /// - Parameter days: 统计时间窗口（天数），筛选该时间段内的评估记录
+    /// - Parameter k: Top-K 截断深度，只考虑前 K 个检索结果
+    /// - Returns: 所有查询 NDCG@K 的均值；无数据时返回 0.0
     func calculateNDCG(days: Int, k: Int) async throws -> Double {
         let writer = await dbWriter
         return try await writer.read { db in
