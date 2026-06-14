@@ -44,22 +44,22 @@ final class AppEnvironment {
 
         Logger.shared.info("[AppEnvironment] Starting initialization...")
 
-        // 🧪 检测是否运行于 XCTest 环境 — 避免污染测试 DI 状态
-        let isRunningInTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        // 🧪 检测是否运行于 XCTest (Unit Test) 环境 — 避免污染测试 DI 状态
+        let isRunningInUnitTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil && !CommandLine.arguments.contains("-UITest_MockData")
         #if DEBUG
         if CommandLine.arguments.contains("-UITest_MockData") {
             Logger.shared.info("[AppEnvironment] Detected UI Test environment, using ephemeral setup")
-        } else if isRunningInTests {
-            Logger.shared.info("[AppEnvironment] Detected XCTest environment, using lightweight test setup")
+        } else if isRunningInUnitTests {
+            Logger.shared.info("[AppEnvironment] Detected XCTest unit test environment, using lightweight test setup")
         }
         #endif
 
         // 1. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         prepareDatabase()
 
-        // 🧪 XCTest 环境：跳过完整生产链，已用基本构造函数完成初始化
-        if isRunningInTests || CommandLine.arguments.contains("-UITest_MockData") {
-            Logger.shared.info("[AppEnvironment] Lightweight initialization completed.")
+        // 🧪 Unit Test 环境：跳过完整生产链，已用基本构造函数完成初始化
+        if isRunningInUnitTests {
+            Logger.shared.info("[AppEnvironment] Lightweight initialization completed for Unit Tests.")
             return
         }
 

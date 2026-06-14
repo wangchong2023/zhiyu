@@ -102,7 +102,8 @@ struct TestApp: App {
 struct AppLauncher {
     /// 进程统一启动主入口方法
     static func main() {
-        if NSClassFromString("XCTestCase") != nil {
+        let isUnitTesting = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil && !CommandLine.arguments.contains("-UITest_MockData")
+        if isUnitTesting {
             // 单测环境下：分流启动空壳 App，屏蔽宿主所有服务和异步任务的实例化
             TestApp.main()
         } else {
