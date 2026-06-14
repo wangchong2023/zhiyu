@@ -127,6 +127,9 @@ steps:
       - echo "====> 编译 iOS <===="
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
       - echo "  ✅ iOS 编译完成"
+      - echo ""
+      - echo "--- 确定性构建验证 ---"
+      - bash Tools/CI/verify_reproducible_build.sh
 
   build-macos:
     depends_on: [prepare]

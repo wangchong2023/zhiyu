@@ -1,0 +1,19 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Canary 构建 → TestFlight Internal 上传"
+  lane :canary do
+    sh("xcodegen generate")
+    build_app(
+      scheme: "ZhiYu",
+      configuration: "Release",
+      export_method: "app-store",
+      skip_codesigning: true
+    )
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      changelog: "Canary build from CI"
+    )
+  end
+end
