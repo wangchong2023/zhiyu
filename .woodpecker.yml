@@ -25,6 +25,8 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
+      - pip3 install pyyaml -q 2>/dev/null || true
+      - set -e
       - echo "===> [1/10] Architecture Dependency (L0-L3)"
       - python3 Tools/Gatekeeper/check_architecture_dependency.py
       - echo "===> [2/10] Domain Purity"
