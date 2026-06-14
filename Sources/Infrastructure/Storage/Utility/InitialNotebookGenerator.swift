@@ -57,9 +57,9 @@ struct InitialNotebookGenerator {
         Logger.shared.info("InitialNotebook_Starting")
         let folder = await resolveImportsFolder()
         let methodologyURL = resolveFileURL(named: "pkm_methodology.md", in: folder,
-            fallback: "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines.")
+            fallback: L10n.InitialNotebook.Fallback.methodology)
         let workflowURL = resolveFileURL(named: "pkm_workflow.md", in: folder,
-            fallback: "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop.")
+            fallback: L10n.InitialNotebook.Fallback.workflow)
         let seeds = buildPKMPageSeeds(methodologyURL: methodologyURL, workflowURL: workflowURL)
         try await persistPages(seeds, in: store) { db in
             try injectPKMMockLogs(db: db)
@@ -75,9 +75,9 @@ struct InitialNotebookGenerator {
         Logger.shared.info("ResearchInitialNotebook_Starting")
         let folder = await resolveImportsFolder()
         let luckinURL = resolveFileURL(named: "luckin_vs_starbucks_report.pdf", in: folder,
-            fallback: "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience.")
+            fallback: L10n.InitialNotebook.Fallback.luckin)
         let surveyURL = resolveFileURL(named: "survey_202606.pdf", in: folder,
-            fallback: "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff.")
+            fallback: L10n.InitialNotebook.Fallback.survey)
         let seeds = buildResearchPageSeeds(luckinURL: luckinURL, surveyURL: surveyURL)
         try await persistPages(seeds, in: store) { db in
             try injectResearchMockLogs(db: db)
@@ -168,8 +168,8 @@ struct InitialNotebookGenerator {
     ///   - methodologyURL: pkm_methodology.md 的本地物理文件路径
     ///   - workflowURL: pkm_workflow.md 的本地物理文件路径
     private static func buildPKMPageSeeds(methodologyURL: String, workflowURL: String) -> [PageSeed] {
-        let methodologySnippet = "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
-        let workflowSnippet = "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop."
+        let methodologySnippet = L10n.InitialNotebook.Snippet.methodology
+        let workflowSnippet = L10n.InitialNotebook.Snippet.workflow
         return [
             PageSeed(title: L10n.InitialNotebook.PKM.title1, type: .concept, content: L10n.InitialNotebook.PKM.content1,
                      tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
@@ -218,44 +218,44 @@ struct InitialNotebookGenerator {
     ///   - luckinURL: 瑞幸 vs 星巴克分析报告 PDF 的本地物理文件路径
     ///   - surveyURL: 用户调研问卷 PDF 的本地物理文件路径
     private static func buildResearchPageSeeds(luckinURL: String, surveyURL: String) -> [PageSeed] {
-        let luckinSnippet = "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report."
-        let surveySnippet = "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff who are heavy internet and power outlet users."
+        let luckinSnippet = L10n.InitialNotebook.Snippet.luckin
+        let surveySnippet = L10n.InitialNotebook.Snippet.survey
         return [
-            PageSeed(title: "竞品分析：瑞幸 vs 星巴克", type: .comparison,
-                     content: "瑞幸主打极简快取与高性价比，星巴克主打\"第三空间\"的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。",
-                     tags: ["竞品分析", "市场调研"],
+            PageSeed(title: L10n.InitialNotebook.Coffee.title1, type: .comparison,
+                     content: L10n.InitialNotebook.Coffee.content1,
+                     tags: [L10n.InitialNotebook.Tags.competitorAnalysis, L10n.InitialNotebook.Tags.marketResearch],
                      sourceURL: luckinURL, rawTextSnippet: luckinSnippet, sourceType: "pdf"),
-            PageSeed(title: "精品咖啡体验", type: .concept,
-                     content: "放弃全自动机器，采用半自动意式机与手冲吧台双轨制。定期举办杯测活动，增强社区黏性，这与我们的[[目标客群分析]]高度吻合。",
-                     tags: ["产品设计", "运营"]),
-            PageSeed(title: "目标客群分析", type: .source,
-                     content: "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。",
-                     tags: ["用户调研"],
+            PageSeed(title: L10n.InitialNotebook.Coffee.title2, type: .concept,
+                     content: L10n.InitialNotebook.Coffee.content2,
+                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.operation]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title3, type: .source,
+                     content: L10n.InitialNotebook.Coffee.content3,
+                     tags: [L10n.InitialNotebook.Tags.userResearch],
                      sourceURL: surveyURL, rawTextSnippet: surveySnippet, sourceType: "pdf"),
-            PageSeed(title: "高品质网络与供电", type: .concept,
-                     content: "部署商用级 Wi-Fi 6 路由器，确保全店无死角覆盖。卡座区必须做到\"一桌一插座\"，这是留住数字游民的核心基建。这部分改造费用已列入[[财务预算模型]]。",
-                     tags: ["基础设施", "装修"]),
-            PageSeed(title: "财务预算模型", type: .map,
-                     content: "- 店面租金与转让费：25万\n- 空间硬装与软装：18万\n- 核心设备（辣妈咖啡机、迈赫迪磨豆机等）：12万\n- 初期流动资金：15万\n首期总预算约 70 万，资金缺口 30 万，需尽快启动[[合伙人招募计划]]。",
-                     tags: ["财务", "规划"]),
-            PageSeed(title: "合伙人招募计划", type: .entity,
-                     content: "理想的合伙人画像：具备成熟的精品咖啡馆店长经验，能独立把控豆子烘焙质量与供应链，与我互补。共同打造极致的[[精品咖啡体验]]。",
-                     tags: ["团队", "招聘"]),
-            PageSeed(title: "咖啡豆供应链选型", type: .comparison,
-                     content: "对比了三家烘焙厂：A厂埃塞豆风味明亮但批次不稳定；B厂云南豆性价比极高且有助农故事；C厂哥伦比亚拼配最均衡。初期决定以 B 厂为主，严格控制[[财务预算模型]]中的物料成本。",
-                     tags: ["供应链", "物料"]),
-            PageSeed(title: "空间视觉与装修意向", type: .map,
-                     content: "采用微水泥侘寂风与温润原木结合。摒弃传统局促的网红打卡墙，大面积留白搭配龟背竹等阔叶绿植。灯光需采用 3000K 暖色温，迎合[[目标客群分析]]中的审美偏好。",
-                     tags: ["设计", "装修"]),
-            PageSeed(title: "开业营销策划", type: .concept,
-                     content: "试营业期间不打折，但买咖啡送定制帆布袋。正式开业首周，邀请本地小红书探店博主进行内容种草。我们将主推具有差异化的[[特调菜单研发]]作为引流爆款。",
-                     tags: ["营销", "增长"]),
-            PageSeed(title: "特调菜单研发", type: .entity,
-                     content: "目前内测评分最高的两款：1. 桂花酒酿拿铁（秋季限定） 2. 澄清番茄气泡美式。这两款特调不仅视觉出片率高，且口味独特，是支持[[开业营销策划]]的核心武器。",
-                     tags: ["产品设计", "研发"]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title4, type: .concept,
+                     content: L10n.InitialNotebook.Coffee.content4,
+                     tags: [L10n.InitialNotebook.Tags.infrastructure, L10n.InitialNotebook.Tags.decoration]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title5, type: .map,
+                     content: L10n.InitialNotebook.Coffee.content5,
+                     tags: [L10n.InitialNotebook.Tags.finance, L10n.InitialNotebook.Tags.planning]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title6, type: .entity,
+                     content: L10n.InitialNotebook.Coffee.content6,
+                     tags: [L10n.InitialNotebook.Tags.team, L10n.InitialNotebook.Tags.recruitment]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title7, type: .comparison,
+                     content: L10n.InitialNotebook.Coffee.content7,
+                     tags: [L10n.InitialNotebook.Tags.supplyChain, L10n.InitialNotebook.Tags.materials]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title8, type: .map,
+                     content: L10n.InitialNotebook.Coffee.content8,
+                     tags: [L10n.InitialNotebook.Tags.design, L10n.InitialNotebook.Tags.decoration]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title9, type: .concept,
+                     content: L10n.InitialNotebook.Coffee.content9,
+                     tags: [L10n.InitialNotebook.Tags.marketing, L10n.InitialNotebook.Tags.growth]),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title10, type: .entity,
+                     content: L10n.InitialNotebook.Coffee.content10,
+                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.rd]),
             PageSeed(title: L10n.InitialNotebook.Coffee.title11, type: .source,
                      content: L10n.InitialNotebook.Coffee.content11,
-                     tags: ["市场调研", "竞品分析"],
+                     tags: [L10n.InitialNotebook.Tags.marketResearch, L10n.InitialNotebook.Tags.competitorAnalysis],
                      sourceURL: luckinURL, rawTextSnippet: luckinSnippet, sourceType: "pdf")
         ]
     }

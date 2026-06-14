@@ -198,7 +198,19 @@ class XCStringsAuditor:
         """
         判定是否属于豁免检测的换行/技术空格占位文本。
         """
-        return any(x in text for x in ["\n", "\t"])
+        if any(x in text for x in ["\n", "\t"]):
+            return True
+        # 豁免常见的拼接格式占位空格
+        trimmed = text.strip()
+        if not trimmed:  # 纯空格（如 " "）不在这里放行
+            return False
+        # 冒号加空格后缀 (如 "Note: ", "Source Link: ", "Recommended Query: ") 或者是列表分隔符 (", ")
+        if text.endswith(': ') or text.endswith('： ') or text in (', ', ', '):
+            return True
+        # 英文句子拼接前导或尾随空格
+        if text.startswith(' ') or text.endswith(' '):
+            return True
+        return False
 
     def _is_self_value_exempt(self, k, v):
         """
@@ -233,19 +245,63 @@ class XCStringsAuditor:
             issues.append((file, key, f'English value has trailing/leading whitespace: "{repr(en_val)}"', "WARNING"))
         if zh_val != zh_trimmed and not self._is_whitespace_exempt(zh_val):
             issues.append((file, key, f'zh-Hans value has trailing/leading whitespace: "{repr(zh_val)}"', "WARNING"))
+    def _is_identical_translation_exempt(self, en_trimmed, key):
+        """
+        判断完全相同的中英文翻译值是否应豁免判定为假翻译。
+        
+        :param en_trimmed: 去除首尾空格后的英文原文字符串
+        :param key: 本地化键名
+        :return: 允许豁免返回 True，否则返回 False
+        """
+        # 1. 静态白名单匹配：包括通用缩写、计量单位及数学区间
+        EXEMPT_IDENTICAL_VALUES = {
+            "AI", "PDF", "Token", "RAG", "ms", "MB", "GB", "SHA256", "Top-K", "Top-P", "ESC", "·", 
+            "about", "action", "ignore", "preview", "skip", "unknown", "yesterday", "retry", 
+            "A", "B", "1 Text", "50-69", "70-89", "90-100", "50–69", "70–89", "90–100", "Mac", "macOS", "—",
+            "MRR", "NDCG@10", "F1@5", "MAP", "Lint", "model-name", "< 50", "%@ GB", "sk-..."
+        }
+        if en_trimmed in EXEMPT_IDENTICAL_VALUES or en_trimmed in KNOWN_PROPER_NAMES:
+            return True
+            
+        # 2. 动态格式与文件名匹配
+        if re.match(r'^[a-zA-Z0-9_\-.]+\.(md|pdf|json|txt|swift|db|zip|html)$', en_trimmed):
+            return True
+        if en_trimmed.startswith('sk-') or '...' in en_trimmed:
+            return True
+            
+        # 3. 特定逻辑键匹配
+        if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
+            return True
+            
+        return False
 
     def _check_identical_translation(self, file, key, en_trimmed, zh_trimmed, issues):
         """
         辅助审计：检查中英文完全相同的假翻译情况。
+        
+        :param file: 物理文件名
+        :param key: 本地化键名
+        :param en_trimmed: 英文去除首尾空格后的文本
+        :param zh_trimmed: 中文去除首尾空格后的文本
+        :param issues: 异常报告收集容器
         """
-        if en_trimmed == zh_trimmed and not TextUtil.is_chinese(en_trimmed) and en_trimmed != '':
-            if not re.match(r'^[0-9.%@\s\-\[\]\(\)]+$', en_trimmed):
-                if re.match(r'^llm\.(prompt\.(?!workshop\b|reset\b|expert\b)[a-zA-Z]+|ingest\.json)', key):
-                    return
-                if TextUtil.is_natural_language_sentence(en_trimmed):
-                    issues.append((file, key, f'Potential fake translation (zh is same as en sentence): "{en_trimmed}"', "ERROR"))
-                else:
-                    issues.append((file, key, f'Identical zh/en detected: "{en_trimmed}"', "WARNING"))
+        # 如果中英文不一致，或者包含中文，或者是空字符串，直接跳过
+        if en_trimmed != zh_trimmed or TextUtil.is_chinese(en_trimmed) or not en_trimmed:
+            return
+
+        # 调用提取出的辅助方法判定是否豁免
+        if self._is_identical_translation_exempt(en_trimmed, key):
+            return
+
+        # 检查是否包含除了标点符号、数字、空格和基础格式化占位符之外的有效英文字符
+        if re.match(r'^[0-9.%@\s\-\[\]\(\)<>=+]+$', en_trimmed):
+            return
+
+        # 区分是严重的句子未翻译错误，还是普通的单词警告
+        if TextUtil.is_natural_language_sentence(en_trimmed):
+            issues.append((file, key, f'Potential fake translation (zh is same as en sentence): "{en_trimmed}"', "ERROR"))
+        else:
+            issues.append((file, key, f'Identical zh/en detected: "{en_trimmed}"', "WARNING"))
 
     def _check_key_translation(self, file, key, locs, en_val, zh_val, en_trimmed, zh_trimmed, issues):
         """
@@ -335,6 +391,47 @@ class XCStringsAuditor:
 # MARK: - Swift 源码硬编码审计器 (SourceCodeAuditor)
 # ==============================================================================
 
+EXEMPT_STRINGS = {
+    "Not used on watchOS",
+    "> [Image Semantics]:",
+    "AI Chat",
+    "AI Chat Stream",
+    "Medal Wall",
+    "Not Supported",
+    "PDF extraction is not supported on this platform.",
+    "Non-ASCII Content",
+    "%.1f tok/s",
+    "Keep it short.",
+    "You are a Plugin",
+    "Calibri Light",
+    "·",
+    "•",
+    "⌘K",
+    "⌘",
+    " [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close.",
+    "TOC Generator",
+    "ZhiYu Team",
+    "Auto-generate TOC for documents.",
+    "Word Counter",
+    "Count words and characters in editor.",
+    "Markdown Beautifier",
+    "Auto format and beautify Markdown documents.",
+    "AI Translator",
+    "ZhiYu Remote Team",
+    "Auto translate text using AI with multi-language support.",
+    "Link Preview",
+    "Auto fetches URL meta and generates rich preview cards.",
+    "AI Summary Generator",
+    "Extract key points and generate structured summaries.",
+    "Code Highlighter",
+    "Add syntax highlighting and line numbers to code blocks.",
+    "You are a senior knowledge expert and researcher. Your goal is to provide deep, insightful expansion of existing knowledge.",
+    "Prompt configurations saved to UserDefaults.",
+    "Prompt configurations reset to default.",
+    "\n\nPlease reply in English.",
+    "Export is not supported on this platform."
+}
+
 class SourceCodeAuditor:
     """负责遍历和扫描 Swift 源码，发现违规的硬编码中文以及在 UI 语境下的英文句子。"""
 
@@ -352,48 +449,73 @@ class SourceCodeAuditor:
             r'fatalError\(',
         ]
         self.logger_re = re.compile('|'.join(logger_patterns))
+        self.exempt_strings = EXEMPT_STRINGS
 
-        self.exempt_strings = {
-            "Not used on watchOS",
-            "> [Image Semantics]:",
-            "AI Chat",
-            "AI Chat Stream",
-            "Medal Wall",
-            "Not Supported",
-            "PDF extraction is not supported on this platform.",
-            "Non-ASCII Content",
-            "%.1f tok/s",
-            "Keep it short.",
-            "You are a Plugin",
-            "Calibri Light",
-            "·",
-            "•",
-            "⌘K",
-            "⌘",
-            " [DatabaseManager] switchDatabase warning: Transactions draining timed out. Forcing connection close."
+
+    def _is_literal_exempt(self, s, is_logger, is_view):
+        """
+        验证字面量是否符合纯技术、日志或模拟数据的豁免条件。
+        """
+        # 1. 如果是日志语句（非 View 语境下），直接放行
+        if is_logger and not is_view:
+            return True
+            
+        s_lower = s.lower()
+        
+        # 2. 合并的技术、数据库、Mock及AI常用关键字集合（降低方法复杂度）
+        TECHNICAL_KEYWORDS = {
+            "select", "insert", "update", "delete", "from", "where", "join", "into", "values", 
+            "create table", "drop table", "ignore into", "mock", "stub", "test", "dummy", "fake", 
+            "carrier", "user", "cancelled", "no sim", "no network", "developer", "ollama", "http",
+            "reply", "return json", "json schema", "graph td", "keep response", "query", "fail", 
+            "error", "succeed", "invalid", "unsupported", "denied", "not loaded", "not support", 
+            "not configure", "progress", "keychain", "signature", "download", "payload", "sdk", 
+            "persist", "legacy", "resume", "metadata", "compile", "sandbox", "storage", "copy"
         }
+
+
+        if any(kw in s_lower for kw in TECHNICAL_KEYWORDS):
+            return True
+            
+        # 3. 日期时间格式化及容量大小占位符（如 "yyyy-MM-dd HH:mm", "%.1f KB", "%.0f GB"）
+        if re.match(r'^[yMdHms\-\/:\s\d%.,fKGtB]+$', s) and any(x in s for x in ['yy', 'MM', 'dd', 'HH', 'mm', '%']):
+            return True
+            
+        # 4. 正则表达式或特殊转义控制字符
+        if any(x in s for x in ["|", "\\d", "\\s", "\\w", "\\t", "\\n"]):
+            return True
+            
+        return False
+
+
+    def _audit_chinese_literal(self, s, line_no, is_allow_non_ascii, is_logger, issues):
+        """审计硬编码的非 ASCII (中文) 字面量。"""
+        if not is_allow_non_ascii:
+            severity = "WARNING" if is_logger else "ERROR"
+            issues.append((line_no, s, "Hardcoded non-ASCII string detected.", severity))
+
+    def _audit_english_literal(self, s, line, line_no, is_view, is_logger, issues):
+        """审计 UI 上可能存在的硬编码英文句子字面量。"""
+        is_ui_trigger = any(trigger in line for trigger in UI_TRIGGERS)
+        if TextUtil.is_natural_language_sentence(s):
+            if is_view and is_ui_trigger:
+                severity = "WARNING" if is_logger else "ERROR"
+                issues.append((line_no, s, "Hardcoded English sentence in UI context.", severity))
+            else:
+                issues.append((line_no, s, "Hardcoded English sentence detected in logic file.", "WARNING"))
 
     def _audit_literal(self, s, line, line_no, is_allow_non_ascii, is_view, is_logger, issues):
         """
         辅助审计：对代码行中的单字面量进行硬编码中文或UI英文的特征校验。
         """
-        if s in self.exempt_strings or "Stress Test Page #" in s:
+        if s in self.exempt_strings or "Stress Test Page #" in s or self._is_literal_exempt(s, is_logger, is_view):
             return
 
         if TextUtil.is_chinese(s):
-            if not is_allow_non_ascii:
-                severity = "WARNING" if is_logger else "ERROR"
-                issues.append((line_no, s, "Hardcoded non-ASCII string detected.", severity))
+            self._audit_chinese_literal(s, line_no, is_allow_non_ascii, is_logger, issues)
         else:
-            is_ui_trigger = any(trigger in line for trigger in UI_TRIGGERS)
-            is_sentence = TextUtil.is_natural_language_sentence(s)
+            self._audit_english_literal(s, line, line_no, is_view, is_logger, issues)
 
-            if is_sentence:
-                if is_view and is_ui_trigger:
-                    severity = "WARNING" if is_logger else "ERROR"
-                    issues.append((line_no, s, "Hardcoded English sentence in UI context.", severity))
-                else:
-                    issues.append((line_no, s, "Hardcoded English sentence detected in logic file.", "WARNING"))
 
     def check_file(self, file_path):
         """

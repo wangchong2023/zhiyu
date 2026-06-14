@@ -444,6 +444,28 @@ extension L10n {
             public static var content11: String { Localized.tr("demo.coffee.11.content", table: t) }
         }
         
+        public enum Fallback {
+            public static var methodology: String { Localized.tr("demo.fallback.methodology", table: t) }
+            public static var workflow: String { Localized.tr("demo.fallback.workflow", table: t) }
+            public static var luckin: String { Localized.tr("demo.fallback.luckin", table: t) }
+            public static var survey: String { Localized.tr("demo.fallback.survey", table: t) }
+        }
+        
+        public enum Snippet {
+            public static var methodology: String { Localized.tr("demo.snippet.methodology", table: t) }
+            public static var workflow: String { Localized.tr("demo.snippet.workflow", table: t) }
+            public static var luckin: String { Localized.tr("demo.snippet.luckin", table: t) }
+            public static var survey: String { Localized.tr("demo.snippet.survey", table: t) }
+        }
+        
+        public enum Log {
+            public static var defaultDemoData: String { Localized.tr("demo.log.defaultDemoData", table: t) }
+            public static var researchDemoData: String { Localized.tr("demo.log.researchDemoData", table: t) }
+            public static var fallbackDemoData: String { Localized.tr("demo.log.fallbackDemoData", table: t) }
+            public static var unknownVault: String { Localized.tr("demo.log.unknownVault", table: t) }
+            public static var projectResearch: String { Localized.tr("demo.log.projectResearch", table: t) }
+        }
+        
         public enum Tags {
             public static var knowledgeMgmt: String { Localized.tr("tags.knowledgeMgmt", table: t) }
             public static var methodology: String { Localized.tr("tags.methodology", table: t) }

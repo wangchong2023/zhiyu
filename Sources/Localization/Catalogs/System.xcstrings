@@ -2281,23 +2281,7 @@
         }
       }
     },
-    "logout": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logout"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "退出"
-          }
-        }
-      }
-    },
+
     "metric.broken": {
       "extractionState": "manual",
       "localizations": {
@@ -3403,23 +3387,7 @@
         }
       }
     },
-    "settings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设置"
-          }
-        }
-      }
-    },
+
     "settings.about.copyright": {
       "extractionState": "manual",
       "localizations": {

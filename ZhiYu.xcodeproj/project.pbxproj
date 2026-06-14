@@ -6083,7 +6083,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
 		};
 		EC187BA9D31CB968CCF1EDE5 /* [Gatekeeper] SwiftLint Quality Audit */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6102,7 +6102,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
 		};
 		FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */ = {
 			isa = PBXShellScriptBuildPhase;

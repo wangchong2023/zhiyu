@@ -84,18 +84,18 @@ public final class MaintenanceService {
             if vaultName == L10n.Vault.defaultName || (isTesting && (vaultName == nil || vaultName?.contains("\u{77e5}\u{8bc6}") == true || vaultName?.contains("Vault") == true)) {
                 // “我的知识库” - 使用标准的 AI 概念与大量 API 日志
                 _ = try await InitialNotebookGenerator.generate(in: pageStore)
-                logger.addLog(action: .create, target: "Default Demo Data", details: "Seeded_default_content", module: "Maintenance")
-            } else if vaultName == L10n.Vault.researchName || vaultName == "\u{9879}\u{76ee}\u{8c03}\u{7814}" || vaultName == "Project Research" || (isTesting && vaultName?.contains("\u{8c03}\u{7814}") == true) {
+                logger.addLog(action: .create, target: L10n.InitialNotebook.Log.defaultDemoData, details: "Seeded_default_content", module: "Maintenance")
+            } else if vaultName == L10n.Vault.researchName || vaultName == "\u{9879}\u{76ee}\u{8c03}\u{7814}" || vaultName == L10n.InitialNotebook.Log.projectResearch || (isTesting && vaultName?.contains("\u{8c03}\u{7814}") == true) {
                 // “项目调研” - 使用全新均衡的调研数据
                 _ = try await InitialNotebookGenerator.generateResearchNotebook(in: pageStore)
-                logger.addLog(action: .create, target: "Research Demo Data", details: "Seeded_research_content", module: "Maintenance")
+                logger.addLog(action: .create, target: L10n.InitialNotebook.Log.researchDemoData, details: "Seeded_research_content", module: "Maintenance")
             } else if isTesting {
                 // UI 自动化测试模式下的万能兜底种子注入，防止空页面导致 Dashboard 卡片显示不出来而超时
                 _ = try await InitialNotebookGenerator.generate(in: pageStore)
-                logger.addLog(action: .create, target: "Fallback Demo Data", details: "Seeded_fallback_content", module: "Maintenance")
+                logger.addLog(action: .create, target: L10n.InitialNotebook.Log.fallbackDemoData, details: "Seeded_fallback_content", module: "Maintenance")
             }
         } catch {
-            logger.addLog(action: .error, target: vaultName ?? "Unknown Vault", details: "Seed_Failed: \(error)", module: "Maintenance")
+            logger.addLog(action: .error, target: vaultName ?? L10n.InitialNotebook.Log.unknownVault, details: "Seed_Failed: \(error)", module: "Maintenance")
         }
     }
 

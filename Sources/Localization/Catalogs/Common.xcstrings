@@ -1,23 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    " ": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " "
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": " "
-          }
-        }
-      }
-    },
     "·": {
       "extractionState": "manual",
       "localizations": {
@@ -7001,6 +6984,227 @@
           "stringUnit": {
             "state": "translated",
             "value": "瑞幸与星巴克竞品格局分析报告。深入对比了瑞幸咖啡极简快取与星巴克“第三空间”的商业定位差异。"
+          }
+        }
+      }
+    },
+    "demo.fallback.methodology": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的的方法论，强调语义分块与 RAG 管道。"
+          }
+        }
+      }
+    },
+    "demo.fallback.workflow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识管理工作流：捕获、分块、检索、合成。将日常工具集成到统一的知识闭环中。"
+          }
+        }
+      }
+    },
+    "demo.fallback.luckin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "瑞幸咖啡与星巴克竞争格局分析。瑞幸专注于无收银的即买即走门店，而星巴克则专注于“第三空间”商务社交体验。"
+          }
+        }
+      }
+    },
+    "demo.fallback.survey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现场收集的 200 份客户调查问卷。目标群体：25-35 岁的自由职业者、自媒体创作者和办公室职员。"
+          }
+        }
+      }
+    },
+    "demo.snippet.methodology": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的方法论，强调语义分块与 RAG 管道，来源于本地 Markdown 文件。"
+          }
+        }
+      }
+    },
+    "demo.snippet.workflow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge management workflows: capture, chunk, retrieve, synthesize. Integrate daily tools into a unified knowledge loop."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识管理工作流：捕获、分块、检索、合成。将日常工具集成到统一的知识闭环中。"
+          }
+        }
+      }
+    },
+    "demo.snippet.luckin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "瑞幸咖啡与星巴克竞争格局分析。瑞幸专注于无收银的即买即走门店，而星巴克则专注于“第三空间”商务社交体验，检索自本地市场 PDF 报告。"
+          }
+        }
+      }
+    },
+    "demo.snippet.survey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "200 customer survey forms collected on-site. Target group: 25-35 years old freelancers, self-media creators, and office staff who are heavy internet and power outlet users."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现场收集的 200 份客户调查问卷。目标群体：25-35 岁的自由职业者、自媒体创作者和极度依赖网络和电源插座的办公室职员。"
+          }
+        }
+      }
+    },
+    "demo.log.defaultDemoData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Demo Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认演示数据"
+          }
+        }
+      }
+    },
+    "demo.log.researchDemoData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Research Demo Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "调研演示数据"
+          }
+        }
+      }
+    },
+    "demo.log.fallbackDemoData": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fallback Demo Data"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "兜底演示数据"
+          }
+        }
+      }
+    },
+    "demo.log.unknownVault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown Vault"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未知金库"
+          }
+        }
+      }
+    },
+    "demo.log.projectResearch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project Research"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "项目调研"
           }
         }
       }

@@ -19,7 +19,7 @@ extension L10n {
         /// - Returns: 返回值
         public static var login: String { tr("login") }
         public static var register: String { tr("register") }
-        public static var logout: String { tr("logout") }
+        public static var logout: String { Localized.tr("logout", table: "Common") }
         public static var identityPlaceholder: String { tr("identity.placeholder") }
         public static var nicknamePlaceholder: String { tr("auth.nicknamePlaceholder") }
         public static var phonePlaceholder: String { Localized.tr("auth.phone.placeholder", table: t) }
