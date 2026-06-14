@@ -165,90 +165,120 @@ struct ConflictDiffView: View {
     ///   - item: 发生冲突的页面对象
     ///   - isWide: 是否大屏幕并排显示
     @ViewBuilder
+    /// 冲突文档的细节比对区
+    /// - Parameters:
+    ///   - item: 发生冲突的页面对象
+    ///   - isWide: 是否大屏幕并排显示
+    @ViewBuilder
     private func conflictingDetailPanel(for item: ConflictingPage, isWide: Bool) -> some View {
         VStack(spacing: 0) {
-            // 元信息头：展示 Lamport 及 updatedAt 修改时间
-            HStack(spacing: DesignSystem.medium) {
-                VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                    Text(L10n.ICloud.Conflict.localVersionTime(formatDate(item.localPage?.updatedAt)))
-                    Text(L10n.ICloud.Conflict.remoteVersionTime(formatDate(item.remotePage?.updatedAt)))
-                }
-                .font(.system(size: 11)) // Dynamic Type
-                .foregroundStyle(.appSecondary)
-                
-                Spacer()
-                
-                // 快速选择覆盖模态
-                Menu(L10n.ICloud.Conflict.smartOverwriteMode) {
-                    Button(L10n.ICloud.Conflict.allChooseLocal) {
-                        mergedContents[item.id] = item.localPage?.content ?? ""
-                    }
-                    Button(L10n.ICloud.Conflict.allChooseRemote) {
-                        mergedContents[item.id] = item.remotePage?.content ?? ""
-                    }
-                }
-                .font(.subheadline)
-                .buttonStyle(.bordered)
-            }
-            .padding()
-            .background(Color.appCard)
+            // 元信息头
+            conflictMetaHeader(for: item)
             
             Divider()
             
-            // 双栏比对主体
+            // 双栏比对主体与合并编辑区
             ScrollView {
                 VStack(spacing: DesignSystem.medium) {
-                    if isWide {
-                        HStack(alignment: .top, spacing: DesignSystem.medium) {
-                            diffContentColumn(title: L10n.ICloud.Conflict.localVersionHeader, content: item.localPage?.content ?? "")
-                            diffContentColumn(title: L10n.ICloud.Conflict.remoteVersionHeader, content: item.remotePage?.content ?? "")
-                        }
-                    } else {
-                        VStack(spacing: DesignSystem.medium) {
-                            diffContentColumn(title: L10n.ICloud.Conflict.localVersionHeader, content: item.localPage?.content ?? "")
-                            diffContentColumn(title: L10n.ICloud.Conflict.remoteVersionHeader, content: item.remotePage?.content ?? "")
-                        }
-                    }
+                    conflictDiffColumns(for: item, isWide: isWide)
                     
                     Divider()
                         .padding(.vertical)
                     
                     // 合并编辑编辑区
-                    VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                        HStack {
-                            Text(L10n.ICloud.Conflict.mergedResultEditorHeader)
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.appText)
-                            Spacer()
-                            Button(L10n.ICloud.Conflict.chooseLocalContent) {
-                                mergedContents[item.id] = item.localPage?.content ?? ""
-                            }
-                            .font(.caption)
-                            Button(L10n.ICloud.Conflict.chooseRemoteContent) {
-                                mergedContents[item.id] = item.remotePage?.content ?? ""
-                            }
-                            .font(.caption)
-                        }
-                        
-                        TextEditor(text: Binding(
-                            get: { mergedContents[item.id] ?? "" },
-                            set: { mergedContents[item.id] = $0 }
-                        ))
-                        .font(.system(.body, design: .monospaced))
-                        .frame(minHeight: 180)
-                        .padding(DesignSystem.tiny)
-                        .background(Color.appCard)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                                .stroke(Color.appAccent.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
-                        )
-                    }
+                    conflictMergedEditor(for: item)
                 }
                 .padding()
             }
         }
         .background(Color.clear)
+    }
+
+    /// 冲突文档的元信息头部视图，展示各版本的修改时间并提供快捷覆盖操作
+    /// - Parameter item: 发生冲突的页面对象
+    /// - Returns: 包含更新时间和操作菜单的头部视图
+    private func conflictMetaHeader(for item: ConflictingPage) -> some View {
+        HStack(spacing: DesignSystem.medium) {
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(L10n.ICloud.Conflict.localVersionTime(formatDate(item.localPage?.updatedAt)))
+                Text(L10n.ICloud.Conflict.remoteVersionTime(formatDate(item.remotePage?.updatedAt)))
+            }
+            .font(.system(size: 11)) // Dynamic Type
+            .foregroundStyle(.appSecondary)
+            
+            Spacer()
+            
+            // 快速选择覆盖模态
+            Menu(L10n.ICloud.Conflict.smartOverwriteMode) {
+                Button(L10n.ICloud.Conflict.allChooseLocal) {
+                    mergedContents[item.id] = item.localPage?.content ?? ""
+                }
+                Button(L10n.ICloud.Conflict.allChooseRemote) {
+                    mergedContents[item.id] = item.remotePage?.content ?? ""
+                }
+            }
+            .font(.subheadline)
+            .buttonStyle(.bordered)
+        }
+        .padding()
+        .background(Color.appCard)
+    }
+
+    /// 渲染本地与远程版本的比对分栏视图
+    /// - Parameters:
+    ///   - item: 发生冲突的页面对象
+    ///   - isWide: 是否在大屏设备下宽屏并排显示
+    /// - Returns: 比对分栏的布局视图
+    private func conflictDiffColumns(for item: ConflictingPage, isWide: Bool) -> some View {
+        Group {
+            if isWide {
+                HStack(alignment: .top, spacing: DesignSystem.medium) {
+                    diffContentColumn(title: L10n.ICloud.Conflict.localVersionHeader, content: item.localPage?.content ?? "")
+                    diffContentColumn(title: L10n.ICloud.Conflict.remoteVersionHeader, content: item.remotePage?.content ?? "")
+                }
+            } else {
+                VStack(spacing: DesignSystem.medium) {
+                    diffContentColumn(title: L10n.ICloud.Conflict.localVersionHeader, content: item.localPage?.content ?? "")
+                    diffContentColumn(title: L10n.ICloud.Conflict.remoteVersionHeader, content: item.remotePage?.content ?? "")
+                }
+            }
+        }
+    }
+
+    /// 冲突文档的手动合并编辑器视图，允许精细修改并支持快捷载入指定版本内容
+    /// - Parameter item: 发生冲突的页面对象
+    /// - Returns: 合并编辑器的整体布局视图
+    private func conflictMergedEditor(for item: ConflictingPage) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+            HStack {
+                Text(L10n.ICloud.Conflict.mergedResultEditorHeader)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.appText)
+                Spacer()
+                Button(L10n.ICloud.Conflict.chooseLocalContent) {
+                    mergedContents[item.id] = item.localPage?.content ?? ""
+                }
+                .font(.caption)
+                Button(L10n.ICloud.Conflict.chooseRemoteContent) {
+                    mergedContents[item.id] = item.remotePage?.content ?? ""
+                }
+                .font(.caption)
+            }
+            
+            TextEditor(text: Binding(
+                get: { mergedContents[item.id] ?? "" },
+                set: { mergedContents[item.id] = $0 }
+            ))
+            .font(.system(.body, design: .monospaced))
+            .frame(minHeight: 180)
+            .padding(DesignSystem.tiny)
+            .background(Color.appCard)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                    .stroke(Color.appAccent.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
+            )
+        }
     }
     
     /// 渲染比对分栏的内容卡片

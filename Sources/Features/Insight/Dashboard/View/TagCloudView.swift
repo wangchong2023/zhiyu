@@ -285,84 +285,7 @@ struct TagCloudViewContent: View {
     }
 
     private func tagCapsule(_ item: (tag: String, count: Int)) -> some View {
-        let isSelected = coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
-        
-        return Button(action: {
-            withAnimation(DesignSystem.Animation.prominent) {
-                if coordinator.isEditMode {
-                    if coordinator.selectedTagsForBulk.contains(item.tag) {
-                        coordinator.selectedTagsForBulk.remove(item.tag)
-                    } else {
-                        coordinator.selectedTagsForBulk.insert(item.tag)
-                    }
-                } else {
-                    coordinator.selectedTag = coordinator.selectedTag == item.tag ? nil : item.tag
-                }
-            }
-            HapticFeedback.shared.trigger(.selection)
-        }) {
-            HStack(spacing: DesignSystem.Layout.listRowSpacing) {
-                Text(item.tag.replacingOccurrences(of: "#", with: ""))
-                    .font(.system(.subheadline, design: .rounded).weight(isSelected ? .semibold : .regular))
-                
-                Text("\(item.count)")
-                    .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.atomic)
-                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
-                    .clipShape(Capsule())
-            }
-            .padding(.horizontal, DesignSystem.large)
-            .padding(.vertical, DesignSystem.small)
-            .background(
-                Capsule()
-                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.translucentOpacity))
-            )
-            .overlay(
-                Capsule()
-                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
-            )
-            .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
-            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
-            .overlay(alignment: .topTrailing) {
-                if coordinator.isEditMode {
-                    ZStack {
-                        Circle()
-                            .fill(isSelected ? Color.appAccent : Color.appCard)
-                            .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
-                        
-                        if isSelected {
-                            Image(systemName: DesignSystem.Icons.check)
-                                .font(.system(size: DesignSystem.microFontSize, weight: .black))
-                                .foregroundStyle(.white)
-                        } else {
-                            Circle()
-                                .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
-                                .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
-                        }
-                    }
-                    .offset(x: DesignSystem.small, y: -DesignSystem.small)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .foregroundStyle(isSelected ? .appAccent : .appText)
-        .contextMenu {
-            if !coordinator.isEditMode {
-                Button(action: {
-                    coordinator.tagToRename = item.tag
-                    coordinator.newTagName = item.tag
-                }) {
-                    Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
-                }
-                Button(role: .destructive, action: {
-                    coordinator.tagToDelete = item.tag
-                    coordinator.showDeleteConfirm = true
-                }) {
-                    Label(L10n.Tag.Action.delete, systemImage: DesignSystem.Icons.delete)
-                }
-            }
-        }
+        TagCapsuleView(item: item, coordinator: coordinator)
     }
 
     private var pagesListView: some View {
@@ -440,3 +363,95 @@ struct BlurView: View {
     }
 }
 #endif
+
+// MARK: - 标签气泡微组件
+
+/// 标签气泡视图，负责展示单个标签字词及其词频，支持编辑选中和单选行为
+private struct TagCapsuleView: View {
+    /// 标签及总数的元组
+    let item: (tag: String, count: Int)
+    
+    /// 绑定的协调器
+    @Bindable var coordinator: TagCloudCoordinator
+    
+    var body: some View {
+        let isSelected = coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
+        
+        Button(action: {
+            withAnimation(DesignSystem.Animation.prominent) {
+                if coordinator.isEditMode {
+                    if coordinator.selectedTagsForBulk.contains(item.tag) {
+                        coordinator.selectedTagsForBulk.remove(item.tag)
+                    } else {
+                        coordinator.selectedTagsForBulk.insert(item.tag)
+                    }
+                } else {
+                    coordinator.selectedTag = coordinator.selectedTag == item.tag ? nil : item.tag
+                }
+            }
+            HapticFeedback.shared.trigger(.selection)
+        }) {
+            HStack(spacing: DesignSystem.Layout.listRowSpacing) {
+                Text(item.tag.replacingOccurrences(of: "#", with: ""))
+                    .font(.system(.subheadline, design: .rounded).weight(isSelected ? .semibold : .regular))
+                
+                Text("\(item.count)")
+                    .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
+                    .padding(.horizontal, DesignSystem.small)
+                    .padding(.vertical, DesignSystem.atomic)
+                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, DesignSystem.large)
+            .padding(.vertical, DesignSystem.small)
+            .background(
+                Capsule()
+                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.translucentOpacity))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
+            )
+            .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
+            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
+            .overlay(alignment: .topTrailing) {
+                if coordinator.isEditMode {
+                    ZStack {
+                        Circle()
+                            .fill(isSelected ? Color.appAccent : Color.appCard)
+                            .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
+                        
+                        if isSelected {
+                            Image(systemName: DesignSystem.Icons.check)
+                                .font(.system(size: DesignSystem.microFontSize, weight: .black))
+                                .foregroundStyle(.white)
+                        } else {
+                            Circle()
+                                .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
+                                .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
+                        }
+                    }
+                    .offset(x: DesignSystem.small, y: -DesignSystem.small)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(isSelected ? .appAccent : .appText)
+        .contextMenu {
+            if !coordinator.isEditMode {
+                Button(action: {
+                    coordinator.tagToRename = item.tag
+                    coordinator.newTagName = item.tag
+                }) {
+                    Label(L10n.Tag.Action.rename, systemImage: DesignSystem.Icons.edit)
+                }
+                Button(role: .destructive, action: {
+                    coordinator.tagToDelete = item.tag
+                    coordinator.showDeleteConfirm = true
+                }) {
+                    Label(L10n.Tag.Action.delete, systemImage: DesignSystem.Icons.delete)
+                }
+            }
+        }
+    }
+}

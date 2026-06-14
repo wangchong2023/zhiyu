@@ -25,8 +25,8 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> SwiftLint（圈复杂度/函数长度/编码规范）"
-      - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint
+      - echo "===> SwiftLint（圈复杂度/函数长度/编码规范，--strict 模式）"
+      - swiftlint --strict --reporter github-actions-logging 2>/dev/null || swiftlint --strict
 
   signature-check:
     depends_on: [clone-repo]

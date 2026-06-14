@@ -44,69 +44,10 @@ extension ContentView {
     /// mainContent
     /// - Parameter tintColor: 着色Color
     func mainContent(tintColor: Color) -> some View {
-        @Bindable var store = store
-        @Bindable var router = router
         ZStack {
-            Group {
-                #if !os(macOS)
-                // 1. 若处于 iOS/iPadOS UI 自动化测试模式下，一律强制回退至 legacyTabView 以保障 TabBar 元素定位在 iPhone/iPad 上绝对可靠
-                if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
-                   ProcessInfo.processInfo.arguments.contains("--uitesting") {
-                    legacyTabView(tintColor: tintColor)
-                } else if appEnv.screenClass != .compact {
-                    if #available(iOS 18.0, *) {
-                        modernTabView(tintColor: tintColor)
-                    } else {
-                        legacyTabView(tintColor: tintColor)
-                    }
-                } else {
-                    if #available(iOS 18.0, *) {
-                        modernTabView(tintColor: tintColor)
-                    } else {
-                        legacyTabView(tintColor: tintColor)
-                    }
-                }
-                #else
-                // 2. macOS 桌面端或 macCatalyst 物理运行环境
-                if appEnv.screenClass != .compact {
-                    adaptiveSplitView(tintColor: tintColor)
-                } else {
-                    if #available(macOS 15.0, macCatalyst 18.0, *) {
-                        modernTabView(tintColor: tintColor)
-                    } else {
-                        legacyTabView(tintColor: tintColor)
-                    }
-                }
-                #endif
-            }
-            .sheet(isPresented: $store.showCreateSheet) {
-                CreatePageView()
-                    .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
-            }
+            adaptiveTabView(tintColor: tintColor)
             
-            // 统一挂载性能监控 Sheet，避免分散在互斥视图分支导致状态丢失
-            .sheet(isPresented: $store.showPerfDashboard) {
-                PerformanceDashboardView(service: store.performanceService)
-            }
-            
-            // 全局奖章奖励弹窗
-            if let medal = medalService.newlyEarnedMedal {
-                MedalRewardPopup(medal: medal) {
-                    withAnimation(.spring()) {
-                        medalService.newlyEarnedMedal = nil
-                    }
-                }
-                .zIndex(DesignSystem.ZIndex.medalPopup)
-                .transition(.asymmetric(insertion: .opacity, removal: .scale.combined(with: .opacity)))
-            }
-            
-            // 功能引导弹窗 (Coach Marks)
-            if let coachMark = store.pendingCoachMark {
-                CoachMarkOverlay(type: coachMark, selectedTab: $router.selectedTab) {
-                    store.pendingCoachMark = nil
-                }
-                .zIndex(DesignSystem.ZIndex.coachMark)
-            }
+            globalOverlaySheets()
         }
         .onAppear {
             if !onboardingService.hasCompletedOnboarding {
@@ -119,6 +60,84 @@ extension ContentView {
             }
         }
         .appToast()
+    }
+
+    /// 渲染适配当前硬件平台与测试模式下的核心 TabView/SplitView 容器
+    /// - Parameter tintColor: 全局着色色彩
+    /// - Returns: 返回经过平台决策后的主内容容器视图
+    @ViewBuilder
+    private func adaptiveTabView(tintColor: Color) -> some View {
+        #if !os(macOS)
+        // 1. 若处于 iOS/iPadOS UI 自动化测试模式下，一律强制回退至 legacyTabView 以保障 TabBar 元素定位在 iPhone/iPad 上绝对可靠
+        if ProcessInfo.processInfo.environment["UITesting"] == "true" ||
+           ProcessInfo.processInfo.arguments.contains("--uitesting") {
+            legacyTabView(tintColor: tintColor)
+        } else if appEnv.screenClass != .compact {
+            if #available(iOS 18.0, *) {
+                modernTabView(tintColor: tintColor)
+            } else {
+                legacyTabView(tintColor: tintColor)
+            }
+        } else {
+            if #available(iOS 18.0, *) {
+                modernTabView(tintColor: tintColor)
+            } else {
+                legacyTabView(tintColor: tintColor)
+            }
+        }
+        #else
+        // 2. macOS 桌面端或 macCatalyst 物理运行环境
+        if appEnv.screenClass != .compact {
+            adaptiveSplitView(tintColor: tintColor)
+        } else {
+            if #available(macOS 15.0, macCatalyst 18.0, *) {
+                modernTabView(tintColor: tintColor)
+            } else {
+                legacyTabView(tintColor: tintColor)
+            }
+        }
+        #endif
+    }
+
+    /// 渲染全局弹出的各种 Sheet 及悬浮引导图层
+    /// - Returns: 返回附加了各种 sheet 和浮层的 overlay 视图
+    @ViewBuilder
+    private func globalOverlaySheets() -> some View {
+        @Bindable var store = store
+        @Bindable var router = router
+        
+        Color.clear
+            .sheet(isPresented: $store.showCreateSheet) {
+                CreatePageView()
+                    .applySettingsPresentationSizing(screenClass: appEnv.screenClass)
+            }
+            
+            // 统一挂载性能监控 Sheet，避免分散在互斥视图分支导致状态丢失
+            .sheet(isPresented: $store.showPerfDashboard) {
+                PerformanceDashboardView(service: store.performanceService)
+            }
+            .background {
+                ZStack {
+                    // 全局奖章奖励弹窗
+                    if let medal = medalService.newlyEarnedMedal {
+                        MedalRewardPopup(medal: medal) {
+                            withAnimation(.spring()) {
+                                medalService.newlyEarnedMedal = nil
+                            }
+                        }
+                        .zIndex(DesignSystem.ZIndex.medalPopup)
+                        .transition(.asymmetric(insertion: .opacity, removal: .scale.combined(with: .opacity)))
+                    }
+                    
+                    // 功能引导弹窗 (Coach Marks)
+                    if let coachMark = store.pendingCoachMark {
+                        CoachMarkOverlay(type: coachMark, selectedTab: $router.selectedTab) {
+                            store.pendingCoachMark = nil
+                        }
+                        .zIndex(DesignSystem.ZIndex.coachMark)
+                    }
+                }
+            }
     }
     
     // MARK: - iPad/Mac Adaptive SplitView

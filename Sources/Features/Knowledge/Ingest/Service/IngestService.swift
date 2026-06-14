@@ -49,34 +49,16 @@ actor IngestService {
         }
         let pageID = UUID()
 
-        // 1. 安全脱敏：拦截恶意指令注入 (@P0: Security)
-        let sanitizedRawContent = PromptSanitizer.shared.sanitize(content)
+        // 1. 内容脱敏及 RAG 摄入预处理
+        let processedContent = await prepareContent(
+            content,
+            pageID: pageID,
+            forceDeepScan: forceDeepScan,
+            llmService: llmService,
+            pageStore: pageStore
+        )
 
-        // --- RAG 摄入管道集成 ---
-        let processedContent: String
-        if forceDeepScan || llmService != nil {
-            if let vectorStore = pageStore as? any VectorIndexableStore {
-                let provider = await MainActor.run { vectorStore.embeddingProvider }
-                do {
-                    processedContent = try await KnowledgeIngestPipeline.shared.process(
-                        content: sanitizedRawContent,
-                        pageID: pageID,
-                        llm: llmService,
-                        embeddingProvider: provider
-                    )
-                } catch {
-                    Logger.shared.debug(" [IngestService]" + " RAG pipeline" + " aborted or" + " cancelled: \(error)")
-                    processedContent = sanitizedRawContent
-                }
-            } else {
-                // fallback: 如果 Store 不支持向量，则仅保留内容
-                processedContent = sanitizedRawContent
-            }
-        } else {
-            processedContent = sanitizedRawContent
-        }
-
-        // Create raw source page with provenance
+        // 2. 创建包含归档信息的原始页面
         let rawPage = await pageStore.anyCreatePage(
             title: title,
             pageType: type,
@@ -90,21 +72,13 @@ actor IngestService {
             forceDeepScan: forceDeepScan
         )
 
-        // Auto-extract potential concept links from content
-        let allPages = await pageStore.pages
-        let concepts = extractConcepts(from: processedContent, pages: allPages)
-        var updatedContent = rawPage.content
-
-        for concept in concepts {
-            updatedContent = updatedContent.replacingOccurrences(
-                of: concept,
-                with: "[[\(concept)]]"
-            )
-        }
-
-        var page = rawPage
-        page.content = updatedContent
-        await pageStore.anyUpdatePage(page, forceDeepScan: forceDeepScan)
+        // 3. 自动识别并关联双链概念
+        let page = await applyConceptLinks(
+            rawPage: rawPage,
+            processedContent: processedContent,
+            pageStore: pageStore,
+            forceDeepScan: forceDeepScan
+        )
 
         let duration = Date().timeIntervalSince(startTime)
         pageStore.addLog(
@@ -120,6 +94,74 @@ actor IngestService {
         await MainActor.run {
             manager.decrementActiveTransactions()
         }
+        return page
+    }
+
+    /// 预处理内容：安全脱敏及 RAG 摄入管道集成
+    /// - Parameters:
+    ///   - content: 原始内容
+    ///   - pageID: 页面 ID
+    ///   - forceDeepScan: 是否深度扫描
+    ///   - llmService: AI 接口模型
+    ///   - pageStore: 数据存储
+    /// - Returns: 处理完成后的文本内容
+    private func prepareContent(
+        _ content: String,
+        pageID: UUID,
+        forceDeepScan: Bool,
+        llmService: (any LLMServiceProtocol)?,
+        pageStore: any AnyPageStore
+    ) async -> String {
+        // 安全脱敏：拦截恶意指令注入 (@P0: Security)
+        let sanitized = PromptSanitizer.shared.sanitize(content)
+        guard forceDeepScan || llmService != nil else {
+            return sanitized
+        }
+        
+        if let vectorStore = pageStore as? any VectorIndexableStore {
+            let provider = await MainActor.run { vectorStore.embeddingProvider }
+            do {
+                return try await KnowledgeIngestPipeline.shared.process(
+                    content: sanitized,
+                    pageID: pageID,
+                    llm: llmService,
+                    embeddingProvider: provider
+                )
+            } catch {
+                Logger.shared.debug(" [IngestService] RAG pipeline aborted or cancelled: \(error)")
+                return sanitized
+            }
+        }
+        return sanitized
+    }
+
+    /// 从页面内容中智能提取概念并自动应用双链关联
+    /// - Parameters:
+    ///   - rawPage: 原始已入库页面
+    ///   - processedContent: 已处理好的正文
+    ///   - pageStore: 数据仓储
+    ///   - forceDeepScan: 是否强制深度扫描
+    /// - Returns: 关联构建后的页面对象
+    private func applyConceptLinks(
+        rawPage: KnowledgePage,
+        processedContent: String,
+        pageStore: any AnyPageStore,
+        forceDeepScan: Bool
+    ) async -> KnowledgePage {
+        let allPages = await pageStore.pages
+        let concepts = extractConcepts(from: processedContent, pages: allPages)
+        var updatedContent = rawPage.content
+
+        for concept in concepts {
+            updatedContent = updatedContent.replacingOccurrences(
+                of: concept,
+                with: "[[\(concept)]]"
+            )
+        }
+
+        var page = rawPage
+        page.content = updatedContent
+        await pageStore.anyUpdatePage(page, forceDeepScan: forceDeepScan)
         return page
     }
 

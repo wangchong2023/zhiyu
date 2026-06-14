@@ -109,7 +109,7 @@ final class ServiceContainer: @unchecked Sendable {
         os_unfair_lock_unlock(lockPointer)
         lastResetInfo = "Removed \(removedCount) services: \(removedKeys.sorted().joined(separator: ", "))"
         lastResetTimestamp = Date()
-        os_log(.info, log: diLog, "%{public}@", "[ServiceContainer] reset() executed. \(lastResetInfo!)")
+        os_log(.info, log: diLog, "%{public}@", "[ServiceContainer] reset() executed. \(lastResetInfo ?? "N/A")")
     }
     
     /// 解析服务

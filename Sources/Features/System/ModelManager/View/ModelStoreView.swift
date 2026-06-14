@@ -119,7 +119,34 @@ public struct ModelStoreView: View {
     }
     
     /// 大模型卡片渲染逻辑
+    /// 大模型卡片渲染逻辑
     private func modelCard(for manifest: LLMManifest) -> some View {
+        ModelCardView(
+            manifest: manifest,
+            modelManager: modelManager,
+            alertManifest: $alertManifest,
+            expandedModelId: $expandedModelId
+        )
+    }
+}
+
+// MARK: - 大模型卡片组件
+
+/// 动态大模型卡片视图组件，承载模型的展示与下载/激活逻辑
+private struct ModelCardView: View {
+    /// 模型元数据清单
+    let manifest: LLMManifest
+    
+    /// 全局大模型中台管理器
+    let modelManager: GlobalModelManager
+    
+    /// 警告弹窗的绑定值
+    @Binding var alertManifest: LLMManifest?
+    
+    /// 展开状态下的模型 ID
+    @Binding var expandedModelId: String?
+    
+    var body: some View {
         let isSelected = modelManager.activeModelId == manifest.modelId
         let eligibility = modelManager.evaluateEligibility(for: manifest)
         let downloadState = modelManager.downloadStates[manifest.modelId] ?? .failed(error: "Not Downloaded")
@@ -130,99 +157,99 @@ public struct ModelStoreView: View {
         let borderColor = isSelected ? Color.appAccent : (eligibility == .restricted ? Color.theme.red.opacity(DesignSystem.Opacity.disabled) : Color.appBorder.opacity(DesignSystem.Opacity.prominent))
         let shadowColor = isSelected ? Color.appAccent.opacity(DesignSystem.Opacity.medium) : Color.theme.black.opacity(DesignSystem.Opacity.ghost)
         
-        return VStack(spacing: 0) {
+        VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: DesignSystem.small) {
-            // 头部：标题与状态标签
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: DesignSystem.small) {
-                        Text(manifest.displayName)
-                            .font(.headline)
-                            .foregroundStyle(eligibility == .restricted ? .appSecondary : .appText)
+                // 头部：标题与状态标签
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: DesignSystem.small) {
+                            Text(manifest.displayName)
+                                .font(.headline)
+                                .foregroundStyle(eligibility == .restricted ? .appSecondary : .appText)
+                            
+                            Text(manifest.parameterCount)
+                                .font(.system(size: 10, weight: .bold, design: .monospaced)) // Dynamic Type
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
+                                .clipShape(Capsule())
+                                .foregroundStyle(.appAccent)
+                        }
                         
-                        Text(manifest.parameterCount)
-                            .font(.system(size: 10, weight: .bold, design: .monospaced)) // Dynamic Type
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.appAccent.opacity(DesignSystem.Opacity.glass))
-                            .clipShape(Capsule())
-                            .foregroundStyle(.appAccent)
+                        Text("\(manifest.vendor)    \(formattedSize(manifest.fileSizeInBytes))")
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
                     }
                     
-                    Text("\(manifest.vendor)    \(formattedSize(manifest.fileSizeInBytes))")
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
-                }
-                
-                Spacer()
-                
-                // 绿盾/就绪标签
-                if isLocalReady {
-                    HStack(spacing: 2) {
-                        Image(systemName: "checkmark.shield.fill")
-                        Text("")
+                    Spacer()
+                    
+                    // 绿盾/就绪标签
+                    if isLocalReady {
+                        HStack(spacing: 2) {
+                            Image(systemName: "checkmark.shield.fill")
+                            Text("")
+                        }
+                        .font(.caption2.bold())
+                        .foregroundStyle(.green)
                     }
-                    .font(.caption2.bold())
-                    .foregroundStyle(.green)
                 }
-            }
-            
-            // 说明文案
-            Text(manifest.description)
-                .font(.caption)
-                .foregroundStyle(.appSecondary)
-                .lineLimit(2)
-            
-            // 场景能力标签 (Chips) — 从 Mock/API 数据动态生成
-            if !manifest.supportedTasks.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: DesignSystem.tiny) {
-                        ForEach(manifest.supportedTasks, id: \.self) { task in
-                            Text(taskLabel(for: task))
-                                .font(.system(size: DesignSystem.microFontSize, weight: .medium))
-                                .padding(.horizontal, DesignSystem.small)
-                                .padding(.vertical, DesignSystem.atomic)
-                                .background(taskColor(for: task).opacity(DesignSystem.Opacity.subtle))
-                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
-                                .foregroundStyle(taskColor(for: task))
+                
+                // 说明文案
+                Text(manifest.description)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                    .lineLimit(2)
+                
+                // 场景能力标签 (Chips) — 从 Mock/API 数据动态生成
+                if !manifest.supportedTasks.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: DesignSystem.tiny) {
+                            ForEach(manifest.supportedTasks, id: \.self) { task in
+                                Text(taskLabel(for: task))
+                                    .font(.system(size: DesignSystem.microFontSize, weight: .medium))
+                                    .padding(.horizontal, DesignSystem.small)
+                                    .padding(.vertical, DesignSystem.atomic)
+                                    .background(taskColor(for: task).opacity(DesignSystem.Opacity.subtle))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius))
+                                    .foregroundStyle(taskColor(for: task))
+                            }
                         }
                     }
+                    .padding(.vertical, DesignSystem.atomic)
                 }
-                .padding(.vertical, DesignSystem.atomic)
-            }
-            
-            // 硬件防爆护栏层
-            if eligibility == .restricted {
-                restrictedBanner(for: manifest)
-            } else if eligibility == .warning {
-                warningBanner
-            }
-            
-            Divider()
-                .foregroundStyle(Color.appBorder.opacity(DesignSystem.Opacity.soft))
-            
-            // 底部下载/激活状态交互组
-            HStack {
-                downloadStatusBar(for: manifest, state: downloadState)
                 
-                Spacer()
+                // 硬件防爆护栏层
+                if eligibility == .restricted {
+                    restrictedBanner(for: manifest)
+                } else if eligibility == .warning {
+                    warningBanner
+                }
                 
-                actionButton(for: manifest, eligibility: eligibility, isSelected: isSelected, isLocalReady: isLocalReady, state: downloadState)
+                Divider()
+                    .foregroundStyle(Color.appBorder.opacity(DesignSystem.Opacity.soft))
+                
+                // 底部下载/激活状态交互组
+                HStack {
+                    downloadStatusBar(for: manifest, state: downloadState)
+                    
+                    Spacer()
+                    
+                    actionButton(for: manifest, eligibility: eligibility, isSelected: isSelected, isLocalReady: isLocalReady, state: downloadState)
+                }
             }
-        }
-        .padding()
-        .background(cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
-                .stroke(borderColor, lineWidth: isSelected ? 2 : 1)
-        )
-        .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
-        .onTapGesture {
-            withAnimation(.easeInOut(duration: 0.3)) {
-                expandedModelId = (expandedModelId == manifest.modelId) ? nil : manifest.modelId
+            .padding()
+            .background(cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
+                    .stroke(borderColor, lineWidth: isSelected ? 2 : 1)
+            )
+            .shadow(color: shadowColor, radius: 8, x: 0, y: 4)
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    expandedModelId = (expandedModelId == manifest.modelId) ? nil : manifest.modelId
+                }
             }
-        }
 
             // 展开的 Model Spec Sheet（参照 Gallery Model Management）
             if expandedModelId == manifest.modelId {
@@ -230,7 +257,7 @@ public struct ModelStoreView: View {
             }
         }
     }
-
+    
     // MARK: - Model Spec Sheet（参照 Gallery）
 
     @ViewBuilder
@@ -333,42 +360,66 @@ public struct ModelStoreView: View {
     @ViewBuilder
     private func actionButton(for manifest: LLMManifest, eligibility: DeviceEligibility, isSelected: Bool, isLocalReady: Bool, state: DownloadState) -> some View {
         if eligibility == .restricted {
-            // 物理限制，禁止下载
-            Button(action: { alertManifest = manifest }) {
-                HStack(spacing: 4) {
-                    Image(systemName: "exclamationmark.octagon.fill")
-                    Text("")
-                }
+            restrictedActionButton(for: manifest)
+        } else if isLocalReady {
+            activeActionButton(for: manifest, isSelected: isSelected)
+        } else {
+            downloadActionButton(for: manifest, state: state)
+        }
+    }
+
+    /// 渲染因硬件限制而被拦截的下载按钮
+    /// - Parameter manifest: 模型元数据
+    /// - Returns: 物理内存限制时的警告警告按钮视图
+    private func restrictedActionButton(for manifest: LLMManifest) -> some View {
+        Button(action: { alertManifest = manifest }) {
+            HStack(spacing: 4) {
+                Image(systemName: "exclamationmark.octagon.fill")
+                Text("")
+            }
+            .font(.subheadline.bold())
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color.theme.red.opacity(DesignSystem.Opacity.glass))
+            .foregroundStyle(.red)
+            .clipShape(Capsule())
+        }
+    }
+
+    /// 渲染已就绪模型的激活与选中切换按钮
+    /// - Parameters:
+    ///   - manifest: 模型元数据
+    ///   - isSelected: 是否为当前处于活跃状态的模型
+    /// - Returns: 激活切换按钮视图
+    private func activeActionButton(for manifest: LLMManifest, isSelected: Bool) -> some View {
+        Button(action: {
+            withAnimation {
+                modelManager.activeModelId = manifest.modelId
+            }
+        }) {
+            Text(isSelected ? "" : "")
                 .font(.subheadline.bold())
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(Color.theme.red.opacity(DesignSystem.Opacity.glass))
-                .foregroundStyle(.red)
+                .background(isSelected ? Color.appAccent : Color.appBackground)
+                .foregroundStyle(isSelected ? .white : .appAccent)
                 .clipShape(Capsule())
-            }
-        } else if isLocalReady {
-            // 已下载，可激活
-            Button(action: {
-                withAnimation {
-                    modelManager.activeModelId = manifest.modelId
-                }
-            }) {
-                Text(isSelected ? "" : "")
-                    .font(.subheadline.bold())
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(isSelected ? Color.appAccent : Color.appBackground)
-                    .foregroundStyle(isSelected ? .white : .appAccent)
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(Color.appAccent, lineWidth: isSelected ? 0 : 1)
-                    )
-            }
-        } else {
-            // 未下载或正在下载
-            switch state {
-            case .pending, .downloading:
+                .overlay(
+                    Capsule()
+                        .stroke(Color.appAccent, lineWidth: isSelected ? 0 : 1)
+                )
+        }
+    }
+
+    /// 渲染处于未下载、下载中或已暂停等各状态下的功能按钮组合
+    /// - Parameters:
+    ///   - manifest: 模型元数据
+    ///   - state: 当前模型文件的下载状态
+    /// - Returns: 下载及控制按钮组视图
+    private func downloadActionButton(for manifest: LLMManifest, state: DownloadState) -> some View {
+        switch state {
+        case .pending, .downloading:
+            return AnyView(
                 Button(action: { modelManager.pauseDownload(for: manifest.modelId) }) {
                     Image(systemName: "pause.fill")
                         .font(.caption)
@@ -378,7 +429,9 @@ public struct ModelStoreView: View {
                         .clipShape(Circle())
                         .overlay(Circle().stroke(Color.theme.orange, lineWidth: 1))
                 }
-            case .paused:
+            )
+        case .paused:
+            return AnyView(
                 HStack(spacing: DesignSystem.small) {
                     Button(action: { modelManager.cancelDownload(for: manifest.modelId) }) {
                         Image(systemName: "xmark")
@@ -397,8 +450,9 @@ public struct ModelStoreView: View {
                             .clipShape(Circle())
                     }
                 }
-            default:
-                // Mock 环境：仅显示提示，不执行实际下载
+            )
+        default:
+            return AnyView(
                 Button(action: {
                     Logger.shared.info(" [ModelStore] Download tapped for \(manifest.modelId)")
                 }) {
@@ -413,7 +467,7 @@ public struct ModelStoreView: View {
                     .foregroundStyle(.white)
                     .clipShape(Capsule())
                 }
-            }
+            )
         }
     }
     

@@ -231,75 +231,8 @@ public struct ModelLabView: View {
     private func useCaseDetailPanel(for useCase: UseCaseType) -> some View {
         VStack(spacing: DesignSystem.medium) {
             // 顶部导航栏
-            HStack {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    labManager.stopSimulation()
-                    labManager.selectedUseCase = nil
-                }) {
-                    HStack(spacing: DesignSystem.standardPadding / 2) {
-                        Image(systemName: "chevron.left")
-                        Text(L10n.ModelManager.Lab.back)
-                    }
-                    .foregroundStyle(.cyan)
-                }
-                .buttonStyle(.plain)
-                
-                Spacer()
-                
-                Menu {
-                    ForEach(modelManager.remoteManifests) { model in
-                        if modelManager.isModelLocalReady(for: model.modelId) {
-                            Button {
-                                HapticFeedback.shared.trigger(.selection)
-                                modelManager.activeModelId = model.modelId
-                                // 同步默认超参
-                                tempTemperature = model.defaultParameters.temperature
-                                tempTopP = model.defaultParameters.topP
-                                tempTopK = model.defaultParameters.topK
-                                tempMaxTokens = model.defaultParameters.maxTokens
-                            } label: {
-                                HStack {
-                                    Text(model.displayName)
-                                    if model.modelId == getActiveModel()?.modelId {
-                                        Image(systemName: "checkmark")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(getActiveModel()?.displayName ?? useCase.title)
-                            .font(.headline)
-                            .foregroundStyle(.white)
-                        Image(systemName: "chevron.down")
-                            .font(.caption)
-                            .foregroundStyle(.cyan)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
-                    .clipShape(Capsule())
-                }
-                
-                Spacer()
-                
-                // 参数配置按钮（仿参考图右上角 Configurations 入口）
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    showConfigSheet = true
-                }) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.title3)
-                        .foregroundStyle(.cyan)
-                        .padding(DesignSystem.standardPadding)
-                        .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.bottom, DesignSystem.small)
+            useCaseDetailHeader(for: useCase)
+                .padding(.bottom, DesignSystem.small)
             
             if useCase == .aiChat {
                 aiChatSandboxView
@@ -308,6 +241,87 @@ public struct ModelLabView: View {
             }
         }
         .id(useCase.rawValue)
+    }
+
+    /// 实验室沙盒面板的顶部导航与配置栏视图
+    /// - Parameter useCase: 当前使用的用例类型
+    /// - Returns: 顶部状态和配置项的 HStack 视图
+    private func useCaseDetailHeader(for useCase: UseCaseType) -> some View {
+        HStack {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                labManager.stopSimulation()
+                labManager.selectedUseCase = nil
+            }) {
+                HStack(spacing: DesignSystem.standardPadding / 2) {
+                    Image(systemName: "chevron.left")
+                    Text(L10n.ModelManager.Lab.back)
+                }
+                .foregroundStyle(.cyan)
+            }
+            .buttonStyle(.plain)
+            
+            Spacer()
+            
+            modelSelectionMenu(for: useCase)
+            
+            Spacer()
+            
+            // 参数配置按钮（仿参考图右上角 Configurations 入口）
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                showConfigSheet = true
+            }) {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.title3)
+                    .foregroundStyle(.cyan)
+                    .padding(DesignSystem.standardPadding)
+                    .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    /// 实验室沙盒面板的模型选择下拉菜单视图，仅列出本地已下载就绪的模型
+    /// - Parameter useCase: 当前使用的用例类型
+    /// - Returns: 模型选择的 Menu 下拉视图
+    private func modelSelectionMenu(for useCase: UseCaseType) -> some View {
+        Menu {
+            ForEach(modelManager.remoteManifests) { model in
+                if modelManager.isModelLocalReady(for: model.modelId) {
+                    Button {
+                        HapticFeedback.shared.trigger(.selection)
+                        modelManager.activeModelId = model.modelId
+                        // 同步默认超参
+                        tempTemperature = model.defaultParameters.temperature
+                        tempTopP = model.defaultParameters.topP
+                        tempTopK = model.defaultParameters.topK
+                        tempMaxTokens = model.defaultParameters.maxTokens
+                    } label: {
+                        HStack {
+                            Text(model.displayName)
+                            if model.modelId == getActiveModel()?.modelId {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(getActiveModel()?.displayName ?? useCase.title)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                Image(systemName: "chevron.down")
+                    .font(.caption)
+                    .foregroundStyle(.cyan)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
+            .clipShape(Capsule())
+        }
     }
 
     /// 多轮对话聊天沙盒视图

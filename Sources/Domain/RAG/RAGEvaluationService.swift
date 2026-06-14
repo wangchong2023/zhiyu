@@ -51,60 +51,8 @@ final class RAGEvaluationService {
 
         do {
             let response = try await llmService.generate(prompt: prompt, systemPrompt: systemPrompt)
-            if let data = response.data(using: .utf8),
-               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-
-                let faithfulnessScore = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
-                let relevanceScore = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
-                let precisionScore = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
-                let hallucinationRate = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
-                let citationAccuracy = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
-
-                let status: String
-                if faithfulnessScore < 0.5 {
-                    status = L10n.AI.Eval.Status.fail
-                } else if faithfulnessScore < 0.7 {
-                    status = L10n.AI.Eval.Status.warning
-                } else {
-                    status = L10n.AI.Eval.Status.pass
-                }
-
-                // 持久化评估结果到数据库，然后查询回 ID
-                let eval = RAGEvaluation(
-                    query: query,
-                    answer: answer,
-                    faithfulness: faithfulnessScore,
-                    relevance: relevanceScore,
-                    precision: precisionScore,
-                    hallucinationRate: hallucinationRate,
-                    citationAccuracy: citationAccuracy,
-                    evaluatorModel: AppConfig.AI.evaluatorModel
-                )
-                try? await governanceStore.saveRAGEvaluation(eval)
-                // 查询最新评估获取自增 ID
-                let savedEvals = (try? await governanceStore.fetchRAGEvaluations(limit: 1)) ?? []
-                let savedEvalID = savedEvals.first.flatMap { $0.id }
-
-                // 检索快照 + 相关性标注（仅当有 sources 时）
-                if let sources, let evalID = savedEvalID {
-                    await recordRetrievalQuality(
-                        evalID: evalID,
-                        query: query,
-                        sources: sources,
-                        relevanceScoresJSON: json["relevance_scores"] as? [Int]
-                    )
-                }
-
-                return EvaluationReport(
-                    query: query,
-                    answer: answer,
-                    faithfulness: faithfulnessScore,
-                    relevance: relevanceScore,
-                    precision: precisionScore,
-                    hallucinationRate: hallucinationRate,
-                    citationAccuracy: citationAccuracy,
-                    status: status
-                )
+            if let report = await processEvaluationResponse(response, query: query, answer: answer, sources: sources) {
+                return report
             }
         } catch {
             Logger.shared.error("Evaluation failed", error: error)
@@ -216,5 +164,77 @@ final class RAGEvaluationService {
           "reasoning": "简要说明"
         }
         """
+    }
+
+    /// 处理评估响应结果并将其持久化到数据库
+    /// - Parameters:
+    ///   - response: LLM 返回的响应文本
+    ///   - query: 原始查询
+    ///   - answer: 生成的回答
+    ///   - sources: 检索文档源列表
+    /// - Returns: 构造好的 EvaluationReport
+    private func processEvaluationResponse(
+        _ response: String,
+        query: String,
+        answer: String,
+        sources: [KnowledgeSource]?
+    ) async -> EvaluationReport? {
+        guard let data = response.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+
+        let faithfulnessScore = (json[EvaluationMetric.faithfulness.rawValue] as? Double) ?? 0.0
+        let relevanceScore = (json[EvaluationMetric.relevance.rawValue] as? Double) ?? 0.0
+        let precisionScore = (json[EvaluationMetric.precision.rawValue] as? Double) ?? 0.0
+        let hallucinationRate = (json[EvaluationMetric.hallucinationRate.rawValue] as? Double) ?? 0.0
+        let citationAccuracy = (json[EvaluationMetric.citationAccuracy.rawValue] as? Double) ?? 0.0
+
+        let status: String
+        if faithfulnessScore < 0.5 {
+            status = L10n.AI.Eval.Status.fail
+        } else if faithfulnessScore < 0.7 {
+            status = L10n.AI.Eval.Status.warning
+        } else {
+            status = L10n.AI.Eval.Status.pass
+        }
+
+        // 持久化评估结果到数据库，然后查询回 ID
+        let eval = RAGEvaluation(
+            query: query,
+            answer: answer,
+            faithfulness: faithfulnessScore,
+            relevance: relevanceScore,
+            precision: precisionScore,
+            hallucinationRate: hallucinationRate,
+            citationAccuracy: citationAccuracy,
+            evaluatorModel: AppConfig.AI.evaluatorModel
+        )
+        try? await governanceStore.saveRAGEvaluation(eval)
+        
+        // 查询最新评估获取自增 ID
+        let savedEvals = (try? await governanceStore.fetchRAGEvaluations(limit: 1)) ?? []
+        let savedEvalID = savedEvals.first.flatMap { $0.id }
+
+        // 检索快照 + 相关性标注（仅当有 sources 且有 ID 时）
+        if let sources, let evalID = savedEvalID {
+            await recordRetrievalQuality(
+                evalID: evalID,
+                query: query,
+                sources: sources,
+                relevanceScoresJSON: json["relevance_scores"] as? [Int]
+            )
+        }
+
+        return EvaluationReport(
+            query: query,
+            answer: answer,
+            faithfulness: faithfulnessScore,
+            relevance: relevanceScore,
+            precision: precisionScore,
+            hallucinationRate: hallucinationRate,
+            citationAccuracy: citationAccuracy,
+            status: status
+        )
     }
 }

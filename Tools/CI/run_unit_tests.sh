@@ -20,8 +20,12 @@ SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
 # ── 2. 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
 echo "🔍 收集 @flaky 标记的不稳定测试..."
 FLAKY_ARGS=()
+HAS_FLAKY=false
 while IFS= read -r skip_arg; do
-    [ -n "$skip_arg" ] && FLAKY_ARGS+=("$skip_arg")
+    if [ -n "$skip_arg" ]; then
+        FLAKY_ARGS+=("$skip_arg")
+        HAS_FLAKY=true
+    fi
 done < <(bash Tools/CI/collect_flaky_tests.sh)
 
 # ── 3. 模式解析 ──────────────────────────────────────────────
@@ -44,10 +48,12 @@ XCODEBUILD_ARGS=(
     CODE_SIGNING_REQUIRED=NO
 )
 
-# 追加不稳定测试跳过参数
-for skip_arg in "${FLAKY_ARGS[@]}"; do
-    XCODEBUILD_ARGS+=("$skip_arg")
-done
+# 追加不稳定测试跳过参数（用 flag 守护，避免 bash 3.2 空数组触发 set -u）
+if $HAS_FLAKY; then
+    for skip_arg in "${FLAKY_ARGS[@]}"; do
+        XCODEBUILD_ARGS+=("$skip_arg")
+    done
+fi
 
 # 如果是 CI 模式，指定共享的 SPM 缓存目录以提速构建
 if [ "${CI_MODE}" = "true" ]; then

@@ -585,46 +585,18 @@ public final class AuthService: AuthServiceProtocol {
     /// 从后端拉取最新个人资料并更新本地 User 缓存
     /// 在登录成功或支付激活后调用，保证本地数据与后端同步
     public func refreshUserProfile() async throws {
-        // 1. 拉取个人基本信息
-        struct ProfileResponse: Codable {
-            let userId: Int64
-            let username: String
-            let nick: String
-            let avatar: String?
-            let email: String?
-        }
-        
-        let profile: ProfileResponse = try await NetworkClient.shared.request(
+        let profile: RefreshProfileResponse = try await NetworkClient.shared.request(
             path: "/api/v1/user/profile",
             method: "GET",
             requiresAuth: true
         )
         
-        // 2. 拉取当前订阅套餐信息
-        struct SubscriptionResponse: Codable {
-            let planKey: String?
-            let quotasJson: String?
-            let featuresJson: String?
-        }
-        
-        struct PlanQuotas: Codable {
-            let maxVaults: Int
-            let maxPages: Int
-            let maxPlugins: Int
-            
-            enum CodingKeys: String, CodingKey {
-                case maxVaults = "max_vaults"
-                case maxPages = "max_pages"
-                case maxPlugins = "max_plugins"
-            }
-        }
-        
         var currentPlanKey: String? = "free"
-        var parsedQuotas: PlanQuotas?
+        var parsedQuotas: RefreshPlanQuotas?
         var parsedFeatures: [String] = []
         
         do {
-            let sub: SubscriptionResponse = try await NetworkClient.shared.request(
+            let sub: RefreshSubscriptionResponse = try await NetworkClient.shared.request(
                 path: "/api/v1/subscriptions/me",
                 method: "GET",
                 requiresAuth: true
@@ -632,7 +604,7 @@ public final class AuthService: AuthServiceProtocol {
             currentPlanKey = sub.planKey ?? "free"
             
             if let quotasStr = sub.quotasJson, let data = quotasStr.data(using: .utf8) {
-                parsedQuotas = try? JSONDecoder().decode(PlanQuotas.self, from: data)
+                parsedQuotas = try? JSONDecoder().decode(RefreshPlanQuotas.self, from: data)
             }
             
             if let featuresStr = sub.featuresJson, let data = featuresStr.data(using: .utf8) {
@@ -647,7 +619,7 @@ public final class AuthService: AuthServiceProtocol {
         // 3. 合并更新本地 User 对象
         if let user = AuthSession.shared.currentUser {
             // 如果后端未返回或解析失败，默认给与 Lite (free) 的限制以策安全
-            let defaultLiteQuotas = PlanQuotas(
+            let defaultLiteQuotas = RefreshPlanQuotas(
                 maxVaults: User.DefaultQuotas.liteMaxVaults, 
                 maxPages: User.DefaultQuotas.liteMaxPages, 
                 maxPlugins: User.DefaultQuotas.liteMaxPlugins
@@ -667,6 +639,37 @@ public final class AuthService: AuthServiceProtocol {
             )
             AuthSession.shared.update(user: updated)
         }
+    }
+}
+
+// MARK: - 私有 DTO 结构体
+
+/// 用户基本信息响应体
+private struct RefreshProfileResponse: Codable {
+    let userId: Int64
+    let username: String
+    let nick: String
+    let avatar: String?
+    let email: String?
+}
+
+/// 用户订阅套餐信息响应体
+private struct RefreshSubscriptionResponse: Codable {
+    let planKey: String?
+    let quotasJson: String?
+    let featuresJson: String?
+}
+
+/// 用户订阅配置限额详情
+private struct RefreshPlanQuotas: Codable {
+    let maxVaults: Int
+    let maxPages: Int
+    let maxPlugins: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case maxVaults = "max_vaults"
+        case maxPages = "max_pages"
+        case maxPlugins = "max_plugins"
     }
 }
 

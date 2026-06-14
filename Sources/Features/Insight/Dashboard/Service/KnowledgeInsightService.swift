@@ -37,14 +37,12 @@ actor KnowledgeInsightService {
         // 是否处于自动化 UI 测试模式
         let isTesting = ProcessInfo.processInfo.arguments.contains("--uitesting") || ProcessInfo.processInfo.environment["UITesting"] == "true"
 
-        // 优先从磁盘加载缓存的见解。若在 UI 自动化测试中，必须校验该缓存所指向的页面 targetPageID 是否确实存在于当前笔记本中，防止跨用例、跨笔记本金库热切换时读取了脏缓存。
-        if !forceRefresh, let cached = loadCachedDailyRecap() {
-            if !isTesting || pages.contains(where: { $0.id == cached.targetPageID }) {
-                return cached
-            }
+        // 1. 尝试从本地加载有效缓存
+        if let cached = loadValidCache(pages: pages, forceRefresh: forceRefresh, isTesting: isTesting) {
+            return cached
         }
 
-        // UI 自动化测试靶场下的智能自愈：直接返回本地 Mock 保证 100% 绿通，免除外部大语言模型网络的依赖与波动
+        // 2. 测试靶场下的智能自愈
         if isTesting {
             guard let target = pages.first else {
                 throw AppError.insight(L10n.Dashboard.insight.addPagesFirst)
@@ -61,23 +59,16 @@ actor KnowledgeInsightService {
 
         updateStatus(L10n.AI.Status.extracting)
 
+        // 3. 挑选目标页面以供 RAG 分析
+        let target = try selectTargetPage(pages: pages)
+        
         let now = Date()
-        // ... (省略中间逻辑)
         let calendar = Calendar.current
-        guard let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now),
-              let longTermMin = calendar.date(byAdding: .day, value: -90, to: now),
-              let longTermMax = calendar.date(byAdding: .day, value: -30, to: now) else {
+        guard let recentThreshold = calendar.date(byAdding: .day, value: -3, to: now) else {
             throw AppError.insight(L10n.Insight.dateCalculationFailed, code: -2)
         }
-
         let recentPages = pages.filter { $0.updatedAt >= recentThreshold }
         let recentFocus = recentPages.isEmpty ? L10n.Insight.InsightSection.Daily.noUpdate : recentPages.map { $0.title }.joined(separator: " ")
-
-        let candidates = pages.filter { $0.updatedAt >= longTermMin && $0.updatedAt <= longTermMax }
-        let fallback = pages.sorted { $0.updatedAt < $1.updatedAt }.first
-        guard let target = candidates.randomElement() ?? fallback else {
-            throw AppError.insight(L10n.Dashboard.insight.addPagesFirst)
-        }
 
         let prompt = L10n.Dashboard.insight.daily.promptRecent(recentFocus, target.title, String(target.content.prefix(500)))
 
@@ -85,35 +76,64 @@ actor KnowledgeInsightService {
             let response = try await llmService.generate(prompt: prompt, systemPrompt: L10n.Dashboard.insight.daily.systemPrompt)
             updateStatus(L10n.AI.Status.generating)
 
-            // 提取并解析 JSON (增强鲁棒性：处理多行及 Markdown 代码块)
-            var jsonString: String?
-            if let firstBrace = response.firstIndex(of: "{"),
-               let lastBrace = response.lastIndex(of: "}") {
-                jsonString = String(response[firstBrace...lastBrace])
-            }
-
-            if let jsonData = jsonString?.data(using: .utf8),
-               let json = try? JSONDecoder().decode([String: String].self, from: jsonData) {
-                let recap = DailyRecap(
-                    targetPageID: target.id,
-                    targetPageTitle: target.title,
-                    insight: json["insight"] ?? response,
-                    suggestedConnection: json["suggestedConnection"] ?? ""
-                )
-                saveCachedDailyRecap(recap)
-                return recap
-            } else {
-                let recap = DailyRecap(
-                    targetPageID: target.id,
-                    targetPageTitle: target.title,
-                    insight: response,
-                    suggestedConnection: L10n.Dashboard.insight.recap.tip
-                )
-                saveCachedDailyRecap(recap)
-                return recap
-            }
+            // 4. 提取并解析 LLM 的回复
+            let recap = parseDailyRecapResponse(response, target: target)
+            saveCachedDailyRecap(recap)
+            return recap
         } catch {
             throw error
+        }
+    }
+
+    /// 载入满足测试用例状态或数据完整度的今日见解缓存
+    private func loadValidCache(pages: [KnowledgePage], forceRefresh: Bool, isTesting: Bool) -> DailyRecap? {
+        guard !forceRefresh, let cached = loadCachedDailyRecap() else { return nil }
+        if !isTesting || pages.contains(where: { $0.id == cached.targetPageID }) {
+            return cached
+        }
+        return nil
+    }
+
+    /// 筛选当前知识页面，找到 30~90 天内最近修改的页面或冷页面作为主动召回靶标
+    private func selectTargetPage(pages: [KnowledgePage]) throws -> KnowledgePage {
+        let now = Date()
+        let calendar = Calendar.current
+        guard let longTermMin = calendar.date(byAdding: .day, value: -90, to: now),
+              let longTermMax = calendar.date(byAdding: .day, value: -30, to: now) else {
+            throw AppError.insight(L10n.Insight.dateCalculationFailed, code: -2)
+        }
+
+        let candidates = pages.filter { $0.updatedAt >= longTermMin && $0.updatedAt <= longTermMax }
+        let fallback = pages.sorted { $0.updatedAt < $1.updatedAt }.first
+        guard let target = candidates.randomElement() ?? fallback else {
+            throw AppError.insight(L10n.Dashboard.insight.addPagesFirst)
+        }
+        return target
+    }
+
+    /// 解析大语言模型返回的召回结果 JSON
+    private func parseDailyRecapResponse(_ response: String, target: KnowledgePage) -> DailyRecap {
+        var jsonString: String?
+        if let firstBrace = response.firstIndex(of: "{"),
+           let lastBrace = response.lastIndex(of: "}") {
+            jsonString = String(response[firstBrace...lastBrace])
+        }
+
+        if let jsonData = jsonString?.data(using: .utf8),
+           let json = try? JSONDecoder().decode([String: String].self, from: jsonData) {
+            return DailyRecap(
+                targetPageID: target.id,
+                targetPageTitle: target.title,
+                insight: json["insight"] ?? response,
+                suggestedConnection: json["suggestedConnection"] ?? ""
+            )
+        } else {
+            return DailyRecap(
+                targetPageID: target.id,
+                targetPageTitle: target.title,
+                insight: response,
+                suggestedConnection: L10n.Dashboard.insight.recap.tip
+            )
         }
     }
 

@@ -178,6 +178,14 @@ struct GraphInsightsPanel: View {
             .background(PageBackgroundView(accentColor: .appAccent))
         }
     
+    /// 渲染图分析报告中的单项洞察板块
+    /// - Parameters:
+    ///   - id: 洞察类型的唯一标识
+    ///   - icon: 图标名称
+    ///   - title: 洞察板块的标题
+    ///   - count: 相关元素的统计数量
+    ///   - description: 详细的文字说明
+    ///   - color: 洞察板块的主题颜色
     private func insightSection(id: String, icon: String, title: String, count: Int, description: String, color: Color) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.mediumRadius) {
             // Section header
@@ -220,42 +228,53 @@ struct GraphInsightsPanel: View {
             .accessibilityIdentifier("insight-\(id)")
             
             if expandedSections.contains(id) {
-                Text(description)
-                    .font(.footnote)
-                    .foregroundStyle(.appSecondary)
-                    .padding(.leading, DesignSystem.huge)
-                
-                // Node chips
-                let nodeIDs = getNodeIDs(for: id)
-                if !nodeIDs.isEmpty {
-                    FlowLayout(spacing: DesignSystem.small) {
-                        ForEach(nodeIDs, id: \.self) { nodeID in
-                            if let node = nodes.first(where: { $0.id == nodeID }) {
-                                Button(action: { onSelectNode(nodeID) }) {
-                                    HStack(spacing: DesignSystem.tiny) {
-                                        Image(systemName: node.pageType.icon)
-                                            .font(.footnote)
-                                        Text(node.title)
-                                            .font(.footnote)
-                                            .lineLimit(1)
-                                    }
-                                    .padding(.horizontal, DesignSystem.mediumRadius)
-                                    .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic)
-                                    .background(color.opacity(DesignSystem.glassOpacity))
-                                    .clipShape(Capsule())
-                                    .foregroundStyle(color)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-                    .padding(.leading, DesignSystem.huge)
-                }
+                insightSectionExpandedContent(id: id, description: description, color: color)
             }
         }
         .padding(DesignSystem.medium)
         .background(color.opacity(DesignSystem.glassOpacity / 3))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+    }
+
+    /// 渲染已展开分析板块的详情和节点推荐 Chips
+    /// - Parameters:
+    ///   - id: 洞察类型的唯一标识
+    ///   - description: 详细说明文字
+    ///   - color: 节点 Chips 的渲染主题色
+    private func insightSectionExpandedContent(id: String, description: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.mediumRadius) {
+            Text(description)
+                .font(.footnote)
+                .foregroundStyle(.appSecondary)
+                .padding(.leading, DesignSystem.huge)
+            
+            // Node chips
+            let nodeIDs = getNodeIDs(for: id)
+            if !nodeIDs.isEmpty {
+                FlowLayout(spacing: DesignSystem.small) {
+                    ForEach(nodeIDs, id: \.self) { nodeID in
+                        if let node = nodes.first(where: { $0.id == nodeID }) {
+                            Button(action: { onSelectNode(nodeID) }) {
+                                HStack(spacing: DesignSystem.tiny) {
+                                    Image(systemName: node.pageType.icon)
+                                        .font(.footnote)
+                                    Text(node.title)
+                                        .font(.footnote)
+                                        .lineLimit(1)
+                                }
+                                .padding(.horizontal, DesignSystem.mediumRadius)
+                                .padding(.vertical, DesignSystem.tiny + DesignSystem.atomic)
+                                .background(color.opacity(DesignSystem.glassOpacity))
+                                .clipShape(Capsule())
+                                .foregroundStyle(color)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(.leading, DesignSystem.huge)
+            }
+        }
     }
     
     private func getNodeIDs(for section: String) -> [UUID] {

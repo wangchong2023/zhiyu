@@ -79,14 +79,14 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
             "temperature": AppConfig.AI.defaultTemperature,
             "max_tokens": maxTokens
         ]
-
+ 
         let startTime = Date()
         let response = try await client.sendRequest(body: body)
         let latency = Int(Date().timeIntervalSince(startTime) * 1000)
-
+ 
         // 审计调用时长与 Token 开销
         analytics.recordUsage(model: configManager.model, response: response, latency: latency)
-
+ 
         guard let content = LLMUtils.extractContent(from: response) else {
             throw LLMError.invalidResponse
         }
@@ -111,7 +111,7 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
         
         guard configManager.isEnabled, let chatService = self.chatService else { throw LLMError.notConfigured }
         let sanitizedQuery = PromptSanitizer.shared.sanitize(query)
-
+ 
         // 1. 在 UI 层启动任务中心异步进度条
         let taskID = TaskCenter.shared.addTask(type: .ai, name: "AI Chat", target: sanitizedQuery)
         TaskCenter.shared.updateTask(taskID, status: .running(progress: 0.2, stage: .embedding))
@@ -159,26 +159,15 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
     }
     
     /// 执行基于 AsyncStream 的高性能流式打字机问答
+    /// - Parameters:
+    ///   - query: 查询文本
+    ///   - history: 历史消息记录
+    ///   - pages: 候选知识库页面
+    /// - Returns: 异步打字机字符串流
     func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
         // UI 自动化测试模式下的自愈：模拟流式打字机延迟吐字，验证骨架屏 (Skeleton) 与流中止 (Stop-flow) 机制，规避 API 预检不通导致的测试失败
         if ProcessInfo.processInfo.arguments.contains("--uitesting") {
-            return AsyncThrowingStream { continuation in
-                Task {
-                    // 模拟在发送大语言模型请求之前的 RAG 检索/思考状态，以留出时间给 UI 测试捕获骨架屏
-                    try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
-                    
-                    let mockChunks = ["\u{8FD9}\u{662F}", "\u{5728}", "UI", "\u{6D4B}\u{8BD5}", "\u{4E0B}", "\u{6D41}\u{5F0F}", "\u{751F}\u{6210}", "\u{7684}", "Mock", "\u{5927}\u{6A21}\u{578B}", "\u{56DE}\u{590D}", "\u{5185}\u{5BB9}\u{3002}", "\u{652F}\u{6301}", "RAG", "\u{6DF1}\u{5EA6}", "\u{5F15}\u{7528}", "\u{68C0}\u{7D22}", "\u{81EA}\u{6108}\u{3002}"]
-                    for chunk in mockChunks {
-                        if Task.isCancelled {
-                            break
-                        }
-                        continuation.yield(chunk)
-                        // 模拟字间吐字延迟
-                        try? await Task.sleep(nanoseconds: UInt64(0.15 * 1_000_000_000))
-                    }
-                    continuation.finish()
-                }
-            }
+            return runMockChatStream()
         }
         
         return AsyncThrowingStream { continuation in
@@ -196,52 +185,22 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                 }
  
                 do {
-                    // 0. 连通性预检：发送极短请求验证 API 可达，避免流式请求长时间挂起无反馈
-                    let preflightClient = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
-                    let preflightBody: [String: Any] = [
-                        "model": configManager.model,
-                        "messages": [["role": "user", "content": "ping"]],
-                        "max_tokens": 1,
-                        "temperature": 0
-                    ]
-                    do {
-                        _ = try await preflightClient.sendRequest(body: preflightBody)
-                    } catch {
-                        // 预检失败 → 将底层错误转化为用户友好提示
-                                        logger.error("[ChatRunner] 预检失败 — API 不可达", error: error)
-                        throw LLMError.apiError("LLM API : \(error.localizedDescription)")
-                    }
+                    // 0. 连通性预检
+                    try await performPreflightCheck()
 
-                    // 1. 构建混合上下文，更新引用源
-                    let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
-                    SourceStore.shared.updateSources(sources)
-                    let streamCapturedSources = sources
-                    
-                    // 2. 排序候选文档
-                                let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
-                    
-                    // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
-                    let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
-                    let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
- 
-                    // 🔒 端侧 NER 脱敏 (SR-12)
-                    let (anonSystemPrompt, mapping1) = contextBuilder.anonymize(systemPrompt)
-                    let (anonQuery, mapping2) = contextBuilder.anonymize(sanitizedQuery, existingMapping: mapping1)
-                    
-                    var anonHistory: [ChatMessageDTO] = []
-                    var currentMapping = mapping2
-                    for msg in history {
-                        let (anonContent, nextMapping) = contextBuilder.anonymize(msg.content, existingMapping: currentMapping)
-                        currentMapping = nextMapping
-                        anonHistory.append(ChatMessageDTO(role: msg.role, content: anonContent))
-                    }
+                    // 1 & 2. 构建混合上下文，更新引用源，排序候选文档并脱敏 (SR-12)
+                    let prep = try await prepareChatContextAndAnonymize(
+                        sanitizedQuery: sanitizedQuery,
+                        history: history,
+                        pages: pages
+                    )
 
                     var fullResponse = ""
                     // 初始化流式解码器
-                    var deanonymizer = StreamDeanonymizer(mapping: currentMapping)
+                    var deanonymizer = StreamDeanonymizer(mapping: prep.currentMapping)
                     
                     // 3. 消费打字机流片段
-                    for try await chunk in chatService.streamChat(systemPrompt: anonSystemPrompt, query: anonQuery, history: anonHistory) {
+                    for try await chunk in chatService.streamChat(systemPrompt: prep.anonSystemPrompt, query: prep.anonQuery, history: prep.anonHistory) {
                         fullResponse += chunk
                         
                         // 🔓 流式端侧解密还原 (SR-12)
@@ -257,14 +216,111 @@ final class ChatRunner: LLMChatServiceProtocol, @unchecked Sendable {
                     }
  
                     // 4. 异步归档 RAG 精准度元数据以做治理评估，保存完整的原文以作归档
-                    let fullDeanonymizedResponse = contextBuilder.deanonymize(fullResponse, mapping: currentMapping)
-                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullDeanonymizedResponse, context: context, sources: streamCapturedSources, systemPrompt: systemPrompt, modelName: configManager.model, latency: 0)
+                    let fullDeanonymizedResponse = contextBuilder.deanonymize(fullResponse, mapping: prep.currentMapping)
+                    analytics.recordRAGMetrics(query: sanitizedQuery, response: fullDeanonymizedResponse, context: prep.context, sources: prep.streamCapturedSources, systemPrompt: prep.systemPrompt, modelName: configManager.model, latency: 0)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
                 }
             }
         }
+    }
+ 
+    /// 在 UI 自动化测试模式下生成 Mock 流式打字机回复数据
+    /// - Returns: 模拟的 AsyncThrowingStream 字符串流
+    private func runMockChatStream() -> AsyncThrowingStream<String, Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                // 模拟在发送大语言模型请求之前的 RAG 检索/思考状态，以留出时间给 UI 测试捕获骨架屏
+                try? await Task.sleep(nanoseconds: UInt64(1.5 * 1_000_000_000))
+                
+                let mockChunks = ["\u{8FD9}\u{662F}", "\u{5728}", "UI", "\u{6D4B}\u{8BD5}", "\u{4E0B}", "\u{6D41}\u{5F0F}", "\u{751F}\u{6210}", "\u{7684}", "Mock", "\u{5927}\u{6A21}\u{578B}", "\u{56DE}\u{590D}", "\u{5185}\u{5BB9}\u{3002}", "\u{652F}\u{6301}", "RAG", "\u{6DF1}\u{5EA6}", "\u{5F15}\u{7528}", "\u{68C0}\u{7D22}", "\u{81EA}\u{6108}\u{3002}"]
+                for chunk in mockChunks {
+                    if Task.isCancelled {
+                        break
+                    }
+                    continuation.yield(chunk)
+                    // 模拟字间吐字延迟
+                    try? await Task.sleep(nanoseconds: UInt64(0.15 * 1_000_000_000))
+                }
+                continuation.finish()
+            }
+        }
+    }
+ 
+    /// 执行连通性预检，发送极短请求验证 API 可达性
+    /// - Throws: `LLMError.apiError` 或预检失败错误
+    private func performPreflightCheck() async throws {
+        let preflightClient = LLMClient(baseURL: configManager.baseURL, apiKey: configManager.apiKey)
+        let preflightBody: [String: Any] = [
+            "model": configManager.model,
+            "messages": [["role": "user", "content": "ping"]],
+            "max_tokens": 1,
+            "temperature": 0
+        ]
+        do {
+            _ = try await preflightClient.sendRequest(body: preflightBody)
+        } catch {
+            logger.error("[ChatRunner] 预检失败 — API 不可达", error: error)
+            throw LLMError.apiError("LLM API : \(error.localizedDescription)")
+        }
+    }
+ 
+    /// 临时存储 RAG 混合上下文及脱敏匿名化结果的容器结构体
+    private struct ChatPreparationResult {
+        let anonSystemPrompt: String
+        let anonQuery: String
+        let anonHistory: [ChatMessageDTO]
+        let currentMapping: [String: String]
+        let context: String
+        let systemPrompt: String
+        let streamCapturedSources: [KnowledgeSource]
+    }
+ 
+    /// 构建混合上下文并执行端侧 NER 脱敏匿名化
+    /// - Parameters:
+    ///   - sanitizedQuery: 经过清理的用户查询
+    ///   - history: 历史消息列表
+    ///   - pages: 候选知识页面列表
+    /// - Returns: 处理完成的脱敏数据包
+    private func prepareChatContextAndAnonymize(
+        sanitizedQuery: String,
+        history: [ChatMessageDTO],
+        pages: [any KnowledgePageRepresentable]
+    ) async throws -> ChatPreparationResult {
+        // 1. 构建混合上下文，更新引用源
+        let (context, sources) = await contextBuilder.buildRelevantContext(query: sanitizedQuery)
+        SourceStore.shared.updateSources(sources)
+        let streamCapturedSources = sources
+        
+        // 2. 排序候选文档
+        let rankedPages = (try? await reranker.rerank(query: sanitizedQuery, candidates: pages)) ?? pages
+        
+        // 🛡️ 安全加固：对召回上下文执行 DLP 图像过滤，并注入金沙箱隔离包装
+        let sandboxedContext = PromptSanitizer.shared.wrapInSandbox(context)
+        let systemPrompt = contextBuilder.buildSystemPrompt(pages: rankedPages) + "\n\n" + sandboxedContext
+ 
+        // 🔒 端侧 NER 脱敏 (SR-12)
+        let (anonSystemPrompt, mapping1) = contextBuilder.anonymize(systemPrompt)
+        let (anonQuery, mapping2) = contextBuilder.anonymize(sanitizedQuery, existingMapping: mapping1)
+        
+        var anonHistory: [ChatMessageDTO] = []
+        var currentMapping = mapping2
+        for msg in history {
+            let (anonContent, nextMapping) = contextBuilder.anonymize(msg.content, existingMapping: currentMapping)
+            currentMapping = nextMapping
+            anonHistory.append(ChatMessageDTO(role: msg.role, content: anonContent))
+        }
+        
+        return ChatPreparationResult(
+            anonSystemPrompt: anonSystemPrompt,
+            anonQuery: anonQuery,
+            anonHistory: anonHistory,
+            currentMapping: currentMapping,
+            context: context,
+            systemPrompt: systemPrompt,
+            streamCapturedSources: streamCapturedSources
+        )
     }
 }
 
@@ -280,8 +336,8 @@ struct StreamDeanonymizer: Sendable {
     }
     
     /// 处理
-    /// /// - Parameter chunk: 分块
-    /// /// - Returns: 字符串
+    /// - Parameter chunk: 分块
+    /// - Returns: 字符串
     mutating func process(chunk: String) -> String {
         var output = ""
         let text = buffer + chunk
@@ -326,7 +382,7 @@ struct StreamDeanonymizer: Sendable {
     }
     
     /// finalize
-    /// /// - Returns: 字符串
+    /// - Returns: 字符串
     mutating func finalize() -> String {
         let remaining = buffer
         return remaining

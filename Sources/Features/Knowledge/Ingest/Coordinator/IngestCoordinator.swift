@@ -94,47 +94,30 @@ final class IngestCoordinator {
         }
         isIngesting = true
         lastImportTime = Date()
-        let title = newTitle, content = newContent, type = newType, icon = newCustomIcon, smart = useSmartIngest
-        let category = sourceHint.rawValue
         let recordID = UUID().uuidString
-        let sourceName = sourceHint.displayName
 
-        // rawText 以 Markdown 格式存储，带来源头
-        let rawText = "> \(L10n.Ingest.sourcePrefix)\(sourceName) | \(Date().formatted(date: .numeric, time: .shortened))\n\n\(content)"
-        let textPath = fileStore.saveContent(rawText, category: sourceHint, ext: "md")
-
-        // OCR：额外保存原始图片文件
-        var imagePath: String?
-        if sourceHint == .ocr, let imgData = pendingImageData {
-            if imgData.count > AppConstants.Keys.ImportLimits.maxOCRImageSizeBytes {
-                pendingImageData = nil
-                isIngesting = false
-                lastImportTime = .distantPast
-                errorMessage = L10n.Ingest.imageTooLarge
-                showError = true
-                return
-            }
-            imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
-            pendingImageData = nil
+        // 1. 保存多媒体及文本的本地临时文件
+        guard let prep = prepareImportFiles(recordID: recordID) else {
+            return
         }
 
-        // 语音：录音已由 AVAudioRecorder 直接存入 Documents/import_records/
-        var voicePath: String?
-        if sourceHint == .voice, let audioURL = pendingVoiceFileURL {
-            voicePath = audioURL.path
-            pendingVoiceFileURL = nil
-        }
-        let savedPath = imagePath ?? voicePath ?? textPath
+        let title = newTitle
+        let content = newContent
+        let type = newType
+        let icon = newCustomIcon
+        let smart = useSmartIngest
+        let category = sourceHint.rawValue
 
-        // 创建导入记录
+        // 2. 创建本地历史导入记录
         let record = ImportRecord(
             id: recordID, category: category, title: title,
-            status: ImportRecordStatus.processing, rawText: rawText,
-            sourceURL: nil, filePath: savedPath,
+            status: ImportRecordStatus.processing, rawText: prep.rawText,
+            sourceURL: nil, filePath: prep.savedPath,
             vaultID: VaultService.shared.selectedVaultID?.uuidString
         )
         Task { try? await importRecordRepo.save(record) }
 
+        // 3. 执行真正的知识库写入及双链提取
         Task {
             do {
                 let page = try await ingestStore.performIngest(
@@ -173,88 +156,140 @@ final class IngestCoordinator {
         }
     }
 
+    /// 预备保存导入的多媒体及文本文件
+    /// - Parameter recordID: 导入记录唯一标识
+    /// - Returns: 返回保存的路径和带有来源信息的原始文本内容，如果因大小超限失败则返回 nil
+    private func prepareImportFiles(recordID: String) -> (savedPath: String, rawText: String)? {
+        let content = newContent
+        let sourceName = sourceHint.displayName
+        
+        // rawText 以 Markdown 格式存储，带来源头
+        let rawText = "> \(L10n.Ingest.sourcePrefix)\(sourceName) | \(Date().formatted(date: .numeric, time: .shortened))\n\n\(content)"
+        let textPath = fileStore.saveContent(rawText, category: sourceHint, ext: "md")
+
+        // OCR：额外保存原始图片文件
+        var imagePath: String?
+        if sourceHint == .ocr, let imgData = pendingImageData {
+            if imgData.count > AppConstants.Keys.ImportLimits.maxOCRImageSizeBytes {
+                pendingImageData = nil
+                isIngesting = false
+                lastImportTime = .distantPast
+                errorMessage = L10n.Ingest.imageTooLarge
+                showError = true
+                return nil
+            }
+            imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
+            pendingImageData = nil
+        }
+
+
+
     /// 处理File导入
-    /// - Parameter result: result
+    /// - Parameter result: 导入结果元组
     func handleFileImport(_ result: Result<[URL], Error>) {
         guard !isImporting else {
             ToastManager.shared.show(type: .info, message: L10n.Ingest.importCooldown)
             return
         }
-        if case .success(let urls) = result {
+        switch result {
+        case .success(let urls):
             for url in urls {
-                _ = url.startAccessingSecurityScopedResource()
-                let fileName = url.lastPathComponent
-                lastImportTime = Date()
-                let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: fileName)
-                let recordID = UUID().uuidString
-
-                // 获取文件大小，超过限制则拒绝
-                let fileSize: Int64? = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize.map(Int64.init)
-                if let size = fileSize, size > AppConstants.Keys.ImportLimits.maxFileSizeBytes {
-                    url.stopAccessingSecurityScopedResource()
-                    lastImportTime = .distantPast
-                    Task { @MainActor in
-                        ToastManager.shared.show(type: .error, message: L10n.Ingest.fileTooLarge)
-                    }
-                    continue
-                }
-
-                // 对文本类文件读取原文作为 rawText（PDF 等二进制靠 filePath + QuickLook）
-                let textContent: String? = {
-                    let ext = url.pathExtension.lowercased()
-                    guard ["md", "txt", "markdown", "rtf"].contains(ext) else { return nil }
-                    return try? String(contentsOf: url, encoding: .utf8)
-                }()
-
-                let record = ImportRecord(
-                    id: recordID, category: ImportCategory.file.rawValue,
-                    title: fileName, status: ImportRecordStatus.processing,
-                    rawText: textContent,
-                    filePath: url.path, fileSize: fileSize,
-                    vaultID: VaultService.shared.selectedVaultID?.uuidString
-                )
-                Task {
-                    let existing = (try? await importRecordRepo.fetchAll(category: ImportCategory.file.rawValue, limit: 1000)) ?? []
-                    if existing.contains(where: { $0.filePath == url.path && $0.status == ImportRecordStatus.done }) {
-                        await MainActor.run {
-                            ToastManager.shared.show(type: .info, message: L10n.Ingest.duplicateFile(fileName))
-                        }
-                        url.stopAccessingSecurityScopedResource()
-                        return
-                    }
-                    try? await importRecordRepo.save(record)
-                }
-
-                Task {
-                    defer { url.stopAccessingSecurityScopedResource() }
-                    // 提取文档图片并 OCR
-                    let ocrText = await extractImagesFromFile(url: url)
-                    if !ocrText.isEmpty, var existingText = textContent {
-                        existingText += ocrText
-                        try? await importRecordRepo.updateRawText(id: recordID, rawText: existingText)
-                    }
-                    let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
-                    await MainActor.run {
-                        if let page = page {
-                            Task { @MainActor in
-                                try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
-                                try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
-                            }
-                            TaskCenter.shared.updateTask(taskID, status: .completed)
-                            HapticFeedback.shared.trigger(.success)
-                        } else {
-                            Task { @MainActor in
-                                try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
-                            }
-                            TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
-                            HapticFeedback.shared.trigger(.error)
-                        }
-                    }
-                }
+                importSingleFile(at: url)
             }
-        } else if case .failure(let error) = result {
+        case .failure(let error):
             errorMessage = error.localizedDescription
             showError = true
+        }
+    }
+
+    /// 处理单个本地文档文件的安全导入与 OCR 处理
+    /// - Parameter url: 文档文件的沙盒 URL 路径
+    private func importSingleFile(at url: URL) {
+        _ = url.startAccessingSecurityScopedResource()
+        let fileName = url.lastPathComponent
+        lastImportTime = Date()
+        let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: fileName)
+        let recordID = UUID().uuidString
+
+        // 获取文件大小，超过限制则拒绝
+        let fileSize: Int64? = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize.map(Int64.init)
+        if let size = fileSize, size > AppConstants.Keys.ImportLimits.maxFileSizeBytes {
+            url.stopAccessingSecurityScopedResource()
+            lastImportTime = .distantPast
+            Task { @MainActor in
+                ToastManager.shared.show(type: .error, message: L10n.Ingest.fileTooLarge)
+            }
+            return
+        }
+
+        // 对文本类文件读取原文作为 rawText（PDF 等二进制靠 filePath + QuickLook）
+        let textContent: String? = {
+            let ext = url.pathExtension.lowercased()
+            guard ["md", "txt", "markdown", "rtf"].contains(ext) else { return nil }
+            return try? String(contentsOf: url, encoding: .utf8)
+        }()
+
+        let record = ImportRecord(
+            id: recordID, category: ImportCategory.file.rawValue,
+            title: fileName, status: ImportRecordStatus.processing,
+            rawText: textContent,
+            filePath: url.path, fileSize: fileSize,
+            vaultID: VaultService.shared.selectedVaultID?.uuidString
+        )
+        
+        Task {
+            let existing = (try? await importRecordRepo.fetchAll(category: ImportCategory.file.rawValue, limit: 1000)) ?? []
+            if existing.contains(where: { $0.filePath == url.path && $0.status == ImportRecordStatus.done }) {
+                await MainActor.run {
+                    ToastManager.shared.show(type: .info, message: L10n.Ingest.duplicateFile(fileName))
+                }
+                url.stopAccessingSecurityScopedResource()
+                return
+            }
+            try? await importRecordRepo.save(record)
+            
+            // 异步执行后续的文件导入任务
+            executeImportTask(at: url, recordID: recordID, textContent: textContent, taskID: taskID)
+        }
+    }
+
+    /// 异步执行文件导入的后台任务，包括 OCR 提取及最终文档摄入
+    /// - Parameters:
+    ///   - url: 文档文件的沙盒 URL
+    ///   - recordID: 导入记录的唯一标识
+    ///   - textContent: 文件已有的原始文本内容
+    ///   - taskID: 关联的任务 ID
+    private func executeImportTask(
+        at url: URL,
+        recordID: String,
+        textContent: String?,
+        taskID: UUID
+    ) {
+        Task {
+            defer { url.stopAccessingSecurityScopedResource() }
+            // 提取文档图片并 OCR
+            let ocrText = await extractImagesFromFile(url: url)
+            if !ocrText.isEmpty, var existingText = textContent {
+                existingText += ocrText
+                try? await importRecordRepo.updateRawText(id: recordID, rawText: existingText)
+            }
+            let page = await store.ingestService.ingestDocument(at: url, pageStore: store)
+            await MainActor.run {
+                if let page = page {
+                    Task { @MainActor in
+                        try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
+                        try? await importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+                    }
+                    TaskCenter.shared.updateTask(taskID, status: .completed)
+                    HapticFeedback.shared.trigger(.success)
+                } else {
+                    Task { @MainActor in
+                        try? await importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
+                    }
+                    TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
+                    HapticFeedback.shared.trigger(.error)
+                }
+            }
         }
     }
 

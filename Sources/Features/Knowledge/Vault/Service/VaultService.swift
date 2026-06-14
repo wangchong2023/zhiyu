@@ -86,32 +86,10 @@ public final class VaultService: VaultServiceProtocol {
                 let loadedVaults = try await vaultRepository.fetchAllVaults()
                 if loadedVaults.isEmpty {
                     // 2. 冷启动：初始化演示金库数据（通过 L10n 支持多语言翻译）
-                    let id1 = UUID()
-                    let id2 = UUID()
-                    self.vaults = [
-                        Vault(
-                            id: id1,
-                            name: L10n.Vault.defaultName,
-                            createdAt: Date(),
-                            updatedAt: Date(),
-                            pageCount: 0,
-                            themePayload: nil,
-                            icon: DesignSystem.Icons.Notebook.defaultBook,
-                            description: L10n.Vault.defaultDescription
-                        ),
-                        Vault(
-                            id: id2,
-                            name: L10n.Vault.researchName,
-                            createdAt: Date(),
-                            updatedAt: Date(),
-                            pageCount: 0,
-                            themePayload: nil,
-                            icon: DesignSystem.Icons.Notebook.defaultResearch,
-                            description: L10n.Vault.researchDescription
-                        )
-                    ]
+                    let demo = buildDefaultDemoVaults()
+                    self.vaults = demo
                     // 3. 将初始化的演示笔记本原子注册并写入全局配置数据库
-                    for vault in self.vaults {
+                    for vault in demo {
                         try await vaultRepository.saveVault(vault)
                     }
                 } else {
@@ -120,32 +98,70 @@ public final class VaultService: VaultServiceProtocol {
             } catch {
                 Logger.shared.error(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)", error: error)
                 // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
-                self.vaults = [
-                    Vault(
-                        id: UUID(),
-                        name: L10n.Vault.defaultName,
-                        createdAt: Date(),
-                        updatedAt: Date(),
-                        pageCount: 12,
-                        themePayload: nil,
-                        icon: DesignSystem.Icons.Notebook.defaultBook,
-                        description: L10n.Vault.defaultDescription
-                    ),
-                    Vault(
-                        id: UUID(),
-                        name: L10n.Vault.researchName,
-                        createdAt: Date(),
-                        updatedAt: Date(),
-                        pageCount: 5,
-                        themePayload: nil,
-                        icon: DesignSystem.Icons.Notebook.defaultResearch,
-                        description: L10n.Vault.researchDescription
-                    )
-                ]
+                self.vaults = buildFallbackDemoVaults()
             }
         }
         
         // 5. 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
+        autoRestoreActiveVault()
+    }
+
+    /// 构建初始化的默认演示笔记本
+    private func buildDefaultDemoVaults() -> [Vault] {
+        let id1 = UUID()
+        let id2 = UUID()
+        return [
+            Vault(
+                id: id1,
+                name: L10n.Vault.defaultName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 0,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultBook,
+                description: L10n.Vault.defaultDescription
+            ),
+            Vault(
+                id: id2,
+                name: L10n.Vault.researchName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 0,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultResearch,
+                description: L10n.Vault.researchDescription
+            )
+        ]
+    }
+
+    /// 极端降级兜底：建立支持多语言本地化的内存级缓存金库
+    private func buildFallbackDemoVaults() -> [Vault] {
+        return [
+            Vault(
+                id: UUID(),
+                name: L10n.Vault.defaultName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 12,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultBook,
+                description: L10n.Vault.defaultDescription
+            ),
+            Vault(
+                id: UUID(),
+                name: L10n.Vault.researchName,
+                createdAt: Date(),
+                updatedAt: Date(),
+                pageCount: 5,
+                themePayload: nil,
+                icon: DesignSystem.Icons.Notebook.defaultResearch,
+                description: L10n.Vault.researchDescription
+            )
+        ]
+    }
+
+    /// 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
+    private func autoRestoreActiveVault() {
         if let idString = UserDefaults.standard.string(forKey: AppConstants.Keys.Storage.vaultsSelectedID),
            let id = UUID(uuidString: idString),
            vaults.contains(where: { $0.id == id }) {
