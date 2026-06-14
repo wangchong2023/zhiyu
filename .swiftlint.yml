@@ -2,8 +2,14 @@
 #
 # 作者: Wang Chong
 # 功能说明: 智宇 (ZhiYu) 项目的全局 SwiftLint 编码规范清单
-# 版本: 2.1
-# 日期: 2026-06-12
+# 版本: 2.2
+# 日期: 2026-06-14
+#
+# 变更 (v2.2):
+#   - 收紧圈复杂度熔断门禁：cyclomatic_complexity error 16 → 10，warning 调至 8 作为预警缓冲
+#   - 收紧函数体长度熔断门禁：function_body_length error 120 → 50，warning 调至 40 作为预警缓冲
+#   - 修正 v2.1 P1a 遗留：function_body_length 实际未进入 disabled_rules，此处显式生效并升格为硬门禁
+#   - 校准测量口径：NBNC（排除空行与注释的有效代码行）与 function_body_length 默认口径一致
 #
 # 变更 (v2.1):
 #   - P1a: 移出 nesting、function_parameter_count、function_body_length 配置并回归至 disabled_rules，避免配置冲突
@@ -123,15 +129,22 @@ large_tuple:
   warning: 2
   error: 4
 
-# 7. 圈复杂度（放宽以避免过度拆分异步流处理函数）
+# 7. 圈复杂度（硬性熔断门禁：目标 CCN < 10 才放行）
+#    - error:10 由 SwiftLint 判定 CCN ≥ 11 为 error
+#    - CCN = 10 落在 warning 区，依赖 CI 的 `swiftlint --strict` 提级为 error 一并熔断
+#    - 故实际放行线为 CCN ≤ 9；warning 8 为预警缓冲，便于提前发现趋势
 cyclomatic_complexity:
-  warning: 10
-  error: 16
+  warning: 8
+  error: 10
 
-# 7.5 函数长度审计限制
+# 7.5 函数长度审计限制（NBNC 硬性熔断门禁：目标 NBNC < 50 才放行）
+#    - error:50 由 SwiftLint 判定 NBNC ≥ 51 为 error
+#    - NBNC = 50 落在 warning 区，依赖 CI 的 `swiftlint --strict` 提级为 error 一并熔断
+#    - 故实际放行线为 NBNC ≤ 49；warning 40 为预警缓冲
+#    - 测量口径：排除空行与注释后的有效代码行，与 NBNC 定义一致
 function_body_length:
-  warning: 60
-  error: 120
+  warning: 40
+  error: 50
 
 # 8. 自定义校验规则 (门禁拦截魔鬼数字与字符串)
 custom_rules:

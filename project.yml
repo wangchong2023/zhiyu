@@ -59,7 +59,7 @@ targets:
         NSSupportsLiveActivities: YES
         SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
     preBuildScripts:
-      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
+      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
         name: "[Gatekeeper] SwiftLint Quality Audit"
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_domain_purity.py"
@@ -126,7 +126,7 @@ targets:
         Release:
           CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
     preBuildScripts:
-      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
+      - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
         name: "[Gatekeeper] SwiftLint Quality Audit"
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_domain_purity.py"

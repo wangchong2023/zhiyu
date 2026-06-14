@@ -27,7 +27,9 @@ final class AppEnvironment {
 
     // ── 系统级状态 ──
     let themeManager: ThemeManager
-    let llmService: LLMService
+    /// 延迟计算：LLMService.shared 内部 @Inject 依赖 DI 容器，
+    /// 必须在 registerDIModules() 之后才能首次访问，故用计算属性。
+    var llmService: LLMService { LLMService.shared }
     var llmConfig: LLMConfigManager   // var：init 中先赋初值，DI 就绪后重新解析
     
     private init() {
@@ -35,7 +37,7 @@ final class AppEnvironment {
         self.router = Router.shared
         self.themeManager = ThemeManager.shared
         self.llmConfig = LLMConfigManager()
-        self.llmService = LLMService.shared
+        // llmService 为计算属性，首次访问时自动触发 LLMService.shared（此时 DI 已就绪）
         self.ingestStore = IngestStore()
         self.synthesisStore = SynthesisStore()
         self.store = AppStore()
