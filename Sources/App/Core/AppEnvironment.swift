@@ -94,6 +94,24 @@ final class AppEnvironment {
             // 生产环境下可考虑弹出警报，开发环境下此处失败将导致后续 register 报错并 panic
         }
         
+        // 🧪 XCTest 环境：跳过完整生产链，仅做最小化初始化
+        // AppEnvironment 在测试中被 SettingsViewTests / ComponentSnapshots 访问，
+        // 仅用于满足 SwiftUI @Environment 注入。不应运行生产级 DI + 后台 Task，
+        // 否则会留下无法排干的 @MainActor Tasks，触发 _swift_task_dealloc_specific 崩溃。
+        if isRunningInTests || CommandLine.arguments.contains("-UITest_MockData") {
+            Logger.shared.info("[AppEnvironment] Test mode — using lightweight initialization (no production DI chain, no background tasks)")
+            self.router = Router.shared
+            self.themeManager = ThemeManager.shared
+            self.llmConfig = LLMConfigManager()
+            self.llmService = LLMService.shared
+            self.ingestStore = IngestStore()
+            self.synthesisStore = SynthesisStore()
+            self.store = AppStore()
+            // 不注册 DI、不标记 productionChain、不启动后台 Task
+            Logger.shared.info("[AppEnvironment] Lightweight initialization completed at \(Date())")
+            return
+        }
+
         // 1. 执行模块化注册 (L0 - L3)
         CoreModuleRegistrar.register(in: ServiceContainer.shared)
         StorageModuleRegistrar.register(in: ServiceContainer.shared)
@@ -110,25 +128,20 @@ final class AppEnvironment {
         AppModuleRegistrar.register(in: ServiceContainer.shared)
 
         // 标记生产 DI 链完成 — 禁止测试中 reset() 清空容器
-        // ⚠️ 在 XCTest 环境下跳过此标记，允许测试 tearDown 正常 reset DI 容器
-        if !isRunningInTests && !CommandLine.arguments.contains("-UITest_MockData") {
-            ServiceContainer.shared.markProductionChainComplete()
-        } else {
-            Logger.shared.info("[AppEnvironment] Skipping markProductionChainComplete() — running in test environment, DI container reset remains available for test isolation")
-        }
+        ServiceContainer.shared.markProductionChainComplete()
 
         // 1.5 在模块注册完成后，解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
         self.router = Router.shared
         self.themeManager = ThemeManager.shared
         self.llmConfig = ServiceContainer.shared.resolve(LLMConfigManager.self)
         self.llmService = LLMService.shared
-        
+
         // 2. 初始化业务层 Stores
         // 确保在依赖注册完成后再实例化，防止 @Inject 导致的崩溃
         self.ingestStore = IngestStore()
         self.synthesisStore = SynthesisStore()
         self.store = AppStore()
-        
+
         // 3. 将核心 Store 注册到 DI 容器，支持各处 @Inject 调用
         let container = ServiceContainer.shared
         container.register(self.store, for: AppStore.self)
@@ -139,17 +152,17 @@ final class AppEnvironment {
         container.register(self.store.aiWorkflowStore as any AIWorkflowCapabilities, for: (any AIWorkflowCapabilities).self)
         container.register(self.store.aiInsightStore, for: AIInsightStore.self)
         container.register(self.store.tagStore, for: TagStore.self)
-        
+
         // 4. 配置全局 UI 样式 (iOS)
         #if os(iOS)
         UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color.appAccent)
         #endif
-        
+
         // 5. 异步触发数据种子化 (确保所有 DI 注册已完成且主线程已释放)
         Task {
             // 5.1 启动 StoreKit 2 Transaction 持久监听（审核必须项：家庭共享、订阅续费、恢复购买均依赖此监听）
             StoreKitService.shared.startListening()
-            
+
             await self.store.seedDefaultContent()
             // 🎬 异步安全触发数据同步编排，此时所有底层注册和上层 Store 均已彻底就绪，避免时序闪退
             ServiceContainer.shared.resolve(DataCoordinator.self).sync()

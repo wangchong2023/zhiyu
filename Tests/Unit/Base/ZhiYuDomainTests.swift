@@ -29,9 +29,6 @@ final class ZhiYuDomainTests: XCTestCase {
     override func tearDown() async throws {
         TaskCenter.shared.reset()
         PromptService.shared.reset()
-        // 排干挂起的异步任务，防止 _swift_task_dealloc_specific 崩溃
-        // @MainActor Tasks 必须在 MainActor 上完成释放，而非 XCTest 后台线程
-        try? await Task.sleep(nanoseconds: 100_000_000)
         DatabaseManager.shared.reset()
         ServiceContainer.shared.reset()
         try await super.tearDown()
