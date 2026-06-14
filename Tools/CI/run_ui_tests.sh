@@ -10,16 +10,12 @@ SCHEME="ZhiYu"
 DEST="platform=iOS Simulator,name=iPhone 17 Pro"
 DERIVED="build/DerivedData"
 
-# ── 跳过不稳定测试 ───────────────────────────────────────────────
-# Monkey 随机遍历测试本质不稳定（随机路径 + isHittable 帧状态依赖），CI 中显式跳过
-SKIP_TESTS=(
-    "ZhiYuUITests/ZhiYuMonkeyTests/testWildMonkeyClickTraversal"
-)
-
-SKIP_ARGS=()
-for test_item in "${SKIP_TESTS[@]}"; do
-    SKIP_ARGS+=("-skip-testing:${test_item}")
-done
+# ── 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
+echo "🔍 收集 @flaky 标记的不稳定测试..."
+FLAKY_ARGS=()
+while IFS= read -r skip_arg; do
+    [ -n "$skip_arg" ] && FLAKY_ARGS+=("$skip_arg")
+done < <(bash Tools/CI/collect_flaky_tests.sh)
 
 set +e
 xcodebuild test-without-building \
@@ -27,7 +23,7 @@ xcodebuild test-without-building \
   -scheme "${SCHEME}" \
   -destination "${DEST}" \
   -only-testing:ZhiYuUITests \
-  "${SKIP_ARGS[@]}" \
+  "${FLAKY_ARGS[@]}" \
   -enableCodeCoverage YES \
   -derivedDataPath "${DERIVED}" \
   -parallel-testing-enabled YES \

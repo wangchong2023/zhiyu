@@ -17,17 +17,12 @@ DESTINATION="platform=iOS Simulator,name=iPhone 17 Pro"
 DERIVED_DATA_PATH="build/DerivedData-ios"
 SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
 
-# ── 2. 测试排除列表 (跳过不稳定、UI交互及超大规模压力测试) ──────────────────
-SKIP_TESTS=(
-    "ZhiYuUITests/ZhiYuUITests/testChatAISkeletonLoadingState"
-    "ZhiYuUITests/IngestTests/testManualEntrySectionExists"
-    "ZhiYuUITests/IngestTests/testURLImportButton"
-    "ZhiYuTests/ComponentSnapshots/testAdaptiveSidebarView"
-    "ZhiYuUITests/ZhiYuMonkeyTests/testWildMonkeyClickTraversal"
-    "ZhiYuTests/AuthServiceTests/testLogoutClearsGuestFlag"
-    "ZhiYuTests/AuthServiceTests/testLogoutClearsState"
-    "ZhiYuTests/KnowledgeStorePerformanceTests/testOneHundredThousandNodesFTSRetrievalLatency"
-)
+# ── 2. 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
+echo "🔍 收集 @flaky 标记的不稳定测试..."
+FLAKY_ARGS=()
+while IFS= read -r skip_arg; do
+    [ -n "$skip_arg" ] && FLAKY_ARGS+=("$skip_arg")
+done < <(bash Tools/CI/collect_flaky_tests.sh)
 
 # ── 3. 模式解析 ──────────────────────────────────────────────
 CI_MODE="false"
@@ -49,9 +44,9 @@ XCODEBUILD_ARGS=(
     CODE_SIGNING_REQUIRED=NO
 )
 
-# 动态组装跳过的测试参数
-for test_item in "${SKIP_TESTS[@]}"; do
-    XCODEBUILD_ARGS+=("-skip-testing:${test_item}")
+# 追加不稳定测试跳过参数
+for skip_arg in "${FLAKY_ARGS[@]}"; do
+    XCODEBUILD_ARGS+=("$skip_arg")
 done
 
 # 如果是 CI 模式，指定共享的 SPM 缓存目录以提速构建

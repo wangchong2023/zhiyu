@@ -43,6 +43,7 @@ final class ZhiYuMonkeyTests: XCTestCase {
     }
 
     /// 执行 100 次原生的狂暴随机点击测试
+    // @flaky: Monkey 随机遍历测试，依赖 UI 帧状态，CI 中显式跳过
     func testWildMonkeyClickTraversal() throws {
         let maxIterations = 100
         print("====== [MONKEY] 开始执行 100 步狂暴随机点击遍历压力测试 ======")
