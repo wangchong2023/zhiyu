@@ -30,7 +30,7 @@ EXPECTED_ROOT_ITEMS = {
     "LICENSE", "project.yml", "ZhiYu.code-workspace",
     # 主要目录
     "build", "Docs", "env", "Frameworks", "Sources", "Tests", "Tools",
-    "ZhiYu.xcodeproj",
+    "ZhiYu.xcodeproj", "fastlane",
 }
 
 # 临时文件/垃圾文件后缀
