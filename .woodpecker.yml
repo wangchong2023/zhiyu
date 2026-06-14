@@ -29,45 +29,57 @@ steps:
           rm -rf build/DerivedData-*
         fi
 
-  # ── Stage 1: 并行（静态分析 ∥ Lint ∥ 安全 ∥ 构建准备）──
+  # ══════════════════════════════════════════════════════════════════════
+  # Stage 1: 并行静态分析 — 所有检查使用统一标题格式
+  # ══════════════════════════════════════════════════════════════════════
   static-analysis:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Running Static Analysis..."
-      - echo "--- 架构依赖检查 (L0-L3 严格分层) ---"
+      - echo "====> Stage 1: 静态分析 <===="
+      - echo ""
+      - echo "--- [1/10] 架构依赖检查 (L0-L3 严格分层) ---"
       - python3 Tools/Gatekeeper/check_architecture_dependency.py
-      - echo "--- 领域纯净度检查 ---"
+      - echo ""
+      - echo "--- [2/10] 领域纯净度检查 ---"
       - python3 Tools/Gatekeeper/check_domain_purity.py
-      - echo "--- DI 测试设置审计 ---"
+      - echo ""
+      - echo "--- [3/10] DI 测试设置审计 ---"
       - python3 Tools/Gatekeeper/check_test_di_setup.py
-      - echo "--- 根目录卫生检查 (临时文件 + 结构) ---"
+      - echo ""
+      - echo "--- [4/10] 根目录卫生检查 (临时文件 + 结构) ---"
       - python3 Tools/Gatekeeper/check_root_hygiene.py
-      - echo "--- 魔鬼数字/字符串审计 ---"
+      - echo ""
+      - echo "--- [5/10] 魔鬼数字/字符串审计 ---"
       - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
-      - echo "--- 分层标记检查 ---"
+      - echo ""
+      - echo "--- [6/10] 分层标记检查 ---"
       - bash Tools/Lint/lint_layer_markers.sh
-      - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
+      - echo ""
+      - echo "--- [7/10] String.Index 越界扫描 ---"
       - python3 Tools/Lint/scan_unsafe_string_index.py
-      - echo "--- 文档完整性检查 ---"
+      - echo ""
+      - echo "--- [8/10] 文档完整性 + 配置健康 + ShellCheck ---"
       - python3 Tools/Gatekeeper/check_docs_integrity.py
-      - echo "--- 配置与脚本健康检查 ---"
       - python3 Tools/Gatekeeper/check_configs_integrity.py
-      - echo "--- ShellCheck ---"
       - bash Tools/CI/run_shellcheck.sh
-      - echo "--- SPM 完整性校验 ---"
+      - echo ""
+      - echo "--- [9/10] SPM 完整性校验 ---"
       - bash Tools/CI/verify_spm_integrity.sh
-      - echo "--- SBOM 生成 ---"
+      - echo ""
+      - echo "--- [10/10] SBOM 生成 ---"
       - python3 Tools/CI/generate_sbom.py
       - brew install syft 2>/dev/null || true
-      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft 不可用，跳过 license 检测"
+      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "  ⚠️  Syft 不可用，跳过 license 检测"
       - python3 Tools/CI/merge_sbom.py
+      - echo ""
+      - echo "====> Stage 1 完成 <===="
 
   swiftlint:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Running SwiftLint..."
+      - echo "====> SwiftLint 严格模式 <===="
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
     failure: ignore
 
@@ -75,12 +87,12 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Verifying commit signature..."
+      - echo "====> 提交签名验证 <===="
       - |
         if git log --show-signature -1 | grep -q "Good signature"; then
-          echo "✅ Commit signed"
+          echo "  ✅ Commit signed"
         else
-          echo "⚠️  Commit NOT signed — 请配置 GPG: git config commit.gpgsign true"
+          echo "  ⚠️  Commit NOT signed — 请配置 GPG: git config commit.gpgsign true"
         fi
     failure: ignore
 
@@ -88,53 +100,67 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Scanning for hardcoded secrets..."
+      - echo "====> 硬编码密钥扫描 <===="
       - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Generating Xcode project..."
+      - echo "====> 构建准备 <===="
+      - echo "--- 生成 Xcode 工程 ---"
       - xcodegen generate
-      - echo "===> Preparing build environment + dependencies..."
+      - echo ""
+      - echo "--- 编译依赖与测试 Bundle ---"
       - mkdir -p build /Users/constantine/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo "===> Preparation complete."
+      - echo ""
+      - echo "  ✅ 构建准备完成"
 
-  # ── Stage 3: 三平台并行编译 ──
+  # ══════════════════════════════════════════════════════════════════════
+  # Stage 2: 三平台并行编译
+  # ══════════════════════════════════════════════════════════════════════
   build-ios:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building iOS app..."
+      - echo "====> 编译 iOS <===="
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "===> iOS Build completed."
+      - echo "  ✅ iOS 编译完成"
 
   build-macos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building macOS (Catalyst) app..."
+      - echo "====> 编译 macOS (Catalyst) <===="
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
-      - echo "===> macOS Build completed."
+      - echo "  ✅ macOS 编译完成"
 
   build-watchos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Building watchOS app..."
+      - echo "====> 编译 watchOS <===="
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
-      - echo "===> watchOS Build completed."
+      - echo "  ✅ watchOS 编译完成"
 
-  # ── Stage 4: 测试 + 覆盖率 ──
+  # ══════════════════════════════════════════════════════════════════════
+  # Stage 3: 测试 + 覆盖率
+  # ══════════════════════════════════════════════════════════════════════
   test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "===> Counting test cases..."
+      - echo "====> Stage 3: 测试 + 覆盖率 <===="
+      - echo ""
+      - echo "--- 统计测试用例 ---"
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
+      - cat build/.test_count | xargs echo "  测试用例数:"
+      - echo ""
+      - echo "--- 执行单元测试 ---"
       - ./Tools/CI/run_unit_tests.sh --ci
-      - echo "===> All Tests passed."
-      - echo "===> Checking code coverage..."
+      - echo ""
+      - echo "--- 代码覆盖率检查 ---"
       - python3 Tools/CI/check_coverage.py
+      - echo ""
+      - echo "  ✅ 测试 + 覆盖率全部通过"
