@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """精确扫描：排除 DesignSystem 定义文件和合法用法"""
 
-import os, re
+import os, re, sys
 
 EXCLUDE_DIRS = {'.git','build','DerivedData','.build','Frameworks','Tests','env','__pycache__'}
 TOKEN_FILES = {'Colors.swift','DesignSystem.swift','IconTokens.swift','Spacing.swift'}
@@ -98,3 +98,9 @@ for fpath, issues in sorted(priority_files.items()):
     if count > 5:
         print(f"     ... 还有 {count - 5} 处")
     print()
+
+if priority_files:
+    print(f"❌ 发现 {len(priority_files)} 个文件包含魔鬼数字，请替换为 DesignSystem token。")
+    sys.exit(1)
+else:
+    print("✅ 未发现魔鬼数字/字符串。")

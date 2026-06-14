@@ -25,32 +25,8 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - set -e
-      - echo "===> [1/10] Architecture Dependency (L0-L3)"
-      - python3 Tools/Gatekeeper/check_architecture_dependency.py
-      - echo "===> [2/10] Domain Purity"
-      - python3 Tools/Gatekeeper/check_domain_purity.py
-      - echo "===> [3/10] DI Test Setup Audit"
-      - python3 Tools/Gatekeeper/check_test_di_setup.py
-      - echo "===> [4/10] Root Hygiene (temp files + structure)"
-      - python3 Tools/Gatekeeper/check_root_hygiene.py
-      - echo "===> [5/10] Magic Numbers / Strings"
-      - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
-      - echo "===> [6/10] Layer Markers"
-      - bash Tools/Lint/lint_layer_markers.sh
-      - echo "===> [7/10] Unsafe String.Index Scan"
-      - python3 Tools/Lint/scan_unsafe_string_index.py
-      - echo "===> [8/10] Docs + Config Integrity + ShellCheck"
-      - python3 Tools/Gatekeeper/check_docs_integrity.py
-      - python3 Tools/Gatekeeper/check_configs_integrity.py
-      - bash Tools/CI/run_shellcheck.sh
-      - echo "===> [9/10] SPM Integrity"
-      - bash Tools/CI/verify_spm_integrity.sh
-      - echo "===> [10/10] SBOM Generation"
-      - python3 Tools/CI/generate_sbom.py
-      - brew install syft 2>/dev/null || true
-      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft not available, skipping"
-      - python3 Tools/CI/merge_sbom.py
+      - echo "===> Static Analysis (10 checks)"
+      - bash Tools/CI/run_static_analysis.sh
 
   swiftlint:
     depends_on: [clone-repo]
