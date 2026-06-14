@@ -52,22 +52,19 @@ steps:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build iOS"
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log || { echo ""; echo "━━━ ❌ iOS Build Failed ━━━"; echo "编译错误:"; grep -E "^.*:[0-9]+:[0-9]+: error:" build/ios_build.log | sort -u | head -20; echo ""; echo "日志尾部:"; tail -15 build/ios_build.log; exit 1; }
+      - bash Tools/CI/build_platform.sh Zhiyu 'generic/platform=iOS Simulator' ios
 
   build-macos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build macOS (Catalyst)"
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log || { echo ""; echo "━━━ ❌ macOS Build Failed ━━━"; echo "编译错误:"; grep -E "^.*:[0-9]+:[0-9]+: error:" build/mac_build.log | sort -u | head -20; echo ""; echo "日志尾部:"; tail -15 build/mac_build.log; exit 1; }
+      - bash Tools/CI/build_platform.sh ZhiYuMac 'platform=macOS' macos
 
   build-watchos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build watchOS"
-      - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log || { echo ""; echo "━━━ ❌ watchOS Build Failed ━━━"; echo "编译错误:"; grep -E "^.*:[0-9]+:[0-9]+: error:" build/watch_build.log | sort -u | head -20; echo ""; echo "日志尾部:"; tail -15 build/watch_build.log; exit 1; }
+      - bash Tools/CI/build_platform.sh ZhiYuWatch 'generic/platform=watchOS Simulator' watchos
 
   test:
     depends_on: [build-ios, build-macos, build-watchos]
