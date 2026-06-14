@@ -26,6 +26,7 @@ final class KeychainService: Sendable {
     ///   - key: 键名
     ///   - value: 要存储的字符串
     func store(key: String, value: String) throws {
+        Logger.shared.debug("[KeychainService] store() called for key: \(key)")
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.encodingFailed
         }

@@ -214,26 +214,38 @@ public final class AuthService: AuthServiceProtocol {
 
     /// logout
     public func logout() {
+        Logger.shared.debug("[AuthService] logout() called")
         AuthSession.shared.logout()
         VaultService.shared.exitVault()
         saveState()
         
-        testLogoutTask?.cancel()
+        if testLogoutTask != nil {
+            Logger.shared.debug("[AuthService] Cancelling existing testLogoutTask")
+            testLogoutTask?.cancel()
+        }
+        
         testLogoutTask = Task {
+            Logger.shared.debug("[AuthService] Logout Task started")
             // 尝试通知后端登出并吊销 RefreshToken
             if let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") {
+                Logger.shared.debug("[AuthService] Revoking token on backend...")
                 let req = RefreshRequest(refreshToken: refreshToken)
-                let _: EmptyData? = try? await NetworkClient.shared.request(
+                let result: EmptyData? = try? await NetworkClient.shared.request(
                     path: "/api/v1/auth/logout",
                     method: "POST",
                     body: req,
                     requiresAuth: true
                 )
+                Logger.shared.debug("[AuthService] Backend revoke result: \(result != nil ? "success" : "failed/nil")")
+            } else {
+                Logger.shared.debug("[AuthService] No refresh token found to revoke")
             }
             
             // 清理本地状态
+            Logger.shared.debug("[AuthService] Deleting tokens from Keychain...")
             try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
             try? KeychainService.shared.delete(key: "refresh_token")
+            Logger.shared.debug("[AuthService] Logout Task completed")
         }
     }
     

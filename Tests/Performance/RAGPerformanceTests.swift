@@ -57,10 +57,14 @@ final class RAGPerformanceTests: XCTestCase {
         // 这里重点测试算法本身的 String 匹配复杂度与重排排序复杂度
         let query = "Apple Vision Pro 空间"
         
+        guard let service = self.llmService else {
+            XCTFail("LLMService is not initialized")
+            return
+        }
+        let candidates = self.largeCandidates
+        
         self.measure {
             let expectation = XCTestExpectation(description: "Rerank Computation")
-            let service = self.llmService!
-            let candidates = self.largeCandidates
             
             Task { [service, candidates] in
                 // 执行检索与重排

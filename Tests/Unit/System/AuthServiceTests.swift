@@ -272,6 +272,60 @@ final class AuthServiceTests: XCTestCase {
         XCTAssertNil(AuthService.shared.currentUser)
     }
 
+    /// 测试：当登出请求返回 401 且触发刷新失败导致的递归调用时，Keychain 是否依然能被清理
+    func testLogoutClearsKeychainEvenIfBackendFailsWith401() async throws {
+        // 1. 模拟写入凭证
+        try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "expired_token")
+        try KeychainService.shared.store(key: "refresh_token", value: "expired_refresh_token")
+        AuthSession.shared.update(user: User(id: UUID(), name: "Test User", email: "test@example.com"))
+
+        // 2. 模拟注销接口返回 401
+        var logoutCallCount = 0
+        TestMockURLProtocol.requestHandler = { request in
+            logoutCallCount += 1
+            let url = try XCTUnwrap(request.url)
+            
+            if request.url?.path == "/api/v1/auth/logout" {
+                // 返回 401 模拟 Token 过期
+                let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 401, httpVersion: nil, headerFields: nil))
+                let apiResponse: ApiResponse<EmptyData> = ApiResponse(code: 40101, message: "Unauthorized", data: nil, requestId: "req", timestamp: 123)
+                let data = try JSONEncoder().encode(apiResponse)
+                return (response, data)
+            } else if request.url?.path == AppConstants.Network.refreshPath {
+                // 刷新也失败，返回 401 错误 JSON
+                let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 401, httpVersion: nil, headerFields: nil))
+                let apiResponse: ApiResponse<EmptyData> = ApiResponse(code: 40103, message: "Refresh token expired", data: nil, requestId: "req", timestamp: 123)
+                let data = try JSONEncoder().encode(apiResponse)
+                return (response, data)
+            }
+            return (try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil)), nil)
+        }
+
+        // 3. 注册通知监听，模拟应用行为
+        let expectation = XCTestExpectation(description: "监听到 userAuthExpired")
+        let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: nil) { _ in
+            print("[TEST] Received .userAuthExpired, calling logout() again")
+            AuthService.shared.logout()
+            expectation.fulfill()
+        }
+
+        // 4. 触发退出
+        print("[TEST] Triggering first logout()")
+        AuthService.shared.logout()
+
+        // 5. 等待
+        await fulfillment(of: [expectation], timeout: 5.0)
+        await AuthService.shared.testLogoutTask?.value
+        NotificationCenter.default.removeObserver(observer)
+
+        // 6. 验证
+        print("[TEST] Final verification")
+        XCTAssertFalse(AuthService.shared.isAuthenticated)
+        let jwt = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
+        XCTAssertNil(jwt, "即便后端 401 导致递归，Keychain 也应该最终被清理")
+        print("[TEST] logoutCallCount: \(logoutCallCount)")
+    }
+
     /// 测试：登录成功后，执行 logout() 能否物理擦除 Keychain 中的 Token，防止残留劫持
     func testLogoutClearsKeychainTokens() async throws {
         // 1. 模拟登录写入 Token 到安全区（受限模拟器环境下 Keychain 不可用则跳过此用例）
@@ -294,14 +348,25 @@ final class AuthServiceTests: XCTestCase {
         }
 
         // 3. 执行退出
+        print("[TEST] Calling AuthService.shared.logout()")
         AuthService.shared.logout()
 
         // 4. 等待后台注销任务完成以检查物理擦除
+        print("[TEST] Waiting for testLogoutTask...")
         await AuthService.shared.testLogoutTask?.value
+        print("[TEST] testLogoutTask finished waiting")
 
         // 5. 最终验证
         XCTAssertFalse(AuthService.shared.isAuthenticated)
         XCTAssertNil(AuthService.shared.currentUser)
+        
+        // 验证物理擦除
+        print("[TEST] Verifying Keychain erasure...")
+        let jwt = try? KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
+        let refresh = try? KeychainService.shared.retrieve(key: "refresh_token")
+        XCTAssertNil(jwt, "JWT Token 应该被物理擦除")
+        XCTAssertNil(refresh, "Refresh Token 应该被物理擦除")
+        print("[TEST] Keychain verification done")
     }
 
     /// 测试：退出登录时，客户端是否会向后端发送携带对应 refresh_token 的 POST 注销请求，使服务端吊销 Token

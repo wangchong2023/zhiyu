@@ -267,6 +267,7 @@ public actor NetworkClient {
                 let response = try decoder.decode(ApiResponse<LoginResponse>.self, from: data)
                 
                 if response.isSuccess, let loginData = response.data {
+                    Logger.shared.debug("[NetworkClient] Token refresh succeeded, updating Keychain...")
                     // 更新 Keychain
                     try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: loginData.accessToken)
                     if let newRefresh = loginData.refreshToken {
@@ -274,6 +275,7 @@ public actor NetworkClient {
                     }
                     return .success(loginData.accessToken)
                 } else {
+                    Logger.shared.debug("[NetworkClient] Token refresh failed, code=\(response.code)")
                     // 刷新失败（如重放攻击 40103，或者已过期），强制退登
                     try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
                     try? KeychainService.shared.delete(key: "refresh_token")
