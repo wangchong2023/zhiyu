@@ -44,6 +44,13 @@ steps:
       - python3 Tools/Gatekeeper/check_configs_integrity.py
       - echo "--- ShellCheck ---"
       - bash Tools/CI/run_shellcheck.sh
+      - echo "--- SPM 完整性校验 ---"
+      - bash Tools/CI/verify_spm_integrity.sh
+      - echo "--- SBOM 生成 ---"
+      - python3 Tools/CI/generate_sbom.py
+      - brew install syft 2>/dev/null || true
+      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft 不可用，跳过 license 检测"
+      - python3 Tools/CI/merge_sbom.py
 
   swiftlint:
     depends_on: [clone-repo]

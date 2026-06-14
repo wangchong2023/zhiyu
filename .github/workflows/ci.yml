@@ -76,6 +76,23 @@ jobs:
       - name: Check Test DI Setup
         run: python3 Tools/Gatekeeper/check_test_di_setup.py
 
+      - name: Verify SPM Integrity
+        run: bash Tools/CI/verify_spm_integrity.sh
+
+      - name: Generate SBOM
+        run: |
+          python3 Tools/CI/generate_sbom.py
+          brew install syft 2>/dev/null || true
+          syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft unavailable"
+          python3 Tools/CI/merge_sbom.py
+
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: build/sbom.spdx.json
+          retention-days: 90
+
   # ── Stage 2: 构建 + 单元测试 + 覆盖率 ────────────────────────────────
   test:
     name: Build & Unit Test
