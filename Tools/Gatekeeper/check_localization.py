@@ -396,7 +396,6 @@ EXEMPT_STRINGS = {
     "> [Image Semantics]:",
     "AI Chat",
     "AI Chat Stream",
-    "Medal Wall",
     "Not Supported",
     "PDF extraction is not supported on this platform.",
     "Non-ASCII Content",

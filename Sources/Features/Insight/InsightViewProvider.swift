@@ -25,7 +25,7 @@ struct InsightViewProvider: ViewProvider {
         case .lint:
             return AnyView(LintWrapper())
         case .medalWall:
-            return AnyView(Text("Medal Wall")) // 假设实现
+            return AnyView(Text(L10n.Insight.Medal.Wall.title)) // 假设实现
         default:
             return nil
         }
