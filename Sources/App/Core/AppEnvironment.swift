@@ -24,13 +24,22 @@ final class AppEnvironment {
     let ingestStore: IngestStore
     let synthesisStore: SynthesisStore
     let router: Router
-    
+
     // ── 系统级状态 ──
     let themeManager: ThemeManager
     let llmService: LLMService
-    let llmConfig: LLMConfigManager
+    var llmConfig: LLMConfigManager   // var：init 中先赋初值，DI 就绪后重新解析
     
     private init() {
+        // ── 0. 必须先初始化所有 stored properties（Swift 要求在调用 self 方法前完成）──
+        self.router = Router.shared
+        self.themeManager = ThemeManager.shared
+        self.llmConfig = LLMConfigManager()
+        self.llmService = LLMService.shared
+        self.ingestStore = IngestStore()
+        self.synthesisStore = SynthesisStore()
+        self.store = AppStore()
+
         Logger.shared.info("[AppEnvironment] Starting initialization...")
 
         // 🧪 检测是否运行于 XCTest 环境 — 避免污染测试 DI 状态
@@ -43,43 +52,27 @@ final class AppEnvironment {
         }
         #endif
 
-        // 0. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
+        // 1. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         prepareDatabase()
-        
-        // 🧪 XCTest 环境：跳过完整生产链，仅做最小化初始化
+
+        // 🧪 XCTest 环境：跳过完整生产链，已用基本构造函数完成初始化
         if isRunningInTests || CommandLine.arguments.contains("-UITest_MockData") {
-            Logger.shared.info("[AppEnvironment] Test mode — using lightweight initialization")
-            self.router = Router.shared
-            self.themeManager = ThemeManager.shared
-            self.llmConfig = LLMConfigManager()
-            self.llmService = LLMService.shared
-            self.ingestStore = IngestStore()
-            self.synthesisStore = SynthesisStore()
-            self.store = AppStore()
             Logger.shared.info("[AppEnvironment] Lightweight initialization completed.")
             return
         }
 
-        // 1. 执行模块化注册 (L0 - L3)
+        // 2. 执行模块化注册 (L0 - L3)
         registerDIModules()
 
-        // 1.5 解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
-        self.router = Router.shared
-        self.themeManager = ThemeManager.shared
+        // 2.5 DI 就绪后重新解析需要容器注入的属性
         self.llmConfig = ServiceContainer.shared.resolve(LLMConfigManager.self)
-        self.llmService = LLMService.shared
-
-        // 2. 初始化业务层 Stores
-        self.ingestStore = IngestStore()
-        self.synthesisStore = SynthesisStore()
-        self.store = AppStore()
 
         // 3. 将核心 Store 注册到 DI 容器，支持各处 @Inject 调用
         registerStoresToContainer()
 
         // 4. 配置全局 UI 样式与数据种子化及同步
         setupGlobalStylesAndSync()
-        
+
         Logger.shared.info("[AppEnvironment] Initialization completed.")
     }
     

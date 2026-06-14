@@ -159,7 +159,7 @@ final class IngestCoordinator {
     /// 预备保存导入的多媒体及文本文件
     /// - Parameter recordID: 导入记录唯一标识
     /// - Returns: 返回保存的路径和带有来源信息的原始文本内容，如果因大小超限失败则返回 nil
-    private func prepareImportFiles(recordID: String) -> (savedPath: String, rawText: String)? {
+    private func prepareImportFiles(recordID: String) -> (savedPath: String?, rawText: String)? {
         let content = newContent
         let sourceName = sourceHint.displayName
         
@@ -181,6 +181,8 @@ final class IngestCoordinator {
             imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
             pendingImageData = nil
         }
+
+        return (textPath, rawText)
     }
 
     /// 处理File导入

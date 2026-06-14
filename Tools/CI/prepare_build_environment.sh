@@ -46,28 +46,21 @@ if [ $BUILD_EXIT_CODE -ne 0 ]; then
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo ""
 
-    # 提取 Swift/Clang 编译错误（按文件分组，去重计数）
+    # 提取编译错误并直接输出到控制台，同时存副本到文件
     {
-        echo "=== Compile Errors ==="
-        grep -E "^.*:[0-9]+:[0-9]+: error:" "$LOG_FILE" | sort -t: -k1,1 -k2,2n -u || echo "  (none)"
+        echo "=== 编译错误（去重） ==="
+        grep -E "^.*:[0-9]+:[0-9]+: error:" "$LOG_FILE" | sort -t: -k1,1 -k2,2n -u || echo "  (无)"
         echo ""
-        echo "=== Swift Compile Errors (abbreviated) ==="
-        grep -E "error:" "$LOG_FILE" | grep -v "check_hardcoded\|L10n Audit\|Hardcoded " | head -50 || echo "  (none)"
+        echo "=== 致命错误 ==="
+        grep -i "fatal error" "$LOG_FILE" || echo "  (无)"
         echo ""
-        echo "=== Fatal Errors ==="
-        grep -i "fatal error" "$LOG_FILE" || echo "  (none)"
-        echo ""
-        echo "=== Build Failure Context (last 20 lines before failure) ==="
-        grep -n "BUILD FAILED\|error:\|fatal error\|failed\|Failed" "$LOG_FILE" | tail -20
-        echo ""
-        echo "=== Raw tail (last 15 lines) ==="
+        echo "=== 日志尾部 ==="
         tail -15 "$LOG_FILE"
     } | tee "$ERROR_SUMMARY"
 
     echo ""
     echo "═══════════════════════════════════════════════════════════════"
-    echo "❌ prepare 失败：编译错误汇总已保存至 $ERROR_SUMMARY"
-    echo "   完整日志: $LOG_FILE ($(wc -l < "$LOG_FILE" | tr -d ' ') lines)"
+    echo "❌ prepare 失败 — 上方为错误详情，完整日志: $LOG_FILE"
     echo "═══════════════════════════════════════════════════════════════"
     exit $BUILD_EXIT_CODE
 fi
