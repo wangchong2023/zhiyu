@@ -102,6 +102,13 @@ jobs:
           path: build/sbom.spdx.json
           retention-days: 90
 
+      - name: Upload Xcode Project Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
+          retention-days: 1
+
   # ── Stage 2: 构建 + 单元测试 + 覆盖率 ────────────────────────────────
   test:
     name: Build & Unit Test
@@ -117,11 +124,11 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Install Build Toolchain
-        run: brew install xcodegen
-
-      - name: Generate Xcode Project
-        run: xcodegen generate
+      - name: Download Xcode Project Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
 
       - name: Run Unit Tests with Coverage
         run: |
@@ -163,11 +170,11 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Install Build Toolchain
-        run: brew install xcodegen
-
-      - name: Generate Xcode Project
-        run: xcodegen generate
+      - name: Download Xcode Project Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
 
       - name: Run UI Tests (Parallel)
         run: |
@@ -211,11 +218,11 @@ jobs:
         with:
           xcode-version: 'latest-stable'
 
-      - name: Install Build Toolchain
-        run: brew install xcodegen
-
-      - name: Generate Xcode Project
-        run: xcodegen generate
+      - name: Download Xcode Project Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: xcode-project
+          path: ZhiYu.xcodeproj/
 
       - name: Build ${{ matrix.platform.name }}
         run: |
@@ -226,7 +233,3 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             2>&1 | tail -30
-
-      - name: Verify Reproducible Build (iOS only)
-        if: matrix.platform.name == 'iOS'
-        run: bash Tools/CI/verify_reproducible_build.sh

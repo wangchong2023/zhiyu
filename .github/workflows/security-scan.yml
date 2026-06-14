@@ -102,6 +102,11 @@ jobs:
           echo "警告数 (trial, not blocking): $(grep -c 'warning:' build/warnings_as_errors.log 2>/dev/null || echo 0)"
         continue-on-error: true
 
+      - name: Verify Reproducible Build
+        run: |
+          echo "🔨 验证确定性构建 (Reproducible Build)..."
+          bash Tools/CI/verify_reproducible_build.sh
+
       - name: Security Audit Complete
         run: |
           echo "✅ 纵深安全扫描全部通过"

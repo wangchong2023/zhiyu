@@ -40,13 +40,7 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Commit Signature"
-      - |
-        if git log --show-signature -1 | grep -q "Good signature"; then
-          echo "  Signed: YES"
-        else
-          echo "  Signed: NO (not blocking)"
-        fi
+      - bash Tools/CI/verify_commit_signature.sh
     failure: ignore
 
   secret-scan:
@@ -60,11 +54,7 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> xcodegen generate"
-      - xcodegen generate
-      - echo "===> Build-for-testing (SPM + compile)"
-      - mkdir -p build /Users/constantine/.cache/zhiyu-spm
-      - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
+      - bash Tools/CI/prepare_build_environment.sh
 
   build-ios:
     depends_on: [prepare]
@@ -72,8 +62,6 @@ steps:
     commands:
       - echo "===> Build iOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "===> Reproducible Build Check"
-      - bash Tools/CI/verify_reproducible_build.sh
 
   build-macos:
     depends_on: [prepare]
@@ -93,10 +81,4 @@ steps:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "===> Count Test Cases"
-      - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-      - cat build/.test_count | xargs echo "  Total:"
-      - echo "===> Run Unit Tests"
-      - ./Tools/CI/run_unit_tests.sh --ci
-      - echo "===> Code Coverage Check"
-      - python3 Tools/CI/check_coverage.py
+      - bash Tools/CI/run_tests_and_coverage.sh
