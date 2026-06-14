@@ -85,6 +85,9 @@ targets:
       - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
         name: "[Gatekeeper] Architecture Dependency Check"
         basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_root_hygiene.py"
+        name: "[Gatekeeper] Root Hygiene Check"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - package: Lottie
@@ -142,6 +145,9 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
         name: "[Gatekeeper] Architecture Dependency Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_root_hygiene.py"
+        name: "[Gatekeeper] Root Hygiene Check"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -218,6 +224,9 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_architecture_dependency.py"
         name: "[Gatekeeper] Architecture Dependency Check"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_root_hygiene.py"
+        name: "[Gatekeeper] Root Hygiene Check"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB

@@ -61,6 +61,21 @@ jobs:
       - name: Check Localization Compliance
         run: python3 Tools/Gatekeeper/check_localization.py
 
+      - name: Check Architecture Dependencies (L0-L3)
+        run: python3 Tools/Gatekeeper/check_architecture_dependency.py
+
+      - name: Check Domain Purity
+        run: python3 Tools/Gatekeeper/check_domain_purity.py
+
+      - name: Audit Magic Numbers & Strings
+        run: python3 Tools/Gatekeeper/check_magic_numbers_v2.py
+
+      - name: Check Root Hygiene (Temp Files + Structure)
+        run: python3 Tools/Gatekeeper/check_root_hygiene.py
+
+      - name: Check Test DI Setup
+        run: python3 Tools/Gatekeeper/check_test_di_setup.py
+
   # ── Stage 2: 构建 + 单元测试 + 覆盖率 ────────────────────────────────
   test:
     name: Build & Unit Test

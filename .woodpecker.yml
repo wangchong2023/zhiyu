@@ -24,16 +24,25 @@ steps:
     image: bash
     commands:
       - echo "===> Running Static Analysis..."
+      - echo "--- 架构依赖检查 (L0-L3 严格分层) ---"
+      - python3 Tools/Gatekeeper/check_architecture_dependency.py
+      - echo "--- 领域纯净度检查 ---"
       - python3 Tools/Gatekeeper/check_domain_purity.py
+      - echo "--- DI 测试设置审计 ---"
       - python3 Tools/Gatekeeper/check_test_di_setup.py
+      - echo "--- 根目录卫生检查 (临时文件 + 结构) ---"
+      - python3 Tools/Gatekeeper/check_root_hygiene.py
+      - echo "--- 魔鬼数字/字符串审计 ---"
+      - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
+      - echo "--- 分层标记检查 ---"
       - bash Tools/Lint/lint_layer_markers.sh
       - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
-      - echo "===> Running Document Integrity Check..."
+      - echo "--- 文档完整性检查 ---"
       - python3 Tools/Gatekeeper/check_docs_integrity.py
-      - echo "===> Running Config and Script Health Check..."
+      - echo "--- 配置与脚本健康检查 ---"
       - python3 Tools/Gatekeeper/check_configs_integrity.py
-      - echo "===> Running ShellCheck for Tools..."
+      - echo "--- ShellCheck ---"
       - bash Tools/CI/run_shellcheck.sh
 
   swiftlint:
