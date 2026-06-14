@@ -4,9 +4,12 @@
 # 功能说明: 智宇 (ZhiYu) 纵深安全扫描流水线
 #          在主 CI（每次 push）之上提供额外的深度检查 + 多平台编译验证
 #          每周一定时运行，也可手动触发
-# 版本: 2.0
-# 日期: 2026-06-07
+# 版本: 3.0
+# 日期: 2026-06-14
 #
+# 变更 (v3.0):
+#   - macOS runner: macos-latest → macos-15（匹配 Xcode 16+ 要求）
+#   - Xcode 固定 latest-stable，信任最新稳定版本
 # 变更 (v2.0):
 #   - 新增 xcodegen generate（修复构建验证因缺少工程文件而失败的问题）
 #   - 新增 macOS / watchOS 编译验证
@@ -25,7 +28,7 @@ on:
 
 jobs:
   security-audit:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 

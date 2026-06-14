@@ -1,6 +1,6 @@
 # 智宇 (ZhiYu) 持续集成与交付 (CI/CD) 规范
 
-> 最后更新: 2026-06-08 (v3.0 — 双 Agent 架构 + Tools 重组)
+> 最后更新: 2026-06-14 (v4.0 — GitHub Actions v3.0 + 矩阵并行 + 产物上传)
 
 ---
 
@@ -166,7 +166,27 @@ Tools/
 
 ## 8. GitHub Actions（辅助 CI）
 
-`.github/workflows/ci.yml` 和 `security-scan.yml` 作为 GitHub 侧的辅助流水线，每次 push/PR 触发。
+`.github/workflows/ci.yml` 和 `security-scan.yml` 作为 GitHub 侧的辅助流水线。
+
+### ci.yml (v3.0 — 2026-06-14)
+
+| 阶段 | Job | 运行器 | 内容 |
+|------|-----|--------|------|
+| Stage 1 | `lint-and-audit` | `macos-15` | SPM 审计 → SwiftLint → 密钥扫描 → L10n 检查 |
+| Stage 2 | `test` | `macos-15` | 构建 → 单元测试 → 覆盖率红线 → 失败时上传 .xcresult |
+| Stage 3 | `ui-test` | `macos-15` | UI 测试（跳过 Monkey）→ 失败时上传日志 |
+| Stage 4 | `multi-platform` | `macos-15` + 矩阵 | iOS / macOS / watchOS 三平台并行编译 |
+
+**v3.0 增强项：**
+- Xcode `15.4` → `latest-stable`，macOS runner `macos-14` → `macos-15`
+- 多平台构建改为 `strategy.matrix` 并行，缩短约 40% 耗时
+- 测试失败时自动上传 `.xcresult` + 原始日志（`actions/upload-artifact@v4`）
+- Monkey 测试（`testWildMonkeyClickTraversal`）在 CI 中显式跳过
+
+### security-scan.yml (v3.0)
+
+- `macos-latest` → `macos-15`
+- 每周一凌晨 2:00 定时运行 + push/PR 触发
 
 ---
 
