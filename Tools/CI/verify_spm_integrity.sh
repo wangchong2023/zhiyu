@@ -16,7 +16,6 @@ if [ -z "$RESOLVED" ]; then
 fi
 
 echo "🔐 校验 SPM 依赖完整性..."
-FAILED=0
 
 python3 -c "
 import json
