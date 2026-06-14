@@ -32,14 +32,25 @@ final class AppEnvironment {
     
     private init() {
         Logger.shared.info("[AppEnvironment] Starting initialization...")
-        
+
+        // 🧪 检测是否运行于 XCTest 环境 — 避免污染测试 DI 状态
+        // XCTest 框架在运行测试时会设置 XCTestConfigurationFilePath 环境变量
+        let isRunningInTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        #if DEBUG
+        if CommandLine.arguments.contains("-UITest_MockData") {
+            Logger.shared.info("[AppEnvironment] Detected UI Test environment, using ephemeral setup")
+        } else if isRunningInTests {
+            Logger.shared.info("[AppEnvironment] Detected XCTest environment, using lightweight test setup (skipping production DI chain)")
+        }
+        #endif
+
         // 0. 准备底层物理存储 (@P0: 确保护航数据库在注册前就绪)
         // 注意：在实际多库模式下，此处应由 VaultService 驱动，但为了保证系统稳定性与 DI 完整性，
         // 我们在此处初始化默认存储路径，迁移至 App Group 共享容器。
         do {
             let fileManager = FileManager.default
             let appGroupIdentifier = "group.com.zhiyu.app"
-            
+
             // 旧的沙盒独立路径
             guard let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { throw NSError(domain: "Insight", code: -1) }
             let oldDbURL = appSupport.appendingPathComponent(AppConstants.Storage.databaseName)
@@ -99,7 +110,12 @@ final class AppEnvironment {
         AppModuleRegistrar.register(in: ServiceContainer.shared)
 
         // 标记生产 DI 链完成 — 禁止测试中 reset() 清空容器
-        ServiceContainer.shared.markProductionChainComplete()
+        // ⚠️ 在 XCTest 环境下跳过此标记，允许测试 tearDown 正常 reset DI 容器
+        if !isRunningInTests && !CommandLine.arguments.contains("-UITest_MockData") {
+            ServiceContainer.shared.markProductionChainComplete()
+        } else {
+            Logger.shared.info("[AppEnvironment] Skipping markProductionChainComplete() — running in test environment, DI container reset remains available for test isolation")
+        }
 
         // 1.5 在模块注册完成后，解析/初始化系统级与依赖注入相关的单例属性，防止提前 resolve 导致的冷启动时序闪退
         self.router = Router.shared

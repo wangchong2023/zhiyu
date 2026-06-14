@@ -12,27 +12,42 @@
 import Foundation
 import os
 
+// MARK: - DI 诊断专用日志子系统
+/// 使用 os_log .fault 级别确保诊断信息在崩溃时写入系统日志，避免 Logger 异步刷新丢失
+private let diLog = OSLog(subsystem: "com.zhiyu.app", category: "DI-Container")
+
 /// 依赖注入容器 (L2 层：解耦中枢)
 /// 遵循 Service Locator 模式，支持 Mock 替换 (@SR-04: 受权限管控的插件访问基础)
 final class ServiceContainer: @unchecked Sendable {
     /// 全局单例
     static let shared = ServiceContainer()
-    
+
     /// 服务注册表
     private var services: [String: Any] = [:]
-    
+
     /// 并发保护锁 (os_unfair_lock)，比 NSLock 更轻量且具备极佳的高并发性能
     private let lockPointer: UnsafeMutablePointer<os_unfair_lock>
-    
+
+    /// 诊断计数器：累计 resolve 调用次数，用于定位全量测试中第几次 resolve 触发崩溃
+    private var resolveCallCount: Int = 0
+
+    /// 诊断计数器：累计 register 调用次数
+    private var registerCallCount: Int = 0
+
+    /// 上次 reset 的诊断信息
+    private var lastResetInfo: String?
+    /// 上次 reset 的时间戳
+    private var lastResetTimestamp: Date?
+
     private init() {
         lockPointer = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
         lockPointer.initialize(to: os_unfair_lock())
     }
-    
+
     deinit {
         lockPointer.deallocate()
     }
-    
+
     /// 注册服务
     /// - Parameters:
     ///   - service: 服务实例
@@ -41,58 +56,117 @@ final class ServiceContainer: @unchecked Sendable {
         let key = makeKey(for: type)
         os_unfair_lock_lock(lockPointer)
         services[key] = service
+        registerCallCount += 1
         os_unfair_lock_unlock(lockPointer)
         #if DEBUG
         Logger.shared.debug("DI: Registered [\(key)] with instance \(String(describing: service))")
         #endif
     }
-    
+
     /// 标记是否由生产注册链（AppEnvironment）完成初始化，防止测试误清
     private var isProductionChainPopulated = false
 
     /// 标记生产链已完成，禁止 reset() 清空
     func markProductionChainComplete() {
         isProductionChainPopulated = true
+        // 记录生产链完成时的诊断快照
+        os_unfair_lock_lock(lockPointer)
+        let keyCount = services.count
+        let allKeys = Array(services.keys)
+        os_unfair_lock_unlock(lockPointer)
+        let info = "[ServiceContainer] Production DI chain complete. Registered services: \(keyCount). Keys: \(allKeys.sorted().joined(separator: ", "))"
+        os_log(.info, log: diLog, "%{public}@", info)
+        Logger.shared.info(info)
+    }
+
+    /// 诊断属性：是否被生产链锁定（公开只读）
+    var isProductionChainLocked: Bool { isProductionChainPopulated }
+
+    /// 诊断属性：当前注册表快照
+    var diagnosticSnapshot: [String: Bool] {
+        os_unfair_lock_lock(lockPointer)
+        let keys = Array(services.keys)
+        os_unfair_lock_unlock(lockPointer)
+        var snapshot: [String: Bool] = [:]
+        for key in keys { snapshot[key] = true }
+        return snapshot
     }
 
     /// 重置所有服务（主要用于测试环境隔离）
     /// 生产注册链完成后调用此方法无效果，防止测试误清导致 @Inject 崩溃
     func reset() {
+        let callSite = Thread.callStackSymbols.prefix(5).joined(separator: "\n")
         guard !isProductionChainPopulated else {
-            Logger.shared.warning("[ServiceContainer] reset() blocked: production DI chain is complete. Use register() to override specific services in tests.")
+            let msg = "[ServiceContainer] reset() BLOCKED: production DI chain is complete. Call site:\n\(callSite)"
+            os_log(.error, log: diLog, "%{public}@", msg)
+            Logger.shared.warning(msg)
             return
         }
         os_unfair_lock_lock(lockPointer)
+        let removedCount = services.count
+        let removedKeys = Array(services.keys)
         services.removeAll()
         os_unfair_lock_unlock(lockPointer)
+        lastResetInfo = "Removed \(removedCount) services: \(removedKeys.sorted().joined(separator: ", "))"
+        lastResetTimestamp = Date()
+        os_log(.info, log: diLog, "%{public}@", "[ServiceContainer] reset() executed. \(lastResetInfo!)")
     }
     
     /// 解析服务
     func resolve<T>(_ type: T.Type) -> T {
         let key = makeKey(for: type)
-        
+
         // 单次加锁：同时读取实例和诊断信息，消除两次加锁间的竞态窗口
         os_unfair_lock_lock(lockPointer)
         let instance = services[key]
         let registeredKeys = Array(services.keys)
+        let callCount = resolveCallCount
+        resolveCallCount += 1
+        let regCallCount = registerCallCount
         os_unfair_lock_unlock(lockPointer)
-        
+
         if let service = instance as? T {
             return service
         }
-        
-        // 服务未注册：输出诊断信息
-        let errorMessage = " DI Error: Service [" + key + "] not registered. Expected type: " + String(describing: type) + ". Current keys: " + registeredKeys.joined(separator: ", ")
-        
+
+        // ── 服务未注册：输出多层次诊断信息 ──
+        let rawTypeString = String(describing: type)
+        let errorSummary = "DI Error: Service [\(key)] not registered. Expected type: \(rawTypeString). Registered keys (\(registeredKeys.count)): \(registeredKeys.sorted().joined(separator: ", "))"
+
+        // 层级 1: os_log .fault — 崩溃后仍可在系统日志中检索
+        os_log(.fault, log: diLog, "%{public}@", errorSummary)
+        os_log(.fault, log: diLog,
+               "DI resolve #%{public}d (register #%{public}d) | productionChainLocked: %{public}@ | lastReset: %{public}@ (%{public}@)",
+               callCount, regCallCount,
+               isProductionChainPopulated ? "YES" : "NO",
+               lastResetTimestamp?.description ?? "never",
+               lastResetInfo ?? "N/A")
+
+        // 层级 2: stderr — 同步打印，不经过任何异步缓冲区
+        fputs("""
+        ╔══════════════════════════════════════════════════════════════╗
+        ║  DI RESOLVE FAILURE — Crash Imminent                        ║
+        ╠══════════════════════════════════════════════════════════════╣
+        ║  Key:        \(key)
+        ║  Type:       \(rawTypeString)
+        ║  Call #:     \(callCount)  |  Register #: \(regCallCount)
+        ║  Production: \(isProductionChainPopulated ? "YES" : "NO")
+        ║  Last Reset: \(lastResetTimestamp?.description ?? "never")
+        ║              \(lastResetInfo ?? "N/A")
+        ║  Keys (\(registeredKeys.count)): \(registeredKeys.sorted().joined(separator: ", "))
+        ╚══════════════════════════════════════════════════════════════╝
+
+        """, stderr)
+
         #if DEBUG
-        Logger.shared.error(errorMessage)
+        Logger.shared.error(errorSummary)
         #endif
-        
+
         // 使用断言而非 fatalError，在开发环境下更容易追踪
-        assertionFailure(errorMessage)
-        
+        assertionFailure(errorSummary)
+
         // 兜底返回（仅在非调试模式下运行到此）
-        fatalError(errorMessage)
+        fatalError(errorSummary)
     }
     
     /// 尝试解析服务，如果未注册则返回 nil，不会触发断言或崩溃

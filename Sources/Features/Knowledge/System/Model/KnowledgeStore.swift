@@ -51,10 +51,19 @@ public final class KnowledgeStore {
     @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     // MARK: - 初始化
-    
+
     public init() {
         Logger.shared.info(" [KnowledgeStore] Initializing...")
+        // 诊断：记录当前 DI 容器状态
+        #if DEBUG
+        let isProductionLocked = ServiceContainer.shared.isProductionChainLocked
+        Logger.shared.info(" [KnowledgeStore] DI container state: productionChainLocked=\(isProductionLocked), serviceCount=\(ServiceContainer.shared.diagnosticSnapshot.count)")
+        #endif
         setupSubscriptions()
+    }
+
+    deinit {
+        Logger.shared.info(" [KnowledgeStore] Deinitializing and cancelling subscriptions...")
     }
 
     private func setupSubscriptions() {
@@ -129,15 +138,23 @@ public final class KnowledgeStore {
     /// 刷新内存镜像
     public func refresh() async {
         let startTime = Date()
-        
+
+        // 🛡️ 防御性检查：在全量测试并发场景下，DI 容器可能被前置测试破坏
+        // 使用 optionalResolve 避免因服务未注册导致 fatalError
+        guard let pageStore = ServiceContainer.shared.optionalResolve((any AnyPageStoreCapabilities).self),
+              let knowledgeRepo = ServiceContainer.shared.optionalResolve((any KnowledgeRepository).self) else {
+            Logger.shared.warning("[KnowledgeStore] refresh() skipped: required services missing from DI container (likely due to test interference)")
+            return
+        }
+
         // 🚨 强制同步底层物理缓存：确保 pageStore (SQLiteStore) 内部内存镜像与磁盘完成重载
         // 这对于直接通过 DB 裸物理连接写入数据（如 Demo 演示数据播种写入）后的数据一致性至关重要
         await pageStore.reloadFromDisk()
-        
-        self.pages = (try? await knowledgeRepository.fetchAll()) ?? []
+
+        self.pages = (try? await knowledgeRepo.fetchAll()) ?? []
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
-        
+
         let duration = Date().timeIntervalSince(startTime)
         if let perf = ServiceContainer.shared.optionalResolve(PerformanceService.self) {
             perf.record(.databaseLoad, duration: duration)

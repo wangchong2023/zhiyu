@@ -70,26 +70,32 @@ final class ZhiYuMonkeyTests: XCTestCase {
             if count > 0 {
                 let randomIndex = Int.random(in: 0..<count)
                 let targetElement = query.element(boundBy: randomIndex)
-                
-                // 执行安全和属性状态评估
-                if targetElement.exists && targetElement.isHittable {
-                    let label = targetElement.label.lowercased()
-                    let identifier = targetElement.identifier.lowercased()
-                    
-                    // 【智能避让机制】拦截一切破坏性、重置性以及会导致退出账户的安全敏感按钮
-                    let isDestructive = label.contains("delete") || label.contains("删除") ||
-                                        label.contains("erase") || label.contains("擦除") ||
-                                        label.contains("sign out") || label.contains("退出登录") ||
-                                        label.contains("logout") || label.contains("clear") ||
-                                        label.contains("清除") || label.contains("reset") ||
-                                        label.contains("重置")
-                    
-                    let isDestructiveId = identifier.contains("delete") || identifier.contains("logout") || identifier.contains("reset")
-                    
-                    // 避让水平 ScrollView 中易被遮挡不可点击的图标选择按钮，避免 XCTest 物理点击挂起
-                    let isIconOption = ["📚", "🔬", "📓", "📖", "📝", "🗂️", "📊", "🧪", "💡", "🎯", "🚀", "⭐", "🔧", "🎨", "📐", "🧠"].contains(targetElement.label)
-                    
-                    if !isDestructive && !isDestructiveId && !isIconOption {
+
+                // 🛡️ 前置过滤：在调用 isHittable 之前先检查元素 label/identifier/frame
+                // isHittable 在 frame 为零/无效时可能触发 XCUITest 底层断言崩溃
+                // 因此必须先将已知高危元素过滤掉，避免 isHittable 调用本身崩溃
+                guard targetElement.exists else { continue }
+                let label = targetElement.label.lowercased()
+                let identifier = targetElement.identifier.lowercased()
+
+                // 【智能避让机制】拦截一切破坏性、重置性以及会导致退出账户的安全敏感按钮
+                let isDestructive = label.contains("delete") || label.contains("删除") ||
+                                    label.contains("erase") || label.contains("擦除") ||
+                                    label.contains("sign out") || label.contains("退出登录") ||
+                                    label.contains("logout") || label.contains("clear") ||
+                                    label.contains("清除") || label.contains("reset") ||
+                                    label.contains("重置")
+
+                let isDestructiveId = identifier.contains("delete") || identifier.contains("logout") || identifier.contains("reset")
+
+                // 避让水平 ScrollView 中易被遮挡不可点击的图标选择按钮，避免 XCTest 物理点击挂起
+                let isIconOption = ["📚", "🔬", "📓", "📖", "📝", "🗂️", "📊", "🧪", "💡", "🎯", "🚀", "⭐", "🔧", "🎨", "📐", "🧠"].contains(targetElement.label)
+
+                // 🛡️ 额外防御：跳过 frame 为零或无效的元素，防止 isHittable 内部断言失败
+                let frame = targetElement.frame
+                let hasValidFrame = !frame.isEmpty && frame.width > 1 && frame.height > 1
+
+                if !isDestructive && !isDestructiveId && !isIconOption && hasValidFrame && targetElement.isHittable {
                         print("[MONKEY] 第 \(step)/\(maxIterations) 步：拟真操作 -> 元素类型: \(targetElement.elementType)，文本标签: '\(targetElement.label)'")
                         
                         // 执行防护式点击，捕捉极端动效竞争异常
@@ -102,7 +108,6 @@ final class ZhiYuMonkeyTests: XCTestCase {
                             print("[MONKEY] 操作警告：元素状态在执行瞬间发生偏转，跳过该步。")
                         }
                     }
-                }
             }
             
             // 4. 如果未能执行有效点击，则进行物理滑动，用于解锁死局页面

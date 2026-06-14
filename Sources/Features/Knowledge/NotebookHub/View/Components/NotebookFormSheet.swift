@@ -83,7 +83,7 @@ struct NotebookFormSheet: View {
                                 .foregroundStyle(.secondary)
                             
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: DesignSystem.medium) {
+                                LazyHStack(spacing: DesignSystem.medium) {
                                     ForEach(iconOptions, id: \.self) { item in
                                         Button {
                                             icon = item
