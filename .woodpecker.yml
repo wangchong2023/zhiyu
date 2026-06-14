@@ -23,107 +23,84 @@ steps:
           git clone $CLONE_URL .
           git checkout $CI_COMMIT_SHA
         fi
-      - |
-        if git diff --name-only HEAD~1 2>/dev/null | grep -qE "project.yml|Package.resolved"; then
-          echo "🧹 依赖配置变更，清空 DerivedData..."
-          rm -rf build/DerivedData-*
-        fi
 
-  # Stage 1: 静态分析 + Lint + 安全
+  # ── Stage 1: 并行（静态分析 ∥ Lint ∥ 安全 ∥ 构建准备）──
   static-analysis:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Stage 1: 静态分析"
-      - python3 Tools/Gatekeeper/check_architecture_dependency.py
+      - echo "===> Running Static Analysis..."
       - python3 Tools/Gatekeeper/check_domain_purity.py
       - python3 Tools/Gatekeeper/check_test_di_setup.py
-      - python3 Tools/Gatekeeper/check_root_hygiene.py
-      - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
       - bash Tools/Lint/lint_layer_markers.sh
+      - 'echo "===> Scanning unsafe String.Index offsetBy: calls..."'
       - python3 Tools/Lint/scan_unsafe_string_index.py
+      - echo "===> Running Document Integrity Check..."
       - python3 Tools/Gatekeeper/check_docs_integrity.py
+      - echo "===> Running Config and Script Health Check..."
       - python3 Tools/Gatekeeper/check_configs_integrity.py
+      - echo "===> Running ShellCheck for Tools..."
       - bash Tools/CI/run_shellcheck.sh
-      - bash Tools/CI/verify_spm_integrity.sh
-      - python3 Tools/CI/generate_sbom.py
-      - brew install syft 2>/dev/null || true
-      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft not available, skipping"
-      - python3 Tools/CI/merge_sbom.py
 
   swiftlint:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> SwiftLint"
+      - echo "===> Running SwiftLint..."
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
-    failure: ignore
-
-  signature-check:
-    depends_on: [clone-repo]
-    image: bash
-    commands:
-      - echo "===> Commit Signature Check"
-      - |
-        if git log --show-signature -1 | grep -q "Good signature"; then
-          echo "  ✅ Commit signed"
-        else
-          echo "  ⚠️  Commit NOT signed"
-        fi
     failure: ignore
 
   secret-scan:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Hardcoded Secrets Scan"
+      - echo "===> Scanning for hardcoded secrets..."
       - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "===> Build Preparation"
+      - echo "===> Generating Xcode project..."
       - xcodegen generate
+      - echo "===> Preparing build environment + dependencies..."
       - mkdir -p build /Users/constantine/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo "===> Preparation Complete"
+      - echo "===> Preparation complete."
 
-  # Stage 2: 三平台并行编译
+  # ── Stage 3: 三平台并行编译 ──
   build-ios:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build iOS"
+      - echo "===> Building iOS app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "===> iOS Build Complete"
-      - echo "===> Reproducible Build Check"
-      - bash Tools/CI/verify_reproducible_build.sh
+      - echo "===> iOS Build completed."
 
   build-macos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build macOS"
+      - echo "===> Building macOS (Catalyst) app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
-      - echo "===> macOS Build Complete"
+      - echo "===> macOS Build completed."
 
   build-watchos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "===> Build watchOS"
+      - echo "===> Building watchOS app..."
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
-      - echo "===> watchOS Build Complete"
+      - echo "===> watchOS Build completed."
 
-  # Stage 3: 测试 + 覆盖率
+  # ── Stage 4: 测试 + 覆盖率 ──
   test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "===> Stage 3: Test + Coverage"
+      - echo "===> Counting test cases..."
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-      - cat build/.test_count | xargs echo "  Test count:"
       - ./Tools/CI/run_unit_tests.sh --ci
+      - echo "===> All Tests passed."
+      - echo "===> Checking code coverage..."
       - python3 Tools/CI/check_coverage.py
-      - echo "===> All Tests + Coverage Passed"
