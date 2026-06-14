@@ -1,23 +1,6 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "pagesCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages Count"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面数量"
-          }
-        }
-      }
-    },
     "icloud.error.systemBusy": {
       "extractionState": "manual",
       "localizations": {
@@ -48,57 +31,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "引擎未就绪"
-          }
-        }
-      }
-    },
-    "error.internalError": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Internal Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "内部错误"
-          }
-        }
-      }
-    },
-    "error.notReady": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not Ready"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未就绪"
-          }
-        }
-      }
-    },
-    "error.busy": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Busy"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "繁忙"
           }
         }
       }

@@ -290,23 +290,6 @@
         }
       }
     },
-    "aiAssistantName": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu Assistant"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智宇助手"
-          }
-        }
-      }
-    },
     "aitask.active": {
       "extractionState": "manual",
       "localizations": {
@@ -970,23 +953,6 @@
         }
       }
     },
-    "categories": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Categories"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "分类"
-          }
-        }
-      }
-    },
     "chat.ai.thinking": {
       "extractionState": "manual",
       "localizations": {
@@ -1034,23 +1000,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "AI 正在后台运行中..."
-          }
-        }
-      }
-    },
-    "chat.clearHistory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear Chat"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "清空对话"
           }
         }
       }
@@ -1106,23 +1055,6 @@
         }
       }
     },
-    "chat.conversationHistory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conversation History"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "对话记录"
-          }
-        }
-      }
-    },
     "chat.deepExplorePrompt": {
       "extractionState": "manual",
       "localizations": {
@@ -1136,40 +1068,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "探索：%@"
-          }
-        }
-      }
-    },
-    "chat.error.noResponse": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No response from AI. Please check your network or model configuration."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未收到 AI 响应，请检查网络或模型配置。"
-          }
-        }
-      }
-    },
-    "chat.expandFull": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Expand full text"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "展开全文"
           }
         }
       }
@@ -1208,23 +1106,6 @@
         }
       }
     },
-    "chat.exportMarkdown": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Export as Markdown"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导出为 Markdown"
-          }
-        }
-      }
-    },
     "chat.exportPDF": {
       "extractionState": "manual",
       "localizations": {
@@ -1242,23 +1123,6 @@
         }
       }
     },
-    "chat.exportSelectedMarkdown": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Export Selected Markdown"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "导出选中的 Markdown"
-          }
-        }
-      }
-    },
     "chat.exportSelectedPDF": {
       "extractionState": "manual",
       "localizations": {
@@ -1272,57 +1136,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "导出选中的 PDF"
-          }
-        }
-      }
-    },
-    "chat.fallback.q1": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Summarize my recent knowledge"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "总结我最近添加的知识点"
-          }
-        }
-      }
-    },
-    "chat.fallback.q2": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What is my current research focus?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "我目前的研究重点是什么？"
-          }
-        }
-      }
-    },
-    "chat.fallback.q3": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Help me discover potential links"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "帮我发现不同领域间的潜在联系"
           }
         }
       }
@@ -1446,40 +1259,6 @@
         }
       }
     },
-    "chat.role.ai": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI"
-          }
-        }
-      }
-    },
-    "chat.role.user": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "You"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你"
-          }
-        }
-      }
-    },
     "chat.selectToExport": {
       "extractionState": "manual",
       "localizations": {
@@ -1493,159 +1272,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "选择聊天内容"
-          }
-        }
-      }
-    },
-    "chat.selectedHistory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selected History"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选中的对话"
-          }
-        }
-      }
-    },
-    "chat.suggested.compare": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compare similarities and differences between concepts"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "对比不同概念的异同"
-          }
-        }
-      }
-    },
-    "chat.suggested.connections": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Which pages might be related but not linked?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有哪些页面之间可能存在关联但没有链接？"
-          }
-        }
-      }
-    },
-    "chat.suggested.explain": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Explain the relationships between these concepts"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "解释这些概念之间的关系"
-          }
-        }
-      }
-    },
-    "chat.suggested.gaps": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What gaps exist in my knowledge that need filling?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识库中有哪些盲区需要补充？"
-          }
-        }
-      }
-    },
-    "chat.suggested.organize": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Help me organize the knowledge structure"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "帮我整理知识结构"
-          }
-        }
-      }
-    },
-    "chat.suggested.recommend": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recommend new pages to add"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "推荐可以添加的新页面"
-          }
-        }
-      }
-    },
-    "chat.suggested.summarize": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Summarize the most important concepts in my knowledge"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "总结我的知识库中最重要的概念"
-          }
-        }
-      }
-    },
-    "chat.suggested.whatContent": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What content is in my knowledge?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识库中有哪些内容？"
           }
         }
       }
@@ -1680,244 +1306,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "基于你的知识库内容回答问题，发现关联，发现盲区"
-          }
-        }
-      }
-    },
-    "chat.welcomeTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZhiYu AI Assistant"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识库 AI 对话"
-          }
-        }
-      }
-    },
-    "clearConfirmMessage": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Are you sure you want to clear all completed and failed task history?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "确定要清空所有已完成和失败的任务记录吗？"
-          }
-        }
-      }
-    },
-    "clearConfirmTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear History"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "清空记录"
-          }
-        }
-      }
-    },
-    "guide.aiscan": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Smart Scanning"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全库智能扫描"
-          }
-        }
-      }
-    },
-    "guide.aiscan.desc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Triggered automatically when adding or updating large amounts of content."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在添加或更新大量内容时自动触发。"
-          }
-        }
-      }
-    },
-    "guide.health": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Self-Health Check"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统自检"
-          }
-        }
-      }
-    },
-    "guide.health.desc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Click 'Run Health Check' in the top right to start."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "点击右上角“运行自检”即可开始。"
-          }
-        }
-      }
-    },
-    "guide.ingest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Ingest"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识提取与加工"
-          }
-        }
-      }
-    },
-    "guide.ingest.desc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Triggered when you 'Extract Knowledge' from raw materials."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在对素材进行“知识提取”时触发。"
-          }
-        }
-      }
-    },
-    "guide.synthesis": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis Lab"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合成实验室"
-          }
-        }
-      }
-    },
-    "guide.synthesis.desc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Triggered when AI is generating insights in the lab."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "在实验室中使用 AI 生成洞察时触发。"
-          }
-        }
-      }
-    },
-    "howToTrigger": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "How to trigger?"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "如何触发任务？"
-          }
-        }
-      }
-    },
-    "inputPlaceholder": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Type a message..."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "问点什么吧..."
-          }
-        }
-      }
-    },
-    "list.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tasks"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "任务列表"
           }
         }
       }
@@ -3520,23 +2908,6 @@
         }
       }
     },
-    "noHistory": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No History"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无记录"
-          }
-        }
-      }
-    },
     "ondevice.appleIntelligence": {
       "extractionState": "manual",
       "localizations": {
@@ -4523,40 +3894,6 @@
         }
       }
     },
-    "prompt.expert.base.footer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Configure deep system instructions for specific AI tasks (e.g., Mindmap, Quiz) to optimize generation results."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "针对特定 AI 任务（如思维导图、知识测验）配置深层的系统指令，以优化生成效果。"
-          }
-        }
-      }
-    },
-    "prompt.expert.base.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Expert Prompt Config"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "专家提示词配置"
-          }
-        }
-      }
-    },
     "prompt.expert.mindmap.footer": {
       "extractionState": "manual",
       "localizations": {
@@ -4744,74 +4081,6 @@
         }
       }
     },
-    "prompt.initial.quiz": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Create 3 difficult quiz questions based on content"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "根据现有内容出 3 道高难度测试题"
-          }
-        }
-      }
-    },
-    "prompt.initial.report": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Turn recent notes into a report outline"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将最近的笔记转化为一份报告大纲"
-          }
-        }
-      }
-    },
-    "prompt.initial.summarize": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Summarize core knowledge learned recently"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "总结我最近学习的核心知识"
-          }
-        }
-      }
-    },
-    "prompt.mindmap": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mind Map"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "思维导图 (Mindmap)"
-          }
-        }
-      }
-    },
     "prompt.potentialLinks": {
       "extractionState": "manual",
       "localizations": {
@@ -4982,23 +4251,6 @@
         }
       }
     },
-    "prompt.quiz": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quiz"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识测验 (Quiz)"
-          }
-        }
-      }
-    },
     "prompt.quiz.defaultTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -5067,23 +4319,6 @@
         }
       }
     },
-    "prompt.quiz.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quiz"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 测验生成"
-          }
-        }
-      }
-    },
     "prompt.refactor": {
       "extractionState": "manual",
       "localizations": {
@@ -5097,23 +4332,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "你是一位知识管理专家。分析页面数据，寻找优化结构的机会（合并相似、拆分过大、重命名）。\n以 JSON 数组格式返回，对象包含: type, target, reason, suggestion。"
-          }
-        }
-      }
-    },
-    "prompt.report": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Report Generation"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "深度报告 (Report)"
           }
         }
       }
@@ -5254,23 +4472,6 @@
         }
       }
     },
-    "prompt.slides": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Slides"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "演示大纲 (Slides)"
-          }
-        }
-      }
-    },
     "prompt.workshop.add": {
       "extractionState": "manual",
       "localizations": {
@@ -5369,23 +4570,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "置顶指令"
-          }
-        }
-      }
-    },
-    "scanTaskName": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vault Scanning"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "全库扫描"
           }
         }
       }
@@ -6121,57 +5305,6 @@
         }
       }
     },
-    "status.completed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Completed"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已完成"
-          }
-        }
-      }
-    },
-    "status.failed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Failed"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "失败"
-          }
-        }
-      }
-    },
-    "status.pending": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pending"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "等待中"
-          }
-        }
-      }
-    },
     "synthesis.actions": {
       "extractionState": "manual",
       "localizations": {
@@ -6240,23 +5373,6 @@
         }
       }
     },
-    "synthesis.error": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synthesis Error"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识合成失败"
-          }
-        }
-      }
-    },
     "synthesis.error.limitReached": {
       "extractionState": "manual",
       "localizations": {
@@ -6287,74 +5403,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识库为空，无法进行合成"
-          }
-        }
-      }
-    },
-    "synthesis.generate": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Generate"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识合成生成"
-          }
-        }
-      }
-    },
-    "synthesis.generatedAt": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Generated: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "生成于 %@"
-          }
-        }
-      }
-    },
-    "synthesis.generatingCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在生成 %d 个"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在生成 %d 个"
-          }
-        }
-      }
-    },
-    "synthesis.intro": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select pages to synthesize into high-value outputs like mindmaps or reports."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择知识页面，将其合成为思维导图、演示文稿、测试或深度报告。"
           }
         }
       }
@@ -6427,91 +5475,6 @@
         }
       }
     },
-    "synthesis.noDocsDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Generate mindmaps, slides, and reports using AI to see the bigger picture."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用 AI 生成思维导图、演示文稿和深度报告，从更高维度洞察知识。"
-          }
-        }
-      }
-    },
-    "synthesis.noDocsThisType": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "该分类下暂无文档"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "该分类下暂无文档"
-          }
-        }
-      }
-    },
-    "synthesis.recentFiles": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recent Documents"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最近生成的文档"
-          }
-        }
-      }
-    },
-    "synthesis.selectPages": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select Sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选择知识源"
-          }
-        }
-      }
-    },
-    "synthesis.sourceTip": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Automatically linked to all knowledge sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统已自动关联库中所有知识源"
-          }
-        }
-      }
-    },
     "synthesis.title": {
       "extractionState": "manual",
       "localizations": {
@@ -6525,57 +5488,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "知识合成"
-          }
-        }
-      }
-    },
-    "synthesis.tools.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tools"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "工具箱"
-          }
-        }
-      }
-    },
-    "synthesis.totalCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "共 %d 个文档"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "共 %d 个文档"
-          }
-        }
-      }
-    },
-    "type.ingest": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Ingest"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识导入"
           }
         }
       }

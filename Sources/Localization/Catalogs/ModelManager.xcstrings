@@ -460,23 +460,6 @@
         }
       }
     },
-    "model_manager.routingTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Smart Routing"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "智能路由"
-          }
-        }
-      }
-    },
     "model_manager.server.add": {
       "extractionState": "manual",
       "localizations": {
@@ -664,23 +647,6 @@
         }
       }
     },
-    "model_manager.serversTitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Servers"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "服务器配置"
-          }
-        }
-      }
-    },
     "model_manager.status.completed": {
       "extractionState": "manual",
       "localizations": {
@@ -767,23 +733,6 @@
       }
     },
     "model_manager.store.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Model Store"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "模型商店"
-          }
-        }
-      }
-    },
-    "model_manager.storeTitle": {
       "extractionState": "manual",
       "localizations": {
         "en": {
@@ -1068,23 +1017,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "启用 SSL 证书验证"
-          }
-        }
-      }
-    },
-    "model_manager.server.test_connection": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Test Connection"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "测试连接"
           }
         }
       }

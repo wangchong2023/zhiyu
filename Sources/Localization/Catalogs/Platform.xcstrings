@@ -324,74 +324,6 @@
         }
       }
     },
-    "watch.pages": {
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "页面"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pages"
-          }
-        }
-      }
-    },
-    "watch.words": {
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "字数"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Words"
-          }
-        }
-      }
-    },
-    "watch.recentUpdates": {
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "最近更新"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recent Updates"
-          }
-        }
-      }
-    },
-    "watch.tenThousand": {
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "万"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "0k"
-          }
-        }
-      }
-    },
     "watch.briefing.synthesizing": {
       "extractionState": "manual",
       "localizations": {
@@ -456,23 +388,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Audio Briefing"
-          }
-        }
-      }
-    },
-    "watch.dictation": {
-      "extractionState": "manual",
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "语音录入"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dictation"
           }
         }
       }

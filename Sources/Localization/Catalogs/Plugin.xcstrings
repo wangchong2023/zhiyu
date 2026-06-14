@@ -800,23 +800,6 @@
         }
       }
     },
-    "plugin.communityMode": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Community Mode (Risk Warning)"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "社区模式 (风险提示)"
-          }
-        }
-      }
-    },
     "plugin.local.desc": {
       "extractionState": "manual",
       "localizations": {
@@ -1157,23 +1140,6 @@
         }
       }
     },
-    "plugin.safeModeOn": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Safe Mode Enabled"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "安全模式已开启"
-          }
-        }
-      }
-    },
     "plugin.searchPlaceholder": {
       "extractionState": "manual",
       "localizations": {
@@ -1225,40 +1191,6 @@
         }
       }
     },
-    "plugin.section.pluginSettings": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plugin Settings"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "插件设置"
-          }
-        }
-      }
-    },
-    "plugin.section.rag": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI Context"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AI 辅助认知"
-          }
-        }
-      }
-    },
     "plugin.section.ribbon": {
       "extractionState": "manual",
       "localizations": {
@@ -1272,23 +1204,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "快捷功能区"
-          }
-        }
-      }
-    },
-    "plugin.stat.downloads": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloads"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "下载"
           }
         }
       }
@@ -1408,57 +1323,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "当前参考信源"
-          }
-        }
-      }
-    },
-    "source.view.empty": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No reference sources yet."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无参考信源，请在页面中选中或添加文档"
-          }
-        }
-      }
-    },
-    "source.view.subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selected docs will be used by AI"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "选中的文档或片段将被 AI 用于生成回答"
-          }
-        }
-      }
-    },
-    "source.view.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reference Sources"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "参考信源"
           }
         }
       }
@@ -1663,91 +1527,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "存储键名超过最大长度限制 (%d 字符)"
-          }
-        }
-      }
-    },
-    "plugin.section.description": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Description"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "功能描述"
-          }
-        }
-      }
-    },
-    "permission.sandboxDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allows plugin to access the local file system within sandbox"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "允许插件在沙盒内访问本地文件系统"
-          }
-        }
-      }
-    },
-    "permission.networkAccessDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allows plugin to access the internet for data fetching"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "允许插件访问互联网获取数据"
-          }
-        }
-      }
-    },
-    "permission.modifyKnowledgeDesc": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allows plugin to read and modify your document content"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "允许插件读取和修改您的文档内容"
-          }
-        }
-      }
-    },
-    "permission.requestPermission": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Requests permission: %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请求权限：%@"
           }
         }
       }

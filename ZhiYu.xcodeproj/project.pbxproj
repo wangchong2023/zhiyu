@@ -5337,6 +5337,7 @@
 				8B33E469F178F75B92D540DA /* [Gatekeeper] Storage Constants Audit */,
 				1DB9E953A686E3ED7904FC30 /* [Gatekeeper] HIG Compliance Check */,
 				65A9C056D7C60802265DD86D /* [Gatekeeper] Architecture Dependency Check */,
+				FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */,
 				EA1B37A047D6A4A9288944A3 /* Sources */,
 				AB2B5FECDF7840D69B5DBB41 /* Resources */,
 				25FE1560EB48C69ADB1DCCD7 /* Frameworks */,
@@ -5367,6 +5368,7 @@
 				4A5A6ABBAAAB1ACD347D1C22 /* [Gatekeeper] HIG Compliance Check */,
 				25126DFFB22D9341C94FCC43 /* [Gatekeeper] App Store Readiness Check */,
 				AE0B46F26F0A7E13AF323F19 /* [Gatekeeper] Architecture Dependency Check */,
+				5A14795F3FF364E52B7253E1 /* [Gatekeeper] Tools Scripts Quality Audit */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -5399,6 +5401,7 @@
 				74F93980910E9104FE556B3E /* [Gatekeeper] HIG Compliance Check */,
 				FBE25CA2EC713019BCCB058D /* [Gatekeeper] App Store Readiness Check */,
 				0B0CF540B4A58BB9BCC68549 /* [Gatekeeper] Architecture Dependency Check */,
+				47B3864CDB201111123F1CEC /* [Gatekeeper] Tools Scripts Quality Audit */,
 				86291D6B599F1CBF26E285DE /* Sources */,
 				9D4C3BB7686487432DE9BCE6 /* Resources */,
 				DAA3A90F62D6362E3C59B549 /* Frameworks */,
@@ -5797,6 +5800,25 @@
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_domain_purity.py";
 		};
+		47B3864CDB201111123F1CEC /* [Gatekeeper] Tools Scripts Quality Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Tools Scripts Quality Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
+		};
 		4A5A6ABBAAAB1ACD347D1C22 /* [Gatekeeper] HIG Compliance Check */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -5834,6 +5856,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_magic_numbers_v2.py";
+		};
+		5A14795F3FF364E52B7253E1 /* [Gatekeeper] Tools Scripts Quality Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Tools Scripts Quality Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
 		};
 		5ED6F7C33F6474A5ED332F3D /* [Gatekeeper] L10n Leak & Hardcode Audit */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6062,6 +6103,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
+		};
+		FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Tools Scripts Quality Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
 		};
 		FBE25CA2EC713019BCCB058D /* [Gatekeeper] App Store Readiness Check */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8067,6 +8127,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_GENERATE_LOCALIZATION_SYMBOL_KEYS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;

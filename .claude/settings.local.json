@@ -246,7 +246,17 @@
       "Bash(echo \"RAG errors: $?\")",
       "Bash(security find-identity *)",
       "Bash(chmod +x *)",
-      "Bash(awk '{printf \"%-20s %s\\\\n\", $2, $NF}')"
+      "Bash(awk '{printf \"%-20s %s\\\\n\", $2, $NF}')",
+      "Bash(gh api *)",
+      "Bash(git -C /Users/constantine/Documents/work/code/projects/ZhiYu add .github/CODEOWNERS)",
+      "Bash(git -C /Users/constantine/Documents/work/code/projects/ZhiYu commit -m \"ci: 添加 CODEOWNERS 文件 — 按领域分配代码所有权\")",
+      "Bash(git *)",
+      "Bash(bash *)",
+      "Bash(ruby -ryaml -e \"YAML.safe_load_file\\('/Users/constantine/Documents/work/code/projects/ZhiYu/.github/dependabot.yml'\\)\")",
+      "Bash(ruby *)",
+      "Bash(sed -i '' '/echo \"\"$/d' .woodpecker.yml)",
+      "Bash(sed -i '' 's/Stage 1 - 静态分析/Stage 1: 静态分析/g' .woodpecker.yml)",
+      "Bash(sed -i '' 's/Stage 3 - 测试/Stage 3: 测试/g' .woodpecker.yml)"
     ]
   }
 }
