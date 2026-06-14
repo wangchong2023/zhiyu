@@ -109,6 +109,11 @@ final class MarkdownProcessor: Sendable {
 
         while i < lines.count {
             let trimmed = lines[i].trimmingCharacters(in: .whitespaces)
+            // 跳过空行，不创建块 — 空白行仅用作段落分隔符
+            guard !trimmed.isEmpty else {
+                i += 1
+                continue
+            }
             if let (block, nextIndex) = parseNextBlock(lines: lines, currentIndex: i, trimmed: trimmed) {
                 blocks.append(block)
                 i = nextIndex
@@ -123,7 +128,7 @@ final class MarkdownProcessor: Sendable {
 
     /// 按优先级依次尝试各解析器，返回匹配到的块及下一扫描位置；若无匹配返回 nil
     private func parseNextBlock(lines: [String], currentIndex i: Int, trimmed: String) -> (BlockType, Int)? {
-        if trimmed.isEmpty { return (.paragraph(text: ""), i + 1) }
+        // trimmed 已由 parse() 保证非空，无需再次检查
 
         if let result = parseDetailsBlock(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
         if let result = parseCodeBlock(lines: lines, startIndex: i) { return (result.block, result.nextIndex) }
