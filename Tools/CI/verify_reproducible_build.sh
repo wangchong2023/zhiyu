@@ -7,7 +7,8 @@ DEST="generic/platform=iOS Simulator"
 BUILD_DIR="build/reproducible_test"
 
 echo "====> 确定性构建验证 (L1+L2) <===="
-export SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
+SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
+export SOURCE_DATE_EPOCH
 mkdir -p "$BUILD_DIR"
 
 for i in 1 2; do
