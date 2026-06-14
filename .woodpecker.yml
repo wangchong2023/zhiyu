@@ -29,57 +29,33 @@ steps:
           rm -rf build/DerivedData-*
         fi
 
-  # ==================================================================
-  # Stage 1: 并行静态分析
-  # ==================================================================
+  # Stage 1: 静态分析 + Lint + 安全
   static-analysis:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====== Stage 1: 静态分析 ======"
-      - echo ""
-      - echo "--- [1/10] 架构依赖检查 (L0-L3 严格分层) ---"
+      - echo "===> Stage 1: 静态分析"
       - python3 Tools/Gatekeeper/check_architecture_dependency.py
-      - echo ""
-      - echo "--- [2/10] 领域纯净度检查 ---"
       - python3 Tools/Gatekeeper/check_domain_purity.py
-      - echo ""
-      - echo "--- [3/10] DI 测试设置审计 ---"
       - python3 Tools/Gatekeeper/check_test_di_setup.py
-      - echo ""
-      - echo "--- [4/10] 根目录卫生检查 (临时文件 + 结构) ---"
       - python3 Tools/Gatekeeper/check_root_hygiene.py
-      - echo ""
-      - echo "--- [5/10] 魔鬼数字/字符串审计 ---"
       - python3 Tools/Gatekeeper/check_magic_numbers_v2.py
-      - echo ""
-      - echo "--- [6/10] 分层标记检查 ---"
       - bash Tools/Lint/lint_layer_markers.sh
-      - echo ""
-      - echo "--- [7/10] String.Index 越界扫描 ---"
       - python3 Tools/Lint/scan_unsafe_string_index.py
-      - echo ""
-      - echo "--- [8/10] 文档完整性 + 配置健康 + ShellCheck ---"
       - python3 Tools/Gatekeeper/check_docs_integrity.py
       - python3 Tools/Gatekeeper/check_configs_integrity.py
       - bash Tools/CI/run_shellcheck.sh
-      - echo ""
-      - echo "--- [9/10] SPM 完整性校验 ---"
       - bash Tools/CI/verify_spm_integrity.sh
-      - echo ""
-      - echo "--- [10/10] SBOM 生成 ---"
       - python3 Tools/CI/generate_sbom.py
       - brew install syft 2>/dev/null || true
-      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "  ⚠️  Syft 不可用，跳过 license 检测"
+      - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "Syft not available, skipping"
       - python3 Tools/CI/merge_sbom.py
-      - echo ""
-      - echo "====== Stage 1 完成 ======"
 
   swiftlint:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====== SwiftLint 严格模式 ======"
+      - echo "===> SwiftLint"
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
     failure: ignore
 
@@ -87,7 +63,7 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====== 提交签名验证 ======"
+      - echo "===> Commit Signature Check"
       - |
         if git log --show-signature -1 | grep -q "Good signature"; then
           echo "  ✅ Commit signed"
@@ -100,70 +76,54 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====== 硬编码密钥扫描 ======"
+      - echo "===> Hardcoded Secrets Scan"
       - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====== 构建准备 ======"
-      - echo "--- 生成 Xcode 工程 ---"
+      - echo "===> Build Preparation"
       - xcodegen generate
-      - echo ""
-      - echo "--- 编译依赖与测试 Bundle ---"
       - mkdir -p build /Users/constantine/.cache/zhiyu-spm
       - set -o pipefail && xcodebuild build-for-testing -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/test_compile.log
-      - echo ""
-      - echo "  ✅ 构建准备完成"
+      - echo "===> Preparation Complete"
 
-  # ==================================================================
   # Stage 2: 三平台并行编译
-  # ==================================================================
   build-ios:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====== 编译 iOS ======"
+      - echo "===> Build iOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
-      - echo "  ✅ iOS 编译完成"
-      - echo ""
-      - echo "--- 确定性构建验证 ---"
+      - echo "===> iOS Build Complete"
+      - echo "===> Reproducible Build Check"
       - bash Tools/CI/verify_reproducible_build.sh
 
   build-macos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====== 编译 macOS (Catalyst) ======"
+      - echo "===> Build macOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
-      - echo "  ✅ macOS 编译完成"
+      - echo "===> macOS Build Complete"
 
   build-watchos:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====== 编译 watchOS ======"
+      - echo "===> Build watchOS"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
-      - echo "  ✅ watchOS 编译完成"
+      - echo "===> watchOS Build Complete"
 
-  # ==================================================================
   # Stage 3: 测试 + 覆盖率
-  # ==================================================================
   test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "====== Stage 3: 测试 + 覆盖率 ======"
-      - echo ""
-      - echo "--- 统计测试用例 ---"
+      - echo "===> Stage 3: Test + Coverage"
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
-      - cat build/.test_count | xargs echo "  测试用例数:"
-      - echo ""
-      - echo "--- 执行单元测试 ---"
+      - cat build/.test_count | xargs echo "  Test count:"
       - ./Tools/CI/run_unit_tests.sh --ci
-      - echo ""
-      - echo "--- 代码覆盖率检查 ---"
       - python3 Tools/CI/check_coverage.py
-      - echo ""
-      - echo "  ✅ 测试 + 覆盖率全部通过"
+      - echo "===> All Tests + Coverage Passed"
