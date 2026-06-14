@@ -29,14 +29,14 @@ steps:
           rm -rf build/DerivedData-*
         fi
 
-  # ══════════════════════════════════════════════════════════════════════
-  # Stage 1: 并行静态分析 — 所有检查使用统一标题格式
-  # ══════════════════════════════════════════════════════════════════════
+  # ==================================================================
+  # Stage 1: 并行静态分析
+  # ==================================================================
   static-analysis:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====> Stage 1: 静态分析 <===="
+      - echo "====== Stage 1: 静态分析 ======"
       - echo ""
       - echo "--- [1/10] 架构依赖检查 (L0-L3 严格分层) ---"
       - python3 Tools/Gatekeeper/check_architecture_dependency.py
@@ -73,13 +73,13 @@ steps:
       - syft . -o cyclonedx-json=build/syft.cdx.json 2>/dev/null || echo "  ⚠️  Syft 不可用，跳过 license 检测"
       - python3 Tools/CI/merge_sbom.py
       - echo ""
-      - echo "====> Stage 1 完成 <===="
+      - echo "====== Stage 1 完成 ======"
 
   swiftlint:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====> SwiftLint 严格模式 <===="
+      - echo "====== SwiftLint 严格模式 ======"
       - swiftlint --reporter github-actions-logging 2>/dev/null || swiftlint || true
     failure: ignore
 
@@ -87,12 +87,12 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====> 提交签名验证 <===="
+      - echo "====== 提交签名验证 ======"
       - |
         if git log --show-signature -1 | grep -q "Good signature"; then
           echo "  ✅ Commit signed"
         else
-          echo "  ⚠️  Commit NOT signed — 请配置 GPG: git config commit.gpgsign true"
+          echo "  ⚠️  Commit NOT signed"
         fi
     failure: ignore
 
@@ -100,14 +100,14 @@ steps:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====> 硬编码密钥扫描 <===="
+      - echo "====== 硬编码密钥扫描 ======"
       - python3 Tools/Gatekeeper/check_hardcoded_secrets.py
 
   prepare:
     depends_on: [clone-repo]
     image: bash
     commands:
-      - echo "====> 构建准备 <===="
+      - echo "====== 构建准备 ======"
       - echo "--- 生成 Xcode 工程 ---"
       - xcodegen generate
       - echo ""
@@ -117,14 +117,14 @@ steps:
       - echo ""
       - echo "  ✅ 构建准备完成"
 
-  # ══════════════════════════════════════════════════════════════════════
+  # ==================================================================
   # Stage 2: 三平台并行编译
-  # ══════════════════════════════════════════════════════════════════════
+  # ==================================================================
   build-ios:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====> 编译 iOS <===="
+      - echo "====== 编译 iOS ======"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData-ios -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/ios_build.log
       - echo "  ✅ iOS 编译完成"
       - echo ""
@@ -135,7 +135,7 @@ steps:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====> 编译 macOS (Catalyst) <===="
+      - echo "====== 编译 macOS (Catalyst) ======"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuMac -destination 'platform=macOS' -derivedDataPath build/DerivedData-macos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/mac_build.log
       - echo "  ✅ macOS 编译完成"
 
@@ -143,18 +143,18 @@ steps:
     depends_on: [prepare]
     image: bash
     commands:
-      - echo "====> 编译 watchOS <===="
+      - echo "====== 编译 watchOS ======"
       - set -o pipefail && xcodebuild build -project ZhiYu.xcodeproj -scheme ZhiYuWatch -destination 'generic/platform=watchOS Simulator' -derivedDataPath build/DerivedData-watchos -clonedSourcePackagesDirPath /Users/constantine/.cache/zhiyu-spm CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO 2>&1 | tee build/watch_build.log
       - echo "  ✅ watchOS 编译完成"
 
-  # ══════════════════════════════════════════════════════════════════════
+  # ==================================================================
   # Stage 3: 测试 + 覆盖率
-  # ══════════════════════════════════════════════════════════════════════
+  # ==================================================================
   test:
     depends_on: [build-ios, build-macos, build-watchos]
     image: bash
     commands:
-      - echo "====> Stage 3: 测试 + 覆盖率 <===="
+      - echo "====== Stage 3: 测试 + 覆盖率 ======"
       - echo ""
       - echo "--- 统计测试用例 ---"
       - grep -r "^    func test" Tests/ --include="*.swift" | wc -l | tr -d ' ' > build/.test_count
