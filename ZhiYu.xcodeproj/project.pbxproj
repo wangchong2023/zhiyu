@@ -8435,7 +8435,7 @@
 			repositoryURL = "https://github.com/groue/GRDB.swift.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 6.29.1;
+				minimumVersion = 7.11.0;
 			};
 		};
 		D48F0F80AA2420CDF3F28D96 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
