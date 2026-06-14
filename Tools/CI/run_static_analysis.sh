@@ -10,6 +10,15 @@
 
 set -uo pipefail
 
+# 自动探测 Python 解释器：优先本地 venv（含 radon），CI 环境回退到系统 python3
+# CI 环境须在 static-analysis step 中预先执行 pip3 install radon
+if [ -x "./env/venv/bin/python3" ]; then
+    PYTHON3="./env/venv/bin/python3"
+else
+    PYTHON3="python3"
+fi
+export PYTHON3
+
 LOG_DIR="build/static_analysis_logs"
 mkdir -p "$LOG_DIR"
 
@@ -53,8 +62,8 @@ run_parallel_task "Layer Markers" "layer_markers" "bash Tools/Lint/lint_layer_ma
 run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tools/Lint/scan_unsafe_string_index.py" & pid7=$!
 run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/check_docs_and_configs.py" & pid8=$!
 run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/verify_spm_integrity.sh" & pid9=$!
-run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "./env/venv/bin/python3 Tools/Gatekeeper/check_scripts_quality.py" & pid10=$!
-run_parallel_task "Swift Comments & Length Guard" "swift_comments" "./env/venv/bin/python3 Tools/Gatekeeper/check_swift_comments.py" & pid11=$!
+run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/check_scripts_quality.py" & pid10=$!
+run_parallel_task "Swift Comments & Length Guard" "swift_comments" "$PYTHON3 Tools/Gatekeeper/check_swift_comments.py" & pid11=$!
 
 # SBOM 串行链路整体放入后台
 (
