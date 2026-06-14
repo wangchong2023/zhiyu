@@ -256,7 +256,14 @@
       "Bash(ruby *)",
       "Bash(sed -i '' '/echo \"\"$/d' .woodpecker.yml)",
       "Bash(sed -i '' 's/Stage 1 - 静态分析/Stage 1: 静态分析/g' .woodpecker.yml)",
-      "Bash(sed -i '' 's/Stage 3 - 测试/Stage 3: 测试/g' .woodpecker.yml)"
+      "Bash(sed -i '' 's/Stage 3 - 测试/Stage 3: 测试/g' .woodpecker.yml)",
+      "Bash(swiftlint --strict)",
+      "Bash(awk 'NR>=162 && NR<=190' Sources/Features/Knowledge/Ingest/Coordinator/IngestCoordinator.swift)",
+      "Bash(awk NR>=162 && NR<=195 {printf \"%4d: %s\\\\n\", NR, $0} *)",
+      "Bash(grep -n \"^    }$\" Sources/Features/Knowledge/Ingest/Coordinator/IngestCoordinator.swift)",
+      "Bash(awk NR>=180 && NR<=195 {printf \"%4d: %s\\\\n\", NR, $0} *)",
+      "Bash(awk NR>=180 && NR<=192 {printf \"%4d: %s\\\\n\", NR, $0} *)",
+      "Bash(swiftlint --strict --quiet)"
     ]
   }
 }

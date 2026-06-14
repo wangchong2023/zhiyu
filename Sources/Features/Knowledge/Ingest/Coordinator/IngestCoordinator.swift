@@ -181,8 +181,7 @@ final class IngestCoordinator {
             imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
             pendingImageData = nil
         }
-
-
+    }
 
     /// 处理File导入
     /// - Parameter result: 导入结果元组
