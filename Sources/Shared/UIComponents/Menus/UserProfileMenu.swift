@@ -299,7 +299,7 @@ struct UserProfileMenu: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("userProfileMenuButton")
-        .onChange(of: pendingMenuAction) { newValue in
+        .onChange(of: pendingMenuAction) { _, newValue in
             guard let action = newValue else { return }
             pendingMenuAction = nil
             DispatchQueue.main.async {
