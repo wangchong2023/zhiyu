@@ -95,14 +95,16 @@ public final class VaultService: VaultServiceProtocol {
                 } else {
                     self.vaults = loadedVaults
                 }
+                // 4. 异步刷新所有笔记本的页面数量统计
+                await refreshAllPageCounts()
             } catch {
                 Logger.shared.error(" [VaultService]" + " Failed to" + " asynchronously load" + " notebook metadata:" + " \(error)", error: error)
-                // 4. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
+                // 5. 极端降级兜底：建立支持多语言本地化的内存级缓存金库
                 self.vaults = buildFallbackDemoVaults()
             }
         }
-        
-        // 5. 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
+
+        // 6. 自动从持久化偏好中恢复最近一次使用的金库并执行底层 SQLite 物理热重载联接
         autoRestoreActiveVault()
     }
 

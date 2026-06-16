@@ -382,7 +382,7 @@ final class AuthUITests: XCTestCase {
     // 验证点：勾选协议 → 点击一键登录 → 按钮在 loading 期间应被 disabled（防重复点击）
     func testLoginButtonDisabledDuringLoading() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementAsserted()
+        ensureAgreementChecked()
 
         let loginButton = app.buttons["oneClickLoginButton"]
         XCTAssertTrue(loginButton.waitForExistence(timeout: 5), "一键登录按钮应存在")
