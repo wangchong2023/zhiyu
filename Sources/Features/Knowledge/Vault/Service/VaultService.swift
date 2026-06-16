@@ -243,9 +243,11 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
 
     /// 启动后刷新全部笔记本的页面计数（直接读取各 vault 数据库文件）
     private func refreshAllPageCounts() async {
+        var anyVaultHasDB = false
         for vault in vaults {
             let dbURL = getVaultDatabaseURL(for: vault.id)
             guard FileManager.default.fileExists(atPath: dbURL.path) else { continue }
+            anyVaultHasDB = true
             do {
                 let count = try await databaseSwitcher.countPages(at: dbURL)
                 if let index = vaults.firstIndex(where: { $0.id == vault.id }) {
@@ -256,24 +258,28 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
                 Logger.shared.warning("[VaultService] refreshPageCount failed for \(vault.name): \(error.localizedDescription)")
             }
         }
-        // 兜底：vault 专属数据库文件不存在时，从主数据库 App.sqlite 读取全局页面计数
-        await refreshPageCountsFromMainDB()
+        // 兜底：仅在没有任何 vault 专属 DB 存在时（全新冷启动），
+        // 从主 App.sqlite 读取全局页面计数并赋给当前活跃 vault
+        if !anyVaultHasDB, let activeID = selectedVaultID {
+            await refreshPageCountFromMainDB(for: activeID)
+        }
     }
 
-    /// 从主数据库（App.sqlite）读取页面计数，赋值给所有 vault。
-    /// 当前架构尚未实现多 vault 物理隔离，所有页面共享同一个 App.sqlite，
-    /// 因此将同一计数赋值给全部 vault 以修正列表页数显示为 0 的问题。
-    private func refreshPageCountsFromMainDB() async {
+    /// 从主数据库（App.sqlite）读取页面计数，仅赋值给指定 vault。
+    /// 当前架构下所有页面共享同一个 App.sqlite，仅在 vault 专属 DB 未创建时兜底使用。
+    private func refreshPageCountFromMainDB(for vaultID: UUID) async {
         guard let writer = DatabaseManager.shared.dbWriter else { return }
         do {
             let count = try await writer.read { db in
                 try KnowledgePage.fetchCount(db)
             }
-            for i in self.vaults.indices {
-                self.vaults[i].pageCount = count
+            if let index = vaults.firstIndex(where: { $0.id == vaultID }) {
+                vaults[index].pageCount = count
+                try? await vaultRepository.saveVault(vaults[index])
             }
+            Logger.shared.info("[VaultService] Fallback: set pageCount=\(count) from main DB for active vault")
         } catch {
-            Logger.shared.error("[VaultService] refreshPageCountsFromMainDB failed", error: error)
+            Logger.shared.error("[VaultService] refreshPageCountFromMainDB failed", error: error)
         }
     }
 
