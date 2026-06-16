@@ -5337,13 +5337,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3CAD462734E8BF8470D17B53 /* Build configuration list for PBXNativeTarget "ZhiYuWatch" */;
 			buildPhases = (
-				3EF339131841AC3D696EFF68 /* [Gatekeeper] Domain Purity Check */,
-				9A2BD974ED4CBF8EACA3EB16 /* [Gatekeeper] L10n Leak & Hardcode Audit */,
-				8B33E469F178F75B92D540DA /* [Gatekeeper] Storage Constants Audit */,
-				1DB9E953A686E3ED7904FC30 /* [Gatekeeper] HIG Compliance Check */,
-				65A9C056D7C60802265DD86D /* [Gatekeeper] Architecture Dependency Check */,
-				FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */,
-				04D588B222D20CFAF22F7192 /* [Gatekeeper] Cross-Platform Layout Audit */,
+				3A26498A3945120BA60D763D /* [Gatekeeper] SwiftLint Quality Audit */,
 				EA1B37A047D6A4A9288944A3 /* Sources */,
 				AB2B5FECDF7840D69B5DBB41 /* Resources */,
 				25FE1560EB48C69ADB1DCCD7 /* Frameworks */,
@@ -5402,14 +5396,6 @@
 			buildConfigurationList = 1581BA8168C5C02F9DF3FC9C /* Build configuration list for PBXNativeTarget "ZhiYuMac" */;
 			buildPhases = (
 				EC187BA9D31CB968CCF1EDE5 /* [Gatekeeper] SwiftLint Quality Audit */,
-				A6C32162DDE9A707260780CB /* [Gatekeeper] Domain Purity Check */,
-				5ED6F7C33F6474A5ED332F3D /* [Gatekeeper] L10n Leak & Hardcode Audit */,
-				C72015EE36B53F3ABD713753 /* [Gatekeeper] Storage Constants Audit */,
-				74F93980910E9104FE556B3E /* [Gatekeeper] HIG Compliance Check */,
-				FBE25CA2EC713019BCCB058D /* [Gatekeeper] App Store Readiness Check */,
-				0B0CF540B4A58BB9BCC68549 /* [Gatekeeper] Architecture Dependency Check */,
-				47B3864CDB201111123F1CEC /* [Gatekeeper] Tools Scripts Quality Audit */,
-				36C3F7017134C9E4DB466743 /* [Gatekeeper] Cross-Platform Layout Audit */,
 				86291D6B599F1CBF26E285DE /* Sources */,
 				9D4C3BB7686487432DE9BCE6 /* Resources */,
 				DAA3A90F62D6362E3C59B549 /* Frameworks */,
@@ -5697,63 +5683,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		04D588B222D20CFAF22F7192 /* [Gatekeeper] Cross-Platform Layout Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Cross-Platform Layout Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_layout.py";
-		};
-		0B0CF540B4A58BB9BCC68549 /* [Gatekeeper] Architecture Dependency Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Architecture Dependency Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_architecture_dependency.py";
-		};
-		1DB9E953A686E3ED7904FC30 /* [Gatekeeper] HIG Compliance Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] HIG Compliance Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_hig_compliance.py";
-		};
 		25126DFFB22D9341C94FCC43 /* [Gatekeeper] App Store Readiness Check */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -5811,7 +5740,7 @@
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_domain_purity.py";
 		};
-		36C3F7017134C9E4DB466743 /* [Gatekeeper] Cross-Platform Layout Audit */ = {
+		3A26498A3945120BA60D763D /* [Gatekeeper] SwiftLint Quality Audit */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -5821,52 +5750,14 @@
 			);
 			inputPaths = (
 			);
-			name = "[Gatekeeper] Cross-Platform Layout Audit";
+			name = "[Gatekeeper] SwiftLint Quality Audit";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_layout.py";
-		};
-		3EF339131841AC3D696EFF68 /* [Gatekeeper] Domain Purity Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Domain Purity Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_domain_purity.py";
-		};
-		47B3864CDB201111123F1CEC /* [Gatekeeper] Tools Scripts Quality Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Tools Scripts Quality Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
 		};
 		4A5A6ABBAAAB1ACD347D1C22 /* [Gatekeeper] HIG Compliance Check */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5925,82 +5816,6 @@
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
 		};
-		5ED6F7C33F6474A5ED332F3D /* [Gatekeeper] L10n Leak & Hardcode Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] L10n Leak & Hardcode Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_localization.py";
-		};
-		65A9C056D7C60802265DD86D /* [Gatekeeper] Architecture Dependency Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Architecture Dependency Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_architecture_dependency.py";
-		};
-		74F93980910E9104FE556B3E /* [Gatekeeper] HIG Compliance Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] HIG Compliance Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_hig_compliance.py";
-		};
-		8B33E469F178F75B92D540DA /* [Gatekeeper] Storage Constants Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Storage Constants Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_storage_constants.py";
-		};
 		904EC091C95D986AC4547D85 /* [Gatekeeper] L10n Leak & Hardcode Audit */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -6020,44 +5835,6 @@
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_localization.py";
 		};
-		9A2BD974ED4CBF8EACA3EB16 /* [Gatekeeper] L10n Leak & Hardcode Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] L10n Leak & Hardcode Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_localization.py";
-		};
-		A6C32162DDE9A707260780CB /* [Gatekeeper] Domain Purity Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Domain Purity Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_domain_purity.py";
-		};
 		AE0B46F26F0A7E13AF323F19 /* [Gatekeeper] Architecture Dependency Check */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -6076,25 +5853,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_architecture_dependency.py";
-		};
-		C72015EE36B53F3ABD713753 /* [Gatekeeper] Storage Constants Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Storage Constants Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_storage_constants.py";
 		};
 		DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6171,44 +5929,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi";
-		};
-		FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] Tools Scripts Quality Audit";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_scripts_quality.py";
-		};
-		FBE25CA2EC713019BCCB058D /* [Gatekeeper] App Store Readiness Check */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Gatekeeper] App Store Readiness Check";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "python3 Tools/Gatekeeper/check_appstore_readiness.py";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -168,7 +168,6 @@ final class IngestCoordinator {
         let textPath = fileStore.saveContent(rawText, category: sourceHint, ext: "md")
 
         // OCR：额外保存原始图片文件
-        var imagePath: String?
         if sourceHint == .ocr, let imgData = pendingImageData {
             if imgData.count > AppConstants.Keys.ImportLimits.maxOCRImageSizeBytes {
                 pendingImageData = nil
@@ -178,7 +177,7 @@ final class IngestCoordinator {
                 showError = true
                 return nil
             }
-            imagePath = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
+            _ = fileStore.saveData(imgData, category: .ocr, ext: "jpg")
             pendingImageData = nil
         }
 
