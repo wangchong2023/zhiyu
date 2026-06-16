@@ -314,7 +314,7 @@ struct SidebarIconRow: View {
                     )
             }
         }
-        .padding(.vertical, DesignSystem.atomic)
+        .padding(.vertical, DesignSystem.small)
     }
 }
 
@@ -357,7 +357,7 @@ struct UniverseNavRow: View {
                     .clipShape(Capsule())
             }
         }
-        .padding(.vertical, DesignSystem.atomic)
+        .padding(.vertical, DesignSystem.small)
     }
 }
 
@@ -392,7 +392,7 @@ struct SidebarTypeRow: View {
                 .foregroundStyle(Color.fromModelColorName(type.colorName))
                 .clipShape(Capsule())
         }
-        .padding(.vertical, DesignSystem.atomic)
+        .padding(.vertical, DesignSystem.small)
     }
 }
 
@@ -433,7 +433,7 @@ struct PageSidebarRow: View {
                 .foregroundStyle(.appText)
                 .lineLimit(1)
         }
-        .padding(.vertical, DesignSystem.atomic)
+        .padding(.vertical, DesignSystem.small)
     }
 }
 

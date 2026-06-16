@@ -228,10 +228,23 @@ public struct AIRainbowGlowBadge: View {
             .buttonStyle(.plain)
         }
         .padding()
-        .frame(width: DesignSystem.Metrics.customSize300)
+        .frame(width: controlCenterWidth)
         // swiftlint:disable:next magic_numbers_opacity
         .background(Color.appCard.opacity(0.95))
         .presentationBackgroundInteraction(.enabled)
+    }
+
+    // MARK: - 平台适配宽度
+
+    /// AI 控制中枢弹窗宽度，按照不同平台与屏幕尺寸自适应
+    private var controlCenterWidth: CGFloat {
+        #if targetEnvironment(macCatalyst)
+        return 360
+        #elseif os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .pad ? 320 : 300
+        #else
+        return 300
+        #endif
     }
     
     // MARK: - 辅助计算

@@ -89,6 +89,9 @@ targets:
       - script: "python3 Tools/Gatekeeper/check_scripts_quality.py"
         name: "[Gatekeeper] Tools Scripts Quality Audit"
         basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_layout.py"
+        name: "[Gatekeeper] Cross-Platform Layout Audit"
+        basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
       - package: Lottie
@@ -149,6 +152,9 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_scripts_quality.py"
         name: "[Gatekeeper] Tools Scripts Quality Audit"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_layout.py"
+        name: "[Gatekeeper] Cross-Platform Layout Audit"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB
@@ -228,6 +234,9 @@ targets:
         basedOnDependencyAnalysis: false
       - script: "python3 Tools/Gatekeeper/check_scripts_quality.py"
         name: "[Gatekeeper] Tools Scripts Quality Audit"
+        basedOnDependencyAnalysis: false
+      - script: "python3 Tools/Gatekeeper/check_layout.py"
+        name: "[Gatekeeper] Cross-Platform Layout Audit"
         basedOnDependencyAnalysis: false
     dependencies:
       - package: GRDB

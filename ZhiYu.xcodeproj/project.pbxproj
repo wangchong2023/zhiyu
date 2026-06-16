@@ -1784,6 +1784,7 @@
 		FC31822E4111D9400F08EB31 /* WidgetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8349889C5529E47A5FD8120 /* WidgetModels.swift */; };
 		FC417FA3DD0D9D7F811CC41E /* SecureEnclaveCryptoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18024DCFA49AD32978E89D06 /* SecureEnclaveCryptoService.swift */; };
 		FC4B27611B0E9CB5397ADB95 /* AuthServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B4021185237449A94155D4 /* AuthServiceTests.swift */; };
+		FC5316A1D712FDAC3897FAB3 /* testSettingsView.1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A282DE798084F26CEDD70A4 /* testSettingsView.1.png */; };
 		FCA681C7034CE7EEF3BDFD6F /* ImportRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1920ECA24AAAC4A387BD4B4 /* ImportRecordRepository.swift */; };
 		FCB2EDF7335BC913D26D3A9C /* Date+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6658DF413C53D918BE7A3DE /* Date+App.swift */; };
 		FD02BC39555C9620553597DE /* AppChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BA716F925D2B7D2F354619 /* AppChips.swift */; };
@@ -2165,6 +2166,7 @@
 		59DD077476221726F0E1E10F /* PerformanceDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceDashboardView.swift; sourceTree = "<group>"; };
 		59E0FEE3ED21BED7BA781DAB /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		5A0BF4A7B03D89A64B55C171 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		5A282DE798084F26CEDD70A4 /* testSettingsView.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testSettingsView.1.png; sourceTree = "<group>"; };
 		5A69B75B9CBB20855C88F99D /* ServiceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		5AD8F8969EFF35350ADACC3B /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		5AE7873D4D948C9EC112291C /* WebViewExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewExportService.swift; sourceTree = "<group>"; };
@@ -2979,6 +2981,7 @@
 				FDABCCC408FFEE84272B2FAD /* testPageDetailView.1.png */,
 				84178368317126D7B249CF11 /* testRAGEvaluationViewLoading.1.png */,
 				9AA7192C8DF03A5919B9BD8D /* testRAGEvaluationViewWithData.1.png */,
+				5A282DE798084F26CEDD70A4 /* testSettingsView.1.png */,
 			);
 			path = ComponentSnapshots;
 			sourceTree = "<group>";
@@ -5340,6 +5343,7 @@
 				1DB9E953A686E3ED7904FC30 /* [Gatekeeper] HIG Compliance Check */,
 				65A9C056D7C60802265DD86D /* [Gatekeeper] Architecture Dependency Check */,
 				FAB88774269FB0DF8DBADEB1 /* [Gatekeeper] Tools Scripts Quality Audit */,
+				04D588B222D20CFAF22F7192 /* [Gatekeeper] Cross-Platform Layout Audit */,
 				EA1B37A047D6A4A9288944A3 /* Sources */,
 				AB2B5FECDF7840D69B5DBB41 /* Resources */,
 				25FE1560EB48C69ADB1DCCD7 /* Frameworks */,
@@ -5371,6 +5375,7 @@
 				25126DFFB22D9341C94FCC43 /* [Gatekeeper] App Store Readiness Check */,
 				AE0B46F26F0A7E13AF323F19 /* [Gatekeeper] Architecture Dependency Check */,
 				5A14795F3FF364E52B7253E1 /* [Gatekeeper] Tools Scripts Quality Audit */,
+				DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */,
 				E063B9A33663ED664F0692A4 /* Sources */,
 				B0DD082C1B2AF7EA4E17CFCD /* Resources */,
 				0AFAF95542CAF86BC9C615A3 /* Frameworks */,
@@ -5404,6 +5409,7 @@
 				FBE25CA2EC713019BCCB058D /* [Gatekeeper] App Store Readiness Check */,
 				0B0CF540B4A58BB9BCC68549 /* [Gatekeeper] Architecture Dependency Check */,
 				47B3864CDB201111123F1CEC /* [Gatekeeper] Tools Scripts Quality Audit */,
+				36C3F7017134C9E4DB466743 /* [Gatekeeper] Cross-Platform Layout Audit */,
 				86291D6B599F1CBF26E285DE /* Sources */,
 				9D4C3BB7686487432DE9BCE6 /* Resources */,
 				DAA3A90F62D6362E3C59B549 /* Frameworks */,
@@ -5548,6 +5554,7 @@
 				FFB5168490852BD24BF55285 /* testPageDetailView.1.png in Resources */,
 				9D3BACCE19653404C5D8FF5D /* testRAGEvaluationViewLoading.1.png in Resources */,
 				ECE8E228B773F88581BAA3E4 /* testRAGEvaluationViewWithData.1.png in Resources */,
+				FC5316A1D712FDAC3897FAB3 /* testSettingsView.1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5690,6 +5697,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		04D588B222D20CFAF22F7192 /* [Gatekeeper] Cross-Platform Layout Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Cross-Platform Layout Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_layout.py";
+		};
 		0B0CF540B4A58BB9BCC68549 /* [Gatekeeper] Architecture Dependency Check */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -5784,6 +5810,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_domain_purity.py";
+		};
+		36C3F7017134C9E4DB466743 /* [Gatekeeper] Cross-Platform Layout Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Cross-Platform Layout Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_layout.py";
 		};
 		3EF339131841AC3D696EFF68 /* [Gatekeeper] Domain Purity Check */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6050,6 +6095,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "python3 Tools/Gatekeeper/check_storage_constants.py";
+		};
+		DCCE0DE01ABCB7FCD769834D /* [Gatekeeper] Cross-Platform Layout Audit */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Gatekeeper] Cross-Platform Layout Audit";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "python3 Tools/Gatekeeper/check_layout.py";
 		};
 		E01D6AFE11C2508020949DE2 /* [Gatekeeper] Hardcoded Secrets Audit */ = {
 			isa = PBXShellScriptBuildPhase;

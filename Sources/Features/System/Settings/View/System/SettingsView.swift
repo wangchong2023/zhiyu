@@ -208,11 +208,18 @@ struct SettingsView: View {
     private func detailColumn(for section: SettingsSection?, router: Router) -> some View {
         if let section = section {
             Group {
-                if section == .about {
-                    // 对于“关于”大类，在 Mac 大屏偏好设置中直接渲染 AboutView 内容
-                    // 彻底消除“点击关于 -> 出现关于列表项 -> 再点击进入详情”的冗余下层菜单交互
+                switch section {
+                case .about:
+                    // 直接渲染 AboutView，消除冗余的中间列表层
                     AboutView()
-                } else {
+                case .feedback:
+                    // 直接渲染 FeedbackView，消除”点击反馈 -> 出现列表项 -> 再点击”的冗余交互
+                    FeedbackView()
+                        .environmentObject(themeManager)
+                case .plugins:
+                    // 插件页：有已安装插件时展示列表，无插件时展示空状态引导
+                    PluginExtensionsDetailView()
+                default:
                     List {
                         switch section {
                         case .appearance:
@@ -227,13 +234,7 @@ struct SettingsView: View {
                         case .data:
                             dataManagementSection
                                 .appListRowBackground()
-                        case .plugins:
-                            PluginExtensionsSection()
-                                .appListRowBackground()
-                        case .feedback:
-                            feedbackSection
-                                .appListRowBackground()
-                        case .about:
+                        case .plugins, .feedback, .about:
                             EmptyView()
                         }
                     }
