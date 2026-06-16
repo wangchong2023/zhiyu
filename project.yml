@@ -246,6 +246,9 @@ targets:
           - "Platforms/iOS/Widgets/WidgetRepository.swift"
           - "Platforms/iOS/Widgets/WidgetModels.swift"
           - "Core/Base/Constants/AppConstants.swift"
+    settings:
+      base:
+        SWIFT_STRICT_CONCURRENCY: targeted
     dependencies:
       - target: ZhiYu
       - package: SnapshotTesting

@@ -7824,6 +7824,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.ZhiYuTests;
 				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZhiYu.app/ZhiYu";
 			};
@@ -7937,6 +7938,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app.ZhiYuTests;
 				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ZhiYu.app/ZhiYu";
 			};
