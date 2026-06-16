@@ -3094,6 +3094,40 @@
           }
         }
       }
+    },
+    "page.batchDeleteTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@ Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "批量删除 %@ 个页面"
+          }
+        }
+      }
+    },
+    "page.batchDeleteMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This action cannot be undone. Are you sure you want to delete these %@ pages?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此操作不可撤销，确定要删除这 %@ 个页面吗？"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

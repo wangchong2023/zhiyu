@@ -265,6 +265,14 @@ public final class AppStore {
         await knowledgeStore.deletePage(page)
     }
 
+    /// 批量删除页面
+    /// - Parameter pages: 待删除的页面数组
+    public func deletePages(_ pages: [KnowledgePage]) async {
+        for page in pages {
+            await knowledgeStore.deletePage(page)
+        }
+    }
+
     /// 撤销
     func undo() async {
         await knowledgeStore.undo()

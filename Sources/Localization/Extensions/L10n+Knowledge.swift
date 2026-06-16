@@ -29,6 +29,8 @@ extension L10n {
             public static var delete: String { Knowledge.tr("page.deletePage") }
             public static var confirmDelete: String { Knowledge.tr("page.confirmDelete") }
             public static var deleteMessage: String { Knowledge.tr("page.deleteMessage") }
+            public static func batchDeleteTitle(_ count: Int) -> String { Knowledge.trf("page.batchDeleteTitle", count) }
+            public static func batchDeleteMessage(_ count: Int) -> String { Knowledge.trf("page.batchDeleteMessage", count) }
             public static var icon: String { Knowledge.tr("page.icon") }
             public static var knowledge: String { Knowledge.tr("page.knowledge") }
             public static var empty: String { Knowledge.tr("page.empty") }

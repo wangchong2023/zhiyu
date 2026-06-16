@@ -36,6 +36,11 @@ struct KnowledgePageListContent: View {
     @State private var pageToDelete: KnowledgePage?
     @State private var showInsights = false
     @State private var searchText = ""
+
+    // 批量删除编辑模式
+    @State private var isEditMode: Bool = false
+    @State private var selectedPageIDs: Set<UUID> = []
+    @State private var showBatchDeleteConfirmation: Bool = false
     
     // 全局混合搜索与语义检索核心状态
     @State private var searchResults: [KnowledgePage] = []
@@ -44,6 +49,13 @@ struct KnowledgePageListContent: View {
     
     private var totalLinks: Int {
         store.pages.reduce(0) { $0 + $1.outgoingLinks.count }
+    }
+
+    /// 批量选择模式下全选/取消全选的按钮标签
+    private var toggleSelectLabel: String {
+        selectedPageIDs.count == store.pages.count
+            ? L10n.Common.deselectAll
+            : L10n.Common.selectAll
     }
     
     private func filteredPages(for type: PageType) -> [KnowledgePage] {
@@ -128,6 +140,49 @@ struct KnowledgePageListContent: View {
                 }
             }
             #endif
+
+            // 编辑/选择模式切换
+            ToolbarItem(placement: .topBarLeading) {
+                if isEditMode {
+                    HStack(spacing: DesignSystem.small) {
+                        Button(action: {
+                            let allIDs = store.pages.map(\.id)
+                            if selectedPageIDs.count == allIDs.count {
+                                selectedPageIDs.removeAll()
+                            } else {
+                                selectedPageIDs = Set(allIDs)
+                            }
+                        }) {
+                            Text(toggleSelectLabel)
+                                .font(.subheadline)
+                        }
+
+                        Button(role: .destructive, action: {
+                            guard !selectedPageIDs.isEmpty else { return }
+                            showBatchDeleteConfirmation = true
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "trash")
+                                Text("\(L10n.Knowledge.Page.deletePage)(\(selectedPageIDs.count))")
+                            }
+                            .font(.subheadline)
+                        }
+                        .disabled(selectedPageIDs.isEmpty)
+                    }
+                }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditMode.toggle()
+                        if !isEditMode { selectedPageIDs.removeAll() }
+                    }
+                }) {
+                    Text(isEditMode ? L10n.Common.done : L10n.Common.select)
+                        .font(.subheadline.weight(.medium))
+                }
+            }
         }
         .onChange(of: searchText) { _, newValue in
             triggerSearch(query: newValue)
@@ -138,6 +193,24 @@ struct KnowledgePageListContent: View {
         }
         .sheet(isPresented: $showInsights) {
             VaultInsightsPanel()
+        }
+        .confirmationDialog(
+            L10n.Knowledge.Page.batchDeleteTitle(selectedPageIDs.count),
+            isPresented: $showBatchDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.Knowledge.Page.deletePage, role: .destructive) {
+                let pagesToDelete = store.pages.filter { selectedPageIDs.contains($0.id) }
+                Task {
+                    await store.deletePages(pagesToDelete)
+                    selectedPageIDs.removeAll()
+                    isEditMode = false
+                    HapticFeedback.shared.trigger(.success)
+                }
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        } message: {
+            Text(L10n.Knowledge.Page.batchDeleteMessage(selectedPageIDs.count))
         }
         .confirmationDialog(
             pageToDelete.map { L10n.Vault.Page.deletePageTitle( $0.title) } ?? L10n.Knowledge.Page.deletePage,
@@ -243,6 +316,47 @@ struct KnowledgePageListContent: View {
         }
     }
     
+    /// 可编辑页面行（支持编辑模式下的多选复选框 + 长按进入多选）
+    @ViewBuilder
+    private func selectablePageRow(_ page: KnowledgePage) -> some View {
+        if isEditMode {
+            Button(action: {
+                HapticFeedback.shared.trigger(.selection)
+                if selectedPageIDs.contains(page.id) {
+                    selectedPageIDs.remove(page.id)
+                } else {
+                    selectedPageIDs.insert(page.id)
+                }
+            }) {
+                HStack(spacing: DesignSystem.medium) {
+                    Image(systemName: selectedPageIDs.contains(page.id)
+                        ? "checkmark.circle.fill"
+                        : "circle")
+                        .font(.title3)
+                        .foregroundStyle(selectedPageIDs.contains(page.id) ? .appAccent : .appSecondary)
+                    PageRowView(page: page)
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        } else {
+            NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+                PageRowView(page: page)
+            }
+            .accessibilityIdentifier("PageRow_Item")
+            .buttonStyle(AppPressButtonStyle())
+            // 长按进入多选模式并自动选中该行
+            .onLongPressGesture {
+                HapticFeedback.shared.trigger(.selection)
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isEditMode = true
+                    selectedPageIDs.insert(page.id)
+                }
+            }
+        }
+    }
+
     @ViewBuilder
     private var entitySection: some View {
         let entities = filteredPages(for: .entity)
@@ -250,11 +364,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(entities) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {
@@ -276,11 +386,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(concepts) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {
@@ -302,11 +408,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(sources) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {
@@ -328,11 +430,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(comparisons) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {
@@ -354,11 +452,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(maps) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {
@@ -380,11 +474,7 @@ struct KnowledgePageListContent: View {
             Section {
                 VStack(spacing: DesignSystem.medium) {
                     ForEach(raws) { page in
-                        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                            PageRowView(page: page)
-                        }
-                        .accessibilityIdentifier("PageRow_Item")
-                        .buttonStyle(AppPressButtonStyle())
+                        selectablePageRow(page)
                     }
                 }
             } header: {

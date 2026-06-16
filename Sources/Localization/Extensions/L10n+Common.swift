@@ -24,6 +24,9 @@ extension L10n {
         public static var ok: String { tr("ok") }
         public static var cancel: String { tr("cancel") }
         public static var done: String { tr("done") }
+        public static var select: String { tr("select") }
+        public static var selectAll: String { tr("selectAll") }
+        public static var deselectAll: String { tr("deselectAll") }
         public static var save: String { tr("save") }
         public static var delete: String { tr("delete") }
         public static var edit: String { tr("edit") }
