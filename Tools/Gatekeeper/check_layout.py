@@ -382,13 +382,36 @@ def format_issues(file_path, issues, output_lines):
     return has_critical
 
 
+def _audit_view_file(file_path, touch_auditor, platform_auditor, spacing_auditor):
+    """对视图文件执行触控热区、平台适配、紧凑间距审计。"""
+    issues = []
+    issues.extend(touch_auditor.audit_file(file_path))
+    issues.extend(platform_auditor.audit_file(file_path))
+    issues.extend(spacing_auditor.audit_file(file_path))
+    return issues
+
+
+def _audit_single_file(file_path, auditors):
+    """对单个 Swift 文件执行完整审计，返回发现的问题列表。"""
+    touch_auditor, platform_auditor, spacing_auditor, font_auditor = auditors
+
+    if 'ViewFactory' in os.path.basename(file_path) or 'ViewProvider' in os.path.basename(file_path):
+        return []
+
+    issues = []
+    if LayoutUtil.is_view_file(file_path):
+        issues.extend(_audit_view_file(file_path, touch_auditor, platform_auditor, spacing_auditor))
+    issues.extend(font_auditor.audit_file(file_path))
+    return issues
+
+
 def audit_all():
     """执行全量布局审计。"""
-
     touch_auditor = TouchTargetAuditor()
     platform_auditor = PlatformSizeAuditor()
     spacing_auditor = CompactSpacingAuditor()
     font_auditor = DynamicTypeAuditor()
+    auditors = (touch_auditor, platform_auditor, spacing_auditor, font_auditor)
 
     all_issues = {}
     total_issues = 0
@@ -398,23 +421,8 @@ def audit_all():
         for f in files:
             if not f.endswith('.swift'):
                 continue
-
             file_path = os.path.join(root, f)
-
-            # 跳过视图代理工厂等纯路由文件
-            if 'ViewFactory' in f or 'ViewProvider' in f:
-                continue
-
-            issues = []
-
-            # 仅对视图文件执行完整审计，非视图文件只检查硬编码字号
-            if LayoutUtil.is_view_file(file_path):
-                issues.extend(touch_auditor.audit_file(file_path))
-                issues.extend(platform_auditor.audit_file(file_path))
-                issues.extend(spacing_auditor.audit_file(file_path))
-
-            issues.extend(font_auditor.audit_file(file_path))
-
+            issues = _audit_single_file(file_path, auditors)
             if issues:
                 all_issues[file_path] = issues
                 total_issues += len(issues)
