@@ -61,17 +61,21 @@ final class AuthUITests: XCTestCase {
         return app.buttons["userProfileMenuButton"].waitForExistence(timeout: timeout)
     }
 
-    /// 勾选用户协议复选框（assertive：断言必须存在）
-    private func checkAgreementAsserted() {
+    /// 确保用户协议复选框处于勾选状态（assertive：断言必须存在）。默认已是勾选，仅未勾选时才点击。
+    private func ensureAgreementChecked() {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
-        checkbox.tap()
+        // 通过 image 名称判断当前状态："checkmark.circle.fill" 表示已勾选，"circle" 表示未勾选
+        if checkbox.images["circle"].exists {
+            checkbox.tap()
+        }
     }
 
-    /// 勾选用户协议复选框（lenient：若不存在则静默跳过）
-    private func checkAgreementIfVisible() {
+    /// 取消勾选用户协议复选框（用于测试协议拦截场景）
+    private func uncheckAgreement() {
         let checkbox = app.buttons["agreementCheckbox"]
-        if checkbox.waitForExistence(timeout: 4) {
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
+        if checkbox.images["checkmark.circle.fill"].exists {
             checkbox.tap()
         }
     }
@@ -91,8 +95,8 @@ final class AuthUITests: XCTestCase {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页显示 AuthView")
         takeScreenshot(name: "TC01_01_AuthView_Loaded")
 
-        // 2. 勾选用户协议
-        checkAgreementAsserted()
+        // 2. 确认协议已勾选（默认勾选）
+        ensureAgreementChecked()
         takeScreenshot(name: "TC01_02_Agreement_Checked")
 
         // 3. 点击一键登录
@@ -147,9 +151,13 @@ final class AuthUITests: XCTestCase {
 
     // MARK: - TC-AUTH-03：未勾选协议时一键登录被拦截
     //
-    // 验证点：默认未勾选 → 点击一键登录 → 停留在登录页，不跳转
+    // 验证点：默认已勾选 → 手动取消勾选 → 点击一键登录 → 停留在登录页，不跳转
     func testAgreementConstraintForOneClickLogin() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
+
+        // 先取消勾选协议
+        uncheckAgreement()
+        takeScreenshot(name: "TC03_00_Agreement_Unchecked")
 
         // 不勾选协议，直接点击一键登录
         let loginButton = app.buttons["oneClickLoginButton"]
@@ -164,9 +172,14 @@ final class AuthUITests: XCTestCase {
 
     // MARK: - TC-AUTH-04：未勾选协议时第三方登录全部被拦截
     //
-    // 验证点：默认未勾选 → 分别点击微信/Apple/运营商图标 → 停留在登录页
+    // 验证点：默认已勾选 → 手动取消勾选 → 分别点击第三方图标 → 停留在登录页
     func testAgreementConstraintForThirdPartyLogin() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
+
+        // 先取消勾选协议
+        uncheckAgreement()
+        takeScreenshot(name: "TC04_00_Agreement_Unchecked")
+
         scrollToThirdPartySection()
 
         // 依次测试代表性第三方按钮
@@ -226,7 +239,7 @@ final class AuthUITests: XCTestCase {
     // 验证点：勾选协议 → 点击 Apple 图标 → mock-backend 返回 mock 凭证 → 登录成功进入主界面
     func testAppleLoginFlow() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementIfVisible()
+        ensureAgreementChecked()
         scrollToThirdPartySection()
 
         let appleButton = app.buttons["auth.thirdparty.apple"]
@@ -252,7 +265,7 @@ final class AuthUITests: XCTestCase {
     func testWeChatLoginFlow() throws {
         try XCTSkipIf(true, "暂时屏蔽微信入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementIfVisible()
+        ensureAgreementChecked()
         scrollToThirdPartySection()
 
         let wechatButton = app.buttons["auth.thirdparty.wechat"]
@@ -276,7 +289,7 @@ final class AuthUITests: XCTestCase {
     // 验证点：勾选协议 → 点击 Google 图标 → mock 路径登录成功
     func testGoogleLoginFlow() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementIfVisible()
+        ensureAgreementChecked()
         scrollToThirdPartySection()
 
         let googleButton = app.buttons["auth.thirdparty.google"]
@@ -299,7 +312,7 @@ final class AuthUITests: XCTestCase {
     // 验证点：勾选协议 → 点击 GitHub 图标 → mock 路径登录成功
     func testGitHubLoginFlow() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementIfVisible()
+        ensureAgreementChecked()
         scrollToThirdPartySection()
 
         let githubButton = app.buttons["auth.thirdparty.github"]
@@ -324,7 +337,7 @@ final class AuthUITests: XCTestCase {
     func testCarrierSecondaryButtonFlow() throws {
         try XCTSkipIf(true, "暂时屏蔽运营商二次入口")
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
-        checkAgreementIfVisible()
+        ensureAgreementChecked()
         scrollToThirdPartySection()
 
         let carrierButton = app.buttons["auth.thirdparty.carrier"]
@@ -341,6 +354,27 @@ final class AuthUITests: XCTestCase {
             "运营商二次入口 mock 路径应能成功登录并进入主界面"
         )
         takeScreenshot(name: "TC10_02_Carrier_Secondary_Success")
+    }
+
+    // MARK: - TC-AUTH-12：用户协议复选框默认勾选
+    //
+    // 验证点：启动后协议复选框默认为勾选状态（checkmark.circle.fill），用户可直接登录
+    func testAgreementCheckboxDefaultChecked() throws {
+        XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
+
+        let checkbox = app.buttons["agreementCheckbox"]
+        XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
+
+        // 验证默认即为勾选状态
+        XCTAssertTrue(
+            checkbox.images["checkmark.circle.fill"].exists,
+            "用户协议复选框应默认为勾选状态（checkmark.circle.fill）"
+        )
+        XCTAssertFalse(
+            checkbox.images["circle"].exists,
+            "用户协议复选框不应显示为未勾选状态（circle）"
+        )
+        takeScreenshot(name: "TC12_01_Agreement_DefaultChecked")
     }
 
     // MARK: - TC-AUTH-11：一键登录按钮 Loading 状态校验

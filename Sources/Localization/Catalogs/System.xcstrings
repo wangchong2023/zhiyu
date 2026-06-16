@@ -160,13 +160,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "By logging in, you agree to the [Privacy Policy](privacy://policy)"
+            "value": "By logging in, you agree to the [Privacy Policy](privacy://policy) and [Terms of Service](privacy://terms)"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "登录即表示同意[《隐私政策》](privacy://policy)"
+            "value": "登录即表示同意[《隐私政策》](privacy://policy)和[《服务条款》](privacy://terms)"
           }
         }
       }
@@ -2281,7 +2281,6 @@
         }
       }
     },
-
     "metric.broken": {
       "extractionState": "manual",
       "localizations": {
@@ -3387,7 +3386,6 @@
         }
       }
     },
-
     "settings.about.copyright": {
       "extractionState": "manual",
       "localizations": {
@@ -6036,6 +6034,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restoring..."
+          }
+        }
+      }
+    },
+    "auth.termsOfService.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms of Service"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "服务条款"
+          }
+        }
+      }
+    },
+    "auth.termsOfService.content": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[ZhiYu Terms of Service]\n\nWelcome to ZhiYu! Please read the following terms carefully before using our service.\n\n1. Service Description\nZhiYu is an AI-native knowledge management application that provides knowledge graph construction, intelligent retrieval, AI synthesis, and other features. We reserve the right to adjust services based on product development.\n\n2. User Conduct\nYou shall comply with applicable laws and regulations when using this service. You may not use the service for illegal activities, including but not limited to: posting illegal content, infringing intellectual property rights, or disrupting normal service operations.\n\n3. Intellectual Property\nThe knowledge content you create through this service (including notes, graphs, synthesized documents, etc.) belongs to you. The software copyright, trademarks, and other intellectual property of this application belong to the ZhiYu team.\n\n4. Disclaimer\nThis service provides content suggestions and analysis based on AI technology. AI-generated content is for reference only and does not constitute professional advice. We are not legally liable for any direct or indirect losses arising from the use of this service.\n\n5. Service Changes and Termination\nWe may modify or discontinue services when necessary and will notify you within a reasonable period. If you violate these terms, we have the right to terminate your access to the service.\n\n6. Governing Law\nThe interpretation, validity, and dispute resolution of these terms shall be governed by the laws of the People's Republic of China.\n\n7. Contact Us\nIf you have any questions about these terms, please contact us via \"Help & Feedback\" in the app."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "【智宇 (ZhiYu) 服务条款】\n\n欢迎使用智宇！在使用本服务前，请您仔细阅读以下条款。\n\n1. 服务说明\n智宇是一款 AI 原生知识管理应用，提供知识图谱构建、智能检索、AI 合成等功能。我们保留根据产品发展调整服务的权利。\n\n2. 用户行为规范\n您在使用本服务时，应遵守中华人民共和国相关法律法规，不得利用本服务从事违法违规活动，包括但不限于：发布违法信息、侵犯他人知识产权、干扰服务正常运行等。\n\n3. 知识产权\n您通过本服务创建的知识内容（包括笔记、图谱、合成文档等）的知识产权归您所有。本应用的软件著作权、商标等知识产权归智宇团队所有。\n\n4. 免责声明\n本服务基于 AI 技术提供内容建议与分析，AI 生成内容仅供参考，不构成专业建议。对于因使用本服务而产生的任何直接或间接损失，我们不承担法律责任。\n\n5. 服务变更与终止\n我们可能会在必要时修改或中断服务，并在合理期限内通知您。若您违反本条款，我们有权终止向您提供服务。\n\n6. 适用法律\n本条款的解释、效力及争议解决，均适用中华人民共和国法律。\n\n7. 联系我们\n如对本条款有任何疑问，请通过应用内\"帮助与反馈\"联系。"
           }
         }
       }

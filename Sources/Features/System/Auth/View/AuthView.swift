@@ -17,16 +17,20 @@ struct AuthView: View {
     
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
-    @State private var isAgreementChecked: Bool = false
+    @State private var isAgreementChecked: Bool = true
     @State private var showPrivacySheet: Bool = false
+    @State private var showTermsSheet: Bool = false
+    @State private var selectedLanguage: LanguageMode = Localized.languageMode
     
     var body: some View {
         ZStack {
             // 背景层
             themeManager.pageBackground()
                 .ignoresSafeArea()
-            
+
             ScrollView(showsIndicators: false) {
+                // 语言切换按钮（右上角）
+                languageSwitcher
                 VStack(spacing: Spacing.huge) { // 增加板块之间的巨型间距 (32px)，让顶部 Header 得到完美释放
                     // 1. Logo & 标语 (品牌展示板块)
                     heroHeader
@@ -61,40 +65,59 @@ struct AuthView: View {
             }
         }
         .sheet(isPresented: $showPrivacySheet) {
-            NavigationStack {
-                ZStack {
-                    themeManager.pageBackground()
-                        .ignoresSafeArea()
-                        
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: Spacing.medium) {
-                            Text(L10n.Auth.privacyPolicyContent)
-                                .font(.body)
-                                .foregroundStyle(.appText)
-                                .lineSpacing(Spacing.tiny)
-                            
-                            Spacer()
-                        }
-                        .padding()
-                        .appListRowBackground()
-                        .padding()
-                    }
-                }
-                .navigationTitle(L10n.Auth.privacyPolicyTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(L10n.Common.confirm) {
-                            showPrivacySheet = false
-                        }
-                    }
-                }
-            }
+            policySheetContent(
+                title: L10n.Auth.privacyPolicyTitle,
+                content: L10n.Auth.privacyPolicyContent,
+                isPresented: $showPrivacySheet
+            )
+        }
+        .sheet(isPresented: $showTermsSheet) {
+            policySheetContent(
+                title: L10n.Auth.termsOfServiceTitle,
+                content: L10n.Auth.termsOfServiceContent,
+                isPresented: $showTermsSheet
+            )
         }
     }
     
     // MARK: - 子视图
-    
+
+    /// 系统语言切换按钮（右上角）
+    private var languageSwitcher: some View {
+        HStack {
+            Spacer()
+            Menu {
+                ForEach(LanguageMode.allCases) { mode in
+                    Button(action: {
+                        selectedLanguage = mode
+                        Localized.languageMode = mode
+                    }) {
+                        HStack {
+                            Text(mode.displayName)
+                            if selectedLanguage == mode {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "globe")
+                        .font(.subheadline)
+                    Text(selectedLanguage.displayName)
+                        .font(.caption)
+                }
+                .foregroundStyle(.appSecondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.ultraThinMaterial)
+                .clipShape(Capsule())
+            }
+        }
+        .padding(.trailing, Spacing.medium)
+        .padding(.top, Spacing.tiny)
+    }
+
     private var heroHeader: some View {
         VStack(spacing: Spacing.giant) { // 增加空气感，给予 Logo 到主标题足够的呼吸空间
             ZStack {
@@ -164,7 +187,11 @@ struct AuthView: View {
                     .lineSpacing(Spacing.atomic)
                     .environment(\.openURL, OpenURLAction { url in
                         if url.scheme == "privacy" {
-                            showPrivacySheet = true
+                            if url.host == "terms" {
+                                showTermsSheet = true
+                            } else {
+                                showPrivacySheet = true
+                            }
                             return .handled
                         }
                         return .systemAction
@@ -260,8 +287,46 @@ struct AuthView: View {
         .accessibilityIdentifier("guestButton")
     }
     
+    // MARK: - 公共 Sheet 组件
+
+    /// 隐私政策 / 服务条款 通用弹窗
+    private func policySheetContent(
+        title: String,
+        content: String,
+        isPresented: Binding<Bool>
+    ) -> some View {
+        NavigationStack {
+            ZStack {
+                themeManager.pageBackground()
+                    .ignoresSafeArea()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Spacing.medium) {
+                        Text(content)
+                            .font(.body)
+                            .foregroundStyle(.appText)
+                            .lineSpacing(Spacing.tiny)
+                        Spacer()
+                    }
+                    .padding()
+                    .appListRowBackground()
+                    .padding()
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .environment(\.locale, Localized.currentLocale)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.confirm) {
+                        isPresented.wrappedValue = false
+                    }
+                }
+            }
+        }
+    }
+
     // MARK: - 逻辑
-    
+
     private func handleAuth() {
         if !isAgreementChecked {
             ToastManager.shared.show(type: .error, message: L10n.Auth.agreementRequired)

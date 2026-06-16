@@ -60,6 +60,10 @@ extension L10n {
         public static var privacyPolicyTitle: String { tr("auth.privacyPolicy.title") }
         public static var privacyPolicyContent: String { tr("auth.privacyPolicy.content") }
 
+        // MARK: - 服务条款
+        public static var termsOfServiceTitle: String { tr("auth.termsOfService.title") }
+        public static var termsOfServiceContent: String { tr("auth.termsOfService.content") }
+
         // MARK: - 个人资料与套餐页面
         public static var profileAndQuota: String { tr("auth.profileAndQuota") }
         public static var currentSubscription: String { tr("auth.currentSubscription") }
