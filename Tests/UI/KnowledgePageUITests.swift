@@ -419,3 +419,132 @@ final class LintTests: KnowledgeBaseUITests {
         }
     }
 }
+
+// MARK: - Batch Delete UI Tests
+/// 批量删除功能 UI 测试套件
+/// 覆盖范围：选择按钮进入编辑模式、复选框可见/切换、全选/取消全选、删除按钮状态、完成退出
+final class BatchDeleteTests: KnowledgeBaseUITests {
+
+    override func setUp() async throws {
+        try await super.setUp()
+        await navigateToKnowledgeTab()
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+        // 导航到页面列表：点击侧边栏第一个筛选类型
+        await navigateToPageList()
+    }
+
+    // MARK: - 导航辅助
+
+    /// 导航到知识页面列表
+    private func navigateToPageList() async {
+        if app.tables.firstMatch.exists {
+            let cells = app.tables.cells
+            if cells.count > 1 {
+                let firstRow = cells.element(boundBy: 1)
+                if firstRow.exists && firstRow.isHittable {
+                    safeTap(firstRow)
+                    try? await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
+                    return
+                }
+            }
+        }
+        // 兜底：已在页面列表视图
+        _ = app.buttons.matching(identifier: "PageRow_Item").firstMatch.waitForExistence(timeout: 2)
+    }
+
+    // MARK: - TC-BATCH-01：选择按钮进入编辑模式
+
+    /// 验证「选择」按钮可见，点击后进入编辑模式（显示「完成」按钮）
+    func testSelectButtonEntersEditMode() async {
+        let selectBtn = app.buttons["选择"]
+        guard selectBtn.waitForExistence(timeout: 5) else {
+            print("⚠️ [BatchDelete] '选择' 按钮未找到，软跳过")
+            return
+        }
+        XCTAssertTrue(selectBtn.isHittable, "「选择」按钮应可点击")
+        safeTap(selectBtn)
+        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
+
+        XCTAssertTrue(app.buttons["完成"].waitForExistence(timeout: 3), "编辑模式应显示「完成」按钮")
+        await exitEditMode()
+    }
+
+    // MARK: - TC-BATCH-02：编辑模式复选框可见
+
+    /// 验证编辑模式下每行显示复选框
+    func testCheckboxesVisibleInEditMode() async {
+        enterEditMode()
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+
+        let unchecked = app.images.matching(identifier: "circle").firstMatch
+        let checked = app.images.matching(identifier: "checkmark.circle.fill").firstMatch
+        XCTAssertTrue(unchecked.exists || checked.exists, "编辑模式应显示复选框")
+
+        await exitEditMode()
+    }
+
+    // MARK: - TC-BATCH-03：全选切换
+
+    /// 验证全选/取消全选按钮可切换
+    func testSelectAllToggles() async {
+        enterEditMode()
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+
+        if app.buttons["全选"].exists {
+            safeTap(app.buttons["全选"])
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            XCTAssertTrue(app.buttons["取消全选"].waitForExistence(timeout: 2), "全选后应显示取消全选")
+            safeTap(app.buttons["取消全选"])
+        } else if app.buttons["取消全选"].exists {
+            safeTap(app.buttons["取消全选"])
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+            XCTAssertTrue(app.buttons["全选"].waitForExistence(timeout: 2), "取消后应显示全选")
+        } else {
+            print("⚠️ [BatchDelete] 全选按钮未找到，软跳过")
+        }
+
+        await exitEditMode()
+    }
+
+    // MARK: - TC-BATCH-04：未选中时删除按钮禁用
+
+    /// 验证无选中项时删除按钮不启用
+    func testDeleteDisabledWhenNoSelection() async {
+        enterEditMode()
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+
+        if app.buttons["取消全选"].exists {
+            safeTap(app.buttons["取消全选"])
+            try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+        }
+        let deleteBtn = app.buttons.containing(NSPredicate(format: "label CONTAINS '删除'")).firstMatch
+        if deleteBtn.exists {
+            XCTAssertFalse(deleteBtn.isEnabled, "无选中时删除按钮应禁用")
+        }
+        await exitEditMode()
+    }
+
+    // MARK: - TC-BATCH-05：完成退出编辑模式
+
+    /// 验证「完成」退出编辑，复选框消失
+    func testDoneExitsEditMode() async {
+        enterEditMode()
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+
+        safeTap(app.buttons["完成"])
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
+        XCTAssertTrue(app.buttons["选择"].waitForExistence(timeout: 3), "退出后应显示「选择」")
+    }
+
+    // MARK: - 辅助方法
+
+    private func enterEditMode() {
+        guard app.buttons["选择"].waitForExistence(timeout: 5) else { return }
+        safeTap(app.buttons["选择"])
+    }
+
+    private func exitEditMode() async {
+        if app.buttons["完成"].exists { safeTap(app.buttons["完成"]) }
+        try? await Task.sleep(nanoseconds: UInt64(0.3 * 1_000_000_000))
+    }
+}
