@@ -134,55 +134,39 @@ struct KnowledgePageListContent: View {
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             #if !os(watchOS)
-            // 编辑模式下显示批量操作栏，非编辑模式下显示用户菜单
+            // 对标 NotebookHubView 模式：单一 ToolbarItemGroup(.topBarTrailing)
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if isEditMode {
-                    Button(action: {
+                    Button(toggleSelectLabel) {
                         let allIDs = store.pages.map(\.id)
                         if selectedPageIDs.count == allIDs.count {
                             selectedPageIDs.removeAll()
                         } else {
                             selectedPageIDs = Set(allIDs)
                         }
-                    }) {
-                        Text(toggleSelectLabel)
-                            .font(.subheadline)
                     }
-
-                    Button(role: .destructive, action: {
+                    Button(role: .destructive) {
                         guard !selectedPageIDs.isEmpty else { return }
                         showBatchDeleteConfirmation = true
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "trash")
-                            Text("\(selectedPageIDs.count)")
-                        }
-                        .font(.subheadline)
+                    } label: {
+                        Label("\(selectedPageIDs.count)", systemImage: "trash")
                     }
                     .disabled(selectedPageIDs.isEmpty)
-
-                    Button(action: {
+                    Button(L10n.Common.done) {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isEditMode = false
                             selectedPageIDs.removeAll()
                         }
-                    }) {
-                        Text(L10n.Common.done)
-                            .font(.subheadline.weight(.bold))
                     }
+                    .fontWeight(.bold)
                 } else {
-                    HStack(spacing: DesignSystem.medium) {
-                        Button(action: {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                isEditMode = true
-                            }
-                        }) {
-                            Text(L10n.Common.select)
-                                .font(.subheadline.weight(.medium))
+                    Button(L10n.Common.select) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isEditMode = true
                         }
-                        if appEnv.screenClass != .compact {
-                            UserProfileMenu()
-                        }
+                    }
+                    if appEnv.screenClass != .compact {
+                        UserProfileMenu()
                     }
                 }
             }
@@ -350,17 +334,18 @@ struct KnowledgePageListContent: View {
             }
             .accessibilityIdentifier("PageRow_Item")
             .buttonStyle(AppPressButtonStyle())
-            // 长按进入多选模式（simultaneousGesture 避免被 NavigationLink 手势吞掉）
-            .simultaneousGesture(
-                LongPressGesture(minimumDuration: 0.5)
-                    .onEnded { _ in
-                        HapticFeedback.shared.trigger(.selection)
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditMode = true
-                            selectedPageIDs.insert(page.id)
-                        }
+            // 长按上下文菜单——对标 NotebookListRow/NotebookCard 的既有模式
+            .contextMenu {
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditMode = true
+                        selectedPageIDs.insert(page.id)
                     }
-            )
+                }) {
+                    Label(L10n.Common.select, systemImage: "checkmark.circle")
+                }
+            }
         }
     }
 
