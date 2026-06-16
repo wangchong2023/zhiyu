@@ -345,6 +345,7 @@ struct CustomProfilePopover: View {
     @Environment(AuthService.self) var authService
     @EnvironmentObject var themeManager: ThemeManager
     
+    @MainActor
     fileprivate enum Constants {
         #if targetEnvironment(macCatalyst)
         /// Mac Catalyst 大屏：菜单宽度 320pt，充分利用桌面空间
