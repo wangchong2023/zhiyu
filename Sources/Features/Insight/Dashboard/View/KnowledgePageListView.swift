@@ -134,55 +134,59 @@ struct KnowledgePageListContent: View {
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             #if !os(watchOS)
-            ToolbarItem(placement: .topBarTrailing) {
-                if appEnv.screenClass != .compact {
-                    UserProfileMenu()
+            // 编辑模式下显示批量操作栏，非编辑模式下显示用户菜单
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if isEditMode {
+                    Button(action: {
+                        let allIDs = store.pages.map(\.id)
+                        if selectedPageIDs.count == allIDs.count {
+                            selectedPageIDs.removeAll()
+                        } else {
+                            selectedPageIDs = Set(allIDs)
+                        }
+                    }) {
+                        Text(toggleSelectLabel)
+                            .font(.subheadline)
+                    }
+
+                    Button(role: .destructive, action: {
+                        guard !selectedPageIDs.isEmpty else { return }
+                        showBatchDeleteConfirmation = true
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "trash")
+                            Text("\(selectedPageIDs.count)")
+                        }
+                        .font(.subheadline)
+                    }
+                    .disabled(selectedPageIDs.isEmpty)
+
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isEditMode = false
+                            selectedPageIDs.removeAll()
+                        }
+                    }) {
+                        Text(L10n.Common.done)
+                            .font(.subheadline.weight(.bold))
+                    }
+                } else {
+                    HStack(spacing: DesignSystem.medium) {
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                isEditMode = true
+                            }
+                        }) {
+                            Text(L10n.Common.select)
+                                .font(.subheadline.weight(.medium))
+                        }
+                        if appEnv.screenClass != .compact {
+                            UserProfileMenu()
+                        }
+                    }
                 }
             }
             #endif
-
-            // 编辑/选择模式切换
-            ToolbarItem(placement: .topBarLeading) {
-                if isEditMode {
-                    HStack(spacing: DesignSystem.small) {
-                        Button(action: {
-                            let allIDs = store.pages.map(\.id)
-                            if selectedPageIDs.count == allIDs.count {
-                                selectedPageIDs.removeAll()
-                            } else {
-                                selectedPageIDs = Set(allIDs)
-                            }
-                        }) {
-                            Text(toggleSelectLabel)
-                                .font(.subheadline)
-                        }
-
-                        Button(role: .destructive, action: {
-                            guard !selectedPageIDs.isEmpty else { return }
-                            showBatchDeleteConfirmation = true
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "trash")
-                                Text("\(L10n.Knowledge.Page.deletePage)(\(selectedPageIDs.count))")
-                            }
-                            .font(.subheadline)
-                        }
-                        .disabled(selectedPageIDs.isEmpty)
-                    }
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isEditMode.toggle()
-                        if !isEditMode { selectedPageIDs.removeAll() }
-                    }
-                }) {
-                    Text(isEditMode ? L10n.Common.done : L10n.Common.select)
-                        .font(.subheadline.weight(.medium))
-                }
-            }
         }
         .onChange(of: searchText) { _, newValue in
             triggerSearch(query: newValue)
@@ -346,14 +350,17 @@ struct KnowledgePageListContent: View {
             }
             .accessibilityIdentifier("PageRow_Item")
             .buttonStyle(AppPressButtonStyle())
-            // 长按进入多选模式并自动选中该行
-            .onLongPressGesture {
-                HapticFeedback.shared.trigger(.selection)
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isEditMode = true
-                    selectedPageIDs.insert(page.id)
-                }
-            }
+            // 长按进入多选模式（simultaneousGesture 避免被 NavigationLink 手势吞掉）
+            .simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.5)
+                    .onEnded { _ in
+                        HapticFeedback.shared.trigger(.selection)
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isEditMode = true
+                            selectedPageIDs.insert(page.id)
+                        }
+                    }
+            )
         }
     }
 
