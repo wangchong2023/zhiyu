@@ -7982,6 +7982,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhiyu.app;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Sources/App/ZhiYu-Bridging-Header.h";
+				SWIFT_STRICT_CONCURRENCY = targeted;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;

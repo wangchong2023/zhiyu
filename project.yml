@@ -58,6 +58,9 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Sources/ZhiYu.entitlements
         NSSupportsLiveActivities: YES
         SWIFT_OBJC_BRIDGING_HEADER: Sources/App/ZhiYu-Bridging-Header.h
+      configs:
+        Debug:
+          SWIFT_STRICT_CONCURRENCY: targeted
     preBuildScripts:
       - script: "export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif which swiftlint >/dev/null; then swiftlint lint --strict; else echo 'warning: SwiftLint not installed. Please download from https://github.com/realm/SwiftLint'; fi"
         name: "[Gatekeeper] SwiftLint Quality Audit"
