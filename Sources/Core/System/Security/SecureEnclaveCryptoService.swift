@@ -104,7 +104,7 @@ final class SecureEnclaveCryptoService: Sendable {
     /// 获取或物理新建 Secure Enclave 内置 P-256 私钥
     private func getOrCreateHardwarePrivateKey() throws -> SecureEnclave.P256.KeyAgreement.PrivateKey {
         // 1. 尝试从本地 Keychain 中拉取保存的私钥引用 Token
-        if let tokenDataString = try? KeychainStore.shared.retrieve(key: hardwareKeyTokenPath),
+        if let tokenDataString = try? KeychainService.shared.retrieve(key: hardwareKeyTokenPath),
            let tokenData = Data(base64Encoded: tokenDataString) {
             do {
                 // 利用 Token 物理连接回 Secure Enclave 内部的硬件密钥
@@ -120,7 +120,7 @@ final class SecureEnclaveCryptoService: Sendable {
         let tokenData = newKey.dataRepresentation
         
         // 3. 将该非敏感的硬件私钥 Token 持久化进钥匙串，供以后无缝挂接
-        try KeychainStore.shared.store(key: hardwareKeyTokenPath, value: tokenData.base64EncodedString())
+        try KeychainService.shared.store(key: hardwareKeyTokenPath, value: tokenData.base64EncodedString())
         return newKey
     }
 }

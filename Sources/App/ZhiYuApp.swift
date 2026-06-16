@@ -117,8 +117,8 @@ struct AppLauncher {
                 defaults.synchronize()
                 
                 // 同时清理 Keychain
-                try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
-                try? KeychainStore.shared.delete(key: "refresh_token")
+                try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
+                try? KeychainService.shared.delete(key: "refresh_token")
                 
                 print("[AppLauncher] Detected --reset-auth-state. Cleared auth state.")
             }

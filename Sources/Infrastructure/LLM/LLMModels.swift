@@ -250,17 +250,17 @@ final class LLMConfigStore: ObservableObject {
 
     private func loadAPIKey(for provider: LLMProvider) -> String {
         let key = keychainKey(for: provider)
-        if let encryptedValue = try? KeychainStore.shared.retrieve(key: key) {
+        if let encryptedValue = try? KeychainService.shared.retrieve(key: key) {
             if let decrypted = try? SecureEnclaveCryptoService.shared.decrypt(encryptedValue) {
                 return decrypted
             }
         }
         
         // 迁移逻辑：如果新版分提供商 Key 不存在，尝试读取旧版全局 Key
-        if let legacyValue = try? KeychainStore.shared.retrieve(key: legacyKeychainAPIKey) {
+        if let legacyValue = try? KeychainService.shared.retrieve(key: legacyKeychainAPIKey) {
             // 对迁移上来的明文进行物理级硬件加密，持久化回 Keychain
             if let encrypted = try? SecureEnclaveCryptoService.shared.encrypt(legacyValue) {
-                try? KeychainStore.shared.store(key: key, value: encrypted)
+                try? KeychainService.shared.store(key: key, value: encrypted)
             }
             return legacyValue
         }
@@ -271,12 +271,12 @@ final class LLMConfigStore: ObservableObject {
     private func saveAPIKey(for provider: LLMProvider) {
         let key = keychainKey(for: provider)
         guard !apiKey.isEmpty else {
-            try? KeychainStore.shared.delete(key: key)
+            try? KeychainService.shared.delete(key: key)
             return
         }
         // 引入 Secure Enclave 硬件安全芯片物理级锁定
         if let encrypted = try? SecureEnclaveCryptoService.shared.encrypt(apiKey) {
-            try? KeychainStore.shared.store(key: key, value: encrypted)
+            try? KeychainService.shared.store(key: key, value: encrypted)
         }
     }
 }

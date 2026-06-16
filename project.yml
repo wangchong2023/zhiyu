@@ -12,12 +12,6 @@ packages:
   ZIPFoundation:
     url: https://github.com/weichsel/ZIPFoundation.git
     from: 0.9.19
-  Markdown:
-    url: https://github.com/swiftlang/swift-markdown
-    from: 0.5.0
-  KeychainAccess:
-    url: https://github.com/kishikawakatsumi/KeychainAccess
-    from: 4.2.2
 
 options:
   bundleIdPrefix: com.zhiyu.app
@@ -86,8 +80,6 @@ targets:
       - package: GRDB
       - package: Lottie
       - package: ZIPFoundation
-      - package: Markdown
-      - package: KeychainAccess
       - target: ZhiYuWidgets
       - framework: Frameworks/WechatOpenSDK.xcframework
       - framework: Frameworks/ATAuthSDK_D.xcframework
@@ -134,8 +126,6 @@ targets:
       - package: GRDB
       - package: Lottie
       - package: ZIPFoundation
-      - package: Markdown
-      - package: KeychainAccess
 
   ZhiYuWatch:
     type: application
@@ -205,8 +195,6 @@ targets:
     dependencies:
       - package: GRDB
       - package: ZIPFoundation
-      - package: Markdown
-      - package: KeychainAccess
 
   ZhiYuWidgets:
     type: app-extension

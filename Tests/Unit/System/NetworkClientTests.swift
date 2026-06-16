@@ -16,13 +16,13 @@ final class NetworkClientTests: XCTestCase {
     
     override func setUpWithError() throws {
         // Clear any leftover state before each test
-        try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
-        try? KeychainStore.shared.delete(key: "refresh_token")
+        try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
+        try? KeychainService.shared.delete(key: "refresh_token")
     }
 
     override func tearDownWithError() throws {
-        try? KeychainStore.shared.delete(key: AppConstants.Network.jwtTokenKey)
-        try? KeychainStore.shared.delete(key: "refresh_token")
+        try? KeychainService.shared.delete(key: AppConstants.Network.jwtTokenKey)
+        try? KeychainService.shared.delete(key: "refresh_token")
     }
 
     func testNetworkClientBasicRequest() async throws {
@@ -36,14 +36,12 @@ final class NetworkClientTests: XCTestCase {
     
     func testTokenStorage() throws {
         do {
-            try KeychainStore.shared.store(key: AppConstants.Network.jwtTokenKey, value: "fake_jwt")
-            let token = try KeychainStore.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
+            try KeychainService.shared.store(key: AppConstants.Network.jwtTokenKey, value: "fake_jwt")
+            let token = try KeychainService.shared.retrieve(key: AppConstants.Network.jwtTokenKey)
             XCTAssertEqual(token, "fake_jwt")
+        } catch KeychainError.storeFailed(let status) where status == -34018 {
+            throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
         } catch {
-            let nsError = error as NSError
-            if nsError.code == -34018 || nsError.domain == NSOSStatusErrorDomain {
-                throw XCTSkip("Keychain access denied (errSecMissingEntitlement -34018). Skipping test in restricted simulator environment.")
-            }
             throw error
         }
     }
