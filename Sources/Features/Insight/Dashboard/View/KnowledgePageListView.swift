@@ -36,11 +36,6 @@ struct KnowledgePageListContent: View {
     @State private var pageToDelete: KnowledgePage?
     @State private var showInsights = false
     @State private var searchText = ""
-
-    // 批量删除编辑模式
-    @State private var isEditMode: Bool = false
-    @State private var selectedPageIDs: Set<UUID> = []
-    @State private var showBatchDeleteConfirmation: Bool = false
     
     // 全局混合搜索与语义检索核心状态
     @State private var searchResults: [KnowledgePage] = []
@@ -49,13 +44,6 @@ struct KnowledgePageListContent: View {
     
     private var totalLinks: Int {
         store.pages.reduce(0) { $0 + $1.outgoingLinks.count }
-    }
-
-    /// 批量选择模式下全选/取消全选的按钮标签
-    private var toggleSelectLabel: String {
-        selectedPageIDs.count == store.pages.count
-            ? L10n.Common.deselectAll
-            : L10n.Common.selectAll
     }
     
     private func filteredPages(for type: PageType) -> [KnowledgePage] {
@@ -134,40 +122,9 @@ struct KnowledgePageListContent: View {
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbar {
             #if !os(watchOS)
-            // 对标 NotebookHubView 模式：单一 ToolbarItemGroup(.topBarTrailing)
             ToolbarItemGroup(placement: .topBarTrailing) {
-                if isEditMode {
-                    Button(toggleSelectLabel) {
-                        let allIDs = store.pages.map(\.id)
-                        if selectedPageIDs.count == allIDs.count {
-                            selectedPageIDs.removeAll()
-                        } else {
-                            selectedPageIDs = Set(allIDs)
-                        }
-                    }
-                    Button(role: .destructive) {
-                        guard !selectedPageIDs.isEmpty else { return }
-                        showBatchDeleteConfirmation = true
-                    } label: {
-                        Label("\(selectedPageIDs.count)", systemImage: "trash")
-                    }
-                    .disabled(selectedPageIDs.isEmpty)
-                    Button(L10n.Common.done) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditMode = false
-                            selectedPageIDs.removeAll()
-                        }
-                    }
-                    .fontWeight(.bold)
-                } else {
-                    Button(L10n.Common.select) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditMode = true
-                        }
-                    }
-                    if appEnv.screenClass != .compact {
-                        UserProfileMenu()
-                    }
+                if appEnv.screenClass != .compact {
+                    UserProfileMenu()
                 }
             }
             #endif
@@ -181,24 +138,6 @@ struct KnowledgePageListContent: View {
         }
         .sheet(isPresented: $showInsights) {
             VaultInsightsPanel()
-        }
-        .confirmationDialog(
-            L10n.Knowledge.Page.batchDeleteTitle(selectedPageIDs.count),
-            isPresented: $showBatchDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(L10n.Knowledge.Page.deletePage, role: .destructive) {
-                let pagesToDelete = store.pages.filter { selectedPageIDs.contains($0.id) }
-                Task {
-                    await store.deletePages(pagesToDelete)
-                    selectedPageIDs.removeAll()
-                    isEditMode = false
-                    HapticFeedback.shared.trigger(.success)
-                }
-            }
-            Button(L10n.Common.cancel, role: .cancel) { }
-        } message: {
-            Text(L10n.Knowledge.Page.batchDeleteMessage(selectedPageIDs.count))
         }
         .confirmationDialog(
             pageToDelete.map { L10n.Vault.Page.deletePageTitle( $0.title) } ?? L10n.Knowledge.Page.deletePage,
@@ -304,49 +243,13 @@ struct KnowledgePageListContent: View {
         }
     }
     
-    /// 可编辑页面行（支持编辑模式下的多选复选框 + 长按进入多选）
     @ViewBuilder
     private func selectablePageRow(_ page: KnowledgePage) -> some View {
-        if isEditMode {
-            Button(action: {
-                HapticFeedback.shared.trigger(.selection)
-                if selectedPageIDs.contains(page.id) {
-                    selectedPageIDs.remove(page.id)
-                } else {
-                    selectedPageIDs.insert(page.id)
-                }
-            }) {
-                HStack(spacing: DesignSystem.medium) {
-                    Image(systemName: selectedPageIDs.contains(page.id)
-                        ? "checkmark.circle.fill"
-                        : "circle")
-                        .font(.title3)
-                        .foregroundStyle(selectedPageIDs.contains(page.id) ? .appAccent : .appSecondary)
-                    PageRowView(page: page)
-                    Spacer()
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-        } else {
-            NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
-                PageRowView(page: page)
-            }
-            .accessibilityIdentifier("PageRow_Item")
-            .buttonStyle(AppPressButtonStyle())
-            // 长按上下文菜单——对标 NotebookListRow/NotebookCard 的既有模式
-            .contextMenu {
-                Button(action: {
-                    HapticFeedback.shared.trigger(.selection)
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isEditMode = true
-                        selectedPageIDs.insert(page.id)
-                    }
-                }) {
-                    Label(L10n.Common.select, systemImage: "checkmark.circle")
-                }
-            }
+        NavigationLink(value: AppRoute.pageDetail(id: page.id)) {
+            PageRowView(page: page)
         }
+        .accessibilityIdentifier("PageRow_Item")
+        .buttonStyle(AppPressButtonStyle())
     }
 
     @ViewBuilder

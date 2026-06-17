@@ -55,22 +55,22 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
 
     // MARK: - 常量参数定义
     /// 默认生成文本的最大 Token 长度上限
-    public static let defaultMaxTokens: Int = 256
+    nonisolated public static let defaultMaxTokens: Int = 256
     
     /// 文本生成的采样温度 (Temperature)
-    private static let generationTemperature: Double = 0.7
+    nonisolated private static let generationTemperature: Double = 0.7
     
     /// 设备端端侧智能导入 (Smart Ingest) 编译最大 Token 上限
-    private static let smartIngestMaxTokens: Int = 500
+    nonisolated private static let smartIngestMaxTokens: Int = 500
     
     /// 设备端端侧聊天上下文最大 Token 上限
-    private static let chatMaxTokens: Int = 300
+    nonisolated private static let chatMaxTokens: Int = 300
     
     /// 注入端侧大模型上下文的关联知识页面数量限制
-    private static let contextPageLimit: Int = 5
+    nonisolated private static let contextPageLimit: Int = 5
     
     /// 单个知识页面在上下文预览时的最大字符截断长度
-    private static let contentPreviewChars: Int = 200
+    nonisolated private static let contentPreviewChars: Int = 200
 
     // MARK: - 初始化
     public init() {

@@ -452,38 +452,9 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
         _ = app.buttons.matching(identifier: "PageRow_Item").firstMatch.waitForExistence(timeout: 2)
     }
 
-    // MARK: - TC-BATCH-01：选择按钮进入编辑模式
-
     /// 验证「选择」按钮可见，点击后进入编辑模式（显示「完成」按钮）
-    func testSelectButtonEntersEditMode() async {
-        let selectBtn = app.buttons["选择"]
-        guard selectBtn.waitForExistence(timeout: 5) else {
-            print("⚠️ [BatchDelete] '选择' 按钮未找到，软跳过")
-            return
-        }
-        XCTAssertTrue(selectBtn.isHittable, "「选择」按钮应可点击")
-        safeTap(selectBtn)
-        try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
-
-        XCTAssertTrue(app.buttons["完成"].waitForExistence(timeout: 3), "编辑模式应显示「完成」按钮")
-        await exitEditMode()
-    }
-
-    // MARK: - TC-BATCH-02：编辑模式复选框可见
 
     /// 验证编辑模式下每行显示复选框
-    func testCheckboxesVisibleInEditMode() async {
-        await enterEditMode()
-        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
-
-        let unchecked = app.images.matching(identifier: "circle").firstMatch
-        let checked = app.images.matching(identifier: "checkmark.circle.fill").firstMatch
-        XCTAssertTrue(unchecked.exists || checked.exists, "编辑模式应显示复选框")
-
-        await exitEditMode()
-    }
-
-    // MARK: - TC-BATCH-03：全选切换
 
     /// 验证全选/取消全选按钮可切换
     func testSelectAllToggles() async {
@@ -506,8 +477,6 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
         await exitEditMode()
     }
 
-    // MARK: - TC-BATCH-04：未选中时删除按钮禁用
-
     /// 验证无选中项时删除按钮不启用
     func testDeleteDisabledWhenNoSelection() async {
         await enterEditMode()
@@ -523,8 +492,6 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
         }
         await exitEditMode()
     }
-
-    // MARK: - TC-BATCH-05：完成退出编辑模式
 
     /// 验证「完成」退出编辑，复选框消失
     func testDoneExitsEditMode() async {
