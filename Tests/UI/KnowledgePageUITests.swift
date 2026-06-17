@@ -473,7 +473,7 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
 
     /// 验证编辑模式下每行显示复选框
     func testCheckboxesVisibleInEditMode() async {
-        enterEditMode()
+        await enterEditMode()
         try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
         let unchecked = app.images.matching(identifier: "circle").firstMatch
@@ -487,7 +487,7 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
 
     /// 验证全选/取消全选按钮可切换
     func testSelectAllToggles() async {
-        enterEditMode()
+        await enterEditMode()
         try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
         if app.buttons["全选"].exists {
@@ -510,7 +510,7 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
 
     /// 验证无选中项时删除按钮不启用
     func testDeleteDisabledWhenNoSelection() async {
-        enterEditMode()
+        await enterEditMode()
         try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
         if app.buttons["取消全选"].exists {
@@ -528,7 +528,7 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
 
     /// 验证「完成」退出编辑，复选框消失
     func testDoneExitsEditMode() async {
-        enterEditMode()
+        await enterEditMode()
         try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
 
         safeTap(app.buttons["完成"])
@@ -538,9 +538,10 @@ final class BatchDeleteTests: KnowledgeBaseUITests {
 
     // MARK: - 辅助方法
 
-    private func enterEditMode() {
+    private func enterEditMode() async {
         guard app.buttons["选择"].waitForExistence(timeout: 5) else { return }
         safeTap(app.buttons["选择"])
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * 1_000_000_000))
     }
 
     private func exitEditMode() async {

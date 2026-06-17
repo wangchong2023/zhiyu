@@ -65,8 +65,12 @@ final class AuthUITests: XCTestCase {
     private func ensureAgreementChecked() {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
-        // 通过 image 名称判断当前状态："checkmark.circle.fill" 表示已勾选，"circle" 表示未勾选
-        if checkbox.images["circle"].exists {
+        // 通过 image 的 accessibility label 判断当前状态：SF Symbol "checkmark.circle.fill" 的
+        // accessibility label 在运行时为 "checkmark circle fill"（点号被替换为空格），
+        // 因此不能使用 images["checkmark.circle.fill"] 进行精确标识符匹配。
+        // 改用 NSPredicate CONTAINS：
+        let uncheckedImage = checkbox.images.matching(NSPredicate(format: "label == 'circle'")).firstMatch
+        if uncheckedImage.exists {
             checkbox.tap()
         }
     }
@@ -75,16 +79,23 @@ final class AuthUITests: XCTestCase {
     private func uncheckAgreement() {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
-        if checkbox.images["checkmark.circle.fill"].exists {
+        // 通过 accessibility label CONTAINS 匹配，避免 SF Symbol 点号转空格导致的标识符不匹配
+        let checkedImage = checkbox.images.matching(NSPredicate(format: "label CONTAINS 'checkmark'")).firstMatch
+        if checkedImage.exists {
             checkbox.tap()
         }
     }
 
-    /// 滑动到第三方登录区域并等待稳定
+    /// 滑动到第三方登录区域并等待可见
     private func scrollToThirdPartySection() {
         app.scrollViews.firstMatch.swipeUp()
-        // 等待滚动动画完成，避免 isHittable 在动画中返回 false
-        sleep(1)
+        // 等待第三方按钮出现而非固定 sleep，兼顾稳定性和速度
+        let appleBtn = app.buttons["auth.thirdparty.apple"]
+        if !appleBtn.waitForExistence(timeout: 3) {
+            // 一次滑动不够则再滑一次
+            app.scrollViews.firstMatch.swipeUp()
+            appleBtn.waitForExistence(timeout: 2)
+        }
     }
 
     // MARK: - TC-AUTH-01：一键登录完整端到端流程（含退出登录）
@@ -365,13 +376,14 @@ final class AuthUITests: XCTestCase {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
 
-        // 验证默认即为勾选状态
+        // 通过 accessibility label CONTAINS 匹配 SF Symbol 状态
+        // "checkmark.circle.fill" 运行时 label 变成 "checkmark circle fill"
         XCTAssertTrue(
-            checkbox.images["checkmark.circle.fill"].exists,
+            checkbox.images.matching(NSPredicate(format: "label CONTAINS 'checkmark'")).firstMatch.exists,
             "用户协议复选框应默认为勾选状态（checkmark.circle.fill）"
         )
         XCTAssertFalse(
-            checkbox.images["circle"].exists,
+            checkbox.images.matching(NSPredicate(format: "label == 'circle'")).firstMatch.exists,
             "用户协议复选框不应显示为未勾选状态（circle）"
         )
         takeScreenshot(name: "TC12_01_Agreement_DefaultChecked")

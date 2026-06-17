@@ -52,6 +52,8 @@ final class AuthServiceTests: XCTestCase {
     }
 
     func testLogoutClearsGuestFlag() {
+        // 确保从干净状态开始，避免前序测试任务残留导致 CI 偶发失败
+        AuthSession.shared.logout()
         AuthSession.shared.isGuest = true
         XCTAssertTrue(AuthService.shared.isGuest)
 
