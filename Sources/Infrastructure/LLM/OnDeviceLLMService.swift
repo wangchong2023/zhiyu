@@ -54,23 +54,14 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     @ObservationIgnored @Inject var compiler: MLModelCompilerProtocol
 
     // MARK: - 常量参数定义
-    /// 默认生成文本的最大 Token 长度上限
-    nonisolated public static let defaultMaxTokens: Int = 256
-    
-    /// 文本生成的采样温度 (Temperature)
-    nonisolated private static let generationTemperature: Double = 0.7
-    
-    /// 设备端端侧智能导入 (Smart Ingest) 编译最大 Token 上限
-    nonisolated private static let smartIngestMaxTokens: Int = 500
-    
-    /// 设备端端侧聊天上下文最大 Token 上限
-    nonisolated private static let chatMaxTokens: Int = 300
-    
-    /// 注入端侧大模型上下文的关联知识页面数量限制
-    nonisolated private static let contextPageLimit: Int = 5
-    
-    /// 单个知识页面在上下文预览时的最大字符截断长度
-    nonisolated private static let contentPreviewChars: Int = 200
+    nonisolated public enum Config {
+        public static let defaultMaxTokens: Int = 256
+        public static let generationTemperature: Double = 0.7
+        public static let smartIngestMaxTokens: Int = 500
+        public static let chatMaxTokens: Int = 300
+        public static let contextPageLimit: Int = 5
+        public static let contentPreviewChars: Int = 200
+    }
 
     // MARK: - 初始化
     public init() {
@@ -213,7 +204,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
     ///   - prompt: 提示词输入
     ///   - maxTokens: 允许的最大 token 生成长度上限
     /// - Returns: 模型输出文本
-    public func generate(prompt: String, maxTokens: Int = defaultMaxTokens) async throws -> String {
+    public func generate(prompt: String, maxTokens: Int = Config.defaultMaxTokens) async throws -> String {
         guard isModelLoaded else {
             throw OnDeviceError.modelNotLoaded
         }
@@ -229,7 +220,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
             let inputFeatures: [String: Any] = [
                 "prompt": prompt,
                 "max_tokens": maxTokens,
-                "temperature": Self.generationTemperature
+                "temperature": Config.generationTemperature
             ]
 
             do {
@@ -276,7 +267,7 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
         \("Retain_all_links_and_formats.")
         """
 
-        let generated = try await generate(prompt: prompt, maxTokens: Self.smartIngestMaxTokens)
+        let generated = try await generate(prompt: prompt, maxTokens: Config.smartIngestMaxTokens)
 
         return SmartIngestResult(
             title: title,
@@ -299,12 +290,12 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
             page.tags.contains(where: { query.lowercased().contains($0.lowercased()) })
         }
 
-        for page in relevant.prefix(Self.contextPageLimit) {
-            context += "\n\n## \(page.title)\n\(String(page.content.prefix(Self.contentPreviewChars)))"
+        for page in relevant.prefix(Config.contextPageLimit) {
+            context += "\n\n## \(page.title)\n\(String(page.content.prefix(Config.contentPreviewChars)))"
         }
 
         let prompt = "\(context)\n\n\("Question"): \(query)"
-        return try await generate(prompt: prompt, maxTokens: Self.chatMaxTokens)
+        return try await generate(prompt: prompt, maxTokens: Config.chatMaxTokens)
     }
 
     // MARK: - 强行取消生成
