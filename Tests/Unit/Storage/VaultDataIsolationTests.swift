@@ -459,4 +459,154 @@ final class VaultDataIsolationTests: XCTestCase {
         }
         wait(for: [expectation], timeout: 1.0)
     }
+
+    /// 验证项目调研（Coffee）演示数据生成及物理文件挂载与导入历史维护
+    func testResearchDemoDataGeneration() async throws {
+        // 🚀 物理挂载切换至 笔记本 A
+        print("🎬 【Research Demo Test】物理挂载切换至 笔记本 A => ID: \(vaultAID.uuidString)")
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        
+        // 1. 生成项目调研演示数据
+        let generatedCount = try await InitialNotebookGenerator.generateResearchNotebook(in: store)
+        let expectedCount = 11
+        XCTAssertEqual(generatedCount, expectedCount, "项目调研笔记本应生成 \(expectedCount) 个演示页面")
+        
+        // 2. 验证页面标题
+        let pages = try await store.fetchAllPages()
+        let titles = pages.map(\.title)
+        XCTAssertTrue(titles.contains(L10n.InitialNotebook.Coffee.title1), "应当包含第一个咖啡店对比分析页面")
+        XCTAssertTrue(titles.contains(L10n.InitialNotebook.Coffee.title3), "应当包含调研报告页面")
+        
+        // 3. 验证物理 PDF 文件挂载与存在性
+        guard let firstPage = pages.first(where: { $0.title == L10n.InitialNotebook.Coffee.title1 }) else {
+            XCTFail("未找到目标演示页面")
+            return
+        }
+        XCTAssertNotNil(firstPage.sourceURL, "演示页面应当挂载 sourceURL")
+        if let urlString = firstPage.sourceURL, let fileURL = URL(string: urlString) {
+            let exists = FileManager.default.fileExists(atPath: fileURL.path)
+            XCTAssertTrue(exists, "物理 PDF 报告文件应当存在于 Imports 沙盒中: \(fileURL.path)")
+            let data = try? Data(contentsOf: fileURL)
+            XCTAssertNotNil(data, "应能够成功读取物理 PDF 报告")
+            XCTAssertGreaterThan(data?.count ?? 0, 0, "物理 PDF 文件大小应大于 0 字节")
+        } else {
+            XCTFail("无法将 sourceURL 解析为本地 file URL")
+        }
+        
+        // 4. 验证导入记录 (ImportRecord) 状态与属性被正确维护
+        guard let dbWriter = DatabaseManager.shared.dbWriter else {
+            XCTFail("数据库写入句柄为空")
+            return
+        }
+        let records = try await dbWriter.read { db in
+            try ImportRecord.fetchAll(db)
+        }
+        XCTAssertEqual(records.count, expectedCount, "写入的导入记录历史记录数应与生成的页面数一致")
+        let coffeeRecord = records.first(where: { $0.title == L10n.InitialNotebook.Coffee.title1 })
+        XCTAssertNotNil(coffeeRecord, "应当包含首要对比页面的导入记录")
+        XCTAssertEqual(coffeeRecord?.status, "done", "初始导入记录状态应为 done 完成状态")
+        XCTAssertEqual(coffeeRecord?.category, "file", "导入渠道类型应匹配为 file 文件")
+        XCTAssertEqual(coffeeRecord?.pageID, firstPage.id.uuidString, "导入记录应当正确绑定对应的 pageID")
+    }
+
+    /// 验证 MaintenanceService 对默认笔记本（我的知识库）的种子注入与分流路由以及物理文件和导入历史存在性
+    func testMaintenanceServiceSeedsDefaultNotebookCorrectly() async throws {
+        // 🚀 物理挂载切换至 笔记本 A，确保 dbURL 存在以引导生成真实的物理 Imports 沙盒文件
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        
+        // 1. 清空当前数据库
+        await maintenanceService.clearAllDeveloperData()
+        
+        // 2. 调用 seedDefaultContent 传入默认笔记本名
+        await maintenanceService.seedDefaultContent(pages: [], vaultName: L10n.Vault.defaultName)
+        
+        // 3. 验证生成 18 个 PKM 页面
+        let pages = try await store.fetchAllPages()
+        XCTAssertEqual(pages.count, 18, "我的知识库应包含 18 个页面")
+        let titles = pages.map(\.title)
+        XCTAssertTrue(titles.contains(L10n.InitialNotebook.PKM.title1), "应包含 PKM 第一篇页面")
+        
+        // 4. 验证默认笔记本的物理 Markdown 配置文件
+        guard let firstPage = pages.first(where: { $0.title == L10n.InitialNotebook.PKM.title1 }) else {
+            XCTFail("未找到 PKM 演示页面")
+            return
+        }
+        XCTAssertNotNil(firstPage.sourceURL, "第一篇演示页面应当配置 sourceURL 物理连接")
+        if let urlString = firstPage.sourceURL, let fileURL = URL(string: urlString) {
+            XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path), "PKM 方法论 Markdown 物理文件应当存在")
+            let content = try? String(contentsOf: fileURL, encoding: .utf8)
+            XCTAssertNotNil(content, "物理文件应成功按 UTF8 解析读取")
+            XCTAssertFalse(content?.isEmpty ?? true, "物理 Markdown 内容不应为空")
+        }
+        
+        // 5. 验证导入历史是否被正确写入并绑定
+        guard let dbWriter = DatabaseManager.shared.dbWriter else {
+            XCTFail("数据库写入句柄为空")
+            return
+        }
+        let records = try await dbWriter.read { db in
+            try ImportRecord.fetchAll(db)
+        }
+        XCTAssertEqual(records.count, 18, "我的知识库导入记录数应为 18")
+        let firstRecord = records.first(where: { $0.title == L10n.InitialNotebook.PKM.title1 })
+        XCTAssertNotNil(firstRecord, "应当生成第一篇文档的导入记录")
+        XCTAssertEqual(firstRecord?.status, "done")
+        XCTAssertEqual(firstRecord?.pageID, firstPage.id.uuidString)
+    }
+
+    /// 验证 MaintenanceService 对项目调研笔记本的种子注入与分流路由以及物理文件和导入历史存在性
+    func testMaintenanceServiceSeedsResearchNotebookCorrectly() async throws {
+        // 🚀 物理挂载切换至 笔记本 A，确保 dbURL 存在以引导生成真实的物理 Imports 沙盒文件
+        try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
+        StorageModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        let store = ServiceContainer.shared.resolve((any AnyPageStoreCapabilities).self)
+        let maintenanceService = ServiceContainer.shared.resolve(MaintenanceService.self)
+        
+        // 1. 清空当前数据库
+        await maintenanceService.clearAllDeveloperData()
+        
+        // 2. 调用 seedDefaultContent 传入项目调研笔记本名
+        await maintenanceService.seedDefaultContent(pages: [], vaultName: L10n.Vault.researchName)
+        
+        // 3. 验证生成 11 个咖啡店调研页面
+        let pages = try await store.fetchAllPages()
+        XCTAssertEqual(pages.count, 11, "项目调研笔记本应包含 11 个页面")
+        let titles = pages.map(\.title)
+        XCTAssertTrue(titles.contains(L10n.InitialNotebook.Coffee.title1), "应包含咖啡店对比页面")
+        
+        // 4. 验证项目调研笔记本的物理 PDF 文件
+        guard let coffeePage = pages.first(where: { $0.title == L10n.InitialNotebook.Coffee.title3 }) else {
+            XCTFail("未找到咖啡调研报告页面")
+            return
+        }
+        XCTAssertNotNil(coffeePage.sourceURL, "咖啡调研页面应挂载物理 sourceURL")
+        if let urlString = coffeePage.sourceURL, let fileURL = URL(string: urlString) {
+            XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path), "咖啡调研问卷 PDF 物理文件应存在于 Imports 沙盒")
+            let data = try? Data(contentsOf: fileURL)
+            XCTAssertNotNil(data, "应能够正常加载 PDF 字节")
+            XCTAssertGreaterThan(data?.count ?? 0, 0, "物理文件大小应大于 0")
+        }
+        
+        // 5. 验证导入历史是否被正确写入并绑定
+        guard let dbWriter = DatabaseManager.shared.dbWriter else {
+            XCTFail("数据库写入句柄为空")
+            return
+        }
+        let records = try await dbWriter.read { db in
+            try ImportRecord.fetchAll(db)
+        }
+        XCTAssertEqual(records.count, 11, "项目调研笔记本导入记录数应为 11")
+        let record = records.first(where: { $0.title == L10n.InitialNotebook.Coffee.title3 })
+        XCTAssertNotNil(record, "应当生成第三篇咖啡文档的导入记录")
+        XCTAssertEqual(record?.status, "done")
+        XCTAssertEqual(record?.pageID, coffeePage.id.uuidString)
+    }
 }

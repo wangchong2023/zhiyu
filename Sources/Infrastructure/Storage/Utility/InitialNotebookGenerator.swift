@@ -19,6 +19,31 @@ import Foundation
 /// 职责：用于快速填充知识库，展示图谱、检索、AI 分析及引用物理文件溯源能力。
 struct InitialNotebookGenerator {
 
+    // MARK: - 模拟调用日志常量
+
+    /// 演示模型名称，模拟未配置外部大模型时的内置/本地空跑服务
+    private static let demoModelName = "ZhiYu-Local-Mock"
+    
+    /// PKM 模拟调用条数
+    private static let pkmLogCount = 50
+    /// 调研集模拟调用条数
+    private static let researchLogCount = 30
+    
+    /// PKM 模拟随机小时跨度 (30天 = 720小时)
+    private static let pkmMaxHoursAgo = 720
+    /// 调研集模拟随机小时跨度 (12天 = 288小时)
+    private static let researchMaxHoursAgo = 288
+    
+    /// 提示 Token 最小值与最大值
+    private static let minPromptTokens = 100
+    private static let maxPromptTokens = 1000
+    /// 补全 Token 最小值与最大值
+    private static let minCompletionTokens = 50
+    private static let maxCompletionTokens = 2000
+    /// 模拟延迟最小值与最大值
+    private static let minLatencyMS = 300
+    private static let maxLatencyMS = 4500
+
     /// 统一的演示数据种子结构，支持溯源元数据
     struct PageSeed {
         let title: String
@@ -261,28 +286,67 @@ struct InitialNotebookGenerator {
     }
 
     // MARK: - 私有辅助方法：持久化
-
-    /// 通用页面批量写入模板：清空旧数据 → 写入页面 → 执行附加日志注入
-    /// - Parameters:
-    ///   - seeds: 需要写入的页面种子数据
-    ///   - store: 目标存储仓储
-    ///   - additionalWrites: 额外写入操作（如注入模拟 AI 日志）
+    
+    /// 通用页面批量写入模板：清空旧数据 → 写入页面 → 执行附加日志注入及导入历史写入
     private static func persistPages(
         _ seeds: [PageSeed],
         in store: any AnyPageStore,
         additionalWrites: @escaping @Sendable (Database) throws -> Void
     ) async throws {
+        let activeVaultID = await MainActor.run {
+            ServiceContainer.shared.resolve((any VaultServiceProtocol).self).selectedVaultID?.uuidString
+        }
+        
         try await store.performBatchWrite { db in
             try KnowledgePage.deleteAll(db)
             try TokenUsage.deleteAll(db)
             try LLMCallLog.deleteAll(db)
+            try ImportRecord.deleteAll(db)
+            
             for seed in seeds {
+                let pageID = UUID()
                 let page = KnowledgePage(
+                    id: pageID,
                     title: seed.title, pageType: seed.type, content: seed.content,
                     tags: seed.tags, sourceURL: seed.sourceURL,
                     rawTextSnippet: seed.rawTextSnippet, sourceType: seed.sourceType
                 )
                 try page.save(db)
+                
+                // 建立对应的已完成导入记录，对齐导入历史和状态维护
+                let category: String
+                if seed.sourceType == "pdf" || seed.sourceType == "markdown" {
+                    category = "file"
+                } else if seed.sourceURL != nil {
+                    category = "link"
+                } else {
+                    category = "manual"
+                }
+                
+                let filePath: String?
+                if let urlStr = seed.sourceURL, let url = URL(string: urlStr) {
+                    filePath = url.path
+                } else {
+                    filePath = nil
+                }
+                
+                var record = ImportRecord(
+                    id: UUID().uuidString,
+                    category: category,
+                    title: seed.title,
+                    status: "done",
+                    rawText: seed.rawTextSnippet,
+                    sourceURL: seed.sourceURL,
+                    filePath: filePath,
+                    fileSize: seed.sourceURL != nil ? Int64(seed.content.utf8.count) : nil,
+                    pageID: pageID.uuidString,
+                    vaultID: activeVaultID,
+                    taskID: nil,
+                    tags: seed.tags.joined(separator: ", "),
+                    createdAt: Date(),
+                    completedAt: Date()
+                )
+                try record.save(db)
             }
             try additionalWrites(db)
         }
@@ -290,14 +354,13 @@ struct InitialNotebookGenerator {
 
     /// 注入 PKM 演示集的模拟 AI 调用日志（50 条，近 30天随机分布）
     private static func injectPKMMockLogs(db: Database) throws {
-        let models = ["GPT-4o", "Claude-3.5-Sonnet", "DeepSeek-V3"]
         let calendar = Calendar.current
-        for _ in 0..<50 {
-            let model = models.randomElement() ?? "GPT-4o"
-            let prompt = Int.random(in: 200...1000)
-            let completion = Int.random(in: 100...2000)
-            let latency = Int.random(in: 400...4500)
-            guard let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...720), to: Date()) else { continue }
+        for _ in 0..<pkmLogCount {
+            let model = demoModelName
+            let prompt = Int.random(in: minPromptTokens...maxPromptTokens)
+            let completion = Int.random(in: minCompletionTokens...maxCompletionTokens)
+            let latency = Int.random(in: minLatencyMS...maxLatencyMS)
+            guard let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...pkmMaxHoursAgo), to: Date()) else { continue }
             var log = LLMCallLog(model: model, promptTokens: prompt, completionTokens: completion,
                                  latencyMS: latency, status: "success", createdAt: date)
             try log.insert(db)
@@ -308,14 +371,13 @@ struct InitialNotebookGenerator {
 
     /// 注入调研演示集的模拟 AI 调用日志（30 条，近 12 天随机分布）
     private static func injectResearchMockLogs(db: Database) throws {
-        let models = ["GPT-4o", "Claude-3.5-Sonnet"]
         let calendar = Calendar.current
-        for _ in 0..<30 {
-            let model = models.randomElement() ?? "GPT-4o"
-            let prompt = Int.random(in: 100...800)
-            let completion = Int.random(in: 50...1000)
-            let latency = Int.random(in: 300...3500)
-            guard let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...300), to: Date()) else { continue }
+        for _ in 0..<researchLogCount {
+            let model = demoModelName
+            let prompt = Int.random(in: minPromptTokens...maxPromptTokens)
+            let completion = Int.random(in: minCompletionTokens...maxCompletionTokens)
+            let latency = Int.random(in: minLatencyMS...maxLatencyMS)
+            guard let date = calendar.date(byAdding: .hour, value: -Int.random(in: 1...researchMaxHoursAgo), to: Date()) else { continue }
             var log = LLMCallLog(model: model, promptTokens: prompt, completionTokens: completion,
                                  latencyMS: latency, status: "success", createdAt: date)
             try log.insert(db)

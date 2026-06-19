@@ -61,7 +61,15 @@ public final class MaintenanceService {
         for vault in existingVaults {
             do {
                 try await vaultService.selectVaultAndWait(vault)
-                let count = try await InitialNotebookGenerator.generate(in: pageStore)
+                
+                // 根据笔记本名称注入相应的数据源，彻底解决出厂预置数据归属混乱的问题
+                let count: Int
+                if vault.name == L10n.Vault.researchName || vault.name == "项目调研" || vault.name == "Project Research" || vault.name == L10n.InitialNotebook.Log.projectResearch {
+                    count = try await InitialNotebookGenerator.generateResearchNotebook(in: pageStore)
+                } else {
+                    count = try await InitialNotebookGenerator.generate(in: pageStore)
+                }
+                
                 totalCount += count
                 vaultDetails.append((name: vault.name, count: count))
                 await vaultService.refreshPageCount(for: vault.id)
