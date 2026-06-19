@@ -4127,7 +4127,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "You are an assistant that predicts the next follow-up questions. Always output strictly in JSON string array format."
+            "value": "你是一个预测用户后续问题的助手，必须且只能以 JSON 字符串数组格式输出结果。"
           }
         }
       }
