@@ -54,6 +54,8 @@ final class AuthServiceTests: XCTestCase {
     func testLogoutClearsGuestFlag() {
         // 确保从干净状态开始，避免前序测试任务残留导致 CI 偶发失败
         AuthSession.shared.logout()
+        AuthSession.shared.isGuest = false
+        XCTAssertFalse(AuthSession.shared.isGuest, "初始 isGuest 应为 false")
         AuthSession.shared.isGuest = true
         XCTAssertTrue(AuthService.shared.isGuest)
 
@@ -303,9 +305,10 @@ final class AuthServiceTests: XCTestCase {
             return (try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil)), nil)
         }
 
-        // 3. 注册通知监听，模拟应用行为
+        // 3. 注册通知监听，模拟应用行为（必须使用 .main queue，因为 .userAuthExpired 由 NetworkClient 在背景队列上发出，
+        //    而 AuthService.shared.logout() 标记了 @MainActor，Swift 6 严格并发模式下从背景线程调用会 SIGABRT）
         let expectation = XCTestExpectation(description: "监听到 userAuthExpired")
-        let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: nil) { _ in
+        let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: .main) { _ in
             print("[TEST] Received .userAuthExpired, calling logout() again")
             AuthService.shared.logout()
             expectation.fulfill()
