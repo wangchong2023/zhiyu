@@ -179,6 +179,8 @@ struct AuthView: View {
                     .font(.system(size: Spacing.smallIconSize))
             }
             .accessibilityIdentifier("agreementCheckbox")
+            // 通过 accessibilityValue 传递勾选状态，避免依赖 SF Symbol 的本地化 label（中文环境下 label 不含 "checkmark"）
+            .accessibilityValue(isAgreementChecked ? "checked" : "unchecked")
             
             VStack(alignment: .leading, spacing: Spacing.tiny) {
                 Text(LocalizedStringKey(L10n.Auth.agreementText))

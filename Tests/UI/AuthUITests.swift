@@ -65,12 +65,9 @@ final class AuthUITests: XCTestCase {
     private func ensureAgreementChecked() {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
-        // 通过 image 的 accessibility label 判断当前状态：SF Symbol "checkmark.circle.fill" 的
-        // accessibility label 在运行时为 "checkmark circle fill"（点号被替换为空格），
-        // 因此不能使用 images["checkmark.circle.fill"] 进行精确标识符匹配。
-        // 改用 NSPredicate CONTAINS：
-        let uncheckedImage = checkbox.images.matching(NSPredicate(format: "label == 'circle'")).firstMatch
-        if uncheckedImage.exists {
+        // 通过 accessibilityValue 判断状态："checked" = 已勾选，"unchecked" = 未勾选
+        // 这种方式不依赖 SF Symbol 的本地化 label，在中文/英文环境均可靠
+        if (checkbox.value as? String) == "unchecked" {
             checkbox.tap()
         }
     }
@@ -79,9 +76,8 @@ final class AuthUITests: XCTestCase {
     private func uncheckAgreement() {
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
-        // 通过 accessibility label CONTAINS 匹配，避免 SF Symbol 点号转空格导致的标识符不匹配
-        let checkedImage = checkbox.images.matching(NSPredicate(format: "label CONTAINS 'checkmark'")).firstMatch
-        if checkedImage.exists {
+        // 通过 accessibilityValue 判断状态，避免 SF Symbol 本地化 label 引起的匹配失败
+        if (checkbox.value as? String) == "checked" {
             checkbox.tap()
         }
     }
@@ -369,22 +365,20 @@ final class AuthUITests: XCTestCase {
 
     // MARK: - TC-AUTH-12：用户协议复选框默认勾选
     //
-    // 验证点：启动后协议复选框默认为勾选状态（checkmark.circle.fill），用户可直接登录
+    // 验证点：启动后协议复选框默认为勾选状态（accessibilityValue = "checked"），用户可直接登录
     func testAgreementCheckboxDefaultChecked() throws {
         XCTAssertTrue(waitForAuthView(), "启动后应在登录页")
 
         let checkbox = app.buttons["agreementCheckbox"]
         XCTAssertTrue(checkbox.waitForExistence(timeout: 5), "用户协议复选框应存在（agreementCheckbox）")
 
-        // 通过 accessibility label CONTAINS 匹配 SF Symbol 状态
-        // "checkmark.circle.fill" 运行时 label 变成 "checkmark circle fill"
-        XCTAssertTrue(
-            checkbox.images.matching(NSPredicate(format: "label CONTAINS 'checkmark'")).firstMatch.exists,
-            "用户协议复选框应默认为勾选状态（checkmark.circle.fill）"
-        )
-        XCTAssertFalse(
-            checkbox.images.matching(NSPredicate(format: "label == 'circle'")).firstMatch.exists,
-            "用户协议复选框不应显示为未勾选状态（circle）"
+        // 通过 accessibilityValue 判断勾选状态
+        // AuthView 设置了 .accessibilityValue(isAgreementChecked ? "checked" : "unchecked")
+        // 这种方式不依赖 SF Symbol 的本地化 label，在中文环境下同样可靠
+        XCTAssertEqual(
+            checkbox.value as? String,
+            "checked",
+            "用户协议复选框应默认为勾选状态（accessibilityValue = \"checked\")"
         )
         takeScreenshot(name: "TC12_01_Agreement_DefaultChecked")
     }
