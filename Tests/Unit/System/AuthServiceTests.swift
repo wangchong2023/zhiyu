@@ -34,6 +34,7 @@ final class AuthServiceTests: XCTestCase {
     override func tearDown() async throws {
         AuthSession.shared.logout()
         await awaitAllLogoutTasks()
+        await NetworkClient.shared.awaitRefreshTask()
         await NetworkClient.shared.setTestSession(nil)
         TestMockURLProtocol.requestHandler = nil
         try await super.tearDown()

@@ -45,6 +45,13 @@ public actor NetworkClient {
     public func setTestSession(_ session: URLSession?) {
         self.testSession = session
     }
+    
+    /// 单元测试专用：等待当前的 refreshTask 彻底完成
+    public func awaitRefreshTask() async {
+        if let task = refreshTask {
+            _ = await task.value
+        }
+    }
     #endif
     
     /// 当前活跃的 URLSession 实例
