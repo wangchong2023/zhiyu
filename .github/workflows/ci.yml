@@ -130,6 +130,15 @@ jobs:
           name: xcode-project
           path: ZhiYu.xcodeproj/
 
+      - name: Install Test Toolchain
+        run: |
+          brew install xcbeautify xcodegen
+
+      - name: List Available Simulators (Debug)
+        run: |
+          echo "=== 可用 iPhone 模拟器列表 ==="
+          xcrun simctl list devices available | grep iPhone || echo "(none)"
+
       - name: Run Unit Tests with Coverage
         run: |
           chmod +x Tools/CI/run_unit_tests.sh

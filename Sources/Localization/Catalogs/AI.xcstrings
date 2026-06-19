@@ -4098,6 +4098,23 @@
         }
       }
     },
+    "prompt.predictQuestions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据以下最近的对话历史，预测用户接下来最可能还会问的 3 个相关、简短的问题。\n\n【设计约束】：\n1. 必须且只能返回包含 3 个字符串的标准的 JSON 数组，例如：[\"问题 1\", \"问题 2\", \"问题 3\"]。\n2. 不要包含 markdown 标记代码块 (```json) 或任何解释性文本，只需输出合法的 JSON 格式。\n3. 问题应该简明扼要，控制在 15 个字以内，契合用户之前的探究重点。\n4. 语言必须与最近对话历史使用的语言保持一致（例如中文）。\n\n【对话历史】：\n%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据以下最近的对话历史，预测用户接下来最可能还会问的 3 个相关、简短的问题。\n\n【设计约束】：\n1. 必须且只能返回包含 3 个字符串的标准的 JSON 数组，例如：[\"问题 1\", \"问题 2\", \"问题 3\"]。\n2. 不要包含 markdown 标记代码块 (```json) 或任何解释性文本，只需输出合法的 JSON 格式。\n3. 问题应该简明扼要，控制在 15 个字以内，契合用户之前的探究重点。\n4. 语言必须与最近对话历史使用的语言保持一致（例如中文）。\n\n【对话历史】：\n%@"
+          }
+        }
+      }
+    },
     "prompt.queryRewrite": {
       "extractionState": "manual",
       "localizations": {

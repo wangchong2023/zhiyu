@@ -20,6 +20,11 @@ struct PageDetailView: View {
     @State private var recommendations: [KnowledgePage] = []
     @State private var copiedUrl: String?
 
+    /// 全局注入的平台设备环境，用于大屏适配判定
+    private var appEnv: any AppEnvironmentProtocol {
+        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
+    }
+
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
         self.heroNamespace = heroNamespace
         self._coordinator = State(initialValue: PageDetailCoordinator(page: page))
@@ -271,6 +276,7 @@ struct PageDetailView: View {
                     .padding(.top, router.navigationHistory.isEmpty ? DesignSystem.Layout.tightPadding : 0)
                     .background(.ultraThinMaterial)
             }
+            .padding(.top, appEnv.screenClass != .compact ? 36 : 0) // 针对 iPad/macOS Catalyst 等大屏设备的悬浮 TabBar / 导航栏进行避让，防止视觉重叠
             .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
             .overlay(
                 Divider().background(Color.appBorder),

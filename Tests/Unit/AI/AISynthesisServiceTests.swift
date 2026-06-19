@@ -43,6 +43,56 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
         let result = try await service.generateInsightfulQuestions(pages: [])
         XCTAssertTrue(result.isEmpty, "空页面列表应返回空数组")
     }
+
+    // MARK: - predictFollowUpQuestions 后续提问预测测试
+
+    /// 验证当历史记录为空时，应直接返回空数组而不用请求大模型。
+    @MainActor
+    func testPredictFollowUpQuestions_emptyHistory() async throws {
+        let service = AISynthesisService.shared
+        let result = try await service.predictFollowUpQuestions(history: [], pages: [])
+        XCTAssertTrue(result.isEmpty, "空历史记录应直接返回空数组")
+    }
+
+    /// 验证当 LLM 正常返回标准的 JSON 数组时，能正确解析出推荐问题。
+    @MainActor
+    func testPredictFollowUpQuestions_success() async throws {
+        let service = AISynthesisService.shared
+        
+        // 配置 Mock 返回 3 个预测问题的 JSON
+        if let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockFullLLMService {
+            mockLLM.generateResult = "[\"后续问题一\", \"后续问题二\", \"后续问题三\"]"
+        }
+        
+        let history = [
+            ChatMessage(role: .user, content: "你好"),
+            ChatMessage(role: .assistant, content: "你好！有什么我可以帮你的吗？")
+        ]
+        
+        let result = try await service.predictFollowUpQuestions(history: history, pages: [])
+        XCTAssertEqual(result.count, 3, "应该返回 3 个预测的问题")
+        XCTAssertEqual(result[0], "后续问题一")
+        XCTAssertEqual(result[1], "后续问题二")
+        XCTAssertEqual(result[2], "后续问题三")
+    }
+
+    /// 验证当 LLM 返回非规范的 JSON 或其他错误文本时，能优雅防护并返回空数组。
+    @MainActor
+    func testPredictFollowUpQuestions_fallback() async throws {
+        let service = AISynthesisService.shared
+        
+        // 配置 Mock 返回非法 JSON
+        if let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockFullLLMService {
+            mockLLM.generateResult = "This is not a JSON array"
+        }
+        
+        let history = [
+            ChatMessage(role: .user, content: "你好")
+        ]
+        
+        let result = try await service.predictFollowUpQuestions(history: history, pages: [])
+        XCTAssertTrue(result.isEmpty, "解析失败时应该优雅返回空数组")
+    }
 }
 
 /// 最小化 LLMServiceProtocol 实现，仅用于避免 AISynthesisService.shared 初始化崩溃
@@ -55,6 +105,9 @@ private final class MockFullLLMService: LLMServiceProtocol {
     var model: String = ""
     var autoScan: Bool = false
     var autoRefactor: Bool = false
+    
+    // 支持动态注入的模拟结果
+    var generateResult: String = ""
 
     func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
         ChatMessageDTO(role: .assistant, content: "")
@@ -62,7 +115,7 @@ private final class MockFullLLMService: LLMServiceProtocol {
     func chatStream(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { $0.finish() }
     }
-    func generate(prompt: String, systemPrompt: String, maxTokens: Int) async throws -> String { "" }
+    func generate(prompt: String, systemPrompt: String, maxTokens: Int) async throws -> String { generateResult }
     func smartIngest(title: String, rawContent: String, pages: [any KnowledgePageRepresentable]) async throws -> SmartIngestResultDTO {
         SmartIngestResultDTO(title: "", compiledContent: "", suggestedTags: [], suggestedType: "", relatedTitles: [], summary: "")
     }

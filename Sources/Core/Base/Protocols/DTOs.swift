@@ -47,6 +47,9 @@ public struct ChatMessageDTO: Codable, Identifiable, Sendable {
     }
 }
 
+// MARK: - Chat Message Alias
+public typealias ChatMessage = ChatMessageDTO
+
 // MARK: - 业务 DTO
 
 /// 智能解析/摄入任务的结果传输对象

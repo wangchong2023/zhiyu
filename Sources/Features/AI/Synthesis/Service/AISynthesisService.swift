@@ -186,6 +186,31 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         return LLMUtils.parseJSONArray(result)
     }
 
+    /// 根据对话上下文，预测用户可能还会问的 3 个问题
+    /// - Parameters:
+    ///   - history: 当前对话的历史记录
+    ///   - pages: 相关知识库页面列表
+    /// - Returns: 预测的 3 个问题字符串列表
+    func predictFollowUpQuestions(history: [ChatMessage], pages: [KnowledgePage]) async throws -> [String] {
+        guard !history.isEmpty else { return [] }
+
+        // 提取最近最多 10 条消息（5 轮对话）以作为大模型预测的基础上下文
+        let recentMessages = history.suffix(10)
+            .map { "\($0.role == .user ? "User" : "Assistant"): \($0.content)" }
+            .joined(separator: "\n")
+
+        let prompt = L10n.AI.Prompt.predictQuestions(recentMessages)
+
+        logger.debug("[PredictQuestions] Prompt: \(String(prompt.prefix(500)))")
+        let result = try await llm.generate(
+            prompt: prompt,
+            systemPrompt: "You are an assistant that predicts the next follow-up questions. Always output strictly in JSON string array format."
+        )
+        logger.debug("[PredictQuestions] LLM Response: \(result)")
+        
+        return LLMUtils.parseJSONArray(result)
+    }
+
     /// 统一合成入口 (Facade)
     func synthesize(type: SynthesisStore.SynthesisType, content: String) async throws -> String {
         switch type {

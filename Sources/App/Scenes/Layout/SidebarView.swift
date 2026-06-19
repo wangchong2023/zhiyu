@@ -121,7 +121,8 @@ struct SidebarToolbarModifier: ViewModifier {
             // 在手机 (Compact) 下：作为主标签页根视图，采用带有右上角头像的标准 appTabToolbar
             content.appTabToolbar(title: title)
         } else {
-            // 在 iPad/Mac (Regular/Expansive) 下：应用户需求，在侧边栏右上角也添加个人资料及设置菜单入口
+            // 在 iPad/Mac (Regular/Expansive) 下：侧边栏只保留 VaultBadge
+            // UserProfileMenu 已在内容区顶部工具栏（AppSubPageToolbarModifier）中渲染，无需重复放置
             content
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
@@ -133,9 +134,6 @@ struct SidebarToolbarModifier: ViewModifier {
                     #else
                     ToolbarItem(placement: .principal) {
                         VaultBadge()
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        UserProfileMenu()
                     }
                     #endif
                 }

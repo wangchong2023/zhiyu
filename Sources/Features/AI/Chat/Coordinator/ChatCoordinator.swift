@@ -32,6 +32,11 @@ final class ChatCoordinator {
     var isSelectionMode = false
     var selectedMessageIDs: Set<UUID> = []
     var showClearConfirmation = false
+    
+    /// 预测的后续追问列表
+    var predictedQuestions: [String] = []
+    /// 是否正在生成预测问题
+    var isGeneratingPredictedQuestions = false
 
     @ObservationIgnored @Inject private var aiSynthesis: (any AISynthesisServiceProtocol)
     @ObservationIgnored @Inject private var chatService: (any ChatServiceProtocol)
@@ -79,6 +84,7 @@ final class ChatCoordinator {
         
         if query == nil { inputText = "" }
         errorMessage = nil
+        predictedQuestions = [] // 清空旧的预测追问，避免在新输入过程中产生视觉干扰
         
         // 1. 保存并展示用户消息
         chatService.saveUserMessage(text)
@@ -90,44 +96,58 @@ final class ChatCoordinator {
         // 2. 启动流式请求 Task，保存引用以支持显式取消
         currentStreamTask = Task { [weak self] in
             guard let self else { return }
-            do {
-                _ = try await self.perf.measureAsync("chatStreamDelay") {
-                    let stream = self.chatService.streamChat(query: text, pages: pages)
-                    for try await chunk in stream {
-                        // 检查 Task 是否已被取消（比 isProcessing 标志更可靠）
-                        guard !Task.isCancelled else { break }
-                        self.streamingContent += chunk
-                    }
-                }
-                
-                // 只有在未被取消的情况下才保存结果
-                if !Task.isCancelled {
-                    self.chatService.saveAssistantMessage(self.streamingContent)
-                    self.chatHistory.append(ChatMessage(role: .assistant, content: self.streamingContent))
-                }
-            } catch {
-                if !Task.isCancelled {
-                    // 提供明确的错误反馈，包括 notConfigured 场景不再静默吞噬
-                    let message: String = {
-                        if case LLMError.notConfigured = error {
-                            return L10n.Chat.configureFirst
-                        }
-                        return error.localizedDescription
-                    }()
-                    self.errorMessage = message
-                    self.showError = true
-                    self.logger.error(" [ChatCoordinator] ", error: error)
-                }
-            }
-            
-            // 无论成功或取消，都清理状态
-            self.isProcessing = false
-            self.streamingContent = ""
-            self.currentStreamTask = nil
+            await self.runStreamTask(text: text, pages: pages)
         }
         
         // 等待流式 Task 完成
         await currentStreamTask?.value
+    }
+
+    /// 运行流式交互的核心后台 Task，处理大模型返回并完成数据保存
+    /// - Parameters:
+    ///   - text: 经过清洗的用户提问文本
+    ///   - pages: 相关知识库页面
+    private func runStreamTask(text: String, pages: [KnowledgePage]) async {
+        do {
+            _ = try await self.perf.measureAsync("chatStreamDelay") {
+                let stream = self.chatService.streamChat(query: text, pages: pages)
+                for try await chunk in stream {
+                    // 检查 Task 是否已被取消（比 isProcessing 标志更可靠）
+                    guard !Task.isCancelled else { break }
+                    self.streamingContent += chunk
+                }
+            }
+            
+            // 只有在未被取消的情况下才保存结果并异步预测问题
+            if !Task.isCancelled {
+                self.chatService.saveAssistantMessage(self.streamingContent)
+                self.chatHistory.append(ChatMessage(role: .assistant, content: self.streamingContent))
+                
+                // 异步启动预测用户后续问题的任务，不阻塞本次响应完成
+                Task { [weak self] in
+                    guard let self = self else { return }
+                    await self.generatePredictedQuestions(pages: pages)
+                }
+            }
+        } catch {
+            if !Task.isCancelled {
+                // 提供明确的错误反馈，包括 notConfigured 场景不再静默吞噬
+                let message: String = {
+                    if case LLMError.notConfigured = error {
+                        return L10n.Chat.configureFirst
+                    }
+                    return error.localizedDescription
+                }()
+                self.errorMessage = message
+                self.showError = true
+                self.logger.error(" [ChatCoordinator] 流式响应出错 ", error: error)
+            }
+        }
+        
+        // 无论成功或取消，都清理状态
+        self.isProcessing = false
+        self.streamingContent = ""
+        self.currentStreamTask = nil
     }
 
     /// 取消Current请求
@@ -159,6 +179,7 @@ final class ChatCoordinator {
     func clearChatHistory() {
         chatService.clearHistory()
         chatHistory.removeAll()
+        predictedQuestions.removeAll() // 清除历史时，同时重置预测追问问题
     }
 
     /// 导出Chat
@@ -204,5 +225,20 @@ final class ChatCoordinator {
             selectedMessageIDs.insert(id)
         }
         HapticFeedback.shared.trigger(.selection)
+    }
+
+    /// 根据当前对话的上下文，自动预测 3 个后续追问
+    /// - Parameter pages: 相关知识库页面列表
+    func generatePredictedQuestions(pages: [KnowledgePage]) async {
+        guard !chatHistory.isEmpty && llmService.isEnabled && !isGeneratingPredictedQuestions else { return }
+        
+        isGeneratingPredictedQuestions = true
+        do {
+            predictedQuestions = try await aiSynthesis.predictFollowUpQuestions(history: chatHistory, pages: pages)
+        } catch {
+            predictedQuestions = []
+            logger.error(" [ChatCoordinator] 预测后续问题失败: ", error: error)
+        }
+        isGeneratingPredictedQuestions = false
     }
 }

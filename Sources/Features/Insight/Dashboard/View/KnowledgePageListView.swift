@@ -111,24 +111,13 @@ struct KnowledgePageListContent: View {
                 VStack(spacing: DesignSystem.loosePadding) {
                     listView
                 }
+                .padding(.top, appEnv.screenClass != .compact ? 48 : 0) // 适配大屏设备（如 iPad / macOS），向下偏移避让顶部悬浮 TabBar，防止第一行内容重合遮挡
             }
             .scrollIndicators(.hidden)
             
         }
-        .navigationTitle(filterType?.displayName ?? L10n.Common.Sidebar.pageList)
-        .navigationBarTitleDisplayMode(.inline)
+        .appSubPageToolbar(title: filterType?.displayName ?? L10n.Common.Sidebar.pageList, showVaultBadge: true)
         .navigationBarBackButtonHidden(false)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
-        .toolbar {
-            #if !os(watchOS)
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                if appEnv.screenClass != .compact {
-                    UserProfileMenu()
-                }
-            }
-            #endif
-        }
         .onChange(of: searchText) { _, newValue in
             triggerSearch(query: newValue)
         }

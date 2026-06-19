@@ -118,9 +118,6 @@ public enum LLMProvider: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-// MARK: - Chat Message
-typealias ChatMessage = ChatMessageDTO
-
 // MARK: - Smart Ingest Result
 typealias SmartIngestResult = SmartIngestResultDTO
 

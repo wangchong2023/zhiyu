@@ -95,6 +95,13 @@ public protocol AISynthesisServiceProtocol: Sendable {
     
     /// 生成启发式问题列表
     func generateInsightfulQuestions(pages: [KnowledgePage]) async throws -> [String]
+    
+    /// 根据对话上下文，预测用户可能还会问的 3 个问题
+    /// - Parameters:
+    ///   - history: 当前对话的历史记录
+    ///   - pages: 相关知识库页面列表
+    /// - Returns: 预测的 3 个问题字符串列表
+    func predictFollowUpQuestions(history: [ChatMessage], pages: [KnowledgePage]) async throws -> [String]
 }
 
 /// 聊天服务协议

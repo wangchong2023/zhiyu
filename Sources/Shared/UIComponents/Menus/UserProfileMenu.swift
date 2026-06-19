@@ -180,6 +180,9 @@ struct UserProfileMenu: View {
     @State private var showDeveloper = false
     @State private var showMenuPopover = false
     @State private var showPlan = false
+    
+    /// 用于 watchOS 平台设置弹窗的展示状态
+    @State private var showSettings = false
 
     /// popover 消失后待执行的导航动作，避免 UIKit 转场冲突（Mac Catalyst）
     @State private var pendingMenuAction: MenuAction?
@@ -206,6 +209,12 @@ struct UserProfileMenu: View {
             }
         }
         .sheet(isPresented: $showAbout) { aboutStack }
+        .sheet(isPresented: $showSettings) {
+            NavigationStack {
+                Text(L10n.Common.settings)
+                    .navigationTitle(L10n.Common.settings)
+            }
+        }
         #else
         nonWatchBody
         .sheet(isPresented: $showProfile) {
@@ -214,6 +223,7 @@ struct UserProfileMenu: View {
             }
             .environment(authService)
             .environmentObject(themeManager)
+            .applyPresentationSizing() // 适配大屏弹窗尺寸规范
         }
         .sheet(isPresented: $showPlan) {
             NavigationStack {
@@ -221,13 +231,22 @@ struct UserProfileMenu: View {
             }
             .environment(authService)
             .environmentObject(themeManager)
+            // 套餐管理含配额大盘+套餐对比+购买功能，内容丰富，使用 .page 级别大尺寸
+            .applyPagePresentationSizing()
         }
-        .sheet(isPresented: $showAbout) { aboutStack.environment(store).environmentObject(themeManager) }
+        .sheet(isPresented: $showAbout) {
+            aboutStack
+                .environment(store)
+                .environmentObject(themeManager)
+                .applyPresentationSizing() // 适配大屏弹窗尺寸规范
+        }
 
         .sheet(isPresented: $showPlugins) {
             NavigationStack {
                 PluginCenterView()
             }
+            // 插件中心内容丰富，使用 .page 级别大尺寸，充分利用 iPad/Mac 屏幕空间
+            .applyPagePresentationSizing()
         }
 
         .sheet(isPresented: $showDeveloper) {
@@ -238,10 +257,14 @@ struct UserProfileMenu: View {
             .environment(store.knowledgeStore)
             .environment(store.settingsStore)
             .environmentObject(onboardingService)
+            // 开发者设置内容丰富，使用 .page 级别大尺寸，充分利用 iPad/Mac 屏幕空间
+            .applyPagePresentationSizing()
         }
         #endif
     }
 
+    /// 执行个人中心菜单里选择的跳转操作
+    /// - Parameter action: 选择的菜单操作类型
     private func executeMenuAction(_ action: MenuAction) {
         switch action {
         case .settings: router.isShowingSettingsSheet = true

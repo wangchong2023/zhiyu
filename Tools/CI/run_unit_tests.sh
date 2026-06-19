@@ -13,9 +13,50 @@ set -euo pipefail
 # ── 1. 常量与环境配置 ──────────────────────────────────────────
 PROJECT="ZhiYu.xcodeproj"
 SCHEME="ZhiYu"
-DESTINATION="platform=iOS Simulator,name=iPhone 17 Pro"
 DERIVED_DATA_PATH="build/DerivedData-ios"
 SPM_CACHE_DIR="${HOME}/.cache/zhiyu-spm"
+
+# 动态查找可用模拟器：优先 iPhone 17 Pro，回退到任意可用 iPhone 模拟器
+# 确保在 GitHub Actions macos-15 runner 上也能找到有效目标
+find_simulator() {
+    # 优先精确匹配 iPhone 17 Pro
+    local sim
+    sim=$(xcrun simctl list devices available -j 2>/dev/null \
+        | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for runtime, devices in data.get('devices', {}).items():
+    for d in devices:
+        if 'iPhone 17 Pro' in d.get('name','') and d.get('isAvailable', False):
+            print(d['name']); exit()
+" 2>/dev/null)
+    if [ -n "${sim}" ]; then
+        echo "${sim}"
+        return
+    fi
+    # 回退：查找任意可用的最新 iPhone 模拟器
+    sim=$(xcrun simctl list devices available -j 2>/dev/null \
+        | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+candidates = []
+for runtime, devices in data.get('devices', {}).items():
+    if 'iOS' not in runtime and 'iPhone' not in runtime:
+        continue
+    for d in devices:
+        name = d.get('name', '')
+        if 'iPhone' in name and d.get('isAvailable', False):
+            candidates.append((runtime, name))
+candidates.sort(reverse=True)
+if candidates:
+    print(candidates[0][1])
+" 2>/dev/null)
+    echo "${sim:-iPhone 16}"
+}
+
+SIM_NAME=$(find_simulator)
+DESTINATION="platform=iOS Simulator,name=${SIM_NAME}"
+echo "📱 使用模拟器: ${SIM_NAME}"
 
 # ── 2. 从 @flaky 注释自动收集不稳定测试 ─────────────────────────────
 echo "🔍 收集 @flaky 标记的不稳定测试..."

@@ -230,6 +230,9 @@ extension L10n {
             public static var resetConfirm: String { AI.tr("prompt.resetConfirm") }
             public static var resetWarning: String { AI.tr("prompt.resetWarning") }
             public static var resetToDefault: String { AI.tr("prompt.resetToDefault") }
+            public static func predictQuestions(_ history: String) -> String {
+                AI.trf("prompt.predictQuestions", history)
+            }
 
             // MARK: - L10n 净化后的 AI 提示词
             

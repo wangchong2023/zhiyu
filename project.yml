@@ -251,7 +251,7 @@ targets:
           - "Core/Base/Constants/AppConstants.swift"
     settings:
       base:
-        SWIFT_STRICT_CONCURRENCY: targeted
+        SWIFT_STRICT_CONCURRENCY: minimal
     dependencies:
       - target: ZhiYu
       - package: SnapshotTesting

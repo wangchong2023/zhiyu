@@ -162,6 +162,9 @@ struct ChatViewContent: View {
                     } else {
                         if coordinator.isProcessing {
                             streamingBubble.id("processing")
+                        } else {
+                            // 当非生成状态且有后续预测追问时，在此处渲染追问按钮气泡
+                            predictedQuestionsView
                         }
                         ForEach(coordinator.chatHistory.reversed()) { message in
                             messageRow(for: message)
@@ -323,5 +326,53 @@ struct ChatViewContent: View {
     
     private var canSend: Bool {
         !coordinator.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !coordinator.isProcessing
+    }
+
+    /// 渲染根据上下文预测的用户后续可能追问的气泡按钮列表
+    private var predictedQuestionsView: some View {
+        Group {
+            if !coordinator.isProcessing,
+               let lastMessage = coordinator.chatHistory.last,
+               lastMessage.role == .assistant,
+               !coordinator.predictedQuestions.isEmpty {
+                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: DesignSystem.tightPadding) {
+                            ForEach(coordinator.predictedQuestions, id: \.self) { question in
+                                Button(action: {
+                                    // 触发系统的轻微选择触感反馈
+                                    HapticFeedback.shared.trigger(.selection)
+                                    Task {
+                                        // 一键直接追问
+                                        await coordinator.sendMessage(query: question, pages: store.pages)
+                                    }
+                                }) {
+                                    HStack(spacing: DesignSystem.tiny) {
+                                        Image(systemName: "arrow.up.right.bubble")
+                                            .font(.caption)
+                                            .foregroundStyle(.appAccent)
+                                        Text(question)
+                                            .font(.system(size: DesignSystem.captionFontSize, weight: .medium))
+                                            .foregroundStyle(.appText)
+                                    }
+                                    .padding(.horizontal, DesignSystem.standardPadding)
+                                    .padding(.vertical, DesignSystem.tiny * 1.5)
+                                    .background(Color.appCard.opacity(DesignSystem.Opacity.glass))
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.standardRadius))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                                            .stroke(Color.appBorder.opacity(DesignSystem.Opacity.subtle), lineWidth: DesignSystem.borderWidth)
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, DesignSystem.standardPadding)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+                .padding(.vertical, DesignSystem.tiny)
+            }
+        }
     }
 }
