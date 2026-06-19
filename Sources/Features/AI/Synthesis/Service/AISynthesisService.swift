@@ -211,7 +211,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
         logger.debug("[PredictQuestions] Prompt: \(String(prompt.prefix(500)))")
         let result = try await llm.generate(
             prompt: prompt,
-            systemPrompt: "You are an assistant that predicts the next follow-up questions. Always output strictly in JSON string array format."
+            systemPrompt: L10n.AI.Prompt.predictQuestionsSystem
         )
         logger.debug("[PredictQuestions] LLM Response: \(result)")
         

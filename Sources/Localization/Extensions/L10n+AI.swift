@@ -234,6 +234,11 @@ extension L10n {
                 AI.trf("prompt.predictQuestions", history)
             }
 
+            /// 预测后续问题功能的 System Prompt（约束输出格式）
+            public static var predictQuestionsSystem: String {
+                AI.tr("prompt.predictQuestionsSystem")
+            }
+
             // MARK: - L10n 净化后的 AI 提示词
             
             /// 搜索变体生成提示词
