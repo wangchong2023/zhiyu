@@ -18,7 +18,8 @@ struct ZhiYuApp: App {
     @StateObject private var themeManager = ThemeManager.shared
     
     /// 状态持有：闪屏页可见性
-    @State private var hasSeenSplash = false
+    /// UI 测试时直接设为 true 跳过闪屏，避免遮挡 AuthView 导致 agreementCheckbox 等元素超时
+    @State private var hasSeenSplash = CommandLine.arguments.contains("--uitesting")
     
     /// 引导状态持有
     @StateObject private var onboardingService = OnboardingService()

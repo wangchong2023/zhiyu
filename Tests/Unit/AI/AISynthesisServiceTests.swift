@@ -10,6 +10,7 @@
 //
 
 import XCTest
+import Combine
 @testable import ZhiYu
 
 final class AISynthesisServicePureLogicTests: XCTestCase {
@@ -18,10 +19,14 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
         try await super.setUp()
         await MainActor.run {
             ServiceContainer.shared.reset()
-            // AISynthesisService.shared.init 会 resolve(LLMServiceProtocol.self)，
-            // 需要注册 mock 避免 fatalError
+            // AISynthesisService 初始化时 resolve(LLMServiceProtocol.self)
+            // predictFollowUpQuestions 等方法通过 @Inject 懒加载 LoggerProtocol
+            // 两者均需注册 mock，否则 ServiceContainer.resolve 触发 fatalError 崩溃
             let mockLLM = MockFullLLMService()
             ServiceContainer.shared.register(mockLLM as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
+
+            let mockLogger = MockLoggerProtocol()
+            ServiceContainer.shared.register(mockLogger as any LoggerProtocol, for: (any LoggerProtocol).self)
         }
     }
 
@@ -95,6 +100,8 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
     }
 }
 
+// MARK: - Mock: LLMServiceProtocol
+
 /// 最小化 LLMServiceProtocol 实现，仅用于避免 AISynthesisService.shared 初始化崩溃
 @MainActor
 private final class MockFullLLMService: LLMServiceProtocol {
@@ -127,4 +134,34 @@ private final class MockFullLLMService: LLMServiceProtocol {
     func rerank(query: String, candidates: [any KnowledgePageRepresentable]) async throws -> [any KnowledgePageRepresentable] { candidates }
     func rerankChunks(query: String, chunks: [PageChunk]) async -> [PageChunk] { chunks }
     func generateHypotheticalDocument(query: String) async -> String { query }
+}
+
+// MARK: - Mock: LoggerProtocol
+
+/// 最小化 LoggerProtocol 实现
+/// 修复根因：AISynthesisService 通过 @Inject 懒加载 logger，
+/// predictFollowUpQuestions 调用 logger.debug 时触发解析，
+/// 若未注册则 ServiceContainer.resolve 触发 fatalError 导致测试崩溃
+private final class MockLoggerProtocol: LoggerProtocol {
+
+    func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?,
+                startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?) {}
+
+    func debug(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {}
+    func info(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {}
+    func warning(_ message: String, file: String = #file, function: String = #function, line: Int = #line) {}
+    func error(_ message: String, error: Error?, file: String = #file, function: String = #function, line: Int = #line) {}
+
+    func logTimed<T>(action: LogAction, target: String, module: String?, details: String, operation: () throws -> T) rethrows -> T {
+        try operation()
+    }
+
+    func saveToDisk() async {}
+    func loadFromDisk() async {}
+    func clearAllLogs() async {}
+    func getLogEntries() async -> [LogEntry] { [] }
+
+    var logEntriesPublisher: AnyPublisher<[LogEntry], Never> {
+        Just([]).eraseToAnyPublisher()
+    }
 }
