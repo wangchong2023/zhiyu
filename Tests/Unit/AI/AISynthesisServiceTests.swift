@@ -8,6 +8,13 @@
 //  系统层级：[Shared] 测试层
 //  核心职责：针对 AISynthesisService 的纯逻辑及边界条件开展单元测试。
 //
+//  架构说明：
+//  AISynthesisService 是单例 actor，其 llm 在首次 init() 时从 ServiceContainer 捕获。
+//  LLMServiceProtocol 是 @MainActor 协议，Mock 的 init() 也被主线程隔离，
+//  只能在 @MainActor setUp 中创建。
+//  关键修复：每次 setUp 通过 AISynthesisService.shared.updateLLMForTesting()
+//  直接替换 actor 内部 llm 引用，保证测试设置的 generateResult 被服务实际使用。
+//
 
 import XCTest
 import Combine
@@ -15,36 +22,49 @@ import Combine
 
 final class AISynthesisServicePureLogicTests: XCTestCase {
 
+    // MARK: - 实例 Mock（在 @MainActor setUp 内创建）
+
+    /// LLM Mock：每次测试独立创建，通过 updateLLMForTesting 注入到 actor 内部
+    private var mockLLM: MockFullLLMService!
+    /// Logger Mock：注册到 ServiceContainer，供 @Inject logger 懒加载使用
+    private var mockLogger: MockLoggerProtocol!
+
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
-        await MainActor.run {
-            ServiceContainer.shared.reset()
-            // AISynthesisService 初始化时 resolve(LLMServiceProtocol.self)
-            // predictFollowUpQuestions 等方法通过 @Inject 懒加载 LoggerProtocol
-            // 两者均需注册 mock，否则 ServiceContainer.resolve 触发 fatalError 崩溃
-            let mockLLM = MockFullLLMService()
-            ServiceContainer.shared.register(mockLLM as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
 
-            let mockLogger = MockLoggerProtocol()
-            ServiceContainer.shared.register(mockLogger as any LoggerProtocol, for: (any LoggerProtocol).self)
-        }
+        // 在 @MainActor 上下文中创建 Mock（规避 @MainActor 协议 init 隔离限制）
+        let llm = MockFullLLMService()
+        let logger = MockLoggerProtocol()
+        self.mockLLM = llm
+        self.mockLogger = logger
+
+        // 注册到 ServiceContainer 供 @Inject logger 解析
+        ServiceContainer.shared.reset()
+        ServiceContainer.shared.register(llm as any LLMServiceProtocol, for: (any LLMServiceProtocol).self)
+        ServiceContainer.shared.register(logger as any LoggerProtocol, for: (any LoggerProtocol).self)
+
+        // 【核心修复】直接替换 actor 内部 llm 引用：
+        // AISynthesisService.shared 是单例，init() 只执行一次，llm 引用固化。
+        // 通过 #if DEBUG 方法 updateLLMForTesting 强制将本次测试的 mockLLM
+        // 注入到 actor 内部，确保 generate() 调用的是当前测试的 Mock 实例。
+        await AISynthesisService.shared.updateLLMForTesting(llm)
     }
 
+    @MainActor
     override func tearDown() async throws {
-        await MainActor.run {
-            ServiceContainer.shared.reset()
-        }
+        ServiceContainer.shared.reset()
+        mockLLM = nil
+        mockLogger = nil
         try await super.tearDown()
     }
 
     // MARK: - generateInsightfulQuestions 空输入防护
 
     /// 验证当传入空页面列表时，AI 合成服务应返回空数组而不抛出异常。
-    /// 使用原生 async/await 测试，避免在 @MainActor 上阻塞主线程（防止死锁与 SIGABRT）。
     @MainActor
     func testGenerateInsightfulQuestions_emptyPages() async throws {
         let service = AISynthesisService.shared
-        // 直接 await，Swift 6 结构化并发下安全可靠
         let result = try await service.generateInsightfulQuestions(pages: [])
         XCTAssertTrue(result.isEmpty, "空页面列表应返回空数组")
     }
@@ -62,20 +82,19 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
     /// 验证当 LLM 正常返回标准的 JSON 数组时，能正确解析出推荐问题。
     @MainActor
     func testPredictFollowUpQuestions_success() async throws {
-        let service = AISynthesisService.shared
-        
-        // 配置 Mock 返回 3 个预测问题的 JSON
-        if let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockFullLLMService {
-            mockLLM.generateResult = "[\"后续问题一\", \"后续问题二\", \"后续问题三\"]"
-        }
-        
+        // 直接通过实例 Mock 设置响应，与 AISynthesisService.shared.llm 首次捕获的是同一引用
+        mockLLM.generateResult = "[\"后续问题一\", \"后续问题二\", \"后续问题三\"]"
+
         let history = [
             ChatMessage(role: .user, content: "你好"),
             ChatMessage(role: .assistant, content: "你好！有什么我可以帮你的吗？")
         ]
-        
-        let result = try await service.predictFollowUpQuestions(history: history, pages: [])
+
+        let result = try await AISynthesisService.shared.predictFollowUpQuestions(history: history, pages: [])
         XCTAssertEqual(result.count, 3, "应该返回 3 个预测的问题")
+
+        // guard 防止 count 不为 3 时下标越界二次崩溃
+        guard result.count == 3 else { return }
         XCTAssertEqual(result[0], "后续问题一")
         XCTAssertEqual(result[1], "后续问题二")
         XCTAssertEqual(result[2], "后续问题三")
@@ -84,27 +103,23 @@ final class AISynthesisServicePureLogicTests: XCTestCase {
     /// 验证当 LLM 返回非规范的 JSON 或其他错误文本时，能优雅防护并返回空数组。
     @MainActor
     func testPredictFollowUpQuestions_fallback() async throws {
-        let service = AISynthesisService.shared
-        
-        // 配置 Mock 返回非法 JSON
-        if let mockLLM = ServiceContainer.shared.resolve((any LLMServiceProtocol).self) as? MockFullLLMService {
-            mockLLM.generateResult = "This is not a JSON array"
-        }
-        
+        mockLLM.generateResult = "This is not a JSON array"
+
         let history = [
             ChatMessage(role: .user, content: "你好")
         ]
-        
-        let result = try await service.predictFollowUpQuestions(history: history, pages: [])
+
+        let result = try await AISynthesisService.shared.predictFollowUpQuestions(history: history, pages: [])
         XCTAssertTrue(result.isEmpty, "解析失败时应该优雅返回空数组")
     }
 }
 
 // MARK: - Mock: LLMServiceProtocol
 
-/// 最小化 LLMServiceProtocol 实现，仅用于避免 AISynthesisService.shared 初始化崩溃
-@MainActor
-private final class MockFullLLMService: LLMServiceProtocol {
+/// 最小化 LLMServiceProtocol 实现
+/// 注意：LLMServiceProtocol 是 @MainActor 协议，此 Mock 类隐式继承主 Actor 隔离，
+/// 因此只能在 @MainActor 上下文中初始化（setUp async throws 满足此条件）
+final class MockFullLLMService: LLMServiceProtocol {
     var isEnabled: Bool = false
     var provider: LLMProvider = .custom
     var apiKey: String = ""
@@ -112,8 +127,8 @@ private final class MockFullLLMService: LLMServiceProtocol {
     var model: String = ""
     var autoScan: Bool = false
     var autoRefactor: Bool = false
-    
-    // 支持动态注入的模拟结果
+
+    /// 支持动态注入的模拟响应文本，每次 setUp 清空以隔离测试状态
     var generateResult: String = ""
 
     func chat(query: String, history: [ChatMessageDTO], pages: [any KnowledgePageRepresentable]) async throws -> ChatMessageDTO {
@@ -142,7 +157,7 @@ private final class MockFullLLMService: LLMServiceProtocol {
 /// 修复根因：AISynthesisService 通过 @Inject 懒加载 logger，
 /// predictFollowUpQuestions 调用 logger.debug 时触发解析，
 /// 若未注册则 ServiceContainer.resolve 触发 fatalError 导致测试崩溃
-private final class MockLoggerProtocol: LoggerProtocol {
+final class MockLoggerProtocol: LoggerProtocol {
 
     func addLog(action: LogAction, target: String, details: String, duration: TimeInterval?,
                 startTime: Date?, endTime: Date?, module: String?, status: LogStatus?, failureReason: String?) {}

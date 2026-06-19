@@ -16,7 +16,7 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     static let shared = AISynthesisService()
 
     @Inject private var logger: any LoggerProtocol
-    private let llm: any LLMServiceProtocol
+    private var llm: any LLMServiceProtocol
 
     private init() {
         // 面向接口依赖，解析协议类型以解耦 LLMService 具体实现，修复单元测试 Mock 注册的注入时序崩溃
@@ -28,6 +28,13 @@ actor AISynthesisService: AISynthesisServiceProtocol {
     static func register(in container: ServiceContainer) {
         container.register(shared, for: AISynthesisService.self)
     }
+
+    #if DEBUG
+    /// [仅测试] 替换 actor 内部的 LLM 实现，解决单例持旧 Mock 引用导致测试失效的问题
+    func updateLLMForTesting(_ newLLM: any LLMServiceProtocol) {
+        self.llm = newLLM
+    }
+    #endif
 
     /// 输入截断保护：超长内容统一截断至 BusinessConstants.AI.maxSynthesisInputLength
     private func truncated(_ content: String) -> String {
