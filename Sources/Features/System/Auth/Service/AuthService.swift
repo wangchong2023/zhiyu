@@ -209,6 +209,9 @@ public final class AuthService: AuthServiceProtocol {
     /// 用于测试的后台注销任务追踪
     public var testLogoutTask: Task<Void, Never>?
     
+    /// 用于测试的后台注销任务追踪列表，防止早期被 XCTest 释放导致崩溃
+    public var testLogoutTasks: [Task<Void, Never>] = []
+    
     /// 退出登录
     @MainActor
 
@@ -224,7 +227,7 @@ public final class AuthService: AuthServiceProtocol {
             testLogoutTask?.cancel()
         }
         
-        testLogoutTask = Task {
+        let task = Task {
             Logger.shared.debug("[AuthService] Logout Task started")
             // 尝试通知后端登出并吊销 RefreshToken
             if let refreshToken = try? KeychainService.shared.retrieve(key: "refresh_token") {
@@ -247,6 +250,9 @@ public final class AuthService: AuthServiceProtocol {
             try? KeychainService.shared.delete(key: "refresh_token")
             Logger.shared.debug("[AuthService] Logout Task completed")
         }
+        
+        testLogoutTask = task
+        testLogoutTasks.append(task)
     }
     
     // MARK: - 多渠道中台统一登录

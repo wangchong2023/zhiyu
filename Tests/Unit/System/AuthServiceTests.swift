@@ -33,33 +33,44 @@ final class AuthServiceTests: XCTestCase {
 
     override func tearDown() async throws {
         AuthSession.shared.logout()
-        await AuthService.shared.testLogoutTask?.value
+        await awaitAllLogoutTasks()
         await NetworkClient.shared.setTestSession(nil)
         TestMockURLProtocol.requestHandler = nil
         try await super.tearDown()
     }
 
+    private func awaitAllLogoutTasks() async {
+        for task in AuthService.shared.testLogoutTasks {
+            await task.value
+        }
+        AuthService.shared.testLogoutTasks.removeAll()
+    }
+
     // MARK: - 登出测试
 
-    func testLogoutClearsState() {
+    func testLogoutClearsState() async {
         AuthSession.shared.update(user: User(id: UUID(), name: "Test User", email: "test@example.com"))
         XCTAssertTrue(AuthService.shared.isAuthenticated)
 
         AuthService.shared.logout()
+        await awaitAllLogoutTasks()
 
         XCTAssertFalse(AuthService.shared.isAuthenticated)
         XCTAssertNil(AuthService.shared.currentUser)
     }
 
-    func testLogoutClearsGuestFlag() {
+    func testLogoutClearsGuestFlag() async {
         // 确保从干净状态开始，避免前序测试任务残留导致 CI 偶发失败
         AuthSession.shared.logout()
+        await awaitAllLogoutTasks()
+        
         AuthSession.shared.isGuest = false
         XCTAssertFalse(AuthSession.shared.isGuest, "初始 isGuest 应为 false")
         AuthSession.shared.isGuest = true
         XCTAssertTrue(AuthService.shared.isGuest)
 
         AuthService.shared.logout()
+        await awaitAllLogoutTasks()
 
         XCTAssertFalse(AuthService.shared.isGuest)
     }
@@ -269,7 +280,7 @@ final class AuthServiceTests: XCTestCase {
         // 4. 等待
         await fulfillment(of: [expectation], timeout: 2.0)
         NotificationCenter.default.removeObserver(observer)
-        await AuthService.shared.testLogoutTask?.value
+        await awaitAllLogoutTasks()
 
         // 5. 验证退登
         XCTAssertFalse(AuthService.shared.isAuthenticated)
@@ -324,7 +335,7 @@ final class AuthServiceTests: XCTestCase {
 
         // 5. 等待
         await fulfillment(of: [expectation], timeout: 5.0)
-        await AuthService.shared.testLogoutTask?.value
+        await awaitAllLogoutTasks()
         NotificationCenter.default.removeObserver(observer)
 
         // 6. 验证
@@ -362,7 +373,7 @@ final class AuthServiceTests: XCTestCase {
 
         // 4. 等待后台注销任务完成以检查物理擦除
         print("[TEST] Waiting for testLogoutTask...")
-        await AuthService.shared.testLogoutTask?.value
+        await awaitAllLogoutTasks()
         print("[TEST] testLogoutTask finished waiting")
 
         // 5. 最终验证
@@ -411,7 +422,7 @@ final class AuthServiceTests: XCTestCase {
         AuthService.shared.logout()
 
         // 4. 等待后台请求发送并被拦截断言
-        await AuthService.shared.testLogoutTask?.value
+        await awaitAllLogoutTasks()
         await fulfillment(of: [expectation], timeout: 2.0)
     }
 }
