@@ -44,6 +44,26 @@ struct TagCloudViewContent: View {
         case bubble
     }
 
+    // ── 顶部工具栏重构排版与透明度设计常量 (杜绝魔鬼数字与 swiftlint 禁用) ──
+    private let pickerBtnPaddingV: CGFloat = 8.0
+    private let pickerBtnPaddingH: CGFloat = 14.0
+    private let pickerInnerPadding: CGFloat = 3.0
+    private let actionBtnDiameter: CGFloat = 36.0
+    private let toolbarCornerRadius: CGFloat = 22.0
+    private let bubbleCanvasMinHeight: CGFloat = 280.0
+    private let viewModeFontSize: CGFloat = 13.0
+    private let actionBtnIconFontSize: CGFloat = 14.0
+    private let pickerSelectedBgOpacity = 0.85
+    private let pickerUnselectedBgOpacity = 0.18
+    private let actionBtnBgOpacity = 0.6
+    private let actionBtnBorderOpacity = 0.3
+    private let toolbarBgOpacity = 0.45
+    private let toolbarBorderOpacity = 0.35
+    
+    // ── 列表折叠遮罩设计常量 ──
+    private let listCollapseGradientHeight: CGFloat = 35.0
+    private let listCollapseGradientOpacity = 0.8
+
     /// 初始化路由状态
     /// - Parameter initialTag: 外部传入的初始选中标签
     init(initialTag: String? = nil) {
@@ -139,52 +159,106 @@ struct TagCloudViewContent: View {
         let isExp = appEnv.screenClass == .expansive
         
         return VStack(spacing: 0) {
-            // 1. 顶部操作栏
-            HStack(spacing: isExp ? DesignSystem.wide : DesignSystem.medium) {
-                // 视图模式选择 (放在左侧)
-                Picker("", selection: $displayMode) {
-                    Text(L10n.Tag.layoutList).tag(DisplayMode.list)
-                    Text(L10n.Tag.layoutBubble).tag(DisplayMode.bubble)
+            // 1. 顶部操作栏重构：悬浮毛玻璃控制舱 (Unified Toolbar Cabinet)
+            HStack(spacing: 12) {
+                // 自定义胶囊型视图切换滑块
+                HStack(spacing: 0) {
+                    Button(action: { 
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.85)) { displayMode = .list } 
+                    }) {
+                        Text(L10n.Tag.layoutList)
+                            .font(.system(size: viewModeFontSize, weight: .bold))
+                            .foregroundStyle(displayMode == .list ? Color.theme.white : .appSecondary)
+                            .padding(.vertical, pickerBtnPaddingV)
+                            .padding(.horizontal, pickerBtnPaddingH)
+                            .background {
+                                if displayMode == .list {
+                                    Capsule()
+                                        .fill(Color.appAccent.opacity(pickerSelectedBgOpacity))
+                                }
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button(action: { 
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.85)) { displayMode = .bubble } 
+                    }) {
+                        Text(L10n.Tag.layoutBubble)
+                            .font(.system(size: viewModeFontSize, weight: .bold))
+                            .foregroundStyle(displayMode == .bubble ? Color.theme.white : .appSecondary)
+                            .padding(.vertical, pickerBtnPaddingV)
+                            .padding(.horizontal, pickerBtnPaddingH)
+                            .background {
+                                if displayMode == .bubble {
+                                    Capsule()
+                                        .fill(Color.appAccent.opacity(pickerSelectedBgOpacity))
+                                }
+                            }
+                    }
+                    .buttonStyle(.plain)
                 }
-                .pickerStyle(.segmented)
-                .frame(width: DesignSystem.Metrics.customSize140)
+                .padding(pickerInnerPadding)
+                .background(Color.theme.black.opacity(pickerUnselectedBgOpacity))
+                .clipShape(Capsule())
                 
                 Spacer()
                 
-                // 🔍 搜索切换按钮 (移至右侧)
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        showSearchBar.toggle()
+                // 右侧统一的正圆磨砂按钮组
+                HStack(spacing: 10) {
+                    // 🔍 搜索切换按钮
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.22)) {
+                            showSearchBar.toggle()
+                        }
+                    }) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: actionBtnIconFontSize, weight: .bold))
+                            .foregroundStyle(showSearchBar ? Color.appAccent : Color.theme.white)
+                            .frame(width: actionBtnDiameter, height: actionBtnDiameter)
+                            .background(Color.appCard.opacity(actionBtnBgOpacity))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
                     }
-                }) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.subheadline.bold())
-                        .foregroundStyle(showSearchBar ? .appAccent : .appSecondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(L10n.Search.title)
-                
-                if !coordinator.isEditMode {
-                    Button(action: { coordinator.showAddTagDialog = true }) {
-                        Label(L10n.Tag.Management.addNew, systemImage: DesignSystem.Icons.plusCircle)
-                            .font(.subheadline.bold())
-                            .adaptiveLabelStyle(isExpanded: isExp)
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(L10n.Search.title)
+                    
+                    if !coordinator.isEditMode {
+                        // ➕ 新建按钮
+                        Button(action: { coordinator.showAddTagDialog = true }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: actionBtnIconFontSize, weight: .bold))
+                                .foregroundStyle(Color.theme.white)
+                                .frame(width: actionBtnDiameter, height: actionBtnDiameter)
+                                .background(Color.appCard.opacity(actionBtnBgOpacity))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
+                        }
+                        .buttonStyle(.plain)
                     }
-                }
-                
-                Button(action: {
-                    coordinator.isEditMode.toggle()
-                    if !coordinator.isEditMode { coordinator.selectedTagsForBulk.removeAll() }
-                }) {
-                    Label(coordinator.isEditMode ? L10n.Common.done : L10n.Tag.Management.manageTitle, 
-                          systemImage: coordinator.isEditMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(coordinator.isEditMode ? .green : .appAccent)
-                        .adaptiveLabelStyle(isExpanded: isExp)
+                    
+                    // ✏️ 管理/编辑按钮
+                    Button(action: {
+                        coordinator.isEditMode.toggle()
+                        if !coordinator.isEditMode { coordinator.selectedTagsForBulk.removeAll() }
+                    }) {
+                        Image(systemName: coordinator.isEditMode ? "checkmark" : "list.bullet.indent")
+                            .font(.system(size: actionBtnIconFontSize, weight: .bold))
+                            .foregroundStyle(coordinator.isEditMode ? .green : Color.theme.white)
+                            .frame(width: actionBtnDiameter, height: actionBtnDiameter)
+                            .background(Color.appCard.opacity(actionBtnBgOpacity))
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
                 }
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(BlurView().background(Color.appCard.opacity(toolbarBgOpacity)))
+            .clipShape(RoundedRectangle(cornerRadius: toolbarCornerRadius))
+            .overlay(RoundedRectangle(cornerRadius: toolbarCornerRadius).stroke(Color.appBorder.opacity(toolbarBorderOpacity), lineWidth: 1))
             .padding(.horizontal, isExp ? DesignSystem.wide : DesignSystem.medium)
-            .padding(.vertical, DesignSystem.Layout.headerVerticalPadding)
+            .padding(.vertical, 10)
 
             // 2. 搜索栏（当 showSearchBar 为真时以动画展开，不受标签总数限值）
             if showSearchBar {
@@ -323,33 +397,37 @@ struct TagCloudViewContent: View {
         let displayedTags = shouldCollapse ? Array(tags.prefix(12)) : tags
         
         return VStack(spacing: 0) {
-            ScrollView {
-                FlowLayout(spacing: isListMode ? DesignSystem.Grid.flowSpacing : DesignSystem.small) {
-                    ForEach(displayedTags, id: \.tag) { tagItem in
-                        TagCapsuleView(
-                            item: tagItem,
-                            coordinator: coordinator,
-                            bubbleRatio: bubbleRatio(for: tagItem.count),
-                            isBubbleMode: !isListMode
+            if isListMode {
+                ScrollView {
+                    FlowLayout(spacing: DesignSystem.Grid.flowSpacing) {
+                        ForEach(displayedTags, id: \.tag) { tagItem in
+                            TagCapsuleView(
+                                item: tagItem,
+                                coordinator: coordinator,
+                                bubbleRatio: bubbleRatio(for: tagItem.count),
+                                isBubbleMode: false
+                            )
+                        }
+                    }
+                    .padding(DesignSystem.medium)
+                }
+                .frame(maxHeight: isExpanded ? .infinity : DesignSystem.Metrics.maxTagCloudHeight)
+                .fixedSize(horizontal: false, vertical: true)
+                .overlay(alignment: .bottom) {
+                    if shouldCollapse {
+                        LinearGradient(
+                            colors: [.clear, Color.appCard.opacity(listCollapseGradientOpacity), Color.appCard],
+                            startPoint: .top,
+                            endPoint: .bottom
                         )
+                        .frame(height: listCollapseGradientHeight)
+                        .allowsHitTesting(false)
                     }
                 }
-                .padding(DesignSystem.medium)
-            }
-            .frame(maxHeight: isListMode ? (isExpanded ? .infinity : DesignSystem.Metrics.maxTagCloudHeight) : .infinity)
-            .fixedSize(horizontal: false, vertical: isListMode)
-            .overlay(alignment: .bottom) {
-                if shouldCollapse {
-                    // swiftlint:disable magic_numbers_opacity magic_numbers_frame
-                    LinearGradient(
-                        colors: [.clear, Color.appCard.opacity(0.8), Color.appCard],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 35)
-                    .allowsHitTesting(false)
-                    // swiftlint:enable magic_numbers_opacity magic_numbers_frame
-                }
+            } else {
+                // 气泡云模式：直接挂载新实现的双向鱼眼蜂窝画布，并撑满布局容器
+                TagBubbleCloudCanvas(coordinator: coordinator)
+                    .frame(minHeight: bubbleCanvasMinHeight, maxHeight: .infinity)
             }
             
             if isListMode && tags.count > 12 {
@@ -498,17 +576,129 @@ private struct TagCapsuleView: View {
     /// 是否为气泡云显示模式
     var isBubbleMode: Bool = false
     
-    // swiftlint:disable magic_numbers_opacity
+    // ── 气泡及流式布局视觉参数常量 ──
+    private let bubbleModeBaseFontSize: CGFloat = 10.0
+    private let bubbleModeFontSizeDelta: CGFloat = 4.0
+    private let listModeFontSize: CGFloat = 13.0
+    
+    private let bubbleModeBasePaddingH: CGFloat = 8.0
+    private let bubbleModePaddingHDelta: CGFloat = 4.0
+    private let listModePaddingH: CGFloat = 12.0
+    
+    private let bubbleModeBasePaddingV: CGFloat = 4.0
+    private let bubbleModePaddingVDelta: CGFloat = 2.0
+    private let listModePaddingV: CGFloat = 6.0
+    
+    private let bubbleModeMinOpacity = 0.08
+    private let bubbleModeOpacityRange = 0.35
+    
+    private let bubbleModeBaseSize: CGFloat = 42.0
+    private let bubbleModeSizeDelta: CGFloat = 32.0
+    
+    // ── 透明度和边框微调参数常量 (杜绝 magic_number) ──
+    private let textBackgroundSelectedOpacity = 0.2
+    private let textBackgroundUnselectedOpacity = 0.15
+    private let bubbleSelectedFillOpacity = 0.85
+    private let bubbleUnselectedFillOpacityBase = 0.1
+    private let bubbleUnselectedFillOpacityFactor = 0.5
+    private let bubbleBorderOpacityBase = 0.25
+    private let bubbleBorderOpacityFactor = 0.15
+    
+    // ── 气泡云列表滚动弹性缩放形变参数常量 ──
+    /// 气泡形变计算的屏幕中心点最大偏移影响距离
+    private let listScrollMaxDistance: CGFloat = 280.0
+    /// 气泡在屏幕中心时的最大缩放系数
+    private let listScrollMaxScale: CGFloat = 1.12
+    /// 气泡由于偏移中心导致的缩放衰减范围
+    private let listScrollScaleRange: CGFloat = 0.52
+    /// 气泡在屏幕中心时的最大不透明度
+    private let listScrollMaxOpacity: CGFloat = 1.0
+    /// 气泡由于偏移中心导致的不透明度衰减范围
+    private let listScrollOpacityRange: CGFloat = 0.55
+    
+    // ── 计算属性 ──
+    private var isSelected: Bool {
+        coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
+    }
+    
+    private var fontSize: CGFloat {
+        isBubbleMode ? bubbleModeBaseFontSize + CGFloat(bubbleRatio * bubbleModeFontSizeDelta) : listModeFontSize
+    }
+    
+    private var paddingH: CGFloat {
+        isBubbleMode ? bubbleModeBasePaddingH + CGFloat(bubbleRatio * bubbleModePaddingHDelta) : listModePaddingH
+    }
+    
+    private var paddingV: CGFloat {
+        isBubbleMode ? bubbleModeBasePaddingV + CGFloat(bubbleRatio * bubbleModePaddingVDelta) : listModePaddingV
+    }
+    
+    private var opacity: Double {
+        isBubbleMode ? bubbleModeMinOpacity + bubbleRatio * bubbleModeOpacityRange : DesignSystem.translucentOpacity
+    }
+    
+    private var size: CGFloat {
+        bubbleModeBaseSize + CGFloat(bubbleRatio * bubbleModeSizeDelta)
+    }
+    
+    private var countTextBg: Color {
+        let selectedTextBg = Color.theme.white.opacity(textBackgroundSelectedOpacity)
+        let unselectedTextBg = Color.appSecondary.opacity(textBackgroundUnselectedOpacity)
+        return isSelected ? selectedTextBg : unselectedTextBg
+    }
+    
+    // ── 主视图主体 ──
     var body: some View {
-        let isSelected = coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
-        
-        let fontSize: CGFloat = isBubbleMode ? 10.0 + CGFloat(bubbleRatio * 4.0) : 13.0
-        let paddingH: CGFloat = isBubbleMode ? 8.0 + CGFloat(bubbleRatio * 4.0) : 12.0
-        let paddingV: CGFloat = isBubbleMode ? 4.0 + CGFloat(bubbleRatio * 2.0) : 6.0
-        let opacity: Double = isBubbleMode ? 0.08 + bubbleRatio * 0.35 : DesignSystem.translucentOpacity
-        let size: CGFloat = 42.0 + CGFloat(bubbleRatio * 32.0)
-        
-        let buttonContent = Button(action: {
+        if isBubbleMode {
+            bubbleModeView
+        } else {
+            listModeView
+        }
+    }
+    
+    // ── 气泡模式子视图 ──
+    /// 气泡模式子视图，利用几何读取器（GeometryReader）根据视口位置动态计算缩放与透明度，实现 3D 浮动气泡效果
+    @ViewBuilder
+    private var bubbleModeView: some View {
+        GeometryReader { geo in
+            let frame = geo.frame(in: .global)
+            let screenHeight: CGFloat = {
+                #if os(macOS)
+                return NSScreen.main?.frame.height ?? 800
+                #else
+                return UIScreen.main.bounds.height
+                #endif
+            }()
+            // 计算屏幕中心 Y 轴坐标
+            let centerY = screenHeight / 2.0
+            // 计算当前气泡中心与屏幕中心的绝对 Y 轴距离
+            let distance = abs(frame.midY - centerY)
+            // 计算归一化的偏移比例（0.0 到 1.0 之间）
+            let pct = max(0, min(1, distance / listScrollMaxDistance))
+            
+            // 根据与屏幕中心的距离动态计算气泡的缩放系数与透明度，使越接近中心的气泡越突出
+            let scale = listScrollMaxScale - (pct * listScrollScaleRange)
+            let fOpacity = listScrollMaxOpacity - (pct * listScrollOpacityRange)
+            
+            buttonContent(isSelected: isSelected)
+                .scaleEffect(scale)
+                .opacity(fOpacity)
+                .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.75, blendDuration: 0), value: scale)
+        }
+        .fixedSize()
+    }
+    
+    // ── 列表模式子视图 ──
+    /// 列表模式下的标签按钮视图
+    @ViewBuilder
+    private var listModeView: some View {
+        buttonContent(isSelected: isSelected)
+    }
+    
+    // ── 共享 Button 结构 ──
+    @ViewBuilder
+    private func buttonContent(isSelected: Bool) -> some View {
+        Button(action: {
             withAnimation(DesignSystem.Animation.prominent) {
                 if coordinator.isEditMode {
                     if coordinator.selectedTagsForBulk.contains(item.tag) {
@@ -522,83 +712,7 @@ private struct TagCapsuleView: View {
             }
             HapticFeedback.shared.trigger(.selection)
         }) {
-            Group {
-                if isBubbleMode {
-                    VStack(spacing: 2) {
-                        Text(item.tag.replacingOccurrences(of: "#", with: ""))
-                            .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("\(item.count)")
-                            .font(.system(size: fontSize * 0.8, weight: .bold, design: .monospaced))
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 0.5)
-                            .background(isSelected ? Color.theme.white.opacity(0.2) : Color.appSecondary.opacity(0.15))
-                            .clipShape(Capsule())
-                    }
-                    .padding(bubbleRatio > 0.5 ? DesignSystem.medium : DesignSystem.small)
-                    .frame(minWidth: size * 0.7)
-                } else {
-                    HStack(spacing: DesignSystem.Layout.listRowSpacing) {
-                        Text(item.tag.replacingOccurrences(of: "#", with: ""))
-                            .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
-                        
-                        Text("\(item.count)")
-                            .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 1)
-                            .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
-                            .clipShape(Capsule())
-                    }
-                    .padding(.horizontal, paddingH)
-                    .padding(.vertical, paddingV)
-                }
-            }
-            .background {
-                if isBubbleMode {
-                    Circle()
-                        .fill(isSelected ? Color.appAccent.opacity(0.85) : Color.appAccent.opacity(0.1 + bubbleRatio * 0.5))
-                } else {
-                    Capsule()
-                        .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(opacity))
-                }
-            }
-            .overlay {
-                if isBubbleMode {
-                    Circle()
-                        .stroke(isSelected ? Color.appAccent : Color.appBorder.opacity(0.25 + bubbleRatio * 0.15), lineWidth: DesignSystem.borderWidth)
-                } else {
-                    Capsule()
-                        .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
-                }
-            }
-            .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
-            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.appAccent.opacity(bubbleRatio * 0.08), radius: bubbleRatio > 0.5 ? DesignSystem.shadowRadius : 2, y: bubbleRatio > 0.5 ? DesignSystem.shadowY : 1)
-            .overlay(alignment: .topTrailing) {
-                if coordinator.isEditMode {
-                    ZStack {
-                        Circle()
-                            .fill(isSelected ? Color.appAccent : Color.appCard)
-                            .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
-                        
-                        if isSelected {
-                            Image(systemName: DesignSystem.Icons.check)
-                                .font(.system(size: DesignSystem.microFontSize, weight: .black))
-                                .foregroundStyle(.white)
-                        } else {
-                            Circle()
-                                .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
-                                .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
-                        }
-                    }
-                    .offset(
-                        x: isBubbleMode ? -DesignSystem.small : DesignSystem.small,
-                        y: isBubbleMode ? DesignSystem.small : -DesignSystem.small
-                    )
-                }
-            }
+            labelContent(isSelected: isSelected)
         }
         .buttonStyle(.plain)
         .foregroundStyle(isSelected ? .appAccent : .appText)
@@ -618,38 +732,98 @@ private struct TagCapsuleView: View {
                 }
             }
         }
-        
-        Group {
-            if isBubbleMode {
-                GeometryReader { geo in
-                    let frame = geo.frame(in: .global)
-                    let screenHeight: CGFloat = {
-                        #if os(macOS)
-                        return NSScreen.main?.frame.height ?? 800
-                        #else
-                        return UIScreen.main.bounds.height
-                        #endif
-                    }()
-                    let centerY = screenHeight / 2.0
-                    let distance = abs(frame.midY - centerY)
-                    let maxDistance: CGFloat = 280.0
-                    let pct = max(0, min(1, distance / maxDistance))
-                    
-                    let scale = 1.12 - (pct * 0.52)
-                    let fOpacity = 1.0 - (pct * 0.55)
-                    
-                    buttonContent
-                        .scaleEffect(scale)
-                        .opacity(fOpacity)
-                        .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.75, blendDuration: 0), value: scale)
+    }
+    
+    // ── 共享 Label 内部渲染 ──
+    @ViewBuilder
+    private func labelContent(isSelected: Bool) -> some View {
+        if isBubbleMode {
+            VStack(spacing: DesignSystem.tiny) {
+                Text(item.tag.replacingOccurrences(of: "#", with: ""))
+                    .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+                    .multilineTextAlignment(.center)
+                
+                Text("\(item.count)")
+                    .font(.system(size: fontSize * 0.8, weight: .bold, design: .monospaced))
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 0.5)
+                    .background(countTextBg)
+                    .clipShape(Capsule())
+            }
+            .padding(bubbleRatio > 0.5 ? DesignSystem.medium : DesignSystem.small)
+            .frame(minWidth: size * 0.7)
+            .background {
+                Circle()
+                    .fill(isSelected ? Color.appAccent.opacity(bubbleSelectedFillOpacity) : Color.appAccent.opacity(bubbleUnselectedFillOpacityBase + bubbleRatio * bubbleUnselectedFillOpacityFactor))
+            }
+            .overlay {
+                Circle()
+                    .stroke(isSelected ? Color.appAccent : Color.appBorder.opacity(bubbleBorderOpacityBase + bubbleRatio * bubbleBorderOpacityFactor), lineWidth: DesignSystem.borderWidth)
+            }
+            .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
+            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.appAccent.opacity(bubbleRatio * 0.08), radius: bubbleRatio > 0.5 ? DesignSystem.shadowRadius : 2, y: bubbleRatio > 0.5 ? DesignSystem.shadowY : 1)
+            .overlay(alignment: .topTrailing) {
+                if coordinator.isEditMode {
+                    editBadgeView(isSelected: isSelected)
                 }
-                .fixedSize()
-            } else {
-                buttonContent
+            }
+        } else {
+            HStack(spacing: DesignSystem.Layout.listRowSpacing) {
+                Text(item.tag.replacingOccurrences(of: "#", with: ""))
+                    .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
+                
+                Text("\(item.count)")
+                    .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1)
+                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
+                    .clipShape(Capsule())
+            }
+            .padding(.horizontal, paddingH)
+            .padding(.vertical, paddingV)
+            .background {
+                Capsule()
+                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(opacity))
+            }
+            .overlay {
+                Capsule()
+                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
+            }
+            .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
+            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.appAccent.opacity(bubbleRatio * 0.08), radius: bubbleRatio > 0.5 ? DesignSystem.shadowRadius : 2, y: bubbleRatio > 0.5 ? DesignSystem.shadowY : 1)
+            .overlay(alignment: .topTrailing) {
+                if coordinator.isEditMode {
+                    editBadgeView(isSelected: isSelected)
+                }
             }
         }
     }
-    // swiftlint:enable magic_numbers_opacity
+    
+    // ── 编辑角标 ──
+    @ViewBuilder
+    private func editBadgeView(isSelected: Bool) -> some View {
+        ZStack {
+            Circle()
+                .fill(isSelected ? Color.appAccent : Color.appCard)
+                .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
+            
+            if isSelected {
+                Image(systemName: DesignSystem.Icons.check)
+                    .font(.system(size: DesignSystem.microFontSize, weight: .black))
+                    .foregroundStyle(.white)
+            } else {
+                Circle()
+                    .stroke(Color.appBorder, lineWidth: DesignSystem.borderWidth)
+                    .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
+            }
+        }
+        .offset(
+            x: isBubbleMode ? -DesignSystem.small : DesignSystem.small,
+            y: isBubbleMode ? DesignSystem.small : -DesignSystem.small
+        )
+    }
 }
 
 // MARK: - View 扩展

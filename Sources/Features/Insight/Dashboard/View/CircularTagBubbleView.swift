@@ -132,7 +132,7 @@ struct CircularTagBubbleView: View {
                         
                         if isSelected {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 11, weight: .black))
+                                .font(.caption2.weight(.black))
                                 .foregroundStyle(Color.theme.white)
                         } else {
                             Circle()
