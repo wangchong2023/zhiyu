@@ -105,7 +105,7 @@ clone-repo ──┬─→ static-analysis (12 项并发)
 | App Store 就绪 | `check_appstore_readiness.py` | ❌ | ✅ | ❌ | ❌ |
 | DI 测试设置审计 | `check_test_di_setup.py` | ❌ | ❌ | ✅ | ✅ |
 | 文档与配置完整性 | `check_docs_and_configs.py` | ❌ | ❌ | ✅ | ❌ |
-| Swift 注释与函数长度 | `check_swift_comments.py` | ❌ | ❌ | ✅ | ❌ |
+| Swift 注释与函数长度 | `check_swift_quality.py` | ❌ | ❌ | ✅ | ❌ |
 | Tools 脚本质量 (Python/Shell) | `check_scripts_quality.py` | ❌ | ✅ | ✅ | ❌ |
 | ShellCheck (条件性¹) | 内嵌于 `check_scripts_quality.py` | ❌ | ❌ | ✅ | ❌ |
 | 分层标记审计 | `lint_layer_markers.sh` | ❌ | ❌ | ✅ | ❌ |
@@ -212,7 +212,7 @@ Tools/
 │   ├── check_architecture_dependency.py # L0-L3 分层依赖审计
 │   ├── check_root_hygiene.py            # 根目录卫生 (临时文件+结构)
 │   ├── check_scripts_quality.py         # Tools 脚本质量 (Python/Shell + ShellCheck)
-│   ├── check_swift_comments.py          # Swift 函数长度与注释完备性
+│   ├── check_swift_quality.py           # Swift 函数长度与注释完备性
 │   ├── check_test_di_setup.py           # 测试环境 DI 完整性
 │   ├── check_docs_and_configs.py        # 文档完整性 + 死链 + 配置一致性
 │   └── check_coverage.py                # 覆盖率红线 (Domain 层, 85%)

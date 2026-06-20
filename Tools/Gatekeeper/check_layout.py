@@ -204,7 +204,7 @@ class PlatformSizeAuditor:
                     line_no,
                     f"Popover/menu width {width_val:.0f}pt may be too narrow on iPad "
                     f"(suggest ≥ {self.min_ipad}pt for iPad, or add iPad conditional).",
-                    "INFO"
+                    "ERROR"
                 ))
         return issues
 
@@ -221,7 +221,7 @@ class PlatformSizeAuditor:
                         line_no,
                         f"Fixed width {width_val:.0f}pt in popover/sheet file — "
                         f"consider DesignSystem token with platform adaptation.",
-                        "INFO"
+                        "ERROR"
                     ))
         return issues
 
@@ -357,7 +357,7 @@ class DynamicTypeAuditor:
                     line_no,
                     f"Hardcoded font size {size:.0f}pt without '// Dynamic Type' annotation — "
                     f"may break Dynamic Type accessibility. Add '// Dynamic Type' if size is intentional.",
-                    "INFO"
+                    "ERROR"
                 ))
 
         return issues

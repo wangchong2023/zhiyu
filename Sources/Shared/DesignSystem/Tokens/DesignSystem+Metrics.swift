@@ -104,5 +104,7 @@ extension DesignSystem {
         public static let customSize1024: CGFloat = 1024
         public static let customSize260: CGFloat = 260
         public static let customSize24: CGFloat = 24
+        public static let settingsSidebarWidth: CGFloat = Spacing.Metrics.settingsSidebarWidth
+        public static let settingsIconFrameSize: CGFloat = Spacing.Metrics.settingsIconFrameSize
     }
 }

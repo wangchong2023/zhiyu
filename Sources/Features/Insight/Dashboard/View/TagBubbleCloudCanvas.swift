@@ -166,3 +166,12 @@ struct TagBubbleCloudCanvas: View {
         }
     }
 }
+
+extension Collection {
+    /// 安全索引访问器，防止越界访问导致崩溃
+    /// - Parameter index: 索引位置
+    /// - Returns: 可选的元素值，若越界则返回 nil
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}

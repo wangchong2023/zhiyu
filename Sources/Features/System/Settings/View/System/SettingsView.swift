@@ -93,7 +93,7 @@ struct SettingsView: View {
             // macOS Catalyst 下采用自定义的左右固定分栏 (HStack) 布局，符合 Mac 平台多窗口及大屏偏好设置的操作习惯
             HStack(spacing: 0) {
                 sidebarColumn
-                    .frame(width: 240) // swiftlint:disable:this magic_numbers_frame
+                    .frame(width: DesignSystem.Metrics.settingsSidebarWidth)
                 
                 Divider()
                     .background(Color.appBorder.opacity(DesignSystem.Opacity.shadow))
@@ -510,8 +510,7 @@ struct ColorfulIconLabelStyle: LabelStyle {
             configuration.icon
                 .font(.system(size: 16, weight: .medium)) // Dynamic Type
                 .foregroundStyle(.white)
-                // swiftlint:disable:next magic_numbers_frame
-                .frame(width: 30, height: 30)
+                .frame(width: DesignSystem.Metrics.settingsIconFrameSize, height: DesignSystem.Metrics.settingsIconFrameSize)
                 .background(color)
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius, style: .continuous))
             

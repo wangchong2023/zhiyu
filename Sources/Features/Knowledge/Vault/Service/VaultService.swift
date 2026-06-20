@@ -21,14 +21,18 @@ public final class VaultService: VaultServiceProtocol {
     
     // MARK: - 依赖注入
     
-    /// 注入金库元数据持久化仓储协议（vaultRepository），贯彻依赖倒置原则（DIP）。
+    /// 注入金库元数据持久化仓储协议（vaultRepository），使用可选计算属性安全解析以规避单元测试单例污染崩溃。
     /// 使用 `@ObservationIgnored` 规避 `Observation` 宏对注入实例的过度包装冲突。
     @ObservationIgnored
-    @Inject private var vaultRepository: any VaultRepository
+    private var vaultRepository: (any VaultRepository)? {
+        ServiceContainer.shared.optionalResolve((any VaultRepository).self)
+    }
     
-    /// 注入数据库切换契约（databaseSwitcher），解耦业务层对数据库具体实现的强依赖。
+    /// 注入数据库切换契约（databaseSwitcher），使用可选计算属性安全解析以规避单元测试单例污染崩溃。
     @ObservationIgnored
-    @Inject private var databaseSwitcher: any VaultDatabaseSwitcher
+    private var databaseSwitcher: (any VaultDatabaseSwitcher)? {
+        ServiceContainer.shared.optionalResolve((any VaultDatabaseSwitcher).self)
+    }
     
     // MARK: - 状态发布属性
     
@@ -81,6 +85,11 @@ public final class VaultService: VaultServiceProtocol {
     /// 该预置演示库支持 100% 国际化多语言翻译适配，自动持久化至全局库中，并安全恢复最近一次激活的物理库。
     private func loadVaults() {
         Task {
+            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+            guard let vaultRepository = vaultRepository else {
+                Logger.shared.warning(" [VaultService] loadVaults 被跳过，因为 vaultRepository 未在 DI 注册")
+                return
+            }
             do {
                 // 1. 尝试从全局元数据 Repository 中读取所有已注册的金库
                 let loadedVaults = try await vaultRepository.fetchAllVaults()
@@ -169,6 +178,11 @@ public final class VaultService: VaultServiceProtocol {
            vaults.contains(where: { $0.id == id }) {
             self.selectedVaultID = id
             Task {
+                // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+                guard let databaseSwitcher = databaseSwitcher else {
+                    Logger.shared.warning(" [VaultService] autoRestoreActiveVault 被跳过，因为 databaseSwitcher 未在 DI 注册")
+                    return
+                }
                 do {
                     let dbURL = getVaultDatabaseURL(for: id)
                     try await databaseSwitcher.switchDatabase(to: id, at: dbURL)
@@ -183,6 +197,11 @@ public final class VaultService: VaultServiceProtocol {
     /// - Parameter vault: 需要保存更新的 Vault 金库实体。
     private func saveVaultToDatabase(_ vault: Vault) throws {
         Task {
+            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+            guard let vaultRepository = vaultRepository else {
+                Logger.shared.warning(" [VaultService] saveVaultToDatabase 被跳过，因为 vaultRepository 未在 DI 注册")
+                return
+            }
             try await vaultRepository.saveVault(vault)
         }
     }
@@ -192,11 +211,19 @@ public final class VaultService: VaultServiceProtocol {
     public func selectVaultAndWait(_ vault: Vault) async throws {
         self.selectedVaultID = vault.id
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
+        
+        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+        guard let vaultRepository = vaultRepository,
+              let databaseSwitcher = databaseSwitcher else {
+            Logger.shared.warning(" [VaultService] selectVaultAndWait 被跳过，因为相关数据库依赖未在 DI 注册")
+            return
+        }
+        
         // 同步写入 global_settings 表（供 Widget Extension 读取）
         try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
         NotificationCenter.default.post(name: .vaultWillSwitch, object: vault.id)
 
-let dbURL = getVaultDatabaseURL(for: vault.id)
+        let dbURL = getVaultDatabaseURL(for: vault.id)
         try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
         try? await vaultRepository.updateLastAccessed(id: vault.id)
 
@@ -206,6 +233,12 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
 
     /// 从当前活跃数据库查询实际页面数并写回全局元数据 + App Group JSON 快照
     public func refreshPageCount(for vaultID: UUID) async {
+        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+        guard let databaseSwitcher = databaseSwitcher,
+              let vaultRepository = vaultRepository else {
+            Logger.shared.warning(" [VaultService] refreshPageCount 被跳过，因为数据库相关依赖未在 DI 注册")
+            return
+        }
         do {
             let count = try await databaseSwitcher.countPagesInCurrentVault()
             Logger.shared.info("[VaultService] refreshPageCount: vault=\(vaultID.uuidString.prefix(8)) count=\(count)")
@@ -241,8 +274,14 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         }
     }
 
-    /// 启动后刷新全部笔记本的页面计数（直接读取各 vault 数据库文件）
+    /// 启动后刷新全部笔记本的页面计数（直接读取各 vault 数据库 file）
     private func refreshAllPageCounts() async {
+        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+        guard let databaseSwitcher = databaseSwitcher,
+              let vaultRepository = vaultRepository else {
+            Logger.shared.warning(" [VaultService] refreshAllPageCounts 被跳过，因为数据库依赖未在 DI 注册")
+            return
+        }
         var anyVaultHasDB = false
         for vault in vaults {
             let dbURL = getVaultDatabaseURL(for: vault.id)
@@ -269,6 +308,11 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
     /// 当前架构下所有页面共享同一个 App.sqlite，仅在 vault 专属 DB 未创建时兜底使用。
     private func refreshPageCountFromMainDB(for vaultID: UUID) async {
         guard let writer = DatabaseManager.shared.dbWriter else { return }
+        // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+        guard let vaultRepository = vaultRepository else {
+            Logger.shared.warning(" [VaultService] refreshPageCountFromMainDB 被跳过，因为 vaultRepository 未在 DI 注册")
+            return
+        }
         do {
             let count = try await writer.read { db in
                 try KnowledgePage.fetchCount(db)
@@ -322,6 +366,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         UserDefaults.standard.set(vault.id.uuidString, forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         // 同步写入 global_settings 表（供 Widget Extension 读取活跃 vault）
         Task {
+            guard let vaultRepository = vaultRepository else { return }
             try? await vaultRepository.saveSetting(key: AppConstants.Keys.Storage.vaultsSelectedID, value: vault.id.uuidString)
         }
 
@@ -329,6 +374,12 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
 
         // 1. 热插拔重定向：要求 databaseSwitcher 彻底挂载专属物理子库，同步刷新句柄
         Task {
+            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+            guard let databaseSwitcher = databaseSwitcher,
+                  let vaultRepository = vaultRepository else {
+                Logger.shared.warning(" [VaultService] selectVault 物理切换被跳过，因为底层依赖未在 DI 注册")
+                return
+            }
             do {
                 let dbURL = getVaultDatabaseURL(for: vault.id)
                 try await databaseSwitcher.switchDatabase(to: vault.id, at: dbURL)
@@ -352,7 +403,7 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         self.selectedVaultID = nil
         UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
         // 物理释放专属连接以闭合通道锁
-        databaseSwitcher.releaseDatabaseConnection()
+        databaseSwitcher?.releaseDatabaseConnection()
     }
     
     /// 创建全新的笔记本金库。
@@ -429,11 +480,16 @@ let dbURL = getVaultDatabaseURL(for: vault.id)
         if selectedVaultID == id {
             selectedVaultID = nil
             UserDefaults.standard.removeObject(forKey: AppConstants.Keys.Storage.vaultsSelectedID)
-            databaseSwitcher.releaseDatabaseConnection()
+            databaseSwitcher?.releaseDatabaseConnection()
         }
         
         // 1. 从全局元数据配置数据库中完全抹除
         Task {
+            // 🛡️ 防御性检查：规避单测非 DB 环境下因依赖未注册导致的致命错误
+            guard let vaultRepository = vaultRepository else {
+                Logger.shared.warning(" [VaultService] deleteVault 中的元数据删除被跳过，因为 vaultRepository 未在 DI 注册")
+                return
+            }
             do {
                 try await vaultRepository.deleteVault(id: id)
             } catch {

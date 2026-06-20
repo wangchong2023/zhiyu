@@ -63,7 +63,7 @@ run_parallel_task "Unsafe String.Index Scan" "unsafe_string_index" "python3 Tool
 run_parallel_task "Docs & Config Integrity" "docs_and_configs" "python3 Tools/Gatekeeper/check_docs_and_configs.py" & pid8=$!
 run_parallel_task "SPM Integrity" "spm_integrity" "bash Tools/CI/verify_spm_integrity.sh" & pid9=$!
 run_parallel_task "Tools Quality Gatekeeper" "tools_quality" "$PYTHON3 Tools/Gatekeeper/check_scripts_quality.py" & pid10=$!
-run_parallel_task "Swift Comments & Length Guard" "swift_comments" "$PYTHON3 Tools/Gatekeeper/check_swift_comments.py" & pid11=$!
+run_parallel_task "Swift Quality Guard" "swift_quality" "$PYTHON3 Tools/Gatekeeper/check_swift_quality.py" & pid11=$!
 
 # SBOM 串行链路整体放入后台
 (

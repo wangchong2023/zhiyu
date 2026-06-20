@@ -59,10 +59,8 @@ function sayHello() {
 }
 JS
 
-# 4. 打包插件
-zip -r my-first-plugin.zyplugin .
-
-# 5. 在 ZhiYu 中加载测试
+# 4. 调试与加载
+# 智宇支持直接加载明文插件目录。将 my-first-plugin 文件夹直接放置在本地沙盒的 Documents/Plugins/ 目录下即可立即动态加载与调试。
 ```
 
 ---
@@ -195,23 +193,14 @@ my-plugin/
     └── screenshot.png
 ```
 
-### 打包格式
+### 目录格式与 Single-file 发布
 
-插件必须打包为 `.zyplugin` 格式（标准 ZIP 压缩）：
+为了让代码更透明、方便开发者和平台进行安全审查，智宇抛弃了繁琐的二进制压缩，采用**明文文件夹形式直接发布**。
 
-```bash
-# 打包命令
-zip -r my-plugin.zyplugin .
-
-# 验证打包
-unzip -l my-plugin.zyplugin
-```
-
-**打包规则：**
-- 文件扩展名必须是 `.zyplugin`
-- 使用标准 ZIP 格式
-- 所有文件放在根目录（不要嵌套文件夹）
-- 文件名使用小写字母和连字符
+**发布规范：**
+- 插件以整个文件夹形式提交至发布仓库。
+- 目录名即为插件的 ID 标识（全部小写，使用连字符连接）。
+- 插件在运行与网络下载时，客户端将并发直接拉取核心明文文件并保存到本地沙盒，免除了运行时的解压损耗。
 
 ---
 
@@ -571,15 +560,14 @@ try {
 
 ZhiYu 在加载插件时会执行以下校验：
 
-#### 1. 文件格式校验
-- ✅ 文件扩展名必须是 `.zyplugin`
-- ✅ 必须是有效的 ZIP 压缩包
-- ✅ 压缩包不能为空
+#### 1. 目录结构校验
+- ✅ 插件必须存放在与插件 ID 同名的子文件夹中
+- ✅ 文件夹命名规范正确且不包含特殊字符
 
 #### 2. 必需文件校验
-- ✅ `manifest.json` 必须存在
-- ✅ `index.js` 必须存在
-- ⚠️ `README.md` 推荐存在（未来可能要求）
+- ✅ 核心配置文件 `manifest.json` 必须存在于目录下
+- ✅ 核心业务脚本 `index.js` 必须存在于目录下
+- ⚠️ `README.md`（英文版文档）和 `README.zh-Hans.md`（中文版文档）建议在对应目录下提供
 
 #### 3. manifest.json 校验
 - ✅ 必须是有效的 JSON 格式
@@ -657,15 +645,18 @@ vim manifest.json  # 修改 version
 vim CHANGELOG.md
 ```
 
-### 2. 打包插件
+### 2. 发布明文文件夹
+
+在项目根目录下保持明文结构，通过 Git 提交并推送至 `zhiyu-releases`。
 
 ```bash
-cd my-plugin
-zip -r ../my-plugin.zyplugin .
-cd ..
+# 拷贝至发布仓库
+cp -r my-plugin/ path/to/zhiyu-releases/plugins/
 
-# 验证打包
-unzip -l my-plugin.zyplugin
+# 执行提交与推送
+git add plugins/my-plugin
+git commit -m "feat: publish my-plugin in raw plaintext"
+git push origin master
 ```
 
 ### 3. 本地测试

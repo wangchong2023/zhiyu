@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#  check_swift_comments.py
+#  check_swift_quality.py
 #  ZhiYu
 #
 #  Created by Antigravity on 2026/06/14.
 #  Copyright © 2026 WangChong. All rights reserved.
 #
 #  系统层级：[Tools/Gatekeeper] 守卫网关
-#  核心职责：自动对 Sources/ 目录下的 Swift 业务代码进行函数长度和注释完备性审计。
+#  核心职责：自动对 Sources/ 目录下的 Swift 业务代码进行函数长度、注释完备性及禁止引入 swiftlint 禁用指令的卡点审计。
 #           卡口规则：
 #           1. Swift 文件前 15 行必须含有“系统层级”与“核心职责”的中文说明。
 #           2. 若函数有效代码行数 (NBNC) 超过 30 行，必须在其上方配置注释。
@@ -149,6 +149,57 @@ def _verify_function_body(content: str, match, func_start_idx: int, lines: list,
 
     return True, nbnc_count, has_comment, ""
 
+def _run_git_diff(rel_path) -> str:
+    """运行 git diff 获取当前文件修改内容"""
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["git", "diff", "HEAD", "--", str(rel_path)],
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            return result.stdout
+    except Exception:
+        pass
+    return ""
+
+def _parse_diff_for_swiftlint(diff_output: str, filepath: Path) -> list:
+    """解析 git diff 结果，找出新增的 swiftlint:disable 并报告行号"""
+    errors = []
+    current_new_line = 0
+    for diff_line in diff_output.split('\n'):
+        if diff_line.startswith('@@'):
+            match = re.search(r'\+(\d+)', diff_line)
+            if match:
+                current_new_line = int(match.group(1))
+            continue
+        
+        if diff_line.startswith('+') and not diff_line.startswith('+++'):
+            if "swiftlint:disable" in diff_line:
+                errors.append(f"{filepath}:{current_new_line}: error: [Comments Guard] 严禁在新增或修改的代码中引入 swiftlint:disable 禁用指令。请移除该禁用，并重构相关源码以使其合规。")
+            current_new_line += 1
+        elif not diff_line.startswith('-') and not diff_line.startswith('---'):
+            current_new_line += 1
+    return errors
+
+def check_added_swiftlint_disable(filepath: Path) -> list:
+    """
+    检查指定 Swift 文件最近一次提交或修改中是否新引入了 swiftlint:disable 指令。
+    
+    :param filepath: 目标文件路径
+    :return: 错误消息列表
+    """
+    try:
+        rel_path = filepath.relative_to(Path.cwd())
+    except Exception:
+        rel_path = filepath
+
+    diff_out = _run_git_diff(rel_path)
+    if not diff_out:
+        return []
+    return _parse_diff_for_swiftlint(diff_out, filepath)
+
 def audit_file(filepath: Path) -> list:
     """
     审计单个 Swift 文件是否符合规则。
@@ -185,6 +236,9 @@ def audit_file(filepath: Path) -> list:
         is_valid, _, _, err_msg = _verify_function_body(content, match, func_start_idx, lines, func_line_no)
         if not is_valid:
             errors.append(f"{filepath}:{func_line_no}: error: [Comments Guard] {err_msg}")
+
+    # 3. 严禁新引入 swiftlint:disable 禁用指令
+    errors.extend(check_added_swiftlint_disable(filepath))
 
     return errors
 

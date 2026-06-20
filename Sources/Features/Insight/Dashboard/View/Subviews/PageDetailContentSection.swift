@@ -16,6 +16,9 @@ struct PageDetailContentSection: View {
     @Binding var isEditing: Bool
     let onLinkTap: (String) -> Void
     
+    /// 提示卡片背景透明度常数
+    private let hintBgOpacity = 0.06
+    
     var body: some View {
         Group {
             if isEditing {
@@ -43,8 +46,7 @@ struct PageDetailContentSection: View {
                 .foregroundStyle(.appAccent.opacity(DesignSystem.Opacity.overlay))
                 .padding(.horizontal, DesignSystem.wide)
                 .padding(.vertical, DesignSystem.small)
-                // swiftlint:disable:next magic_numbers_opacity
-                .background(Color.appAccent.opacity(0.06))
+                .background(Color.appAccent.opacity(hintBgOpacity))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
         }
         .frame(maxWidth: .infinity, minHeight: 200)

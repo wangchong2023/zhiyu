@@ -89,7 +89,7 @@ struct MarketPlugin: Codable, Identifiable {
         self.rating = 0
         self.icon = "puzzlepiece.extension.fill"
         self.downloadURL = downloadBase
-            .appendingPathComponent("\(entry.id).zyplugin")
+            .appendingPathComponent(entry.id)
             .absoluteString
         self.minAppVersion = nil
         self.requiredPermissions = nil
@@ -248,8 +248,14 @@ final class PluginMarketService: ObservableObject {
     /// 下载指定的插件并将其保存到本地沙盒存储目录中
     /// - Parameter plugin: 目标下载插件条目
     /// - Returns: Bool，代表下载与解包保存是否成功。
+    /// 下载指定的插件并将其保存到本地沙盒存储目录中（明文分流并发下载版）
+    /// - Parameter plugin: 目标下载插件条目
+    /// - Returns: Bool，代表下载保存是否成功。
+    /// 下载指定的插件并将其保存到本地沙盒存储目录中（明文分流并发下载版）
+    /// - Parameter plugin: 目标下载插件条目
+    /// - Returns: Bool，代表下载保存是否成功。
     func downloadPlugin(_ plugin: MarketPlugin) async -> Bool {
-        guard let urlString = plugin.downloadURL, let url = URL(string: urlString) else {
+        guard let urlString = plugin.downloadURL, let baseURL = URL(string: urlString) else {
             Logger.shared.warning("[PluginMarket] 插件 \(plugin.name) 下载链接无效或缺失。")
             return false
         }
@@ -262,44 +268,126 @@ final class PluginMarketService: ObservableObject {
         defer { 
             Task { @MainActor in downloadingPluginID = nil }
         }
+        
+        let fileManager = FileManager.default
 
         do {
-            Logger.shared.info("[PluginMarket] 开始从云端下载插件: \(plugin.name)")
-            let (tempURL, _) = try await URLSession.shared.download(from: url)
+            Logger.shared.info("[PluginMarket] 开始从明文目录并发下载插件: \(plugin.name)")
+            let destinationFolderURL = try prepareDestinationFolder(for: plugin.id, fileManager: fileManager)
+            let tasks = buildDownloadTasks(baseURL: baseURL, destinationFolderURL: destinationFolderURL)
             
-            let fileManager = FileManager.default
-            guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return false }
-            let pluginsDirectory = documentsURL.appendingPathComponent("Plugins")
-            
-            // 确保本地沙盒的 Plugins 目录物理存在
-            if !fileManager.fileExists(atPath: pluginsDirectory.path) {
-                try fileManager.createDirectory(at: pluginsDirectory, withIntermediateDirectories: true, attributes: nil)
-            }
-
-            let destinationURL = pluginsDirectory.appendingPathComponent("\(plugin.id).zyplugin")
-            
-            // 如果本地已存在同名插件文件，先行移除
-            if fileManager.fileExists(atPath: destinationURL.path) {
-                try fileManager.removeItem(at: destinationURL)
-            }
-            
-            // 将下载下来的临时插件包物理移至沙盒目的目录
-            try fileManager.moveItem(at: tempURL, to: destinationURL)
+            try await executeDownloadTasks(tasks)
             
             await MainActor.run {
                 Logger.shared.info(" [PluginMarket] 插件下载并安装成功: \(plugin.name)")
             }
             
-            // 扫描并重新加载插件以供系统使用
+            // 扫描并重新加载插件以供系统挂载
             PluginRegistry.shared.scanAndLoadLocalPlugins()
-            
             return true
         } catch {
+            performDownloadRollback(for: plugin.id, fileManager: fileManager)
             await MainActor.run {
-                Logger.shared.error(" [PluginMarket] 插件下载失败: \(plugin.name)", error: error)
+                Logger.shared.error(" [PluginMarket] 插件明文并发下载安装失败: \(plugin.name)", error: error)
                 self.errorMessage = error.localizedDescription
             }
             return false
+        }
+    }
+
+    /// 为指定插件准备物理沙盒目标文件夹，清理老旧缓存
+    private func prepareDestinationFolder(for pluginID: String, fileManager: FileManager) throws -> URL {
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw NSError(
+                domain: "PluginMarketService",
+                code: 404,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to locate documents directory"]
+            )
+        }
+        let pluginsDirectory = documentsURL.appendingPathComponent("Plugins")
+        let destinationFolderURL = pluginsDirectory.appendingPathComponent(pluginID)
+        
+        if fileManager.fileExists(atPath: destinationFolderURL.path) {
+            try fileManager.removeItem(at: destinationFolderURL)
+        }
+        try fileManager.createDirectory(at: destinationFolderURL, withIntermediateDirectories: true, attributes: nil)
+        return destinationFolderURL
+    }
+
+    /// 构造所要下载的文件清单任务列表
+    private func buildDownloadTasks(baseURL: URL, destinationFolderURL: URL) -> [FileDownloadTask] {
+        return [
+            FileDownloadTask(
+                remoteURL: baseURL.appendingPathComponent("manifest.json"),
+                localURL: destinationFolderURL.appendingPathComponent("manifest.json"),
+                isRequired: true
+            ),
+            FileDownloadTask(
+                remoteURL: baseURL.appendingPathComponent("index.js"),
+                localURL: destinationFolderURL.appendingPathComponent("index.js"),
+                isRequired: true
+            ),
+            FileDownloadTask(
+                remoteURL: baseURL.appendingPathComponent("icon.png"),
+                localURL: destinationFolderURL.appendingPathComponent("icon.png"),
+                isRequired: false
+            ),
+            FileDownloadTask(
+                remoteURL: baseURL.appendingPathComponent("README.md"),
+                localURL: destinationFolderURL.appendingPathComponent("README.md"),
+                isRequired: false
+            ),
+            FileDownloadTask(
+                remoteURL: baseURL.appendingPathComponent("README.zh-Hans.md"),
+                localURL: destinationFolderURL.appendingPathComponent("README.zh-Hans.md"),
+                isRequired: false
+            )
+        ]
+    }
+
+    /// 并发吞吐执行网络拉取文件任务组，控制错误传递
+    private func executeDownloadTasks(_ tasks: [FileDownloadTask]) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for task in tasks {
+                group.addTask {
+                    do {
+                        let (tempURL, response) = try await URLSession.shared.download(from: task.remoteURL)
+                        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                        guard statusCode == 200 else {
+                            throw NSError(
+                                domain: "PluginMarketService",
+                                code: statusCode,
+                                userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"]
+                            )
+                        }
+                        
+                        if FileManager.default.fileExists(atPath: task.localURL.path) {
+                            try FileManager.default.removeItem(at: task.localURL)
+                        }
+                        try FileManager.default.moveItem(at: tempURL, to: task.localURL)
+                        Logger.shared.info("[PluginMarket] 成功下载明文文件: \(task.remoteURL.lastPathComponent)")
+                    } catch {
+                        if task.isRequired {
+                            throw error
+                        } else {
+                            Logger.shared.warning(
+                                "[PluginMarket] 辅助资源拉取跳过: \(task.remoteURL.lastPathComponent), error: \(error.localizedDescription)"
+                            )
+                        }
+                    }
+                }
+            }
+            try await group.waitForAll()
+        }
+    }
+
+    /// 发生异常时的下载清理回滚动作
+    private func performDownloadRollback(for pluginID: String, fileManager: FileManager) {
+        if let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let destinationFolderURL = documentsURL.appendingPathComponent("Plugins").appendingPathComponent(pluginID)
+            if fileManager.fileExists(atPath: destinationFolderURL.path) {
+                try? fileManager.removeItem(at: destinationFolderURL)
+            }
         }
     }
 
@@ -339,6 +427,13 @@ final class PluginMarketService: ObservableObject {
         
         return urlsToTry
     }
+}
+
+/// 文件下载清单描述结构
+private struct FileDownloadTask: Sendable {
+    let remoteURL: URL
+    let localURL: URL
+    let isRequired: Bool
 }
 
 extension PluginMarketService: @unchecked Sendable {}

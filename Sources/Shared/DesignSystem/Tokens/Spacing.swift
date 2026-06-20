@@ -322,6 +322,10 @@ public enum Spacing {
         public static let customSize260: CGFloat = 260
         /// 信息图标点击区域尺寸 (24px)
         public static let customSize24: CGFloat = 24
+        /// macOS/Catalyst 设置侧栏宽度 (240px)
+        public static let settingsSidebarWidth: CGFloat = 240
+        /// 设置图标背景框尺寸 (30px)
+        public static let settingsIconFrameSize: CGFloat = 30
     }
     
     /// 任务管理中心规范

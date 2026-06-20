@@ -177,8 +177,8 @@ final class PluginMarketServiceTests: XCTestCase {
         // 下载 URL 应包含 plugins/ 目录
         XCTAssertTrue(service.availablePlugins[0].downloadURL?.contains("/plugins/") ?? false,
                       "下载 URL 应包含 /plugins/ 路径")
-        XCTAssertTrue(service.availablePlugins[0].downloadURL?.hasSuffix("/toc-generator.zyplugin") ?? false,
-                      "下载 URL 应以 {id}.zyplugin 结尾")
+        XCTAssertTrue(service.availablePlugins[0].downloadURL?.hasSuffix("/toc-generator") ?? false,
+                      "下载 URL 应以 {id} 结尾")
         XCTAssertNil(service.errorMessage)
     }
 
@@ -188,8 +188,8 @@ final class PluginMarketServiceTests: XCTestCase {
         [{"id":"test","name":"Test","author":"A","description":"D","repo":"user/repo"}]
         """
         MockURLProtocol.requestHandler = { request in
-            // 验证请求 URL 是 registry（不是 mock 服务器）
-            XCTAssertTrue(request.url?.absoluteString.contains("community-plugins.json") ?? false)
+            let urlString = request.url?.absoluteString ?? ""
+            XCTAssertTrue(urlString.contains("community-plugins.json") || urlString.contains("community-plugins_zh-Hans.json"))
             // swiftlint:disable:next force_unwrapping
             let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
             return (response, Data(jsonString.utf8))
@@ -203,8 +203,8 @@ final class PluginMarketServiceTests: XCTestCase {
         XCTAssertFalse(downloadURL.contains("community-plugins.json"))
         // 应该包含 plugins/ 目录
         XCTAssertTrue(downloadURL.contains("/plugins/"))
-        // 应以 .zyplugin 结尾
-        XCTAssertTrue(downloadURL.hasSuffix(".zyplugin"))
+        // 应以 id 结尾
+        XCTAssertTrue(downloadURL.hasSuffix("/test"))
     }
 
     func testEmptyCommunityPluginsList() async throws {

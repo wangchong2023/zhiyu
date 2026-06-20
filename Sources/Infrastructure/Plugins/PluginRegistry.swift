@@ -445,6 +445,13 @@ extension PluginRegistry {
             let files = try fileManager.contentsOfDirectory(at: pluginsDirectory, includingPropertiesForKeys: nil)
 
             for file in files {
+                // 🛡️ 检查是否为物理子目录以支持明文文件夹形式的插件
+                var isDirectory: ObjCBool = false
+                if fileManager.fileExists(atPath: file.path, isDirectory: &isDirectory), isDirectory.boolValue {
+                    loadPluginFromDirectory(file)
+                    continue
+                }
+
                 let ext = file.pathExtension.lowercased()
 
                 switch ext {
@@ -623,6 +630,47 @@ extension PluginRegistry {
 
         } catch {
             Logger.shared.error("[PluginRegistry] Archive error: \(archiveURL.lastPathComponent)", error: error)
+        }
+    }
+
+    // MARK: - 文件夹形式加载（明文加载）
+
+    /// 从解压明文插件目录中直接加载插件并进行 JavaScript 沙箱挂载
+    /// - Parameter directoryURL: 物理子目录 URL 路径
+    private func loadPluginFromDirectory(_ directoryURL: URL) {
+        let fileManager = FileManager.default
+        let manifestURL = directoryURL.appendingPathComponent("manifest.json")
+        let scriptURL = directoryURL.appendingPathComponent("index.js")
+
+        // 🛡️ 核心安全性静态核验：必须同时存在声明式配置清单与核心 JS 逻辑
+        guard fileManager.fileExists(atPath: manifestURL.path),
+              fileManager.fileExists(atPath: scriptURL.path) else {
+            // 如果不是插件目录，静默返回即可（比如 Assets 目录）
+            return
+        }
+
+        do {
+            Logger.shared.info("[PluginRegistry] 开始从明文目录加载插件: \(directoryURL.lastPathComponent)")
+            let manifestData = try Data(contentsOf: manifestURL)
+            let script = try String(contentsOf: scriptURL, encoding: .utf8)
+            let manifest = try JSONDecoder().decode(PluginManifest.self, from: manifestData)
+
+            // 校验多语言 README 完整性
+            validateReadmeFiles(manifest: manifest, extractedDir: directoryURL)
+
+            // 持久化图标和 README 到 Documents/Plugins/{id}_icon.png 等供 UI 侧边栏读取展示
+            persistPluginAssets(manifest: manifest, extractedDir: directoryURL)
+
+            #if canImport(JavaScriptCore) && !os(watchOS)
+            if let jsPlugin = JavaScriptPlugin(script: script, manifest: manifest) {
+                loadPlugin(jsPlugin)
+                Logger.shared.info("[PluginRegistry] 从明文目录成功加载: \(manifest.name)")
+            } else {
+                Logger.shared.error("[PluginRegistry] 实例化 JS 插件失败: \(manifest.name)")
+            }
+            #endif
+        } catch {
+            Logger.shared.error("[PluginRegistry] 明文目录加载错误: \(directoryURL.lastPathComponent)", error: error)
         }
     }
 
