@@ -445,12 +445,12 @@ struct PluginDetailView: View {
         // 依次尝试降级拉取云端文档数据
         for readmeURL in urlsToTry {
             do {
-                Logger.shared.info("[PluginDetail] Trying to fetch remote README resource: \(readmeURL.absoluteString)")
+                Logger.shared.info("PluginDetail.fetchRemoteReadme.try: \(readmeURL.absoluteString)")
                 let (data, response) = try await URLSession.shared.data(from: readmeURL)
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
                 
                 if statusCode == 200, !data.isEmpty, let text = String(data: data, encoding: .utf8) {
-                    Logger.shared.info("[PluginDetail] Successfully fetched remote README: \(readmeURL.lastPathComponent)")
+                    Logger.shared.info("PluginDetail.fetchRemoteReadme.success: \(readmeURL.lastPathComponent)")
                     await MainActor.run {
                         self.remoteReadme = text
                         self.isReadmeLoading = false
@@ -458,7 +458,7 @@ struct PluginDetailView: View {
                     return
                 }
             } catch {
-                Logger.shared.warning("[PluginDetail] Failed to fetch \(readmeURL.lastPathComponent), trying fallback. Error: \(error.localizedDescription)")
+                Logger.shared.warning("PluginDetail.fetchRemoteReadme.error: \(readmeURL.lastPathComponent), error: \(error.localizedDescription)")
             }
         }
         
