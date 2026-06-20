@@ -318,6 +318,8 @@ public enum Spacing {
         public static let minWindowHeight: CGFloat = 600
         /// 推理参数浮窗宽度 (260px)
         public static let customSize260: CGFloat = 260
+        /// 信息图标点击区域尺寸 (24px)
+        public static let customSize24: CGFloat = 24
     }
     
     /// 任务管理中心规范

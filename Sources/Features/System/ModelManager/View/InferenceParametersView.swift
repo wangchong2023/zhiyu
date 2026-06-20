@@ -24,7 +24,7 @@ public struct InferenceParametersView: View {
     @State private var topP: Double = 0.9
     @State private var topK: Int = 40
     @State private var maxTokens: Int = 2048
-    @State private var hoveredTitle: String?  // 当前悬浮的参数标题
+    @State private var hoveredTitle: String?  // 当前激活的参数提示（popover 锚点）
 
     /// 当前位置是否匹配某个预设（不匹配时按钮不高亮）
     private var matchedPreset: ParameterPreset? {
@@ -240,40 +240,12 @@ public struct InferenceParametersView: View {
     /// 参数滑块（Double 类型）
     @ViewBuilder
     private func parameterSlider(title: String, value: Binding<Double>, range: ClosedRange<Double>, tip: String) -> some View {
-        let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
-            }
-            .onHover { hovering in hoveredTitle = hovering ? title : nil }
-            .onTapGesture { hoveredTitle = isHovered ? nil : title }
-            .overlay(alignment: .top) {
-                if isHovered {
-                    HStack(alignment: .top, spacing: 4) {
-                        Image(systemName: "lightbulb.fill")
-                            .font(.caption2)
-                            .foregroundStyle(.orange)
-                            .padding(.top, 2)
-                        Text(tip)
-                            .font(.caption2)
-                            .foregroundStyle(.appSecondary)
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.horizontal, DesignSystem.medium)
-                    .padding(.vertical, DesignSystem.small)
-                    .frame(width: DesignSystem.Metrics.customSize260)
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
-                    .offset(y: -50)
-                }
+                infoIcon(id: title, tip: tip)
             }
 
             Slider(value: value, in: range)
@@ -299,40 +271,12 @@ public struct InferenceParametersView: View {
     /// 参数滑块（Int 类型）
     @ViewBuilder
     private func parameterIntSlider(title: String, value: Binding<Int>, range: ClosedRange<Int>, tip: String) -> some View {
-        let isHovered = hoveredTitle == title
         VStack(alignment: .leading, spacing: DesignSystem.small) {
             HStack(spacing: 4) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.appText)
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundStyle(isHovered ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
-            }
-            .onHover { hovering in hoveredTitle = hovering ? title : nil }
-            .onTapGesture { hoveredTitle = isHovered ? nil : title }
-            .overlay(alignment: .top) {
-                if isHovered {
-                    HStack(alignment: .top, spacing: 4) {
-                        Image(systemName: "lightbulb.fill")
-                            .font(.caption2)
-                            .foregroundStyle(.orange)
-                            .padding(.top, 2)
-                        Text(tip)
-                            .font(.caption2)
-                            .foregroundStyle(.appSecondary)
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(.horizontal, DesignSystem.medium)
-                    .padding(.vertical, DesignSystem.small)
-                    .frame(width: DesignSystem.Metrics.customSize260)
-                    .background(.regularMaterial)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
-                    .offset(y: -50)
-                }
+                infoIcon(id: title, tip: tip)
             }
 
             Slider(value: Binding(
@@ -352,6 +296,44 @@ public struct InferenceParametersView: View {
         .padding()
         .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+    }
+
+    /// Info 图标 + popover 提示（iOS 友好：点击切换，popover 自动边界避让）
+    @ViewBuilder
+    private func infoIcon(id: String, tip: String) -> some View {
+        let binding = Binding<Bool>(
+            get: { hoveredTitle == id },
+            set: { hoveredTitle = $0 ? id : nil }
+        )
+        Button(action: {
+            HapticFeedback.shared.trigger(.selection)
+            hoveredTitle = (hoveredTitle == id) ? nil : id
+        }) {
+            Image(systemName: "info.circle")
+                .font(.caption)
+                .foregroundStyle(hoveredTitle == id ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
+                .frame(width: DesignSystem.Metrics.customSize24, height: DesignSystem.Metrics.customSize24)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .popover(isPresented: binding, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
+            HStack(alignment: .top, spacing: 4) {
+                Image(systemName: "lightbulb.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.theme.orange)
+                    .padding(.top, 2)
+                Text(tip)
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, DesignSystem.medium)
+            .padding(.vertical, DesignSystem.small)
+            .frame(width: DesignSystem.Metrics.customSize260)
+            .presentationCompactAdaptation(.popover)
+        }
     }
 
     // MARK: - 辅助方法
