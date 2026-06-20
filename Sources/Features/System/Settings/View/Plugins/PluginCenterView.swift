@@ -160,7 +160,7 @@ struct PluginCenterView: View {
                     NavigationLink {
                         LocalPluginDetailView(manifest: plugin.manifest)
                     } label: {
-                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, pluginID: plugin.manifest.id, source: "local", isLocal: true)
+                        PluginCard(name: plugin.manifest.name, version: plugin.manifest.version, pluginID: plugin.manifest.id, source: .local, isLocal: true)
                     }
                 }
                 .padding(.horizontal)
@@ -220,7 +220,7 @@ struct PluginCenterView: View {
                     } else {
                         ForEach(filtered) { p in
                             NavigationLink(destination: PluginDetailView(plugin: p, marketService: marketService)) {
-                                PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon, source: "community")
+                                PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon, pluginID: p.id, source: .community)
                             }
                         }
                         .padding(.horizontal)
@@ -231,6 +231,12 @@ struct PluginCenterView: View {
     }
 }
 
+/// 插件来源类型
+enum PluginSource: String {
+    case local
+    case community
+}
+
 struct PluginCard: View {
     let name: String
     let version: String
@@ -239,14 +245,18 @@ struct PluginCard: View {
     var rating: Double?
     var icon: String = "puzzlepiece.fill"
     var pluginID: String?
-    var source: String?    // "local" / "remote" / "community"
+    var source: PluginSource?
     var isLocal: Bool = false
 
+    @ObservedObject private var registry = PluginRegistry.shared
     @State private var localIcon: UIImage?
 
     /// 自适应计算插件的展示版本号，已安装则优先显示真实本地版本号
     private var displayVersion: String {
-        if let localPlugin = PluginRegistry.shared.plugins.first(where: { $0.manifest.id == (pluginID ?? "") }) {
+        // 兼容简短 ID 和物理包名规范 ID 的后缀匹配，寻找对应的本地已安装插件实体以显示正确的版本号
+        if let id = pluginID, let localPlugin = registry.plugins.first(where: { 
+            $0.manifest.id == id || $0.manifest.id.hasSuffix("." + id) 
+        }) {
             return localPlugin.manifest.version
         }
         return version
@@ -257,6 +267,7 @@ struct PluginCard: View {
             // 优先显示本地 icon.png，fallback SF Symbol，并剪裁为连续平滑 Squircle 圆角
             if let uiImage = localIcon {
                 Image(uiImage: uiImage)
+                    .renderingMode(.original)
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
@@ -325,27 +336,30 @@ struct PluginCard: View {
         .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).stroke(Color.theme.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
         .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity * 0.66), radius: 8, x: 0, y: 4)
         .task {
-            if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
-                localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
+            if let id = pluginID {
+                // 兼容支持物理包名 ID（如 com.zhiyu.plugin...）与市场简短 ID 的模糊联通匹配以加载图标
+                let targetID = registry.plugins.first(where: { 
+                    $0.manifest.id == id || $0.manifest.id.hasSuffix("." + id) 
+                })?.manifest.id ?? id
+                
+                if let url = PluginRegistry.shared.iconURL(for: targetID) {
+                    localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
+                }
             }
         }
     }
 
-    private func sourceLabel(_ src: String) -> String {
+    private func sourceLabel(_ src: PluginSource) -> String {
         switch src {
-        case "local": return L10n.Plugin.Detail.categoryLocal
-        case "remote": return L10n.Plugin.Detail.categoryRemote
-        case "community": return L10n.Plugin.Detail.categoryCommunity
-        default: return src
+        case .local: return L10n.Plugin.Detail.categoryLocal
+        case .community: return L10n.Plugin.Detail.categoryCommunity
         }
     }
 
-    private func sourceColor(_ src: String) -> Color {
+    private func sourceColor(_ src: PluginSource) -> Color {
         switch src {
-        case "local": return .green
-        case "remote": return .blue
-        case "community": return .orange
-        default: return .appSecondary
+        case .local: return .green
+        case .community: return .orange
         }
     }
 }

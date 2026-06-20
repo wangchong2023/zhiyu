@@ -32,7 +32,9 @@ struct LocalPluginDetailView: View {
                 HStack(spacing: DesignSystem.wide) {
                     // 优先显示本地 icon.png，fallback SF Symbol
                     if let image = localIcon {
-                        Image(uiImage: image).resizable().scaledToFit()
+                        Image(uiImage: image)
+                            .renderingMode(.original)
+                            .resizable().scaledToFit()
                             .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                             .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
                     } else {

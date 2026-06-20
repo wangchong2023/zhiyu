@@ -83,7 +83,8 @@ struct MarketPlugin: Codable, Identifiable {
     ///   - downloadBase: 下载的基准 URL 地址
     init(from entry: CommunityPluginEntry, downloadBase: URL) {
         self.id = entry.id
-        self.version = "latest"
+        // 优先采纳 json 物理文件声明的动态版本字段，兜底初始版本使用 0.0.1
+        self.version = entry.version ?? "0.0.1"
         self.author = entry.author
         self.downloads = "N/A"
         self.rating = 0
@@ -121,6 +122,8 @@ struct CommunityPluginEntry: Codable {
     let author: String
     let description: String
     let repo: String
+    /// 自定义增加动态版本属性，由云端 json 配置文件统一调配
+    let version: String?
     
     let names: [String: String]?
     let descriptions: [String: String]?
@@ -144,6 +147,7 @@ final class PluginMarketService: ObservableObject {
         return url
     }()
 
+    /// 插件市场目标请求 URL 地址，统一为 GitHub 生产环境发布地址
     private var targetURL: URL {
         return registryGitHub
     }
@@ -168,17 +172,26 @@ final class PluginMarketService: ObservableObject {
         }
     }
 
+    /// 构建要尝试请求的插件市场 URL 地址列表（支持按首选语言加载）
+    /// - Returns: 包含高优先级多语言包及通用兜底包的 URL 数组。
     private func buildPluginURLs() -> [URL] {
         let preferredLanguage = Locale.preferredLanguages.first ?? "en"
         var urls: [URL] = []
+        
+        // 优先将对应语言的本地化 community-plugins_zh-Hans.json 加入抓取队列中以优先尝试
         if preferredLanguage.hasPrefix("zh") {
             let zhURL = registryGitHub.deletingLastPathComponent().appendingPathComponent("community-plugins_zh-Hans.json")
             urls.append(zhURL)
         }
+        
+        // 其次加入通用的默认 community-plugins.json 作为最终兜底
         urls.append(registryGitHub)
         return urls
     }
 
+    /// 并发依次尝试拉取请求列表中的第一个可用插件元数据
+    /// - Parameter urls: 待尝试的 URL 数组列表
+    /// - Returns: 是否有一项拉取成功。
     private func tryFetchAny(from urls: [URL]) async -> Bool {
         // swiftlint:disable for_where
         for url in urls {
@@ -190,6 +203,9 @@ final class PluginMarketService: ObservableObject {
         return false
     }
 
+    /// 尝试从单个 URL 抓取插件元数据
+    /// - Parameter url: 目标 URL
+    /// - Returns: 抓取并解析是否成功。
     private func tryFetch(from url: URL) async -> Bool {
         do {
             Logger.shared.info("[PluginMarket] 正在尝试从以下地址拉取插件市场: \(url.absoluteString)")
@@ -208,11 +224,27 @@ final class PluginMarketService: ObservableObject {
         }
     }
 
+    /// 解析服务器返回的插件市场元数据 JSON 并转换为 MarketPlugin 结构
+    /// - Parameter data: 二进制响应数据
+    /// - Returns: 反序列化与数据填充是否成功。
     private func processPluginResponse(data: Data) async -> Bool {
         let decoder = JSONDecoder()
 
         if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
-            let rawURLString = registryGitHub.absoluteString.replacingOccurrences(of: "community-plugins.json", with: "plugins")
+            // 根据实际请求的目标 URL，计算得出其下载子文件（manifest, index.js）的 downloadBase 基准路径
+            let currentTargetURL = targetURL
+            let rawURLString: String
+            if currentTargetURL.absoluteString.contains("community-plugins.json") {
+                rawURLString = currentTargetURL.absoluteString.replacingOccurrences(of: "community-plugins.json", with: "plugins")
+            } else if currentTargetURL.absoluteString.contains("community-plugins_zh-Hans.json") {
+                rawURLString = currentTargetURL.absoluteString.replacingOccurrences(of: "community-plugins_zh-Hans.json", with: "plugins")
+            } else if currentTargetURL.absoluteString.contains("community.json") {
+                rawURLString = currentTargetURL.absoluteString.replacingOccurrences(of: "community.json", with: "plugins")
+            } else {
+                // 如果是 api/plugins 等调试接口，直接用其父级目录的 plugins
+                rawURLString = currentTargetURL.deletingLastPathComponent().appendingPathComponent("plugins").absoluteString
+            }
+            
             if let downloadBase = URL(string: rawURLString) {
                 let plugins = await MainActor.run {
                     communityPlugins.map { MarketPlugin(from: $0, downloadBase: downloadBase) }

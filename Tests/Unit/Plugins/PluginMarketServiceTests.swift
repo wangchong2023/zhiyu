@@ -123,10 +123,11 @@ final class PluginMarketServiceTests: XCTestCase {
                 author: "ZhiYu Team",
                 description: "Desc",
                 repo: "wangchong2023/zhiyu-releases",
+                version: nil,
                 names: nil,
                 descriptions: nil
             ),
-            downloadBase: URL(string: "http://localhost/plugins")!
+            downloadBase: URL(string: "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/plugins")!
         )
         
         // 构造一个没有下载 URL 的插件实例
@@ -296,5 +297,200 @@ final class PluginMarketServiceTests: XCTestCase {
         XCTAssertEqual(frCandidates[0].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_fr.md")
         XCTAssertEqual(frCandidates[1].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_en.md")
         XCTAssertEqual(frCandidates[2].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id.md")
+    }
+
+    /// 验证正常情况下 downloadPlugin 能并发成功下载、保存和在沙盒中建立插件所需的文件结构
+    func testDownloadPluginSuccess() async throws {
+        // 创建临时沙盒 Plugins 目录路径
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            XCTFail("无法定位本地 Documents 目录")
+            return
+        }
+        let pluginsDir = documentsURL.appendingPathComponent("Plugins")
+        let destFolder = pluginsDir.appendingPathComponent("com.test.plugin.success")
+        
+        // 预先清理可能残留的文件，保证测试隔离性
+        try? fileManager.removeItem(at: destFolder)
+        
+        // 创建用于测试的 Mock 插件实例
+        let plugin = MarketPlugin(
+            id: "com.test.plugin.success",
+            version: "1.0.0",
+            author: "Test Author",
+            downloads: "100",
+            rating: 5.0,
+            icon: "star",
+            downloadURL: "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/plugins/com.test.plugin.success",
+            minAppVersion: "2.0.0",
+            requiredPermissions: ["writeContent"],
+            monetization: nil,
+            reviewCount: 0,
+            category: "Sync",
+            source: "community",
+            names: ["en": "Success Plugin"],
+            descriptions: ["en": "Successful download test."]
+        )
+        
+        // 配置模拟的必需文件二进制和 JSON 字符串
+        let manifestJSON = """
+        {
+            "id": "com.test.plugin.success",
+            "version": "1.0.0",
+            "author": "Test Author",
+            "permissions": ["writeContent"],
+            "names": { "en": "Success Plugin" },
+            "descriptions": { "en": "Successful download test." }
+        }
+        """
+        
+        let indexJS = """
+        function onLoad(context) {
+            context.log("Loaded Success Plugin");
+        }
+        function onUnload() {
+            // Unload
+        }
+        """
+        
+        // 使用 URLProtocol 劫持并 Mock 对应的文件 HTTP 返回
+        MockURLProtocol.requestHandler = { request in
+            let urlString = request.url?.absoluteString ?? ""
+            // swiftlint:disable:next force_unwrapping
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            
+            if urlString.hasSuffix("manifest.json") {
+                return (response, Data(manifestJSON.utf8))
+            } else if urlString.hasSuffix("index.js") {
+                return (response, Data(indexJS.utf8))
+            } else if urlString.hasSuffix("icon.png") {
+                return (response, Data())
+            } else if urlString.hasSuffix("README.md") {
+                return (response, Data("# Success Plugin README".utf8))
+            } else {
+                return (response, Data())
+            }
+        }
+        
+        // 触发下载行为
+        let success = await service.downloadPlugin(plugin)
+        XCTAssertTrue(success, "在有 Mock API 成功返回时，插件下载应当返回 True 代表安装成功")
+        
+        // 校验必需的文件是否已经成功创建落地在沙盒目录中
+        let manifestExists = fileManager.fileExists(atPath: destFolder.appendingPathComponent("manifest.json").path)
+        let indexExists = fileManager.fileExists(atPath: destFolder.appendingPathComponent("index.js").path)
+        
+        XCTAssertTrue(manifestExists, "测试下载成功后，manifest.json 应当正确在沙盒落地")
+        XCTAssertTrue(indexExists, "测试下载成功后，index.js 应当正确在沙盒落地")
+        
+        // 彻底清理测试现场
+        try? fileManager.removeItem(at: destFolder)
+    }
+
+    /// 验证当市场插件ID（简短ID，例如 "toc-generator"）与物理 manifest.json 中声明的真实ID（例如 "com.zhiyu.plugin.local.toc-generator"）存在不匹配时，
+    /// 安装之后逻辑层是否能够通过自适应后缀匹配识别到已安装状态，并且卸载时能完美卸载。
+    func testDownloadPluginWithIDMismatchSuccess() async throws {
+        let fileManager = FileManager.default
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            XCTFail("无法定位本地 Documents 目录")
+            return
+        }
+        let pluginsDir = documentsURL.appendingPathComponent("Plugins")
+        
+        // 简短的市场插件 ID 
+        let marketID = "toc-generator"
+        // 真实的规范 ID
+        let realManifestID = "com.zhiyu.plugin.local.toc-generator"
+        
+        // 彻底清除可能因为之前测试残留于内存或物理磁盘中的同名插件，保证单测环境的绝对隔离性
+        PluginRegistry.shared.unloadPlugin(id: realManifestID)
+        
+        let destFolder = pluginsDir.appendingPathComponent(marketID)
+        try? fileManager.removeItem(at: destFolder)
+        
+        let plugin = MarketPlugin(
+            id: marketID,
+            version: "0.0.1",
+            author: "ZhiYu Team",
+            downloads: "100",
+            rating: 5.0,
+            icon: "star",
+            downloadURL: "https://raw.githubusercontent.com/wangchong2023/zhiyu-releases/master/plugins/\(marketID)",
+            minAppVersion: "2.0.0",
+            requiredPermissions: ["writeContent", "log"],
+            monetization: nil,
+            reviewCount: 0,
+            category: "Sync",
+            source: "community",
+            names: ["en": "TOC Generator"],
+            descriptions: ["en": "Test ID Mismatch."]
+        )
+        
+        let manifestJSON = """
+        {
+            "id": "\(realManifestID)",
+            "version": "0.0.1",
+            "author": "ZhiYu Team",
+            "permissions": ["writeContent", "log"],
+            "names": { "en": "TOC Generator" },
+            "descriptions": { "en": "Test ID Mismatch." }
+        }
+        """
+        
+        let indexJS = """
+        function onLoad(context) {
+            context.log("Loaded TOC Generator");
+        }
+        function onUnload() {}
+        """
+        
+        MockURLProtocol.requestHandler = { request in
+            let urlString = request.url?.absoluteString ?? ""
+            // swiftlint:disable:next force_unwrapping
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            
+            if urlString.hasSuffix("manifest.json") {
+                return (response, Data(manifestJSON.utf8))
+            } else if urlString.hasSuffix("index.js") {
+                return (response, Data(indexJS.utf8))
+            } else {
+                return (response, Data())
+            }
+        }
+        
+        // 1. 执行安装
+        let success = await service.downloadPlugin(plugin)
+        XCTAssertTrue(success, "插件下载安装应当成功")
+        
+        // 2. 验证通过后缀匹配和相等匹配能否探测到已安装状态
+        let isInstalled = PluginRegistry.shared.plugins.contains(where: {
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id)
+        })
+        XCTAssertTrue(isInstalled, "系统应当能识别不一致 ID 的已安装状态")
+        
+        // 3. 验证能否获取正确的展示版本号
+        if let localPlugin = PluginRegistry.shared.plugins.first(where: {
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id)
+        }) {
+            XCTAssertEqual(localPlugin.manifest.version, "0.0.1")
+        } else {
+            XCTFail("无法获取对应的本地已安装插件")
+        }
+        
+        // 4. 执行卸载并验证
+        let targetID = PluginRegistry.shared.plugins.first(where: { 
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id) 
+        })?.manifest.id ?? plugin.id
+        
+        PluginRegistry.shared.unloadPlugin(id: targetID)
+        
+        let isStillInstalled = PluginRegistry.shared.plugins.contains(where: {
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id)
+        })
+        XCTAssertFalse(isStillInstalled, "卸载后应当标记为未安装")
+        
+        // 5. 验证是否自动物理删除了磁盘文件夹以绝后患，如果此物理文件依然存在，则说明系统物理清理失败
+        let folderExists = fileManager.fileExists(atPath: destFolder.path)
+        XCTAssertFalse(folderExists, "卸载后应该自动在物理层删除该插件以简短 ID 命名的子文件夹，实际目录仍存在: \(destFolder.path)")
     }
 }

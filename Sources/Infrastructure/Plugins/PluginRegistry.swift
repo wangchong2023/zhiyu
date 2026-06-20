@@ -333,19 +333,23 @@ final class PluginRegistry: ObservableObject {
             }
         }
 
-        // 模糊匹配：删除包含 pluginID 片段的文件（兼容旧格式）
+        // 模糊匹配与自适应后缀匹配：清理可能由简短 ID（如 "toc-generator"）命名落地的物理目录或文件，
+        // 以及包含规范 ID 核心 Slug 片段的任何残留，防止应用重启时扫描器自动重新加载。
         do {
             let files = try fileManager.contentsOfDirectory(at: pluginsDir, includingPropertiesForKeys: nil)
             let idSlug = pluginID.replacingOccurrences(of: "com.zhiyu.plugin.", with: "")
             for file in files {
                 let name = file.deletingPathExtension().lastPathComponent
-                if name.contains(idSlug) || name == pluginID {
+                // 1. 完全一致
+                // 2. 包含核心 ID 片段 (idSlug)
+                // 3. 规范注册 ID 以物理文件名后缀结尾 (例如 "com.zhiyu.plugin.local.toc-generator" 匹配 "toc-generator" 目录)
+                if name == pluginID || name.contains(idSlug) || pluginID.hasSuffix("." + name) {
                     try? fileManager.removeItem(at: file)
-                    Logger.shared.info("[PluginRegistry] Cleaned up: \(file.lastPathComponent)")
+                    Logger.shared.info("[PluginRegistry] 成功物理清理磁盘残留: \(file.lastPathComponent)")
                 }
             }
         } catch {
-            Logger.shared.error("[PluginRegistry] Cleanup scan error", error: error)
+            Logger.shared.error("[PluginRegistry] 清理磁盘扫描目录发生异常", error: error)
         }
     }
 

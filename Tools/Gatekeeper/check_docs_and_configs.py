@@ -181,7 +181,8 @@ def find_all_markdown_files(workspace):
         if any(p.startswith(".") and p != "." and p != ".." for p in parts):
             continue
             
-        if any(p in root for p in ["build", "DerivedData", ".cache", "node_modules"]):
+        # 排除构建目录、派生数据目录、隐藏缓存目录、Node依赖目录以及外部发布的插件仓（zhiyu-releases）
+        if any(p in root for p in ["build", "DerivedData", ".cache", "node_modules", "zhiyu-releases"]):
             continue
             
         for file in files:

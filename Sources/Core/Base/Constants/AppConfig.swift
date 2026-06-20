@@ -27,8 +27,9 @@ enum AppConfig {
     // MARK: - 内部键名定义
     private enum ConfigKey {
         enum Network: String {
+            /// 插件市场生产环境 URL
             case pluginMarketProduction = "plugin_market_production"
-            case pluginMarketDebug = "plugin_market_debug"
+            /// 模型商店生产环境
             case modelStoreProduction = "model_store_production"
             case modelStoreDebug = "model_store_debug"
             case jinaReaderBase = "jina_reader_base"
@@ -95,8 +96,8 @@ enum AppConfig {
     }
 
     // MARK: - 网络与服务器
+    /// 插件市场生产环境物理分发 URL
     static var productionURL: String { getNetwork(.pluginMarketProduction) }
-    static var mockServerURL: String { getNetwork(.pluginMarketDebug) }
 
     /// 模型商店 URL（根据环境自动选择）
     static var modelStoreURL: String {

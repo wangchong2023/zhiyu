@@ -15,6 +15,7 @@ import SwiftUI
 struct PluginDetailView: View {
     let plugin: MarketPlugin
     @ObservedObject var marketService: PluginMarketService
+    @ObservedObject private var registry = PluginRegistry.shared
 
     @Environment(\.dismiss) var dismiss
     @State private var isInstalling = false
@@ -26,14 +27,21 @@ struct PluginDetailView: View {
 
     /// 计算插件的当前展示版本 (如果已安装则展示本地已安装的真实版本号，否则展示市场版本)
     private var displayVersion: String {
-        if let localPlugin = PluginRegistry.shared.plugins.first(where: { $0.manifest.id == plugin.id }) {
+        // 兼容简短 ID 和物理包名规范 ID 的后缀匹配，寻找对应的本地已安装插件实体
+        if let localPlugin = registry.plugins.first(where: { 
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id) 
+        }) {
             return localPlugin.manifest.version
         }
         return plugin.version
     }
 
+    /// 校验该插件是否已经成功下载并安装落地于沙盒中
     private var isInstalled: Bool {
-        PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == plugin.id })
+        // 检查 PluginRegistry 中是否存在完全匹配或后缀点拼接匹配（.id）的插件实例
+        registry.plugins.contains(where: { 
+            $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id) 
+        })
     }
 
     var body: some View {
@@ -77,11 +85,15 @@ struct PluginDetailView: View {
         }
         .background(PageBackgroundView(accentColor: .appAccent))
         .task {
-            // 异步加载本地图标和 README，避免主线程 I/O 阻塞
-            if let url = PluginRegistry.shared.iconURL(for: plugin.id) {
+            // 异步加载本地图标和 README，支持包名 ID（如 com.zhiyu.plugin...）与市场简短 ID 的模糊联通匹配，避免主线程 I/O 阻塞
+            let targetID = PluginRegistry.shared.plugins.first(where: { 
+                $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id) 
+            })?.manifest.id ?? plugin.id
+            
+            if let url = PluginRegistry.shared.iconURL(for: targetID) {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
             }
-            localReadme = PluginRegistry.shared.localizedReadme(for: plugin.id)
+            localReadme = PluginRegistry.shared.localizedReadme(for: targetID)
             
             // 异步拉取云端多语言 README
             await fetchRemoteReadme()
@@ -96,6 +108,7 @@ struct PluginDetailView: View {
             // 插件大图标 — 优先显示已缓存的本地 icon.png，使用 App Store 经典的 Squircle 平滑圆角
             if let uiImage = localIcon {
                 Image(uiImage: uiImage)
+                    .renderingMode(.original)
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
@@ -159,7 +172,11 @@ struct PluginDetailView: View {
             // 安装 / 卸载
             Button(action: {
                 if isInstalled {
-                    PluginRegistry.shared.unloadPlugin(id: plugin.id)
+                    // 解析出沙盒加载的真实 ID（例如 com.zhiyu.plugin.local.toc-generator）以便成功物理注销
+                    let targetID = PluginRegistry.shared.plugins.first(where: { 
+                        $0.manifest.id == plugin.id || $0.manifest.id.hasSuffix("." + plugin.id) 
+                    })?.manifest.id ?? plugin.id
+                    PluginRegistry.shared.unloadPlugin(id: targetID)
                     HapticFeedback.shared.trigger(.success)
                 } else {
                     HapticFeedback.shared.trigger(.selection)
