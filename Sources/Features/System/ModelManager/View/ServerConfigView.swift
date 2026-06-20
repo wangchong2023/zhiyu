@@ -64,11 +64,11 @@ public struct ServerConfigView: View {
                 .font(.system(size: 64)) // Dynamic Type
                 .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
 
-            Text(L10n.ModelManager.Server.emptyTitleAlt)
+            Text(L10n.ModelManager.Server.emptyTitle)
                 .font(.headline)
                 .foregroundStyle(.appText)
 
-            Text(L10n.ModelManager.Server.emptySubtitleAlt)
+            Text(L10n.ModelManager.Server.emptySubtitle)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
                 .multilineTextAlignment(.center)

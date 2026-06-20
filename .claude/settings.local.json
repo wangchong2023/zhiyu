@@ -264,7 +264,20 @@
       "Bash(awk NR>=180 && NR<=195 {printf \"%4d: %s\\\\n\", NR, $0} *)",
       "Bash(awk NR>=180 && NR<=192 {printf \"%4d: %s\\\\n\", NR, $0} *)",
       "Bash(swiftlint --strict --quiet)",
-      "Bash(xcodegen --version)"
+      "Bash(xcodegen --version)",
+      "Bash(RECORD_SNAPSHOTS=1 xcodebuild test -project ZhiYu.xcodeproj -scheme ZhiYu -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:ZhiYuTests/ComponentSnapshots/testSettingsView)",
+      "Bash(gh run *)",
+      "Read(//Users/constantine/Documents/work/code/projects/**)",
+      "Read(//Users/constantine/Documents/work/code/**)",
+      "Read(//Users/constantine/Documents/**)",
+      "Bash(rg -rn \"appEnv\\\\|screenClass\\\\|isPad\\\\|isMac\" Sources/ --type swift)",
+      "Bash(pkill -9 Xcode)",
+      "Bash(rm -rf /Users/constantine/Library/Developer/Xcode/DerivedData/ZhiYu-*/Build/Intermediates.noindex)",
+      "Bash(xcodebuild -resolvePackageDependencies -project ZhiYu.xcodeproj -scheme ZhiYu -scmProvider system)",
+      "Bash(sort -t: -k1,1 -k2,2n -u)",
+      "Bash(awk '/^  ZhiYuTests:/,/^  [A-Z]/' project.yml)",
+      "Bash(awk *)",
+      "Bash(tee /tmp/zhiyu_test_full.log)"
     ]
   }
 }

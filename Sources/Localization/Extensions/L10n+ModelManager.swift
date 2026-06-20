@@ -238,14 +238,6 @@ extension L10n {
                 ModelManager.tr("model_manager.server.api_key")
             }
 
-            public static var emptyTitleAlt: String {
-                ModelManager.tr("model_manager.server.empty_title")
-            }
-
-            public static var emptySubtitleAlt: String {
-                ModelManager.tr("model_manager.server.empty_subtitle")
-            }
-
             /// 最后测试时间
             /// - Parameter date: 格式化的日期字符串
             /// - Returns: 格式化的测试时间文本

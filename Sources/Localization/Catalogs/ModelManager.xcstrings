@@ -534,13 +534,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add a server to get started"
+            "value": "Add a Mock server for local development and testing"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "添加一个服务器以开始使用"
+            "value": "添加 Mock 服务器以进行本地开发测试"
           }
         }
       }
@@ -551,13 +551,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No Servers"
+            "value": "No Servers Configured"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "暂无服务器"
+            "value": "暂无配置的服务器"
           }
         }
       }
@@ -813,40 +813,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "单次生成的最大令牌数量"
-          }
-        }
-      }
-    },
-    "model_manager.server.empty_title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Servers Configured"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暂无配置的服务器"
-          }
-        }
-      }
-    },
-    "model_manager.server.empty_subtitle": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add a Mock server for local development and testing"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "添加 Mock 服务器以进行本地开发测试"
           }
         }
       }
