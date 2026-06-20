@@ -320,7 +320,7 @@ public struct InferenceParametersView: View {
             HStack(alignment: .top, spacing: 4) {
                 Image(systemName: "lightbulb.fill")
                     .font(.caption2)
-                    .foregroundStyle(.theme.orange)
+                    .foregroundStyle(Color.theme.orange)
                     .padding(.top, 2)
                 Text(tip)
                     .font(.caption2)
