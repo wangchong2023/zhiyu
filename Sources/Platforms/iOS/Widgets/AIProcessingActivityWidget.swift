@@ -115,17 +115,17 @@ struct AIProcessingActivityWidget: Widget {
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
                         .symbolRenderingMode(.multicolor)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 14, weight: .bold)) // Dynamic Type
                     
                     Text(context.attributes.taskName.prefix(2))
-                        .font(.system(size: 10, weight: .heavy))
+                        .font(.system(size: 10, weight: .heavy)) // Dynamic Type
                         .foregroundStyle(.purple)
                 }
                 .padding(.leading, 4)
             } compactTrailing: {
                 // 紧凑模式 - 右侧：增大字体并使用等宽数字，提升易读性
                 Text("\(Int(context.state.progress * 100))%")
-                    .font(.system(size: 13, weight: .black, design: .rounded).monospacedDigit())
+                    .font(.system(size: 13, weight: .black, design: .rounded).monospacedDigit()) // Dynamic Type
                     .foregroundColor(.purple)
             } minimal: {
                 // 最小模式
