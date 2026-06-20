@@ -1358,7 +1358,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "断链: 「%1$@」引用了不存在的页面 [[%2$@]]"
+            "value": "失效链接: 「%1$@」引用了不存在的页面 [[%2$@]]"
           }
         }
       }
@@ -2293,7 +2293,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "断开链接"
+            "value": "失效链接"
           }
         }
       }
@@ -2327,7 +2327,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "孤立节点"
+            "value": "无引节点"
           }
         }
       }
@@ -2871,7 +2871,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "孤立页面: 「%@」没有任何反向链接"
+            "value": "无引页面: 「%@」没有任何反向引用"
           }
         }
       }
@@ -3392,13 +3392,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copyright (c) 2026 Wang Chong. All rights reserved."
+            "value": "Copyright (c) 2026 ZhiYu. All rights reserved."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "版权所有 (c) 2026 Wang Chong。保留所有权利。"
+            "value": "版权所有 (c) 2026 智宇。保留所有权利。"
           }
         }
       }
@@ -3426,13 +3426,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wang Chong"
+            "value": "Constantine"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "王冲"
+            "value": "Constantine"
           }
         }
       }
@@ -4202,6 +4202,57 @@
         }
       }
     },
+    "settings.feedback.statusPending": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "待处理"
+          }
+        }
+      }
+    },
+    "settings.feedback.statusSynced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synced"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已提交"
+          }
+        }
+      }
+    },
+    "settings.feedback.statusFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提交失败"
+          }
+        }
+      }
+    },
     "settings.iCloudSync": {
       "extractionState": "manual",
       "localizations": {
@@ -4384,7 +4435,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "重建初始笔记本"
+            "value": "恢复初始数据"
           }
         }
       }
@@ -6034,6 +6085,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restoring..."
+          }
+        }
+      }
+    },
+    "auth.restoreHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如果您之前购买过此套餐，可点击此按钮恢复您在 App Store 的订阅权益，无需重复支付。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If you previously purchased this plan, tap here to restore your App Store subscription benefits without paying again."
           }
         }
       }

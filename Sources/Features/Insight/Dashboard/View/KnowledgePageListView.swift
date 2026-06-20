@@ -116,7 +116,7 @@ struct KnowledgePageListContent: View {
             .scrollIndicators(.hidden)
             
         }
-        .appSubPageToolbar(title: filterType?.displayName ?? L10n.Common.Sidebar.pageList, showVaultBadge: true)
+        .appSubPageToolbar(title: filterType?.displayName ?? L10n.Common.Sidebar.pageList)
         .navigationBarBackButtonHidden(false)
         .onChange(of: searchText) { _, newValue in
             triggerSearch(query: newValue)

@@ -17,11 +17,35 @@ struct BreadcrumbView: View {
     let history: [KnowledgePage]
     /// 导航回调事件，当点击某个面包屑节点时，触发回溯跳转
     let onNavigate: (UUID) -> Void
+    /// 返回首页回调事件
+    let onGoHome: () -> Void
     
     var body: some View {
         // 挂载 BreadcrumbNavigation 标识符，供 UI 自动化测试全局定位面包屑容器
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DesignSystem.small) {
+                // 常驻的“知识库主页”节点，方便深度跳转一键快速返回
+                Button(action: {
+                    HapticFeedback.shared.trigger(.selection)
+                    onGoHome()
+                }) {
+                    HStack(spacing: DesignSystem.tiny) {
+                        Image(systemName: DesignSystem.Icons.booksVerticalFill)
+                            .font(.caption2)
+                        Text(L10n.Knowledge.Page.knowledge)
+                            .font(.caption.weight(.medium))
+                    }
+                    .foregroundStyle(.appSecondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("BreadcrumbHome")
+                
+                if !history.isEmpty {
+                    Image(systemName: DesignSystem.Icons.forward)
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                }
+
                 ForEach(Array(history.enumerated()), id: \.offset) { index, page in
                     HStack(spacing: DesignSystem.small) {
                         // 每一个面包屑节点按钮挂载 "BreadcrumbItem_\(index)" 唯一标识符，支持 UI 自动化测试精准点击
@@ -41,7 +65,7 @@ struct BreadcrumbView: View {
                         if index < history.count - 1 {
                             Image(systemName: DesignSystem.Icons.forward)
                                 .font(.caption2)
-                                .foregroundStyle(.appBorder)
+                                .foregroundStyle(.appSecondary)
                         }
                     }
                 }

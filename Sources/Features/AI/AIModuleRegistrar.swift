@@ -37,6 +37,11 @@ struct AIModuleRegistrar: ModuleRegistrar {
 
         // 远程配置服务
         container.register(RemoteConfigService() as any RemoteConfigCapabilities, for: (any RemoteConfigCapabilities).self)
+        
+        // 注册大模型权重文件后台下载管理器与契约能力
+        let downloadManager = ModelDownloadManager.shared
+        container.register(downloadManager as any ModelDownloadCapabilities, for: (any ModelDownloadCapabilities).self)
+        container.register(downloadManager, for: ModelDownloadManager.self)
 
         // LLM 协议实现
         container.register(ChatRunner(), for: (any LLMChatServiceProtocol).self)

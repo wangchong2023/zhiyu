@@ -58,7 +58,7 @@ struct NotebookListRow: View {
                 Spacer()
                 
                 // 3. 统计指标展示（显示该金库中已持久化的知识页面总数）
-                VStack(alignment: .trailing, spacing: DesignSystem.tiny) {
+                HStack(alignment: .lastTextBaseline, spacing: DesignSystem.atomic) {
                     Text("\(notebook.pageCount)")
                         .font(.system(size: DesignSystem.bodyFontSize, weight: .semibold, design: .rounded))
                         .foregroundStyle(.appAccent)

@@ -71,6 +71,36 @@ final class LocalizationTests: XCTestCase {
         Localized.languageMode = currentMode
     }
     
+    /// 验证从字典中根据当前 Locale 最佳匹配或降级回滚规则 (bestMatch)
+    func testBestMatchLanguageFallback() {
+        // 1. 测试当字典为空时，返回指定的 fallback 值
+        let emptyDict: [String: String] = [:]
+        XCTAssertEqual(Localized.bestMatch(in: emptyDict, fallback: "FallbackValue"), "FallbackValue")
+        
+        // 2. 测试当字典只包含英文 "en" 且当前设备 Locale 不匹配任何其他 Key 时 (通过模拟非主语言的冷门 key 传入)
+        let coldDict = ["de": "German", "en": "English"]
+        let bestForCold = Localized.bestMatch(in: coldDict, fallback: "FallbackValue")
+        
+        if Locale.current.identifier.hasPrefix("de") {
+            XCTAssertEqual(bestForCold, "German")
+        } else {
+            // 当前非德语系统时，由于字典中含 "en"，应完美回退到英文
+            XCTAssertEqual(bestForCold, "English")
+        }
+        
+        // 3. 测试完全没有匹配且字典不含 "en" 时，返回字典首个值 (dict.values.first)
+        let noEnDict = ["fr": "French", "es": "Spanish"]
+        let matched = Localized.bestMatch(in: noEnDict, fallback: "FallbackValue")
+        if Locale.current.identifier.hasPrefix("fr") {
+            XCTAssertEqual(matched, "French")
+        } else if Locale.current.identifier.hasPrefix("es") {
+            XCTAssertEqual(matched, "Spanish")
+        } else {
+            // 其他语言则为 fr 或 es 之一 (基于 Dictionary 无序特性)
+            XCTAssertTrue(matched == "French" || matched == "Spanish")
+        }
+    }
+    
     /// 验证格式化字符串是否正常工作
     func testParameterizedLocalization() {
         // 验证 trf 接口不会崩溃且能正常注入参数
@@ -89,7 +119,7 @@ final class LocalizationTests: XCTestCase {
             // Common 表：misc 系列 key
             ModuleEntry(name: "Common", table: "Common", keys: ["ok", "cancel", "done"]),
             // Settings/Auth/Lint/Coachmark 均路由到 System 表
-            ModuleEntry(name: "Settings", table: "System", keys: ["aboutApp", "version", "section.about"]),
+            ModuleEntry(name: "Settings", table: "System", keys: ["aboutApp", "version", "section.about", "settings.about.developerName", "settings.about.copyright"]),
             ModuleEntry(name: "Auth", table: "System", keys: ["guestMode", "login"]),
             ModuleEntry(name: "Lint", table: "System", keys: ["noIssues", "noIssuesHint"]),
             ModuleEntry(name: "Coachmark", table: "System", keys: ["onboarding.action.next"]),
@@ -103,11 +133,11 @@ final class LocalizationTests: XCTestCase {
             ModuleEntry(name: "Plugin", table: "Plugin", keys: ["section.rag"]),
             // Knowledge 表：Creation/Vault 路由到此
             ModuleEntry(name: "Creation", table: "Knowledge", keys: ["pageTitle", "content"]),
-            ModuleEntry(name: "Vault", table: "Knowledge", keys: ["vault.label"]),
+            ModuleEntry(name: "Vault", table: "Knowledge", keys: ["vault.label", "tag.layoutList", "tag.layoutBubble", "tag.expandAll", "tag.collapse"]),
             // Insight 表：Dashboard/Graph 路由到此
             // 注意：Graph 模块的 tr() 辅助函数会给 key 添加 "graph." 前缀，
             // 因此 xcstrings 中真实 key 为 "graph.title"。
-            ModuleEntry(name: "Dashboard", table: "Insight", keys: ["dashboard.hotTopics", "dashboard.density"]),
+            ModuleEntry(name: "Dashboard", table: "Insight", keys: ["dashboard.hotTopics", "dashboard.density", "dashboard.stats.tab.plugins", "dashboard.stats.tab.satisfactionAndEval"]),
             ModuleEntry(name: "Graph", table: "Insight", keys: ["graph.title"]),
             // Platform 表：Watch/Widget 路由到此
             ModuleEntry(name: "Watch", table: "Platform", keys: ["watch.capture"]),

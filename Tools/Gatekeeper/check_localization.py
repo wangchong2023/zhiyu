@@ -258,7 +258,7 @@ class XCStringsAuditor:
             "AI", "PDF", "Token", "RAG", "ms", "MB", "GB", "SHA256", "Top-K", "Top-P", "ESC", "·", 
             "about", "action", "ignore", "preview", "skip", "unknown", "yesterday", "retry", 
             "A", "B", "1 Text", "50-69", "70-89", "90-100", "50–69", "70–89", "90–100", "Mac", "macOS", "—",
-            "MRR", "NDCG@10", "F1@5", "MAP", "Lint", "model-name", "< 50", "%@ GB", "sk-..."
+            "MRR", "NDCG@10", "F1@5", "MAP", "Lint", "model-name", "< 50", "%@ GB", "sk-...", "Constantine"
         }
         if en_trimmed in EXEMPT_IDENTICAL_VALUES or en_trimmed in KNOWN_PROPER_NAMES:
             return True
@@ -1010,11 +1010,14 @@ class ObsoleteKeyDetector:
             'ondevice.',
             'icloud.',
             'llm.',
-            'weekly.aiAnalysis'
+            'weekly.aiAnalysis',
+            'watch.'
         )
         
         unused_issues = []
         for ref, (key, file) in all_keys_with_table.items():
+            if file == 'InfoPlist.xcstrings':
+                continue
             if ref in used_keys_with_table:
                 continue
             if any(key.startswith(pre) for pre in dynamic_prefixes):

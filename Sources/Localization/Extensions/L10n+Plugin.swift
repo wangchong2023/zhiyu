@@ -180,6 +180,7 @@ extension L10n {
             public static var showLess: String { Plugin.tr("plugin.detail.showLess") }
             public static var ratingsTitle: String { Plugin.tr("plugin.detail.ratings") }
             public static var secureLabel: String { Plugin.tr("plugin.detail.secure") }
+            public static var securePassed: String { Plugin.tr("plugin.detail.securePassed") }
             public static var allPlatforms: String { Plugin.tr("plugin.detail.allPlatforms") }
             public static var compatibilityTitle: String { Plugin.tr("plugin.detail.compatibility") }
         }

@@ -27,26 +27,48 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
         // 根据 DEBUG/RELEASE 环境自动选择 URL
         let remoteURLString = AppConfig.modelStoreURL
 
-        guard let url = URL(string: remoteURLString) else {
-            throw NetworkError.invalidURL
+        let preferredLanguage = Locale.preferredLanguages.first ?? "en"
+        var urlsToTry: [URL] = []
+        
+        if preferredLanguage.hasPrefix("zh") {
+            var zhURLString = remoteURLString
+            if zhURLString.contains(".json") {
+                zhURLString = zhURLString.replacingOccurrences(of: ".json", with: "_zh-Hans.json")
+            } else {
+                zhURLString += "_zh-Hans"
+            }
+            if let zhURL = URL(string: zhURLString) {
+                urlsToTry.append(zhURL)
+            }
+        }
+        
+        if let defaultURL = URL(string: remoteURLString) {
+            urlsToTry.append(defaultURL)
         }
 
-        do {
-            let (data, response) = try await session.data(from: url)
-            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-            guard statusCode == 200 else {
-                throw NetworkError.serverError(500, "Fetch remote models allowlist failed.")
-            }
+        var lastError: Error?
+        for url in urlsToTry {
+            do {
+                Logger.shared.info("[RemoteConfigService] 正在尝试从以下地址拉取模型白名单: \(url.absoluteString)")
+                let (data, response) = try await session.data(from: url)
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                guard statusCode == 200 else {
+                    throw NetworkError.serverError(500, "Fetch remote models allowlist failed with HTTP \(statusCode).")
+                }
 
-            let apiResponse = try decoder.decode(ApiResponse<[LLMManifest]>.self, from: data)
-            if apiResponse.isSuccess, let list = apiResponse.data {
-                return list
+                let apiResponse = try decoder.decode(ApiResponse<[LLMManifest]>.self, from: data)
+                if apiResponse.isSuccess, let list = apiResponse.data {
+                    return list
+                }
+            } catch {
+                Logger.shared.warning("[RemoteConfigService] 尝试拉取大模型白名单 (\(url.absoluteString)) 失败: \(error)")
+                lastError = error
             }
-            throw NetworkError.unexpected("Remote models payload is empty.")
-        } catch {
-            Logger.shared.error("[RemoteConfigService] Error, using fallback: \(error)")
-            return getFallbackLLMManifests()
         }
+
+        // 若全部请求失败，使用离线兜底
+        Logger.shared.error("[RemoteConfigService] 远端拉取失败，使用离线兜底: \(String(describing: lastError))")
+        return getFallbackLLMManifests()
     }
     
     /// 异步拉取动态 Agent 智能技能（Prompt 模板及超参限制）集合
@@ -78,7 +100,10 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     /// 从 model_allowlist.json 加载离线预设模型清单
     private func getFallbackLLMManifests() -> [LLMManifest] {
-        guard let url = Bundle.main.url(forResource: "model_allowlist", withExtension: "json"),
+        let preferredLanguage = Locale.preferredLanguages.first ?? "en"
+        let resourceName = preferredLanguage.hasPrefix("zh") ? "model_allowlist_zh-Hans" : "model_allowlist"
+        
+        guard let url = Bundle.main.url(forResource: resourceName, withExtension: "json") ?? Bundle.main.url(forResource: "model_allowlist", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let models = json["models"] as? [[String: Any]] else {

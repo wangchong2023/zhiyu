@@ -309,6 +309,16 @@ extension DatabaseManager {
             }
         }
 
+        // V13: 反馈条目新增处理状态列
+        migrator.registerMigration("v13_feedback_status") { db in
+            let columns = try db.columns(in: FeedbackEntry.databaseTableName)
+            if !columns.contains(where: { $0.name == FeedbackEntry.CodingKeys.status.name }) {
+                try db.alter(table: FeedbackEntry.databaseTableName) { t in
+                    t.add(column: FeedbackEntry.CodingKeys.status.name, .text).notNull().defaults(to: FeedbackStatus.pending.rawValue)
+                }
+            }
+        }
+
         // V12: RAG 评估新增用户满意度评分（幂等）
         migrator.registerMigration("v12_rag_user_rating") { db in
             let columns = try db.columns(in: RAGEvaluation.databaseTableName)

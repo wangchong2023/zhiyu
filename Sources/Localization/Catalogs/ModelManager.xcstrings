@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "model_manager.card.warning_low_memory": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low memory, high crash risk"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备运存较低，有较高的闪退风险"
+          }
+        }
+      }
+    },
     "model_manager.card.activate": {
       "extractionState": "manual",
       "localizations": {

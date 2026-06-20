@@ -187,7 +187,7 @@ private struct ModelCardView: View {
                     if isLocalReady {
                         HStack(spacing: 2) {
                             Image(systemName: "checkmark.shield.fill")
-                            Text("")
+                            Text(L10n.ModelManager.Card.ready)
                         }
                         .font(.caption2.bold())
                         .foregroundStyle(.green)
@@ -312,47 +312,64 @@ private struct ModelCardView: View {
     
     // MARK: - 状态子栏与操作按钮
     
-    /// 下载进度与状态文案提示
+    /// 下载进度环与状态文案提示，支持中文/英文本地化映射
+    /// - Parameters:
+    ///   - manifest: 模型元数据
+    ///   - state: 当前模型文件的下载状态
+    /// - Returns: 状态子栏视图
     @ViewBuilder
     private func downloadStatusBar(for manifest: LLMManifest, state: DownloadState) -> some View {
         switch state {
-        case .pending:
-            Text("...")
-                .font(.caption.italic())
-                .foregroundStyle(.appSecondary)
-        case .downloading(let progress):
-            HStack(spacing: DesignSystem.small) {
-                ProgressView(value: progress, total: 1.0)
-                    .tint(.appAccent)
-                    .frame(width: DesignSystem.Metrics.indicatorSize)
-                
-                Text("\(Int(progress * 100))%")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced)) // Dynamic Type
-                    .foregroundStyle(.appAccent)
-            }
-        case .paused:
-            Text("")
-                .font(.caption)
-                .foregroundStyle(.orange)
-        case .verifying:
-            HStack(spacing: DesignSystem.small) {
-                ProgressView()
-                    .scaleEffect(0.7)
-                Text("...")
-                    .font(.caption.bold())
-                    .foregroundStyle(.appAccent)
+        case .failed(let error):
+            if error == "Not Downloaded" || error == "Cancelled" {
+                EmptyView()
+            } else {
+                ringWithStatus(state: state, statusText: error, color: .red)
             }
         case .completed:
             EmptyView()
-        case .failed(let error):
-            if error != "Not Downloaded" && error != "Cancelled" {
-                Text(": \(error)")
+        default:
+            ringWithStatus(state: state)
+        }
+    }
+
+    @ViewBuilder
+    private func ringWithStatus(state: DownloadState, statusText: String? = nil, color: Color = .appAccent) -> some View {
+        HStack(spacing: DesignSystem.small) {
+            DownloadProgressRing(state: state, size: DesignSystem.Metrics.ringSize)
+
+            if let statusText {
+                Text(statusText)
                     .font(.caption2)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(color)
                     .lineLimit(1)
             } else {
-                EmptyView()
+                statusLabel(for: state)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func statusLabel(for state: DownloadState) -> some View {
+        switch state {
+        case .downloading(let progress):
+            Text("\(Int(progress * 100))%")
+                .font(.caption.bold())
+                .foregroundStyle(.appAccent)
+        case .paused:
+            Text(L10n.ModelManager.Status.paused)
+                .font(.caption)
+                .foregroundStyle(.orange)
+        case .verifying:
+            Text(L10n.ModelManager.Status.verifying + "...")
+                .font(.caption.bold())
+                .foregroundStyle(.appAccent)
+        case .pending:
+            Text(L10n.ModelManager.Status.downloading + "...")
+                .font(.caption.italic())
+                .foregroundStyle(.appSecondary)
+        default:
+            EmptyView()
         }
     }
     
@@ -370,12 +387,12 @@ private struct ModelCardView: View {
 
     /// 渲染因硬件限制而被拦截的下载按钮
     /// - Parameter manifest: 模型元数据
-    /// - Returns: 物理内存限制时的警告警告按钮视图
+    /// - Returns: 物理内存限制时的警告按钮视图
     private func restrictedActionButton(for manifest: LLMManifest) -> some View {
         Button(action: { alertManifest = manifest }) {
             HStack(spacing: 4) {
                 Image(systemName: "exclamationmark.octagon.fill")
-                Text("")
+                Text(L10n.ModelManager.Card.unavailable)
             }
             .font(.subheadline.bold())
             .padding(.horizontal, 16)
@@ -397,7 +414,7 @@ private struct ModelCardView: View {
                 modelManager.activeModelId = manifest.modelId
             }
         }) {
-            Text(isSelected ? "" : "")
+            Text(isSelected ? L10n.ModelManager.Card.activated : L10n.ModelManager.Card.activate)
                 .font(.subheadline.bold())
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -454,11 +471,12 @@ private struct ModelCardView: View {
         default:
             return AnyView(
                 Button(action: {
-                    Logger.shared.info(" [ModelStore] Download tapped for \(manifest.modelId)")
+                    // 启动后台模型下载动作并关联进度监听
+                    modelManager.startDownload(for: manifest)
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "icloud.and.arrow.down")
-                        Text("")
+                        Text(L10n.ModelManager.Card.download)
                     }
                     .font(.subheadline.bold())
                     .padding(.horizontal, 16)
@@ -493,7 +511,7 @@ private struct ModelCardView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.circle.fill")
                 .foregroundStyle(.orange)
-            Text("")
+            Text(L10n.ModelManager.Card.warningLowMemory)
                 .font(.system(size: 10)) // Dynamic Type
                 .foregroundStyle(.orange)
             Spacer()

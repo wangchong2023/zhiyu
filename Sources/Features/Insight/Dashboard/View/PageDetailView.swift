@@ -8,11 +8,13 @@
 //  系统层级：[L2] 业务功能层
 //  核心职责：构建 PageDetail 界面的 UI 视图层组件。
 //
+
 import SwiftUI
 
 /// 页面详情视图
 struct PageDetailView: View {
-    @State private var coordinator: PageDetailCoordinator
+    let page: KnowledgePage
+    @State private var coordinator: PageDetailCoordinator?
     var heroNamespace: Namespace.ID?
     @Environment(AppStore.self) var store
     @Environment(AIWorkflowStore.self) var aiStore
@@ -26,11 +28,11 @@ struct PageDetailView: View {
     }
 
     init(page: KnowledgePage, heroNamespace: Namespace.ID? = nil) {
+        self.page = page
         self.heroNamespace = heroNamespace
-        self._coordinator = State(initialValue: PageDetailCoordinator(page: page))
     }
     
-    private var pinButton: some View {
+    private func pinButton(coordinator: PageDetailCoordinator) -> some View {
         Button(action: { Task { await coordinator.togglePin() } }) {
             Image(systemName: coordinator.page.isPinned ? DesignSystem.Icons.pinFill : DesignSystem.Icons.pin)
                 .foregroundStyle(coordinator.page.isPinned ? .orange : .appSecondary)
@@ -38,7 +40,7 @@ struct PageDetailView: View {
         .accessibilityIdentifier("pin")
     }
     
-    private var backlinksButton: some View {
+    private func backlinksButton(coordinator: PageDetailCoordinator) -> some View {
         Button(action: { coordinator.showBacklinks.toggle() }) {
             HStack(spacing: DesignSystem.tiny) {
                 Image(systemName: DesignSystem.Icons.link)
@@ -48,7 +50,7 @@ struct PageDetailView: View {
         }
     }
     
-    private var editButton: some View {
+    private func editButton(coordinator: PageDetailCoordinator) -> some View {
         Button(action: {
             HapticFeedback.shared.trigger(.selection)
             if coordinator.isEditing {
@@ -56,12 +58,12 @@ struct PageDetailView: View {
             }
             coordinator.isEditing.toggle()
         }) {
-            Image(systemName: coordinator.isEditing ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.edit + ".circle.fill")
+            Image(systemName: coordinator.isEditing ? DesignSystem.Icons.check : DesignSystem.Icons.squareAndPencil)
                 .foregroundStyle(coordinator.isEditing ? .green : .appText)
         }
     }
     
-    private var aiMenuButton: some View {
+    private func aiMenuButton(coordinator: PageDetailCoordinator) -> some View {
         #if os(watchOS)
         Button(action: { coordinator.generateSummary() }) {
             Image(systemName: DesignSystem.Icons.sparkles)
@@ -114,6 +116,7 @@ struct PageDetailView: View {
         .disabled(coordinator.isEditing)
         #endif
     }
+    
     private var welcomeAhaPromptCard: some View {
         VStack(alignment: .leading, spacing: DesignSystem.medium) {
             HStack(spacing: DesignSystem.small) {
@@ -187,183 +190,169 @@ struct PageDetailView: View {
     }
     
     var body: some View {
-        @Bindable var coordinator = coordinator
-        ScrollViewReader { _ in
-            ScrollView {
-                VStack(spacing: 0) {
-                    Color.clear.frame(height: DesignSystem.mediumRadius)
-                    
-                    VStack(alignment: .leading, spacing: 0) {
-                        PageDetailAISection(pageTitle: coordinator.page.title, onLinkTap: navigateToPage)
-                            .id("aiResultSection")
-                            .padding(.bottom, DesignSystem.standardPadding)
-                        
-                        Group {
-                            PageDetailContentSection(page: $coordinator.page, isEditing: $coordinator.isEditing, onLinkTap: navigateToPage)
-                            
-                            if coordinator.page.sourceURL != nil || coordinator.page.sourceType != nil {
-                                sourceCitationBar
-                            }
-
-                            if coordinator.page.title == L10n.Common.Demo.Welcome.title {
-                                welcomeAhaPromptCard
-                            }
-
-                            Divider().background(Color.appBorder)
-                            
-                            PageDetailMetadataSection(page: coordinator.page, backlinks: coordinator.backlinks, recommendations: recommendations)
-                        }
-                        .padding(.horizontal)
-                    }
+        if let coordinator = coordinator {
+            mainDetailView(coordinator: coordinator)
+        } else {
+            Color.clear
+                .onAppear {
+                    self.coordinator = PageDetailCoordinator(page: page)
                 }
-            }
-            .scrollIndicators(.hidden)
+        }
+    }
+    
+    @ViewBuilder
+    private func mainDetailView(coordinator: PageDetailCoordinator) -> some View {
+        let content = ScrollViewReader { _ in
+            detailScrollView(coordinator: coordinator)
         }
         .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
         .frame(maxWidth: .infinity)
         .background(PageBackgroundView(accentColor: Color.fromModelColorName(coordinator.page.pageType.colorName)))
         .appSubPageToolbar(title: coordinator.page.title) {
             HStack(spacing: DesignSystem.small) {
-                pinButton
-                backlinksButton
-                editButton
-                aiMenuButton
-            }
-        }
-        .confirmationDialog(L10n.Knowledge.Page.confirmDelete, isPresented: $coordinator.showDeleteConfirmation) {
-            let deleteTitle = L10n.Vault.Page.deletePageTitle(coordinator.page.title)
-            Button(deleteTitle, role: .destructive) {
-                Task { await coordinator.deletePage() }
-            }
-            Button(L10n.Common.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.Knowledge.Page.deleteMessage)
-        }
-        .sheet(isPresented: $coordinator.showBacklinks) {
-            BacklinksView(page: coordinator.page)
-        }
-        .sheet(isPresented: $coordinator.showIconPicker) {
-            NavigationStack {
-                IconPickerView(selectedIcon: Binding(
-                    get: { coordinator.page.customIcon },
-                    set: { newIcon in
-                        var updated = coordinator.page
-                        updated.customIcon = newIcon
-                        Task { await store.updatePage(updated, forceDeepScan: false) }
-                        coordinator.page = updated
-                    }
-                ))
-            }
-        }
-        .onChange(of: coordinator.page) { _, newValue in
-            if !coordinator.isEditing {
-                Task { await store.updatePage(newValue, forceDeepScan: false) }
+                pinButton(coordinator: coordinator)
+                backlinksButton(coordinator: coordinator)
+                editButton(coordinator: coordinator)
+                aiMenuButton(coordinator: coordinator)
             }
         }
         .safeAreaInset(edge: .top) {
+            safeAreaHeader(coordinator: coordinator)
+        }
+
+        applyLifecycle(
+            applySheetsAndModifiers(content, coordinator: coordinator),
+            coordinator: coordinator
+        )
+    }
+
+    private func detailScrollView(coordinator: PageDetailCoordinator) -> some View {
+        ScrollView {
             VStack(spacing: 0) {
-                if router.navigationHistory.count > 1 {
-                    BreadcrumbView(history: Array(router.navigationHistory.dropLast())) { id in
+                Color.clear.frame(height: DesignSystem.mediumRadius)
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    PageDetailAISection(pageTitle: coordinator.page.title, onLinkTap: navigateToPage)
+                        .id("aiResultSection")
+                        .padding(.bottom, DesignSystem.standardPadding)
+                    
+                    Group {
+                        PageDetailContentSection(
+                            page: Binding(get: { coordinator.page }, set: { coordinator.page = $0 }),
+                            isEditing: Binding(get: { coordinator.isEditing }, set: { coordinator.isEditing = $0 }),
+                            onLinkTap: navigateToPage
+                        )
+                        
+                        if coordinator.page.sourceURL != nil || coordinator.page.sourceType != nil {
+                            sourceCitationBar(coordinator: coordinator)
+                        }
+
+                        if coordinator.page.title == L10n.Common.Demo.Welcome.title {
+                            welcomeAhaPromptCard
+                        }
+
+                        Divider().background(Color.appBorder)
+                        
+                        PageDetailMetadataSection(page: coordinator.page, backlinks: coordinator.backlinks, recommendations: recommendations)
+                    }
+                    .padding(.horizontal)
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private func safeAreaHeader(coordinator: PageDetailCoordinator) -> some View {
+        VStack(spacing: 0) {
+            if router.navigationHistory.count > 1 {
+                BreadcrumbView(
+                    history: Array(router.navigationHistory.dropLast()),
+                    onNavigate: { id in
                         let targetPage = store.pages.first { $0.id == id }
                         if let target = targetPage {
                             navigateToPage(target.title)
                         }
+                    },
+                    onGoHome: {
+                        router.popToRoot()
+                        router.clearHistory()
                     }
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
+                )
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
 
-                PageDetailHeader(page: coordinator.page, heroNamespace: heroNamespace)
-                    .padding(.top, router.navigationHistory.isEmpty ? DesignSystem.Layout.tightPadding : 0)
-                    .background(.ultraThinMaterial)
-            }
-            .padding(.top, appEnv.screenClass != .compact ? 36 : 0) // 针对 iPad/macOS Catalyst 等大屏设备的悬浮 TabBar / 导航栏进行避让，防止视觉重叠
-            .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
-            .overlay(
-                Divider().background(Color.appBorder),
-                alignment: .bottom
-            )
+            PageDetailHeader(page: coordinator.page, heroNamespace: heroNamespace)
+                .padding(.top, router.navigationHistory.isEmpty ? DesignSystem.Layout.tightPadding : 0)
+                .background(.ultraThinMaterial)
         }
-        .sheet(isPresented: $coordinator.showSnapshotHistory) {
-            PageHistoryView(page: coordinator.page)
-        }
-        .onAppear {
-            router.addToHistory(coordinator.page)
-            Task {
-                recommendations = await aiStore.findSimilarPages(for: coordinator.page)
-            }
-        }
-        .onChange(of: coordinator.page) { _, newValue in
-            router.addToHistory(newValue)
-            Task {
-                recommendations = await aiStore.findSimilarPages(for: newValue)
-            }
-        }
-        .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
+        .padding(.top, appEnv.screenClass != .compact ? 36 : 0)
+        .frame(maxWidth: DesignSystem.Layout.maxReadWidth)
+        .overlay(
+            Divider().background(Color.appBorder),
+            alignment: .bottom
+        )
     }
 
-    private var sourceCitationBar: some View {
+    private func applySheetsAndModifiers<V: View>(_ view: V, coordinator: PageDetailCoordinator) -> some View {
+        view
+            .confirmationDialog(L10n.Knowledge.Page.confirmDelete, isPresented: Binding(get: { coordinator.showDeleteConfirmation }, set: { coordinator.showDeleteConfirmation = $0 })) {
+                let deleteTitle = L10n.Vault.Page.deletePageTitle(coordinator.page.title)
+                Button(deleteTitle, role: .destructive) {
+                    Task { await coordinator.deletePage() }
+                }
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.Knowledge.Page.deleteMessage)
+            }
+            .sheet(isPresented: Binding(get: { coordinator.showBacklinks }, set: { coordinator.showBacklinks = $0 })) {
+                BacklinksView(page: coordinator.page)
+            }
+            .sheet(isPresented: Binding(get: { coordinator.showIconPicker }, set: { coordinator.showIconPicker = $0 })) {
+                NavigationStack {
+                    IconPickerView(selectedIcon: Binding(
+                        get: { coordinator.page.customIcon },
+                        set: { newIcon in
+                            var updated = coordinator.page
+                            updated.customIcon = newIcon
+                            Task { await store.updatePage(updated, forceDeepScan: false) }
+                            coordinator.page = updated
+                        }
+                    ))
+                }
+            }
+            .sheet(isPresented: Binding(get: { coordinator.showSnapshotHistory }, set: { coordinator.showSnapshotHistory = $0 })) {
+                PageHistoryView(page: coordinator.page)
+            }
+    }
+
+    private func applyLifecycle<V: View>(_ view: V, coordinator: PageDetailCoordinator) -> some View {
+        view
+            .onChange(of: coordinator.page) { _, newValue in
+                if !coordinator.isEditing {
+                    Task { await store.updatePage(newValue, forceDeepScan: false) }
+                }
+            }
+            .onAppear {
+                router.addToHistory(coordinator.page)
+                Task {
+                    recommendations = await aiStore.findSimilarPages(for: coordinator.page)
+                }
+            }
+            .onChange(of: coordinator.page) { _, newValue in
+                router.addToHistory(newValue)
+                Task {
+                    recommendations = await aiStore.findSimilarPages(for: newValue)
+                }
+            }
+            .quizPresentation(activeQuiz: Binding(get: { aiStore.activeQuiz }, set: { aiStore.activeQuiz = $0 }))
+    }
+
+    private func sourceCitationBar(coordinator: PageDetailCoordinator) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.tightPadding) {
             Label(L10n.Knowledge.Page.sourceCitation, systemImage: "link")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.appSecondary)
-            HStack(spacing: DesignSystem.medium) {
-                if let url = coordinator.page.sourceURL {
-                    if coordinator.page.isLocalFileSource {
-                        Button(action: {
-                            #if os(iOS)
-                            UIPasteboard.general.string = url
-                            #endif
-                            withAnimation(.spring()) {
-                                copiedUrl = url
-                            }
-                            Task {
-                                try? await Task.sleep(nanoseconds: 2_000_000_000)
-                                withAnimation(.spring()) {
-                                    if copiedUrl == url {
-                                        copiedUrl = nil
-                                    }
-                                }
-                            }
-                        }) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: coordinator.page.displaySourceIcon)
-                                    .font(.caption2)
-                                Text(copiedUrl == url ? L10n.Knowledge.Page.Source.copied : "\(coordinator.page.displaySourceName) (\(L10n.Knowledge.Page.Source.copyPath))")
-                                    .font(.caption)
-                                    .lineLimit(1)
-                            }
-                            .foregroundStyle(.blue)
-                        }
-                        .buttonStyle(.plain)
-                    } else {
-                        Button(action: {
-                            guard let urlObject = URL(string: url) else { return }
-                            #if os(iOS)
-                            UIApplication.shared.open(urlObject)
-                            #endif
-                        }) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Image(systemName: coordinator.page.displaySourceIcon)
-                                    .font(.caption2)
-                                Text(coordinator.page.displaySourceName)
-                                    .font(.caption)
-                                    .lineLimit(1)
-                            }
-                            .foregroundStyle(.blue)
-                        }
-                    }
-                }
-                if let st = coordinator.page.sourceType {
-                    Label("\(L10n.Knowledge.Page.sourceTypeFile): \(st)", systemImage: "doc")
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
-                }
-                if let fs = coordinator.page.fileSize {
-                    Text(ByteCountFormatter.string(fromByteCount: fs, countStyle: .file))
-                        .font(.caption2)
-                        .foregroundStyle(.appSecondary)
-                }
-            }
+            sourceCitationDetails(coordinator: coordinator)
         }
         .padding(DesignSystem.medium)
         .background(Color.appCard.opacity(DesignSystem.Opacity.soft))
@@ -371,16 +360,76 @@ struct PageDetailView: View {
         .padding(.vertical, DesignSystem.tightPadding)
     }
 
+    private func sourceCitationDetails(coordinator: PageDetailCoordinator) -> some View {
+        HStack(spacing: DesignSystem.medium) {
+            if let url = coordinator.page.sourceURL {
+                sourceCitationLinkButton(url: url, coordinator: coordinator)
+            }
+            if let st = coordinator.page.sourceType {
+                Label("\(L10n.Knowledge.Page.sourceTypeFile): \(st)", systemImage: "doc")
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+            if let fs = coordinator.page.fileSize {
+                Text(ByteCountFormatter.string(fromByteCount: fs, countStyle: .file))
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+        }
+    }
+
+    private func sourceCitationLinkButton(url: String, coordinator: PageDetailCoordinator) -> some View {
+        Group {
+            if coordinator.page.isLocalFileSource {
+                Button(action: {
+                    #if os(iOS)
+                    UIPasteboard.general.string = url
+                    #endif
+                    withAnimation(.spring()) {
+                        copiedUrl = url
+                    }
+                    Task {
+                        try? await Task.sleep(nanoseconds: 2_000_000_000)
+                        withAnimation(.spring()) {
+                            if copiedUrl == url {
+                                copiedUrl = nil
+                            }
+                        }
+                    }
+                }) {
+                    HStack(spacing: DesignSystem.tiny) {
+                        Image(systemName: coordinator.page.displaySourceIcon)
+                            .font(.caption2)
+                        Text(copiedUrl == url ? L10n.Knowledge.Page.Source.copied : "\(coordinator.page.displaySourceName) (\(L10n.Knowledge.Page.Source.copyPath))")
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+                    .foregroundStyle(.blue)
+                }
+                .buttonStyle(.plain)
+            } else {
+                Button(action: {
+                    guard let urlObject = URL(string: url) else { return }
+                    #if os(iOS)
+                    UIApplication.shared.open(urlObject)
+                    #endif
+                }) {
+                    HStack(spacing: DesignSystem.tiny) {
+                        Image(systemName: coordinator.page.displaySourceIcon)
+                            .font(.caption2)
+                        Text(coordinator.page.displaySourceName)
+                            .font(.caption)
+                            .lineLimit(1)
+                    }
+                    .foregroundStyle(.blue)
+                }
+            }
+        }
+    }
+
     private func navigateToPage(_ title: String) {
         if let target = store.pages.first(where: { $0.title == title }) {
             router.navigate(to: .pageDetail(id: target.id))
         }
-    }
-}
-
-// MARK: - Text Extension for aiInsightsVal
-extension Text {
-    init(_ aiInsights: L10n.Knowledge.Page.AIInsightsVal) {
-        self.init(aiInsights.title)
     }
 }

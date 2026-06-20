@@ -528,4 +528,57 @@ final class ZhiYuDomainTests: XCTestCase {
             await manager.ingestFolder(at: dummyFolderURL, pageStore: concretePageStore)
         }
     }
+    
+    // MARK: - Batch Ingest & TaskCenter Integration Tests
+    @MainActor
+    func testUrlBatchImportTaskCenterTracking() {
+        let center = TaskCenter.shared
+        center.reset()
+        
+        let taskID = center.addTask(
+            name: "批量导入网页",
+            target: "https://www.runoob.com/ai-agent/ai-agent-core.html, https://www.baidu.com"
+        )
+        
+        XCTAssertEqual(center.tasks.count, 1)
+        // 模拟开始抓取 (映射为 extraction 阶段)
+        center.updateTask(taskID, status: .running(progress: 0.2, stage: .extraction))
+        if case .running(let progress, let stage) = center.tasks.first?.status {
+            XCTAssertEqual(progress, 0.2)
+            XCTAssertEqual(stage, .extraction)
+        } else {
+            XCTFail("Should be running")
+        }
+        
+        // 模拟正在保存 (映射为 synthesis 阶段)
+        center.updateTask(taskID, status: .running(progress: 0.8, stage: .synthesis))
+        if case .running(let progress, let stage) = center.tasks.first?.status {
+            XCTAssertEqual(progress, 0.8)
+            XCTAssertEqual(stage, .synthesis)
+        } else {
+            XCTFail("Should be running")
+        }
+        
+        // 模拟成功完成
+        center.updateTask(taskID, status: .completed)
+        if case .completed = center.tasks.first?.status {
+            // Success
+        } else {
+            XCTFail("Should be completed")
+        }
+    }
+    
+    // MARK: - SystemStats Tab Count & InferenceParameters Tests
+    @MainActor
+    func testSystemStatsTabsAndInferenceParameters() {
+        // 验证 SystemStatsView.Tab 枚举具有 3 个选项
+        let allTabs = SystemStatsView.Tab.allCases
+        XCTAssertEqual(allTabs.count, 3)
+        XCTAssertEqual(allTabs[0], .performance)
+        XCTAssertEqual(allTabs[1], .storage)
+        XCTAssertEqual(allTabs[2], .plugins)
+        
+        // 验证翻译
+        XCTAssertFalse(SystemStatsView.Tab.plugins.title.isEmpty)
+    }
 }

@@ -218,6 +218,22 @@ private struct FeedbackHistoryRow: View {
         }
     }
 
+    private var statusIcon: String {
+        switch entry.status {
+        case .pending: return "icloud.and.arrow.up"
+        case .synced: return "checkmark.icloud.fill"
+        case .failed: return "exclamationmark.icloud.fill"
+        }
+    }
+
+    private var statusColor: Color {
+        switch entry.status {
+        case .pending: return .secondary
+        case .synced: return .green
+        case .failed: return .red
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.tiny) {
             HStack(spacing: DesignSystem.tightPadding) {
@@ -225,6 +241,8 @@ private struct FeedbackHistoryRow: View {
                 Circle().fill(categoryColor).frame(width: 8, height: 8)
                 Text(entry.title).font(.subheadline.weight(.medium)).lineLimit(1)
                 Spacer()
+                Image(systemName: statusIcon)
+                    .font(.caption).foregroundStyle(statusColor)
                 Text(FeedbackCategory.displayName(entry.category))
                     .font(.caption2).foregroundStyle(.secondary)
             }

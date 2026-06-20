@@ -164,7 +164,7 @@ struct BackupEntryRow: View {
                 
                 HStack(spacing: DesignSystem.medium) {
                     Label("\(entry.pageCount) " + L10n.Backup.pages, systemImage: "doc.richtext.fill")
-                    Label("\(entry.totalWords) " + L10n.Backup.words, systemImage: "textformat")
+                    Label("\(entry.totalWords) " + L10n.Backup.words, systemImage: "abc")
                     Label(entry.fileSize(in: backupDirectory), systemImage: "externaldrive")
                 }
                 .font(.caption)

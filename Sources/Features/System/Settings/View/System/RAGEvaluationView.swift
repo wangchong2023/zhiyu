@@ -49,8 +49,7 @@ private enum UserRating {
 private enum EvalTab: Int, CaseIterable, Identifiable {
     case retrieval
     case generation
-    case satisfaction
-    case history
+    case evaluation
 
     var id: Int { rawValue }
 
@@ -58,8 +57,7 @@ private enum EvalTab: Int, CaseIterable, Identifiable {
         switch self {
         case .retrieval: return L10n.Dashboard.stats.tabRetrieval
         case .generation: return L10n.Dashboard.stats.tabGeneration
-        case .satisfaction: return L10n.Dashboard.stats.tabSatisfaction
-        case .history: return L10n.Dashboard.stats.tabHistory
+        case .evaluation: return L10n.Dashboard.stats.tabSatisfactionAndEval
         }
     }
 }
@@ -194,10 +192,9 @@ struct RAGEvaluationView: View {
                             retrievalSection
                         case .generation:
                             generationSection
-                        case .satisfaction:
+                        case .evaluation:
                             satisfactionSection
                             costSection
-                        case .history:
                             evaluationHistorySection
                         }
                     }

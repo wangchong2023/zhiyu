@@ -3481,7 +3481,41 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Token 效率"
+            "value": "Token消耗"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.satisfactionAndEval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satisfaction & Eval"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "满意度与评估"
+          }
+        }
+      }
+    },
+    "dashboard.stats.tab.plugins": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plugins"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "插件"
           }
         }
       }

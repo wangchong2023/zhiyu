@@ -78,7 +78,8 @@ struct SettingsView: View {
     
     @State private var selectedLanguage: LanguageMode = Localized.languageMode
     @State private var languageChanged = false
-    @State private var showResetConfirmation = false
+    @State private var showInjectConfirmation = false
+    @State private var isInjecting = false
     /// Lite 用户尝试开启安全功能时弹出升级提示
     @State private var showUpgradeSheet = false
     /// 当前大屏布局下选中的设置分类，默认选中“外观”
@@ -124,17 +125,42 @@ struct SettingsView: View {
                     }
                 }
             }
-            .alert(L10n.Settings.resetOnboarding.title, isPresented: $showResetConfirmation) {
-                Button(L10n.Settings.clearAll.action, role: .destructive) {
-                    store.clearAllDeveloperData()
-                }
-                Button(L10n.Common.cancel, role: .cancel) { }
-            } message: {
-                Text(L10n.Settings.resetOnboarding.message)
-            }
             #endif
         }
         .environment(\.locale, router.currentLocale)
+        .appToast()
+        .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
+            Button(L10n.Common.confirm) {
+                Task {
+                    isInjecting = true
+                    let result = await store.generateInitialNotebooks()
+                    isInjecting = false
+
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+
+                    HapticFeedback.shared.trigger(result.total > 0 ? .success : .error)
+                    let total = result.total
+                    let details = result.details
+                    if total > 0 {
+                        let prefix = String(format: L10n.Settings.InjectDemo.injectedNotebooks, details.count)
+                        let suffix = L10n.Settings.InjectDemo.pageUnit
+                        let sep = L10n.Settings.InjectDemo.itemsSeparator
+                        var vaultsDesc = ""
+                        for (i, detail) in details.enumerated() {
+                            if i > 0 { vaultsDesc += sep }
+                            vaultsDesc += detail.name + String(detail.count) + suffix
+                        }
+                        let msg = prefix + vaultsDesc
+                        ToastManager.shared.show(type: .success, message: msg)
+                    } else {
+                        ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
+                    }
+                }
+            }
+            Button(L10n.Common.cancel, role: .cancel) { }
+        } message: {
+            Text(L10n.Settings.injectConfirm.message)
+        }
     }
     
     /// 构建小屏下的紧凑设置列表
@@ -375,13 +401,18 @@ struct SettingsView: View {
                     .labelStyle(ColorfulIconLabelStyle(color: .teal))
             }
             
-            // 数据重置：清理开发数据与沙盒存储
-            Button(role: .destructive) {
-                showResetConfirmation = true
-            } label: {
-                Label(L10n.Settings.resetData, systemImage: "trash.fill")
-                    .labelStyle(ColorfulIconLabelStyle(color: .red))
+            // 恢复初始数据：生成默认的演示笔记本
+            Button(action: { showInjectConfirmation = true }) {
+                HStack {
+                    Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "arrow.counterclockwise")
+                        .labelStyle(ColorfulIconLabelStyle(color: .red))
+                    Spacer()
+                    if isInjecting {
+                        ProgressView()
+                    }
+                }
             }
+            .disabled(isInjecting)
         } header: {
             Text(L10n.Settings.Section.data)
         }

@@ -226,21 +226,34 @@ internal struct Localized {
         return trf(key, table: table, arguments: args)
     }
 
-    /// 从多语言字典中匹配最佳语言（zh-Hans > zh > en > first）
-    /// - Parameters:
-    ///   - dict: [语言代码: 值] 字典
-    ///   - fallback: 所有语言都不匹配时的默认值
-    /// - Returns: 最佳匹配的值
     static func bestMatch(in dict: [String: String], fallback: String = "") -> String {
-        let fullId = Locale.current.identifier  // e.g. "zh-Hans_CN"
-        let langCode = Locale.current.language.languageCode?.identifier ?? "en"  // e.g. "zh"
-        // 1. 完整 ID 前缀匹配 (zh-Hans)
-        for key in dict.keys where fullId.hasPrefix(key) { return dict[key] ?? fallback }
-        // 2. 仅语言码匹配 (zh)
-        for key in dict.keys where key.hasPrefix(langCode) { return dict[key] ?? fallback }
-        // 3. en fallback
+        let currentLang = currentLanguage // 例如 "zh-Hans" 或 "en"
+        
+        // 1. 优先完全匹配 (例如 "zh-Hans" / "en")
+        if let value = dict[currentLang] {
+            return value
+        }
+        
+        // 2. 其次匹配前缀 (例如，如果 dict 里面有 "zh"，而 currentLang 是 "zh-Hans"；或者反过来，如果 dict 里面有 "zh-Hans"，而 currentLang 是 "zh")
+        for key in dict.keys {
+            if currentLang.hasPrefix(key) || key.hasPrefix(currentLang) {
+                return dict[key] ?? fallback
+            }
+        }
+        
+        // 3. 语言码级别前缀匹配 (例如，提取当前激活语言的前两位 "zh" / "en")
+        let shortLang = currentLang.components(separatedBy: "-").first ?? currentLang
+        for key in dict.keys {
+            let shortKey = key.components(separatedBy: "-").first ?? key
+            if shortKey == shortLang {
+                return dict[key] ?? fallback
+            }
+        }
+        
+        // 4. en fallback
         if let en = dict["en"] { return en }
-        // 4. 任意值
+        
+        // 5. 任意值
         return dict.values.first ?? fallback
     }
 }

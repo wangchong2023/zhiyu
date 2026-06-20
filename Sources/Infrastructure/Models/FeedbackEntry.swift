@@ -23,10 +23,11 @@ public struct FeedbackEntry: Identifiable, Codable, FetchableRecord, MutablePers
     public var appVersion: String
     public var osVersion: String
     public var deviceModel: String
+    public var status: FeedbackStatus
     public var createdAt: Date
 
     public enum CodingKeys: String, CodingKey, ColumnExpression {
-        case id, title, category, rating, content
+        case id, title, category, rating, content, status
         case appVersion = "app_version"
         case osVersion = "os_version"
         case deviceModel = "device_model"
@@ -42,6 +43,7 @@ public struct FeedbackEntry: Identifiable, Codable, FetchableRecord, MutablePers
         appVersion: String = "",
         osVersion: String = "",
         deviceModel: String = "",
+        status: FeedbackStatus = .pending,
         createdAt: Date = Date()
     ) {
         self.id = id
@@ -52,7 +54,23 @@ public struct FeedbackEntry: Identifiable, Codable, FetchableRecord, MutablePers
         self.appVersion = appVersion
         self.osVersion = osVersion
         self.deviceModel = deviceModel
+        self.status = status
         self.createdAt = createdAt
+    }
+}
+
+/// 用户反馈提交状态
+public enum FeedbackStatus: String, Codable, Sendable, CaseIterable {
+    case pending
+    case synced
+    case failed
+
+    public var displayName: String {
+        switch self {
+        case .pending: return L10n.Settings.Feedback.statusPending
+        case .synced: return L10n.Settings.Feedback.statusSynced
+        case .failed: return L10n.Settings.Feedback.statusFailed
+        }
     }
 }
 

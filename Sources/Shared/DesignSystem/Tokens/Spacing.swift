@@ -239,6 +239,8 @@ public enum Spacing {
         public static let boxHeight: CGFloat = 100
         public static let indicatorSize: CGFloat = 12
         public static let progressHeight: CGFloat = 6
+        /// 下载进度环尺寸 (36pt)
+        public static let ringSize: CGFloat = 36
         public static let boxAspectRatio: CGFloat = 1.0
         public static let dashboardValueSize: CGFloat = 32
         public static let dashboardLabelSize: CGFloat = 13

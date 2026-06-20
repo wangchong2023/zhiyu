@@ -227,7 +227,7 @@ final class ComponentSnapshots: XCTestCase {
         ]
         
         var navigatedId: UUID?
-        let rawBreadcrumbView = BreadcrumbView(history: history) { navigatedId = $0 }
+        let rawBreadcrumbView = BreadcrumbView(history: history, onNavigate: { navigatedId = $0 }, onGoHome: {})
         
         // 显式触发重构后的面包屑点击行为，消灭未覆盖闭包行
         if let firstPage = history.first {

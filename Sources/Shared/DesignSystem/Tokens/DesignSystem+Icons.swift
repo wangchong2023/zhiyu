@@ -34,7 +34,7 @@ extension DesignSystem {
         public static let pencilCircle = Typography.Icons.pencilCircle
         public static let delete = Typography.Icons.delete
         public static let pin = Typography.Icons.pin
-        public static let pinFill = "pin.fill"
+        public static let pinFill = "star.fill"
         public static let folderBadgePlus = "folder.badge.plus"
         public static let folderFill = "folder.fill"
         

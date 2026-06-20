@@ -26,11 +26,13 @@ struct SystemStatsView: View {
     enum Tab: String, CaseIterable {
         case performance
         case storage
+        case plugins
         
         var title: String {
             switch self {
             case .performance: return L10n.Dashboard.stats.tabPerf
             case .storage: return L10n.Dashboard.stats.tabStorage
+            case .plugins: return L10n.Dashboard.stats.tabPlugins
             }
         }
     }
@@ -65,6 +67,9 @@ struct SystemStatsView: View {
                             performanceSection
                         case .storage:
                             storageSection
+                        case .plugins:
+                            PluginStatsSection()
+                                .padding(.horizontal, Spacing.medium)
                         }
                     }
                 }
@@ -172,9 +177,6 @@ struct SystemStatsView: View {
                 }
                 .padding(Spacing.medium)
             }
-            
-            // 4. 插件资源占用
-            PluginStatsSection()
         }
     }
     

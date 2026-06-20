@@ -155,6 +155,11 @@ public final class KnowledgeStore {
         self.totalPages = pages.count
         self.totalWords = pages.reduce(0) { $0 + $1.content.count }
 
+        // 同步刷新当前活跃金库的页面计数并落库以保证 UI 数据一致性
+        if let selectedVaultID = VaultService.shared.selectedVaultID {
+            await VaultService.shared.refreshPageCount(for: selectedVaultID)
+        }
+
         let duration = Date().timeIntervalSince(startTime)
         if let perf = ServiceContainer.shared.optionalResolve(PerformanceService.self) {
             perf.record(.databaseLoad, duration: duration)

@@ -81,6 +81,10 @@ extension L10n {
             public static var unavailable: String {
                 ModelManager.tr("model_manager.card.unavailable")
             }
+
+            public static var warningLowMemory: String {
+                ModelManager.tr("model_manager.card.warning_low_memory")
+            }
         }
 
         // MARK: - 顶部摘要

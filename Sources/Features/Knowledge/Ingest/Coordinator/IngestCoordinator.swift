@@ -294,6 +294,67 @@ final class IngestCoordinator {
     }
 
     /// 批量导入 URL
+    /// 单个 URL 网页抓取与导入
+    private func importSingleURL(
+        urlString: String,
+        recordID: String,
+        taskID: UUID,
+        scraper: WebScraperProcessor,
+        vaultID: String?,
+        store: any ImportFileStore
+    ) async -> Bool {
+        await MainActor.run {
+            TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.fetchingURL): \(urlString)")
+        }
+        
+        let rawResult = try? await scraper.fetchMarkdown(from: urlString)
+        let title = rawResult?.title ?? urlString
+        
+        if rawResult != nil {
+            await MainActor.run {
+                TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.Status.webscraperLevel1Success): \(title)")
+            }
+        } else {
+            await MainActor.run {
+                TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.Status.webscraperLevel1Failed): \(urlString)")
+            }
+        }
+        
+        await MainActor.run {
+            TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.imageExtracting): \(title)")
+        }
+        let ocrText = (try? await self.extractImagesFromURL(urlString)) ?? ""
+        
+        let rawBody = rawResult.map { "> \(L10n.Ingest.urlSourcePrefix)\(urlString)\n> \(L10n.Ingest.scrapeTimePrefix)\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
+        let rawMarkdown = rawBody.map { $0 + ocrText }
+        let filePath = rawMarkdown.flatMap { store.saveContent($0, category: .link, ext: "md") }
+        
+        let record = ImportRecord(
+            id: recordID, category: ImportCategory.link.rawValue,
+            title: title, status: ImportRecordStatus.processing,
+            rawText: rawMarkdown, sourceURL: urlString, filePath: filePath,
+            vaultID: vaultID
+        )
+        try? await self.importRecordRepo.save(record)
+        
+        let page = try? await self.store.ingestService.ingestURL(urlString: urlString, pageStore: self.store)
+        if let page = page {
+            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
+            try? await self.importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
+            await MainActor.run {
+                TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.Status.completed): \(title)")
+            }
+            return true
+        } else {
+            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
+            await MainActor.run {
+                TaskCenter.shared.addSubLog(id: taskID, log: "\(L10n.Ingest.importFailed): \(title)")
+            }
+            return false
+        }
+    }
+
+    /// 批量导入 URL
     func handleBatchURLImport(_ urls: [URL]) {
         guard !isImporting else {
             ToastManager.shared.show(type: .info, message: L10n.Ingest.importCooldown)
@@ -302,46 +363,57 @@ final class IngestCoordinator {
         showURLImport = false
         lastImportTime = Date()
 
+        let totalCount = urls.count
+        let taskID = TaskCenter.shared.addTask(
+            type: .ingest,
+            name: L10n.Ingest.urlImport,
+            target: L10n.Ingest.validURLCount(totalCount, totalCount)
+        )
+
         Task {
             let scraper = WebScraperProcessor()
             let vaultID = VaultService.shared.selectedVaultID?.uuidString
             let store = fileStore
             let completed = await withTaskGroup(of: (ok: Bool, idx: Int).self) { group in
                 for (i, url) in urls.enumerated() {
-                    group.addTask { [self] in
-                        let urlString = url.absoluteString
-                        let recordID = UUID().uuidString
-                        let rawResult = try? await scraper.fetchMarkdown(from: urlString)
-                        let rawBody = rawResult.map { "> \(L10n.Ingest.urlSourcePrefix)\(urlString)\n> \(L10n.Ingest.scrapeTimePrefix)\(Date().formatted(date: .numeric, time: .shortened))\n\n\($0.markdown)" }
-                        let ocrText = (try? await self.extractImagesFromURL(urlString)) ?? ""
-                        let rawMarkdown = rawBody.map { $0 + ocrText }
-                        let filePath = rawMarkdown.flatMap { store.saveContent($0, category: .link, ext: "md") }
-                        let title = rawResult?.title ?? urlString
-                        let record = ImportRecord(
-                            id: recordID, category: ImportCategory.link.rawValue,
-                            title: title, status: ImportRecordStatus.processing,
-                            rawText: rawMarkdown, sourceURL: urlString, filePath: filePath,
-                            vaultID: vaultID
+                    let urlString = url.absoluteString
+                    let recordID = UUID().uuidString
+                    group.addTask { [self, taskID, urlString, recordID] in
+                        let ok = await importSingleURL(
+                            urlString: urlString,
+                            recordID: recordID,
+                            taskID: taskID,
+                            scraper: scraper,
+                            vaultID: vaultID,
+                            store: store
                         )
-                        try? await self.importRecordRepo.save(record)
-                        let page = try? await self.store.ingestService.ingestURL(urlString: urlString, pageStore: self.store)
-                        if let page = page {
-                            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.done, completedAt: Date())
-                            try? await self.importRecordRepo.updatePageID(id: recordID, pageID: page.id.uuidString)
-                            return (true, i)
-                        } else {
-                            try? await self.importRecordRepo.updateStatus(id: recordID, status: ImportRecordStatus.failed, completedAt: Date())
-                            return (false, i)
-                        }
+                        return (ok, i)
                     }
                 }
+                
                 var results = [(ok: Bool, idx: Int)]()
-                for await r in group { results.append(r) }
+                var processedCount = 0
+                for await r in group {
+                    results.append(r)
+                    processedCount += 1
+                    let progress = Double(processedCount) / Double(totalCount)
+                    await MainActor.run {
+                        TaskCenter.shared.updateTask(taskID, status: .running(progress: progress, stage: .extraction))
+                    }
+                }
                 return results
             }
+            
             let ok = completed.filter(\.ok).count
             let fail = completed.count - ok
             await MainActor.run {
+                if fail == 0 {
+                    TaskCenter.shared.updateTask(taskID, status: .completed)
+                } else if ok == 0 {
+                    TaskCenter.shared.updateTask(taskID, status: .failed(error: L10n.Ingest.importFailed))
+                } else {
+                    TaskCenter.shared.updateTask(taskID, status: .completed)
+                }
                 ToastManager.shared.show(type: ok > 0 ? .success : .error, message: L10n.Ingest.batchResult(ok, fail))
             }
         }

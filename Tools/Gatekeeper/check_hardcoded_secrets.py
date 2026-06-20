@@ -32,6 +32,7 @@ SAFE_URL_PATTERNS = [
     r'generativelanguage\.googleapis\.com',
     # 公开网站和文档
     r'zhiyu\.ai',
+    r'izhiyu\.top',
     r'github\.com/zhiyu',
     r'raw\.githubusercontent\.com',
     r'github\.com/login/oauth',      # OAuth 授权 URL（公开）

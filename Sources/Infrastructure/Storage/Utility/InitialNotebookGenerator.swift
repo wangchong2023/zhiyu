@@ -81,9 +81,9 @@ struct InitialNotebookGenerator {
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("InitialNotebook_Starting")
         let folder = await resolveImportsFolder()
-        let methodologyURL = resolveFileURL(named: "pkm_methodology.md", in: folder,
+        let methodologyURL = resolveFileURL(bundleName: "pkm_methodology.md", localName: L10n.InitialNotebook.FileNames.methodology, in: folder,
             fallback: L10n.InitialNotebook.Fallback.methodology)
-        let workflowURL = resolveFileURL(named: "pkm_workflow.md", in: folder,
+        let workflowURL = resolveFileURL(bundleName: "pkm_workflow.md", localName: L10n.InitialNotebook.FileNames.workflow, in: folder,
             fallback: L10n.InitialNotebook.Fallback.workflow)
         let seeds = buildPKMPageSeeds(methodologyURL: methodologyURL, workflowURL: workflowURL)
         try await persistPages(seeds, in: store) { db in
@@ -99,9 +99,9 @@ struct InitialNotebookGenerator {
     static func generateResearchNotebook(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("ResearchInitialNotebook_Starting")
         let folder = await resolveImportsFolder()
-        let luckinURL = resolveFileURL(named: "luckin_vs_starbucks_report.pdf", in: folder,
+        let luckinURL = resolveFileURL(bundleName: "luckin_vs_starbucks_report.pdf", localName: L10n.InitialNotebook.FileNames.luckin, in: folder,
             fallback: L10n.InitialNotebook.Fallback.luckin)
-        let surveyURL = resolveFileURL(named: "survey_202606.pdf", in: folder,
+        let surveyURL = resolveFileURL(bundleName: "survey_202606.pdf", localName: L10n.InitialNotebook.FileNames.survey, in: folder,
             fallback: L10n.InitialNotebook.Fallback.survey)
         let seeds = buildResearchPageSeeds(luckinURL: luckinURL, surveyURL: surveyURL)
         try await persistPages(seeds, in: store) { db in
@@ -181,9 +181,9 @@ struct InitialNotebookGenerator {
     }
 
     /// 将演示 file 路径解析为字符串 URL，若 folder 为 nil 则返回虚拟演示地址
-    private static func resolveFileURL(named name: String, in folder: URL?, fallback: String) -> String {
-        guard let folder else { return "file:///demo/\(name)" }
-        return copyOrWriteDemoFile(named: name, to: folder, fallbackText: fallback)
+    private static func resolveFileURL(bundleName: String, localName: String, in folder: URL?, fallback: String) -> String {
+        guard let folder else { return "file:///demo/\(localName)" }
+        return copyOrWriteDemoFile(bundleName: bundleName, localName: localName, to: folder, fallbackText: fallback)
     }
 
     // MARK: - 私有辅助方法：数据集构建
@@ -388,37 +388,40 @@ struct InitialNotebookGenerator {
 
     // MARK: - 私有辅助方法：文件拷贝
 
-    /// 从应用 Bundle 中物理拷贝演示文件至 Imports 沙盒，如果不存在则写入 fallback 文本
+    /// 从应用 Bundle 中物理拷贝演示 file 至 Imports 沙盒，如果不存在则写入 fallback 文本
     /// - Parameters:
-    ///   - fileName: 文件名（含后缀）
+    ///   - bundleName: Bundle 中英文文件名
+    ///   - localName: 本地化后的物理文件名
     ///   - folder: 目标沙盒 Imports 路径
     ///   - fallbackText: 降级写入的文本
-    private static func copyOrWriteDemoFile(named fileName: String, to folder: URL, fallbackText: String) -> String {
-        let fileURL = folder.appendingPathComponent(fileName)
+    private static func copyOrWriteDemoFile(bundleName: String, localName: String, to folder: URL, fallbackText: String) -> String {
+        let fileURL = folder.appendingPathComponent(localName)
 
         // 尝试先物理清理旧文件，防止 copyItem 报 FileExists 错误
         try? FileManager.default.removeItem(at: fileURL)
 
-        let fileParts = fileName.split(separator: ".")
-        if fileParts.count == 2,
+        let expectedPartsCount = 2
+        let extensionSeparator: Character = "."
+        let fileParts = bundleName.split(separator: extensionSeparator)
+        if fileParts.count == expectedPartsCount,
            let resourceName = fileParts.first.map(String.init),
            let resourceExt = fileParts.last.map(String.init),
            let bundleURL = Bundle.main.url(forResource: resourceName, withExtension: resourceExt) {
             do {
                 try FileManager.default.copyItem(at: bundleURL, to: fileURL)
-                Logger.shared.info("InitialNotebook_CopiedResource: \(fileName)")
+                Logger.shared.info("InitialNotebook_CopiedResource: \(localName)")
                 return fileURL.absoluteString
             } catch {
-                Logger.shared.error("InitialNotebook_CopyFailed: \(fileName), error: \(error)")
+                Logger.shared.error("InitialNotebook_CopyFailed: \(localName), error: \(error)")
             }
         }
 
         // Fallback: 写入硬编码文本
         do {
             try fallbackText.write(to: fileURL, atomically: true, encoding: .utf8)
-            Logger.shared.info("InitialNotebook_WroteFallback: \(fileName)")
+            Logger.shared.info("InitialNotebook_WroteFallback: \(localName)")
         } catch {
-            Logger.shared.error("InitialNotebook_WriteFallbackFailed: \(fileName), error: \(error)")
+            Logger.shared.error("InitialNotebook_WriteFallbackFailed: \(localName), error: \(error)")
         }
         return fileURL.absoluteString
     }

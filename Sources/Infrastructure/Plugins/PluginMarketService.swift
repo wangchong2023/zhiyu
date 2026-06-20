@@ -156,57 +156,9 @@ final class PluginMarketService: ObservableObject {
             self.errorMessage = nil
         }
 
-        let url = registryGitHub
-        var fetchSuccess = false
+        let urlsToTry = self.buildPluginURLs()
+        let fetchSuccess = await tryFetchAny(from: urlsToTry)
 
-        do {
-            Logger.shared.info("[PluginMarket] 正在尝试从以下地址拉取插件市场: \(url.absoluteString)")
-            let (data, response) = try await URLSession.shared.data(from: url)
-            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-            
-            guard statusCode == 200 else {
-                throw NSError(domain: "PluginMarketService", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
-            }
-            
-            Logger.shared.info("[PluginMarket] 成功拉取插件元数据，大小: \(data.count) 字节")
-            let decoder = JSONDecoder()
-
-            // 1. 尝试解析为社区插件条目列表 (community-plugins.json)
-            if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
-                let rawURLString = url.absoluteString.replacingOccurrences(of: "community-plugins.json", with: "plugins")
-                if let downloadBase = URL(string: rawURLString) {
-                    let plugins = await MainActor.run {
-                        communityPlugins.map { entry in
-                            MarketPlugin(from: entry, downloadBase: downloadBase)
-                        }
-                    }
-                    await MainActor.run {
-                        self.availablePlugins = plugins
-                        self.isLoading = false
-                    }
-                    fetchSuccess = true
-                }
-            // 2. 尝试解析为带有外层包装的 ApiResponse 格式
-            } else if let apiResponse = try? decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data),
-                      let plugins = apiResponse.data {
-                await MainActor.run {
-                    self.availablePlugins = plugins
-                    self.isLoading = false
-                }
-                fetchSuccess = true
-            // 3. 尝试直接解析为 MarketPlugin 数组
-            } else if let decodedPlugins = try? decoder.decode([MarketPlugin].self, from: data) {
-                await MainActor.run {
-                    self.availablePlugins = decodedPlugins
-                    self.isLoading = false
-                }
-                fetchSuccess = true
-            }
-        } catch {
-            Logger.shared.warning("[PluginMarket] 从云端拉取插件市场元数据失败: \(error.localizedDescription)")
-        }
-
-        // 若网络或解析失败，置空插件列表并暴露本地化错误消息，触发 UI 层的规范空状态展示
         if !fetchSuccess {
             await MainActor.run {
                 self.availablePlugins = []
@@ -214,6 +166,83 @@ final class PluginMarketService: ObservableObject {
                 self.isLoading = false
             }
         }
+    }
+
+    private func buildPluginURLs() -> [URL] {
+        let preferredLanguage = Locale.preferredLanguages.first ?? "en"
+        var urls: [URL] = []
+        if preferredLanguage.hasPrefix("zh") {
+            let zhURL = registryGitHub.deletingLastPathComponent().appendingPathComponent("community-plugins_zh-Hans.json")
+            urls.append(zhURL)
+        }
+        urls.append(registryGitHub)
+        return urls
+    }
+
+    private func tryFetchAny(from urls: [URL]) async -> Bool {
+        // swiftlint:disable for_where
+        for url in urls {
+            if await tryFetch(from: url) {
+                return true
+            }
+        }
+        // swiftlint:enable for_where
+        return false
+    }
+
+    private func tryFetch(from url: URL) async -> Bool {
+        do {
+            Logger.shared.info("[PluginMarket] 正在尝试从以下地址拉取插件市场: \(url.absoluteString)")
+            let (data, response) = try await URLSession.shared.data(from: url)
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+
+            guard statusCode == 200 else {
+                throw NSError(domain: "PluginMarketService", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
+            }
+
+            Logger.shared.info("[PluginMarket] 成功拉取插件元数据，大小: \(data.count) 字节")
+            return await processPluginResponse(data: data)
+        } catch {
+            Logger.shared.warning("[PluginMarket] 从云端 \(url.absoluteString) 拉取插件市场元数据失败: \(error.localizedDescription)")
+            return false
+        }
+    }
+
+    private func processPluginResponse(data: Data) async -> Bool {
+        let decoder = JSONDecoder()
+
+        if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
+            let rawURLString = registryGitHub.absoluteString.replacingOccurrences(of: "community-plugins.json", with: "plugins")
+            if let downloadBase = URL(string: rawURLString) {
+                let plugins = await MainActor.run {
+                    communityPlugins.map { MarketPlugin(from: $0, downloadBase: downloadBase) }
+                }
+                await MainActor.run {
+                    self.availablePlugins = plugins
+                    self.isLoading = false
+                }
+                return true
+            }
+        }
+
+        if let apiResponse = try? decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data),
+           let plugins = apiResponse.data {
+            await MainActor.run {
+                self.availablePlugins = plugins
+                self.isLoading = false
+            }
+            return true
+        }
+
+        if let decodedPlugins = try? decoder.decode([MarketPlugin].self, from: data) {
+            await MainActor.run {
+                self.availablePlugins = decodedPlugins
+                self.isLoading = false
+            }
+            return true
+        }
+
+        return false
     }
 
     /// 下载指定的插件并将其保存到本地沙盒存储目录中

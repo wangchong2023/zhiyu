@@ -50,6 +50,12 @@ extension L10n {
             public static var sourceTypeFile: String { Knowledge.tr("page.sourceTypeFile") }
             public static var doubleTapToNavigate: String { Knowledge.tr("page.doubleTapToNavigate") }
             public static var backlinks: String { Knowledge.tr("page.backlinks") }
+            /// 引用外部
+            public static var outgoings: String { Knowledge.tr("page.outgoings") }
+            /// 失效链接
+            public static var brokenLinks: String { Knowledge.tr("page.brokenLinks") }
+            /// 无引页面
+            public static var orphanPages: String { Knowledge.tr("page.orphanPages") }
 
             /// 删除PageTitle
             /// - Parameter name: name

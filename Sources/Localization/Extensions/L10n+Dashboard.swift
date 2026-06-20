@@ -204,6 +204,8 @@ extension L10n {
             public static var tabGeneration: String { Localized.tr("dashboard.stats.tab.generation", table: t) }
             public static var tabSatisfaction: String { Localized.tr("dashboard.stats.tab.satisfaction", table: t) }
             public static var tabHistory: String { Localized.tr("dashboard.stats.tab.history", table: t) }
+            public static var tabSatisfactionAndEval: String { Localized.tr("dashboard.stats.tab.satisfactionAndEval", table: t) }
+            public static var tabPlugins: String { Localized.tr("dashboard.stats.tab.plugins", table: t) }
 
             // MARK: - Tooltip 说明文案
 

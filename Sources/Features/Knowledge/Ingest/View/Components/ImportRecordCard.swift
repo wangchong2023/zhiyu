@@ -67,7 +67,12 @@ struct ImportRecordCard: View {
                 timeLine
             }
             Spacer()
-            statusBadge
+            HStack(spacing: DesignSystem.small) {
+                statusBadge
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .foregroundStyle(.tertiary)
+            }
         }
         .padding(DesignSystem.medium)
         .background(Color.appCard)

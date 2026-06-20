@@ -32,14 +32,22 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
     /// 模型 ID 到物理后台 Session Task 的映射表
     private var activeTasks: [String: URLSessionDownloadTask] = [:]
     
-    /// 模型 ID 到断点续传二进制数据 (resumeData) 的缓存记录
-    private var resumeDataCache: [String: Data] = [:]
-    
     /// 模型 ID 到对应 SHA256 校验指纹的缓存映射表
     private var sha256Checksums: [String: String] = [:]
     
     /// 模型 ID 到其异步流事件通道 (Continuation) 的订阅分发映射表
     private var continuations: [String: AsyncStream<DownloadState>.Continuation] = [:]
+    
+    /// 获取大模型断点恢复数据（resumeData）在沙盒 Caches 目录下的物理临时存储路径
+    /// - Parameter modelId: 模型唯一标识 ID
+    /// - Returns: 对应的临时断点恢复数据存储 URL 路径
+    private func resumeDataURL(for modelId: String) -> URL {
+        let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let resumeFolder = cachesDirectory.appendingPathComponent("com.zhiyu.app.download.resume", isDirectory: true)
+        // 确保持久化文件夹结构存在
+        try? FileManager.default.createDirectory(at: resumeFolder, withIntermediateDirectories: true)
+        return resumeFolder.appendingPathComponent("\(modelId).resume")
+    }
     
     private init() {}
     
@@ -84,8 +92,13 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         }
         
         if let data = resumeData {
-            resumeDataCache[modelId] = data
-            updateState(for: modelId, to: .paused)
+            do {
+                // 原子性写入物理文件系统，确保数据写入完整
+                try data.write(to: resumeDataURL(for: modelId), options: .atomic)
+                updateState(for: modelId, to: .paused)
+            } catch {
+                updateState(for: modelId, to: .failed(error: "Persist resume data failed: \(error.localizedDescription)"))
+            }
         } else {
             updateState(for: modelId, to: .failed(error: "Failed to generate resume data for pausing."))
         }
@@ -95,10 +108,11 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
     
     /// 恢复下载已经暂停的权重任务 (利用之前捕获的 resumeData)
     public func resumeDownload(modelId: String) async throws {
-        // 1. 检索断点缓存数据
-        guard let data = resumeDataCache[modelId] else {
-            // 如果缓存为空，尝试重新从 url 启动下载 (需在业务层补充 URL 记录)
-            updateState(for: modelId, to: .failed(error: "No resume data available."))
+        // 1. 检索物理断点恢复文件数据
+        let fileURL = resumeDataURL(for: modelId)
+        guard FileManager.default.fileExists(atPath: fileURL.path),
+              let data = try? Data(contentsOf: fileURL) else {
+            updateState(for: modelId, to: .failed(error: "No resume data file available."))
             return
         }
         
@@ -107,8 +121,8 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         task.taskDescription = modelId
         activeTasks[modelId] = task
         
-        // 3. 清理已消费的缓存
-        resumeDataCache[modelId] = nil
+        // 3. 清理已消费的物理断点恢复文件，防止磁盘碎片残留
+        try? FileManager.default.removeItem(at: fileURL)
         
         // 4. 激活 Task 继续静默续传
         task.resume()
@@ -120,7 +134,10 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
             task.cancel()
         }
         
-        resumeDataCache[modelId] = nil
+        // 清理可能存在的断点恢复文件
+        let fileURL = resumeDataURL(for: modelId)
+        try? FileManager.default.removeItem(at: fileURL)
+        
         activeTasks[modelId] = nil
         cleanPreviousFiles(for: modelId)
         
@@ -204,8 +221,12 @@ public actor ModelDownloadManager: ModelDownloadCapabilities {
         
         // 🟢 如果是断网等原因引起的异常中断，iOS 会在错误包里贴心地附带 resumeData！
         if let resumeData = nsError.userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
-            resumeDataCache[modelId] = resumeData
-            updateState(for: modelId, to: .paused)
+            do {
+                try resumeData.write(to: resumeDataURL(for: modelId), options: .atomic)
+                updateState(for: modelId, to: .paused)
+            } catch {
+                updateState(for: modelId, to: .failed(error: "Persist network error resume data failed: \(error.localizedDescription)"))
+            }
         } else {
             updateState(for: modelId, to: .failed(error: error.localizedDescription))
         }

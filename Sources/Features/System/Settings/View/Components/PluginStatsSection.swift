@@ -16,9 +16,7 @@ struct PluginStatsSection: View {
     var body: some View {
         StandardSection(title: L10n.Plugin.Stats.resourceUsage) {
             if registry.pluginResourceUsage.isEmpty {
-                Text(L10n.Plugin.Stats.noUsage)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                AppEmptyState.simple(icon: "puzzlepiece.extension", title: L10n.Plugin.Stats.noUsage)
                     .padding()
             } else {
                 VStack(spacing: 0) {

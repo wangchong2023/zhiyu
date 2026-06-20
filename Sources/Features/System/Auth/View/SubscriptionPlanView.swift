@@ -544,6 +544,12 @@ public struct SubscriptionPlanView: View {
             .buttonStyle(.plain)
             .disabled(storeKitService.isRestoring || isPurchasing)
             
+            Text(L10n.Auth.restoreHint)
+                .font(.caption2)
+                .foregroundStyle(.appSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DesignSystem.large)
+            
             // 恢复结果提示
             if let msg = storeKitService.restoreMessage {
                 Text(msg)

@@ -14,4 +14,5 @@ public protocol FeedbackRepository: Sendable {
     func save(_ entry: FeedbackEntry) async throws
     func fetchAll(limit: Int) async throws -> [FeedbackEntry]
     func fetchByID(id: String) async throws -> FeedbackEntry?
+    func updateStatus(id: String, status: FeedbackStatus) async throws
 }

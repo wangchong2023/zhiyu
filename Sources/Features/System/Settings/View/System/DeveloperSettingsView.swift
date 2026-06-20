@@ -16,65 +16,13 @@ struct DeveloperSettingsView: View {
     @Environment(SettingsStore.self) var settingsStore
     @EnvironmentObject var onboardingService: OnboardingService
     @Environment(\.dismiss) var dismiss
-    @State private var showInjectConfirmation = false
     @State private var showStressTestConfirmation = false
     @State private var stressTestTargetCount = 1000
-    
     @State private var isStressTesting = false
-    @State private var isInjecting = false
     @State private var stressTestCount: Int?
 
     var body: some View {
         List {
-            // MARK: - 数据注入 (Data Injection)
-            Section {
-                Button(action: { showInjectConfirmation = true }) {
-                    HStack {
-                        Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "testtube.2")
-                        Spacer()
-                        if isInjecting {
-                            ProgressView()
-                        }
-                    }
-                }
-                .disabled(isInjecting)
-                .alert(L10n.Settings.injectConfirm.title, isPresented: $showInjectConfirmation) {
-                    Button(L10n.Common.confirm) {
-                        Task {
-                            isInjecting = true
-                            let result = await store.generateInitialNotebooks()
-                            isInjecting = false
-
-                            try? await Task.sleep(nanoseconds: 300_000_000)
-
-                            HapticFeedback.shared.trigger(result.total > 0 ? .success : .error)
-                            let total = result.total
-                            let details = result.details
-                            if total > 0 {
-                                let prefix = String(format: L10n.Settings.InjectDemo.injectedNotebooks, details.count)
-                                let suffix = L10n.Settings.InjectDemo.pageUnit
-                                let sep = L10n.Settings.InjectDemo.itemsSeparator
-                                var vaultsDesc = ""
-                                for (i, detail) in details.enumerated() {
-                                    if i > 0 { vaultsDesc += sep }
-                                    vaultsDesc += detail.name + String(detail.count) + suffix
-                                }
-                                let msg = prefix + vaultsDesc
-                                ToastManager.shared.show(type: .success, message: msg)
-                            } else {
-                                ToastManager.shared.show(type: .error, message: L10n.Settings.InjectDemo.errorMessage)
-                            }
-                        }
-                    }
-                    Button(L10n.Common.cancel, role: .cancel) { }
-                } message: {
-                    Text(L10n.Settings.injectConfirm.message)
-                }
-
-            } header: {
-                Text(L10n.Settings.developer.section.data)
-            }
-            .appListRowBackground()
 
             // MARK: - 性能测试 (Performance Testing)
             Section {

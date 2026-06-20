@@ -2517,6 +2517,57 @@
         }
       }
     },
+    "perf.ragChain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG Chain"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RAG 检索"
+          }
+        }
+      }
+    },
+    "perf.llmCalls": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Calls"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 调用次数"
+          }
+        }
+      }
+    },
+    "perf.aiSuccessRate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Success Rate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI 成功率"
+          }
+        }
+      }
+    },
     "pinned": {
       "extractionState": "manual",
       "localizations": {
@@ -7256,6 +7307,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消全选"
+          }
+        }
+      }
+    },
+    "demo.filename.methodology": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pkm_methodology.md"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "个人知识管理方法论.md"
+          }
+        }
+      }
+    },
+    "demo.filename.workflow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pkm_workflow.md"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识管理工作流.md"
+          }
+        }
+      }
+    },
+    "demo.filename.luckin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "luckin_vs_starbucks_report.pdf"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "瑞幸与星巴克竞争格局分析.pdf"
+          }
+        }
+      }
+    },
+    "demo.filename.survey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "survey_202606.pdf"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "客户调查问卷_202606.pdf"
           }
         }
       }

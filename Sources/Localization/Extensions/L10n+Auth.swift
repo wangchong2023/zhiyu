@@ -139,6 +139,8 @@ extension L10n {
         public static var restoreFailed: String { tr("auth.restoreFailed") }
         /// 恢复中 Loading 提示
         public static var restoring: String { tr("auth.restoring") }
+        /// 恢复购买的作用机制注解
+        public static var restoreHint: String { tr("auth.restoreHint") }
 
 
         // MARK: - 套餐权益对比子结构

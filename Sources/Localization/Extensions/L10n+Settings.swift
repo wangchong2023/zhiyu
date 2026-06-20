@@ -163,6 +163,9 @@ extension L10n {
             public static var deviceMacDefault: String { Settings.tr("settings.feedback.deviceMacDefault") }
             public static var history: String { Settings.tr("settings.feedback.history") }
             public static var noHistory: String { Settings.tr("settings.feedback.noHistory") }
+            public static var statusPending: String { Settings.tr("settings.feedback.statusPending") }
+            public static var statusSynced: String { Settings.tr("settings.feedback.statusSynced") }
+            public static var statusFailed: String { Settings.tr("settings.feedback.statusFailed") }
         }
 
         public struct About {

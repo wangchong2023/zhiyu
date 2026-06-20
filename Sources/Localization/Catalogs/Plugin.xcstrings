@@ -942,13 +942,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Go to the community market to find surprises"
+            "value": "Go to the plugin market to find surprises"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "去社区市场发现惊喜吧"
+            "value": "去插件市场发现惊喜吧"
           }
         }
       }
@@ -1146,13 +1146,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Search extensions..."
+            "value": "Search plugins..."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "搜索扩展能力..."
+            "value": "搜索插件..."
           }
         }
       }
@@ -1680,6 +1680,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "安全"
+          }
+        }
+      }
+    },
+    "plugin.detail.securePassed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passed"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已通过"
           }
         }
       }

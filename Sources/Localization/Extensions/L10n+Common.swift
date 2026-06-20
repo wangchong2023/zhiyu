@@ -178,6 +178,9 @@ extension L10n {
             public static var search: String { Common.tr("perf.search") }
             public static var edges: String { Common.tr("perf.edges") }
             public static var save: String { Common.tr("perf.save") }
+            public static var ragChain: String { Common.tr("perf.ragChain") }
+            public static var llmCalls: String { Common.tr("perf.llmCalls") }
+            public static var aiSuccessRate: String { Common.tr("perf.aiSuccessRate") }
             
             public enum summary {
                 public static var title: String { Common.tr("perf.summary.title") }
@@ -459,6 +462,13 @@ extension L10n {
             public static var workflow: String { Localized.tr("demo.snippet.workflow", table: t) }
             public static var luckin: String { Localized.tr("demo.snippet.luckin", table: t) }
             public static var survey: String { Localized.tr("demo.snippet.survey", table: t) }
+        }
+        
+        public enum FileNames {
+            public static var methodology: String { Localized.tr("demo.filename.methodology", table: t) }
+            public static var workflow: String { Localized.tr("demo.filename.workflow", table: t) }
+            public static var luckin: String { Localized.tr("demo.filename.luckin", table: t) }
+            public static var survey: String { Localized.tr("demo.filename.survey", table: t) }
         }
         
         public enum Log {

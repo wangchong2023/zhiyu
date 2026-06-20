@@ -72,9 +72,6 @@ struct PluginDetailView: View {
 
                 // MARK: - 3. 详细信息面板 (底栏信息)
                 metadataSection
-
-                // MARK: - 6. 底部举报与源码链接
-                bottomInfoSection
             }
             .padding()
         }
@@ -213,7 +210,7 @@ struct PluginDetailView: View {
                 
                 // 卡片 2: 安全检测认证 (沙盒审计通过)
                 metricCard(
-                    title: "GET",
+                    title: L10n.Plugin.Detail.securePassed,
                     subtitle: L10n.Plugin.Detail.secureLabel,
                     icon: "lock.shield.fill",
                     iconColor: .green
@@ -387,14 +384,16 @@ struct PluginDetailView: View {
             } else {
                 // 降级选择链：优先显示本地缓存的 README -> 远端多语言 README -> 插件自身的简短描述
                 let content = localReadme ?? remoteReadme ?? plugin.description
+                let lineCount = content.components(separatedBy: .newlines).count
+                let showExpandButton = lineCount > 5
                 
                 VStack(alignment: .leading, spacing: DesignSystem.tiny) {
                     MarkdownRendererView(content: content, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
-                        .frame(maxHeight: isDescriptionExpanded ? nil : 180, alignment: .top)
+                        .frame(maxHeight: (showExpandButton && !isDescriptionExpanded) ? 180 : nil, alignment: .top)
                         .clipped()
                         .overlay(
                             Group {
-                                if !isDescriptionExpanded {
+                                if showExpandButton && !isDescriptionExpanded {
                                     VStack {
                                         Spacer()
                                         // 渐变蒙层，在折叠状态下于底部实现优雅淡出效果
@@ -409,21 +408,23 @@ struct PluginDetailView: View {
                             }
                         )
                     
-                    // 轻量级展开/折叠更多按钮
-                    Button(action: {
-                        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                            isDescriptionExpanded.toggle()
+                    if showExpandButton {
+                        // 轻量级展开/折叠更多按钮
+                        Button(action: {
+                            withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                                isDescriptionExpanded.toggle()
+                            }
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Text(isDescriptionExpanded ? L10n.Plugin.Detail.showLess : L10n.Plugin.Detail.readMore)
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(.appAccent)
+                                Image(systemName: isDescriptionExpanded ? "chevron.up" : "chevron.down")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.appAccent)
+                            }
+                            .padding(.vertical, DesignSystem.atomic)
                         }
-                    }) {
-                        HStack(spacing: DesignSystem.tiny) {
-                            Text(isDescriptionExpanded ? L10n.Plugin.Detail.showLess : L10n.Plugin.Detail.readMore)
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.appAccent)
-                            Image(systemName: isDescriptionExpanded ? "chevron.up" : "chevron.down")
-                                .font(.caption2.bold())
-                                .foregroundStyle(.appAccent)
-                        }
-                        .padding(.vertical, DesignSystem.atomic)
                     }
                 }
             }
@@ -523,41 +524,6 @@ struct PluginDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
         }
-    }
-
-    // MARK: - 底部信息
-
-    private var bottomInfoSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.small) {
-            Text(L10n.Plugin.Detail.reportTitle)
-                .font(.caption)
-                .foregroundStyle(.appSecondary)
-
-            HStack(spacing: DesignSystem.medium) {
-                Button(action: {}) {
-                    Label(L10n.Plugin.Detail.reportIssue, systemImage: "exclamationmark.triangle")
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.appSecondary)
-
-                if plugin.downloadURL != nil {
-                    Text("·")
-                        .foregroundStyle(.appSecondary)
-                    Link(destination: URL(string: "https://github.com/zhiyu/plugins")!) {
-                        Label(L10n.Plugin.Detail.viewSource, systemImage: "chevron.left.forwardslash.chevron.right")
-                            .font(.caption)
-                    }
-                    .foregroundStyle(.appAccent)
-                }
-            }
-
-            Text(plugin.id)
-                .font(.system(size: 10)) // Dynamic Type
-                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
-                .padding(.top, DesignSystem.tiny)
-        }
-        .padding(.top, DesignSystem.medium)
     }
 
     // MARK: - 辅助方法

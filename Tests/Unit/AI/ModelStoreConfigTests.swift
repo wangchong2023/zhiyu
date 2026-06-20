@@ -272,6 +272,163 @@ final class ModelStoreConfigTests: XCTestCase {
             XCTFail("解析模型白名单多语言字段失败: \(error.localizedDescription)")
         }
     }
+
+    // MARK: - 6. 大模型下载注册与状态流分发测试
+    
+    /// 测试 AIModuleRegistrar 是否正确注册了 ModelDownloadCapabilities 和 ModelDownloadManager 到 ServiceContainer
+    ///
+    /// 此测试用以保障 DI（依赖注入）的完整性，防止未来的重构漏掉此注册，导致运行时点击下载 crash。
+    @MainActor
+    func testAIModuleRegistrarRegistersDownloadCapabilities() {
+        // 在注册 AIModuleRegistrar 前，先手动注册其依赖的系统级别服务，防止其内部初始化 ChatRunner 时触发 @Inject 崩溃
+        ServiceContainer.shared.register(Logger.shared as any LoggerProtocol, for: (any LoggerProtocol).self)
+        
+        // 确保执行了模块注册
+        AIModuleRegistrar.register(in: ServiceContainer.shared)
+        
+        // 从 DI 容器中解析 ModelDownloadCapabilities 契约
+        let capabilities = ServiceContainer.shared.resolveOptional((any ModelDownloadCapabilities).self)
+        XCTAssertNotNil(capabilities, "AIModuleRegistrar 必须将 ModelDownloadCapabilities 契约注册到 ServiceContainer 中。")
+        
+        // 从 DI 容器中解析 ModelDownloadManager 具体类
+        let manager = ServiceContainer.shared.resolveOptional(ModelDownloadManager.self)
+        XCTAssertNotNil(manager, "AIModuleRegistrar 必须将 ModelDownloadManager 注册到 ServiceContainer 中。")
+        
+        // 验证二者在底层的映射与类型兼容性
+        XCTAssertTrue(capabilities is ModelDownloadManager, "解析出的 ModelDownloadCapabilities 应该是 ModelDownloadManager 的单例实例。")
+    }
+    
+    /// 测试 ModelDownloadManager 在并发环境下分发大模型权重下载状态事件的完整性
+    ///
+    /// 模拟大模型在等待、下载中等状态的改变，验证 observeDownloadState 的 AsyncStream 是否能正确且无延迟地捕获这些事件。
+    @MainActor
+    func testModelDownloadManagerObserveDownloadState() async {
+        let manager = ModelDownloadManager.shared
+        let modelId = "test-observe-model-id"
+        
+        // 提前获取状态流，确保 continuation 被 Actor 内部初始化并保存，消除由于后台任务启动延迟导致的时序竞争
+        let stateStream = await manager.observeDownloadState(for: modelId)
+        
+        // 创建状态监听的期望，预计会收到 3 个状态变化事件
+        let expectation = XCTestExpectation(description: "观察大模型下载状态流转")
+        var receivedStates: [DownloadState] = []
+        
+        // 在后台任务中监听 AsyncStream 状态流
+        let observationTask = Task {
+            for await state in stateStream {
+                receivedStates.append(state)
+                // 收到 3 个状态事件后终止监听
+                if receivedStates.count == 3 {
+                    expectation.fulfill()
+                    break
+                }
+            }
+        }
+        
+        // 模拟外部发起下载和下载进度更新，由于是 actor，使用 await 触发状态改变
+        await manager.updateState(for: modelId, to: .pending)
+        await manager.updateProgress(for: modelId, progress: 0.5)
+        
+        // 等待状态流分发完成
+        #if os(watchOS)
+        let waitResult = await XCTWaiter().fulfillment(of: [expectation], timeout: 2.0)
+        #else
+        await fulfillment(of: [expectation], timeout: 2.0)
+        #endif
+        
+        // 取消后台监听 Task 避免资源泄露
+        observationTask.cancel()
+        
+        // 验证接收到的状态转换序列是否正确
+        XCTAssertEqual(receivedStates.count, 3, "应该收到 3 个状态变更通知")
+        XCTAssertEqual(receivedStates[0], .failed(error: "Idle"), "首个初始状态应为 Idle 失败状态")
+        XCTAssertEqual(receivedStates[1], .pending, "第二个状态应为 pending 挂起状态")
+        XCTAssertEqual(receivedStates[2], .downloading(progress: 0.5), "第三个状态应为下载中 50% 进度状态")
+    }
+    
+    /// 测试 ModelDownloadManager 能够将断点续传数据正确持久化至沙盒并可重新加载使用与销毁
+    @MainActor
+    func testModelDownloadPersistsResumeDataToSandbox() async throws {
+        let manager = ModelDownloadManager.shared
+        let modelId = "test-persist-resume-model-id"
+        
+        // 1. 获取断点数据保存的预期物理文件路径
+        let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let expectedFileURL = cachesDirectory
+            .appendingPathComponent("com.zhiyu.app.download.resume", isDirectory: true)
+            .appendingPathComponent("\(modelId).resume")
+        
+        // 确保一开始不存在残留
+        try? FileManager.default.removeItem(at: expectedFileURL)
+        
+        // 2. 模拟网络传输中断，带有 resumeData 进 handleDownloadError
+        let sampleResumeContent = "MockResumeDataForBreakpointTesting"
+        guard let sampleData = sampleResumeContent.data(using: .utf8) else {
+            XCTFail("模拟数据转换失败")
+            return
+        }
+        
+        // 构造一个含有 resumeData 的 NSError，模拟系统网络故障中断时的系统回调输入
+        let mockNSError = NSError(domain: NSURLErrorDomain, code: -1009, userInfo: [
+            NSURLSessionDownloadTaskResumeData: sampleData
+        ])
+        
+        await manager.handleDownloadError(for: modelId, error: mockNSError)
+        
+        // 3. 验证沙盒 caches 下对应的物理断点文件是否成功写入
+        XCTAssertTrue(FileManager.default.fileExists(atPath: expectedFileURL.path), "当任务遇到网络故障异常中断并捕获到 resumeData 时，必须成功在 Caches 物理目录持久化该数据文件。")
+        
+        let persistedData = try Data(contentsOf: expectedFileURL)
+        XCTAssertEqual(persistedData, sampleData, "持久化的物理文件指纹与内容必须与网络任务中拦截的 resumeData 保持一致。")
+        
+        // 4. 验证在主动取消任务后，对应的临时断点物理文件是否能被安全销毁
+        try await manager.cancelDownload(modelId: modelId)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: expectedFileURL.path), "在主动取消任务后，对应的断点物理文件必须立刻被物理删除销毁，不能遗留磁盘垃圾碎片。")
+    }
+    
+    /// 测试 ModelDownloadManager 能够成功读取沙盒中持久化的断点恢复文件并进行续传消费（消费后自动物理删除文件）
+    @MainActor
+    func testModelDownloadResumeDataConsumption() async throws {
+        let manager = ModelDownloadManager.shared
+        let modelId = "test-consume-resume-model-id"
+        
+        // 1. 获取物理路径
+        let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        let expectedFileURL = cachesDirectory
+            .appendingPathComponent("com.zhiyu.app.download.resume", isDirectory: true)
+            .appendingPathComponent("\(modelId).resume")
+        
+        // 确保无干扰残留
+        try? FileManager.default.removeItem(at: expectedFileURL)
+        
+        // 2. 构造合法的 Apple Plist 格式的断点续传数据，避免底层 URLSession 抛出 Objective-C 抛出不可捕获的崩溃异常
+        let plistDict: [String: Any] = [
+            "NSURLSessionDownloadURL": "https://cdn.example.com/test-model.bin",
+            "NSURLSessionResumeBytesReceived": Int64(1024),
+            "NSURLSessionResumeInfoVersion": 2,
+            "NSURLSessionResumeOriginalRequest": Data()
+        ]
+        guard let plistData = try? PropertyListSerialization.data(fromPropertyList: plistDict, format: .xml, options: 0) else {
+            XCTFail("构造 Apple Plist 格式的断点恢复测试数据失败")
+            return
+        }
+        
+        // 写入沙盒，模拟暂停或断网后持久化的物理断点恢复文件
+        try plistData.write(to: expectedFileURL, options: .atomic)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: expectedFileURL.path))
+        
+        // 3. 触发恢复下载
+        // 尽管由于模拟的物理临时分块文件本身不存在，后续下载会异步报错（属于预期行为），
+        // 但该方法应当能成功通过 session.downloadTask(withResumeData:) 预检并启动，同时最关键的是：它会清除已消费的断点物理文件。
+        do {
+            try await manager.resumeDownload(modelId: modelId)
+        } catch {
+            // 忽略由于物理下载任务拉起失败抛出的预期错误，主要验证物理断点文件是否已被消费
+        }
+        
+        // 4. 断言：已消费的物理断点恢复文件必须已被删除，以确保下次不会重复消费旧的垃圾数据
+        XCTAssertFalse(FileManager.default.fileExists(atPath: expectedFileURL.path), "恢复下载一旦启动，已消费的断点物理文件必须立即从 Caches 目录中物理销毁。")
+    }
 }
 
 final class FakeModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {

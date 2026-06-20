@@ -37,4 +37,14 @@ final class SQLiteFeedbackRepository: FeedbackRepository, DatabaseWriterProvider
             try FeedbackEntry.fetchOne(db, key: id)
         }
     }
+
+    func updateStatus(id: String, status: FeedbackStatus) async throws {
+        let writer = await dbWriter
+        try await writer.write { db in
+            try db.execute(
+                sql: "UPDATE \(FeedbackEntry.databaseTableName) SET status = ? WHERE id = ?",
+                arguments: [status.rawValue, id]
+            )
+        }
+    }
 }

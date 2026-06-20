@@ -71,16 +71,6 @@ struct PageDetailHeader: View {
     // MARK: - Breadcrumb
     private var breadcrumb: some View {
         HStack(spacing: DesignSystem.tiny) {
-            Image(systemName: DesignSystem.Icons.booksVerticalFill)
-                .font(.caption2)
-                .foregroundStyle(.appSecondary)
-            Text(L10n.Knowledge.Page.knowledge)
-                .font(.caption2)
-                .foregroundStyle(.appSecondary)
-            Image(systemName: DesignSystem.Icons.forward)
-                .font(.system(size: DesignSystem.caption2FontSize))
-                .foregroundStyle(.appSecondary)
-            
             // AI Status Indicator
             if taskCenter.tasks.contains(where: { if case .running = $0.status { return true }; return false }) {
                 HStack(spacing: DesignSystem.tiny) {

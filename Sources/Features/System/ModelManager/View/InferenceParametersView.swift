@@ -14,6 +14,10 @@ import SwiftUI
 /// 推理参数调节视图
 @MainActor
 public struct InferenceParametersView: View {
+    
+    private enum Constants {
+        static let popoverWidth: CGFloat = 240.0
+    }
 
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var modelManager = GlobalModelManager()
@@ -24,7 +28,7 @@ public struct InferenceParametersView: View {
     @State private var topP: Double = 0.9
     @State private var topK: Int = 40
     @State private var maxTokens: Int = 2048
-    @State private var hoveredTitle: String?  // 当前激活的参数提示（popover 锚点）
+    @State private var activeTipId: String? // 记录当前激活的 popover 提示 ID
 
     /// 当前位置是否匹配某个预设（不匹配时按钮不高亮）
     private var matchedPreset: ParameterPreset? {
@@ -298,41 +302,47 @@ public struct InferenceParametersView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
-    /// Info 图标 + popover 提示（iOS 友好：点击切换，popover 自动边界避让）
+    /// 弹窗气泡提示组件
+    /// - Parameters:
+    ///   - id: 参数的唯一标识符
+    ///   - tip: 参数的说明文本内容
+    /// - Returns: 附带 Popover 提示的气泡按钮视图，自适应大小且不产生布局下拉挤压
     @ViewBuilder
     private func infoIcon(id: String, tip: String) -> some View {
-        let binding = Binding<Bool>(
-            get: { hoveredTitle == id },
-            set: { hoveredTitle = $0 ? id : nil }
-        )
+        let isExpanded = activeTipId == id
         Button(action: {
+            // 触觉反馈并切换弹窗显示状态
             HapticFeedback.shared.trigger(.selection)
-            hoveredTitle = (hoveredTitle == id) ? nil : id
+            if isExpanded {
+                activeTipId = nil
+            } else {
+                activeTipId = id
+            }
         }) {
             Image(systemName: "info.circle")
                 .font(.caption)
-                .foregroundStyle(hoveredTitle == id ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
+                .foregroundStyle(isExpanded ? .appAccent : .appSecondary.opacity(DesignSystem.Opacity.soft))
                 .frame(width: DesignSystem.Metrics.customSize24, height: DesignSystem.Metrics.customSize24)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .popover(isPresented: binding, attachmentAnchor: .point(.top), arrowEdge: .bottom) {
-            HStack(alignment: .top, spacing: 4) {
-                Image(systemName: "lightbulb.fill")
-                    .font(.caption2)
-                    .foregroundStyle(Color.theme.orange)
-                    .padding(.top, 2)
-                Text(tip)
-                    .font(.caption2)
-                    .foregroundStyle(.appSecondary)
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
+        .popover(isPresented: Binding(
+            get: { activeTipId == id },
+            set: { isPresent in
+                if isPresent {
+                    activeTipId = id
+                } else if activeTipId == id {
+                    activeTipId = nil
+                }
             }
-            .padding(.horizontal, DesignSystem.medium)
-            .padding(.vertical, DesignSystem.small)
-            .frame(width: DesignSystem.Metrics.customSize260)
-            .presentationCompactAdaptation(.popover)
+        )) {
+            // 文字内容自适应，并通过限制宽度维持精美的气泡效果
+            Text(tip)
+                .font(.caption2)
+                .foregroundStyle(.appText)
+                .padding(DesignSystem.medium)
+                .frame(width: Constants.popoverWidth) // 限制最佳宽度
+                .presentationCompactAdaptation(.popover) // 强力适配：在 iPhone 紧凑布局上也呈现为气泡卡片，而非全屏 Sheet
         }
     }
 

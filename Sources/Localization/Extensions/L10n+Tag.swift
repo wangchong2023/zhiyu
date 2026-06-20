@@ -25,6 +25,10 @@ extension L10n {
         public static var allTags: String { tr("tag.allTags") }
         public static var relatedPagesTitle: String { tr("tag.relatedPagesTitle") }
         public static func tagCount(_ n: Int) -> String { trf("tag.count", n) }
+        public static var layoutList: String { Tag.tr("tag.layoutList") }
+        public static var layoutBubble: String { Tag.tr("tag.layoutBubble") }
+        public static var expandAll: String { Tag.tr("tag.expandAll") }
+        public static var collapse: String { Tag.tr("tag.collapse") }
 
         public enum Action {
             public static var rename: String { Tag.tr("tag.rename") }

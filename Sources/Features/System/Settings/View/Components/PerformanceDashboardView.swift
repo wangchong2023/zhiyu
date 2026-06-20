@@ -15,8 +15,15 @@ import SwiftUI
 /// 负责实时展示内存占用、页面规模、图谱密度及核心算法耗时，帮助开发者诊断系统性能瓶颈
 struct PerformanceDashboardView: View {
     @ObservedObject var service: PerformanceService
+    @Environment(AppStore.self) var store
     @Environment(\.dismiss) private var dismiss
     @State private var timer: Timer?
+    
+    private func updateMetricsData() {
+        service.updateMemoryUsage()
+        service.updatePageMetrics(pages: store.pages)
+        service.updateGraphMetrics(nodes: store.totalPages, edges: store.totalConnectionCount)
+    }
     
     var body: some View {
         NavigationStack {
@@ -26,7 +33,6 @@ struct PerformanceDashboardView: View {
                     MetricCardView(
                         title: L10n.Common.Perf.memory,
                         value: String(format: "%.1f MB", service.metrics.memoryUsageMB),
-                        icon: "memorychip",
                         color: .blue
                     )
                     
@@ -35,13 +41,11 @@ struct PerformanceDashboardView: View {
                         MetricCardView(
                             title: L10n.Common.Perf.pages,
                             value: "\(service.metrics.pageCount)",
-                            icon: "doc.fill",
                             color: .green
                         )
                         MetricCardView(
                             title: L10n.Common.Perf.words,
                             value: "\(service.metrics.totalWords)",
-                            icon: "textformat",
                             color: .purple
                         )
                     }
@@ -51,14 +55,26 @@ struct PerformanceDashboardView: View {
                         MetricCardView(
                             title: L10n.Common.Perf.nodes,
                             value: "\(service.metrics.graphNodeCount)",
-                            icon: "circle.fill",
                             color: .orange
                         )
                         MetricCardView(
                             title: L10n.Common.Perf.edges,
                             value: "\(service.metrics.graphEdgeCount)",
-                            icon: "line.diagonal",
                             color: .pink
+                        )
+                    }
+                    
+                    // AI & RAG Stats
+                    HStack(spacing: DesignSystem.medium) {
+                        MetricCardView(
+                            title: L10n.Common.Perf.llmCalls,
+                            value: "\(service.metrics.llmCallCount)",
+                            color: .cyan
+                        )
+                        MetricCardView(
+                            title: L10n.Common.Perf.aiSuccessRate,
+                            value: String(format: "%.1f%%", service.metrics.aiSuccessRate * 100),
+                            color: .teal
                         )
                     }
                     
@@ -73,6 +89,7 @@ struct PerformanceDashboardView: View {
                         TimingRowView(label: L10n.Common.Perf.lint, duration: service.metrics.lintDuration, color: .orange)
                         TimingRowView(label: L10n.Common.Perf.graphLayout, duration: service.metrics.graphLayoutDuration, color: .purple)
                         TimingRowView(label: L10n.Common.Perf.search, duration: service.metrics.searchDuration, color: .pink)
+                        TimingRowView(label: L10n.Common.Perf.ragChain, duration: service.metrics.ragChainDuration, color: .cyan)
                     }
                     .padding()
                     .background(Color.appCard)
@@ -87,21 +104,21 @@ struct PerformanceDashboardView: View {
             }
             .background(PageBackgroundView(accentColor: .appAccent))
             .navigationTitle(L10n.Common.Perf.title)
-.appNavigationBarTitleDisplayMode(.inline)
+            .appNavigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        service.updateMemoryUsage()
+                        updateMetricsData()
                     } label: {
                         Image(systemName: DesignSystem.Icons.refresh)
                     }
                 }
             }
             .onAppear {
-                service.updateMemoryUsage()
-                timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak service] _ in
+                updateMetricsData()
+                timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
                     Task { @MainActor in
-                        service?.updateMemoryUsage()
+                        updateMetricsData()
                     }
                 }
             }
@@ -114,27 +131,30 @@ struct PerformanceDashboardView: View {
 }
 
 // MARK: - Metric Card
-/// 性能指标卡片小组件
+/// 性能指标卡片小组件 — 无图标，参考页面顶部摘要栏风格
 struct MetricCardView: View {
     let title: String
     let value: String
-    let icon: String
     let color: Color
     
     var body: some View {
-        VStack(spacing: DesignSystem.small) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(color)
-            Text(value)
-                .font(.title3.weight(.bold))
-                .foregroundStyle(.appText)
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.appSecondary)
+        HStack(spacing: DesignSystem.small) {
+            RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                .fill(color)
+                .frame(width: DesignSystem.IconSize.atomic, height: DesignSystem.huge)
+            
+            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                Text(value)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.appText)
+                Text(title)
+                    .font(.caption2)
+                    .foregroundStyle(.appSecondary)
+            }
+            Spacer()
         }
+        .padding(DesignSystem.medium)
         .frame(maxWidth: .infinity)
-        .padding()
         .background(Color.appCard)
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
     }
@@ -174,7 +194,7 @@ struct TimingRowView: View {
             Text(String(format: "%.3fs", duration))
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.appSecondary)
-                .frame(width: DesignSystem.Metrics.progressHeight, alignment: .trailing)
+                .frame(width: DesignSystem.Metrics.timingLabelWidth, alignment: .trailing)
         }
     }
 }

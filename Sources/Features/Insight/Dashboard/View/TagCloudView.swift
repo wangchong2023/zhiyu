@@ -30,10 +30,19 @@ struct TagCloudView: View {
 struct TagCloudViewContent: View {
     // ── 外部依赖 ──
     @Environment(AppStore.self) var store
+    @Inject var appEnv: any AppEnvironmentProtocol
     
     // 使用协调器管理状态与交互
     @State private var coordinator: TagCloudCoordinator
     @State private var showBulkDeleteConfirm = false
+    @State private var displayMode: DisplayMode = .list
+    @State private var showSearchBar = false
+    @State private var isExpanded = false
+    
+    enum DisplayMode {
+        case list
+        case bubble
+    }
 
     /// 初始化路由状态
     /// - Parameter initialTag: 外部传入的初始选中标签
@@ -127,14 +136,39 @@ struct TagCloudViewContent: View {
 
     /// 组合主界面布局
     private var mainContent: some View {
-        VStack(spacing: 0) {
+        let isExp = appEnv.screenClass == .expansive
+        
+        return VStack(spacing: 0) {
             // 1. 顶部操作栏
-            HStack(spacing: DesignSystem.wide) {
+            HStack(spacing: isExp ? DesignSystem.wide : DesignSystem.medium) {
+                // 视图模式选择 (放在左侧)
+                Picker("", selection: $displayMode) {
+                    Text(L10n.Tag.layoutList).tag(DisplayMode.list)
+                    Text(L10n.Tag.layoutBubble).tag(DisplayMode.bubble)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: DesignSystem.Metrics.customSize140)
+                
                 Spacer()
+                
+                // 🔍 搜索切换按钮 (移至右侧)
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showSearchBar.toggle()
+                    }
+                }) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(showSearchBar ? .appAccent : .appSecondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L10n.Search.title)
+                
                 if !coordinator.isEditMode {
                     Button(action: { coordinator.showAddTagDialog = true }) {
                         Label(L10n.Tag.Management.addNew, systemImage: DesignSystem.Icons.plusCircle)
                             .font(.subheadline.bold())
+                            .adaptiveLabelStyle(isExpanded: isExp)
                     }
                 }
                 
@@ -146,13 +180,14 @@ struct TagCloudViewContent: View {
                           systemImage: coordinator.isEditMode ? DesignSystem.Icons.checkCircle : DesignSystem.Icons.checklist)
                         .font(.subheadline.bold())
                         .foregroundStyle(coordinator.isEditMode ? .green : .appAccent)
+                        .adaptiveLabelStyle(isExpanded: isExp)
                 }
             }
-            .padding(.horizontal, DesignSystem.wide)
+            .padding(.horizontal, isExp ? DesignSystem.wide : DesignSystem.medium)
             .padding(.vertical, DesignSystem.Layout.headerVerticalPadding)
 
-            // 2. 搜索栏（标签数 > 30 时显示）
-            if coordinator.tags.count > TagCloudCoordinator.searchThreshold {
+            // 2. 搜索栏（当 showSearchBar 为真时以动画展开，不受标签总数限值）
+            if showSearchBar {
                 HStack(spacing: DesignSystem.tightPadding) {
                     Image(systemName: DesignSystem.Icons.search)
                         .foregroundStyle(.appSecondary)
@@ -169,6 +204,8 @@ struct TagCloudViewContent: View {
                 .background(Color.appCard.opacity(DesignSystem.glassOpacity))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                 .padding(.horizontal, DesignSystem.huge)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .padding(.bottom, DesignSystem.small)
             }
 
             // 3. 标签云展示区（带标准边框的卡片）
@@ -271,21 +308,102 @@ struct TagCloudViewContent: View {
         .frame(maxHeight: .infinity)
     }
 
-    private var tagScrollView: some View {
-        ScrollView {
-            FlowLayout(spacing: DesignSystem.Grid.flowSpacing) {
-                ForEach(coordinator.filteredTags, id: \.tag) { tagItem in
-                    tagCapsule(tagItem)
-                }
-            }
-            .padding(DesignSystem.medium)
-        }
-        .frame(maxHeight: DesignSystem.Metrics.maxTagCloudHeight) // 300
-        .fixedSize(horizontal: false, vertical: true)
+    private func bubbleRatio(for count: Int) -> Double {
+        let counts = coordinator.filteredTags.map { $0.count }
+        guard let maxVal = counts.max(), let minVal = counts.min() else { return 0.0 }
+        let diff = maxVal - minVal
+        guard diff > 0 else { return 0.5 }
+        return Double(count - minVal) / Double(diff)
     }
 
-    private func tagCapsule(_ item: (tag: String, count: Int)) -> some View {
-        TagCapsuleView(item: item, coordinator: coordinator)
+    private var tagScrollView: some View {
+        let isListMode = displayMode == .list
+        let tags = coordinator.filteredTags
+        let shouldCollapse = isListMode && tags.count > 12 && !isExpanded
+        let displayedTags = shouldCollapse ? Array(tags.prefix(12)) : tags
+        
+        return VStack(spacing: 0) {
+            ScrollView {
+                FlowLayout(spacing: isListMode ? DesignSystem.Grid.flowSpacing : DesignSystem.small) {
+                    ForEach(displayedTags, id: \.tag) { tagItem in
+                        TagCapsuleView(
+                            item: tagItem,
+                            coordinator: coordinator,
+                            bubbleRatio: bubbleRatio(for: tagItem.count),
+                            isBubbleMode: !isListMode
+                        )
+                    }
+                }
+                .padding(DesignSystem.medium)
+            }
+            .frame(maxHeight: isListMode ? (isExpanded ? .infinity : DesignSystem.Metrics.maxTagCloudHeight) : .infinity)
+            .fixedSize(horizontal: false, vertical: isListMode)
+            .overlay(alignment: .bottom) {
+                if shouldCollapse {
+                    // swiftlint:disable magic_numbers_opacity magic_numbers_frame
+                    LinearGradient(
+                        colors: [.clear, Color.appCard.opacity(0.8), Color.appCard],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 35)
+                    .allowsHitTesting(false)
+                    // swiftlint:enable magic_numbers_opacity magic_numbers_frame
+                }
+            }
+            
+            if isListMode && tags.count > 12 {
+                HStack {
+                    Spacer()
+                    if !isExpanded {
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                isExpanded = true
+                            }
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Text(L10n.Tag.expandAll)
+                                Image(systemName: "chevron.down")
+                            }
+                            .font(.caption.bold())
+                            .foregroundStyle(.appAccent)
+                            .padding(.horizontal, DesignSystem.large)
+                            .padding(.vertical, DesignSystem.small)
+                            .background(Color.appCard)
+                            .clipShape(Capsule())
+                            .overlay(
+                                Capsule().stroke(Color.appAccent.opacity(DesignSystem.Opacity.light), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.bottom, DesignSystem.small)
+                    } else {
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                isExpanded = false
+                            }
+                        }) {
+                            HStack(spacing: DesignSystem.tiny) {
+                                Text(L10n.Tag.collapse)
+                                Image(systemName: "chevron.up")
+                            }
+                            .font(.caption.bold())
+                            .foregroundStyle(.appSecondary)
+                            .padding(.horizontal, DesignSystem.large)
+                            .padding(.vertical, DesignSystem.small)
+                            .background(Color.appCard)
+                            .clipShape(Capsule())
+                            .overlay(
+                                Capsule().stroke(Color.appBorder.opacity(DesignSystem.Opacity.light), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.bottom, DesignSystem.small)
+                    }
+                    Spacer()
+                }
+            }
+        }
     }
 
     private var pagesListView: some View {
@@ -374,10 +492,23 @@ private struct TagCapsuleView: View {
     /// 绑定的协调器
     @Bindable var coordinator: TagCloudCoordinator
     
+    /// 词频插值比例
+    var bubbleRatio: Double = 0.0
+    
+    /// 是否为气泡云显示模式
+    var isBubbleMode: Bool = false
+    
+    // swiftlint:disable magic_numbers_opacity
     var body: some View {
         let isSelected = coordinator.isEditMode ? coordinator.selectedTagsForBulk.contains(item.tag) : coordinator.selectedTag == item.tag
         
-        Button(action: {
+        let fontSize: CGFloat = isBubbleMode ? 10.0 + CGFloat(bubbleRatio * 4.0) : 13.0
+        let paddingH: CGFloat = isBubbleMode ? 8.0 + CGFloat(bubbleRatio * 4.0) : 12.0
+        let paddingV: CGFloat = isBubbleMode ? 4.0 + CGFloat(bubbleRatio * 2.0) : 6.0
+        let opacity: Double = isBubbleMode ? 0.08 + bubbleRatio * 0.35 : DesignSystem.translucentOpacity
+        let size: CGFloat = 42.0 + CGFloat(bubbleRatio * 32.0)
+        
+        let buttonContent = Button(action: {
             withAnimation(DesignSystem.Animation.prominent) {
                 if coordinator.isEditMode {
                     if coordinator.selectedTagsForBulk.contains(item.tag) {
@@ -391,29 +522,60 @@ private struct TagCapsuleView: View {
             }
             HapticFeedback.shared.trigger(.selection)
         }) {
-            HStack(spacing: DesignSystem.Layout.listRowSpacing) {
-                Text(item.tag.replacingOccurrences(of: "#", with: ""))
-                    .font(.system(.subheadline, design: .rounded).weight(isSelected ? .semibold : .regular))
-                
-                Text("\(item.count)")
-                    .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
-                    .padding(.horizontal, DesignSystem.small)
-                    .padding(.vertical, DesignSystem.atomic)
-                    .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
-                    .clipShape(Capsule())
+            Group {
+                if isBubbleMode {
+                    VStack(spacing: 2) {
+                        Text(item.tag.replacingOccurrences(of: "#", with: ""))
+                            .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .multilineTextAlignment(.center)
+                        
+                        Text("\(item.count)")
+                            .font(.system(size: fontSize * 0.8, weight: .bold, design: .monospaced))
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 0.5)
+                            .background(isSelected ? Color.theme.white.opacity(0.2) : Color.appSecondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    .padding(bubbleRatio > 0.5 ? DesignSystem.medium : DesignSystem.small)
+                    .frame(minWidth: size * 0.7)
+                } else {
+                    HStack(spacing: DesignSystem.Layout.listRowSpacing) {
+                        Text(item.tag.replacingOccurrences(of: "#", with: ""))
+                            .font(.system(size: fontSize, design: .rounded).weight(isSelected ? .semibold : .regular))
+                        
+                        Text("\(item.count)")
+                            .font(.system(size: DesignSystem.microFontSize, weight: .bold, design: .monospaced))
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appSecondary.opacity(DesignSystem.glassOpacity * 0.5))
+                            .clipShape(Capsule())
+                    }
+                    .padding(.horizontal, paddingH)
+                    .padding(.vertical, paddingV)
+                }
             }
-            .padding(.horizontal, DesignSystem.large)
-            .padding(.vertical, DesignSystem.small)
-            .background(
-                Capsule()
-                    .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(DesignSystem.translucentOpacity))
-            )
-            .overlay(
-                Capsule()
-                    .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
-            )
+            .background {
+                if isBubbleMode {
+                    Circle()
+                        .fill(isSelected ? Color.appAccent.opacity(0.85) : Color.appAccent.opacity(0.1 + bubbleRatio * 0.5))
+                } else {
+                    Capsule()
+                        .fill(isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity) : Color.appCard.opacity(opacity))
+                }
+            }
+            .overlay {
+                if isBubbleMode {
+                    Circle()
+                        .stroke(isSelected ? Color.appAccent : Color.appBorder.opacity(0.25 + bubbleRatio * 0.15), lineWidth: DesignSystem.borderWidth)
+                } else {
+                    Capsule()
+                        .stroke(isSelected ? Color.appAccent.opacity(DesignSystem.surfaceOpacity) : Color.appBorder.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth * 1.5)
+                }
+            }
             .scaleEffect(isSelected ? DesignSystem.Gallery.hoverScale : 1.0)
-            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.clear, radius: DesignSystem.shadowRadius, y: DesignSystem.shadowY)
+            .shadow(color: isSelected ? Color.appAccent.opacity(DesignSystem.glassOpacity * 0.8) : Color.appAccent.opacity(bubbleRatio * 0.08), radius: bubbleRatio > 0.5 ? DesignSystem.shadowRadius : 2, y: bubbleRatio > 0.5 ? DesignSystem.shadowY : 1)
             .overlay(alignment: .topTrailing) {
                 if coordinator.isEditMode {
                     ZStack {
@@ -431,7 +593,10 @@ private struct TagCapsuleView: View {
                                 .frame(width: DesignSystem.headlineFontSize, height: DesignSystem.headlineFontSize)
                         }
                     }
-                    .offset(x: DesignSystem.small, y: -DesignSystem.small)
+                    .offset(
+                        x: isBubbleMode ? -DesignSystem.small : DesignSystem.small,
+                        y: isBubbleMode ? DesignSystem.small : -DesignSystem.small
+                    )
                 }
             }
         }
@@ -452,6 +617,50 @@ private struct TagCapsuleView: View {
                     Label(L10n.Tag.Action.delete, systemImage: DesignSystem.Icons.delete)
                 }
             }
+        }
+        
+        Group {
+            if isBubbleMode {
+                GeometryReader { geo in
+                    let frame = geo.frame(in: .global)
+                    let screenHeight: CGFloat = {
+                        #if os(macOS)
+                        return NSScreen.main?.frame.height ?? 800
+                        #else
+                        return UIScreen.main.bounds.height
+                        #endif
+                    }()
+                    let centerY = screenHeight / 2.0
+                    let distance = abs(frame.midY - centerY)
+                    let maxDistance: CGFloat = 280.0
+                    let pct = max(0, min(1, distance / maxDistance))
+                    
+                    let scale = 1.12 - (pct * 0.52)
+                    let fOpacity = 1.0 - (pct * 0.55)
+                    
+                    buttonContent
+                        .scaleEffect(scale)
+                        .opacity(fOpacity)
+                        .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.75, blendDuration: 0), value: scale)
+                }
+                .fixedSize()
+            } else {
+                buttonContent
+            }
+        }
+    }
+    // swiftlint:enable magic_numbers_opacity
+}
+
+// MARK: - View 扩展
+extension View {
+    /// 智适应 Label 样式转换器，支持在不同屏幕状态下在图文和纯图标间弹性切换，避开三元运算符类型匹配限制
+    @ViewBuilder
+    func adaptiveLabelStyle(isExpanded: Bool) -> some View {
+        if isExpanded {
+            self.labelStyle(.titleAndIcon)
+        } else {
+            self.labelStyle(.iconOnly)
         }
     }
 }

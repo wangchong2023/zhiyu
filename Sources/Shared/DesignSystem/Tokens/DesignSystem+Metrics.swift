@@ -21,6 +21,7 @@ extension DesignSystem {
         public static let boxHeight: CGFloat = Spacing.Metrics.boxHeight
         public static let indicatorSize: CGFloat = Spacing.Metrics.indicatorSize
         public static let progressHeight: CGFloat = Spacing.Metrics.progressHeight
+        public static let ringSize: CGFloat = Spacing.Metrics.ringSize
         public static let boxAspectRatio: CGFloat = Spacing.Metrics.boxAspectRatio
         public static let dashboardValueSize: CGFloat = Spacing.Metrics.dashboardValueSize
         public static let dashboardLabelSize: CGFloat = Spacing.Metrics.dashboardLabelSize
@@ -71,6 +72,8 @@ extension DesignSystem {
         public static let minWindowHeight: CGFloat = Spacing.Metrics.minWindowHeight
         /// 笔记本名称最大长度限制 (24字符)
         public static let maxNotebookNameLength: Int = 24
+        /// 耗时分析标签宽度 (60px)
+        public static let timingLabelWidth: CGFloat = 60
     
         // 自动生成的魔鬼数字补充常量
         public static let customSize150: CGFloat = 150

@@ -1033,7 +1033,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "反向链接页面：%@，类型：%@"
+            "value": "反向引用页面：%@，类型：%@"
           }
         }
       }
@@ -1050,7 +1050,58 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "反向链接"
+            "value": "反向引用"
+          }
+        }
+      }
+    },
+    "page.outgoings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outgoings"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "引用外部"
+          }
+        }
+      }
+    },
+    "page.brokenLinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broken Links"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "失效链接"
+          }
+        }
+      }
+    },
+    "page.orphanPages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orphan Pages"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无引页面"
           }
         }
       }
@@ -1067,7 +1118,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d 个反向链接"
+            "value": "%d 个反向引用"
           }
         }
       }
@@ -1475,7 +1526,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "无反向链接"
+            "value": "无反向引用"
           }
         }
       }
@@ -1492,7 +1543,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "出链"
+            "value": "引用外部"
           }
         }
       }
@@ -1509,7 +1560,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d 个出链"
+            "value": "%d 个引用外部"
           }
         }
       }
@@ -1537,13 +1588,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pin page"
+            "value": "Favorite page"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "固定页面"
+            "value": "收藏页面"
           }
         }
       }
@@ -1707,13 +1758,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unpin"
+            "value": "Unfavorite"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "取消固定"
+            "value": "取消收藏"
           }
         }
       }
@@ -2139,6 +2190,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "标签管理"
+          }
+        }
+      }
+    },
+    "tag.layoutList": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "List"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "列表"
+          }
+        }
+      }
+    },
+    "tag.layoutBubble": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bubble Cloud"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "气泡云"
+          }
+        }
+      }
+    },
+    "tag.expandAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expand All"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "展开全部"
+          }
+        }
+      }
+    },
+    "tag.collapse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collapse"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "收起"
           }
         }
       }
