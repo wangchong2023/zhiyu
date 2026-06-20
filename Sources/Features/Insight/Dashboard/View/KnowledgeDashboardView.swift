@@ -47,7 +47,7 @@ struct KnowledgeDashboardView: View {
             .scrollIndicators(.hidden)
             
         }
-        .appTabToolbar(title: L10n.Dashboard.title)
+        .appTabToolbar(title: L10n.Dashboard.title, showVaultBadge: false)
         .task {
             await coordinator.refreshAll()
         }

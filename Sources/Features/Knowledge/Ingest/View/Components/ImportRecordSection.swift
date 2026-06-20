@@ -128,6 +128,10 @@ struct ImportRecordSection: View {
             showTextPreview = true
             return
         }
+        // 回退：无原始内容可预览时，若有关联页面则导航过去
+        if let pageID = record.pageID, let uuid = UUID(uuidString: pageID), record.status == ImportRecordStatus.done {
+            router.navigateToPage(id: uuid)
+        }
     }
 
     // MARK: - 标签分组（仅在"全部"tab）

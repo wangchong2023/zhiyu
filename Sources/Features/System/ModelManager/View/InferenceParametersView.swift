@@ -20,7 +20,7 @@ public struct InferenceParametersView: View {
     }
 
     @EnvironmentObject private var themeManager: ThemeManager
-    @State private var modelManager = GlobalModelManager()
+    @State private var modelManager = GlobalModelManager.shared
 
     // MARK: - 状态管理
 

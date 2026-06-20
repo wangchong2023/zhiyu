@@ -25,7 +25,7 @@ public struct ModelLabView: View {
         static let chatBubblePadding: CGFloat = 14
     }
     
-    @State private var modelManager = GlobalModelManager()
+    @State private var modelManager = GlobalModelManager.shared
     @State private var labManager = ModelLabManager()
     @StateObject private var themeManager = ThemeManager.shared
     

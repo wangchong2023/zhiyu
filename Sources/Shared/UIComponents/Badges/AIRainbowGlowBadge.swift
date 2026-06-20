@@ -17,7 +17,7 @@ public struct AIRainbowGlowBadge: View {
     
     // MARK: - 依赖注入
     
-    @State private var modelManager = GlobalModelManager()
+    @State private var modelManager = GlobalModelManager.shared
     
     @Environment(Router.self) private var router
     

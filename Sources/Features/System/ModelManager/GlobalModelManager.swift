@@ -18,6 +18,9 @@ import Combine
 @Observable
 public final class GlobalModelManager {
     
+    /// 全局共享实例
+    public static let shared = GlobalModelManager()
+    
     // MARK: - 依赖注入
     
     @ObservationIgnored @Inject private var remoteConfig: any RemoteConfigCapabilities

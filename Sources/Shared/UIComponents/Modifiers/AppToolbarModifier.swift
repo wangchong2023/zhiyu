@@ -15,9 +15,11 @@ import SwiftUI
 struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
     let title: String
     let trailingItems: Trailing
+    let showVaultBadge: Bool
     
-    init(title: String, @ViewBuilder trailing: () -> Trailing) {
+    init(title: String, showVaultBadge: Bool = true, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
+        self.showVaultBadge = showVaultBadge
         self.trailingItems = trailing()
     }
     
@@ -29,15 +31,17 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // leading 侧不放任何占位符，避免 SwiftUI 渲染白色背景底座
-                // .principal placement 在 NavigationBar 中默认物理居中
                 #if os(watchOS)
-                ToolbarItem(placement: .topBarTrailing) {
-                    VaultBadge()
+                if showVaultBadge {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        VaultBadge()
+                    }
                 }
                 #else
-                ToolbarItem(placement: .principal) {
-                    VaultBadge()
+                if showVaultBadge {
+                    ToolbarItem(placement: .principal) {
+                        VaultBadge()
+                    }
                 }
                 #endif
                 
@@ -46,7 +50,7 @@ struct AppTabToolbarModifier<Trailing: View>: ViewModifier {
                         if Trailing.self != EmptyView.self {
                             trailingItems
                         }
-UserProfileMenu()
+                        UserProfileMenu()
                     }
                 }
             }
@@ -64,11 +68,6 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
         self.title = title
         self.showVaultBadge = showVaultBadge
         self.trailingItems = trailing()
-    }
-    
-    /// 全局注入的平台设备环境
-    private var appEnv: any AppEnvironmentProtocol {
-        ServiceContainer.shared.resolve((any AppEnvironmentProtocol).self)
     }
     
     /// 视图主体
@@ -101,15 +100,7 @@ struct AppSubPageToolbarModifier<Trailing: View>: ViewModifier {
                 #endif
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: DesignSystem.medium) {
-                        trailingItems
-
-                        #if !os(watchOS)
-if appEnv.screenClass != .compact {
-                            UserProfileMenu()
-                        }
-                        #endif
-                    }
+                    trailingItems
                 }
             }
     }
@@ -117,14 +108,15 @@ if appEnv.screenClass != .compact {
 
 extension View {
     /// 应用主标签页统一工具栏 (根页面使用)
-    func appTabToolbar<Trailing: View>(title: String, @ViewBuilder trailing: @escaping () -> Trailing) -> some View {
-        self.modifier(AppTabToolbarModifier(title: title, trailing: trailing))
+    func appTabToolbar<Trailing: View>(title: String, showVaultBadge: Bool = true, @ViewBuilder trailing: @escaping () -> Trailing) -> some View {
+        self.modifier(AppTabToolbarModifier(title: title, showVaultBadge: showVaultBadge, trailing: trailing))
     }
     
     /// appTabToolbar
     /// - Parameter title: title
-    func appTabToolbar(title: String) -> some View {
-        self.modifier(AppTabToolbarModifier(title: title, trailing: { EmptyView() }))
+    /// - Parameter showVaultBadge: 展示 VaultBadge
+    func appTabToolbar(title: String, showVaultBadge: Bool = true) -> some View {
+        self.modifier(AppTabToolbarModifier(title: title, showVaultBadge: showVaultBadge, trailing: { EmptyView() }))
     }
     
     /// 应用子页面统一工具栏 (解决重叠，保留返回路径)

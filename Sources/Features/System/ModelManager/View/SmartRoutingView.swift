@@ -16,7 +16,7 @@ import SwiftUI
 public struct SmartRoutingView: View {
 
     @StateObject private var themeManager = ThemeManager.shared
-    @State private var modelManager = GlobalModelManager()
+    @State private var modelManager = GlobalModelManager.shared
 
     public init() {}
 

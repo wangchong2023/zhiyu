@@ -104,13 +104,31 @@ struct ImportRecordCard: View {
 
     // MARK: - 信息行
 
+    /// 计算导入内容的占用空间大小
+    private var storageSize: String? {
+        if let size = record.fileSize, size > 0 {
+            return ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+        }
+        if let text = record.rawText, !text.isEmpty {
+            let bytes = Int64(text.lengthOfBytes(using: .utf8))
+            return ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
+        }
+        return nil
+    }
+
     @ViewBuilder
     private var detailLine: some View {
         HStack(spacing: DesignSystem.tightPadding) {
             switch categoryValue {
             case .file:
-                if let size = record.fileSize {
-                    Label(ByteCountFormatter.string(fromByteCount: size, countStyle: .file), systemImage: "doc")
+                HStack(spacing: DesignSystem.tightPadding) {
+                    if let size = record.fileSize {
+                        Label(ByteCountFormatter.string(fromByteCount: size, countStyle: .file), systemImage: "doc")
+                    }
+                    if let url = record.sourceURL, let host = URL(string: url)?.host {
+                        Text("·")
+                        Label(host, systemImage: "link")
+                    }
                 }
             case .link:
                 if let url = record.sourceURL, let host = URL(string: url)?.host {
@@ -120,6 +138,12 @@ struct ImportRecordCard: View {
                 Label(L10n.Ingest.voiceNote, systemImage: "waveform")
             default:
                 EmptyView()
+            }
+            Spacer()
+            if let size = storageSize {
+                Text(size)
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.tertiary)
             }
         }
         .font(.caption)

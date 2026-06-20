@@ -22,7 +22,7 @@ public struct ModelStoreView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     
     /// 全局大模型商店中台管理器
-    @State private var modelManager = GlobalModelManager()
+    @State private var modelManager = GlobalModelManager.shared
     
     // MARK: - 局部视图状态
 
