@@ -215,7 +215,22 @@ final class SettingsE2ETests: KnowledgeBaseUITests {
 
     /// 验证语言切换控件可交互
     func testLanguageSwitching() async {
-        tapTab(named: "Settings")
+        let tabLabels = ["Settings", "设置"]
+        var tapped = false
+        for label in tabLabels {
+            let tab = app.tabBars.buttons[label].exists ? app.tabBars.buttons[label] : app.buttons[label]
+            if tab.exists && tab.isHittable {
+                tab.tap()
+                tapped = true
+                break
+            }
+        }
+        if !tapped {
+            let tab = app.tabBars.buttons.element(boundBy: 3)
+            if tab.exists && tab.isHittable {
+                tab.tap()
+            }
+        }
         try? await Task.sleep(nanoseconds: UInt64(1 * 1_000_000_000))
 
         let langPicker = app.pickerWheels.firstMatch

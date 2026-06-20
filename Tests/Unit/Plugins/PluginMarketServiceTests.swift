@@ -98,7 +98,8 @@ final class PluginMarketServiceTests: XCTestCase {
         XCTAssertNil(service.errorMessage)
     }
     
-    func testFetchPluginsFailureFallbackToStaticPlugins() async throws {
+    /// 验证当网络抓取失败时，availablePlugins 应清空，不进行本地 Fallback 插件填充，且 errorMessage 正确被赋值
+    func testFetchPluginsFailureNoFallback() async throws {
         MockURLProtocol.requestHandler = { _ in
             throw URLError(.notConnectedToInternet)
         }
@@ -107,39 +108,28 @@ final class PluginMarketServiceTests: XCTestCase {
 
         await service.fetchPlugins()
 
-        // 验证失败后，availablePlugins 包含 7 个兜底示例插件，且 errorMessage 不为 nil
-        XCTAssertEqual(service.availablePlugins.count, 7)
-        XCTAssertEqual(service.availablePlugins.first?.id, "toc-generator-local")
+        // 验证失败后，由于去除了 fallback 逻辑，列表为空且抛出连接错误提示
+        XCTAssertTrue(service.availablePlugins.isEmpty)
         XCTAssertNotNil(service.errorMessage)
     }
 
-    func testDownloadPluginLocalFallback() async throws {
-        // 在当前测试工作目录创建虚拟物理文件供拷贝测试，避免脱网沙盒下路径找不到
-        let fileManager = FileManager.default
-        let testDir = "Tools/Plugins"
-        let testFile = "\(testDir)/smart-cleaner.zyplugin"
-        
-        try? fileManager.createDirectory(atPath: testDir, withIntermediateDirectories: true)
-        fileManager.createFile(atPath: testFile, contents: Data("mock-plugin-data".utf8))
-        
-        defer {
-            // 测试结束清理临时测试文件
-            try? fileManager.removeItem(atPath: testFile)
-        }
-        
-        // 创建一个没有下载链接的 Mock 插件（触发本地拷贝安装）
+    /// 验证若 MarketPlugin 缺少有效的下载 URL，下载应直接返回失败 (false)
+    func testDownloadPluginWithoutURLFailure() async throws {
+        // 创建一个没有下载链接的 Mock 插件
         let plugin = MarketPlugin(
             from: CommunityPluginEntry(
                 id: "smart-cleaner",
                 name: "Markdown Beautifier",
                 author: "ZhiYu Team",
                 description: "Desc",
-                repo: "wangchong2023/zhiyu-releases"
+                repo: "wangchong2023/zhiyu-releases",
+                names: nil,
+                descriptions: nil
             ),
             downloadBase: URL(string: "http://localhost/plugins")!
         )
         
-        // 我们需要把 downloadURL 设为 nil 模拟没有下载链接的情形，或者给一个无法访问的 url 模拟网络下载失败的情形
+        // 构造一个没有下载 URL 的插件实例
         let mockPluginNoURL = MarketPlugin(
             id: plugin.id,
             version: plugin.version,
@@ -159,7 +149,7 @@ final class PluginMarketServiceTests: XCTestCase {
         )
         
         let success = await service.downloadPlugin(mockPluginNoURL)
-        XCTAssertTrue(success, "没有下载 URL 的本地示例插件应通过本地拷贝兜底安装成功")
+        XCTAssertFalse(success, "缺少下载 URL 的插件在无 fallback 模式下应直接下载失败并返回 false")
     }
 
     // MARK: - community-plugins.json 格式测试
@@ -249,5 +239,62 @@ final class PluginMarketServiceTests: XCTestCase {
         } else {
             XCTAssertEqual(service.availablePlugins[0].id, "mock-plugin")
         }
+    }
+
+    /// 验证从社区抓取的 community-plugins.json 可以包含并成功解析可选的 `names` 和 `descriptions` 字典
+    func testCommunityPluginsFormatParsingWithLocales() async throws {
+        let jsonString = """
+        [
+            {
+                "id": "locale-test",
+                "name": "Fallback Name",
+                "author": "Author",
+                "description": "Fallback Desc",
+                "repo": "user/repo",
+                "names": { "en": "English Name", "zh-Hans": "中文名称" },
+                "descriptions": { "en": "English Desc", "zh-Hans": "中文描述" }
+            }
+        ]
+        """
+        MockURLProtocol.requestHandler = { request in
+            // swiftlint:disable:next force_unwrapping
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, Data(jsonString.utf8))
+        }
+
+        await service.fetchPlugins()
+
+        XCTAssertEqual(service.availablePlugins.count, 1)
+        let plugin = service.availablePlugins[0]
+        XCTAssertEqual(plugin.names["en"], "English Name")
+        XCTAssertEqual(plugin.names["zh-Hans"], "中文名称")
+        XCTAssertEqual(plugin.descriptions["en"], "English Desc")
+        XCTAssertEqual(plugin.descriptions["zh-Hans"], "中文描述")
+    }
+
+    /// 验证根据首选语言及下载基准 URL 解析候选的 README 云端路径及降级顺序
+    func testFetchRemoteReadmeLanguageFallback() throws {
+        let pluginID = "test-plugin-id"
+        let downloadURL = "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id.zyplugin"
+        
+        // 1. 首选语言为中文 (zh-Hans)，应优先请求特定语言版，其次英文，最后默认
+        let zhCandidates = service.readmeCandidateURLs(forID: pluginID, downloadURLString: downloadURL, preferredLanguages: ["zh-Hans"])
+        XCTAssertEqual(zhCandidates.count, 3)
+        XCTAssertEqual(zhCandidates[0].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_zh-Hans.md")
+        XCTAssertEqual(zhCandidates[1].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_en.md")
+        XCTAssertEqual(zhCandidates[2].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id.md")
+        
+        // 2. 首选语言为英文 (en)，英文即为首选，降级列表只有英文和默认
+        let enCandidates = service.readmeCandidateURLs(forID: pluginID, downloadURLString: downloadURL, preferredLanguages: ["en"])
+        XCTAssertEqual(enCandidates.count, 2)
+        XCTAssertEqual(enCandidates[0].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_en.md")
+        XCTAssertEqual(enCandidates[1].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id.md")
+        
+        // 3. 首选为其它语言（如法文 fr），应优先法语，其次英文，最后默认
+        let frCandidates = service.readmeCandidateURLs(forID: pluginID, downloadURLString: downloadURL, preferredLanguages: ["fr-FR"])
+        XCTAssertEqual(frCandidates.count, 3)
+        XCTAssertEqual(frCandidates[0].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_fr.md")
+        XCTAssertEqual(frCandidates[1].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id_en.md")
+        XCTAssertEqual(frCandidates[2].absoluteString, "https://raw.githubusercontent.com/user/repo/master/plugins/test-plugin-id.md")
     }
 }

@@ -57,8 +57,8 @@ struct MarketPlugin: Codable, Identifiable {
         reviewCount: Int?,
         category: String?,
         source: String?,
-        names: [String: String],
-        descriptions: [String: String]
+        names: [String: String] = [:],
+        descriptions: [String: String] = [:]
     ) {
         self.id = id
         self.version = version
@@ -77,7 +77,10 @@ struct MarketPlugin: Codable, Identifiable {
         self.descriptions = descriptions
     }
 
-    /// 从 community-plugins.json 条目构造
+    /// 从 community-plugins.json 元数据条目构造插件市场条目，支持可选的多语言元数据字段。
+    /// - Parameters:
+    ///   - entry: 解析后的社区插件元数据条目
+    ///   - downloadBase: 下载的基准 URL 地址
     init(from entry: CommunityPluginEntry, downloadBase: URL) {
         self.id = entry.id
         self.version = "latest"
@@ -94,18 +97,33 @@ struct MarketPlugin: Codable, Identifiable {
         self.reviewCount = nil
         self.category = nil
         self.source = "community"
-        self.names = ["en": entry.name]
-        self.descriptions = ["en": entry.description]
+        
+        // 优先采纳 entry.names 多语言字典，若为空则自动补充默认英文名称
+        var resolvedNames = entry.names ?? [:]
+        if resolvedNames["en"] == nil {
+            resolvedNames["en"] = entry.name
+        }
+        self.names = resolvedNames
+        
+        // 优先采纳 entry.descriptions 多语言字典，若为空则自动补充默认英文描述
+        var resolvedDescs = entry.descriptions ?? [:]
+        if resolvedDescs["en"] == nil {
+            resolvedDescs["en"] = entry.description
+        }
+        self.descriptions = resolvedDescs
     }
 }
 
-/// community-plugins.json 条目 (Obsidian 风格)
+/// community-plugins.json 条目（Obsidian 风格，扩展支持多语言元数据）
 struct CommunityPluginEntry: Codable {
     let id: String
     let name: String
     let author: String
     let description: String
     let repo: String
+    
+    let names: [String: String]?
+    let descriptions: [String: String]?
 }
 
 /// 插件市场服务 (Architect 视角：实现云端分发体系)
@@ -130,45 +148,19 @@ final class PluginMarketService: ObservableObject {
         return registryGitHub
     }
 
-    /// 从本地资源包加载静态 Fallback 示例插件列表数据，在无法连接云端时使用。
-    /// - Returns: 解析后的 MarketPlugin 列表。
-    private var staticFallbackPlugins: [MarketPlugin] {
-        // 查找主 Bundle 或者是当前类所在的 Bundle（确保单测环境也能正常访问）
-        let bundle = Bundle(for: PluginMarketService.self)
-        guard let url = Bundle.main.url(forResource: "fallback-plugins", withExtension: "json") ??
-                        bundle.url(forResource: "fallback-plugins", withExtension: "json") else {
-            Logger.shared.error("[PluginMarket] 本地 Fallback 插件配置文件 fallback-plugins.json 未找到。")
-            return []
-        }
-        
-        do {
-            // 读取本地 JSON 文件数据
-            let data = try Data(contentsOf: url)
-            
-            // 使用 JSONDecoder 反序列化 MarketPlugin 数组
-            let decoder = JSONDecoder()
-            let plugins = try decoder.decode([MarketPlugin].self, from: data)
-            
-            Logger.shared.info("[PluginMarket] 成功从本地加载并反序列化了 \(plugins.count) 个 Fallback 插件。")
-            return plugins
-        } catch {
-            Logger.shared.error("[PluginMarket] 解析 fallback-plugins.json 失败", error: error)
-            return []
-        }
-    }
-
-    /// 拉取云端插件市场的最新插件列表（统一从 GitHub 拉取，支持断网本地静态 Fallback）
+    /// 拉取云端插件市场的最新插件列表（从 GitHub 远端配置地址异步加载，无本地静态 Fallback）
+    /// - Returns: Void。更新 `@Published` 的 `availablePlugins` 与 `isLoading` 状态。
     func fetchPlugins() async {
         await MainActor.run {
-            isLoading = true
-            errorMessage = nil
+            self.isLoading = true
+            self.errorMessage = nil
         }
 
         let url = registryGitHub
         var fetchSuccess = false
 
         do {
-            Logger.shared.info("[PluginMarket] Attempting to pull plugin market from: \(url.absoluteString)")
+            Logger.shared.info("[PluginMarket] 正在尝试从以下地址拉取插件市场: \(url.absoluteString)")
             let (data, response) = try await URLSession.shared.data(from: url)
             let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
             
@@ -176,14 +168,17 @@ final class PluginMarketService: ObservableObject {
                 throw NSError(domain: "PluginMarketService", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
             }
             
-            Logger.shared.info("[PluginMarket] Successfully pulled plugin market from: \(url.lastPathComponent), size: \(data.count) bytes")
+            Logger.shared.info("[PluginMarket] 成功拉取插件元数据，大小: \(data.count) 字节")
             let decoder = JSONDecoder()
 
+            // 1. 尝试解析为社区插件条目列表 (community-plugins.json)
             if let communityPlugins = try? decoder.decode([CommunityPluginEntry].self, from: data) {
                 let rawURLString = url.absoluteString.replacingOccurrences(of: "community-plugins.json", with: "plugins")
                 if let downloadBase = URL(string: rawURLString) {
                     let plugins = await MainActor.run {
-                        communityPlugins.map { MarketPlugin(from: $0, downloadBase: downloadBase) }
+                        communityPlugins.map { entry in
+                            MarketPlugin(from: entry, downloadBase: downloadBase)
+                        }
                     }
                     await MainActor.run {
                         self.availablePlugins = plugins
@@ -191,6 +186,7 @@ final class PluginMarketService: ObservableObject {
                     }
                     fetchSuccess = true
                 }
+            // 2. 尝试解析为带有外层包装的 ApiResponse 格式
             } else if let apiResponse = try? decoder.decode(ApiResponse<[MarketPlugin]>.self, from: data),
                       let plugins = apiResponse.data {
                 await MainActor.run {
@@ -198,6 +194,7 @@ final class PluginMarketService: ObservableObject {
                     self.isLoading = false
                 }
                 fetchSuccess = true
+            // 3. 尝试直接解析为 MarketPlugin 数组
             } else if let decodedPlugins = try? decoder.decode([MarketPlugin].self, from: data) {
                 await MainActor.run {
                     self.availablePlugins = decodedPlugins
@@ -206,101 +203,26 @@ final class PluginMarketService: ObservableObject {
                 fetchSuccess = true
             }
         } catch {
-            Logger.shared.warning("[PluginMarket] Pull from \(url.absoluteString) failed: \(error.localizedDescription)")
+            Logger.shared.warning("[PluginMarket] 从云端拉取插件市场元数据失败: \(error.localizedDescription)")
         }
 
+        // 若网络或解析失败，置空插件列表并暴露本地化错误消息，触发 UI 层的规范空状态展示
         if !fetchSuccess {
             await MainActor.run {
-                self.availablePlugins = self.staticFallbackPlugins
+                self.availablePlugins = []
                 self.errorMessage = L10n.Plugin.market.connectionError
                 self.isLoading = false
             }
         }
     }
 
-    /// 在 Tools/Plugins 及其子目录中寻找对应的本地 .zyplugin 物理路径
-    private func findLocalPluginFile(forID id: String) -> URL? {
-        let fileManager = FileManager.default
-        let cleanID = id.replacingOccurrences(of: "com.zhiyu.plugin.remote.", with: "")
-                        .replacingOccurrences(of: "com.zhiyu.plugin.local.", with: "")
-                        .replacingOccurrences(of: "com.zhiyu.plugin.", with: "")
-        
-        let possibleNames = [
-            "\(id).zyplugin",
-            "\(cleanID).zyplugin",
-            "\(cleanID)-local.zyplugin",
-            "\(cleanID)-remote.zyplugin"
-        ]
-        
-        let baseSearchPaths = [
-            "Tools/Plugins",
-            "Tools/Plugins/Local",
-            "Tools/Plugins/Remote",
-            "Tools/Plugins/community"
-        ]
-        
-        for basePath in baseSearchPaths {
-            for name in possibleNames {
-                let fileURL = URL(fileURLWithPath: "\(basePath)/\(name)")
-                if fileManager.fileExists(atPath: fileURL.path) {
-                    return fileURL
-                }
-            }
-        }
-        return nil
-    }
-
-    /// 从本地 Tools/Plugins 目录拷贝安装示例插件
-    private func installFromLocalFallback(_ plugin: MarketPlugin) async -> Bool {
-        let fileManager = FileManager.default
-        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return false }
-        let pluginsDir = documentsURL.appendingPathComponent("Plugins")
-        let localFile = pluginsDir.appendingPathComponent("\(plugin.id).zyplugin")
-
-        if !fileManager.fileExists(atPath: pluginsDir.path) {
-            try? fileManager.createDirectory(at: pluginsDir, withIntermediateDirectories: true)
-        }
-
-        // 检测是否在 XCTest 测试环境下，若是，则写入虚拟测试文件并返回 true
-        if NSClassFromString("XCTest") != nil {
-            Logger.shared.info("[PluginMarket] XCTest environment detected, bypass local copy and write mock data.")
-            do {
-                if fileManager.fileExists(atPath: localFile.path) {
-                    try fileManager.removeItem(at: localFile)
-                }
-                try Data("mock-plugin-data".utf8).write(to: localFile)
-                return true
-            } catch {
-                Logger.shared.error("[PluginMarket] Failed to write mock plugin data in XCTest", error: error)
-                return false
-            }
-        }
-
-        if let srcURL = findLocalPluginFile(forID: plugin.id) {
-            do {
-                if fileManager.fileExists(atPath: localFile.path) {
-                    try fileManager.removeItem(at: localFile)
-                }
-                try fileManager.copyItem(at: srcURL, to: localFile)
-                Logger.shared.info("[PluginMarket] Successfully installed from local fallback path: \(srcURL.path) -> \(localFile.path)")
-                return true
-            } catch {
-                Logger.shared.error("[PluginMarket] Failed to copy local fallback plugin from \(srcURL.path) to \(localFile.path)", error: error)
-                return false
-            }
-        }
-        
-        Logger.shared.warning("[PluginMarket] Local fallback plugin file not found for id: \(plugin.id)")
-        return false
-    }
-
-    /// 下载插件并保存到本地沙盒，支持无网本地示例拷贝安装兜底
+    /// 下载指定的插件并将其保存到本地沙盒存储目录中
+    /// - Parameter plugin: 目标下载插件条目
+    /// - Returns: Bool，代表下载与解包保存是否成功。
     func downloadPlugin(_ plugin: MarketPlugin) async -> Bool {
         guard let urlString = plugin.downloadURL, let url = URL(string: urlString) else {
-            let success = await installFromLocalFallback(plugin)
-            try? await Task.sleep(nanoseconds: 500_000_000)
-            PluginRegistry.shared.scanAndLoadLocalPlugins()
-            return success
+            Logger.shared.warning("[PluginMarket] 插件 \(plugin.name) 下载链接无效或缺失。")
+            return false
         }
 
         await MainActor.run { 
@@ -313,48 +235,80 @@ final class PluginMarketService: ObservableObject {
         }
 
         do {
+            Logger.shared.info("[PluginMarket] 开始从云端下载插件: \(plugin.name)")
             let (tempURL, _) = try await URLSession.shared.download(from: url)
             
             let fileManager = FileManager.default
             guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return false }
             let pluginsDirectory = documentsURL.appendingPathComponent("Plugins")
             
+            // 确保本地沙盒的 Plugins 目录物理存在
             if !fileManager.fileExists(atPath: pluginsDirectory.path) {
                 try fileManager.createDirectory(at: pluginsDirectory, withIntermediateDirectories: true, attributes: nil)
             }
 
             let destinationURL = pluginsDirectory.appendingPathComponent("\(plugin.id).zyplugin")
             
+            // 如果本地已存在同名插件文件，先行移除
             if fileManager.fileExists(atPath: destinationURL.path) {
                 try fileManager.removeItem(at: destinationURL)
             }
             
+            // 将下载下来的临时插件包物理移至沙盒目的目录
             try fileManager.moveItem(at: tempURL, to: destinationURL)
             
             await MainActor.run {
-                Logger.shared.info(" [PluginMarket] : \(plugin.name)")
+                Logger.shared.info(" [PluginMarket] 插件下载并安装成功: \(plugin.name)")
             }
             
+            // 扫描并重新加载插件以供系统使用
             PluginRegistry.shared.scanAndLoadLocalPlugins()
             
             return true
         } catch {
-            Logger.shared.warning("[PluginMarket] Network download failed for \(plugin.name), trying local fallback copy. Error: \(error.localizedDescription)")
-            let success = await installFromLocalFallback(plugin)
-            if success {
-                await MainActor.run {
-                    self.errorMessage = nil
-                }
-                PluginRegistry.shared.scanAndLoadLocalPlugins()
-                return true
-            }
-            
             await MainActor.run {
-                Logger.shared.error(" [PluginMarket] : \(plugin.name)", error: error)
+                Logger.shared.error(" [PluginMarket] 插件下载失败: \(plugin.name)", error: error)
                 self.errorMessage = error.localizedDescription
             }
             return false
         }
+    }
+
+    /// 获取云端 README.md 拉取时的候选 URL 降级路径数组（支持根据当前首选语言自动降级）
+    /// - Parameters:
+    ///   - pluginID: 插件 ID 标识
+    ///   - downloadURLString: 插件下载物理包的 URL 地址字符串
+    ///   - preferredLanguages: 系统首选语言链条，默认自 Locale.preferredLanguages 自动生成，允许单测注入
+    /// - Returns: 按尝试优先级从高到低排列的 URL 数组。
+    public func readmeCandidateURLs(
+        forID pluginID: String,
+        downloadURLString: String,
+        preferredLanguages: [String] = Locale.preferredLanguages
+    ) -> [URL] {
+        guard let downloadURL = URL(string: downloadURLString) else { return [] }
+        let base = downloadURL.deletingLastPathComponent()
+        let preferredLanguage = preferredLanguages.first ?? "en"
+        
+        var urlsToTry: [URL] = []
+        // 1. 优先拼接首选语言专属的 README (如 _zh-Hans.md / _en.md)
+        if preferredLanguage.hasPrefix("zh") {
+            urlsToTry.append(base.appendingPathComponent("\(pluginID)_zh-Hans.md"))
+        } else if preferredLanguage.hasPrefix("en") {
+            urlsToTry.append(base.appendingPathComponent("\(pluginID)_en.md"))
+        } else {
+            let cleanLang = preferredLanguage.components(separatedBy: "-").first ?? preferredLanguage
+            urlsToTry.append(base.appendingPathComponent("\(pluginID)_\(cleanLang).md"))
+        }
+        
+        // 2. 其次添加英文版 README 兜底 (若首选语言不是英文)
+        if !preferredLanguage.hasPrefix("en") {
+            urlsToTry.append(base.appendingPathComponent("\(pluginID)_en.md"))
+        }
+        
+        // 3. 最后使用默认 README.md 文件无后缀路径兜底
+        urlsToTry.append(base.appendingPathComponent("\(pluginID).md"))
+        
+        return urlsToTry
     }
 }
 

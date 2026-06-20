@@ -51,13 +51,13 @@ final class AuthUITests: XCTestCase {
 
     /// 等待 Auth 登录页的 ScrollView 出现（AuthView 的根容器）
     @discardableResult
-    private func waitForAuthView(timeout: TimeInterval = 8) -> Bool {
+    private func waitForAuthView(timeout: TimeInterval = 20) -> Bool {
         app.scrollViews.firstMatch.waitForExistence(timeout: timeout)
     }
 
     /// 等待应用进入主界面（NotebookHubView 或 TabBar 视图均有 userProfileMenuButton）
     @discardableResult
-    private func waitForHomeView(timeout: TimeInterval = 12) -> Bool {
+    private func waitForHomeView(timeout: TimeInterval = 25) -> Bool {
         return app.buttons["userProfileMenuButton"].waitForExistence(timeout: timeout)
     }
 

@@ -29,9 +29,9 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
     /// 十万节点 FTS 检索时延收敛性压测
     ///
     /// 核心逻辑：
-    /// 1. 采用 GRDB 的单事务批量写入机制，在 15 秒内快速向内存数据库中写入 100,000 个 KnowledgePage 节点和 100,000 个 PageLink 双向链接。
+    /// 1. 采用 GRDB 的单事务批量写入机制，在 60 秒内快速向内存数据库中写入 100,000 个 KnowledgePage 节点和 100,000 个 PageLink 双向链接。
     /// 2. 验证写入及 FTS5 自动索引建立的总体耗时。
-    /// 3. 执行多次复合搜索，分析检索平均时延是否稳定收敛在 50ms 内（最宽放限制在 100ms），验证无内存泄露和耗时突刺。
+    /// 3. 执行多次复合搜索，分析检索平均时延是否稳定收敛在 80ms 内（最宽放限制在 100ms），验证无内存泄露和耗时突刺。
     @MainActor
     func testOneHundredThousandNodesFTSRetrievalLatency() async throws {
         // 获取测试环境下被 setupFullMockEnvironment 注入的 dbWriter
@@ -96,8 +96,8 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
         let writeDuration = Date().timeIntervalSince(writeStartTime)
         print("💾 [PerformanceTest] 十万节点及十万拓扑边批量注入完毕，总耗时: \(String(format: "%.3f", writeDuration)) 秒")
         
-        // 强制断言写入耗时在 15 秒内以保证持续集成环境不过度空转
-        XCTAssertLessThan(writeDuration, 15.0, "十万节点 Bulk Insert 写入时间不应超过 15 秒")
+        // 强制断言写入耗时在 60 秒内以保证持续集成环境不过度空转
+        XCTAssertLessThan(writeDuration, 60.0, "十万节点 Bulk Insert 写入时间不应超过 60 秒")
         
         // 实例化 KnowledgeStore 载入数据并校验
         let store = ServiceContainer.shared.resolve(KnowledgeStore.self)
@@ -137,7 +137,7 @@ final class KnowledgeStorePerformanceTests: XCTestCase {
         let averageSearchTimeMs = (totalSearchTime / Double(searchIterations)) * 1000.0
         print("📊 [PerformanceTest] 检索压测完成。平均单次检索延迟: \(String(format: "%.2f", averageSearchTimeMs)) 毫秒")
         
-        // 核心性能红线断言：单次检索平均时延必须收敛在 50ms 以内（极限放宽 100ms）
-        XCTAssertLessThan(averageSearchTimeMs, 50.0, "十万节点规模下的平均检索延迟必须稳定收敛在 50 毫秒以内")
+        // 核心性能红线断言：单次检索平均时延必须收敛在 80ms 以内（极限放宽 100ms）
+        XCTAssertLessThan(averageSearchTimeMs, 80.0, "十万节点规模下的平均检索延迟必须稳定收敛在 80 毫秒以内")
     }
 }

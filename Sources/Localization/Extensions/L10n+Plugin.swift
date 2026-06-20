@@ -175,6 +175,13 @@ extension L10n {
 
             /// 评价数格式化，如 "（287）"
             public static func reviewCount(_ count: Int) -> String { Plugin.trf("plugin.detail.reviewCount", count) }
+            
+            public static var readMore: String { Plugin.tr("plugin.detail.readMore") }
+            public static var showLess: String { Plugin.tr("plugin.detail.showLess") }
+            public static var ratingsTitle: String { Plugin.tr("plugin.detail.ratings") }
+            public static var secureLabel: String { Plugin.tr("plugin.detail.secure") }
+            public static var allPlatforms: String { Plugin.tr("plugin.detail.allPlatforms") }
+            public static var compatibilityTitle: String { Plugin.tr("plugin.detail.compatibility") }
         }
 
         public enum Error {

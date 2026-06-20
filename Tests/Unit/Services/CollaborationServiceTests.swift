@@ -90,6 +90,7 @@ final class CollaborationServiceTests: XCTestCase {
     @MainActor
     override func setUp() {
         super.setUp()
+        setupFullMockEnvironment()
         mockProvider = MockCollaborationProvider()
         
         // 动态替换 DI 容器中的提供商，实现模拟器环境解耦

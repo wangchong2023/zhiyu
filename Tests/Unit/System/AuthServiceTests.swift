@@ -324,9 +324,11 @@ final class AuthServiceTests: XCTestCase {
         // 3. 注册通知监听，模拟应用行为（必须使用 .main queue，因为 .userAuthExpired 由 NetworkClient 在背景队列上发出，
         //    而 AuthService.shared.logout() 标记了 @MainActor，Swift 6 严格并发模式下从背景线程调用会 SIGABRT）
         let expectation = XCTestExpectation(description: "监听到 userAuthExpired")
-        let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: .main) { _ in
+        let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: nil) { _ in
             print("[TEST] Received .userAuthExpired, calling logout() again")
-            AuthService.shared.logout()
+            Task { @MainActor in
+                AuthService.shared.logout()
+            }
             expectation.fulfill()
         }
 

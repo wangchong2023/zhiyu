@@ -254,19 +254,25 @@ public struct InferenceParametersView: View {
             .onTapGesture { hoveredTitle = isHovered ? nil : title }
             .overlay(alignment: .top) {
                 if isHovered {
-                    HStack(spacing: 4) {
+                    HStack(alignment: .top, spacing: 4) {
                         Image(systemName: "lightbulb.fill")
                             .font(.caption2)
                             .foregroundStyle(.orange)
+                            .padding(.top, 2)
                         Text(tip)
                             .font(.caption2)
                             .foregroundStyle(.appSecondary)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, DesignSystem.medium)
                     .padding(.vertical, DesignSystem.small)
+                    .frame(width: DesignSystem.Metrics.customSize260)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .offset(y: -DesignSystem.largeIconSize)
+                    .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
+                    .offset(y: -50)
                 }
             }
 
@@ -307,15 +313,25 @@ public struct InferenceParametersView: View {
             .onTapGesture { hoveredTitle = isHovered ? nil : title }
             .overlay(alignment: .top) {
                 if isHovered {
-                    HStack(spacing: 4) {
-                        Image(systemName: "lightbulb.fill").font(.subheadline).foregroundStyle(.orange)
-                        Text(tip).font(.subheadline).foregroundStyle(.appSecondary)
+                    HStack(alignment: .top, spacing: 4) {
+                        Image(systemName: "lightbulb.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                            .padding(.top, 2)
+                        Text(tip)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.horizontal, DesignSystem.medium)
                     .padding(.vertical, DesignSystem.small)
+                    .frame(width: DesignSystem.Metrics.customSize260)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .offset(y: -DesignSystem.largeIconSize)
+                    .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
+                    .offset(y: -50)
                 }
             }
 

@@ -37,16 +37,28 @@ struct ImportRecordCard: View {
                 Text(record.title)
                     .font(.subheadline.weight(.medium))
                     .lineLimit(1)
-                if !tagList.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: DesignSystem.atomic) {
-                            ForEach(tagList, id: \.self) { tag in
-                                Text(tag)
-                                    .font(.caption2)
-                                    .padding(.horizontal, DesignSystem.tightPadding)
-                                    .padding(.vertical, 2)
-                                    .background(Capsule().fill(categoryColor.opacity(DesignSystem.Opacity.subtle)))
-                                    .foregroundStyle(categoryColor)
+                
+                // 来源类型与 AI 标签行
+                HStack(spacing: DesignSystem.atomic) {
+                    // 来源类型胶囊标签 (使用高对比度的实色背景，明确标明文件来源)
+                    Text(categoryValue?.displayName ?? L10n.Common.unknown)
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, DesignSystem.tightPadding)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(categoryColor))
+                        .foregroundStyle(.white)
+                    
+                    if !tagList.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: DesignSystem.atomic) {
+                                ForEach(tagList, id: \.self) { tag in
+                                    Text(tag)
+                                        .font(.caption2)
+                                        .padding(.horizontal, DesignSystem.tightPadding)
+                                        .padding(.vertical, 2)
+                                        .background(Capsule().fill(categoryColor.opacity(DesignSystem.Opacity.subtle)))
+                                        .foregroundStyle(categoryColor)
+                                }
                             }
                         }
                     }
@@ -137,10 +149,23 @@ struct ImportRecordCard: View {
 
     // MARK: - 分类样式
 
+    private var fileIcon: String {
+        guard let path = record.filePath else { return "doc.fill" }
+        let ext = URL(fileURLWithPath: path).pathExtension.lowercased()
+        switch ext {
+        case "pdf": return "doc.richtext.fill"
+        case "png", "jpg", "jpeg", "heic", "gif": return "doc.image.fill"
+        case "mp3", "m4a", "wav", "caf": return "doc.sound.fill"
+        case "txt", "md": return "doc.text.fill"
+        case "zip", "tar", "gz": return "doc.zipper.fill"
+        default: return "doc.fill"
+        }
+    }
+
     private var categoryIcon: String {
         switch categoryValue {
         case .link: return "link"
-        case .file: return "doc.fill"
+        case .file: return fileIcon
         case .manual: return "pencil.line"
         case .ocr: return "camera.fill"
         case .clipboard: return "list.clipboard"

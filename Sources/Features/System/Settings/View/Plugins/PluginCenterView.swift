@@ -145,6 +145,7 @@ struct PluginCenterView: View {
         .background(Color.clear)
     }
     
+    /// 本地已启用/已安装的插件列表区域
     private var myPluginsSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.widePadding) {
             let filtered = registry.plugins.filter { searchText.isEmpty || $0.manifest.name.localizedCaseInsensitiveContains(searchText) }
@@ -164,46 +165,69 @@ struct PluginCenterView: View {
                 }
                 .padding(.horizontal)
             } else if searchText.isEmpty {
-                // 如果没有插件且不在搜索状态，显示空状态
-                emptyStateView(icon: DesignSystem.Icons.pluginOutline, title: L10n.Plugin.noPlugins, sub: L10n.Plugin.noPluginsHint)
+                // 当本地插件列表为空时，展示规范的简单空状态
+                AppEmptyState.simple(
+                    icon: DesignSystem.Icons.pluginOutline,
+                    title: L10n.Plugin.noPlugins,
+                    description: L10n.Plugin.noPluginsHint
+                )
+                .padding(.vertical, DesignSystem.giant)
             } else {
-                // 搜索结果为空
-                emptyStateView(icon: DesignSystem.Icons.search, title: L10n.Plugin.noResults, sub: L10n.Plugin.noResultsHint)
+                // 搜索后无匹配结果，展示无结果空状态
+                AppEmptyState.simple(
+                    icon: DesignSystem.Icons.search,
+                    title: L10n.Plugin.noResults,
+                    description: L10n.Plugin.noResultsHint
+                )
+                .padding(.vertical, DesignSystem.giant)
             }
         }
     }
     
+    /// 远端/社区插件市场的插件列表区域
     private var marketSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
             if marketService.isLoading {
-                ProgressView().padding(.top, DesignSystem.Gallery.splashIconSize - DesignSystem.tightPadding).frame(maxWidth: .infinity)
+                ProgressView()
+                    .padding(.top, DesignSystem.Gallery.splashIconSize - DesignSystem.tightPadding)
+                    .frame(maxWidth: .infinity)
             } else {
-                let filtered = marketService.availablePlugins.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }
-                
-                if filtered.isEmpty {
-                    emptyStateView(icon: DesignSystem.Icons.storefront, title: L10n.Plugin.market.empty, sub: L10n.Plugin.market.emptyHint)
-                } else {
-                    ForEach(filtered) { p in
-                        NavigationLink(destination: PluginDetailView(plugin: p, marketService: marketService)) {
-                            PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon, source: "community")
+                // 优先校验并展示网络连接或元数据解析异常带来的空错误状态
+                if let errorMessage = marketService.errorMessage {
+                    AppEmptyState.withAction(
+                        icon: "wifi.slash",
+                        title: L10n.Plugin.market.connectionError,
+                        description: errorMessage,
+                        actionLabel: L10n.Shared.retryButton,
+                        actionIcon: "arrow.clockwise"
+                    ) {
+                        Task {
+                            await marketService.fetchPlugins()
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.vertical, DesignSystem.giant)
+                } else {
+                    let filtered = marketService.availablePlugins.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }
+                    
+                    if filtered.isEmpty {
+                        // 远端市场插件拉取成功但为空，展示规范的简单空状态
+                        AppEmptyState.simple(
+                            icon: DesignSystem.Icons.storefront,
+                            title: L10n.Plugin.market.empty,
+                            description: L10n.Plugin.market.emptyHint
+                        )
+                        .padding(.vertical, DesignSystem.giant)
+                    } else {
+                        ForEach(filtered) { p in
+                            NavigationLink(destination: PluginDetailView(plugin: p, marketService: marketService)) {
+                                PluginCard(name: p.name, version: p.version, author: p.author, downloads: p.downloads, rating: p.rating, icon: p.icon, source: "community")
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
                 }
             }
         }
-    }
-    
-    private func emptyStateView(icon: String, title: String, sub: String) -> some View {
-        VStack(spacing: DesignSystem.medium) {
-            Image(systemName: icon)
-                .font(.system(size: DesignSystem.Gallery.iconSize))
-                .foregroundStyle(.appSecondary.opacity(DesignSystem.glassOpacity * 2))
-            Text(title).font(.headline).foregroundStyle(.appSecondary)
-            Text(sub).font(.caption2).foregroundStyle(.appSecondary.opacity(DesignSystem.glassOpacity * 4))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, DesignSystem.Gallery.splashIconSize - DesignSystem.tightPadding)
     }
 }
 
@@ -220,56 +244,86 @@ struct PluginCard: View {
 
     @State private var localIcon: UIImage?
 
+    /// 自适应计算插件的展示版本号，已安装则优先显示真实本地版本号
+    private var displayVersion: String {
+        if let localPlugin = PluginRegistry.shared.plugins.first(where: { $0.manifest.id == (pluginID ?? "") }) {
+            return localPlugin.manifest.version
+        }
+        return version
+    }
+
     var body: some View {
         HStack(spacing: DesignSystem.standardPadding) {
-            // 优先显示本地 icon.png，fallback SF Symbol
+            // 优先显示本地 icon.png，fallback SF Symbol，并剪裁为连续平滑 Squircle 圆角
             if let uiImage = localIcon {
                 Image(uiImage: uiImage)
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
             } else {
                 Image(systemName: icon)
                     .font(.title3)
                     .foregroundStyle(.white)
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
-                    .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.fullOpacity - DesignSystem.glassOpacity * 2)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
+                    .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.pressedOpacity * 4.0)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
             }
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
-                Text(name).font(.subheadline.bold()).foregroundStyle(.appText)
+                Text(name)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.appText)
+                
                 HStack(spacing: DesignSystem.tightPadding) {
-                    Text("v\(version)").font(.caption2).foregroundStyle(.appSecondary)
-                    // 来源标签
+                    Text("v\(displayVersion)")
+                        .font(.caption2)
+                        .foregroundStyle(.appSecondary)
+                    
+                    // 来源类型精致微缩标签
                     if let src = source {
-                        Text(sourceLabel(src)).font(.system(size: DesignSystem.microFontSize, weight: .medium))
-                            .padding(.horizontal, DesignSystem.tiny).padding(.vertical, DesignSystem.atomic)
-                            .background(sourceColor(src).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
+                        Text(sourceLabel(src))
+                            .font(.system(size: DesignSystem.microFontSize, weight: .semibold))
+                            .padding(.horizontal, DesignSystem.tiny)
+                            .padding(.vertical, 2)
+                            .background(sourceColor(src).opacity(DesignSystem.subtleOpacity))
+                            .clipShape(Capsule())
                             .foregroundStyle(sourceColor(src))
                     }
+                    
                     if let author = author {
-                        Text(DesignSystem.Icons.bullet).font(.caption2).foregroundStyle(.appSecondary)
-                        Text(author).font(.caption2).foregroundStyle(.appSecondary)
+                        Text(DesignSystem.Icons.bullet)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
+                        Text(author)
+                            .font(.caption2)
+                            .foregroundStyle(.appSecondary)
                     }
                 }
                 
                 if let downloads = downloads, let rating = rating {
                     HStack(spacing: DesignSystem.tightPadding) {
-                        Label(downloads, systemImage: DesignSystem.Icons.arrowDownCircle).font(.system(size: DesignSystem.microFontSize))
-                        Label(String(format: "%.1f", rating), systemImage: DesignSystem.Icons.star).font(.system(size: DesignSystem.microFontSize)).foregroundStyle(.yellow)
+                        Label(downloads, systemImage: DesignSystem.Icons.arrowDownCircle)
+                            .font(.system(size: DesignSystem.microFontSize))
+                        Label(String(format: "%.1f", rating), systemImage: DesignSystem.Icons.star)
+                            .font(.system(size: DesignSystem.microFontSize))
+                            .foregroundStyle(.yellow)
                     }
                     .foregroundStyle(.appSecondary)
-                    .padding(.top, DesignSystem.atomic)
+                    .padding(.top, 2)
                 }
             }
             Spacer()
-            Image(systemName: DesignSystem.Icons.forward).font(.caption2).foregroundStyle(.appSecondary)
+            Image(systemName: DesignSystem.Icons.forward)
+                .font(.caption2)
+                .foregroundStyle(.appSecondary)
         }
         .padding()
-        .background(Color.appCard.opacity(DesignSystem.glassOpacity * 4))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius))
-        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius).stroke(Color.theme.white.opacity(DesignSystem.glassOpacity / 3), lineWidth: DesignSystem.borderWidth))
+        // 升级为 ultraThinMaterial 亚玻璃磨砂镜面质感，提供高透明度高对比度
+        .background(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).fill(.ultraThinMaterial))
+        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
+        .shadow(color: Color.black.opacity(DesignSystem.subtleOpacity * 0.66), radius: 8, x: 0, y: 4)
         .task {
             if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())

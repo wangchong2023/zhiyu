@@ -5,6 +5,10 @@
     {
       "modelId": "gemma-4-e2b-it",
       "displayName": "Gemma-4-E2B-it",
+      "displayNames": {
+        "en": "Gemma-4-E2B-it",
+        "zh-Hans": "Gemma-4-E2B-it"
+      },
       "vendor": "Google",
       "fileSizeInBytes": 2780997222,
       "minDeviceMemoryInGb": 6.0,
@@ -14,9 +18,17 @@
       "sha256Checksum": "gemma4e2b12345",
       "parameterCount": "E2B",
       "supportedTasks": ["chat", "completion"],
-      "accelerators": ["cpu", "gpu"],
+      "supportedTasksLocalized": {
+        "en": ["Chat", "Text Completion"],
+        "zh-Hans": ["智能对话", "文本补全"]
+      },
+      "accelerators": ["CPU", "GPU"],
       "estimatedPeakMemoryInBytes": 5200000000,
       "description": "A variant of Gemma 4 E2B ready for deployment on iOS using LiteRT-LM. It supports text input, with up to 32K context length.",
+      "descriptions": {
+        "en": "A variant of Gemma 4 E2B ready for deployment on iOS using LiteRT-LM. It supports text input, with up to 32K context length.",
+        "zh-Hans": "适用于 iOS 的 Gemma 4 E2B 变体，使用 LiteRT-LM 进行部署。支持文本输入，提供最高达 32K 的上下文长度。"
+      },
       "defaultParameters": {
         "temperature": 1.0, "topP": 0.95, "topK": 64, "maxTokens": 4096
       }
@@ -24,6 +36,10 @@
     {
       "modelId": "gemma-4-e4b-it",
       "displayName": "Gemma-4-E4B-it",
+      "displayNames": {
+        "en": "Gemma-4-E4B-it",
+        "zh-Hans": "Gemma-4-E4B-it"
+      },
       "vendor": "Google",
       "fileSizeInBytes": 3930059200,
       "minDeviceMemoryInGb": 8.0,
@@ -33,9 +49,17 @@
       "sha256Checksum": "gemma4e4b12345",
       "parameterCount": "E4B",
       "supportedTasks": ["chat", "completion"],
-      "accelerators": ["cpu", "gpu"],
+      "supportedTasksLocalized": {
+        "en": ["Chat", "Text Completion"],
+        "zh-Hans": ["智能对话", "文本补全"]
+      },
+      "accelerators": ["CPU", "GPU"],
       "estimatedPeakMemoryInBytes": 6800000000,
       "description": "A variant of Gemma 4 E4B ready for deployment on iOS using LiteRT-LM. It supports text input, with up to 32K context length.",
+      "descriptions": {
+        "en": "A variant of Gemma 4 E4B ready for deployment on iOS using LiteRT-LM. It supports text input, with up to 32K context length.",
+        "zh-Hans": "适用于 iOS 的 Gemma 4 E4B 变体，使用 LiteRT-LM 进行部署。支持文本输入，提供最高达 32K 的上下文长度。"
+      },
       "defaultParameters": {
         "temperature": 1.0, "topP": 0.95, "topK": 64, "maxTokens": 4096
       }
@@ -43,6 +67,10 @@
     {
       "modelId": "gemma-3n-e2b-it",
       "displayName": "Gemma-3n-E2B-it",
+      "displayNames": {
+        "en": "Gemma-3n-E2B-it",
+        "zh-Hans": "Gemma-3n-E2B-it"
+      },
       "vendor": "Google",
       "fileSizeInBytes": 3639999000,
       "minDeviceMemoryInGb": 6.0,
@@ -52,9 +80,17 @@
       "sha256Checksum": "gemma3ne2b12345",
       "parameterCount": "E2B",
       "supportedTasks": ["chat", "completion", "multimodal"],
-      "accelerators": ["cpu", "gpu"],
+      "supportedTasksLocalized": {
+        "en": ["Chat", "Text Completion", "Multimodal"],
+        "zh-Hans": ["智能对话", "文本补全", "多模态理解"]
+      },
+      "accelerators": ["CPU", "GPU"],
       "estimatedPeakMemoryInBytes": 5905580032,
       "description": "Gemma 3n E2B ready for deployment on iOS using MediaPipe LLM Inference API.",
+      "descriptions": {
+        "en": "Gemma 3n E2B ready for deployment on iOS using MediaPipe LLM Inference API.",
+        "zh-Hans": "适用于 iOS 的 Gemma 3n E2B 预览版，基于 MediaPipe LLM 推理 API 运行。"
+      },
       "defaultParameters": {
         "temperature": 1.0, "topP": 0.95, "topK": 64, "maxTokens": 4096
       }
@@ -62,6 +98,10 @@
     {
       "modelId": "gemma-3n-e4b-it",
       "displayName": "Gemma-3n-E4B-it",
+      "displayNames": {
+        "en": "Gemma-3n-E4B-it",
+        "zh-Hans": "Gemma-3n-E4B-it"
+      },
       "vendor": "Google",
       "fileSizeInBytes": 4992892900,
       "minDeviceMemoryInGb": 8.0,
@@ -71,9 +111,17 @@
       "sha256Checksum": "gemma3ne4b12345",
       "parameterCount": "E4B",
       "supportedTasks": ["chat", "completion", "multimodal"],
-      "accelerators": ["cpu", "gpu"],
+      "supportedTasksLocalized": {
+        "en": ["Chat", "Text Completion", "Multimodal"],
+        "zh-Hans": ["智能对话", "文本补全", "多模态理解"]
+      },
+      "accelerators": ["CPU", "GPU"],
       "estimatedPeakMemoryInBytes": 6979321856,
       "description": "Gemma 3n E4B ready for deployment on iOS using MediaPipe LLM Inference API.",
+      "descriptions": {
+        "en": "Gemma 3n E4B ready for deployment on iOS using MediaPipe LLM Inference API.",
+        "zh-Hans": "适用于 iOS 的 Gemma 3n E4B 预览版，基于 MediaPipe LLM 推理 API 运行。"
+      },
       "defaultParameters": {
         "temperature": 1.0, "topP": 0.95, "topK": 64, "maxTokens": 4096
       }

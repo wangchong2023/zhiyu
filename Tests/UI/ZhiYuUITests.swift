@@ -151,9 +151,19 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(dailyRecapHeader.waitForExistence(timeout: 5), "每日灵感标题应该存在并渲染")
 
-        // 增加等待超时时间至 20 秒，以防慢速测试机或首次冷启动下异步数据播种写入延迟
+        // 增加等待超时时间至 20 秒，以防慢速测试机或首次冷启动下异步数据播种写入延迟，辅以下拉刷新自愈机制
         let recapCard = app.buttons["DailyRecapCard"]
-        XCTAssertTrue(recapCard.waitForExistence(timeout: 20), "每日灵感推荐卡片在 20 秒内应该加载并存在")
+        if !recapCard.waitForExistence(timeout: 8) {
+            #if DEBUG
+            print("[UI TEST] DailyRecapCard not found in 8s. Performing pull-to-refresh to trigger database recalculation.")
+            #endif
+            if app.scrollViews.firstMatch.exists {
+                app.scrollViews.firstMatch.swipeDown()
+            } else {
+                app.swipeDown()
+            }
+        }
+        XCTAssertTrue(recapCard.waitForExistence(timeout: 12), "每日灵感推荐卡片在自愈刷新后应该加载并存在")
         
         // 物理点击推荐卡片以跳转至笔记详情页
         recapCard.tap()

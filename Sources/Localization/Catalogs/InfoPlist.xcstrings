@@ -8,12 +8,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "ZhiYu Widgets"
+            "value" : "ZhiYu"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "智宇"
           }
         }
@@ -26,12 +26,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "ZhiYu Widgets"
+            "value" : "ZhiYu"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "智宇"
           }
         }

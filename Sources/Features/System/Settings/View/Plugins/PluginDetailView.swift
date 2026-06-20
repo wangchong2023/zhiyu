@@ -20,6 +20,17 @@ struct PluginDetailView: View {
     @State private var isInstalling = false
     @State private var localIcon: UIImage?
     @State private var localReadme: String?
+    @State private var remoteReadme: String?
+    @State private var isReadmeLoading = false
+    @State private var isDescriptionExpanded = false
+
+    /// 计算插件的当前展示版本 (如果已安装则展示本地已安装的真实版本号，否则展示市场版本)
+    private var displayVersion: String {
+        if let localPlugin = PluginRegistry.shared.plugins.first(where: { $0.manifest.id == plugin.id }) {
+            return localPlugin.manifest.version
+        }
+        return plugin.version
+    }
 
     private var isInstalled: Bool {
         PluginRegistry.shared.plugins.contains(where: { $0.manifest.id == plugin.id })
@@ -29,10 +40,10 @@ struct PluginDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignSystem.giant) {
 
-                // MARK: - 1. 头部信息区
+                // MARK: - 1. 头部信息区 (Squircle 图标与简要)
                 headerSection
 
-                // MARK: - 2. 操作按钮
+                // MARK: - 2. 操作按钮 (获取/卸载与分享)
                 actionButtons
 
                 if let error = marketService.errorMessage {
@@ -44,12 +55,12 @@ struct PluginDetailView: View {
 
                 Divider()
 
-                // MARK: - 3. 元数据详情面板
-                metadataSection
+                // MARK: - App Store 风格快捷指标横向栏
+                appStoreMetricsBar
 
                 Divider()
 
-                // MARK: - 4. 功能描述
+                // MARK: - 4. 功能描述 (README 折叠渐变展开)
                 descriptionSection
 
                 Divider()
@@ -57,7 +68,12 @@ struct PluginDetailView: View {
                 // MARK: - 5. 权限声明
                 permissionsSection
 
-                // MARK: - 6. 底部信息
+                Divider()
+
+                // MARK: - 3. 详细信息面板 (底栏信息)
+                metadataSection
+
+                // MARK: - 6. 底部举报与源码链接
                 bottomInfoSection
             }
             .padding()
@@ -69,6 +85,9 @@ struct PluginDetailView: View {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())
             }
             localReadme = PluginRegistry.shared.localizedReadme(for: plugin.id)
+            
+            // 异步拉取云端多语言 README
+            await fetchRemoteReadme()
         }
         .appNavigationBarTitleDisplayMode(.inline)
     }
@@ -77,23 +96,25 @@ struct PluginDetailView: View {
 
     private var headerSection: some View {
         HStack(alignment: .top, spacing: DesignSystem.wide) {
-            // 插件图标 — 优先显示已缓存的本地 icon.png，fallback SF Symbol
+            // 插件大图标 — 优先显示已缓存的本地 icon.png，使用 App Store 经典的 Squircle 平滑圆角
             if let uiImage = localIcon {
                 Image(uiImage: uiImage)
                     .resizable().scaledToFit()
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.largeRadius))
-                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10, x: 0, y: 5)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
+                    .shadow(color: Color.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
             } else {
                 Image(systemName: plugin.icon)
                     .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
                     .foregroundStyle(.white)
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                     .background(
-                        LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.Opacity.prominent)],
+                        LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.subtleOpacity * 6.25)],
                                        startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.giant))
-                    .shadow(color: Color.appAccent.opacity(DesignSystem.Opacity.shadow), radius: 10, x: 0, y: 5)
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
+                    .shadow(color: Color.appAccent.opacity(DesignSystem.subtleOpacity * 1.66), radius: 12, x: 0, y: 6)
             }
 
             VStack(alignment: .leading, spacing: DesignSystem.small) {
@@ -104,7 +125,7 @@ struct PluginDetailView: View {
                         .foregroundStyle(.appText)
 
                     // 版本号标签
-                    Text("v\(plugin.version)")
+                    Text("v\(displayVersion)")
                         .font(.caption2.weight(.semibold))
                         .padding(.horizontal, DesignSystem.small)
                         .padding(.vertical, DesignSystem.atomic * 2)
@@ -118,38 +139,7 @@ struct PluginDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.appSecondary)
 
-                // 统计行：下载量 + 评分
-                HStack(spacing: DesignSystem.medium) {
-                    // 评分（带星号）
-                    HStack(spacing: DesignSystem.tiny) {
-                        Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow)
-                            .font(.caption)
-                        Text(String(format: "%.1f", plugin.rating))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.appText)
-                        if let reviewCount = plugin.reviewCount {
-                            Text(L10n.Plugin.Detail.reviewCount(reviewCount))
-                                .font(.caption)
-                                .foregroundStyle(.appSecondary)
-                        }
-                    }
-
-                    // 下载量
-                    HStack(spacing: DesignSystem.tiny) {
-                        Image(systemName: "arrow.down.circle")
-                            .foregroundStyle(.appSecondary)
-                            .font(.caption)
-                        Text(plugin.downloads)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.appText)
-                        Text(L10n.Plugin.Detail.downloadsUnit)
-                            .font(.caption)
-                            .foregroundStyle(.appSecondary)
-                    }
-                }
-
-                // 安装状态标签
+                // 安装状态标签 (移至大字号区域下端，保持视觉重点清晰)
                 if isInstalled {
                     HStack(spacing: DesignSystem.tiny) {
                         Image(systemName: "checkmark.circle.fill")
@@ -207,6 +197,85 @@ struct PluginDetailView: View {
         }
     }
 
+    // MARK: - App Store 风格快捷指标滚轴
+
+    private var appStoreMetricsBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 0) {
+                // 卡片 1: 评分与星级
+                let reviewLabel = plugin.reviewCount.map { L10n.Plugin.Detail.reviewCount($0) } ?? L10n.Plugin.Stats.rating
+                metricCard(
+                    title: String(format: "%.1f ★", plugin.rating),
+                    subtitle: reviewLabel
+                )
+                
+                metricDivider
+                
+                // 卡片 2: 安全检测认证 (沙盒审计通过)
+                metricCard(
+                    title: "GET",
+                    subtitle: L10n.Plugin.Detail.secureLabel,
+                    icon: "lock.shield.fill",
+                    iconColor: .green
+                )
+                
+                metricDivider
+                
+                // 卡片 3: 开发者
+                metricCard(
+                    title: plugin.author,
+                    subtitle: L10n.Plugin.Detail.author
+                )
+                
+                metricDivider
+                
+                // 卡片 4: 最低系统要求
+                let compatVal = plugin.minAppVersion.map { "iOS \($0)+" } ?? L10n.Plugin.Detail.allPlatforms
+                metricCard(
+                    title: compatVal,
+                    subtitle: L10n.Plugin.Detail.compatibilityTitle
+                )
+            }
+            .padding(.horizontal, DesignSystem.small)
+        }
+        .frame(height: DesignSystem.iconDisplay + Spacing.giant)
+    }
+
+    /// 单个快捷指标项卡片渲染
+    private func metricCard(title: String, subtitle: String, icon: String? = nil, iconColor: Color = .secondary) -> some View {
+        VStack(spacing: DesignSystem.tiny) {
+            Text(subtitle)
+                .font(.system(size: 10, weight: .bold)) // Dynamic Type
+                .foregroundStyle(.appSecondary)
+                .lineLimit(1)
+                
+            Spacer(minLength: 0)
+
+            if let icon = icon {
+                HStack(spacing: 4) {
+                    Image(systemName: icon)
+                        .foregroundStyle(iconColor)
+                        .font(.caption.bold())
+                    Text(title)
+                        .font(.headline.bold())
+                        .foregroundStyle(.appText)
+                }
+            } else {
+                Text(title)
+                    .font(.headline.bold())
+                    .foregroundStyle(.appText)
+                    .lineLimit(1)
+            }
+        }
+        .frame(width: Spacing.Action.buttonHeight * 2.0 + Spacing.atomic, height: Spacing.Action.buttonHeight)
+    }
+
+    private var metricDivider: some View {
+        Divider()
+            .frame(height: Spacing.huge)
+            .padding(.horizontal, DesignSystem.medium)
+    }
+
     // MARK: - 元数据面板（参照 VS Code 扩展详情页）
 
     private var metadataSection: some View {
@@ -220,7 +289,7 @@ struct PluginDetailView: View {
                 metadataRow(
                     icon: "number",
                     label: L10n.Plugin.Detail.version,
-                    value: plugin.version
+                    value: displayVersion
                 )
 
                 Divider().padding(.leading, 40)
@@ -276,7 +345,8 @@ struct PluginDetailView: View {
             Text(label)
                 .font(.subheadline)
                 .foregroundStyle(.appSecondary)
-                .frame(width: DesignSystem.Metrics.indicatorSize, alignment: .leading)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
 
             Spacer()
 
@@ -297,10 +367,102 @@ struct PluginDetailView: View {
                 .font(.headline)
                 .foregroundStyle(.appText)
 
-            // 使用统一的 MarkdownRendererView 渲染 README
-            let content = localReadme ?? plugin.description
-            MarkdownRendererView(content: content, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
+            // 如果本地没有 README 缓存，且远端 README 正在加载，则呈现骨架屏
+            if localReadme == nil && isReadmeLoading {
+                VStack(alignment: .leading, spacing: DesignSystem.small) {
+                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
+                        .frame(height: Spacing.large)
+                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
+                        .frame(height: Spacing.large)
+                    RoundedRectangle(cornerRadius: DesignSystem.microRadius)
+                        .fill(Color.appCard.opacity(DesignSystem.subtleOpacity * 2.5))
+                        .frame(height: Spacing.large)
+                        .frame(maxWidth: 200)
+                }
+                .opacity(isReadmeLoading ? 0.6 : 1.0)
+                .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: isReadmeLoading)
+                .padding(.vertical, DesignSystem.small)
+            } else {
+                // 降级选择链：优先显示本地缓存的 README -> 远端多语言 README -> 插件自身的简短描述
+                let content = localReadme ?? remoteReadme ?? plugin.description
+                
+                VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                    MarkdownRendererView(content: content, isPrivate: false, onLinkTap: { _ in }, isCompact: true)
+                        .frame(maxHeight: isDescriptionExpanded ? nil : 180, alignment: .top)
+                        .clipped()
+                        .overlay(
+                            Group {
+                                if !isDescriptionExpanded {
+                                    VStack {
+                                        Spacer()
+                                        // 渐变蒙层，在折叠状态下于底部实现优雅淡出效果
+                                        LinearGradient(
+                                            colors: [Color.appBackground.opacity(Double.zero), Color.appBackground.opacity(DesignSystem.Metrics.lockOverlayScaleMultiplier), Color.appBackground],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                        .frame(height: DesignSystem.iconDisplay)
+                                    }
+                                }
+                            }
+                        )
+                    
+                    // 轻量级展开/折叠更多按钮
+                    Button(action: {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                            isDescriptionExpanded.toggle()
+                        }
+                    }) {
+                        HStack(spacing: DesignSystem.tiny) {
+                            Text(isDescriptionExpanded ? L10n.Plugin.Detail.showLess : L10n.Plugin.Detail.readMore)
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.appAccent)
+                            Image(systemName: isDescriptionExpanded ? "chevron.up" : "chevron.down")
+                                .font(.caption2.bold())
+                                .foregroundStyle(.appAccent)
+                        }
+                        .padding(.vertical, DesignSystem.atomic)
+                    }
+                }
+            }
         }
+    }
+
+    /// 异步拉取云端多语言 README.md，包含首选语言 -> 英文 -> 默认无后缀的自动降级策略
+    /// - Returns: Void。更新 `@State` 的 `remoteReadme` 与 `isReadmeLoading`。
+    private func fetchRemoteReadme() async {
+        // 如果本地已存在 README 缓存，或者下载 URL 缺失，直接返回无需重复抓取
+        guard localReadme == nil,
+              let downloadURLString = plugin.downloadURL else { return }
+        
+        let urlsToTry = marketService.readmeCandidateURLs(forID: plugin.id, downloadURLString: downloadURLString)
+        guard !urlsToTry.isEmpty else { return }
+        
+        await MainActor.run { isReadmeLoading = true }
+        
+        // 依次尝试降级拉取云端文档数据
+        for readmeURL in urlsToTry {
+            do {
+                Logger.shared.info("[PluginDetail] Trying to fetch remote README resource: \(readmeURL.absoluteString)")
+                let (data, response) = try await URLSession.shared.data(from: readmeURL)
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                
+                if statusCode == 200, !data.isEmpty, let text = String(data: data, encoding: .utf8) {
+                    Logger.shared.info("[PluginDetail] Successfully fetched remote README: \(readmeURL.lastPathComponent)")
+                    await MainActor.run {
+                        self.remoteReadme = text
+                        self.isReadmeLoading = false
+                    }
+                    return
+                }
+            } catch {
+                Logger.shared.warning("[PluginDetail] Failed to fetch \(readmeURL.lastPathComponent), trying fallback. Error: \(error.localizedDescription)")
+            }
+        }
+        
+        await MainActor.run { isReadmeLoading = false }
     }
 
     // MARK: - 权限声明

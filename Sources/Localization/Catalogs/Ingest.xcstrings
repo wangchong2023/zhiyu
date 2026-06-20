@@ -1769,6 +1769,57 @@
         }
       }
     },
+    "ingest.preview.truncated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[Content truncated, previewing the first 100KB of text only.]"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[内容已截断，仅预览前 100KB 文本。]"
+          }
+        }
+      }
+    },
+    "ingest.preview.loadMore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Load More"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加载更多"
+          }
+        }
+      }
+    },
+    "ingest.preview.finished": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[All content loaded]"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "[文件已全部加载完毕]"
+          }
+        }
+      }
+    },
     "ingest.preview": {
       "extractionState": "manual",
       "localizations": {

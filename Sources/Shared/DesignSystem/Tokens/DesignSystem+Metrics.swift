@@ -99,5 +99,6 @@ extension DesignSystem {
         public static let customSize800: CGFloat = 800
         public static let customSize600: CGFloat = 600
         public static let customSize1024: CGFloat = 1024
+        public static let customSize260: CGFloat = 260
     }
 }

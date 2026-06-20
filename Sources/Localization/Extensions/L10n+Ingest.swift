@@ -245,6 +245,11 @@ extension L10n {
                 String(format: Ingest.tr("ingest.status.webscraper.paywall_detected"), code)
             }
         }
+        
+        // MARK: - 大文件增量文本预览
+        public static var previewTruncated: String { Ingest.tr("ingest.preview.truncated") }
+        public static var previewLoadMore: String { Ingest.tr("ingest.preview.loadMore") }
+        public static var previewFinished: String { Ingest.tr("ingest.preview.finished") }
     }
 
     public struct Status {

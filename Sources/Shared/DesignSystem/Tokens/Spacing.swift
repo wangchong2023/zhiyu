@@ -316,6 +316,8 @@ public enum Spacing {
         public static let minWindowWidth: CGFloat = 800
         /// macOS/Catalyst 最小窗口高度 (600px)
         public static let minWindowHeight: CGFloat = 600
+        /// 推理参数浮窗宽度 (260px)
+        public static let customSize260: CGFloat = 260
     }
     
     /// 任务管理中心规范

@@ -14,6 +14,7 @@ struct ImportRecordSection: View {
     @State private var selectedCategory: String = "all"
     @State private var records: [ImportRecord] = []
     @State private var previewText: String?
+    @State private var previewFilePath: String?
     @State private var showTextPreview = false
     @State private var quickLookURL: URL?
     @State private var showQuickLook = false
@@ -56,11 +57,17 @@ struct ImportRecordSection: View {
         }
         .sheet(isPresented: $showTextPreview) {
             NavigationStack {
-                ScrollView {
-                    Text(previewText ?? "")
-                        .font(.body.monospaced())
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                Group {
+                    if let path = previewFilePath {
+                        FileTextPreviewView(filePath: path)
+                    } else {
+                        ScrollView {
+                            Text(previewText ?? "")
+                                .font(.body.monospaced())
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
                 }
                 .navigationTitle(L10n.Ingest.rawContentTitle)
                 .navigationBarTitleDisplayMode(.inline)
@@ -82,9 +89,27 @@ struct ImportRecordSection: View {
 
     // MARK: - 预览分发
 
+    /// 校验是否是纯文本文件后缀
+    private func isTextFile(path: String) -> Bool {
+        let textExtensions = ["txt", "md", "json", "csv", "js", "py", "html", "xml", "css", "log", "swift", "yaml", "yml"]
+        let ext = URL(fileURLWithPath: path).pathExtension.lowercased()
+        return textExtensions.contains(ext)
+    }
+
+    /// 预览导入的原始内容
+    /// - Parameter record: 导入记录实体
     private func previewContent(_ record: ImportRecord) {
-        // 文件 → QuickLook（含链接导入的 .md、文件导入的原始文件）
+        // 优先处理本地磁盘文件
         if let path = record.filePath, FileManager.default.fileExists(atPath: path) {
+            if isTextFile(path: path) {
+                // 流式异步分块加载预览，避免 ANR/OOM
+                previewFilePath = path
+                previewText = nil
+                showTextPreview = true
+                return
+            }
+            
+            // 降级处理：非纯文本二进制文件（如 PDF、图片）则通过 QuickLook 预览
             quickLookURL = URL(fileURLWithPath: path)
             showQuickLook = true
             return
@@ -97,8 +122,9 @@ struct ImportRecordSection: View {
             return
         }
         // 文本 → Sheet
-        if record.rawText != nil {
-            previewText = record.rawText
+        if let rawText = record.rawText {
+            previewText = rawText
+            previewFilePath = nil
             showTextPreview = true
             return
         }
@@ -115,7 +141,7 @@ struct ImportRecordSection: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.appAccent)
                         .padding(.horizontal, DesignSystem.tiny)
-                    flatCardList(grouped[tag] ?? [])
+                    flatCardList(grouped[tag] ?? [], groupTag: tag)
                 }
             }
         }
@@ -123,8 +149,21 @@ struct ImportRecordSection: View {
 
     // MARK: - 平铺列表
 
-    private func flatCardList(_ items: [ImportRecord]) -> some View {
-        ForEach(items, id: \.id) { record in
+    /// 包装结构体，为 SwiftUI 提供结合 tag 分组的联合唯一 ID，避免 ID 重复导致手势分发失效
+    fileprivate struct GroupedRecord: Identifiable {
+        let record: ImportRecord
+        let tag: String
+        var id: String { "\(tag)-\(record.id)" }
+    }
+
+    /// 平铺渲染卡片列表
+    /// - Parameters:
+    ///   - items: 待显示的导入记录数组
+    ///   - groupTag: 当前的分组标签，用于防止重复 ID
+    private func flatCardList(_ items: [ImportRecord], groupTag: String = "") -> some View {
+        let groupedItems = items.map { GroupedRecord(record: $0, tag: groupTag) }
+        return ForEach(groupedItems) { wrapper in
+            let record = wrapper.record
             ImportRecordCard(
                 record: record,
                 onTap: { previewContent(record) },
@@ -137,9 +176,24 @@ struct ImportRecordSection: View {
                     let fileURL = URL(fileURLWithPath: path)
                     #if os(iOS)
                     let controller = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
-                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let root = scene.windows.first?.rootViewController {
-                        root.present(controller, animated: true)
+                    if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+                       let keyWindow = scene.windows.first(where: { $0.isKeyWindow }),
+                       let root = keyWindow.rootViewController {
+                        
+                        // 递归查找顶层 UIViewController
+                        var topVC = root
+                        while let presented = topVC.presentedViewController {
+                            topVC = presented
+                        }
+                        
+                        // 适配 iPad 弹窗避免崩溃
+                        if let popover = controller.popoverPresentationController {
+                            popover.sourceView = topVC.view
+                            popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
+                            popover.permittedArrowDirections = []
+                        }
+                        
+                        topVC.present(controller, animated: true)
                     }
                     #endif
                 },

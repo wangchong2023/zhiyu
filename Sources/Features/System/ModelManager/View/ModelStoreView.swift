@@ -201,10 +201,10 @@ private struct ModelCardView: View {
                     .lineLimit(2)
                 
                 // 场景能力标签 (Chips) — 从 Mock/API 数据动态生成
-                if !manifest.supportedTasks.isEmpty {
+                if !manifest.displayTasks.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: DesignSystem.tiny) {
-                            ForEach(manifest.supportedTasks, id: \.self) { task in
+                            ForEach(manifest.displayTasks, id: \.self) { task in
                                 Text(taskLabel(for: task))
                                     .font(.system(size: DesignSystem.microFontSize, weight: .medium))
                                     .padding(.horizontal, DesignSystem.small)
@@ -279,10 +279,10 @@ private struct ModelCardView: View {
             }
 
             // 支持的任务
-            if !manifest.supportedTasks.isEmpty {
+            if !manifest.displayTasks.isEmpty {
                 HStack(spacing: DesignSystem.tiny) {
                     Text(L10n.ModelManager.Spec.tasks).font(.caption).foregroundStyle(.appSecondary)
-                    ForEach(manifest.supportedTasks, id: \.self) { t in
+                    ForEach(manifest.displayTasks, id: \.self) { t in
                         Text(taskLabel(for: t)).font(.caption2).padding(.horizontal, 6).padding(.vertical, 2)
                             .background(taskColor(for: t).opacity(DesignSystem.Opacity.subtle)).clipShape(Capsule())
                             .foregroundStyle(taskColor(for: t))

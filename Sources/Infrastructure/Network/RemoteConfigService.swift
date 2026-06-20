@@ -103,7 +103,9 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                     topK: (params["topK"] as? Int) ?? 40,
                     maxTokens: (params["maxTokens"] as? Int) ?? 2048),
                 huggingfaceURLString: dict["huggingfaceURLString"] as? String,
-                modelscopeURLString: dict["modelscopeURLString"] as? String
+                modelscopeURLString: dict["modelscopeURLString"] as? String,
+                displayNames: dict["displayNames"] as? [String: String],
+                descriptions: dict["descriptions"] as? [String: String]
             )
         }
     }

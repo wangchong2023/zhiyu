@@ -185,6 +185,93 @@ final class ModelStoreConfigTests: XCTestCase {
         
         XCTAssertEqual(fakeDownloadManager.lastRemoteURL?.absoluteString, manifest.huggingfaceURLString)
     }
+    
+    // MARK: - 5. 测试大模型 Manifest 多语言自适应支持
+    
+    /// 测试 LLMManifest 的多语言计算属性是否能根据多语言映射字典自适应返回正确译文
+    func testLLMManifestMultiLanguageDisplayNameAndDescription() {
+        let displayNames = ["en": "Gemma 4 English", "zh-Hans": "Gemma 4 中文"]
+        let descriptions = ["en": "Gemma 4 English Description", "zh-Hans": "Gemma 4 中文描述"]
+        
+        let manifest = LLMManifest(
+            modelId: "gemma-4-test",
+            displayName: "Gemma Fallback Name",
+            vendor: "Google",
+            fileSizeInBytes: 1000,
+            minDeviceMemoryInGb: 4.0,
+            remoteURLString: "https://cdn.example.com",
+            sha256Checksum: "abc",
+            parameterCount: "E2B",
+            description: "Gemma Fallback Description",
+            defaultParameters: InferenceParameters(),
+            displayNames: displayNames,
+            descriptions: descriptions
+        )
+        
+        // 验证 displayNames 与 descriptions 能够被完美赋值
+        XCTAssertEqual(manifest.displayNames?["en"], "Gemma 4 English")
+        XCTAssertEqual(manifest.descriptions?["zh-Hans"], "Gemma 4 中文描述")
+        
+        // 验证在无匹配或不影响默认计算属性时的自适应展示逻辑
+        XCTAssertFalse(manifest.displayName.isEmpty, "多语言 displayName 应该被正确返回，不能返回空")
+        XCTAssertFalse(manifest.description.isEmpty, "多语言 description 应该被正确返回，不能返回空")
+    }
+    
+    /// 测试 LLMManifest 的多语言 supportedTasksLocalized 映射以及 displayTasks 的自适应多语言显示
+    func testLLMManifestMultiLanguageSupportedTasks() {
+        let tasksLocalized = [
+            "en": ["Chat", "Text Completion"],
+            "zh-Hans": ["智能对话", "文本补全"]
+        ]
+        
+        let manifest = LLMManifest(
+            modelId: "gemma-4-test",
+            displayName: "Gemma Fallback Name",
+            vendor: "Google",
+            fileSizeInBytes: 1000,
+            minDeviceMemoryInGb: 4.0,
+            remoteURLString: "https://cdn.example.com",
+            sha256Checksum: "abc",
+            parameterCount: "E2B",
+            supportedTasks: ["chat", "completion"],
+            description: "Gemma Fallback Description",
+            defaultParameters: InferenceParameters(),
+            supportedTasksLocalized: tasksLocalized
+        )
+        
+        XCTAssertEqual(manifest.supportedTasksLocalized?["en"]?[0], "Chat")
+        XCTAssertEqual(manifest.supportedTasksLocalized?["zh-Hans"]?[1], "文本补全")
+        
+        // 验证 displayTasks 会首选最佳语言匹配
+        XCTAssertFalse(manifest.displayTasks.isEmpty)
+    }
+
+    /// 验证本地内置的离线 fallback `model_allowlist.json` 已经含有多语言描述字段，并能正确解析
+    func testModelAllowlistJSONContainsMultiLanguageFields() async {
+        do {
+            let manifests = try await remoteConfigService.fetchLLMManifests()
+            XCTAssertFalse(manifests.isEmpty, "离线模型列表不应为空")
+            for manifest in manifests {
+                XCTAssertNotNil(manifest.displayNames, "Manifest \(manifest.modelId) 的 displayNames 多语言字典必须存在")
+                XCTAssertNotNil(manifest.descriptions, "Manifest \(manifest.modelId) 的 descriptions 多语言字典必须存在")
+                XCTAssertNotNil(manifest.supportedTasksLocalized, "Manifest \(manifest.modelId) 的 supportedTasksLocalized 多语言字典必须存在")
+                XCTAssertFalse(manifest.displayNames?.isEmpty ?? true, "Manifest \(manifest.modelId) 的 displayNames 不能为空")
+                XCTAssertFalse(manifest.descriptions?.isEmpty ?? true, "Manifest \(manifest.modelId) 的 descriptions 不能为空")
+                XCTAssertFalse(manifest.supportedTasksLocalized?.isEmpty ?? true, "Manifest \(manifest.modelId) 的 supportedTasksLocalized 不能为空")
+                
+                // 验证中英文内容存在
+                XCTAssertNotNil(manifest.displayNames?["en"], "英文名称不存在")
+                XCTAssertNotNil(manifest.displayNames?["zh-Hans"], "中文名称不存在")
+                XCTAssertNotNil(manifest.descriptions?["en"], "英文描述不存在")
+                XCTAssertNotNil(manifest.descriptions?["zh-Hans"], "中文描述不存在")
+                
+                XCTAssertNotNil(manifest.supportedTasksLocalized?["en"], "英文支持任务不存在")
+                XCTAssertNotNil(manifest.supportedTasksLocalized?["zh-Hans"], "中文支持任务不存在")
+            }
+        } catch {
+            XCTFail("解析模型白名单多语言字段失败: \(error.localizedDescription)")
+        }
+    }
 }
 
 final class FakeModelDownloadManager: ModelDownloadCapabilities, @unchecked Sendable {

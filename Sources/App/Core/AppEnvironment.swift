@@ -45,7 +45,7 @@ final class AppEnvironment {
         Logger.shared.info("[AppEnvironment] Starting initialization...")
 
         // 🧪 检测是否运行于 XCTest (Unit Test) 环境 — 避免污染测试 DI 状态
-        let isRunningInUnitTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil && !CommandLine.arguments.contains("-UITest_MockData")
+        let isRunningInUnitTests = NSClassFromString("XCTestCase") != nil && !CommandLine.arguments.contains("-UITest_MockData")
         #if DEBUG
         if CommandLine.arguments.contains("-UITest_MockData") {
             Logger.shared.info("[AppEnvironment] Detected UI Test environment, using ephemeral setup")

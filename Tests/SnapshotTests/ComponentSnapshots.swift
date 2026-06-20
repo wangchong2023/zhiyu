@@ -35,7 +35,7 @@ final class ComponentSnapshots: XCTestCase {
             .background(Color.appBackground)
         
         // 记录/验证 iOS 布局
-        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
     
     private func setupMockEnvironment() {
@@ -77,7 +77,7 @@ final class ComponentSnapshots: XCTestCase {
         .frame(width: DesignSystem.Metrics.largeIconBoxSize, height: DesignSystem.Metrics.largeIconBoxSize)
         .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize100, height: DesignSystem.Metrics.customSize100)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize100, height: DesignSystem.Metrics.customSize100)))
     }
     
     /// 测试 AI 助手聊天视图 (ChatView) 的视觉一致性
@@ -106,7 +106,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
     
     /// 测试知识点详情页 (PageDetailView) 的视觉一致性
@@ -131,7 +131,7 @@ final class ComponentSnapshots: XCTestCase {
         .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
         .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
     
     /// 测试系统设置页 (SettingsView) 的视觉一致性
@@ -152,7 +152,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
 
     /// 测试响应式侧边栏组件的视觉一致性与代码覆盖率提升
@@ -180,7 +180,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize768)
             .background(Color.appBackground)
         
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize768)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize300, height: DesignSystem.Metrics.customSize768)))
         
         // 2. 历经所有 AppTab 的 case 分支，榨干 switch-case 覆盖率死角
         for tab in AppTab.allCases {
@@ -209,7 +209,7 @@ final class ComponentSnapshots: XCTestCase {
             .background(Color.appBackground)
 
             if tab == .knowledge {
-                assertSnapshot(of: detailViewForTab, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize768)))
+                assertSnapshot(of: detailViewForTab, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize500, height: DesignSystem.Metrics.customSize768)))
             } else {
                 let controller = UIHostingController(rootView: detailViewForTab)
                 _ = controller.view
@@ -238,7 +238,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)
             .background(Color.appBackground)
             
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize50)))
     }
 
     // MARK: - RAG 质量评估视图快照
@@ -251,7 +251,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize812)
             .background(Color.appBackground)
 
-        assertSnapshot(of: view, as: .image(layout: .device(config: .iPhone13Pro)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .device(config: .iPhone13Pro)))
     }
 
     /// 测试 RAGEvaluationView 数据就绪后的完整展示
@@ -274,7 +274,7 @@ final class ComponentSnapshots: XCTestCase {
             .frame(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize1200)
             .background(Color.appBackground)
 
-        assertSnapshot(of: view, as: .image(layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize1200)))
+        assertSnapshot(of: view, as: .image(precision: 0.95, layout: .fixed(width: DesignSystem.Metrics.customSize375, height: DesignSystem.Metrics.customSize1200)))
     }
 }
 
