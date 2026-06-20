@@ -268,7 +268,7 @@ struct PluginCard: View {
                     .frame(width: DesignSystem.Action.minTouchTarget, height: DesignSystem.Action.minTouchTarget)
                     .background(LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.pressedOpacity * 4.0)], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.cardRadius, style: .continuous).stroke(Color.theme.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
             }
             
             VStack(alignment: .leading, spacing: DesignSystem.tiny) {
@@ -322,8 +322,8 @@ struct PluginCard: View {
         .padding()
         // 升级为 ultraThinMaterial 亚玻璃磨砂镜面质感，提供高透明度高对比度
         .background(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).fill(.ultraThinMaterial))
-        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
-        .shadow(color: Color.black.opacity(DesignSystem.subtleOpacity * 0.66), radius: 8, x: 0, y: 4)
+        .overlay(RoundedRectangle(cornerRadius: DesignSystem.Task.dashboardRadius, style: .continuous).stroke(Color.theme.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
+        .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity * 0.66), radius: 8, x: 0, y: 4)
         .task {
             if let id = pluginID, let url = PluginRegistry.shared.iconURL(for: id) {
                 localIcon = UIImage(data: (try? Data(contentsOf: url)) ?? Data())

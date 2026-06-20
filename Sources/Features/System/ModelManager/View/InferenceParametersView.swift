@@ -271,7 +271,7 @@ public struct InferenceParametersView: View {
                     .frame(width: DesignSystem.Metrics.customSize260)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
+                    .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
                     .offset(y: -50)
                 }
             }
@@ -330,7 +330,7 @@ public struct InferenceParametersView: View {
                     .frame(width: DesignSystem.Metrics.customSize260)
                     .background(.regularMaterial)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                    .shadow(color: Color.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
+                    .shadow(color: Color.theme.black.opacity(DesignSystem.Opacity.glass), radius: 6, x: 0, y: 3)
                     .offset(y: -50)
                 }
             }

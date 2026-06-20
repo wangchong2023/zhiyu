@@ -117,7 +117,7 @@ public struct FileTextPreviewView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, DesignSystem.tiny)
-                .background(Color.orange.opacity(DesignSystem.shadowOpacity))
+                .background(Color.theme.orange.opacity(DesignSystem.shadowOpacity))
                 .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
             }
             

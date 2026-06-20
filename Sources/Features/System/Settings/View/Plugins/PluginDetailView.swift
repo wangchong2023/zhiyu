@@ -103,7 +103,7 @@ struct PluginDetailView: View {
                     .frame(width: DesignSystem.Gallery.itemSize, height: DesignSystem.Gallery.itemSize)
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
                     .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.appBorder.opacity(DesignSystem.subtleOpacity * 1.66), lineWidth: 0.5))
-                    .shadow(color: Color.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
+                    .shadow(color: Color.theme.black.opacity(DesignSystem.subtleOpacity), radius: 12, x: 0, y: 6)
             } else {
                 Image(systemName: plugin.icon)
                     .font(.system(size: DesignSystem.Gallery.mainIconSize * 0.9))
@@ -113,7 +113,7 @@ struct PluginDetailView: View {
                         LinearGradient(colors: [Color.appAccent, Color.appAccent.opacity(DesignSystem.subtleOpacity * 6.25)],
                                        startPoint: .topLeading, endPoint: .bottomTrailing))
                     .clipShape(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
+                    .overlay(RoundedRectangle(cornerRadius: DesignSystem.chipRadius + Spacing.atomic, style: .continuous).stroke(Color.theme.white.opacity(DesignSystem.subtleOpacity * 1.25), lineWidth: 0.5))
                     .shadow(color: Color.appAccent.opacity(DesignSystem.subtleOpacity * 1.66), radius: 12, x: 0, y: 6)
             }
 
