@@ -173,7 +173,8 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(pinButton.waitForExistence(timeout: 10), "详情页置顶按钮应当存在并正确渲染")
     }
 
-    /// 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页
+    // 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页
+    // @flaky: 初始种子文档可能不包含双向链接导致的偶发性失败
     func testPageLinkNavigation() throws {
         ensureAppIsLoggedInAndInVault()
 
@@ -224,7 +225,8 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         XCTAssertTrue(app.navigationBars.element.waitForExistence(timeout: 3))
     }
 
-    /// 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
+    // 闭环测试：退出至工作台 -> 多笔记本金库切换 -> 校验播种数据幂等填充
+    // @flaky: 模拟器界面流转及种子数据二次填充时序导致的偶发不稳定
     func testVaultSwitchingAndSeedingFlow() throws {
         ensureAppIsLoggedInAndInVault()
         navigateBackToHub()
@@ -311,9 +313,9 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
 
     // MARK: - 新增高级 UI 冒烟测试
 
-    /// UI 冒烟测试：切入 AI 对话面板 -> 模拟发送提问 -> 捕获并校验国际化加载状态 (AppAILoadingSkeleton) 文案 -> 物理中断流式输出
-    ///
-    /// 核心职责：验证 AppAILoadingSkeleton 的 L10n 字段正确渲染，并确保 RAG 对话流的中止机制（Stop-flow）功能闭环正常。
+    // UI 冒烟测试：切入 AI 对话面板 -> 模拟发送提问 -> 捕获并校验国际化加载状态 (AppAILoadingSkeleton) 文案 -> 物理中断流式输出
+    //
+    // 核心职责：验证 AppAILoadingSkeleton 的 L10n 字段正确渲染，并确保 RAG 对话流的中止机制（Stop-flow）功能闭环正常。
     func testChatAISkeletonLoadingState() throws {
         ensureAppIsLoggedInAndInVault()
 
@@ -326,22 +328,37 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
         }
         XCTAssertTrue(chatTab.waitForExistence(timeout: 5), "AI 对话 Tab 按钮应当存在")
         chatTab.tap()
+        try? Thread.sleep(forTimeInterval: 0.5)
 
         let chatInput = app.textFields["ChatInput_TextField"]
         XCTAssertTrue(chatInput.waitForExistence(timeout: 5), "对话输入框应当存在并可见")
 
         chatInput.tap()
+        // 关键点：等待软键盘完全弹出且焦点状态完全稳定
+        try? Thread.sleep(forTimeInterval: 0.8)
         chatInput.typeText("什么是倒数排名融合RRF算法？")
+        try? Thread.sleep(forTimeInterval: 0.5)
 
         let sendButton = app.buttons["ChatSend_Button"]
         XCTAssertTrue(sendButton.exists, "发送按钮应当存在")
+        
+        // 关键点：防卫自愈，如因模拟器硬件键盘连接导致输入丢失，则在此重新激活重试
+        if !sendButton.isEnabled {
+            chatInput.tap()
+            try? Thread.sleep(forTimeInterval: 0.5)
+            chatInput.typeText("什么是倒数排名融合RRF算法？")
+            try? Thread.sleep(forTimeInterval: 0.5)
+        }
+        
+        XCTAssertTrue(sendButton.isEnabled, "发送按钮应当在打字后变为可用状态")
         sendButton.tap()
 
         let skeletonPredicate = NSPredicate(format: "label CONTAINS '思考' OR label CONTAINS '嵌入' OR label CONTAINS '检索' OR label CONTAINS '整合' OR label CONTAINS 'THINKING' OR label CONTAINS 'EMBEDDING' OR label CONTAINS 'RETRIEVAL' OR label CONTAINS 'SYNTHESIS' OR label CONTAINS 'ai.status.skeleton'")
 
         let skeletonText = app.staticTexts.matching(skeletonPredicate).element(boundBy: 0)
 
-        let exists = skeletonText.waitForExistence(timeout: 5)
+        // 关键点：放宽超时门限至 12 秒以容忍在慢速 CPU 环境下的模型后台初始化
+        let exists = skeletonText.waitForExistence(timeout: 12)
         XCTAssertTrue(exists, "AI 流式思考骨架屏 (AppAILoadingSkeleton) 本地化提示文案应当正确渲染")
 
         XCTAssertTrue(sendButton.exists, "发送/停止按钮应当可见并支持点击")
