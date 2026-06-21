@@ -1,6 +1,3 @@
-labels:
-  backend: local
-
 skip_clone: true
 
 steps:
