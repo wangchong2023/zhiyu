@@ -47,7 +47,7 @@ XCODEBUILD_ARGS=(
     -derivedDataPath "${DERIVED_DATA_PATH}"
     -enableCodeCoverage YES
     -parallel-testing-enabled YES
-    -parallel-testing-worker-count 4
+    -parallel-testing-worker-count 2
     CODE_SIGNING_ALLOWED=NO
     CODE_SIGNING_REQUIRED=NO
 )

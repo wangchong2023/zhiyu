@@ -7,7 +7,7 @@
 # ==============================================================================
 set -euo pipefail
 
-TESTS_DIR="$(cd "$(dirname "$0")/../../Tests" && pwd)"
+TESTS_DIR="$(cd "$(dirname "$0")/../../../Tests" && pwd)"
 OUTPUT_FILE="build/.flaky_tests"
 
 echo "🔍 扫描 @flaky 标记的测试..." >&2
