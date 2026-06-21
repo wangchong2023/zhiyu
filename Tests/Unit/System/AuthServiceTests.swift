@@ -326,10 +326,10 @@ final class AuthServiceTests: XCTestCase {
         let expectation = XCTestExpectation(description: "监听到 userAuthExpired")
         let observer = NotificationCenter.default.addObserver(forName: .userAuthExpired, object: nil, queue: nil) { _ in
             print("[TEST] Received .userAuthExpired, calling logout() again")
-            Task { @MainActor in
+            DispatchQueue.main.async {
                 AuthService.shared.logout()
+                expectation.fulfill()
             }
-            expectation.fulfill()
         }
 
         // 4. 触发退出

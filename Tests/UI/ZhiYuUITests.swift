@@ -174,6 +174,7 @@ final class ZhiYuUITests: KnowledgeBaseUITests {
     }
 
     // 链接跳转测试：列表文档 -> 查找双向链接 [[WikiPage]] 标记 -> 模拟点击跳转关联页
+    // @flaky: 模拟器在特定环境下转场加载缓慢，双向链接渲染偶尔超时
     func testPageLinkNavigation() throws {
         ensureAppIsLoggedInAndInVault()
 
