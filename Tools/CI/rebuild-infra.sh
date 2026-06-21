@@ -25,9 +25,9 @@ NEXUS_IMAGE="sonatype/nexus3:latest"
 PLUGIN_GIT_VERSION="2.9.1"
 
 # 项目路径（显式指定，参考 NEXUS_DIR 风格）
-SCRIPT_DIR="/Users/constantine/devs/rnd-cicd/tools"
-RNDCICD_DIR="${SCRIPT_DIR}"
-NEXUS_DIR="/Users/constantine/devs/rnd-cicd/nexus"
+SCRIPT_DIR="/Users/constantine/devs/rnd-cicd/woodpecker/tools"
+RNDCICD_DIR="/Users/constantine/devs/rnd-cicd/woodpecker/conf"
+NEXUS_DIR="/Users/constantine/devs/rnd-cicd/nexus/conf"
 
 # Woodpecker Agent GitHub release 下载地址（Linux ARM64）
 WP_AGENT_DOWNLOAD_URL="https://github.com/woodpecker-ci/woodpecker/releases/download/${WOODPECKER_VERSION}/woodpecker-agent_linux_arm64.tar.gz"
@@ -216,7 +216,7 @@ build_agent_image() {
   docker build \
     --platform linux/arm64 \
     -t "${image_tag}" \
-    -f "${SCRIPT_DIR}/Dockerfile" \
+    -f "${RNDCICD_DIR}/Dockerfile" \
     "${SCRIPT_DIR}"
 
   log_success "构建成功: ${image_tag}"
