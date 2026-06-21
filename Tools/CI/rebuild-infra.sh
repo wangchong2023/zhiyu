@@ -27,7 +27,7 @@ PLUGIN_GIT_VERSION="2.9.1"
 # 项目路径（显式指定，参考 NEXUS_DIR 风格）
 SCRIPT_DIR="/Users/constantine/devs/rnd-cicd/tools"
 RNDCICD_DIR="${SCRIPT_DIR}"
-NEXUS_DIR="/Users/constantine/devs/nexus"
+NEXUS_DIR="/Users/constantine/devs/rnd-cicd/nexus"
 
 # Woodpecker Agent GitHub release 下载地址（Linux ARM64）
 WP_AGENT_DOWNLOAD_URL="https://github.com/woodpecker-ci/woodpecker/releases/download/${WOODPECKER_VERSION}/woodpecker-agent_linux_arm64.tar.gz"
