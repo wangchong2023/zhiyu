@@ -22,7 +22,6 @@ struct SettingsView: View {
     /// 设置分类枚举，表示各个设置大类
     private enum SettingsSection: String, CaseIterable, Identifiable {
         case appearance      // 界面外观
-        case ai              // AI设置
         case security        // 安全隐私
         case data            // 数据与日志
         case plugins         // 插件与扩展
@@ -30,7 +29,7 @@ struct SettingsView: View {
         case about           // 关于软件
 
         static var allCases: [SettingsSection] {
-            return [.appearance, .ai, .security, .data, .plugins, .feedback, .about]
+            return [.appearance, .security, .data, .plugins, .feedback, .about]
         }
 
         var id: String { rawValue }
@@ -40,8 +39,6 @@ struct SettingsView: View {
             switch self {
             case .appearance:
                 return L10n.Settings.Section.appearance
-            case .ai:
-                return L10n.Settings.Section.ai
             case .security:
                 return L10n.Settings.Section.security
             case .data:
@@ -60,8 +57,6 @@ struct SettingsView: View {
             switch self {
             case .appearance:
                 return DesignSystem.Icons.settingsAppearance
-            case .ai:
-                return DesignSystem.Icons.settingsAI
             case .security:
                 return DesignSystem.Icons.settingsSecurity
             case .data:
@@ -169,9 +164,6 @@ struct SettingsView: View {
             appearanceSection
                 .appListRowBackground()
             
-            aiSection
-                .appListRowBackground()
-            
             dataManagementSection
                 .appListRowBackground()
 
@@ -250,9 +242,6 @@ struct SettingsView: View {
                         switch section {
                         case .appearance:
                             appearanceSection
-                                .appListRowBackground()
-                        case .ai:
-                            aiSection
                                 .appListRowBackground()
                         case .security:
                             securitySection(store: store)
@@ -335,40 +324,6 @@ struct SettingsView: View {
         .id(router.currentLocale)
     }
     
-    private var aiSection: some View {
-        Section {
-            NavigationLink {
-                SmartRoutingView()
-            } label: {
-                Label(L10n.Settings.smartRouting, systemImage: "arrow.triangle.branch")
-                    .labelStyle(ColorfulIconLabelStyle(color: .purple))
-            }
-
-            NavigationLink {
-                LLMSettingsView()
-            } label: {
-                Label(L10n.Settings.llmSettings, systemImage: "network")
-                    .labelStyle(ColorfulIconLabelStyle(color: .cyan))
-            }
-
-            NavigationLink {
-                LocalModelManagerView()
-            } label: {
-                Label(L10n.Settings.localModelManager, systemImage: "cpu")
-                    .labelStyle(ColorfulIconLabelStyle(color: .orange))
-            }
-
-            NavigationLink {
-                PromptWorkshopView()
-            } label: {
-                Label(L10n.Settings.promptSettings, systemImage: "terminal.fill")
-                    .labelStyle(ColorfulIconLabelStyle(color: .gray))
-            }
-        } header: {
-            Text(L10n.Settings.Section.ai)
-        }
-    }
-    
     private var dataManagementSection: some View {
         Section {
             #if ICLOUD_ENABLED
@@ -406,12 +361,18 @@ struct SettingsView: View {
                 HStack {
                     Label(L10n.Settings.rebuildInitialNotebooks, systemImage: "arrow.counterclockwise")
                         .labelStyle(ColorfulIconLabelStyle(color: .red))
+                        .foregroundStyle(.appText)
                     Spacer()
                     if isInjecting {
                         ProgressView()
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold)) // Dynamic Type
+                            .foregroundStyle(.appSecondary)
                     }
                 }
             }
+            .buttonStyle(.plain)
             .disabled(isInjecting)
         } header: {
             Text(L10n.Settings.Section.data)

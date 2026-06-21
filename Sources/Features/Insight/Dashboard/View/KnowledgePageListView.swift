@@ -189,10 +189,6 @@ struct KnowledgePageListContent: View {
                     comparisonSection
                 }
 
-                if filterType == nil || filterType == .map {
-                    mapSection
-                }
-
                 if filterType == nil || filterType == .raw {
                     rawSection
                 }
@@ -328,29 +324,7 @@ struct KnowledgePageListContent: View {
             }
         }
     }
-    
-    @ViewBuilder
-    private var mapSection: some View {
-        let maps = filteredPages(for: .map)
-        if !maps.isEmpty {
-            Section {
-                VStack(spacing: DesignSystem.medium) {
-                    ForEach(maps) { page in
-                        selectablePageRow(page)
-                    }
-                }
-            } header: {
-                HStack {
-                    Label(L10n.Dashboard.pageList.mapCount(maps.count), systemImage: DesignSystem.Icons.map)
-                        .font(.subheadline.bold())
-                        .foregroundStyle(.appMap)
-                    Spacer()
-                }
-                .padding(.vertical, DesignSystem.tiny)
-            }
-        }
-    }
-    
+
     @ViewBuilder
     private var rawSection: some View {
         let raws = filteredPages(for: .raw)

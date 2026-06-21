@@ -226,7 +226,7 @@ struct SearchDiagnosticSheet: View {
                                 .font(.system(size: 36, weight: .bold, design: .rounded)) // Dynamic Type
                                 .foregroundStyle(Color.theme.blue)
                             
-                            Text("FTS5 SQLite")
+                            Text(L10n.Search.Diag.ftsEngine)
                                 .font(.system(size: 10, weight: .bold)) // Dynamic Type
                                 .foregroundStyle(.blue.opacity(DesignSystem.Opacity.prominent))
                         }
@@ -256,7 +256,7 @@ struct SearchDiagnosticSheet: View {
                                 .font(.system(size: 36, weight: .bold, design: .rounded)) // Dynamic Type
                                 .foregroundStyle(Color.theme.green)
                             
-                            Text("HNSW / Vector")
+                            Text(L10n.Search.Diag.vectorEngine)
                                 .font(.system(size: 10, weight: .bold)) // Dynamic Type
                                 .foregroundStyle(.green.opacity(DesignSystem.Opacity.prominent))
                         }

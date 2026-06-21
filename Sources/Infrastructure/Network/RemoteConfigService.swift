@@ -24,50 +24,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
     
     /// 异步拉取云端大模型兼容白名单列表
     public func fetchLLMManifests() async throws -> [LLMManifest] {
-        // 根据 DEBUG/RELEASE 环境自动选择 URL
-        let remoteURLString = AppConfig.modelStoreURL
-
-        let preferredLanguage = Locale.preferredLanguages.first ?? "en"
-        var urlsToTry: [URL] = []
-        
-        if preferredLanguage.hasPrefix("zh") {
-            var zhURLString = remoteURLString
-            if zhURLString.contains(".json") {
-                zhURLString = zhURLString.replacingOccurrences(of: ".json", with: "_zh-Hans.json")
-            } else {
-                zhURLString += "_zh-Hans"
-            }
-            if let zhURL = URL(string: zhURLString) {
-                urlsToTry.append(zhURL)
-            }
-        }
-        
-        if let defaultURL = URL(string: remoteURLString) {
-            urlsToTry.append(defaultURL)
-        }
-
-        var lastError: Error?
-        for url in urlsToTry {
-            do {
-                Logger.shared.info("[RemoteConfigService] 正在尝试从以下地址拉取模型白名单: \(url.absoluteString)")
-                let (data, response) = try await session.data(from: url)
-                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-                guard statusCode == 200 else {
-                    throw NetworkError.serverError(500, "Fetch remote models allowlist failed with HTTP \(statusCode).")
-                }
-
-                let apiResponse = try decoder.decode(ApiResponse<[LLMManifest]>.self, from: data)
-                if apiResponse.isSuccess, let list = apiResponse.data {
-                    return list
-                }
-            } catch {
-                Logger.shared.warning("[RemoteConfigService] 尝试拉取大模型白名单 (\(url.absoluteString)) 失败: \(error)")
-                lastError = error
-            }
-        }
-
-        // 若全部请求失败，使用离线兜底
-        Logger.shared.error("[RemoteConfigService] 远端拉取失败，使用离线兜底: \(String(describing: lastError))")
+        Logger.shared.info("[RemoteConfigService] 直接加载本地内置离线预设大模型白名单")
         return getFallbackLLMManifests()
     }
     
@@ -114,6 +71,9 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                   let displayName = dict["displayName"] as? String,
                   let vendor = dict["vendor"] as? String else { return nil }
             let params = dict["defaultParameters"] as? [String: Any] ?? [:]
+            // 提取模型所支持的核心任务类型及多语言本地化映射，以保证测试实验室兼容性检测正常
+            let tasks = dict["supportedTasks"] as? [String] ?? []
+            let tasksLoc = dict["supportedTasksLocalized"] as? [String]
             return LLMManifest(
                 modelId: modelId, displayName: displayName, vendor: vendor,
                 fileSizeInBytes: (dict["fileSizeInBytes"] as? Int64) ?? 0,
@@ -121,6 +81,7 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 remoteURLString: (dict["remoteURLString"] as? String) ?? "",
                 sha256Checksum: (dict["sha256Checksum"] as? String) ?? "",
                 parameterCount: (dict["parameterCount"] as? String) ?? "",
+                supportedTasks: tasks,
                 description: (dict["description"] as? String) ?? "",
                 defaultParameters: InferenceParameters(
                     temperature: (params["temperature"] as? Double) ?? 0.7,
@@ -130,7 +91,8 @@ public final class RemoteConfigService: RemoteConfigCapabilities, Sendable {
                 huggingfaceURLString: dict["huggingfaceURLString"] as? String,
                 modelscopeURLString: dict["modelscopeURLString"] as? String,
                 displayNames: dict["displayNames"] as? [String: String],
-                descriptions: dict["descriptions"] as? [String: String]
+                descriptions: dict["descriptions"] as? [String: String],
+                supportedTasksLocalized: tasksLoc
             )
         }
     }

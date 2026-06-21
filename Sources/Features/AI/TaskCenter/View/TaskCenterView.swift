@@ -19,6 +19,8 @@ struct TaskCenterView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(Router.self) var router
     @State private var showClearConfirm = false
+    // 跟踪当前选中的过滤任务类型，为 nil 时展示全部分类
+    @State private var selectedFilterType: TaskType?
     
     var body: some View {
         Group {
@@ -30,6 +32,8 @@ struct TaskCenterView: View {
                         emptyState
                             .padding(.top, DesignSystem.loosePadding)
                     }
+                    // 追加底部安全间距，确保在小屏或带底部 TabBar 的机型上，描述文字可以完全滚上来
+                    .padding(.bottom, DesignSystem.huge * 2)
                 }
             } else {
                 List {
@@ -43,7 +47,8 @@ struct TaskCenterView: View {
                     }
                     
                     Section {
-                        ForEach(TaskType.allCases, id: \.self) { type in
+                        // 根据选中的过滤条件筛选展示的 Section 分类
+                        ForEach(TaskType.allCases.filter { selectedFilterType == nil || $0 == selectedFilterType }, id: \.self) { type in
                             let metrics = taskCenter.metrics(for: type)
                             let tasks = taskCenter.tasks.filter { $0.type == type }
                             
@@ -224,6 +229,8 @@ struct TaskCenterView: View {
     private func summaryCard(type: TaskType, color: Color) -> some View {
         let metrics = taskCenter.metrics(for: type)
         let runningCount = metrics.running
+        let isSelected = selectedFilterType == type
+        let isAnySelected = selectedFilterType != nil
         
         return VStack(alignment: .center, spacing: DesignSystem.tiny) {
             ZStack {
@@ -261,8 +268,32 @@ struct TaskCenterView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, DesignSystem.standardPadding)
         .appMetricCardStyle(color: color, cornerRadius: DesignSystem.standardRadius)
+        // 选中状态应用细微的色彩边框，提供强力视觉锚点
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.standardRadius)
+                .stroke(isSelected ? color : Color.clear, lineWidth: DesignSystem.borderWidth * 2)
+        )
         .padding(.vertical, DesignSystem.tiny)
-        .shadow(color: Color.theme.black.opacity(DesignSystem.shadowOpacity / 5), radius: DesignSystem.small, x: 0, y: DesignSystem.tiny)
+        // 阴影和缩放微动效
+        .shadow(
+            color: Color.theme.black.opacity(isSelected ? DesignSystem.shadowOpacity / 2.5 : DesignSystem.shadowOpacity / 5),
+            radius: isSelected ? DesignSystem.medium : DesignSystem.small,
+            x: 0,
+            y: isSelected ? DesignSystem.small : DesignSystem.tiny
+        )
+        .scaleEffect(isSelected ? 1.03 : 1.0)
+        // 当过滤了其他类型时，对未选中的卡片进行半透明度弱化
+        .opacity(isAnySelected && !isSelected ? 0.6 : 1.0)
+        .animation(.fastAnimation, value: selectedFilterType)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            HapticFeedback.shared.trigger(.selection)
+            if isSelected {
+                selectedFilterType = nil
+            } else {
+                selectedFilterType = type
+            }
+        }
     }
     
     private var emptyState: some View {

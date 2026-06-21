@@ -180,6 +180,7 @@ struct UserProfileMenu: View {
     @State private var showDeveloper = false
     @State private var showMenuPopover = false
     @State private var showPlan = false
+    @State private var showAISettings = false // AI 大模型快捷设置展示状态
     
     /// 用于 watchOS 平台设置弹窗的展示状态
     @State private var showSettings = false
@@ -188,7 +189,7 @@ struct UserProfileMenu: View {
     @State private var pendingMenuAction: MenuAction?
 
     fileprivate enum MenuAction {
-        case settings, profile, plan, plugins, developer
+        case settings, profile, plan, plugins, developer, aiSettings
     }
     
     var body: some View {
@@ -249,6 +250,15 @@ struct UserProfileMenu: View {
             .applyPagePresentationSizing()
         }
 
+        .sheet(isPresented: $showAISettings) {
+            NavigationStack {
+                AISettingsView()
+            }
+            .environment(store)
+            .environmentObject(themeManager)
+            .applyPagePresentationSizing() // 适配大屏弹窗尺寸规范
+        }
+
         .sheet(isPresented: $showDeveloper) {
             NavigationStack {
                 DeveloperSettingsView()
@@ -272,6 +282,7 @@ struct UserProfileMenu: View {
         case .plan: showPlan = true
         case .plugins: showPlugins = true
         case .developer: showDeveloper = true
+        case .aiSettings: showAISettings = true
         }
     }
     
@@ -441,8 +452,13 @@ struct CustomProfilePopover: View {
                         showMenuPopover = false
                     }
                     
-                    menuRow(icon: "star.fill", color: .yellow, title: L10n.Auth.subscription) {
+                    menuRow(icon: DesignSystem.Icons.crown, color: .yellow, title: L10n.Auth.subscription) {
                         onAction?(.plan)
+                        showMenuPopover = false
+                    }
+                    
+                    menuRow(icon: DesignSystem.Icons.sparkles, color: .purple, title: L10n.Settings.Section.ai) {
+                        onAction?(.aiSettings)
                         showMenuPopover = false
                     }
                     

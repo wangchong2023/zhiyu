@@ -109,6 +109,7 @@ struct PluginCenterView: View {
                     Text(L10n.Plugin.safeModeTitle)
                         .font(.subheadline.bold())
                         .foregroundStyle(.appText)
+                        .lineLimit(1)
                     
                     Toggle("", isOn: Binding(
                         get: { isSafeModeOn },

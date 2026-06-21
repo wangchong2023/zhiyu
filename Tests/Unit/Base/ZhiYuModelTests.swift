@@ -73,7 +73,6 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(KnowledgePage(title: "", pageType: .concept).folderName, "concepts")
         XCTAssertEqual(KnowledgePage(title: "", pageType: .source).folderName, "sources")
         XCTAssertEqual(KnowledgePage(title: "", pageType: .comparison).folderName, "comparisons")
-        XCTAssertEqual(KnowledgePage(title: "", pageType: .map).folderName, "maps")
         XCTAssertEqual(KnowledgePage(title: "", pageType: .raw).folderName, "raw")
     }
     
@@ -256,12 +255,11 @@ final class ModelsTests: XCTestCase {
     // MARK: - 页面类型与置信度测试
     /// 验证所有的知识页面类型（PageType）定义无遗漏
     func testPageTypeAllCases() {
-        XCTAssertEqual(PageType.allCases.count, 6)
+        XCTAssertEqual(PageType.allCases.count, 5)
         XCTAssertTrue(PageType.allCases.contains(.entity))
         XCTAssertTrue(PageType.allCases.contains(.concept))
         XCTAssertTrue(PageType.allCases.contains(.source))
         XCTAssertTrue(PageType.allCases.contains(.comparison))
-        XCTAssertTrue(PageType.allCases.contains(.map))
         XCTAssertTrue(PageType.allCases.contains(.raw))
     }
     
@@ -271,7 +269,6 @@ final class ModelsTests: XCTestCase {
         XCTAssertFalse(PageType.concept.displayName.isEmpty)
         XCTAssertFalse(PageType.source.displayName.isEmpty)
         XCTAssertFalse(PageType.comparison.displayName.isEmpty)
-        XCTAssertFalse(PageType.map.displayName.isEmpty)
         XCTAssertFalse(PageType.raw.displayName.isEmpty)
     }
     

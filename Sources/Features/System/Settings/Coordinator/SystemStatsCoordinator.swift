@@ -22,6 +22,12 @@ final class SystemStatsCoordinator {
     var provenance = ProvenanceStats(importedCount: 0, importedSize: 0, createdCount: 0, createdSize: 0)
     var exportCount: Int = 0
     var exportSize: Int64 = 0
+    
+    struct AssetStats: Sendable {
+        var count: Int
+        var size: Int64
+    }
+    var assetCategoryStats: [String: AssetStats] = [:]
     var avgLatency: Int = 0
     var maxLatency: Int = 0
     var minLatency: Int = 0
@@ -113,6 +119,32 @@ final class SystemStatsCoordinator {
     private func fetchStorageStats() async {
         let stats = await pageStore.getStorageStats()
         let allLogEntries = await logger.getLogEntries()
+        
+        let records = (try? await importRecordRepo.fetchAll(category: nil, limit: 2000)) ?? []
+        var voiceStats = AssetStats(count: 0, size: 0)
+        var ocrStats = AssetStats(count: 0, size: 0)
+        var fileStats = AssetStats(count: 0, size: 0)
+        
+        for record in records {
+            let size = record.fileSize ?? 0
+            if record.category == "voice" {
+                voiceStats.count += 1
+                voiceStats.size += size
+            } else if record.category == "ocr" {
+                ocrStats.count += 1
+                ocrStats.size += size
+            } else if record.category == "file" {
+                fileStats.count += 1
+                fileStats.size += size
+            }
+        }
+        
+        self.assetCategoryStats = [
+            "voice": voiceStats,
+            "ocr": ocrStats,
+            "file": fileStats
+        ]
+        
         let categories = [
             StorageCategory(label: L10n.Dashboard.System.database, value: stats.databaseSize, count: VaultService.shared.vaults.count, color: .blue),
             StorageCategory(label: L10n.Dashboard.System.logs, value: stats.logsSize, count: allLogEntries.count, color: .orange),

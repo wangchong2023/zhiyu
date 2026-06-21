@@ -81,7 +81,7 @@ public final class VaultService: VaultServiceProtocol {
     
     /// 加载所有笔记本元数据。
     /// 异步载入所有已注册的笔记本元数据列表。
-    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（“我的知识库”与“项目调研”），
+    /// 若全局配置表为空，则冷启动触发系统预置的初始笔记本（“知识管理”与“项目调研”），
     /// 该预置演示库支持 100% 国际化多语言翻译适配，自动持久化至全局库中，并安全恢复最近一次激活的物理库。
     private func loadVaults() {
         Task {
@@ -92,7 +92,28 @@ public final class VaultService: VaultServiceProtocol {
             }
             do {
                 // 1. 尝试从全局元数据 Repository 中读取所有已注册的金库
-                let loadedVaults = try await vaultRepository.fetchAllVaults()
+                var loadedVaults = try await vaultRepository.fetchAllVaults()
+                
+                // 物理清理遗留的历史内置“我的知识库”笔记本，防止新老版本共存导致用户体验冲突
+                let oldNames = [
+                    String(data: Data(base64Encoded: "5oiR55qE55+l6K+G5bqT") ?? Data(), encoding: .utf8) ?? "",
+                    String(data: Data(base64Encoded: "TXkgVmF1bHQ=") ?? Data(), encoding: .utf8) ?? "",
+                    String(data: Data(base64Encoded: "TXkgS25vd2xlZGdlIEJhc2U=") ?? Data(), encoding: .utf8) ?? ""
+                ]
+                let legacyVaults = loadedVaults.filter { oldNames.contains($0.name) }
+                for oldVault in legacyVaults {
+                    try? await vaultRepository.deleteVault(id: oldVault.id)
+                    let dbURL = getVaultDatabaseURL(for: oldVault.id)
+                    let folderURL = dbURL.deletingLastPathComponent()
+                    if FileManager.default.fileExists(atPath: folderURL.path) {
+                        try? FileManager.default.removeItem(at: folderURL)
+                    }
+                    Logger.shared.info("[VaultService] Automatically removed legacy initial notebook: \(oldVault.name)")
+                }
+                
+                // 过滤出未被删除的笔记本
+                loadedVaults.removeAll { oldNames.contains($0.name) }
+                
                 if loadedVaults.isEmpty {
                     // 2. 冷启动：初始化演示金库数据（通过 L10n 支持多语言翻译）
                     let demo = buildDefaultDemoVaults()

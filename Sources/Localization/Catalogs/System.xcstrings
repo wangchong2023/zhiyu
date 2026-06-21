@@ -3120,13 +3120,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Large Models"
+            "value": "Artificial Intelligence"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "大模型"
+            "value": "人工智能"
           }
         }
       }
@@ -6136,6 +6136,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "【智宇 (ZhiYu) 服务条款】\n\n欢迎使用智宇！在使用本服务前，请您仔细阅读以下条款。\n\n1. 服务说明\n智宇是一款 AI 原生知识管理应用，提供知识图谱构建、智能检索、AI 合成等功能。我们保留根据产品发展调整服务的权利。\n\n2. 用户行为规范\n您在使用本服务时，应遵守中华人民共和国相关法律法规，不得利用本服务从事违法违规活动，包括但不限于：发布违法信息、侵犯他人知识产权、干扰服务正常运行等。\n\n3. 知识产权\n您通过本服务创建的知识内容（包括笔记、图谱、合成文档等）的知识产权归您所有。本应用的软件著作权、商标等知识产权归智宇团队所有。\n\n4. 免责声明\n本服务基于 AI 技术提供内容建议与分析，AI 生成内容仅供参考，不构成专业建议。对于因使用本服务而产生的任何直接或间接损失，我们不承担法律责任。\n\n5. 服务变更与终止\n我们可能会在必要时修改或中断服务，并在合理期限内通知您。若您违反本条款，我们有权终止向您提供服务。\n\n6. 适用法律\n本条款的解释、效力及争议解决，均适用中华人民共和国法律。\n\n7. 联系我们\n如对本条款有任何疑问，请通过应用内\"帮助与反馈\"联系。"
+          }
+        }
+      }
+    },
+    "auth.overseas.welcome": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to ZhiYu"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎来到智宇"
+          }
+        }
+      }
+    },
+    "auth.overseas.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secure, passwordless entry using modern authentication methods."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用现代安全认证方式，免密快捷登录。"
+          }
+        }
+      }
+    },
+    "auth.overseas.continueWithPasskey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue with Passkey"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用通行密钥登录"
+          }
+        }
+      }
+    },
+    "auth.overseas.signInWithEmail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "or sign in with email"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "或使用邮箱登录"
+          }
+        }
+      }
+    },
+    "auth.overseas.sendMagicLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send Magic Link"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送魔术链接"
+          }
+        }
+      }
+    },
+    "auth.region.china": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mainland China"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "中国大陆"
+          }
+        }
+      }
+    },
+    "auth.region.international": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "International"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "国际区"
+          }
+        }
+      }
+    },
+    "auth.overseas.magicLinkSent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magic link sent! Please check your mailbox."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "魔术链接已发送！请检查您的邮箱。"
           }
         }
       }

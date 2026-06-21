@@ -109,14 +109,13 @@ final class KnowledgePageTests: XCTestCase {
         XCTAssertEqual(pageWithCustomIcon.displayIcon, "star.fill", "自定义图标应当覆盖默认类型图标")
     }
     
-    /// 测试 6 种 PageType 对应的物理存储文件夹名称
+    /// 测试 5 种 PageType 对应的物理存储文件夹名称
     func testFolderNameMapping() {
         let mappings: [(PageType, String)] = [
             (.entity, "entities"),
             (.concept, "concepts"),
             (.source, "sources"),
             (.comparison, "comparisons"),
-            (.map, "maps"),
             (.raw, "raw")
         ]
         

@@ -221,37 +221,53 @@ struct SystemStatsView: View {
             StandardSection(title: L10n.Dashboard.stats.storageDetails) {
                 ForEach(coordinator.storageCategories.indices, id: \.self) { index in
                     let category = coordinator.storageCategories[index]
-                    HStack(spacing: Spacing.standardPadding) {
-                        Image(systemName: coordinator.iconForCategory(category.label))
-                            .foregroundStyle(category.color)
-                            .frame(width: DesignSystem.giant)
-                        
-                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                            Text(category.label)
-                                .foregroundStyle(.appText)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(spacing: Spacing.standardPadding) {
+                            Image(systemName: coordinator.iconForCategory(category.label))
+                                .foregroundStyle(category.color)
+                                .frame(width: DesignSystem.giant)
                             
-                            if category.label == L10n.Dashboard.System.database {
-                                Text(L10n.Dashboard.stats.multiVaultDesc(category.count))
-                                    .font(.system(size: DesignSystem.microFontSize))
-                                    .foregroundStyle(.appSecondary)
+                            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                                Text(category.label)
+                                    .foregroundStyle(.appText)
+                                
+                                if category.label == L10n.Dashboard.System.database {
+                                    Text(L10n.Dashboard.stats.multiVaultDesc(category.count))
+                                        .font(.system(size: DesignSystem.microFontSize))
+                                        .foregroundStyle(.appSecondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            VStack(alignment: .trailing, spacing: DesignSystem.atomic) {
+                                HStack(spacing: DesignSystem.tiny) {
+                                    Text(coordinator.formatBytes(category.value))
+                                        .font(.subheadline.bold())
+                                        .foregroundStyle(.appText)
+                                }
+                                
+                                if coordinator.totalStorage > 0 {
+                                    let percent = Int(Double(category.value) / Double(coordinator.totalStorage) * 100)
+                                    Text("\(percent)%")
+                                        .font(.system(size: DesignSystem.microFontSize, design: .rounded))
+                                        .foregroundStyle(.appSecondary)
+                                }
                             }
                         }
                         
-                        Spacer()
-                        
-                        VStack(alignment: .trailing, spacing: DesignSystem.atomic) {
-                            HStack(spacing: DesignSystem.tiny) {
-                                Text(coordinator.formatBytes(category.value))
-                                    .font(.subheadline.bold())
-                                    .foregroundStyle(.appText)
-                            }
+                        if category.label == L10n.Dashboard.stats.storageImport {
+                            let voice = coordinator.assetCategoryStats["voice"] ?? SystemStatsCoordinator.AssetStats(count: 0, size: 0)
+                            let ocr = coordinator.assetCategoryStats["ocr"] ?? SystemStatsCoordinator.AssetStats(count: 0, size: 0)
+                            let file = coordinator.assetCategoryStats["file"] ?? SystemStatsCoordinator.AssetStats(count: 0, size: 0)
                             
-                            if coordinator.totalStorage > 0 {
-                                let percent = Int(Double(category.value) / Double(coordinator.totalStorage) * 100)
-                                Text("\(percent)%")
-                                    .font(.system(size: DesignSystem.microFontSize, design: .rounded))
-                                    .foregroundStyle(.appSecondary)
+                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.small) {
+                                assetCategoryGridItem(title: L10n.Dashboard.stats.audioFormat, count: voice.count, size: voice.size, color: .indigo)
+                                assetCategoryGridItem(title: L10n.Dashboard.stats.imageFormat, count: ocr.count, size: ocr.size, color: .orange)
+                                assetCategoryGridItem(title: L10n.Dashboard.stats.documentFormat, count: file.count, size: file.size, color: .teal)
                             }
+                            .padding(.top, DesignSystem.small)
+                            .padding(.leading, DesignSystem.giant + Spacing.standardPadding)
                         }
                     }
                     .appListRowStyle(showDivider: index < coordinator.storageCategories.count - 1)
@@ -415,5 +431,29 @@ struct SystemStatsView: View {
         Divider()
             .frame(height: DesignSystem.IconSize.micro)
             .padding(.horizontal, DesignSystem.tiny)
+    }
+    
+    private func assetCategoryGridItem(title: String, count: Int, size: Int64, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+            Text(title)
+                .font(.system(size: 10, weight: .bold)) // Dynamic Type
+                .foregroundStyle(.secondary)
+            
+            Text(L10n.Dashboard.stats.itemsCount(count))
+                .font(.subheadline.bold())
+                .foregroundStyle(.appText)
+            
+            Text(coordinator.formatBytes(size))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding(DesignSystem.small)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.appCard.opacity(DesignSystem.Opacity.subtle))
+        .cornerRadius(DesignSystem.smallRadius)
+        .overlay(
+            RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                .stroke(color.opacity(DesignSystem.Opacity.shadow), lineWidth: 1)
+        )
     }
 }

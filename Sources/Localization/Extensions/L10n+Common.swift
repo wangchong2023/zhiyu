@@ -397,32 +397,6 @@ extension L10n {
             public static var content4: String { Localized.tr("demo.pkm.4.content", table: t) }
             public static var title5: String { Localized.tr("demo.pkm.5.title", table: t) }
             public static var content5: String { Localized.tr("demo.pkm.5.content", table: t) }
-            public static var title6: String { Localized.tr("demo.pkm.6.title", table: t) }
-            public static var content6: String { Localized.tr("demo.pkm.6.content", table: t) }
-            public static var title7: String { Localized.tr("demo.pkm.7.title", table: t) }
-            public static var content7: String { Localized.tr("demo.pkm.7.content", table: t) }
-            public static var title8: String { Localized.tr("demo.pkm.8.title", table: t) }
-            public static var content8: String { Localized.tr("demo.pkm.8.content", table: t) }
-            public static var title9: String { Localized.tr("demo.pkm.9.title", table: t) }
-            public static var content9: String { Localized.tr("demo.pkm.9.content", table: t) }
-            public static var title10: String { Localized.tr("demo.pkm.10.title", table: t) }
-            public static var content10: String { Localized.tr("demo.pkm.10.content", table: t) }
-            public static var title11: String { Localized.tr("demo.pkm.11.title", table: t) }
-            public static var content11: String { Localized.tr("demo.pkm.11.content", table: t) }
-            public static var title12: String { Localized.tr("demo.pkm.12.title", table: t) }
-            public static var content12: String { Localized.tr("demo.pkm.12.content", table: t) }
-            public static var title13: String { Localized.tr("demo.pkm.13.title", table: t) }
-            public static var content13: String { Localized.tr("demo.pkm.13.content", table: t) }
-            public static var title14: String { Localized.tr("demo.pkm.14.title", table: t) }
-            public static var content14: String { Localized.tr("demo.pkm.14.content", table: t) }
-            public static var title15: String { Localized.tr("demo.pkm.15.title", table: t) }
-            public static var content15: String { Localized.tr("demo.pkm.15.content", table: t) }
-            public static var title16: String { Localized.tr("demo.pkm.16.title", table: t) }
-            public static var content16: String { Localized.tr("demo.pkm.16.content", table: t) }
-            public static var title17: String { Localized.tr("demo.pkm.17.title", table: t) }
-            public static var content17: String { Localized.tr("demo.pkm.17.content", table: t) }
-            public static var title18: String { Localized.tr("demo.pkm.18.title", table: t) }
-            public static var content18: String { Localized.tr("demo.pkm.18.content", table: t) }
         }
         
         public enum Coffee {
@@ -436,18 +410,6 @@ extension L10n {
             public static var content4: String { Localized.tr("demo.coffee.4.content", table: t) }
             public static var title5: String { Localized.tr("demo.coffee.5.title", table: t) }
             public static var content5: String { Localized.tr("demo.coffee.5.content", table: t) }
-            public static var title6: String { Localized.tr("demo.coffee.6.title", table: t) }
-            public static var content6: String { Localized.tr("demo.coffee.6.content", table: t) }
-            public static var title7: String { Localized.tr("demo.coffee.7.title", table: t) }
-            public static var content7: String { Localized.tr("demo.coffee.7.content", table: t) }
-            public static var title8: String { Localized.tr("demo.coffee.8.title", table: t) }
-            public static var content8: String { Localized.tr("demo.coffee.8.content", table: t) }
-            public static var title9: String { Localized.tr("demo.coffee.9.title", table: t) }
-            public static var content9: String { Localized.tr("demo.coffee.9.content", table: t) }
-            public static var title10: String { Localized.tr("demo.coffee.10.title", table: t) }
-            public static var content10: String { Localized.tr("demo.coffee.10.content", table: t) }
-            public static var title11: String { Localized.tr("demo.coffee.11.title", table: t) }
-            public static var content11: String { Localized.tr("demo.coffee.11.content", table: t) }
         }
         
         public enum Fallback {
@@ -462,6 +424,14 @@ extension L10n {
             public static var workflow: String { Localized.tr("demo.snippet.workflow", table: t) }
             public static var luckin: String { Localized.tr("demo.snippet.luckin", table: t) }
             public static var survey: String { Localized.tr("demo.snippet.survey", table: t) }
+            public static var pkmRagLink: String { Localized.tr("demo.snippet.pkmRagLink", table: t) }
+            public static var pkmVoiceForget: String { Localized.tr("demo.snippet.pkmVoiceForget", table: t) }
+            public static var pkmClipboardFeynman: String { Localized.tr("demo.snippet.pkmClipboardFeynman", table: t) }
+            public static var pkmOcrFolder: String { Localized.tr("demo.snippet.pkmOcrFolder", table: t) }
+            public static var coffeeOcrManual: String { Localized.tr("demo.snippet.coffeeOcrManual", table: t) }
+            public static var coffeeRagLink: String { Localized.tr("demo.snippet.coffeeRagLink", table: t) }
+            public static var coffeeClipboardTeam: String { Localized.tr("demo.snippet.coffeeClipboardTeam", table: t) }
+            public static var coffeeVoiceProcure: String { Localized.tr("demo.snippet.coffeeVoiceProcure", table: t) }
         }
         
         public enum FileNames {
@@ -469,6 +439,10 @@ extension L10n {
             public static var workflow: String { Localized.tr("demo.filename.workflow", table: t) }
             public static var luckin: String { Localized.tr("demo.filename.luckin", table: t) }
             public static var survey: String { Localized.tr("demo.filename.survey", table: t) }
+            public static var ocrFolderScan: String { Localized.tr("demo.filename.ocrFolderScan", table: t) }
+            public static var voiceNoteForget: String { Localized.tr("demo.filename.voiceNoteForget", table: t) }
+            public static var ocrStoreManual: String { Localized.tr("demo.filename.ocrStoreManual", table: t) }
+            public static var voiceNoteProcure: String { Localized.tr("demo.filename.voiceNoteProcure", table: t) }
         }
         
         public enum Log {

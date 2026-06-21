@@ -22,7 +22,6 @@ extension L10n {
             public static var concept: String { CoreModels.tr("type.concept") }
             public static var source: String { CoreModels.tr("type.source") }
             public static var comparison: String { CoreModels.tr("type.comparison") }
-            public static var map: String { CoreModels.tr("type.map") }
             public static var raw: String { CoreModels.tr("type.raw") }
         }
 

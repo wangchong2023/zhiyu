@@ -15,6 +15,11 @@ struct AuthView: View {
     @Environment(AuthService.self) var authService
     @EnvironmentObject var themeManager: ThemeManager
     
+    // MARK: - 区域感知与3D翻转状态
+    @State private var currentRegion: AuthRegion = AuthRegionDetector.shared.detectDefaultRegion()
+    @State private var displayedRegion: AuthRegion = AuthRegionDetector.shared.detectDefaultRegion()
+    @State private var rotateDegrees: Double = 0
+    
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
     @State private var isAgreementChecked: Bool = true
@@ -29,33 +34,25 @@ struct AuthView: View {
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                // 语言切换按钮（右上角）
-                languageSwitcher
+                // 顶部控制条（区域选择与语言切换）
+                topControlBar
+                
                 VStack(spacing: Spacing.huge) { // 增加板块之间的巨型间距 (32px)，让顶部 Header 得到完美释放
                     // 1. Logo & 标语 (品牌展示板块)
                     heroHeader
                     
-                    // 2. 一键登录交互板块
-                    VStack(spacing: Spacing.large) {
-                        // 手机号掩码显示
-                        Text("180****6625")
-                            .font(.system(size: DesignSystem.titleFontSize * 1.2, weight: .bold, design: .rounded))
-                            .foregroundStyle(.appText)
-                            .padding(.top, Spacing.medium)
-                        
-                        // 登录动作按钮
-                        actionButton
-                        
-                        // 协议勾选
-                        agreementSection
-                        
-                        Spacer().frame(height: Spacing.large)
-                        
-                        // 更多登录方式
-                        thirdPartySection
+                    // 2. 卡片登录承载容器 (包含3D翻转动画)
+                    Group {
+                        if displayedRegion == .china {
+                            chinaLoginCard
+                        } else {
+                            OverseasLoginCardView()
+                                .id(Localized.currentLanguage)
+                                // 抵消卡片翻转的 180 度，使卡片内容正常正向显示而不被水平镜像翻转
+                                .rotation3DEffect(.degrees(180), axis: (x: 0.0, y: 1.0, z: 0.0))
+                        }
                     }
-                    .padding(Spacing.wide)
-                    .appContainer(cornerRadius: Spacing.largeRadius)
+                    .rotation3DEffect(.degrees(rotateDegrees), axis: (x: 0.0, y: 1.0, z: 0.0))
                     
                     // 3. 游客模式
                     guestButton
@@ -81,6 +78,56 @@ struct AuthView: View {
     }
     
     // MARK: - 子视图
+
+    /// 系统语言与区域切换控制条
+    private var topControlBar: some View {
+        HStack {
+            RegionSelectorToggle(currentRegion: $currentRegion) {
+                triggerRegionFlip()
+            }
+            
+            Spacer()
+            
+            languageSwitcher
+        }
+        .padding(.horizontal, Spacing.wide)
+        .padding(.top, Spacing.tiny)
+    }
+    
+    /// 触发 3D 卡片翻转动效
+    private func triggerRegionFlip() {
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+            rotateDegrees += 180
+        }
+        // 在旋转到一半 (90度) 时，无缝切换展示的视图类型，防止卡片背面内容在视觉上镜像反向显示
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            displayedRegion = currentRegion
+        }
+    }
+    
+    /// 国内版（中国大陆）一键登录卡片
+    private var chinaLoginCard: some View {
+        VStack(spacing: Spacing.large) {
+            // 手机号掩码显示
+            Text("180****6625")
+                .font(.system(size: DesignSystem.titleFontSize * 1.2, weight: .bold, design: .rounded))
+                .foregroundStyle(.appText)
+                .padding(.top, Spacing.medium)
+            
+            // 登录动作按钮
+            actionButton
+            
+            // 协议勾选
+            agreementSection
+            
+            Spacer().frame(height: Spacing.large)
+            
+            // 更多登录方式
+            thirdPartySection
+        }
+        .padding(Spacing.wide)
+        .appContainer(cornerRadius: Spacing.largeRadius)
+    }
 
     /// 系统语言切换按钮（右上角）
     private var languageSwitcher: some View {

@@ -90,7 +90,7 @@ public final class MaintenanceService {
         
         do {
             if vaultName == L10n.Vault.defaultName || (isTesting && (vaultName == nil || vaultName?.contains("\u{77e5}\u{8bc6}") == true || vaultName?.contains("Vault") == true)) {
-                // “我的知识库” - 使用标准的 AI 概念与大量 API 日志
+                // “知识管理” - 使用标准的 AI 概念与大量 API 日志
                 _ = try await InitialNotebookGenerator.generate(in: pageStore)
                 logger.addLog(action: .create, target: L10n.InitialNotebook.Log.defaultDemoData, details: "Seeded_default_content", module: "Maintenance")
             } else if vaultName == L10n.Vault.researchName || vaultName == "\u{9879}\u{76ee}\u{8c03}\u{7814}" || vaultName == L10n.InitialNotebook.Log.projectResearch || (isTesting && vaultName?.contains("\u{8c03}\u{7814}") == true) {

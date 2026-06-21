@@ -262,7 +262,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restore"
+            "value": "Restore Backup"
           }
         },
         "zh-Hans": {
@@ -2064,7 +2064,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Knowledge Ingest"
+            "value": "Knowledge Source"
           }
         },
         "zh-Hans": {

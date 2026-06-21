@@ -6,7 +6,7 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层 / 状态中台
-//  核心职责：作为全局响应式大模型控制中枢。负责拉取并映射端侧模型商店白名单、监听后台下载进度流、处理本地运存护栏判定、以及执行端云混合路由决策（2.4 契约）。
+//  核心职责：作为全局响应式大模型控制中枢。负责拉取并映射端侧模型市场白名单、监听后台下载进度流、处理本地运存护栏判定、以及执行端云混合路由决策（2.4 契约）。
 //
 
 import Foundation
@@ -107,7 +107,7 @@ public final class GlobalModelManager {
     
     // MARK: - 初始化
     
-    /// 初始化大模型商店中台管理器
+    /// 初始化大模型市场中台管理器
     public init() {
         self.physicalMemory = ProcessInfo.processInfo.physicalMemory
         self.hardwareGuard = DeviceHardwareGuard(physicalMemory: self.physicalMemory)
@@ -142,12 +142,20 @@ public final class GlobalModelManager {
         }
     }
     
-    /// 强制重新加载商店配置及沙盒状态
+    /// 强制重新加载市场配置及沙盒状态
     public func reload() async {
         await initializeManager()
     }
     
-    /// 对本地沙盒大模型权重文件进行扫描刷新
+    /// 物理扫描本地沙盒中大模型的权重文件并刷新状态
+    ///
+    /// 核心逻辑：
+    /// 1. 遍历远程下发的端侧模型白名单。
+    /// 2. 检测本地 Documents 目录下是否存在对应的权重文件（如 gemma-4-e2b-it.bin）。
+    /// 3. 若文件存在，通过 FileManager 读取其物理大小进行强校验：
+    ///    - 若大小为 0 或异常，则认定为损坏的临时残留文件，执行物理删除清理以杜绝欺骗误判。
+    ///    - 若大小大于 0，则认定为本地已完全就绪，将状态标为 `.completed`。
+    /// 4. 若文件不存在或已损坏清理，检查当前下载进度状态，若非下载中/暂停中/等待中，则重置降级为未下载状态。
     public func refreshLocalModelFiles() {
         let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         
@@ -155,12 +163,45 @@ public final class GlobalModelManager {
             let modelId = manifest.modelId
             let fileURL = documentDirectory.appendingPathComponent("\(modelId).bin")
             
+            var isFileValid = false
             if FileManager.default.fileExists(atPath: fileURL.path) {
-                // 本地已完全就绪
+                do {
+                    // 获取文件物理属性以提取大小
+                    let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
+                    if let fileSize = attributes[.size] as? Int64, fileSize > 0 {
+                        isFileValid = true
+                    } else {
+                        // 物理大小为 0 或者是损坏的残留，执行物理删除
+                        try FileManager.default.removeItem(at: fileURL)
+                        Logger.shared.warning("[GlobalModelManager] 检测到模型权重文件为0字节或损坏: \(modelId)，已执行物理清理")
+                    }
+                } catch {
+                    // 属性读取失败也视为异常，执行安全物理删除
+                    try? FileManager.default.removeItem(at: fileURL)
+                    Logger.shared.error("[GlobalModelManager] 校验模型权重文件属性失败: \(modelId)，错误: \(error.localizedDescription)")
+                }
+            }
+            
+            if isFileValid {
+                // 文件强校验合法，本地大模型完全就绪
                 downloadStates[modelId] = .completed(localURL: fileURL)
             } else {
-                // 本地尚无权重包，如 downloadStates 里的状态不是 downloading/paused/pending，则归为未下载(即 failed/Idle 初始态)
-                if downloadStates[modelId] == nil {
+                // 文件失效或不存在，需要将状态重置。
+                // 若状态不是 downloading/paused/pending 等正在下载的相关状态，则降级为未下载状态 (failed with Not Downloaded)
+                let currentState = downloadStates[modelId]
+                let isDownloadingOrActive: Bool
+                if let state = currentState {
+                    switch state {
+                    case .downloading, .paused, .pending:
+                        isDownloadingOrActive = true
+                    default:
+                        isDownloadingOrActive = false
+                    }
+                } else {
+                    isDownloadingOrActive = false
+                }
+                
+                if !isDownloadingOrActive {
                     downloadStates[modelId] = .failed(error: "Not Downloaded")
                 }
             }

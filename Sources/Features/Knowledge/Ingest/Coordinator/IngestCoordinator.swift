@@ -205,7 +205,12 @@ final class IngestCoordinator {
     /// 处理单个本地文档文件的安全导入与 OCR 处理
     /// - Parameter url: 文档文件的沙盒 URL 路径
     private func importSingleFile(at url: URL) {
-        _ = url.startAccessingSecurityScopedResource()
+        let isSecurityScoped = url.startAccessingSecurityScopedResource()
+        defer {
+            if isSecurityScoped {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
         let fileName = url.lastPathComponent
         lastImportTime = Date()
         let taskID = TaskCenter.shared.addTask(type: .ingest, name: L10n.Ingest.importingFile, target: fileName)
@@ -214,7 +219,6 @@ final class IngestCoordinator {
         // 获取文件大小，超过限制则拒绝
         let fileSize: Int64? = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize.map(Int64.init)
         if let size = fileSize, size > AppConstants.Keys.ImportLimits.maxFileSizeBytes {
-            url.stopAccessingSecurityScopedResource()
             lastImportTime = .distantPast
             Task { @MainActor in
                 ToastManager.shared.show(type: .error, message: L10n.Ingest.fileTooLarge)
@@ -222,34 +226,38 @@ final class IngestCoordinator {
             return
         }
 
-        // 对文本类文件读取原文作为 rawText（PDF 等二进制靠 filePath + QuickLook）
+        // 对文本类文件读取原文作为 rawText
         let textContent: String? = {
             let ext = url.pathExtension.lowercased()
             guard ["md", "txt", "markdown", "rtf"].contains(ext) else { return nil }
             return try? String(contentsOf: url, encoding: .utf8)
         }()
 
+        // 物理复制外部文件到沙盒内部以避免 Security-Scoped 权限释放问题
+        let savedPath = fileStore.copyFile(at: url, category: .file)
+        let actualPath = savedPath ?? url.path
+        let sandboxURL = savedPath.map { URL(fileURLWithPath: $0) } ?? url
+
         let record = ImportRecord(
             id: recordID, category: ImportCategory.file.rawValue,
             title: fileName, status: ImportRecordStatus.processing,
             rawText: textContent,
-            filePath: url.path, fileSize: fileSize,
+            filePath: actualPath, fileSize: fileSize,
             vaultID: VaultService.shared.selectedVaultID?.uuidString
         )
         
         Task {
             let existing = (try? await importRecordRepo.fetchAll(category: ImportCategory.file.rawValue, limit: 1000)) ?? []
-            if existing.contains(where: { $0.filePath == url.path && $0.status == ImportRecordStatus.done }) {
+            if existing.contains(where: { $0.filePath == actualPath && $0.status == ImportRecordStatus.done }) {
                 await MainActor.run {
                     ToastManager.shared.show(type: .info, message: L10n.Ingest.duplicateFile(fileName))
                 }
-                url.stopAccessingSecurityScopedResource()
                 return
             }
             try? await importRecordRepo.save(record)
             
             // 异步执行后续的文件导入任务
-            executeImportTask(at: url, recordID: recordID, textContent: textContent, taskID: taskID)
+            executeImportTask(at: sandboxURL, recordID: recordID, textContent: textContent, taskID: taskID)
         }
     }
 
@@ -266,9 +274,8 @@ final class IngestCoordinator {
         taskID: UUID
     ) {
         Task {
-            defer { url.stopAccessingSecurityScopedResource() }
+            let ocrText = await self.extractImagesFromFile(url: url)
             // 提取文档图片并 OCR
-            let ocrText = await extractImagesFromFile(url: url)
             if !ocrText.isEmpty, var existingText = textContent {
                 existingText += ocrText
                 try? await importRecordRepo.updateRawText(id: recordID, rawText: existingText)
@@ -485,5 +492,41 @@ final class IngestCoordinator {
         newContent = ""
         newCustomIcon = nil
         useSmartIngest = false
+    }
+
+    // MARK: - 手工录入二次编辑
+    
+    /// 开启手工录入表单并预填已有的记录数据以供用户再次编辑与重新导入
+    /// - Parameter record: 待编辑重新录入的导入记录实体
+    func openManualForm(with record: ImportRecord) {
+        self.sourceHint = .manual
+        self.manualFormTitle = L10n.Ingest.manualEntry
+        self.newTitle = record.title
+        
+        // 自动解析沙盒中备份的原始 markdown 数据，提取出真正的用户录入文本
+        if let raw = record.rawText {
+            let lines = raw.components(separatedBy: .newlines)
+            // 匹配 IngestCoordinator 自带的 Markdown 导入来源头拼接逻辑 (如：> 来源 | 时间)
+            if let firstLine = lines.first, firstLine.hasPrefix(">") {
+                // 自动跳过头部前两行 (第一行为来源引用行，第二行为间隔空行)，将核心文本还原
+                self.newContent = lines.dropFirst(2).joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
+            } else {
+                self.newContent = raw
+            }
+        } else {
+            self.newContent = ""
+        }
+        
+        // 如果该记录之前已成功关联 Page，我们智能化预载它当时的 Page 类别和自定义图标
+        if let pageID = record.pageID, let uuid = UUID(uuidString: pageID),
+           let page = store.pages.first(where: { $0.id == uuid }) {
+            self.newType = page.pageType
+            self.newCustomIcon = page.customIcon
+        } else {
+            self.newType = .source
+            self.newCustomIcon = nil
+        }
+        
+        self.showManualForm = true
     }
 }

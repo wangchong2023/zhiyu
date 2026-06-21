@@ -4206,7 +4206,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ingest"
+            "value": "Sources"
           }
         },
         "zh-Hans": {
@@ -4365,7 +4365,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "概念"
+            "value": "主题"
           }
         }
       }
@@ -4376,30 +4376,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entity"
+            "value": "Entry"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "实体"
-          }
-        }
-      }
-    },
-    "type.map": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Map"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "地图"
+            "value": "词条"
           }
         }
       }
@@ -5413,13 +5396,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Filter tags..."
+            "value": "Search tags"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "筛选标签..."
+            "value": "搜索标签"
           }
         }
       }
@@ -5430,13 +5413,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Personal Knowledge Management"
+            "value": "Personal Knowledge Graph Guide"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "个人知识管理"
+            "value": "个人知识图谱指南"
           }
         }
       }
@@ -5447,13 +5430,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Personal Knowledge Management (PKM) is not just bookmarking webpages, but building a personal external brain. This usually relies on [[Zettelkasten]] and [[Bidirectional Links]]."
+            "value": "A personal knowledge graph is not just a collection of notes, but the core of building a personal web-like second brain. This is typically constructed by categorizing notes into [[Theme]] and [[Entry]], and building [[Connection]] between them. For details on physical Markdown import, please refer to the associated file `personal_knowledge_graph_guide.md`."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "个人知识管理（PKM）不仅是收藏网页，而是建立个人的外脑体系。这通常需要依赖[[卡片盒笔记法]]与[[双向链接]]机制。"
+            "value": "个人知识图谱不仅是简单的笔记收集，更是建立个人网状外脑的核心。这通常通过将笔记分类为[[主题]]与[[词条]]，并在它们之间建立[[关联]]来构建。物理导入的 Markdown 详情参见关联物理文件 `个人知识图谱指南.md`。"
           }
         }
       }
@@ -5464,13 +5447,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zettelkasten"
+            "value": "Entry: What is a Neuron"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "卡片盒笔记法"
+            "value": "词条：什么是神经元"
           }
         }
       }
@@ -5481,13 +5464,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zettelkasten is a note-taking method invented by sociologist Niklas Luhmann. It emphasizes breaking knowledge into atomic cards and building a complex network structure through [[Bidirectional Links]]."
+            "value": "An entry is a core note type in a knowledge graph, focusing on specific definitions, concepts, names, events, and factual attributes. Take the \"Neuron\" entry as an example, it is typically connected to a [[Theme]] related to \"Brain Science\"."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zettelkasten 是由社会学家卢曼发明的记笔记方法，强调将知识打碎成原子化的卡片，通过[[双向链接]]建立复杂的网状结构。"
+            "value": "词条是知识图谱中一种核心的笔记类型，专注于具体的定义、概念、人名、事件及事实属性。以“神经元”词条为例，它通常会与“脑科学”相关的[[主题]]进行关联。"
           }
         }
       }
@@ -5498,13 +5481,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bidirectional Links"
+            "value": "Cross-Domain Hub Guide"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "双向链接"
+            "value": "跨领域笔记枢纽指南"
           }
         }
       }
@@ -5515,13 +5498,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unlike traditional folder hierarchies, bidirectional links allow two unrelated notes to have a wonderful chemical reaction in a specific [[Context]]."
+            "value": "A cross-domain hub is a bridge page connecting different [[Knowledge Domain]]s. If it is removed, two originally disconnected knowledge domains will fall apart. It is a key hub for bridging interdisciplinary insights."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "区别于传统的文件夹层级结构，双向链接能够让两篇毫无关联的笔记在特定的[[上下文]]中产生奇妙的化学反应。"
+            "value": "跨领域笔记枢纽是连接不同[[知识领域]]的桥梁页面。如果它没了，两个本来不相连的知识领域就会断开，是联通跨界认知的重要枢纽。"
           }
         }
       }
@@ -5532,13 +5515,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Context"
+            "value": "Voice Memo: Unlinked Note"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "上下文"
+            "value": "语音速记的未关联笔记"
           }
         }
       }
@@ -5549,13 +5532,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Context is the core of knowledge association. Only notes that are no longer islands form a truly useful network knowledge system. This also puts higher demands on [[Knowledge Retrieval]]."
+            "value": "An unlinked note is a page that has no connection lines at all, usually an inspiration draft you wrote down on the fly. Connecting it can help it integrate into your knowledge web."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Context 是知识产生关联的核心。只有脱离了孤岛的笔记，才是真正有用的网状知识体系。这也对[[知识检索]]提出了更高的要求。"
+            "value": "未关联笔记是完全没有建立任何链接线的页面，通常是你随手记下的灵感草稿。帮它建立关联能让它融入你的知识网络。"
           }
         }
       }
@@ -5566,13 +5549,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Knowledge Retrieval"
+            "value": "Progressive Summarization Comparison"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "知识检索"
+            "value": "渐进式总结对比分析"
           }
         }
       }
@@ -5583,421 +5566,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Good knowledge management relies on efficient full-text search and tag filtering to help us instantly awaken sleeping [[Memory]] when needed."
+            "value": "Compare and analyze traditional note-taking with ZhiYu's web-like knowledge graph. Introduce how to use progressive summarization highlighting to make notes easy to retrieve and connect."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "良好的知识管理离不开高效的全文检索与标签过滤，帮助我们在需要的时候瞬间唤醒沉睡的[[记忆]]。"
-          }
-        }
-      }
-    },
-    "demo.pkm.6.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Memory"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "记忆"
-          }
-        }
-      }
-    },
-    "demo.pkm.6.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The Ebbinghaus forgetting curve tells us that the human brain is not good at rote memorization. Using the [[Spaced Repetition]] algorithm, we can review knowledge more scientifically."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "艾宾浩斯遗忘曲线告诉我们，人脑是不擅长死记硬背的。利用[[间隔重复]]算法，我们可以更科学地复习知识。"
-          }
-        }
-      }
-    },
-    "demo.pkm.7.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spaced Repetition"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "间隔重复"
-          }
-        }
-      }
-    },
-    "demo.pkm.7.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spaced Repetition System (SRS) can maximize knowledge retention rate, which requires deep integration with our [[Personal Knowledge Management]] system."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spaced Repetition System (SRS) 可以最大化知识的留存率，这需要与我们的[[个人知识管理]]体系深度结合。"
-          }
-        }
-      }
-    },
-    "demo.pkm.8.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PARA Method"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PARA 方法"
-          }
-        }
-      }
-    },
-    "demo.pkm.8.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Proposed by Tiago Forte, classifying information into Projects, Areas, Resources, and Archives. It is a practical file categorization method for building a [[Second Brain]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "由 Tiago Forte 提出，将信息分为 Projects, Areas, Resources, Archives，是构建[[个人外脑]]的实用文件归类法。"
-          }
-        }
-      }
-    },
-    "demo.pkm.9.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Second Brain"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "个人外脑"
-          }
-        }
-      }
-    },
-    "demo.pkm.9.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The significance of a Second Brain is to release the brain's storage pressure, allowing it to focus on thinking and creation rather than simple memorization. We can learn from the [[PARA Method]] to build one."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Second Brain 的意义在于释放大脑的存储压力，让大脑专注于思考和创造，而不是单纯的记忆。我们可以借鉴[[PARA 方法]]进行构建。"
-          }
-        }
-      }
-    },
-    "demo.pkm.10.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reading Workflow"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "阅读工作流"
-          }
-        }
-      }
-    },
-    "demo.pkm.10.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragmented information collected every day is uniformly put into the Inbox. Digestion and extraction are regularly performed on weekends to form permanent [[Zettelkasten]] cards."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每天收集到的碎片信息，统一放入 Inbox。周末定期进行消化与提炼，形成永久的[[卡片盒笔记法]]卡片。"
-          }
-        }
-      }
-    },
-    "demo.pkm.11.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags and Folders"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签与分类"
-          }
-        }
-      }
-    },
-    "demo.pkm.11.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags provide a horizontal dimension for organizing knowledge, while categorization (such as folders) is vertical. In a [[Second Brain]], a flat structure with light folders and heavy tags is more recommended."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "标签提供了一种横向组织知识的维度，而分类（如文件夹）则是纵向的。在[[个人外脑]]中，更推荐轻文件夹、重标签的扁平化结构。"
-          }
-        }
-      }
-    },
-    "demo.pkm.12.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Progressive Summarization"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "渐进式总结"
-          }
-        }
-      }
-    },
-    "demo.pkm.12.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Progressive Summarization extracts the most core sentences in an article through multiple readings and gradual bolding and highlighting, facilitating future [[Knowledge Retrieval]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Progressive Summarization，通过多遍阅读并逐步加粗、高亮，提取出文章中最核心的几句话，便于日后的[[知识检索]]。"
-          }
-        }
-      }
-    },
-    "demo.pkm.13.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Output Forces Input"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "输出倒逼输入"
-          }
-        }
-      }
-    },
-    "demo.pkm.13.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The ultimate goal of knowledge management should be output (writing, sharing). Only when we output will we discover the loopholes in our cognitive network, prompting us to establish more [[Bidirectional Links]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识管理的最终目的应该是输出（写作、分享）。只有当我们在输出时，才会发现自己认知网络中的漏洞，促使我们建立更多的[[双向链接]]。"
-          }
-        }
-      }
-    },
-    "demo.pkm.14.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niklas Luhmann"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "卢曼"
-          }
-        }
-      }
-    },
-    "demo.pkm.14.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niklas Luhmann, a German sociologist and the founder of the [[Zettelkasten]]. He published over 70 monographs using his card box."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "尼克拉斯·卢曼，德国社会学家，[[卡片盒笔记法]]的创立者。他一生凭借卡片盒发表了 70 多部专著。"
-          }
-        }
-      }
-    },
-    "demo.pkm.15.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feynman Technique"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "费曼技巧"
-          }
-        }
-      }
-    },
-    "demo.pkm.15.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Testing whether you truly master the knowledge by explaining a concept to a layman in the simplest language. It is very suitable for use when writing a [[Progressive Summarization]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通过用最简单的语言将一个概念讲给外行听，来检验自己是否真正掌握了该知识。非常适合在撰写[[渐进式总结]]时使用。"
-          }
-        }
-      }
-    },
-    "demo.pkm.16.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Island"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识孤岛"
-          }
-        }
-      }
-    },
-    "demo.pkm.16.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Notes lacking associations are islands. We must break the islands through [[Zettelkasten]] to let knowledge flow."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "缺乏关联的笔记就是孤岛。我们要通过[[卡片盒笔记法]]打破孤岛，让知识流动起来。"
-          }
-        }
-      }
-    },
-    "demo.pkm.17.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Knowledge Creation"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "知识创造"
-          }
-        }
-      }
-    },
-    "demo.pkm.17.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This is the highest realm of knowledge management. When we combine enough atomic cards of [[Zettelkasten]], we can create a new ideological system."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这是知识管理的最高境界。当我们把足够多的[[卡片盒笔记法]]原子卡片组合在一起时，就能创造出新的思想体系。"
+            "value": "对比分析传统的记笔记与智宇的网状知识图谱。介绍如何利用渐进总结高亮，使笔记易于检索 and 关联。"
           }
         }
       }
@@ -6008,13 +5583,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Competitor Analysis: Luckin vs Starbucks"
+            "value": "Luckin vs Starbucks Comparison Report"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "竞品分析：瑞幸 vs 星巴克"
+            "value": "瑞幸与星巴克商业对比报告"
           }
         }
       }
@@ -6025,13 +5600,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Luckin focuses on extreme fast-pickup and high cost-effectiveness, while Starbucks focuses on the 'third space' for business social networking. Our independent coffee shop needs to avoid direct competition, focusing on community integration and [[Specialty Coffee Experience]]."
+            "value": "Compare and analyze the business models and cost structures of two coffee giants in the domestic market. Provide decision support for our new cafe planning through detailed data assessment. The physical imported file is `luckin_market_report.pdf`."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "瑞幸主打极简快取与高性价比，星巴克主打“第三空间”的商务社交。我们的独立咖啡店需要避开直接竞争，主打社区融合与[[精品咖啡体验]]。"
+            "value": "对比分析两家咖啡巨头在国内市场的运营模式与成本结构。通过细致的数据评估，为我们新设立的咖啡馆规划提供决策支持。物理导入文件为 `瑞幸与星巴克商业对比报告.pdf`。"
           }
         }
       }
@@ -6042,13 +5617,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Specialty Coffee Experience"
+            "value": "Entry: What is Coffee Roasting Level"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "精品咖啡体验"
+            "value": "词条：什么是咖啡豆烘焙度"
           }
         }
       }
@@ -6059,13 +5634,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abandon fully automatic machines, adopt a dual-track system of semi-automatic espresso machines and pour-over bars. Hold regular cupping events to enhance community stickiness, which is highly consistent with our [[Target Audience Analysis]]."
+            "value": "An entry focuses on specific coffee definitions. For example, the roasting level determines the flavor tone of coffee beans, divided into light, medium, and dark roasts, each with different physical and chemical changes. This entry is imported via smart OCR physical scanning."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "放弃全自动机器，采用半自动意式机与手冲吧台双轨制。定期举办杯测活动，增强社区黏性，这与我们的[[目标客群分析]]高度吻合。"
+            "value": "词条专注于具体的咖啡定义。例如，烘焙度决定了咖啡豆的风味基调，分为浅焙、中焙和深焙，各具不同的物理 and 化学变化。本词条通过智能 OCR 物理扫描导入。"
           }
         }
       }
@@ -6076,13 +5651,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Target Audience Analysis"
+            "value": "Coffee Chain Site Selection Planning"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "目标客群分析"
+            "value": "咖啡连锁行业选址规划"
           }
         }
       }
@@ -6093,13 +5668,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Collected 200 street questionnaires this month. The core customer base is locked on 25-35 year old freelancers, self-media professionals, and nearby white-collar workers. They have high requirements for spatial comfort and are extremely dependent on [[High-Quality Network and Power]]."
+            "value": "The theme focuses on the methodology and evaluation logic of site selection planning. Introduce core planning steps such as business district traffic, rent models, and customer profiling."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "本月收集了 200 份街头问卷。核心客群锁定为 25-35 岁的自由职业者、自媒体人及周边白领。他们对空间舒适度要求高，且极度依赖[[高品质网络与供电]]。"
+            "value": "主题侧重于选址规划的方法论与评估逻辑。介绍商圈流量、租金模型及人群画像等核心规划步骤。"
           }
         }
       }
@@ -6110,13 +5685,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "High-Quality Network and Power"
+            "value": "Voice Memo: Equipment Procurement List"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "高品质网络与供电"
+            "value": "语音速记：咖啡设备采购清单"
           }
         }
       }
@@ -6127,13 +5702,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deploy commercial-grade Wi-Fi 6 routers to ensure dead-zone-free coverage throughout the store. The booth area must have 'one socket per table', which is the core infrastructure to retain digital nomads. This part of the transformation cost has been included in the [[Financial Budget Model]]."
+            "value": "Quickly record the procurement list and budget through voice narration, such as commercial espresso machines, grinders, and water purification equipment procurement planning. The physical file is a `.mp3` recording converted from voice."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "部署商用级 Wi-Fi 6 路由器，确保全店无死角覆盖。卡座区必须做到“一桌一插座”，这是留住数字游民的核心基建。这部分改造费用已列入[[财务预算模型]]。"
+            "value": "通过语音口述快速记录的采购清单和预算，例如商用意式机、磨豆机和净水设备采购规划。物理文件为语音转换的 `.mp3` 录音文件。"
           }
         }
       }
@@ -6144,13 +5719,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Financial Budget Model"
+            "value": "Coffee Shop Daily Operations Manual"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "财务预算模型"
+            "value": "咖啡店日常运营手册"
           }
         }
       }
@@ -6161,183 +5736,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "- Store rent and transfer fee: 250k\n- Space hard & soft furnishing: 180k\n- Core equipment (La Marzocco, Mahlkönig, etc.): 120k\n- Initial working capital: 150k\nThe total budget for the first phase is about 700k, with a funding gap of 300k, requiring immediate activation of the [[Partner Recruitment Plan]]."
+            "value": "Explain in detail the daily opening workflow, hygiene standards, and service scripts of coffee shops. This is an important guidance for standardized operation of coffee shops."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "- 店面租金与转让费：25万\n- 空间硬装与软装：18万\n- 核心设备（辣妈咖啡机、迈赫迪磨豆机等）：12万\n- 初期流动资金：15万\n首期总预算约 70 万，资金缺口 30 万，需尽快启动[[合伙人招募计划]]。"
-          }
-        }
-      }
-    },
-    "demo.coffee.6.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Partner Recruitment Plan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "合伙人招募计划"
-          }
-        }
-      }
-    },
-    "demo.coffee.6.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ideal partner persona: Possess mature specialty coffee shop manager experience, able to independently control bean roasting quality and supply chain, complementary to me. Together, we will build the ultimate [[Specialty Coffee Experience]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "理想的合伙人画像：具备成熟的精品咖啡馆店长经验，能独立把控豆子烘焙质量与供应链，与我互补。共同打造极致的[[精品咖啡体验]]。"
-          }
-        }
-      }
-    },
-    "demo.coffee.7.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Coffee Bean Supply Chain Selection"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "咖啡豆供应链选型"
-          }
-        }
-      }
-    },
-    "demo.coffee.7.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Compared three roasteries: Factory A's Ethiopian beans have bright flavor but unstable batches; Factory B's Yunnan beans have high cost-effectiveness and a rural assistance story; Factory C's Colombian blend is the most balanced. Initially decided to mainly use Factory B to strictly control material costs in the [[Financial Budget Model]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "对比了三家烘焙厂：A厂埃塞豆风味明亮但批次不稳定；B厂云南豆性价比极高且有助农故事；C厂哥伦比亚拼配最均衡。初期决定以 B 厂为主，严格控制[[财务预算模型]]中的物料成本。"
-          }
-        }
-      }
-    },
-    "demo.coffee.8.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Space Visual and Decor Intention"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "空间视觉与装修意向"
-          }
-        }
-      }
-    },
-    "demo.coffee.8.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adopting a combination of micro-cement wabi-sabi style and warm log texture. Abandon the traditional cramped internet-famous photo wall, using large areas of blank space paired with broadleaf green plants like Monstera. Lighting needs to use 3000K warm color temperature to cater to the aesthetic preferences in the [[Target Audience Analysis]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "采用微水泥侘寂风与温润原木结合。摒弃传统局促的网红打卡墙，大面积留白搭配龟背竹等阔叶绿植。灯光需采用 3000K 暖色温，迎合[[目标客群分析]]中的审美偏好。"
-          }
-        }
-      }
-    },
-    "demo.coffee.9.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opening Marketing Plan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "开业营销策划"
-          }
-        }
-      }
-    },
-    "demo.coffee.9.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No discounts during soft opening, but buy coffee get a customized canvas bag. During the first week of official opening, invite local Xiaohongshu shop-visiting bloggers for content seeding. We will promote the differentiated [[Signature Menu R&D]] as the explosive traffic driver."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "试营业期间不打折，但买咖啡送定制帆布袋。正式开业首周，邀请本地小红书探店博主进行内容种草。我们将主推具有差异化的[[特调菜单研发]]作为引流爆款。"
-          }
-        }
-      }
-    },
-    "demo.coffee.10.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Signature Menu R&D"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "特调菜单研发"
-          }
-        }
-      }
-    },
-    "demo.coffee.10.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The two highest-rated items in internal testing so far: 1. Osmanthus Rice Wine Latte (Autumn Limited) 2. Clarified Tomato Sparkling Americano. These two signature drinks not only have high visual appeal but also unique tastes, and are the core weapons supporting the [[Opening Marketing Plan]]."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目前内测评分最高的两款：1. 桂花酒酿拿铁（秋季限定） 2. 澄清番茄气泡美式。这两款特调不仅视觉出片率高，且口味独特，是支持[[开业营销策划]]的核心武器。"
+            "value": "详细讲解咖啡门店的日常开店流程、卫生标准以及服务话术。这是咖啡店标准化运营的重要指导。"
           }
         }
       }
@@ -6971,87 +6376,19 @@
         }
       }
     },
-    "demo.pkm.18.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "pkm_methodology.md"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "pkm_methodology.md"
-          }
-        }
-      }
-    },
-    "demo.pkm.18.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的方法论，强调语义分块和 RAG 管道，来源于本地 markdown 文件。"
-          }
-        }
-      }
-    },
-    "demo.coffee.11.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "luckin_vs_starbucks_report.pdf"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "luckin_vs_starbucks_report.pdf"
-          }
-        }
-      }
-    },
-    "demo.coffee.11.content": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience, retrieved from local market PDF report."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "瑞幸与星巴克竞品格局分析报告。深入对比了瑞幸咖啡极简快取与星巴克“第三空间”的商业定位差异。"
-          }
-        }
-      }
-    },
     "demo.fallback.methodology": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines."
+            "value": "# Personal Knowledge Graph Construction and Growth Guide\n\n## 1. Why Do We Need a Personal Knowledge Graph?\nIn today's information explosion era, we receive a massive amount of news, articles, audio-visual content, and inspiration fragments every day. Traditional note-taking methods, whether linear outlines or hierarchical classification according to tree-like folders, face a difficult pain point: as the number of notes increases, the information becomes isolated, forming \"information islands.\" This not only makes it difficult for us to retrieve information quickly when needed, but also limits our ability to discover potential connections between different knowledge points.\n\nKarpathy's knowledge management methodology advocates viewing knowledge from the perspective of a network topology. This idea has been perfectly inherited and developed in the ZhiYu application. A personal knowledge graph is like our own customized \"digital second brain.\" Instead of simply piling notes together, it simulates the neuron network of the human brain, taking individual knowledge points as nodes and connecting them into a network that can continuously grow and dynamically evolve through logical association. In this network, there is no fixed starting point or ending point, and every concept and fact can become an entry point for exploration.\n\n## 2. Core Constructing Elements of a Knowledge Graph\nIn ZhiYu's web-like knowledge network, we mainly use the following basic elements to organize information to avoid the confusion of traditional classification:\n\n*   **🔵 Theme (Concept)**: This is the main pillar in the knowledge network. It focuses on principles, core concepts, general methodologies, abstract mental models, or cross-domain research topics. For example, \"Memory Improvement Methods\" or \"Supply Chain Optimization Strategy\" can be used as a \"Theme\" note.\n*   **🟡 Entry (Entity)**: This is the fine-grained detail in the knowledge network. It focuses on specific noun explanations, character profiles, specific events, theorem formulas, or attribute definitions. For example, \"Ebbinghaus Forgetting Curve\" or \"Water Purification Equipment Specification\" are typical \"Entry\" notes.\n*   **Connection**: This is the bridge connecting different themes and entries. In ZhiYu, we establish this connection through double-bracket syntax (such as bi-directional linking). When you mention a specific entry in a theme note, establishing a link not only makes it easy for you to jump in one click in the future, but also clearly shows their relationship on the 3D graph.\n\nThrough this \"Theme-Entry\" classification and connection, we can both overlook the huge macro knowledge network and deeply inspect the details of specific definitions from a micro perspective.\n\n## 3. Zero-Threshold Knowledge Accumulation Steps\nTo build your own knowledge graph, you do not need complex professional training. You can easily start your knowledge journey by following these three steps:\n\n### Step 1: Capture with No Pressure\nWhether it is an inspiration fragment that flashes on the bus, a scan of a roadside poster, a recording of a meeting speech, or a business analysis from a professional website, you can import them into ZhiYu at the first time. At this time, you do not need to consider perfect layout, and collecting raw materials is the first priority.\n\n### Step 2: Progressive Summarization\nWhen you review these imported materials, you can refine them for a second time. Rewrite them in plain language, or use bolding and underlining to mark key sentences. This refinement not only deepens your memory, but also helps you convert complex raw documents into refined, easy-to-retrieve knowledge.\n\n### Step 3: Establish Connections\nThis is the most critical step. When refining content, always look for its connection to your existing notes. Can this Luckin comparison report be linked to your \"Coffee Shop Site Selection Planning\"? Can this forgetting curve definition be linked to your \"Personal Learning Methodology\"? Use double brackets to link them together. As links increase, your graph will spontaneously emerge with clear veins.\n\n## 4. The Long-Term Value Brought by Your Knowledge Graph\nBuilding a personal knowledge graph is a long-term process with compounding effects. First, it greatly improves your retrieval efficiency, letting you completely get rid of the trouble of \"which folder this note is stored in\"; second, it stimulates your association and creativity. By viewing the 3D graph, you might suddenly find that there is some beautiful cross-connection between two seemingly unrelated fields. This web-like second brain can evolve together with your thinking, eventually becoming an inseparable part of your personal wisdom, helping you make more visionary decisions in study, work, and research."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的的方法论，强调语义分块与 RAG 管道。"
+            "value": "# 个人知识图谱构建与成长指南\n\n## 1. 为什么我们需要个人知识图谱？\n在当今的信息爆炸时代，我们每天都会接收到海量的新闻、文章、视听内容和灵感碎片。传统的记笔记方式，无论是线性大纲，还是按照树状文件夹进行的层级分类，都面临着一个难以解决的痛点：随着笔记数量的增加，信息之间会变得孤立，形成“信息孤岛”。这不仅让我们难以在需要时快速检索，更限制了我们发现不同知识点之间潜在联系的能力。\n\n卡帕西的知识管理方法论提倡以网状拓扑的视角来看待知识。这种思路在智宇应用中得到了完美的继承和发扬。个人知识图谱就像是我们自己定制的“数字外脑”，它不是把笔记简单地堆积在一起，而是模拟人类大脑的神经元网络，将一个个知识点作为节点，通过逻辑关联把它们连接成一张可以不断成长、动态演化的网。在这张网中，没有固定的起点和终点，每一个概念和事实都可以成为探索的入口。\n\n## 2. 知识图谱的核心构建元素\n在智宇的网状知识网络中，我们主要利用以下几种基本元素来组织信息，以避免传统分类的混乱：\n\n*   **🔵 主题 (Concept)**：这是知识网络中的主要支柱。它侧重于原理、核心概念、通用方法论、抽象的思维模型或者跨领域的研究课题。例如，“记忆力提升方法”、“供应链优化策略”都可以作为一个“主题”笔记。\n*   **🟡 词条 (Entity)**：这是知识网络中的细粒度细节。它侧重于具体的名词解释、人物简介、特定事件、定理公式或者属性定义。例如，“艾宾浩斯遗忘曲线”或者“净水设备规格说明”就是典型的“词条”笔记。\n*   **关联 (Connection)**：这是连接不同主题和词条的桥梁。在智宇中，我们通过双括号语法（如双向链接）来建立这种联系。当你在一个主题笔记里提到某个具体词条时，建立链接不仅能方便你未来一键跳转，更能在3D图谱上清晰地展现它们之间的关联。\n\n通过这种“主题-词条”的分类与关联，我们既能俯瞰庞大的宏观知识网络，又能微观深入地查看具体定义的细节。\n\n## 3. 零门槛的知识积累步骤\n想要构建自己的知识图谱，你并不需要复杂的专业培训。你可以按照以下三个步骤，轻松地开始你的知识之旅：\n\n### 第一步：无压力捕获 (Capture)\n无论是一段在公交车上闪现的灵感、一张路边海报的扫描图、一段会议发言的录音，还是一篇来自专业网站的商业分析，你都可以第一时间将它们导入智宇。此时不需要考虑完美的排版，将原材料收集起来是第一要务。\n\n### 第二步：渐进式总结 (Summarize)\n当你重新回顾这些导入的素材时，可以对其进行二次提炼。使用大白话去重写它，或者使用加粗、划线来标识关键语句。这种提炼不仅能加深你的记忆，更能帮助你将繁杂的原始文档转化为精炼的、易于检索的知识。\n\n### 第三步：建立关联 (Link)\n这是最关键的一步。在提炼内容时，时刻寻找它与你已有笔记的关联。这篇瑞幸的对比报告是否可以关联到你的“咖啡店选址规划”？这个遗忘曲线的定义是否可以关联到你的“个人学习方法论”？使用双括号将它们连结起来。随着链接的增加，你的图谱会自发地涌现出清晰的脉络。\n\n## 4. 知识图谱带给你的长期价值\n构建个人知识图谱是一个长期而有复利效应的过程。首先，它能极大提高你的检索效率，让你彻底摆脱“这篇笔记存在哪个文件夹”的烦恼；其次，它能激发你的联想与创造力。通过查看3D图谱，你可能会突然发现两个看似不相关的领域之间其实有着某种美妙的交叉关联。这种网状的外脑能够随着你的思考一起进化，最终成为你个人智慧不可分割的一部分，帮助你在学习、工作和研究中做出更具远见的决策。"
           }
         }
       }
@@ -7079,13 +6416,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Luckin Coffee vs Starbucks competitive landscape analysis. Luckin's focus on cashierless grab-and-go outlets vs Starbucks' 'Third Space' business social experience."
+            "value": "# New Retail Coffee Business Research and Planning Report\n\n## 1. Industry Overview and Core Brand Comparison\nAs domestic consumers' acceptance of coffee beverages continues to climb, coffee has gradually evolved from a social luxury to a high-frequency consumer product for the general public. In this huge market, Luckin Coffee and Starbucks, as two industry giants, show completely different business models and competitive dimensions:\n\n*   **Starbucks**: Deeply cultivates the \"Third Space\" model centered on social and leisure attributes. Its stores are spacious, beautifully decorated, and comfortable, aiming to provide quality social spaces outside home and work for white-collar workers. This gives it a high brand premium, but the capital investment and store rent costs are also extremely high.\n*   **Luckin Coffee**: Completely subverts the traditional social space logic and initiates a digitally driven \"Express Store\" new retail model. Its stores are usually very small, focusing on delivery and self-pickup, saving expensive dine-in rent, and reducing costs to a minimum. At the same time, Luckin achieves high-frequency repurchases through frequent innovation of single product hits (such as raw coconut latte, meteorite latte) and intense coupon fission.\n\nFor our newly established independent cafe project, it is impractical to copy Starbucks' huge space investment. Instead, drawing lessons from Luckin's digital operations and asset-light route combining takeout with minimal dine-in is our only feasible way to achieve business closure.\n\n## 2. Spatial Positioning and Site Selection Strategy\nOur planned new store is positioned as a hybrid space model of \"boutique pickup plus community leisure.\" Site selection is the primary physical determining factor for a cafe's survival, and we have formulated the following strict evaluation steps:\n\n1.  **District Traffic Measurement**: Focus on selecting lobbies of high-tech parks where white-collar crowds gather, ground floors of high-end office buildings, or street shops close to mature youth communities. The average daily natural traffic must remain above 3,000 passenger times.\n2.  **Avoid Homogeneous Competition**: The selected site must maintain a physical distance of at least 150 meters from major chain coffee brands (such as Starbucks, Luckin), focusing on attracting specific segment customers who have higher requirements for coffee bean quality and flavor details, and need a short break.\n3.  **Store Physical Specifications**: The usable area should be controlled between 40 and 60 square meters. Water supply and drainage channels, as well as a dual-route 380V power supply, must be available to withstand the heavy power demands of commercial espresso machines, professional grinders, and ice makers.\n\n## 3. Financial Budget and Partner Planning\nOpening a high-standard boutique cafe requires refined budget control and a reasonable partner contribution structure. Our initial startup budget is designed as 500,000 RMB, allocated as follows:\n\n*   **Store Initial Rent and Deposit**: Rent in the high-tech park requires deposit three pay three, pre-allocating a total of 120,000 RMB.\n*   **Space Decoration and Hardware Modification**: Featuring a minimalist log and cement grey design style, including bar customization, water and electricity modification, and procurement of a small amount of leisure seating, budgeted at 150,000 RMB.\n*   **Core Professional Equipment Procurement**: Including double-group semi-automatic espresso machines (like La Marzocco or Victoria Arduino), professional single-origin and espresso grinders, reverse osmosis water purification systems, commercial ice makers, and chillers, totaling 130,000 RMB. Equipment quality directly determines the stability of coffee flavor.\n*   **Initial Procurement of Raw Materials and Operating Reserves**: Boutique roasted coffee beans, fresh milk, packaging materials, and employee salaries for the first quarter pre-allocated, totaling 100,000 RMB.\n\nCurrently, the two co-founders have raised 200,000 RMB through personal savings. Therefore, the project still has a **funding gap of 300,000 RMB**. We plan to fill this gap by introducing a financial partner or through equity financing. The new partner will mainly share the annual dividends of the cafe in the future, but will not directly participate in the tedious decisions of daily store operations.\n\n## 4. Subsequent Action Roadmap\nTo ensure that the new store can open smoothly within four months, we have formulated a clear schedule:\n*   **Month 1**: Complete site selection and signing, publish the partner recruitment prospectus through multiple channels, and complete the raising of the 300,000 RMB gap funding.\n*   **Month 2**: The designer issues detailed construction drawings, the construction team enters the site for water and electricity modification and hardware building; apply for food business licenses and business licenses from relevant authorities.\n*   **Month 3**: Core equipment enters the site for testing, perform coffee bean formula tests, recruit store managers and baristas, and conduct one month of standardized service training.\n*   **Month 4**: Conduct one week of trial operations, distribute new store opening coupons to surrounding communities, and officially open for business."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "瑞幸咖啡与星巴克竞争格局分析。瑞幸专注于无收银的即买即走门店，而星巴克则专注于“第三空间”商务社交体验。"
+            "value": "# 新零售咖啡商业调研与规划报告\n\n## 1. 行业概况与核心品牌对比\n随着国内消费者对咖啡饮品接受度的不断攀升，咖啡已从最初的“社交奢侈品”逐步演变为大众日常的高频消费品。在这一庞大的市场中，瑞幸咖啡与星巴克作为两大行业巨头，展现出了完全不同的商业运营模式与竞争维度：\n\n*   **星巴克 (Starbucks)**：深耕以社交、休闲为核心属性的“第三空间”模式。其店面空间开阔、装修考究、座位舒适，旨在为白领人群提供一个家庭与工作之外的品质社交空间。这使其享有极高的品牌溢价，但相应的资金投入与店铺租金成本也极为高昂。\n*   **瑞幸咖啡 (Luckin)**：彻底颠覆了传统的社交空间逻辑，开创了数字化驱动的“快取店”新零售模式。其门店通常面积极小、以外卖和自提为主，省去了昂贵的堂食空间租金，将成本降至极低。同时，瑞幸通过高频的爆款单品创新（例如生椰拿铁、陨石拿铁等）和大力度的优惠券裂变，实现了用户的高频复购。\n\n对于我们新创立的独立咖啡馆项目来说，照搬星巴克庞大的空间投入是不切实际的。相反，借鉴瑞幸数字化运营、以外带和极简堂食相结合的轻资产路线，是我们实现商业闭环的唯一可行方案。\n\n## 2. 空间定位与选址策略\n我们规划的新店定位为“精品快取加社区休闲”的混合空间模型。选址是咖啡馆能否存活的首要物理决定因素，我们制定了以下严格的评估步骤：\n\n1.  **商圈流量测算**：重点选择在白领人群聚集的高新技术园区大堂、高档写字楼底层，或者靠近成熟青年社区的临街商铺。日均自然人流量需保持在3000人次以上。\n2.  **避开同质化竞争**：选址需与大型连锁咖啡品牌（如星巴克、瑞幸）保持至少150米以上的物理距离，专注于吸引那些对咖啡豆品质、风味细节有更高要求，且需要短暂休息的特定细分客群。\n3.  **铺位物理指标要求**：使用面积控制在40至60平米之间。必须具备上下水通道以及双路380V动力电，能承受商用意式咖啡机、专业磨豆机和制冰机的高负荷电力需求。\n\n## 3. 财务预算与合伙人规划\n开设一家高水准的精品咖啡馆，需要精细化的预算管控与合理的合伙人出资结构。我们的首期启动资金总预算设计为50万元，具体分配如下：\n\n*   **店面首期租金及押金**：科技园铺位押三付三，预留首期租金共需 12万元。\n*   **空间装修与硬装改造**：主打极简原木配水泥灰的设计风格，包含吧台定制、水电改造及少量休闲座椅采购，预算为 15万元。\n*   **核心专业设备采购**：包括双头半自动意式咖啡机（如辣妈或黑鹰）、专业单品与意式磨豆机、反渗透净水系统、商用制冰机及冷藏柜，共计 13万元。设备品质直接决定了咖啡风味的稳定性。\n*   **原材料首批采购与日常运营储备**：精品烘焙咖啡豆、鲜奶、包装材料采购及首季度员工工资预留，共需 10万元。\n\n目前，两位联合创始人已通过个人积蓄筹集了20万元。因此，项目目前仍存在 **30万元的资金缺口**。我们计划通过引入一位财务合伙人或提供股权融资的方式，来填补这一缺口。新合伙人将主要共享未来咖啡馆的年度分红，但不直接参与店面日常运营的琐碎决策。\n\n## 4. 后续行动路线图\n为了确保新店能在四个月内顺利开业，我们制定了清晰的步骤规划：\n*   **第一个月**：完成选址签约，同时通过多渠道发布合伙人招募说明书，完成30万缺口资金的融入。\n*   **第二个月**：设计师出具详细施工图纸，施工队进场进行水电改造及硬装搭建；同时向相关部门申请食品经营许可证和营业执照。\n*   **第三个月**：核心设备进场调试，进行咖啡豆配方测试，招聘店长与咖啡师，并开展为期一个月的标准化服务培训。\n*   **第四个月**：进行为期一周的试营业测试，通过周边社群发放新店开业优惠券，正式开门营业。"
           }
         }
       }
@@ -7113,13 +6450,149 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Andrej Karpathy's methodology on building AI-native personal wiki systems, emphasizing semantic chunking and RAG pipelines, sourced from a local markdown file."
+            "value": "Classic Personal Knowledge Management (PKM) methodology, emphasizing the workflow of capture, organization, retrieval, and sharing, sourced from a local Markdown file."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的方法论，强调语义分块与 RAG 管道，来源于本地 Markdown 文件。"
+            "value": "经典个人知识管理（PKM）方法论，强调知识的捕获、整理、检索与分享工作流，来源于本地 Markdown 文件。"
+          }
+        }
+      }
+    },
+    "demo.snippet.pkmRagLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hybrid search (FTS5 + Vector) significantly improves knowledge recall accuracy."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "混合检索（FTS5 + Vector）能够大幅度提升知识召回的准确度。"
+          }
+        }
+      }
+    },
+    "demo.snippet.pkmVoiceForget": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Ebbinghaus forgetting curve shows that memory retention declines quickly over time, so spaced repetition is essential."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "艾宾浩斯遗忘曲线表明，人的遗忘速度是先快后慢的，因此在 20 分钟、1 小时、9 小时后进行间隔重复至关重要。"
+          }
+        }
+      }
+    },
+    "demo.snippet.pkmClipboardFeynman": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The core of the Feynman technique is to explain a concept simply to someone else to test and deepen your understanding."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "费曼学习法的核心是：通过向他人（或自己）以最简单的语言解释一个概念，来检验和深化自己的理解。"
+          }
+        }
+      }
+    },
+    "demo.snippet.pkmOcrFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paper documents or scanned PDFs can be directly ingested into the vault after OCR text recognition."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纸质文档或扫描版 PDF 经过 OCR 识别为文本后，即可直接被金库摄取。"
+          }
+        }
+      }
+    },
+    "demo.snippet.coffeeOcrManual": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Equipment configuration and wiring layouts have been recognized and imported via tablet OCR."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设备配置清单与电路布线设计，已通过平板拍照进行 OCR 智能识别录入系统。"
+          }
+        }
+      }
+    },
+    "demo.snippet.coffeeRagLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The single-store break-even point (BEP) for new retail coffee is approximately 250 cups per day."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新零售咖啡的单店盈亏平衡点（BEP）大约为每日销售 250 杯。"
+          }
+        }
+      }
+    },
+    "demo.snippet.coffeeClipboardTeam": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Team hiring plan: Urgent need for 2 warehouse operation managers and 1 coffee quality controller, copied from clipboard."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "团队招聘计划：急需前置仓运营经理 2 名，咖啡品控总监 1 名。从 Boss 直聘剪贴板复制。"
+          }
+        }
+      }
+    },
+    "demo.snippet.coffeeVoiceProcure": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oral meeting notes: Ensure the blend ratio of Ethiopian and Colombian beans, and check the eco-certification of packaging."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "口头沟通会议记录整理：首批烘焙豆需确保埃塞割亚与哥伦比亚产区配比，以及包材的环保标准认证。"
           }
         }
       }
@@ -7317,13 +6790,81 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "pkm_methodology.md"
+            "value": "personal_knowledge_graph_guide.md"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "个人知识管理方法论.md"
+            "value": "个人知识图谱指南.md"
+          }
+        }
+      }
+    },
+    "demo.filename.ocrFolderScan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ocr_folder_scan.png"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ocr_文件夹扫描.png"
+          }
+        }
+      }
+    },
+    "demo.filename.voiceNoteForget": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "voice_note_forgetting_curve.mp3"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音_遗忘曲线_速记.mp3"
+          }
+        }
+      }
+    },
+    "demo.filename.ocrStoreManual": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ocr_store_manual.png"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ocr_门店运营手册.png"
+          }
+        }
+      }
+    },
+    "demo.filename.voiceNoteProcure": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "voice_note_procurement.mp3"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音_设备采购清单.mp3"
           }
         }
       }
@@ -7334,13 +6875,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "pkm_workflow.md"
+            "value": "pkm_workflow_analysis.pdf"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "知识管理工作流.md"
+            "value": "图谱工作流分析.pdf"
           }
         }
       }
@@ -7351,13 +6892,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "luckin_vs_starbucks_report.pdf"
+            "value": "luckin_market_report.pdf"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "瑞幸与星巴克竞争格局分析.pdf"
+            "value": "瑞幸与星巴克商业对比报告.pdf"
           }
         }
       }
@@ -7368,13 +6909,47 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "survey_202606.pdf"
+            "value": "store_operation_handbook.md"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "客户调查问卷_202606.pdf"
+            "value": "咖啡门店运营手册.md"
+          }
+        }
+      }
+    },
+    "search.diag.ftsEngine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full-Text Search"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全文文本检索"
+          }
+        }
+      }
+    },
+    "search.diag.vectorEngine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vector Semantic Search"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "智能语义检索"
           }
         }
       }

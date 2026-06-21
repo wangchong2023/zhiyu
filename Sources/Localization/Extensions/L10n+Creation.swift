@@ -14,6 +14,11 @@ extension L10n {
     public struct Creation: L10nTableEntry {
         public static let tableName = "Knowledge"
         public static var t: String { tableName }
+        
+        public static func tr(_ key: String) -> String {
+            Localized.tr(key, table: tableName)
+        }
+        
         /// 本地化翻译
         /// - Parameter key: key
         /// - Returns: 返回值
@@ -26,11 +31,11 @@ extension L10n {
         public static var pageTitle: String { tr("pageTitle") }
         public static var pageType: String { tr("pageType") }
 
-        public static var title: String { Localized.tr("create.title") }
-        public static var tagsPlaceholder: String { Localized.tr("create.tagsPlaceholder") }
-        public static var create: String { Localized.tr("create.create") }
-        public static var content: String { Localized.tr("create.content") }
-        public static var quickTemplates: String { Localized.tr("create.quickTemplates") }
+        public static var title: String { tr("create.title") }
+        public static var tagsPlaceholder: String { tr("create.tagsPlaceholder") }
+        public static var create: String { tr("create.create") }
+        public static var content: String { tr("create.content") }
+        public static var quickTemplates: String { tr("create.quickTemplates") }
         public static var relatedLinks: String { Creation.tr("creation.relatedLinks") }
         public static var compareItemA: String { Creation.tr("creation.compare.itemA") }
         public static var compareItemB: String { Creation.tr("creation.compare.itemB") }

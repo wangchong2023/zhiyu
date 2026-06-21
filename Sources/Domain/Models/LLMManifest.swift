@@ -61,8 +61,8 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
     /// 多语言描述映射字典
     public let descriptions: [String: String]?
     
-    /// 多语言支持任务映射字典 (如: ["en": ["Chat"], "zh-Hans": ["对话"]])
-    public let supportedTasksLocalized: [String: [String]]?
+    /// 本地化支持任务列表 (如: ["智能对话", "文本补全"])
+    public let supportedTasksLocalized: [String]?
     
     /// 界面友好展示的模型名称（自动匹配系统语言）
     public var displayName: String {
@@ -80,23 +80,30 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
         return rawDescription
     }
 
-    /// 界面友好展示的支持任务列表（自动匹配系统语言）
+    /// 界面友好展示的支持任务列表
     public var displayTasks: [String] {
         if let localized = supportedTasksLocalized {
-            let preferred = Locale.preferredLanguages.first ?? "en"
-            if let matched = localized[preferred] {
-                return matched
-            }
-            for (lang, tasks) in localized {
-                if preferred.hasPrefix(lang) || lang.hasPrefix(preferred) {
-                    return tasks
-                }
-            }
-            if let enTasks = localized["en"] {
-                return enTasks
-            }
+            return localized
         }
-        return supportedTasks
+        return supportedTasks.map { task in
+            let localizedText: String
+            switch task.lowercased() {
+            case "chat": localizedText = L10n.ModelManager.Task.chat
+            case "completion": localizedText = L10n.ModelManager.Task.completion
+            case "multimodal": localizedText = L10n.ModelManager.Task.multimodal
+            case "reasoning": localizedText = L10n.ModelManager.Task.reasoning
+            case "code": localizedText = L10n.ModelManager.Task.code
+            case "rag": localizedText = L10n.ModelManager.Task.rag
+            case "translation": localizedText = L10n.ModelManager.Task.translation
+            default: localizedText = task.capitalized
+            }
+            
+            // 单元测试或极端情况下的健壮降级兜底
+            if localizedText.contains("_") || localizedText.contains(".") {
+                return task.capitalized
+            }
+            return localizedText
+        }
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -134,7 +141,7 @@ public struct LLMManifest: Codable, Sendable, Identifiable, Equatable {
         modelscopeURLString: String? = nil,
         displayNames: [String: String]? = nil,
         descriptions: [String: String]? = nil,
-        supportedTasksLocalized: [String: [String]]? = nil
+        supportedTasksLocalized: [String]? = nil
     ) {
         self.modelId = modelId
         self.rawDisplayName = displayName

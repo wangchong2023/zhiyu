@@ -2489,13 +2489,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Efficient techniques for your workflow..."
+            "value": "Explore practices of personal knowledge capture, internalization, organization, and expression"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "高效处理您的工作流..."
+            "value": "探索个人知识获取、内化、整理与输出的实践"
           }
         }
       }
@@ -2506,13 +2506,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "My Notebook"
+            "value": "Knowledge Graph"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "我的知识库"
+            "value": "知识图谱"
           }
         }
       }

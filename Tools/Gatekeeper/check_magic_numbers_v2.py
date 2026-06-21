@@ -13,7 +13,7 @@ import os, re, sys
 
 EXCLUDE_DIRS = {'.git','build','DerivedData','.build','Frameworks','Tests','env','__pycache__'}
 TOKEN_FILES = {'Colors.swift','DesignSystem.swift','IconTokens.swift','Spacing.swift'}
-TOKEN_FILES_PY = {'mock_constants.py'}
+TOKEN_FILES_PY = set()
 
 SWIFT_EXT = {'.swift'}
 PY_EXT = {'.py'}
@@ -64,8 +64,6 @@ def check_python_line(path, line_no, s, raw):
     例如未定义为常量的硬编码 Port 端口号，或可能硬编码的版本号信息。
     """
     results = []
-    if 'mock_constants' in path:
-        return results
     if re.search(r'port\s*=\s*\d{4,5}\b', raw) and 'PORT' not in raw:
         results.append(('硬编码端口号', path, line_no, s[:MAX_LINE_PREVIEW_LEN]))
     if re.match(r'^[A-Z][A-Z_]*\s*=', s):

@@ -18,7 +18,6 @@ extension PageType {
         case .concept: return "lightbulb.fill"
         case .source: return "doc.richtext.fill"
         case .comparison: return "arrow.left.arrow.right.circle.fill"
-        case .map: return "map.fill"
         case .raw: return "doc.plaintext.fill"
         }
     }
@@ -30,7 +29,6 @@ extension PageType {
         case .concept: return .purple
         case .source: return .green
         case .comparison: return .orange
-        case .map: return .red
         case .raw: return .gray
         }
     }

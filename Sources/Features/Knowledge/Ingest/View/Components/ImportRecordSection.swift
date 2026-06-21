@@ -20,6 +20,7 @@ struct ImportRecordSection: View {
     @State private var showQuickLook = false
     @Environment(Router.self) var router
     var onAITag: ((ImportRecord) -> Void)?
+    var onManualEdit: ((ImportRecord) -> Void)?
 
     @Inject private var repo: any ImportRecordRepository
 
@@ -99,6 +100,12 @@ struct ImportRecordSection: View {
     /// 预览导入的原始内容
     /// - Parameter record: 导入记录实体
     private func previewContent(_ record: ImportRecord) {
+        // 对于用户手工录入的记录，优先分派编辑事件以拉起表单
+        if record.category == ImportCategory.manual.rawValue {
+            onManualEdit?(record)
+            return
+        }
+
         // 优先处理本地磁盘文件
         if let path = record.filePath, FileManager.default.fileExists(atPath: path) {
             if isTextFile(path: path) {

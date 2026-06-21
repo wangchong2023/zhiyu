@@ -581,4 +581,28 @@ final class ZhiYuDomainTests: XCTestCase {
         // 验证翻译
         XCTAssertFalse(SystemStatsView.Tab.plugins.title.isEmpty)
     }
+
+    // MARK: - IngestCoordinator 手工录入二次编辑测试
+    @MainActor
+    func testIngestCoordinatorManualEdit() {
+        let coordinator = IngestCoordinator()
+
+        // 构造带有 Ingest 来源头部特征的 rawText
+        let record = ImportRecord(
+            id: UUID().uuidString,
+            category: ImportCategory.manual.rawValue,
+            title: "测试二次编辑",
+            status: ImportRecordStatus.done,
+            rawText: "> 手工录入 | 2026/06/20 02:00\n\n真正的用户录入文本内容",
+            pageID: nil
+        )
+
+        coordinator.openManualForm(with: record)
+
+        // 验证状态预载
+        XCTAssertEqual(coordinator.newTitle, "测试二次编辑")
+        XCTAssertEqual(coordinator.newContent, "真正的用户录入文本内容")
+        XCTAssertEqual(coordinator.sourceHint, .manual)
+        XCTAssertTrue(coordinator.showManualForm)
+    }
 }

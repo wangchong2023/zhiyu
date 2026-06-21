@@ -374,10 +374,10 @@ struct GraphContainerView: View {
                 }
             )
             .navigationTitle(L10n.Graph.insights)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Common.cancel) { viewModel.showInsights = false }
-                        .buttonStyle(.plain)
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(L10n.Common.done) { viewModel.showInsights = false }
                 }
             }
         }

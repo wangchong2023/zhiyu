@@ -392,23 +392,6 @@
         }
       }
     },
-    "dashboard.pageList.mapCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d maps"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个地图"
-          }
-        }
-      }
-    },
     "dashboard.pageList.rawCount": {
       "extractionState": "manual",
       "localizations": {
@@ -1248,13 +1231,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cluster group %d"
+            "value": "Knowledge Domain %d"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "聚类群组 %d"
+            "value": "知识领域 %d"
           }
         }
       }
@@ -1333,13 +1316,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bridge Nodes"
+            "value": "Cross-domain Hub"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "桥接节点"
+            "value": "跨领域笔记枢纽"
           }
         }
       }
@@ -1367,13 +1350,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Orphan Pages"
+            "value": "Unlinked Notes"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "孤立页面"
+            "value": "未关联笔记"
           }
         }
       }
@@ -1401,13 +1384,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sparse Clusters"
+            "value": "Isolated Concepts"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "稀疏社区"
+            "value": "孤立主题"
           }
         }
       }
@@ -1435,13 +1418,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Surprising Links"
+            "value": "Cross-domain Connection"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "意外关联"
+            "value": "跨领域关联"
           }
         }
       }
@@ -2177,23 +2160,6 @@
         }
       }
     },
-    "stats.short.map": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Map"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "地图"
-          }
-        }
-      }
-    },
     "stats.short.raw": {
       "extractionState": "manual",
       "localizations": {
@@ -2768,23 +2734,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "标签管理"
-          }
-        }
-      }
-    },
-    "pageList.mapCount": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d maps"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d 个地图"
           }
         }
       }
@@ -4196,6 +4145,397 @@
           "stringUnit": {
             "state": "translated",
             "value": "日期计算失败"
+          }
+        }
+      }
+    },
+    "graph.guide.entryTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to read the Knowledge Graph?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "如何读懂知识图谱？"
+          }
+        }
+      }
+    },
+    "graph.guide.entrySubtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3D network illustration & concept guide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3D 图解网络与大白话概念指南"
+          }
+        }
+      }
+    },
+    "graph.guide.sheetTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Knowledge Graph Concept Guide"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "知识图谱图解指南"
+          }
+        }
+      }
+    },
+    "graph.guide.legendNodeTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Circle (Node)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圆圈 (节点)"
+          }
+        }
+      }
+    },
+    "graph.guide.legendNodeDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every note you write is a circle (mainly categorized as Theme or Entry)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在智宇中写的每一篇笔记都是一个圆圈，笔记细分为「主题」或「词条」两种类型。"
+          }
+        }
+      }
+    },
+    "graph.guide.legendLinkTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line (Link)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连线 (链接)"
+          }
+        }
+      }
+    },
+    "graph.guide.legendLinkDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lines between circles represent connections built via double-bracket [[ links ]]."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "圆圈之间的线，代表两篇笔记通过双括号建立了关联。"
+          }
+        }
+      }
+    },
+    "graph.guide.typeConceptTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theme (Concept)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题"
+          }
+        }
+      }
+    },
+    "graph.guide.typeConceptDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes focused on concepts, theories, and methodologies."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以概念、原理和方法论为主的笔记。"
+          }
+        }
+      }
+    },
+    "graph.guide.typeEntityTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entry (Entity)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "词条"
+          }
+        }
+      }
+    },
+    "graph.guide.typeEntityDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glossary notes focused on specific entities, attributes, and definitions."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以具体名词、属性和定义为主的名词速查笔记。"
+          }
+        }
+      }
+    },
+    "graph.guide.bridgeTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cross-domain Hub"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跨领域笔记枢纽"
+          }
+        }
+      }
+    },
+    "graph.guide.bridgeDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bridge nodes connecting two previously disjoint knowledge domains."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将两个本来不相连的知识领域联通在一起的桥梁节点。"
+          }
+        }
+      }
+    },
+    "graph.guide.sparseTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isolated Concepts"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "孤立主题"
+          }
+        }
+      }
+    },
+    "graph.guide.sparseDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locally connected nodes not yet integrated into the main network."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "局部小规模互连，但尚未融入图谱主网络的主题群。"
+          }
+        }
+      }
+    },
+    "graph.guide.orphanTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlinked Note"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未关联笔记"
+          }
+        }
+      }
+    },
+    "graph.guide.orphanDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draft notes not yet linked to any other page."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "随手记下，但尚未与任何其他笔记建立连线的草稿。"
+          }
+        }
+      }
+    },
+    "graph.guide.surprisingTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cross-domain Connection"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跨领域关联"
+          }
+        }
+      }
+    },
+    "graph.guide.surprisingDesc": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algorithmic connection between seemingly unrelated domains."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "算法挖掘到的，不同知识领域之间产生的意外强关联。"
+          }
+        }
+      }
+    },
+    "dashboard.stats.audioFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio (.mp3)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音频 (.mp3)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.imageFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image (.png)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "图片 (.png)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.documentFormat": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Document (.pdf/.md)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文档 (.pdf/.md)"
+          }
+        }
+      }
+    },
+    "dashboard.stats.itemsCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d items"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d 个"
           }
         }
       }

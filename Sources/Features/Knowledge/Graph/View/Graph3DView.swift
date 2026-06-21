@@ -307,7 +307,6 @@ struct Graph3DView: View {
         case .entity: return SCNBox(width: size * 1.6, height: size * 1.6, length: size * 1.6, chamferRadius: size * 0.2)
         case .source: return SCNCylinder(radius: size, height: size * 2.5)
         case .comparison: return SCNPyramid(width: size * 2, height: size * 2, length: size * 2)
-        case .map: return SCNTorus(ringRadius: size, pipeRadius: size * 0.3)
         case .raw: return SCNBox(width: size * 2, height: size * 0.2, length: size * 1.5, chamferRadius: 0.05)
         }
     }

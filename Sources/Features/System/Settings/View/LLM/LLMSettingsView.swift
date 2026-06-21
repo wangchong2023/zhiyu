@@ -191,11 +191,6 @@ struct LLMSettingsView: View {
             #endif
             .scrollContentBackground(.hidden)
         }
-        .toolbarBackground(.hidden, for: .navigationBar)
-        .navigationTitle(L10n.AI.LLM.title)
-        #if !os(watchOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     /// 配置内容视图（API Key / Base URL / Model 输入）

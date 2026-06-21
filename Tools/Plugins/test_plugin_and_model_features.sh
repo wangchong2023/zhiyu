@@ -1,10 +1,10 @@
 #!/bin/bash
-# 综合测试脚本：插件市场、本地插件加载、模型商店功能验证 + E2E 全流程
+# 综合测试脚本：插件市场、本地插件加载、模型市场功能验证 + E2E 全流程
 
 set -e
 
 echo "========================================"
-echo "🧪 插件市场和模型商店功能测试套件"
+echo "🧪 插件市场和模型市场功能测试套件"
 echo "========================================"
 echo ""
 
@@ -18,32 +18,9 @@ print_success() { echo -e "${GREEN}✅ $1${NC}"; }
 print_error()   { echo -e "${RED}❌ $1${NC}"; }
 print_info()    { echo -e "${YELLOW}ℹ️  $1${NC}"; }
 
-# 1. Mock 服务器状态检查
+# 1. 插件压缩包完整性检查
 echo "========================================="
-echo "测试 1: Mock 服务器状态检查"
-echo "========================================="
-
-if curl -s http://localhost:8080/api/models > /dev/null; then
-    print_success "模型商店 Mock 服务器运行正常"
-else
-    print_info "模型商店 Mock 服务器未运行，跳过网络 API 测试"
-    SKIP_NETWORK=1
-fi
-
-echo ""
-
-# 2. Mock API 数据结构验证
-if [ "${SKIP_NETWORK:-0}" -eq 0 ]; then
-    echo "========================================="
-    echo "测试 2: Mock API 数据结构验证"
-    echo "========================================="
-    python3 Tools/Mock/test_mock_api.py && print_success "API 数据结构测试通过"
-    echo ""
-fi
-
-# 3. 插件压缩包完整性检查
-echo "========================================="
-echo "测试 3: 插件压缩包文件检查"
+echo "测试 1: 插件压缩包文件检查"
 echo "========================================="
 
 if [ -f "Tools/Plugins/smart-cleaner.zyplugin" ]; then
@@ -66,16 +43,16 @@ fi
 
 echo ""
 
-# 4. 插件 E2E 全流程测试（安装/卸载/JS语法/JSContext池化）
+# 2. 插件 E2E 全流程测试（安装/卸载/JS语法/JSContext池化）
 echo "========================================="
-echo "测试 4: 插件 E2E 全流程测试"
+echo "测试 2: 插件 E2E 全流程测试"
 echo "========================================="
 python3 Tools/Mock/test_plugin_e2e.py && print_success "E2E 测试通过"
 echo ""
 
-# 5. XCTest 单元测试（仅在有模拟器时运行）
+# 3. XCTest 单元测试（仅在有模拟器时运行）
 echo "========================================="
-echo "测试 5: XCTest 单元测试"
+echo "测试 3: XCTest 单元测试"
 echo "========================================="
 print_info "运行插件相关单元测试..."
 xcodebuild test \
@@ -97,16 +74,16 @@ fi
 
 echo ""
 
-# 6. 功能覆盖率检查
+# 4. 功能覆盖率检查
 echo "========================================="
-echo "测试 6: 功能覆盖率检查"
+echo "测试 4: 功能覆盖率检查"
 echo "========================================="
 echo "已测试的功能模块:"
 print_success "1. 插件市场 API 数据获取"
 print_success "2. 插件市场数据解析（ApiResponse 格式）"
 print_success "3. 本地插件加载和沙盒隔离"
 print_success "4. JavaScript 插件执行和看门狗"
-print_success "5. 模型商店离线兜底"
+print_success "5. 模型市场离线兜底"
 print_success "6. 模型下载 SHA256 完整性校验"
 print_success "7. 插件 E2E 安装/卸载全流程"
 print_success "8. JS 语法纯净化检查"

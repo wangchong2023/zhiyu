@@ -97,7 +97,6 @@ extension L10n {
             public static var conceptCount: String { Localized.tr("dashboard.pageList.conceptCount", table: t) }
             public static var sourceCount: String { Localized.tr("dashboard.pageList.sourceCount", table: t) }
             public static var comparisonCount: String { Localized.tr("dashboard.pageList.comparisonCount", table: t) }
-            public static var mapCount: String { Localized.tr("dashboard.pageList.mapCount", table: t) }
             public static var rawCount: String { Localized.tr("dashboard.pageList.rawCount", table: t) }
 
             /// 获取格式化字数文案
@@ -125,10 +124,7 @@ extension L10n {
             /// - Returns: 本地化格式化文案
             public static func comparisonCount(_ count: Int) -> String { Localized.trf("pageList.comparisonCount", table: t, count) }
 
-            /// 获取格式化地图个数文案
-            /// - Parameter count: 地图个数
-            /// - Returns: 本地化格式化文案
-            public static func mapCount(_ count: Int) -> String { Localized.trf("pageList.mapCount", table: t, count) }
+
 
             /// 获取格式化原始个数文案
             /// - Parameter count: 原始个数
@@ -163,6 +159,11 @@ extension L10n {
         public static var cleanedSuffix: String { Localized.tr("dashboard.stats.cleanedSuffix", table: t) }
 
         public struct stats {
+            public static var audioFormat: String { Localized.tr("dashboard.stats.audioFormat", table: t) }
+            public static var imageFormat: String { Localized.tr("dashboard.stats.imageFormat", table: t) }
+            public static var documentFormat: String { Localized.tr("dashboard.stats.documentFormat", table: t) }
+            public static func itemsCount(_ count: Int) -> String { Localized.trf("dashboard.stats.itemsCount", table: t, count) }
+
             public static var faithfulness: String { Dashboard.tr("stats.faithfulness") }
             public static var relevance: String { Dashboard.tr("stats.relevance") }
             public static var precision: String { Dashboard.tr("stats.precision") }
@@ -302,7 +303,6 @@ extension L10n {
                 public static var concept: String { Dashboard.tr("stats.short.concept") }
                 public static var source: String { Dashboard.tr("stats.short.source") }
                 public static var comparison: String { Dashboard.tr("stats.short.comparison") }
-                public static var map: String { Dashboard.tr("stats.short.map") }
                 public static var raw: String { Dashboard.tr("stats.short.raw") }
                 public static var pages: String { Dashboard.tr("stats.short.pages") }
                 public static var new: String { Dashboard.tr("stats.short.new") }

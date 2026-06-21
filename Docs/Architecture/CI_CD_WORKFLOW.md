@@ -241,10 +241,7 @@ Tools/
 │   ├── lint_layer_markers.sh            # 分层标记审计
 │   └── scan_unsafe_string_index.py      # Unsafe String.Index 越界扫描
 ├── Mock/                                # Mock 服务器 + E2E 测试
-│   ├── mock_llm_server.py
-│   ├── mock_model_server.py
 │   ├── mock_plugin_market.py
-│   ├── test_mock_api.py
 │   ├── test_plugin_e2e.py
 │   └── MockServer/
 ├── Plugins/                             # 插件 SDK + 源文件 + 测试

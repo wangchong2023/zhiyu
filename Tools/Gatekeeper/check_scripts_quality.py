@@ -33,7 +33,6 @@ except ImportError:
 EXEMPT_FILES = {
     'check_scripts_quality.py', # 本身不自我循环扫描
     'clean_unused.py',         # 临时清理脚本
-    'mock_constants.py',       # Mock 数据常量
 }
 EXEMPT_DIRS = {'env', 'DerivedData', 'build', '.git', '__pycache__', 'Mock', 'Plugins', 'Utils', 'Lint'}
 

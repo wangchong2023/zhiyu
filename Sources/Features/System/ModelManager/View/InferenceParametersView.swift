@@ -135,6 +135,18 @@ public struct InferenceParametersView: View {
             // 模型切换时自动加载对应参数
             loadParametersForModel(newModelId)
         }
+        .onChange(of: temperature) { _, _ in
+            autoSave()
+        }
+        .onChange(of: topP) { _, _ in
+            autoSave()
+        }
+        .onChange(of: topK) { _, _ in
+            autoSave()
+        }
+        .onChange(of: maxTokens) { _, _ in
+            autoSave()
+        }
     }
 
     // MARK: - 子视图组件
@@ -302,21 +314,40 @@ public struct InferenceParametersView: View {
         .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
     }
 
-    /// 弹窗气泡提示组件
+    /// 推理参数说明的提示信息按钮组件
+    ///
+    /// 核心职责：
+    /// 1. 展示一个可交互的 info.circle 图标按钮。
+    /// 2. 点击时弹出浮动 popover 气泡显示具体参数描述信息。
+    /// 3. 为防止用户连续点击不同的参数提示按钮时发生 Popover 展示与收起的状态重叠冲突，
+    ///    导致底层 Settings 页面被系统层级错误地一同 dismiss 关闭，这里在切换时引入了 100ms 异步防竞态缓冲延迟。
     /// - Parameters:
-    ///   - id: 参数的唯一标识符
-    ///   - tip: 参数的说明文本内容
-    /// - Returns: 附带 Popover 提示的气泡按钮视图，自适应大小且不产生布局下拉挤压
+    ///   - id: 提示项的唯一标识符
+    ///   - tip: 展示的本地化说明文本内容
+    /// - Returns: 附带气泡效果的提示按钮视图
     @ViewBuilder
     private func infoIcon(id: String, tip: String) -> some View {
         let isExpanded = activeTipId == id
         Button(action: {
-            // 触觉反馈并切换弹窗显示状态
+            // 触觉反馈
             HapticFeedback.shared.trigger(.selection)
             if isExpanded {
                 activeTipId = nil
             } else {
-                activeTipId = id
+                if activeTipId != nil {
+                    // 1. 如果当前已有气泡在展示，先将其置空以安全触发上一个气泡的 dismiss 流程
+                    activeTipId = nil
+                    
+                    // 2. 异步等待上一个 Popover 动画彻底收起完毕后，再激活当前 Popover，避免 SwiftUI 同步变更 presentation 时序冲突
+                    Task { @MainActor in
+                        try? await Task.sleep(nanoseconds: 100_000_000) // 延迟 100ms
+                        if activeTipId == nil {
+                            activeTipId = id
+                        }
+                    }
+                } else {
+                    activeTipId = id
+                }
             }
         }) {
             Image(systemName: "info.circle")

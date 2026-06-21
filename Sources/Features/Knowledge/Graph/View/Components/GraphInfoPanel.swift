@@ -133,11 +133,49 @@ struct GraphInsightsPanel: View {
     let onSelectNode: (UUID) -> Void
     
     @State private var expandedSections: Set<String> = ["surprising", "orphans", "sparse", "bridges"]
+    @State private var showGuide = false
     
     var body: some View {
         ScrollView {
             VStack(spacing: DesignSystem.standardPadding) {
-                    insightSection(
+                // 概念图解指南入口卡片
+                Button {
+                    showGuide = true
+                } label: {
+                    HStack(spacing: DesignSystem.medium) {
+                        Image(systemName: "questionmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.appAccent)
+                        
+                        VStack(alignment: .leading, spacing: DesignSystem.atomic) {
+                            Text(L10n.Graph.guide.entryTitle)
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.appText)
+                            Text(L10n.Graph.guide.entrySubtitle)
+                                .font(.caption)
+                                .foregroundStyle(.appSecondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: DesignSystem.Icons.forward)
+                            .foregroundStyle(.appSecondary)
+                    }
+                    .padding()
+                    .background(Color.appCard.opacity(DesignSystem.surfaceOpacity))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
+                            .stroke(Color.appAccent.opacity(DesignSystem.translucentOpacity), lineWidth: DesignSystem.borderWidth)
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.bottom, DesignSystem.small)
+                .sheet(isPresented: $showGuide) {
+                    GraphConceptGuideSheet()
+                }
+
+                insightSection(
                         id: "surprising",
                         icon: DesignSystem.Icons.link,
                         title: L10n.Graph.insightSurprising,
@@ -284,6 +322,89 @@ struct GraphInsightsPanel: View {
         case "sparse": return sparse
         case "bridges": return bridges
         default: return []
+        }
+    }
+}
+
+// MARK: - Graph Concept Guide Sheet
+/// 知识图谱概念大白话指南弹窗 Sheet
+struct GraphConceptGuideSheet: View {
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: DesignSystem.huge) {
+                // 1. 头部标题
+                HStack {
+                    Label(L10n.Graph.guide.sheetTitle, systemImage: "info.circle.fill")
+                        .font(.headline)
+                        .foregroundStyle(.appAccent)
+                    Spacer()
+                    Button { dismiss() } label: {
+                        Image(systemName: DesignSystem.Icons.errorCircle)
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.bottom, DesignSystem.medium)
+                
+                // 2. 3D 概念指南干净的图示
+                VStack(spacing: 0) {
+                    Image("graph_concepts_guide_clean")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+                        .shadow(color: .black.opacity(DesignSystem.translucentOpacity), radius: DesignSystem.shadowRadius)
+                }
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: false)
+                
+                // 3. SwiftUI 图例对照与大白话描述
+                VStack(alignment: .leading, spacing: DesignSystem.widePadding) {
+                    Group {
+                        guideRow(color: .appAccent, icon: "circle.fill", title: L10n.Graph.guide.legendNodeTitle, desc: L10n.Graph.guide.legendNodeDesc)
+                        guideRow(color: .appSecondary, icon: "minus", title: L10n.Graph.guide.legendLinkTitle, desc: L10n.Graph.guide.legendLinkDesc)
+                    }
+                    Divider()
+                        .background(Color.appAccent.opacity(DesignSystem.glassOpacity))
+                    Group {
+                        guideRow(color: .appConcept, icon: "circle.fill", title: L10n.Graph.guide.typeConceptTitle, desc: L10n.Graph.guide.typeConceptDesc)
+                        guideRow(color: .appEntity, icon: "circle.fill", title: L10n.Graph.guide.typeEntityTitle, desc: L10n.Graph.guide.typeEntityDesc)
+                        guideRow(color: .purple, icon: "circle.fill", title: L10n.Graph.guide.bridgeTitle, desc: L10n.Graph.guide.bridgeDesc)
+                        guideRow(color: .orange, icon: "circle.fill", title: L10n.Graph.guide.sparseTitle, desc: L10n.Graph.guide.sparseDesc)
+                        guideRow(color: .gray, icon: "circle.fill", title: L10n.Graph.guide.orphanTitle, desc: L10n.Graph.guide.orphanDesc)
+                        guideRow(color: .appComparison, icon: "bolt.fill", title: L10n.Graph.guide.surprisingTitle, desc: L10n.Graph.guide.surprisingDesc)
+                    }
+                }
+                .padding()
+                .appContainer(background: Color.appCard.opacity(DesignSystem.surfaceOpacity), padding: false)
+                
+                Spacer(minLength: DesignSystem.huge)
+            }
+            .padding(DesignSystem.huge)
+        }
+        .presentationDetents([.large])
+        .presentationBackground(.ultraThinMaterial)
+    }
+    
+    private func guideRow(color: Color, icon: String, title: String, desc: String) -> some View {
+        HStack(alignment: .top, spacing: DesignSystem.medium) {
+            Image(systemName: icon)
+                .font(.body)
+                .foregroundStyle(color)
+                .frame(width: DesignSystem.iconMedium, height: DesignSystem.iconMedium)
+                .background(color.opacity(DesignSystem.glassOpacity))
+                .clipShape(Circle())
+            
+            VStack(alignment: .leading, spacing: DesignSystem.tiny) {
+                Text(title)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.appText)
+                Text(desc)
+                    .font(.caption)
+                    .foregroundStyle(.appSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 }

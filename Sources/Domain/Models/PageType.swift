@@ -16,7 +16,6 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
     case concept
     case source
     case comparison
-    case map
     case raw
     
     public var id: String { rawValue }
@@ -27,7 +26,6 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
         case .concept: return L10n.CoreModels.type.concept
         case .source: return L10n.CoreModels.type.source
         case .comparison: return L10n.CoreModels.type.comparison
-        case .map: return L10n.CoreModels.type.map
         case .raw: return L10n.CoreModels.type.raw
         }
     }
@@ -38,7 +36,6 @@ public enum PageType: String, Codable, CaseIterable, Identifiable, Sendable {
         case .concept: return "concept"
         case .source: return "source"
         case .comparison: return "comparison"
-        case .map: return "map"
         case .raw: return "gray"
         }
     }

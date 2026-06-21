@@ -622,7 +622,6 @@ final class PageLifecycleIntegrationTests: XCTestCase {
             (.concept, "concepts"),
             (.source, "sources"),
             (.comparison, "comparisons"),
-            (.map, "maps"),
             (.raw, "raw")
         ]
         for (type, expected) in typeFolderPairs {

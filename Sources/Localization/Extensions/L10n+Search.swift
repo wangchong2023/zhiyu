@@ -51,6 +51,8 @@ extension L10n {
             public static var vectorRank: String { Search.tr("search.diag.vectorRank") }
             public static var miss: String { Search.tr("search.diag.miss") }
             public static var scoreFormat: String { Search.tr("search.diag.scoreFormat") }
+            public static var ftsEngine: String { Search.tr("search.diag.ftsEngine") }
+            public static var vectorEngine: String { Search.tr("search.diag.vectorEngine") }
         }
     }
 }

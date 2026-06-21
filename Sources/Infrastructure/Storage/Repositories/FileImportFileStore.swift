@@ -39,4 +39,46 @@ final class FileImportFileStore: ImportFileStore, Sendable {
             return nil
         }
     }
+
+    /// 将指定路径的外部物理文件复制到沙盒内部
+    /// - Parameters:
+    ///   - url: 外部文件 URL
+    ///   - category: 导入资源类别
+    /// - Returns: 拷贝后的沙盒内绝对路径，失败时返回 nil
+    func copyFile(at url: URL, category: ImportCategory) -> String? {
+        let fileManager = FileManager.default
+        
+        // 针对可能需要安全访问权限的外部 URL 获取权限
+        let isSecurityScoped = url.startAccessingSecurityScopedResource()
+        defer {
+            if isSecurityScoped {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        
+        let ext = url.pathExtension
+        let nameWithoutExt = url.deletingPathExtension().lastPathComponent
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmmss"
+        let ts = formatter.string(from: Date())
+        
+        // 构造带时间戳的新物理文件名以防重名冲突
+        let newFileName = "\(nameWithoutExt)_\(ts).\(ext)"
+        let destinationURL = recordsDir.appendingPathComponent(newFileName)
+        
+        do {
+            // 如若目标物理文件此前已存在，先执行删除
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.removeItem(at: destinationURL)
+            }
+            
+            // 执行物理拷贝
+            try fileManager.copyItem(at: url, to: destinationURL)
+            return destinationURL.path
+        } catch {
+            Logger.shared.error("[ImportFileStore] 拷贝外部文件失败: \(error)", error: error)
+            return nil
+        }
+    }
 }

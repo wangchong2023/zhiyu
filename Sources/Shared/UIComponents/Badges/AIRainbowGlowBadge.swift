@@ -206,10 +206,10 @@ public struct AIRainbowGlowBadge: View {
             
             Divider()
             
-            // 4. 快捷前往 AI 模型商店
+            // 4. 快捷前往 AI 模型市场
             Button(action: {
                 isShowingPopover = false
-                // 在路由中推送大模型商店
+                // 在路由中推送大模型市场
                 router.isShowingSettingsSheet = true
                 // 这里我们可以直接通过 Router 切换到对应的 ModelStoreView
             }) {

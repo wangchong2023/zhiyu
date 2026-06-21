@@ -761,7 +761,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "模型商店"
+            "value": "模型市场"
           }
         }
       }
@@ -1905,6 +1905,23 @@
         }
       }
     },
+    "model_manager.task.multimodal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Multimodal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "多模态理解"
+          }
+        }
+      }
+    },
     "model_manager.routing.modelStrategy": {
       "extractionState": "manual",
       "localizations": {
@@ -1985,7 +2002,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请先前往“模型商店”下载并激活一款模型以运行场景测试。"
+            "value": "请先前往“模型市场”下载并激活一款模型以运行场景测试。"
           }
         }
       }
@@ -2002,7 +2019,7 @@
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "前往模型商店"
+            "value": "前往模型市场"
           }
         }
       }
@@ -2768,6 +2785,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "System Prompt"
+          }
+        }
+      }
+    },
+    "model_manager.lab.default_system_prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你是一个得力的助手。"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are a helpful assistant."
           }
         }
       }

@@ -159,95 +159,81 @@ struct TagCloudViewContent: View {
         let isExp = appEnv.screenClass == .expansive
         
         return VStack(spacing: 0) {
-            // 1. 顶部操作栏重构：悬浮毛玻璃控制舱 (Unified Toolbar Cabinet)
-            HStack(spacing: 12) {
-                // 自定义胶囊型视图切换滑块
-                HStack(spacing: 0) {
-                    Button(action: { 
-                        withAnimation(.spring(response: 0.28, dampingFraction: 0.85)) { displayMode = .list } 
-                    }) {
-                        Text(L10n.Tag.layoutList)
-                            .font(.system(size: viewModeFontSize, weight: .bold))
-                            .foregroundStyle(displayMode == .list ? Color.theme.white : .appSecondary)
-                            .padding(.vertical, pickerBtnPaddingV)
-                            .padding(.horizontal, pickerBtnPaddingH)
-                            .background {
-                                if displayMode == .list {
-                                    Capsule()
-                                        .fill(Color.appAccent.opacity(pickerSelectedBgOpacity))
-                                }
-                            }
-                    }
-                    .buttonStyle(.plain)
+            // 1. 🔍 置顶常驻的高级毛玻璃搜索输入卡片，提至顶端！
+            if !coordinator.tags.isEmpty {
+                HStack(spacing: DesignSystem.medium) {
+                    Image(systemName: DesignSystem.Icons.search)
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.appAccent)
                     
-                    Button(action: { 
-                        withAnimation(.spring(response: 0.28, dampingFraction: 0.85)) { displayMode = .bubble } 
-                    }) {
-                        Text(L10n.Tag.layoutBubble)
-                            .font(.system(size: viewModeFontSize, weight: .bold))
-                            .foregroundStyle(displayMode == .bubble ? Color.theme.white : .appSecondary)
-                            .padding(.vertical, pickerBtnPaddingV)
-                            .padding(.horizontal, pickerBtnPaddingH)
-                            .background {
-                                if displayMode == .bubble {
-                                    Capsule()
-                                        .fill(Color.appAccent.opacity(pickerSelectedBgOpacity))
-                                }
-                            }
+                    TextField(L10n.Search.filterTags, text: $coordinator.searchText)
+                        .textFieldStyle(.plain)
+                        .font(.subheadline)
+                        .foregroundStyle(.appText)
+                    
+                    if !coordinator.searchText.isEmpty {
+                        Button(action: { coordinator.searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.appSecondary.opacity(DesignSystem.Opacity.dim))
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
-                .padding(pickerInnerPadding)
-                .background(Color.theme.black.opacity(pickerUnselectedBgOpacity))
-                .clipShape(Capsule())
-                
+                .padding(.horizontal, DesignSystem.standardPadding)
+                .padding(.vertical, DesignSystem.tightPadding + DesignSystem.atomic)
+                .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignSystem.mediumRadius, style: .continuous)
+                        .strokeBorder(Color.appAccent.opacity(DesignSystem.Opacity.medium), lineWidth: DesignSystem.borderWidth)
+                )
+                .padding(.horizontal, DesignSystem.huge)
+                .padding(.top, DesignSystem.medium)
+                .padding(.bottom, DesignSystem.tiny)
+            }
+
+            // 2. 悬浮毛玻璃控制舱 (Unified Toolbar Cabinet)
+            HStack(spacing: 12) {
                 Spacer()
                 
-                // 右侧统一的正圆磨砂按钮组
+                // 右侧动作按钮组：升级为带文字与图标的胶囊型按钮
                 HStack(spacing: 10) {
-                    // 🔍 搜索切换按钮
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.22)) {
-                            showSearchBar.toggle()
-                        }
-                    }) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: actionBtnIconFontSize, weight: .bold))
-                            .foregroundStyle(showSearchBar ? Color.appAccent : Color.theme.white)
-                            .frame(width: actionBtnDiameter, height: actionBtnDiameter)
-                            .background(Color.appCard.opacity(actionBtnBgOpacity))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(L10n.Search.title)
-                    
                     if !coordinator.isEditMode {
                         // ➕ 新建按钮
                         Button(action: { coordinator.showAddTagDialog = true }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: actionBtnIconFontSize, weight: .bold))
-                                .foregroundStyle(Color.theme.white)
-                                .frame(width: actionBtnDiameter, height: actionBtnDiameter)
-                                .background(Color.appCard.opacity(actionBtnBgOpacity))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: actionBtnIconFontSize, weight: .bold))
+                                Text(L10n.Tag.Management.addNew)
+                                    .font(.system(size: viewModeFontSize - 1, weight: .semibold))
+                            }
+                            .foregroundStyle(Color.theme.white)
+                            .padding(.horizontal, 12)
+                            .frame(height: actionBtnDiameter)
+                            .background(Color.appCard.opacity(actionBtnBgOpacity))
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
                         }
                         .buttonStyle(.plain)
                     }
                     
-                    // ✏️ 管理/编辑按钮
+                    // ✏️ 管理/编辑按钮 (匹配选择)
                     Button(action: {
                         coordinator.isEditMode.toggle()
                         if !coordinator.isEditMode { coordinator.selectedTagsForBulk.removeAll() }
                     }) {
-                        Image(systemName: coordinator.isEditMode ? "checkmark" : "list.bullet.indent")
-                            .font(.system(size: actionBtnIconFontSize, weight: .bold))
-                            .foregroundStyle(coordinator.isEditMode ? .green : Color.theme.white)
-                            .frame(width: actionBtnDiameter, height: actionBtnDiameter)
-                            .background(Color.appCard.opacity(actionBtnBgOpacity))
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
+                        HStack(spacing: 6) {
+                            Image(systemName: coordinator.isEditMode ? "checkmark" : "list.bullet.indent")
+                                .font(.system(size: actionBtnIconFontSize, weight: .bold))
+                            Text(coordinator.isEditMode ? L10n.Common.ok : L10n.Tag.Management.manageTitle)
+                                .font(.system(size: viewModeFontSize - 1, weight: .semibold))
+                        }
+                        .foregroundStyle(coordinator.isEditMode ? .green : Color.theme.white)
+                        .padding(.horizontal, 12)
+                        .frame(height: actionBtnDiameter)
+                        .background(Color.appCard.opacity(actionBtnBgOpacity))
+                        .clipShape(Capsule())
+                        .overlay(Capsule().stroke(Color.appBorder.opacity(actionBtnBorderOpacity), lineWidth: 1))
                     }
                     .buttonStyle(.plain)
                 }
@@ -259,28 +245,6 @@ struct TagCloudViewContent: View {
             .overlay(RoundedRectangle(cornerRadius: toolbarCornerRadius).stroke(Color.appBorder.opacity(toolbarBorderOpacity), lineWidth: 1))
             .padding(.horizontal, isExp ? DesignSystem.wide : DesignSystem.medium)
             .padding(.vertical, 10)
-
-            // 2. 搜索栏（当 showSearchBar 为真时以动画展开，不受标签总数限值）
-            if showSearchBar {
-                HStack(spacing: DesignSystem.tightPadding) {
-                    Image(systemName: DesignSystem.Icons.search)
-                        .foregroundStyle(.appSecondary)
-                    TextField(L10n.Search.filterTags, text: $coordinator.searchText)
-                        .textFieldStyle(.plain)
-                    if !coordinator.searchText.isEmpty {
-                        Button { coordinator.searchText = "" } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(.appSecondary)
-                        }
-                    }
-                }
-                .padding(.horizontal, DesignSystem.medium)
-                .padding(.vertical, DesignSystem.tightPadding)
-                .background(Color.appCard.opacity(DesignSystem.glassOpacity))
-                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
-                .padding(.horizontal, DesignSystem.huge)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .padding(.bottom, DesignSystem.small)
-            }
 
             // 3. 标签云展示区（带标准边框的卡片）
             if coordinator.tags.isEmpty {
@@ -310,7 +274,7 @@ struct TagCloudViewContent: View {
                     }
                 }
                 .padding(.horizontal, DesignSystem.huge)
-                .padding(.vertical, DesignSystem.Layout.columnSpacing)
+                .padding(.bottom, DesignSystem.Layout.columnSpacing)
             }
 
             VStack(alignment: .leading, spacing: DesignSystem.medium) {

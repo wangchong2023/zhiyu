@@ -81,11 +81,22 @@ struct InitialNotebookGenerator {
     static func generate(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("InitialNotebook_Starting")
         let folder = await resolveImportsFolder()
-        let methodologyURL = resolveFileURL(bundleName: "pkm_methodology.md", localName: L10n.InitialNotebook.FileNames.methodology, in: folder,
+        // 动态根据当前本地化语言，决定去 Bundle 寻找的物理文件名（中文版使用中文物理文件名，英文版使用英文物理文件名）
+        let methodologyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.methodology, localName: L10n.InitialNotebook.FileNames.methodology, in: folder,
             fallback: L10n.InitialNotebook.Fallback.methodology)
-        let workflowURL = resolveFileURL(bundleName: "pkm_workflow.md", localName: L10n.InitialNotebook.FileNames.workflow, in: folder,
+        let workflowURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.workflow, localName: L10n.InitialNotebook.FileNames.workflow, in: folder,
             fallback: L10n.InitialNotebook.Fallback.workflow)
-        let seeds = buildPKMPageSeeds(methodologyURL: methodologyURL, workflowURL: workflowURL)
+        let ocrFolderURL = resolveFileURL(bundleName: "ocr_folder_scan.png", localName: L10n.InitialNotebook.FileNames.ocrFolderScan, in: folder,
+            fallback: "")
+        let voiceForgetURL = resolveFileURL(bundleName: "voice_note_forgetting_curve.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteForget, in: folder,
+            fallback: "")
+        
+        let seeds = buildPKMPageSeeds(
+            methodologyURL: methodologyURL,
+            workflowURL: workflowURL,
+            ocrFolderURL: ocrFolderURL,
+            voiceForgetURL: voiceForgetURL
+        )
         try await persistPages(seeds, in: store) { db in
             try injectPKMMockLogs(db: db)
         }
@@ -99,11 +110,22 @@ struct InitialNotebookGenerator {
     static func generateResearchNotebook(in store: any AnyPageStore) async throws -> Int {
         Logger.shared.info("ResearchInitialNotebook_Starting")
         let folder = await resolveImportsFolder()
-        let luckinURL = resolveFileURL(bundleName: "luckin_vs_starbucks_report.pdf", localName: L10n.InitialNotebook.FileNames.luckin, in: folder,
+        // 动态根据当前本地化语言，决定去 Bundle 寻找的物理文件名（中文版使用中文物理文件名，英文版使用英文物理文件名）
+        let luckinURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.luckin, localName: L10n.InitialNotebook.FileNames.luckin, in: folder,
             fallback: L10n.InitialNotebook.Fallback.luckin)
-        let surveyURL = resolveFileURL(bundleName: "survey_202606.pdf", localName: L10n.InitialNotebook.FileNames.survey, in: folder,
+        let surveyURL = resolveFileURL(bundleName: L10n.InitialNotebook.FileNames.survey, localName: L10n.InitialNotebook.FileNames.survey, in: folder,
             fallback: L10n.InitialNotebook.Fallback.survey)
-        let seeds = buildResearchPageSeeds(luckinURL: luckinURL, surveyURL: surveyURL)
+        let ocrStoreURL = resolveFileURL(bundleName: "ocr_store_manual.png", localName: L10n.InitialNotebook.FileNames.ocrStoreManual, in: folder,
+            fallback: "")
+        let voiceProcureURL = resolveFileURL(bundleName: "voice_note_procurement.mp3", localName: L10n.InitialNotebook.FileNames.voiceNoteProcure, in: folder,
+            fallback: "")
+        
+        let seeds = buildResearchPageSeeds(
+            luckinURL: luckinURL,
+            surveyURL: surveyURL,
+            ocrStoreURL: ocrStoreURL,
+            voiceProcureURL: voiceProcureURL
+        )
         try await persistPages(seeds, in: store) { db in
             try injectResearchMockLogs(db: db)
         }
@@ -134,7 +156,7 @@ struct InitialNotebookGenerator {
 
             // 预生成标题列表，用于建立随机链接
             let titles = (1...targetCount).map { "StressNode_\($0)" }
-            let types: [PageType] = [.concept, .entity, .source, .comparison, .map]
+            let types: [PageType] = [.concept, .entity, .source, .comparison]
 
             var localCount = 0
             for i in 0..<targetCount {
@@ -192,49 +214,32 @@ struct InitialNotebookGenerator {
     /// - Parameters:
     ///   - methodologyURL: pkm_methodology.md 的本地物理文件路径
     ///   - workflowURL: pkm_workflow.md 的本地物理文件路径
-    private static func buildPKMPageSeeds(methodologyURL: String, workflowURL: String) -> [PageSeed] {
+    ///   - ocrFolderURL: ocr_folder_scan.png 的本地物理文件路径
+    ///   - voiceForgetURL: voice_note_forgetting_curve.mp3 的本地物理文件路径
+    private static func buildPKMPageSeeds(
+        methodologyURL: String,
+        workflowURL: String,
+        ocrFolderURL: String,
+        voiceForgetURL: String
+    ) -> [PageSeed] {
         let methodologySnippet = L10n.InitialNotebook.Snippet.methodology
         let workflowSnippet = L10n.InitialNotebook.Snippet.workflow
         return [
             PageSeed(title: L10n.InitialNotebook.PKM.title1, type: .concept, content: L10n.InitialNotebook.PKM.content1,
                      tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.methodology],
                      sourceURL: methodologyURL, rawTextSnippet: methodologySnippet, sourceType: "markdown"),
-            PageSeed(title: L10n.InitialNotebook.PKM.title2, type: .concept, content: L10n.InitialNotebook.PKM.content2,
-                     tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency]),
+            PageSeed(title: L10n.InitialNotebook.PKM.title2, type: .entity, content: L10n.InitialNotebook.PKM.content2,
+                     tags: [L10n.InitialNotebook.Tags.noteStyles, L10n.InitialNotebook.Tags.efficiency],
+                     sourceURL: ocrFolderURL, rawTextSnippet: L10n.InitialNotebook.Snippet.pkmOcrFolder, sourceType: "ocr"),
             PageSeed(title: L10n.InitialNotebook.PKM.title3, type: .concept, content: L10n.InitialNotebook.PKM.content3,
-                     tags: [L10n.InitialNotebook.Tags.techPrinciple, L10n.InitialNotebook.Tags.association]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title4, type: .concept, content: L10n.InitialNotebook.PKM.content4,
-                     tags: [L10n.InitialNotebook.Tags.cognitivePsych]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title5, type: .concept, content: L10n.InitialNotebook.PKM.content5,
-                     tags: [L10n.InitialNotebook.Tags.retrievalTech]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title6, type: .concept, content: L10n.InitialNotebook.PKM.content6,
-                     tags: [L10n.InitialNotebook.Tags.brainSci, "心理学"]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title7, type: .concept, content: L10n.InitialNotebook.PKM.content7,
-                     tags: [L10n.InitialNotebook.Tags.learningMethod]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title8, type: .concept, content: L10n.InitialNotebook.PKM.content8,
-                     tags: [L10n.InitialNotebook.Tags.fileMgmt]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title9, type: .concept, content: L10n.InitialNotebook.PKM.content9,
-                     tags: [L10n.InitialNotebook.Tags.knowledgeMgmt, L10n.InitialNotebook.Tags.productivity]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title10, type: .source, content: L10n.InitialNotebook.PKM.content10,
-                     tags: [L10n.InitialNotebook.Tags.workflow],
-                     sourceURL: workflowURL, rawTextSnippet: workflowSnippet, sourceType: "markdown"),
-            PageSeed(title: L10n.InitialNotebook.PKM.title11, type: .map, content: L10n.InitialNotebook.PKM.content11,
-                     tags: [L10n.InitialNotebook.Tags.architectureOrg]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title12, type: .concept, content: L10n.InitialNotebook.PKM.content12,
-                     tags: [L10n.InitialNotebook.Tags.readingMethod, L10n.InitialNotebook.Tags.summary]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title13, type: .concept, content: L10n.InitialNotebook.PKM.content13,
-                     tags: [L10n.InitialNotebook.Tags.creation, L10n.InitialNotebook.Tags.output]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title14, type: .entity, content: L10n.InitialNotebook.PKM.content14,
-                     tags: [L10n.InitialNotebook.Tags.biography]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title15, type: .concept, content: L10n.InitialNotebook.PKM.content15,
-                     tags: ["学习法"]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title16, type: .concept, content: L10n.InitialNotebook.PKM.content16,
-                     tags: [L10n.InitialNotebook.Tags.metaphor]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title17, type: .concept, content: L10n.InitialNotebook.PKM.content17,
-                     tags: [L10n.InitialNotebook.Tags.innovation, L10n.InitialNotebook.Tags.summary]),
-            PageSeed(title: L10n.InitialNotebook.PKM.title18, type: .source, content: L10n.InitialNotebook.PKM.content18,
-                     tags: [L10n.InitialNotebook.Tags.workflow],
-                     sourceURL: methodologyURL, rawTextSnippet: methodologySnippet, sourceType: "markdown")
+                     tags: [L10n.InitialNotebook.Tags.techPrinciple, L10n.InitialNotebook.Tags.association],
+                     sourceURL: "https://github.com/karpathy/llm.c", rawTextSnippet: L10n.InitialNotebook.Snippet.pkmRagLink, sourceType: "link"),
+            PageSeed(title: L10n.InitialNotebook.PKM.title4, type: .source, content: L10n.InitialNotebook.PKM.content4,
+                     tags: [L10n.InitialNotebook.Tags.cognitivePsych],
+                     sourceURL: voiceForgetURL, rawTextSnippet: L10n.InitialNotebook.Snippet.pkmVoiceForget, sourceType: "voice"),
+            PageSeed(title: L10n.InitialNotebook.PKM.title5, type: .comparison, content: L10n.InitialNotebook.PKM.content5,
+                     tags: [L10n.InitialNotebook.Tags.retrievalTech],
+                     sourceURL: workflowURL, rawTextSnippet: workflowSnippet, sourceType: "pdf")
         ]
     }
 
@@ -242,7 +247,14 @@ struct InitialNotebookGenerator {
     /// - Parameters:
     ///   - luckinURL: 瑞幸 vs 星巴克分析报告 PDF 的本地物理文件路径
     ///   - surveyURL: 用户调研问卷 PDF 的本地物理文件路径
-    private static func buildResearchPageSeeds(luckinURL: String, surveyURL: String) -> [PageSeed] {
+    ///   - ocrStoreURL: ocr_store_manual.png 的本地物理文件路径
+    ///   - voiceProcureURL: voice_note_procurement.mp3 的本地物理文件路径
+    private static func buildResearchPageSeeds(
+        luckinURL: String,
+        surveyURL: String,
+        ocrStoreURL: String,
+        voiceProcureURL: String
+    ) -> [PageSeed] {
         let luckinSnippet = L10n.InitialNotebook.Snippet.luckin
         let surveySnippet = L10n.InitialNotebook.Snippet.survey
         return [
@@ -250,38 +262,22 @@ struct InitialNotebookGenerator {
                      content: L10n.InitialNotebook.Coffee.content1,
                      tags: [L10n.InitialNotebook.Tags.competitorAnalysis, L10n.InitialNotebook.Tags.marketResearch],
                      sourceURL: luckinURL, rawTextSnippet: luckinSnippet, sourceType: "pdf"),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title2, type: .concept,
+            PageSeed(title: L10n.InitialNotebook.Coffee.title2, type: .entity,
                      content: L10n.InitialNotebook.Coffee.content2,
-                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.operation]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title3, type: .source,
+                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.operation],
+                     sourceURL: ocrStoreURL, rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeOcrManual, sourceType: "ocr"),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title3, type: .concept,
                      content: L10n.InitialNotebook.Coffee.content3,
                      tags: [L10n.InitialNotebook.Tags.userResearch],
-                     sourceURL: surveyURL, rawTextSnippet: surveySnippet, sourceType: "pdf"),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title4, type: .concept,
+                     sourceURL: "https://finance.sina.com.cn/coffee-industry", rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeRagLink, sourceType: "link"),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title4, type: .source,
                      content: L10n.InitialNotebook.Coffee.content4,
-                     tags: [L10n.InitialNotebook.Tags.infrastructure, L10n.InitialNotebook.Tags.decoration]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title5, type: .map,
+                     tags: [L10n.InitialNotebook.Tags.infrastructure, L10n.InitialNotebook.Tags.decoration],
+                     sourceURL: voiceProcureURL, rawTextSnippet: L10n.InitialNotebook.Snippet.coffeeVoiceProcure, sourceType: "voice"),
+            PageSeed(title: L10n.InitialNotebook.Coffee.title5, type: .concept,
                      content: L10n.InitialNotebook.Coffee.content5,
-                     tags: [L10n.InitialNotebook.Tags.finance, L10n.InitialNotebook.Tags.planning]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title6, type: .entity,
-                     content: L10n.InitialNotebook.Coffee.content6,
-                     tags: [L10n.InitialNotebook.Tags.team, L10n.InitialNotebook.Tags.recruitment]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title7, type: .comparison,
-                     content: L10n.InitialNotebook.Coffee.content7,
-                     tags: [L10n.InitialNotebook.Tags.supplyChain, L10n.InitialNotebook.Tags.materials]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title8, type: .map,
-                     content: L10n.InitialNotebook.Coffee.content8,
-                     tags: [L10n.InitialNotebook.Tags.design, L10n.InitialNotebook.Tags.decoration]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title9, type: .concept,
-                     content: L10n.InitialNotebook.Coffee.content9,
-                     tags: [L10n.InitialNotebook.Tags.marketing, L10n.InitialNotebook.Tags.growth]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title10, type: .entity,
-                     content: L10n.InitialNotebook.Coffee.content10,
-                     tags: [L10n.InitialNotebook.Tags.productDesign, L10n.InitialNotebook.Tags.rd]),
-            PageSeed(title: L10n.InitialNotebook.Coffee.title11, type: .source,
-                     content: L10n.InitialNotebook.Coffee.content11,
-                     tags: [L10n.InitialNotebook.Tags.marketResearch, L10n.InitialNotebook.Tags.competitorAnalysis],
-                     sourceURL: luckinURL, rawTextSnippet: luckinSnippet, sourceType: "pdf")
+                     tags: [L10n.InitialNotebook.Tags.finance, L10n.InitialNotebook.Tags.planning],
+                     sourceURL: surveyURL, rawTextSnippet: surveySnippet, sourceType: "markdown")
         ]
     }
 
@@ -313,10 +309,17 @@ struct InitialNotebookGenerator {
                 )
                 try page.save(db)
                 
-                // 建立对应的已完成导入记录，对齐导入历史和状态维护
+                // 建立对应的已完成导入记录，对齐导入历史和状态维护。
+                // 根据 PageSeed 中声明的 sourceType，将其映射到标准的 6 种 Ingest 导入分类中。
                 let category: String
-                if seed.sourceType == "pdf" || seed.sourceType == "markdown" {
-                    category = "file"
+                if let st = seed.sourceType?.lowercased() {
+                    if ["ocr", "clipboard", "voice", "link", "manual"].contains(st) {
+                        category = st
+                    } else if st == "pdf" || st == "markdown" || st == "md" || st == "file" {
+                        category = "file"
+                    } else {
+                        category = "manual"
+                    }
                 } else if seed.sourceURL != nil {
                     category = "link"
                 } else {

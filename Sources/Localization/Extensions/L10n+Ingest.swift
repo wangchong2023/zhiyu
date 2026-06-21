@@ -253,10 +253,10 @@ extension L10n {
     }
 
     public struct Status {
-        public static let extraction = Localized.tr("ingest.status.extraction")
-        public static let enhancement = Localized.tr("ingest.status.enhancement")
-        public static let chunking = Localized.tr("ingest.status.chunking")
-        public static let embedding = Localized.tr("ingest.status.embedding")
+        public static let extraction = Localized.tr("ingest.status.extraction", table: "Ingest")
+        public static let enhancement = Localized.tr("ingest.status.enhancement", table: "Ingest")
+        public static let chunking = Localized.tr("ingest.status.chunking", table: "Ingest")
+        public static let embedding = Localized.tr("ingest.status.embedding", table: "Ingest")
     }
 
 }

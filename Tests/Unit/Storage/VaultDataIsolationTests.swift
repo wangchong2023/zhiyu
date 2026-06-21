@@ -245,7 +245,7 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 2. InitialNotebookGenerator 写入 DB → KnowledgeStore.refresh() 同步 → 验证完整链路
         let generatedCount = try await InitialNotebookGenerator.generate(in: store)
-        let expectedCount = 18
+        let expectedCount = 5
         XCTAssertEqual(generatedCount, expectedCount,
                        "应生成 \(expectedCount) 个演示页面")
 
@@ -259,7 +259,7 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(ks.pages.count, expectedCount,
                        "KnowledgeStore 应为恰好 \(expectedCount) 页")
         XCTAssertTrue(ksTitles.contains(L10n.InitialNotebook.PKM.title1), "应包含第一个 PKM 页面")
-        XCTAssertTrue(ksTitles.contains(L10n.InitialNotebook.PKM.title10), "应包含第十个 PKM 页面")
+        XCTAssertTrue(ksTitles.contains(L10n.InitialNotebook.PKM.title5), "应包含第五个 PKM 页面")
         // 验证标签不为空（演示数据应有关联标签）
         let taggedPages = ks.pages.filter { !$0.tags.isEmpty }
         XCTAssertEqual(taggedPages.count, expectedCount,
@@ -471,7 +471,7 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 1. 生成项目调研演示数据
         let generatedCount = try await InitialNotebookGenerator.generateResearchNotebook(in: store)
-        let expectedCount = 11
+        let expectedCount = 5
         XCTAssertEqual(generatedCount, expectedCount, "项目调研笔记本应生成 \(expectedCount) 个演示页面")
         
         // 2. 验证页面标题
@@ -512,7 +512,7 @@ final class VaultDataIsolationTests: XCTestCase {
         XCTAssertEqual(coffeeRecord?.pageID, firstPage.id.uuidString, "导入记录应当正确绑定对应的 pageID")
     }
 
-    /// 验证 MaintenanceService 对默认笔记本（我的知识库）的种子注入与分流路由以及物理文件和导入历史存在性
+    /// 验证 MaintenanceService 对默认笔记本（知识管理）的种子注入与分流路由以及物理文件和导入历史存在性
     func testMaintenanceServiceSeedsDefaultNotebookCorrectly() async throws {
         // 🚀 物理挂载切换至 笔记本 A，确保 dbURL 存在以引导生成真实的物理 Imports 沙盒文件
         try await DatabaseManager.shared.switchDatabase(to: vaultAID, at: dbAURL)
@@ -529,7 +529,7 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 3. 验证生成 18 个 PKM 页面
         let pages = try await store.fetchAllPages()
-        XCTAssertEqual(pages.count, 18, "我的知识库应包含 18 个页面")
+        XCTAssertEqual(pages.count, 5, "知识图谱应包含 5 个页面")
         let titles = pages.map(\.title)
         XCTAssertTrue(titles.contains(L10n.InitialNotebook.PKM.title1), "应包含 PKM 第一篇页面")
         
@@ -554,7 +554,7 @@ final class VaultDataIsolationTests: XCTestCase {
         let records = try await dbWriter.read { db in
             try ImportRecord.fetchAll(db)
         }
-        XCTAssertEqual(records.count, 18, "我的知识库导入记录数应为 18")
+        XCTAssertEqual(records.count, 5, "知识图谱导入记录数应为 5")
         let firstRecord = records.first(where: { $0.title == L10n.InitialNotebook.PKM.title1 })
         XCTAssertNotNil(firstRecord, "应当生成第一篇文档的导入记录")
         XCTAssertEqual(firstRecord?.status, "done")
@@ -578,7 +578,7 @@ final class VaultDataIsolationTests: XCTestCase {
         
         // 3. 验证生成 11 个咖啡店调研页面
         let pages = try await store.fetchAllPages()
-        XCTAssertEqual(pages.count, 11, "项目调研笔记本应包含 11 个页面")
+        XCTAssertEqual(pages.count, 5, "项目调研笔记本应包含 5 个页面")
         let titles = pages.map(\.title)
         XCTAssertTrue(titles.contains(L10n.InitialNotebook.Coffee.title1), "应包含咖啡店对比页面")
         
@@ -603,7 +603,7 @@ final class VaultDataIsolationTests: XCTestCase {
         let records = try await dbWriter.read { db in
             try ImportRecord.fetchAll(db)
         }
-        XCTAssertEqual(records.count, 11, "项目调研笔记本导入记录数应为 11")
+        XCTAssertEqual(records.count, 5, "项目调研笔记本导入记录数应为 5")
         let record = records.first(where: { $0.title == L10n.InitialNotebook.Coffee.title3 })
         XCTAssertNotNil(record, "应当生成第三篇咖啡文档的导入记录")
         XCTAssertEqual(record?.status, "done")

@@ -2,11 +2,7 @@
   "network": {
     "backend_base_url": "https://10.211.55.4:30443",
     "plugin_market_production": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json",
-    "model_store_production": "https://10.211.55.4:30443/api/ai/models/allowlist",
-    "model_store_debug": "http://localhost:8080/api/models",
-    "jina_reader_base": "https://r.jina.ai/",
-    "ollama_base": "http://localhost:11434",
-    "deepseek_base": "https://api.deepseek.com/v1"
+    "jina_reader_base": "https://r.jina.ai/"
   },
   "llm_providers": {
     "openai": "https://api.openai.com/v1",
@@ -18,7 +14,8 @@
     "kimi": "https://api.moonshot.cn/v1",
     "siliconflow": "https://api.siliconflow.cn/v1",
     "xai": "https://api.x.ai/v1",
-    "groq": "https://api.groq.com/openai/v1"
+    "groq": "https://api.groq.com/openai/v1",
+    "ollama": "http://localhost:11434"
   },
   "cdn": {
     "mermaid": "local",

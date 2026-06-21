@@ -1,1 +1,1 @@
-Andrej Karpathy 关于构建 AI 原生个人 Wiki 系统的方法论，强调语义分块和 RAG 管道，来源于本地 markdown 文件。
+经典个人知识管理（PKM）方法论，强调知识的捕获、整理、检索与分享工作流，来源于本地 Markdown 文件。

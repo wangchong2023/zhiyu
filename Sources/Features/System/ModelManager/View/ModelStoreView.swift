@@ -6,12 +6,12 @@
 //  Copyright © 2026 WangChong. All rights reserved.
 //
 //  系统层级：[L2] 业务功能层 / 视图组件
-//  核心职责：构建大模型商店（ModelStoreView）的 UI 视图。支持「我的模型」与「模型商店」分段切换、物理运存护栏视觉拦截与动态下载进度交互。
+//  核心职责：构建大模型市场（ModelStoreView）的 UI 视图。支持「我的模型」与「模型市场」分段切换、物理运存护栏视觉拦截与动态下载进度交互。
 //
 
 import SwiftUI
 
-/// 动态端侧大模型商店面板视图
+/// 动态端侧大模型市场面板视图
 @MainActor
 public struct ModelStoreView: View {
     
@@ -21,8 +21,11 @@ public struct ModelStoreView: View {
     @Environment(Router.self) private var router
     @EnvironmentObject private var themeManager: ThemeManager
     
-    /// 全局大模型商店中台管理器
+    /// 全局大模型市场中台管理器
     @State private var modelManager = GlobalModelManager.shared
+    
+    /// 进入测试实验室的回调
+    public var onGoToLab: () -> Void
     
     // MARK: - 局部视图状态
 
@@ -31,18 +34,14 @@ public struct ModelStoreView: View {
     /// 展开详情的模型 ID（参照 Gallery Model Spec Sheet）
     @State private var expandedModelId: String?
     
-    public init() {}
+    public init(onGoToLab: @escaping () -> Void) {
+        self.onGoToLab = onGoToLab
+    }
     
     public var body: some View {
         ZStack {
-            themeManager.pageBackground()
-                .ignoresSafeArea()
-            
             VStack(spacing: 0) {
-                // 1. 物理设备运存信息看板
-                deviceHardwareHeader
-
-                // 2. 模型列表展示区
+                // 1. 模型列表展示区
                 ScrollView {
                     LazyVStack(spacing: DesignSystem.medium) {
                         ForEach(modelManager.remoteManifests) { manifest in
@@ -74,50 +73,6 @@ public struct ModelStoreView: View {
     
     // MARK: - 子视图组件
     
-    /// 顶部设备摘要卡片（内存 + 模型数量）
-    private var deviceHardwareHeader: some View {
-        let memInGb = Double(modelManager.physicalMemory) / (1024 * 1024 * 1024)
-        let modelCount = modelManager.remoteManifests.count
-
-        return HStack(spacing: DesignSystem.standardPadding) {
-            // 设备内存
-            summaryItem(
-                icon: "memorychip", iconColor: .blue,
-                value: String(format: "%.0f GB", memInGb),
-                label: L10n.ModelManager.Spec.memory
-            )
-            // 分隔
-            Rectangle().frame(width: DesignSystem.borderWidth, height: DesignSystem.huge).foregroundStyle(Color.appBorder.opacity(DesignSystem.glassOpacity))
-            // 可用模型数
-            summaryItem(
-                icon: "square.stack.3d.up", iconColor: .appAccent,
-                value: "\(modelCount)",
-                label: L10n.ModelManager.Header.availableModels
-            )
-        }
-        .padding(.horizontal, DesignSystem.standardPadding)
-        .padding(.vertical, DesignSystem.medium)
-        .frame(maxWidth: .infinity)
-        .background(Color.appCard.opacity(DesignSystem.Opacity.disabled))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.cardRadius))
-        .padding(.horizontal, DesignSystem.medium)
-        .padding(.top, DesignSystem.small)
-    }
-
-    /// 摘要条目
-    private func summaryItem(icon: String, iconColor: Color, value: String, label: String) -> some View {
-        HStack(spacing: DesignSystem.small) {
-            Image(systemName: icon)
-                .font(.title3).foregroundStyle(iconColor)
-                .frame(width: DesignSystem.titleIconSize)
-            VStack(alignment: .leading, spacing: DesignSystem.atomic) {
-                Text(value).font(.subheadline.weight(.semibold)).foregroundStyle(.appText)
-                Text(label).font(.caption2).foregroundStyle(.appSecondary)
-            }
-            Spacer()
-        }
-    }
-    
     /// 大模型卡片渲染逻辑
     /// 大模型卡片渲染逻辑
     private func modelCard(for manifest: LLMManifest) -> some View {
@@ -125,7 +80,8 @@ public struct ModelStoreView: View {
             manifest: manifest,
             modelManager: modelManager,
             alertManifest: $alertManifest,
-            expandedModelId: $expandedModelId
+            expandedModelId: $expandedModelId,
+            onGoToLab: onGoToLab
         )
     }
 }
@@ -145,6 +101,9 @@ private struct ModelCardView: View {
     
     /// 展开状态下的模型 ID
     @Binding var expandedModelId: String?
+    
+    /// 进入测试实验室的回调
+    let onGoToLab: () -> Void
     
     var body: some View {
         let isSelected = modelManager.activeModelId == manifest.modelId
@@ -410,21 +369,29 @@ private struct ModelCardView: View {
     /// - Returns: 激活切换按钮视图
     private func activeActionButton(for manifest: LLMManifest, isSelected: Bool) -> some View {
         Button(action: {
-            withAnimation {
-                modelManager.activeModelId = manifest.modelId
+            // 1. 激活此大模型
+            modelManager.activeModelId = manifest.modelId
+            
+            // 2. 初始化大模型
+            if let onDeviceService = ServiceContainer.shared.resolveOptional((any OnDeviceLLMServiceProtocol).self) as? OnDeviceLLMService {
+                let expectedID = "downloaded_\(manifest.modelId)"
+                onDeviceService.selectedModelID = expectedID
+                
+                Task {
+                    try? await onDeviceService.loadModel()
+                }
             }
+            
+            // 3. 触发 Tab 跳转直达测试实验室
+            onGoToLab()
+            HapticFeedback.shared.trigger(.success)
         }) {
-            Text(isSelected ? L10n.ModelManager.Card.activated : L10n.ModelManager.Card.activate)
-                .font(.subheadline.bold())
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(isSelected ? Color.appAccent : Color.appBackground)
-                .foregroundStyle(isSelected ? .white : .appAccent)
-                .clipShape(Capsule())
-                .overlay(
-                    Capsule()
-                        .stroke(Color.appAccent, lineWidth: isSelected ? 0 : 1)
-                )
+            Image(systemName: "arrow.right")
+                .font(.system(size: 16, weight: .bold)) // Dynamic Type
+                .foregroundStyle(.white)
+                .frame(width: DesignSystem.Metrics.ringSize, height: DesignSystem.Metrics.ringSize)
+                .background(Color.appAccent)
+                .clipShape(Circle())
         }
     }
 

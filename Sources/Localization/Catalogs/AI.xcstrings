@@ -2421,13 +2421,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You are a ZhiYu assistant, running on the Karpathy LLM Knowledge methodology."
+            "value": "You are a ZhiYu assistant, running on classic Personal Knowledge Management methodology."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "你是知识库助手，基于 Karpathy 知识管理方法论运行。"
+            "value": "你是知识库助手，基于经典个人知识管理方法论运行。"
           }
         }
       }

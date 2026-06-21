@@ -176,7 +176,6 @@ public struct KnowledgePage: Identifiable, Codable, Hashable, Sendable, Knowledg
         case .concept: return "concepts"
         case .source: return "sources"
         case .comparison: return "comparisons"
-        case .map: return "maps"
         case .raw: return "raw"
         }
     }

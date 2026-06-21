@@ -46,6 +46,64 @@ public struct ModelLabView: View {
     @State private var enableThinking: Bool = false
     @State private var enableSpeculativeDecoding: Bool = false
     
+    @State private var selectedConfigTab: Int = 0
+    @State private var systemPromptText: String = L10n.ModelManager.Lab.defaultSystemPrompt
+    
+    private let parametersStore = InferenceParametersStore.shared
+    
+    private enum ParameterPreset: String, CaseIterable {
+        case balanced
+        case creative
+        case precise
+
+        var displayName: String {
+            switch self {
+            case .creative:
+                return L10n.ModelManager.Parameters.presetCreative
+            case .balanced:
+                return L10n.ModelManager.Parameters.presetBalanced
+            case .precise:
+                return L10n.ModelManager.Parameters.presetPrecise
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .creative:
+                return "paintbrush.fill"
+            case .balanced:
+                return "scale.3d"
+            case .precise:
+                return "target"
+            }
+        }
+
+        struct InferenceParams { var temperature: Double; var topP: Double; var topK: Int; var maxTokens: Int }
+        var parameters: InferenceParams {
+            switch self {
+            case .creative:
+                return InferenceParams(temperature: 1.2, topP: 0.95, topK: 50, maxTokens: 2048)
+            case .balanced:
+                return InferenceParams(temperature: 0.7, topP: 0.9, topK: 40, maxTokens: 2048)
+            case .precise:
+                return InferenceParams(temperature: 0.3, topP: 0.85, topK: 20, maxTokens: 1024)
+            }
+        }
+    }
+
+    private var matchedPreset: ParameterPreset? {
+        for p in ParameterPreset.allCases {
+            let v = p.parameters
+            if abs(tempTemperature - v.temperature) < 0.01,
+               abs(tempTopP - v.topP) < 0.01,
+               tempTopK == v.topK,
+               tempMaxTokens == v.maxTokens { return p }
+        }
+        return nil
+    }
+
+    private var isCustomMode: Bool { matchedPreset == nil }
+    
     // 多模态/视觉特定状态
     @State private var isImageSelected: Bool = false
     
@@ -69,14 +127,6 @@ public struct ModelLabView: View {
     
     public var body: some View {
         ZStack {
-            // 暗黑星空渐变背景以彰显 Wow Factor
-            LinearGradient(
-                colors: [Color.theme.black, Color(red: DesignSystem.Opacity.ghost, green: DesignSystem.Opacity.ghost, blue: DesignSystem.Opacity.glass)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-            
             ScrollView {
                 VStack(spacing: DesignSystem.large) {
                     if let selectedUseCase = labManager.selectedUseCase {
@@ -99,6 +149,18 @@ public struct ModelLabView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: labManager.selectedUseCase)
         .sheet(isPresented: $showConfigSheet) {
             configurationSheet
+        }
+        .onChange(of: tempTemperature) { _, _ in autoSave() }
+        .onChange(of: tempTopP) { _, _ in autoSave() }
+        .onChange(of: tempTopK) { _, _ in autoSave() }
+        .onChange(of: tempMaxTokens) { _, _ in autoSave() }
+        .onAppear {
+            if let activeModel = getActiveModel() {
+                loadParametersForModel(activeModel.modelId)
+            }
+        }
+        .onChange(of: modelManager.activeModelId) { _, newModelId in
+            loadParametersForModel(newModelId)
         }
     }
     
@@ -167,10 +229,7 @@ public struct ModelLabView: View {
                 labManager.selectedUseCase = useCase
                 // 同步初始化默认超参
                 if let model = activeModel {
-                    tempTemperature = model.defaultParameters.temperature
-                    tempTopP = model.defaultParameters.topP
-                    tempTopK = model.defaultParameters.topK
-                    tempMaxTokens = model.defaultParameters.maxTokens
+                    loadParametersForModel(model.modelId)
                 }
             }
         } label: {
@@ -293,11 +352,7 @@ public struct ModelLabView: View {
                     Button {
                         HapticFeedback.shared.trigger(.selection)
                         modelManager.activeModelId = model.modelId
-                        // 同步默认超参
-                        tempTemperature = model.defaultParameters.temperature
-                        tempTopP = model.defaultParameters.topP
-                        tempTopK = model.defaultParameters.topK
-                        tempMaxTokens = model.defaultParameters.maxTokens
+                        loadParametersForModel(model.modelId)
                     } label: {
                         HStack {
                             Text(model.displayName)
@@ -331,39 +386,39 @@ public struct ModelLabView: View {
         metricsMonitorBoard
         
         // 聊天对话列表与气泡流
+        chatMainPanel
+    }
+
+    @ViewBuilder
+    private var chatMainPanel: some View {
         VStack(spacing: DesignSystem.medium) {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: DesignSystem.medium) {
-                        ForEach(chatHistory) { msg in
-                            HStack {
-                                if msg.isUser {
-                                    Spacer()
-                                    Text(msg.text)
-                                        .padding(.horizontal, Constants.chatBubblePadding)
-                                        .padding(.vertical, DesignSystem.standardPadding + 2)
-                                        .background(Color.theme.cyan.opacity(DesignSystem.Opacity.soft))
-                                        .foregroundStyle(.white)
-                                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-                                        .padding(.leading, DesignSystem.large * 2)
-                                } else {
-                                    Text(msg.text)
-                                        .padding(.horizontal, Constants.chatBubblePadding)
-                                        .padding(.vertical, DesignSystem.standardPadding + 2)
-                                        .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
-                                        .foregroundStyle(.white)
-                                        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
-                                        .padding(.trailing, DesignSystem.large * 2)
-                                    Spacer()
-                                }
-                            }
-                            .id(msg.id)
-                        }
-                        
-                        // 正在流式生成时的临时显示占位符
-                        if labManager.isGenerating && !labManager.generatedText.isEmpty {
-                            HStack {
-                                Text(labManager.generatedText)
+            messageScrollView
+            Divider()
+            chatInputBarView
+        }
+        .padding(DesignSystem.medium)
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+        .cornerRadius(DesignSystem.mediumRadius)
+    }
+
+    @ViewBuilder
+    private var messageScrollView: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: DesignSystem.medium) {
+                    ForEach(chatHistory) { msg in
+                        HStack {
+                            if msg.isUser {
+                                Spacer()
+                                Text(msg.text)
+                                    .padding(.horizontal, Constants.chatBubblePadding)
+                                    .padding(.vertical, DesignSystem.standardPadding + 2)
+                                    .background(Color.theme.cyan.opacity(DesignSystem.Opacity.soft))
+                                    .foregroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+                                    .padding(.leading, DesignSystem.large * 2)
+                            } else {
+                                Text(msg.text)
                                     .padding(.horizontal, Constants.chatBubblePadding)
                                     .padding(.vertical, DesignSystem.standardPadding + 2)
                                     .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
@@ -372,62 +427,74 @@ public struct ModelLabView: View {
                                     .padding(.trailing, DesignSystem.large * 2)
                                 Spacer()
                             }
-                            .id("generating_anchor")
                         }
+                        .id(msg.id)
                     }
-                    .padding(.vertical, DesignSystem.small)
+                    
+                    // 正在流式生成时的临时显示占位符
+                    if labManager.isGenerating && !labManager.generatedText.isEmpty {
+                        HStack {
+                            Text(labManager.generatedText)
+                                .padding(.horizontal, Constants.chatBubblePadding)
+                                .padding(.vertical, DesignSystem.standardPadding + 2)
+                                .background(Color.theme.white.opacity(DesignSystem.Opacity.light))
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+                                .padding(.trailing, DesignSystem.large * 2)
+                            Spacer()
+                        }
+                        .id("generating_anchor")
+                    }
                 }
-                .frame(height: Constants.chatScrollHeight) // 消息滚动区域限高
-                .onChange(of: chatHistory) { _, _ in
-                    if let last = chatHistory.last {
-                        withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
-                    }
-                }
-                .onChange(of: labManager.generatedText) { _, _ in
-                    if labManager.isGenerating {
-                        proxy.scrollTo("generating_anchor", anchor: .bottom)
-                    }
+                .padding(.vertical, DesignSystem.small)
+            }
+            .frame(height: Constants.chatScrollHeight) // 消息滚动区域限高
+            .onChange(of: chatHistory) { _, _ in
+                if let last = chatHistory.last {
+                    withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
                 }
             }
-            
-            // 底部多轮输入发送区
-            HStack(spacing: DesignSystem.small) {
-                TextField(L10n.ModelManager.Lab.chatInputPlaceholder, text: $chatInputText)
-                    .textFieldStyle(.plain)
-                    .padding(DesignSystem.standardPadding + 4)
-                    .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
-                    .cornerRadius(DesignSystem.smallRadius)
-                    .foregroundStyle(.white)
-                    .onSubmit {
-                        sendChatMessage()
-                    }
-                
-                Button(action: sendChatMessage) {
-                    if labManager.isGenerating {
-                        Button(action: { labManager.stopSimulation() }) {
-                            Image(systemName: "stop.fill")
-                                .foregroundStyle(.white)
-                                .frame(width: Constants.stopIconSize, height: Constants.stopIconSize)
-                                .padding(Constants.stopPadding)
-                                .background(Color.theme.red)
-                                .clipShape(Circle())
-                        }
-                    } else {
-                        Text(L10n.ModelManager.Lab.send)
-                            .bold()
-                            .padding(.horizontal, DesignSystem.medium)
-                            .padding(.vertical, DesignSystem.standardPadding + 2)
-                            .background(chatInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.theme.gray.opacity(DesignSystem.Opacity.disabled) : Color.theme.cyan)
-                            .foregroundStyle(.white)
-                            .cornerRadius(DesignSystem.smallRadius)
-                    }
+            .onChange(of: labManager.generatedText) { _, _ in
+                if labManager.isGenerating {
+                    proxy.scrollTo("generating_anchor", anchor: .bottom)
                 }
-                .disabled(chatInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !labManager.isGenerating)
             }
         }
-        .padding(DesignSystem.medium)
-        .background(.white.opacity(DesignSystem.Opacity.faint))
-        .cornerRadius(DesignSystem.mediumRadius)
+    }
+
+    @ViewBuilder
+    private var chatInputBarView: some View {
+        HStack(alignment: .center, spacing: DesignSystem.medium) {
+            TextField(labManager.isGenerating ? L10n.Chat.aiRunning : L10n.ModelManager.Lab.chatInputPlaceholder, text: $chatInputText)
+                .font(.subheadline)
+                .foregroundStyle(labManager.isGenerating ? Color.secondary : Color.theme.white)
+                .textFieldStyle(.plain)
+                .disabled(labManager.isGenerating)
+                .submitLabel(.send)
+                .onSubmit {
+                    if !chatInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        sendChatMessage()
+                    }
+                }
+            
+            Button {
+                if labManager.isGenerating {
+                    labManager.stopSimulation()
+                } else {
+                    HapticFeedback.shared.trigger(.selection)
+                    sendChatMessage()
+                }
+            } label: {
+                Image(systemName: labManager.isGenerating ? DesignSystem.Icons.stop : DesignSystem.Icons.send)
+                    .font(.title2)
+                    .foregroundStyle(labManager.isGenerating ? .red : (!chatInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.theme.cyan : .secondary))
+                    .frame(width: DesignSystem.Action.inputBarHeight, height: DesignSystem.Action.inputBarHeight)
+            }
+            .disabled(chatInputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !labManager.isGenerating)
+        }
+        .padding(.horizontal, DesignSystem.standardPadding)
+        .padding(.vertical, DesignSystem.tightPadding)
+        .background(labManager.isGenerating ? Color.appCard.opacity(DesignSystem.Opacity.soft) : Color.appCard)
     }
 
     /// 设置特定用例场景的初始预设 prompt
@@ -554,7 +621,7 @@ public struct ModelLabView: View {
                 }
             }
             .padding(DesignSystem.medium)
-            .background(.white.opacity(DesignSystem.Opacity.faint))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .cornerRadius(DesignSystem.mediumRadius)
             
             // 推理流输出展示板
@@ -598,11 +665,11 @@ public struct ModelLabView: View {
                     unit: "MB"
                 )
             }
-            .background(Color.theme.black.opacity(DesignSystem.Opacity.medium))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .cornerRadius(DesignSystem.smallRadius)
         }
         .padding(DesignSystem.medium)
-        .background(.white.opacity(DesignSystem.Opacity.atomic))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .cornerRadius(DesignSystem.mediumRadius)
         .overlay(
             RoundedRectangle(cornerRadius: DesignSystem.mediumRadius)
@@ -645,15 +712,15 @@ public struct ModelLabView: View {
             }
             .frame(height: DesignSystem.Vault.cardHeight)
             .padding(DesignSystem.standardPadding + 4)
-            .background(Color.theme.black.opacity(DesignSystem.Opacity.medium))
+            .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
             .cornerRadius(DesignSystem.smallRadius)
             .overlay(
                 RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
-                    .stroke(Color.theme.white.opacity(DesignSystem.Opacity.subtle), lineWidth: 1)
+                    .stroke(Color.appBorder.opacity(DesignSystem.Opacity.subtle), lineWidth: 1)
             )
         }
         .padding(DesignSystem.medium)
-        .background(.white.opacity(DesignSystem.Opacity.faint))
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
         .cornerRadius(DesignSystem.mediumRadius)
     }
     
@@ -789,7 +856,7 @@ public struct ModelLabView: View {
             ScrollView {
                 VStack(spacing: DesignSystem.medium) {
                     // Model Configs / System Prompt 分段
-                    Picker("", selection: .constant(0)) {
+                    Picker("", selection: $selectedConfigTab) {
                         Text(L10n.ModelManager.Lab.modelConfigs).tag(0)
                         Text(L10n.ModelManager.Lab.systemPrompt).tag(1)
                     }
@@ -797,92 +864,116 @@ public struct ModelLabView: View {
                     .padding(.horizontal, DesignSystem.medium)
                     .padding(.top, DesignSystem.small)
                     
-                    VStack(spacing: DesignSystem.medium) {
-                        // Max Tokens
-                        paramSheetSlider(
-                            title: L10n.ModelManager.Parameters.maxTokens,
-                            value: Binding(
-                                get: { Double(tempMaxTokens) },
-                                set: { tempMaxTokens = Int($0) }
-                            ),
-                            range: 256...8192,
-                            step: 256,
-                            displayValue: "\(tempMaxTokens)"
-                        )
-                        
-                        // TopK
-                        paramSheetSlider(
-                            title: L10n.ModelManager.Parameters.topK,
-                            value: Binding(
-                                get: { Double(tempTopK) },
-                                set: { tempTopK = Int($0) }
-                            ),
-                            range: 1...100,
-                            step: 1,
-                            displayValue: "\(tempTopK)"
-                        )
-                        
-                        // TopP
-                        paramSheetSlider(
-                            title: L10n.ModelManager.Parameters.topP,
-                            value: $tempTopP,
-                            range: 0.0...1.0,
-                            step: 0.05,
-                            displayValue: String(format: "%.2f", tempTopP)
-                        )
-                        
-                        // Temperature
-                        paramSheetSlider(
-                            title: L10n.ModelManager.Parameters.temperature,
-                            value: $tempTemperature,
-                            range: 0.0...2.0,
-                            step: 0.05,
-                            displayValue: String(format: "%.2f", tempTemperature)
-                        )
-                        
-                        Divider().padding(.vertical, DesignSystem.standardPadding)
-                        
-                        // CPU / GPU 加速器选择
-                        VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
-                            Text("Accelerator")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                    if selectedConfigTab == 0 {
+                        VStack(spacing: DesignSystem.medium) {
+                            // 预设模板选择
+                            presetSelectorView
                             
-                            HStack(spacing: 0) {
-                                Button(action: { useGPU = false }) {
-                                    Text("CPU")
-                                        .font(.headline)
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, DesignSystem.standardPadding + 4)
-                                        .background(useGPU ? Color.clear : Color.theme.white.opacity(DesignSystem.Opacity.light))
-                                        .foregroundStyle(useGPU ? Color.secondary : Color.theme.white)
-                                }
-                                .buttonStyle(.plain)
+                            // Max Tokens
+                            paramSheetSlider(
+                                title: L10n.ModelManager.Parameters.maxTokens,
+                                value: Binding(
+                                    get: { Double(tempMaxTokens) },
+                                    set: { tempMaxTokens = Int($0) }
+                                ),
+                                range: 256...8192,
+                                step: 256,
+                                displayValue: "\(tempMaxTokens)"
+                            )
+                            
+                            // TopK
+                            paramSheetSlider(
+                                title: L10n.ModelManager.Parameters.topK,
+                                value: Binding(
+                                    get: { Double(tempTopK) },
+                                    set: { tempTopK = Int($0) }
+                                ),
+                                range: 1...100,
+                                step: 1,
+                                displayValue: "\(tempTopK)"
+                            )
+                            
+                            // TopP
+                            paramSheetSlider(
+                                title: L10n.ModelManager.Parameters.topP,
+                                value: $tempTopP,
+                                range: 0.0...1.0,
+                                step: 0.05,
+                                displayValue: String(format: "%.2f", tempTopP)
+                            )
+                            
+                            // Temperature
+                            paramSheetSlider(
+                                title: L10n.ModelManager.Parameters.temperature,
+                                value: $tempTemperature,
+                                range: 0.0...2.0,
+                                step: 0.05,
+                                displayValue: String(format: "%.2f", tempTemperature)
+                            )
+                            
+                            Divider().padding(.vertical, DesignSystem.standardPadding)
+                            
+                            // CPU / GPU 加速器选择
+                            VStack(alignment: .leading, spacing: DesignSystem.standardPadding) {
+                                Text("Accelerator")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
                                 
-                                Button(action: { useGPU = true }) {
-                                    Text("GPU")
-                                        .font(.headline)
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, DesignSystem.standardPadding + 4)
-                                        .background(useGPU ? Color.theme.white.opacity(DesignSystem.Opacity.light) : Color.clear)
-                                        .foregroundStyle(useGPU ? Color.theme.white : Color.secondary)
+                                HStack(spacing: 0) {
+                                    Button(action: { useGPU = false }) {
+                                        Text("CPU")
+                                            .font(.headline)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, DesignSystem.standardPadding + 4)
+                                            .background(useGPU ? Color.clear : Color.theme.white.opacity(DesignSystem.Opacity.light))
+                                            .foregroundStyle(useGPU ? Color.secondary : Color.theme.white)
+                                    }
+                                    .buttonStyle(.plain)
+                                    
+                                    Button(action: { useGPU = true }) {
+                                        Text("GPU")
+                                            .font(.headline)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, DesignSystem.standardPadding + 4)
+                                            .background(useGPU ? Color.theme.white.opacity(DesignSystem.Opacity.light) : Color.clear)
+                                            .foregroundStyle(useGPU ? Color.theme.white : Color.secondary)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
+                                .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+                                .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
                             }
-                            .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
-                            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+                            
+                            Divider().padding(.vertical, DesignSystem.standardPadding)
+                            
+                            // 高级开关
+                            Toggle(L10n.ModelManager.Lab.enableThinking, isOn: $enableThinking)
+                                .tint(.cyan)
+                            
+                            Toggle(L10n.ModelManager.Lab.enableSpeculativeDecoding, isOn: $enableSpeculativeDecoding)
+                                .tint(.cyan)
                         }
-                        
-                        Divider().padding(.vertical, DesignSystem.standardPadding)
-                        
-                        // 高级开关
-                        Toggle(L10n.ModelManager.Lab.enableThinking, isOn: $enableThinking)
-                            .tint(.cyan)
-                        
-                        Toggle(L10n.ModelManager.Lab.enableSpeculativeDecoding, isOn: $enableSpeculativeDecoding)
-                            .tint(.cyan)
+                        .padding(.horizontal, DesignSystem.medium)
+                    } else {
+                        VStack(alignment: .leading, spacing: DesignSystem.medium) {
+                            Text(L10n.ModelManager.Lab.systemPrompt)
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.white.opacity(DesignSystem.Opacity.prominent))
+                            
+                            TextEditor(text: $systemPromptText)
+                                .frame(minHeight: 180)
+                                .padding(DesignSystem.standardPadding)
+                                .background(Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+                                .cornerRadius(DesignSystem.smallRadius)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignSystem.smallRadius)
+                                        .stroke(Color.theme.white.opacity(DesignSystem.Opacity.glass), lineWidth: 1)
+                                )
+                                .font(.body)
+                                .foregroundStyle(Color.theme.white)
+                        }
+                        .padding(.horizontal, DesignSystem.medium)
                     }
-                    .padding(.horizontal, DesignSystem.medium)
                 }
             }
             .navigationTitle(L10n.ModelManager.Lab.configurations)
@@ -915,10 +1006,12 @@ public struct ModelLabView: View {
             HStack(spacing: DesignSystem.medium) {
                 Slider(value: value, in: range, step: step)
                     .tint(.cyan)
+                    .disabled(!isCustomMode)
                 
                 Text(displayValue)
                     .font(.system(.body, design: .monospaced))
-                    .frame(width: DesignSystem.Metrics.smallIconBoxSize, alignment: .trailing)
+                    .lineLimit(1)
+                    .frame(minWidth: 50, alignment: .trailing)
                     .padding(.horizontal, DesignSystem.standardPadding)
                     .padding(.vertical, DesignSystem.standardPadding / 2)
                     .background(Color.theme.white.opacity(DesignSystem.Opacity.subtle))
@@ -1031,6 +1124,104 @@ public struct ModelLabView: View {
             return manifest
         }
         return modelManager.remoteManifests.first
+    }
+
+    private func applyPreset(_ preset: ParameterPreset) {
+        let params = preset.parameters
+        withAnimation(.easeInOut(duration: 0.3)) {
+            tempTemperature = params.temperature
+            tempTopP = params.topP
+            tempTopK = params.topK
+            tempMaxTokens = params.maxTokens
+        }
+        HapticFeedback.shared.trigger(.success)
+        autoSave()
+    }
+
+    private func loadParametersForModel(_ modelId: String) {
+        if let config = InferenceParametersStore.shared.loadParameters(for: modelId) {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                tempTemperature = config.temperature
+                tempTopP = config.topP
+                tempTopK = config.topK
+                tempMaxTokens = config.maxTokens
+            }
+        } else {
+            applyPreset(.balanced)
+        }
+    }
+
+    private func autoSave() {
+        let activeId = getActiveModel()?.modelId ?? modelManager.activeModelId
+        let config = InferenceParametersConfig(
+            modelId: activeId,
+            presetName: matchedPreset?.rawValue ?? "custom",
+            temperature: tempTemperature,
+            topP: tempTopP,
+            topK: tempTopK,
+            maxTokens: tempMaxTokens
+        )
+        InferenceParametersStore.shared.saveParameters(config)
+        HapticFeedback.shared.trigger(.success)
+    }
+
+    private var presetSelectorView: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.small) {
+            Text(L10n.ModelManager.Parameters.presetTemplate)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+ 
+            HStack(spacing: DesignSystem.small) {
+                ForEach(ParameterPreset.allCases, id: \.self) { preset in
+                    presetButton(for: preset)
+                }
+                customButton
+            }
+        }
+        .padding()
+        .background(Color.appCard.opacity(DesignSystem.Opacity.dim))
+        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.mediumRadius))
+    }
+    
+    private var customButton: some View {
+        let isCustom = matchedPreset == nil
+        return Button(action: {
+            if let preset = matchedPreset {
+                tempTemperature = preset.parameters.temperature + 0.01
+            }
+        }) {
+            VStack(spacing: DesignSystem.tiny) {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.title3)
+                Text(L10n.ModelManager.Parameters.custom)
+                    .font(.caption.weight(.medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSystem.small)
+            .background(isCustom ? Color.theme.cyan : Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+            .foregroundStyle(isCustom ? .white : .secondary)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        }
+        .buttonStyle(.plain)
+        .disabled(isCustom)
+    }
+ 
+    private func presetButton(for preset: ParameterPreset) -> some View {
+        let isSelected = matchedPreset == preset
+        return Button(action: { applyPreset(preset) }) {
+            VStack(spacing: DesignSystem.tiny) {
+                Image(systemName: preset.icon)
+                    .font(.title3)
+                Text(preset.displayName)
+                    .font(.caption.weight(.medium))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSystem.small)
+            .background(isSelected ? Color.theme.cyan : Color.theme.white.opacity(DesignSystem.Opacity.ghost))
+            .foregroundStyle(isSelected ? .white : .secondary)
+            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.smallRadius))
+        }
+        .buttonStyle(.plain)
     }
 }
 

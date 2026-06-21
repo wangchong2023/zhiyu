@@ -56,6 +56,17 @@ extension L10n {
         public static var githubDeveloping: String { tr("auth.githubDeveloping") }
         public static var agreementRequired: String { tr("auth.agreementRequired") }
 
+        // MARK: - 海外登录与区域切换
+        public static var overseasWelcome: String { tr("auth.overseas.welcome") }
+        public static var overseasSubtitle: String { tr("auth.overseas.subtitle") }
+        public static var continueWithPasskey: String { tr("auth.overseas.continueWithPasskey") }
+        public static var signInWithEmail: String { tr("auth.overseas.signInWithEmail") }
+        public static var sendMagicLink: String { tr("auth.overseas.sendMagicLink") }
+        public static var magicLinkSent: String { tr("auth.overseas.magicLinkSent") }
+        public static var regionChina: String { tr("auth.region.china") }
+        public static var regionInternational: String { tr("auth.region.international") }
+
+
         // MARK: - 隐私政策
         public static var privacyPolicyTitle: String { tr("auth.privacyPolicy.title") }
         public static var privacyPolicyContent: String { tr("auth.privacyPolicy.content") }

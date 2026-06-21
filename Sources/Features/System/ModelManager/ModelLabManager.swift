@@ -56,7 +56,7 @@ public enum UseCaseType: String, CaseIterable, Identifiable, Sendable {
         case .audioScribe: return "mic.fill"
         case .aiChat: return "bubble.left.and.bubble.right.fill"
         case .agentSkills: return "sparkles.square.filled.on.square"
-        case .promptLab: return "slider.horizontal.below.rectangle.filled.and.checkmark"
+        case .promptLab: return "slider.horizontal.3"
         case .tinyGarden: return "leaf.fill"
         case .mobileActions: return "iphone.radiowaves.left.and.right"
         }

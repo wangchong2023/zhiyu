@@ -128,5 +128,31 @@ extension L10n {
             }
             public static var title: String { Localized.tr("graph3d.title", table: t) }
         }
+
+        public struct guide {
+            public static var entryTitle: String { Localized.tr("graph.guide.entryTitle", table: t) }
+            public static var entrySubtitle: String { Localized.tr("graph.guide.entrySubtitle", table: t) }
+            public static var sheetTitle: String { Localized.tr("graph.guide.sheetTitle", table: t) }
+            
+            public static var legendNodeTitle: String { Localized.tr("graph.guide.legendNodeTitle", table: t) }
+            public static var legendNodeDesc: String { Localized.tr("graph.guide.legendNodeDesc", table: t) }
+            public static var legendLinkTitle: String { Localized.tr("graph.guide.legendLinkTitle", table: t) }
+            public static var legendLinkDesc: String { Localized.tr("graph.guide.legendLinkDesc", table: t) }
+            
+            public static var typeConceptTitle: String { Localized.tr("graph.guide.typeConceptTitle", table: t) }
+            public static var typeConceptDesc: String { Localized.tr("graph.guide.typeConceptDesc", table: t) }
+            public static var typeEntityTitle: String { Localized.tr("graph.guide.typeEntityTitle", table: t) }
+            public static var typeEntityDesc: String { Localized.tr("graph.guide.typeEntityDesc", table: t) }
+            
+            public static var bridgeTitle: String { Localized.tr("graph.guide.bridgeTitle", table: t) }
+            public static var bridgeDesc: String { Localized.tr("graph.guide.bridgeDesc", table: t) }
+            public static var sparseTitle: String { Localized.tr("graph.guide.sparseTitle", table: t) }
+            public static var sparseDesc: String { Localized.tr("graph.guide.sparseDesc", table: t) }
+            public static var orphanTitle: String { Localized.tr("graph.guide.orphanTitle", table: t) }
+            public static var orphanDesc: String { Localized.tr("graph.guide.orphanDesc", table: t) }
+            
+            public static var surprisingTitle: String { Localized.tr("graph.guide.surprisingTitle", table: t) }
+            public static var surprisingDesc: String { Localized.tr("graph.guide.surprisingDesc", table: t) }
+        }
     }
 }

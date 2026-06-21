@@ -86,7 +86,8 @@ struct MarketPlugin: Codable, Identifiable {
         // 优先采纳 json 物理文件声明的动态版本字段，兜底初始版本使用 0.0.1
         self.version = entry.version ?? "0.0.1"
         self.author = entry.author
-        self.downloads = "N/A"
+        // 初始下载计数：未开始下载时默认为 "0"
+        self.downloads = "0"
         self.rating = 0
         self.icon = "puzzlepiece.extension.fill"
         self.downloadURL = downloadBase

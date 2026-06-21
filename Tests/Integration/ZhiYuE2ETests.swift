@@ -543,7 +543,7 @@ final class GraphLayoutRealisticTests: XCTestCase {
         for i in 0..<100 {
             var page = KnowledgePage(
                 title: "Page \(i)",
-                pageType: PageType.allCases[i % 6],
+                pageType: PageType.allCases[i % PageType.allCases.count],
                 content: "Content for page \(i). " + String(repeating: "word ", count: 20)
             )
             // Create some links between pages

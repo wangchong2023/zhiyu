@@ -217,10 +217,24 @@ public final class OnDeviceLLMService: OnDeviceLLMServiceProtocol {
 
         // 核心 Core ML 推理预测过程
         if currentModel is MLModel {
+            // 动态从 InferenceParametersStore 中读取当前模型对应的调节参数
+            let modelId = selectedModelID.replacingOccurrences(of: "downloaded_", with: "")
+                .replacingOccurrences(of: "bundled_", with: "")
+            
+            let finalTemperature: Double
+            let finalMaxTokens: Int
+            if let config = InferenceParametersStore.shared.loadParameters(for: modelId) {
+                finalTemperature = config.temperature
+                finalMaxTokens = config.maxTokens
+            } else {
+                finalTemperature = Config.generationTemperature
+                finalMaxTokens = maxTokens
+            }
+
             let inputFeatures: [String: Any] = [
                 "prompt": prompt,
-                "max_tokens": maxTokens,
-                "temperature": Config.generationTemperature
+                "max_tokens": finalMaxTokens,
+                "temperature": finalTemperature
             ]
 
             do {

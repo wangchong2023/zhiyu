@@ -102,6 +102,7 @@ extension L10n {
             public static var code: String { ModelManager.tr("model_manager.task.code") }
             public static var rag: String { ModelManager.tr("model_manager.task.rag") }
             public static var translation: String { ModelManager.tr("model_manager.task.translation") }
+            public static var multimodal: String { ModelManager.tr("model_manager.task.multimodal") }
         }
 
         // MARK: - 规格详表（Model Spec Sheet）
@@ -548,6 +549,7 @@ extension L10n {
             public static var configurations: String { ModelManager.tr("model_manager.lab.configurations") }
             public static var modelConfigs: String { ModelManager.tr("model_manager.lab.model_configs") }
             public static var systemPrompt: String { ModelManager.tr("model_manager.lab.system_prompt") }
+            public static var defaultSystemPrompt: String { ModelManager.tr("model_manager.lab.default_system_prompt") }
             public static var enableThinking: String { ModelManager.tr("model_manager.lab.enable_thinking") }
             public static var enableSpeculativeDecoding: String { ModelManager.tr("model_manager.lab.enable_speculative_decoding") }
             public static var accelerator: String { ModelManager.tr("model_manager.lab.accelerator") }

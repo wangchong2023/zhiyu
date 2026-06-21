@@ -601,6 +601,9 @@ class MissingKeyDetector:
         # 2. 检查非扩展模块中原生 L.tr() 异常使用情况
         self._check_raw_tr_calls(all_keys, missing)
 
+        # 2.5 校验全局不带 table 参数的 Localized.tr(key) 是否在 Common 表中
+        self._check_global_implicit_tr_calls(table_keys, missing)
+
         # 3. 校验非 Common 模块错误隐式解析成 Common table 的情况
         self._check_implicit_tr_mismatches(all_keys, table_keys, missing)
 
@@ -703,6 +706,28 @@ class MissingKeyDetector:
                         if key not in all_keys:
                             missing.append((path, key, "L.tr() key used in source code but missing from ALL .xcstrings", "ERROR"))
 
+    def _check_global_implicit_tr_calls(self, table_keys, missing):
+        """
+        扫描 Sources 下所有文件中的 Localized.tr() / Localized.trf() 隐式调用。
+        如果 key 不在 Common 表中，则按 ERROR 阻断编译。
+        """
+        implicit_tr_pattern = re.compile(r'Localized\.trf?\(\s*"([^"]+)"(?:\s*\)|\s*,\s*(?![^)]*table\s*:)[^)]*\))')
+        common_keys = table_keys.get("Common", set())
+        
+        for root, dirs, files in os.walk('Sources'):
+            dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS and not d.startswith('.')]
+            for f in files:
+                if f.endswith('.swift'):
+                    path = os.path.join(root, f)
+                    with open(path, 'r', encoding='utf-8', errors='ignore') as fh:
+                        content = fh.read()
+                    
+                    # 匹配所有不带 table: 参数的 Localized.tr
+                    for key in set(implicit_tr_pattern.findall(content)):
+                        if key not in common_keys:
+                            actual = [t for t, ks in table_keys.items() if key in ks]
+                            missing.append((path, key, f"Implicit Localized.tr() defaults to 'Common' table, but key '{key}' is only in {actual} (missing from 'Common')", "ERROR"))
+
     def _check_implicit_tr_mismatches(self, all_keys, table_keys, missing):
         """
         校验非 Common 模块对 Localized.tr() 的隐式错误调用（导致表解析降级丢失）。
@@ -722,14 +747,16 @@ class MissingKeyDetector:
             lines = content.split('\n')
             for line in lines:
                 for key in set(tr_pattern.findall(line)):
-                    # 如果这行含有显式的 table: "xxx"，属于显式调用，由显式检查覆盖，隐式检查跳过
-                    if re.search(r'table\s*:\s*"([^"]+)"', line):
+                    # 如果这行含有显式的 table: "xxx" 或 table: t，属于显式调用，由显式检查覆盖，隐式检查跳过
+                    if re.search(r'table\s*:\s*', line):
                         continue
-                    if key in all_keys and key not in table_keys.get(declared_table, set()):
+                    
+                    # 隐式调用 Localized.tr(key) 会默认降级检索 'Common' 表
+                    common_keys = table_keys.get("Common", set())
+                    if key not in common_keys:
                         actual = [t for t, ks in table_keys.items() if key in ks]
-                        if declared_table not in actual:
-                            mod = file.replace('L10n+', '').replace('.swift', '')
-                            missing.append((path, key, f"Implicit Localized.tr() in L10n+{mod} (declared table is {declared_table}) but key is only in {actual}", "ERROR"))
+                        mod = file.replace('L10n+', '').replace('.swift', '')
+                        missing.append((path, key, f"Implicit Localized.tr() in L10n+{mod} defaults to 'Common' table, but key is only in {actual} (missing from 'Common')", "ERROR"))
 
     def _load_existing_l10n_modules(self):
         """

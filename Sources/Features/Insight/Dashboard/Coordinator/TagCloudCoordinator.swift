@@ -94,6 +94,11 @@ final class TagCloudCoordinator {
         Task {
             store.addNewTag(trimmed)
             await fetchData()
+            // 体验优化：若新创建的标签尚未被任何页面使用，将其作为空闲预设插入内存列表，供用户选中并关联页面
+            if !self.tags.contains(where: { $0.tag == trimmed }) {
+                self.tags.append((tag: trimmed, count: 0))
+                self.tags.sort { $0.tag < $1.tag }
+            }
             self.selectedTag = trimmed
         }
         

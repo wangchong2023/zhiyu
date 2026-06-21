@@ -20,7 +20,7 @@
 - ✅ 4周里程碑规划
 
 #### **`local-llm-wireframes.md`** - 原型图文档
-- ✅ 模型商店主界面（含空状态）
+- ✅ 模型市场主界面（含空状态）
 - ✅ 参数调优界面（完整调节面板 + 预设模板）
 - ✅ 服务器配置界面（列表 + 添加/编辑 + 空状态）
 - ✅ 模型详情页
@@ -59,7 +59,7 @@
 
 ## 🎨 核心功能模块
 
-### 模块 1: 模型商店（已有，需优化）
+### 模块 1: 模型市场（已有，需优化）
 **文件**: `ModelStoreView.swift`
 
 **当前功能**:
@@ -131,7 +131,7 @@
 ### 统一入口架构
 ```
 LocalModelManagerView (统一入口)
-├── Tab 0: ModelStoreView (模型商店)
+├── Tab 0: ModelStoreView (模型市场)
 ├── Tab 1: InferenceParametersView (参数调优)
 ├── Tab 2: ServerConfigView (服务器配置)
 └── Tab 3: SmartRoutingView (智能路由)
@@ -142,7 +142,7 @@ LocalModelManagerView (统一入口)
 设置页面 (SettingsView)
 └── AI 设置
     └── 本地模型管理 (LocalModelManagerView)
-        ├── 模型商店
+        ├── 模型市场
         ├── 参数调优
         ├── 服务器配置
         └── 智能路由
@@ -166,7 +166,7 @@ LocalModelManagerView (统一入口)
 需要添加约 60+ 词条，包括：
 
 #### Tab 标题
-- `model_manager.store.title`: "模型商店" / "Model Store"
+- `model_manager.store.title`: "模型市场" / "Model Store"
 - `model_manager.parameters.title`: "参数调优" / "Parameters"
 - `model_manager.servers.title`: "服务器配置" / "Servers"
 - `model_manager.routing.title`: "智能路由" / "Smart Routing"

@@ -1,0 +1,16 @@
+{
+  "regions": {
+    "CN": {
+      "login_page_type": "localized",
+      "plugin_market_url": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json"
+    },
+    "US": {
+      "login_page_type": "international",
+      "plugin_market_url": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json"
+    },
+    "default": {
+      "login_page_type": "international",
+      "plugin_market_url": "https://raw.githubusercontent.com/knowledge-management/plugins/main/community.json"
+    }
+  }
+}

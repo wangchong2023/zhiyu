@@ -115,8 +115,7 @@ struct PromptWorkshopView: View {
             }
             .scrollContentBackground(.hidden) // 隐藏 Form 默认的白色背景，实现高端毛玻璃穿透
         }
-        .navigationTitle(L10n.Settings.promptSettings)
-.appNavigationBarTitleDisplayMode(.inline)
+        .appNavigationBarTitleDisplayMode(.inline)
         .onDisappear {
             promptService.save()
             HapticFeedback.shared.trigger(.success)

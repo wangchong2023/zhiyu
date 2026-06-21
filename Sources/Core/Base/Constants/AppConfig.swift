@@ -29,12 +29,7 @@ enum AppConfig {
         enum Network: String {
             /// 插件市场生产环境 URL
             case pluginMarketProduction = "plugin_market_production"
-            /// 模型商店生产环境
-            case modelStoreProduction = "model_store_production"
-            case modelStoreDebug = "model_store_debug"
             case jinaReaderBase = "jina_reader_base"
-            case ollamaBase = "ollama_base"
-            case deepseekBase = "deepseek_base"
             case backendBaseURL = "backend_base_url"
         }
         
@@ -99,18 +94,14 @@ enum AppConfig {
     /// 插件市场生产环境物理分发 URL
     static var productionURL: String { getNetwork(.pluginMarketProduction) }
 
-    /// 模型商店 URL（根据环境自动选择）
-    static var modelStoreURL: String {
-        #if DEBUG
-        return getNetwork(.modelStoreDebug)
-        #else
-        return getNetwork(.modelStoreProduction)
-        #endif
-    }
-
     static var jinaReaderURL: String { getNetwork(.jinaReaderBase) }
-    static var ollamaDefaultURL: String { getNetwork(.ollamaBase) }
-    static var deepseekDefaultURL: String { getNetwork(.deepseekBase) }
+    
+    /// Ollama 本地默认的大模型推理 API Base URL
+    static var ollamaDefaultURL: String { llmProviderURL(for: "ollama") }
+    
+    /// DeepSeek 官方默认的大模型 API Base URL
+    static var deepseekDefaultURL: String { llmProviderURL(for: "deepseek") }
+    
     static var backendBaseURL: String { getNetwork(.backendBaseURL) }
     
     // MARK: - 性能参数

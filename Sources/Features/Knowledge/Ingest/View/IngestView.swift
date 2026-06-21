@@ -31,7 +31,10 @@ struct IngestView: View {
                     if !coordinator.isLLMConfigured { llmWarningSection }
                     ingestProgressPanel
                     actionsSection
-                    ImportRecordSection(onAITag: { record in coordinator.triggerAITagging(for: record) })
+                    ImportRecordSection(
+                        onAITag: { record in coordinator.triggerAITagging(for: record) },
+                        onManualEdit: { record in coordinator.openManualForm(with: record) }
+                    )
                     if !TaskCenter.shared.tasks.filter({ $0.type == .ingest }).isEmpty { taskCenterLinkSection }
                     recentActivitiesSection
                 }

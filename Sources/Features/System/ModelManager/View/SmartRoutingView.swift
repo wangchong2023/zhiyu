@@ -34,10 +34,6 @@ public struct SmartRoutingView: View {
                 .padding(DesignSystem.medium)
             }
         }
-        .navigationTitle(L10n.Settings.smartRouting)
-        #if !os(watchOS)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 
     // MARK: - 大模型策略
