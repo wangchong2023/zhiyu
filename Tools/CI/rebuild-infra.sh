@@ -25,7 +25,7 @@ NEXUS_IMAGE="sonatype/nexus3:latest"
 PLUGIN_GIT_VERSION="2.9.1"
 
 # 项目路径（显式指定，参考 NEXUS_DIR 风格）
-SCRIPT_DIR="/Users/constantine/devs/rnd-cicd/bin"
+SCRIPT_DIR="/Users/constantine/devs/rnd-cicd/tools"
 RNDCICD_DIR="${SCRIPT_DIR}"
 NEXUS_DIR="/Users/constantine/devs/nexus"
 
@@ -394,6 +394,7 @@ register_woodpecker_secrets() {
   local REPOS="${WOODPECKER_REPOS:-constantine/ZhiYu-Backend,constantine/ZhiYu}"
   local SSH_USER="${DEPLOY_SSH_USER:-parallels}"
   local SSH_PASS="${DEPLOY_SSH_PASSWORD:-}"
+  local NACOS_PASS="${WOODPECKER_NACOS_PASSWORD:-nacos}"
 
   export WOODPECKER_SERVER=http://localhost:8000
   export WOODPECKER_TOKEN="${WOODPECKER_API_TOKEN}"
@@ -411,6 +412,7 @@ register_woodpecker_secrets() {
     # 删除旧 secrets（忽略错误）
     "${WP_CLI}" repo secret rm --repository "${repo}" --name ssh_user 2>/dev/null || true
     "${WP_CLI}" repo secret rm --repository "${repo}" --name ssh_password 2>/dev/null || true
+    "${WP_CLI}" repo secret rm --repository "${repo}" --name nacos_password 2>/dev/null || true
 
     # 注册 ssh_user
     if "${WP_CLI}" repo secret add \
@@ -434,6 +436,16 @@ register_woodpecker_secrets() {
       fi
     else
       log_warn "  DEPLOY_SSH_PASSWORD 未设置，跳过 ssh_password"
+    fi
+
+    # 注册 nacos_password
+    if "${WP_CLI}" repo secret add \
+        --repository "${repo}" \
+        --name nacos_password --value "${NACOS_PASS}" \
+        --event push --event pull_request --event tag 2>/dev/null; then
+      log_success "  nacos_password → ${repo}"
+    else
+      log_warn "  nacos_password 注册失败: ${repo}"
     fi
   done
 
